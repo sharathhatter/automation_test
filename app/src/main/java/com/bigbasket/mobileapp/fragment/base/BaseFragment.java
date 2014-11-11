@@ -35,7 +35,7 @@ import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.model.request.HttpRequestData;
 import com.bigbasket.mobileapp.util.*;
-import com.melnykov.fab.FloatingActionButton;
+//import com.melnykov.fab.FloatingActionButton;
 import org.apache.http.impl.client.BasicCookieStore;
 
 import java.text.NumberFormat;
@@ -366,9 +366,9 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         editor.commit();
     }
 
-    public FloatingActionButton getFloatingActionButton(int drawableResId) {
-        return UIUtil.getFloatActionButton(drawableResId, getActivity());
-    }
+//    public FloatingActionButton getFloatingActionButton(int drawableResId) {
+//        return UIUtil.getFloatActionButton(drawableResId, getActivity());
+//    }
 
     public void showAlertDialog(Context context, String title,
                                 String msg, DialogButton dialogButton,

@@ -9,3 +9,5 @@ androidHorizontalListView/build/*
 multipleImagePick/build/*
 konotorActivity/build/*
 app/build/*
+facebook/build/*
+facebook/gen/*

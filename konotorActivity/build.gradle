@@ -6,6 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.demach"
+        minSdkVersion 10
     }
 
     buildTypes {
@@ -22,7 +23,7 @@ android {
 
 dependencies {
     provided 'com.android.support:support-v4:18.+'
-    compile 'com.google.android.gms:play-services:+'
+    compile 'com.google.android.gms:play-services:6.1.71'
     provided 'com.google.code.gson:gson:2.3'
     compile files('libs/KonotorApi.jar')
 }

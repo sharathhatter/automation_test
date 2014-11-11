@@ -16,7 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
-import com.melnykov.fab.FloatingActionButton;
+//import com.melnykov.fab.FloatingActionButton;
 import org.apache.commons.lang3.StringUtils;
 
 import java.text.NumberFormat;
@@ -117,17 +117,17 @@ public class UIUtil {
         return (nf.format(amount).equals("0.00") || nf.format(amount).equals("0.0")) ? "0" : nf.format(amount);
     }
 
-    public static FloatingActionButton getFloatActionButton(int drawableResId, Activity context) {
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams.gravity = Gravity.BOTTOM | Gravity.RIGHT;
-        LayoutInflater inflater = context.getLayoutInflater();
-        FloatingActionButton floatingActionButton = (FloatingActionButton)
-                inflater.inflate(R.layout.uiv3_floating_action_button, null);
-        floatingActionButton.setLayoutParams(layoutParams);
-        floatingActionButton.setColorNormal(context.getResources().getColor(R.color.uiv3_action_bar_background));
-        floatingActionButton.setColorPressed(context.getResources().getColor(R.color.uiv3_action_bar_background_pressed));
-        floatingActionButton.setImageDrawable(context.getResources().getDrawable(drawableResId));
-        return floatingActionButton;
-    }
+//    public static FloatingActionButton getFloatActionButton(int drawableResId, Activity context) {
+//        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+//                ViewGroup.LayoutParams.WRAP_CONTENT);
+//        layoutParams.gravity = Gravity.BOTTOM | Gravity.RIGHT;
+//        LayoutInflater inflater = context.getLayoutInflater();
+//        FloatingActionButton floatingActionButton = (FloatingActionButton)
+//                inflater.inflate(R.layout.uiv3_floating_action_button, null);
+//        floatingActionButton.setLayoutParams(layoutParams);
+//        floatingActionButton.setColorNormal(context.getResources().getColor(R.color.uiv3_action_bar_background));
+//        floatingActionButton.setColorPressed(context.getResources().getColor(R.color.uiv3_action_bar_background_pressed));
+//        floatingActionButton.setImageDrawable(context.getResources().getDrawable(drawableResId));
+//        return floatingActionButton;
+//    }
 }
