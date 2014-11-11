@@ -28,7 +28,7 @@ import com.bigbasket.mobileapp.model.product.TopCategoryModel;
 import com.bigbasket.mobileapp.task.COReserveQuantityCheckTask;
 import com.bigbasket.mobileapp.task.CoUpdateReservationTask;
 import com.bigbasket.mobileapp.util.Constants;
-import com.melnykov.fab.FloatingActionButton;
+//import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 
@@ -159,7 +159,7 @@ public class CheckoutQCFragment extends BaseFragment implements COReserveQuantit
 
             RelativeLayout layoutRelativeMain = (RelativeLayout) inflater.inflate(R.layout.uiv3_checkout_qc_scroll, null);
             LinearLayout linearLayoutViewQC = (LinearLayout) layoutRelativeMain.findViewById(R.id.layoutMainCheckoutQc);
-            FloatingActionButton btnFabProceedQc = (FloatingActionButton) layoutRelativeMain.findViewById(R.id.btnFabProceedQc);
+            //FloatingActionButton btnFabProceedQc = (FloatingActionButton) layoutRelativeMain.findViewById(R.id.btnFabProceedQc);
             contentView.addView(layoutRelativeMain);
 
             if (productWithNoStockListSize > 0) {
@@ -318,12 +318,12 @@ public class CheckoutQCFragment extends BaseFragment implements COReserveQuantit
                 }
             }
 
-            btnFabProceedQc.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    new CoUpdateReservationTask(getFragment(), false, productWithNoStockList, productWithSomeStockList).execute();
-                }
-            });
+//            btnFabProceedQc.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    new CoUpdateReservationTask(getFragment(), false, productWithNoStockList, productWithSomeStockList).execute();
+//                }
+//            });
         } else {
             showAlertDialogFinish(getActivity(), null, getString(R.string.INTERNAL_SERVER_ERROR));
         }

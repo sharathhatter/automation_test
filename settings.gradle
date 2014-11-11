@@ -1,4 +1,3 @@
 include ':app', ':facebook'
 include ':konotorActivity'
-include ':multipleImagePick'
 include ':androidHorizontalListView'
