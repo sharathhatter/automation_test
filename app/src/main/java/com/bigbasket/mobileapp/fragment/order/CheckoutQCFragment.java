@@ -1,0 +1,370 @@
+package com.bigbasket.mobileapp.fragment.order;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.v7.widget.PopupMenu;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
+import android.view.*;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
+import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.fragment.product.SubCategoryListFragment;
+import com.bigbasket.mobileapp.interfaces.COReserveQuantityCheckAware;
+import com.bigbasket.mobileapp.model.order.COReserveQuantity;
+import com.bigbasket.mobileapp.model.order.CheckoutProduct;
+import com.bigbasket.mobileapp.model.order.QCErrorData;
+import com.bigbasket.mobileapp.model.product.Product;
+import com.bigbasket.mobileapp.model.product.TopCategoryModel;
+import com.bigbasket.mobileapp.task.COReserveQuantityCheckTask;
+import com.bigbasket.mobileapp.task.CoUpdateReservationTask;
+import com.bigbasket.mobileapp.util.Constants;
+import com.melnykov.fab.FloatingActionButton;
+
+import java.util.ArrayList;
+
+
+public class CheckoutQCFragment extends BaseFragment implements COReserveQuantityCheckAware {
+
+    private COReserveQuantity coReserveQuantity;
+    private LayoutInflater inflater;
+    private String categoryName = "";
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.uiv3_list_container, container, false);
+        view.setBackgroundColor(getResources().getColor(R.color.uiv3_list_bkg_color));
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        int qcLen = getArguments().getInt(Constants.QC_LEN, -100);
+        if (qcLen == 0) {
+            changeFragment(new MemberAddressListFragment());
+        } else {
+            callQCApi();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    private void callQCApi() {
+        if (checkInternetConnection()) {
+            SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String pharmaPrescriptionId = prefer.getString(Constants.PHARMA_PRESCRIPTION_ID, null);
+            new COReserveQuantityCheckTask(this, pharmaPrescriptionId).execute();
+        } else {
+            showAlertDialogForGoToHome(getString(R.string.checkinternet));
+        }
+    }
+
+    @Override
+    public COReserveQuantity getCOReserveQuantity() {
+        return coReserveQuantity;
+    }
+
+    @Override
+    public void setCOReserveQuantity(COReserveQuantity coReserveQuantity) {
+        this.coReserveQuantity = coReserveQuantity;
+    }
+
+    @Override
+    public void onCOReserveQuantityCheck() {
+        if (coReserveQuantity.isStatus()) {
+            if (!coReserveQuantity.isQcHasErrors()) {
+                showAlertDialogForGoToHome(getString(R.string.INTERNAL_SERVER_ERROR));
+            } else {
+                createArrayListOfProducts();
+            }
+        }
+    }
+
+
+    private void createArrayListOfProducts() {
+        if (coReserveQuantity.isQcHasErrors()) {
+            ArrayList<CheckoutProduct> productWithNoStockList = new ArrayList<>();
+            ArrayList<CheckoutProduct> productWithSomeStockList = new ArrayList<>();
+            for (int i = 0; i < coReserveQuantity.getQCErrorData().size(); i++) {
+                QCErrorData qcErrorData;
+                qcErrorData = coReserveQuantity.getQCErrorData().get(i);
+                Product product = qcErrorData.getProduct();
+                CheckoutProduct item_details = new CheckoutProduct();
+                item_details.setReserveQuantity(String.valueOf(qcErrorData.getReservedQuantity()));
+                item_details.setOriginalQuantity(String.valueOf(qcErrorData.getOriginalQuantity()));
+                item_details.setDescription(product.getDescription());
+                item_details.setSpprice(product.getSellPrice());
+                item_details.setMrp(product.getMrp());
+                item_details.setBrand(product.getBrand());
+                item_details.setDiscountValue(product.getDiscountValue());
+                item_details.setId(product.getSku());
+                item_details.setWeight(product.getWeight());
+                item_details.setCategoryName(product.getTopLevelCategoryName());
+                item_details.setTopLevelCategorySlug(product.getTopLevelCategorySlug());
+                if (!qcErrorData.getReservedQuantity().equals("0")) {
+                    productWithSomeStockList.add(item_details);
+                } else {
+                    productWithNoStockList.add(item_details);
+                }
+            }
+            renderCheckOut(productWithNoStockList, productWithSomeStockList);
+        } else {
+            showAlertDialogFinish(getActivity(), null, getString(R.string.INTERNAL_SERVER_ERROR));
+        }
+
+    }
+
+    private boolean isViaInvoice() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        boolean viaInvoice = sharedPreferences.getBoolean(Constants.VIA_INVOICE, false);
+        removeViaInvoiceFlag();
+        return viaInvoice;
+    }
+
+    protected void removeViaInvoiceFlag() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove(Constants.VIA_INVOICE);
+        editor.commit();
+    }
+
+
+    private void renderCheckOut(final ArrayList<CheckoutProduct> productWithNoStockList,
+                                final ArrayList<CheckoutProduct> productWithSomeStockList) {
+        if (getActivity() == null) return;
+        LinearLayout contentView = getContentView();
+        if (contentView == null) return;
+
+        int productWithNoStockListSize = productWithNoStockList.size();
+        int productWithSomeStockListSize = productWithSomeStockList.size();
+        if (productWithNoStockListSize > 0 || productWithSomeStockListSize > 0) {
+
+            contentView.removeAllViews();
+            contentView.setBackgroundColor(getResources().getColor(R.color.uiv3_list_bkg_color));
+            contentView.setPadding(0, 0, 0, 10);
+
+            RelativeLayout layoutRelativeMain = (RelativeLayout) inflater.inflate(R.layout.uiv3_checkout_qc_scroll, null);
+            LinearLayout linearLayoutViewQC = (LinearLayout) layoutRelativeMain.findViewById(R.id.layoutMainCheckoutQc);
+            FloatingActionButton btnFabProceedQc = (FloatingActionButton) layoutRelativeMain.findViewById(R.id.btnFabProceedQc);
+            contentView.addView(layoutRelativeMain);
+
+            if (productWithNoStockListSize > 0) {
+                showQcMsg(linearLayoutViewQC, false);
+                for (int i = 0; i < productWithNoStockListSize; i++) {
+                    // show product's top category
+                    if (!categoryName.equalsIgnoreCase(productWithNoStockList.get(i).getCategoryName()) &&
+                            !TextUtils.isEmpty(productWithNoStockList.get(i).getCategoryName())) {
+                        View categoryRow = inflater.inflate(R.layout.uiv3_category_row, null);
+                        TextView txtTopCategory = (TextView) categoryRow.findViewById(R.id.txtTopCategory);
+                        categoryName = productWithNoStockList.get(i).getCategoryName();
+                        txtTopCategory.setText(productWithNoStockList.get(i).getCategoryName());
+                        linearLayoutViewQC.addView(categoryRow);
+                    }
+
+                    // no stock product
+                    RelativeLayout layoutWithNoStockProducts = (RelativeLayout) inflater.inflate(R.layout.uiv3_out_of_stock_product_layout, null);
+
+//                    TextView txtIndex = (TextView) layoutWithNoStockProducts.findViewById(R.id.txtIndex);
+//                    txtIndex.setText(String.valueOf(i+1));
+
+                    TextView txtProductBrand = (TextView) layoutWithNoStockProducts.findViewById(R.id.txtProductBrand);
+                    txtProductBrand.setText(productWithNoStockList.get(i).getBrand());
+
+                    TextView txtProductDesc = (TextView) layoutWithNoStockProducts.findViewById(R.id.txtProductDesc);
+                    txtProductDesc.setText(productWithNoStockList.get(i).getDescription());
+
+                    TextView txtWeight = (TextView) layoutWithNoStockProducts.findViewById(R.id.txtWeight);
+                    txtWeight.setText(productWithNoStockList.get(i).getWeight());
+
+                    RelativeLayout layoutSomeStock = (RelativeLayout) layoutWithNoStockProducts.findViewById(R.id.layoutSomeStock);
+                    layoutSomeStock.setVisibility(View.GONE);
+
+                    //ImageView imgRemove = (ImageView) layoutWithNoStockProducts.findViewById(R.id.imgRemove);
+                    //imgRemove.setVisibility(View.GONE);
+
+                    //Button btnSimilarProducts = (Button) layoutWithNoStockProducts.findViewById(R.id.btnSimilarProducts);
+                    //btnSimilarProducts.setVisibility(View.GONE);
+
+                    linearLayoutViewQC.addView(layoutWithNoStockProducts);
+                }
+
+            }
+
+            if (productWithSomeStockListSize > 0) {
+                showQcMsg(linearLayoutViewQC, true);
+                categoryName = "";
+                for (int i = 0; i < productWithSomeStockListSize; i++) {
+                    // show product's top category
+                    if (!categoryName.equalsIgnoreCase(productWithSomeStockList.get(i).getCategoryName()) &&
+                            !TextUtils.isEmpty(productWithSomeStockList.get(i).getCategoryName())) {
+                        View categoryRow = inflater.inflate(R.layout.uiv3_category_row, null);
+                        TextView txtTopCategory = (TextView) categoryRow.findViewById(R.id.txtTopCategory);
+                        categoryName = productWithSomeStockList.get(i).getCategoryName();
+                        txtTopCategory.setText(productWithSomeStockList.get(i).getCategoryName());
+                        linearLayoutViewQC.addView(categoryRow);
+                    }
+
+                    // some stock product
+                    RelativeLayout layoutWithSomeStockProducts = (RelativeLayout) inflater.inflate(R.layout.uiv3_out_of_stock_product_layout, null);
+
+                    TextView txtOutOfStock = (TextView) layoutWithSomeStockProducts.findViewById(R.id.txtOutOfStock);
+                    txtOutOfStock.setVisibility(View.GONE);
+
+                    TextView txtProductBrand = (TextView) layoutWithSomeStockProducts.findViewById(R.id.txtProductBrand);
+                    txtProductBrand.setText(productWithSomeStockList.get(i).getBrand());
+
+                    TextView txtProductDesc = (TextView) layoutWithSomeStockProducts.findViewById(R.id.txtProductDesc);
+                    txtProductDesc.setText(productWithSomeStockList.get(i).getDescription());
+
+                    TextView txtWeight = (TextView) layoutWithSomeStockProducts.findViewById(R.id.txtWeight);
+                    txtWeight.setVisibility(View.GONE);
+
+                    RelativeLayout layoutSomeStock = (RelativeLayout) layoutWithSomeStockProducts.findViewById(R.id.layoutSomeStock);
+                    layoutSomeStock.setVisibility(View.VISIBLE);
+
+                    TextView txtSelected = (TextView) layoutWithSomeStockProducts.findViewById(R.id.txtSelected);
+                    String prefixSelect = getString(R.string.check_out_selected);
+                    String postfixSelect = productWithSomeStockList.get(i).getOriginalQuantity();
+                    SpannableString spannableTxtSelected = new SpannableString(prefixSelect + " " + postfixSelect);
+                    spannableTxtSelected.setSpan(new ForegroundColorSpan(0xff709d03), 0, prefixSelect.length(), 0);
+                    txtSelected.setText(spannableTxtSelected);
+
+                    TextView txtAvailable = (TextView) layoutWithSomeStockProducts.findViewById(R.id.txtAvailable);
+                    String prefixAvailable = getString(R.string.check_out_available);
+                    String postfixAvailable = productWithSomeStockList.get(i).getReserveQuantity();
+                    SpannableString spannableTxtAvailable = new SpannableString(prefixAvailable + " " + postfixAvailable);
+                    spannableTxtAvailable.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.uiv3_action_bar_background)),
+                            0, prefixSelect.length(), 0);
+                    txtAvailable.setText(spannableTxtAvailable);
+
+                    TextView txtSalePrice = (TextView) layoutWithSomeStockProducts.findViewById(R.id.txtSalePrice);
+                    if (!TextUtils.isEmpty(productWithSomeStockList.get(i).getSpprice())) {
+                        String preFixSalePrice = "Sale Price: `";
+                        String postFixSalePrice = getFloatAmount((Float.parseFloat(productWithSomeStockList.get(i).getSpprice())));
+                        int prefixBalLen = preFixSalePrice.length();
+                        SpannableString spannableSalePrice = new SpannableString(preFixSalePrice + " " + postFixSalePrice);
+                        spannableSalePrice.setSpan(new CustomTypefaceSpan("", faceRupee), prefixBalLen - 1,
+                                prefixBalLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+                        txtSalePrice.setText(spannableSalePrice);
+                    } else {
+                        txtSalePrice.setVisibility(View.GONE);
+                    }
+
+                    TextView txtSaving = (TextView) layoutWithSomeStockProducts.findViewById(R.id.txtSaving);
+                    if (!TextUtils.isEmpty(productWithSomeStockList.get(i).getDiscountValue())) {
+                        String preFixSaving = "Saving: `";
+                        String postFixSaving = getFloatAmount((Float.parseFloat(productWithSomeStockList.get(i).getDiscountValue())));
+                        int prefixBalLen = preFixSaving.length();
+                        SpannableString spannableSaving = new SpannableString(preFixSaving + " " + postFixSaving);
+                        spannableSaving.setSpan(new CustomTypefaceSpan("", faceRupee), prefixBalLen - 1,
+                                prefixBalLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+                        txtSaving.setText(spannableSaving);
+                    } else {
+                        txtSaving.setVisibility(View.GONE);
+                    }
+
+                    final ImageView imgProductCheckOutQCAdditionalAction = (ImageView) layoutWithSomeStockProducts.
+                            findViewById(R.id.imgProductCheckOutQCAdditionalAction);
+                    imgProductCheckOutQCAdditionalAction.setVisibility(View.VISIBLE);
+                    imgProductCheckOutQCAdditionalAction.setTag(productWithSomeStockList.get(i).getId());
+                    imgProductCheckOutQCAdditionalAction.setId(i);
+                    imgProductCheckOutQCAdditionalAction.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            PopupMenu popupMenu = new PopupMenu(getActivity(), v);
+                            MenuInflater menuInflater = popupMenu.getMenuInflater();
+                            menuInflater.inflate(R.menu.check_out_qc, popupMenu.getMenu());
+                            popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                                @Override
+                                public boolean onMenuItemClick(MenuItem item) {
+                                    switch (item.getItemId()) {
+                                        case R.id.menuAddSimilarQCProduct:
+                                            SubCategoryListFragment subCategoryListFragment = new SubCategoryListFragment();
+                                            TopCategoryModel topCategoryModel = new
+                                                    TopCategoryModel(productWithSomeStockList.get(imgProductCheckOutQCAdditionalAction.getId()).getCategoryName(),
+                                                    productWithSomeStockList.get(imgProductCheckOutQCAdditionalAction.getId()).getTopLevelCategorySlug(), null, null, null);
+                                            Bundle bundle = new Bundle();
+                                            bundle.putParcelable(Constants.TOP_CATEGORY, topCategoryModel);
+                                            subCategoryListFragment.setArguments(bundle);
+                                            changeFragment(subCategoryListFragment);
+                                            return true;
+                                        case R.id.menuDeleteQCProduct:
+                                            new CoUpdateReservationTask(getFragment(), true, String.valueOf(imgProductCheckOutQCAdditionalAction.getTag()), 0).execute();
+                                            return true;
+                                        default:
+                                            return false;
+                                    }
+                                }
+                            });
+                            popupMenu.show();
+                        }
+                    });
+
+                    linearLayoutViewQC.addView(layoutWithSomeStockProducts);
+                }
+            }
+
+            btnFabProceedQc.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    new CoUpdateReservationTask(getFragment(), false, productWithNoStockList, productWithSomeStockList).execute();
+                }
+            });
+        } else {
+            showAlertDialogFinish(getActivity(), null, getString(R.string.INTERNAL_SERVER_ERROR));
+        }
+
+    }
+
+    private void showQcMsg(LinearLayout linearLayoutViewQC, boolean forNoProductView) {
+        View view = inflater.inflate(R.layout.uiv3_checkout_msg, null);
+        TextView txtOutOfStockMsg1 = (TextView) view.findViewById(R.id.txtOutOfStockMsg1);
+        txtOutOfStockMsg1.setTypeface(faceRobotoRegular);
+        TextView txtOutOfStockMsg2 = (TextView) view.findViewById(R.id.txtOutOfStockMsg2);
+        txtOutOfStockMsg2.setTypeface(faceRobotoRegular);
+        if (forNoProductView) {
+            txtOutOfStockMsg1.setText(getString(R.string.out_of_stock_msg3));
+            txtOutOfStockMsg2.setVisibility(View.VISIBLE);
+        }
+        linearLayoutViewQC.addView(view);
+    }
+
+    private BaseFragment getFragment() {
+        return this;
+    }
+
+    public LinearLayout getContentView() {
+        return getView() != null ? (LinearLayout) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
+    }
+
+    @Override
+    public String getTitle() {
+        return "CHECKOUT";
+    }
+
+    @Override
+    public void onBackResume() {
+        super.onBackResume();
+        finish();
+    }
+
+    @NonNull
+    @Override
+    public String getFragmentTxnTag() {
+        return CheckoutQCFragment.class.getName();
+    }
+}

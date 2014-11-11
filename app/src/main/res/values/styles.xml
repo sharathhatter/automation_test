@@ -1,0 +1,114 @@
+<resources>
+
+    <!--
+        Base application theme, dependent on API level. This theme is replaced
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+    -->
+    <!-- Application theme. -->
+    <style name="BBAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:buttonStyle">@style/CustomHoloLightButtonStyle</item>
+        <item name="colorPrimary">@color/uiv3_action_bar_background</item>
+        <item name="colorPrimaryDark">@color/uiv3_status_bar_background</item>
+        <item name="colorAccent">@color/uiv3_action_bar_background</item>
+    </style>
+    
+    <style name="BBFullScreenDialog" parent="android:Theme" >
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowIsFloating">false</item>
+    </style>
+
+    <!-- TODO: Remove this theme eventually -->
+    <style name="NoTitleAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:buttonStyle">@style/CustomHoloLightButtonStyle</item>
+    </style>
+    <style name="CustomHoloLightButtonStyle" parent="@android:style/Widget.Holo.Light.Button">
+        <item name="android:minHeight">1dip</item>
+        <item name="android:minWidth">1dip</item>
+    </style>
+    <style name="SpinnerDialogMode">
+        <item name="android:spinnerMode">dialog</item>
+    </style>
+    <!-- Other styles -->
+    <style name="Uiv2HeaderButtonStyle">
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:minHeight">1dp</item>
+        <item name="android:minWidth">1dp</item>
+        <item name="android:background">@drawable/header_btn_bkg_drawable</item>
+        <item name="android:textColor">@color/headerBtnTxtColor</item>
+    </style>
+    <style name="Uiv3BigGreenButton">
+        <item name="android:paddingTop">@dimen/padding_small</item>
+        <item name="android:paddingBottom">@dimen/padding_small</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:background">@color/uiv3_action_bar_background</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:minHeight">1dp</item>
+        <item name="android:minWidth">1dp</item>
+        <item name="android:textSize">@dimen/secondary_text_size</item>
+    </style>
+    <style name="Uiv2BigYellowButton">
+        <item name="android:layout_margin">10dp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:textColor">@color/light_grey_text</item>
+        <item name="android:background">@color/buttonYellowBkg</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:minHeight">1dp</item>
+        <item name="android:minWidth">1dp</item>
+    </style>
+    <style name="Uiv2YellowButton">
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:drawablePadding">10dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/light_grey_text</item>
+        <item name="android:background">@drawable/button_yellow_gradient</item>
+        <item name="android:minHeight">1dp</item>
+        <item name="android:minWidth">1dp</item>
+    </style>
+    <style name="Uiv2BigGreyButton">
+        <item name="android:layout_margin">10dp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:background">@color/buttonGreyBkg</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:textColor">@color/light_grey_text</item>
+        <item name="android:minHeight">1dp</item>
+        <item name="android:minWidth">1dp</item>
+    </style>
+
+    <style name="Uiv2ShoppingPopBtn">
+        <item name="android:background">@color/buttonGreyBkg</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:textColor">@color/light_grey_text</item>
+        <item name="android:minHeight">1dp</item>
+        <item name="android:minWidth">1dp</item>
+    </style>
+
+    <style name="NavTxtStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/margin_small</item>
+        <item name="android:layout_marginBottom">@dimen/margin_small</item>
+        <item name="android:layout_marginLeft">@dimen/margin_normal</item>
+        <item name="android:layout_marginRight">@dimen/margin_normal</item>
+        <item name="android:drawablePadding">@dimen/padding_large</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textSize">@dimen/primary_text_size</item>
+        <item name="android:textColor">@color/uiv3_list_primary_text_color</item>
+    </style>
+
+    <style name="FooterButtonStyle">
+        <item name="android:clickable">true</item>
+        <item name="android:background">@color/uiv3_action_bar_background</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/heading_1_text_size</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingBottom">@dimen/footer_button_vertical_padding</item>
+        <item name="android:paddingTop">@dimen/footer_button_vertical_padding</item>
+    </style>
+</resources>

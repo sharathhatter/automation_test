@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/uiv3_list_bkg_color"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollView">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/uiv3_list_bkg_color">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView"
+            android:background="@color/white"
+            android:contentDescription="@string/orderPlaced"
+            android:src="@drawable/bigbasket_van"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/large_text_size"
+            android:textColor="@color/white"
+            android:background="@color/uiv3_action_bar_background"
+            android:paddingTop="@dimen/padding_normal"
+            android:paddingLeft="@dimen/padding_normal"
+            android:paddingRight="@dimen/padding_small"
+            android:paddingBottom="@dimen/padding_large"
+            android:text="@string/orderThankyouText"
+            android:id="@+id/txtThankYou"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/uiv3_primary_text_color"
+            android:padding="@dimen/padding_normal"
+            android:textSize="@dimen/secondary_text_size"
+            android:id="@+id/txtSlotInfo"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/uiv3_list_separator_color" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/secondary_text_size"
+            android:padding="@dimen/padding_normal"
+            android:textColor="@color/uiv3_action_bar_background_pressed"
+            android:text="@string/viewInvoice"
+            android:id="@+id/lblViewInvoice"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/uiv3_list_separator_color" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/secondary_text_size"
+            android:padding="@dimen/padding_normal"
+            android:textColor="@color/uiv3_action_bar_background_pressed"
+            android:text="@string/locateOnMapViaInvoice"
+            android:id="@+id/lblLocateOnMap"/>
+
+    </LinearLayout>
+</ScrollView>

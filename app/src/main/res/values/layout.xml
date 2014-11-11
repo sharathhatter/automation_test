@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <item name="uiv3_promo_detail" type="layout">@layout/uiv3_promo_detail_content</item>
+</resources>

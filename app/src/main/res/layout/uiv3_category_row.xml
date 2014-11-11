@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/headerOuterLayout"
+    >
+
+    <TextView
+        android:id="@+id/txtTopCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_small"
+        android:layout_marginLeft="@dimen/margin_small"
+        android:gravity="center_vertical"
+        android:layout_alignParentLeft="true"
+        android:textColor="@color/uiv3_primary_text_color"
+        android:text="Branded Foods"
+        android:textSize="@dimen/primary_text_size"
+        />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/uiv3_primary_text_color"
+        android:id="@+id/topCatTotalItems"
+        android:layout_marginLeft="@dimen/margin_small"
+        android:layout_below="@id/txtTopCategory"
+        android:visibility="gone"
+        android:textSize="@dimen/secondary_text_size"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/topCatTotal"
+        android:layout_below="@id/txtTopCategory"
+        android:layout_toRightOf="@id/topCatTotalItems"
+        android:gravity="center"
+        android:textColor="@color/redColor"
+        android:visibility="gone"
+        android:layout_marginRight="@dimen/margin_mini"
+        android:textSize="@dimen/secondary_text_size"
+        />
+
+</RelativeLayout>

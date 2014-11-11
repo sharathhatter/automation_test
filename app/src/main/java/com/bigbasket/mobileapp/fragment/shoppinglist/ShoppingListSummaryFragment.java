@@ -1,0 +1,256 @@
+package com.bigbasket.mobileapp.fragment.shoppinglist;
+
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.*;
+import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.model.request.HttpOperationResult;
+import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
+import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListSummary;
+import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.MobileApiUrl;
+import com.bigbasket.mobileapp.util.ParserUtil;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import java.util.HashMap;
+import java.util.List;
+
+
+public class ShoppingListSummaryFragment extends BaseFragment {
+
+    private ShoppingListName shoppingListName;
+    private static final HashMap<String, Integer> categoryImageMap = new HashMap<>();
+
+    static {
+        categoryImageMap.put("fruits-vegetables", R.drawable.fruit_and_veg);
+        categoryImageMap.put("grocery-staples", R.drawable.cereal);
+        categoryImageMap.put("bread-dairy-eggs", R.drawable.bread);
+        categoryImageMap.put("beverages", R.drawable.beverage_tea);
+        categoryImageMap.put("branded-foods", R.drawable.brandedfoods);
+        categoryImageMap.put("personal-care", R.drawable.personalcare);
+        categoryImageMap.put("household", R.drawable.household);
+        categoryImageMap.put("confectionery", R.drawable.cake_slice);
+        categoryImageMap.put("imported-gourmet", R.drawable.imported_goumet);
+        categoryImageMap.put("meat", R.drawable.chicken);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.uiv3_list_container, container, false);
+        view.setBackgroundColor(getResources().getColor(R.color.uiv3_list_bkg_light_color));
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        loadShoppingListCategories();
+    }
+
+    private void loadShoppingListCategories() {
+        Bundle bundle = getArguments();
+        if (bundle == null) {
+            return;
+        }
+        shoppingListName = bundle.getParcelable(Constants.SHOPPING_LIST_NAME);
+        if (shoppingListName.getSlug().equalsIgnoreCase(Constants.SMART_BASKET_SLUG)) {
+            setTitle(Constants.SMART_BASKET);
+        }
+        String url = MobileApiUrl.getBaseAPIUrl() + Constants.SL_LIST_SUMMARY + "?" +
+                Constants.SLUG + "=" + shoppingListName.getSlug();
+        startAsyncActivity(url, null, false, true, null);
+    }
+
+    @Override
+    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
+        String url = httpOperationResult.getUrl();
+        if (url.contains(Constants.SL_LIST_SUMMARY)) {
+            JsonObject httpResponseJsonObj = new JsonParser().parse(httpOperationResult.getReponseString()).getAsJsonObject();
+            String status = httpResponseJsonObj.get(Constants.STATUS).getAsString();
+            switch (status) {
+                case Constants.OK:
+                    JsonArray shoppingListSummaryJsonArray = httpResponseJsonObj.get(Constants.SHOPPING_LIST_SUMMARY).getAsJsonArray();
+                    List<ShoppingListSummary> shoppingListSummaries = ParserUtil.parseShoppingListSummary(shoppingListSummaryJsonArray);
+                    renderShoppingListSummary(shoppingListSummaries);
+                    break;
+                default:
+                    // TODO : Add error handling
+                    showErrorMsg("Server Error");
+                    break;
+            }
+        } else {
+            super.onAsyncTaskComplete(httpOperationResult);
+        }
+    }
+
+    private void renderShoppingListSummary(final List<ShoppingListSummary> shoppingListSummaries) {
+        if (getActivity() == null) return;
+        LinearLayout contentView = getContentView();
+        if (contentView == null) return;
+        contentView.removeAllViews();
+        if (shoppingListSummaries == null || shoppingListSummaries.size() == 0) {
+            if (shoppingListName.getSlug().equalsIgnoreCase(Constants.SMART_BASKET_SLUG)) {
+                showErrorMsg(getString(R.string.smartBasketEmpty));
+            } else {
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                RelativeLayout relativeLayout = (RelativeLayout) inflater.inflate(R.layout.shopping_list_empty, null);
+                TextView txtShoppingListMsg1 = (TextView) relativeLayout.findViewById(R.id.txtShoppingListMsg1);
+                txtShoppingListMsg1.setTypeface(faceRobotoRegular);
+                TextView txtShoppingListMsg2 = (TextView) relativeLayout.findViewById(R.id.txtShoppingListMsg2);
+                txtShoppingListMsg2.setTypeface(faceRobotoRegular);
+                TextView txtSearchProducts = (TextView) relativeLayout.findViewById(R.id.txtSearchProducts);
+                txtSearchProducts.setTypeface(faceRobotoRegular);
+                TextView txtSearchResultMsg1 = (TextView) relativeLayout.findViewById(R.id.txtSearchResultMsg1);
+                txtSearchResultMsg1.setTypeface(faceRobotoRegular);
+                TextView txtSearchResultMsg2 = (TextView) relativeLayout.findViewById(R.id.txtSearchResultMsg2);
+                txtSearchResultMsg2.setTypeface(faceRobotoRegular);
+                contentView.addView(relativeLayout);
+            }
+            return;
+        }
+        ListView shoppingListSummaryView = new ListView(getActivity());
+        shoppingListSummaryView.setDividerHeight(0);
+        shoppingListSummaryView.setDivider(null);
+        ShoppingListSummaryAdapter shoppingListSummaryAdapter = new ShoppingListSummaryAdapter(shoppingListSummaries);
+        shoppingListSummaryView.setAdapter(shoppingListSummaryAdapter);
+        shoppingListSummaryView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ShoppingListSummary shoppingListSummary = shoppingListSummaries.get(position);
+                Bundle bundle = new Bundle();
+                bundle.putParcelable(Constants.SHOPPING_LIST_NAME, shoppingListName);
+                bundle.putString(Constants.TOP_CAT_SLUG, shoppingListSummary.getTopCategorySlug());
+                bundle.putString(Constants.TOP_CATEGORY_NAME, shoppingListSummary.getTopCategoryName());
+                ShoppingListProductFragment shoppingListProductFragment = new ShoppingListProductFragment();
+                shoppingListProductFragment.setArguments(bundle);
+                changeFragment(shoppingListProductFragment);
+            }
+        });
+        contentView.addView(shoppingListSummaryView);
+    }
+
+    private class ShoppingListSummaryAdapter extends BaseAdapter {
+
+        private List<ShoppingListSummary> shoppingListSummaries;
+        private int size;
+
+        private ShoppingListSummaryAdapter(List<ShoppingListSummary> shoppingListSummaries) {
+            this.shoppingListSummaries = shoppingListSummaries;
+            this.size = shoppingListSummaries.size();
+        }
+
+        @Override
+        public int getCount() {
+            return this.size;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return shoppingListSummaries.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View row = convertView;
+            ShoppingListSummaryHolder shoppingListSummaryHolder;
+            if (row == null) {
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                row = inflater.inflate(R.layout.uiv3_shopping_list_summary, null);
+                shoppingListSummaryHolder = new ShoppingListSummaryHolder(row);
+                row.setTag(shoppingListSummaryHolder);
+            } else {
+                shoppingListSummaryHolder = (ShoppingListSummaryHolder) row.getTag();
+            }
+
+            ShoppingListSummary shoppingListSummary = shoppingListSummaries.get(position);
+
+            TextView txtCategoryName = shoppingListSummaryHolder.getTxtCategoryName();
+            ImageView imgCategory = shoppingListSummaryHolder.getImgCategory();
+            EditText editTextNumItems = shoppingListSummaryHolder.getEditTextNumItems();
+
+            txtCategoryName.setText(shoppingListSummary.getTopCategoryName());
+            int imageResId = categoryImageMap.containsKey(shoppingListSummary.getTopCategorySlug()) ?
+                    categoryImageMap.get(shoppingListSummary.getTopCategorySlug()) : R.drawable.image_404;
+            imgCategory.setImageResource(imageResId);
+
+            editTextNumItems.setText(shoppingListSummary.getNumItems());
+
+            View viewSeparator = shoppingListSummaryHolder.getViewSeparator();
+            if (position == size - 1) {
+                viewSeparator.setVisibility(View.GONE);
+            } else {
+                viewSeparator.setVisibility(View.VISIBLE);
+            }
+            return row;
+        }
+
+        private class ShoppingListSummaryHolder {
+            private View base;
+            private ImageView imgCategory;
+            private TextView txtCategoryName;
+            private EditText editTextNumItems;
+            private View viewSeparator;
+
+            private ShoppingListSummaryHolder(View base) {
+                this.base = base;
+            }
+
+            public ImageView getImgCategory() {
+                if (imgCategory == null) {
+                    imgCategory = (ImageView) base.findViewById(R.id.imgCategory);
+                }
+                return imgCategory;
+            }
+
+            public TextView getTxtCategoryName() {
+                if (txtCategoryName == null) {
+                    txtCategoryName = (TextView) base.findViewById(R.id.txtCategoryName);
+                    txtCategoryName.setTypeface(faceRobotoRegular);
+                }
+                return txtCategoryName;
+            }
+
+            public View getViewSeparator() {
+                if (viewSeparator == null) {
+                    viewSeparator = base.findViewById(R.id.viewSeparator);
+                }
+                return viewSeparator;
+            }
+
+            public EditText getEditTextNumItems() {
+                if (editTextNumItems == null) {
+                    editTextNumItems = (EditText) base.findViewById(R.id.editTextNumItems);
+                    editTextNumItems.setTypeface(faceRobotoRegular);
+                }
+                return editTextNumItems;
+            }
+        }
+    }
+
+    @Override
+    public LinearLayout getContentView() {
+        return getView() != null ? (LinearLayout) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
+    }
+
+    @Override
+    public String getTitle() {
+        return "Shopping list summary";
+    }
+
+    @NonNull
+    @Override
+    public String getFragmentTxnTag() {
+        return ShoppingListSummaryFragment.class.getName();
+    }
+}

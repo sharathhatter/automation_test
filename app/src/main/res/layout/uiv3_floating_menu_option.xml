@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:fab="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+        <com.bigbasket.mobileapp.view.uiv3.FloatingActionsMenu
+                android:id="@+id/multiple_actions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                fab:addButtonColorNormal="@color/white"
+                fab:addButtonColorPressed="@color/white_pressed"
+                fab:addButtonPlusIconColor="@color/half_black"
+                android:layout_marginBottom="@dimen/margin_normal"
+                >
+
+            <LinearLayout android:layout_width="wrap_content"
+                            android:id="@+id/layoutCheckOut"
+                            android:layout_marginTop="@dimen/margin_normal"
+                            android:layout_height="wrap_content">
+
+                <com.melnykov.fab.FloatingActionButton
+                        xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:id="@+id/btnCheckOut"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/active_orders"/>
+
+                <TextView android:layout_width="wrap_content"
+                          android:background="@drawable/bubble_text_view"
+                          android:id="@+id/txtListFooter"
+                          android:layout_gravity="center_vertical"
+                          android:gravity="center_vertical"
+                          android:padding="@dimen/padding_mini"
+                          android:textSize="@dimen/secondary_text_size"
+                          android:text="@string/check_out"
+                          android:textColor="@color/white"
+                          android:layout_height="wrap_content"/>
+
+
+            </LinearLayout>
+
+
+            <LinearLayout android:layout_width="wrap_content"
+                            android:id="@+id/layoutEmptyBasket"
+                            android:layout_marginTop="@dimen/margin_normal"
+                            android:layout_height="wrap_content">
+
+
+                <com.melnykov.fab.FloatingActionButton
+                        xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/btnEmptyBasket"
+                        android:src="@drawable/delete_white"/>
+
+
+                <TextView android:layout_width="wrap_content"
+                          android:background="@drawable/bubble_text_view"
+                          android:text="@string/empty_basket"
+                          android:padding="@dimen/padding_mini"
+                          android:layout_gravity="center_vertical"
+                          android:gravity="center_vertical"
+                          android:id="@+id/txtEmptyBasket"
+                          android:textColor="@color/white"
+                          android:layout_height="wrap_content"/>
+
+
+
+            </LinearLayout>
+
+        </com.bigbasket.mobileapp.view.uiv3.FloatingActionsMenu>
+
+</RelativeLayout>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:id="@+id/swipeShoppingList"
+              android:layout_width="match_parent"
+              android:layout_height="48dp">
+    <!-- Bottom View Start-->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="@dimen/swipe_element_width"
+        android:id="@+id/bottom_wrapper"
+        android:weightSum="1"
+        android:gravity="right"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/imgEditShopList"
+            android:padding="@dimen/padding_normal"
+            android:background="#F6F680"
+            android:contentDescription="@string/editShoppingList"
+            android:src="@drawable/create_white"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/imgDeleteShoppingList"
+            android:padding="@dimen/padding_normal"
+            android:background="@color/red"
+            android:contentDescription="@string/deleteShoppingList"
+            android:src="@drawable/delete_white"/>
+
+    </LinearLayout>
+    <!-- Bottom View End-->
+
+    <!-- Surface View Start -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/uiv3_list_bkg_color">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtShopLstName"
+            android:textSize="@dimen/primary_text_size"
+            android:paddingLeft="@dimen/padding_normal"
+            android:layout_centerVertical="true"
+            android:textColor="@color/uiv3_primary_text_color"/>
+    </RelativeLayout>
+    <!-- Surface View End -->
+</com.daimajia.swipe.SwipeLayout>

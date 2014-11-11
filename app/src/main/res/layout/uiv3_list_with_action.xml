@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/FooterButtonStyle"
+        android:id="@+id/txtListFooter"
+        android:layout_margin="0dp"
+        android:layout_alignParentBottom="true"
+        />
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/listWithFixedFooter"
+        android:layout_alignParentTop="true"
+        android:layout_above="@id/txtListFooter"/>
+
+</RelativeLayout>

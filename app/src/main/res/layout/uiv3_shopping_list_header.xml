@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/heading">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/strokeLine"
+        android:layout_alignParentTop="true"
+        />
+
+    <TextView
+        android:id="@+id/brandNameTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_small"
+        android:textColor="@color/uiv3_primary_text_color"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:textSize="@dimen/primary_text_size"
+        />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:paddingLeft="@dimen/padding_small"
+        android:paddingRight="@dimen/padding_small"
+        style="@style/Uiv2ShoppingPopBtn"
+        android:id="@+id/btnAddAllToBasket"
+        android:gravity="center_vertical"
+        android:textSize="@dimen/secondary_text_size"
+        android:layout_marginTop="@dimen/margin_small"
+        android:layout_marginBottom="@dimen/margin_small"
+        android:background="@drawable/grey_button_shopping_list"
+        android:layout_marginRight="@dimen/margin_small"
+        android:layout_alignParentRight="true"
+        android:drawablePadding="@dimen/padding_small"
+        android:drawableRight="@drawable/basket_inline_icon"
+        android:text="@string/addAll"/>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/strokeLine"
+        android:layout_below="@id/btnAddAllToBasket"
+        />
+
+</RelativeLayout>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:background="@color/uiv3_list_bkg_light_color"
+              android:paddingLeft="16dp">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:paddingTop="@dimen/padding_normal"
+        android:contentDescription="@string/delivery_van"
+        android:id="@+id/imgDeliveryVan"
+        android:src="@drawable/van" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_small"
+        android:paddingRight="6dp"
+        android:paddingBottom="2dp"
+        android:paddingTop="2dp"
+        android:paddingLeft="6dp"
+        android:layout_alignParentRight="true"
+        android:text="In Process"
+        android:textSize="@dimen/small_text_size"
+        android:background="@color/dark_green"
+        android:id="@+id/txtOrderStatus"
+        android:textColor="@color/white"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_marginTop="@dimen/margin_small"
+        android:layout_toRightOf="@id/imgDeliveryVan"
+        android:text="Tue 30 Sep 2014"
+        android:textSize="@dimen/primary_text_size"
+        android:id="@+id/txtSlotDate"
+        android:textColor="@color/uiv3_list_primary_text_color"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_marginTop="2dp"
+        android:layout_toRightOf="@id/imgDeliveryVan"
+        android:text="7:30 PM to 10:00PM"
+        android:textSize="@dimen/secondary_text_size"
+        android:layout_below="@id/txtSlotDate"
+        android:id="@+id/txtSlotTime"
+        android:textColor="@color/uiv3_list_primary_text_color"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_marginTop="2dp"
+        android:layout_toRightOf="@id/imgDeliveryVan"
+        android:text="ID : BBO-130440-240914"
+        android:textSize="@dimen/secondary_text_size"
+        android:layout_below="@id/txtSlotTime"
+        android:id="@+id/txtOrderId"
+        android:textColor="@color/uiv3_list_primary_text_color"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_marginTop="2dp"
+        android:layout_toRightOf="@id/imgDeliveryVan"
+        android:text="2 Items"
+        android:textSize="@dimen/secondary_text_size"
+        android:id="@+id/txtNumItems"
+        android:layout_below="@id/txtOrderId"
+        android:textColor="@color/uiv3_list_secondary_text_color"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingRight="@dimen/margin_small"
+        android:layout_marginTop="2dp"
+        android:text="Rs. 200"
+        android:textSize="@dimen/secondary_text_size"
+        android:id="@+id/txtOrderTotal"
+        android:layout_below="@id/txtOrderId"
+        android:layout_alignParentRight="true"
+        android:textColor="@color/uiv3_list_secondary_text_color"
+        />
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/uiv3_list_separator_color"
+        android:layout_toRightOf="@id/imgDeliveryVan"
+        android:layout_below="@id/txtNumItems"
+        android:layout_marginTop="@dimen/margin_normal"
+        android:layout_marginLeft="@dimen/margin_normal"/>
+</RelativeLayout>

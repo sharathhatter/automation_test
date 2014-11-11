@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="product_breadcrumb_text">#709D03</color>
+    <color name="mrp_text">#585858</color>
+    <color name="basket_count_text">#554b49</color>
+    <color name="product_view_background">#cecec7</color>
+    <color name="dark_blue">#026996</color>
+    <color name="link_color">#ff0376ac</color>
+    <color name="green_color">#709D03</color>
+    <color name="medium_dark_green">#98B04E</color>
+    <color name="grey_color">#585858</color>
+    <color name="dark_grey">#3D3D3D</color>
+    <color name="light_grey">#ff8a8a8a</color>
+    <color name="lighter_grey">#C2C2C2</color>
+    <color name="light_blue">#82cafa</color>
+    <color name="medium_grey">#727272</color>
+    <color name="light_grey_text">#4D4D4D</color>
+    <color name="list_border">#DAD9D8</color>
+    <color name="tabMedium">#2B2B2B</color>
+    <color name="tabDark">#000000</color>
+    <color name="red">#E10000</color>
+    <color name="tabTransparent">#10ffffff</color>
+    <color name="transparent_black">#D8000000</color>
+    <color name="dark_red">#9A2722</color>
+    <color name="dark_yellow">#B09200</color>
+    <color name="dark_green">#ff14a209</color>
+    <color name="header_background">#f2f2f2</color>
+    <color name="white">#ffffff</color>
+    <color name="footer_background">#555555</color>
+    <color name="heading">#f4f3f2</color>
+    <color name="strokeLine">#d1d2d3</color>
+    <color name="saveMrp">#ba5253</color>
+    <color name="redColor">#ba5253</color>
+    <color name="deliverySlotTimeColor">#d00000</color>
+    <color name="productQtyText">#ffe97c</color>
+    <color name="lightGreen">#c6cc76</color>
+    <color name="subtxt_grey_color">#666668</color>
+    <color name="promo_txt_green_color">#2E9B57</color>
+    <color name="promo_red_color">#e80000</color>
+    <color name="active_order_red_color">#ed5353</color>
+    <color name="dark_black">#000000</color>
+    <color name="yellow_txt_box_color">#ffe97c</color>
+    <color name="promo_label_backgroung_color">#f8931f</color>
+    <color name="new_product_label_color">#90b244</color>
+    <color name="search_auto_complete_color">#f4f3f1</color>
+    <color name="search_auto_complete_header_color">#f0f0f0</color>
+    <color name="light_yellow_color">#f7f095</color>
+    <color name="headerFontColor">#58595b</color>
+    <color name="mrpColor">#666666</color>
+    <color name="saveColor">#ba5253</color>
+    <color name="actualCostColor">#231f20</color>
+    <color name="productBrandColor">#666668</color>
+    <color name="selectAsDeliveryAddress">#EAEFD9</color>
+    <color name="selectedBkg">#F5ECDD</color>
+    <color name="buttonYellowBkg">#F2D747</color>
+    <color name="yellowForDeliverySlotSlidView">#FBDB0C</color>
+    <color name="buttonGreyBkg">#E4E4E4</color>
+    <color name="greyBkg">#F3F3F3</color>
+    <color name="headerBtnBkg">#F4EF99</color>
+    <color name="headerBtnTxtColor">#5B5D6D</color>
+    <color name="slotSeletionNotAvailableColor">#d3d4d6</color>
+    <color name="slotTimecolor">#e66c6a</color>
+    <color name="slotDateColor">#e98686</color>
+    <color name="EditTxtHintColor">#e3e3e3</color>
+    <color name="autoSearchHeaderBackgroungColor">#f4f3f1</color>
+    <color name="autoSearchTermBackgroungColor">#f9f9f9</color>
+    <color name="promoDescColor">#444343</color>
+    <color name="promoAdditionalSavingsColor">#738524</color>
+    <color name="outOfStockBkg">#D8D8D8</color>
+
+    <!-- UIv3 colours -->
+    <!--<color name="uiv3_action_bar_background">#659588</color>-->
+    <!--<color name="uiv3_action_bar_background">#4AA02C</color>-->
+    <color name="uiv3_action_bar_background">#ff4da841</color>
+    <color name="uiv3_status_bar_background">#056f00</color>
+    <color name="uiv3_action_bar_background_pressed">#53B428</color>
+    <color name="uiv3_product_list_row_bkg">#FAFAFA</color>
+    <color name="uiv3_product_brand_color">#757575</color>
+    <color name="uiv3_primary_text_color">#464646</color>
+    <color name="uiv3_content_area_bkg">#DDDDDD</color>
+    <color name="uiv3_list_bkg_color">#EEEEEE</color>
+    <color name="uiv3_list_bkg_light_color">#F9F9F9</color>
+    <color name="uiv3_list_primary_text_color">#5D5D5D</color>
+    <color name="uiv3_list_dark_bkg">#656565</color>
+    <color name="uiv3_list_secondary_text_color">#878787</color>
+    <color name="uiv3_list_separator_color">#E0E0E0</color>
+    <color name="uiv3_tab_selected_color">#FEFB7B</color>
+    <color name="uiv3_pin_label_color_heading">#a3e9a4</color>
+    <color name="uiv3_ok_label_color">#FF9100</color>
+    <color name="uiv3_accept_label_color">#2C88F0</color>
+    <color name="uiv3_link_color">#66009688</color>
+    <color name="uiv3_dark_bkg">#333333</color>
+    <color name="uiv3_orange">#E7685D</color>
+    <color name="uiv3_filter_by_text_color">@color/white</color>
+
+    <!-- LetterImageViewColor -->
+    <string-array name="letterImageViewColors" translatable="false">
+        <item>#99cc00</item>
+        <item>#33b5e5</item>
+        <item>#0099cc</item>
+        <item>#547bca</item>
+        <item>#aa66cc</item>
+        <item>#9933cc</item>
+        <item>#669900</item>
+        <item>#aeb857</item>
+        <item>#cc0000</item>
+        <item>#df5948</item>
+        <item>#ff4444</item>
+        <item>#ae6b23</item>
+        <item>#ff8800</item>
+        <item>#e5ae4f</item>
+        <item>#ffbb33</item>
+    </string-array>
+    <color name="uiv3_tab_indicator_color">#FBFF87</color>
+
+    <!-- floating menu btn -->
+    <color name="half_black">#808080</color>
+    <color name="white_pressed">#f1f1f1</color>
+
+
+    <color name="fbutton_default_color">#3eadeb</color>
+    <color name="fbutton_default_shadow_color">#ff3493c8</color>
+    <color name="fbutton_color_turquoise">#1abc9c</color>
+    <color name="fbutton_color_green_sea">#16a085</color>
+    <color name="fbutton_color_emerald">#2ecc71</color>
+    <color name="fbutton_color_nephritis">#27ae60</color>
+    <color name="fbutton_color_peter_river">#3498db</color>
+    <color name="fbutton_color_belize_hole">#2980b9</color>
+    <color name="fbutton_color_amethyst">#9b59b6</color>
+    <color name="fbutton_color_wisteria">#8e44ad</color>
+    <color name="fbutton_color_wet_asphalt">#34495e</color>
+    <color name="fbutton_color_midnight_blue">#2c3e50</color>
+    <color name="fbutton_color_sun_flower">#f1c40f</color>
+    <color name="fbutton_color_orange">#f39c12</color>
+    <color name="fbutton_color_carrot">#e67e22</color>
+    <color name="fbutton_color_pumpkin">#d35400</color>
+    <color name="fbutton_color_alizarin">#e74c3c</color>
+    <color name="fbutton_color_pomegranate">#c0392b</color>
+    <color name="fbutton_color_clouds">#ecf0f1</color>
+    <color name="fbutton_color_silver">#bdc3c7</color>
+    <color name="fbutton_color_concrete">#95a5a6</color>
+    <color name="fbutton_color_asbestos">#7f8c8d</color>
+    <color name="fbutton_color_transparent">@android:color/transparent</color>
+</resources>

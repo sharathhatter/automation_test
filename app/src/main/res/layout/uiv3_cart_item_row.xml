@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_small"
+        android:layout_marginLeft="@dimen/margin_small"
+        android:layout_marginRight="@dimen/margin_small"
+        android:padding="@dimen/padding_small"
+        android:background="@color/white">
+
+        <ImageView
+            android:id="@+id/imgProduct"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxHeight="64dp"
+            android:maxWidth="64dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/product_image"
+            android:src="@drawable/image_404"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="@dimen/margin_mini"
+            android:visibility="gone"
+            android:id="@+id/imgLiquorIcon"
+            android:layout_height="wrap_content"
+            android:maxWidth="12dp"
+            android:maxHeight="14dp"
+            android:contentDescription="@string/alt_placeholder"
+            android:adjustViewBounds="true"
+            android:src="@drawable/delete"
+            android:layout_marginTop="2dp"
+            android:layout_toRightOf="@id/imgProduct"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/imgLiquorIcon"
+            android:id="@+id/txtProductBrand"
+            android:layout_marginLeft="@dimen/margin_small"
+            android:text="Prestige"
+            android:textColor="@color/uiv3_product_brand_color"
+            android:textSize="@dimen/secondary_text_size"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/primary_text_size"
+            android:layout_below="@id/txtProductBrand"
+            android:layout_toRightOf="@id/imgProduct"
+            android:text="product description is the short sadf a dadasdasdadsasdaddsf"
+            android:textColor="@color/uiv3_primary_text_color"
+            android:layout_marginLeft="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_mini"
+            android:id="@+id/txtProductDesc"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/primary_text_size"
+            android:paddingRight="@dimen/padding_small"
+            android:text="Rs 900"
+            android:layout_below="@id/txtProductDesc"
+            android:layout_toRightOf="@id/imgProduct"
+            android:textColor="@color/uiv3_action_bar_background"
+            android:layout_marginLeft="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_mini"
+            android:id="@+id/txtSalePrice"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textSize="@dimen/primary_text_size"
+            android:gravity="center"
+            android:layout_toRightOf="@id/txtSalePrice"
+            android:layout_below="@id/txtProductDesc"
+            android:text="(2 @ 450)"
+            android:textColor="@color/uiv3_list_secondary_text_color"
+            android:layout_marginLeft="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_mini"
+            android:id="@+id/txtTotalPriceAndQty"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/itemCountTxtView"
+            android:layout_alignParentRight="true"
+            android:textSize="@dimen/secondary_text_size"
+            android:text="2"
+            android:background="@drawable/green_rounded_bkg"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"
+            android:textColor="@color/white"
+            android:layout_marginTop="@dimen/margin_mini"
+            android:layout_marginBottom="@dimen/margin_mini"
+            android:layout_below="@id/txtProductDesc"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/secondary_text_size"
+            android:text="@string/saving"
+            android:textColor="@color/redColor"
+            android:layout_below="@id/txtSalePrice"
+            android:layout_toRightOf="@id/imgProduct"
+            android:layout_marginLeft="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_mini"
+            android:id="@+id/lblSaving"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/secondary_text_size"
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/redColor"
+            android:layout_below="@id/txtSalePrice"
+            android:layout_toRightOf="@id/lblSaving"
+            android:text="231433.13"
+            android:layout_marginLeft="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_mini"
+            android:id="@+id/txtSaving"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/margin_mini"
+            android:id="@+id/promoSeparatorLine"
+            android:background="@color/strokeLine"
+            android:layout_below="@id/lblSaving"
+            android:layout_height="0.5dp"/>
+
+        <!-- Regular price layout -->
+        <ImageView
+            android:layout_width="wrap_content"
+            android:maxWidth="24dp"
+            android:layout_height="wrap_content"
+            android:maxHeight="20dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/promo"
+            android:src="@drawable/small_list_arrow"
+            android:layout_below="@id/promoSeparatorLine"
+            android:layout_marginLeft="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_mini"
+            android:id="@+id/imgRegularImg"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/imgRegularImg"
+            android:paddingBottom="@dimen/padding_mini"
+            android:textSize="@dimen/secondary_text_size"
+            android:text="promo test"
+            android:layout_below="@id/promoSeparatorLine"
+            android:textColor="@color/uiv3_primary_text_color"
+            android:layout_marginLeft="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_mini"
+            android:id="@+id/txtRegularPriceAndQty"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/txtRegularPriceAndQty"
+            android:text="@string/regular_price"
+            android:layout_marginBottom="@dimen/margin_small"
+            android:layout_below="@id/promoSeparatorLine"
+            android:textSize="@dimen/secondary_text_size"
+            android:textColor="@color/uiv3_primary_text_color"
+            android:layout_marginLeft="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_mini"
+            android:id="@+id/lblRegularPrice"/>
+
+        <!-- Promo price layout -->
+        <ImageView
+            android:src="@drawable/promo_used"
+            android:layout_width="wrap_content"
+            android:maxWidth="24dp"
+            android:layout_height="wrap_content"
+            android:maxHeight="20dp"
+            android:adjustViewBounds="true"
+            android:layout_below="@+id/lblRegularPrice"
+            android:layout_marginLeft="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_mini"
+            android:id="@+id/imgPromoUsed"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/padding_small"
+            android:paddingBottom="@dimen/padding_small"
+            android:layout_toRightOf="@id/imgPromoUsed"
+            android:text="testing for promo"
+            android:textSize="@dimen/secondary_text_size"
+            android:textColor="@color/uiv3_primary_text_color"
+            android:layout_below="@+id/lblRegularPrice"
+            android:layout_marginLeft="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_mini"
+            android:id="@+id/txtPromoPriceAndQty"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/uiv3_link_color"
+            android:layout_toRightOf="@id/txtPromoPriceAndQty"
+            android:paddingLeft="@dimen/padding_mini"
+            android:paddingBottom="@dimen/padding_mini"
+            android:layout_below="@+id/lblRegularPrice"
+            android:text="testing for Promo Name, description and bla bla bla..."
+            android:textSize="@dimen/secondary_text_size"
+            android:layout_marginLeft="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_mini"
+            android:id="@+id/txtPromoNameDesc"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/margin_small"
+            android:id="@+id/basketOperationSeparatorLine"
+            android:background="@color/strokeLine"
+            android:layout_below="@id/txtPromoNameDesc"
+            android:layout_height="0.5dp"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/add"
+            android:id="@+id/imgAdd"
+            android:layout_below="@id/basketOperationSeparatorLine"
+            android:src="@drawable/add"
+            android:layout_marginLeft="@dimen/margin_medium_large"
+            android:layout_marginTop="@dimen/margin_small"
+            android:layout_alignParentRight="true"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="25dp"
+            android:contentDescription="@string/decrease"
+            android:layout_below="@id/basketOperationSeparatorLine"
+            android:id="@+id/imgDec"
+            android:layout_toLeftOf="@id/imgAdd"
+            android:paddingTop="@dimen/padding_mini"
+            android:paddingBottom="@dimen/padding_mini"
+            android:layout_marginLeft="@dimen/margin_medium_large"
+            android:layout_marginTop="@dimen/margin_small"
+            android:src="@drawable/remove"/>
+
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/remove"
+            android:layout_below="@id/basketOperationSeparatorLine"
+            android:id="@+id/imgRemove"
+            android:layout_toLeftOf="@id/imgDec"
+            android:layout_marginLeft="@dimen/margin_medium_large"
+            android:layout_marginTop="@dimen/margin_small"
+            android:src="@drawable/clear"/>
+
+    </RelativeLayout>
+</RelativeLayout>

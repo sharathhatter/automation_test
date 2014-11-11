@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/orderReview"
+        style="@style/FooterButtonStyle"
+        android:id="@+id/txtReviewOrder"
+        android:layout_alignParentBottom="true"
+        />
+
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_above="@id/txtReviewOrder">
+
+        <TableLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:stretchColumns="1">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/padding_normal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_small"
+                    android:layout_marginLeft="@dimen/margin_normal"
+                    android:src="@drawable/payment_large"
+                    android:contentDescription="@string/amtToPay"
+                    android:id="@+id/imgPaymentOption"/>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/layoutChoosePayment"
+                    android:paddingBottom="@dimen/padding_mini"
+                    android:layout_marginLeft="@dimen/margin_normal"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:text="@string/choosePayment"
+                        android:textSize="@dimen/primary_text_size"
+                        android:layout_marginRight="10dp"
+                        android:id="@+id/lblPaymentMethod"
+                        android:textColor="@color/uiv3_primary_text_color"
+                        android:layout_height="wrap_content"/>
+
+                    <Spinner
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="-8dp"
+                        android:id="@+id/spinnerPaymentMethod"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:id="@+id/viewPaymentOptionSeparator"
+                        android:background="@color/uiv3_list_separator_color"/>
+                </LinearLayout>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/padding_normal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_small"
+                    android:src="@drawable/voucher_large"
+                    android:layout_marginLeft="@dimen/margin_normal"
+                    android:contentDescription="@string/amtToPay"
+                    android:id="@+id/imgVoucherApply"/>
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/layoutApplyVoucher"
+                    android:paddingBottom="@dimen/margin_mini"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="@dimen/margin_normal"
+                    android:layout_marginRight="@dimen/margin_mini">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/apply"
+                        android:paddingLeft="@dimen/padding_small"
+                        android:clickable="true"
+                        android:textSize="@dimen/primary_text_size"
+                        android:layout_alignParentRight="true"
+                        android:textColor="@color/uiv3_ok_label_color"
+                        android:id="@+id/txtApplyVoucher"/>
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:textSize="@dimen/primary_text_size"
+                        android:layout_toLeftOf="@id/txtApplyVoucher"
+                        android:hint="@string/enterVoucher"
+                        android:id="@+id/editTextVoucherCode"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/viewAvailableVouchers"
+                        android:textSize="@dimen/secondary_text_size"
+                        android:clickable="true"
+                        android:paddingBottom="@dimen/padding_mini"
+                        android:layout_marginTop="@dimen/margin_normal"
+                        android:layout_below="@id/editTextVoucherCode"
+                        android:textColor="@color/uiv3_accept_label_color"
+                        android:id="@+id/txtViewAvailableVouchers"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_alignParentBottom="true"
+                        android:background="@color/uiv3_list_separator_color"/>
+                </RelativeLayout>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/padding_normal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_small"
+                    android:src="@drawable/schedule"
+                    android:layout_marginLeft="@dimen/margin_normal"
+                    android:contentDescription="@string/amtToPay"
+                    android:id="@+id/imgSlots"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="@dimen/margin_normal"
+                    android:paddingBottom="@dimen/padding_mini"
+                    android:layout_marginRight="@dimen/padding_mini"
+                    android:id="@+id/layoutDeliverySlot">
+
+                </LinearLayout>
+            </TableRow>
+        </TableLayout>
+    </ScrollView>
+</RelativeLayout>

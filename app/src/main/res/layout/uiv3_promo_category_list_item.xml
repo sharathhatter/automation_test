@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="@dimen/card_corner_radius">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:padding="@dimen/padding_small">
+
+        <ImageView
+            android:layout_width="@dimen/product_image_height"
+            android:layout_height="@dimen/product_image_width"
+            android:id="@+id/imgPromoIcon"
+            android:contentDescription="@string/promo"
+            android:src="@drawable/image_404"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="@dimen/margin_mini"
+            android:layout_marginBottom="@dimen/margin_mini"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/secondary_text_size"
+            android:textColor="@color/uiv3_list_secondary_text_color"
+            android:layout_marginTop="@dimen/margin_small"
+            android:layout_marginLeft="@dimen/margin_small"
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@id/imgPromoIcon"
+            android:id="@+id/txtPromoName"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/primary_text_size"
+            android:textColor="@color/uiv3_list_primary_text_color"
+            android:layout_marginTop="@dimen/margin_normal"
+            android:layout_marginLeft="@dimen/margin_small"
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@id/imgPromoIcon"
+            android:layout_below="@id/txtPromoName"
+            android:id="@+id/txtPromoDescLine1"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/large_text_size"
+            android:textColor="@color/uiv3_primary_text_color"
+            android:layout_marginTop="@dimen/margin_small"
+            android:layout_marginLeft="@dimen/margin_small"
+            android:layout_marginBottom="@dimen/margin_small"
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@id/imgPromoIcon"
+            android:layout_below="@id/txtPromoDescLine1"
+            android:id="@+id/txtPromoDescLine2"/>
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

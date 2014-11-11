@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.bigbasket.mobileapp">
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <!-- Needed by Google GCM -->
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
+    <!-- Needed by Google GCM -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    <!-- Keeps the processor from sleeping when a message is received. -->
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+
+    <supports-screens
+        android:xlargeScreens="true"
+        android:normalScreens="true"
+        android:smallScreens="true"
+        android:resizeable="true"
+        android:anyDensity="true"
+        android:largeScreens="true"/>
+
+    <permission
+        android:name="com.bigbasket.mobileapp.permission.C2D_MESSAGE"
+        android:protectionLevel="signature"/>
+
+
+    <uses-permission android:name="com.bigbasket.mobileapp.permission.C2D_MESSAGE"/>
+
+    <application
+        android:allowBackup="false"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/BBAppTheme"
+        android:name=".application.BaseApplication"
+        tools:replace="android:allowBackup">
+        <meta-data
+            android:name="android.app.default_searchable"
+            android:value=".activity.product.SearchableActivity"/>
+        <activity
+            android:name=".activity.StartActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/BBAppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <service android:name="com.bigbasket.mobileapp.GCMIntentService"/>
+        <receiver
+            android:name="com.google.android.gcm.GCMBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION"/>
+
+                <category android:name="com.bigbasket.mobileapp"/>
+            </intent-filter>
+        </receiver>
+
+        <service android:name="com.demach.konotor.service.KonotorService"/>
+        <service android:name="com.demach.konotor.service.KonotorBacklogService"/>
+
+        <receiver android:name="com.demach.konotor.KonotorAlarmReceiver"/>
+        <receiver android:name="com.demach.konotor.NetworkStateReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+        </receiver>
+
+
+        <activity
+            android:name="com.demach.konotor.KonotorFeedbackActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/NoTitleAppTheme"
+            android:windowSoftInputMode="stateHidden|adjustPan"/>
+
+
+        <activity
+            android:name=".activity.CustomerFeedbackActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/NoTitleAppTheme"
+            android:windowSoftInputMode="stateHidden|adjustPan"/>
+
+        <activity
+            android:name=".activity.promo.FlatPageWebViewActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/NoTitleAppTheme"
+            android:windowSoftInputMode="stateHidden|adjustPan"/>
+
+        <!--<activity android:name="com.luminous.pick.CustomGalleryActivity" >-->
+        <!--<intent-filter>-->
+        <!--<action android:name="luminous.ACTION_PICK" />-->
+        <!--<action android:name="luminous.ACTION_MULTIPLE_PICK" />-->
+
+        <!--<category android:name="android.intent.category.DEFAULT" />-->
+        <!--</intent-filter>-->
+        <!--</activity>-->
+
+        <activity android:name="com.luminous.pick.CustomGalleryActivity">
+            <intent-filter>
+                <action android:name="luminous.ACTION_PICK"/>
+                <action android:name="luminous.ACTION_MULTIPLE_PICK"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+
+        <activity
+            android:name=".activity.DeepLinkDispatcherActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/NoTitleAppTheme"
+            android:windowSoftInputMode="stateHidden|adjustPan">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data
+                    android:host="promo"
+                    android:scheme="bigbasket"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data
+                    android:host="feedback"
+                    android:scheme="bigbasket"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data
+                    android:host="order"
+                    android:scheme="bigbasket"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data
+                    android:host="wallet"
+                    android:scheme="bigbasket"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.base.uiv3.BBActivity"/>
+
+        <activity android:name=".activity.product.SearchableActivity">
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable"/>
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.account.uiv3.SignInSignUpActivity">
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable"/>
+        </activity>
+        <activity
+            android:name=".activity.order.uiv3.PlaceOrderActivity"/>
+        <activity
+            android:name=".activity.order.uiv3.OrderDetailActivity"/>
+        <activity
+            android:name=".activity.order.uiv3.AvailableVoucherListActivity"/>
+
+        <service
+            android:name="com.bigbasket.mobileapp.task.UploadImageService"
+            android:label="@string/uploadServiceForPrescriptionImage"/>
+
+        <activity android:name=".activity.order.MemberAddressFormActivity"
+            />
+        <activity
+            android:name="com.facebook.LoginActivity"
+            android:label="@string/app_name">
+        </activity>
+
+        <activity
+            android:name=".activity.order.uiv3.PayuTransactionActivity"/>
+
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/fb_app_id"/>
+
+        <activity android:name=".activity.account.uiv3.OrderListActivity"/>
+
+        <provider
+            android:authorities="com.bigbasket.mobileapp.contentProvider.SearchSuggestionProvider"
+            android:name=".contentProvider.SearchSuggestionProvider"
+            android:multiprocess="true"
+            android:enabled="true"
+            android:exported="false"
+            />
+    </application>
+</manifest>

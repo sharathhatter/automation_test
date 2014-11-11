@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/layoutNoStock"
+            android:background="@color/white"
+            android:layout_marginTop="@dimen/margin_small"
+            android:layout_marginLeft="@dimen/margin_small"
+            android:layout_marginRight="@dimen/margin_small"
+            android:paddingRight="@dimen/padding_normal"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/padding_small"
+            android:paddingBottom="@dimen/padding_small">
+
+        <TextView
+                android:id="@+id/txtProductBrand"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textSize="@dimen/secondary_text_size"
+                android:layout_marginLeft="@dimen/margin_small"
+                android:textColor="@color/uiv3_product_brand_color"
+                android:text="Prestige"/>
+
+        <TextView
+                android:id="@+id/txtProductDesc"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:textSize="@dimen/primary_text_size"
+                android:layout_marginLeft="@dimen/margin_small"
+                android:layout_below="@id/txtProductBrand"
+                android:textColor="@color/uiv3_primary_text_color"
+                android:text="Delux Prestige - test test test test test test test test"/>
+
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/primary_text_size"
+                android:textColor="@color/uiv3_primary_text_color"
+                android:id="@+id/txtWeight"
+                android:text="5 lt"
+                android:layout_marginLeft="@dimen/margin_small"
+                android:layout_below="@id/txtProductDesc"
+                />
+
+        <RelativeLayout android:layout_width="match_parent"
+                      android:id="@+id/layoutSomeStock"
+                      android:layout_marginLeft="@dimen/margin_small"
+                      android:layout_below="@id/txtWeight"
+                      android:layout_height="wrap_content">
+
+            <TextView android:layout_width="wrap_content"
+                          android:id="@+id/txtSelected"
+                      android:text="selected"
+                      android:textSize="@dimen/secondary_text_size"
+                      android:layout_height="wrap_content"/>
+
+            <TextView android:layout_width="wrap_content"
+                          android:id="@+id/txtAvailable"
+                      android:layout_below="@id/txtSelected"
+                      android:text="Available"
+                      android:textSize="@dimen/secondary_text_size"
+                      android:layout_height="wrap_content"/>
+
+            <TextView android:layout_width="wrap_content"
+                      android:id="@+id/txtSalePrice"
+                      android:layout_below="@id/txtAvailable"
+                      android:text="Sale Price"
+                      android:textSize="@dimen/secondary_text_size"
+                      android:layout_height="wrap_content"/>
+
+            <TextView android:layout_width="wrap_content"
+                      android:id="@+id/txtSaving"
+                      android:text="Saving"
+                      android:textSize="@dimen/secondary_text_size"
+                      android:layout_below="@+id/txtSalePrice"
+                      android:layout_height="wrap_content"/>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="@dimen/margin_small"
+            android:layout_marginRight="@dimen/margin_small"
+            android:visibility="gone"
+            android:src="@drawable/ic_action_overflow_dark"
+            android:id="@+id/imgProductCheckOutQCAdditionalAction"
+            android:contentDescription="@string/additional_action"
+            android:layout_gravity="right|top"/>
+
+
+    <TextView android:layout_width="wrap_content"
+              android:background="@color/promo_red_color"
+              android:textSize="@dimen/secondary_text_size"
+              android:id="@+id/txtOutOfStock"
+              android:layout_alignParentRight="true"
+              android:paddingLeft="@dimen/padding_mini"
+              android:paddingRight="@dimen/padding_mini"
+              android:paddingTop="2dp"
+              android:layout_alignTop="@id/layoutNoStock"
+              android:layout_gravity="right"
+              android:paddingBottom="2dp"
+              android:layout_marginRight="@dimen/margin_small"
+              android:textColor="@color/white"
+              android:layout_marginTop="@dimen/margin_mini"
+              android:text="@string/out_of_stock"
+              android:layout_height="wrap_content"/>
+
+</RelativeLayout>

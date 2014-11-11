@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/uiv3_list_bkg_color"
+    android:id="@+id/layoutOrderList">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="@dimen/margin_normal"
+        android:textSize="@dimen/primary_text_size"
+        android:id="@+id/txtNoOrdersMsg"
+        android:textColor="@color/dark_red"/>
+
+    <GridView android:id="@+id/listOrders"
+              android:columnWidth="360dp"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:numColumns="auto_fit"
+              android:verticalSpacing="@dimen/margin_mini"
+              android:horizontalSpacing="@dimen/margin_mini"
+              android:stretchMode="columnWidth"
+              android:gravity="center"
+        />
+</RelativeLayout>

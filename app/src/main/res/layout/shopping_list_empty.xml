@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingTop="20dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtShoppingListMsg1"
+        android:layout_marginLeft="32dp"
+        android:textSize="18sp"
+        android:textColor="@color/uiv3_primary_text_color"
+        android:text="@string/shoppingListIsEmpty"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtShoppingListMsg1"
+        android:id="@+id/txtShoppingListMsg2"
+        android:textColor="@color/uiv3_primary_text_color"
+        android:layout_marginLeft="32dp"
+        android:textSize="18sp"
+        android:text="@string/toAddProductsToList"/>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:id="@+id/txtSearchProducts"
+        android:layout_marginTop="8dp"
+        android:layout_below="@id/txtShoppingListMsg2"
+        android:layout_marginLeft="32dp"
+        android:text="@string/searchForProducts"
+        android:textSize="18sp"
+        android:textColor="@color/uiv3_primary_text_color"
+        android:drawablePadding="8dp"
+        android:drawableLeft="@drawable/list_arrow"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:id="@+id/txtSearchResultMsg1"
+        android:layout_marginTop="8dp"
+        android:layout_below="@id/txtSearchProducts"
+        android:layout_marginLeft="32dp"
+        android:text="@string/fromSearchResults"
+        android:textSize="18sp"
+        android:textColor="@color/uiv3_primary_text_color"
+        android:drawablePadding="8dp"
+        android:gravity="center_vertical"
+        android:drawableRight="@drawable/ic_action_overflow_dark"
+        android:drawableLeft="@drawable/list_arrow"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:textSize="18sp"
+        android:layout_marginLeft="60dp"
+        android:id="@+id/txtSearchResultMsg2"
+        android:textColor="@color/uiv3_primary_text_color"
+        android:layout_below="@id/txtSearchResultMsg1"
+        android:layout_height="wrap_content"
+        android:text="@string/toAddToList"/>
+
+
+</RelativeLayout>

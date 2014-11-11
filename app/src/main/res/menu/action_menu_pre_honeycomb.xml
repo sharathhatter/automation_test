@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:bb="http://schemas.android.com/apk/res-auto">
+
+    <!-- Search / will display always -->
+    <item
+        android:id="@+id/action_search_icon"
+        android:icon="@drawable/ic_search"
+        android:title="@string/search"
+        bb:showAsAction="always|collapseActionView"
+        android:orderInCategory="9999"
+        />
+
+    <item
+        android:id="@+id/action_view_basket"
+        android:icon="@drawable/view_basket"
+        android:title="@string/viewBasket"
+        bb:showAsAction="ifRoom"
+        android:orderInCategory="9999"
+        />
+
+    <!-- More -->
+    <item
+        android:id="@+id/action_account"
+        android:icon="@drawable/person_header"
+        bb:showAsAction="ifRoom"
+        android:orderInCategory="9999"
+        android:title="@string/myAccount">
+        <menu>
+
+            <item
+                android:id="@+id/action_communication_hub"
+                android:icon="@drawable/b_logo_bubble"
+                android:orderInCategory="9999"
+                bb:showAsAction="never"
+                android:title="@string/bbCommHub"/>
+
+            <item
+                android:id="@+id/action_login"
+                android:icon="@drawable/login_arrow"
+                bb:showAsAction="never"
+                android:orderInCategory="9999"
+                android:title="@string/signIn"/>
+
+            <item
+                android:id="@+id/action_register"
+                android:icon="@drawable/person_add"
+                bb:showAsAction="never"
+                android:orderInCategory="9999"
+                android:title="@string/registerHomepageTxt"/>
+
+            <item
+                android:id="@+id/action_change_city"
+                android:icon="@drawable/login_arrow"
+                bb:showAsAction="never"
+                android:orderInCategory="9999"
+                android:title="@string/changeCityMenuTxt"/>
+
+            <item
+                android:id="@+id/action_active_orders"
+                android:icon="@drawable/active_orders"
+                bb:showAsAction="never"
+                android:orderInCategory="9999"
+                android:title="@string/active_order_label"/>
+
+            <item
+                android:id="@+id/action_order_history"
+                android:icon="@drawable/history"
+                bb:showAsAction="never"
+                android:orderInCategory="9999"
+                android:title="@string/past_order_label"/>
+
+            <item
+                android:id="@+id/action_update_profile"
+                android:icon="@drawable/user_modify"
+                bb:showAsAction="never"
+                android:orderInCategory="9999"
+                android:title="@string/update_my_profile"/>
+
+            <item
+                android:id="@+id/action_change_password"
+                android:icon="@drawable/lock"
+                bb:showAsAction="never"
+                android:orderInCategory="9999"
+                android:title="@string/change_password"/>
+
+            <item
+                android:id="@+id/action_wallet_activity"
+                android:icon="@drawable/safety_box"
+                bb:showAsAction="never"
+                android:title="@string/wallet_activity"/>
+
+            <item
+                android:id="@+id/action_delivery_address"
+                android:icon="@drawable/place_small"
+                bb:showAsAction="never"
+                android:orderInCategory="9999"
+                android:title="@string/delivery_address"/>
+
+            <item
+                android:id="@+id/action_change_pin"
+                android:icon="@drawable/edit_large"
+                bb:showAsAction="never"
+                android:orderInCategory="9999"
+                android:title="@string/view_edit_pin_label"/>
+
+            <item
+                android:id="@+id/action_logout"
+                android:icon="@drawable/logout"
+                bb:showAsAction="never"
+                android:orderInCategory="9999"
+                android:title="@string/signOut"/>
+        </menu>
+    </item>
+
+</menu>

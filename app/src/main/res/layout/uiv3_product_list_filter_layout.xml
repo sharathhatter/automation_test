@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/padding_small"
+        android:paddingTop="@dimen/padding_small"
+        android:id="@+id/txtNumProducts"
+        android:layout_marginBottom="@dimen/margin_normal"
+        android:textColor="@color/uiv3_primary_text_color"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtNumProducts"
+        android:gravity="center_vertical"
+        android:id="@+id/layoutFilterSort"
+        android:background="@android:color/transparent"
+        android:layout_marginBottom="@dimen/margin_normal"
+        android:baselineAligned="false">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="@dimen/padding_small"
+            android:id="@+id/layoutFilterBy">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/filter"
+                android:drawableLeft="@drawable/no_filter"
+                android:textSize="@dimen/heading_2_text_size"
+                android:id="@+id/txtFilterBy"
+                android:drawablePadding="@dimen/padding_small"/>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/uiv3_primary_text_color"/>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/padding_small"
+            android:layout_weight="1"
+            android:id="@+id/layoutSortBy">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imgSortedOn"
+                android:src="@drawable/sort_filter"
+                android:contentDescription="@string/sortBy"
+                android:layout_marginLeft="@dimen/margin_small"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/uiv3_primary_text_color"
+                android:drawablePadding="@dimen/padding_small"
+                android:textSize="@dimen/large_text_size"
+                android:layout_toRightOf="@id/imgSortedOn"
+                android:layout_marginLeft="@dimen/margin_small"
+                android:text="@string/sortBy"
+                android:id="@+id/txtSortBy"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/txtSortedOnValue"
+                android:textColor="@color/uiv3_primary_text_color"
+                android:layout_below="@id/txtSortBy"
+                android:layout_toRightOf="@id/imgSortedOn"
+                android:layout_marginLeft="@dimen/margin_small"
+                android:textSize="@dimen/small_text_size"
+                android:textStyle="italic" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+</RelativeLayout>

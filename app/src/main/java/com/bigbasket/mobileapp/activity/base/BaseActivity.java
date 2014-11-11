@@ -1,0 +1,701 @@
+package com.bigbasket.mobileapp.activity.base;
+
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
+import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBarActivity;
+import android.text.Spannable;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.*;
+import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.account.uiv3.SignInSignUpActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
+import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
+import com.bigbasket.mobileapp.adapter.order.PrescriptionImageAdapter;
+import com.bigbasket.mobileapp.application.BaseApplication;
+import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
+import com.bigbasket.mobileapp.handler.MessageHandler;
+import com.bigbasket.mobileapp.interfaces.COMarketPlaceAware;
+import com.bigbasket.mobileapp.interfaces.COReserveQuantityCheckAware;
+import com.bigbasket.mobileapp.model.order.COReserveQuantity;
+import com.bigbasket.mobileapp.model.order.MarketPlace;
+import com.bigbasket.mobileapp.model.request.AuthParameters;
+import com.bigbasket.mobileapp.model.request.HttpOperationResult;
+import com.bigbasket.mobileapp.model.request.HttpRequestData;
+import com.bigbasket.mobileapp.task.COReserveQuantityCheckTask;
+import com.bigbasket.mobileapp.task.GetCartCountTask;
+import com.bigbasket.mobileapp.task.UploadImageService;
+import com.bigbasket.mobileapp.util.*;
+import com.demach.konotor.Konotor;
+import org.apache.http.client.CookieStore;
+
+import java.text.DateFormat;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Random;
+
+public abstract class BaseActivity extends ActionBarActivity implements AdapterView.OnItemClickListener,
+        AdapterView.OnItemSelectedListener, COMarketPlaceAware, COReserveQuantityCheckAware {
+
+    public static Typeface faceRupee;
+    public static Typeface faceRobotoSlabNrml;
+    public static Typeface faceRobotoSlabLight;
+    public static Typeface faceLatoMedium;
+    public static Typeface faceLatoLight;
+    public static Typeface faceLatoNormal;
+    public static Typeface faceItalic;
+    public static Typeface faceRobotoSlabThin;
+    public static Typeface faceRobotoRegular;
+    protected Handler handler = new MessageHandler(getCurrentActivity());
+    private boolean isActivitySuspended;
+    //protected MarketPlace marketPlace;
+    protected COReserveQuantity coReserveQuantity;
+
+    @SuppressLint("NewApi")
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        isActivitySuspended = false;
+
+        faceRupee = Typeface.createFromAsset(getAssets(), "Rupee.ttf");
+        faceRobotoSlabNrml = Typeface.createFromAsset(getAssets(), "roboto-slab.regular.ttf");
+        faceRobotoSlabLight = Typeface.createFromAsset(getAssets(), "roboto-slab.light.ttf");
+        faceLatoMedium = Typeface.createFromAsset(getAssets(), "Lato-Medium.ttf");
+        faceLatoLight = Typeface.createFromAsset(getAssets(), "Lato-Light.ttf");
+        faceLatoNormal = Typeface.createFromAsset(getAssets(), "Lato-Regular.ttf");
+        faceRobotoSlabThin = Typeface.createFromAsset(getAssets(), "roboto-slab.thin.ttf");
+        faceItalic = Typeface.createFromAsset(getAssets(), "Italic.ttf");
+        faceRobotoRegular = Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");
+    }
+
+    public boolean checkInternetConnection() {
+        return DataUtil.isInternetAvailable(getCurrentActivity());
+    }
+
+    public void Writefile() {
+    }
+
+    public void Writefile(String message) {
+
+        // previous code need to write it correctly
+/*
+        final String DATE_FORMAT_NOW = "dd-MM-yyyy HH:mm:ss";
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_NOW);
+        String time = String.valueOf(sdf.format(cal.getTime()));
+        final Logger LOG = LoggerFactory.getLogger(SearchActivity.class);
+        com.bigbasket.util.DataUtil.fileHandling(exp_Message, "SearchActivity.class");
+        LOG.info(time + " " + exp_Message);
+        LOG.debug("debug", time + " " + exp_Message);
+*/
+
+    }
+
+    public abstract String getTag();
+
+    protected ProgressDialog progressDialog = null;
+
+    protected void showProgressDialog(String msg, String url) {
+        if (!TextUtils.isEmpty(url) && !url.contains(Constants.AUTO_SEARCH_URL)) {
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setCancelable(false);
+            progressDialog.setMessage(msg);
+            progressDialog.show();
+        }
+    }
+
+    protected void hideProgressDialog() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+            progressDialog = null;
+        }
+    }
+
+    public void onHttpError() {
+
+    }
+
+    public abstract BaseActivity getCurrentActivity();
+
+    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
+    }
+
+    @Override
+    public void onCoMarketPlaceSuccess(MarketPlace marketPlace) {
+        Handler handler = new MessageHandler(getCurrentActivity(), marketPlace);
+        if (marketPlace.isRuleValidationError()) {
+            handler.sendEmptyMessage(MessageCode.GO_MARKET_PLACE);
+        } else if (marketPlace.isAgeCheckRequired() || marketPlace.isPharamaPrescriptionNeeded()) {
+            handler.sendEmptyMessage(MessageCode.GO_AGE_VALIDATION);
+        } else {
+            SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
+            String pharmaPrescriptionId = prefer.getString(Constants.PHARMA_PRESCRIPTION_ID, null);
+            new COReserveQuantityCheckTask(getCurrentActivity(), pharmaPrescriptionId).execute();
+        }
+    }
+
+
+    @Override
+    public COReserveQuantity getCOReserveQuantity() {
+        return coReserveQuantity;
+    }
+
+    @Override
+    public void setCOReserveQuantity(COReserveQuantity coReserveQuantity) {
+        this.coReserveQuantity = coReserveQuantity;
+    }
+
+    @Override
+    public void onCOReserveQuantityCheck() {
+        Intent intent = new Intent(getCurrentActivity(), BBActivity.class);
+        intent.putExtra(Constants.QC_LEN, coReserveQuantity.getQc_len());
+        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_QC);
+        startActivityForResult(intent, Constants.GO_TO_HOME);
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+    }
+
+
+    public void startAsyncActivity(String url, HashMap<String, String> params,
+                                   boolean post, @Nullable AuthParameters authParameters,
+                                   CookieStore cookieStore) {
+        startAsyncActivity(url, params, post, authParameters, cookieStore, null);
+    }
+
+    public void startAsyncActivity(String url, HashMap<String, String> params,
+                                   boolean post, @Nullable AuthParameters authParameters,
+                                   CookieStore cookieStore, @Nullable HashMap<Object, String> additionalCtx) {
+        startAsyncActivity(url, params, post, authParameters, cookieStore, additionalCtx, false);
+    }
+
+    public void startAsyncActivity(String url, HashMap<String, String> params,
+                                   boolean post, @Nullable AuthParameters authParameters,
+                                   CookieStore cookieStore, @Nullable HashMap<Object, String> additionalCtx,
+                                   boolean noProgressView) {
+        if (DataUtil.isInternetAvailable(getCurrentActivity())) {
+            if (isActivitySuspended()) {
+                return;
+            }
+            if (!noProgressView) {
+                showProgressDialog("Please Wait", url);
+            }
+            String authToken = null, vid = null, osVersion = null;
+            if (authParameters != null) {
+                authToken = authParameters.getBbAuthToken();
+                vid = authParameters.getVisitorId();
+                osVersion = authParameters.getOsVersion();
+            }
+            HttpRequestData httpRequestData = new HttpRequestData(url, params, post,
+                    authToken, vid, osVersion, cookieStore, additionalCtx);
+            new HttpAsyncActivity().execute(httpRequestData);
+        } else {
+            handler.sendEmptyMessage(MessageCode.INTERNET_ERROR);
+        }
+    }
+
+    private class HttpAsyncActivity extends AsyncTask<HttpRequestData, Integer, HttpOperationResult> {
+
+        protected HttpOperationResult doInBackground(HttpRequestData... httpRequestDatas) {
+            if (isCancelled()) {
+                return null;
+            }
+            HttpRequestData httpRequestData = httpRequestDatas[0];
+            HttpOperationResult httpOperationResult;
+            httpOperationResult = httpRequestData.isPost() ? DataUtil.doHttpPost(httpRequestData)
+                    : DataUtil.doHttpGet(httpRequestData);
+            return httpOperationResult;
+        }
+
+        protected void onPostExecute(HttpOperationResult httpOperationResult) {
+            Log.d("OnPostExecute", "");
+            hideProgressDialog();
+            if (httpOperationResult != null) {
+                onAsyncTaskComplete(httpOperationResult);
+            } else {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        onHttpError();
+                    }
+                });
+            }
+        }
+    }
+
+
+    @Override
+    public void onItemSelected(AdapterView<?> arg0, View arg1, int position,
+                               long arg3) {
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> arg0) {
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+    }
+
+    protected void onResume() {
+        super.onResume();
+        com.facebook.AppEventsLogger.activateApp(getCurrentActivity(), Constants.FB_APP_ID);
+        PrescriptionImageAdapter prescriptionImageAdapter = new PrescriptionImageAdapter(getCurrentActivity());
+        if (!prescriptionImageAdapter.exists()) {
+            stopService(new Intent(this, UploadImageService.class));
+        }
+        isActivitySuspended = false;
+
+        initializeKonotor();
+    }
+
+    public void launchKonotor() {
+        AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());
+        if (!authParameters.isAuthTokenEmpty()) {
+            Konotor.getInstance(getApplicationContext()).launchFeedbackScreen(this);
+        } else {
+            showAlertDialog(getCurrentActivity(), null, "You are not signed in.\nPlease sign-in to continue",
+                    Constants.LOGIN_REQUIRED);
+        }
+    }
+
+    protected void initializeKonotor() {
+        AuthParameters authParameters = AuthParameters.getInstance(this);
+        if (!authParameters.isAuthTokenEmpty()) {
+            Konotor.getInstance(getApplicationContext())
+                    .withLaunchMainActivityOnFinish(true)
+                    .withUserName(authParameters.getMemberFullName())
+                    .withIdentifier(authParameters.getMid())
+                    .withUserEmail(authParameters.getMemberEmail())
+                    .withWelcomeMessage(this.getResources().getString(R.string.konotorWelcomeMessage))
+                    .withNoAudioRecording(true)
+                    .withFeedbackScreenTitle(getResources().getString(R.string.bbCommHub))
+                    .withLinking("bigbasket://[a-z0-9A-Z\\?\\&\\=]+", "bigbasket")
+                    .init(Constants.KONOTOR_APP_ID, Constants.KONOTOR_APP_KEY);
+        } else {
+            Konotor.getInstance(getApplicationContext())
+                    .withLaunchMainActivityOnFinish(true)
+                    .withWelcomeMessage(this.getResources().getString(R.string.konotorWelcomeMessage))
+                    .withNoAudioRecording(true)
+                    .withFeedbackScreenTitle(getResources().getString(R.string.bbCommHub))
+                    .withLinking("bigbasket://[a-z0-9A-Z\\?\\&\\=]+", "bigbasket")
+                    .init(Constants.KONOTOR_APP_ID, Constants.KONOTOR_APP_KEY);
+        }
+    }
+
+    public void updateKonotor() {
+        AuthParameters authParameters = AuthParameters.getInstance(this);
+        if (!authParameters.isAuthTokenEmpty()) {
+            Konotor.getInstance(getApplicationContext())
+                    .withUserName(authParameters.getMemberFullName())
+                    .withIdentifier(authParameters.getMid())
+                    .withUserEmail(authParameters.getMemberEmail())
+                    .update();
+        }
+    }
+
+    public void showAlertDialog(Context context, String title,
+                                String msg) {
+        showAlertDialog(context, title, msg, null);
+    }
+
+    public void showAlertDialog(Context context, String title,
+                                String msg, final String sourceName) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(title == null ? "BigBasket" : title);
+        builder.setMessage(msg);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                onPositiveButtonClicked(dialog, which, sourceName, null);
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        if (isActivitySuspended())
+            return;
+        alertDialog.show();
+    }
+
+    public void showAlertDialogFinish(Context context, String title,
+                                      String msg) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(title == null ? "BigBasket" : title);
+        builder.setMessage(msg);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (getCurrentActivity() != null) {
+                    getCurrentActivity().finish();
+                }
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        if (isActivitySuspended())
+            return;
+        alertDialog.show();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isActivitySuspended = true;
+    }
+
+    public void showAlertDialog(String msg) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getCurrentActivity());
+        alertDialogBuilder.setTitle("BigBasket");
+        alertDialogBuilder.setMessage(msg).setCancelable(false).setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
+                onPositiveButtonClicked(dialog, id, null, null);
+            }
+        });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        if (isActivitySuspended())
+            return;
+        alertDialog.show();
+    }
+
+    public void showAlertDialog(Context context, String title,
+                                String msg, DialogButton dialogButton,
+                                DialogButton nxtDialogButton, final String sourceName) {
+        showAlertDialog(context, title, msg, dialogButton, nxtDialogButton, sourceName, null, null);
+    }
+
+    public void showAlertDialog(Context context, String title,
+                                String msg, DialogButton dialogButton,
+                                DialogButton nxtDialogButton, final String sourceName,
+                                final String passedValue) {
+        showAlertDialog(context, title, msg, dialogButton, nxtDialogButton, sourceName, passedValue, null);
+    }
+
+    public void showAlertDialog(Context context, String title,
+                                String msg, DialogButton dialogButton,
+                                DialogButton nxtDialogButton, final String sourceName,
+                                final Object passedValue, String positiveBtnText) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(title);
+        builder.setMessage(msg);
+        if (dialogButton != null && nxtDialogButton != null) {
+            if (dialogButton.equals(DialogButton.YES) || dialogButton.equals(DialogButton.OK)) {
+                if (TextUtils.isEmpty(positiveBtnText)) {
+                    int textId = dialogButton.equals(DialogButton.YES) ? R.string.yesTxt : R.string.ok;
+                    positiveBtnText = getString(textId);
+                }
+                builder.setPositiveButton(positiveBtnText, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int id) {
+                        onPositiveButtonClicked(dialogInterface, id, sourceName, passedValue);
+                    }
+                });
+            }
+            if (nxtDialogButton.equals(DialogButton.NO))
+                builder.setNegativeButton(R.string.noTxt, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int id) {
+                        onNegativeButtonClicked(dialogInterface, id, sourceName);
+                    }
+                });
+        }
+        AlertDialog alertDialog = builder.create();
+        if (isActivitySuspended())
+            return;
+        alertDialog.show();
+    }
+
+    public void showAlertDialog(Context context, String title,
+                                String msg, DialogButton dialogButton,
+                                DialogButton nxtDialogButton) {
+        showAlertDialog(context, title, msg, dialogButton, nxtDialogButton, null);
+    }
+
+    public Spannable asRupeeSpannable(String amtTxt) {
+        return UIUtil.asRupeeSpannable(amtTxt, faceRupee);
+    }
+
+    protected void onPositiveButtonClicked(DialogInterface dialogInterface, int id, String sourceName, Object valuePassed) {
+        if (sourceName != null) {
+            switch (sourceName) {
+                case Constants.LOGIN_REQUIRED:
+                    Intent loginIntent = new Intent(this, SignInSignUpActivity.class);
+                    loginIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_LOGIN);
+                    startActivityForResult(loginIntent, Constants.GO_TO_HOME);
+                    break;
+            }
+        }
+    }
+
+    protected void onNegativeButtonClicked(DialogInterface dialogInterface, int id, String sourceName) {
+
+    }
+
+    protected void removeViaInvoiceFlag() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove(Constants.VIA_INVOICE);
+        editor.commit();
+    }
+
+    public void triggerActivityResult(int requestCode, int resultCode, Intent data) {
+        onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        isActivitySuspended = false;
+        if (resultCode == Constants.GO_TO_HOME) {
+            if (data != null && data.getBooleanExtra(Constants.LOGOUT, false)) {
+                reloadNavigation();
+            }
+            if (getCurrentActivity().getSupportFragmentManager().findFragmentByTag(Constants.HOME) != null) {
+//                    getCurrentActivity() instanceof HomeActivity) {
+                removeViaInvoiceFlag();
+            } else {
+                setResult(Constants.GO_TO_HOME);
+                finish();
+            }
+        }
+//        } else if (resultCode == Constants.GO_TO_SLOT_SELECTION && !(getCurrentActivity() instanceof DeliverySlotsActivity)) {
+//            setResult(Constants.GO_TO_SLOT_SELECTION);
+//            finish();
+//        } else if (resultCode == Constants.GO_TO_SHOP) {
+//            if (getCurrentActivity() instanceof HomeActivity) {
+//                navigateToFooterActivity(ShopActivity.class);
+//            } else if (!(getCurrentActivity() instanceof ShopActivity)) {
+//                setResult(Constants.GO_TO_SHOP);
+//                finish();
+//            }
+//        } else if (resultCode == Constants.GO_TO_PRODUCTS) {
+//            if (getCurrentActivity() instanceof HomeActivity) {
+//                navigateToFooterActivity(TopCategoryActivity.class);
+//            } else if (!(getCurrentActivity() instanceof TopCategoryActivity)) {
+//                setResult(Constants.GO_TO_PRODUCTS);
+//                finish();
+//            }
+//        } else if (resultCode == Constants.GO_TO_OFFERS) {
+//            if (getCurrentActivity() instanceof HomeActivity) {
+//                navigateToFooterActivity(OfferSelectActivity.class);
+//            } else if (!(getCurrentActivity() instanceof OfferSelectActivity)) {
+//                setResult(Constants.GO_TO_OFFERS);
+//                finish();
+//            }
+//        }
+        else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    public void showToast(String txt) {
+        Toast toast = Toast.makeText(getCurrentActivity(), txt, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
+        toast.show();
+    }
+
+    public String getValueOrBlank(String val) {
+        return !TextUtils.isEmpty(val) ? val : "";
+    }
+
+    public void gotoDeliverySlot() {
+        setResult(Constants.GO_TO_SLOT_SELECTION);
+        getCurrentActivity().finish();
+    }
+
+    public void goToHome() {
+        setResult(Constants.GO_TO_HOME);
+        getCurrentActivity().finish();
+    }
+
+    public String getDecimalAmount(Double amount) {
+        int amountInt = amount.intValue();
+        if (amountInt == amount)
+            return String.valueOf(amountInt);
+        final NumberFormat nf = NumberFormat.getInstance();
+        nf.setMinimumFractionDigits(2);
+        nf.setMaximumFractionDigits(2);
+        nf.setGroupingUsed(false);
+        return (nf.format(amount).equals("0.00") || nf.format(amount).equals("0.0")) ? "0" : nf.format(amount);
+    }
+
+    public String getFloatAmount(float amount) {
+        int amountInt = (int) amount;
+        if (amountInt == amount)
+            return String.valueOf(amountInt);
+        final NumberFormat nf = NumberFormat.getInstance();
+        nf.setMinimumFractionDigits(2);
+        nf.setMaximumFractionDigits(2);
+        nf.setGroupingUsed(false);
+        return (nf.format(amount).equals("0.00") || nf.format(amount).equals("0.0")) ? "0" : nf.format(amount);
+    }
+
+
+    public static void showKeyboard(final EditText editText) {
+        (new Handler()).postDelayed(new Runnable() {
+
+            public void run() {
+                MotionEvent motionActionDown = MotionEvent.obtain(SystemClock.uptimeMillis(),
+                        SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0);
+                MotionEvent motionActionUp = MotionEvent.obtain(SystemClock.uptimeMillis(),
+                        SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0);
+                if (motionActionDown == null || motionActionUp == null) return;
+                editText.dispatchTouchEvent(motionActionDown);
+                editText.dispatchTouchEvent(motionActionUp);
+
+            }
+        }, 100);
+    }
+
+    public static void hideKeyboard(BaseActivity context, View view) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    protected void showProgressDialog(String msg) {
+        showProgressDialog(msg, null);
+    }
+
+
+    public void setAreaPinCode(String areaName, AreaPinInfoAdapter areaPinInfoAdapter, EditText editTextPincode) {
+        if (areaName != null) {
+            String pinCode = areaPinInfoAdapter.getAreaPin(areaName);
+            editTextPincode.setText(pinCode);
+        }
+
+    }
+
+    public void setAdapterArea(final AutoCompleteTextView editTextArea, final EditText editTextPincode) {
+        final AreaPinInfoAdapter areaPinInfoAdapter = new AreaPinInfoAdapter(getCurrentActivity());
+        ArrayList<String> areaNameArrayList = areaPinInfoAdapter.getAreaNameList();
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getCurrentActivity(), android.R.layout.select_dialog_item, areaNameArrayList);
+        editTextArea.setThreshold(1);
+        editTextArea.setAdapter(adapter);
+        editTextArea.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                String areaName = editTextArea.getText().toString(); //arg0.getAdapter().getItem(0)
+                setAreaPinCode(areaName, areaPinInfoAdapter, editTextPincode);
+
+            }
+        });
+    }
+
+    public boolean getSystemAreaInfo() {
+        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(this);
+        String areaInfoCalledLast = prefer.getString("areaInfoCalledLast", null);
+        SharedPreferences.Editor editor = prefer.edit();
+        try {
+            DateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+            Date d1 = format.getCalendar().getTime();
+            int days = 0;
+            if (areaInfoCalledLast != null) {
+                Date d2 = format.parse(areaInfoCalledLast);
+                long diff = d1.getTime() - d2.getTime();
+                days = (int) diff / (24 * 60 * 60 * 1000);
+            }
+            if (areaInfoCalledLast == null || days > 30) {
+                String currentDate = format.format(d1);
+                editor.putString("areaInfoCalledLast", currentDate);
+                editor.commit();
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public boolean isActivitySuspended() {
+        return isActivitySuspended;
+    }
+
+    public void setActivitySuspended(boolean state) {
+        isActivitySuspended = state;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+            progressDialog = null;
+        }
+    }
+
+    public Handler getHandler() {
+        return handler;
+    }
+
+    public abstract void onChangeFragment(AbstractFragment newFragment);
+
+    public int randomColor() {
+        Random random = new Random();
+        String[] colorsArr = getResources().getStringArray(R.array.letterImageViewColors);
+        return Color.parseColor(colorsArr[random.nextInt(colorsArr.length)]);
+    }
+
+    public void removePharmaPrescriptionId() {
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
+        editor.remove(Constants.PHARMA_PRESCRIPTION_ID);
+        editor.commit();
+    }
+
+    public String getCartRequestParams() {
+        return "";
+    }
+
+    public void doLogout() {
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
+        editor.putString(Constants.FIRST_NAME, null);
+        editor.putString(Constants.BBTOKEN_KEY, null);
+        editor.putString(Constants.OLD_BBTOKEN_KEY, null);
+        editor.putString(Constants.MID_KEY, null);
+        editor.putString(Constants.MEMBER_FULL_NAME_KEY, null);
+        editor.putString(Constants.MEMBER_EMAIL_KEY, null);
+        editor.commit();
+        AuthParameters.updateInstance(getCurrentActivity());
+        new GetCartCountTask(getCurrentActivity(),
+                MobileApiUrl.getBaseAPIUrl() + Constants.C_SUMMARY +
+                        getCartRequestParams()
+        ).execute();
+        reloadNavigation();
+    }
+
+    public void reloadNavigation() {
+        if (getCurrentActivity() instanceof BBActivity) {
+            ((BBActivity) getCurrentActivity()).refreshNavigation();
+        }
+    }
+
+    public void onLoginSuccess() {
+        AuthParameters.updateInstance(getCurrentActivity());
+        Intent data = new Intent();
+        data.putExtra(Constants.LOGOUT, true);
+        setResult(Constants.GO_TO_HOME, data);
+        finish();
+    }
+
+    public BaseApplication getBaseApplication() {
+        return (BaseApplication) getApplicationContext();
+    }
+
+    public abstract void onChangeTitle(String title);
+}
