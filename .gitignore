@@ -11,3 +11,6 @@ konotorActivity/build/*
 app/build/*
 facebook/build/*
 facebook/gen/*
+app/proguard\\classes.txt
+app/proguard\\seeds.txt
+app/proguard\\configuration.txt

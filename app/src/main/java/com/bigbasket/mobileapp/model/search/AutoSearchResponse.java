@@ -5,12 +5,11 @@ import android.text.TextUtils;
 import com.bigbasket.mobileapp.adapter.db.SearchSuggestionAdapter;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
-import org.joda.time.DateTime;
-import org.joda.time.Days;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class AutoSearchResponse {
 
@@ -76,7 +75,8 @@ public class AutoSearchResponse {
         try {
             Date createdOnDate = dateFormat.parse(createdOn);
             Date now = new Date();
-            int days = Days.daysBetween(new DateTime(createdOnDate), new DateTime(now)).getDays();
+            long days = TimeUnit.DAYS.convert(now.getTime() - createdOnDate.getTime(),
+                    TimeUnit.MILLISECONDS);
             return days > CACHE_INTERVAL_IN_DAYS;
         } catch (ParseException e) {
             return false;
