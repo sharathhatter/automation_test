@@ -56,23 +56,11 @@ public class ShoppingListSummary implements Parcelable {
         return topCategoryName;
     }
 
-    public void setTopCategoryName(String topCategoryName) {
-        this.topCategoryName = topCategoryName;
-    }
-
     public String getTopCategorySlug() {
         return topCategorySlug;
     }
 
-    public void setTopCategorySlug(String topCategorySlug) {
-        this.topCategorySlug = topCategorySlug;
-    }
-
     public String getNumItems() {
         return numItems;
-    }
-
-    public void setNumItems(String numItems) {
-        this.numItems = numItems;
     }
 }

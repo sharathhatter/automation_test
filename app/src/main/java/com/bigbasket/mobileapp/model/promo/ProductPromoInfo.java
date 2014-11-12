@@ -48,8 +48,4 @@ public class ProductPromoInfo extends Promo {
     public String getFormattedPromoSavings() {
         return new DecimalFormat("0.00").format(promoSavings);
     }
-
-    public void setPromoSavings(double promoSavings) {
-        this.promoSavings = promoSavings;
-    }
 }

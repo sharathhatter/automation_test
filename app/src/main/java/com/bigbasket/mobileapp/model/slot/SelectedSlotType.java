@@ -56,23 +56,11 @@ public class SelectedSlotType implements Parcelable {
         return fulfillmentId;
     }
 
-    public void setFulfillmentId(String fulfillmentId) {
-        this.fulfillmentId = fulfillmentId;
-    }
-
     public String getSlotId() {
         return slotId;
     }
 
-    public void setSlotId(String slotId) {
-        this.slotId = slotId;
-    }
-
     public String getSlotDate() {
         return slotDate;
-    }
-
-    public void setSlotDate(String slotDate) {
-        this.slotDate = slotDate;
     }
 }

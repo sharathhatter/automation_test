@@ -45,15 +45,7 @@ public class Option implements Parcelable {
         return sortName;
     }
 
-    public void setSortName(String sortName) {
-        this.sortName = sortName;
-    }
-
     public String getSortSlug() {
         return sortSlug;
-    }
-
-    public void setSortSlug(String sortSlug) {
-        this.sortSlug = sortSlug;
     }
 }

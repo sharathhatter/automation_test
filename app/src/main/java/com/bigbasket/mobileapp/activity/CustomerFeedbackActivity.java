@@ -24,7 +24,6 @@ import java.util.HashMap;
 
 public class CustomerFeedbackActivity extends BaseActivity {
 
-    private static final String TAG = CustomerFeedbackActivity.class.getName();
     private View base;
     private String caseId;
 
@@ -124,9 +123,4 @@ public class CustomerFeedbackActivity extends BaseActivity {
         return this;
     }
 
-
-    @Override
-    public String getTag() {
-        return TAG;
-    }
 }

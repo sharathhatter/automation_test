@@ -107,32 +107,16 @@ public class FulfillmentInfo implements Parcelable {
         return tc2;
     }
 
-    public void setTc2(String tc2) {
-        this.tc2 = tc2;
-    }
-
     public String getFulfilledBy() {
         return fulfilledBy;
-    }
-
-    public void setFulfilledBy(String fulfilledBy) {
-        this.fulfilledBy = fulfilledBy;
     }
 
     public String getFulfillmentId() {
         return fulfillmentId;
     }
 
-    public void setFulfillmentId(String fulfillmentId) {
-        this.fulfillmentId = fulfillmentId;
-    }
-
     public String getFulfilledByInfoPage() {
         return fulfilledByInfoPage;
-    }
-
-    public void setFulfilledByInfoPage(String fulfilledByInfoPage) {
-        this.fulfilledByInfoPage = fulfilledByInfoPage;
     }
 
     public String getTc1() {

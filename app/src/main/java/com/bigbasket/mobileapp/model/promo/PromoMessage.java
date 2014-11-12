@@ -31,6 +31,8 @@ public class PromoMessage implements Parcelable {
 
     public PromoMessage(Parcel source) {
         promoMessage = source.readString();
+
+        criteriaMessages = new ArrayList<>();
         source.readStringList(criteriaMessages);
     }
 
@@ -50,21 +52,8 @@ public class PromoMessage implements Parcelable {
         return promoMessage;
     }
 
-    public void setPromoMessage(String promoMessage) {
-        this.promoMessage = promoMessage;
-    }
-
     public ArrayList<String> getCriteriaMessages() {
         return criteriaMessages;
-    }
-
-    public void setCriteriaMessages(ArrayList<String> criteriaMessages) {
-        this.criteriaMessages = criteriaMessages;
-    }
-
-    public PromoMessage(String promoMessage, ArrayList<String> criteriaMessages) {
-        this.promoMessage = promoMessage;
-        this.criteriaMessages = criteriaMessages;
     }
 
     public List<Spannable> getCriteriaMsgSpannableList() {

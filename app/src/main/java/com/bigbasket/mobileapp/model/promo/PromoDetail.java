@@ -150,10 +150,6 @@ public class PromoDetail extends Promo {
         return numPromoCompletedInBasket;
     }
 
-    public void setNumPromoCompletedInBasket(int numPromoCompletedInBasket) {
-        this.numPromoCompletedInBasket = numPromoCompletedInBasket;
-    }
-
     public double getSaving() {
         return saving;
     }
@@ -166,56 +162,28 @@ public class PromoDetail extends Promo {
         return additionalNumAllowedInOrder;
     }
 
-    public void setAdditionalNumAllowedInOrder(int additionalNumAllowedInOrder) {
-        this.additionalNumAllowedInOrder = additionalNumAllowedInOrder;
-    }
-
     public int getAdditionalNumAllowedInLifetime() {
         return additionalNumAllowedInLifetime;
-    }
-
-    public void setAdditionalNumAllowedInLifetime(int additionalNumAllowedInLifetime) {
-        this.additionalNumAllowedInLifetime = additionalNumAllowedInLifetime;
     }
 
     public boolean isActive() {
         return active;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
     public String getTermsAndCond() {
         return termsAndCond;
-    }
-
-    public void setTermsAndCond(String termsAndCond) {
-        this.termsAndCond = termsAndCond;
     }
 
     public String getBaseImgUrl() {
         return baseImgUrl;
     }
 
-    public void setBaseImgUrl(String baseImgUrl) {
-        this.baseImgUrl = baseImgUrl;
-    }
-
     public double getPromoSaving() {
         return promoSaving;
     }
 
-    public void setPromoSaving(double promoSaving) {
-        this.promoSaving = promoSaving;
-    }
-
     public PromoRedemptionInfo getPromoRedemptionInfo() {
         return promoRedemptionInfo;
-    }
-
-    public void setPromoRedemptionInfo(PromoRedemptionInfo promoRedemptionInfo) {
-        this.promoRedemptionInfo = promoRedemptionInfo;
     }
 
     public static Spannable getNumCompletedInBasketSpannable(int color, int numPromoCompletedInBasket) {

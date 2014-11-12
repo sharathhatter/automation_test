@@ -75,10 +75,6 @@ public class ActiveVouchers implements Parcelable {
         return customerDesc;
     }
 
-    public void setCustomerDesc(String customerDesc) {
-        this.customerDesc = customerDesc;
-    }
-
     public String getMessage() {
         return message;
     }
@@ -91,15 +87,7 @@ public class ActiveVouchers implements Parcelable {
         return validity;
     }
 
-    public void setValidity(String validity) {
-        this.validity = validity;
-    }
-
     public boolean canApply() {
         return canApply;
-    }
-
-    public void setCanApply(boolean canApply) {
-        this.canApply = canApply;
     }
 }

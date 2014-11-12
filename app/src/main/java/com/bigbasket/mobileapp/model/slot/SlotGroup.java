@@ -114,20 +114,8 @@ public class SlotGroup implements Parcelable {
         return nextAvailableSlot;
     }
 
-    public void setNextAvailableSlot(Slot nextAvailableSlot) {
-        this.nextAvailableSlot = nextAvailableSlot;
-    }
-
-    public void setFulfillmentInfo(FulfillmentInfo fulfillmentInfo) {
-        this.fulfillmentInfo = fulfillmentInfo;
-    }
-
     public List<Slot> getSlotList() {
         return slotList;
-    }
-
-    public void setSlotList(List<Slot> slotList) {
-        this.slotList = slotList;
     }
 
     public boolean isSelected() {

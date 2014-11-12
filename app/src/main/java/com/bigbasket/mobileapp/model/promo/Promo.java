@@ -125,24 +125,12 @@ public class Promo implements Parcelable {
         return promoLabel;
     }
 
-    public void setPromoLabel(String promoLabel) {
-        this.promoLabel = promoLabel;
-    }
-
     public String getPromoType() {
         return promoType;
     }
 
-    public void setPromoType(String promoType) {
-        this.promoType = promoType;
-    }
-
     public String getPromoName() {
         return promoName;
-    }
-
-    public void setPromoName(String promoName) {
-        this.promoName = promoName;
     }
 
     public int getId() {
@@ -157,16 +145,8 @@ public class Promo implements Parcelable {
         return promoDesc;
     }
 
-    public void setPromoDesc(String promoDesc) {
-        this.promoDesc = promoDesc;
-    }
-
     public String getPromoIcon() {
         return promoIcon;
-    }
-
-    public void setPromoIcon(String promoIcon) {
-        this.promoIcon = promoIcon;
     }
 
     public String getPromoDescLine1() {

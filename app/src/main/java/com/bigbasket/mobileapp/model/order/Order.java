@@ -88,32 +88,16 @@ public class Order implements Parcelable {
         return orderId;
     }
 
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
-    }
-
     public String getOrderNumber() {
         return orderNumber;
-    }
-
-    public void setOrderNumber(String orderNumber) {
-        this.orderNumber = orderNumber;
     }
 
     public FulfillmentInfo getFulfillmentInfo() {
         return fulfillmentInfo;
     }
 
-    public void setFulfillmentInfo(FulfillmentInfo fulfillmentInfo) {
-        this.fulfillmentInfo = fulfillmentInfo;
-    }
-
     public String getDeliveryDate() {
         return deliveryDate;
-    }
-
-    public void setDeliveryDate(String deliveryDate) {
-        this.deliveryDate = deliveryDate;
     }
 
     public int getItemsCount() {
@@ -124,15 +108,7 @@ public class Order implements Parcelable {
         return orderStatus;
     }
 
-    public void setOrderStatus(String orderStatus) {
-        this.orderStatus = orderStatus;
-    }
-
     public String getOrderValue() {
         return orderValue;
-    }
-
-    public void setOrderValue(String orderValue) {
-        this.orderValue = orderValue;
     }
 }

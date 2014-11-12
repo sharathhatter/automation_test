@@ -138,64 +138,32 @@ public class MarketPlace implements Parcelable {
         return savedPrescription;
     }
 
-    public void setSavedPrescription(ArrayList<SavedPrescription> savedPrescription) {
-        this.savedPrescription = savedPrescription;
-    }
-
     public String getRuleValidationTitle() {
         return ruleValidationTitle;
-    }
-
-    public void setRuleValidationTitle(String ruleValidationTitle) {
-        this.ruleValidationTitle = ruleValidationTitle;
     }
 
     public boolean isRuleValidationError() {
         return ruleValidationError;
     }
 
-    public void setRuleValidationError(boolean ruleValidationError) {
-        this.ruleValidationError = ruleValidationError;
-    }
-
     public ArrayList<MarketPlaceRuleValidator> getMarketPlaceRuleValidators() {
         return marketPlaceRuleValidators;
-    }
-
-    public void setMarketPlaceRuleValidators(ArrayList<MarketPlaceRuleValidator> marketPlaceRuleValidators) {
-        this.marketPlaceRuleValidators = marketPlaceRuleValidators;
     }
 
     public boolean isAgeCheckRequired() {
         return ageCheckRequired;
     }
 
-    public void setAgeCheckRequired(boolean ageCheckRequired) {
-        this.ageCheckRequired = ageCheckRequired;
-    }
-
     public ArrayList<MarketPlaceAgeCheck> getAgeCheckRequiredDetail() {
         return ageCheckRequiredDetail;
-    }
-
-    public void setAgeCheckRequiredDetail(ArrayList<MarketPlaceAgeCheck> ageCheckRequiredDetail) {
-        this.ageCheckRequiredDetail = ageCheckRequiredDetail;
     }
 
     public boolean isPharamaPrescriptionNeeded() {
         return pharamaPrescriptionNeeded;
     }
 
-    public void setPharamaPrescriptionNeeded(boolean pharamaPrescriptionNeeded) {
-        this.pharamaPrescriptionNeeded = pharamaPrescriptionNeeded;
-    }
-
     public PharmaPrescriptionInfo getPharmaPrescriptionInfo() {
         return pharmaPrescriptionInfo;
-    }
-
-    public void setPharmaPrescriptionInfo(PharmaPrescriptionInfo pharmaPrescriptionInfo) {
-        this.pharmaPrescriptionInfo = pharmaPrescriptionInfo;
     }
 
 }

@@ -40,22 +40,6 @@ public class CartItem extends BaseCartItem {
 
     private int index;
 
-    public CartItem(int skuId, double saving, double mrp, double salePrice,
-                    double totalQty, String productDesc, String productBrand,
-                    String productImgUrl, byte promoAppliedType) {
-        super(saving, mrp, salePrice);
-        this.skuId = skuId;
-        this.totalQty = totalQty;
-        this.productDesc = productDesc;
-        this.productBrand = productBrand;
-
-        this.productImgUrl = productImgUrl;
-        this.promoAppliedType = promoAppliedType;
-    }
-
-    public CartItem() {
-    }
-
     @Override
     public int describeContents() {
         return 0;
@@ -109,20 +93,8 @@ public class CartItem extends BaseCartItem {
         return annotationId;
     }
 
-    public void setAnnotationId(String annotationId) {
-        this.annotationId = annotationId;
-    }
-
     public String getFulfillmentId() {
         return fulfillmentId;
-    }
-
-    public void setFulfillmentId(String fulfillmentId) {
-        this.fulfillmentId = fulfillmentId;
-    }
-
-    public int getIndex() {
-        return index;
     }
 
     public void setIndex(int index) {
@@ -133,48 +105,24 @@ public class CartItem extends BaseCartItem {
         return skuId;
     }
 
-    public void setSkuId(int skuId) {
-        this.skuId = skuId;
-    }
-
     public double getTotalQty() {
         return totalQty;
-    }
-
-    public void setTotalQty(double totalQty) {
-        this.totalQty = totalQty;
     }
 
     public String getProductDesc() {
         return productDesc;
     }
 
-    public void setProductDesc(String productDesc) {
-        this.productDesc = productDesc;
-    }
-
     public String getProductImgUrl() {
         return productImgUrl;
-    }
-
-    public void setProductImgUrl(String productImgUrl) {
-        this.productImgUrl = productImgUrl;
     }
 
     public byte getPromoAppliedType() {
         return promoAppliedType;
     }
 
-    public void setPromoAppliedType(byte promoAppliedType) {
-        this.promoAppliedType = promoAppliedType;
-    }
-
     public String getProductBrand() {
         return productBrand;
-    }
-
-    public void setProductBrand(String productBrand) {
-        this.productBrand = productBrand;
     }
 
     public double getTotalPrice() {
@@ -183,9 +131,5 @@ public class CartItem extends BaseCartItem {
 
     public CartItemPromoInfo getCartItemPromoInfo() {
         return cartItemPromoInfo;
-    }
-
-    public void setCartItemPromoInfo(CartItemPromoInfo cartItemPromoInfo) {
-        this.cartItemPromoInfo = cartItemPromoInfo;
     }
 }

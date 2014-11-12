@@ -23,13 +23,17 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
+import android.widget.Toast;
+
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInSignUpActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 import com.bigbasket.mobileapp.adapter.order.PrescriptionImageAdapter;
-import com.bigbasket.mobileapp.application.BaseApplication;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.handler.MessageHandler;
 import com.bigbasket.mobileapp.interfaces.COMarketPlaceAware;
@@ -42,8 +46,15 @@ import com.bigbasket.mobileapp.model.request.HttpRequestData;
 import com.bigbasket.mobileapp.task.COReserveQuantityCheckTask;
 import com.bigbasket.mobileapp.task.GetCartCountTask;
 import com.bigbasket.mobileapp.task.UploadImageService;
-import com.bigbasket.mobileapp.util.*;
+import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.DataUtil;
+import com.bigbasket.mobileapp.util.DialogButton;
+import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.MessageCode;
+import com.bigbasket.mobileapp.util.MobileApiUrl;
+import com.bigbasket.mobileapp.util.UIUtil;
 import com.demach.konotor.Konotor;
+
 import org.apache.http.client.CookieStore;
 
 import java.text.DateFormat;
@@ -54,8 +65,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Random;
 
-public abstract class BaseActivity extends ActionBarActivity implements AdapterView.OnItemClickListener,
-        AdapterView.OnItemSelectedListener, COMarketPlaceAware, COReserveQuantityCheckAware {
+public abstract class BaseActivity extends ActionBarActivity implements COMarketPlaceAware, COReserveQuantityCheckAware {
 
     public static Typeface faceRupee;
     public static Typeface faceRobotoRegular;
@@ -77,27 +87,6 @@ public abstract class BaseActivity extends ActionBarActivity implements AdapterV
     public boolean checkInternetConnection() {
         return DataUtil.isInternetAvailable(getCurrentActivity());
     }
-
-    public void Writefile() {
-    }
-
-    public void Writefile(String message) {
-
-        // previous code need to write it correctly
-/*
-        final String DATE_FORMAT_NOW = "dd-MM-yyyy HH:mm:ss";
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT_NOW);
-        String time = String.valueOf(sdf.format(cal.getTime()));
-        final Logger LOG = LoggerFactory.getLogger(SearchActivity.class);
-        com.bigbasket.util.DataUtil.fileHandling(exp_Message, "SearchActivity.class");
-        LOG.info(time + " " + exp_Message);
-        LOG.debug("debug", time + " " + exp_Message);
-*/
-
-    }
-
-    public abstract String getTag();
 
     protected ProgressDialog progressDialog = null;
 
@@ -225,20 +214,6 @@ public abstract class BaseActivity extends ActionBarActivity implements AdapterV
                 });
             }
         }
-    }
-
-
-    @Override
-    public void onItemSelected(AdapterView<?> arg0, View arg1, int position,
-                               long arg3) {
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> arg0) {
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
     }
 
     protected void onResume() {
@@ -499,10 +474,6 @@ public abstract class BaseActivity extends ActionBarActivity implements AdapterV
         return !TextUtils.isEmpty(val) ? val : "";
     }
 
-    public void gotoDeliverySlot() {
-        setResult(Constants.GO_TO_SLOT_SELECTION);
-        getCurrentActivity().finish();
-    }
 
     public void goToHome() {
         setResult(Constants.GO_TO_HOME);
@@ -519,18 +490,6 @@ public abstract class BaseActivity extends ActionBarActivity implements AdapterV
         nf.setGroupingUsed(false);
         return (nf.format(amount).equals("0.00") || nf.format(amount).equals("0.0")) ? "0" : nf.format(amount);
     }
-
-    public String getFloatAmount(float amount) {
-        int amountInt = (int) amount;
-        if (amountInt == amount)
-            return String.valueOf(amountInt);
-        final NumberFormat nf = NumberFormat.getInstance();
-        nf.setMinimumFractionDigits(2);
-        nf.setMaximumFractionDigits(2);
-        nf.setGroupingUsed(false);
-        return (nf.format(amount).equals("0.00") || nf.format(amount).equals("0.0")) ? "0" : nf.format(amount);
-    }
-
 
     public static void showKeyboard(final EditText editText) {
         (new Handler()).postDelayed(new Runnable() {
@@ -677,10 +636,6 @@ public abstract class BaseActivity extends ActionBarActivity implements AdapterV
         data.putExtra(Constants.LOGOUT, true);
         setResult(Constants.GO_TO_HOME, data);
         finish();
-    }
-
-    public BaseApplication getBaseApplication() {
-        return (BaseApplication) getApplicationContext();
     }
 
     public abstract void onChangeTitle(String title);

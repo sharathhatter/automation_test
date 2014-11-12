@@ -87,10 +87,6 @@ public class AnnotationInfo implements Parcelable {
         return iconUrl;
     }
 
-    public void setIconUrl(String iconUrl) {
-        this.iconUrl = iconUrl;
-    }
-
     public String getDisplayName() {
         return displayName;
     }
@@ -103,23 +99,7 @@ public class AnnotationInfo implements Parcelable {
         return annotationId;
     }
 
-    public void setAnnotationId(String annotationId) {
-        this.annotationId = annotationId;
-    }
-
-    public String getInfoPage() {
-        return infoPage;
-    }
-
-    public void setInfoPage(String infoPage) {
-        this.infoPage = infoPage;
-    }
-
     public MessageInfo getMsgInfo() {
         return msgInfo;
-    }
-
-    public void setMsgInfo(MessageInfo msgInfo) {
-        this.msgInfo = msgInfo;
     }
 }

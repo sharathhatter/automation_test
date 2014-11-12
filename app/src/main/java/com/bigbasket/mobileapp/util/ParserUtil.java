@@ -11,7 +11,6 @@ import com.bigbasket.mobileapp.model.product.*;
 import com.bigbasket.mobileapp.model.promo.ProductPromoInfo;
 import com.bigbasket.mobileapp.model.promo.PromoCategory;
 import com.bigbasket.mobileapp.model.promo.PromoDetail;
-import com.bigbasket.mobileapp.model.search.AutoCompleteTermModel;
 import com.bigbasket.mobileapp.model.search.AutoSearchResponse;
 import com.bigbasket.mobileapp.model.section.DestinationInfo;
 import com.bigbasket.mobileapp.model.section.Section;
@@ -511,78 +510,6 @@ public class ParserUtil {
         } catch (JSONException e) {
             return null;
         }
-    }
-
-    public static ArrayList<AutoCompleteTermModel> parseSearchRespose(JsonObject jsonObject) {
-        ArrayList<AutoCompleteTermModel> parseArrayString = null;
-        try {
-            JsonObject responseJsonObject = jsonObject.get("response").getAsJsonObject();
-            JsonObject resObject = (responseJsonObject).get("tc").getAsJsonObject();
-            JsonArray jArrayTerm = resObject.get("term").getAsJsonArray();
-            JsonArray jArrayCategories = resObject.get("categories").getAsJsonArray();
-            JsonArray jArraySuggest = resObject.get("suggest_term").getAsJsonArray();
-            JsonArray jsonArrayTopSearches = resObject.get("top_search").getAsJsonArray();
-            parseArrayString = new ArrayList<>();
-            int lenTerm = jArrayTerm.size();
-            int lenSuggest = jArraySuggest.size();
-            if (lenTerm != 0) {
-            } else if (lenSuggest != 0) {
-                parseArrayString.add(new AutoCompleteTermModel(Constants.LIST_SUGGEST, null));
-                jArrayTerm = jArraySuggest;
-                lenTerm = lenSuggest;
-            } else if (jArrayCategories.size() == 0 && jsonArrayTopSearches.size() != 0) {
-                parseArrayString.add(new AutoCompleteTermModel(Constants.LIST_TOP_SEARCHES, null));
-                jArrayTerm = jsonArrayTopSearches;
-                lenTerm = jArrayTerm.size();
-            }
-            Constants.LEN_TERMS = lenTerm;
-
-            for (int i = 0; i < lenTerm; i++) {
-                parseArrayString.add(new AutoCompleteTermModel(jArrayTerm.get(i).getAsString()));
-            }
-            int lenCat = jArrayCategories.size();
-            Constants.LEN_CATEGORY = lenCat;
-            if (lenCat != 0)
-                parseArrayString.add(new AutoCompleteTermModel(Constants.LIST_CATEGORY, null));
-            for (int i = 0; i < lenCat; i++) {
-                parseArrayString.add(new AutoCompleteTermModel(jArrayCategories.get(i).getAsString()));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return parseArrayString;
-    }
-
-
-    public static ArrayList<String[]> parseCategoryUrl(String responseJson) {
-        String[] urlSlug = null, pcUrlSlug = null;
-        ArrayList<String[]> categoryUrlList = new ArrayList<>();
-        try {
-            JsonObject jsonObject = new JsonParser().parse(responseJson).getAsJsonObject();
-            JsonObject responseJsonObject = jsonObject.get("response").getAsJsonObject();
-            JsonObject resObject = (responseJsonObject).get("tc").getAsJsonObject();
-            JsonArray jArrayCategoriesUrl = resObject.get("categories_url").getAsJsonArray();
-
-            int catPosSlug = Constants.LEN_TERMS + 1;
-            int lenUrl = jArrayCategoriesUrl.size();
-            urlSlug = new String[lenUrl + Constants.LEN_TERMS + 1];
-            pcUrlSlug = new String[lenUrl + Constants.LEN_TERMS + 1];
-            for (int i = 0; i < lenUrl; i++) {
-                String strUrl = jArrayCategoriesUrl.get(i).getAsString();
-                int lenStrUrl = strUrl.split("/").length;
-                String catSlug = strUrl.split("/")[lenStrUrl - 1];
-                String pCatSlug = strUrl.split("/")[lenStrUrl - 2];
-                urlSlug[catPosSlug] = catSlug;
-                pcUrlSlug[catPosSlug] = pCatSlug;
-                catPosSlug += 1;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        categoryUrlList.add(urlSlug);
-        categoryUrlList.add(pcUrlSlug);
-
-        return categoryUrlList;
     }
 
     public static ArrayList<WalletDataItem> getListData(String resp) {

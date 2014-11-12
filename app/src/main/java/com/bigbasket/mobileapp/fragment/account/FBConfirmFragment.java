@@ -19,7 +19,7 @@ import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-//import com.melnykov.fab.FloatingActionButton;
+import com.melnykov.fab.FloatingActionButton;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -82,18 +82,18 @@ public class FBConfirmFragment extends BaseFragment {
         txtYesHaveAcc.setText("Link " + firstName + " " + lastName + " " + getString(R.string.txtYesHaveAccMsg));
         final RadioButton radioBtnNoHaveAcc = (RadioButton) base.findViewById(R.id.radioBtnNoHaveAcc);
 
-//        final FloatingActionButton btnFBConfirm = (FloatingActionButton) base.findViewById(R.id.btnFBConfirm);
-//        btnFBConfirm.setTag(getString(R.string.txtLinkAccount));
-//        btnFBConfirm.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (String.valueOf(btnFBConfirm.getTag()).equalsIgnoreCase(getString(R.string.txtLinkAccount))) {
-//                    OnLoginButtonClicked();
-//                } else {
-//                    callFbConfirmToLinkMailIDTOBigbasketId();
-//                }
-//            }
-//        });
+        final FloatingActionButton btnFBConfirm = (FloatingActionButton) base.findViewById(R.id.btnFBConfirm);
+        btnFBConfirm.setTag(getString(R.string.txtLinkAccount));
+        btnFBConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (String.valueOf(btnFBConfirm.getTag()).equalsIgnoreCase(getString(R.string.txtLinkAccount))) {
+                    OnLoginButtonClicked();
+                } else {
+                    callFbConfirmToLinkMailIDTOBigbasketId();
+                }
+            }
+        });
         final TextView txtFBConfirmBtnHint = (TextView) base.findViewById(R.id.txtFBConfirmBtnHint);
 
         radioBtnYesHaveAcc.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -103,8 +103,8 @@ public class FBConfirmFragment extends BaseFragment {
                     radioBtnNoHaveAcc.setChecked(false);
                     layoutDoNotHaveAcc.setVisibility(View.GONE);
                     layoutEmailConfirmForm.setVisibility(View.VISIBLE);
-//                    btnFBConfirm.setTag(getString(R.string.txtLinkAccount));
-//                    txtFBConfirmBtnHint.setText(String.valueOf(btnFBConfirm.getTag()));
+                    btnFBConfirm.setTag(getString(R.string.txtLinkAccount));
+                    txtFBConfirmBtnHint.setText(String.valueOf(btnFBConfirm.getTag()));
                 }
             }
         });
@@ -116,8 +116,8 @@ public class FBConfirmFragment extends BaseFragment {
                     radioBtnYesHaveAcc.setChecked(false);
                     layoutEmailConfirmForm.setVisibility(View.GONE);
                     layoutDoNotHaveAcc.setVisibility(View.VISIBLE);
-//                    btnFBConfirm.setTag(getString(R.string.txtCreateAndLinkAccount));
-//                    txtFBConfirmBtnHint.setText(String.valueOf(btnFBConfirm.getTag()));
+                    btnFBConfirm.setTag(getString(R.string.txtCreateAndLinkAccount));
+                    txtFBConfirmBtnHint.setText(String.valueOf(btnFBConfirm.getTag()));
                 }
             }
         });

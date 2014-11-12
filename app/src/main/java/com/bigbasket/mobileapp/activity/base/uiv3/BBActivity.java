@@ -69,8 +69,6 @@ import java.util.List;
 public class BBActivity extends BaseActivity implements BasketOperationAware,
         CartInfoAware, HandlerAware {
 
-    private static final String TAG = BBActivity.class.getName();
-
     private ActionBarDrawerToggle mDrawerToggle;
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
@@ -140,11 +138,6 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         loadNavigationItems();
         Intent intent = getIntent();
         handleIntent(intent, savedInstanceState);
-    }
-
-    @Override
-    public String getTag() {
-        return TAG;
     }
 
     @Override
