@@ -15,9 +15,9 @@ public class ProductListData implements Parcelable {
     private String query;
     private List<Product> products;
     private Map<String, Set<String>> filteredOn;
-    private List<Option> sortOptions;
+    private ArrayList<Option> sortOptions;
     private boolean isFilterSelected = false;
-    private List<FilterOptionCategory> filterOptionItems;
+    private ArrayList<FilterOptionCategory> filterOptionItems;
     private String sortedOnDisplay;
 
     @Override
@@ -191,11 +191,11 @@ public class ProductListData implements Parcelable {
         this.query = query;
     }
 
-    public List<FilterOptionCategory> getFilterOptions() {
+    public ArrayList<FilterOptionCategory> getFilterOptions() {
         return filterOptionItems;
     }
 
-    public void setFilterOptions(List<FilterOptionCategory> filterOptions) {
+    public void setFilterOptions(ArrayList<FilterOptionCategory> filterOptions) {
         this.filterOptionItems = filterOptions;
     }
 
@@ -215,11 +215,11 @@ public class ProductListData implements Parcelable {
         this.filteredOn = filteredOn;
     }
 
-    public List<Option> getSortOptions() {
+    public ArrayList<Option> getSortOptions() {
         return sortOptions;
     }
 
-    public void setSortOptions(List<Option> sortOptions) {
+    public void setSortOptions(ArrayList<Option> sortOptions) {
         this.sortOptions = sortOptions;
     }
 

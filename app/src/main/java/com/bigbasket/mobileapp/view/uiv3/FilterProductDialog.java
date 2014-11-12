@@ -1,39 +1,60 @@
 package com.bigbasket.mobileapp.view.uiv3;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.widget.ExpandableListView;
+
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.product.FilterByAdapter;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.model.product.FilterOptionCategory;
 import com.bigbasket.mobileapp.model.product.FilterOptionItem;
+import com.bigbasket.mobileapp.util.Constants;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 public class FilterProductDialog extends DialogFragment {
 
-    private List<FilterOptionCategory> filterOptionCategories;
+    private ArrayList<FilterOptionCategory> filterOptionCategories;
     private Map<String, Set<String>> filteredOn;
 
-    private Fragment fragment;
+    public static FilterProductDialog newInstance(ArrayList<FilterOptionCategory> filterOptionCategories,
+                                                  Map<String, Set<String>> filteredOn) {
+        FilterProductDialog filterProductDialog = new FilterProductDialog();
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList(Constants.FILTER_OPTIONS, filterOptionCategories);
 
-    public FilterProductDialog() {}
+        ArrayList<String> filteredOnMapKeyList = new ArrayList<>();
+        ArrayList<Set<String>> filteredOnMapValueList = new ArrayList<>();
+        for (Map.Entry<String, Set<String>> entrySet : filteredOn.entrySet()) {
+            filteredOnMapKeyList.add(entrySet.getKey());
+            filteredOnMapValueList.add(entrySet.getValue());
+        }
+        bundle.putStringArrayList(Constants.FILTER_NAME, filteredOnMapKeyList);
+        bundle.putSerializable(Constants.FILTER_VALUES, filteredOnMapValueList);
+        filterProductDialog.setArguments(bundle);
+        return filterProductDialog;
+    }
 
-    @SuppressLint("ValidFragment")
-    public FilterProductDialog(Fragment fragment, List<FilterOptionCategory> filterOptionCategories,
-                               Map<String, Set<String>> filteredOn) {
-        this.fragment = fragment;
-        this.filterOptionCategories = filterOptionCategories;
-        this.filteredOn = filteredOn;
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        filterOptionCategories = getArguments().getParcelableArrayList(Constants.FILTER_OPTIONS);
+        ArrayList<String> filteredOnMapKeyList;
+        ArrayList<Set<String>> filteredOnMapValueList;
+        filteredOnMapKeyList = getArguments().getStringArrayList(Constants.FILTER_NAME);
+        filteredOnMapValueList = (ArrayList<Set<String>>) getArguments().getSerializable(Constants.FILTER_VALUES);
+        filteredOn = new HashMap<>();
+        for (int i = 0; i < filteredOnMapKeyList.size(); i++) {
+            filteredOn.put(filteredOnMapKeyList.get(i), filteredOnMapValueList.get(i));
+        }
     }
 
     @Override
@@ -49,7 +70,7 @@ public class FilterProductDialog extends DialogFragment {
                 .setPositiveButton(R.string.filter, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        ((ProductListAwareFragment) fragment).loadProducts();
+                        ((ProductListAwareFragment) getTargetFragment()).loadProducts();
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -69,7 +90,7 @@ public class FilterProductDialog extends DialogFragment {
                                 filterOptionItem.setSelected(false);
                             }
                         }
-                        ((ProductListAwareFragment) fragment).loadProducts();
+                        ((ProductListAwareFragment) getTargetFragment()).loadProducts();
                     }
                 });
         return builder.create();

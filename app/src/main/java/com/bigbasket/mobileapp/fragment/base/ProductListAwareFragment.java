@@ -9,13 +9,22 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.AbsListView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.product.ProductListAdapter;
 import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.interfaces.SortAware;
-import com.bigbasket.mobileapp.model.product.*;
+import com.bigbasket.mobileapp.model.product.Option;
+import com.bigbasket.mobileapp.model.product.Product;
+import com.bigbasket.mobileapp.model.product.ProductListData;
+import com.bigbasket.mobileapp.model.product.ProductQuery;
+import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.task.uiv3.ProductListTask;
@@ -38,8 +47,6 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
     private ArrayList<ShoppingListName> shoppingListNames;
     private String selectedProductId;
     private ProductListAdapter productListAdapter;
-    private FilterProductDialog mFilterProductDialog;
-    private SortProductDialog mSortProductDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -264,9 +271,10 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
                 v.setBackgroundColor(Color.YELLOW);
             } else if (event.getAction() == MotionEvent.ACTION_UP) {
                 v.setBackgroundColor(Color.TRANSPARENT);
-                mFilterProductDialog = new FilterProductDialog(getFragment(),
+                FilterProductDialog filterProductDialog = FilterProductDialog.newInstance(
                         productListData.getFilterOptions(), productListData.getFilteredOn());
-                mFilterProductDialog.show(getFragmentManager(), Constants.FILTER_ON);
+                filterProductDialog.setTargetFragment(getFragment(), 0);
+                filterProductDialog.show(getFragmentManager(), Constants.FILTER_ON);
             }
             return true;
         }
@@ -279,9 +287,10 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
                 v.setBackgroundColor(Color.YELLOW);
             } else if (event.getAction() == MotionEvent.ACTION_UP) {
                 v.setBackgroundColor(Color.TRANSPARENT);
-                mSortProductDialog = new SortProductDialog(getFragment(), productListData.getSortedOn(),
+                SortProductDialog sortProductDialog = SortProductDialog.newInstance(productListData.getSortedOn(),
                         productListData.getSortOptions());
-                mSortProductDialog.show(getFragmentManager(), Constants.SORT_ON);
+                sortProductDialog.setTargetFragment(getFragment(), 0);
+                sortProductDialog.show(getFragmentManager(), Constants.SORT_ON);
             }
             return true;
         }
@@ -318,16 +327,5 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
         if (productListData != null) {
             outState.putParcelable(Constants.PRODUCTS, productListData);
         }
-    }
-
-    @Override
-    public void onDestroyView() {
-        if (mFilterProductDialog != null && mFilterProductDialog.isVisible()) {
-            mFilterProductDialog.dismiss();
-        }
-        if (mSortProductDialog != null && mSortProductDialog.isVisible()) {
-            mSortProductDialog.dismiss();
-        }
-        super.onDestroyView();
     }
 }
