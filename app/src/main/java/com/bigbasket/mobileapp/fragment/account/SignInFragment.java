@@ -30,7 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class SignInFragment extends BaseFragment {
+public class SignInFragment extends GooglePlusSignInHelperFragment implements View.OnClickListener {
 
     private static final String TAG = SignInFragment.class.getSimpleName();
     private EditText editTextEmail, editTextPasswd;
@@ -192,6 +192,7 @@ public class SignInFragment extends BaseFragment {
         imgPasswdErr = (ImageView) base.findViewById(R.id.imgPasswdErr);
         imgEmailErr.setVisibility(View.GONE);
         imgPasswdErr.setVisibility(View.GONE);
+        base.findViewById(R.id.sign_in_button).setOnClickListener(this);
     }
 
     public void OnLoginButtonClicked() {
@@ -455,4 +456,11 @@ public class SignInFragment extends BaseFragment {
         return null;
     }
 
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.sign_in_button && !mGoogleApiClient.isConnecting()) {
+            mSignInClicked = true;
+            resolveSignInError();
+        }
+    }
 }
