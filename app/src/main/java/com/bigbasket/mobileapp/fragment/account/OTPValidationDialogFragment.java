@@ -21,6 +21,7 @@ public abstract class OTPValidationDialogFragment extends DialogFragment {
     private Typeface faceRobotoRegular;
     private TextView txtErrorValidateNumber, txtResendNumber;
 
+    public OTPValidationDialogFragment() {}
     public OTPValidationDialogFragment(BaseActivity baseActivity, Typeface faceRobotoRegular) {
         this.baseActivity = baseActivity;
         this.faceRobotoRegular = faceRobotoRegular;

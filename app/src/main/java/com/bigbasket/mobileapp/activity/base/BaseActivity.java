@@ -58,13 +58,6 @@ public abstract class BaseActivity extends ActionBarActivity implements AdapterV
         AdapterView.OnItemSelectedListener, COMarketPlaceAware, COReserveQuantityCheckAware {
 
     public static Typeface faceRupee;
-    public static Typeface faceRobotoSlabNrml;
-    public static Typeface faceRobotoSlabLight;
-    public static Typeface faceLatoMedium;
-    public static Typeface faceLatoLight;
-    public static Typeface faceLatoNormal;
-    public static Typeface faceItalic;
-    public static Typeface faceRobotoSlabThin;
     public static Typeface faceRobotoRegular;
     protected Handler handler = new MessageHandler(getCurrentActivity());
     private boolean isActivitySuspended;
@@ -78,13 +71,6 @@ public abstract class BaseActivity extends ActionBarActivity implements AdapterV
         isActivitySuspended = false;
 
         faceRupee = Typeface.createFromAsset(getAssets(), "Rupee.ttf");
-        faceRobotoSlabNrml = Typeface.createFromAsset(getAssets(), "roboto-slab.regular.ttf");
-        faceRobotoSlabLight = Typeface.createFromAsset(getAssets(), "roboto-slab.light.ttf");
-        faceLatoMedium = Typeface.createFromAsset(getAssets(), "Lato-Medium.ttf");
-        faceLatoLight = Typeface.createFromAsset(getAssets(), "Lato-Light.ttf");
-        faceLatoNormal = Typeface.createFromAsset(getAssets(), "Lato-Regular.ttf");
-        faceRobotoSlabThin = Typeface.createFromAsset(getAssets(), "roboto-slab.thin.ttf");
-        faceItalic = Typeface.createFromAsset(getAssets(), "Italic.ttf");
         faceRobotoRegular = Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");
     }
 

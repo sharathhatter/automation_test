@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.view.uiv3;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -24,6 +25,9 @@ public class ShoppingListNamesDialog extends DialogFragment {
     private Context context;
     private BaseFragment fragment;
 
+    public ShoppingListNamesDialog() {}
+
+    @SuppressLint("ValidFragment")
     public ShoppingListNamesDialog(List<ShoppingListName> shoppingListNames, Context context, BaseFragment fragment) {
         this.shoppingListNames = shoppingListNames;
         this.context = context;

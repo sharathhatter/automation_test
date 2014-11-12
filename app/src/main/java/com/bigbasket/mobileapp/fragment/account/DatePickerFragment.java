@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.fragment.account;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.os.Bundle;
@@ -18,6 +19,9 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
 
     View view;
 
+    public DatePickerFragment() {}
+
+    @SuppressLint("ValidFragment")
     public DatePickerFragment(View view) {
         this.view = view;
     }

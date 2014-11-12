@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.fragment.shoppinglist;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -227,14 +228,14 @@ public class ShoppingListFragment extends BaseFragment {
             imgEditShoppingListName.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    EditShoppingDialog editShoppingDialog = new EditShoppingDialog(shoppingListName);
+                    EditShoppingDialog editShoppingDialog = new EditShoppingDialog(shoppingListName, getFragmentInstance());
                     editShoppingDialog.show(getFragmentManager(), Constants.SHOPPING_LIST_NAME);
                 }
             });
             imgDeleteShoppingList.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    DeleteShoppingListDialog deleteShoppingListDialog = new DeleteShoppingListDialog(shoppingListName);
+                    DeleteShoppingListDialog deleteShoppingListDialog = new DeleteShoppingListDialog(shoppingListName, getFragmentInstance());
                     deleteShoppingListDialog.show(getFragmentManager(), Constants.SHOPPING_LIST_NAME);
                 }
             });
@@ -260,12 +261,21 @@ public class ShoppingListFragment extends BaseFragment {
         }
     }
 
-    private class EditShoppingDialog extends DialogFragment {
+    public ShoppingListFragment getFragmentInstance() {
+        return this;
+    }
+
+    public static class EditShoppingDialog extends DialogFragment {
 
         private ShoppingListName shoppingListName;
+        private ShoppingListFragment fragment;
 
-        private EditShoppingDialog(ShoppingListName shoppingListName) {
+        public EditShoppingDialog() {}
+
+        @SuppressLint("ValidFragment")
+        private EditShoppingDialog(ShoppingListName shoppingListName, ShoppingListFragment fragment) {
             this.shoppingListName = shoppingListName;
+            this.fragment = fragment;
         }
 
         @Override
@@ -281,7 +291,7 @@ public class ShoppingListFragment extends BaseFragment {
                         public void onClick(DialogInterface dialog, int which) {
                             String newName = editTextShoppingListName.getText().toString();
                             if (!newName.equals(shoppingListName.getName())) {
-                                editShoppingListName(shoppingListName, newName);
+                                fragment.editShoppingListName(shoppingListName, newName);
                             }
                         }
                     })
@@ -295,13 +305,18 @@ public class ShoppingListFragment extends BaseFragment {
         }
     }
 
-    private class DeleteShoppingListDialog extends DialogFragment {
+    public static class DeleteShoppingListDialog extends DialogFragment {
 
         private ShoppingListName shoppingListName;
+        private ShoppingListFragment fragment;
 
-        private DeleteShoppingListDialog(ShoppingListName shoppingListName) {
+        @SuppressLint("ValidFragment")
+        private DeleteShoppingListDialog(ShoppingListName shoppingListName, ShoppingListFragment fragment) {
             this.shoppingListName = shoppingListName;
+            this.fragment = fragment;
         }
+
+        public DeleteShoppingListDialog() {}
 
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -310,7 +325,7 @@ public class ShoppingListFragment extends BaseFragment {
                     .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            deleteShoppingList(shoppingListName);
+                            fragment.deleteShoppingList(shoppingListName);
                         }
                     })
                     .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

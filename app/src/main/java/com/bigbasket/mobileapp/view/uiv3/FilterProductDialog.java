@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.view.uiv3;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -25,6 +26,9 @@ public class FilterProductDialog extends DialogFragment {
 
     private Fragment fragment;
 
+    public FilterProductDialog() {}
+
+    @SuppressLint("ValidFragment")
     public FilterProductDialog(Fragment fragment, List<FilterOptionCategory> filterOptionCategories,
                                Map<String, Set<String>> filteredOn) {
         this.fragment = fragment;

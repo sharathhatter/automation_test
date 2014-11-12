@@ -240,7 +240,7 @@
             android:layout_below="@id/txtSalePrice"
             />
 
-        <info.hoang8f.widget.FButton
+        <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/ADD"
@@ -253,12 +253,9 @@
             android:drawablePadding="@dimen/padding_small"
             android:minHeight="0dp"
             android:minWidth="0dp"
-            android:background="@drawable/uiv3_btn_background_shadow"
-            app:buttonColor="@color/uiv3_action_bar_background"
-            app:shadowColor="@color/uiv3_status_bar_background"
-            app:shadowEnabled="true"
-            app:shadowHeight="4dp"
-            app:cornerRadius="4dp"
+            android:background="@color/uiv3_action_bar_background"
+            android:paddingTop="@dimen/padding_small"
+            android:paddingBottom="@dimen/padding_small"
             android:drawableLeft="@drawable/view_basket_small"
             android:layout_below="@id/txtInBasket"
             android:layout_alignParentRight="true"

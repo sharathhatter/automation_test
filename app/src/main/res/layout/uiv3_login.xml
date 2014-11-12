@@ -1,124 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
-    <ScrollView android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/uiv3_list_bkg_light_color"
-                android:id="@+id/layoutLogin">
+    android:id="@+id/layoutLogin"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/uiv3_list_bkg_light_color">
 
 
         <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="@dimen/padding_large">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/padding_large">
 
             <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@string/app_name"
-                    android:layout_marginTop="@dimen/margin_normal"
-                    android:layout_marginLeft="@dimen/margin_normal"
-                    android:layout_marginBottom="@dimen/margin_large"
-                    android:layout_marginRight="@dimen/margin_normal"
-                    android:src="@drawable/dash_logo"
-                    android:layout_gravity="center_horizontal"/>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="@dimen/margin_large"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:layout_marginRight="@dimen/margin_normal"
+                android:layout_marginTop="@dimen/margin_normal"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/dash_logo" />
 
             <TableLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:stretchColumns="1">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:stretchColumns="1">
 
                 <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
                     <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="bottom"
-                            android:layout_marginBottom="@dimen/margin_small"
-                            android:contentDescription="@string/email"
-                            android:src="@drawable/mail"/>
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="@dimen/margin_small"
+                        android:contentDescription="@string/email"
+                        android:src="@drawable/mail" />
 
                     <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/margin_normal">
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/margin_normal">
 
                         <EditText
-                                android:id="@+id/editTextEmail"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:ems="10"
-                                android:inputType="textEmailAddress"
-                                android:imeOptions="actionNext"
-                                android:paddingLeft="@dimen/padding_normal"
-                                android:singleLine="true"
-                                android:hint="@string/email"
-                                android:textColor="@color/uiv3_primary_text_color"
-                                android:textSize="@dimen/secondary_text_size">
+                            android:id="@+id/editTextEmail"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ems="10"
+                            android:hint="@string/email"
+                            android:imeOptions="actionNext"
+                            android:inputType="textEmailAddress"
+                            android:paddingLeft="@dimen/padding_normal"
+                            android:singleLine="true"
+                            android:textColor="@color/uiv3_primary_text_color"
+                            android:textSize="@dimen/secondary_text_size">
 
                         </EditText>
 
                         <ImageView
-                                android:id="@+id/imgEmailErr"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentBottom="true"
-                                android:layout_alignRight="@id/editTextEmail"
-                                android:layout_marginRight="@dimen/margin_normal"
-                                android:paddingBottom="@dimen/padding_small"
-                                android:contentDescription="@string/missing"
-                                android:visibility="gone"
-                                android:src="@drawable/error_symbol"/>
+                            android:id="@+id/imgEmailErr"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentBottom="true"
+                            android:layout_alignRight="@id/editTextEmail"
+                            android:layout_marginRight="@dimen/margin_normal"
+                            android:contentDescription="@string/missing"
+                            android:paddingBottom="@dimen/padding_small"
+                            android:src="@drawable/error_symbol"
+                            android:visibility="gone" />
 
                     </RelativeLayout>
                 </TableRow>
 
                 <TableRow
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
                     <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="bottom"
-                            android:layout_marginBottom="@dimen/padding_small"
-                            android:contentDescription="@string/password"
-                            android:src="@drawable/password_lock"/>
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="@dimen/padding_small"
+                        android:contentDescription="@string/password"
+                        android:src="@drawable/password_lock" />
 
                     <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/margin_normal">
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/margin_normal">
 
                         <EditText
-                                android:id="@+id/editTextPasswd"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:ems="10"
-                                android:inputType="textPassword"
-                                android:paddingLeft="@dimen/padding_normal"
-                                android:singleLine="true"
-                                android:layout_marginLeft="@dimen/margin_normal"
-                                android:hint="@string/password"
-                                android:textSize="@dimen/secondary_text_size"
-                                android:textColor="@color/uiv3_primary_text_color"/>
+                            android:id="@+id/editTextPasswd"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/margin_normal"
+                            android:ems="10"
+                            android:hint="@string/password"
+                            android:inputType="textPassword"
+                            android:paddingLeft="@dimen/padding_normal"
+                            android:singleLine="true"
+                            android:textColor="@color/uiv3_primary_text_color"
+                            android:textSize="@dimen/secondary_text_size" />
 
                         <ImageView
-                                android:id="@+id/imgPasswdErr"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentBottom="true"
-                                android:layout_alignRight="@id/editTextPasswd"
-                                android:contentDescription="@string/missing"
-                                android:layout_marginRight="@dimen/margin_normal"
-                                android:paddingBottom="@dimen/padding_small"
-                                android:visibility="gone"
-                                android:src="@drawable/error_symbol"/>
+                            android:id="@+id/imgPasswdErr"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentBottom="true"
+                            android:layout_alignRight="@id/editTextPasswd"
+                            android:layout_marginRight="@dimen/margin_normal"
+                            android:contentDescription="@string/missing"
+                            android:paddingBottom="@dimen/padding_small"
+                            android:src="@drawable/error_symbol"
+                            android:visibility="gone" />
 
                     </RelativeLayout>
                 </TableRow>
@@ -127,64 +129,62 @@
 
 
             <CheckBox
-                    android:id="@+id/chkRememberMe"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin_normal"
-                    android:textSize="13sp"
-                    android:textColor="@color/uiv3_primary_text_color"
-                    android:text="@string/remember"
-                    />
+                android:id="@+id/chkRememberMe"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_normal"
+                android:text="@string/remember"
+                android:textColor="@color/uiv3_primary_text_color"
+                android:textSize="13sp" />
 
             <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin_large">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_large">
 
                 <Button
-                        android:id="@+id/btnLogin"
-                        android:layout_width="match_parent"
-                        android:background="@color/uiv3_action_bar_background"
-                        android:layout_height="wrap_content"
-                        android:text="@string/signIn"
-                        android:textSize="@dimen/secondary_text_size"
-                        android:textColor="@android:color/white"
-                        android:paddingTop="@dimen/padding_small"
-                        android:paddingBottom="@dimen/padding_small"
-                        />
+                    android:id="@+id/btnLogin"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/uiv3_action_bar_background"
+                    android:paddingBottom="@dimen/padding_small"
+                    android:paddingTop="@dimen/padding_small"
+                    android:text="@string/signIn"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/secondary_text_size" />
 
                 <ProgressBar
-                        style="?android:attr/progressBarStyleSmall"
-                        android:layout_width="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginRight="@dimen/margin_small"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone"
-                        android:id="@+id/progressBarLogin"/>
+                    android:id="@+id/progressBarLogin"
+                    style="?android:attr/progressBarStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/margin_small"
+                    android:visibility="gone" />
 
             </RelativeLayout>
 
             <TextView
-                    android:id="@+id/txtForgotPasswd"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:clickable="true"
-                    android:layout_marginTop="@dimen/margin_normal"
-                    android:text="@string/forgotPasswd"
-                    android:textSize="@dimen/small_text_size"
-                    android:textColor="@color/uiv3_primary_text_color"
-                    />
+                android:id="@+id/txtForgotPasswd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/margin_normal"
+                android:clickable="true"
+                android:gravity="center"
+                android:text="@string/forgotPasswd"
+                android:textColor="@color/uiv3_primary_text_color"
+                android:textSize="@dimen/small_text_size" />
 
-            <Button android:layout_width="wrap_content"
-                    android:id="@+id/btnFBLogin"
-                    android:layout_marginTop="25dp"
-                    android:layout_gravity="center"
-                    android:text="FB Log-In"
-                    android:gravity="center"
-                    android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/btnFBLogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="25dp"
+                android:gravity="center"
+                android:text="FB Log-In" />
 
             <!--<com.facebook.widget.LoginButton-->
             <!--android:id="@+id/btnFBLogin"-->

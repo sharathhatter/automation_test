@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.view.uiv3;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -19,6 +20,9 @@ public class SortProductDialog extends DialogFragment {
     private String sortedOn;
     private Fragment fragment;
 
+    public SortProductDialog() {}
+
+    @SuppressLint("ValidFragment")
     public SortProductDialog(Fragment fragment, String sortedOn, List<Option> sortOptions) {
         this.fragment = fragment;
         this.sortedOn = sortedOn;

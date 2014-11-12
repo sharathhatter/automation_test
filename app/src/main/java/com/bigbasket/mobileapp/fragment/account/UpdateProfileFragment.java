@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.fragment.account;
 
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -274,21 +275,26 @@ public class UpdateProfileFragment extends BaseFragment {
         }
     }
 
-    class OTPDialog extends OTPValidationDialogFragment {
+    public static class OTPDialog extends OTPValidationDialogFragment {
+        private UpdateProfileFragment fragment;
 
-        public OTPDialog(BaseActivity baseActivity) {
+        public OTPDialog() {}
+
+        @SuppressLint("ValidFragment")
+        public OTPDialog(BaseActivity baseActivity, UpdateProfileFragment fragment) {
             super(baseActivity, faceRobotoRegular);
+            this.fragment = fragment;
         }
 
         @Override
         public void resendOrConfirmOTP(String otp) {
-            btnUpdateAfterSuccessNumberValidation(otp);
+            fragment.btnUpdateAfterSuccessNumberValidation(otp);
         }
     }
 
     private void validateMobileNumber(boolean txtErrorValidateNumberVisibility, String errorMsg) {
         if (otpDialog == null)
-            otpDialog = new OTPDialog((BaseActivity) getActivity());
+            otpDialog = new OTPDialog((BaseActivity) getActivity(), this);
         if (otpDialog.isVisible()) {
             if (txtErrorValidateNumberVisibility) {
                 otpDialog.showErrorText(errorMsg);

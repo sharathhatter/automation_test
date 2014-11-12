@@ -27,7 +27,6 @@ import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.ParserUtil;
-import com.flurry.android.FlurryAgent;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -50,7 +49,7 @@ public class StartActivity extends BaseActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash);
-        FlurryAgent.onStartSession(this, Constants.FLURRY_AGENT_KEY);
+        //FlurryAgent.onStartSession(this, Constants.FLURRY_AGENT_KEY);
 
         if (!checkInternetConnection()) {
             showAlertDialogFinish(this, null, getString(R.string.deviceOffline));

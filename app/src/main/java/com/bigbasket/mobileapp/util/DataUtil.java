@@ -19,7 +19,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
@@ -48,7 +47,6 @@ import static com.bigbasket.mobileapp.util.Constants.CONNECTION_TIMEOUT;
 public class DataUtil {
 
     private static final String TAG = DataUtil.class.getName();
-    private MultipartEntity mpEntity;
     private static HashMap<String, String> addBasketKeyHash = new HashMap<String, String>() {{
 //        put(Productdetail.class.getSimpleName(), "pd");
 //        put(SearchFragment.class.getSimpleName(), "ps");
