@@ -35,7 +35,7 @@ public class WalletActivityFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
 
         if (savedInstanceState != null) {
-            walletActivityData = savedInstanceState.getParcelable(Constants.WALLET_DATA);
+            walletActivityData = savedInstanceState.getParcelableArrayList(Constants.WALLET_DATA);
         } else {
             String walletActivityStringData = getArguments().getString(Constants.WALLET_ACTIVITY_DATA);
             walletActivityData = ParserUtil.getListData(walletActivityStringData);

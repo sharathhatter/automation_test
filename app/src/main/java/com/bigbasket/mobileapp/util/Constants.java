@@ -119,6 +119,7 @@ public class Constants {
     public static final String INTERNAL_VALUE = "internal_value";
     public static final String APP_LINK = "app_link";
     public static final String WEB_LINK = "link";
+    public static final String TOP_CATEGORY_SLUG = "top_category_slug";
 
 
     public static String FILTER_OPTIONS = "filter_opts";
@@ -729,5 +730,6 @@ public class Constants {
     public static final String FB_LAST_NAME = "fb_last_name";
     public static final int FB_INTERNAL_SERVER_ERROR = 101;
     public static final String FB_SERVER_ERROR_MSG = "fb_server_msg";
+    public static final String FB_EMAIL = "fb_email";
 
 }

@@ -40,6 +40,7 @@ import com.bigbasket.mobileapp.fragment.product.BrowseByOffersFragment;
 import com.bigbasket.mobileapp.fragment.product.CategoryProductsFragment;
 import com.bigbasket.mobileapp.fragment.product.SearchFragment;
 import com.bigbasket.mobileapp.fragment.product.ShopInShopFragment;
+import com.bigbasket.mobileapp.fragment.product.SubCategoryListFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoCategoryFragment;
 import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListFragment;
 import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListSummaryFragment;
@@ -736,7 +737,18 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         @Override
         public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
             List<NavigationSubItem> navigationSubItems = navigationItems.get(groupPosition).getNavigationSubItems();
-            if (navigationSubItems != null) {
+            if (navigationItems.get(groupPosition).getTag() != null &&
+                    navigationItems.get(groupPosition).getTag().equals(Constants.BROWSE_CAT)) {
+                SubCategoryListFragment subCategoryListFragment = new SubCategoryListFragment();
+                Bundle subCatBundle = new Bundle();
+                subCatBundle.putString(Constants.TOP_CATEGORY_SLUG,
+                        navigationItems.get(groupPosition).getNavigationSubItems().get(childPosition).getTag());
+                subCatBundle.putString(Constants.TOP_CATEGORY_NAME,
+                        navigationItems.get(groupPosition).getNavigationSubItems().get(childPosition).getTag());
+                subCategoryListFragment.setArguments(subCatBundle);
+                addToMainLayout(subCategoryListFragment);
+
+            }else if (navigationSubItems != null) {
                 NavigationSubItem navigationSubItem = navigationSubItems.get(childPosition);
                 if (navigationSubItem.getTag() != null) {
                     switch (navigationSubItem.getTag()) {

@@ -14,7 +14,6 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
-import com.bigbasket.mobileapp.model.account.CurrentWalletBalance;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
@@ -35,7 +34,7 @@ public class DoWalletFragment extends BaseFragment {
     private TextView txtCurrentBalance;
     boolean oneYearBack1 = false, oneYearBack2 = false, oneYearBack3 = false;
     private String month1 = "", month2 = "", month3 = "", monthClickText;
-    private CurrentWalletBalance currentWalletBalance;
+    private float currentBalance;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -47,14 +46,14 @@ public class DoWalletFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
         renderWalletMonthActivity();
         if (savedInstanceState != null) {
-            currentWalletBalance = savedInstanceState.getParcelable(Constants.CURRENT_BALANCE);
-            setCurrentBalance(currentWalletBalance);
+            currentBalance = savedInstanceState.getFloat(Constants.CURRENT_BALANCE);
+            setCurrentBalance(currentBalance);
         } else {
-            getCurrentMemberPin();
+            getCurrentMemberWalletBalance();
         }
     }
 
-    private void getCurrentMemberPin() {
+    private void getCurrentMemberWalletBalance() {
         startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.GET_CURRENT_WALLET_BALANCE, null, false, false, null);
     }
 
@@ -71,13 +70,10 @@ public class DoWalletFragment extends BaseFragment {
                 JsonObject jsonObject = new JsonParser().parse(responseJson).getAsJsonObject();
                 if (responseUrl.contains(Constants.GET_WALLET_BALANCE_URL)) {
                     JsonObject responseJsonObject = jsonObject.get(Constants.RESPONSE).getAsJsonObject();
-                    float current_balance = responseJsonObject.get(Constants.CURRENT_BALANCE).getAsFloat();
-                    currentWalletBalance = new CurrentWalletBalance(current_balance, null);
-                    txtCurrentBalance.append(!TextUtils.isEmpty(String.valueOf(current_balance)) ? String.valueOf(current_balance) :
-                            "****");
+                    currentBalance = responseJsonObject.get(Constants.CURRENT_BALANCE).getAsFloat();
+                    setCurrentBalance(currentBalance);
                 } else if (responseUrl.contains(Constants.GET_WALLET_ACTIVITY_URL)) {
                     String responseJsonString = jsonObject.get(Constants.RESPONSE).toString();
-                    currentWalletBalance.setResponseJsonStringWalletActivity(responseJsonString);
                     Log.d("URL: ", responseUrl);
                     if (responseJsonString.equals("[]")) {
                         showErrorMsg(getString(R.string.noActivityErrorMsg) + " " + monthClickText);
@@ -107,9 +103,9 @@ public class DoWalletFragment extends BaseFragment {
         }
     }
 
-    private void setCurrentBalance(CurrentWalletBalance currentWalletBalance) {
-        txtCurrentBalance.append(!TextUtils.isEmpty(String.valueOf(currentWalletBalance.getCurrentBalance())) ?
-                String.valueOf(currentWalletBalance.getCurrentBalance()) :
+    private void setCurrentBalance(float currentBalance){
+        txtCurrentBalance.append(!TextUtils.isEmpty(String.valueOf(currentBalance)) ?
+                String.valueOf(currentBalance) :
                 "****");
     }
 
@@ -334,9 +330,7 @@ public class DoWalletFragment extends BaseFragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        if (currentWalletBalance != null) {
-            outState.putParcelable(Constants.CURRENT_BALANCE, currentWalletBalance);
-        }
+        outState.putFloat(Constants.CURRENT_BALANCE, currentBalance);
         super.onSaveInstanceState(outState);
     }
 
