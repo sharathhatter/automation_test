@@ -10,17 +10,30 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.facebook.*;
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.SessionLoginBehavior;
+import com.facebook.SessionState;
 import com.facebook.model.GraphUser;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,7 +43,7 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class SignInFragment extends GooglePlusSignInHelperFragment implements View.OnClickListener {
+public class SignInFragment extends BaseFragment {
 
     private static final String TAG = SignInFragment.class.getSimpleName();
     private EditText editTextEmail, editTextPasswd;
@@ -192,7 +205,7 @@ public class SignInFragment extends GooglePlusSignInHelperFragment implements Vi
         imgPasswdErr = (ImageView) base.findViewById(R.id.imgPasswdErr);
         imgEmailErr.setVisibility(View.GONE);
         imgPasswdErr.setVisibility(View.GONE);
-        base.findViewById(R.id.sign_in_button).setOnClickListener(this);
+//        base.findViewById(R.id.sign_in_button).setOnClickListener(this);
     }
 
     public void OnLoginButtonClicked() {
@@ -455,12 +468,12 @@ public class SignInFragment extends GooglePlusSignInHelperFragment implements Vi
     public String getTitle() {
         return null;
     }
-
-    @Override
-    public void onClick(View v) {
-        if (v.getId() == R.id.sign_in_button && !mGoogleApiClient.isConnecting()) {
-            mSignInClicked = true;
-            resolveSignInError();
-        }
-    }
+//
+//    @Override
+//    public void onClick(View v) {
+//        if (v.getId() == R.id.sign_in_button && !mGoogleApiClient.isConnecting()) {
+//            mSignInClicked = true;
+//            resolveSignInError();
+//        }
+//    }
 }
