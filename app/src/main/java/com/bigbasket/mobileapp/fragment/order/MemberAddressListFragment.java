@@ -125,8 +125,6 @@ public class MemberAddressListFragment extends BaseFragment {
         });
 
         FloatingActionButton floatingActionButton = (FloatingActionButton) addressView.findViewById(R.id.btnFab);
-        floatingActionButton.setColorNormal(getResources().getColor(R.color.uiv3_action_bar_background));
-        floatingActionButton.setColorPressed(getResources().getColor(R.color.uiv3_action_bar_background_pressed));
         floatingActionButton.attachToListView(addressListView);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override

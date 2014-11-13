@@ -550,12 +550,15 @@ public class Constants {
     public static final String SL_GET_LISTS = "sl-get-lists/";
     public static final String SL_EDIT_LIST = "sl-edit-list/";
     public static final String SL_DELETE_LIST = "sl-delete-list/";
-    public static final String SL_LIST_SUMMARY = "sl-get-list-summary";
+    public static final String SL_LIST_SUMMARY = "sl-get-list-summary/";
     public static final String SHOPPING_LIST_SUMMARY = "shoplist_summary";
     public static final String SL_GET_LIST_DETAILS = "sl-get-list-details/";
     public static final String SHOPPING_LIST_ITEMS = "shoplist_items";
     public static final String SMART_BASKET_ADD_ALL = "sb-cat-items-to-cart/";
     public static final String SL_ADD_ALL = "sl-cat-items-to-cart/";
+    public static final String SL_CREATE_LIST = "sl-create-list/";
+    public static final String SL_NAME = "name";
+    public static final String IS_PUBLIC = "is_public";
 
     //otp
     public static final String OTP_VALIDATION_STATUS = "otp_validation_status";

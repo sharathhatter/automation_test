@@ -20,6 +20,7 @@ import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.ParserUtil;
+import com.bigbasket.mobileapp.view.uiv3.CreateShoppingListDialog;
 import com.bigbasket.mobileapp.view.uiv3.DeleteShoppingListDialog;
 import com.bigbasket.mobileapp.view.uiv3.EditShoppingDialog;
 import com.daimajia.swipe.SwipeLayout;
@@ -29,11 +30,14 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.melnykov.fab.FloatingActionButton;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 
 public class ShoppingListFragment extends BaseFragment {
+
+    private ArrayList<ShoppingListName> mShoppingListNames;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -43,6 +47,13 @@ public class ShoppingListFragment extends BaseFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            mShoppingListNames = savedInstanceState.getParcelableArrayList(Constants.SHOPPING_LISTS);
+            if (mShoppingListNames != null) {
+                renderShoppingList();
+                return;
+            }
+        }
         loadShoppingLists();
     }
 
@@ -68,8 +79,8 @@ public class ShoppingListFragment extends BaseFragment {
             switch (status) {
                 case Constants.OK:
                     JsonArray shoppingListNamesJsonArray = httpJsonObj.get(Constants.SHOPPING_LISTS).getAsJsonArray();
-                    List<ShoppingListName> shoppingListNames = ParserUtil.parseShoppingList(shoppingListNamesJsonArray);
-                    renderShoppingList(shoppingListNames);
+                    mShoppingListNames = ParserUtil.parseShoppingList(shoppingListNamesJsonArray);
+                    renderShoppingList();
                     break;
                 default:
                     // TODO : Add error handling
@@ -105,32 +116,70 @@ public class ShoppingListFragment extends BaseFragment {
                     showErrorMsg("Server Error");
                     break;
             }
+        } else if (url.contains(Constants.SL_CREATE_LIST)) {
+            JsonObject httpJsonObj = new JsonParser().parse(httpOperationResult.getReponseString()).getAsJsonObject();
+            String status = httpJsonObj.get(Constants.STATUS).getAsString();
+            switch (status) {
+                case Constants.OK:
+                    Toast.makeText(getActivity(),
+                            "List \"" + httpOperationResult.getAdditionalCtx().get(Constants.SL_NAME)
+                                    + "\" was created successfully", Toast.LENGTH_LONG).show();
+                    loadShoppingLists();
+                    break;
+                default:
+                    // TODO : Add error handling
+                    showErrorMsg("Server Error");
+                    break;
+            }
         } else {
             super.onAsyncTaskComplete(httpOperationResult);
         }
     }
 
-    private void renderShoppingList(final List<ShoppingListName> shoppingListNames) {
+    private void renderShoppingList() {
         if (getActivity() == null) return;
         LinearLayout contentView = getContentView();
         if (contentView == null) return;
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View base = inflater.inflate(R.layout.uiv3_fab_list_view, null);
         ListView shoppingNameListView = (ListView) base.findViewById(R.id.fabListView);
-        ShoppingListNameAndOpAdapter shoppingListNameAndOpAdapter = new ShoppingListNameAndOpAdapter(shoppingListNames);
+        ShoppingListNameAndOpAdapter shoppingListNameAndOpAdapter = new ShoppingListNameAndOpAdapter(mShoppingListNames);
         shoppingNameListView.setAdapter(shoppingListNameAndOpAdapter);
 
         shoppingNameListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ShoppingListName shoppingListName = shoppingListNames.get(position);
+                ShoppingListName shoppingListName = mShoppingListNames.get(position);
                 launchShoppingListSummary(shoppingListName);
             }
         });
         FloatingActionButton fabCreateShoppingList = (FloatingActionButton) base.findViewById(R.id.btnFab);
         fabCreateShoppingList.attachToListView(shoppingNameListView);
+        fabCreateShoppingList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CreateShoppingListDialog createShoppingListDialog = new CreateShoppingListDialog();
+                createShoppingListDialog.setTargetFragment(getFragmentInstance(), 0);
+                createShoppingListDialog.show(getFragmentManager(), Constants.SHOPPING_LIST_NAME);
+            }
+        });
         contentView.removeAllViews();
         contentView.addView(base);
+    }
+
+    public void createShoppingList(String shoppingListName) {
+        shoppingListName = shoppingListName.trim();
+        if (shoppingListName.length() == 0) {
+            Toast.makeText(getActivity(), "Please enter a valid name", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        HashMap<String, String> params = new HashMap<>();
+        params.put(Constants.SL_NAME, shoppingListName);
+        params.put(Constants.IS_PUBLIC, "1");
+        HashMap<Object, String> additionalCtx = new HashMap<>();
+        additionalCtx.put(Constants.SL_NAME, shoppingListName);
+        startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.SL_CREATE_LIST, params,
+                true, false, additionalCtx);
     }
 
     private void launchShoppingListSummary(ShoppingListName shoppingListName) {
@@ -213,6 +262,12 @@ public class ShoppingListFragment extends BaseFragment {
             imgEditShoppingListName.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (shoppingListName.isSystem()) {
+                        if (getBaseActivity() != null) {
+                            getBaseActivity().showAlertDialog(getActivity(), null, getString(R.string.isSystemShoppingListMsg));
+                        }
+                        return;
+                    }
                     EditShoppingDialog editShoppingDialog = EditShoppingDialog.newInstance(shoppingListName);
                     editShoppingDialog.setTargetFragment(getFragmentInstance(), 0);
                     editShoppingDialog.show(getFragmentManager(), Constants.SHOPPING_LIST_NAME);
@@ -221,15 +276,18 @@ public class ShoppingListFragment extends BaseFragment {
             imgDeleteShoppingList.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (shoppingListName.isSystem()) {
+                        if (getBaseActivity() != null) {
+                            getBaseActivity().showAlertDialog(getActivity(), null, getString(R.string.isSystemShoppingListMsg));
+                        }
+                        return;
+                    }
                     DeleteShoppingListDialog deleteShoppingListDialog = DeleteShoppingListDialog.newInstance(shoppingListName);
                     deleteShoppingListDialog.setTargetFragment(getFragmentInstance(), 0);
                     deleteShoppingListDialog.show(getFragmentManager(), Constants.SHOPPING_LIST_NAME);
                 }
             });
             txtShoppingListName.setText(shoppingListName.getName());
-
-            SwipeLayout swipeLayout = (SwipeLayout) convertView.findViewById(getSwipeLayoutResourceId(position));
-            swipeLayout.setSwipeEnabled(!shoppingListName.isSystem());
         }
 
         @Override
@@ -266,6 +324,14 @@ public class ShoppingListFragment extends BaseFragment {
         HashMap<Object, String> additionalCtx = new HashMap<>();
         additionalCtx.put(Constants.SHOPPING_LIST_NAME, shoppingListName.getName());
         startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.SL_DELETE_LIST, params, true, false, additionalCtx);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (mShoppingListNames != null && mShoppingListNames.size() > 0) {
+            outState.putParcelableArrayList(Constants.SHOPPING_LISTS, mShoppingListNames);
+        }
+        super.onSaveInstanceState(outState);
     }
 
     @Override

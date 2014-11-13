@@ -60,6 +60,9 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        if (getView() != null) {
+            getView().setClickable(true);
+        }
         setTitle();
     }
 
