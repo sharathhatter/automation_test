@@ -6,6 +6,8 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Section implements Parcelable {
     public static final String BANNER = "banner";
@@ -16,8 +18,16 @@ public class Section implements Parcelable {
     public static final String IMAGE = "image";
     public static final String TILE = "tile";
 
-    public static String[] getSupportedSectionTypes() {
-        return new String[]{BANNER, SALUTATION, PRODUCT_CAROUSEL, INFO_WIDGET, AD, IMAGE, TILE};
+    public static Set<String> getSupportedSectionTypes() {
+        Set<String> sectionTypeSets = new HashSet<>();
+        sectionTypeSets.add(BANNER);
+        sectionTypeSets.add(SALUTATION);
+        sectionTypeSets.add(PRODUCT_CAROUSEL);
+        sectionTypeSets.add(INFO_WIDGET);
+        sectionTypeSets.add(AD);
+        sectionTypeSets.add(IMAGE);
+        sectionTypeSets.add(TILE);
+        return sectionTypeSets;
     }
 
     @SerializedName(Constants.SECTION_TYPE)

@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.product.PromoCategoryAdapter;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
@@ -21,10 +22,10 @@ import com.bigbasket.mobileapp.util.ParserUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 
 public class PromoCategoryFragment extends BaseFragment {
@@ -90,13 +91,13 @@ public class PromoCategoryFragment extends BaseFragment {
     }
 
     private ArrayList<PromoCategory> filterPromoCategories() {
-        String[] allPromoTypes = Promo.getAllTypes();
+        Set<String> allPromoTypes = Promo.getAllTypes();
         ArrayList<PromoCategory> filteredPromoCatList = new ArrayList<>();
         for (PromoCategory promoCategory : mPromoCategoryList) {
             ArrayList<Promo> newPromos = new ArrayList<>();
 
             for (Promo promo : promoCategory.getPromos()) {
-                if (ArrayUtils.contains(allPromoTypes, promo.getPromoType())) {
+                if (allPromoTypes.contains(promo.getPromoType())) {
                     newPromos.add(promo);
                 }
             }

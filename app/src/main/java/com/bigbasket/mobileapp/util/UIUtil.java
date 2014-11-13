@@ -15,8 +15,6 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -84,8 +82,41 @@ public class UIUtil {
             case 2:
                 return lst.get(0) + " " + separator + " " + lst.get(1);
             default:
-                return StringUtils.join(lst.subList(0, lenLst - 1), ", ") + " " + separator + " " + lst.get(lenLst - 1);
+                return strJoin(lst.subList(0, lenLst - 1), ", ") + " " + separator + " " + lst.get(lenLst - 1);
         }
+    }
+
+    public static String strJoin(List<String> stringList, String separator) {
+        StringBuilder sbr = new StringBuilder();
+        int len = stringList.size();
+        for (int i = 0; i < len; i++) {
+            sbr.append(stringList.get(i));
+            if (i != len - 1) {
+                sbr.append(separator);
+            }
+        }
+        return sbr.toString();
+    }
+
+
+    public static String strJoin(String[] stringArray, String separator) {
+        StringBuilder sbr = new StringBuilder();
+        int len = stringArray.length;
+        for (int i = 0; i < len; i++) {
+            sbr.append(stringArray[i]);
+            if (i != len - 1) {
+                sbr.append(separator);
+            }
+        }
+        return sbr.toString();
+    }
+
+    public static String abbreviate(String txt, int sz) {
+        if (txt.length() <= sz) {
+            return txt;
+        }
+        String abbreviatedTxt = txt.substring(0, sz - 4);
+        return abbreviatedTxt + "...";
     }
 
     public static boolean isValidEmail(String email) {

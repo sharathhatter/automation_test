@@ -8,6 +8,7 @@ import android.database.MatrixCursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.text.TextUtils;
+
 import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
 import com.bigbasket.mobileapp.adapter.db.SearchSuggestionAdapter;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -21,7 +22,7 @@ import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.ParserUtil;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.apache.commons.lang3.ArrayUtils;
+
 import org.apache.http.HttpStatus;
 import org.apache.http.impl.client.BasicCookieStore;
 
@@ -89,12 +90,16 @@ public class SearchSuggestionProvider extends ContentProvider {
 
         MatrixCursor matrixCursor = null;
         if (autoSearchResponse != null) {
-            if (!ArrayUtils.isEmpty(autoSearchResponse.getTerms()) || !ArrayUtils.isEmpty(autoSearchResponse.getCategories())) {
+            String[] termsArray = autoSearchResponse.getTerms();
+            String[] categoriesArray = autoSearchResponse.getCategories();
+            String[] suggestedTermsArray = autoSearchResponse.getSuggestedTerm();
+            String[] topSearchesArray = autoSearchResponse.getTopSearches();
+            if ((termsArray != null && termsArray.length > 0) || (categoriesArray != null && categoriesArray.length > 0)) {
                 matrixCursor = getMatrixCursorForArray(autoSearchResponse.getTerms(), autoSearchResponse.getCategories(),
                         autoSearchResponse.getCategoriesUrl());
-            } else if (!ArrayUtils.isEmpty(autoSearchResponse.getSuggestedTerm())) {
+            } else if (suggestedTermsArray != null && suggestedTermsArray.length > 0) {
                 matrixCursor = getMatrixCursorForArray(autoSearchResponse.getSuggestedTerm(), "Suggestion");
-            } else if (!ArrayUtils.isEmpty(autoSearchResponse.getTopSearches())) {
+            } else if (topSearchesArray != null && topSearchesArray.length > 0) {
                 matrixCursor = getMatrixCursorForArray(autoSearchResponse.getTopSearches(), "Top Searches");
             }
         }
@@ -117,12 +122,12 @@ public class SearchSuggestionProvider extends ContentProvider {
                 SearchManager.SUGGEST_COLUMN_TEXT_2, SearchManager.SUGGEST_COLUMN_INTENT_EXTRA_DATA,
                 SearchManager.SUGGEST_COLUMN_INTENT_DATA_ID});
         int i = 0;
-        if (!ArrayUtils.isEmpty(termsArray)) {
+        if (termsArray != null && termsArray.length > 0) {
             for (i = 0; i < termsArray.length; i++) {
                 matrixCursor.addRow(new String[]{String.valueOf(i), termsArray[i], null, null, termsArray[i]});
             }
         }
-        if (!ArrayUtils.isEmpty(categoriesArray)) {
+        if (categoriesArray != null && categoriesArray.length > 0) {
             for (int j = 0; j < categoriesArray.length; j++) {
                 String categoryName = null;
                 String categoryUrl = null;

@@ -60,7 +60,6 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,8 +69,8 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         CartInfoAware, HandlerAware {
 
     private ActionBarDrawerToggle mDrawerToggle;
-    private CharSequence mDrawerTitle;
-    private CharSequence mTitle;
+    private String mDrawerTitle;
+    private String mTitle;
     private BasketOperationResponse basketOperationResponse;
     private CartSummary cartInfo = new CartSummary();
     protected Handler handler;
@@ -84,7 +83,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         setContentView(R.layout.uiv3_main_layout);
 
         handler = new MessageHandler(this);
-        mTitle = mDrawerTitle = getTitle();
+        mTitle = mDrawerTitle = getTitle().toString();
 
         Toolbar toolbar = getToolbar();
         setSupportActionBar(toolbar);
@@ -507,7 +506,11 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             mTitle = title == null ? "" : "  " + title;
-            actionBar.setTitle(StringUtils.abbreviate(mTitle.toString(), 25));
+            if (mTitle.length() > 25) {
+                mTitle = mTitle.substring(0, 22);
+                mTitle += "...";
+            }
+            actionBar.setTitle(mTitle);
         }
     }
 

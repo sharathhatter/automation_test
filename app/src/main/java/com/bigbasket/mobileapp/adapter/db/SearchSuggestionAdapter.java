@@ -6,9 +6,9 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteException;
+
 import com.bigbasket.mobileapp.model.search.AutoSearchResponse;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
+import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -42,17 +42,24 @@ public class SearchSuggestionAdapter {
         ContentValues contentValues = new ContentValues();
         contentValues.put(COLUMN_QUERY, DatabaseUtils.sqlEscapeString(autoSearchResponse.getQuery()));
         contentValues.put(COLUMN_CREATED_ON, new SimpleDateFormat("dd-MM-yyyy").format(new Date(System.currentTimeMillis())));
-        if (!ArrayUtils.isEmpty(autoSearchResponse.getTerms())) {
-            contentValues.put(COLUMN_TERMS, StringUtils.join(autoSearchResponse.getTerms(), ','));
+
+        String[] termsArray = autoSearchResponse.getTerms();
+        String[] categoriesArray = autoSearchResponse.getCategories();
+        String[] categoriesUrlArray = autoSearchResponse.getCategoriesUrl();
+        String[] suggestedTermsArray = autoSearchResponse.getSuggestedTerm();
+        String[] topSearchesArray = autoSearchResponse.getTopSearches();
+
+        if (termsArray != null && termsArray.length > 0) {
+            contentValues.put(COLUMN_TERMS, UIUtil.strJoin(termsArray, ","));
         }
-        if (!ArrayUtils.isEmpty(autoSearchResponse.getCategories())) {
-            contentValues.put(COLUMN_CATEGORIES, StringUtils.join(autoSearchResponse.getCategories(), ','));
+        if (categoriesArray != null && categoriesArray.length > 0) {
+            contentValues.put(COLUMN_CATEGORIES, UIUtil.strJoin(categoriesArray, ","));
         }
-        if (!ArrayUtils.isEmpty(autoSearchResponse.getCategoriesUrl())) {
-            contentValues.put(COLUMN_CATEGORY_URLS, StringUtils.join(autoSearchResponse.getCategoriesUrl(), ','));
+        if (categoriesUrlArray != null && categoriesUrlArray.length > 0) {
+            contentValues.put(COLUMN_CATEGORY_URLS, UIUtil.strJoin(categoriesUrlArray, ","));
         }
-        if (!ArrayUtils.isEmpty(autoSearchResponse.getSuggestedTerm())) {
-            contentValues.put(COLUMN_SUGGESTED_TERMS, StringUtils.join(autoSearchResponse.getSuggestedTerm(), ','));
+        if (suggestedTermsArray != null && suggestedTermsArray.length > 0) {
+            contentValues.put(COLUMN_SUGGESTED_TERMS, UIUtil.strJoin(suggestedTermsArray, ","));
         }
         if (hasElement(autoSearchResponse.getQuery(), COLUMN_QUERY)) {
             DatabaseHelper.db.update(tableName, contentValues,
