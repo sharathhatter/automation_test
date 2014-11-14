@@ -162,90 +162,84 @@ public class SubCategoryListFragment extends BaseFragment {
             }
         }
 
-        try {
-            // banner images
-            renderBanner(categoriesJsonObject, contentView);
+        // banner images
+        renderBanner(categoriesJsonObject, contentView);
 
-            final List<Category> categoryArrayList = new ArrayList<>();
+        final List<Category> categoryArrayList = new ArrayList<>();
 
-            // subcat added by client
-            Category newLaunchesCategory = new Category("New Launches", "launches");
-            categoryArrayList.add(newLaunchesCategory);
+        // subcat added by client
+        Category newLaunchesCategory = new Category("New Launches", "launches");
+        categoryArrayList.add(newLaunchesCategory);
 
-            Category offersCategory = new Category("Offers", "offers");
-            categoryArrayList.add(offersCategory);
+        Category offersCategory = new Category("Offers", "offers");
+        categoryArrayList.add(offersCategory);
 
-            Category allCategories = new Category("All " + topCatName.trim(), topCatSlug);
-            categoryArrayList.add(allCategories);
+        Category allCategories = new Category("All " + topCatName.trim(), topCatSlug);
+        categoryArrayList.add(allCategories);
 
-            for (int i = 0; i < subCategoryModel.getCategory().size(); i++) {
-                Category subCat = subCategoryModel.getCategory().get(i);
-                if(subCat.getCategory()!=null && subCat.getCategory().size()>0){
-                    Category offersBottomCategory = new Category("Offers", "offerssub");
-                    subCat.getCategory().add(0,offersBottomCategory);
+        for (int i = 0; i < subCategoryModel.getCategory().size(); i++) {
+            Category subCat = subCategoryModel.getCategory().get(i);
+            if(subCat.getCategory()!=null && subCat.getCategory().size()>0){
+                Category offersBottomCategory = new Category("Offers", "offerssub");
+                subCat.getCategory().add(0,offersBottomCategory);
 
-                    Category allBottomCategory = new Category("All "+subCategoryModel.getCategory().get(i).getName(),
-                            subCat.getSlug());
-                    subCat.getCategory().add(1,allBottomCategory);
-                }
-                categoryArrayList.add(subCat);
-
+                Category allBottomCategory = new Category("All "+subCategoryModel.getCategory().get(i).getName(),
+                        subCat.getSlug());
+                subCat.getCategory().add(1,allBottomCategory);
             }
+            categoryArrayList.add(subCat);
 
-            final ExpandableListView subCategoryExpandableView = new ExpandableListView(getActivity());
-            subCategoryExpandableView.setGroupIndicator(null);
-            subCategoryExpandableView.setDivider(new ColorDrawable(getResources().getColor(R.color.strokeLine)));
-            subCategoryExpandableView.setDividerHeight(1);
-            subCategoryExpandableView.setLayoutParams(new
-                    LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-
-
-            SubCategoryListAdapter subCategoryListAdapter = new SubCategoryListAdapter(this, categoryArrayList, getActivity());
-            subCategoryExpandableView.setAdapter(subCategoryListAdapter);
-            contentView.addView(subCategoryExpandableView);
-
-            subCategoryExpandableView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-                @Override
-                public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-                    if (categoryArrayList.get(groupPosition).getCategory()!=null &&
-                            categoryArrayList.get(groupPosition).getCategory().size()>0) {
-                    } else {
-                        Bundle bundle = new Bundle();
-                        bundle.putString("slug_name_category", categoryArrayList.get(groupPosition).getSlug());
-                        CategoryProductsFragment categoryProductsFragment = new CategoryProductsFragment();
-                        categoryProductsFragment.setArguments(bundle);
-                        changeFragment(categoryProductsFragment);
-                        return false;
-                    }
-                    return false;
-                }
-            });
-
-            subCategoryExpandableView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-                @Override
-                public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                    if (childPosition == 1) {
-                        Bundle bundle = new Bundle();
-                        bundle.putString("slug_name_category", categoryArrayList.get(groupPosition).getSlug());
-                        CategoryProductsFragment categoryProductsFragment = new CategoryProductsFragment();
-                        categoryProductsFragment.setArguments(bundle);
-                        changeFragment(categoryProductsFragment);
-                    } else {
-                        Bundle bundle = new Bundle();
-                        bundle.putString("slug_name_category", categoryArrayList.get(groupPosition).getCategory().get(childPosition).getSlug());
-                        CategoryProductsFragment categoryProductsFragment = new CategoryProductsFragment();
-                        categoryProductsFragment.setArguments(bundle);
-                        changeFragment(categoryProductsFragment);
-                    }
-                    return false;
-                }
-            });
-
-        } catch (Exception e) {
-
-            showErrorMsg("Please try again later");
-            e.printStackTrace();
         }
+
+        final ExpandableListView subCategoryExpandableView = new ExpandableListView(getActivity());
+        subCategoryExpandableView.setGroupIndicator(null);
+        subCategoryExpandableView.setDivider(new ColorDrawable(getResources().getColor(R.color.strokeLine)));
+        subCategoryExpandableView.setDividerHeight(1);
+        subCategoryExpandableView.setLayoutParams(new
+                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
+
+        SubCategoryListAdapter subCategoryListAdapter = new SubCategoryListAdapter(this, categoryArrayList, getActivity());
+        subCategoryExpandableView.setAdapter(subCategoryListAdapter);
+        contentView.addView(subCategoryExpandableView);
+
+        subCategoryExpandableView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+            @Override
+            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+                if (categoryArrayList.get(groupPosition).getCategory()!=null &&
+                        categoryArrayList.get(groupPosition).getCategory().size()>0) {
+                } else {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("slug_name_category", categoryArrayList.get(groupPosition).getSlug());
+                    CategoryProductsFragment categoryProductsFragment = new CategoryProductsFragment();
+                    categoryProductsFragment.setArguments(bundle);
+                    changeFragment(categoryProductsFragment);
+                    return false;
+                }
+                return false;
+            }
+        });
+
+        subCategoryExpandableView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                if (childPosition == 1) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("slug_name_category", categoryArrayList.get(groupPosition).getSlug());
+                    CategoryProductsFragment categoryProductsFragment = new CategoryProductsFragment();
+                    categoryProductsFragment.setArguments(bundle);
+                    changeFragment(categoryProductsFragment);
+                } else {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("slug_name_category", categoryArrayList.get(groupPosition).getCategory().get(childPosition).getSlug());
+                    CategoryProductsFragment categoryProductsFragment = new CategoryProductsFragment();
+                    categoryProductsFragment.setArguments(bundle);
+                    changeFragment(categoryProductsFragment);
+                }
+                return false;
+            }
+        });
+
     }
 
     private void renderBanner(JsonObject categoriesJsonObject, LinearLayout contentView){
