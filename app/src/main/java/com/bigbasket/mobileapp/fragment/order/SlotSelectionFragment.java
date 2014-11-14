@@ -145,6 +145,7 @@ public class SlotSelectionFragment extends BaseFragment {
     public void showSlotListDialog(SlotGroup slotGroup) {
         mSlotListDialog = new Dialog(getActivity());
         mSlotListDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        mSlotListDialog.setCanceledOnTouchOutside(true);
         ListView lstViewSlot = new ListView(getActivity());
         lstViewSlot.setDivider(null);
         lstViewSlot.setDividerHeight(0);
@@ -234,11 +235,23 @@ public class SlotSelectionFragment extends BaseFragment {
         private List<BaseSlot> flattenedSlotGroupList;
         private int slotNotAvailableTextColor;
         private int size;
+        private int VIEW_TYPE_HEADER = 0;
+        private int VIEW_TYPE_ITEM = 1;
 
         public SlotListAdapter(List<BaseSlot> flattenedSlotGroupList) {
             this.flattenedSlotGroupList = flattenedSlotGroupList;
             this.slotNotAvailableTextColor = getResources().getColor(R.color.slotSeletionNotAvailableColor);
             this.size = flattenedSlotGroupList.size();
+        }
+
+        @Override
+        public int getViewTypeCount() {
+            return 2;
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            return flattenedSlotGroupList.get(position) instanceof Slot ? VIEW_TYPE_ITEM : VIEW_TYPE_HEADER;
         }
 
         @Override
@@ -259,15 +272,15 @@ public class SlotSelectionFragment extends BaseFragment {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             BaseSlot baseSlot = flattenedSlotGroupList.get(position);
-            if (baseSlot instanceof Slot) {
+            if (getItemViewType(position) == VIEW_TYPE_ITEM) {
                 View slotView = getSlotView((Slot) baseSlot, convertView);
                 View listSeparator = slotView.findViewById(R.id.listSeparator);
                 LinearLayout itemTextLayout = (LinearLayout) slotView.findViewById(R.id.itemTextLayout);
-                if ((position + 1) < size && flattenedSlotGroupList.get(position + 1) instanceof SlotHeader) {
+                if ((position + 1) < size && getItemViewType(position + 1) == VIEW_TYPE_HEADER) {
                     listSeparator.setVisibility(View.VISIBLE);
-                    itemTextLayout.setPadding(0, 16, 0, 16);
+                    itemTextLayout.setPadding(0, (int) getResources().getDimension(R.dimen.padding_normal), 0, (int) getResources().getDimension(R.dimen.padding_normal));
                 } else {
-                    itemTextLayout.setPadding(0, 16, 0, 0);
+                    itemTextLayout.setPadding(0, (int) getResources().getDimension(R.dimen.padding_normal), 0, (int) getResources().getDimension(R.dimen.padding_normal));
                     listSeparator.setVisibility(View.GONE);
                 }
                 return slotView;
@@ -276,9 +289,8 @@ public class SlotSelectionFragment extends BaseFragment {
         }
 
         private View getHeaderView(SlotHeader slotHeader, View row) {
-            if (row == null || row.getTag() == null || !row.getTag().toString().equalsIgnoreCase(Constants.IS_SLOT_HEADER)) {
-                row = getInflatedHeaderView();
-                row.setTag(Constants.IS_SLOT_HEADER);
+            if (row == null) {
+                row = getActivity().getLayoutInflater().inflate(R.layout.uiv3_list_title, null);
             }
             TextView txtHeaderMsg = (TextView) row.findViewById(R.id.txtHeaderMsg);
 
@@ -289,9 +301,8 @@ public class SlotSelectionFragment extends BaseFragment {
         }
 
         private View getSlotView(Slot slot, View row) {
-            if (row == null || row.getTag() == null || !row.getTag().toString().equalsIgnoreCase(Constants.IS_SLOT)) {
-                row = getInflatedSlotView();
-                row.setTag(Constants.IS_SLOT);
+            if (row == null) {
+                row = getActivity().getLayoutInflater().inflate(R.layout.uiv3_list_icon_and_two_texts_row, null);
                 row.setBackgroundColor(getResources().getColor(R.color.uiv3_list_bkg_light_color));
             }
             TextView txtTitle = (TextView) row.findViewById(R.id.itemTitle);
@@ -310,16 +321,6 @@ public class SlotSelectionFragment extends BaseFragment {
                 imgRow.setImageResource(R.drawable.deliveryslot_deactive);
             }
             return row;
-        }
-
-        private View getInflatedHeaderView() {
-            LayoutInflater inflater = getActivity().getLayoutInflater();
-            return inflater.inflate(R.layout.uiv3_list_title, null);
-        }
-
-        private View getInflatedSlotView() {
-            LayoutInflater inflater = getActivity().getLayoutInflater();
-            return inflater.inflate(R.layout.uiv3_list_icon_and_two_texts_row, null);
         }
     }
 
