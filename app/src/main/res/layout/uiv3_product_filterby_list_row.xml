@@ -20,7 +20,7 @@
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@id/chkFilter"
         android:drawablePadding="@dimen/padding_small"
-        android:textColor="@color/uiv3_filter_by_text_color"
+        android:textColor="@color/uiv3_dialog_primary_text_color"
         android:textSize="@dimen/primary_text_size"
         android:id="@+id/txtListRow"
         />

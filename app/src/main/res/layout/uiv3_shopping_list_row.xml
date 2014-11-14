@@ -39,14 +39,16 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:gravity="center_vertical"
         android:background="@color/uiv3_list_bkg_color">
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:id="@+id/txtShopLstName"
             android:textSize="@dimen/primary_text_size"
             android:paddingLeft="@dimen/padding_normal"
+            android:gravity="center_vertical"
             android:layout_centerVertical="true"
             android:textColor="@color/uiv3_primary_text_color"/>
     </RelativeLayout>

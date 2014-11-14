@@ -40,13 +40,12 @@
         <meta-data
             android:name="android.app.default_searchable"
             android:value=".activity.product.SearchableActivity"/>
-        <meta-data android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
         <activity
             android:name=".activity.StartActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/BBAppTheme">
+            android:theme="@style/BBAppTheme"
+            android:windowSoftInputMode="stateHidden|adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -104,7 +103,8 @@
         <!--</intent-filter>-->
         <!--</activity>-->
 
-        <activity android:name="com.luminous.pick.CustomGalleryActivity">
+        <activity android:name="com.luminous.pick.CustomGalleryActivity"
+            android:windowSoftInputMode="stateHidden|adjustPan">
             <intent-filter>
                 <action android:name="luminous.ACTION_PICK"/>
                 <action android:name="luminous.ACTION_MULTIPLE_PICK"/>
@@ -161,9 +161,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.base.uiv3.BBActivity"/>
+            android:name=".activity.base.uiv3.BBActivity"
+            android:windowSoftInputMode="stateHidden|adjustPan"/>
 
-        <activity android:name=".activity.product.SearchableActivity">
+        <activity android:name=".activity.product.SearchableActivity"
+            android:windowSoftInputMode="stateHidden|adjustPan">
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable"/>
@@ -172,23 +174,28 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.account.uiv3.SignInSignUpActivity">
+            android:name=".activity.account.uiv3.SignInSignUpActivity"
+            android:windowSoftInputMode="stateHidden|adjustPan">
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable"/>
         </activity>
         <activity
-            android:name=".activity.order.uiv3.PlaceOrderActivity"/>
+            android:name=".activity.order.uiv3.PlaceOrderActivity"
+            android:windowSoftInputMode="stateHidden|adjustPan"/>
         <activity
-            android:name=".activity.order.uiv3.OrderDetailActivity"/>
+            android:name=".activity.order.uiv3.OrderDetailActivity"
+            android:windowSoftInputMode="stateHidden|adjustPan"/>
         <activity
-            android:name=".activity.order.uiv3.AvailableVoucherListActivity"/>
+            android:name=".activity.order.uiv3.AvailableVoucherListActivity"
+            android:windowSoftInputMode="stateHidden|adjustPan"/>
 
         <service
             android:name="com.bigbasket.mobileapp.task.UploadImageService"
             android:label="@string/uploadServiceForPrescriptionImage"/>
 
         <activity android:name=".activity.order.MemberAddressFormActivity"
+            android:windowSoftInputMode="stateHidden|adjustPan"
             />
         <activity
             android:name="com.facebook.LoginActivity"
@@ -196,13 +203,15 @@
         </activity>
 
         <activity
-            android:name=".activity.order.uiv3.PayuTransactionActivity"/>
+            android:name=".activity.order.uiv3.PayuTransactionActivity"
+            android:windowSoftInputMode="stateHidden|adjustPan"/>
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/fb_app_id"/>
 
-        <activity android:name=".activity.account.uiv3.OrderListActivity"/>
+        <activity android:name=".activity.account.uiv3.OrderListActivity"
+            android:windowSoftInputMode="stateHidden|adjustPan"/>
 
         <provider
             android:authorities="com.bigbasket.mobileapp.contentProvider.SearchSuggestionProvider"

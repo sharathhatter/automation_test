@@ -51,16 +51,8 @@ public class QCErrorData implements Parcelable {
         return reservedQuantity;
     }
 
-    public void setReservedQuantity(String reservedQuantity) {
-        this.reservedQuantity = reservedQuantity;
-    }
-
     public String getOriginalQuantity() {
         return originalQuantity;
-    }
-
-    public void setOriginalQuantity(String originalQuantity) {
-        this.originalQuantity = originalQuantity;
     }
 
     public Product getProduct() {

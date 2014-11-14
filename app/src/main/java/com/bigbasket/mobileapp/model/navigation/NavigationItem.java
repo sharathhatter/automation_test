@@ -25,8 +25,4 @@ public class NavigationItem extends BaseNavigationItem {
     public ArrayList<NavigationSubItem> getNavigationSubItems() {
         return navigationSubItems;
     }
-
-    public void setNavigationSubItems(ArrayList<NavigationSubItem> navigationSubItems) {
-        this.navigationSubItems = navigationSubItems;
-    }
 }

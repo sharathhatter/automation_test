@@ -8,7 +8,15 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.util.Constants;
@@ -20,14 +28,13 @@ import com.facebook.Session;
 import com.facebook.model.GraphUser;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
 import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-
 public class SignInFragment extends FacebookRegisterLogIn {
-
     private static final String TAG = SignInFragment.class.getSimpleName();
     private EditText editTextEmail, editTextPasswd;
     private Button btnLogin;
@@ -121,6 +128,8 @@ public class SignInFragment extends FacebookRegisterLogIn {
         imgPasswdErr = (ImageView) base.findViewById(R.id.imgPasswdErr);
         imgEmailErr.setVisibility(View.GONE);
         imgPasswdErr.setVisibility(View.GONE);
+//        base.findViewById(R.id.sign_in_button).setOnClickListener(this);
+
     }
 
     public void OnLoginButtonClicked() {
@@ -320,5 +329,4 @@ public class SignInFragment extends FacebookRegisterLogIn {
     public String getTitle() {
         return null;
     }
-
 }

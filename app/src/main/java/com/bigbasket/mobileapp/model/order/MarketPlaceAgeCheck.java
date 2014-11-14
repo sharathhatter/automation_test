@@ -76,16 +76,8 @@ public class MarketPlaceAgeCheck extends FulfillmentInfo implements Parcelable {
         return ageLimit;
     }
 
-    public void setAgeLimit(int ageLimit) {
-        this.ageLimit = ageLimit;
-    }
-
     public String getAgeMessage() {
         return ageMessage;
-    }
-
-    public void setAgeMessage(String ageMessage) {
-        this.ageMessage = ageMessage;
     }
 
 }

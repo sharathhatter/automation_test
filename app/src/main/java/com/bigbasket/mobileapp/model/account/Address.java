@@ -161,24 +161,12 @@ public class Address implements Parcelable {
         return contactNum;
     }
 
-    public void setContactNum(String contactNum) {
-        this.contactNum = contactNum;
-    }
-
     public String getAddressNickName() {
         return addressNickName;
     }
 
-    public void setAddressNickName(String addressNickName) {
-        this.addressNickName = addressNickName;
-    }
-
     public String getFirstName() {
         return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
     }
 
     public String getName() {
@@ -189,40 +177,20 @@ public class Address implements Parcelable {
         return lastName;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
     public String getHouseNumber() {
         return houseNumber;
-    }
-
-    public void setHouseNumber(String houseNumber) {
-        this.houseNumber = houseNumber;
     }
 
     public String getStreet() {
         return street;
     }
 
-    public void setStreet(String street) {
-        this.street = street;
-    }
-
     public String getResidentialComplex() {
         return residentialComplex;
     }
 
-    public void setResidentialComplex(String residentialComplex) {
-        this.residentialComplex = residentialComplex;
-    }
-
     public String getLandmark() {
         return landmark;
-    }
-
-    public void setLandmark(String landmark) {
-        this.landmark = landmark;
     }
 
     public String getArea() {
@@ -237,16 +205,8 @@ public class Address implements Parcelable {
         return cityName;
     }
 
-    public void setCityName(String cityName) {
-        this.cityName = cityName;
-    }
-
     public String getPincode() {
         return pincode;
-    }
-
-    public void setPincode(String pincode) {
-        this.pincode = pincode;
     }
 
     @Override

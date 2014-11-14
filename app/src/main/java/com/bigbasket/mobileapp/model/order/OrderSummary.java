@@ -102,55 +102,27 @@ public class OrderSummary implements Parcelable {
         return memberSummary;
     }
 
-    public void setMemberSummary(MemberSummary memberSummary) {
-        this.memberSummary = memberSummary;
-    }
-
     public String getBaseImgUrl() {
         return baseImgUrl;
-    }
-
-    public void setBaseImgUrl(String baseImgUrl) {
-        this.baseImgUrl = baseImgUrl;
     }
 
     public ArrayList<CartItemList> getCartItems() {
         return cartItems;
     }
 
-    public void setCartItems(ArrayList<CartItemList> cartItems) {
-        this.cartItems = cartItems;
-    }
-
     public ArrayList<SlotGroup> getSlotGroups() {
         return slotGroups;
-    }
-
-    public void setSlotGroups(ArrayList<SlotGroup> slotGroups) {
-        this.slotGroups = slotGroups;
     }
 
     public OrderDetails getOrderDetails() {
         return orderDetails;
     }
 
-    public void setOrderDetails(OrderDetails orderDetails) {
-        this.orderDetails = orderDetails;
-    }
-
     public ArrayList<CreditDetails> getCreditDetails() {
         return creditDetails;
     }
 
-    public void setCreditDetails(ArrayList<CreditDetails> creditDetails) {
-        this.creditDetails = creditDetails;
-    }
-
     public ArrayList<AnnotationInfo> getAnnotationInfos() {
         return annotationInfos;
-    }
-
-    public void setAnnotationInfos(ArrayList<AnnotationInfo> annotationInfos) {
-        this.annotationInfos = annotationInfos;
     }
 }

@@ -43,8 +43,6 @@ import java.util.Set;
 
 public class StartActivity extends BaseActivity {
 
-    private static final String TAG = StartActivity.class.getName();
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -199,7 +197,7 @@ public class StartActivity extends BaseActivity {
                     String.valueOf(width) + "X" + String.valueOf(height));
             devicePropertiesJsonObj.put(Constants.SCREEN_DPI, densityDpi);
         } catch (JSONException e) {
-            Log.e(TAG, "Error while creating device-properties json");
+            Log.e("StartActivity", "Error while creating device-properties json");
         }
         params.put(Constants.PROPERTIES, devicePropertiesJsonObj.toString());
         startAsyncActivity(url, params, true, null, new BasicCookieStore(), additionalCtx);
@@ -247,11 +245,6 @@ public class StartActivity extends BaseActivity {
     public void onHttpError() {
         // TODO : Add error handling
         showAlertDialogFinish(this, null, "Server error");
-    }
-
-    @Override
-    public String getTag() {
-        return TAG;
     }
 
     @Override

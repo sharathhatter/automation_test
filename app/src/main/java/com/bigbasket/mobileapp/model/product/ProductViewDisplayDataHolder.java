@@ -49,10 +49,6 @@ public class ProductViewDisplayDataHolder {
         return showShopListDeleteBtn;
     }
 
-    public Typeface getSanSerifLightTypeface() {
-        return sanSerifLightTypeface;
-    }
-
     public Typeface getSerifTypeface() {
         return serifTypeface;
     }

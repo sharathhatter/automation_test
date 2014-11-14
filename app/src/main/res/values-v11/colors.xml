@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="uiv3_filter_by_text_color">@color/uiv3_primary_text_color</color>
+    <color name="uiv3_dialog_primary_text_color">@color/uiv3_primary_text_color</color>
 </resources>

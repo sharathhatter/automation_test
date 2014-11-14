@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.product.ProductListAdapter;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
@@ -20,8 +21,9 @@ import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.ParserUtil;
+import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.ProductListView;
-import org.apache.commons.lang3.StringUtils;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -109,7 +111,7 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
                 TextView brandNameTxt = (TextView) shopListHeaderLayout.findViewById(R.id.brandNameTxt);
                 brandNameTxt.setTypeface(faceRobotoRegular);
                 topname = topname.replaceAll("<br/>", " ");
-                brandNameTxt.setText(StringUtils.abbreviate(topname, 25));
+                brandNameTxt.setText(UIUtil.abbreviate(topname, 25));
                 List<Product> productList = ParserUtil.parseProductJsonArray(productJsonArray, baseImgUrl);
                 Button btnAddAllToBasket = (Button) shopListHeaderLayout.findViewById(R.id.btnAddAllToBasket);
                 if (Product.areAllProductsOutOfStock(productList)) {

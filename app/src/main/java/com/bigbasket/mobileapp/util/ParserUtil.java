@@ -2,16 +2,32 @@ package com.bigbasket.mobileapp.util;
 
 import android.text.TextUtils;
 import android.util.Log;
+
 import com.bigbasket.mobileapp.model.account.Address;
 import com.bigbasket.mobileapp.model.account.UpdateProfileModel;
 import com.bigbasket.mobileapp.model.account.WalletDataItem;
-import com.bigbasket.mobileapp.model.cart.*;
-import com.bigbasket.mobileapp.model.order.*;
-import com.bigbasket.mobileapp.model.product.*;
+import com.bigbasket.mobileapp.model.cart.AnnotationInfo;
+import com.bigbasket.mobileapp.model.cart.BasketOperationResponse;
+import com.bigbasket.mobileapp.model.cart.CartItemList;
+import com.bigbasket.mobileapp.model.cart.CartSummary;
+import com.bigbasket.mobileapp.model.cart.FulfillmentInfo;
+import com.bigbasket.mobileapp.model.order.ActiveVouchers;
+import com.bigbasket.mobileapp.model.order.COReserveQuantity;
+import com.bigbasket.mobileapp.model.order.Order;
+import com.bigbasket.mobileapp.model.order.OrderInvoice;
+import com.bigbasket.mobileapp.model.order.OrderMonthRange;
+import com.bigbasket.mobileapp.model.order.OrderSummary;
+import com.bigbasket.mobileapp.model.order.QCErrorData;
+import com.bigbasket.mobileapp.model.product.FilterOption;
+import com.bigbasket.mobileapp.model.product.FilterOptionCategory;
+import com.bigbasket.mobileapp.model.product.FilterOptionItem;
+import com.bigbasket.mobileapp.model.product.Option;
+import com.bigbasket.mobileapp.model.product.Product;
+import com.bigbasket.mobileapp.model.product.ProductListData;
+import com.bigbasket.mobileapp.model.product.TopCategoryModel;
 import com.bigbasket.mobileapp.model.promo.ProductPromoInfo;
 import com.bigbasket.mobileapp.model.promo.PromoCategory;
 import com.bigbasket.mobileapp.model.promo.PromoDetail;
-import com.bigbasket.mobileapp.model.search.AutoCompleteTermModel;
 import com.bigbasket.mobileapp.model.search.AutoSearchResponse;
 import com.bigbasket.mobileapp.model.section.DestinationInfo;
 import com.bigbasket.mobileapp.model.section.Section;
@@ -19,14 +35,25 @@ import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListSummary;
 import com.bigbasket.mobileapp.model.slot.Slot;
 import com.bigbasket.mobileapp.model.slot.SlotGroup;
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class ParserUtil {
     private static final String TAG = ParserUtil.class.getName();
@@ -143,7 +170,7 @@ public class ParserUtil {
             }
 
             // get the sort options
-            List<Option> sortOptions = new ArrayList<>();
+            ArrayList<Option> sortOptions = new ArrayList<>();
             String sortedOnSlug = productListJsonData.optString(Constants.SORT_ON);
             if (productListJsonData.has(Constants.PRODUCT_SORT_OPTION)) {
                 JSONArray sortOptionJsonArray = productListJsonData.getJSONArray((Constants.PRODUCT_SORT_OPTION));
@@ -162,7 +189,7 @@ public class ParserUtil {
             data.setSortedOn(sortedOnSlug);
 
             // get the filter options
-            List<FilterOptionCategory> filterOptionCategories = new ArrayList<>();
+            ArrayList<FilterOptionCategory> filterOptionCategories = new ArrayList<>();
             Map<String, Set<String>> filteredOnOptions = new HashMap<>();
             JSONArray filterOptionJsonArray = productListJsonData.optJSONArray(Constants.FILTER_OPTIONS);
             if (filterOptionJsonArray != null) {
@@ -511,78 +538,6 @@ public class ParserUtil {
         } catch (JSONException e) {
             return null;
         }
-    }
-
-    public static ArrayList<AutoCompleteTermModel> parseSearchRespose(JsonObject jsonObject) {
-        ArrayList<AutoCompleteTermModel> parseArrayString = null;
-        try {
-            JsonObject responseJsonObject = jsonObject.get("response").getAsJsonObject();
-            JsonObject resObject = (responseJsonObject).get("tc").getAsJsonObject();
-            JsonArray jArrayTerm = resObject.get("term").getAsJsonArray();
-            JsonArray jArrayCategories = resObject.get("categories").getAsJsonArray();
-            JsonArray jArraySuggest = resObject.get("suggest_term").getAsJsonArray();
-            JsonArray jsonArrayTopSearches = resObject.get("top_search").getAsJsonArray();
-            parseArrayString = new ArrayList<>();
-            int lenTerm = jArrayTerm.size();
-            int lenSuggest = jArraySuggest.size();
-            if (lenTerm != 0) {
-            } else if (lenSuggest != 0) {
-                parseArrayString.add(new AutoCompleteTermModel(Constants.LIST_SUGGEST, null));
-                jArrayTerm = jArraySuggest;
-                lenTerm = lenSuggest;
-            } else if (jArrayCategories.size() == 0 && jsonArrayTopSearches.size() != 0) {
-                parseArrayString.add(new AutoCompleteTermModel(Constants.LIST_TOP_SEARCHES, null));
-                jArrayTerm = jsonArrayTopSearches;
-                lenTerm = jArrayTerm.size();
-            }
-            Constants.LEN_TERMS = lenTerm;
-
-            for (int i = 0; i < lenTerm; i++) {
-                parseArrayString.add(new AutoCompleteTermModel(jArrayTerm.get(i).getAsString()));
-            }
-            int lenCat = jArrayCategories.size();
-            Constants.LEN_CATEGORY = lenCat;
-            if (lenCat != 0)
-                parseArrayString.add(new AutoCompleteTermModel(Constants.LIST_CATEGORY, null));
-            for (int i = 0; i < lenCat; i++) {
-                parseArrayString.add(new AutoCompleteTermModel(jArrayCategories.get(i).getAsString()));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return parseArrayString;
-    }
-
-
-    public static ArrayList<String[]> parseCategoryUrl(String responseJson) {
-        String[] urlSlug = null, pcUrlSlug = null;
-        ArrayList<String[]> categoryUrlList = new ArrayList<>();
-        try {
-            JsonObject jsonObject = new JsonParser().parse(responseJson).getAsJsonObject();
-            JsonObject responseJsonObject = jsonObject.get("response").getAsJsonObject();
-            JsonObject resObject = (responseJsonObject).get("tc").getAsJsonObject();
-            JsonArray jArrayCategoriesUrl = resObject.get("categories_url").getAsJsonArray();
-
-            int catPosSlug = Constants.LEN_TERMS + 1;
-            int lenUrl = jArrayCategoriesUrl.size();
-            urlSlug = new String[lenUrl + Constants.LEN_TERMS + 1];
-            pcUrlSlug = new String[lenUrl + Constants.LEN_TERMS + 1];
-            for (int i = 0; i < lenUrl; i++) {
-                String strUrl = jArrayCategoriesUrl.get(i).getAsString();
-                int lenStrUrl = strUrl.split("/").length;
-                String catSlug = strUrl.split("/")[lenStrUrl - 1];
-                String pCatSlug = strUrl.split("/")[lenStrUrl - 2];
-                urlSlug[catPosSlug] = catSlug;
-                pcUrlSlug[catPosSlug] = pCatSlug;
-                catPosSlug += 1;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        categoryUrlList.add(urlSlug);
-        categoryUrlList.add(pcUrlSlug);
-
-        return categoryUrlList;
     }
 
     public static ArrayList<WalletDataItem> getListData(String resp) {

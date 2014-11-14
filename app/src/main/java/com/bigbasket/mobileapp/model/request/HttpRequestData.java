@@ -34,10 +34,6 @@ public class HttpRequestData {
         return additionalCtx;
     }
 
-    public void setAdditionalCtx(HashMap<Object, String> additionalCtx) {
-        this.additionalCtx = additionalCtx;
-    }
-
     public void setUrl(String url) {
         this.url = url;
     }
@@ -46,40 +42,20 @@ public class HttpRequestData {
         return post;
     }
 
-    public void setPost(boolean post) {
-        this.post = post;
-    }
-
     public String getBbAuthToken() {
         return bbAuthToken;
-    }
-
-    public void setBbAuthToken(String bbAuthToken) {
-        this.bbAuthToken = bbAuthToken;
     }
 
     public String getBbVid() {
         return bbVid;
     }
 
-    public void setBbVid(String bbVid) {
-        this.bbVid = bbVid;
-    }
-
     public String getOsVersion() {
         return osVersion;
     }
 
-    public void setOsVersion(String osVersion) {
-        this.osVersion = osVersion;
-    }
-
     public CookieStore getCookieStore() {
         return cookieStore;
-    }
-
-    public void setCookieStore(CookieStore cookieStore) {
-        this.cookieStore = cookieStore;
     }
 
     public String getUrl() {

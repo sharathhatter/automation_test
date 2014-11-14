@@ -16,7 +16,6 @@ import com.bigbasket.mobileapp.util.Constants;
  * Created by jugal on 7/8/14.
  */
 public class FlatPageWebViewActivity extends BaseActivity {
-    private static final String TAG = FlatPageWebViewActivity.class.getName();
     private ProgressBar progressBar;
 
     @Override
@@ -79,11 +78,6 @@ public class FlatPageWebViewActivity extends BaseActivity {
     @Override
     public BaseActivity getCurrentActivity() {
         return this;
-    }
-
-    @Override
-    public String getTag() {
-        return TAG;
     }
 
     private class MyWebViewClient extends WebViewClient {

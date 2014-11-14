@@ -14,3 +14,4 @@ facebook/gen/*
 app/proguard\\classes.txt
 app/proguard\\seeds.txt
 app/proguard\\configuration.txt
+floatingActionButton/build/*

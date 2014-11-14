@@ -83,63 +83,31 @@ public class MarketPlaceItems implements Parcelable { //implements Parcelable
         return ruleValidationArrayIndex;
     }
 
-    public void setRuleValidationArrayIndex(int ruleValidationArrayIndex) {
-        this.ruleValidationArrayIndex = ruleValidationArrayIndex;
-    }
-
     public int getItemIndex() {
         return itemIndex;
-    }
-
-    public void setItemIndex(int itemIndex) {
-        this.itemIndex = itemIndex;
     }
 
     public float getSalePrice() {
         return salePrice;
     }
 
-    public void setSalePrice(float salePrice) {
-        this.salePrice = salePrice;
-    }
-
     public String getSku() {
         return sku;
-    }
-
-    public void setSku(String sku) {
-        this.sku = sku;
     }
 
     public String getImageUrl() {
         return imageUrl;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
     public String getDesc() {
         return desc;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
     }
 
     public int getItemInCart() {
         return itemInCart;
     }
 
-    public void setItemInCart(int itemInCart) {
-        this.itemInCart = itemInCart;
-    }
-
     public float getTotalQty() {
         return totalQty;
-    }
-
-    public void setTotalQty(float totalQty) {
-        this.totalQty = totalQty;
     }
 }

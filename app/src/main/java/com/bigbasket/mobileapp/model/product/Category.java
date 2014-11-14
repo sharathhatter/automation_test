@@ -64,10 +64,6 @@ public class Category implements Parcelable, Serializable {
         return numberItems;
     }
 
-    public void setNumberItems(int numberItems) {
-        this.numberItems = numberItems;
-    }
-
     public void setSlug(String slug) {
         this.slug = slug;
     }

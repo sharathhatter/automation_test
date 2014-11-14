@@ -67,15 +67,6 @@ public class PromoSet implements Parcelable {
         }
     };
 
-    public PromoSet(String name, int valueInBasket, int promoCriteriaVal, int setId, String setType, String valType) {
-        this.name = name;
-        this.valueInBasket = valueInBasket;
-        this.promoCriteriaVal = promoCriteriaVal;
-        this.setId = setId;
-        this.setType = setType;
-        this.valType = valType;
-    }
-
     public String getName() {
         return name;
     }
@@ -88,39 +79,19 @@ public class PromoSet implements Parcelable {
         return valueInBasket;
     }
 
-    public void setValueInBasket(int valueInBasket) {
-        this.valueInBasket = valueInBasket;
-    }
-
     public int getPromoCriteriaVal() {
         return promoCriteriaVal;
-    }
-
-    public void setPromoCriteriaVal(int promoCriteriaVal) {
-        this.promoCriteriaVal = promoCriteriaVal;
     }
 
     public int getSetId() {
         return setId;
     }
 
-    public void setSetId(int setId) {
-        this.setId = setId;
-    }
-
     public String getSetType() {
         return setType;
     }
 
-    public void setSetType(String setType) {
-        this.setType = setType;
-    }
-
     public String getValType() {
         return valType;
-    }
-
-    public void setValType(String valType) {
-        this.valType = valType;
     }
 }

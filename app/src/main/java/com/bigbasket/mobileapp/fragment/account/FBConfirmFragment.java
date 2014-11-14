@@ -94,7 +94,6 @@ public class FBConfirmFragment extends BaseFragment {
             }
         });
         //final TextView txtFBConfirmBtnHint = (TextView) base.findViewById(R.id.txtFBConfirmBtnHint);
-
         radioBtnYesHaveAcc.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

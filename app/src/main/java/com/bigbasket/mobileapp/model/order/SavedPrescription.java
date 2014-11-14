@@ -80,32 +80,16 @@ public class SavedPrescription implements Parcelable {
         return dateCreated;
     }
 
-    public void setDateCreated(String dateCreated) {
-        this.dateCreated = dateCreated;
-    }
-
     public String getPatientName() {
         return patientName;
-    }
-
-    public void setPatientName(String patientName) {
-        this.patientName = patientName;
     }
 
     public String getDoctorName() {
         return doctorName;
     }
 
-    public void setDoctorName(String doctorName) {
-        this.doctorName = doctorName;
-    }
-
     public int getPharmaPrescriptionId() {
         return pharmaPrescriptionId;
-    }
-
-    public void setPharmaPrescriptionId(int pharmaPrescriptionId) {
-        this.pharmaPrescriptionId = pharmaPrescriptionId;
     }
 
 //    public String getPrescriptionImageUrl() {
@@ -120,7 +104,4 @@ public class SavedPrescription implements Parcelable {
         return prescriptionName;
     }
 
-    public void setPrescriptionName(String prescriptionName) {
-        this.prescriptionName = prescriptionName;
-    }
 }

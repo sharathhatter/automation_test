@@ -359,11 +359,6 @@ public class MemberAddressFormActivity extends BackButtonActivity {
         return address == null ? "Create new address" : "Update address";
     }
 
-    @Override
-    public String getTag() {
-        return MemberAddressFormActivity.class.getName();
-    }
-
     public void OnSubmitButtonClicked(View v) {
         uploadAddress(null);
     }

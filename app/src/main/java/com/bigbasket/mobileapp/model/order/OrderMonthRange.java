@@ -59,10 +59,6 @@ public class OrderMonthRange implements Parcelable {
         return displayValue;
     }
 
-    public void setDisplayValue(String displayValue) {
-        this.displayValue = displayValue;
-    }
-
     @Override
     public String toString() {
         return this.displayValue;

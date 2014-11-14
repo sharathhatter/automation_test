@@ -99,14 +99,6 @@ public class MarketPlaceRuleValidator implements Parcelable { //implements Parce
         }
     };
 
-//    public int getTotalRuleNoOfItems() {
-//        return totalRuleNoOfItems;
-//    }
-//
-//    public void setTotalRuleNoOfItems(int totalRuleNoOfItems) {
-//        this.totalRuleNoOfItems = totalRuleNoOfItems;
-//    }
-
     public float getRuleTotalPrice() {
         return ruleTotalPrice;
     }
@@ -115,52 +107,24 @@ public class MarketPlaceRuleValidator implements Parcelable { //implements Parce
         return noRuleError;
     }
 
-    public void setNoRuleError(boolean noRuleError) {
-        this.noRuleError = noRuleError;
-    }
-
     public float getRuleMaxWeightLimit() {
         return ruleMaxWeightLimit;
-    }
-
-    public void setRuleMaxWeightLimit(float ruleMaxWeightLimit) {
-        this.ruleMaxWeightLimit = ruleMaxWeightLimit;
-    }
-
-    public void setRuleTotalPrice(float ruleTotalPrice) {
-        this.ruleTotalPrice = ruleTotalPrice;
     }
 
     public float getRuleTotalQty() {
         return ruleTotalQty;
     }
 
-    public void setRuleTotalQty(float ruleTotalQty) {
-        this.ruleTotalQty = ruleTotalQty;
-    }
-
     public String getWeightLabel() {
         return weightLabel;
-    }
-
-    public void setWeightLabel(String weightLabel) {
-        this.weightLabel = weightLabel;
     }
 
     public String getRuleName() {
         return ruleName;
     }
 
-    public void setRuleName(String ruleName) {
-        this.ruleName = ruleName;
-    }
-
     public String getRuleDesc() {
         return ruleDesc;
-    }
-
-    public void setRuleDesc(String ruleDesc) {
-        this.ruleDesc = ruleDesc;
     }
 
     public ArrayList<MarketPlaceItems> getItems() {

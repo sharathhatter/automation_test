@@ -2,8 +2,12 @@ package com.bigbasket.mobileapp.model.promo;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class Promo implements Parcelable {
 
@@ -24,18 +28,18 @@ public class Promo implements Parcelable {
 
     }
 
-    public static String[] getAllTypes() {
-        String[] allTypes = new String[9];
-        allTypes[0] = PromoType.FREE;
-        allTypes[1] = PromoType.DISCOUNT_PRICE;
-        allTypes[2] = PromoType.CUSTOMIZED_COMBO;
-        allTypes[3] = PromoType.FIXED_COMBO;
-        allTypes[4] = PromoType.MIN_ORDER_DISCOUNTED_PRODUCT;
-        allTypes[5] = PromoType.MIN_ORDER_FREE_PRODUCT;
-        allTypes[6] = PromoType.DISCOUNTED_BIN;
-        allTypes[7] = PromoType.FIXED_FREE_COMBO;
-        allTypes[8] = PromoType.MEMBER_REFERRAL;
-        return allTypes;
+    public static Set<String> getAllTypes() {
+        Set<String> promoTypes = new HashSet<>();
+        promoTypes.add(PromoType.FREE);
+        promoTypes.add(PromoType.DISCOUNT_PRICE);
+        promoTypes.add(PromoType.CUSTOMIZED_COMBO);
+        promoTypes.add(PromoType.FIXED_COMBO);
+        promoTypes.add(PromoType.MIN_ORDER_DISCOUNTED_PRODUCT);
+        promoTypes.add(PromoType.MIN_ORDER_FREE_PRODUCT);
+        promoTypes.add(PromoType.DISCOUNTED_BIN);
+        promoTypes.add(PromoType.FIXED_FREE_COMBO);
+        promoTypes.add(PromoType.MEMBER_REFERRAL);
+        return promoTypes;
     }
 
     @SerializedName(Constants.PROMO_NAME)
@@ -125,24 +129,12 @@ public class Promo implements Parcelable {
         return promoLabel;
     }
 
-    public void setPromoLabel(String promoLabel) {
-        this.promoLabel = promoLabel;
-    }
-
     public String getPromoType() {
         return promoType;
     }
 
-    public void setPromoType(String promoType) {
-        this.promoType = promoType;
-    }
-
     public String getPromoName() {
         return promoName;
-    }
-
-    public void setPromoName(String promoName) {
-        this.promoName = promoName;
     }
 
     public int getId() {
@@ -157,16 +149,8 @@ public class Promo implements Parcelable {
         return promoDesc;
     }
 
-    public void setPromoDesc(String promoDesc) {
-        this.promoDesc = promoDesc;
-    }
-
     public String getPromoIcon() {
         return promoIcon;
-    }
-
-    public void setPromoIcon(String promoIcon) {
-        this.promoIcon = promoIcon;
     }
 
     public String getPromoDescLine1() {

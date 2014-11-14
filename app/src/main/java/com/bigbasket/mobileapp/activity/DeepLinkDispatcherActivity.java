@@ -9,8 +9,6 @@ import com.bigbasket.mobileapp.util.Constants;
 
 public class DeepLinkDispatcherActivity extends BaseActivity {
 
-    private static final String TAG = DeepLinkDispatcherActivity.class.getName();
-
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         launchCorrespondingActivity();
@@ -69,11 +67,6 @@ public class DeepLinkDispatcherActivity extends BaseActivity {
     @Override
     public void onChangeFragment(AbstractFragment newFragment) {
 
-    }
-
-    @Override
-    public String getTag() {
-        return TAG;
     }
 
     @Override

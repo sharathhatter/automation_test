@@ -68,12 +68,4 @@ public class CartItemHeader implements Parcelable {
     public void setTopCatItems(int topCatItems) {
         this.topCatItems = topCatItems;
     }
-
-    public CartItem getCartItems() {
-        return cartItems;
-    }
-
-    public void setCartItems(CartItem cartItems) {
-        this.cartItems = cartItems;
-    }
 }

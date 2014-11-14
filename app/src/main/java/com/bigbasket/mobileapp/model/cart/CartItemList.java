@@ -69,31 +69,15 @@ public class CartItemList implements Parcelable {
         return cartItems;
     }
 
-    public void setCartItems(ArrayList<CartItem> cartItems) {
-        this.cartItems = cartItems;
-    }
-
     public String getTopCatName() {
         return topCatName;
-    }
-
-    public void setTopCatName(String topCatName) {
-        this.topCatName = topCatName;
     }
 
     public double getTopCatTotal() {
         return topCatTotal;
     }
 
-    public void setTopCatTotal(double topCatTotal) {
-        this.topCatTotal = topCatTotal;
-    }
-
     public int getTopCatItems() {
         return topCatItems;
-    }
-
-    public void setTopCatItems(int topCatItems) {
-        this.topCatItems = topCatItems;
     }
 }

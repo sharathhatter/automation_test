@@ -1,16 +1,17 @@
 package com.bigbasket.mobileapp.fragment.shoppinglist;
 
-import android.annotation.SuppressLint;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -19,17 +20,24 @@ import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.ParserUtil;
+import com.bigbasket.mobileapp.view.uiv3.CreateShoppingListDialog;
+import com.bigbasket.mobileapp.view.uiv3.DeleteShoppingListDialog;
+import com.bigbasket.mobileapp.view.uiv3.EditShoppingDialog;
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.adapters.BaseSwipeAdapter;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.melnykov.fab.FloatingActionButton;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 
 public class ShoppingListFragment extends BaseFragment {
+
+    private ArrayList<ShoppingListName> mShoppingListNames;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -39,6 +47,13 @@ public class ShoppingListFragment extends BaseFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            mShoppingListNames = savedInstanceState.getParcelableArrayList(Constants.SHOPPING_LISTS);
+            if (mShoppingListNames != null) {
+                renderShoppingList();
+                return;
+            }
+        }
         loadShoppingLists();
     }
 
@@ -64,8 +79,8 @@ public class ShoppingListFragment extends BaseFragment {
             switch (status) {
                 case Constants.OK:
                     JsonArray shoppingListNamesJsonArray = httpJsonObj.get(Constants.SHOPPING_LISTS).getAsJsonArray();
-                    List<ShoppingListName> shoppingListNames = ParserUtil.parseShoppingList(shoppingListNamesJsonArray);
-                    renderShoppingList(shoppingListNames);
+                    mShoppingListNames = ParserUtil.parseShoppingList(shoppingListNamesJsonArray);
+                    renderShoppingList();
                     break;
                 default:
                     // TODO : Add error handling
@@ -101,51 +116,70 @@ public class ShoppingListFragment extends BaseFragment {
                     showErrorMsg("Server Error");
                     break;
             }
+        } else if (url.contains(Constants.SL_CREATE_LIST)) {
+            JsonObject httpJsonObj = new JsonParser().parse(httpOperationResult.getReponseString()).getAsJsonObject();
+            String status = httpJsonObj.get(Constants.STATUS).getAsString();
+            switch (status) {
+                case Constants.OK:
+                    Toast.makeText(getActivity(),
+                            "List \"" + httpOperationResult.getAdditionalCtx().get(Constants.SL_NAME)
+                                    + "\" was created successfully", Toast.LENGTH_LONG).show();
+                    loadShoppingLists();
+                    break;
+                default:
+                    // TODO : Add error handling
+                    showErrorMsg("Server Error");
+                    break;
+            }
         } else {
             super.onAsyncTaskComplete(httpOperationResult);
         }
     }
 
-    private void renderShoppingList(final List<ShoppingListName> shoppingListNames) {
+    private void renderShoppingList() {
         if (getActivity() == null) return;
         LinearLayout contentView = getContentView();
         if (contentView == null) return;
-        ListView shoppingNameListView = new ListView(getActivity());
-//        shoppingNameListView.setDivider(null);
-//        shoppingNameListView.setDividerHeight(0);
-        ShoppingListNameAndOpAdapter shoppingListNameAndOpAdapter = new ShoppingListNameAndOpAdapter(shoppingListNames);
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View base = inflater.inflate(R.layout.uiv3_fab_list_view, null);
+        ListView shoppingNameListView = (ListView) base.findViewById(R.id.fabListView);
+        ShoppingListNameAndOpAdapter shoppingListNameAndOpAdapter = new ShoppingListNameAndOpAdapter(mShoppingListNames);
         shoppingNameListView.setAdapter(shoppingListNameAndOpAdapter);
-//        final SwipeListView swipeListView = (SwipeListView) base.findViewById(R.id.swipeListView);
-//        swipeListView.setSwipeMode(SwipeListView.SWIPE_MODE_LEFT);
-//
-//        ShoppingListNameAdapter shoppingListNameAdapter = new ShoppingListNameAdapter(getActivity(),
-//                R.layout.uiv3_shopping_list_name_row, shoppingListNames);
-//        swipeListView.setAdapter(shoppingListNameAdapter);
-//        swipeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                ShoppingListName shoppingListName = shoppingListNames.get(position);
-//                launchShoppingListSummary(shoppingListName);
-//            }
-//        });
-//        swipeListView.setSwipeListViewListener(new BaseSwipeListViewListener() {
-//            @Override
-//            public void onClickFrontView(int position) {
-//                super.onClickFrontView(position);
-//                ShoppingListName shoppingListName = shoppingListNames.get(position);
-//                launchShoppingListSummary(shoppingListName);
-//            }
-//        });
 
         shoppingNameListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ShoppingListName shoppingListName = shoppingListNames.get(position);
+                ShoppingListName shoppingListName = mShoppingListNames.get(position);
                 launchShoppingListSummary(shoppingListName);
             }
         });
+        FloatingActionButton fabCreateShoppingList = (FloatingActionButton) base.findViewById(R.id.btnFab);
+        fabCreateShoppingList.attachToListView(shoppingNameListView);
+        fabCreateShoppingList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CreateShoppingListDialog createShoppingListDialog = new CreateShoppingListDialog();
+                createShoppingListDialog.setTargetFragment(getFragmentInstance(), 0);
+                createShoppingListDialog.show(getFragmentManager(), Constants.SHOPPING_LIST_NAME);
+            }
+        });
         contentView.removeAllViews();
-        contentView.addView(shoppingNameListView);
+        contentView.addView(base);
+    }
+
+    public void createShoppingList(String shoppingListName) {
+        shoppingListName = shoppingListName.trim();
+        if (shoppingListName.length() == 0) {
+            Toast.makeText(getActivity(), "Please enter a valid name", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        HashMap<String, String> params = new HashMap<>();
+        params.put(Constants.SL_NAME, shoppingListName);
+        params.put(Constants.IS_PUBLIC, "1");
+        HashMap<Object, String> additionalCtx = new HashMap<>();
+        additionalCtx.put(Constants.SL_NAME, shoppingListName);
+        startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.SL_CREATE_LIST, params,
+                true, false, additionalCtx);
     }
 
     private void launchShoppingListSummary(ShoppingListName shoppingListName) {
@@ -228,21 +262,32 @@ public class ShoppingListFragment extends BaseFragment {
             imgEditShoppingListName.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    EditShoppingDialog editShoppingDialog = new EditShoppingDialog(shoppingListName, getFragmentInstance());
+                    if (shoppingListName.isSystem()) {
+                        if (getBaseActivity() != null) {
+                            getBaseActivity().showAlertDialog(getActivity(), null, getString(R.string.isSystemShoppingListMsg));
+                        }
+                        return;
+                    }
+                    EditShoppingDialog editShoppingDialog = EditShoppingDialog.newInstance(shoppingListName);
+                    editShoppingDialog.setTargetFragment(getFragmentInstance(), 0);
                     editShoppingDialog.show(getFragmentManager(), Constants.SHOPPING_LIST_NAME);
                 }
             });
             imgDeleteShoppingList.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    DeleteShoppingListDialog deleteShoppingListDialog = new DeleteShoppingListDialog(shoppingListName, getFragmentInstance());
+                    if (shoppingListName.isSystem()) {
+                        if (getBaseActivity() != null) {
+                            getBaseActivity().showAlertDialog(getActivity(), null, getString(R.string.isSystemShoppingListMsg));
+                        }
+                        return;
+                    }
+                    DeleteShoppingListDialog deleteShoppingListDialog = DeleteShoppingListDialog.newInstance(shoppingListName);
+                    deleteShoppingListDialog.setTargetFragment(getFragmentInstance(), 0);
                     deleteShoppingListDialog.show(getFragmentManager(), Constants.SHOPPING_LIST_NAME);
                 }
             });
             txtShoppingListName.setText(shoppingListName.getName());
-
-            SwipeLayout swipeLayout = (SwipeLayout) convertView.findViewById(getSwipeLayoutResourceId(position));
-            swipeLayout.setSwipeEnabled(!shoppingListName.isSystem());
         }
 
         @Override
@@ -265,92 +310,28 @@ public class ShoppingListFragment extends BaseFragment {
         return this;
     }
 
-    public static class EditShoppingDialog extends DialogFragment {
 
-        private ShoppingListName shoppingListName;
-        private ShoppingListFragment fragment;
-
-        public EditShoppingDialog() {}
-
-        @SuppressLint("ValidFragment")
-        private EditShoppingDialog(ShoppingListName shoppingListName, ShoppingListFragment fragment) {
-            this.shoppingListName = shoppingListName;
-            this.fragment = fragment;
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            LayoutInflater inflater = getActivity().getLayoutInflater();
-            View view = inflater.inflate(R.layout.uiv3_edit_shopping_list_name, null);
-            final EditText editTextShoppingListName = (EditText) view.findViewById(R.id.editTextShoppingListName);
-            editTextShoppingListName.setText(shoppingListName.getName());
-            builder.setView(view)
-                    .setPositiveButton(R.string.change, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            String newName = editTextShoppingListName.getText().toString();
-                            if (!newName.equals(shoppingListName.getName())) {
-                                fragment.editShoppingListName(shoppingListName, newName);
-                            }
-                        }
-                    })
-                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    });
-            return builder.create();
-        }
-    }
-
-    public static class DeleteShoppingListDialog extends DialogFragment {
-
-        private ShoppingListName shoppingListName;
-        private ShoppingListFragment fragment;
-
-        @SuppressLint("ValidFragment")
-        private DeleteShoppingListDialog(ShoppingListName shoppingListName, ShoppingListFragment fragment) {
-            this.shoppingListName = shoppingListName;
-            this.fragment = fragment;
-        }
-
-        public DeleteShoppingListDialog() {}
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage(R.string.deleteShoppingListText)
-                    .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            fragment.deleteShoppingList(shoppingListName);
-                        }
-                    })
-                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    });
-            return builder.create();
-        }
-    }
-
-    private void editShoppingListName(ShoppingListName shoppingListName, String newName) {
+    public void editShoppingListName(ShoppingListName shoppingListName, String newName) {
         HashMap<String, String> params = new HashMap<>();
         params.put(Constants.SLUG, shoppingListName.getSlug());
         params.put("name", newName);
         startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.SL_EDIT_LIST, params, true, false, null);
     }
 
-    private void deleteShoppingList(ShoppingListName shoppingListName) {
+    public void deleteShoppingList(ShoppingListName shoppingListName) {
         HashMap<String, String> params = new HashMap<>();
         params.put(Constants.SLUG, shoppingListName.getSlug());
         HashMap<Object, String> additionalCtx = new HashMap<>();
         additionalCtx.put(Constants.SHOPPING_LIST_NAME, shoppingListName.getName());
         startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.SL_DELETE_LIST, params, true, false, additionalCtx);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (mShoppingListNames != null && mShoppingListNames.size() > 0) {
+            outState.putParcelableArrayList(Constants.SHOPPING_LISTS, mShoppingListNames);
+        }
+        super.onSaveInstanceState(outState);
     }
 
     @Override

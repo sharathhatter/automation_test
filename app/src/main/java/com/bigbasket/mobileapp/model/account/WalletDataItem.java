@@ -99,10 +99,6 @@ public class WalletDataItem implements Parcelable {
         this.endingBalance = endingBalance;
     }
 
-    public double getStartingBalance() {
-        return startingBalance;
-    }
-
     public void setStartingBalance(double startingBalance) {
         this.startingBalance = startingBalance;
     }
@@ -149,10 +145,9 @@ public class WalletDataItem implements Parcelable {
 
     @Override
     public String toString() {
-        return "[ OrderId=" + orderId + ", Amount=" +
+        return "[OrderId=" + orderId + ", Amount=" +
                 amount + " , Date=" + date + "Starting_balance" + startingBalance + "Ending_balance" + endingBalance +
                 "Primary_reason" + primary_reason + "Secondary_reason" + secondary_reason + "]";
     }
-
 
 }

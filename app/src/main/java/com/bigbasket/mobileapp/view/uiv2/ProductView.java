@@ -34,7 +34,6 @@ import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.MessageCode;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -204,7 +203,7 @@ public final class ProductView {
         TextView txtPromoDesc = (TextView) row.findViewById(R.id.txtPromoName);
         TextView txtPromoAddSavings = (TextView) row.findViewById(R.id.txtPromoAddSavings);
         if (product.getProductPromoInfo() != null &&
-                ArrayUtils.contains(Promo.getAllTypes(), product.getProductPromoInfo().getPromoType())) {
+                Promo.getAllTypes().contains(product.getProductPromoInfo().getPromoType())) {
             //Show Promo Saving
             if (product.getProductPromoInfo().getPromoSavings() > 0) {
                 String label = product.hasSavings() ? "Save Additional `" : "Save `";

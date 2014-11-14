@@ -15,11 +15,6 @@ public class PromoRedemptionInfo implements Parcelable {
     @SerializedName(Constants.PROMO_SETS)
     private ArrayList<PromoSet> promoSets;
 
-    public PromoRedemptionInfo(PromoMessage promoMessage, ArrayList<PromoSet> promoSets) {
-        this.promoMessage = promoMessage;
-        this.promoSets = promoSets;
-    }
-
     @Override
     public int describeContents() {
         return 0;
@@ -53,15 +48,7 @@ public class PromoRedemptionInfo implements Parcelable {
         return promoMessage;
     }
 
-    public void setPromoMessage(PromoMessage promoMessage) {
-        this.promoMessage = promoMessage;
-    }
-
     public ArrayList<PromoSet> getPromoSets() {
         return promoSets;
-    }
-
-    public void setPromoSets(ArrayList<PromoSet> promoSets) {
-        this.promoSets = promoSets;
     }
 }

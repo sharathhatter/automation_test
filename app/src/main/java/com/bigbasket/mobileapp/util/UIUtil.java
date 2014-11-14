@@ -1,6 +1,5 @@
 package com.bigbasket.mobileapp.util;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.text.Spannable;
@@ -9,15 +8,12 @@ import android.text.Spanned;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.BulletSpan;
 import android.util.Patterns;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
-//import com.melnykov.fab.FloatingActionButton;
-import org.apache.commons.lang3.StringUtils;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -86,8 +82,41 @@ public class UIUtil {
             case 2:
                 return lst.get(0) + " " + separator + " " + lst.get(1);
             default:
-                return StringUtils.join(lst.subList(0, lenLst - 1), ", ") + " " + separator + " " + lst.get(lenLst - 1);
+                return strJoin(lst.subList(0, lenLst - 1), ", ") + " " + separator + " " + lst.get(lenLst - 1);
         }
+    }
+
+    public static String strJoin(List<String> stringList, String separator) {
+        StringBuilder sbr = new StringBuilder();
+        int len = stringList.size();
+        for (int i = 0; i < len; i++) {
+            sbr.append(stringList.get(i));
+            if (i != len - 1) {
+                sbr.append(separator);
+            }
+        }
+        return sbr.toString();
+    }
+
+
+    public static String strJoin(String[] stringArray, String separator) {
+        StringBuilder sbr = new StringBuilder();
+        int len = stringArray.length;
+        for (int i = 0; i < len; i++) {
+            sbr.append(stringArray[i]);
+            if (i != len - 1) {
+                sbr.append(separator);
+            }
+        }
+        return sbr.toString();
+    }
+
+    public static String abbreviate(String txt, int sz) {
+        if (txt.length() <= sz) {
+            return txt;
+        }
+        String abbreviatedTxt = txt.substring(0, sz - 4);
+        return abbreviatedTxt + "...";
     }
 
     public static boolean isValidEmail(String email) {
@@ -116,18 +145,4 @@ public class UIUtil {
         nf.setGroupingUsed(false);
         return (nf.format(amount).equals("0.00") || nf.format(amount).equals("0.0")) ? "0" : nf.format(amount);
     }
-
-//    public static FloatingActionButton getFloatActionButton(int drawableResId, Activity context) {
-//        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-//                ViewGroup.LayoutParams.WRAP_CONTENT);
-//        layoutParams.gravity = Gravity.BOTTOM | Gravity.RIGHT;
-//        LayoutInflater inflater = context.getLayoutInflater();
-//        FloatingActionButton floatingActionButton = (FloatingActionButton)
-//                inflater.inflate(R.layout.uiv3_floating_action_button, null);
-//        floatingActionButton.setLayoutParams(layoutParams);
-//        floatingActionButton.setColorNormal(context.getResources().getColor(R.color.uiv3_action_bar_background));
-//        floatingActionButton.setColorPressed(context.getResources().getColor(R.color.uiv3_action_bar_background_pressed));
-//        floatingActionButton.setImageDrawable(context.getResources().getDrawable(drawableResId));
-//        return floatingActionButton;
-//    }
 }

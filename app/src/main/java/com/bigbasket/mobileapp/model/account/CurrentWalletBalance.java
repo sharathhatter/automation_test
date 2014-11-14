@@ -15,14 +15,6 @@ public class CurrentWalletBalance implements Parcelable {
         return currentBalance;
     }
 
-    public void setCurrentBalance(float currentBalance) {
-        this.currentBalance = currentBalance;
-    }
-
-    public String getResponseJsonStringWalletActivity() {
-        return responseJsonStringWalletActivity;
-    }
-
     public void setResponseJsonStringWalletActivity(String responseJsonStringWalletActivity) {
         this.responseJsonStringWalletActivity = responseJsonStringWalletActivity;
     }

@@ -59,15 +59,7 @@ public class CartItemPromoInfo implements Parcelable {
         return promoInfo;
     }
 
-    public void setPromoInfo(CartItemPromo promoInfo) {
-        this.promoInfo = promoInfo;
-    }
-
     public CartItemPromo getRegularInfo() {
         return regularInfo;
-    }
-
-    public void setRegularInfo(CartItemPromo regularInfo) {
-        this.regularInfo = regularInfo;
     }
 }

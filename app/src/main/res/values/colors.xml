@@ -71,8 +71,8 @@
     <!-- UIv3 colours -->
     <!--<color name="uiv3_action_bar_background">#659588</color>-->
     <!--<color name="uiv3_action_bar_background">#4AA02C</color>-->
-    <color name="uiv3_action_bar_background">#8fb242</color>
-    <color name="uiv3_status_bar_background">#ff3fa819</color>
+    <color name="uiv3_action_bar_background">#ff4da841</color>
+    <color name="uiv3_status_bar_background">#056f00</color>
     <color name="uiv3_action_bar_background_pressed">#53B428</color>
     <color name="uiv3_product_list_row_bkg">#FAFAFA</color>
     <color name="uiv3_product_brand_color">#757575</color>
@@ -91,7 +91,7 @@
     <color name="uiv3_link_color">#66009688</color>
     <color name="uiv3_dark_bkg">#333333</color>
     <color name="uiv3_orange">#E7685D</color>
-    <color name="uiv3_filter_by_text_color">@color/white</color>
+    <color name="uiv3_dialog_primary_text_color">@color/white</color>
 
     <!-- LetterImageViewColor -->
     <string-array name="letterImageViewColors" translatable="false">

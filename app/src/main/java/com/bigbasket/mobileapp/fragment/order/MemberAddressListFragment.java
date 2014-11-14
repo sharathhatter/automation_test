@@ -25,7 +25,7 @@ import com.bigbasket.mobileapp.util.ParserUtil;
 import com.etsy.android.grid.StaggeredGridView;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-//import com.melnykov.fab.FloatingActionButton;
+import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 
@@ -124,16 +124,14 @@ public class MemberAddressListFragment extends BaseFragment {
             }
         });
 
-//        FloatingActionButton floatingActionButton = (FloatingActionButton) addressView.findViewById(R.id.btnFab);
-//        floatingActionButton.setColorNormal(getResources().getColor(R.color.uiv3_action_bar_background));
-//        floatingActionButton.setColorPressed(getResources().getColor(R.color.uiv3_action_bar_background_pressed));
-//        floatingActionButton.attachToListView(addressListView);
-//        floatingActionButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                showCreateAddressForm();
-//            }
-//        });
+        FloatingActionButton floatingActionButton = (FloatingActionButton) addressView.findViewById(R.id.btnFab);
+        floatingActionButton.attachToListView(addressListView);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showCreateAddressForm();
+            }
+        });
         contentView.addView(addressView);
     }
 

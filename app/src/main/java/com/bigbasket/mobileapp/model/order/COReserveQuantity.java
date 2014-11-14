@@ -29,7 +29,10 @@ public class COReserveQuantity implements Parcelable {
     }
 
     public COReserveQuantity(Parcel source) {
-
+        status = source.readByte() == (byte) 1;
+        qcHasErrors = source.readByte() == (byte) 1;
+        qc_len = source.readInt();
+        orderId = source.readInt();
     }
 
     public COReserveQuantity() {
@@ -73,10 +76,6 @@ public class COReserveQuantity implements Parcelable {
 
     public List<QCErrorData> getQCErrorData() {
         return QCErrorData;
-    }
-
-    public void setQCErrorData(List<QCErrorData> QCErrorData) {
-        this.QCErrorData = QCErrorData;
     }
 
     public int getQc_len() {

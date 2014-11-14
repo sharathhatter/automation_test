@@ -21,8 +21,6 @@ import java.util.ArrayList;
 
 public class AvailableVoucherListActivity extends BackButtonActivity {
 
-    private static final String TAG = AvailableVoucherListActivity.class.getName();
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,11 +48,6 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
                 }
             }
         });
-    }
-
-    @Override
-    public String getTag() {
-        return TAG;
     }
 
     @Override

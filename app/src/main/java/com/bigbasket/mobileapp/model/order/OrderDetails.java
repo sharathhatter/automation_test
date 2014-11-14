@@ -64,40 +64,20 @@ public class OrderDetails implements Parcelable {
         return paymentMethod;
     }
 
-    public void setPaymentMethod(String paymentMethod) {
-        this.paymentMethod = paymentMethod;
-    }
-
     public int getTotalItems() {
         return totalItems;
-    }
-
-    public void setTotalItems(int totalItems) {
-        this.totalItems = totalItems;
     }
 
     public double getSubTotal() {
         return subTotal;
     }
 
-    public void setSubTotal(double subTotal) {
-        this.subTotal = subTotal;
-    }
-
     public double getDeliveryCharge() {
         return deliveryCharge;
     }
 
-    public void setDeliveryCharge(double deliveryCharge) {
-        this.deliveryCharge = deliveryCharge;
-    }
-
     public double getFinalTotal() {
         return finalTotal;
-    }
-
-    public void setFinalTotal(double finalTotal) {
-        this.finalTotal = finalTotal;
     }
 
     public String getPaymentMethodDisplay() {

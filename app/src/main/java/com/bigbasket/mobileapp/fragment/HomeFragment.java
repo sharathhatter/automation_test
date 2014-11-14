@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.fragment.base.BaseSectionFragment;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -26,10 +27,10 @@ import com.bigbasket.mobileapp.util.ParserUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 
 public class HomeFragment extends BaseSectionFragment {
 
@@ -158,10 +159,10 @@ public class HomeFragment extends BaseSectionFragment {
         if (contentView == null) return;
 
         // Filter sections
-        String[] supportedSectionTypes = Section.getSupportedSectionTypes();
+        Set<String> supportedSectionTypes = Section.getSupportedSectionTypes();
         for (Iterator<Section> iterator = mSections.iterator(); iterator.hasNext(); ) {
             Section section = iterator.next();
-            if (!ArrayUtils.contains(supportedSectionTypes, section.getSectionType())) {
+            if (!supportedSectionTypes.contains(section.getSectionType())) {
                 iterator.remove();
             }
         }

@@ -19,18 +19,6 @@ public class CartItemPromo extends BaseCartItem {
     @SerializedName(Constants.PROMO_LABEL)
     protected String promo_label;
 
-    public CartItemPromo() {
-    }
-
-    public CartItemPromo(double saving, double mrp, double salePrice,
-                         int promoId, String promoName, double numItemInCart) {
-        super(saving, mrp, salePrice);
-        this.promoId = promoId;
-        this.promoName = promoName;
-        this.numItemInCart = numItemInCart;
-    }
-
-
     @Override
     public int describeContents() {
         return 0;
@@ -69,35 +57,15 @@ public class CartItemPromo extends BaseCartItem {
         }
     };
 
-    public String getPromo_label() {
-        return promo_label;
-    }
-
-    public void setPromo_label(String promo_label) {
-        this.promo_label = promo_label;
-    }
-
     public int getPromoId() {
         return promoId;
-    }
-
-    public void setPromoId(int promoId) {
-        this.promoId = promoId;
     }
 
     public String getPromoName() {
         return promoName;
     }
 
-    public void setPromoName(String promoName) {
-        this.promoName = promoName;
-    }
-
     public double getNumItemInCart() {
         return numItemInCart;
-    }
-
-    public void setNumItemInCart(double numItemInCart) {
-        this.numItemInCart = numItemInCart;
     }
 }
