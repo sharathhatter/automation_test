@@ -235,7 +235,7 @@ public class PaymentSelectionFragment extends BaseFragment {
         }
     }
 
-    private void renderSlotInfoRow(View row, SlotGroup slotGroup, boolean hideBasketSummary) {
+    private void renderSlotInfoRow(View row, SlotGroup slotGroup, boolean hasMultipleSlots) {
         if (getActivity() == null || getBaseActivity() == null) return;
         TextView txtNumItems = (TextView) row.findViewById(R.id.txtNumItems);
         TextView txtBasketVal = (TextView) row.findViewById(R.id.txtBasketVal);
@@ -250,16 +250,16 @@ public class PaymentSelectionFragment extends BaseFragment {
 
         txtSlotDate.setText(slotGroup.getSelectedSlot().getFormattedSlotDate());
         txtSlotTime.setText(slotGroup.getSelectedSlot().getDisplayName());
-        if (hideBasketSummary) {
+        if (hasMultipleSlots) {
             txtNumItems.setVisibility(View.GONE);
             txtBasketVal.setVisibility(View.GONE);
-            txtFulfilledBy.setVisibility(View.GONE);
+            txtFulfilledBy.setText(slotGroup.getFulfillmentInfo().getFulfilledBy());
         } else {
             int numItems = cartSummary.getNoOfItems();
             txtNumItems.setText(numItems + "Item" + (numItems > 1 ? "s" : ""));
             txtBasketVal.setText(getBaseActivity().
                     asRupeeSpannable(getBaseActivity().getDecimalAmount(cartSummary.getTotal())));
-            txtFulfilledBy.setText(slotGroup.getFulfillmentInfo().getFulfilledBy());
+            txtFulfilledBy.setVisibility(View.GONE);
         }
     }
 

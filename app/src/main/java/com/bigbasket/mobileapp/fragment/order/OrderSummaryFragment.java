@@ -146,7 +146,8 @@ public class OrderSummaryFragment extends AbstractOrderSummaryFragment {
             View row = inflater.inflate(R.layout.uiv3_slot_info_row, null);
             renderSlotInfoRow(row, slotGroup.getSelectedSlot().getFormattedSlotDate(),
                     slotGroup.getSelectedSlot().getDisplayName(),
-                    slotGroup.getFulfillmentInfo().getDisplayName(), hasMultipleSlots);
+                    "Slot & fulfilled by " + slotGroup.getFulfillmentInfo().getFulfilledBy(),
+                    hasMultipleSlots);
             layoutDeliverySlot.addView(row);
         }
     }

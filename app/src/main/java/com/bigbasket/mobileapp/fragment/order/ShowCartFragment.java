@@ -10,19 +10,41 @@ import android.support.annotation.NonNull;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
-import android.view.*;
-import android.widget.*;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
+
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.adapter.order.ActiveOrderRowAdapter;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
+import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
-import com.bigbasket.mobileapp.model.cart.*;
+import com.bigbasket.mobileapp.model.cart.AnnotationInfo;
+import com.bigbasket.mobileapp.model.cart.BasketOperation;
+import com.bigbasket.mobileapp.model.cart.CartItem;
+import com.bigbasket.mobileapp.model.cart.CartItemHeader;
+import com.bigbasket.mobileapp.model.cart.CartItemList;
+import com.bigbasket.mobileapp.model.cart.CartSummary;
+import com.bigbasket.mobileapp.model.cart.FulfillmentInfo;
 import com.bigbasket.mobileapp.model.order.OrderItemDisplaySource;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.task.COReserveQuantityCheckTask;
-import com.bigbasket.mobileapp.util.*;
+import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.DialogButton;
+import com.bigbasket.mobileapp.util.ExceptionUtil;
+import com.bigbasket.mobileapp.util.MobileApiUrl;
+import com.bigbasket.mobileapp.util.ParserUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -258,7 +280,7 @@ public class ShowCartFragment extends BaseFragment {
 
 
         TextView txtTotalCartItems = (TextView) base.findViewById(R.id.txtTotalCartItems);
-        txtTotalCartItems.setTypeface(faceRobotoThin);
+        txtTotalCartItems.setTypeface(faceRobotoRegular);
         if (cartSummary.getNoOfItems() != 0) {
             if (cartSummary.getNoOfItems() > 1) {
                 txtTotalCartItems.setText(cartSummary.getNoOfItems() + " Items/ ");
@@ -311,6 +333,24 @@ public class ShowCartFragment extends BaseFragment {
     @Override
     public LinearLayout getContentView() {
         return getView() != null ? (LinearLayout) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
+    }
+
+    @Override
+    public void changeFragment(AbstractFragment newFragment) {
+        setHasOptionsMenu(false);
+        if (getBaseActivity() != null) {
+            getBaseActivity().invalidateOptionsMenu();
+        }
+        super.changeFragment(newFragment);
+    }
+
+    @Override
+    public void onBackResume() {
+        super.onBackResume();
+        setHasOptionsMenu(true);
+        if (getBaseActivity() != null) {
+            getBaseActivity().invalidateOptionsMenu();
+        }
     }
 
     @Override

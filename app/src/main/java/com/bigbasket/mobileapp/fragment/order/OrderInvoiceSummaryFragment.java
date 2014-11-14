@@ -55,7 +55,7 @@ public class OrderInvoiceSummaryFragment extends AbstractOrderSummaryFragment {
         View slotInfoRow = inflater.inflate(R.layout.uiv3_slot_info_row, null);
         String[] slotDateAndTime = orderInvoice.getSlot().getDisplayName().split("between");
         renderSlotInfoRow(slotInfoRow, slotDateAndTime[0].trim(), slotDateAndTime[1].trim(),
-                orderInvoice.getFulfillmentInfo().getDisplayName(), false);
+                orderInvoice.getFulfillmentInfo().getFulfilledBy(), false);
         layoutDeliverySlot.addView(slotInfoRow);
 
         // Show delivered time
