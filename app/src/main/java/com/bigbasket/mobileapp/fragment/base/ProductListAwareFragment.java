@@ -119,6 +119,7 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
         if (getActivity() == null) return;
         LinearLayout contentView = getContentView();
         if (contentView == null) return;
+        if (productListData == null) return;
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
@@ -195,6 +196,7 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
     }
 
     public String getNumProductsMessage() {
+        if (productListData == null) return null;
         String msg = "No products found";
         if (productListData.getProductCount() > 0) {
             int firstCount = (productListData.getCurrentPage() - 1) * Constants.PAGE_SIZE + 1;

@@ -4,8 +4,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,25 +24,52 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.ParserUtil;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.bigbasket.mobileapp.view.ProductListView;
+import com.etsy.android.grid.StaggeredGridView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 
 public class ShoppingListProductFragment extends ProductListAwareFragment {
 
-    private String topCatName;
-    private String topCatSlug;
-    private ShoppingListName shoppingListName;
+    private ShoppingListName mShoppingListName;
+    private JSONArray mShoppingListItemsInfoJsonArray;
+    private String mBaseImgUrl;
 
     @Override
     public void loadProducts() {
         loadShoppingListProducts();
+    }
+
+    @Override
+    public void loadMoreProducts() {
+        // Do nothing
+    }
+
+    @Override
+    public void updateData() {
+        // Do nothing
+    }
+
+    @Override
+    public void restoreProductList(Bundle savedInstanceState) {
+        mShoppingListName = getArguments().getParcelable(Constants.SHOPPING_LIST_NAME);
+        if (savedInstanceState != null) {
+            String shoppingListItemsJsonStr = savedInstanceState.getString(Constants.SHOPPING_LIST_ITEMS);
+            if (shoppingListItemsJsonStr != null) {
+                try {
+                    mShoppingListItemsInfoJsonArray = new JSONArray(shoppingListItemsJsonStr);
+                    mBaseImgUrl = savedInstanceState.getString(Constants.BASE_IMG_URL);
+                    renderShoppingListItems();
+                    return;
+                } catch (JSONException e) { }
+            }
+        }
+        loadProducts();
     }
 
     @Override
@@ -55,13 +84,11 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
 
     private void loadShoppingListProducts() {
         Bundle bundle = getArguments();
-        topCatSlug = bundle.getString(Constants.TOP_CAT_SLUG);
-        topCatName = bundle.getString(Constants.TOP_CATEGORY_NAME);
-        shoppingListName = bundle.getParcelable(Constants.SHOPPING_LIST_NAME);
+        String topCatSlug = bundle.getString(Constants.TOP_CAT_SLUG);
 
         HashMap<String, String> params = new HashMap<>();
-        params.put(Constants.SLUG, shoppingListName.getSlug());
-        if (shoppingListName.getSlug().equalsIgnoreCase(Constants.SMART_BASKET_SLUG)) {
+        params.put(Constants.SLUG, mShoppingListName.getSlug());
+        if (mShoppingListName.getSlug().equalsIgnoreCase(Constants.SMART_BASKET_SLUG)) {
             setTitle("Smart Basket Products");
         }
         params.put(Constants.TOP_CAT_SLUG, topCatSlug);
@@ -79,9 +106,9 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
                 switch (status) {
                     case 0:
                         JSONObject responseJsonObj = httpResponseJsonObj.getJSONObject(Constants.RESPONSE);
-                        String baseImgUrl = responseJsonObj.getString(Constants.BASE_IMG_URL);
-                        JSONArray shoppingListItemsJsonArray = responseJsonObj.getJSONArray(Constants.SHOPPING_LIST_ITEMS);
-                        renderShoppingListItems(baseImgUrl, shoppingListItemsJsonArray);
+                        mBaseImgUrl = responseJsonObj.getString(Constants.BASE_IMG_URL);
+                        mShoppingListItemsInfoJsonArray = responseJsonObj.getJSONArray(Constants.SHOPPING_LIST_ITEMS);
+                        renderShoppingListItems();
                         break;
                     default:
                         showErrorMsg("Server Error");
@@ -96,15 +123,15 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
         }
     }
 
-    private void renderShoppingListItems(String baseImgUrl, JSONArray shoppingListItemsJsonArray) {
+    private void renderShoppingListItems() {
         if (getActivity() == null) return;
         LinearLayout contentView = getContentView();
         if (contentView == null) return;
         contentView.removeAllViews();
         try {
             LayoutInflater inflater = getActivity().getLayoutInflater();
-            for (int i = 0; i < shoppingListItemsJsonArray.length(); i++) {
-                JSONObject jsonObject = shoppingListItemsJsonArray.getJSONObject(i);
+            for (int i = 0; i < mShoppingListItemsInfoJsonArray.length(); i++) {
+                JSONObject jsonObject = mShoppingListItemsInfoJsonArray.getJSONObject(i);
                 JSONArray productJsonArray = jsonObject.getJSONArray(Constants.ITEMS);
                 String topname = jsonObject.getString(Constants.TOP_CATEGORY_NAME);
                 View shopListHeaderLayout = inflater.inflate(R.layout.my_shopping_list_listheader, null);
@@ -112,7 +139,7 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
                 brandNameTxt.setTypeface(faceRobotoRegular);
                 topname = topname.replaceAll("<br/>", " ");
                 brandNameTxt.setText(UIUtil.abbreviate(topname, 25));
-                List<Product> productList = ParserUtil.parseProductJsonArray(productJsonArray, baseImgUrl);
+                ArrayList<Product> productList = ParserUtil.parseProductJsonArray(productJsonArray, mBaseImgUrl);
                 Button btnAddAllToBasket = (Button) shopListHeaderLayout.findViewById(R.id.btnAddAllToBasket);
                 if (Product.areAllProductsOutOfStock(productList)) {
                     btnAddAllToBasket.setVisibility(View.GONE);
@@ -137,26 +164,44 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
         }
     }
 
-    private void renderProducts(List<Product> productList) {
+    private void renderProducts(ArrayList<Product> productList) {
         if (getActivity() == null) return;
         LinearLayout contentView = getContentView();
         if (contentView == null) return;
 
-        ProductListView listViewShopListProducts = new ProductListView(getActivity());
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+
+        View base = inflater.inflate(R.layout.product_list, null);
+        AbsListView productListView = (AbsListView) base.findViewById(R.id.lstProducts);
+
         ProductViewDisplayDataHolder productViewDisplayDataHolder = new
                 ProductViewDisplayDataHolder(faceRobotoRegular, faceRobotoRegular, faceRobotoRegular, faceRupee,
                 !AuthParameters.getInstance(getBaseActivity()).isAuthTokenEmpty(), true, true,
-                !shoppingListName.isSystem(),
-                new MessageHandler(getBaseActivity()), shoppingListName);
+                !mShoppingListName.isSystem(),
+                new MessageHandler(getBaseActivity()), mShoppingListName);
         ProductListAdapter productListAdapter = new ProductListAdapter(productList, null,
                 getBaseActivity(), productViewDisplayDataHolder, this, 1);
-        listViewShopListProducts.setAdapter(productListAdapter);
-        contentView.addView(listViewShopListProducts);
+
+        // AbsListView doesn't have setAdapter below API 11, hence doing this way
+        if (productListView instanceof ListView) {
+            ((ListView) productListView).setAdapter(productListAdapter);
+        } else if (productListView instanceof StaggeredGridView) {
+            ((StaggeredGridView) productListView).setAdapter(productListAdapter);
+        }
+        contentView.addView(base);
     }
 
     @Override
     public LinearLayout getContentView() {
         return getView() != null ? (LinearLayout) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
+    }
+
+    @Override
+    public void parcelProductList(Bundle outState) {
+        if (mShoppingListItemsInfoJsonArray != null) {
+            outState.putString(Constants.SHOPPING_LIST_ITEMS, mShoppingListItemsInfoJsonArray.toString());
+            outState.putString(Constants.BASE_IMG_URL, mBaseImgUrl);
+        }
     }
 
     @Override

@@ -18,13 +18,15 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 
 public class ShoppingListSummaryFragment extends BaseFragment {
 
-    private ShoppingListName shoppingListName;
+    private ShoppingListName mShoppingListName;
+    private ArrayList<ShoppingListSummary> mShoppingListSummaries;
     private static final HashMap<String, Integer> categoryImageMap = new HashMap<>();
 
     static {
@@ -50,20 +52,27 @@ public class ShoppingListSummaryFragment extends BaseFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        loadShoppingListCategories();
-    }
-
-    private void loadShoppingListCategories() {
         Bundle bundle = getArguments();
         if (bundle == null) {
             return;
         }
-        shoppingListName = bundle.getParcelable(Constants.SHOPPING_LIST_NAME);
-        if (shoppingListName.getSlug().equalsIgnoreCase(Constants.SMART_BASKET_SLUG)) {
+        mShoppingListName = bundle.getParcelable(Constants.SHOPPING_LIST_NAME);
+        if (mShoppingListName.getSlug().equalsIgnoreCase(Constants.SMART_BASKET_SLUG)) {
             setTitle(Constants.SMART_BASKET);
         }
+        if (savedInstanceState != null) {
+            mShoppingListSummaries = savedInstanceState.getParcelableArrayList(Constants.SHOPPING_LIST_SUMMARY);
+            if (mShoppingListSummaries != null) {
+                renderShoppingListSummary();
+                return;
+            }
+        }
+        loadShoppingListCategories();
+    }
+
+    private void loadShoppingListCategories() {
         String url = MobileApiUrl.getBaseAPIUrl() + Constants.SL_LIST_SUMMARY + "?" +
-                Constants.SLUG + "=" + shoppingListName.getSlug();
+                Constants.SLUG + "=" + mShoppingListName.getSlug();
         startAsyncActivity(url, null, false, true, null);
     }
 
@@ -76,8 +85,8 @@ public class ShoppingListSummaryFragment extends BaseFragment {
             switch (status) {
                 case Constants.OK:
                     JsonArray shoppingListSummaryJsonArray = httpResponseJsonObj.get(Constants.SHOPPING_LIST_SUMMARY).getAsJsonArray();
-                    List<ShoppingListSummary> shoppingListSummaries = ParserUtil.parseShoppingListSummary(shoppingListSummaryJsonArray);
-                    renderShoppingListSummary(shoppingListSummaries);
+                    mShoppingListSummaries = ParserUtil.parseShoppingListSummary(shoppingListSummaryJsonArray);
+                    renderShoppingListSummary();
                     break;
                 default:
                     // TODO : Add error handling
@@ -89,13 +98,13 @@ public class ShoppingListSummaryFragment extends BaseFragment {
         }
     }
 
-    private void renderShoppingListSummary(final List<ShoppingListSummary> shoppingListSummaries) {
+    private void renderShoppingListSummary() {
         if (getActivity() == null) return;
         LinearLayout contentView = getContentView();
         if (contentView == null) return;
         contentView.removeAllViews();
-        if (shoppingListSummaries == null || shoppingListSummaries.size() == 0) {
-            if (shoppingListName.getSlug().equalsIgnoreCase(Constants.SMART_BASKET_SLUG)) {
+        if (mShoppingListSummaries == null || mShoppingListSummaries.size() == 0) {
+            if (mShoppingListName.getSlug().equalsIgnoreCase(Constants.SMART_BASKET_SLUG)) {
                 showErrorMsg(getString(R.string.smartBasketEmpty));
             } else {
                 LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -117,14 +126,14 @@ public class ShoppingListSummaryFragment extends BaseFragment {
         ListView shoppingListSummaryView = new ListView(getActivity());
         shoppingListSummaryView.setDividerHeight(0);
         shoppingListSummaryView.setDivider(null);
-        ShoppingListSummaryAdapter shoppingListSummaryAdapter = new ShoppingListSummaryAdapter(shoppingListSummaries);
+        ShoppingListSummaryAdapter shoppingListSummaryAdapter = new ShoppingListSummaryAdapter(mShoppingListSummaries);
         shoppingListSummaryView.setAdapter(shoppingListSummaryAdapter);
         shoppingListSummaryView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ShoppingListSummary shoppingListSummary = shoppingListSummaries.get(position);
+                ShoppingListSummary shoppingListSummary = mShoppingListSummaries.get(position);
                 Bundle bundle = new Bundle();
-                bundle.putParcelable(Constants.SHOPPING_LIST_NAME, shoppingListName);
+                bundle.putParcelable(Constants.SHOPPING_LIST_NAME, mShoppingListName);
                 bundle.putString(Constants.TOP_CAT_SLUG, shoppingListSummary.getTopCategorySlug());
                 bundle.putString(Constants.TOP_CATEGORY_NAME, shoppingListSummary.getTopCategoryName());
                 ShoppingListProductFragment shoppingListProductFragment = new ShoppingListProductFragment();
@@ -236,6 +245,14 @@ public class ShoppingListSummaryFragment extends BaseFragment {
                 return editTextNumItems;
             }
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (mShoppingListSummaries != null) {
+            outState.putParcelableArrayList(Constants.SHOPPING_LIST_SUMMARY, mShoppingListSummaries);
+        }
+        super.onSaveInstanceState(outState);
     }
 
     @Override

@@ -259,8 +259,8 @@ public class ParserUtil {
         return data;
     }
 
-    public static List<Product> parseProductJsonArray(JSONArray productJsonArray, String baseImgUrl) {
-        List<Product> productList = new ArrayList<>();
+    public static ArrayList<Product> parseProductJsonArray(JSONArray productJsonArray, String baseImgUrl) {
+        ArrayList<Product> productList = new ArrayList<>();
         for (int index = 0; index < productJsonArray.length(); index++) {
             JSONObject productJsonObject;
             try {
@@ -411,11 +411,11 @@ public class ParserUtil {
         return shoppingListNames;
     }
 
-    public static List<ShoppingListSummary> parseShoppingListSummary(JsonArray shoppingListSummaryJsonArray) {
+    public static ArrayList<ShoppingListSummary> parseShoppingListSummary(JsonArray shoppingListSummaryJsonArray) {
         if (shoppingListSummaryJsonArray == null || shoppingListSummaryJsonArray.size() == 0) {
             return null;
         }
-        List<ShoppingListSummary> shoppingListSummaries;
+        ArrayList<ShoppingListSummary> shoppingListSummaries;
         Gson gson = new Gson();
         Type collectionType = new TypeToken<Collection<ShoppingListSummary>>() {
         }.getType();

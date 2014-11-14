@@ -33,6 +33,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
 
     private ArrayList<ShoppingListName> shoppingListNames;
     private String selectedProductId;
+    private Product mProduct;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -42,6 +43,13 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            mProduct = savedInstanceState.getParcelable(Constants.PRODUCT);
+            if (mProduct != null) {
+                renderProductDetail();
+                return;
+            }
+        }
         loadProductDetail();
     }
 
@@ -64,8 +72,8 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
             switch (status) {
                 case Constants.OK:
                     JsonObject productJsonObj = httpResponseJsonOj.get(Constants.PRODUCT).getAsJsonObject();
-                    Product product = ParserUtil.parseProduct(productJsonObj, null);
-                    renderProductDetail(product);
+                    mProduct = ParserUtil.parseProduct(productJsonObj, null);
+                    renderProductDetail();
                     break;
                 default:
                     showErrorMsg("Server Error");
@@ -77,7 +85,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
         }
     }
 
-    private void renderProductDetail(Product product) {
+    private void renderProductDetail() {
         if (getActivity() == null || getView() == null) return;
 
         ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder(faceRobotoRegular,
@@ -90,11 +98,11 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
         LinearLayout.LayoutParams productRowParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         productRow.setLayoutParams(productRowParams);
-        View productView = ProductView.getProductView(productRow, product, null, null, productViewDisplayDataHolder,
+        View productView = ProductView.getProductView(productRow, mProduct, null, null, productViewDisplayDataHolder,
                 getBaseActivity(), false, this);
         layoutProductDetail.addView(productView);
 
-        ArrayList<ProductAdditionalInfo> productAdditionalInfos = product.getProductAdditionalInfos();
+        ArrayList<ProductAdditionalInfo> productAdditionalInfos = mProduct.getProductAdditionalInfos();
         if (productAdditionalInfos != null && productAdditionalInfos.size() > 0) {
             for (ProductAdditionalInfo productAdditionalInfo : productAdditionalInfos) {
                 View additionalInfoView = inflater.inflate(R.layout.uiv3_product_add_desc, null);
@@ -142,6 +150,14 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
     @Override
     public void postShoppingListItemDeleteOperation() {
 
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (mProduct != null) {
+            outState.putParcelable(Constants.PRODUCT, mProduct);
+        }
+        super.onSaveInstanceState(outState);
     }
 
     @NonNull
