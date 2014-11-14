@@ -1,241 +1,250 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@color/uiv3_list_bkg_color"
-              android:id="@+id/FBConfirmLayout">
-    
-    <LinearLayout android:layout_width="match_parent" 
-                  android:layout_marginTop="@dimen/margin_mini"
-                  android:id="@+id/layoutMsgFbConfirm"
-                  android:layout_marginLeft="@dimen/margin_normal"
-                  android:orientation="vertical"
-                  android:layout_marginRight="@dimen/margin_normal"
-                  android:layout_height="wrap_content">
-        
-        <TextView android:layout_width="match_parent"
-                  android:textSize="@dimen/secondary_text_size"
-                  android:id="@+id/fbConfirmMsg1"
-                  android:text="@string/fb_confirm_msg1"
-                  android:layout_height="wrap_content"/>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/uiv3_list_bkg_color"
+    android:id="@+id/FBConfirmLayout">
+    <ScrollView android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-        <TextView android:layout_width="match_parent"
-                  android:textSize="@dimen/secondary_text_size"
-                      android:id="@+id/fbConfirmMsg2"
-                  android:text="@string/fb_confirm_msg2"
-                  android:layout_height="wrap_content"/>
-
-        <TextView android:layout_width="match_parent"
-                  android:textSize="@dimen/primary_text_size"
-                  android:layout_marginTop="@dimen/margin_mini"
-                  android:textColor="@color/active_order_red_color"
-                  android:id="@+id/fbConfirmMsg3"
-                  android:text="@string/fb_confirm_msg3"
-                  android:layout_height="wrap_content"/>
-        
-    </LinearLayout>
-
-    <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:layout_below="@id/layoutMsgFbConfirm"
-            android:layout_marginTop="@dimen/margin_small"
-            android:layout_marginLeft="@dimen/margin_small"
-            android:layout_marginRight="@dimen/margin_small"
-            android:paddingRight="@dimen/padding_normal"
-            android:paddingLeft="@dimen/padding_normal"
+        <LinearLayout android:layout_width="match_parent"
             android:orientation="vertical"
-            android:paddingTop="@dimen/padding_small"
-            android:paddingBottom="@dimen/padding_normal">
-
-        <LinearLayout android:layout_width="match_parent"
-                      android:id="@+id/layoutYesHaveAcc"
-                      android:orientation="horizontal"
-                      android:layout_height="wrap_content">
-
-            <RadioButton android:layout_width="wrap_content"
-                         android:id="@+id/radioBtnYesHaveAcc"
-                         android:checked="true"
-                         android:textSize="@dimen/secondary_text_size"
-                         android:textColor="@color/medium_grey"
-                         android:layout_height="wrap_content"/>
-
-            <TextView android:layout_width="wrap_content"
-                      android:id="@+id/txtYesHaveAcc"
-                      android:paddingBottom="@dimen/padding_mini"
-                      android:text="@string/txtYesHaveAccMsg"
-                      android:layout_height="wrap_content"/>
-
-        </LinearLayout>
-
-        <LinearLayout android:layout_width="match_parent"
-                      android:layout_marginTop="@dimen/margin_small"
-                      android:paddingLeft="@dimen/padding_small"
-                      android:orientation="vertical"
-                      android:id="@+id/layoutEmailConfirmForm"
-                      android:layout_below="@id/layoutYesHaveAcc"
-                      android:layout_height="wrap_content">
-
-            <TableLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:stretchColumns="1">
-
-                <TableRow android:layout_width="match_parent"
-                          android:layout_height="wrap_content">
-
-                    <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="bottom"
-                            android:layout_marginBottom="@dimen/margin_mini"
-                            android:contentDescription="@string/email"
-                            android:src="@drawable/mail"/>
-
-                    <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/margin_small">
-
-                        <EditText
-                                android:id="@+id/editTextEmail"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:ems="10"
-                                android:inputType="textEmailAddress"
-                                android:imeOptions="actionNext"
-                                android:paddingLeft="@dimen/padding_small"
-                                android:singleLine="true"
-                                android:hint="@string/email"
-                                android:textColor="@color/uiv3_primary_text_color"
-                                android:textSize="@dimen/secondary_text_size">
-
-                        </EditText>
-
-                        <ImageView
-                                android:id="@+id/imgEmailErr"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignRight="@id/editTextEmail"
-                                android:layout_marginRight="@dimen/margin_mini"
-                                android:visibility="gone"
-                                android:paddingBottom="@dimen/padding_mini"
-                                android:contentDescription="@string/missing"
-                                android:src="@drawable/error_symbol"/>
-
-                    </RelativeLayout>
-                </TableRow>
-
-                <TableRow android:layout_width="match_parent"
-                          android:layout_height="wrap_content">
-
-                    <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="bottom"
-                            android:layout_marginBottom="@dimen/margin_mini"
-                            android:contentDescription="@string/password"
-                            android:src="@drawable/create"/>
-
-                    <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/margin_small">
-
-                        <EditText
-                                android:id="@+id/editTextPasswd"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:ems="10"
-                                android:inputType="textPassword"
-                                android:paddingLeft="@dimen/padding_small"
-                                android:singleLine="true"
-                                android:layout_marginLeft="@dimen/margin_small"
-                                android:hint="@string/password"
-                                android:textSize="@dimen/secondary_text_size"
-                                android:textColor="@color/uiv3_primary_text_color"/>
-
-                        <ImageView
-                                android:id="@+id/imgPasswdErr"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignRight="@id/editTextPasswd"
-                                android:contentDescription="@string/missing"
-                                android:layout_marginRight="@dimen/margin_mini"
-                                android:visibility="gone"
-                                android:paddingBottom="@dimen/padding_mini"
-                                android:src="@drawable/error_symbol"/>
-
-                    </RelativeLayout>
-                </TableRow>
-
-            </TableLayout>
-
-        </LinearLayout>
+            android:layout_height="wrap_content">
 
 
-        <LinearLayout android:layout_width="match_parent"
-                      android:id="@+id/layoutNoDONotHaveAcc"
-                      android:layout_below="@id/layoutEmailConfirmForm"
-                      android:orientation="horizontal"
-                      android:layout_height="wrap_content">
-            <RadioButton android:layout_width="wrap_content"
-                         android:id="@+id/radioBtnNoHaveAcc"
-                         android:textSize="14sp"
-                         android:textColor="@color/medium_grey"
-                         android:layout_height="wrap_content"/>
+            <LinearLayout android:layout_width="match_parent"
+                android:layout_marginTop="@dimen/margin_mini"
+                android:id="@+id/layoutMsgFbConfirm"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:orientation="vertical"
+                android:layout_marginRight="@dimen/margin_normal"
+                android:layout_height="wrap_content">
 
+                <TextView android:layout_width="match_parent"
+                    android:textSize="@dimen/secondary_text_size"
+                    android:id="@+id/fbConfirmMsg1"
+                    android:text="@string/fb_confirm_msg1"
+                    android:layout_height="wrap_content"/>
 
-            <TextView android:layout_width="wrap_content"
-                      android:id="@+id/txtNoHaveAcc"
-                      android:text="@string/txtNoHaveAccMsg"
-                      android:layout_height="wrap_content"/>
-        </LinearLayout>
+                <TextView android:layout_width="match_parent"
+                    android:textSize="@dimen/secondary_text_size"
+                    android:id="@+id/fbConfirmMsg2"
+                    android:text="@string/fb_confirm_msg2"
+                    android:layout_height="wrap_content"/>
 
+                <TextView android:layout_width="match_parent"
+                    android:textSize="@dimen/primary_text_size"
+                    android:layout_marginTop="@dimen/margin_mini"
+                    android:textColor="@color/active_order_red_color"
+                    android:id="@+id/fbConfirmMsg3"
+                    android:text="@string/fb_confirm_msg3"
+                    android:layout_height="wrap_content"/>
 
-        <LinearLayout android:layout_width="match_parent"
-                      android:id="@+id/layoutDoNotHaveAcc"
-                      android:orientation="vertical"
-                      android:layout_marginLeft="@dimen/margin_mini"
-                      android:layout_below="@id/layoutNoDONotHaveAcc"
-                      android:layout_height="wrap_content">
+            </LinearLayout>
 
-            <TextView android:layout_width="match_parent"
-                      android:id="@+id/txtCreateNewAccount"
-                      android:layout_height="wrap_content"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:layout_marginTop="@dimen/margin_small"
+                android:layout_marginLeft="@dimen/margin_small"
+                android:layout_marginRight="@dimen/margin_small"
+                android:paddingRight="@dimen/padding_normal"
+                android:paddingLeft="@dimen/padding_normal"
+                android:orientation="vertical"
+                android:paddingTop="@dimen/padding_small"
+                android:paddingBottom="@dimen/padding_normal">
 
-        </LinearLayout>
-
-    </RelativeLayout>
-
-    <RelativeLayout android:layout_width="match_parent"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentBottom="true"
+                <LinearLayout android:layout_width="match_parent"
+                    android:id="@+id/layoutYesHaveAcc"
+                    android:orientation="horizontal"
                     android:layout_height="wrap_content">
 
-        <com.melnykov.fab.FloatingActionButton
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/btnFBConfirm"
-                android:layout_alignParentRight="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_normal"
-                android:src="@drawable/login_arrow"/>
+                    <RadioButton android:layout_width="wrap_content"
+                        android:id="@+id/radioBtnYesHaveAcc"
+                        android:checked="true"
+                        android:textSize="@dimen/secondary_text_size"
+                        android:textColor="@color/medium_grey"
+                        android:layout_height="wrap_content"/>
 
-        <TextView android:layout_width="wrap_content"
-                  android:background="@drawable/bubble_text_view"
-                  android:id="@+id/txtFBConfirmBtnHint"
-                  android:layout_centerInParent="true"
-                  android:padding="@dimen/padding_mini"
-                  android:layout_toLeftOf="@id/btnFBConfirm"
-                  android:text="@string/txtLinkAccount"
-                  android:textColor="@color/white"
-                  android:layout_height="wrap_content"/>
+                    <TextView android:layout_width="wrap_content"
+                        android:id="@+id/txtYesHaveAcc"
+                        android:paddingBottom="@dimen/padding_normal"
+                        android:text="@string/txtYesHaveAccMsg"
+                        android:layout_height="wrap_content"/>
 
-    </RelativeLayout>
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent"
+                    android:layout_marginTop="@dimen/margin_small"
+                    android:paddingLeft="@dimen/padding_small"
+                    android:orientation="vertical"
+                    android:id="@+id/layoutEmailConfirmForm"
+                    android:layout_below="@id/layoutYesHaveAcc"
+                    android:layout_height="wrap_content">
+
+                    <TableLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:stretchColumns="1">
+
+                        <TableRow android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="bottom"
+                                android:layout_marginBottom="@dimen/margin_mini"
+                                android:contentDescription="@string/email"
+                                android:src="@drawable/mail"/>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/margin_small">
+
+                                <EditText
+                                    android:id="@+id/editTextEmail"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:ems="10"
+                                    android:inputType="textEmailAddress"
+                                    android:imeOptions="actionNext"
+                                    android:paddingLeft="@dimen/padding_small"
+                                    android:singleLine="true"
+                                    android:hint="@string/email"
+                                    android:textColor="@color/uiv3_primary_text_color"
+                                    android:textSize="@dimen/secondary_text_size">
+
+                                </EditText>
+
+                                <ImageView
+                                    android:id="@+id/imgEmailErr"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignRight="@id/editTextEmail"
+                                    android:layout_marginRight="@dimen/margin_mini"
+                                    android:visibility="gone"
+                                    android:paddingBottom="@dimen/padding_mini"
+                                    android:contentDescription="@string/missing"
+                                    android:src="@drawable/error_symbol"/>
+
+                            </RelativeLayout>
+                        </TableRow>
+
+                        <TableRow android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="bottom"
+                                android:layout_marginBottom="@dimen/margin_mini"
+                                android:contentDescription="@string/password"
+                                android:src="@drawable/create"/>
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/margin_small">
+
+                                <EditText
+                                    android:id="@+id/editTextPasswd"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:ems="10"
+                                    android:inputType="textPassword"
+                                    android:paddingLeft="@dimen/padding_small"
+                                    android:singleLine="true"
+                                    android:layout_marginLeft="@dimen/margin_small"
+                                    android:hint="@string/password"
+                                    android:textSize="@dimen/secondary_text_size"
+                                    android:textColor="@color/uiv3_primary_text_color"/>
+
+                                <ImageView
+                                    android:id="@+id/imgPasswdErr"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignRight="@id/editTextPasswd"
+                                    android:contentDescription="@string/missing"
+                                    android:layout_marginRight="@dimen/margin_mini"
+                                    android:visibility="gone"
+                                    android:paddingBottom="@dimen/padding_mini"
+                                    android:src="@drawable/error_symbol"/>
+
+                            </RelativeLayout>
+                        </TableRow>
+
+                    </TableLayout>
+
+                </LinearLayout>
 
 
-</RelativeLayout>
+                <LinearLayout android:layout_width="match_parent"
+                    android:id="@+id/layoutNoDONotHaveAcc"
+                    android:layout_below="@id/layoutEmailConfirmForm"
+                    android:orientation="horizontal"
+                    android:layout_height="wrap_content">
+                    <RadioButton android:layout_width="wrap_content"
+                        android:id="@+id/radioBtnNoHaveAcc"
+                        android:textSize="14sp"
+                        android:textColor="@color/medium_grey"
+                        android:layout_height="wrap_content"/>
+
+
+                    <TextView android:layout_width="wrap_content"
+                        android:id="@+id/txtNoHaveAcc"
+                        android:text="@string/txtNoHaveAccMsg"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+
+
+                <LinearLayout android:layout_width="match_parent"
+                    android:id="@+id/layoutDoNotHaveAcc"
+                    android:orientation="vertical"
+                    android:layout_marginLeft="@dimen/margin_mini"
+                    android:layout_below="@id/layoutNoDONotHaveAcc"
+                    android:layout_height="wrap_content">
+
+                    <TextView android:layout_width="match_parent"
+                        android:id="@+id/txtCreateNewAccount"
+                        android:layout_height="wrap_content"/>
+
+                </LinearLayout>
+
+                <Button
+                    android:layout_centerInParent="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/txtLinkAccount"
+                    android:textSize="@dimen/primary_text_size"
+                    android:id="@+id/btnFBConfirm"
+                    android:layout_below="@id/layoutDoNotHaveAcc"
+                    android:paddingLeft="@dimen/padding_normal"
+                    android:paddingRight="@dimen/padding_normal"
+                    android:paddingTop="@dimen/padding_small"
+                    android:paddingBottom="@dimen/padding_small"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:textColor="@color/white"
+                    android:layout_marginLeft="@dimen/margin_normal"
+                    android:drawablePadding="@dimen/padding_small"
+                    android:background="@color/uiv3_action_bar_background"
+                    android:layout_marginTop="@dimen/margin_normal"
+                    android:layout_marginRight="@dimen/margin_normal"
+                    android:layout_marginBottom="@dimen/margin_small"
+                    />
+
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+</LinearLayout>

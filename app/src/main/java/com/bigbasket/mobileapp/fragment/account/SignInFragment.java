@@ -1,7 +1,5 @@
 package com.bigbasket.mobileapp.fragment.account;
 
-import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -20,7 +18,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
@@ -28,65 +25,30 @@ import com.bigbasket.mobileapp.util.UIUtil;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
-import com.facebook.SessionLoginBehavior;
-import com.facebook.SessionState;
 import com.facebook.model.GraphUser;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 
-
-public class SignInFragment extends BaseFragment {
-
+public class SignInFragment extends FacebookRegisterLogIn {
     private static final String TAG = SignInFragment.class.getSimpleName();
     private EditText editTextEmail, editTextPasswd;
     private Button btnLogin;
     private CheckBox chkRememberMe;
     private ImageView imgEmailErr, imgPasswdErr;
     private ProgressBar progressBarLogin;
-    private Button btnFBLogin;
-    private GraphUser user;
-    private JSONObject user_details = new JSONObject();
-    private Session currentSession;
-    private static final List<String> PERMISSIONS = Arrays.asList("email", "user_friends", "public_profile");
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.uiv3_login, container, false);
     }
 
-    private Session openActiveSession(Activity activity, boolean allowLoginUI, List<String> permissions, Session.StatusCallback callback) {
-        Session.OpenRequest openRequest = new Session.OpenRequest(this).setPermissions(permissions).setCallback(callback);
-        Session session = new Session.Builder(activity).build();
-        if (SessionState.CREATED_TOKEN_LOADED.equals(session.getState()) || allowLoginUI) {
-            Toast.makeText(getActivity(), session.getState().toString(), Toast.LENGTH_LONG).show();
-            Session.setActiveSession(session);
-            session.openForRead(openRequest);
-            return session;
-        }
-        return null;
-    }
 
-
-    public void connectToFB() {
-        currentSession = new Session.Builder(getActivity()).build();
-        currentSession.addCallback(callback);
-        Session.OpenRequest openRequest = new Session.OpenRequest(this);
-        openRequest.setLoginBehavior(SessionLoginBehavior.SUPPRESS_SSO);
-        openRequest.setRequestCode(Session.DEFAULT_AUTHORIZE_ACTIVITY_CODE);
-        openRequest.setPermissions(PERMISSIONS);
-        currentSession.openForRead(openRequest);
-    }
-
-
-    private void fetchUserInfo(Session session) {
+    public void fetchUserInfo(Session session) {
         Request request = Request.newMeRequest(session, new Request.GraphUserCallback() {
             @Override
             public void onCompleted(GraphUser me, Response response) {
@@ -102,45 +64,6 @@ public class SignInFragment extends BaseFragment {
         });
         Request.executeBatchAsync(request);
     }
-
-
-    private void onSessionStateChange(Session session, SessionState state,
-                                      Exception exception) {
-        if (exception != null) {
-            Toast.makeText(getActivity(), exception.toString(), Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        if (session != currentSession) {
-            Toast.makeText(getActivity(), "current session not equal to session", Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        if (session.isOpened()) {
-            Toast.makeText(getActivity(), "Session active..", Toast.LENGTH_LONG).show();
-            fetchUserInfo(session);
-        } else {
-            if (session.isClosed()) {
-                Toast.makeText(getActivity(), "session is closed", Toast.LENGTH_SHORT).show();
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.remove(Constants.FB_EMAIL_ID);
-                editor.commit();
-                session.closeAndClearTokenInformation();
-            } else {
-                Toast.makeText(getActivity(), "isFetching", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    private Session.StatusCallback callback = new Session.StatusCallback() {
-        @Override
-        public void call(Session session, SessionState state,
-                         Exception exception) {
-            if (getActivity() != null)
-                onSessionStateChange(session, state, exception);
-        }
-    };
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -170,7 +93,7 @@ public class SignInFragment extends BaseFragment {
         btnLogin.setTypeface(faceRobotoRegular);
         resetLoginButton();
 
-        btnFBLogin = (Button) base.findViewById(R.id.btnFBLogin);
+        Button btnFBLogin = (Button) base.findViewById(R.id.btnFBLogin);
         btnFBLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -206,6 +129,7 @@ public class SignInFragment extends BaseFragment {
         imgEmailErr.setVisibility(View.GONE);
         imgPasswdErr.setVisibility(View.GONE);
 //        base.findViewById(R.id.sign_in_button).setOnClickListener(this);
+
     }
 
     public void OnLoginButtonClicked() {
@@ -281,16 +205,6 @@ public class SignInFragment extends BaseFragment {
 
     }
 
-    private void callFbLogin() {
-        if (user_details != null && user_details.length() > 0) {
-            HashMap<String, String> load = new HashMap<>();
-            load.put(Constants.USER_DETAILS, user_details.toString());
-            startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.FB_LOGIN_REGISTER, load, true, false, null);
-        } else {
-            showErrorMsg(getString(R.string.INTERNAL_SERVER_ERROR));
-        }
-    }
-
     private void startLogin(String email, String passwd) {
         setLoginButtonInProgress();
         HashMap<String, String> params = new HashMap<>();
@@ -354,46 +268,12 @@ public class SignInFragment extends BaseFragment {
                             break;
                     }
             }
-        } else if (httpOperationResult.getUrl().contains(Constants.FB_LOGIN_REGISTER) ||
-                httpOperationResult.getUrl().contains(Constants.FB_CONFIRM)) {
-            int responseCode = httpOperationResult.getResponseCode();
-            String responseJsonString = httpOperationResult.getReponseString();
-            if (responseCode == Constants.successRespCode) {
-                if (responseJsonString != null) {
-                    JsonObject responseJsonObj = new JsonParser().parse(responseJsonString).getAsJsonObject();
-                    int status = responseJsonObj.get(Constants.STATUS).getAsInt();
-                    switch (status) {
-                        case 0:
-                            JsonObject jsonObjectResponse = responseJsonObj.get(Constants.RESPONSE).getAsJsonObject();
-                            saveUserDetailInPreference(jsonObjectResponse);
-                            break;
-                        case Constants.FB_CONFIRM_ERROR:
-                            String errorMsg = responseJsonObj.get(Constants.MESSAGE).getAsString();
-                            FBConfirmFragment fbConfirmFragment = new FBConfirmFragment();
-                            Bundle bundle = getFBDataFromPreference(new Bundle(), errorMsg);
-                            fbConfirmFragment.setArguments(bundle);
-                            changeFragment(fbConfirmFragment);
-                            break;
-                        case Constants.FB_INTERNAL_SERVER_ERROR:
-                            showAlertDialogFinish(getActivity(), null, getString(R.string.INTERNAL_SERVER_ERROR));
-                            break;
-                        default:
-                            String errorMsgDefault = responseJsonObj.get(Constants.MESSAGE).getAsString();
-                            showErrorMsg(errorMsgDefault);
-                            break;
-                    }
-                } else {
-                    showAlertDialogFinish(getActivity(), null, getString(R.string.INTERNAL_SERVER_ERROR));
-                }
-            } else {
-                showAlertDialogFinish(getActivity(), null, getString(R.string.INTERNAL_SERVER_ERROR));
-            }
         } else {
             super.onAsyncTaskComplete(httpOperationResult);
         }
     }
 
-    private Bundle getFBDataFromPreference(Bundle bundle, String serverErrorMsg) {
+    public Bundle getFBDataFromPreference(Bundle bundle, String serverErrorMsg) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         bundle.putString(Constants.FB_SERVER_ERROR_MSG, serverErrorMsg);
@@ -407,7 +287,7 @@ public class SignInFragment extends BaseFragment {
         return bundle;
     }
 
-    private void saveUserDetailInPreference(JsonObject responseJsonObj) {
+    public void saveUserDetailInPreference(JsonObject responseJsonObj) {
         if (getActivity() == null || getBaseActivity() == null) return;
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         SharedPreferences.Editor editor = preferences.edit();
@@ -437,25 +317,6 @@ public class SignInFragment extends BaseFragment {
         getBaseActivity().onLoginSuccess();
     }
 
-    protected void onPositiveButtonClicked(DialogInterface dialogInterface, int id, String sourceName, Object valuePassed) {
-        super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
-        if (sourceName != null && sourceName.equals(Constants.FROM_FB_CONFIRM_DIALOG)) {
-            callFbConfirmToLinkMailIDTOBigbasketId();
-        }
-    }
-
-    private void callFbConfirmToLinkMailIDTOBigbasketId() {
-        if (user_details != null && user_details.length() > 0) {
-            HashMap<String, String> load = new HashMap<>();
-            load.put(Constants.FB_LINK_FROM, "Login");
-            load.put(Constants.FB_CONFIRM_TYPE, "create-account");
-            load.put(Constants.USER_DETAILS, user_details.toString());
-            startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.FB_CONFIRM, load, true, false, null);
-        } else {
-            showErrorMsg(getString(R.string.INTERNAL_SERVER_ERROR));
-        }
-    }
-
     public void OnForgotPasswordClicked() {
 
     }
@@ -468,12 +329,4 @@ public class SignInFragment extends BaseFragment {
     public String getTitle() {
         return null;
     }
-//
-//    @Override
-//    public void onClick(View v) {
-//        if (v.getId() == R.id.sign_in_button && !mGoogleApiClient.isConnecting()) {
-//            mSignInClicked = true;
-//            resolveSignInError();
-//        }
-//    }
 }

@@ -19,7 +19,6 @@ import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.melnykov.fab.FloatingActionButton;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -36,7 +35,7 @@ public class FBConfirmFragment extends BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.uiv3_list_container, container, false);
+        return inflater.inflate(R.layout.uiv3_fb_confirm_layout, container, false);
     }
 
     @Override
@@ -55,11 +54,11 @@ public class FBConfirmFragment extends BaseFragment {
 
     private void renderFbConfirmForm() {
         if (getActivity() == null) return;
-        LinearLayout contentView = getContentView();
-        if (contentView == null) return;
+        LinearLayout base = getContentView();
+        if (base == null) return;
 
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        View base = inflater.inflate(R.layout.uiv3_fb_confirm_layout, null);
+        //LayoutInflater inflater = getActivity().getLayoutInflater();
+        //View base = inflater.inflate(R.layout.uiv3_fb_confirm_layout, null);
         editTextEmail = (EditText) base.findViewById(R.id.editTextEmail);
         editTextPasswd = (EditText) base.findViewById(R.id.editTextPasswd);
         editTextEmail.setTypeface(faceRobotoRegular);
@@ -82,20 +81,19 @@ public class FBConfirmFragment extends BaseFragment {
         txtYesHaveAcc.setText("Link " + firstName + " " + lastName + " " + getString(R.string.txtYesHaveAccMsg));
         final RadioButton radioBtnNoHaveAcc = (RadioButton) base.findViewById(R.id.radioBtnNoHaveAcc);
 
-        final FloatingActionButton btnFBConfirm = (FloatingActionButton) base.findViewById(R.id.btnFBConfirm);
+        final Button btnFBConfirm = (Button) base.findViewById(R.id.btnFBConfirm);
         btnFBConfirm.setTag(getString(R.string.txtLinkAccount));
         btnFBConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (String.valueOf(btnFBConfirm.getTag()).equalsIgnoreCase(getString(R.string.txtLinkAccount))) {
+                if (String.valueOf(btnFBConfirm.getText().toString()).equalsIgnoreCase(getString(R.string.txtLinkAccount))) {
                     OnLoginButtonClicked();
                 } else {
                     callFbConfirmToLinkMailIDTOBigbasketId();
                 }
             }
         });
-        final TextView txtFBConfirmBtnHint = (TextView) base.findViewById(R.id.txtFBConfirmBtnHint);
-
+        //final TextView txtFBConfirmBtnHint = (TextView) base.findViewById(R.id.txtFBConfirmBtnHint);
         radioBtnYesHaveAcc.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -103,8 +101,8 @@ public class FBConfirmFragment extends BaseFragment {
                     radioBtnNoHaveAcc.setChecked(false);
                     layoutDoNotHaveAcc.setVisibility(View.GONE);
                     layoutEmailConfirmForm.setVisibility(View.VISIBLE);
-                    btnFBConfirm.setTag(getString(R.string.txtLinkAccount));
-                    txtFBConfirmBtnHint.setText(String.valueOf(btnFBConfirm.getTag()));
+                    btnFBConfirm.setText(getString(R.string.txtLinkAccount));
+                    //txtFBConfirmBtnHint.setText(String.valueOf(btnFBConfirm.getTag()));
                 }
             }
         });
@@ -116,36 +114,15 @@ public class FBConfirmFragment extends BaseFragment {
                     radioBtnYesHaveAcc.setChecked(false);
                     layoutEmailConfirmForm.setVisibility(View.GONE);
                     layoutDoNotHaveAcc.setVisibility(View.VISIBLE);
-                    btnFBConfirm.setTag(getString(R.string.txtCreateAndLinkAccount));
-                    txtFBConfirmBtnHint.setText(String.valueOf(btnFBConfirm.getTag()));
+                    btnFBConfirm.setText(getString(R.string.txtCreateAndLinkAccount));
+                    //txtFBConfirmBtnHint.setText(String.valueOf(btnFBConfirm.getTag()));
                 }
             }
         });
         TextView txtCreateNewAccount = (TextView) base.findViewById(R.id.txtCreateNewAccount);
         txtCreateNewAccount.setText(serverErrorMsg);
 
-        /*
-        TextView txtLinkAcc = (TextView)base.findViewById(R.id.txtLinkAcc);
-        txtLinkAcc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                OnLoginButtonClicked();
-            }
-        });
-
-
-
-        TextView txtLinkAccAndCreate = (TextView) base.findViewById(R.id.txtLinkAccAndCreate);
-        txtLinkAccAndCreate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                callFbConfirmToLinkMailIDTOBigbasketId();
-            }
-        });
-
-        */
-
-        contentView.addView(base);
+        //contentView.addView(base);
     }
 
 
@@ -203,6 +180,7 @@ public class FBConfirmFragment extends BaseFragment {
     private void startLogin(String email, String passwd) {
         HashMap<String, String> params = new HashMap<>();
         params.put(Constants.EMAIL, email);
+        params.put(Constants.FB_EMAIL, emailID);
         params.put(Constants.PASSWORD, passwd);
         params.put("fb-login", "fb-login");
         params.put(Constants.FB_GENDER, passwd);
@@ -235,7 +213,6 @@ public class FBConfirmFragment extends BaseFragment {
                 case Constants.OK:
                     removeFbDataFromPreference();
                     saveUserDetailInPreference(responseJsonObj);
-                    OnLoginSuccess();
                     break;
                 case Constants.ERROR:
                     //TODO : Replace with handler
@@ -260,7 +237,7 @@ public class FBConfirmFragment extends BaseFragment {
                         case 0:
                             JsonObject jsonObjectResponse = responseJsonObj.get(Constants.RESPONSE).getAsJsonObject();
                             saveUserDetailInPreference(jsonObjectResponse);
-                            OnLoginSuccess();
+                            break;
                         case Constants.FB_INTERNAL_SERVER_ERROR:
                             showAlertDialogFinish(getActivity(), null, getString(R.string.INTERNAL_SERVER_ERROR));
                             break;
@@ -280,13 +257,9 @@ public class FBConfirmFragment extends BaseFragment {
         }
     }
 
-    public void OnLoginSuccess() {
-        AuthParameters.updateInstance(getActivity());
-        BaseActivity baseActivity = (BaseActivity) getActivity();
-        baseActivity.goToHome();
-    }
 
     private void saveUserDetailInPreference(JsonObject responseJsonObj) {
+        if (getActivity() == null || getBaseActivity() == null) return;
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         SharedPreferences.Editor editor = preferences.edit();
         String bbToken = responseJsonObj.get(Constants.BB_TOKEN).getAsString();
@@ -314,10 +287,11 @@ public class FBConfirmFragment extends BaseFragment {
         }
         */
         editor.commit();
+        getBaseActivity().onLoginSuccess();
     }
 
     public LinearLayout getContentView() {
-        return getView() != null ? (LinearLayout) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
+        return getView() != null ? (LinearLayout) getView().findViewById(R.id.FBConfirmLayout) : null;
     }
 
 

@@ -46,6 +46,16 @@ public class UpdatePinFragment extends BaseFragment {
         getCurrentMemberPin();
     }
 
+    private void setCurrentPin(String currentPin){
+        txtPinValue.setText(!TextUtils.isEmpty(currentPin) ? currentPin : getString(R.string.blankPin));
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if(currentPin!=null)
+            outState.putString(Constants.CURRENT_PIN, currentPin);
+        super.onSaveInstanceState(outState);
+    }
 
     private void clickEventHandler() {
         if (getActivity() == null) return;
@@ -102,15 +112,15 @@ public class UpdatePinFragment extends BaseFragment {
                 JsonObject jsonObject = new JsonParser().parse(responseJson).getAsJsonObject();
                 JsonObject responseJsonObject = jsonObject.get(Constants.RESPONSE).getAsJsonObject();
                 currentPin = responseJsonObject.get(Constants.CURRENT_PIN).getAsString();
-                txtPinValue.setText(!TextUtils.isEmpty(currentPin) ? currentPin : getString(R.string.blankPin));
+                setCurrentPin(currentPin);
             } else {
                 switch (responseCode) {
                     case Constants.successRespCode:
                         //layoutEditPin.setVisibility(View.GONE);
                         //layoutCurrentPin.setVisibility(View.VISIBLE);
                         AnimationFactory.flipTransition(viewAnimator, AnimationFactory.FlipDirection.LEFT_RIGHT);
-                        txtPinValue.setText(!TextUtils.isEmpty(editTextNewPin.getText().toString()) ?
-                                editTextNewPin.getText().toString() : getString(R.string.blankPin));
+                        currentPin = editTextNewPin.getText().toString();
+                        setCurrentPin(editTextNewPin.getText().toString());
                         BaseActivity.hideKeyboard((BaseActivity) getActivity(), editTextNewPin);
                         break;
                     case Constants.notMemberRespCode:
