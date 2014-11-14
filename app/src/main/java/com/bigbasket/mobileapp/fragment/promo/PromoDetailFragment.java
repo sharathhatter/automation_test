@@ -486,12 +486,16 @@ public class PromoDetailFragment extends BaseFragment {
         public View getView(int position, View convertView, ViewGroup parent) {
             View row = convertView;
             Promo promo = (Promo) getItem(position);
+            TextView txtPromoName = null;
             if (row == null) {
                 row = getActivity().getLayoutInflater().inflate(R.layout.uiv3_list_title, null);
-                ((TextView) row).setTypeface(faceRobotoRegular);
-                ((TextView) row).setTextSize(textSize);
+                txtPromoName = (TextView) row.findViewById(R.id.txtHeaderMsg);
+                txtPromoName.setTypeface(faceRobotoRegular);
+                txtPromoName.setTextSize(textSize);
             }
-            TextView txtPromoName = (TextView) row;
+            if (txtPromoName == null) {
+                txtPromoName = (TextView) row.findViewById(R.id.txtHeaderMsg);
+            }
             txtPromoName.setText("- " + promo.getPromoName());
             if (mPromoDetail.getId() == promo.getId()) {
                 txtPromoName.setTextColor(highlightedColor);

@@ -1,6 +1,8 @@
 package com.bigbasket.mobileapp.fragment.order;
 
+import android.app.Dialog;
 import android.content.SharedPreferences;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -10,16 +12,29 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.CheckBox;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
+
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.model.account.Address;
 import com.bigbasket.mobileapp.model.cart.FulfillmentInfo;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
-import com.bigbasket.mobileapp.model.slot.*;
+import com.bigbasket.mobileapp.model.slot.BaseSlot;
+import com.bigbasket.mobileapp.model.slot.SelectedSlotType;
+import com.bigbasket.mobileapp.model.slot.Slot;
+import com.bigbasket.mobileapp.model.slot.SlotGroup;
+import com.bigbasket.mobileapp.model.slot.SlotHeader;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.ParserUtil;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,6 +47,8 @@ import java.util.List;
 public class SlotSelectionFragment extends BaseFragment {
 
     private List<SlotGroup> slotGroupList;
+    private Dialog mSlotListDialog;
+    private SlotGroupListAdapter mSlotGroupListAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -97,32 +114,22 @@ public class SlotSelectionFragment extends BaseFragment {
             fillSlotList(listViewSlots, slotGroupList.get(0));
         } else {
             // info message for multiple slot selection
-
-            LinearLayout msgLayout = new LinearLayout(getActivity());
-            final LinearLayout.LayoutParams main1Params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT);
-            main1Params.setMargins(20, 5, 20, 10);
-            msgLayout.setLayoutParams(main1Params);
-            contentView.addView(msgLayout);
-
             TextView infoMsgMultipleSlotSelection = new TextView(getActivity());
             infoMsgMultipleSlotSelection.setText(getResources().getString(R.string.multipleDeliverySlotMsg1));
+            infoMsgMultipleSlotSelection.setTextSize(getResources().getDimension(R.dimen.primary_text_size));
             infoMsgMultipleSlotSelection.setGravity(Gravity.CENTER_HORIZONTAL);
-            infoMsgMultipleSlotSelection.setTextColor(getResources().getColor(R.color.active_order_red_color));
+            infoMsgMultipleSlotSelection.setTextColor(getResources().getColor(R.color.dark_red));
             infoMsgMultipleSlotSelection.setTypeface(faceRobotoRegular);
-            msgLayout.addView(infoMsgMultipleSlotSelection);
+            infoMsgMultipleSlotSelection.setPadding((int) getResources().getDimension(R.dimen.padding_small),
+                    (int) getResources().getDimension(R.dimen.padding_normal),
+                    (int) getResources().getDimension(R.dimen.padding_small),
+                    (int) getResources().getDimension(R.dimen.padding_normal));
+            infoMsgMultipleSlotSelection.setGravity(Gravity.CENTER_HORIZONTAL);
+            contentView.addView(infoMsgMultipleSlotSelection);
 
-            View viewLine = new View(getActivity());
-            final LinearLayout.LayoutParams layoutLine2Params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1);
-            layoutLine2Params.setMargins(0, 20, 0, 0);
-            viewLine.setLayoutParams(layoutLine2Params);
-            viewLine.setBackgroundColor(getResources().getColor(R.color.strokeLine));
-            contentView.addView(viewLine);
-
-
-            SlotGroupListAdapter slotGroupListAdapter = new SlotGroupListAdapter();
+            mSlotGroupListAdapter = new SlotGroupListAdapter();
             ListView slotGroupListView = new ListView(getActivity());
-            slotGroupListView.setAdapter(slotGroupListAdapter);
+            slotGroupListView.setAdapter(mSlotGroupListAdapter);
             slotGroupListView.setDivider(null);
             slotGroupListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -136,25 +143,18 @@ public class SlotSelectionFragment extends BaseFragment {
     }
 
     public void showSlotListDialog(SlotGroup slotGroup) {
-//        slotListDialog = new Dialog(this);
-//        slotListDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-//        slotListDialog.setContentView(R.layout.dialog_list_layout);
-//        TextView txtDialogTitle = (TextView) slotListDialog.findViewById(R.id.txtDialogTitle);
-//        txtDialogTitle.setText(StringUtils.abbreviate(slotGroup.getFulfillmentInfo().getFulfilledBy(), 25));
-//        ListView lstViewSlot = (ListView) slotListDialog.findViewById(R.id.listViewDialog);
-//        fillSlotList(lstViewSlot, slotGroup);
-//        ImageView imgCloseBtn = (ImageView) slotListDialog.findViewById(R.id.imgCloseBtn);
-//        imgCloseBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (slotListDialog != null && slotListDialog.isShowing()) {
-//                    slotListDialog.dismiss();
-//                } else {
-//                    return;
-//                }
-//            }
-//        });
-//        slotListDialog.show();
+        mSlotListDialog = new Dialog(getActivity());
+        mSlotListDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        ListView lstViewSlot = new ListView(getActivity());
+        lstViewSlot.setDivider(null);
+        lstViewSlot.setDividerHeight(0);
+        mSlotListDialog.setContentView(lstViewSlot);
+        fillSlotList(lstViewSlot, slotGroup);
+        Rect displayRectangle = new Rect();
+        getActivity().getWindow().getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
+        mSlotListDialog.getWindow().setLayout(displayRectangle.width() - 20,
+                (int) (displayRectangle.height() * 0.7f));
+        mSlotListDialog.show();
     }
 
     private void fillSlotList(ListView listViewSlot, final SlotGroup slotGroup) {
@@ -187,15 +187,15 @@ public class SlotSelectionFragment extends BaseFragment {
     private void onSlotSelected(SlotGroup slotGroup, Slot slot) {
         slotGroup.setSelectedSlot(slot);
         if (slotGroupList.size() > 1) {
-//            if (slotListDialog != null && slotListDialog.isShowing()) {
-//                slotListDialog.dismiss();
-//            } else {
-//                return;
-//            }
-//            slotGroupListAdapter.notifyDataSetChanged();
-//            if (areAllSlotGroupsSelected()) {
-//                startCheckout();
-//            }
+            if (mSlotListDialog != null && mSlotListDialog.isShowing()) {
+                mSlotListDialog.dismiss();
+            } else {
+                return;
+            }
+            mSlotGroupListAdapter.notifyDataSetChanged();
+            if (areAllSlotGroupsSelected()) {
+                startCheckout();
+            }
         } else {
             startCheckout();
         }
@@ -341,44 +341,44 @@ public class SlotSelectionFragment extends BaseFragment {
 
         private class SlotGroupHolder {
             private View base;
-            private TextView txtListRowHeader;
-            private TextView txtListRowSubHeader;
-            private TextView txtListRowContent;
-            private ImageView imgLstRow;
+            private TextView txtFulfilledBy;
+            private TextView txtFulfillmentDisplayName;
+            private TextView txtSlotSelected;
+            private CheckBox chkIsSlotSelected;
 
             private SlotGroupHolder(View base) {
                 this.base = base;
             }
 
-            public TextView getTxtListRowHeader() {
-                if (txtListRowHeader == null) {
-                    txtListRowHeader = (TextView) base.findViewById(R.id.txtListRowHeader);
-                    txtListRowHeader.setTypeface(faceRobotoRegular);
+            public TextView getTxtFulfilledBy() {
+                if (txtFulfilledBy == null) {
+                    txtFulfilledBy = (TextView) base.findViewById(R.id.txtFulfilledBy);
+                    txtFulfilledBy.setTypeface(faceRobotoRegular);
                 }
-                return txtListRowHeader;
+                return txtFulfilledBy;
             }
 
-            public TextView getTxtListRowSubHeader() {
-                if (txtListRowSubHeader == null) {
-                    txtListRowSubHeader = (TextView) base.findViewById(R.id.txtListRowSubHeader);
-                    txtListRowSubHeader.setTypeface(faceRobotoRegular);
+            public TextView getTxtFulfillmentDisplayName() {
+                if (txtFulfillmentDisplayName == null) {
+                    txtFulfillmentDisplayName = (TextView) base.findViewById(R.id.txtFulfillmentDisplayName);
+                    txtFulfillmentDisplayName.setTypeface(faceRobotoRegular);
                 }
-                return txtListRowSubHeader;
+                return txtFulfillmentDisplayName;
             }
 
-            public TextView getTxtListRowContent() {
-                if (txtListRowContent == null) {
-                    txtListRowContent = (TextView) base.findViewById(R.id.txtListRowContent);
-                    txtListRowContent.setTypeface(faceRobotoRegular);
+            public TextView getTxtSlotSelected() {
+                if (txtSlotSelected == null) {
+                    txtSlotSelected = (TextView) base.findViewById(R.id.txtSlotSelected);
+                    txtSlotSelected.setTypeface(faceRobotoRegular);
                 }
-                return txtListRowContent;
+                return txtSlotSelected;
             }
 
-            public ImageView getImgLstRow() {
-                if (imgLstRow == null) {
-                    imgLstRow = (ImageView) base.findViewById(R.id.imgLstRow);
+            public CheckBox getChkIsSlotSelected() {
+                if (chkIsSlotSelected == null) {
+                    chkIsSlotSelected = (CheckBox) base.findViewById(R.id.chkIsSlotSelected);
                 }
-                return imgLstRow;
+                return chkIsSlotSelected;
             }
         }
 
@@ -388,34 +388,35 @@ public class SlotSelectionFragment extends BaseFragment {
             SlotGroupHolder slotGroupHolder;
             if (row == null) {
                 LayoutInflater inflater = getActivity().getLayoutInflater();
-                row = inflater.inflate(R.layout.list_row_with_arrow, null);
+                row = inflater.inflate(R.layout.uiv3_slot_group_card, null);
                 slotGroupHolder = new SlotGroupHolder(row);
                 row.setTag(slotGroupHolder);
             } else {
                 slotGroupHolder = (SlotGroupHolder) row.getTag();
             }
             SlotGroup slotGroup = slotGroupList.get(position);
-            TextView txtListRowHeader = slotGroupHolder.getTxtListRowHeader();
-            TextView txtListRowSubHeader = slotGroupHolder.getTxtListRowSubHeader();
-            TextView txtListRowContent = slotGroupHolder.getTxtListRowContent();
+            TextView txtFulfilledBy = slotGroupHolder.getTxtFulfilledBy();
+            TextView txtFulfillmentDisplayName = slotGroupHolder.getTxtFulfillmentDisplayName();
+            TextView txtSlotSelected = slotGroupHolder.getTxtSlotSelected();
 
-            ImageView imgLstRow = slotGroupHolder.getImgLstRow();
+            CheckBox chkIsSlotSelected = slotGroupHolder.getChkIsSlotSelected();
             if (slotGroup.isSelected()) {
-                imgLstRow.setVisibility(View.VISIBLE);
-                txtListRowContent.setVisibility(View.VISIBLE);
-                txtListRowContent.setText(slotGroup.getSelectedSlot().getFormattedSlotDate()
+                chkIsSlotSelected.setVisibility(View.VISIBLE);
+                chkIsSlotSelected.setChecked(true);
+                txtSlotSelected.setVisibility(View.VISIBLE);
+                txtSlotSelected.setText(slotGroup.getSelectedSlot().getFormattedSlotDate()
                         + ", " + slotGroup.getSelectedSlot().getFormattedDisplayName());
             } else {
-                txtListRowContent.setVisibility(View.GONE);
-                imgLstRow.setVisibility(View.GONE);
+                txtSlotSelected.setVisibility(View.GONE);
+                chkIsSlotSelected.setVisibility(View.GONE);
             }
             FulfillmentInfo fulfillmentInfo = slotGroup.getFulfillmentInfo();
-            txtListRowHeader.setText(fulfillmentInfo.getFulfilledBy());
+            txtFulfilledBy.setText(fulfillmentInfo.getFulfilledBy());
             if (TextUtils.isEmpty(fulfillmentInfo.getDisplayName())) {
-                txtListRowSubHeader.setVisibility(View.GONE);
+                txtFulfillmentDisplayName.setVisibility(View.GONE);
             } else {
-                txtListRowSubHeader.setVisibility(View.VISIBLE);
-                txtListRowSubHeader.setText(Html.fromHtml(fulfillmentInfo.getDisplayName()));
+                txtFulfillmentDisplayName.setVisibility(View.VISIBLE);
+                txtFulfillmentDisplayName.setText(Html.fromHtml(fulfillmentInfo.getDisplayName()));
             }
             return row;
         }

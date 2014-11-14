@@ -59,7 +59,7 @@
 	<string name="NO_ACT_ORDER">You do not have any active orders.</string>
     <string name="selectDateRange">Select a date range</string>
     <string name="maxQtyReached">Quantity reached maximum limit, max 25 allowed per product</string>
-    <string name="multipleDeliverySlotMsg1">This order will be fulfilled by more than one vendor and will delivered separately.</string>
+    <string name="multipleDeliverySlotMsg1">This order will be fulfilled by more than one vendor and will be delivered separately.</string>
     <string name="multipleDeliverySlotMsg2">Please choose delivery slots for each of these deliveries.</string>
     <string name="txtViewProducts">View products</string>
     <string name="txtChooseSlots">Choose slot</string>
