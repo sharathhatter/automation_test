@@ -102,6 +102,8 @@
         <item name="android:textColor">@color/uiv3_list_primary_text_color</item>
     </style>
 
+    <style name="CardViewStyle" />
+
     <style name="FooterButtonStyle">
         <item name="android:clickable">true</item>
         <item name="android:background">@color/uiv3_action_bar_background</item>

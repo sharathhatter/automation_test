@@ -13,7 +13,7 @@ android {
     }
     buildTypes {
         release {
-            runProguard true
+            runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'konotor-proguard-conf.txt', 'proguard-rules.pro'
         }
     }
