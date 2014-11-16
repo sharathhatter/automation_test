@@ -2,7 +2,7 @@ package com.bigbasket.mobileapp.util;
 
 public final class MobileApiUrl {
 
-    public static final String DOMAIN = "http://192.168.0.105:8000/";
+    public static final String DOMAIN = "http://192.168.0.103:8000/";
     //public static final String DOMAIN = "http://test2.bigbasket.com/";
     public static final String API_VERSION = "v2.0.0";
 

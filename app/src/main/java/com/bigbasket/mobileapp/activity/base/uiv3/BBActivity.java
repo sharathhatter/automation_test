@@ -20,8 +20,19 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.*;
-import android.widget.*;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ExpandableListView;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.OrderListActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInSignUpActivity;
@@ -30,8 +41,12 @@ import com.bigbasket.mobileapp.adapter.NavigationListAdapter;
 import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
 import com.bigbasket.mobileapp.adapter.product.CategoryAdapter;
 import com.bigbasket.mobileapp.fragment.HomeFragment;
-import com.bigbasket.mobileapp.fragment.ShopFragment;
-import com.bigbasket.mobileapp.fragment.account.*;
+import com.bigbasket.mobileapp.fragment.account.AccountSettingFragment;
+import com.bigbasket.mobileapp.fragment.account.ChangeCityFragment;
+import com.bigbasket.mobileapp.fragment.account.ChangePasswordFragment;
+import com.bigbasket.mobileapp.fragment.account.DoWalletFragment;
+import com.bigbasket.mobileapp.fragment.account.UpdatePinFragment;
+import com.bigbasket.mobileapp.fragment.account.UpdateProfileFragment;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.order.MemberAddressListFragment;
 import com.bigbasket.mobileapp.fragment.order.ShowCartFragment;
@@ -39,7 +54,6 @@ import com.bigbasket.mobileapp.fragment.order.SlotSelectionFragment;
 import com.bigbasket.mobileapp.fragment.product.BrowseByOffersFragment;
 import com.bigbasket.mobileapp.fragment.product.CategoryProductsFragment;
 import com.bigbasket.mobileapp.fragment.product.SearchFragment;
-import com.bigbasket.mobileapp.fragment.product.ShopInShopFragment;
 import com.bigbasket.mobileapp.fragment.product.SubCategoryListFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoCategoryFragment;
 import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListFragment;
@@ -227,11 +241,21 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
     public void startFragment() {
         int fragmentCode = getIntent().getIntExtra(Constants.FRAGMENT_CODE, -1);
         switch (fragmentCode) {
-            case FragmentCodes.START_SHOP_IN_SHOP:
-                addToMainLayout(new ShopInShopFragment());
+            case FragmentCodes.START_UPDATE_PROFILE:
+                addToMainLayout(new UpdateProfileFragment());
                 break;
-            case FragmentCodes.START_SHOP_LIST:
-                addToMainLayout(new ShopFragment());
+            case FragmentCodes.START_CHANGE_PASSWD:
+                addToMainLayout(new ChangePasswordFragment());
+                break;
+            case FragmentCodes.START_VIEW_DELIVERY_ADDRESS:
+                MemberAddressListFragment memberAddressListFragment = new MemberAddressListFragment();
+                Bundle addressbundle = new Bundle();
+                addressbundle.putBoolean(Constants.FROM_ACCOUNT_PAGE, true);
+                memberAddressListFragment.setArguments(addressbundle);
+                addToMainLayout(memberAddressListFragment);
+                break;
+            case FragmentCodes.START_CHANGE_PIN:
+                addToMainLayout(new UpdatePinFragment());
                 break;
             case FragmentCodes.START_CHANGE_CITY:
                 addToMainLayout(new ChangeCityFragment());
@@ -244,6 +268,9 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 break;
             case FragmentCodes.START_ACCOUNT_SETTING:
                 addToMainLayout(new AccountSettingFragment());
+                break;
+            case FragmentCodes.START_WALLET_FRAGMENT:
+                addToMainLayout(new DoWalletFragment());
                 break;
             case FragmentCodes.START_ORDER_LIST:
                 Intent orderListIntent = new Intent(this, OrderListActivity.class);
@@ -291,40 +318,48 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 addToMainLayout(new ShowCartFragment());
                 return true;
             case R.id.action_active_orders:
-                Intent orderListIntent = new Intent(this, OrderListActivity.class);
-                orderListIntent.putExtra(Constants.ORDER, getString(R.string.active_label));
-                startActivityForResult(orderListIntent, Constants.GO_TO_HOME);
+                intent = new Intent(this, OrderListActivity.class);
+                intent.putExtra(Constants.ORDER, getString(R.string.active_label));
+                startActivityForResult(intent, Constants.GO_TO_HOME);
                 return true;
             case R.id.action_order_history:
-                orderListIntent = new Intent(this, OrderListActivity.class);
-                orderListIntent.putExtra(Constants.ORDER, getString(R.string.past_label));
-                startActivityForResult(orderListIntent, Constants.GO_TO_HOME);
+                intent = new Intent(this, OrderListActivity.class);
+                intent.putExtra(Constants.ORDER, getString(R.string.past_label));
+                startActivityForResult(intent, Constants.GO_TO_HOME);
                 return true;
             case R.id.action_update_profile:
-                addToMainLayout(new UpdateProfileFragment());
+                intent = new Intent(this, BackButtonActivity.class);
+                intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_UPDATE_PROFILE);
+                startActivityForResult(intent, Constants.GO_TO_HOME);
                 return true;
             case R.id.action_change_password:
-                addToMainLayout(new ChangePasswordFragment());
+                intent = new Intent(this, BackButtonActivity.class);
+                intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_CHANGE_PASSWD);
+                startActivityForResult(intent, Constants.GO_TO_HOME);
                 return true;
             case R.id.action_wallet_activity:
-                addToMainLayout(new DoWalletFragment());
+                intent = new Intent(this, BackButtonActivity.class);
+                intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WALLET_FRAGMENT);
+                startActivityForResult(intent, Constants.GO_TO_HOME);
                 return true;
             case R.id.action_delivery_address:
-                MemberAddressListFragment memberAddressListFragment = new MemberAddressListFragment();
-                Bundle addressbundle = new Bundle();
-                addressbundle.putBoolean(Constants.FROM_ACCOUNT_PAGE, true);
-                memberAddressListFragment.setArguments(addressbundle);
-                addToMainLayout(memberAddressListFragment);
+                intent = new Intent(this, BackButtonActivity.class);
+                intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_VIEW_DELIVERY_ADDRESS);
+                startActivityForResult(intent, Constants.GO_TO_HOME);
                 return true;
             case R.id.action_change_pin:
-                addToMainLayout(new UpdatePinFragment());
+                intent = new Intent(this, BackButtonActivity.class);
+                intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_CHANGE_PIN);
+                startActivityForResult(intent, Constants.GO_TO_HOME);
                 return true;
             case R.id.action_logout:
                 showAlertDialog(this, getString(R.string.signOut), getString(R.string.signoutConfirmation),
                         DialogButton.YES, DialogButton.NO, Constants.LOGOUT);
                 return true;
             case R.id.action_change_city:
-                addToMainLayout(new ChangeCityFragment());
+                intent = new Intent(this, BackButtonActivity.class);
+                intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_CHANGE_CITY);
+                startActivityForResult(intent, Constants.GO_TO_HOME);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -449,7 +484,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         handleIntent(intent, null);
     }
 
-    private void handleIntent(Intent intent, Bundle savedInstanceState) {
+    public void handleIntent(Intent intent, Bundle savedInstanceState) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction()) && savedInstanceState == null) {
             // User has entered something in search, and pressed enter and this is not due to a screen rotation
             String query = intent.getStringExtra(SearchManager.QUERY);
@@ -744,7 +779,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 subCategoryListFragment.setArguments(subCatBundle);
                 addToMainLayout(subCategoryListFragment);
 
-            }else if (navigationSubItems != null) {
+            } else if (navigationSubItems != null) {
                 NavigationSubItem navigationSubItem = navigationSubItems.get(childPosition);
                 if (navigationSubItem.getTag() != null) {
                     switch (navigationSubItem.getTag()) {

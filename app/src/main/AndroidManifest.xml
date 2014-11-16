@@ -213,6 +213,9 @@
         <activity android:name=".activity.account.uiv3.OrderListActivity"
             android:windowSoftInputMode="stateHidden|adjustPan"/>
 
+        <activity android:name=".activity.base.uiv3.BackButtonActivity"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+
         <provider
             android:authorities="com.bigbasket.mobileapp.contentProvider.SearchSuggestionProvider"
             android:name=".contentProvider.SearchSuggestionProvider"

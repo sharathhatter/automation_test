@@ -45,8 +45,7 @@ public class ChangePasswordFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
     }
 
-    public void initiateChangePassword(View view) {
-        ScrollView base = (ScrollView) view;
+    public void initiateChangePassword(View base) {
 
         oldEditText = (EditText) base.findViewById(R.id.oldPwdEditTxt);
         oldEditText.setTypeface(faceRobotoRegular);
