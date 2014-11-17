@@ -2,10 +2,13 @@ package com.bigbasket.mobileapp.handler;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Handler;
 import android.widget.Toast;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.bigbasket.mobileapp.activity.order.uiv3.AgeValidationActivity;
+import com.bigbasket.mobileapp.activity.order.uiv3.BasketValidationActivity;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.model.order.MarketPlace;
@@ -374,20 +377,17 @@ public class MessageHandler extends Handler {
                 alertDialog10.show();
                 break;
             case MessageCode.GO_MARKET_PLACE:
-//                Intent intent = new Intent(activity, BasketCheckRuleErrorActivity.class);
-//                intent.putExtra(Constants.MARKET_PLACE_INTENT, marketPlace);
-//                intent.putExtra(Constants.FROM_BIGBASKET_ACTIVITY, true);
-//                activity.startActivityForResult(intent, Constants.GO_TO_HOME);
-//                activity.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
-                // TODO : Replace with better handling
+                Intent intent = new Intent(activity, BasketValidationActivity.class);
+                intent.putExtra(Constants.MARKET_PLACE_INTENT, marketPlace);
+                activity.startActivityForResult(intent, Constants.GO_TO_HOME);
+                activity.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
                 break;
 
             case MessageCode.GO_AGE_VALIDATION:
-//                intent = new Intent(activity, AgeValidationActivity.class);
-//                intent.putExtra(Constants.MARKET_PLACE_INTENT, marketPlace);
-//                activity.startActivityForResult(intent, Constants.GO_TO_HOME);
-//                activity.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
-                // TODO : Replace with better handling
+                intent = new Intent(activity, AgeValidationActivity.class);
+                intent.putExtra(Constants.MARKET_PLACE_INTENT, marketPlace);
+                activity.startActivityForResult(intent, Constants.GO_TO_HOME);
+                activity.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
                 break;
 
             case MessageCode.CO_RESERVE_QUANTITY_CHECK_OK:

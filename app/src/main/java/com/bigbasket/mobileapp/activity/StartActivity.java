@@ -219,7 +219,7 @@ public class StartActivity extends BaseActivity {
     }
 
     @Override
-    protected void showProgressDialog(String msg, String url) {
+    public void showProgressDialog(String msg) {
         ProgressBar progressBarLoading = (ProgressBar) findViewById(R.id.progressBarLoading);
         progressBarLoading.setVisibility(View.VISIBLE);
         Spinner spinnerCity = (Spinner) findViewById(R.id.spinnerCity);
@@ -227,7 +227,7 @@ public class StartActivity extends BaseActivity {
     }
 
     @Override
-    protected void hideProgressDialog() {
+    public void hideProgressDialog() {
         ProgressBar progressBarLoading = (ProgressBar) findViewById(R.id.progressBarLoading);
         progressBarLoading.setVisibility(View.GONE);
     }

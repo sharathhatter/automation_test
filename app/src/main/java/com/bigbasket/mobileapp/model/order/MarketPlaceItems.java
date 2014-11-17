@@ -2,13 +2,11 @@ package com.bigbasket.mobileapp.model.order;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
-/**
- * Created by jugal on 16/7/14.
- */
-public class MarketPlaceItems implements Parcelable { //implements Parcelable
+public class MarketPlaceItems implements Parcelable {
 
     @SerializedName(Constants.IMAGE_URL)
     private String imageUrl;
@@ -23,10 +21,10 @@ public class MarketPlaceItems implements Parcelable { //implements Parcelable
     private int itemInCart;
 
     @SerializedName(Constants.QTY)
-    private float totalQty;
+    private double totalQty;
 
     @SerializedName(Constants.SALE_PRICE)
-    private float salePrice;
+    private double salePrice;
 
     private int ruleValidationArrayIndex;
     private int itemIndex;
@@ -50,9 +48,9 @@ public class MarketPlaceItems implements Parcelable { //implements Parcelable
         imageUrl = source.readString();
         desc = source.readString();
         itemInCart = source.readInt();
-        totalQty = source.readFloat();
+        totalQty = source.readDouble();
         sku = source.readString();
-        salePrice = source.readFloat();
+        salePrice = source.readDouble();
     }
 
     @Override
@@ -60,9 +58,9 @@ public class MarketPlaceItems implements Parcelable { //implements Parcelable
         dest.writeString(imageUrl);
         dest.writeString(desc);
         dest.writeInt(itemInCart);
-        dest.writeFloat(totalQty);
+        dest.writeDouble(totalQty);
         dest.writeString(sku);
-        dest.writeFloat(salePrice);
+        dest.writeDouble(salePrice);
 
     }
 
@@ -78,6 +76,13 @@ public class MarketPlaceItems implements Parcelable { //implements Parcelable
         }
     };
 
+    public void setRuleValidationArrayIndex(int ruleValidationArrayIndex) {
+        this.ruleValidationArrayIndex = ruleValidationArrayIndex;
+    }
+
+    public void setItemIndex(int itemIndex) {
+        this.itemIndex = itemIndex;
+    }
 
     public int getRuleValidationArrayIndex() {
         return ruleValidationArrayIndex;
@@ -87,7 +92,7 @@ public class MarketPlaceItems implements Parcelable { //implements Parcelable
         return itemIndex;
     }
 
-    public float getSalePrice() {
+    public double getSalePrice() {
         return salePrice;
     }
 
@@ -107,7 +112,7 @@ public class MarketPlaceItems implements Parcelable { //implements Parcelable
         return itemInCart;
     }
 
-    public float getTotalQty() {
+    public double getTotalQty() {
         return totalQty;
     }
 }

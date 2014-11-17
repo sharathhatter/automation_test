@@ -1,16 +1,21 @@
 package com.bigbasket.mobileapp.task;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
@@ -22,17 +27,22 @@ import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.model.request.HttpRequestData;
-import com.bigbasket.mobileapp.util.*;
+import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.DataUtil;
+import com.bigbasket.mobileapp.util.HttpCode;
+import com.bigbasket.mobileapp.util.MessageCode;
+import com.bigbasket.mobileapp.util.ParserUtil;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
 import org.apache.http.impl.client.BasicCookieStore;
 
 import java.util.HashMap;
 
-public class BasketOperationTask extends AsyncTask<String, Long, Void> {
+public class BasketOperationTask<T> extends AsyncTask<String, Long, Void> {
 
     private static final String TAG = BasketOperationTask.class.getName();
-    private BaseFragment fragment;
+    private T context;
     private String url;
     private HttpOperationResult httpOperationResult;
     private String productId;
@@ -45,21 +55,21 @@ public class BasketOperationTask extends AsyncTask<String, Long, Void> {
     private Button btnAddToBasket;
     private EditText editTextQty;
 
-    public BasketOperationTask(BaseFragment fragment, String url,
+    public BasketOperationTask(T context, String url,
                                BasketOperation basketOperation, @NonNull Product product,
                                TextView basketCountTextView, ImageView imgDecQty,
                                ImageView imgIncQty, Button btnAddToBasket,
                                EditText editTextQty) {
-        this(fragment, url, basketOperation, product, basketCountTextView, imgDecQty, imgIncQty,
+        this(context, url, basketOperation, product, basketCountTextView, imgDecQty, imgIncQty,
                 btnAddToBasket, editTextQty, "1");
     }
 
-    public BasketOperationTask(BaseFragment fragment, String url,
+    public BasketOperationTask(T context, String url,
                                BasketOperation basketOperation, @NonNull Product product,
                                TextView basketCountTextView, ImageView imgDecQty,
                                ImageView imgIncQty, Button btnAddToBasket,
                                EditText editTextQty, String qty) {
-        this.fragment = fragment;
+        this.context = context;
         this.url = url;
         this.product = product;
         this.basketOperation = basketOperation;
@@ -71,21 +81,21 @@ public class BasketOperationTask extends AsyncTask<String, Long, Void> {
         this.qty = qty;
     }
 
-    public BasketOperationTask(BaseFragment fragment, String url,
+    public BasketOperationTask(T context, String url,
                                BasketOperation basketOperation, @NonNull String productId,
                                TextView basketCountTextView, ImageView imgDecQty,
                                ImageView imgIncQty, Button btnAddToBasket,
                                EditText editTextQty) {
-        this(fragment, url, basketOperation, productId, basketCountTextView, imgDecQty, imgIncQty,
+        this(context, url, basketOperation, productId, basketCountTextView, imgDecQty, imgIncQty,
                 btnAddToBasket, editTextQty, "1");
     }
 
-    public BasketOperationTask(BaseFragment fragment, String url,
+    public BasketOperationTask(T context, String url,
                                BasketOperation basketOperation, @NonNull String productId,
                                TextView basketCountTextView, ImageView imgDecQty,
                                ImageView imgIncQty, Button btnAddToBasket,
                                EditText editTextQty, String qty) {
-        this.fragment = fragment;
+        this.context = context;
         this.url = url;
         this.productId = productId;
         this.basketOperation = basketOperation;
@@ -102,8 +112,9 @@ public class BasketOperationTask extends AsyncTask<String, Long, Void> {
         if (isCancelled()) {
             return null;
         }
-        String nc = DataUtil.getAddBasketNavigationActivity(fragment.getTag());
-        if (fragment.checkInternetConnection()) {
+        String nc = ""; //DataUtil.getAddBasketNavigationActivity(fragment.getTag()); TODO : Fix this
+        Context ctx = context instanceof Fragment ? ((Fragment) context).getActivity() : (Activity) context;
+        if (DataUtil.isInternetAvailable(ctx)) {
             if (!url.contains(Constants.CART_INC))
                 nc = null;
             HashMap<String, String> params = new HashMap<>();
@@ -111,36 +122,53 @@ public class BasketOperationTask extends AsyncTask<String, Long, Void> {
             params.put(Constants.PROD_ID, reqProdId);
             params.put(Constants.QTY, qty);
             params.put(Constants.NC, nc);
-            AuthParameters authParameters = AuthParameters.getInstance(fragment.getActivity());
+            AuthParameters authParameters = AuthParameters.getInstance(ctx);
             HttpRequestData httpRequestData = new HttpRequestData(url, params, true, authParameters.getBbAuthToken(),
                     authParameters.getVisitorId(), authParameters.getOsVersion(),
                     new BasicCookieStore(), null);
             httpOperationResult = DataUtil.doHttpPost(httpRequestData);
         } else {
-            fragment.getHandler().sendEmptyMessage(MessageCode.INTERNET_ERROR);
+            if (context instanceof Fragment) {
+                ((BaseFragment) context).getHandler().sendEmptyMessage(MessageCode.INTERNET_ERROR);
+            } else {
+                ((BaseActivity) context).getHandler().sendEmptyMessage(MessageCode.INTERNET_ERROR);
+            }
             Log.d(TAG, "Sending message: MessageCode.INTERNET_ERROR");
 
         }
         return null;
     }
 
+    private boolean isSuspended() {
+        return (context instanceof BaseFragment && ((BaseFragment) context).isSuspended()) ||
+                (context instanceof BaseActivity && ((BaseActivity) context).isActivitySuspended());
+    }
+
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        if (fragment.isSuspended()) {
+        if (isSuspended()) {
             cancel(true);
         } else {
-            fragment.showProgressDialog(fragment.getString(R.string.please_wait));
+            if (context instanceof BaseFragment) {
+                ((BaseFragment) context).showProgressDialog(((BaseFragment) context).getString(R.string.please_wait));
+            } else {
+                ((BaseActivity) context).showProgressDialog(((BaseActivity) context).getString(R.string.please_wait));
+            }
         }
     }
 
     @Override
     protected void onPostExecute(Void result) {
-        if (fragment.isSuspended()) {
+        if (isSuspended()) {
             return;
         } else {
             try {
-                fragment.hideProgressDialog();
+                if (context instanceof BaseFragment) {
+                    ((BaseFragment) context).hideProgressDialog();
+                } else {
+                    ((BaseActivity) context).hideProgressDialog();
+                }
             } catch (IllegalArgumentException ex) {
                 return;
             }
@@ -153,21 +181,26 @@ public class BasketOperationTask extends AsyncTask<String, Long, Void> {
                     if (status.equalsIgnoreCase("OK")) {
                         JsonObject responseJsonObj = jsonObject.get(Constants.RESPONSE).getAsJsonObject();
                         CartSummary cartInfo = ParserUtil.parseGetCartSummaryResponse(responseJsonObj);
-                        ((CartInfoAware) fragment).setCartInfo(cartInfo);
-                        ((CartInfoAware) fragment).updateUIForCartInfo();
+                        ((CartInfoAware) context).setCartInfo(cartInfo);
+                        ((CartInfoAware) context).updateUIForCartInfo();
                     } else {
-                        fragment.showErrorMsg(httpOperationResult.getJsonObject().optString(Constants.BASKET_ERROR_MESSAGE));
+                        if (context instanceof BaseFragment) {
+                            ((BaseFragment) context).showErrorMsg(httpOperationResult.getJsonObject().optString(Constants.BASKET_ERROR_MESSAGE));
+                        } else {
+                            ((BaseActivity) context).showAlertDialog((BaseActivity) context, null, httpOperationResult.getJsonObject().optString(Constants.BASKET_ERROR_MESSAGE));
+                        }
                     }
                 } else {
                     final BasketOperationResponse basketOperationResponse = ParserUtil.parseBasketOperationResponse(
                             (httpOperationResult.getReponseString()));
-                    ((BasketOperationAware) fragment).setBasketOperationResponse(basketOperationResponse);
+                    ((BasketOperationAware) context).setBasketOperationResponse(basketOperationResponse);
                     if (basketOperationResponse.getStatus() != null && basketOperationResponse.getStatus()
                             .equalsIgnoreCase("OK")) {   // OK case
-                        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(fragment.getActivity()).edit();
+                        Context ctx = context instanceof Fragment ? ((Fragment) context).getActivity() : (Activity) context;
+                        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(ctx).edit();
                         editor.putString("getcart", basketOperationResponse.getNoOfItems());
                         editor.commit();
-                        ((BasketOperationAware) fragment).updateUIAfterBasketOperationSuccess(basketOperation,
+                        ((BasketOperationAware) context).updateUIAfterBasketOperationSuccess(basketOperation,
                                 basketCountTextView, imgDecQty, imgIncQty, btnAddToBasket, editTextQty, product, qty);
 
                     } else if (basketOperationResponse.getStatus() != null && basketOperationResponse.getStatus()
@@ -175,39 +208,43 @@ public class BasketOperationTask extends AsyncTask<String, Long, Void> {
                         if (basketOperationResponse.getErrorType() != null && basketOperationResponse.getErrorType()
                                 .equals(Constants.BASKET_LIMIT_REACHED)) {
                             if (TextUtils.isEmpty(basketOperationResponse.getErrorMessage())) {
-                                ((HandlerAware) fragment).getHandler().sendEmptyMessage(MessageCode.BASKET_LIMIT_REACHED);
+                                ((HandlerAware) context).getHandler().sendEmptyMessage(MessageCode.BASKET_LIMIT_REACHED);
                             } else if (basketOperation == BasketOperation.ADD &&
                                     basketOperationResponse.getErrorType().equals(Constants.BASKET_LIMIT_REACHED)) {
-                                ((HandlerAware) fragment).getHandler().sendEmptyMessage(MessageCode.BASKET_LIMIT_REACHED);
+                                ((HandlerAware) context).getHandler().sendEmptyMessage(MessageCode.BASKET_LIMIT_REACHED);
                             } else {
-                                fragment.showErrorMsg(basketOperationResponse.getErrorMessage());
+                                if (context instanceof BaseFragment) {
+                                    ((BaseFragment) context).showErrorMsg(basketOperationResponse.getErrorMessage());
+                                } else {
+                                    ((BaseActivity) context).showAlertDialog((BaseActivity) context, null, basketOperationResponse.getErrorMessage());
+                                }
                             }
                             Log.d(TAG, "Sending message: MessageCode.BASKET_LIMIT_REACHED");
                         } else if (basketOperationResponse.getErrorType() != null && basketOperationResponse.getErrorType()
                                 .equals(Constants.PRODUCT_ID_NOT_FOUND)) {
-                            ((HandlerAware) fragment).getHandler().sendEmptyMessage(MessageCode.BASKET_EMPTY);
+                            ((HandlerAware) context).getHandler().sendEmptyMessage(MessageCode.BASKET_EMPTY);
                             Log.d(TAG, "Sending message: MessageCode.BASKET_EMPTY");
                         }
-                        ((BasketOperationAware) fragment).updateUIAfterBasketOperationFailed(basketOperation,
+                        ((BasketOperationAware) context).updateUIAfterBasketOperationFailed(basketOperation,
                                 basketCountTextView, imgDecQty, imgIncQty, btnAddToBasket, editTextQty, product, null);
 
                     } else {
-                        ((HandlerAware) fragment).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
+                        ((HandlerAware) context).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
                         Log.d(TAG, "Sending message: MessageCode.SERVER_ERROR");
                     }
                 }
 
             } else if (httpOperationResult.getResponseCode() == HttpCode.UNAUTHORIZED) {
-                ((HandlerAware) fragment).getHandler().sendEmptyMessage(MessageCode.UNAUTHORIZED);
+                ((HandlerAware) context).getHandler().sendEmptyMessage(MessageCode.UNAUTHORIZED);
                 Log.d(TAG, "Sending message: MessageCode.UNAUTHORIZED");
 
             } else {
-                ((HandlerAware) fragment).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
+                ((HandlerAware) context).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
                 Log.d(TAG, "Sending message: MessageCode.SERVER_ERROR");
             }
 
         } else {
-            ((HandlerAware) fragment).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
+            ((HandlerAware) context).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
             Log.d(TAG, "Sending message: MessageCode.SERVER_ERROR");
         }
 

@@ -13,7 +13,13 @@ import android.text.style.StyleSpan;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.TextView;
+
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.adapter.product.ProductListSpinnerAdapter;
@@ -395,7 +401,7 @@ public final class ProductView {
                     @Override
                     public void onClick(View view) {
                         if (DataUtil.isInternetAvailable(context) && !TextUtils.isEmpty(editTextQty.getText())) {
-                            BasketOperationTask basketOperationTask = new BasketOperationTask(baseFragment,
+                            BasketOperationTask<BaseFragment> basketOperationTask = new BasketOperationTask<>(baseFragment,
                                     MobileApiUrl.getBaseAPIUrl() + Constants.CART_INC, BasketOperation.ADD, product,
                                     txtInBasket, imgDecBasketQty, imgIncBasketQty, btnAddToBasket, editTextQty);
                             basketOperationTask.execute();
@@ -410,7 +416,7 @@ public final class ProductView {
                     @Override
                     public void onClick(View view) {
                         if (DataUtil.isInternetAvailable(context) && !TextUtils.isEmpty(editTextQty.getText())) {
-                            BasketOperationTask myTask = new BasketOperationTask(baseFragment,
+                            BasketOperationTask<BaseFragment> myTask = new BasketOperationTask<>(baseFragment,
                                     MobileApiUrl.getBaseAPIUrl() + Constants.CART_DEC, BasketOperation.DELETE,
                                     product, txtInBasket, imgDecBasketQty, imgIncBasketQty, btnAddToBasket, editTextQty);
                             myTask.execute();
@@ -425,12 +431,12 @@ public final class ProductView {
                     @Override
                     public void onClick(View view) {
                         if (DataUtil.isInternetAvailable(context) && !TextUtils.isEmpty(editTextQty.getText())) {
-                            if (editTextQty.getText() == null || TextUtils.isEmpty(editTextQty.getText().toString())) {
+                            if (TextUtils.isEmpty(editTextQty.getText().toString())) {
                                 context.showToast("Please enter a valid quantity");
                                 return;
                             }
                             String qty = editTextQty.getText() != null ? editTextQty.getText().toString() : "1";
-                            BasketOperationTask basketOperationTask = new BasketOperationTask(baseFragment,
+                            BasketOperationTask<BaseFragment> basketOperationTask = new BasketOperationTask<>(baseFragment,
                                     MobileApiUrl.getBaseAPIUrl() + Constants.CART_INC, BasketOperation.ADD, product,
                                     txtInBasket, imgDecBasketQty, imgIncBasketQty, btnAddToBasket, editTextQty, qty);
                             basketOperationTask.execute();

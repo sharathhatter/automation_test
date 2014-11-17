@@ -90,16 +90,14 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
 
     protected ProgressDialog progressDialog = null;
 
-    protected void showProgressDialog(String msg, String url) {
-        if (!TextUtils.isEmpty(url) && !url.contains(Constants.AUTO_SEARCH_URL)) {
-            progressDialog = new ProgressDialog(this);
-            progressDialog.setCancelable(false);
-            progressDialog.setMessage(msg);
-            progressDialog.show();
-        }
+    public void showProgressDialog(String msg) {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage(msg);
+        progressDialog.show();
     }
 
-    protected void hideProgressDialog() {
+    public void hideProgressDialog() {
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
             progressDialog = null;
@@ -171,7 +169,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
                 return;
             }
             if (!noProgressView) {
-                showProgressDialog("Please Wait", url);
+                showProgressDialog(getString(R.string.please_wait));
             }
             String authToken = null, vid = null, osVersion = null;
             if (authParameters != null) {
@@ -511,10 +509,6 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         InputMethodManager imm = (InputMethodManager) context.getSystemService(
                 Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
-
-    protected void showProgressDialog(String msg) {
-        showProgressDialog(msg, null);
     }
 
 

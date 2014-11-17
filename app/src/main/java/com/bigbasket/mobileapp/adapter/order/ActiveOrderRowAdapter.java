@@ -359,7 +359,7 @@ public class ActiveOrderRowAdapter extends android.widget.BaseAdapter {
                     @Override
                     public void onClick(View v) {
                         if (DataUtil.isInternetAvailable(baseActivity)) {
-                            BasketOperationTask basketOperationTask = new BasketOperationTask(fragment,
+                            BasketOperationTask<BaseFragment> basketOperationTask = new BasketOperationTask<>(fragment,
                                     MobileApiUrl.getBaseAPIUrl() + Constants.CART_DEC, BasketOperation.DELETE, productId,
                                     null, null, null, null, null
                             );
@@ -375,7 +375,7 @@ public class ActiveOrderRowAdapter extends android.widget.BaseAdapter {
                     @Override
                     public void onClick(View v) {
                         if (DataUtil.isInternetAvailable(baseActivity)) {
-                            BasketOperationTask basketOperationTask = new BasketOperationTask(fragment,
+                            BasketOperationTask<BaseFragment> basketOperationTask = new BasketOperationTask<>(fragment,
                                     MobileApiUrl.getBaseAPIUrl() + Constants.CART_INC, BasketOperation.ADD, productId,
                                     null, null, null, null, null
                             );
@@ -393,7 +393,7 @@ public class ActiveOrderRowAdapter extends android.widget.BaseAdapter {
                     @Override
                     public void onClick(View v) {
                         if (DataUtil.isInternetAvailable(baseActivity)) {
-                            BasketOperationTask basketOperationTask = new BasketOperationTask(fragment,
+                            BasketOperationTask<BaseFragment> basketOperationTask = new BasketOperationTask<>(fragment,
                                     MobileApiUrl.getBaseAPIUrl() + Constants.CART_SET_ITEM, BasketOperation.EMPTY,
                                     productId, itemCountTxtView, null, null, null, null, "0"
                             );

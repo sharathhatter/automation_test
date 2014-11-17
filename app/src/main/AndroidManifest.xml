@@ -216,6 +216,12 @@
         <activity android:name=".activity.base.uiv3.BackButtonActivity"
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
+        <activity android:name=".activity.order.uiv3.BasketValidationActivity"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+
+        <activity android:name=".activity.order.uiv3.AgeValidationActivity"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+
         <provider
             android:authorities="com.bigbasket.mobileapp.contentProvider.SearchSuggestionProvider"
             android:name=".contentProvider.SearchSuggestionProvider"

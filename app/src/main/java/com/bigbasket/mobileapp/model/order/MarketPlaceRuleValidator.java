@@ -2,14 +2,12 @@ package com.bigbasket.mobileapp.model.order;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-/**
- * Created by jugal on 16/7/14.
- */
 public class MarketPlaceRuleValidator implements Parcelable { //implements Parcelable
 
     @SerializedName(Constants.RULE_NAME)
@@ -22,16 +20,16 @@ public class MarketPlaceRuleValidator implements Parcelable { //implements Parce
     private String weightLabel;
 
     @SerializedName(Constants.RULE_TOTAL_QTY)
-    private float ruleTotalQty;
+    private double ruleTotalQty;
 
     @SerializedName(Constants.RULE_TOTAL_PRICE)
-    private float ruleTotalPrice;
+    private double ruleTotalPrice;
 
     @SerializedName(Constants.ITEMS)
     private ArrayList<MarketPlaceItems> items;
 
     @SerializedName(Constants.RULE_MAX_WEIGHT_LIMIT)
-    private float ruleMaxWeightLimit;
+    private double ruleMaxWeightLimit;
 
     //private int totalRuleNoOfItems;
     private boolean noRuleError;
@@ -58,14 +56,14 @@ public class MarketPlaceRuleValidator implements Parcelable { //implements Parce
         ruleName = source.readString();
         ruleDesc = source.readString();
         weightLabel = source.readString();
-        ruleTotalQty = source.readFloat();
+        ruleTotalQty = source.readDouble();
         ruleTotalPrice = source.readFloat();
         boolean _wasMarketPlaceItemsNull = source.readByte() == (byte) 1;
         if (!_wasMarketPlaceItemsNull) {
             items = new ArrayList<>();
             source.readTypedList(items, MarketPlaceItems.CREATOR);
         }
-        ruleMaxWeightLimit = source.readFloat();
+        ruleMaxWeightLimit = source.readDouble();
     }
 
     @Override
@@ -73,8 +71,8 @@ public class MarketPlaceRuleValidator implements Parcelable { //implements Parce
         dest.writeString(ruleName);
         dest.writeString(ruleDesc);
         dest.writeString(weightLabel);
-        dest.writeFloat(ruleTotalQty);
-        dest.writeFloat(ruleTotalPrice);
+        dest.writeDouble(ruleTotalQty);
+        dest.writeDouble(ruleTotalPrice);
         boolean _wasMarketPlaceItemsNull = false;
         if (items == null) {
             _wasMarketPlaceItemsNull = true;
@@ -83,7 +81,7 @@ public class MarketPlaceRuleValidator implements Parcelable { //implements Parce
         if (items != null) {
             dest.writeTypedList(items);
         }
-        dest.writeFloat(ruleMaxWeightLimit);
+        dest.writeDouble(ruleMaxWeightLimit);
 
     }
 
@@ -99,7 +97,7 @@ public class MarketPlaceRuleValidator implements Parcelable { //implements Parce
         }
     };
 
-    public float getRuleTotalPrice() {
+    public double getRuleTotalPrice() {
         return ruleTotalPrice;
     }
 
@@ -107,11 +105,11 @@ public class MarketPlaceRuleValidator implements Parcelable { //implements Parce
         return noRuleError;
     }
 
-    public float getRuleMaxWeightLimit() {
+    public double getRuleMaxWeightLimit() {
         return ruleMaxWeightLimit;
     }
 
-    public float getRuleTotalQty() {
+    public double getRuleTotalQty() {
         return ruleTotalQty;
     }
 
