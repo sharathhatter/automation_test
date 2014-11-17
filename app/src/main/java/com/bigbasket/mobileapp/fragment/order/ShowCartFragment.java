@@ -38,8 +38,9 @@ import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.cart.FulfillmentInfo;
 import com.bigbasket.mobileapp.model.order.OrderItemDisplaySource;
 import com.bigbasket.mobileapp.model.product.Product;
+import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
-import com.bigbasket.mobileapp.task.COReserveQuantityCheckTask;
+import com.bigbasket.mobileapp.task.COMarketPlaceCheckTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.ExceptionUtil;
@@ -133,7 +134,7 @@ public class ShowCartFragment extends BaseFragment {
                     String baseImageUrl = cartItemsJsonObject.get(Constants.BASE_IMG_URL).getAsString();
                     renderCartItemList(cartSummary, baseImageUrl);
                 } else {
-                    //showBasketEmptyMessage(); //todo
+                    showBasketEmptyMessage();
                     editor.putString(Constants.GET_CART, "0");
                 }
             } else {
@@ -223,9 +224,14 @@ public class ShowCartFragment extends BaseFragment {
         txtCheckout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
-                String pharmaPrescriptionId = prefer.getString(Constants.PHARMA_PRESCRIPTION_ID, null);
-                new COReserveQuantityCheckTask(getFragment(), pharmaPrescriptionId).execute();
+                if (cartInfo != null && cartInfo.getNoOfItems() > 0) {
+                    if (AuthParameters.getInstance(getActivity()).isAuthTokenEmpty()) {
+                        showAlertDialog(getActivity(), "Login", getString(R.string.login_to_place_order),
+                                DialogButton.OK, DialogButton.NO, Constants.LOGIN_REQUIRED, null, "Login");
+                    } else {
+                        new COMarketPlaceCheckTask(getBaseActivity()).execute();
+                    }
+                }
             }
         });
         ActiveOrderRowAdapter activeOrderRowAdapter = new ActiveOrderRowAdapter(cartItemHeaderList, ((BaseActivity) getActivity()),
@@ -351,6 +357,17 @@ public class ShowCartFragment extends BaseFragment {
         if (getBaseActivity() != null) {
             getBaseActivity().invalidateOptionsMenu();
         }
+    }
+
+    private void showBasketEmptyMessage() {
+        LinearLayout contentView = getContentView();
+        if (contentView == null) return;
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View base = inflater.inflate(R.layout.uiv3_empty_data_text, null);
+        TextView txtEmptyDataMsg = (TextView) base.findViewById(R.id.txtEmptyDataMsg);
+        txtEmptyDataMsg.setText(getString(R.string.BASKET_EMPTY));
+        contentView.removeAllViews();
+        contentView.addView(base);
     }
 
     @Override

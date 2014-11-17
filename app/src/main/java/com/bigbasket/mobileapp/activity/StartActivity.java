@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
@@ -25,12 +26,14 @@ import com.bigbasket.mobileapp.model.product.TopCategoryModel;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.ParserUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
 import org.apache.http.impl.client.BasicCookieStore;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -84,6 +87,7 @@ public class StartActivity extends BaseActivity {
 
     private void loadHomePage() {
         Intent homePageIntent = new Intent(this, BBActivity.class);
+        homePageIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_HOME);
         startActivityForResult(homePageIntent, Constants.FORCE_REGISTER_CODE);
     }
 

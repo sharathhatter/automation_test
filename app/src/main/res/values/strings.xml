@@ -34,6 +34,7 @@
     <string name="missing_field">Internal Server Error</string>
     <!--<string name="missing_field">Invalid Field</string>-->
     <string name="login_required">Please log in to your account.</string>
+    <string name="login_to_place_order">Please log in to place an order</string>
     <string name="voucher">Provided eVoucher Invalid</string>
     <string name="voucherCode">eVoucher Code</string>
     <!--<string name="invalid_field">Invalid_field</string>-->

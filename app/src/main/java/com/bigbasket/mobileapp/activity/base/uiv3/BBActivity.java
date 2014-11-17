@@ -241,6 +241,9 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
     public void startFragment() {
         int fragmentCode = getIntent().getIntExtra(Constants.FRAGMENT_CODE, -1);
         switch (fragmentCode) {
+            case FragmentCodes.START_HOME:
+                addToMainLayout(new HomeFragment(), Constants.HOME);
+                break;
             case FragmentCodes.START_UPDATE_PROFILE:
                 addToMainLayout(new UpdateProfileFragment());
                 break;
@@ -277,9 +280,6 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 String orderType = getIntent().getStringExtra(Constants.ORDER);
                 orderListIntent.putExtra(Constants.ORDER, orderType);
                 startActivityForResult(orderListIntent, Constants.GO_TO_HOME);
-                break;
-            default:
-                addToMainLayout(new HomeFragment(), Constants.HOME);
                 break;
         }
     }
