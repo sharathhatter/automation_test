@@ -8,6 +8,7 @@ import android.support.v4.app.DialogFragment;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
+
 import com.bigbasket.mobileapp.R;
 
 import java.util.Calendar;
@@ -19,7 +20,8 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
 
     View view;
 
-    public DatePickerFragment() {}
+    public DatePickerFragment() {
+    }
 
     @SuppressLint("ValidFragment")
     public DatePickerFragment(View view) {

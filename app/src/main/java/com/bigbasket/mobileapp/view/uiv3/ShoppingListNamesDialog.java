@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.widget.Toast;
+
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
@@ -25,7 +26,8 @@ public class ShoppingListNamesDialog extends DialogFragment {
     private Context context;
     private BaseFragment fragment;
 
-    public ShoppingListNamesDialog() {}
+    public ShoppingListNamesDialog() {
+    }
 
     @SuppressLint("ValidFragment")
     public ShoppingListNamesDialog(List<ShoppingListName> shoppingListNames, Context context, BaseFragment fragment) {

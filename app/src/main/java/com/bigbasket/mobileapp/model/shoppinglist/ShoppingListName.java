@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.model.shoppinglist;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 

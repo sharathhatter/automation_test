@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.model.search;
 
 import android.database.Cursor;
+
 import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
 
 public class MostSearchedItem {

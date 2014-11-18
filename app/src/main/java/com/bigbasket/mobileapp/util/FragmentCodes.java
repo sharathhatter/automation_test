@@ -15,4 +15,5 @@ public class FragmentCodes {
     public static final int START_VIEW_DELIVERY_ADDRESS = 13;
     public static final int START_CHANGE_PIN = 14;
     public static final int START_WALLET_FRAGMENT = 15;
+    public static final int START_VIEW_BASKET = 16;
 }

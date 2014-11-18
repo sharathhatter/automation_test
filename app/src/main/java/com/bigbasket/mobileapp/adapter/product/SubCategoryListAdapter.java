@@ -1,7 +1,6 @@
 package com.bigbasket.mobileapp.adapter.product;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.model.product.Category;
@@ -41,7 +41,7 @@ public class SubCategoryListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return categoryList.get(groupPosition).getCategory()!=null?categoryList.get(groupPosition).getCategory().size():0;
+        return categoryList.get(groupPosition).getCategory() != null ? categoryList.get(groupPosition).getCategory().size() : 0;
     }
 
     @Override
@@ -110,7 +110,7 @@ public class SubCategoryListAdapter extends BaseExpandableListAdapter {
 
         if (childPosition == 0 || childPosition == 1) {
             txtListItem.setTextColor(baseFragment.getResources().getColor(R.color.active_order_red_color));
-        }else {
+        } else {
             txtListItem.setTextColor(baseFragment.getResources().getColor(R.color.uiv3_list_primary_text_color));
         }
 
@@ -165,18 +165,18 @@ public class SubCategoryListAdapter extends BaseExpandableListAdapter {
         ImageView imgArrow = subCatHolder.getListArrow();
         if (groupPosition == 0 || groupPosition == 1 || groupPosition == 2) {
             txtListItem.setTextColor(baseFragment.getResources().getColor(R.color.active_order_red_color));
-        }else {
+        } else {
             txtListItem.setTextColor(baseFragment.getResources().getColor(R.color.uiv3_list_primary_text_color));
         }
 
-        if (subcategory.getCategory() != null && subcategory.getCategory().size() > 0){
+        if (subcategory.getCategory() != null && subcategory.getCategory().size() > 0) {
             imgArrow.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             imgArrow.setVisibility(View.GONE);
         }
 
         imgArrow.setImageResource(isExpanded ? R.drawable.small_down_arrow :
-                    R.drawable.small_list_arrow);
+                R.drawable.small_list_arrow);
 
         /*
         row.setOnClickListener(new View.OnClickListener() {

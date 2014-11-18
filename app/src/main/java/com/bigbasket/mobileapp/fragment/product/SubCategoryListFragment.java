@@ -1,6 +1,5 @@
 package com.bigbasket.mobileapp.fragment.product;
 
-import android.app.Activity;
 import android.database.sqlite.SQLiteException;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -10,14 +9,17 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.ExpandableListView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.product.SubCategoryAdapter;
 import com.bigbasket.mobileapp.adapter.product.SubCategoryListAdapter;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.model.product.Category;
 import com.bigbasket.mobileapp.model.product.SubCategoryModel;
-import com.bigbasket.mobileapp.model.product.TopCategoryModel;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
@@ -179,13 +181,13 @@ public class SubCategoryListFragment extends BaseFragment {
 
         for (int i = 0; i < subCategoryModel.getCategory().size(); i++) {
             Category subCat = subCategoryModel.getCategory().get(i);
-            if(subCat.getCategory()!=null && subCat.getCategory().size()>0){
+            if (subCat.getCategory() != null && subCat.getCategory().size() > 0) {
                 Category offersBottomCategory = new Category("Offers", "offerssub");
-                subCat.getCategory().add(0,offersBottomCategory);
+                subCat.getCategory().add(0, offersBottomCategory);
 
-                Category allBottomCategory = new Category("All "+subCategoryModel.getCategory().get(i).getName(),
+                Category allBottomCategory = new Category("All " + subCategoryModel.getCategory().get(i).getName(),
                         subCat.getSlug());
-                subCat.getCategory().add(1,allBottomCategory);
+                subCat.getCategory().add(1, allBottomCategory);
             }
             categoryArrayList.add(subCat);
 
@@ -206,8 +208,8 @@ public class SubCategoryListFragment extends BaseFragment {
         subCategoryExpandableView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-                if (categoryArrayList.get(groupPosition).getCategory()!=null &&
-                        categoryArrayList.get(groupPosition).getCategory().size()>0) {
+                if (categoryArrayList.get(groupPosition).getCategory() != null &&
+                        categoryArrayList.get(groupPosition).getCategory().size() > 0) {
                 } else {
                     Bundle bundle = new Bundle();
                     bundle.putString("slug_name_category", categoryArrayList.get(groupPosition).getSlug());
@@ -242,7 +244,7 @@ public class SubCategoryListFragment extends BaseFragment {
 
     }
 
-    private void renderBanner(JsonObject categoriesJsonObject, LinearLayout contentView){
+    private void renderBanner(JsonObject categoriesJsonObject, LinearLayout contentView) {
         final ArrayList<String> bannerArrList = new ArrayList<>();
         if (categoriesJsonObject.has(Constants.SUB_CATEGORY_BANNER_IMAGE)) {
             JsonArray banner = categoriesJsonObject.getAsJsonArray(Constants.SUB_CATEGORY_BANNER_IMAGE);

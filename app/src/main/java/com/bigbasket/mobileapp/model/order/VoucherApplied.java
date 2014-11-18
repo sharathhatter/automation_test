@@ -6,6 +6,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;

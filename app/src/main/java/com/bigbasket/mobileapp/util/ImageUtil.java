@@ -7,6 +7,7 @@ import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.util.Base64;
 import android.util.Log;
+
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.adapter.order.PrescriptionImageAdapter;
 import com.nostra13.universalimageloader.core.ImageLoader;

@@ -281,6 +281,9 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 orderListIntent.putExtra(Constants.ORDER, orderType);
                 startActivityForResult(orderListIntent, Constants.GO_TO_HOME);
                 break;
+            case FragmentCodes.START_VIEW_BASKET:
+                addToMainLayout(new ShowCartFragment());
+                break;
         }
     }
 

@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.fragment.product;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
 import com.bigbasket.mobileapp.util.Constants;

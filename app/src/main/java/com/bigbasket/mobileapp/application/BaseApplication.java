@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.application;
 
 import android.app.Application;
+
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;

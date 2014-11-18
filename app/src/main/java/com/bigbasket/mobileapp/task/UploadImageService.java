@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
+
 import com.bigbasket.mobileapp.adapter.order.PrescriptionImageAdapter;
 import com.bigbasket.mobileapp.model.order.PrescriptionImageModel;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -15,6 +16,7 @@ import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
 import org.apache.http.impl.client.BasicCookieStore;
 
 import java.util.ArrayList;

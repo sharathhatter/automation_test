@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.model.cart;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import com.bigbasket.mobileapp.model.general.MessageInfo;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;

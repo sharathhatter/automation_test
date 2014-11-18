@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.util;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -9,6 +10,7 @@ import android.text.style.AbsoluteSizeSpan;
 import android.text.style.BulletSpan;
 import android.util.Patterns;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -144,5 +146,17 @@ public class UIUtil {
         nf.setMaximumFractionDigits(2);
         nf.setGroupingUsed(false);
         return (nf.format(amount).equals("0.00") || nf.format(amount).equals("0.0")) ? "0" : nf.format(amount);
+    }
+
+    public static Button getPrimaryButton(Context ctx) {
+        Button btn = new Button(ctx);
+        btn.setPadding(0, (int) ctx.getResources().getDimension(R.dimen.padding_small), 0,
+                (int) ctx.getResources().getDimension(R.dimen.padding_small));
+        btn.setTextColor(Color.WHITE);
+        btn.setBackgroundColor(ctx.getResources().getColor(R.color.uiv3_action_bar_background));
+        btn.setMinHeight(1);
+        btn.setMinWidth(1);
+        btn.setTextSize(ctx.getResources().getDimension(R.dimen.secondary_text_size));
+        return btn;
     }
 }

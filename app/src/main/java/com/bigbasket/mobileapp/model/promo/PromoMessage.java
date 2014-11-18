@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.model.promo;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.Spannable;
+
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.google.gson.annotations.SerializedName;

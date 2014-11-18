@@ -14,7 +14,6 @@ import com.bigbasket.mobileapp.model.product.Option;
 import com.bigbasket.mobileapp.util.Constants;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class SortProductDialog extends DialogFragment {
     private ArrayList<Option> sortOptions;

@@ -2,12 +2,18 @@ package com.bigbasket.mobileapp.model.slot;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 
 public class Slot extends BaseSlot implements Parcelable {

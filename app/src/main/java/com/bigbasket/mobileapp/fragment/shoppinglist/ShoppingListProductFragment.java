@@ -66,7 +66,8 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
                     mBaseImgUrl = savedInstanceState.getString(Constants.BASE_IMG_URL);
                     renderShoppingListItems();
                     return;
-                } catch (JSONException e) { }
+                } catch (JSONException e) {
+                }
             }
         }
         loadProducts();

@@ -2,14 +2,20 @@ package com.bigbasket.mobileapp.task.uiv3;
 
 import android.os.AsyncTask;
 import android.util.Log;
+
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.model.request.HttpRequestData;
-import com.bigbasket.mobileapp.util.*;
+import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.DataUtil;
+import com.bigbasket.mobileapp.util.HttpCode;
+import com.bigbasket.mobileapp.util.MessageCode;
+import com.bigbasket.mobileapp.util.ParserUtil;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+
 import org.apache.http.impl.client.BasicCookieStore;
 
 import java.util.HashMap;

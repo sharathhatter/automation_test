@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.model.order;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import com.bigbasket.mobileapp.model.product.Product;
 
 public class QCErrorData implements Parcelable {

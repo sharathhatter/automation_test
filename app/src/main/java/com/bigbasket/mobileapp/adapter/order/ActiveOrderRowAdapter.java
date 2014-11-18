@@ -16,12 +16,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoDetailFragment;
-import com.bigbasket.mobileapp.model.cart.*;
+import com.bigbasket.mobileapp.model.cart.AnnotationInfo;
+import com.bigbasket.mobileapp.model.cart.BasketOperation;
+import com.bigbasket.mobileapp.model.cart.CartItem;
+import com.bigbasket.mobileapp.model.cart.CartItemHeader;
+import com.bigbasket.mobileapp.model.cart.FulfillmentInfo;
 import com.bigbasket.mobileapp.model.order.OrderItemDisplaySource;
 import com.bigbasket.mobileapp.task.BasketOperationTask;
 import com.bigbasket.mobileapp.util.Constants;

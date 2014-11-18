@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
@@ -103,7 +104,7 @@ public class DoWalletFragment extends BaseFragment {
         }
     }
 
-    private void setCurrentBalance(float currentBalance){
+    private void setCurrentBalance(float currentBalance) {
         txtCurrentBalance.append(!TextUtils.isEmpty(String.valueOf(currentBalance)) ?
                 String.valueOf(currentBalance) :
                 "****");

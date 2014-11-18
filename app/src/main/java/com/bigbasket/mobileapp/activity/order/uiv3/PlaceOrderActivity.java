@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.TabActivity;
 import com.bigbasket.mobileapp.fragment.order.OrderItemListFragment;
@@ -25,6 +26,7 @@ import com.bigbasket.mobileapp.view.uiv3.BBTab;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
 import org.apache.http.impl.client.BasicCookieStore;
 
 import java.text.DecimalFormat;

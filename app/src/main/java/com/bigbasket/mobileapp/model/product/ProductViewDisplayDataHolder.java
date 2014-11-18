@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.model.product;
 
 import android.graphics.Typeface;
 import android.os.Handler;
+
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 
 public class ProductViewDisplayDataHolder {

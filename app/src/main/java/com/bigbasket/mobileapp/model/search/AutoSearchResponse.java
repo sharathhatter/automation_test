@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.model.search;
 
 import android.database.Cursor;
 import android.text.TextUtils;
+
 import com.bigbasket.mobileapp.adapter.db.SearchSuggestionAdapter;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;

@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.model.product;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

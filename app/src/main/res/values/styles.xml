@@ -6,29 +6,11 @@
     -->
     <!-- Application theme. -->
     <style name="BBAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:buttonStyle">@style/CustomHoloLightButtonStyle</item>
         <item name="colorPrimary">@color/uiv3_action_bar_background</item>
         <item name="colorPrimaryDark">@color/uiv3_status_bar_background</item>
         <item name="colorAccent">@color/uiv3_action_bar_background</item>
     </style>
-    
-    <style name="BBFullScreenDialog" parent="android:Theme" >
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:windowFullscreen">true</item>
-        <item name="android:windowIsFloating">false</item>
-    </style>
 
-    <!-- TODO: Remove this theme eventually -->
-    <style name="NoTitleAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:buttonStyle">@style/CustomHoloLightButtonStyle</item>
-    </style>
-    <style name="CustomHoloLightButtonStyle" parent="@android:style/Widget.Holo.Light.Button">
-        <item name="android:minHeight">1dip</item>
-        <item name="android:minWidth">1dip</item>
-    </style>
-    <style name="SpinnerDialogMode">
-        <item name="android:spinnerMode">dialog</item>
-    </style>
     <!-- Other styles -->
     <style name="Uiv2HeaderButtonStyle">
         <item name="android:paddingBottom">5dp</item>

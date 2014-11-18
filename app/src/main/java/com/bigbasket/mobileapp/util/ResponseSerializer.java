@@ -3,7 +3,12 @@ package com.bigbasket.mobileapp.util;
 
 import android.util.Log;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 
 public class ResponseSerializer {
 

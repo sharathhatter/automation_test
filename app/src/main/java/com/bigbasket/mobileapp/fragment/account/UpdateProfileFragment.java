@@ -12,7 +12,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
@@ -26,6 +33,7 @@ import com.bigbasket.mobileapp.util.ParserUtil;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -278,7 +286,8 @@ public class UpdateProfileFragment extends BaseFragment {
     public static class OTPDialog extends OTPValidationDialogFragment {
         private UpdateProfileFragment fragment;
 
-        public OTPDialog() {}
+        public OTPDialog() {
+        }
 
         @SuppressLint("ValidFragment")
         public OTPDialog(BaseActivity baseActivity, UpdateProfileFragment fragment) {

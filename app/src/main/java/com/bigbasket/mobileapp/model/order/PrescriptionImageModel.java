@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.model.order;
 
 import android.database.Cursor;
+
 import com.bigbasket.mobileapp.adapter.order.PrescriptionImageAdapter;
 
 /**

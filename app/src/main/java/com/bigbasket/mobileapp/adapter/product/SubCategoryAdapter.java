@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
+
 import com.bigbasket.mobileapp.adapter.db.DatabaseHelper;
 import com.bigbasket.mobileapp.model.product.SubCategoryModel;
 import com.bigbasket.mobileapp.util.ResponseSerializer;

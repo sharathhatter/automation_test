@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.model.order;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import com.bigbasket.mobileapp.model.account.MemberSummary;
 import com.bigbasket.mobileapp.model.cart.AnnotationInfo;
 import com.bigbasket.mobileapp.model.cart.CartItemList;

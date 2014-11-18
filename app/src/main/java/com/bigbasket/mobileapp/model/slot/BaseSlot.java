@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.model.slot;
 
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 

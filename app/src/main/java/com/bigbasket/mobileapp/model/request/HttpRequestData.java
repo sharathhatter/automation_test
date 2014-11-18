@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.model.request;
 
 import android.support.annotation.Nullable;
+
 import org.apache.http.client.CookieStore;
 
 import java.util.HashMap;

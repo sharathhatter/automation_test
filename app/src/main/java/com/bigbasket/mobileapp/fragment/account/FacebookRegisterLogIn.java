@@ -7,15 +7,18 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
-import com.facebook.*;
+import com.facebook.Session;
+import com.facebook.SessionState;
 import com.facebook.model.GraphUser;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
 import org.json.JSONObject;
 
 import java.util.Arrays;
@@ -64,13 +67,13 @@ public abstract class FacebookRegisterLogIn extends BaseFragment {
         @Override
         public void call(Session session, SessionState state,
                          Exception exception) {
-            if(getActivity()!=null)
+            if (getActivity() != null)
                 onSessionStateChange(session, state, exception);
         }
     };
 
     protected void onSessionStateChange(Session session, SessionState state,
-                                      Exception exception) {
+                                        Exception exception) {
         if (exception != null) {
             Toast.makeText(getActivity(), exception.toString(), Toast.LENGTH_LONG).show();
             return;
@@ -115,7 +118,7 @@ public abstract class FacebookRegisterLogIn extends BaseFragment {
     public abstract Bundle getFBDataFromPreference(Bundle bundle, String serverErrorMsg);
 
     @Override
-    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult){
+    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
         if (httpOperationResult.getUrl().contains(Constants.FB_LOGIN_REGISTER) ||
                 httpOperationResult.getUrl().contains(Constants.FB_CONFIRM)) {
             int responseCode = httpOperationResult.getResponseCode();
@@ -150,7 +153,7 @@ public abstract class FacebookRegisterLogIn extends BaseFragment {
             } else {
                 showAlertDialogFinish(getActivity(), null, getString(R.string.INTERNAL_SERVER_ERROR));
             }
-        }else {
+        } else {
             super.onAsyncTaskComplete(httpOperationResult);
         }
     }
@@ -160,6 +163,7 @@ public abstract class FacebookRegisterLogIn extends BaseFragment {
         super.onActivityResult(requestCode, resultCode, data);
         Session.getActiveSession().onActivityResult(this.getActivity(), requestCode, resultCode, data);
     }
+
     @Override
     public String getTitle() {
         return null;

@@ -10,11 +10,16 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
@@ -28,9 +33,10 @@ import com.bigbasket.mobileapp.model.product.TopCategoryModel;
 import com.bigbasket.mobileapp.task.COReserveQuantityCheckTask;
 import com.bigbasket.mobileapp.task.CoUpdateReservationTask;
 import com.bigbasket.mobileapp.util.Constants;
-//import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
+
+//import com.melnykov.fab.FloatingActionButton;
 
 
 public class CheckoutQCFragment extends BaseFragment implements COReserveQuantityCheckAware {

@@ -6,9 +6,14 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.TextView;
+
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 
@@ -21,7 +26,9 @@ public abstract class OTPValidationDialogFragment extends DialogFragment {
     private Typeface faceRobotoRegular;
     private TextView txtErrorValidateNumber, txtResendNumber;
 
-    public OTPValidationDialogFragment() {}
+    public OTPValidationDialogFragment() {
+    }
+
     public OTPValidationDialogFragment(BaseActivity baseActivity, Typeface faceRobotoRegular) {
         this.baseActivity = baseActivity;
         this.faceRobotoRegular = faceRobotoRegular;

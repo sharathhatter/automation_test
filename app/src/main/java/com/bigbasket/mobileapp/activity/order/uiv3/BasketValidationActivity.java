@@ -35,20 +35,20 @@ import com.bigbasket.mobileapp.util.MobileApiUrl;
 
 public class BasketValidationActivity extends BackButtonActivity {
 
-    private MarketPlace mMarketPlace;
+    private MarketPlace marketPlace;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
-            mMarketPlace = savedInstanceState.getParcelable(Constants.MARKET_PLACE_INTENT); // File IO, so not putting it inside above If as AND
-            if (mMarketPlace != null) {
+            marketPlace = savedInstanceState.getParcelable(Constants.MARKET_PLACE_INTENT); // File IO, so not putting it inside above If as AND
+            if (marketPlace != null) {
                 renderBasketValidationErrors();
                 return;
             }
         }
-        mMarketPlace = getIntent().getParcelableExtra(Constants.MARKET_PLACE_INTENT);
-        if (mMarketPlace == null) {
+        marketPlace = getIntent().getParcelableExtra(Constants.MARKET_PLACE_INTENT);
+        if (marketPlace == null) {
             return;
         }
         renderBasketValidationErrors();
@@ -56,7 +56,7 @@ public class BasketValidationActivity extends BackButtonActivity {
 
     @Override
     public void onCoMarketPlaceSuccess(MarketPlace marketPlace) {
-        this.mMarketPlace = marketPlace;
+        this.marketPlace = marketPlace;
         if (marketPlace.isRuleValidationError()) {
             renderBasketValidationErrors();
         } else if (marketPlace.isAgeCheckRequired() || marketPlace.isPharamaPrescriptionNeeded()) {
@@ -73,10 +73,10 @@ public class BasketValidationActivity extends BackButtonActivity {
         FrameLayout base = (FrameLayout) findViewById(R.id.content_frame);
         LinearLayout contentView = new LinearLayout(this);
         contentView.setOrientation(LinearLayout.VERTICAL);
-        if (!mMarketPlace.isRuleValidationError() || mMarketPlace.getMarketPlaceRuleValidators().size() == 0)
+        if (!marketPlace.isRuleValidationError() || marketPlace.getMarketPlaceRuleValidators().size() == 0)
             return;
         final LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        for (int i = 0; i < mMarketPlace.getMarketPlaceRuleValidators().size(); i++) {
+        for (int i = 0; i < marketPlace.getMarketPlaceRuleValidators().size(); i++) {
             final RelativeLayout marketPlaceBaseLayout = (RelativeLayout) inflater.inflate(R.layout.uiv3_basket_validation_error, null);
             LinearLayout addRemoveItemsLinearLayout = (LinearLayout) marketPlaceBaseLayout.findViewById(R.id.addRemoveItemsLinearLayout);
             contentView.addView(marketPlaceBaseLayout);
@@ -88,25 +88,25 @@ public class BasketValidationActivity extends BackButtonActivity {
             TextView txtRuleName = (TextView) marketPlaceBaseLayout.findViewById(R.id.txtRuleName);
             TextView txtRuleDesc = (TextView) marketPlaceBaseLayout.findViewById(R.id.txtRuleDesc);
 
-            txtRuleName.setText(mMarketPlace.getMarketPlaceRuleValidators().get(i).getRuleName());
-            txtRuleDesc.setText(mMarketPlace.getMarketPlaceRuleValidators().get(i).getRuleDesc());
+            txtRuleName.setText(marketPlace.getMarketPlaceRuleValidators().get(i).getRuleName());
+            txtRuleDesc.setText(marketPlace.getMarketPlaceRuleValidators().get(i).getRuleDesc());
 
             String label = "";
-            if (mMarketPlace.getMarketPlaceRuleValidators().get(i).getWeightLabel().equalsIgnoreCase("volume")) {
+            if (marketPlace.getMarketPlaceRuleValidators().get(i).getWeightLabel().equalsIgnoreCase("volume")) {
                 label = label + "lt";
-            } else if (mMarketPlace.getMarketPlaceRuleValidators().get(i).getWeightLabel().equalsIgnoreCase("weight")) {
+            } else if (marketPlace.getMarketPlaceRuleValidators().get(i).getWeightLabel().equalsIgnoreCase("weight")) {
                 label = label + "Kg";
             }
             TextView txtRuleTotalWeight = (TextView) marketPlaceBaseLayout.findViewById(R.id.txtRuleTotalWeight);
             txtRuleTotalWeight.setText(getString(R.string.ruleTotal) + " " +
-                    mMarketPlace.getMarketPlaceRuleValidators().get(i).getWeightLabel() + ": " +
-                    getDecimalAmount(mMarketPlace.getMarketPlaceRuleValidators().get(i).getRuleTotalQty()) + " " + label);
+                    marketPlace.getMarketPlaceRuleValidators().get(i).getWeightLabel() + ": " +
+                    getDecimalAmount(marketPlace.getMarketPlaceRuleValidators().get(i).getRuleTotalQty()) + " " + label);
 
 
             TextView txtRuleTotalPriceValue = (TextView) marketPlaceBaseLayout.findViewById(R.id.txtRuleTotalPriceValue);
-            if (!TextUtils.isEmpty(String.valueOf(mMarketPlace.getMarketPlaceRuleValidators().get(i).getRuleTotalPrice()))) {
+            if (!TextUtils.isEmpty(String.valueOf(marketPlace.getMarketPlaceRuleValidators().get(i).getRuleTotalPrice()))) {
                 String prefix = " `";
-                String mrpStr = getDecimalAmount(mMarketPlace.getMarketPlaceRuleValidators().get(i).getRuleTotalPrice()) + " ";
+                String mrpStr = getDecimalAmount(marketPlace.getMarketPlaceRuleValidators().get(i).getRuleTotalPrice()) + " ";
                 int prefixLen = prefix.length();
                 SpannableString spannableMrp = new SpannableString(prefix + mrpStr);
                 spannableMrp.setSpan(new CustomTypefaceSpan("", faceRupee), prefixLen - 1,
@@ -114,8 +114,8 @@ public class BasketValidationActivity extends BackButtonActivity {
                 txtRuleTotalPriceValue.setText(spannableMrp);
             }
 
-            for (int j = 0; j < mMarketPlace.getMarketPlaceRuleValidators().get(i).getItems().size(); j++) {
-                final MarketPlaceItems marketPlaceItems = mMarketPlace.getMarketPlaceRuleValidators().get(i).getItems().get(j);
+            for (int j = 0; j < marketPlace.getMarketPlaceRuleValidators().get(i).getItems().size(); j++) {
+                final MarketPlaceItems marketPlaceItems = marketPlace.getMarketPlaceRuleValidators().get(i).getItems().get(j);
                 RelativeLayout addRemoveLinearLayout = (RelativeLayout) inflater.inflate(R.layout.uiv3_basket_validation_error_products, null);
                 TextView txtIndex = (TextView) addRemoveLinearLayout.findViewById(R.id.txtIndex);
                 TextView txtItemInBasketAndProductDesc = (TextView) addRemoveLinearLayout.findViewById(R.id.txtItemInBasketAndProductDesc);
@@ -134,7 +134,7 @@ public class BasketValidationActivity extends BackButtonActivity {
                 txtItemInBasketAndProductDesc.setText(marketPlaceItems.getItemInCart() + " quantity of " + marketPlaceItems.getDesc());
                 txtItemInBasketAndProductDesc.setTypeface(faceRobotoRegular);
                 txtTotalQty.setText(getString(R.string.ruleTotal) + " " +
-                        mMarketPlace.getMarketPlaceRuleValidators().get(i).getWeightLabel() + ": " +
+                        marketPlace.getMarketPlaceRuleValidators().get(i).getWeightLabel() + ": " +
                         getDecimalAmount(itemTotalVolume) + " " + label);
 
                 if (!TextUtils.isEmpty(String.valueOf(marketPlaceItems.getSalePrice()))) {
@@ -207,8 +207,8 @@ public class BasketValidationActivity extends BackButtonActivity {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        if (mMarketPlace != null) {
-            outState.putParcelable(Constants.MARKET_PLACE_INTENT, mMarketPlace);
+        if (marketPlace != null) {
+            outState.putParcelable(Constants.MARKET_PLACE_INTENT, marketPlace);
         }
         super.onSaveInstanceState(outState);
     }

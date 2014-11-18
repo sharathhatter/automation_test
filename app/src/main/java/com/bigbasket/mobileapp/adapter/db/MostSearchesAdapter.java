@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteException;
 import android.text.TextUtils;
+
 import com.bigbasket.mobileapp.model.search.MostSearchedItem;
 
 import java.util.ArrayList;

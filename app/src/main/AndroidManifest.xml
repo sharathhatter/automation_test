@@ -78,20 +78,17 @@
         <activity
             android:name="com.demach.konotor.KonotorFeedbackActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/NoTitleAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan"/>
 
 
         <activity
             android:name=".activity.CustomerFeedbackActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/NoTitleAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan"/>
 
         <activity
             android:name=".activity.promo.FlatPageWebViewActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/NoTitleAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan"/>
 
         <!--<activity android:name="com.luminous.pick.CustomGalleryActivity" >-->
@@ -117,7 +114,6 @@
         <activity
             android:name=".activity.DeepLinkDispatcherActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/NoTitleAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>

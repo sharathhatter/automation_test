@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.task.uiv3;
 
 import android.os.AsyncTask;
 import android.util.Log;
+
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -13,6 +14,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.MessageCode;
 import com.google.gson.Gson;
+
 import org.apache.http.HttpStatus;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.json.JSONException;
