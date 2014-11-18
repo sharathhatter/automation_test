@@ -28,6 +28,11 @@ android {
 }
 
 dependencies {
+    compile project(':konotorActivity')
+    compile project(':androidHorizontalListView')
+    compile project(':facebook')
+    compile files('libs/gcm.jar')
+    compile project(':floatingActionButton')
     compile 'com.android.support:appcompat-v7:21.0.0'
     compile 'com.android.support:support-v4:21.0.0'
     compile 'com.android.support:cardview-v7:21.0.0'
@@ -39,11 +44,6 @@ dependencies {
     compile 'com.etsy.android.grid:library:1.0.5'
     compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.3'
-    compile project(':konotorActivity')
-    compile project(':androidHorizontalListView')
-    compile project(':facebook')
-    compile files('libs/gcm.jar')
-    compile project(':floatingActionButton')
     compile 'com.google.android.gms:play-services:6.1.71'
 }
 
@@ -55,11 +55,14 @@ def toCamelCase(String string) {
     return result
 }
 
+
 afterEvaluate { project ->
     Configuration runtimeConfiguration = project.configurations.getByName('compile')
     ResolutionResult resolution = runtimeConfiguration.incoming.resolutionResult
     // Forces resolve of configuration
-    ModuleVersionIdentifier module = resolution.getAllComponents().find { it.moduleVersion.name.equals("play-services") }.moduleVersion
+    ModuleVersionIdentifier module = resolution.getAllComponents().find {
+        it.moduleVersion.name.equals("play-services")
+    }.moduleVersion
 
     String prepareTaskName = "prepare${toCamelCase("${module.group} ${module.name} ${module.version}")}Library"
     File playServiceRootFolder = project.tasks.find { it.name.equals(prepareTaskName) }.explodedDir
@@ -97,7 +100,9 @@ afterEvaluate { project ->
         }
     }
 
-    project.tasks.findAll { it.name.startsWith('prepare') && it.name.endsWith('Dependencies') }.each { Task task ->
+    project.tasks.findAll {
+        it.name.startsWith('prepare') && it.name.endsWith('Dependencies')
+    }.each { Task task ->
         task.dependsOn stripPlayServices
     }
 }

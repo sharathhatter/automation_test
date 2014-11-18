@@ -34,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.account.uiv3.LoginActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.OrderListActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInSignUpActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
@@ -308,13 +309,11 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 launchKonotor();
                 return true;
             case R.id.action_login:
-                Intent intent = new Intent(this, SignInSignUpActivity.class);
-                intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_LOGIN);
+                Intent intent = new Intent(this, LoginActivity.class);
                 startActivityForResult(intent, Constants.GO_TO_HOME);
                 return true;
             case R.id.action_register:
-                intent = new Intent(this, SignInSignUpActivity.class);
-                intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_REGISTER);
+                intent = new Intent(this, LoginActivity.class);
                 startActivityForResult(intent, Constants.GO_TO_HOME);
                 return true;
             case R.id.action_view_basket:
@@ -738,8 +737,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                         }
                         break;
                     case Constants.LOGIN:
-                        Intent intent = new Intent(getCurrentActivity(), SignInSignUpActivity.class);
-                        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_LOGIN);
+                        Intent intent = new Intent(getCurrentActivity(), LoginActivity.class);
                         startActivityForResult(intent, Constants.GO_TO_HOME);
                         break;
                     case Constants.REGISTER_MEMBER:

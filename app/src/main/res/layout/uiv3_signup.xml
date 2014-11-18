@@ -6,7 +6,16 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    <ProgressBar
+        android:id="@+id/login_progress"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:visibility="gone" />
+
+    <ScrollView
+        android:id="@+id/signup_form"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/uiv3_list_bkg_light_color"
@@ -329,29 +338,14 @@
                 android:textColor="@color/uiv3_primary_text_color"
                 android:textSize="@dimen/secondary_text_size" />
 
-            <RelativeLayout
+            <Button
+                android:id="@+id/btnRegister"
+                style="@style/Uiv3BigGreenButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_normal">
-
-                <Button
-                    android:id="@+id/btnRegister"
-                    style="@style/Uiv3BigGreenButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/signUp" />
-
-                <ProgressBar
-                    android:id="@+id/progressBarRegister"
-                    style="?android:attr/progressBarStyleSmall"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="@dimen/margin_small"
-                    android:visibility="visible" />
-
-            </RelativeLayout>
+                android:layout_marginBottom="@dimen/margin_normal"
+                android:layout_marginTop="@dimen/margin_normal"
+                android:text="@string/signUp" />
 
         </LinearLayout>
     </ScrollView>

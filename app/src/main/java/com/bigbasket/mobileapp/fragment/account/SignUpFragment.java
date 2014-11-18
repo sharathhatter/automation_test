@@ -76,7 +76,7 @@ public class SignUpFragment extends BaseFragment {
         chkReceivePromos = (CheckBox) base.findViewById(R.id.chkReceivePromos);
 
         btnRegister = (Button) base.findViewById(R.id.btnRegister);
-        progressBarRegister = (ProgressBar) base.findViewById(R.id.progressBarRegister);
+        //progressBarRegister = (ProgressBar) base.findViewById(R.id.progressBarRegister);
         resetRegisterBtn();
 
         editTextEmail.setTypeface(faceRobotoRegular);

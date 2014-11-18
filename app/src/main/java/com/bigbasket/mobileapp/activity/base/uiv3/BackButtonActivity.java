@@ -12,7 +12,6 @@ import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
 
 public class BackButtonActivity extends BBActivity {
 
-
     @Override
     public void setNavDrawer(Toolbar toolbar, Bundle savedInstanceState) {
         ActionBar supportActionBar = getSupportActionBar();
@@ -26,6 +25,8 @@ public class BackButtonActivity extends BBActivity {
     @Override
     protected void setOptionsMenu(Menu menu) {
         BBDrawerLayout drawerLayout = (BBDrawerLayout) findViewById(R.id.drawer_layout);
-        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        if (drawerLayout != null) {
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        }
     }
 }

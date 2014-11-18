@@ -160,6 +160,7 @@
     <string name="hi">Hi</string>
     <string name="checkState">checkState</string>
     <string name="registerHomepageTxt">Register</string>
+    <string name="or">or</string>
     <string name="myAccount">My Account</string>
     <string name="signOut">Logout</string>
     <string name="logOutSuccess">Logout successful</string>
@@ -444,4 +445,6 @@
     <string name="chooseYourLocation">Choose Your Location</string>
     <integer name="grid_portrait_count">1</integer>
     <string name="search_activity_launchMode">singleTop</string>
+    <string name="login_with_facebook">Log in</string>
+    <string name="loginPageSignUpText">Don\'t have an account?</string>
 </resources>
