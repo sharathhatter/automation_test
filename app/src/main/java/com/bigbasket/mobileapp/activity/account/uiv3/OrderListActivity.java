@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckedTextView;
 import android.widget.FrameLayout;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -201,12 +202,13 @@ public class OrderListActivity extends BackButtonActivity {
                 base.removeView(orderAbsListView);
             }
         } else {
-            if (orderAbsListView instanceof ListView) {
-                ((ListView) orderAbsListView).setDivider(null);
-                ((ListView) orderAbsListView).setDividerHeight(0);
-            }
             OrderListAdapter orderListAdapter = new OrderListAdapter(this, faceRobotoRegular, faceRupee, orders);
-            orderAbsListView.setAdapter(orderListAdapter);
+
+            if (orderAbsListView instanceof ListView) {
+                ((ListView) orderAbsListView).setAdapter(orderListAdapter);
+            } else if (orderAbsListView instanceof GridView) {
+                ((GridView) orderAbsListView).setAdapter(orderListAdapter);
+            }
             orderAbsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
