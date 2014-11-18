@@ -32,6 +32,7 @@ import android.widget.Toast;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInSignUpActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
+import com.bigbasket.mobileapp.activity.order.uiv3.CheckoutQCActivity;
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 import com.bigbasket.mobileapp.adapter.order.PrescriptionImageAdapter;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
@@ -140,11 +141,9 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
 
     @Override
     public void onCOReserveQuantityCheck() {
-        Intent intent = new Intent(getCurrentActivity(), BBActivity.class);
+        Intent intent = new Intent(getCurrentActivity(), CheckoutQCActivity.class);
         intent.putExtra(Constants.QC_LEN, coReserveQuantity.getQc_len());
-        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_QC);
         startActivityForResult(intent, Constants.GO_TO_HOME);
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
     }
 
 
@@ -476,6 +475,14 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     public void goToHome() {
         setResult(Constants.GO_TO_HOME);
         getCurrentActivity().finish();
+//        Intent intent = new Intent(this, BBActivity.class);
+//        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_HOME);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//        } else {
+//            intent.setFlags(IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
+//        }
+//        startActivity(intent);
     }
 
     public String getDecimalAmount(Double amount) {

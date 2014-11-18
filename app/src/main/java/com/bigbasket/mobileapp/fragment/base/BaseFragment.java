@@ -26,7 +26,7 @@ import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
-import com.bigbasket.mobileapp.fragment.order.CheckoutQCFragment;
+import com.bigbasket.mobileapp.activity.order.uiv3.CheckoutQCActivity;
 import com.bigbasket.mobileapp.handler.MessageHandler;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
 import com.bigbasket.mobileapp.interfaces.COReserveQuantityCheckAware;
@@ -472,23 +472,10 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     @Override
     public void onCOReserveQuantityCheck() {
         if (coReserveQuantity.isStatus()) {
-            CheckoutQCFragment checkoutQCFragment = new CheckoutQCFragment();
-            Bundle bundle = new Bundle();
-            bundle.putInt(Constants.QC_LEN, coReserveQuantity.getQc_len());
-            checkoutQCFragment.setArguments(bundle);
-            changeFragment(checkoutQCFragment);
+            Intent intent = new Intent(getActivity(), CheckoutQCActivity.class);
+            intent.putExtra(Constants.QC_LEN, coReserveQuantity.getQc_len());
+            startActivityForResult(intent, Constants.GO_TO_HOME);
         }
-    }
-
-    public String getDecimalAmount(Double amount) {
-        int amountInt = amount.intValue();
-        if (amountInt == amount)
-            return String.valueOf(amountInt);
-        final NumberFormat nf = NumberFormat.getInstance();
-        nf.setMinimumFractionDigits(2);
-        nf.setMaximumFractionDigits(2);
-        nf.setGroupingUsed(false);
-        return (nf.format(amount).equals("0.00") || nf.format(amount).equals("0.0")) ? "0" : nf.format(amount);
     }
 
     public String getFloatAmount(float amount) {

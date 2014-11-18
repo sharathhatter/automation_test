@@ -1,10 +1,11 @@
-package com.bigbasket.mobileapp.fragment.order;
+package com.bigbasket.mobileapp.activity.order.uiv3;
+
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.PopupMenu;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -15,67 +16,72 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
-import com.bigbasket.mobileapp.fragment.base.BaseFragment;
-import com.bigbasket.mobileapp.fragment.product.SubCategoryListFragment;
-import com.bigbasket.mobileapp.interfaces.COReserveQuantityCheckAware;
 import com.bigbasket.mobileapp.model.order.COReserveQuantity;
 import com.bigbasket.mobileapp.model.order.CheckoutProduct;
 import com.bigbasket.mobileapp.model.order.QCErrorData;
 import com.bigbasket.mobileapp.model.product.Product;
-import com.bigbasket.mobileapp.model.product.TopCategoryModel;
 import com.bigbasket.mobileapp.task.COReserveQuantityCheckTask;
 import com.bigbasket.mobileapp.task.CoUpdateReservationTask;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
 
-//import com.melnykov.fab.FloatingActionButton;
-
-
-public class CheckoutQCFragment extends BaseFragment implements COReserveQuantityCheckAware {
-
+public class CheckoutQCActivity extends BackButtonActivity {
     private COReserveQuantity coReserveQuantity;
-    private LayoutInflater inflater;
     private String categoryName = "";
+    private boolean mAlreadyRunning;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.uiv3_list_container, container, false);
-        view.setBackgroundColor(getResources().getColor(R.color.uiv3_list_bkg_color));
-        return view;
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        int qcLen = getArguments().getInt(Constants.QC_LEN, -100);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        int qcLen = getIntent().getIntExtra(Constants.QC_LEN, -100);
         if (qcLen == 0) {
-            changeFragment(new MemberAddressListFragment());
+            launchAddressSelection();
         } else {
             callQCApi();
         }
     }
 
+    private void launchAddressSelection() {
+        Intent intent = new Intent(this, BackButtonActivity.class);
+        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ADDRESS_SELECTION);
+        startActivityForResult(intent, Constants.GO_TO_HOME);
+    }
+
     @Override
     public void onResume() {
         super.onResume();
+        if (mAlreadyRunning) {
+            finish();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mAlreadyRunning = true;
     }
 
     private void callQCApi() {
         if (checkInternetConnection()) {
-            SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(this);
             String pharmaPrescriptionId = prefer.getString(Constants.PHARMA_PRESCRIPTION_ID, null);
             new COReserveQuantityCheckTask(this, pharmaPrescriptionId).execute();
         } else {
-            showAlertDialogForGoToHome(getString(R.string.checkinternet));
+            // TODO : Improve error handling
+            showAlertDialogFinish(this, null, getString(R.string.checkinternet));
         }
     }
 
@@ -93,7 +99,8 @@ public class CheckoutQCFragment extends BaseFragment implements COReserveQuantit
     public void onCOReserveQuantityCheck() {
         if (coReserveQuantity.isStatus()) {
             if (!coReserveQuantity.isQcHasErrors()) {
-                showAlertDialogForGoToHome(getString(R.string.INTERNAL_SERVER_ERROR));
+                // TODO : Improve error handling
+                showAlertDialogFinish(this, null, getString(R.string.INTERNAL_SERVER_ERROR));
             } else {
                 createArrayListOfProducts();
             }
@@ -129,32 +136,25 @@ public class CheckoutQCFragment extends BaseFragment implements COReserveQuantit
             }
             renderCheckOut(productWithNoStockList, productWithSomeStockList);
         } else {
-            showAlertDialogFinish(getActivity(), null, getString(R.string.INTERNAL_SERVER_ERROR));
+            showAlertDialogFinish(this, null, getString(R.string.INTERNAL_SERVER_ERROR));
         }
 
     }
 
     private boolean isViaInvoice() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean viaInvoice = sharedPreferences.getBoolean(Constants.VIA_INVOICE, false);
         removeViaInvoiceFlag();
         return viaInvoice;
     }
 
-    protected void removeViaInvoiceFlag() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.remove(Constants.VIA_INVOICE);
-        editor.commit();
-    }
-
-
     private void renderCheckOut(final ArrayList<CheckoutProduct> productWithNoStockList,
                                 final ArrayList<CheckoutProduct> productWithSomeStockList) {
-        if (getActivity() == null) return;
-        LinearLayout contentView = getContentView();
-        if (contentView == null) return;
-
+        FrameLayout base = (FrameLayout) findViewById(R.id.content_frame);
+        LinearLayout contentView = new LinearLayout(this);
+        contentView.setOrientation(LinearLayout.VERTICAL);
+        base.addView(contentView);
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         int productWithNoStockListSize = productWithNoStockList.size();
         int productWithSomeStockListSize = productWithSomeStockList.size();
         if (productWithNoStockListSize > 0 || productWithSomeStockListSize > 0) {
@@ -260,7 +260,7 @@ public class CheckoutQCFragment extends BaseFragment implements COReserveQuantit
                     TextView txtSalePrice = (TextView) layoutWithSomeStockProducts.findViewById(R.id.txtSalePrice);
                     if (!TextUtils.isEmpty(productWithSomeStockList.get(i).getSpprice())) {
                         String preFixSalePrice = "Sale Price: `";
-                        String postFixSalePrice = getFloatAmount((Float.parseFloat(productWithSomeStockList.get(i).getSpprice())));
+                        String postFixSalePrice = getDecimalAmount((Double.parseDouble(productWithSomeStockList.get(i).getSpprice())));
                         int prefixBalLen = preFixSalePrice.length();
                         SpannableString spannableSalePrice = new SpannableString(preFixSalePrice + " " + postFixSalePrice);
                         spannableSalePrice.setSpan(new CustomTypefaceSpan("", faceRupee), prefixBalLen - 1,
@@ -273,7 +273,7 @@ public class CheckoutQCFragment extends BaseFragment implements COReserveQuantit
                     TextView txtSaving = (TextView) layoutWithSomeStockProducts.findViewById(R.id.txtSaving);
                     if (!TextUtils.isEmpty(productWithSomeStockList.get(i).getDiscountValue())) {
                         String preFixSaving = "Saving: `";
-                        String postFixSaving = getFloatAmount((Float.parseFloat(productWithSomeStockList.get(i).getDiscountValue())));
+                        String postFixSaving = getDecimalAmount(Double.parseDouble(productWithSomeStockList.get(i).getDiscountValue()));
                         int prefixBalLen = preFixSaving.length();
                         SpannableString spannableSaving = new SpannableString(preFixSaving + " " + postFixSaving);
                         spannableSaving.setSpan(new CustomTypefaceSpan("", faceRupee), prefixBalLen - 1,
@@ -291,7 +291,7 @@ public class CheckoutQCFragment extends BaseFragment implements COReserveQuantit
                     imgProductCheckOutQCAdditionalAction.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            PopupMenu popupMenu = new PopupMenu(getActivity(), v);
+                            PopupMenu popupMenu = new PopupMenu(getCurrentActivity(), v);
                             MenuInflater menuInflater = popupMenu.getMenuInflater();
                             menuInflater.inflate(R.menu.check_out_qc, popupMenu.getMenu());
                             popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -299,17 +299,19 @@ public class CheckoutQCFragment extends BaseFragment implements COReserveQuantit
                                 public boolean onMenuItemClick(MenuItem item) {
                                     switch (item.getItemId()) {
                                         case R.id.menuAddSimilarQCProduct:
-                                            SubCategoryListFragment subCategoryListFragment = new SubCategoryListFragment();
-                                            TopCategoryModel topCategoryModel = new
-                                                    TopCategoryModel(productWithSomeStockList.get(imgProductCheckOutQCAdditionalAction.getId()).getCategoryName(),
-                                                    productWithSomeStockList.get(imgProductCheckOutQCAdditionalAction.getId()).getTopLevelCategorySlug(), null, null, null);
-                                            Bundle bundle = new Bundle();
-                                            bundle.putParcelable(Constants.TOP_CATEGORY, topCategoryModel);
-                                            subCategoryListFragment.setArguments(bundle);
-                                            changeFragment(subCategoryListFragment);
+//                                            SubCategoryListFragment subCategoryListFragment = new SubCategoryListFragment();
+//                                            TopCategoryModel topCategoryModel = new
+//                                                    TopCategoryModel(productWithSomeStockList.get(imgProductCheckOutQCAdditionalAction.getId()).getCategoryName(),
+//                                                    productWithSomeStockList.get(imgProductCheckOutQCAdditionalAction.getId()).getTopLevelCategorySlug(), null, null, null);
+//                                            Bundle bundle = new Bundle();
+//                                            bundle.putParcelable(Constants.TOP_CATEGORY, topCategoryModel);
+//                                            subCategoryListFragment.setArguments(bundle);
+//                                            changeFragment(subCategoryListFragment);
                                             return true;
                                         case R.id.menuDeleteQCProduct:
-                                            new CoUpdateReservationTask(getFragment(), true, String.valueOf(imgProductCheckOutQCAdditionalAction.getTag()), 0).execute();
+                                            new CoUpdateReservationTask(getCurrentActivity(),
+                                                    true, String.valueOf(imgProductCheckOutQCAdditionalAction.getTag()),
+                                                    0).execute();
                                             return true;
                                         default:
                                             return false;
@@ -324,19 +326,29 @@ public class CheckoutQCFragment extends BaseFragment implements COReserveQuantit
                 }
             }
 
-//            btnFabProceedQc.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    new CoUpdateReservationTask(getFragment(), false, productWithNoStockList, productWithSomeStockList).execute();
-//                }
-//            });
+            Button btnContinue = UIUtil.getPrimaryButton(this);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
+            int btnMargin = (int) getResources().getDimension(R.dimen.margin_large);
+            layoutParams.setMargins(btnMargin, btnMargin, btnMargin, btnMargin);
+            btnContinue.setLayoutParams(layoutParams);
+            btnContinue.setTypeface(faceRobotoRegular);
+            btnContinue.setText("Continue");
+            btnContinue.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    new CoUpdateReservationTask(getCurrentActivity(), false, productWithNoStockList, productWithSomeStockList).execute();
+                }
+            });
+            contentView.addView(btnContinue);
         } else {
-            showAlertDialogFinish(getActivity(), null, getString(R.string.INTERNAL_SERVER_ERROR));
+            showAlertDialogFinish(this, null, getString(R.string.INTERNAL_SERVER_ERROR));
         }
 
     }
 
     private void showQcMsg(LinearLayout linearLayoutViewQC, boolean forNoProductView) {
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.uiv3_checkout_msg, null);
         TextView txtOutOfStockMsg1 = (TextView) view.findViewById(R.id.txtOutOfStockMsg1);
         txtOutOfStockMsg1.setTypeface(faceRobotoRegular);
@@ -347,30 +359,5 @@ public class CheckoutQCFragment extends BaseFragment implements COReserveQuantit
             txtOutOfStockMsg2.setVisibility(View.VISIBLE);
         }
         linearLayoutViewQC.addView(view);
-    }
-
-    private BaseFragment getFragment() {
-        return this;
-    }
-
-    public LinearLayout getContentView() {
-        return getView() != null ? (LinearLayout) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
-    }
-
-    @Override
-    public String getTitle() {
-        return "CHECKOUT";
-    }
-
-    @Override
-    public void onBackResume() {
-        super.onBackResume();
-        finish();
-    }
-
-    @NonNull
-    @Override
-    public String getFragmentTxnTag() {
-        return CheckoutQCFragment.class.getName();
     }
 }

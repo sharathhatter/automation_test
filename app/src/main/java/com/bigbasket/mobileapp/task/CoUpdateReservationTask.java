@@ -9,8 +9,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
-import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
@@ -43,7 +43,7 @@ public class CoUpdateReservationTask extends AsyncTask<String, String, String> {
     //private String updateType;
     private ProgressDialog progressDialog;
     private HttpOperationResult httpOperationResult;
-    private BaseFragment baseFragment;
+    private BaseActivity activity;
     private boolean removeAll;
     private int finalQty;
     private String productId;
@@ -56,16 +56,16 @@ public class CoUpdateReservationTask extends AsyncTask<String, String, String> {
 //        this.updateType = updateType;
 //    }
 
-    public CoUpdateReservationTask(BaseFragment baseFragment, boolean removeAll, String productId, int finalQty) {
-        this.baseFragment = baseFragment;
+    public CoUpdateReservationTask(BaseActivity activity, boolean removeAll, String productId, int finalQty) {
+        this.activity = activity;
         this.removeAll = removeAll;
         this.finalQty = finalQty;
         this.productId = productId;
     }
 
-    public CoUpdateReservationTask(BaseFragment baseFragment, boolean removeAll, ArrayList<CheckoutProduct> productWithNoStockList,
+    public CoUpdateReservationTask(BaseActivity activity, boolean removeAll, ArrayList<CheckoutProduct> productWithNoStockList,
                                    ArrayList<CheckoutProduct> productWithSomeStockList) {
-        this.baseFragment = baseFragment;
+        this.activity = activity;
         this.removeAll = removeAll;
         this.productWithNoStockList = productWithNoStockList;
         this.productWithSomeStockList = productWithSomeStockList;
@@ -76,7 +76,7 @@ public class CoUpdateReservationTask extends AsyncTask<String, String, String> {
         if (isCancelled()) {
             return null;
         }
-        if (baseFragment.checkInternetConnection()) {
+        if (activity.checkInternetConnection()) {
             JSONArray finalItem = new JSONArray();
             JSONObject updateItem = new JSONObject();
             try {
@@ -102,7 +102,7 @@ public class CoUpdateReservationTask extends AsyncTask<String, String, String> {
                         }
                     }
                 }
-                SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(baseFragment.getActivity());
+                SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(activity);
                 String pid = prefer.getString(Constants.POTENTIAL_ORDER_ID, "");
 
                 HashMap<String, String> postLoad = new HashMap<>();
@@ -110,18 +110,18 @@ public class CoUpdateReservationTask extends AsyncTask<String, String, String> {
                 postLoad.put(Constants.ITEMS, finalItem.toString());
 
 
-                AuthParameters authParameters = AuthParameters.getInstance(baseFragment.getActivity());
+                AuthParameters authParameters = AuthParameters.getInstance(activity);
                 HttpRequestData httpRequestData = new HttpRequestData(URL,
                         postLoad, true, authParameters.getBbAuthToken(), authParameters.getVisitorId(),
                         authParameters.getOsVersion(), new BasicCookieStore(), null);
                 httpOperationResult = DataUtil.doHttpPost(httpRequestData);
 
             } catch (Exception e) {
-                ((HandlerAware) baseFragment.getActivity()).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
+                ((HandlerAware) activity).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
                 Log.d(TAG, "Sending message: MessageCode.SERVER_ERROR");
             }
         } else {
-            ((HandlerAware) baseFragment.getActivity()).getHandler().sendEmptyMessage(MessageCode.INTERNET_ERROR);
+            ((HandlerAware) activity).getHandler().sendEmptyMessage(MessageCode.INTERNET_ERROR);
             Log.d(TAG, "Sending message: MessageCode.INTERNET_ERROR");
         }
 
@@ -132,10 +132,10 @@ public class CoUpdateReservationTask extends AsyncTask<String, String, String> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        if (baseFragment.isSuspended()) {
+        if (activity.isActivitySuspended()) {
             cancel(true);
         } else {
-            progressDialog = ProgressDialog.show(baseFragment.getActivity(), "", "Please wait");
+            progressDialog = ProgressDialog.show(activity, "", "Please wait");
         }
     }
 
@@ -154,49 +154,49 @@ public class CoUpdateReservationTask extends AsyncTask<String, String, String> {
             if (httpOperationResult.getResponseCode() == HttpCode.HTTP_OK) {
                 JsonObject resultJson = new JsonParser().parse(httpOperationResult.getReponseString()).getAsJsonObject();
                 String status = resultJson.get(Constants.STATUS).getAsString();
-                SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(baseFragment.getActivity());
+                SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(activity);
                 SharedPreferences.Editor editor = prefer.edit();
 
                 if (status.equalsIgnoreCase(Constants.OK)) {
                     if (removeAll) {
-                        Toast.makeText(baseFragment.getActivity(), "Updated successfully.", Toast.LENGTH_SHORT).show();
-                        CartSummary cartInfo = ((CartInfoAware) baseFragment).getCartInfo();
+                        Toast.makeText(activity, "Updated successfully.", Toast.LENGTH_SHORT).show();
+                        CartSummary cartInfo = ((CartInfoAware) activity).getCartInfo();
                         if (cartInfo.getNoOfItems() > 0) {
-                            Intent i1 = new Intent(baseFragment.getActivity(), BBActivity.class);
+                            Intent i1 = new Intent(activity, BBActivity.class);
                             i1.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ADDRESS_SELECTION);
                             editor.commit();
-                            baseFragment.getActivity().startActivityForResult(i1, Constants.GO_TO_HOME);
-                            baseFragment.getActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+                            activity.startActivityForResult(i1, Constants.GO_TO_HOME);
+                            activity.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
                         } else {
-                            baseFragment.goToHome();  // todo test this flow v.carefully
+                            activity.goToHome();  // todo test this flow v.carefully
                         }
                     } else {
-                        Intent intent = new Intent(baseFragment.getActivity(), BBActivity.class);
+                        Intent intent = new Intent(activity, BBActivity.class);
                         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ADDRESS_SELECTION);
                         editor.commit();
-                        baseFragment.getActivity().startActivityForResult(intent, Constants.GO_TO_HOME);
-                        baseFragment.getActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+                        activity.startActivityForResult(intent, Constants.GO_TO_HOME);
+                        activity.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
                     }
 
                 } else {  // its error case
                     String errorType = resultJson.get(Constants.ERROR_TYPE).getAsString();
-                    Toast.makeText(baseFragment.getActivity(), resultJson.get(Constants.MESSAGE).getAsString(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, resultJson.get(Constants.MESSAGE).getAsString(), Toast.LENGTH_SHORT).show();
                     if (errorType != null && errorType.equalsIgnoreCase(Constants.POTENTIAL_ORDER_ID_EXPIRED)) {
-                        baseFragment.goToHome();
+                        activity.goToHome();
                     }
                 }
 
             } else if (httpOperationResult.getResponseCode() == HttpCode.UNAUTHORIZED) {
-                ((HandlerAware) baseFragment.getActivity()).getHandler().sendEmptyMessage(MessageCode.UNAUTHORIZED);
+                ((HandlerAware) activity).getHandler().sendEmptyMessage(MessageCode.UNAUTHORIZED);
                 Log.d(TAG, "Sending message: MessageCode.UNAUTHORIZED");
 
             } else {
-                ((HandlerAware) baseFragment.getActivity()).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
+                ((HandlerAware) activity).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
                 Log.d(TAG, "Sending message: MessageCode.SERVER_ERROR");
             }
 
         } else {
-            ((HandlerAware) baseFragment.getActivity()).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
+            ((HandlerAware) activity).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
             Log.d(TAG, "Sending message: MessageCode.SERVER_ERROR");
         }
 

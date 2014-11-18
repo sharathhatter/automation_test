@@ -1,7 +1,10 @@
 package com.bigbasket.mobileapp.activity.order.uiv3;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
@@ -18,16 +21,31 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
+import com.bigbasket.mobileapp.interfaces.CartInfoAware;
+import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.general.MessageInfo;
 import com.bigbasket.mobileapp.model.general.MessageParamInfo;
 import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.order.MarketPlaceAgeCheck;
 import com.bigbasket.mobileapp.model.order.PharmaPrescriptionInfo;
+import com.bigbasket.mobileapp.model.request.AuthParameters;
+import com.bigbasket.mobileapp.model.request.HttpOperationResult;
+import com.bigbasket.mobileapp.task.COMarketPlaceCheckTask;
+import com.bigbasket.mobileapp.task.COReserveQuantityCheckTask;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.DialogButton;
+import com.bigbasket.mobileapp.util.ExceptionUtil;
 import com.bigbasket.mobileapp.util.MessageFormatUtil;
+import com.bigbasket.mobileapp.util.MobileApiUrl;
+import com.bigbasket.mobileapp.util.ParserUtil;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import org.apache.http.impl.client.BasicCookieStore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class AgeValidationActivity extends BackButtonActivity {
     private MarketPlace marketPlace;
@@ -57,7 +75,9 @@ public class AgeValidationActivity extends BackButtonActivity {
     }
 
     private void proceedToQc() {
-
+        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(this);
+        String pharmaPrescriptionId = prefer.getString(Constants.PHARMA_PRESCRIPTION_ID, null);
+        new COReserveQuantityCheckTask(getCurrentActivity(), pharmaPrescriptionId).execute();
     }
 
     private void renderMarketPlaceValidationErrors() {
@@ -69,6 +89,23 @@ public class AgeValidationActivity extends BackButtonActivity {
         scrollView.addView(base);
         renderAgeValidations(base);
         renderPharmaPrescriptionValidations(base);
+
+        Button btnContinue = UIUtil.getPrimaryButton(this);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        int btnMargin = (int) getResources().getDimension(R.dimen.margin_large);
+        layoutParams.setMargins(btnMargin, btnMargin, btnMargin, btnMargin);
+        btnContinue.setLayoutParams(layoutParams);
+        btnContinue.setTypeface(faceRobotoRegular);
+        btnContinue.setText("Continue");
+        btnContinue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                proceedToQc();
+            }
+        });
+        base.addView(btnContinue);
+
         contentView.addView(scrollView);
     }
 
@@ -76,29 +113,28 @@ public class AgeValidationActivity extends BackButtonActivity {
         if (!marketPlace.isAgeCheckRequired() || marketPlace.getAgeCheckRequiredDetail() == null)
             return;
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        for (MarketPlaceAgeCheck marketPlaceAgeCheck : marketPlace.getAgeCheckRequiredDetail()) {
+        for (final MarketPlaceAgeCheck marketPlaceAgeCheck : marketPlace.getAgeCheckRequiredDetail()) {
             View ageLayout = inflater.inflate(R.layout.uiv3_age_validation_layout, null);
             TextView txtAgeMsg = (TextView) ageLayout.findViewById(R.id.txtAgeMsg);
             txtAgeMsg.setTypeface(faceRobotoRegular);
             txtAgeMsg.setText(marketPlaceAgeCheck.getAgeMessage());
 
             RadioButton rbtnYes = (RadioButton) ageLayout.findViewById(R.id.radioBtnYes);
-            RadioButton rbtnNo = (RadioButton) ageLayout.findViewById(R.id.radioBtnNo);
+            final RadioButton rbtnNo = (RadioButton) ageLayout.findViewById(R.id.radioBtnNo);
             rbtnYes.setTypeface(faceRobotoRegular);
             rbtnNo.setTypeface(faceRobotoRegular);
             rbtnYes.setText(getString(R.string.preYesRadioBtnAgeMsg) + " " + marketPlaceAgeCheck.getAgeLimit() + " year");
             rbtnNo.setText(getString(R.string.preNoRadioBtnAgeMsg) + " " + marketPlaceAgeCheck.getAgeLimit()
                     + " year, remove " + marketPlaceAgeCheck.getDisplayName() + " from this order");
-            rbtnYes.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-                }
-            });
             rbtnNo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
+                    if (isChecked) {
+                        showAlertDialog(getCurrentActivity(), null,
+                                "Remove all " + marketPlaceAgeCheck.getDisplayName() + " products from Basket?",
+                                DialogButton.YES, DialogButton.NO, Constants.REMOVE_ALL_MARKETPLACE_FROM_BASKET,
+                                marketPlaceAgeCheck.getFulfillmentId(), "Remove " + marketPlaceAgeCheck.getDisplayName());
+                    }
                 }
             });
             base.addView(ageLayout);
@@ -210,6 +246,61 @@ public class AgeValidationActivity extends BackButtonActivity {
                     layoutTC.addView(txtTCMsg);
                     base.addView(layoutTC);
                 }
+            }
+        }
+    }
+
+    @Override
+    protected void onPositiveButtonClicked(DialogInterface dialogInterface, int id, String sourceName, final Object valuePassed) {
+        if (sourceName != null) {
+            switch (sourceName) {
+                case Constants.REMOVE_ALL_MARKETPLACE_FROM_BASKET:
+                    AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());
+                    startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.C_BULK_REMOVE,
+                            new HashMap<String, String>() {
+                                {
+                                    put(Constants.FULFILLMENT_ID, String.valueOf(valuePassed));
+                                }
+                            }, false,
+                            authParameters,
+                            new BasicCookieStore()
+                    );
+                    break;
+                default:
+                    super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
+                    break;
+            }
+        } else {
+            super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
+        }
+    }
+
+    @Override
+    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
+        super.onAsyncTaskComplete(httpOperationResult);
+        String responseString = httpOperationResult.getReponseString();
+        JsonObject jsonObject = new JsonParser().parse(responseString).getAsJsonObject();
+        if (httpOperationResult.getUrl().contains(Constants.C_BULK_REMOVE)) {
+            int status = jsonObject.get(Constants.STATUS).getAsInt();
+            if (status == 0) {
+                CartSummary cartInfo = ParserUtil.parseGetCartSummaryResponse(jsonObject.
+                        get(Constants.CART_SUMMARY).getAsJsonObject());
+                ((CartInfoAware) getCurrentActivity()).setCartInfo(cartInfo);
+                ((CartInfoAware) getCurrentActivity()).updateUIForCartInfo();
+                SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(this);
+                SharedPreferences.Editor editor = prefer.edit();
+                editor.putString(Constants.GET_CART, String.valueOf(cartInfo.getNoOfItems()));
+                editor.commit();
+                if (cartInfo.getNoOfItems() == 0) {
+                    showAlertDialogFinish(this, null, getResources().getString(R.string.basketEmpty));
+                } else {
+                    new COMarketPlaceCheckTask(getCurrentActivity()).execute();
+                }
+            } else {
+                String msgString = status == ExceptionUtil.INTERNAL_SERVER_ERROR ?
+                        getResources().getString(R.string.INTERNAL_SERVER_ERROR) :
+                        jsonObject.get(Constants.MESSAGE).getAsString();
+                showAlertDialog(this, null, msgString, Constants.GO_TO_HOME_STRING);
             }
         }
     }
