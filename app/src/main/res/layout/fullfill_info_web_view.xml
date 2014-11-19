@@ -1,39 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <RelativeLayout
-            android:id="@+id/relativeLayout1"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/medium_dark_green"
-            >
+        android:id="@+id/relativeLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/medium_dark_green">
 
         <Button
-                android:id="@+id/homeBBbtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="15dp"
-                android:layout_centerVertical="true"
-                android:background="@drawable/home_logo"/>
+            android:id="@+id/homeBBbtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="15dp"
+            android:layout_centerVertical="true"
+            android:background="@drawable/home_logo" />
 
     </RelativeLayout>
 
     <ProgressBar
-            android:layout_width="fill_parent"
-            android:layout_height="5dip"
-            style="?android:attr/progressBarStyleHorizontal"
-                android:id="@+id/progressbar_Horizontal"
-            android:max="100"
-            android:background="#228b22"
-            />
-    <WebView android:layout_width="match_parent"
-             android:id="@+id/wevViewFulfillmentPage"
-             android:layout_height="match_parent">
+        android:layout_width="fill_parent"
+        android:layout_height="5dip"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:id="@+id/progressbar_Horizontal"
+        android:max="100"
+        android:background="#228b22" />
+
+    <WebView
+        android:layout_width="match_parent"
+        android:id="@+id/wevViewFulfillmentPage"
+        android:layout_height="match_parent">
 
     </WebView>
 

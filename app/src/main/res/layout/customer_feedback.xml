@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:paddingLeft="10dp"
-              android:paddingRight="10dp"
-              android:layout_height="match_parent">
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:layout_height="match_parent">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/rating"
         android:layout_marginTop="10dp"
-        android:id="@+id/labelRating"/>
+        android:id="@+id/labelRating" />
 
     <RatingBar
         android:layout_width="wrap_content"
@@ -20,7 +20,7 @@
         android:stepSize="1"
         android:rating="5"
         android:layout_marginTop="10dp"
-        android:id="@+id/ratingBar"/>
+        android:id="@+id/ratingBar" />
 
     <EditText
         android:layout_width="match_parent"
@@ -30,7 +30,7 @@
         android:layout_marginTop="10dp"
         android:minLines="5"
         android:hint="@string/yourComments"
-        android:id="@+id/editTextComments"/>
+        android:id="@+id/editTextComments" />
 
     <Button
         android:layout_width="match_parent"
@@ -38,7 +38,7 @@
         android:text="@string/submit"
         style="@style/Uiv2BigYellowButton"
         android:id="@+id/btnSubmit"
-        android:onClick="OnSubmitButtonClicked"/>
+        android:onClick="OnSubmitButtonClicked" />
 
     <Button
         android:layout_width="match_parent"
@@ -46,5 +46,5 @@
         style="@style/Uiv2BigGreyButton"
         android:text="@string/cancel"
         android:id="@+id/btnCancel"
-        android:onClick="OnCancelButtonClicked"/>
+        android:onClick="OnCancelButtonClicked" />
 </LinearLayout>

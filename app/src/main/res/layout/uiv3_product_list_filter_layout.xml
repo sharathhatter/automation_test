@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <TextView
         android:layout_width="wrap_content"
@@ -13,7 +13,7 @@
         android:layout_marginBottom="@dimen/margin_normal"
         android:textColor="@color/uiv3_primary_text_color"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"/>
+        android:layout_alignParentLeft="true" />
 
     <LinearLayout
         android:orientation="horizontal"
@@ -40,14 +40,14 @@
                 android:drawableLeft="@drawable/no_filter"
                 android:textSize="@dimen/heading_2_text_size"
                 android:id="@+id/txtFilterBy"
-                android:drawablePadding="@dimen/padding_small"/>
+                android:drawablePadding="@dimen/padding_small" />
 
         </LinearLayout>
 
         <View
             android:layout_width="1dp"
             android:layout_height="match_parent"
-            android:background="@color/uiv3_primary_text_color"/>
+            android:background="@color/uiv3_primary_text_color" />
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -62,8 +62,7 @@
                 android:id="@+id/imgSortedOn"
                 android:src="@drawable/sort_filter"
                 android:contentDescription="@string/sortBy"
-                android:layout_marginLeft="@dimen/margin_small"
-                />
+                android:layout_marginLeft="@dimen/margin_small" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -74,7 +73,7 @@
                 android:layout_toRightOf="@id/imgSortedOn"
                 android:layout_marginLeft="@dimen/margin_small"
                 android:text="@string/sortBy"
-                android:id="@+id/txtSortBy"/>
+                android:id="@+id/txtSortBy" />
 
             <TextView
                 android:layout_width="wrap_content"

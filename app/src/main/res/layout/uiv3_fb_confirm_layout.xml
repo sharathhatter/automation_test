@@ -2,20 +2,23 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/uiv3_list_bkg_color"
     android:id="@+id/FBConfirmLayout">
-    <ScrollView android:layout_width="match_parent"
+
+    <ScrollView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <LinearLayout android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:orientation="vertical"
             android:layout_height="wrap_content">
 
 
-            <LinearLayout android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_marginTop="@dimen/margin_mini"
                 android:id="@+id/layoutMsgFbConfirm"
                 android:layout_marginLeft="@dimen/margin_normal"
@@ -23,25 +26,28 @@
                 android:layout_marginRight="@dimen/margin_normal"
                 android:layout_height="wrap_content">
 
-                <TextView android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="match_parent"
                     android:textSize="@dimen/secondary_text_size"
                     android:id="@+id/fbConfirmMsg1"
                     android:text="@string/fb_confirm_msg1"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content" />
 
-                <TextView android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="match_parent"
                     android:textSize="@dimen/secondary_text_size"
                     android:id="@+id/fbConfirmMsg2"
                     android:text="@string/fb_confirm_msg2"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content" />
 
-                <TextView android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="match_parent"
                     android:textSize="@dimen/primary_text_size"
                     android:layout_marginTop="@dimen/margin_mini"
                     android:textColor="@color/active_order_red_color"
                     android:id="@+id/fbConfirmMsg3"
                     android:text="@string/fb_confirm_msg3"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content" />
 
             </LinearLayout>
 
@@ -58,27 +64,31 @@
                 android:paddingTop="@dimen/padding_small"
                 android:paddingBottom="@dimen/padding_normal">
 
-                <LinearLayout android:layout_width="match_parent"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:id="@+id/layoutYesHaveAcc"
                     android:orientation="horizontal"
                     android:layout_height="wrap_content">
 
-                    <RadioButton android:layout_width="wrap_content"
+                    <RadioButton
+                        android:layout_width="wrap_content"
                         android:id="@+id/radioBtnYesHaveAcc"
                         android:checked="true"
                         android:textSize="@dimen/secondary_text_size"
                         android:textColor="@color/medium_grey"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content" />
 
-                    <TextView android:layout_width="wrap_content"
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:id="@+id/txtYesHaveAcc"
                         android:paddingBottom="@dimen/padding_normal"
                         android:text="@string/txtYesHaveAccMsg"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content" />
 
                 </LinearLayout>
 
-                <LinearLayout android:layout_width="match_parent"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_marginTop="@dimen/margin_small"
                     android:paddingLeft="@dimen/padding_small"
                     android:orientation="vertical"
@@ -91,7 +101,8 @@
                         android:layout_height="wrap_content"
                         android:stretchColumns="1">
 
-                        <TableRow android:layout_width="match_parent"
+                        <TableRow
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content">
 
                             <ImageView
@@ -100,7 +111,7 @@
                                 android:layout_gravity="bottom"
                                 android:layout_marginBottom="@dimen/margin_mini"
                                 android:contentDescription="@string/email"
-                                android:src="@drawable/mail"/>
+                                android:src="@drawable/mail" />
 
                             <RelativeLayout
                                 android:layout_width="match_parent"
@@ -131,12 +142,13 @@
                                     android:visibility="gone"
                                     android:paddingBottom="@dimen/padding_mini"
                                     android:contentDescription="@string/missing"
-                                    android:src="@drawable/error_symbol"/>
+                                    android:src="@drawable/error_symbol" />
 
                             </RelativeLayout>
                         </TableRow>
 
-                        <TableRow android:layout_width="match_parent"
+                        <TableRow
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content">
 
                             <ImageView
@@ -145,7 +157,7 @@
                                 android:layout_gravity="bottom"
                                 android:layout_marginBottom="@dimen/margin_mini"
                                 android:contentDescription="@string/password"
-                                android:src="@drawable/create"/>
+                                android:src="@drawable/create" />
 
                             <RelativeLayout
                                 android:layout_width="match_parent"
@@ -163,7 +175,7 @@
                                     android:layout_marginLeft="@dimen/margin_small"
                                     android:hint="@string/password"
                                     android:textSize="@dimen/secondary_text_size"
-                                    android:textColor="@color/uiv3_primary_text_color"/>
+                                    android:textColor="@color/uiv3_primary_text_color" />
 
                                 <ImageView
                                     android:id="@+id/imgPasswdErr"
@@ -174,7 +186,7 @@
                                     android:layout_marginRight="@dimen/margin_mini"
                                     android:visibility="gone"
                                     android:paddingBottom="@dimen/padding_mini"
-                                    android:src="@drawable/error_symbol"/>
+                                    android:src="@drawable/error_symbol" />
 
                             </RelativeLayout>
                         </TableRow>
@@ -184,35 +196,41 @@
                 </LinearLayout>
 
 
-                <LinearLayout android:layout_width="match_parent"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:id="@+id/layoutNoDONotHaveAcc"
                     android:layout_below="@id/layoutEmailConfirmForm"
                     android:orientation="horizontal"
                     android:layout_height="wrap_content">
-                    <RadioButton android:layout_width="wrap_content"
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
                         android:id="@+id/radioBtnNoHaveAcc"
                         android:textSize="14sp"
                         android:textColor="@color/medium_grey"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content" />
 
 
-                    <TextView android:layout_width="wrap_content"
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:id="@+id/txtNoHaveAcc"
                         android:text="@string/txtNoHaveAccMsg"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
 
-                <LinearLayout android:layout_width="match_parent"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:id="@+id/layoutDoNotHaveAcc"
                     android:orientation="vertical"
                     android:layout_marginLeft="@dimen/margin_mini"
                     android:layout_below="@id/layoutNoDONotHaveAcc"
                     android:layout_height="wrap_content">
 
-                    <TextView android:layout_width="match_parent"
+                    <TextView
+                        android:layout_width="match_parent"
                         android:id="@+id/txtCreateNewAccount"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content" />
 
                 </LinearLayout>
 
@@ -236,8 +254,7 @@
                     android:background="@color/uiv3_action_bar_background"
                     android:layout_marginTop="@dimen/margin_normal"
                     android:layout_marginRight="@dimen/margin_normal"
-                    android:layout_marginBottom="@dimen/margin_small"
-                    />
+                    android:layout_marginBottom="@dimen/margin_small" />
 
 
             </RelativeLayout>

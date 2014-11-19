@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:orientation="vertical"
-             android:layout_width="match_parent"
-             android:background="@android:color/white"
-             android:layout_height="wrap_content"
-             android:paddingBottom="@dimen/padding_normal">
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:background="@android:color/white"
+    android:layout_height="wrap_content"
+    android:paddingBottom="@dimen/padding_normal">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -21,7 +21,7 @@
             android:layout_marginRight="10dp"
             android:text="20 items"
             android:textSize="@dimen/small_text_size"
-            android:textColor="@color/uiv3_list_secondary_text_color"/>
+            android:textColor="@color/uiv3_list_secondary_text_color" />
 
         <TextView
             android:id="@+id/txtBasketVal"
@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
             android:textColor="@color/uiv3_list_secondary_text_color"
-            android:textSize="@dimen/small_text_size"/>
+            android:textSize="@dimen/small_text_size" />
     </LinearLayout>
 
     <LinearLayout
@@ -44,8 +44,7 @@
             android:textColor="@color/uiv3_primary_text_color"
             android:text="Monday 20/10/14"
             android:id="@+id/txtSlotDate"
-            android:textSize="@dimen/primary_text_size"
-            />
+            android:textSize="@dimen/primary_text_size" />
 
         <TextView
             android:layout_width="match_parent"
@@ -54,8 +53,7 @@
             android:textColor="@color/uiv3_primary_text_color"
             android:text="7:00 AM to 9:30 PM"
             android:textSize="@dimen/secondary_text_size"
-            android:id="@+id/txtSlotTime"
-            />
+            android:id="@+id/txtSlotTime" />
 
         <TextView
             android:layout_width="match_parent"
@@ -64,8 +62,7 @@
             android:textColor="@color/uiv3_primary_text_color"
             android:id="@+id/txtFulfilledBy"
             android:text="Sold &amp; Fulfilled by BigBasket"
-            android:textSize="@dimen/secondary_text_size"
-            />
+            android:textSize="@dimen/secondary_text_size" />
     </LinearLayout>
 
 </FrameLayout>

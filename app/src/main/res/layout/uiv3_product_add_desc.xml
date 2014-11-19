@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_gravity="center"
     android:layout_width="match_parent"
@@ -24,7 +23,7 @@
             android:id="@+id/txtProductAddDescTitle"
             android:padding="@dimen/padding_small"
             android:textSize="@dimen/heading_2_text_size"
-            android:textColor="@color/uiv3_primary_text_color"/>
+            android:textColor="@color/uiv3_primary_text_color" />
 
         <TextView
             android:layout_width="match_parent"
@@ -32,7 +31,7 @@
             android:id="@+id/txtProductAddDescContent"
             android:padding="@dimen/padding_small"
             android:textSize="@dimen/primary_text_size"
-            android:textColor="@color/uiv3_primary_text_color"/>
+            android:textColor="@color/uiv3_primary_text_color" />
 
     </LinearLayout>
 

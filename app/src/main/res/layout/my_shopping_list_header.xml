@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:background="@color/medium_dark_green"
-                android:layout_height="wrap_content">
+    android:layout_width="match_parent"
+    android:background="@color/medium_dark_green"
+    android:layout_height="wrap_content">
 
 
     <RelativeLayout
@@ -24,7 +24,7 @@
             android:layout_marginLeft="8dp"
             android:contentDescription="@string/back"
             android:layout_marginTop="6dp"
-            android:src="@drawable/back_btn"/>
+            android:src="@drawable/back_btn" />
 
         <TextView
             android:id="@+id/myShoppingListHeaderTitle"
@@ -35,8 +35,7 @@
             android:paddingLeft="15dp"
             android:layout_marginLeft="2dp"
             android:layout_centerVertical="true"
-            android:layout_toRightOf="@id/imgBackHome"
-            />
+            android:layout_toRightOf="@id/imgBackHome" />
 
         <Button
             android:id="@+id/myShoppingListBasketBtn"
@@ -45,7 +44,7 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:layout_marginTop="5dp"
-            android:background="@drawable/basket_home_items"/>
+            android:background="@drawable/basket_home_items" />
 
     </RelativeLayout>
 

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:background="@color/uiv3_list_bkg_light_color"
-              android:paddingLeft="16dp">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/uiv3_list_bkg_light_color"
+    android:paddingLeft="16dp">
 
     <ImageView
         android:layout_width="wrap_content"
@@ -29,8 +29,7 @@
         android:textSize="@dimen/small_text_size"
         android:background="@color/dark_green"
         android:id="@+id/txtOrderStatus"
-        android:textColor="@color/white"
-        />
+        android:textColor="@color/white" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -41,8 +40,7 @@
         android:text="Tue 30 Sep 2014"
         android:textSize="@dimen/primary_text_size"
         android:id="@+id/txtSlotDate"
-        android:textColor="@color/uiv3_list_primary_text_color"
-        />
+        android:textColor="@color/uiv3_list_primary_text_color" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -54,8 +52,7 @@
         android:textSize="@dimen/secondary_text_size"
         android:layout_below="@id/txtSlotDate"
         android:id="@+id/txtSlotTime"
-        android:textColor="@color/uiv3_list_primary_text_color"
-        />
+        android:textColor="@color/uiv3_list_primary_text_color" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -67,8 +64,7 @@
         android:textSize="@dimen/secondary_text_size"
         android:layout_below="@id/txtSlotTime"
         android:id="@+id/txtOrderId"
-        android:textColor="@color/uiv3_list_primary_text_color"
-        />
+        android:textColor="@color/uiv3_list_primary_text_color" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -80,8 +76,7 @@
         android:textSize="@dimen/secondary_text_size"
         android:id="@+id/txtNumItems"
         android:layout_below="@id/txtOrderId"
-        android:textColor="@color/uiv3_list_secondary_text_color"
-        />
+        android:textColor="@color/uiv3_list_secondary_text_color" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -93,8 +88,7 @@
         android:id="@+id/txtOrderTotal"
         android:layout_below="@id/txtOrderId"
         android:layout_alignParentRight="true"
-        android:textColor="@color/uiv3_list_secondary_text_color"
-        />
+        android:textColor="@color/uiv3_list_secondary_text_color" />
 
 
     <View
@@ -104,5 +98,5 @@
         android:layout_toRightOf="@id/imgDeliveryVan"
         android:layout_below="@id/txtNumItems"
         android:layout_marginTop="@dimen/margin_normal"
-        android:layout_marginLeft="@dimen/margin_normal"/>
+        android:layout_marginLeft="@dimen/margin_normal" />
 </RelativeLayout>

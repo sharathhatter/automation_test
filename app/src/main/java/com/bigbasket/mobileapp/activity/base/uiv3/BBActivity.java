@@ -36,7 +36,7 @@ import android.widget.Toast;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.LoginActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.OrderListActivity;
-import com.bigbasket.mobileapp.activity.account.uiv3.SignInSignUpActivity;
+import com.bigbasket.mobileapp.activity.account.uiv3.SignupActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.adapter.NavigationListAdapter;
 import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
@@ -312,10 +312,6 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 Intent intent = new Intent(this, LoginActivity.class);
                 startActivityForResult(intent, Constants.GO_TO_HOME);
                 return true;
-            case R.id.action_register:
-                intent = new Intent(this, LoginActivity.class);
-                startActivityForResult(intent, Constants.GO_TO_HOME);
-                return true;
             case R.id.action_view_basket:
                 addToMainLayout(new ShowCartFragment());
                 return true;
@@ -556,9 +552,6 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         MenuItem loginMenuItem = menu.findItem(R.id.action_login);
         loginMenuItem.setVisible(false);
 
-        MenuItem registerMenuItem = menu.findItem(R.id.action_register);
-        registerMenuItem.setVisible(false);
-
         MenuItem changeCityRegisterMenu = menu.findItem(R.id.action_change_city);
         changeCityRegisterMenu.setVisible(false);
     }
@@ -638,10 +631,8 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         boolean isLoggedIn = !AuthParameters.getInstance(this).isAuthTokenEmpty();
 
         if (!isLoggedIn) {
-            navigationItems.add(new NavigationItem(getString(R.string.signIn),
+            navigationItems.add(new NavigationItem(getString(R.string.action_sign_in),
                     R.drawable.main_nav_login_arrow, Constants.LOGIN, false));
-            navigationItems.add(new NavigationItem(getString(R.string.registerHomepageTxt),
-                    R.drawable.main_nav_person_add, Constants.REGISTER_MEMBER, false));
         }
 
         // Populate top-category list
@@ -741,8 +732,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                         startActivityForResult(intent, Constants.GO_TO_HOME);
                         break;
                     case Constants.REGISTER_MEMBER:
-                        intent = new Intent(getCurrentActivity(), SignInSignUpActivity.class);
-                        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_REGISTER);
+                        intent = new Intent(getCurrentActivity(), SignupActivity.class);
                         startActivityForResult(intent, Constants.GO_TO_HOME);
                         break;
                     case Constants.FEEDBACK:

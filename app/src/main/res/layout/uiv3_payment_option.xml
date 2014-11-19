@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/white">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
     <TextView
         android:layout_width="match_parent"
@@ -11,14 +11,13 @@
         android:text="@string/orderReview"
         style="@style/FooterButtonStyle"
         android:id="@+id/txtReviewOrder"
-        android:layout_alignParentBottom="true"
-        />
+        android:layout_alignParentBottom="true" />
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_above="@id/txtReviewOrder">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_above="@id/txtReviewOrder">
 
         <TableLayout
             android:layout_width="wrap_content"
@@ -37,7 +36,7 @@
                     android:layout_marginLeft="@dimen/margin_normal"
                     android:src="@drawable/payment_large"
                     android:contentDescription="@string/amtToPay"
-                    android:id="@+id/imgPaymentOption"/>
+                    android:id="@+id/imgPaymentOption" />
 
                 <LinearLayout
                     android:orientation="vertical"
@@ -55,18 +54,18 @@
                         android:layout_marginRight="10dp"
                         android:id="@+id/lblPaymentMethod"
                         android:textColor="@color/uiv3_primary_text_color"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content" />
 
                     <Spinner
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/spinnerPaymentMethod"/>
+                        android:id="@+id/spinnerPaymentMethod" />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:id="@+id/viewPaymentOptionSeparator"
-                        android:background="@color/uiv3_list_separator_color"/>
+                        android:background="@color/uiv3_list_separator_color" />
                 </LinearLayout>
             </TableRow>
 
@@ -82,7 +81,7 @@
                     android:src="@drawable/voucher_large"
                     android:layout_marginLeft="@dimen/margin_normal"
                     android:contentDescription="@string/amtToPay"
-                    android:id="@+id/imgVoucherApply"/>
+                    android:id="@+id/imgVoucherApply" />
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
@@ -102,7 +101,7 @@
                         android:textSize="@dimen/primary_text_size"
                         android:layout_alignParentRight="true"
                         android:textColor="@color/uiv3_ok_label_color"
-                        android:id="@+id/txtApplyVoucher"/>
+                        android:id="@+id/txtApplyVoucher" />
 
                     <EditText
                         android:layout_width="match_parent"
@@ -111,7 +110,7 @@
                         android:textSize="@dimen/primary_text_size"
                         android:layout_toLeftOf="@id/txtApplyVoucher"
                         android:hint="@string/enterVoucher"
-                        android:id="@+id/editTextVoucherCode"/>
+                        android:id="@+id/editTextVoucherCode" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -123,13 +122,13 @@
                         android:layout_marginTop="@dimen/margin_normal"
                         android:layout_below="@id/editTextVoucherCode"
                         android:textColor="@color/uiv3_accept_label_color"
-                        android:id="@+id/txtViewAvailableVouchers"/>
+                        android:id="@+id/txtViewAvailableVouchers" />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_alignParentBottom="true"
-                        android:background="@color/uiv3_list_separator_color"/>
+                        android:background="@color/uiv3_list_separator_color" />
                 </RelativeLayout>
             </TableRow>
 
@@ -145,7 +144,7 @@
                     android:src="@drawable/schedule"
                     android:layout_marginLeft="@dimen/margin_normal"
                     android:contentDescription="@string/amtToPay"
-                    android:id="@+id/imgSlots"/>
+                    android:id="@+id/imgSlots" />
 
                 <LinearLayout
                     android:layout_width="match_parent"

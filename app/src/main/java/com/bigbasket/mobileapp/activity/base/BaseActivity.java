@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -17,7 +18,10 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -30,6 +34,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.StartActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.LoginActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.CheckoutQCActivity;
@@ -421,10 +426,8 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
             if (data != null && data.getBooleanExtra(Constants.LOGOUT, false)) {
                 reloadNavigation();
             }
-            if (getCurrentActivity().getSupportFragmentManager().findFragmentByTag(Constants.HOME) != null) {
-//                    getCurrentActivity() instanceof HomeActivity) {
-                removeViaInvoiceFlag();
-            } else {
+
+            if (!(getCurrentActivity() instanceof StartActivity)) {
                 setResult(Constants.GO_TO_HOME);
                 finish();
             }
@@ -638,4 +641,26 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     }
 
     public abstract void onChangeTitle(String title);
+
+    protected void reportFormInputFieldError(EditText editText, String errMsg) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            editText.setError(errMsg);
+        } else {
+            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(errMsg);
+            spannableStringBuilder.setSpan(new ForegroundColorSpan(Color.BLACK), 0, errMsg.length(),
+                    Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+            editText.setError(spannableStringBuilder);
+        }
+    }
+
+    protected void reportFormInputFieldError(AutoCompleteTextView autoCompleteTextView, String errMsg) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            autoCompleteTextView.setError(errMsg);
+        } else {
+            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(errMsg);
+            spannableStringBuilder.setSpan(new ForegroundColorSpan(Color.BLACK), 0, errMsg.length(),
+                    Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+            autoCompleteTextView.setError(spannableStringBuilder);
+        }
+    }
 }

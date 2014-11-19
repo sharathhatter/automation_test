@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/white">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
     <TableLayout
         android:layout_width="wrap_content"
@@ -21,7 +21,7 @@
                 android:src="@drawable/schedule"
                 android:layout_marginLeft="@dimen/margin_normal"
                 android:layout_marginStart="@dimen/margin_normal"
-                android:contentDescription="@string/slot"/>
+                android:contentDescription="@string/slot" />
 
             <LinearLayout
                 android:orientation="vertical"
@@ -52,7 +52,7 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@color/uiv3_list_separator_color"/>
+                    android:background="@color/uiv3_list_separator_color" />
             </LinearLayout>
         </TableRow>
 
@@ -67,7 +67,7 @@
                 android:src="@drawable/person_large"
                 android:layout_marginLeft="@dimen/margin_normal"
                 android:layout_marginStart="@dimen/margin_normal"
-                android:contentDescription="@string/memberName"/>
+                android:contentDescription="@string/memberName" />
 
             <LinearLayout
                 android:orientation="vertical"
@@ -86,7 +86,7 @@
                     android:textColor="@color/uiv3_primary_text_color"
                     android:id="@+id/txtMemberName"
                     android:paddingBottom="@dimen/padding_small"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -96,12 +96,12 @@
                     android:paddingBottom="@dimen/padding_normal"
                     android:id="@+id/txtMemberAddress"
                     android:textColor="@color/uiv3_primary_text_color"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content" />
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@color/uiv3_list_separator_color"/>
+                    android:background="@color/uiv3_list_separator_color" />
             </LinearLayout>
         </TableRow>
 
@@ -118,7 +118,7 @@
                 android:layout_marginLeft="@dimen/margin_normal"
                 android:layout_marginStart="@dimen/margin_normal"
                 android:contentDescription="@string/amtToPay"
-                android:id="@+id/imgVoucherApply"/>
+                android:id="@+id/imgVoucherApply" />
 
             <RelativeLayout
                 android:orientation="vertical"
@@ -140,7 +140,7 @@
                     android:layout_below="@id/layoutOrderSummaryInfo"
                     android:layout_height="1dp"
                     android:layout_marginTop="@dimen/padding_normal"
-                    android:background="@color/uiv3_list_separator_color"/>
+                    android:background="@color/uiv3_list_separator_color" />
             </RelativeLayout>
         </TableRow>
     </TableLayout>

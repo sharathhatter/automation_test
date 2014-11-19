@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                  android:orientation="vertical"
-                  android:id="@+id/layoutMain"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content">
+        android:orientation="vertical"
+        android:id="@+id/layoutMain"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_height="wrap_content"
@@ -27,7 +27,7 @@
                 android:contentDescription="@string/alt_placeholder"
                 android:layout_marginRight="@dimen/margin_mini"
                 android:src="@drawable/image_404"
-                android:id="@+id/imgPromoIcon"/>
+                android:id="@+id/imgPromoIcon" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -45,7 +45,7 @@
                     android:layout_margin="0dp"
                     android:textColor="@color/uiv3_primary_text_color"
                     android:text="Slice Twice Offer"
-                    android:id="@+id/txtPromoName"/>
+                    android:id="@+id/txtPromoName" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -57,7 +57,7 @@
                     android:layout_marginTop="@dimen/margin_mini"
                     android:textColor="@color/uiv3_list_secondary_text_color"
                     android:text="Buy 2 get One free"
-                    android:id="@+id/txtPromoDesc"/>
+                    android:id="@+id/txtPromoDesc" />
             </LinearLayout>
 
         </LinearLayout>
@@ -66,7 +66,7 @@
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
             android:layout_marginTop="5dp"
-            android:background="@color/strokeLine"/>
+            android:background="@color/strokeLine" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -79,7 +79,7 @@
             android:textSize="@dimen/secondary_text_size"
             android:layout_gravity="center_horizontal"
             android:gravity="center_horizontal"
-            android:id="@+id/txtPromoTermsAndCond1"/>
+            android:id="@+id/txtPromoTermsAndCond1" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -93,9 +93,9 @@
             android:text="Buy 2 get One free"
             android:layout_gravity="center_horizontal"
             android:gravity="center_horizontal"
-            android:id="@+id/txtPromoTermsAndCond2"/>
+            android:id="@+id/txtPromoTermsAndCond2" />
 
 
-        <include layout="@layout/uiv3_promo_info_box"/>
+        <include layout="@layout/uiv3_promo_info_box" />
     </LinearLayout>
 </ScrollView>

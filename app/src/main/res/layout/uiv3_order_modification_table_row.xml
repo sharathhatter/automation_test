@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -27,8 +27,7 @@
                 android:paddingBottom="@dimen/padding_small"
                 android:layout_weight="0.3"
                 android:textColor="@color/uiv3_primary_text_color"
-                android:id="@+id/txtOrderModType"
-                />
+                android:id="@+id/txtOrderModType" />
 
 
             <TextView
@@ -38,7 +37,7 @@
                 android:textColor="@color/uiv3_primary_text_color"
                 android:layout_height="wrap_content"
                 android:id="@+id/txtOrderModMsg"
-                android:layout_weight="0.7"/>
+                android:layout_weight="0.7" />
 
         </LinearLayout>
 
@@ -46,7 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="@dimen/margin_mini"
-            android:background="@color/uiv3_list_separator_color"/>
+            android:background="@color/uiv3_list_separator_color" />
 
     </LinearLayout>
 </LinearLayout>

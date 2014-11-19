@@ -7,11 +7,12 @@
     android:orientation="vertical">
 
     <ProgressBar
-        android:id="@+id/login_progress"
+        android:id="@+id/signup_progress"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/margin_small"
         android:visibility="gone" />
 
     <ScrollView
@@ -33,7 +34,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="@dimen/margin_large"
+                android:layout_marginBottom="@dimen/margin_normal"
                 android:layout_marginLeft="@dimen/margin_normal"
                 android:layout_marginRight="@dimen/margin_normal"
                 android:layout_marginTop="@dimen/margin_normal"
@@ -57,36 +58,20 @@
                         android:contentDescription="@string/email"
                         android:src="@drawable/mail" />
 
-                    <RelativeLayout
+                    <AutoCompleteTextView
+                        android:id="@+id/editTextEmailSignup"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_small">
-
-                        <EditText
-                            android:id="@+id/editTextEmail"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/margin_normal"
-                            android:layout_marginRight="@dimen/margin_normal"
-                            android:ems="10"
-                            android:hint="@string/email"
-                            android:inputType="textEmailAddress"
-                            android:singleLine="true"
-                            android:textColor="@color/uiv3_primary_text_color"
-                            android:textSize="@dimen/secondary_text_size" />
-
-                        <ImageView
-                            android:id="@+id/imgEmailErr"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignRight="@id/editTextEmail"
-                            android:layout_centerVertical="true"
-                            android:layout_marginRight="@dimen/margin_normal"
-                            android:contentDescription="@string/missing"
-                            android:src="@drawable/error_symbol"
-                            android:visibility="gone" />
-
-                    </RelativeLayout>
+                        android:layout_marginLeft="@dimen/margin_normal"
+                        android:layout_marginRight="@dimen/margin_normal"
+                        android:layout_marginTop="@dimen/margin_small"
+                        android:ems="10"
+                        android:hint="@string/email"
+                        android:inputType="textEmailAddress"
+                        android:singleLine="true"
+                        android:imeOptions="actionNext"
+                        android:textColor="@color/uiv3_primary_text_color"
+                        android:textSize="@dimen/secondary_text_size" />
                 </TableRow>
 
                 <TableRow
@@ -101,37 +86,21 @@
                         android:contentDescription="@string/password"
                         android:src="@drawable/password_lock" />
 
-                    <RelativeLayout
+
+                    <EditText
+                        android:id="@+id/editTextPasswd"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_small">
-
-                        <EditText
-                            android:id="@+id/editTextPasswd"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/margin_normal"
-                            android:layout_marginRight="@dimen/margin_normal"
-                            android:ems="10"
-                            android:hint="@string/password"
-                            android:inputType="textVisiblePassword"
-                            android:maxLength="30"
-                            android:singleLine="true"
-                            android:textColor="@color/uiv3_primary_text_color"
-                            android:textSize="@dimen/secondary_text_size" />
-
-                        <ImageView
-                            android:id="@+id/imgPasswdErr"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignRight="@id/editTextPasswd"
-                            android:layout_centerVertical="true"
-                            android:layout_marginRight="@dimen/margin_normal"
-                            android:contentDescription="@string/missing"
-                            android:src="@drawable/error_symbol"
-                            android:visibility="gone" />
-
-                    </RelativeLayout>
+                        android:layout_marginLeft="@dimen/margin_normal"
+                        android:layout_marginRight="@dimen/margin_normal"
+                        android:layout_marginTop="@dimen/margin_small"
+                        android:ems="10"
+                        android:hint="@string/password"
+                        android:inputType="textVisiblePassword"
+                        android:maxLength="30"
+                        android:singleLine="true"
+                        android:textColor="@color/uiv3_primary_text_color"
+                        android:textSize="@dimen/secondary_text_size" />
                 </TableRow>
 
                 <TableRow
@@ -146,37 +115,20 @@
                         android:contentDescription="@string/firstName"
                         android:src="@drawable/person" />
 
-                    <RelativeLayout
+                    <EditText
+                        android:id="@+id/editTextFirstName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_small">
-
-                        <EditText
-                            android:id="@+id/editTextFirstName"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/margin_normal"
-                            android:layout_marginRight="@dimen/margin_normal"
-                            android:ems="10"
-                            android:hint="@string/firstName"
-                            android:inputType="textVisiblePassword"
-                            android:maxLength="30"
-                            android:singleLine="true"
-                            android:textColor="@color/uiv3_primary_text_color"
-                            android:textSize="@dimen/secondary_text_size" />
-
-                        <ImageView
-                            android:id="@+id/imgFirstNameErr"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignRight="@id/editTextFirstName"
-                            android:layout_centerVertical="true"
-                            android:layout_marginRight="@dimen/margin_normal"
-                            android:contentDescription="@string/missing"
-                            android:src="@drawable/error_symbol"
-                            android:visibility="gone" />
-
-                    </RelativeLayout>
+                        android:layout_marginLeft="@dimen/margin_normal"
+                        android:layout_marginRight="@dimen/margin_normal"
+                        android:layout_marginTop="@dimen/margin_small"
+                        android:ems="10"
+                        android:hint="@string/firstName"
+                        android:inputType="textVisiblePassword"
+                        android:maxLength="30"
+                        android:singleLine="true"
+                        android:textColor="@color/uiv3_primary_text_color"
+                        android:textSize="@dimen/secondary_text_size" />
                 </TableRow>
 
                 <TableRow
@@ -191,37 +143,20 @@
                         android:contentDescription="@string/lastName"
                         android:src="@drawable/person" />
 
-                    <RelativeLayout
+                    <EditText
+                        android:id="@+id/editTextLastName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_small">
-
-                        <EditText
-                            android:id="@+id/editTextLastName"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/margin_normal"
-                            android:layout_marginRight="@dimen/margin_normal"
-                            android:ems="10"
-                            android:hint="@string/lastName"
-                            android:inputType="textVisiblePassword"
-                            android:maxLength="30"
-                            android:singleLine="true"
-                            android:textColor="@color/uiv3_primary_text_color"
-                            android:textSize="@dimen/secondary_text_size" />
-
-                        <ImageView
-                            android:id="@+id/imgLastNameErr"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignRight="@id/editTextLastName"
-                            android:layout_centerVertical="true"
-                            android:layout_marginRight="@dimen/margin_normal"
-                            android:contentDescription="@string/missing"
-                            android:src="@drawable/error_symbol"
-                            android:visibility="gone" />
-
-                    </RelativeLayout>
+                        android:layout_marginLeft="@dimen/margin_normal"
+                        android:layout_marginRight="@dimen/margin_normal"
+                        android:layout_marginTop="@dimen/margin_small"
+                        android:ems="10"
+                        android:hint="@string/lastName"
+                        android:inputType="textVisiblePassword"
+                        android:maxLength="30"
+                        android:singleLine="true"
+                        android:textColor="@color/uiv3_primary_text_color"
+                        android:textSize="@dimen/secondary_text_size" />
                 </TableRow>
 
                 <TableRow
@@ -236,37 +171,21 @@
                         android:contentDescription="@string/mobileNumber"
                         android:src="@drawable/call" />
 
-                    <RelativeLayout
+                    <EditText
+                        android:id="@+id/editTextMobileNumber"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_small">
+                        android:layout_marginLeft="@dimen/margin_normal"
+                        android:layout_marginRight="@dimen/margin_normal"
+                        android:layout_marginTop="@dimen/margin_small"
+                        android:ems="10"
+                        android:hint="@string/mobileNumber"
+                        android:inputType="numberSigned"
+                        android:maxLength="10"
+                        android:singleLine="true"
+                        android:textColor="@color/uiv3_primary_text_color"
+                        android:textSize="@dimen/secondary_text_size" />
 
-                        <EditText
-                            android:id="@+id/editTextMobileNumber"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/margin_normal"
-                            android:layout_marginRight="@dimen/margin_normal"
-                            android:ems="10"
-                            android:hint="@string/mobileNumber"
-                            android:inputType="numberSigned"
-                            android:maxLength="10"
-                            android:singleLine="true"
-                            android:textColor="@color/uiv3_primary_text_color"
-                            android:textSize="@dimen/secondary_text_size" />
-
-                        <ImageView
-                            android:id="@+id/imgMobileNumberErr"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignRight="@id/editTextMobileNumber"
-                            android:layout_centerVertical="true"
-                            android:layout_marginRight="@dimen/margin_normal"
-                            android:contentDescription="@string/missing"
-                            android:src="@drawable/error_symbol"
-                            android:visibility="gone" />
-
-                    </RelativeLayout>
                 </TableRow>
 
                 <TableRow
@@ -281,41 +200,22 @@
                         android:contentDescription="@string/city"
                         android:src="@drawable/place" />
 
-                    <RelativeLayout
+                    <EditText
+                        android:id="@+id/editTextCity"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp">
-
-                        <EditText
-                            android:id="@+id/editTextCity"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/margin_normal"
-                            android:layout_marginRight="@dimen/margin_normal"
-                            android:ems="10"
-                            android:enabled="false"
-                            android:focusableInTouchMode="false"
-                            android:hint="@string/city"
-                            android:imeOptions="actionNext"
-                            android:inputType="text"
-                            android:singleLine="true"
-                            android:textColor="@color/uiv3_primary_text_color"
-                            android:textSize="@dimen/secondary_text_size" />
-
-                        <ImageView
-                            android:id="@+id/errCity"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignRight="@id/editTextCity"
-                            android:layout_centerVertical="true"
-                            android:layout_marginRight="@dimen/margin_small"
-                            android:layout_marginTop="@dimen/margin_small"
-                            android:contentDescription="@string/missing"
-                            android:src="@drawable/error_symbol"
-                            android:visibility="gone" />
-
-
-                    </RelativeLayout>
+                        android:layout_marginLeft="@dimen/margin_normal"
+                        android:layout_marginRight="@dimen/margin_normal"
+                        android:layout_marginTop="@dimen/margin_small"
+                        android:ems="10"
+                        android:enabled="false"
+                        android:focusableInTouchMode="false"
+                        android:hint="@string/city"
+                        android:imeOptions="actionNext"
+                        android:inputType="text"
+                        android:singleLine="true"
+                        android:textColor="@color/uiv3_primary_text_color"
+                        android:textSize="@dimen/secondary_text_size" />
                 </TableRow>
             </TableLayout>
 
@@ -345,6 +245,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/margin_normal"
                 android:layout_marginTop="@dimen/margin_normal"
+                android:onClick="OnRegisterButtonClicked"
                 android:text="@string/signUp" />
 
         </LinearLayout>

@@ -5,7 +5,7 @@ import android.content.IntentSender;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.BaseSignInSignupActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.Scopes;
@@ -14,7 +14,7 @@ import com.google.android.gms.plus.PlusClient;
 /**
  * A base class to wrap communication with the Google Play Services PlusClient.
  */
-public abstract class PlusBaseActivity extends BackButtonActivity
+public abstract class PlusBaseActivity extends BaseSignInSignupActivity
         implements GooglePlayServicesClient.ConnectionCallbacks,
         GooglePlayServicesClient.OnConnectionFailedListener {
 

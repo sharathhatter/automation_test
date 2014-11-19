@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:id="@+id/swipeShoppingList"
-              android:layout_width="match_parent"
-              android:layout_height="48dp">
+    android:orientation="vertical"
+    android:id="@+id/swipeShoppingList"
+    android:layout_width="match_parent"
+    android:layout_height="48dp">
     <!-- Bottom View Start-->
     <LinearLayout
         android:orientation="horizontal"
@@ -21,7 +21,7 @@
             android:padding="@dimen/padding_normal"
             android:background="#F6F680"
             android:contentDescription="@string/editShoppingList"
-            android:src="@drawable/create_white"/>
+            android:src="@drawable/create_white" />
 
         <ImageView
             android:layout_width="wrap_content"
@@ -30,7 +30,7 @@
             android:padding="@dimen/padding_normal"
             android:background="@color/red"
             android:contentDescription="@string/deleteShoppingList"
-            android:src="@drawable/delete_white"/>
+            android:src="@drawable/delete_white" />
 
     </LinearLayout>
     <!-- Bottom View End-->
@@ -50,7 +50,7 @@
             android:paddingLeft="@dimen/padding_normal"
             android:gravity="center_vertical"
             android:layout_centerVertical="true"
-            android:textColor="@color/uiv3_primary_text_color"/>
+            android:textColor="@color/uiv3_primary_text_color" />
     </RelativeLayout>
     <!-- Surface View End -->
 </com.daimajia.swipe.SwipeLayout>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical"
-              android:id="@+id/layoutUpdateProfile">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:id="@+id/layoutUpdateProfile">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -33,13 +33,12 @@
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="@dimen/margin_small"
                         android:contentDescription="@string/email"
-                        android:src="@drawable/mail"/>
+                        android:src="@drawable/mail" />
 
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_small"
-                        >
+                        android:layout_marginTop="@dimen/margin_small">
 
                         <EditText
                             android:id="@+id/editTextEmail"
@@ -52,7 +51,7 @@
                             android:hint="@string/email"
                             android:inputType="textEmailAddress"
                             android:singleLine="true"
-                            android:textColor="@color/uiv3_primary_text_color"/>
+                            android:textColor="@color/uiv3_primary_text_color" />
 
                         <ImageView
                             android:id="@+id/imgEmailErr"
@@ -63,7 +62,7 @@
                             android:layout_centerVertical="true"
                             android:layout_marginRight="10dp"
                             android:contentDescription="@string/missing"
-                            android:src="@drawable/error_symbol"/>
+                            android:src="@drawable/error_symbol" />
 
                     </RelativeLayout>
                 </TableRow>
@@ -78,13 +77,12 @@
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="@dimen/margin_small"
                         android:contentDescription="@string/firstName"
-                        android:src="@drawable/person"/>
+                        android:src="@drawable/person" />
 
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_small"
-                        >
+                        android:layout_marginTop="@dimen/margin_small">
 
                         <EditText
                             android:id="@+id/editTextFirstName"
@@ -98,7 +96,7 @@
                             android:inputType="textVisiblePassword"
                             android:singleLine="true"
                             android:maxLength="30"
-                            android:textColor="@color/uiv3_primary_text_color"/>
+                            android:textColor="@color/uiv3_primary_text_color" />
 
                         <ImageView
                             android:id="@+id/imgFirstNameErr"
@@ -109,7 +107,7 @@
                             android:contentDescription="@string/missing"
                             android:layout_marginRight="10dp"
                             android:visibility="gone"
-                            android:src="@drawable/error_symbol"/>
+                            android:src="@drawable/error_symbol" />
 
                     </RelativeLayout>
                 </TableRow>
@@ -124,13 +122,12 @@
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="@dimen/margin_small"
                         android:contentDescription="@string/lastName"
-                        android:src="@drawable/person"/>
+                        android:src="@drawable/person" />
 
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_small"
-                        >
+                        android:layout_marginTop="@dimen/margin_small">
 
                         <EditText
                             android:id="@+id/editTextLastName"
@@ -144,7 +141,7 @@
                             android:inputType="textVisiblePassword"
                             android:singleLine="true"
                             android:maxLength="30"
-                            android:textColor="@color/uiv3_primary_text_color"/>
+                            android:textColor="@color/uiv3_primary_text_color" />
 
                         <ImageView
                             android:id="@+id/imgLastNameErr"
@@ -155,7 +152,7 @@
                             android:contentDescription="@string/missing"
                             android:layout_marginRight="10dp"
                             android:visibility="gone"
-                            android:src="@drawable/error_symbol"/>
+                            android:src="@drawable/error_symbol" />
 
                     </RelativeLayout>
                 </TableRow>
@@ -170,13 +167,12 @@
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="@dimen/margin_small"
                         android:contentDescription="@string/dob"
-                        android:src="@drawable/create"/>
+                        android:src="@drawable/create" />
 
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_small"
-                        >
+                        android:layout_marginTop="@dimen/margin_small">
 
                         <EditText
                             android:id="@+id/editTextDob"
@@ -189,7 +185,7 @@
                             android:ems="10"
                             android:singleLine="true"
                             android:maxLength="30"
-                            android:textColor="@color/uiv3_primary_text_color"/>
+                            android:textColor="@color/uiv3_primary_text_color" />
 
                         <ImageView
                             android:id="@+id/imgCalc"
@@ -199,7 +195,7 @@
                             android:layout_centerVertical="true"
                             android:contentDescription="@string/calender"
                             android:layout_marginRight="10dp"
-                            android:src="@drawable/calander"/>
+                            android:src="@drawable/calander" />
 
                     </RelativeLayout>
                     <!-- todo change image -->
@@ -216,13 +212,12 @@
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="@dimen/margin_small"
                         android:contentDescription="@string/mobileNumber"
-                        android:src="@drawable/call"/>
+                        android:src="@drawable/call" />
 
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_small"
-                        >
+                        android:layout_marginTop="@dimen/margin_small">
 
                         <EditText
                             android:id="@+id/editTextMobileNumber"
@@ -236,7 +231,7 @@
                             android:inputType="numberSigned"
                             android:singleLine="true"
                             android:maxLength="10"
-                            android:textColor="@color/uiv3_primary_text_color"/>
+                            android:textColor="@color/uiv3_primary_text_color" />
 
                         <ImageView
                             android:id="@+id/imgMobileNumberErr"
@@ -247,7 +242,7 @@
                             android:contentDescription="@string/missing"
                             android:layout_marginRight="10dp"
                             android:visibility="gone"
-                            android:src="@drawable/error_symbol"/>
+                            android:src="@drawable/error_symbol" />
 
                     </RelativeLayout>
                 </TableRow>
@@ -262,13 +257,12 @@
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="@dimen/margin_small"
                         android:contentDescription="@string/telNumber"
-                        android:src="@drawable/call"/>
+                        android:src="@drawable/call" />
 
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_small"
-                        >
+                        android:layout_marginTop="@dimen/margin_small">
 
                         <EditText
                             android:id="@+id/editTextTelNumber"
@@ -281,7 +275,7 @@
                             android:ems="10"
                             android:inputType="numberSigned"
                             android:singleLine="true"
-                            android:textColor="@color/uiv3_primary_text_color"/>
+                            android:textColor="@color/uiv3_primary_text_color" />
 
                     </RelativeLayout>
                 </TableRow>
@@ -296,13 +290,12 @@
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="@dimen/margin_small"
                         android:contentDescription="@string/HNDetails"
-                        android:src="@drawable/call"/>
+                        android:src="@drawable/call" />
 
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_small"
-                        >
+                        android:layout_marginTop="@dimen/margin_small">
 
                         <EditText
                             android:id="@+id/editTextHouseAndDetails"
@@ -314,7 +307,7 @@
                             android:textSize="@dimen/secondary_text_size"
                             android:ems="10"
                             android:singleLine="true"
-                            android:textColor="@color/uiv3_primary_text_color"/>
+                            android:textColor="@color/uiv3_primary_text_color" />
 
                         <ImageView
                             android:id="@+id/imgHouseAndDetailsErr"
@@ -325,7 +318,7 @@
                             android:contentDescription="@string/missing"
                             android:layout_marginRight="10dp"
                             android:visibility="gone"
-                            android:src="@drawable/error_symbol"/>
+                            android:src="@drawable/error_symbol" />
 
                     </RelativeLayout>
                 </TableRow>
@@ -340,13 +333,12 @@
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="@dimen/margin_small"
                         android:contentDescription="@string/streetDetails"
-                        android:src="@drawable/call"/>
+                        android:src="@drawable/call" />
 
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_small"
-                        >
+                        android:layout_marginTop="@dimen/margin_small">
 
                         <EditText
                             android:id="@+id/editTextStreetDetails"
@@ -358,7 +350,7 @@
                             android:textSize="@dimen/secondary_text_size"
                             android:ems="10"
                             android:singleLine="true"
-                            android:textColor="@color/uiv3_primary_text_color"/>
+                            android:textColor="@color/uiv3_primary_text_color" />
 
                     </RelativeLayout>
                 </TableRow>
@@ -374,13 +366,12 @@
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="@dimen/margin_small"
                         android:contentDescription="@string/area"
-                        android:src="@drawable/call"/>
+                        android:src="@drawable/call" />
 
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_small"
-                        >
+                        android:layout_marginTop="@dimen/margin_small">
 
                         <AutoCompleteTextView
                             android:id="@+id/editTextArea"
@@ -392,7 +383,7 @@
                             android:textSize="@dimen/secondary_text_size"
                             android:ems="10"
                             android:singleLine="true"
-                            android:textColor="@color/uiv3_primary_text_color"/>
+                            android:textColor="@color/uiv3_primary_text_color" />
 
                         <ImageView
                             android:id="@+id/imgAreaErr"
@@ -404,7 +395,7 @@
                             android:layout_marginTop="@dimen/margin_small"
                             android:visibility="gone"
                             android:contentDescription="@string/missing"
-                            android:src="@drawable/error_symbol"/>
+                            android:src="@drawable/error_symbol" />
 
 
                     </RelativeLayout>
@@ -420,13 +411,12 @@
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="@dimen/margin_small"
                         android:contentDescription="@string/resAndComplex"
-                        android:src="@drawable/call"/>
+                        android:src="@drawable/call" />
 
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_small"
-                        >
+                        android:layout_marginTop="@dimen/margin_small">
 
                         <EditText
                             android:id="@+id/editTextResAndComplex"
@@ -438,7 +428,7 @@
                             android:textSize="@dimen/secondary_text_size"
                             android:ems="10"
                             android:singleLine="true"
-                            android:textColor="@color/uiv3_primary_text_color"/>
+                            android:textColor="@color/uiv3_primary_text_color" />
 
                     </RelativeLayout>
                 </TableRow>
@@ -454,13 +444,12 @@
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="@dimen/margin_small"
                         android:contentDescription="@string/landmark"
-                        android:src="@drawable/call"/>
+                        android:src="@drawable/call" />
 
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_small"
-                        >
+                        android:layout_marginTop="@dimen/margin_small">
 
                         <EditText
                             android:id="@+id/editTextLandmark"
@@ -472,7 +461,7 @@
                             android:textSize="@dimen/secondary_text_size"
                             android:ems="10"
                             android:singleLine="true"
-                            android:textColor="@color/uiv3_primary_text_color"/>
+                            android:textColor="@color/uiv3_primary_text_color" />
 
                     </RelativeLayout>
                 </TableRow>
@@ -487,13 +476,12 @@
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="@dimen/margin_small"
                         android:contentDescription="@string/city"
-                        android:src="@drawable/place"/>
+                        android:src="@drawable/place" />
 
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_small"
-                        >
+                        android:layout_marginTop="@dimen/margin_small">
 
                         <EditText
                             android:id="@+id/editTextCity"
@@ -509,7 +497,7 @@
                             android:layout_marginRight="@dimen/margin_normal"
                             android:textSize="@dimen/secondary_text_size"
                             android:singleLine="true"
-                            android:textColor="@color/uiv3_primary_text_color"/>
+                            android:textColor="@color/uiv3_primary_text_color" />
 
                         <ImageView
                             android:id="@+id/imgCityErr"
@@ -521,7 +509,7 @@
                             android:layout_marginTop="@dimen/margin_small"
                             android:visibility="gone"
                             android:contentDescription="@string/missing"
-                            android:src="@drawable/error_symbol"/>
+                            android:src="@drawable/error_symbol" />
 
 
                     </RelativeLayout>
@@ -537,13 +525,12 @@
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="@dimen/margin_small"
                         android:contentDescription="@string/pinCode"
-                        android:src="@drawable/place"/>
+                        android:src="@drawable/place" />
 
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_small"
-                        >
+                        android:layout_marginTop="@dimen/margin_small">
 
                         <EditText
                             android:id="@+id/editTextPinCode"
@@ -559,7 +546,7 @@
                             android:imeOptions="actionNext"
                             android:enabled="false"
                             android:singleLine="true"
-                            android:textColor="@color/uiv3_primary_text_color"/>
+                            android:textColor="@color/uiv3_primary_text_color" />
 
                         <ImageView
                             android:id="@+id/imgPinCodeErr"
@@ -571,7 +558,7 @@
                             android:layout_marginTop="@dimen/margin_small"
                             android:visibility="gone"
                             android:contentDescription="@string/missing"
-                            android:src="@drawable/error_symbol"/>
+                            android:src="@drawable/error_symbol" />
 
 
                     </RelativeLayout>
@@ -586,7 +573,7 @@
                 android:text="@string/receivePromos"
                 android:textColor="@color/uiv3_primary_text_color"
                 android:textSize="@dimen/secondary_text_size"
-                android:checked="true"/>
+                android:checked="true" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -598,8 +585,7 @@
                     android:layout_width="match_parent"
                     style="@style/Uiv3BigGreenButton"
                     android:layout_height="wrap_content"
-                    android:text="@string/UPDATE"
-                    />
+                    android:text="@string/UPDATE" />
 
                 <ProgressBar
                     style="?android:attr/progressBarStyleSmall"
@@ -609,7 +595,7 @@
                     android:layout_marginRight="8dp"
                     android:layout_height="wrap_content"
                     android:visibility="gone"
-                    android:id="@+id/progressBarUpdateProfile"/>
+                    android:id="@+id/progressBarUpdateProfile" />
 
             </RelativeLayout>
         </LinearLayout>

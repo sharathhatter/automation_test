@@ -1,36 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:background="@color/white"
-              android:layout_height="match_parent">
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:layout_height="match_parent">
 
-    <RelativeLayout android:layout_width="match_parent"
-                    android:gravity="center"
-                    android:id="@+id/layoutImage"
-                    android:layout_height="wrap_content">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:id="@+id/layoutImage"
+        android:layout_height="wrap_content">
 
-        <ImageView android:layout_width="match_parent"
-                   android:id="@+id/imgFullfillmentInfoPage"
-                   android:scaleType="center"
-                   android:src="@drawable/banner"
-                   android:layout_height="wrap_content"/>
+        <ImageView
+            android:layout_width="match_parent"
+            android:id="@+id/imgFullfillmentInfoPage"
+            android:scaleType="center"
+            android:src="@drawable/banner"
+            android:layout_height="wrap_content" />
 
     </RelativeLayout>
 
 
     <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:paddingRight="4dp"
-            android:src="@drawable/close_button_filter"
-            android:contentDescription="@string/close"
-            android:layout_alignParentRight="true"
-            android:layout_alignTop="@id/layoutImage"
-            android:id="@+id/imgCloseBtn"/>
-
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:paddingRight="4dp"
+        android:src="@drawable/close_button_filter"
+        android:contentDescription="@string/close"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@id/layoutImage"
+        android:id="@+id/imgCloseBtn" />
 
 
 </RelativeLayout>

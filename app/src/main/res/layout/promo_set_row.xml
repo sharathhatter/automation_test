@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/layoutPromoSetLayout"
-    >
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/layoutPromoSetLayout">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -20,7 +19,7 @@
             android:layout_marginTop="4dp"
             android:src="@drawable/no_bkg_tick"
             android:contentDescription="@string/alt_placeholder"
-            android:layout_alignParentTop="true"/>
+            android:layout_alignParentTop="true" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -30,8 +29,7 @@
             android:layout_marginLeft="5dp"
             android:textColor="@color/dark_black"
             android:id="@+id/txtSetName"
-            android:text="Slice 1.2 lt"
-            />
+            android:text="Slice 1.2 lt" />
 
         <ImageView
             android:layout_width="wrap_content"
@@ -41,8 +39,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:id="@+id/imgRightArrow"
-            android:padding="-5dp"
-            />
+            android:padding="-5dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -52,8 +49,7 @@
             android:id="@+id/txtValueInBasket"
             android:textSize="14sp"
             android:layout_toRightOf="@id/txtSetName"
-            android:text="0 in basket"
-            />
+            android:text="0 in basket" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -63,8 +59,7 @@
             android:id="@+id/txtValueNeed"
             android:textSize="14sp"
             android:textColor="@color/dark_black"
-            android:layout_below="@id/txtSetName"
-            />
+            android:layout_below="@id/txtSetName" />
 
 
     </RelativeLayout>
@@ -73,6 +68,5 @@
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:background="@color/strokeLine"
-        android:layout_below="@id/innerLayout"
-        />
+        android:layout_below="@id/innerLayout" />
 </RelativeLayout>

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:orientation="vertical"
-                android:id="@+id/layoutPromoInfoBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+    android:orientation="vertical"
+    android:id="@+id/layoutPromoInfoBox"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
     <TextView
         android:layout_width="wrap_content"
@@ -17,15 +17,14 @@
         android:text="Buy 2 get One free"
         android:id="@+id/txtPromoInfoMsg"
         android:textColor="@color/uiv3_primary_text_color"
-        android:layout_centerHorizontal="true"
-        />
+        android:layout_centerHorizontal="true" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:id="@+id/layoutCriteriaMsg"
-        android:layout_below="@id/txtPromoInfoMsg"/>
+        android:layout_below="@id/txtPromoInfoMsg" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -33,8 +32,7 @@
         android:orientation="horizontal"
         android:layout_centerHorizontal="true"
         android:id="@+id/layoutPromoSavingInfo"
-        android:layout_below="@id/layoutCriteriaMsg"
-        >
+        android:layout_below="@id/layoutCriteriaMsg">
 
         <TextView
             android:layout_width="wrap_content"
@@ -44,7 +42,7 @@
             android:textColor="@color/promo_txt_green_color"
             android:textSize="@dimen/secondary_text_size"
             android:text="testing"
-            android:id="@+id/txtNumCompletedOffer"/>
+            android:id="@+id/txtNumCompletedOffer" />
 
         <View
             android:layout_width="1dp"
@@ -53,7 +51,7 @@
             android:layout_marginBottom="2dp"
             android:layout_marginLeft="0dp"
             android:layout_marginRight="0dp"
-            android:background="@color/promo_txt_green_color"/>
+            android:background="@color/promo_txt_green_color" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -63,7 +61,7 @@
             android:textColor="@color/promo_txt_green_color"
             android:textSize="@dimen/secondary_text_size"
             android:text="testing"
-            android:id="@+id/txtSaving"/>
+            android:id="@+id/txtSaving" />
     </LinearLayout>
 
     <View
@@ -72,7 +70,6 @@
         android:background="@color/strokeLine"
         android:layout_marginTop="@dimen/margin_small"
         android:id="@+id/line"
-        android:layout_below="@id/layoutPromoSavingInfo"
-        />
+        android:layout_below="@id/layoutPromoSavingInfo" />
 
 </RelativeLayout>

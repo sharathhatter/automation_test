@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/heading">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/heading">
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/strokeLine"
-        android:layout_alignParentTop="true"
-        />
+        android:layout_alignParentTop="true" />
 
     <TextView
         android:id="@+id/brandNameTxt"
@@ -20,8 +19,7 @@
         android:textColor="@color/uiv3_primary_text_color"
         android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
-        android:textSize="@dimen/primary_text_size"
-        />
+        android:textSize="@dimen/primary_text_size" />
 
     <Button
         android:layout_width="wrap_content"
@@ -39,14 +37,13 @@
         android:layout_alignParentRight="true"
         android:drawablePadding="@dimen/padding_small"
         android:drawableRight="@drawable/basket_inline_icon"
-        android:text="@string/addAll"/>
+        android:text="@string/addAll" />
 
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/strokeLine"
-        android:layout_below="@id/btnAddAllToBasket"
-        />
+        android:layout_below="@id/btnAddAllToBasket" />
 
 </RelativeLayout>

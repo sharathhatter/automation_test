@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/uiv3_list_bkg_light_color">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/uiv3_list_bkg_light_color">
 
     <ImageView
         android:layout_width="30dp"
@@ -13,8 +13,7 @@
         android:layout_centerVertical="true"
         android:contentDescription="@string/topCategory"
         android:id="@+id/imgCategory"
-        android:layout_marginLeft="@dimen/margin_normal"
-        />
+        android:layout_marginLeft="@dimen/margin_normal" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -26,8 +25,7 @@
         android:layout_marginTop="@dimen/margin_normal"
         android:layout_marginLeft="@dimen/margin_normal"
         android:textColor="@color/uiv3_list_primary_text_color"
-        android:gravity="left|center_vertical"
-        />
+        android:gravity="left|center_vertical" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -45,7 +43,7 @@
         android:cursorVisible="false"
         android:focusable="false"
         android:inputType="text"
-        android:layout_centerVertical="true"/>
+        android:layout_centerVertical="true" />
 
     <View
         android:layout_width="match_parent"
@@ -55,7 +53,6 @@
         android:layout_marginTop="@dimen/margin_normal"
         android:layout_marginLeft="@dimen/margin_normal"
         android:id="@+id/viewSeparator"
-        android:layout_toRightOf="@id/imgCategory"
-        />
+        android:layout_toRightOf="@id/imgCategory" />
 
 </RelativeLayout>

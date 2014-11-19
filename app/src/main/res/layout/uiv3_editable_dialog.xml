@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content">
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
     <EditText
         android:layout_width="match_parent"
@@ -11,5 +11,5 @@
         android:layout_margin="@dimen/margin_normal"
         android:inputType="text"
         android:textColor="@color/uiv3_dialog_primary_text_color"
-        android:id="@+id/editTextDialog"/>
+        android:id="@+id/editTextDialog" />
 </LinearLayout>

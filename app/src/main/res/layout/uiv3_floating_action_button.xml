@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<com.melnykov.fab.FloatingActionButton
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.melnykov.fab.FloatingActionButton xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:id="@+id/btnFab"
     android:layout_width="wrap_content"
@@ -10,4 +9,4 @@
     android:layout_margin="@dimen/margin_normal"
     android:src="@drawable/ic_action_content_new"
     fab:fab_colorNormal="@color/uiv3_action_bar_background"
-    fab:fab_colorPressed="@color/uiv3_action_bar_background_pressed"/>
+    fab:fab_colorPressed="@color/uiv3_action_bar_background_pressed" />

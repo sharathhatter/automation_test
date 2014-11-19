@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/uiv3_dark_bkg"
-                android:paddingTop="@dimen/padding_small"
-                android:paddingLeft="@dimen/padding_normal"
-                android:paddingRight="@dimen/padding_small"
-                android:paddingBottom="@dimen/padding_small">
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/uiv3_dark_bkg"
+    android:paddingTop="@dimen/padding_small"
+    android:paddingLeft="@dimen/padding_normal"
+    android:paddingRight="@dimen/padding_small"
+    android:paddingBottom="@dimen/padding_small">
 
     <TextView
         android:layout_width="wrap_content"
@@ -16,7 +16,7 @@
         android:textColor="@color/white"
         android:textSize="@dimen/primary_text_size"
         android:layout_marginBottom="@dimen/margin_normal"
-        android:id="@+id/txtSalutationTitle"/>
+        android:id="@+id/txtSalutationTitle" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -32,8 +32,7 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/alt_placeholder"
             android:id="@+id/imgSalutationItem1"
-            android:layout_gravity="center_horizontal"
-            />
+            android:layout_gravity="center_horizontal" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -42,7 +41,7 @@
             android:layout_gravity="center_horizontal"
             android:textColor="@color/white"
             android:textSize="@dimen/secondary_text_size"
-            android:id="@+id/txtSalutationItem1"/>
+            android:id="@+id/txtSalutationItem1" />
 
     </LinearLayout>
 
@@ -60,8 +59,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:contentDescription="@string/alt_placeholder"
-            android:id="@+id/imgSalutationItem2"
-            />
+            android:id="@+id/imgSalutationItem2" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -69,7 +67,7 @@
             android:textColor="@color/white"
             android:layout_marginTop="@dimen/margin_small"
             android:textSize="@dimen/secondary_text_size"
-            android:id="@+id/txtSalutationItem2"/>
+            android:id="@+id/txtSalutationItem2" />
 
     </LinearLayout>
 
@@ -87,8 +85,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:contentDescription="@string/alt_placeholder"
-            android:id="@+id/imgSalutationItem3"
-            />
+            android:id="@+id/imgSalutationItem3" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -96,7 +93,7 @@
             android:layout_marginTop="@dimen/margin_small"
             android:textColor="@color/white"
             android:textSize="@dimen/secondary_text_size"
-            android:id="@+id/txtSalutationItem3"/>
+            android:id="@+id/txtSalutationItem3" />
 
     </LinearLayout>
 

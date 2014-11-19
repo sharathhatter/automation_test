@@ -240,6 +240,8 @@ public class StartActivity extends BaseActivity {
             if (forceRegisterDevice) {
                 loadCities();
             }
+        } else if (resultCode == Constants.GO_TO_HOME) {
+            loadHomePage();
         } else {
             finish();
         }

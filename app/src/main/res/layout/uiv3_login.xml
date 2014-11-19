@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="@dimen/margin_small"
         android:visibility="gone" />
 
     <ScrollView
@@ -25,6 +25,16 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="@dimen/padding_large">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="@dimen/margin_normal"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:layout_marginRight="@dimen/margin_normal"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/dash_logo" />
 
             <com.google.android.gms.common.SignInButton
                 android:id="@+id/plus_sign_in_button"
@@ -217,8 +227,8 @@
                 android:layout_marginTop="@dimen/margin_normal"
                 android:text="@string/signUp"
                 android:textColor="@color/uiv3_primary_text_color"
-                android:textSize="@dimen/secondary_text_size" />
-
+                android:textSize="@dimen/secondary_text_size"
+                android:onClick="OnRegistrationButtonClicked" />
 
         </LinearLayout>
     </ScrollView>

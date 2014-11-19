@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
     <ImageView
         android:layout_width="match_parent"
@@ -11,7 +11,7 @@
         android:contentDescription="@string/app_name"
         android:id="@+id/imgNavMain"
         android:layout_marginBottom="@dimen/margin_small"
-        android:src="@drawable/nav_main_cover"/>
+        android:src="@drawable/nav_main_cover" />
 
     <TextView
         android:layout_width="match_parent"
@@ -22,6 +22,6 @@
         android:layout_marginRight="@dimen/margin_normal"
         android:textColor="@color/white"
         android:textSize="@dimen/primary_text_size"
-        android:id="@+id/txtNavSalutation"/>
+        android:id="@+id/txtNavSalutation" />
 
 </RelativeLayout>

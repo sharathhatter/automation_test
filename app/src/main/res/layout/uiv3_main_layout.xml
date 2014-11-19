@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-<com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -28,11 +27,11 @@
         android:layout_gravity="left"
         android:background="@color/white">
 
-        <include layout="@layout/uiv3_left_nav_header"/>
+        <include layout="@layout/uiv3_left_nav_header" />
 
         <ExpandableListView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/listNavigation"/>
+            android:id="@+id/listNavigation" />
     </LinearLayout>
 </com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout>

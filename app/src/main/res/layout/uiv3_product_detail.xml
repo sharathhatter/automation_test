@@ -2,9 +2,9 @@
 
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/uiv3_list_bkg_color">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/uiv3_list_bkg_color">
 
     <LinearLayout
         android:layout_width="match_parent"
