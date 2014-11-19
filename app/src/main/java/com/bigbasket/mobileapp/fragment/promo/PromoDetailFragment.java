@@ -284,7 +284,7 @@ public class PromoDetailFragment extends BaseFragment {
                 .setShowShopListDeleteBtn(false)
                 .build();
         for (Product freeProduct : freeProducts) {
-            View base = layoutInflater.inflate(R.layout.uiv3_stretched_product_row, null);
+            View base = layoutInflater.inflate(R.layout.uiv3_product_row, null);
             LinearLayout.LayoutParams productRowParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
             productRowParams.setMargins(8, 8, 8, 0);
