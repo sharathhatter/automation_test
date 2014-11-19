@@ -175,11 +175,17 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
         View base = inflater.inflate(R.layout.product_list, null);
         AbsListView productListView = (AbsListView) base.findViewById(R.id.lstProducts);
 
-        ProductViewDisplayDataHolder productViewDisplayDataHolder = new
-                ProductViewDisplayDataHolder(faceRobotoRegular, faceRobotoRegular, faceRobotoRegular, faceRupee,
-                !AuthParameters.getInstance(getBaseActivity()).isAuthTokenEmpty(), true, true,
-                !mShoppingListName.isSystem(),
-                new MessageHandler(getBaseActivity()), mShoppingListName);
+
+        ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
+                .setCommonTypeface(faceRobotoRegular)
+                .setHandler(new MessageHandler(getBaseActivity()))
+                .setLoggedInMember(!AuthParameters.getInstance(getActivity()).isAuthTokenEmpty())
+                .setShowShoppingListBtn(true)
+                .setShowBasketBtn(true)
+                .setShowShopListDeleteBtn(!mShoppingListName.isSystem())
+                .setShoppingListName(mShoppingListName)
+                .build();
+        
         ProductListAdapter productListAdapter = new ProductListAdapter(productList, null,
                 getBaseActivity(), productViewDisplayDataHolder, this, 1);
 

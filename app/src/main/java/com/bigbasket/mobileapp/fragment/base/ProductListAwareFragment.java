@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -32,7 +31,6 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.view.uiv3.FilterProductDialog;
 import com.bigbasket.mobileapp.view.uiv3.SortProductDialog;
-import com.etsy.android.grid.StaggeredGridView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -124,7 +122,7 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
         View base = inflater.inflate(R.layout.product_list, null);
-        AbsListView productListView = (AbsListView) base.findViewById(R.id.lstProducts);
+        ListView productListView = (ListView) base.findViewById(R.id.lstProducts);
 
         // Set product-list header view
         View headerView = inflater.inflate(R.layout.uiv3_product_list_filter_layout, null);
@@ -134,11 +132,7 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
         TextView txtNumProducts = (TextView) headerView.findViewById(R.id.txtNumProducts);
         txtNumProducts.setText(getNumProductsMessage());
 
-        if (productListView instanceof ListView) {
-            ((ListView) productListView).addHeaderView(headerView, null, false);
-        } else if (productListView instanceof StaggeredGridView) {
-            ((StaggeredGridView) productListView).addHeaderView(headerView, null, false);
-        }
+        productListView.addHeaderView(headerView, null, false);
 
         TextView txtFilterBy = (TextView) headerView.findViewById(R.id.txtFilterBy);
         TextView txtSortedOnValue = (TextView) headerView.findViewById(R.id.txtSortedOnValue);
@@ -169,21 +163,21 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
         } else {
             layoutFilterSort.setVisibility(View.GONE);
         }
-
         // Set product-list data
         AuthParameters authParameters = AuthParameters.getInstance(getActivity());
-        ProductViewDisplayDataHolder productViewDisplayDataHolder = new
-                ProductViewDisplayDataHolder(faceRobotoRegular, faceRobotoRegular, faceRobotoRegular, faceRupee, true,
-                !authParameters.isAuthTokenEmpty(), true, false, handler);
+        ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
+                .setCommonTypeface(faceRobotoRegular)
+                .setRupeeTypeface(faceRupee)
+                .setHandler(handler)
+                .setLoggedInMember(!authParameters.isAuthTokenEmpty())
+                .setShowShoppingListBtn(true)
+                .setShowBasketBtn(true)
+                .setShowShopListDeleteBtn(false)
+                .build();
         productListAdapter = new ProductListAdapter(productListData.getProducts(), null,
                 getBaseActivity(), productViewDisplayDataHolder, this, productListData.getProductCount());
 
-        // AbsListView doesn't have setAdapter below API 11, hence doing this way
-        if (productListView instanceof ListView) {
-            ((ListView) productListView).setAdapter(productListAdapter);
-        } else if (productListView instanceof StaggeredGridView) {
-            ((StaggeredGridView) productListView).setAdapter(productListAdapter);
-        }
+        productListView.setAdapter(productListAdapter);
         contentView.addView(base);
     }
 

@@ -30,6 +30,7 @@ import com.bigbasket.mobileapp.model.promo.Promo;
 import com.bigbasket.mobileapp.model.promo.PromoCategory;
 import com.bigbasket.mobileapp.model.promo.PromoDetail;
 import com.bigbasket.mobileapp.model.promo.PromoSet;
+import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.ExceptionUtil;
@@ -272,11 +273,17 @@ public class PromoDetailFragment extends BaseFragment {
         if (getActivity() == null || getBaseActivity() == null) return;
         String freeProductStr = promoDetail.getFreeProducts();
         ArrayList<Product> freeProducts = ParserUtil.parseProductList(freeProductStr);
-        ProductViewDisplayDataHolder productViewDisplayDataHolder = new
-                ProductViewDisplayDataHolder(faceRobotoRegular, faceRobotoRegular, faceRobotoRegular, faceRupee, true,
-                false, false, false, handler);
+        ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
+                .setCommonTypeface(faceRobotoRegular)
+                .setRupeeTypeface(faceRupee)
+                .setHandler(handler)
+                .setLoggedInMember(!AuthParameters.getInstance(getActivity()).isAuthTokenEmpty())
+                .setShowShoppingListBtn(true)
+                .setShowBasketBtn(false)
+                .setShowShopListDeleteBtn(false)
+                .build();
         for (Product freeProduct : freeProducts) {
-            View base = layoutInflater.inflate(R.layout.uiv3_stretched_product_row, null);
+            View base = layoutInflater.inflate(R.layout.uiv3_product_row, null);
             LinearLayout.LayoutParams productRowParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
             productRowParams.setMargins(8, 8, 8, 0);

@@ -261,9 +261,16 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
         View base = inflater.inflate(R.layout.product_list, null);
         AbsListView productListView = (AbsListView) base.findViewById(R.id.lstProducts);
 
-        ProductViewDisplayDataHolder productViewDisplayDataHolder = new
-                ProductViewDisplayDataHolder(faceRobotoRegular, faceRobotoRegular, faceRobotoRegular, faceRupee, true,
-                !AuthParameters.getInstance(getActivity()).isAuthTokenEmpty(), true, false, handler);
+        ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
+                .setCommonTypeface(faceRobotoRegular)
+                .setRupeeTypeface(faceRupee)
+                .setHandler(handler)
+                .setLoggedInMember(!AuthParameters.getInstance(getActivity()).isAuthTokenEmpty())
+                .setShowShoppingListBtn(true)
+                .setShowBasketBtn(true)
+                .setShowShopListDeleteBtn(false)
+                .build();
+
         ProductListAdapter productListAdapter = new ProductListAdapter(products, baseImgUrl,
                 getBaseActivity(), productViewDisplayDataHolder, this, 1);
 

@@ -89,13 +89,19 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
     private void renderProductDetail() {
         if (getActivity() == null || getView() == null) return;
 
-        ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder(faceRobotoRegular,
-                faceRobotoRegular, faceRobotoRegular, faceRupee, true,
-                !AuthParameters.getInstance(getActivity()).isAuthTokenEmpty(), true, false, handler);
+        ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
+                .setCommonTypeface(faceRobotoRegular)
+                .setRupeeTypeface(faceRupee)
+                .setHandler(handler)
+                .setLoggedInMember(!AuthParameters.getInstance(getActivity()).isAuthTokenEmpty())
+                .setShowShoppingListBtn(true)
+                .setShowBasketBtn(true)
+                .setShowShopListDeleteBtn(false)
+                .build();
 
         LinearLayout layoutProductDetail = (LinearLayout) getView().findViewById(R.id.layoutProductDetail);
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View productRow = inflater.inflate(R.layout.uiv3_stretched_product_row, null);
+        View productRow = inflater.inflate(R.layout.uiv3_product_row, null);
         LinearLayout.LayoutParams productRowParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         productRow.setLayoutParams(productRowParams);

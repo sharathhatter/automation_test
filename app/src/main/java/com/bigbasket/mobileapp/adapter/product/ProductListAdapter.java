@@ -13,7 +13,6 @@ import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.handler.ProductDetailOnClickListener;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
-import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.view.uiv2.ProductView;
 
 import java.util.List;
@@ -38,21 +37,15 @@ public class ProductListAdapter extends InfiniteListAbstractAdapter<Product> {
     public View getDataView(int position, View convertView, ViewGroup parent) {
         final Product product = dataList.get(position);
         View row = convertView;
-        if (row == null || row.getTag() == null ||
-                !row.getTag().toString().equalsIgnoreCase(Constants.IS_PRODUCT)) {
-            row = getInflatedProductView();
-            row.setTag(Constants.IS_PRODUCT);
+        if (row == null) {
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            row = inflater.inflate(R.layout.uiv3_product_row, null);
         }
         row = ProductView.getProductView(row, product, baseImgUrl,
                 new ProductDetailOnClickListener(product.getSku(), fragment),
                 productViewDisplayDataHolder,
                 context, false, fragment);
         return row;
-    }
-
-    private View getInflatedProductView() {
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        return inflater.inflate(R.layout.uiv3_product_row, null);
     }
 
     @Override
