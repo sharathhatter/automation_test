@@ -221,7 +221,7 @@
                 <Button
                     android:id="@+id/plus_sign_in_button"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@color/gplus_red"
                     android:drawableLeft="@drawable/btn_gplus_normal"
@@ -234,7 +234,7 @@
                 <Button
                     android:id="@+id/btnFBLogin"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:layout_marginLeft="@dimen/margin_small"
                     android:layout_weight="1"
