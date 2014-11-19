@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.adapter.InfiniteListAbstractAdapter;
+import com.bigbasket.mobileapp.common.ProductViewHolder;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.handler.ProductDetailOnClickListener;
 import com.bigbasket.mobileapp.model.product.Product;
@@ -37,11 +38,16 @@ public class ProductListAdapter extends InfiniteListAbstractAdapter<Product> {
     public View getDataView(int position, View convertView, ViewGroup parent) {
         final Product product = dataList.get(position);
         View row = convertView;
+        ProductViewHolder productViewHolder;
         if (row == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             row = inflater.inflate(R.layout.uiv3_product_row, null);
+            productViewHolder = new ProductViewHolder(row);
+            row.setTag(productViewHolder);
+        } else {
+            productViewHolder = (ProductViewHolder) row.getTag();
         }
-        row = ProductView.getProductView(row, product, baseImgUrl,
+        ProductView.setProductView(productViewHolder, product, baseImgUrl,
                 new ProductDetailOnClickListener(product.getSku(), fragment),
                 productViewDisplayDataHolder,
                 context, false, fragment);

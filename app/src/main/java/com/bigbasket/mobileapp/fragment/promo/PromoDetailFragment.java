@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
+import com.bigbasket.mobileapp.common.ProductViewHolder;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.handler.ProductDetailOnClickListener;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
@@ -288,11 +289,11 @@ public class PromoDetailFragment extends BaseFragment {
                     ViewGroup.LayoutParams.WRAP_CONTENT);
             productRowParams.setMargins(8, 8, 8, 0);
 
-            View pView = ProductView.getProductView(base, freeProduct, promoDetail.getBaseImgUrl(),
+            ProductView.setProductView(new ProductViewHolder(base), freeProduct, promoDetail.getBaseImgUrl(),
                     new ProductDetailOnClickListener(freeProduct.getSku(), this), productViewDisplayDataHolder,
                     getBaseActivity(), false, null);
-            pView.setLayoutParams(productRowParams);
-            view.addView(pView);
+            base.setLayoutParams(productRowParams);
+            view.addView(base);
         }
     }
 

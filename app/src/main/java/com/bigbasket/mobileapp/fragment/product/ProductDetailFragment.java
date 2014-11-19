@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.common.ProductViewHolder;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.model.product.Product;
@@ -105,9 +106,9 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
         LinearLayout.LayoutParams productRowParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         productRow.setLayoutParams(productRowParams);
-        View productView = ProductView.getProductView(productRow, mProduct, null, null, productViewDisplayDataHolder,
+        ProductView.setProductView(new ProductViewHolder(productRow), mProduct, null, null, productViewDisplayDataHolder,
                 getBaseActivity(), false, this);
-        layoutProductDetail.addView(productView);
+        layoutProductDetail.addView(productRow);
 
         ArrayList<ProductAdditionalInfo> productAdditionalInfos = mProduct.getProductAdditionalInfos();
         if (productAdditionalInfos != null && productAdditionalInfos.size() > 0) {

@@ -24,6 +24,7 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.adapter.product.ProductListSpinnerAdapter;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
+import com.bigbasket.mobileapp.common.ProductViewHolder;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.handler.ProductDetailOnClickListener;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
@@ -46,28 +47,27 @@ import java.util.List;
 
 public final class ProductView {
 
-    public static View getProductView(final View row, final Product product, String baseImgUrl,
+    public static void setProductView(final ProductViewHolder productViewHolder, final Product product, String baseImgUrl,
                                       ProductDetailOnClickListener productDetailOnClickListener,
                                       ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                       final BaseActivity context, final boolean skipChildDropDownRendering,
                                       final BaseFragment baseFragment) {
-        setProductImage(row, product, baseImgUrl, productDetailOnClickListener);
-        setIsNewAndBby(row, product);
+        setProductImage(productViewHolder, product, baseImgUrl, productDetailOnClickListener);
+        setIsNewAndBby(productViewHolder, product);
         if (!skipChildDropDownRendering) {
-            setChildProducts(row, product, context, baseImgUrl, productViewDisplayDataHolder, baseFragment);
+            setChildProducts(productViewHolder, product, context, baseImgUrl, productViewDisplayDataHolder, baseFragment);
         }
-        setProductBrand(row, product, productViewDisplayDataHolder, productDetailOnClickListener);
-        setProductDesc(row, product, productViewDisplayDataHolder, productDetailOnClickListener);
-        setPrice(row, product, productViewDisplayDataHolder, context);
-        setPromo(row, product, productViewDisplayDataHolder, context);
-        setProductAdditionalActionMenu(row, product, productViewDisplayDataHolder, context, baseFragment);
-        setBasketAndAvailabilityViews(row, product, productViewDisplayDataHolder, context, baseFragment);
-        return row;
+        setProductBrand(productViewHolder, product, productViewDisplayDataHolder, productDetailOnClickListener);
+        setProductDesc(productViewHolder, product, productViewDisplayDataHolder, productDetailOnClickListener);
+        setPrice(productViewHolder, product, productViewDisplayDataHolder, context);
+        setPromo(productViewHolder, product, productViewDisplayDataHolder, context);
+        setProductAdditionalActionMenu(productViewHolder, product, productViewDisplayDataHolder, context, baseFragment);
+        setBasketAndAvailabilityViews(productViewHolder, product, productViewDisplayDataHolder, context, baseFragment);
     }
 
-    private static void setProductImage(View row, Product product, String baseImgUrl,
+    private static void setProductImage(ProductViewHolder productViewHolder, Product product, String baseImgUrl,
                                         ProductDetailOnClickListener productDetailOnClickListener) {
-        ImageView imgProduct = (ImageView) row.findViewById(R.id.imgProduct);
+        ImageView imgProduct = productViewHolder.getImgProduct();
         if (product.getImageUrl() != null) {
             ImageLoader.getInstance().displayImage(baseImgUrl != null ? baseImgUrl + product.getImageUrl() :
                     product.getImageUrl(), imgProduct);
@@ -77,25 +77,25 @@ public final class ProductView {
         imgProduct.setOnClickListener(productDetailOnClickListener);
     }
 
-    private static void setIsNewAndBby(View row, Product product) {
-        ImageView imgBby = (ImageView) row.findViewById(R.id.imgBBY);
+    private static void setIsNewAndBby(ProductViewHolder productViewHolder, Product product) {
+        ImageView imgBby = productViewHolder.getImgBby();
         if (product.isBbyProduct()) {
             imgBby.setVisibility(View.VISIBLE);
         } else {
             imgBby.setVisibility(View.GONE);
-            TextView txtIsNewProduct = (TextView) row.findViewById(R.id.imgNew);
+            TextView txtIsNewProduct = productViewHolder.getTxtIsNewProduct();
             txtIsNewProduct.setVisibility(product.isNewProduct() ? View.VISIBLE : View.GONE);
         }
     }
 
-    private static void setChildProducts(final View row, Product product, final BaseActivity context,
+    private static void setChildProducts(final ProductViewHolder productViewHolder, Product product, final BaseActivity context,
                                          final String baseImgUrl,
                                          final ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                          final BaseFragment fragment) {
         final List<Product> childProducts = product.getAllProducts();
         boolean hasChildren = childProducts != null && childProducts.size() > 0;
-        Spinner spinnerPackageDesc = (Spinner) row.findViewById(R.id.spinnerPackageDesc);
-        TextView packageDescTxtView = (TextView) row.findViewById(R.id.txtPackageDesc);
+        Spinner spinnerPackageDesc = productViewHolder.getSpinnerPackageDesc();
+        TextView packageDescTxtView = productViewHolder.getPackageDescTextView();
         if (hasChildren) {
             ProductListSpinnerAdapter productListSpinnerAdapter = new ProductListSpinnerAdapter(context, android.R.layout.simple_spinner_item,
                     childProducts, productViewDisplayDataHolder.getSansSerifMediumTypeface(),
@@ -106,7 +106,7 @@ public final class ProductView {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     Product childProduct = childProducts.get(position);
-                    getProductView(row, childProduct, baseImgUrl,
+                    setProductView(productViewHolder, childProduct, baseImgUrl,
                             new ProductDetailOnClickListener(childProduct.getSku(), fragment),
                             productViewDisplayDataHolder, context, true, fragment);
                 }
@@ -126,9 +126,9 @@ public final class ProductView {
         }
     }
 
-    private static void setProductBrand(View row, Product product, ProductViewDisplayDataHolder productViewDisplayDataHolder,
+    private static void setProductBrand(ProductViewHolder productViewHolder, Product product, ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                         ProductDetailOnClickListener productDetailOnClickListener) {
-        TextView txtProductBrand = (TextView) row.findViewById(R.id.txtProductBrand);
+        TextView txtProductBrand = productViewHolder.getTxtProductBrand();
         txtProductBrand.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
         if (!TextUtils.isEmpty(product.getBrand())) {
             txtProductBrand.setText(product.getBrand());
@@ -138,9 +138,9 @@ public final class ProductView {
         txtProductBrand.setOnClickListener(productDetailOnClickListener);
     }
 
-    private static void setProductDesc(View row, Product product, ProductViewDisplayDataHolder productViewDisplayDataHolder,
+    private static void setProductDesc(ProductViewHolder productViewHolder, Product product, ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                        ProductDetailOnClickListener productDetailOnClickListener) {
-        TextView txtProductDesc = (TextView) row.findViewById(R.id.txtProductDesc);
+        TextView txtProductDesc = productViewHolder.getTxtProductDesc();
         txtProductDesc.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
         if (!TextUtils.isEmpty(product.getDescription())) {
             txtProductDesc.setText(product.getDescription());
@@ -151,16 +151,16 @@ public final class ProductView {
         txtProductDesc.setOnClickListener(productDetailOnClickListener);
     }
 
-    private static void setPrice(View row, Product product,
+    private static void setPrice(ProductViewHolder productViewHolder, Product product,
                                  ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                  BaseActivity context) {
-        TextView labelMrp = (TextView) row.findViewById(R.id.labelMrp);
-        TextView txtSalePrice = (TextView) row.findViewById(R.id.txtSalePrice);
+        TextView labelMrp = productViewHolder.getLabelMrp();
+        TextView txtSalePrice = productViewHolder.getTxtSalePrice();
         boolean hasSavings = product.hasSavings();
         labelMrp.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
         txtSalePrice.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
 
-        TextView txtMrp = (TextView) row.findViewById(R.id.txtMrp);
+        TextView txtMrp = productViewHolder.getTxtMrp();
         txtMrp.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
 
         if (hasSavings && !TextUtils.isEmpty(product.getMrp())) {
@@ -178,8 +178,8 @@ public final class ProductView {
             labelMrp.setVisibility(View.GONE);
         }
         double actualDiscount = product.getActualDiscount();
-        TextView txtSave = (TextView) row.findViewById(R.id.txtSave);
-        ImageView valueStarForSaveTxt = (ImageView) row.findViewById(R.id.valueStarForSaveTxt);
+        TextView txtSave = productViewHolder.getTxtSave();
+        ImageView valueStarForSaveTxt = productViewHolder.getValueStartForSaveTxt();
 
         if (hasSavings) {
             String prefix = "SAVE: `";
@@ -203,11 +203,11 @@ public final class ProductView {
         txtSalePrice.setText(context.asRupeeSpannable(product.getSellPrice()));
     }
 
-    private static void setPromo(View row, Product product, ProductViewDisplayDataHolder productViewDisplayDataHolder,
+    private static void setPromo(ProductViewHolder productViewHolder, Product product, ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                  final BaseActivity context) {
-        TextView txtPromoLabel = (TextView) row.findViewById(R.id.promoLabel);
-        TextView txtPromoDesc = (TextView) row.findViewById(R.id.txtPromoName);
-        TextView txtPromoAddSavings = (TextView) row.findViewById(R.id.txtPromoAddSavings);
+        TextView txtPromoLabel = productViewHolder.getTxtPromoLabel();
+        TextView txtPromoDesc = productViewHolder.getTxtPromoDesc();
+        TextView txtPromoAddSavings = productViewHolder.getTxtPromoAddSavings();
         if (product.getProductPromoInfo() != null &&
                 Promo.getAllTypes().contains(product.getProductPromoInfo().getPromoType())) {
             //Show Promo Saving
@@ -263,12 +263,12 @@ public final class ProductView {
         }
     }
 
-    private static void setProductAdditionalActionMenu(View row, final Product product,
+    private static void setProductAdditionalActionMenu(ProductViewHolder productViewHolder, final Product product,
                                                        final ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                                        final BaseActivity context,
                                                        final BaseFragment fragment) {
-        final ImageView imgProductAdditionalAction = (ImageView) row.findViewById(R.id.imgProductAdditionalAction);
-        setShoppingDeleteButton(row, product, productViewDisplayDataHolder, context, fragment);
+        final ImageView imgProductAdditionalAction = productViewHolder.getImgProductAdditionalAction();
+        setShoppingDeleteButton(productViewHolder, product, productViewDisplayDataHolder, context, fragment);
         if (productViewDisplayDataHolder.isShowShoppingListBtn() && productViewDisplayDataHolder.isLoggedInMember()
                 && !product.getProductStatus().equalsIgnoreCase("N") && fragment != null) {
             imgProductAdditionalAction.setOnClickListener(new View.OnClickListener() {
@@ -299,13 +299,13 @@ public final class ProductView {
         }
     }
 
-    private static void setShoppingDeleteButton(View row, final Product product,
+    private static void setShoppingDeleteButton(ProductViewHolder productViewHolder, final Product product,
                                                 final ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                                 final BaseActivity context,
                                                 final BaseFragment baseFragment) {
 
         // for logged in user display add to list icon
-        final ImageView imgShoppingListDel = (ImageView) row.findViewById(R.id.imgShoppingListDel);
+        final ImageView imgShoppingListDel = productViewHolder.getImgShoppingListDel();
 
         if (productViewDisplayDataHolder.showShopListDeleteBtn()) {
             imgShoppingListDel.setVisibility(View.VISIBLE);
@@ -361,19 +361,19 @@ public final class ProductView {
         }
     }
 
-    private static void setBasketAndAvailabilityViews(View row, final Product product,
+    private static void setBasketAndAvailabilityViews(ProductViewHolder productViewHolder, final Product product,
                                                       final ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                                       final BaseActivity context,
                                                       final BaseFragment baseFragment) {
-        final Button btnAddToBasket = (Button) row.findViewById(R.id.btnAddToBasket);
-        final ImageView imgDecBasketQty = (ImageView) row.findViewById(R.id.imgDecBasketQty);
-        final TextView txtInBasket = (TextView) row.findViewById(R.id.txtInBasket);
-        final ImageView imgIncBasketQty = (ImageView) row.findViewById(R.id.imgIncBasketQty);
+        final Button btnAddToBasket = productViewHolder.getBtnAddToBasket();
+        final ImageView imgDecBasketQty = productViewHolder.getImgDecBasketQty();
+        final TextView txtInBasket = productViewHolder.getTxtInBasket();
+        final ImageView imgIncBasketQty = productViewHolder.getImgIncBasketQty();
 
-        final EditText editTextQty = (EditText) row.findViewById(R.id.editTextQty);
-        final ImageView imgShoppingListAddToBasket = (ImageView) row.findViewById(R.id.imgProductAdditionalAction);
+        final EditText editTextQty = productViewHolder.getEditTextQty();
+        final ImageView imgShoppingListAddToBasket = productViewHolder.getImgShoppingListAddToBasket();
 
-        TextView txtOutOfStockORNotForSale = (TextView) row.findViewById(R.id.txtOutOfStockORNotForSale);
+        TextView txtOutOfStockORNotForSale = productViewHolder.getTxtOutOfStockORNotForSale();
 
         if (productViewDisplayDataHolder.isShowBasketBtn()) {
             if (product.getProductStatus().equalsIgnoreCase("A")) {
