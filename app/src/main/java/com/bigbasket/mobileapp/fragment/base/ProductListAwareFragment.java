@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -31,6 +32,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.view.uiv3.FilterProductDialog;
 import com.bigbasket.mobileapp.view.uiv3.SortProductDialog;
+import com.etsy.android.grid.StaggeredGridView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +47,8 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
     private ArrayList<ShoppingListName> shoppingListNames;
     private String selectedProductId;
     private ProductListAdapter productListAdapter;
+    private AbsListView mProductAbsListView;
+    private View mFooterView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -84,6 +88,15 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
     public void loadMoreProducts() {
         int nextPage = productListData.getCurrentPage() + 1;
         if (nextPage <= productListData.getTotalPages()) {
+            if (mFooterView == null) {
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                mFooterView = inflater.inflate(R.layout.uiv3_list_loading_footer, null);
+            }
+            if (mProductAbsListView instanceof ListView) {
+                ((ListView) mProductAbsListView).addFooterView(mFooterView, null, false);
+            } else if (mProductAbsListView instanceof StaggeredGridView) {
+                ((StaggeredGridView) mProductAbsListView).addFooterView(mFooterView, null, false);
+            }
             getProductListAsyncTask(nextPage).execute();
         }
     }
@@ -122,7 +135,7 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
         View base = inflater.inflate(R.layout.product_list, null);
-        ListView productListView = (ListView) base.findViewById(R.id.lstProducts);
+        mProductAbsListView = (AbsListView) base.findViewById(R.id.lstProducts);
 
         // Set product-list header view
         View headerView = inflater.inflate(R.layout.uiv3_product_list_filter_layout, null);
@@ -132,7 +145,11 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
         TextView txtNumProducts = (TextView) headerView.findViewById(R.id.txtNumProducts);
         txtNumProducts.setText(getNumProductsMessage());
 
-        productListView.addHeaderView(headerView, null, false);
+        if (mProductAbsListView instanceof ListView) {
+            ((ListView) mProductAbsListView).addHeaderView(headerView, null, false);
+        } else if (mProductAbsListView instanceof StaggeredGridView) {
+            ((StaggeredGridView) mProductAbsListView).addHeaderView(headerView, null, false);
+        }
 
         TextView txtFilterBy = (TextView) headerView.findViewById(R.id.txtFilterBy);
         TextView txtSortedOnValue = (TextView) headerView.findViewById(R.id.txtSortedOnValue);
@@ -177,13 +194,22 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
         productListAdapter = new ProductListAdapter(productListData.getProducts(), null,
                 getBaseActivity(), productViewDisplayDataHolder, this, productListData.getProductCount());
 
-        productListView.setAdapter(productListAdapter);
+        if (mProductAbsListView instanceof ListView) {
+            ((ListView) mProductAbsListView).setAdapter(productListAdapter);
+        } else if (mProductAbsListView instanceof StaggeredGridView) {
+            ((StaggeredGridView) mProductAbsListView).removeFooterView(mFooterView);
+        }
         contentView.addView(base);
     }
 
     @Override
     public void updateProductList(List<Product> nextPageProducts) {
         if (productListData == null || productListAdapter == null) return;
+        if (mProductAbsListView instanceof ListView) {
+            ((ListView) mProductAbsListView).removeFooterView(mFooterView);
+        } else if (mProductAbsListView instanceof StaggeredGridView) {
+            ((StaggeredGridView) mProductAbsListView).removeFooterView(mFooterView);
+        }
         List<Product> currentProducts = productListData.getProducts();
         currentProducts.addAll(nextPageProducts);
         productListAdapter.notifyDataSetChanged();
