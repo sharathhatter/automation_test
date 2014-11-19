@@ -33,8 +33,8 @@
     <string name="member_error">Member ShoppingList does not exist</string>
     <string name="missing_field">Internal Server Error</string>
     <!--<string name="missing_field">Invalid Field</string>-->
-    <string name="login_required">Please log in to your account.</string>
-    <string name="login_to_place_order">Please log in to place an order</string>
+    <string name="login_required">Please sign in to your account.</string>
+    <string name="login_to_place_order">Please sign in to place an order</string>
     <string name="voucher">Provided eVoucher Invalid</string>
     <string name="voucherCode">eVoucher Code</string>
     <!--<string name="invalid_field">Invalid_field</string>-->
@@ -159,19 +159,17 @@
     <string name="hiGuest">Hi Guest</string>
     <string name="hi">Hi</string>
     <string name="checkState">checkState</string>
-    <string name="registerHomepageTxt">Register</string>
+    <string name="registerHomepageTxt">Sign up</string>
     <string name="or">or</string>
     <string name="myAccount">My Account</string>
     <string name="signOut">Logout</string>
     <string name="logOutSuccess">Logout successful</string>
-    <string name="signIn">Login</string>
+    <string name="signIn">Sign in</string>
     <string name="signoutConfirmation">Are you sure that you want to logout?</string>
     <string name="changeCityHome">Change City</string>
-    <string name="signInHeader">LOG IN</string>
-    <string name="signUpHeader">REGISTER</string>
-    <string name="signUp">Register</string>
+    <string name="signUp">Sign Up</string>
     <string name="changeCityHeader">CHANGE CITY</string>
-    <string name="loginYourAcc">Login to your account</string>
+    <string name="loginYourAcc">Sign in to your account</string>
     <string name="HNDetails">House No &amp; Details</string>
     <string name="selectAsDeliveryAddress">Select this as my delivery address</string>
     <string name="addressFormHeading">Add new address</string>
@@ -284,13 +282,10 @@
     <string name="edit">Edit</string>
     <string name="remember">Remember me</string>
     <string name="forgotPasswd">Forgot Password?</string>
-    <string name="noAccountYet">Don&quot;t have a account yet?</string>
-    <string name="registerAccount">Register an account</string>
     <string name="acceptTermsAndCond">I Accept the terms and conditions.</string>
     <string name="receivePromos">Receive mail about promotions. Offer and Service.</string>
     <string name="cityChangeSuccess">Your city was changed successfully</string>
     <string name="loggingIn">LOGGING IN...</string>
-    <string name="registering">Registering...</string>
     <string name="firstName">First Name</string>
     <string name="lastName">Last Name</string>
     <string name="mobileNumber">Mobile Number</string>
@@ -363,12 +358,12 @@
 
     <!-- singin -->
     <string name="enter_password">Enter password</string>
-    <string name="login">login</string>
+    <string name="login">sign in</string>
     <string name="notValidEmail">Enter valid email-id</string>
     <string name="enterPwd">Enter password</string>
     <string name="pleaseWait">Please wait</string>
     <string name="login_page_title">SIGN IN</string>
-    <string name="fb_session_expire_msg">Facebook session expired, Please login again.</string>
+    <string name="fb_session_expire_msg">Facebook session expired, Please sign in again.</string>
     <string name="fb_confirm_msg1">You are logged in to Facebook as</string>
     <string name="fb_confirm_msg2">We do not have a BigBasket account with</string>
     <string name="fb_confirm_msg3">To complete the Facebook account linking, select from the two options mentioned below.</string>
@@ -445,6 +440,7 @@
     <string name="chooseYourLocation">Choose Your Location</string>
     <integer name="grid_portrait_count">1</integer>
     <string name="search_activity_launchMode">singleTop</string>
-    <string name="login_with_facebook">Log in</string>
-    <string name="loginPageSignUpText">Don\'t have an account?</string>
+    <string name="use_facebook">Facebook</string>
+    <string name="use_google">Google</string>
+    <string name="loginPageSignUpText">New user? Sign Up</string>
 </resources>

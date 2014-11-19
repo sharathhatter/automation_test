@@ -7,7 +7,10 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.UnderlineSpan;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +31,6 @@ import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.SignInButton;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -44,12 +46,12 @@ import java.util.HashMap;
  * https://developers.google.com/+/mobile/android/getting-started#step_1_enable_the_google_api
  * and follow the steps in "Step 1" to create an OAuth 2.0 client for your package.
  */
-public class LoginActivity extends PlusBaseActivity {
+public class SignInActivity extends PlusBaseActivity {
 
     // UI references.
     private EditText mPasswordView;
     private View mProgressView;
-    private SignInButton mPlusSignInButton;
+    private Button mPlusSignInButton;
     private View mLoginFormView;
     private View mBaseView;
 
@@ -64,7 +66,7 @@ public class LoginActivity extends PlusBaseActivity {
 
         setTitle(getString(R.string.signIn));
         // Find the Google+ sign in button.
-        mPlusSignInButton = (SignInButton) mBaseView.findViewById(R.id.plus_sign_in_button);
+        mPlusSignInButton = (Button) mBaseView.findViewById(R.id.plus_sign_in_button);
         if (supportsGooglePlayServices()) {
             // Set a listener to connect the user when the G+ button is clicked.
             mPlusSignInButton.setOnClickListener(new OnClickListener() {
@@ -105,6 +107,11 @@ public class LoginActivity extends PlusBaseActivity {
 
         mLoginFormView = mBaseView.findViewById(R.id.login_form);
         mProgressView = mBaseView.findViewById(R.id.login_progress);
+
+        TextView txtSignup = (TextView) mBaseView.findViewById(R.id.txtSignup);
+        SpannableString spannableString = new SpannableString(getString(R.string.loginPageSignUpText));
+        spannableString.setSpan(new UnderlineSpan(), 0, spannableString.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+        txtSignup.setText(spannableString);
     }
 
 
@@ -315,7 +322,7 @@ public class LoginActivity extends PlusBaseActivity {
         onLoginSuccess();
     }
 
-    public void OnRegistrationButtonClicked(View v) {
+    public void OnRegistrationLinkClicked(View v) {
         Intent intent = new Intent(this, SignupActivity.class);
         startActivityForResult(intent, Constants.GO_TO_HOME);
     }

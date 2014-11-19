@@ -35,7 +35,7 @@ import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.StartActivity;
-import com.bigbasket.mobileapp.activity.account.uiv3.LoginActivity;
+import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.CheckoutQCActivity;
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
@@ -397,7 +397,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         if (sourceName != null) {
             switch (sourceName) {
                 case Constants.LOGIN_REQUIRED:
-                    Intent loginIntent = new Intent(this, LoginActivity.class);
+                    Intent loginIntent = new Intent(this, SignInActivity.class);
                     startActivityForResult(loginIntent, Constants.GO_TO_HOME);
                     break;
             }

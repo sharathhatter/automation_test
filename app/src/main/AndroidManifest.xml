@@ -188,7 +188,7 @@
             android:name="com.bigbasket.mobileapp.activity.order.uiv3.PayuTransactionActivity"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name="com.bigbasket.mobileapp.activity.account.uiv3.LoginActivity"
+            android:name=".activity.account.uiv3.SignInActivity"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name="com.bigbasket.mobileapp.activity.account.uiv3.SignupActivity"
