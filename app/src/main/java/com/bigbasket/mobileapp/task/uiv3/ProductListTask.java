@@ -1,14 +1,17 @@
 package com.bigbasket.mobileapp.task.uiv3;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
+import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.CancelableAware;
+import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
+import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
+import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.model.product.ProductListData;
 import com.bigbasket.mobileapp.model.product.ProductQuery;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -28,24 +31,20 @@ import org.json.JSONObject;
 
 import java.util.List;
 
-public class ProductListTask extends AsyncTask {
+public class ProductListTask<T> extends AsyncTask {
     private static final String TAG = ProductListTask.class.getName();
 
     private int page;
     private HttpOperationResult httpOperationResult;
-    private ProductListAwareFragment fragment;
-    private Context context;
+    private T ctx;
 
-    public ProductListTask(ProductListAwareFragment fragment) {
-        this.page = 1;
-        this.fragment = fragment;
-        this.context = fragment.getActivity();
+    public ProductListTask(T ctx) {
+        this(1, ctx);
     }
 
-    public ProductListTask(int page, ProductListAwareFragment fragment) {
+    public ProductListTask(int page, T ctx) {
         this.page = page;
-        this.fragment = fragment;
-        this.context = fragment.getActivity();
+        this.ctx = ctx;
     }
 
     @Override
@@ -53,8 +52,8 @@ public class ProductListTask extends AsyncTask {
         if (isCancelled()) {
             return null;
         }
-        ProductQuery productQuery = fragment.getProductQuery();
-        String url = fragment.getProductListUrl();
+        ProductQuery productQuery = ((ProductListDataAware) ctx).getProductQuery();
+        String url = ((ProductListDataAware) ctx).getProductListUrl();
         if (productQuery != null) {
             if (page > 1) {
                 productQuery.setPage(page);
@@ -62,15 +61,15 @@ public class ProductListTask extends AsyncTask {
             List<NameValuePair> parameterList = productQuery.getAsNameValuePair();
             url += URLEncodedUtils.format(parameterList, "utf-8");
         }
-        if (fragment.checkInternetConnection()) {
-            SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(context);
-            String visitorId = AuthParameters.getInstance(context).getVisitorId();
-            String bbAuthToken = AuthParameters.getInstance(context).getBbAuthToken();
+        if (((ConnectivityAware) ctx).checkInternetConnection()) {
+            SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(((ActivityAware) ctx).getCurrentActivity());
+            String visitorId = AuthParameters.getInstance(((ActivityAware) ctx).getCurrentActivity()).getVisitorId();
+            String bbAuthToken = AuthParameters.getInstance(((ActivityAware) ctx).getCurrentActivity()).getBbAuthToken();
             String osVersion = prefer.getString("os", "");
             httpOperationResult = DataUtil.doHttpGet(url, new BasicCookieStore(), visitorId,
                     bbAuthToken, osVersion);
         } else {
-            fragment.getHandler().sendEmptyMessage(MessageCode.INTERNET_ERROR);
+            ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.INTERNET_ERROR);
             Log.d(TAG, "Sending message: MessageCode.INTERNET_ERROR");
         }
         return null;
@@ -79,42 +78,51 @@ public class ProductListTask extends AsyncTask {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        if (fragment.isSuspended()) {
+        if (((CancelableAware) ctx).isSuspended()) {
             cancel(true);
         } else if (page == 1) {
-            fragment.showProgressView();
+            ((ProgressIndicationAware) ctx).showProgressView();
         }
     }
 
     @Override
     protected void onPostExecute(Object result) {
+        if (((CancelableAware) ctx).isSuspended()) {
+            return;
+        } else {
+            if (page == 1) {
+                try {
+                    ((ProgressIndicationAware) ctx).hideProgressView();
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
+            }
+        }
         if (httpOperationResult != null) {
             if (isSuccessFull(httpOperationResult)) {
-                ProductListDataAware productListDataAware = fragment;
                 ProductListData productListData = ParserUtil.parseProductListData(httpOperationResult.getJsonObject());
                 if (page > 1) {
-                    ProductListData existingProductListData = fragment.getProductListData();
+                    ProductListData existingProductListData = ((ProductListDataAware) ctx).getProductListData();
                     existingProductListData.setCurrentPage(productListData.getCurrentPage());
-                    productListDataAware.updateProductList(productListData.getProducts());
+                    ((ProductListDataAware) ctx).updateProductList(productListData.getProducts());
                 } else {
-                    fragment.hideProgressView();
-                    productListDataAware.setProductListData(productListData);
+                    ((ProductListDataAware) ctx).setProductListData(productListData);
                     if (!TextUtils.isEmpty(productListData.getSortedOn())) {
-                        productListDataAware.getProductListData().
-                                setUserSortedOn(productListDataAware.getProductListData().getUserSortedOn());
+                        ((ProductListDataAware) ctx).getProductListData().
+                                setUserSortedOn(((ProductListDataAware) ctx).getProductListData().getUserSortedOn());
                     }
-                    productListDataAware.updateData();
+                    ((ProductListDataAware) ctx).updateData();
                 }
                 Log.d(TAG, "Product list fetch and display completed");
             } else if (httpOperationResult.getResponseCode() == HttpCode.UNAUTHORIZED) {
-                fragment.getHandler().sendEmptyMessage(MessageCode.UNAUTHORIZED);
+                ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.UNAUTHORIZED);
                 Log.d(TAG, "Sending message: MessageCode.UNAUTHORIZED");
             } else {
-                fragment.getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
+                ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
                 Log.d(TAG, "Sending message: MessageCode.SERVER_ERROR");
             }
         } else {
-            fragment.getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
+            ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
             Log.d(TAG, "Sending message: MessageCode.SERVER_ERROR");
         }
     }

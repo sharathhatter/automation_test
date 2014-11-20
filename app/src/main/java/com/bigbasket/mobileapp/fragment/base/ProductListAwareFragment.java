@@ -106,11 +106,11 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
     }
 
     public AsyncTask getProductListAsyncTask() {
-        return new ProductListTask(this);
+        return new ProductListTask<>(this);
     }
 
     public AsyncTask getProductListAsyncTask(int page) {
-        return new ProductListTask(page, this);
+        return new ProductListTask<>(page, this);
     }
 
     public ProductListData getProductListData() {
