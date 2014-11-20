@@ -288,7 +288,7 @@ public class SignInFragment extends FacebookRegisterLogIn {
     }
 
     public void saveUserDetailInPreference(JsonObject responseJsonObj) {
-        if (getActivity() == null || getBaseActivity() == null) return;
+        if (getActivity() == null || getCurrentActivity() == null) return;
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         SharedPreferences.Editor editor = preferences.edit();
         String bbToken = responseJsonObj.get(Constants.BB_TOKEN).getAsString();
@@ -314,7 +314,7 @@ public class SignInFragment extends FacebookRegisterLogIn {
             editor.remove(Constants.PASSWD_PREF);
         }
         editor.commit();
-        getBaseActivity().onLoginSuccess();
+        getCurrentActivity().onLoginSuccess();
     }
 
     public void OnForgotPasswordClicked() {

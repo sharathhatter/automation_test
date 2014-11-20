@@ -1,35 +1,44 @@
 package com.bigbasket.mobileapp.task;
 
-import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.CancelableAware;
+import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
+import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
+import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
+import com.bigbasket.mobileapp.model.request.HttpRequestData;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.HttpCode;
 import com.bigbasket.mobileapp.util.MessageCode;
 
+import org.apache.http.impl.client.BasicCookieStore;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
 import java.util.List;
 
-public class ShoppingListDoOperationTask extends AsyncTask<String, Long, Void> {
+public class ShoppingListDoOperationTask<T> extends AsyncTask<String, Long, Void> {
 
     private static final String TAG = ShoppingListDoOperationTask.class.getName();
-    private ProgressDialog progressDialog;
     private String url;
     private List<String> selectedShoppingListNameSlugs;
-    private BaseActivity activity;
+    private T ctx;
     private ShoppingListOption shoppingListOption;
     private HttpOperationResult httpOperationResult;
 
-    public ShoppingListDoOperationTask(BaseActivity activity, String url,
+    public ShoppingListDoOperationTask(T ctx, String url,
                                        List<String> selectedShoppingListNameSlugs,
                                        ShoppingListOption shoppingListOption) {
-        this.activity = activity;
+        this.ctx = ctx;
         this.url = url;
         this.selectedShoppingListNameSlugs = selectedShoppingListNameSlugs;
         this.shoppingListOption = shoppingListOption;
@@ -41,11 +50,28 @@ public class ShoppingListDoOperationTask extends AsyncTask<String, Long, Void> {
         if (isCancelled()) {
             return null;
         }
-        if (activity.checkInternetConnection()) {
-            String selectedProductId = ((ShoppingListNamesAware) activity).getSelectedProductId();
-            httpOperationResult = DataUtil.doHttpPostShoppingListOptions(activity, url, shoppingListOption, selectedShoppingListNameSlugs, selectedProductId);
+        if (((ConnectivityAware) ctx).checkInternetConnection()) {
+            String selectedProductId = ((ShoppingListNamesAware) ctx).getSelectedProductId();
+            HashMap<String, String> requestParams = new HashMap<>();
+            requestParams.put("product_id", selectedProductId);
+            switch (shoppingListOption) {
+                case ADD_TO_LIST:
+                    try {
+                        JSONArray jsonArray = new JSONArray(selectedShoppingListNameSlugs.toString());
+                        requestParams.put("slugs", jsonArray.toString());
+                    } catch (JSONException e) {
+                    }
+                    break;
+                case DELETE_ITEM:
+                    requestParams.put(Constants.SLUG, selectedShoppingListNameSlugs.get(0));
+                    break;
+            }
+            AuthParameters authParameters = AuthParameters.getInstance(((ActivityAware) ctx).getCurrentActivity());
+            HttpRequestData httpRequestData = new HttpRequestData(url, requestParams, true, authParameters.getBbAuthToken(),
+                    authParameters.getVisitorId(), authParameters.getOsVersion(), new BasicCookieStore(), null);
+            httpOperationResult = DataUtil.doHttpPost(httpRequestData);
         } else {
-            ((HandlerAware) activity).getHandler().sendEmptyMessage(MessageCode.INTERNET_ERROR);
+            ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.INTERNET_ERROR);
             Log.d(TAG, "Sending message: MessageCode.INTERNET_ERROR");
 
         }
@@ -56,54 +82,62 @@ public class ShoppingListDoOperationTask extends AsyncTask<String, Long, Void> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        if (activity.isActivitySuspended()) {
+        if (((CancelableAware) ctx).isSuspended()) {
             cancel(true);
         } else {
-            progressDialog = ProgressDialog.show(activity, "", "Please wait");
+            ((ProgressIndicationAware) ctx).showProgressDialog("Please wait...");
         }
     }
 
     @Override
     protected void onPostExecute(Void result) {
-        if (progressDialog != null && progressDialog.isShowing()) {
+        if (((CancelableAware) ctx).isSuspended()) {
+            return;
+        } else {
             try {
-                progressDialog.dismiss();
-            } catch (IllegalArgumentException ex) {
+                ((ProgressIndicationAware) ctx).hideProgressDialog();
+            } catch (IllegalArgumentException e) {
                 return;
             }
-        } else {
-            return;
         }
         if (httpOperationResult != null) {
             if (httpOperationResult.getResponseCode() == HttpCode.HTTP_OK) {
+                try {
+                    JSONObject jsonObject = new JSONObject(httpOperationResult.getReponseString());
+                    httpOperationResult.setJsonObject(jsonObject);
+                } catch (JSONException e) {
+                    ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
+                    Log.d(TAG, "Sending message: MessageCode.SERVER_ERROR");
+                    return;
+                }
                 if (httpOperationResult.getJsonObject().optString(Constants.STATUS).equals("OK")) {
                     switch (shoppingListOption) {
                         case ADD_TO_LIST:
-                            ((HandlerAware) activity).getHandler().sendEmptyMessage(MessageCode.ADD_TO_SHOPPINGLIST_OK);
+                            ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.ADD_TO_SHOPPINGLIST_OK);
                             Log.d(TAG, "Sending message: MessageCode.ADD_TO_SHOPPINGLIST_OK");
                             break;
                         case DELETE_ITEM:
-                            ((HandlerAware) activity).getHandler().sendEmptyMessage(MessageCode.DELETE_FROM_SHOPPING_LIST_OK);
-                            ((ShoppingListNamesAware) activity).postShoppingListItemDeleteOperation();
+                            ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.DELETE_FROM_SHOPPING_LIST_OK);
+                            ((ShoppingListNamesAware) ctx).postShoppingListItemDeleteOperation();
                             Log.d(TAG, "Sending message: MessageCode.DELETE_FROM_SHOPPING_LIST_OK");
                             break;
                     }
                 } else {
-                    ((HandlerAware) activity).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
+                    ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
                     Log.d(TAG, "Sending message: MessageCode.SERVER_ERROR");
                 }
 
             } else if (httpOperationResult.getResponseCode() == HttpCode.UNAUTHORIZED) {
-                ((HandlerAware) activity).getHandler().sendEmptyMessage(MessageCode.UNAUTHORIZED);
+                ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.UNAUTHORIZED);
                 Log.d(TAG, "Sending message: MessageCode.UNAUTHORIZED");
 
             } else {
-                ((HandlerAware) activity).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
+                ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
                 Log.d(TAG, "Sending message: MessageCode.SERVER_ERROR");
             }
 
         } else {
-            ((HandlerAware) activity).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
+            ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
             Log.d(TAG, "Sending message: MessageCode.SERVER_ERROR");
         }
 

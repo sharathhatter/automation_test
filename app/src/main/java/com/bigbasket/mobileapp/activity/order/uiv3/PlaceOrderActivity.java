@@ -117,7 +117,7 @@ public class PlaceOrderActivity extends TabActivity implements PlaceOrderAware {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        setActivitySuspended(false);
+        setSuspended(false);
         switch (resultCode) {
             case Constants.PAYU_FAILED:
                 setResult(resultCode);

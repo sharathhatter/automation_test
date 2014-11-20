@@ -3,7 +3,11 @@ package com.bigbasket.mobileapp.task.uiv3;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.CancelableAware;
+import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
+import com.bigbasket.mobileapp.interfaces.HandlerAware;
+import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
@@ -20,15 +24,15 @@ import org.apache.http.impl.client.BasicCookieStore;
 
 import java.util.HashMap;
 
-public class ShoppingListNamesTask extends AsyncTask<String, Long, Void> {
+public class ShoppingListNamesTask<T> extends AsyncTask<String, Long, Void> {
     private static final String TAG = ShoppingListNamesTask.class.getName();
     private HttpOperationResult httpOperationResult;
     private String url;
-    private BaseFragment fragment;
+    private T ctx;
     private boolean showSystem;
 
-    public ShoppingListNamesTask(BaseFragment fragment, String url, boolean showSystem) {
-        this.fragment = fragment;
+    public ShoppingListNamesTask(T ctx, String url, boolean showSystem) {
+        this.ctx = ctx;
         this.url = url;
         this.showSystem = showSystem;
     }
@@ -38,8 +42,8 @@ public class ShoppingListNamesTask extends AsyncTask<String, Long, Void> {
         if (isCancelled()) {
             return null;
         }
-        if (fragment.checkInternetConnection()) {
-            AuthParameters authParameters = AuthParameters.getInstance(fragment.getActivity());
+        if (((ConnectivityAware) ctx).checkInternetConnection()) {
+            AuthParameters authParameters = AuthParameters.getInstance(((ActivityAware) ctx).getCurrentActivity());
             HashMap<String, String> httpPostParams = new HashMap<String, String>() {
                 {
                     put(Constants.SYSTEM, showSystem ? "1" : "0");
@@ -50,7 +54,7 @@ public class ShoppingListNamesTask extends AsyncTask<String, Long, Void> {
                     authParameters.getOsVersion(), new BasicCookieStore(), null);
             httpOperationResult = DataUtil.doHttpPost(httpRequestData);
         } else {
-            fragment.getHandler().sendEmptyMessage(MessageCode.INTERNET_ERROR);
+            ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.INTERNET_ERROR);
             Log.d(TAG, "Sending message: MessageCode.INTERNET_ERROR");
 
         }
@@ -61,38 +65,42 @@ public class ShoppingListNamesTask extends AsyncTask<String, Long, Void> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        if (fragment.isSuspended()) {
+        if (((CancelableAware) ctx).isSuspended()) {
             cancel(true);
         } else {
-            fragment.showProgressDialog("Please wait...");
+            ((ProgressIndicationAware) ctx).showProgressDialog("Please wait...");
         }
     }
 
     @Override
     protected void onPostExecute(Void result) {
-        if (fragment.isSuspended()) {
+        if (((CancelableAware) ctx).isSuspended()) {
             return;
         } else {
-            fragment.hideProgressDialog();
+            try {
+                ((ProgressIndicationAware) ctx).hideProgressDialog();
+            } catch (IllegalArgumentException e) {
+                return;
+            }
         }
         if (httpOperationResult != null && httpOperationResult.getReponseString() != null) {
             if (httpOperationResult.getResponseCode() == HttpCode.HTTP_OK) {
                 String responseString = httpOperationResult.getReponseString();
                 JsonElement responseJsonElement = new JsonParser().parse(responseString);
-                ((ShoppingListNamesAware) fragment).setShoppingListNames(ParserUtil.parseShoppingList(responseJsonElement.getAsJsonObject()));
-                fragment.getHandler().sendEmptyMessage(MessageCode.GET_SHOPPINGLIST_NAMES_OK);
+                ((ShoppingListNamesAware) ctx).setShoppingListNames(ParserUtil.parseShoppingList(responseJsonElement.getAsJsonObject()));
+                ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.GET_SHOPPINGLIST_NAMES_OK);
                 Log.d(TAG, "Sending message: MessageCode.GET_SHOPPINGLIST_NAMES_OK");
             } else if (httpOperationResult.getResponseCode() == HttpCode.UNAUTHORIZED) {
-                fragment.getHandler().sendEmptyMessage(MessageCode.UNAUTHORIZED);
+                ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.UNAUTHORIZED);
                 Log.d(TAG, "Sending message: MessageCode.UNAUTHORIZED");
 
             } else {
-                fragment.getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
+                ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
                 Log.d(TAG, "Sending message: MessageCode.SERVER_ERROR");
             }
 
         } else {
-            fragment.getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
+            ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
             Log.d(TAG, "Sending message: MessageCode.SERVER_ERROR");
         }
         super.onPostExecute(result);

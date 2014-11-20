@@ -117,7 +117,6 @@ public class ProductListTask extends AsyncTask {
             fragment.getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
             Log.d(TAG, "Sending message: MessageCode.SERVER_ERROR");
         }
-        super.onPostExecute(result);
     }
 
     private boolean isSuccessFull(HttpOperationResult httpOperationResult) {

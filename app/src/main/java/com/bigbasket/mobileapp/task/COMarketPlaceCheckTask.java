@@ -1,13 +1,14 @@
 package com.bigbasket.mobileapp.task;
 
-import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.COMarketPlaceAware;
+import com.bigbasket.mobileapp.interfaces.CancelableAware;
+import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
+import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
@@ -25,16 +26,15 @@ import com.google.gson.JsonParser;
 import org.apache.http.impl.client.BasicCookieStore;
 
 
-public class COMarketPlaceCheckTask extends AsyncTask<String, Long, Void> {
+public class COMarketPlaceCheckTask<T> extends AsyncTask<String, Long, Void> {
 
 
     private static final String TAG = COMarketPlaceCheckTask.class.getName();
-    private ProgressDialog progressDialog;
     private HttpOperationResult httpOperationResult;
-    private BaseActivity activity;
+    private T ctx;
 
-    public COMarketPlaceCheckTask(BaseActivity activity) {
-        this.activity = activity;
+    public COMarketPlaceCheckTask(T ctx) {
+        this.ctx = ctx;
     }
 
     @Override
@@ -42,14 +42,14 @@ public class COMarketPlaceCheckTask extends AsyncTask<String, Long, Void> {
         if (isCancelled()) {
             return null;
         }
-        if (activity.checkInternetConnection()) {
-            AuthParameters authParameters = AuthParameters.getInstance(activity);
+        if (((ConnectivityAware) ctx).checkInternetConnection()) {
+            AuthParameters authParameters = AuthParameters.getInstance(((ActivityAware) ctx).getCurrentActivity());
             HttpRequestData httpRequestData = new HttpRequestData(MobileApiUrl.getBaseAPIUrl() + Constants.CO_BASKET_CHECK,
                     null, false, authParameters.getBbAuthToken(), authParameters.getVisitorId(),
                     authParameters.getOsVersion(), new BasicCookieStore(), null);
             httpOperationResult = DataUtil.doHttpGet(httpRequestData);
         } else {
-            ((HandlerAware) activity).getHandler().sendEmptyMessage(MessageCode.INTERNET_ERROR);
+            ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.INTERNET_ERROR);
             Log.d(TAG, "Sending message: MessageCode.INTERNET_ERROR");
         }
         return null;
@@ -58,23 +58,23 @@ public class COMarketPlaceCheckTask extends AsyncTask<String, Long, Void> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        if (activity.isActivitySuspended()) {
+        if (((CancelableAware) ctx).isSuspended()) {
             cancel(true);
         } else {
-            progressDialog = ProgressDialog.show(activity, "", "Please wait", true, false);
+            ((ProgressIndicationAware) ctx).showProgressDialog("Please wait...");
         }
     }
 
     @Override
     protected void onPostExecute(Void result) {
-        if (progressDialog != null && progressDialog.isShowing()) {
+        if (((CancelableAware) ctx).isSuspended()) {
+            return;
+        } else {
             try {
-                progressDialog.dismiss();
-            } catch (IllegalArgumentException ex) {
+                ((ProgressIndicationAware) ctx).hideProgressDialog();
+            } catch (IllegalArgumentException e) {
                 return;
             }
-        } else {
-            return;
         }
         if (httpOperationResult != null) {
             if (httpOperationResult.getResponseCode() == HttpCode.HTTP_OK) {
@@ -86,30 +86,25 @@ public class COMarketPlaceCheckTask extends AsyncTask<String, Long, Void> {
                     Gson gson = new Gson();
                     final MarketPlace marketPlace = gson.fromJson(responseJsonObject, MarketPlace.class);
                     // call interface method
-                    //((COMarketPlaceAware) activity).setMarketPlaceInfo(marketPlace);
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            ((COMarketPlaceAware) activity).onCoMarketPlaceSuccess(marketPlace);
-                        }
-                    });
+                    ((COMarketPlaceAware) ctx).onCoMarketPlaceSuccess(marketPlace);
 
                 } else {
-                    String msg = status == ExceptionUtil.INTERNAL_SERVER_ERROR ? activity.getResources().getString(R.string.INTERNAL_SERVER_ERROR) :
+                    String msg = status == ExceptionUtil.INTERNAL_SERVER_ERROR ? "Server Error" :
                             jsonObject.get(Constants.MESSAGE).getAsString();
-                    activity.showAlertDialogFinish(activity, null, msg);
+                    // TODO : Improve handling
+                    ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
                 }
             } else if (httpOperationResult.getResponseCode() == HttpCode.UNAUTHORIZED) {
-                ((HandlerAware) activity).getHandler().sendEmptyMessage(MessageCode.UNAUTHORIZED);
+                ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.UNAUTHORIZED);
                 Log.d(TAG, "Sending message: MessageCode.UNAUTHORIZED");
 
             } else {
-                ((HandlerAware) activity).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
+                ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
                 Log.d(TAG, "Sending message: MessageCode.SERVER_ERROR");
             }
 
         } else {
-            ((HandlerAware) activity).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
+            ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
             Log.d(TAG, "Sending message: MessageCode.SERVER_ERROR");
         }
         super.onPostExecute(result);

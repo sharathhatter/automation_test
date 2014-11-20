@@ -31,7 +31,9 @@ import com.bigbasket.mobileapp.handler.MessageHandler;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
 import com.bigbasket.mobileapp.interfaces.COReserveQuantityCheckAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
+import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
+import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.cart.BasketOperationResponse;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
@@ -53,7 +55,8 @@ import java.util.HashMap;
 
 
 public abstract class BaseFragment extends AbstractFragment implements HandlerAware,
-        CartInfoAware, BasketOperationAware, COReserveQuantityCheckAware {
+        CartInfoAware, BasketOperationAware, COReserveQuantityCheckAware, ProgressIndicationAware,
+        ConnectivityAware {
 
     protected Handler handler;
     private ProgressDialog progressDialog;
@@ -85,7 +88,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        setFragmentSuspended(true);
+        setSuspended(true);
         Activity activity = getActivity();
         if (activity != null && activity instanceof BaseActivity) {
             ((BaseActivity) activity).triggerActivityResult(requestCode, resultCode, data);
@@ -109,7 +112,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
                 return;
             }
             if (inlineProgress) {
-                showProgressView(loadingMsg);
+                showProgressView();
             } else {
                 showProgressDialog(loadingMsg);
             }
@@ -149,7 +152,11 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
             if (inlineProgress) {
                 hideProgressView();
             } else {
-                hideProgressDialog();
+                try {
+                    hideProgressDialog();
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
             }
             Log.d("OnPostExecute", "");
             if (httpOperationResult != null) {
@@ -169,23 +176,12 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     }
 
     public void showProgressView() {
-        showProgressView(null);
-    }
-
-    public void showProgressView(String msg) {
         if (getActivity() == null) return;
         LinearLayout view = getContentView();
         if (view == null) return;
         view.removeAllViews();
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View loadingView = inflater.inflate(R.layout.uiv3_loading_layout, null);
-        TextView txtLoadingMsg = (TextView) loadingView.findViewById(R.id.txtLoadingMsg);
-        if (!TextUtils.isEmpty(msg)) {
-            txtLoadingMsg.setText(msg);
-            txtLoadingMsg.setVisibility(View.VISIBLE);
-        } else {
-            txtLoadingMsg.setVisibility(View.GONE);
-        }
         view.addView(loadingView);
     }
 
@@ -208,6 +204,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     public void hideProgressDialog() {
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
+            progressDialog = null;
         }
     }
 
@@ -225,7 +222,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     }
 
     private void changeTitle(String title) {
-        getBaseActivity().onChangeTitle(title);
+        getCurrentActivity().onChangeTitle(title);
     }
 
     public void setTitle() {
@@ -264,7 +261,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     }
 
     @Nullable
-    public BaseActivity getBaseActivity() {
+    public BaseActivity getCurrentActivity() {
         return getActivity() != null ? (BaseActivity) getActivity() : null;
     }
 
@@ -408,7 +405,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
                 });
         }
         AlertDialog alertDialog = builder.create();
-        //if (isActivitySuspended())
+        //if (isSuspended())
         //    return;
         alertDialog.show();
     }
@@ -423,7 +420,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
             }
         });
         AlertDialog alertDialog = alertDialogBuilder.create();
-        //if (isActivitySuspended())
+        //if (isSuspended())
         //    return;
         alertDialog.show();
     }
@@ -441,7 +438,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
             }
         });
         AlertDialog alertDialog = builder.create();
-        //if (isActivitySuspended())
+        //if (isSuspended())
         //    return;
         alertDialog.show();
     }

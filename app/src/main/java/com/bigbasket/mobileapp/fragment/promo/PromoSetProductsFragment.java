@@ -215,7 +215,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
 
     private void displayPromoSummary(String promoInfoMsg, ArrayList<String> criteriaMsgs,
                                      double saving, int numPromoCompletedInBasket) {
-        if (getActivity() == null || getBaseActivity() == null) return;
+        if (getActivity() == null || getCurrentActivity() == null) return;
         View promoSummaryView = getPromoSummaryView();
         TextView txtPromoInfoMsg = (TextView) promoSummaryView.findViewById(R.id.txtPromoInfoMsg);
         txtPromoInfoMsg.setTypeface(faceRobotoRegular);
@@ -227,7 +227,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
             layoutCriteriaMsg.removeAllViews();
             layoutCriteriaMsg.setVisibility(View.VISIBLE);
             for (Spannable spannable : criteriaSpannable) {
-                TextView txtPromoMsg = UIUtil.getPromoMsgTextView(getBaseActivity());
+                TextView txtPromoMsg = UIUtil.getPromoMsgTextView(getCurrentActivity());
                 txtPromoMsg.setTypeface(faceRobotoRegular);
                 txtPromoMsg.setText(spannable);
                 layoutCriteriaMsg.addView(txtPromoMsg);
@@ -272,7 +272,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
                 .build();
 
         ProductListAdapter productListAdapter = new ProductListAdapter(products, baseImgUrl,
-                getBaseActivity(), productViewDisplayDataHolder, this, 1);
+                getCurrentActivity(), productViewDisplayDataHolder, this, 1);
 
         if (productListView instanceof ListView) {
             ((ListView) productListView).setAdapter(productListAdapter);
@@ -312,7 +312,11 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
 //            relativeLayout.addView(btnAddBundle);
 //            contentView.addView(relativeLayout);
         }
-        hideProgressDialog();
+        try {
+            hideProgressDialog();
+        } catch (IllegalArgumentException e) {
+            return;
+        }
     }
 
     private View getPromoSummaryView() {

@@ -10,7 +10,6 @@ import android.util.Log;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.model.request.HttpRequestData;
-import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -30,16 +29,12 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -60,23 +55,6 @@ public class DataUtil {
 //        put(PromoSetProductsActivity.class.getSimpleName(), "pp");
         // TODO : Fix this functionality for add to basket
     }};
-
-    public static JSONObject getJSONFromUrl(String strUrl) {
-        Log.d(TAG, "Fetching data for URL :" + strUrl);
-
-        try {
-            URLConnection connection = new URL(strUrl).openConnection();
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-
-            return new JSONObject(reader.readLine());
-
-        } catch (Exception e) {
-            Log.e(TAG, Log.getStackTraceString(e));
-        }
-        return null;
-
-    }
 
     public static boolean isInternetAvailable(Context context) {
         return getConnectionStatus(context) == MessageCode.NET_CONNECTED;
@@ -227,7 +205,6 @@ public class DataUtil {
         return result;
     }
 
-    @SuppressWarnings("null")
     public static HttpOperationResult doHttpGet(String url, CookieStore cookieStore, String bbVid, String bbAuthToken, String osVersion) {
         HttpResponse response = null;
         HttpOperationResult result = null;
@@ -297,70 +274,6 @@ public class DataUtil {
             httpGet.setHeader("User-Agent", Constants.USER_AGENT_PREFIX + osVersion);
             client.setCookieStore(cookieStore);
             HttpResponse response = client.execute(httpGet);
-
-            int responseCode = response.getStatusLine().getStatusCode();
-            JSONObject jsonObject = null;
-            Log.d(TAG, "Response Code: " + responseCode);
-            if (responseCode == HttpCode.HTTP_OK) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
-                String strResultJson = reader.readLine();
-                jsonObject = new JSONObject(new JSONTokener(strResultJson));
-                Log.d(TAG, "Response Data: " + jsonObject.toString());
-            }
-            Log.d("Server response for URL =>", url);
-            result = new HttpOperationResult(jsonObject, responseCode);
-        } catch (Exception e) {
-            Log.e(TAG, Log.getStackTraceString(e));
-        }
-
-        return result;
-
-    }
-
-    public static HttpOperationResult doHttpPostShoppingListOptions(Context context, String url, ShoppingListOption shoppingListOption,
-                                                                    List<String> selectedShoppingListNameSlugs, String productId) {
-        // TODO : Remove this method
-        HttpOperationResult result = null;
-        Log.d("Server request for URL =>", url);
-        HttpParams httpParams = new BasicHttpParams();
-        HttpConnectionParams.setConnectionTimeout(httpParams, CONNECTION_TIMEOUT);
-        HttpConnectionParams.setSoTimeout(httpParams, Constants.SOCKET_TIMEOUT);
-        DefaultHttpClient client;
-
-        CookieStore cookieStore = new BasicCookieStore();
-        String bbVisitorId = AuthParameters.getInstance(context).getVisitorId();
-        String bbAuthToken = AuthParameters.getInstance(context).getBbAuthToken();
-        String osVersion = AuthParameters.getInstance(context).getOsVersion();
-
-        try {
-            client = new DefaultHttpClient(httpParams);
-            client.setCookieStore(cookieStore);
-            HttpPost post = new HttpPost(url);
-            HttpContext localContext1 = new BasicHttpContext();
-            localContext1.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
-            if (bbAuthToken.length() == 0) {
-                post.setHeader("Cookie", "_bb_vid=" + bbVisitorId);
-            } else {
-                post.setHeader("Cookie", "_bb_vid=\"" + bbVisitorId + "\";BBAUTHTOKEN=\"" + bbAuthToken + "\"");
-            }
-            post.setHeader("User-Agent", Constants.USER_AGENT_PREFIX + osVersion);
-
-            post.setHeader("Content-Type", "application/json");
-            List<NameValuePair> valuePairs = new ArrayList<NameValuePair>(2);
-            valuePairs.add(new BasicNameValuePair("product_id", productId));
-            switch (shoppingListOption) {
-                case ADD_TO_LIST:
-                    JSONArray jsonarry = new JSONArray(selectedShoppingListNameSlugs.toString());
-                    valuePairs.add(new BasicNameValuePair("slugs", jsonarry.toString()));
-                    break;
-                case DELETE_ITEM:
-                    valuePairs.add(new BasicNameValuePair(Constants.SLUG, selectedShoppingListNameSlugs.get(0)));
-                    break;
-            }
-            UrlEncodedFormEntity encodedFormEntity = new UrlEncodedFormEntity(valuePairs, HTTP.UTF_8);
-            post.setEntity(encodedFormEntity);
-
-            HttpResponse response = client.execute(post);
 
             int responseCode = response.getStatusLine().getStatusCode();
             JSONObject jsonObject = null;

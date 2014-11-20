@@ -103,7 +103,7 @@ public class OrderItemListFragment extends BaseFragment {
         ListView listView = (ListView) base.findViewById(R.id.listWithFixedFooter);
         listView.setDividerHeight(0);
         listView.setDivider(null);
-        ActiveOrderRowAdapter activeOrderRowAdapter = new ActiveOrderRowAdapter(cartItemConsolidatedList, getBaseActivity(), faceRupee, faceRobotoRegular, faceRobotoRegular, faceRobotoRegular, faceRobotoRegular,
+        ActiveOrderRowAdapter activeOrderRowAdapter = new ActiveOrderRowAdapter(cartItemConsolidatedList, getCurrentActivity(), faceRupee, faceRobotoRegular, faceRobotoRegular, faceRobotoRegular, faceRobotoRegular,
                 OrderItemDisplaySource.ORDER_DISPLAY, fulfillmentInfoIdAndIconHashMap, annotationHashMap);
         listView.setAdapter(activeOrderRowAdapter);
 

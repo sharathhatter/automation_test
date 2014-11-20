@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.common.ProductViewHolder;
@@ -20,6 +21,8 @@ import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
+import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
+import com.bigbasket.mobileapp.task.uiv3.ShoppingListDoAddDeleteTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.ParserUtil;
@@ -28,6 +31,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class ProductDetailFragment extends BaseFragment implements ShoppingListNamesAware {
@@ -107,7 +111,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         productRow.setLayoutParams(productRowParams);
         ProductView.setProductView(new ProductViewHolder(productRow), mProduct, null, null, productViewDisplayDataHolder,
-                getBaseActivity(), false, this);
+                getCurrentActivity(), false, this);
         layoutProductDetail.addView(productRow);
 
         ArrayList<ProductAdditionalInfo> productAdditionalInfos = mProduct.getProductAdditionalInfos();
@@ -158,6 +162,20 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
     @Override
     public void postShoppingListItemDeleteOperation() {
 
+    }
+
+    @Override
+    public void addToShoppingList(List<ShoppingListName> selectedShoppingListNames) {
+        if (getActivity() == null) return;
+        if (selectedShoppingListNames == null || selectedShoppingListNames.size() == 0) {
+            Toast.makeText(getActivity(), getString(R.string.chooseShopList), Toast.LENGTH_SHORT).show();
+            return;
+        }
+        ShoppingListDoAddDeleteTask shoppingListDoAddDeleteTask =
+                new ShoppingListDoAddDeleteTask<>(this,
+                        MobileApiUrl.getBaseAPIUrl() + "sl-add-item/", selectedShoppingListNames,
+                        ShoppingListOption.ADD_TO_LIST);
+        shoppingListDoAddDeleteTask.execute();
     }
 
     @Override

@@ -185,7 +185,7 @@ public class MemberAddressListFragment extends BaseFragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        setFragmentSuspended(false);
+        setSuspended(false);
         if (resultCode == Constants.ADDRESS_CREATED_MODIFIED) {
             if (data != null) {
                 String addressId = data.getStringExtra(Constants.MEMBER_ADDRESS_ID);

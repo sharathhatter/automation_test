@@ -18,7 +18,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.MessageCode;
 import com.bigbasket.mobileapp.view.uiv3.ShoppingListNamesDialog;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class MessageHandler extends Handler {
     private BaseActivity activity;
@@ -102,13 +102,12 @@ public class MessageHandler extends Handler {
                 break;
 
             case MessageCode.GET_SHOPPINGLIST_NAMES_OK:
-                List<ShoppingListName> shoppingListNames = ((ShoppingListNamesAware) baseFragment).getShoppingListNames();
+                ArrayList<ShoppingListName> shoppingListNames = ((ShoppingListNamesAware) baseFragment).getShoppingListNames();
                 if (shoppingListNames == null || shoppingListNames.size() == 0) {
                     Toast.makeText(activity, "Create a new shopping list", Toast.LENGTH_SHORT).show();
                 } else {
-                    ShoppingListNamesDialog shoppingListNamesDialog =
-                            new ShoppingListNamesDialog(shoppingListNames, baseFragment.getActivity(),
-                                    baseFragment);
+                    ShoppingListNamesDialog shoppingListNamesDialog = ShoppingListNamesDialog.newInstance(shoppingListNames);
+                    shoppingListNamesDialog.setTargetFragment(baseFragment, 0);
                     shoppingListNamesDialog.show(baseFragment.getFragmentManager(), Constants.SHOP_LST);
                 }
                 break;

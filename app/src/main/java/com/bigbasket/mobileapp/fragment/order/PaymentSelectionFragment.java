@@ -242,7 +242,7 @@ public class PaymentSelectionFragment extends BaseFragment {
     }
 
     private void renderSlotInfoRow(View row, SlotGroup slotGroup, boolean hasMultipleSlots) {
-        if (getActivity() == null || getBaseActivity() == null) return;
+        if (getActivity() == null || getCurrentActivity() == null) return;
         TextView txtNumItems = (TextView) row.findViewById(R.id.txtNumItems);
         TextView txtBasketVal = (TextView) row.findViewById(R.id.txtBasketVal);
         TextView txtSlotDate = (TextView) row.findViewById(R.id.txtSlotDate);
@@ -263,8 +263,8 @@ public class PaymentSelectionFragment extends BaseFragment {
         } else {
             int numItems = cartSummary.getNoOfItems();
             txtNumItems.setText(numItems + "Item" + (numItems > 1 ? "s" : ""));
-            txtBasketVal.setText(getBaseActivity().
-                    asRupeeSpannable(getBaseActivity().getDecimalAmount(cartSummary.getTotal())));
+            txtBasketVal.setText(getCurrentActivity().
+                    asRupeeSpannable(getCurrentActivity().getDecimalAmount(cartSummary.getTotal())));
             txtFulfilledBy.setVisibility(View.GONE);
         }
     }
@@ -303,7 +303,7 @@ public class PaymentSelectionFragment extends BaseFragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        setFragmentSuspended(false);
+        setSuspended(false);
         if (resultCode == Constants.VOUCHER_APPLIED && data != null) {
             String voucherCode = data.getStringExtra(Constants.EVOUCHER_CODE);
             if (!TextUtils.isEmpty(voucherCode)) {

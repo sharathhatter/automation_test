@@ -229,7 +229,7 @@ public class ShowCartFragment extends BaseFragment {
                         showAlertDialog(getActivity(), "Login", getString(R.string.login_to_place_order),
                                 DialogButton.OK, DialogButton.NO, Constants.LOGIN_REQUIRED, null, "Login");
                     } else {
-                        new COMarketPlaceCheckTask(getBaseActivity()).execute();
+                        new COMarketPlaceCheckTask(getCurrentActivity()).execute();
                     }
                 }
             }
@@ -344,8 +344,8 @@ public class ShowCartFragment extends BaseFragment {
     @Override
     public void changeFragment(AbstractFragment newFragment) {
         setHasOptionsMenu(false);
-        if (getBaseActivity() != null) {
-            getBaseActivity().invalidateOptionsMenu();
+        if (getCurrentActivity() != null) {
+            getCurrentActivity().invalidateOptionsMenu();
         }
         super.changeFragment(newFragment);
     }
@@ -354,8 +354,8 @@ public class ShowCartFragment extends BaseFragment {
     public void onBackResume() {
         super.onBackResume();
         setHasOptionsMenu(true);
-        if (getBaseActivity() != null) {
-            getBaseActivity().invalidateOptionsMenu();
+        if (getCurrentActivity() != null) {
+            getCurrentActivity().invalidateOptionsMenu();
         }
     }
 

@@ -1,14 +1,16 @@
 package com.bigbasket.mobileapp.task;
 
-import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.COReserveQuantityCheckAware;
+import com.bigbasket.mobileapp.interfaces.CancelableAware;
+import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
+import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.model.order.COReserveQuantity;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
@@ -24,18 +26,17 @@ import org.apache.http.impl.client.BasicCookieStore;
 
 import java.util.HashMap;
 
-public class COReserveQuantityCheckTask extends AsyncTask<String, Long, Void> {
+public class COReserveQuantityCheckTask<T> extends AsyncTask<String, Long, Void> {
 
     private static final String TAG = COReserveQuantityCheckTask.class.getName();
     private static String URL = MobileApiUrl.getBaseAPIUrl() + Constants.CO_RESERVE_QTY;
-    private ProgressDialog progressDialog;
     private HttpOperationResult httpOperationResult;
     private String pharmaPrescriptionId;
-    private BaseActivity activity;
+    private T ctx;
 
 
-    public COReserveQuantityCheckTask(BaseActivity activity, String pharmaPrescriptionId) {
-        this.activity = activity;
+    public COReserveQuantityCheckTask(T ctx, String pharmaPrescriptionId) {
+        this.ctx = ctx;
         this.pharmaPrescriptionId = pharmaPrescriptionId;
     }
 
@@ -44,20 +45,20 @@ public class COReserveQuantityCheckTask extends AsyncTask<String, Long, Void> {
         if (isCancelled()) {
             return null;
         }
-        if (activity.checkInternetConnection()) {
+        if (((ConnectivityAware) ctx).checkInternetConnection()) {
             HashMap<String, String> load = null;
             if (pharmaPrescriptionId != null) {
                 load = new HashMap<>();
                 load.put(Constants.PHARMA_PRESCRIPTION_ID, pharmaPrescriptionId);
             }
             //fragment.startAsyncActivity(URL, load, true, true, null);
-            AuthParameters authParameters = AuthParameters.getInstance(activity);
+            AuthParameters authParameters = AuthParameters.getInstance(((ActivityAware) ctx).getCurrentActivity());
             HttpRequestData httpRequestData = new HttpRequestData(URL, load, true,
                     authParameters.getBbAuthToken(), authParameters.getVisitorId(),
                     authParameters.getOsVersion(), new BasicCookieStore(), null);
             httpOperationResult = DataUtil.doHttpPost(httpRequestData);
         } else {
-            ((HandlerAware) activity).getHandler().sendEmptyMessage(MessageCode.INTERNET_ERROR);
+            ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.INTERNET_ERROR);
             Log.d(TAG, "Sending message: MessageCode.INTERNET_ERROR");
 
         }
@@ -67,47 +68,47 @@ public class COReserveQuantityCheckTask extends AsyncTask<String, Long, Void> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        if (activity.isActivitySuspended()) {
+        if (((CancelableAware) ctx).isSuspended()) {
             cancel(true);
         } else {
-            progressDialog = ProgressDialog.show(activity, "", "Please wait", true, false);
+            ((ProgressIndicationAware) ctx).showProgressDialog("Please wait...");
         }
     }
 
     @SuppressWarnings("unchecked")
     @Override
     protected void onPostExecute(Void result) {
-        if (progressDialog != null && progressDialog.isShowing()) {
+        if (((CancelableAware) ctx).isSuspended()) {
+            return;
+        } else {
             try {
-                progressDialog.dismiss();
-            } catch (IllegalArgumentException ex) {
+                ((ProgressIndicationAware) ctx).hideProgressDialog();
+            } catch (IllegalArgumentException e) {
                 return;
             }
-        } else {
-            return;
         }
         if (httpOperationResult != null) {
             if (httpOperationResult.getResponseCode() == HttpCode.HTTP_OK) {
                 COReserveQuantity coReserveQuantity = ParserUtil.parseCoReserveQuantity(httpOperationResult.getReponseString());
-                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(activity).edit();
+                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(((ActivityAware) ctx).getCurrentActivity()).edit();
                 editor.putString(Constants.POTENTIAL_ORDER_ID, String.valueOf(coReserveQuantity.getOrderId()));
                 editor.commit();
 
-                ((COReserveQuantityCheckAware) activity).setCOReserveQuantity(coReserveQuantity);
-                ((COReserveQuantityCheckAware) activity).onCOReserveQuantityCheck();
+                ((COReserveQuantityCheckAware) ctx).setCOReserveQuantity(coReserveQuantity);
+                ((COReserveQuantityCheckAware) ctx).onCOReserveQuantityCheck();
                 Log.d(TAG, "Calling on COReserveQuantityCheck()");
 
             } else if (httpOperationResult.getResponseCode() == HttpCode.UNAUTHORIZED) {
-                ((HandlerAware) activity).getHandler().sendEmptyMessage(MessageCode.UNAUTHORIZED);
+                ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.UNAUTHORIZED);
                 Log.d(TAG, "Sending message: MessageCode.UNAUTHORIZED");
 
             } else {
-                ((HandlerAware) activity).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
+                ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
                 Log.d(TAG, "Sending message: MessageCode.SERVER_ERROR");
             }
 
         } else {
-            ((HandlerAware) activity).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
+            ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
             Log.d(TAG, "Sending message: MessageCode.SERVER_ERROR");
         }
         super.onPostExecute(result);

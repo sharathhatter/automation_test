@@ -34,8 +34,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.OrderListActivity;
+import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignupActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.adapter.NavigationListAdapter;
@@ -54,6 +54,7 @@ import com.bigbasket.mobileapp.fragment.order.ShowCartFragment;
 import com.bigbasket.mobileapp.fragment.order.SlotSelectionFragment;
 import com.bigbasket.mobileapp.fragment.product.BrowseByOffersFragment;
 import com.bigbasket.mobileapp.fragment.product.CategoryProductsFragment;
+import com.bigbasket.mobileapp.fragment.product.ProductDetailFragment;
 import com.bigbasket.mobileapp.fragment.product.SearchFragment;
 import com.bigbasket.mobileapp.fragment.product.SubCategoryListFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoCategoryFragment;
@@ -284,6 +285,13 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 break;
             case FragmentCodes.START_VIEW_BASKET:
                 addToMainLayout(new ShowCartFragment());
+                break;
+            case FragmentCodes.START_PRODUCT_DETAIL:
+                ProductDetailFragment productDetailFragment = new ProductDetailFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString(Constants.SKU_ID, getIntent().getStringExtra(Constants.SKU_ID));
+                productDetailFragment.setArguments(bundle);
+                addToMainLayout(productDetailFragment);
                 break;
         }
     }

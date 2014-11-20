@@ -265,7 +265,7 @@ public class FBConfirmFragment extends BaseFragment {
 
 
     private void saveUserDetailInPreference(JsonObject responseJsonObj) {
-        if (getActivity() == null || getBaseActivity() == null) return;
+        if (getActivity() == null || getCurrentActivity() == null) return;
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         SharedPreferences.Editor editor = preferences.edit();
         String bbToken = responseJsonObj.get(Constants.BB_TOKEN).getAsString();
@@ -293,7 +293,7 @@ public class FBConfirmFragment extends BaseFragment {
         }
         */
         editor.commit();
-        getBaseActivity().onLoginSuccess();
+        getCurrentActivity().onLoginSuccess();
     }
 
     public LinearLayout getContentView() {

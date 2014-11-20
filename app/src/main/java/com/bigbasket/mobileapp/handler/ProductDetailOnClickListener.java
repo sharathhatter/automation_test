@@ -1,32 +1,28 @@
 package com.bigbasket.mobileapp.handler;
 
-import android.os.Bundle;
+import android.content.Intent;
 import android.view.View;
 
-import com.bigbasket.mobileapp.fragment.base.BaseFragment;
-import com.bigbasket.mobileapp.fragment.product.ProductDetailFragment;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
+import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.FragmentCodes;
 
 public class ProductDetailOnClickListener implements View.OnClickListener {
     private String skuId;
-    private BaseFragment fragment;
+    private ActivityAware ctx;
 
-    public ProductDetailOnClickListener(int skuId, BaseFragment context) {
-        this(String.valueOf(skuId), context);
-    }
-
-    public ProductDetailOnClickListener(String skuId, BaseFragment context) {
+    public ProductDetailOnClickListener(String skuId, ActivityAware context) {
         this.skuId = skuId;
-        this.fragment = context;
+        this.ctx = context;
     }
 
     @Override
     public void onClick(View v) {
-        if (fragment == null) return;
-        ProductDetailFragment productDetailFragment = new ProductDetailFragment();
-        Bundle args = new Bundle();
-        args.putString(Constants.SKU_ID, skuId);
-        productDetailFragment.setArguments(args);
-        fragment.changeFragment(productDetailFragment);
+        if (ctx == null) return;
+        Intent intent = new Intent(ctx.getCurrentActivity(), BackButtonActivity.class);
+        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PRODUCT_DETAIL);
+        intent.putExtra(Constants.SKU_ID, skuId);
+        ctx.getCurrentActivity().startActivityForResult(intent, Constants.GO_TO_HOME);
     }
 }

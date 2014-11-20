@@ -84,7 +84,7 @@ public class HomeFragment extends BaseSectionFragment {
 
     @Override
     public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-        if (getActivity() == null || getBaseActivity() == null) return;
+        if (getActivity() == null || getCurrentActivity() == null) return;
         String url = httpOperationResult.getUrl();
         if (url.contains(Constants.GET_VERSION_NUMBER)) {
             // Is version number call
@@ -108,7 +108,7 @@ public class HomeFragment extends BaseSectionFragment {
                 editor.commit();
                 AuthParameters.updateInstance(getActivity());
                 if (!AuthParameters.getInstance(getActivity()).isAuthTokenEmpty()) {
-                    getBaseActivity().updateKonotor();
+                    getCurrentActivity().updateKonotor();
                 }
                 getHomePage();
                 Log.d("HomeFragment", getResources().getString(R.string.versionNoUpdated));
@@ -116,7 +116,7 @@ public class HomeFragment extends BaseSectionFragment {
                 Intent result = new Intent();
                 result.putExtra(Constants.FORCE_REGISTER_DEVICE, true);
                 getActivity().setResult(Constants.FORCE_REGISTER_CODE, result);
-                getBaseActivity().doLogout();
+                getCurrentActivity().doLogout();
                 getActivity().finish();
             }
         } else if (url.contains(Constants.GET_HOME_PG_URL)) {

@@ -25,8 +25,8 @@ import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.adapter.product.ProductListSpinnerAdapter;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.common.ProductViewHolder;
-import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.handler.ProductDetailOnClickListener;
+import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.product.Product;
@@ -40,6 +40,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.MessageCode;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
+import com.bigbasket.mobileapp.util.UIUtil;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
@@ -47,22 +48,22 @@ import java.util.List;
 
 public final class ProductView {
 
-    public static void setProductView(final ProductViewHolder productViewHolder, final Product product, String baseImgUrl,
-                                      ProductDetailOnClickListener productDetailOnClickListener,
-                                      ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                      final BaseActivity context, final boolean skipChildDropDownRendering,
-                                      final BaseFragment baseFragment) {
+    public static <T> void setProductView(final ProductViewHolder productViewHolder, final Product product, String baseImgUrl,
+                                          ProductDetailOnClickListener productDetailOnClickListener,
+                                          ProductViewDisplayDataHolder productViewDisplayDataHolder,
+                                          final BaseActivity context, final boolean skipChildDropDownRendering,
+                                          final T productDataAware) {
         setProductImage(productViewHolder, product, baseImgUrl, productDetailOnClickListener);
         setIsNewAndBby(productViewHolder, product);
         if (!skipChildDropDownRendering) {
-            setChildProducts(productViewHolder, product, context, baseImgUrl, productViewDisplayDataHolder, baseFragment);
+            setChildProducts(productViewHolder, product, context, baseImgUrl, productViewDisplayDataHolder, productDataAware);
         }
         setProductBrand(productViewHolder, product, productViewDisplayDataHolder, productDetailOnClickListener);
         setProductDesc(productViewHolder, product, productViewDisplayDataHolder, productDetailOnClickListener);
         setPrice(productViewHolder, product, productViewDisplayDataHolder, context);
         setPromo(productViewHolder, product, productViewDisplayDataHolder, context);
-        setProductAdditionalActionMenu(productViewHolder, product, productViewDisplayDataHolder, context, baseFragment);
-        setBasketAndAvailabilityViews(productViewHolder, product, productViewDisplayDataHolder, context, baseFragment);
+        setProductAdditionalActionMenu(productViewHolder, product, productViewDisplayDataHolder, context, productDataAware);
+        setBasketAndAvailabilityViews(productViewHolder, product, productViewDisplayDataHolder, context, productDataAware);
     }
 
     private static void setProductImage(ProductViewHolder productViewHolder, Product product, String baseImgUrl,
@@ -88,10 +89,10 @@ public final class ProductView {
         }
     }
 
-    private static void setChildProducts(final ProductViewHolder productViewHolder, Product product, final BaseActivity context,
-                                         final String baseImgUrl,
-                                         final ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                         final BaseFragment fragment) {
+    private static <T> void setChildProducts(final ProductViewHolder productViewHolder, Product product, final BaseActivity context,
+                                             final String baseImgUrl,
+                                             final ProductViewDisplayDataHolder productViewDisplayDataHolder,
+                                             final T productDataAware) {
         final List<Product> childProducts = product.getAllProducts();
         boolean hasChildren = childProducts != null && childProducts.size() > 0;
         Spinner spinnerPackageDesc = productViewHolder.getSpinnerPackageDesc();
@@ -107,8 +108,8 @@ public final class ProductView {
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     Product childProduct = childProducts.get(position);
                     setProductView(productViewHolder, childProduct, baseImgUrl,
-                            new ProductDetailOnClickListener(childProduct.getSku(), fragment),
-                            productViewDisplayDataHolder, context, true, fragment);
+                            new ProductDetailOnClickListener(childProduct.getSku(), (ActivityAware) productDataAware),
+                            productViewDisplayDataHolder, context, true, productDataAware);
                 }
 
                 @Override
@@ -200,7 +201,7 @@ public final class ProductView {
             valueStarForSaveTxt.setVisibility(View.GONE);
         }
         txtSalePrice.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
-        txtSalePrice.setText(context.asRupeeSpannable(product.getSellPrice()));
+        txtSalePrice.setText(UIUtil.asRupeeSpannable(product.getSellPrice(), productViewDisplayDataHolder.getRupeeTypeface()));
     }
 
     private static void setPromo(ProductViewHolder productViewHolder, Product product, ProductViewDisplayDataHolder productViewDisplayDataHolder,
@@ -263,14 +264,14 @@ public final class ProductView {
         }
     }
 
-    private static void setProductAdditionalActionMenu(ProductViewHolder productViewHolder, final Product product,
-                                                       final ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                                       final BaseActivity context,
-                                                       final BaseFragment fragment) {
+    private static <T> void setProductAdditionalActionMenu(ProductViewHolder productViewHolder, final Product product,
+                                                           final ProductViewDisplayDataHolder productViewDisplayDataHolder,
+                                                           final BaseActivity context,
+                                                           final T shoppingListNamesAware) {
         final ImageView imgProductAdditionalAction = productViewHolder.getImgProductAdditionalAction();
-        setShoppingDeleteButton(productViewHolder, product, productViewDisplayDataHolder, context, fragment);
+        setShoppingDeleteButton(productViewHolder, product, productViewDisplayDataHolder, context, shoppingListNamesAware);
         if (productViewDisplayDataHolder.isShowShoppingListBtn() && productViewDisplayDataHolder.isLoggedInMember()
-                && !product.getProductStatus().equalsIgnoreCase("N") && fragment != null) {
+                && !product.getProductStatus().equalsIgnoreCase("N")) {
             imgProductAdditionalAction.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -282,8 +283,8 @@ public final class ProductView {
                         public boolean onMenuItemClick(MenuItem item) {
                             switch (item.getItemId()) {
                                 case R.id.menuAddToShoppingList:
-                                    ((ShoppingListNamesAware) fragment).setSelectedProductId(product.getSku());
-                                    new ShoppingListNamesTask(fragment,
+                                    ((ShoppingListNamesAware) shoppingListNamesAware).setSelectedProductId(product.getSku());
+                                    new ShoppingListNamesTask<>(shoppingListNamesAware,
                                             MobileApiUrl.getBaseAPIUrl() + "sl-get-lists/", false).execute();
                                     return true;
                                 default:
@@ -299,10 +300,10 @@ public final class ProductView {
         }
     }
 
-    private static void setShoppingDeleteButton(ProductViewHolder productViewHolder, final Product product,
-                                                final ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                                final BaseActivity context,
-                                                final BaseFragment baseFragment) {
+    private static <T> void setShoppingDeleteButton(ProductViewHolder productViewHolder, final Product product,
+                                                    final ProductViewDisplayDataHolder productViewDisplayDataHolder,
+                                                    final BaseActivity context,
+                                                    final T shoppingListNamesAware) {
 
         // for logged in user display add to list icon
         final ImageView imgShoppingListDel = productViewHolder.getImgShoppingListDel();
@@ -329,10 +330,10 @@ public final class ProductView {
                                             if (DataUtil.isInternetAvailable(context)) {
                                                 ArrayList<String> shoppingListNames = new ArrayList<>();
                                                 shoppingListNames.add(productViewDisplayDataHolder.getShoppingListName().getSlug());
-                                                ShoppingListDoOperationTask shoppingListDoOperationTask = new ShoppingListDoOperationTask(context,
+                                                ShoppingListDoOperationTask shoppingListDoOperationTask = new ShoppingListDoOperationTask<>(context,
                                                         MobileApiUrl.getBaseAPIUrl() + "sl-delete-item/",
                                                         shoppingListNames, ShoppingListOption.DELETE_ITEM);
-                                                ((ShoppingListNamesAware) baseFragment).setSelectedProductId(product.getSku());
+                                                ((ShoppingListNamesAware) shoppingListNamesAware).setSelectedProductId(product.getSku());
                                                 shoppingListDoOperationTask.execute();
                                             } else {
                                                 context.showToast("No internet connection found!");
@@ -361,10 +362,10 @@ public final class ProductView {
         }
     }
 
-    private static void setBasketAndAvailabilityViews(ProductViewHolder productViewHolder, final Product product,
-                                                      final ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                                      final BaseActivity context,
-                                                      final BaseFragment baseFragment) {
+    private static <T> void setBasketAndAvailabilityViews(ProductViewHolder productViewHolder, final Product product,
+                                                          final ProductViewDisplayDataHolder productViewDisplayDataHolder,
+                                                          final BaseActivity context,
+                                                          final T basketOperationAware) {
         final Button btnAddToBasket = productViewHolder.getBtnAddToBasket();
         final ImageView imgDecBasketQty = productViewHolder.getImgDecBasketQty();
         final TextView txtInBasket = productViewHolder.getTxtInBasket();
@@ -401,7 +402,7 @@ public final class ProductView {
                     @Override
                     public void onClick(View view) {
                         if (DataUtil.isInternetAvailable(context) && !TextUtils.isEmpty(editTextQty.getText())) {
-                            BasketOperationTask<BaseFragment> basketOperationTask = new BasketOperationTask<>(baseFragment,
+                            BasketOperationTask basketOperationTask = new BasketOperationTask<>(basketOperationAware,
                                     MobileApiUrl.getBaseAPIUrl() + Constants.CART_INC, BasketOperation.ADD, product,
                                     txtInBasket, imgDecBasketQty, imgIncBasketQty, btnAddToBasket, editTextQty);
                             basketOperationTask.execute();
@@ -416,7 +417,7 @@ public final class ProductView {
                     @Override
                     public void onClick(View view) {
                         if (DataUtil.isInternetAvailable(context) && !TextUtils.isEmpty(editTextQty.getText())) {
-                            BasketOperationTask<BaseFragment> myTask = new BasketOperationTask<>(baseFragment,
+                            BasketOperationTask myTask = new BasketOperationTask<>(basketOperationAware,
                                     MobileApiUrl.getBaseAPIUrl() + Constants.CART_DEC, BasketOperation.DELETE,
                                     product, txtInBasket, imgDecBasketQty, imgIncBasketQty, btnAddToBasket, editTextQty);
                             myTask.execute();
@@ -436,7 +437,7 @@ public final class ProductView {
                                 return;
                             }
                             String qty = editTextQty.getText() != null ? editTextQty.getText().toString() : "1";
-                            BasketOperationTask<BaseFragment> basketOperationTask = new BasketOperationTask<>(baseFragment,
+                            BasketOperationTask basketOperationTask = new BasketOperationTask<>(basketOperationAware,
                                     MobileApiUrl.getBaseAPIUrl() + Constants.CART_INC, BasketOperation.ADD, product,
                                     txtInBasket, imgDecBasketQty, imgIncBasketQty, btnAddToBasket, editTextQty, qty);
                             basketOperationTask.execute();

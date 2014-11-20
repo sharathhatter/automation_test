@@ -8,10 +8,12 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.util.Constants;
 
 
-public abstract class AbstractFragment extends Fragment {
+public abstract class AbstractFragment extends Fragment implements CancelableAware, ActivityAware {
 
     public static Typeface faceRupee;
     public static Typeface faceRobotoRegular;
@@ -70,17 +72,17 @@ public abstract class AbstractFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    public void setFragmentSuspended(boolean isFragmentSuspended) {
+    public void setSuspended(boolean isFragmentSuspended) {
         this.isFragmentSuspended = isFragmentSuspended;
-        if (getActivity() == null || getBaseActivity() == null) return;
-        getBaseActivity().setActivitySuspended(isFragmentSuspended);
+        if (getActivity() == null || getCurrentActivity() == null) return;
+        getCurrentActivity().setSuspended(isFragmentSuspended);
     }
 
     public boolean isSuspended() {
-        return getActivity() != null && ((BaseActivity) getActivity()).isActivitySuspended() || isFragmentSuspended;
+        return getActivity() != null && ((BaseActivity) getActivity()).isSuspended() || isFragmentSuspended;
     }
 
-    public BaseActivity getBaseActivity() {
+    public BaseActivity getCurrentActivity() {
         return (BaseActivity) getActivity();
     }
 

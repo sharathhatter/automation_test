@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.product.ProductListAdapter;
@@ -26,7 +27,9 @@ import com.bigbasket.mobileapp.model.product.ProductQuery;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
+import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
 import com.bigbasket.mobileapp.task.uiv3.ProductListTask;
+import com.bigbasket.mobileapp.task.uiv3.ShoppingListDoAddDeleteTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.view.uiv3.FilterProductDialog;
@@ -47,6 +50,7 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
     private ProductListAdapter productListAdapter;
     private ListView mProductAbsListView;
     private View mFooterView;
+    private boolean mIsNextPageLoading;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -84,8 +88,10 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
     }
 
     public void loadMoreProducts() {
+        if (isNextPageLoading()) return;
         int nextPage = productListData.getCurrentPage() + 1;
         if (nextPage <= productListData.getTotalPages()) {
+            setNextPageLoading(true);
             if (mFooterView == null) {
                 LayoutInflater inflater = getActivity().getLayoutInflater();
                 mFooterView = inflater.inflate(R.layout.uiv3_list_loading_footer, null);
@@ -182,7 +188,7 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
                 .setShowShopListDeleteBtn(false)
                 .build();
         productListAdapter = new ProductListAdapter(productListData.getProducts(), null,
-                getBaseActivity(), productViewDisplayDataHolder, this, productListData.getProductCount());
+                getCurrentActivity(), productViewDisplayDataHolder, this, productListData.getProductCount());
 
         mProductAbsListView.setAdapter(productListAdapter);
         contentView.addView(base);
@@ -191,6 +197,7 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
     @Override
     public void updateProductList(List<Product> nextPageProducts) {
         if (productListData == null || productListAdapter == null) return;
+        setNextPageLoading(false);
         mProductAbsListView.removeFooterView(mFooterView);
         List<Product> currentProducts = productListData.getProducts();
         currentProducts.addAll(nextPageProducts);
@@ -331,5 +338,29 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
         if (productListData != null) {
             outState.putParcelable(Constants.PRODUCTS, productListData);
         }
+    }
+
+    @Override
+    public boolean isNextPageLoading() {
+        return mIsNextPageLoading;
+    }
+
+    @Override
+    public void setNextPageLoading(boolean isNextPageLoading) {
+        this.mIsNextPageLoading = isNextPageLoading;
+    }
+
+    @Override
+    public void addToShoppingList(List<ShoppingListName> selectedShoppingListNames) {
+        if (getActivity() == null) return;
+        if (selectedShoppingListNames == null || selectedShoppingListNames.size() == 0) {
+            Toast.makeText(getActivity(), getString(R.string.chooseShopList), Toast.LENGTH_SHORT).show();
+            return;
+        }
+        ShoppingListDoAddDeleteTask shoppingListDoAddDeleteTask =
+                new ShoppingListDoAddDeleteTask<>(this,
+                        MobileApiUrl.getBaseAPIUrl() + "sl-add-item/", selectedShoppingListNames,
+                        ShoppingListOption.ADD_TO_LIST);
+        shoppingListDoAddDeleteTask.execute();
     }
 }

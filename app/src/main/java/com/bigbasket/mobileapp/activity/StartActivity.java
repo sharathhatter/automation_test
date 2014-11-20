@@ -234,7 +234,7 @@ public class StartActivity extends BaseActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        setActivitySuspended(false);
+        setSuspended(false);
         if (data != null && resultCode == Constants.FORCE_REGISTER_CODE) {
             boolean forceRegisterDevice = data.getBooleanExtra(Constants.FORCE_REGISTER_DEVICE, false);
             if (forceRegisterDevice) {

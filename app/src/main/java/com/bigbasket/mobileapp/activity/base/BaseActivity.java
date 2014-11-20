@@ -42,8 +42,12 @@ import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 import com.bigbasket.mobileapp.adapter.order.PrescriptionImageAdapter;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.handler.MessageHandler;
+import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.COMarketPlaceAware;
 import com.bigbasket.mobileapp.interfaces.COReserveQuantityCheckAware;
+import com.bigbasket.mobileapp.interfaces.CancelableAware;
+import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
+import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.model.order.COReserveQuantity;
 import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -70,7 +74,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Random;
 
-public abstract class BaseActivity extends ActionBarActivity implements COMarketPlaceAware, COReserveQuantityCheckAware {
+public abstract class BaseActivity extends ActionBarActivity implements COMarketPlaceAware,
+        COReserveQuantityCheckAware, CancelableAware, ProgressIndicationAware, ActivityAware,
+        ConnectivityAware {
 
     public static Typeface faceRupee;
     public static Typeface faceRobotoRegular;
@@ -107,6 +113,13 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
             progressDialog.dismiss();
             progressDialog = null;
         }
+    }
+
+    public void showProgressView() {
+    }
+
+    @Override
+    public void hideProgressView() {
     }
 
     public void onHttpError() {
@@ -168,7 +181,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
                                    CookieStore cookieStore, @Nullable HashMap<Object, String> additionalCtx,
                                    boolean noProgressView) {
         if (DataUtil.isInternetAvailable(getCurrentActivity())) {
-            if (isActivitySuspended()) {
+            if (isSuspended()) {
                 return;
             }
             if (!noProgressView) {
@@ -203,16 +216,15 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
 
         protected void onPostExecute(HttpOperationResult httpOperationResult) {
             Log.d("OnPostExecute", "");
-            hideProgressDialog();
+            try {
+                hideProgressDialog();
+            } catch (IllegalArgumentException e) {
+                return;
+            }
             if (httpOperationResult != null) {
                 onAsyncTaskComplete(httpOperationResult);
             } else {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        onHttpError();
-                    }
-                });
+                onHttpError();
             }
         }
     }
@@ -291,7 +303,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
             }
         });
         AlertDialog alertDialog = builder.create();
-        if (isActivitySuspended())
+        if (isSuspended())
             return;
         alertDialog.show();
     }
@@ -310,7 +322,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
             }
         });
         AlertDialog alertDialog = builder.create();
-        if (isActivitySuspended())
+        if (isSuspended())
             return;
         alertDialog.show();
     }
@@ -331,7 +343,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
             }
         });
         AlertDialog alertDialog = alertDialogBuilder.create();
-        if (isActivitySuspended())
+        if (isSuspended())
             return;
         alertDialog.show();
     }
@@ -378,7 +390,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
                 });
         }
         AlertDialog alertDialog = builder.create();
-        if (isActivitySuspended())
+        if (isSuspended())
             return;
         alertDialog.show();
     }
@@ -570,11 +582,11 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         return false;
     }
 
-    public boolean isActivitySuspended() {
+    public boolean isSuspended() {
         return isActivitySuspended;
     }
 
-    public void setActivitySuspended(boolean state) {
+    public void setSuspended(boolean state) {
         isActivitySuspended = state;
     }
 

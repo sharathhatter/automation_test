@@ -17,8 +17,10 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
+import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.cart.BasketOperationResponse;
@@ -113,8 +115,7 @@ public class BasketOperationTask<T> extends AsyncTask<String, Long, Void> {
             return null;
         }
         String nc = ""; //DataUtil.getAddBasketNavigationActivity(fragment.getTag()); TODO : Fix this
-        Context ctx = context instanceof Fragment ? ((Fragment) context).getActivity() : (Activity) context;
-        if (DataUtil.isInternetAvailable(ctx)) {
+        if (((ConnectivityAware) context).checkInternetConnection()) {
             if (!url.contains(Constants.CART_INC))
                 nc = null;
             HashMap<String, String> params = new HashMap<>();
@@ -122,7 +123,7 @@ public class BasketOperationTask<T> extends AsyncTask<String, Long, Void> {
             params.put(Constants.PROD_ID, reqProdId);
             params.put(Constants.QTY, qty);
             params.put(Constants.NC, nc);
-            AuthParameters authParameters = AuthParameters.getInstance(ctx);
+            AuthParameters authParameters = AuthParameters.getInstance(((ActivityAware) context).getCurrentActivity());
             HttpRequestData httpRequestData = new HttpRequestData(url, params, true, authParameters.getBbAuthToken(),
                     authParameters.getVisitorId(), authParameters.getOsVersion(),
                     new BasicCookieStore(), null);
@@ -141,7 +142,7 @@ public class BasketOperationTask<T> extends AsyncTask<String, Long, Void> {
 
     private boolean isSuspended() {
         return (context instanceof BaseFragment && ((BaseFragment) context).isSuspended()) ||
-                (context instanceof BaseActivity && ((BaseActivity) context).isActivitySuspended());
+                (context instanceof BaseActivity && ((BaseActivity) context).isSuspended());
     }
 
     @Override

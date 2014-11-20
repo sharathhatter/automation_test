@@ -58,10 +58,10 @@ public class ShoppingListFragment extends BaseFragment {
     }
 
     private void loadShoppingLists() {
-        if (getActivity() == null || getBaseActivity() == null) return;
+        if (getActivity() == null || getCurrentActivity() == null) return;
         AuthParameters authParameters = AuthParameters.getInstance(getActivity());
         if (authParameters.isAuthTokenEmpty()) {
-            getBaseActivity().showAlertDialog(getActivity(), null, getString(R.string.login_required), Constants.LOGIN_REQUIRED);
+            getCurrentActivity().showAlertDialog(getActivity(), null, getString(R.string.login_required), Constants.LOGIN_REQUIRED);
             return;
         }
         HashMap<String, String> params = new HashMap<>();
@@ -263,8 +263,8 @@ public class ShoppingListFragment extends BaseFragment {
                 @Override
                 public void onClick(View v) {
                     if (shoppingListName.isSystem()) {
-                        if (getBaseActivity() != null) {
-                            getBaseActivity().showAlertDialog(getActivity(), null, getString(R.string.isSystemShoppingListMsg));
+                        if (getCurrentActivity() != null) {
+                            getCurrentActivity().showAlertDialog(getActivity(), null, getString(R.string.isSystemShoppingListMsg));
                         }
                         return;
                     }
@@ -277,8 +277,8 @@ public class ShoppingListFragment extends BaseFragment {
                 @Override
                 public void onClick(View v) {
                     if (shoppingListName.isSystem()) {
-                        if (getBaseActivity() != null) {
-                            getBaseActivity().showAlertDialog(getActivity(), null, getString(R.string.isSystemShoppingListMsg));
+                        if (getCurrentActivity() != null) {
+                            getCurrentActivity().showAlertDialog(getActivity(), null, getString(R.string.isSystemShoppingListMsg));
                         }
                         return;
                     }

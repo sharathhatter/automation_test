@@ -178,16 +178,16 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
 
         ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
                 .setCommonTypeface(faceRobotoRegular)
-                .setHandler(new MessageHandler(getBaseActivity()))
+                .setHandler(new MessageHandler(getCurrentActivity()))
                 .setLoggedInMember(!AuthParameters.getInstance(getActivity()).isAuthTokenEmpty())
                 .setShowShoppingListBtn(true)
                 .setShowBasketBtn(true)
                 .setShowShopListDeleteBtn(!mShoppingListName.isSystem())
                 .setShoppingListName(mShoppingListName)
                 .build();
-        
+
         ProductListAdapter productListAdapter = new ProductListAdapter(productList, null,
-                getBaseActivity(), productViewDisplayDataHolder, this, 1);
+                getCurrentActivity(), productViewDisplayDataHolder, this, 1);
 
         // AbsListView doesn't have setAdapter below API 11, hence doing this way
         if (productListView instanceof ListView) {

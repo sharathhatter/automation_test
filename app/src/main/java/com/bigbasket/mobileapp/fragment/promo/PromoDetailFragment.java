@@ -271,7 +271,7 @@ public class PromoDetailFragment extends BaseFragment {
 
     private void addFreeProductToLayout(PromoDetail promoDetail, LinearLayout view,
                                         LayoutInflater layoutInflater) {
-        if (getActivity() == null || getBaseActivity() == null) return;
+        if (getActivity() == null || getCurrentActivity() == null) return;
         String freeProductStr = promoDetail.getFreeProducts();
         ArrayList<Product> freeProducts = ParserUtil.parseProductList(freeProductStr);
         ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
@@ -291,7 +291,7 @@ public class PromoDetailFragment extends BaseFragment {
 
             ProductView.setProductView(new ProductViewHolder(base), freeProduct, promoDetail.getBaseImgUrl(),
                     new ProductDetailOnClickListener(freeProduct.getSku(), this), productViewDisplayDataHolder,
-                    getBaseActivity(), false, null);
+                    getCurrentActivity(), false, null);
             base.setLayoutParams(productRowParams);
             view.addView(base);
         }
