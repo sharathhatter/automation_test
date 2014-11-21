@@ -144,6 +144,7 @@ public class Constants {
     public static final String EMAIL_ALREADY_EXIST = "105";
     public static final String CART_NOT_EXISTS_ERROR = "106";
     public static final String INVALID_USER_PASS = "107";
+    public static final String NO_ACCOUNT = "183";
     public static final String POTENTIAL_ORDER_ID_EXPIRED = "108";
     public static final String INVALID_E_VOUCHER = "109";
     public static final String LOGIN_REQUIRED = "110";
@@ -734,5 +735,10 @@ public class Constants {
     public static final int FB_INTERNAL_SERVER_ERROR = 101;
     public static final String FB_SERVER_ERROR_MSG = "fb_server_msg";
     public static final String FB_EMAIL = "fb_email";
-
+    public static final String SOCIAL_LOGIN_URL = "social-login/";
+    public static final String LOGIN_TYPE = "login_type";
+    public static final String LOGIN_PARAMS = "login_params";
+    public static final String SOCIAL_ACCOUNT_TYPE = "social_account_type";
+    public static final String SOCIAL_LOGOUT = "social_logout";
+    public static final int ON_SOCIAL_LOGOUT = 2516;
 }

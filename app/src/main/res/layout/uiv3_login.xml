@@ -27,8 +27,7 @@
             android:paddingBottom="@dimen/padding_large"
             android:paddingLeft="@dimen/padding_large"
             android:paddingRight="@dimen/padding_large"
-            android:paddingTop="@dimen/padding_normal"
-            >
+            android:paddingTop="@dimen/padding_normal">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -168,6 +167,19 @@
                     android:textColor="@color/com_facebook_loginview_text_color"
                     android:textSize="@dimen/secondary_text_size" />
 
+                <Button
+                    android:id="@+id/plus_sign_out_button"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/gplus_red"
+                    android:drawableLeft="@drawable/btn_gplus_normal"
+                    android:onClick="OnLogoutButtonClicked"
+                    android:paddingRight="@dimen/padding_normal"
+                    android:text="@string/signOut"
+                    android:textColor="@color/com_facebook_loginview_text_color"
+                    android:textSize="@dimen/secondary_text_size"
+                    android:visibility="gone" />
 
                 <Button
                     android:id="@+id/btnFBLogin"
@@ -186,12 +198,6 @@
                     android:textSize="@dimen/secondary_text_size" />
 
             </LinearLayout>
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="logout"
-                android:onClick="OnLogoutButtonClicked"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

@@ -24,6 +24,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.model.account.SocialAccount;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.util.Constants;
@@ -32,6 +33,7 @@ import com.bigbasket.mobileapp.util.UIUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.plus.model.people.Person;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -55,6 +57,8 @@ public class SignInActivity extends PlusBaseActivity {
     private Button mPlusSignInButton;
     private View mLoginFormView;
     private View mBaseView;
+
+    private SocialAccount mSocialAccount;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -82,6 +86,9 @@ public class SignInActivity extends PlusBaseActivity {
             mPlusSignInButton.setVisibility(View.GONE);
         }
 
+        if (isInLogoutMode()) {
+            return;
+        }
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) mBaseView.findViewById(R.id.emailInput);
         populateAutoComplete();
@@ -113,6 +120,10 @@ public class SignInActivity extends PlusBaseActivity {
         SpannableString spannableString = new SpannableString(getString(R.string.loginPageSignUpText));
         spannableString.setSpan(new UnderlineSpan(), 0, spannableString.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
         txtSignup.setText(spannableString);
+    }
+
+    private boolean isInLogoutMode() {
+        return getIntent().getBooleanExtra(Constants.SOCIAL_LOGOUT, false);
     }
 
 
@@ -173,28 +184,37 @@ public class SignInActivity extends PlusBaseActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-            });
+            if (mLoginFormView != null) {
+                mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+                mLoginFormView.animate().setDuration(shortAnimTime).alpha(
+                        show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+                    }
+                });
+            }
 
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
+            if (mProgressView != null) {
+                mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+                mProgressView.animate().setDuration(shortAnimTime).alpha(
+                        show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+                    }
+                });
+            }
         } else {
             // The ViewPropertyAnimator APIs are not available, so simply show
             // and hide the relevant UI components.
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+
+            if (mProgressView != null) {
+                mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            }
+            if (mLoginFormView != null) {
+                mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            }
         }
     }
 
@@ -204,6 +224,30 @@ public class SignInActivity extends PlusBaseActivity {
 
     @Override
     protected void onPlusClientSignIn(String email, Person person) {
+
+        //Set up sign out and disconnect buttons.
+        Button signOutButton = (Button) mBaseView.findViewById(R.id.plus_sign_out_button);
+        signOutButton.setVisibility(View.VISIBLE);
+        signOutButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                signOutFromGplus();
+            }
+        });
+
+        if (isInLogoutMode()) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+            String socialAccountType = preferences.getString(Constants.SOCIAL_ACCOUNT_TYPE, null);
+            if (!TextUtils.isEmpty(socialAccountType)) {
+                switch (socialAccountType) {
+                    case SocialAccount.GP:
+                        signOutFromGplus();
+                        break;
+                }
+            }
+            return;
+        }
+
         if (TextUtils.isEmpty(email)) {
             signOutFromGplus();
             showAlertDialog(this, null, "Unable to get your email-address\n" +
@@ -218,31 +262,35 @@ public class SignInActivity extends PlusBaseActivity {
         }
 
         String displayName = person.getDisplayName();
-        String firstName = person.getName().getGivenName();
-        String lastName = person.getName().getFamilyName();
-        String gender = person.getGender() == Person.Gender.FEMALE ? "female": "male";
+        String firstName = null;
+        String lastName = null;
+        String imgUrl = null;
+        if (person.getName() != null) {
+            firstName = person.getName().getGivenName();
+            lastName = person.getName().getFamilyName();
+        }
+
+        String gender = person.getGender() == Person.Gender.FEMALE ? "female" : "male";
         String profileLink = person.getUrl();
         boolean isVerified = person.isVerified();
         String uid = person.getId();
-        String imgUrl = person.getImage().getUrl();
+        if (person.getImage() != null) {
+            imgUrl = person.getImage().getUrl();
+        }
 
+        mSocialAccount = new SocialAccount(email, displayName, gender, profileLink, uid,
+                isVerified, firstName, lastName, imgUrl);
 
-
-        //Set up sign out and disconnect buttons.
-//        Button signOutButton = (Button) mBaseView.findViewById(R.id.plus_sign_out_button);
-//        signOutButton.setOnClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                signOut();
-//            }
-//        });
-//        Button disconnectButton = (Button) mBaseView.findViewById(R.id.plus_disconnect_button);
-//        disconnectButton.setOnClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                revokeAccess();
-//            }
-//        });
+        HashMap<String, String> params = new HashMap<>();
+        params.put(Constants.LOGIN_TYPE, SocialAccount.GP);
+        Gson gson = new Gson();
+        params.put(Constants.LOGIN_PARAMS, gson.toJson(mSocialAccount, SocialAccount.class));
+        HashMap<Object, String> loginTypeMap = new HashMap<>();
+        loginTypeMap.put(Constants.LOGIN_TYPE, SocialAccount.GP);
+        showProgress(true);
+        startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.SOCIAL_LOGIN_URL,
+                params, true, AuthParameters.getInstance(this), new BasicCookieStore(),
+                loginTypeMap, false);
     }
 
     @Override
@@ -254,8 +302,12 @@ public class SignInActivity extends PlusBaseActivity {
     protected void updateConnectButtonState() {
         boolean connected = getPlusClient().isConnected();
 
-        mPlusSignInButton.setVisibility(connected ? View.GONE : View.VISIBLE);
-        mLoginFormView.setVisibility(connected ? View.GONE : View.VISIBLE);
+        if (mPlusSignInButton != null) {
+            mPlusSignInButton.setVisibility(connected ? View.GONE : View.VISIBLE);
+        }
+        if (mLoginFormView != null) {
+            mLoginFormView.setVisibility(connected ? View.GONE : View.VISIBLE);
+        }
     }
 
     @Override
@@ -266,7 +318,12 @@ public class SignInActivity extends PlusBaseActivity {
 
     @Override
     protected void onPlusClientSignOut() {
-        signOutFromGplus();
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.remove(Constants.SOCIAL_ACCOUNT_TYPE);
+        editor.commit();
+        setResult(Constants.GO_TO_HOME);
+        finish();
     }
 
     /**
@@ -295,14 +352,29 @@ public class SignInActivity extends PlusBaseActivity {
 
     @Override
     public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-        if (httpOperationResult.getUrl().contains(Constants.LOGIN) &&
-                !httpOperationResult.getUrl().contains(Constants.FB_LOGIN_REGISTER)) {
+        if (httpOperationResult.getUrl().contains(Constants.SOCIAL_LOGIN_URL) ||
+                httpOperationResult.getUrl().contains(Constants.LOGIN)) {
             showProgress(false);
             JsonObject responseJsonObj = new JsonParser().parse(httpOperationResult.getReponseString()).getAsJsonObject();
             String status = responseJsonObj.get(Constants.STATUS).getAsString();
             switch (status) {
                 case Constants.OK:
-                    saveUserDetailInPreference(responseJsonObj);
+                    String loginType = httpOperationResult.getAdditionalCtx() != null ?
+                            httpOperationResult.getAdditionalCtx().get(Constants.LOGIN_TYPE) : null;
+                    saveUserDetailInPreference(responseJsonObj, loginType);
+                    break;
+                case Constants.NO_ACCOUNT:
+                    loginType = httpOperationResult.getAdditionalCtx().get(Constants.LOGIN_TYPE);
+                    switch (loginType) {
+                        case SocialAccount.FB:
+                            // TODO : Plugin fb API
+                            break;
+                        case SocialAccount.GP:
+                            Intent intent = new Intent(this, GoogleSignInConfirmActivity.class);
+                            intent.putExtra(Constants.REGISTER_MEMBER, mSocialAccount);
+                            startActivityForResult(intent, Constants.GO_TO_HOME);
+                            break;
+                    }
                     break;
                 case Constants.ERROR:
                     //TODO : Replace with handler
@@ -321,7 +393,7 @@ public class SignInActivity extends PlusBaseActivity {
         }
     }
 
-    public void saveUserDetailInPreference(JsonObject responseJsonObj) {
+    public void saveUserDetailInPreference(JsonObject responseJsonObj, String socialAccountType) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = preferences.edit();
         String bbToken = responseJsonObj.get(Constants.BB_TOKEN).getAsString();
@@ -337,6 +409,7 @@ public class SignInActivity extends PlusBaseActivity {
         editor.putString(Constants.MID_KEY, mid);
         editor.putString(Constants.MEMBER_FULL_NAME_KEY, fullName);
         editor.putString(Constants.MEMBER_EMAIL_KEY, email);
+        editor.putString(Constants.SOCIAL_ACCOUNT_TYPE, socialAccountType);
         CheckBox chkRememberMe = (CheckBox) mBaseView.findViewById(R.id.chkRememberMe);
         if (chkRememberMe.isChecked()) {
             editor.putString(Constants.EMAIL_PREF, email);

@@ -602,14 +602,6 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         }
     }
 
-    public void refreshNavigation() {
-        if (mDrawerLayout != null) {
-            mDrawerLayout.closeDrawers();
-        }
-        invalidateOptionsMenu();
-        loadNavigationItems();
-    }
-
     private void loadNavigationItems() {
 
         TextView txtNavSalutation = (TextView) findViewById(R.id.txtNavSalutation);

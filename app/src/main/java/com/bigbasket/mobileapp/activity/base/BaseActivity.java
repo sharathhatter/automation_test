@@ -435,10 +435,6 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         isActivitySuspended = false;
         if (resultCode == Constants.GO_TO_HOME) {
-            if (data != null && data.getBooleanExtra(Constants.LOGOUT, false)) {
-                reloadNavigation();
-            }
-
             if (!(getCurrentActivity() instanceof StartActivity)) {
                 setResult(Constants.GO_TO_HOME);
                 finish();
@@ -617,30 +613,21 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         editor.commit();
     }
 
-    public String getCartRequestParams() {
-        return "";
-    }
-
     public void doLogout() {
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
-        editor.putString(Constants.FIRST_NAME, null);
-        editor.putString(Constants.BBTOKEN_KEY, null);
-        editor.putString(Constants.OLD_BBTOKEN_KEY, null);
-        editor.putString(Constants.MID_KEY, null);
-        editor.putString(Constants.MEMBER_FULL_NAME_KEY, null);
-        editor.putString(Constants.MEMBER_EMAIL_KEY, null);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.remove(Constants.FIRST_NAME);
+        editor.remove(Constants.BBTOKEN_KEY);
+        editor.remove(Constants.OLD_BBTOKEN_KEY);
+        editor.remove(Constants.MID_KEY);
+        editor.remove(Constants.MEMBER_FULL_NAME_KEY);
+        editor.remove(Constants.MEMBER_EMAIL_KEY);
         editor.commit();
         AuthParameters.updateInstance(getCurrentActivity());
-        new GetCartCountTask(getCurrentActivity(),
-                MobileApiUrl.getBaseAPIUrl() + Constants.C_SUMMARY +
-                        getCartRequestParams()
-        ).execute();
-        reloadNavigation();
-    }
-
-    public void reloadNavigation() {
-        if (getCurrentActivity() instanceof BBActivity) {
-            ((BBActivity) getCurrentActivity()).refreshNavigation();
+        if (preferences.contains(Constants.SOCIAL_ACCOUNT_TYPE)) {
+            Intent intent = new Intent(getCurrentActivity(), SignInActivity.class);
+            intent.putExtra(Constants.SOCIAL_LOGOUT, true);
+            startActivityForResult(intent, Constants.GO_TO_HOME);
         }
     }
 

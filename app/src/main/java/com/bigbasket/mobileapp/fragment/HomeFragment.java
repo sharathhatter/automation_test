@@ -21,6 +21,7 @@ import com.bigbasket.mobileapp.fragment.base.BaseSectionFragment;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.model.section.Section;
+import com.bigbasket.mobileapp.task.GetCartCountTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.ParserUtil;
@@ -49,6 +50,9 @@ public class HomeFragment extends BaseSectionFragment {
         } else {
             requestHomePage();
         }
+
+        new GetCartCountTask<>(getCurrentActivity(),
+                MobileApiUrl.getBaseAPIUrl() + Constants.C_SUMMARY).execute();
     }
 
     private boolean isVisitorUpdateNeeded() {
