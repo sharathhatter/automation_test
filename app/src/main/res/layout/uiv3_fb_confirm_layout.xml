@@ -250,7 +250,6 @@
                     android:minWidth="0dp"
                     android:textColor="@color/white"
                     android:layout_marginLeft="@dimen/margin_normal"
-                    android:drawablePadding="@dimen/padding_small"
                     android:background="@color/uiv3_action_bar_background"
                     android:layout_marginTop="@dimen/margin_normal"
                     android:layout_marginRight="@dimen/margin_normal"

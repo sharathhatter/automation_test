@@ -31,6 +31,7 @@ import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.plus.model.people.Person;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -72,7 +73,7 @@ public class SignInActivity extends PlusBaseActivity {
             mPlusSignInButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    signIn();
+                    signInViaGPlus();
                 }
             });
         } else {
@@ -197,8 +198,36 @@ public class SignInActivity extends PlusBaseActivity {
         }
     }
 
+    public void OnLogoutButtonClicked(View v) {
+        signOutFromGplus();
+    }
+
     @Override
-    protected void onPlusClientSignIn() {
+    protected void onPlusClientSignIn(String email, Person person) {
+        if (TextUtils.isEmpty(email)) {
+            signOutFromGplus();
+            showAlertDialog(this, null, "Unable to get your email-address\n" +
+                    "Please check your privacy settings.");
+            return;
+        }
+        if (person == null) {
+            signOutFromGplus();
+            showAlertDialog(this, null, "Unable to read your profile information\n" +
+                    "Please check your privacy settings.");
+            return;
+        }
+
+        String displayName = person.getDisplayName();
+        String firstName = person.getName().getGivenName();
+        String lastName = person.getName().getFamilyName();
+        String gender = person.getGender() == Person.Gender.FEMALE ? "female": "male";
+        String profileLink = person.getUrl();
+        boolean isVerified = person.isVerified();
+        String uid = person.getId();
+        String imgUrl = person.getImage().getUrl();
+
+
+
         //Set up sign out and disconnect buttons.
 //        Button signOutButton = (Button) mBaseView.findViewById(R.id.plus_sign_out_button);
 //        signOutButton.setOnClickListener(new OnClickListener() {
@@ -237,7 +266,7 @@ public class SignInActivity extends PlusBaseActivity {
 
     @Override
     protected void onPlusClientSignOut() {
-
+        signOutFromGplus();
     }
 
     /**

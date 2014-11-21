@@ -27,7 +27,8 @@
             android:paddingBottom="@dimen/padding_large"
             android:paddingLeft="@dimen/padding_large"
             android:paddingRight="@dimen/padding_large"
-            android:paddingTop="@dimen/padding_normal">
+            android:paddingTop="@dimen/padding_normal"
+            >
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -39,70 +40,7 @@
                 android:contentDescription="@string/app_name"
                 android:src="@drawable/dash_logo" />
 
-            <TableLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:stretchColumns="1">
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom"
-                        android:layout_marginBottom="@dimen/margin_small"
-                        android:contentDescription="@string/email"
-                        android:src="@drawable/mail" />
-
-                    <AutoCompleteTextView
-                        android:id="@+id/emailInput"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/margin_normal"
-                        android:ems="10"
-                        android:hint="@string/email"
-                        android:imeOptions="actionNext"
-                        android:inputType="textEmailAddress"
-                        android:paddingLeft="@dimen/padding_normal"
-                        android:singleLine="true"
-                        android:textColor="@color/uiv3_primary_text_color"
-                        android:textSize="@dimen/secondary_text_size" />
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom"
-                        android:layout_marginBottom="@dimen/padding_small"
-                        android:contentDescription="@string/password"
-                        android:src="@drawable/password_lock" />
-
-                    <EditText
-                        android:id="@+id/editTextPasswd"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/margin_normal"
-                        android:layout_marginTop="@dimen/margin_normal"
-                        android:ems="10"
-                        android:hint="@string/password"
-                        android:imeActionId="@+id/login"
-                        android:imeActionLabel="@string/action_sign_in_short"
-                        android:imeOptions="actionUnspecified"
-                        android:inputType="textPassword"
-                        android:paddingLeft="@dimen/padding_normal"
-                        android:singleLine="true"
-                        android:textColor="@color/uiv3_primary_text_color"
-                        android:textSize="@dimen/secondary_text_size" />
-                </TableRow>
-
-            </TableLayout>
-
+            <include layout="@layout/uiv3_login_input_layout" />
 
             <CheckBox
                 android:id="@+id/chkRememberMe"
@@ -111,7 +49,7 @@
                 android:layout_marginTop="@dimen/margin_normal"
                 android:text="@string/remember"
                 android:textColor="@color/uiv3_primary_text_color"
-                android:textSize="13sp" />
+                android:textSize="@dimen/secondary_text_size" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -249,6 +187,11 @@
 
             </LinearLayout>
 
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="logout"
+                android:onClick="OnLogoutButtonClicked"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
