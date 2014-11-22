@@ -299,7 +299,7 @@ public class SignInActivity extends PlusBaseActivity {
     }
 
     @Override
-    protected void updateConnectButtonState() {
+    protected void updatePlusConnectedButtonState() {
         boolean connected = getPlusClient().isConnected();
 
         if (mPlusSignInButton != null) {

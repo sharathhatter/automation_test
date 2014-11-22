@@ -67,7 +67,7 @@ public abstract class PlusBaseActivity extends BaseSignInSignupActivity
      * "Sign out"/ "Disconnect", or "Revoke access" buttons, this lets you know when their states
      * need to be updated.
      */
-    protected abstract void updateConnectButtonState();
+    protected abstract void updatePlusConnectedButtonState();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -104,7 +104,7 @@ public abstract class PlusBaseActivity extends BaseSignInSignupActivity
             }
         }
 
-        updateConnectButtonState();
+        updatePlusConnectedButtonState();
     }
 
     /**
@@ -143,7 +143,7 @@ public abstract class PlusBaseActivity extends BaseSignInSignupActivity
             Log.v(TAG, "Sign out successful!");
         }
 
-        updateConnectButtonState();
+        updatePlusConnectedButtonState();
     }
 
     /**
@@ -161,7 +161,7 @@ public abstract class PlusBaseActivity extends BaseSignInSignupActivity
                     // Revoke access to this entire application. This will call back to
                     // onAccessRevoked when it is complete, as it needs to reach the Google
                     // authentication servers to revoke all tokens.
-                    updateConnectButtonState();
+                    updatePlusConnectedButtonState();
                     onPlusClientRevokeAccess();
                 }
             });
@@ -219,19 +219,21 @@ public abstract class PlusBaseActivity extends BaseSignInSignupActivity
      */
     @Override
     protected void onActivityResult(int requestCode, int responseCode, Intent intent) {
-        updateConnectButtonState();
-        if (requestCode == RC_SIGN_IN && responseCode == RESULT_OK) {
-            // If we have a successful result, we will want to be able to resolve any further
-            // errors, so turn on resolution with our flag.
-            mAutoResolveOnFail = true;
-            // If we have a successful result, let's call connect() again. If there are any more
-            // errors to resolve we'll get our onConnectionFailed, but if not,
-            // we'll get onConnected.
-            initiatePlusClientConnect();
-        } else if (requestCode == RC_SIGN_IN && responseCode != RESULT_OK) {
-            // If we've got an error we can't resolve, we're no longer in the midst of signing
-            // in, so we can stop the progress spinner.
-            setProgressBarVisible(false);
+        updatePlusConnectedButtonState();
+        if (requestCode == RC_SIGN_IN) {
+            if (responseCode == RESULT_OK) {
+                // If we have a successful result, we will want to be able to resolve any further
+                // errors, so turn on resolution with our flag.
+                mAutoResolveOnFail = true;
+                // If we have a successful result, let's call connect() again. If there are any more
+                // errors to resolve we'll get our onConnectionFailed, but if not,
+                // we'll get onConnected.
+                initiatePlusClientConnect();
+            } else {
+                // If we've got an error we can't resolve, we're no longer in the midst of signing
+                // in, so we can stop the progress spinner.
+                setProgressBarVisible(false);
+            }
         }
     }
 
@@ -240,7 +242,7 @@ public abstract class PlusBaseActivity extends BaseSignInSignupActivity
      */
     @Override
     public void onConnected(Bundle connectionHint) {
-        updateConnectButtonState();
+        updatePlusConnectedButtonState();
         setProgressBarVisible(false);
         onPlusClientSignIn(Plus.AccountApi.getAccountName(mGoogleApiClient),
                 Plus.PeopleApi.getCurrentPerson(mGoogleApiClient));
@@ -255,7 +257,7 @@ public abstract class PlusBaseActivity extends BaseSignInSignupActivity
      */
     @Override
     public void onConnectionFailed(ConnectionResult result) {
-        updateConnectButtonState();
+        updatePlusConnectedButtonState();
 
         // Most of the time, the connection will fail with a user resolvable result. We can store
         // that in our mConnectionResult property ready to be used when the user clicks the
