@@ -47,14 +47,6 @@ import org.json.JSONException;
 
 import java.util.HashMap;
 
-/**
- * A login screen that offers login via email/password and via Google+ sign in.
- * <p/>
- * ************ IMPORTANT SETUP NOTES: ************
- * In order for Google+ sign in to work with your app, you must first go to:
- * https://developers.google.com/+/mobile/android/getting-started#step_1_enable_the_google_api
- * and follow the steps in "Step 1" to create an OAuth 2.0 client for your package.
- */
 public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
 
     // UI references.
@@ -63,6 +55,7 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
     private Button mPlusSignInButton;
     private View mLoginFormView;
     private View mBaseView;
+    private LoginButton mFacebookLoginButton;
 
     private SocialAccount mSocialAccount;
 
@@ -90,6 +83,8 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
             // Don't offer G+ sign in if the app's version is too low to support Google Play
             // Services.
             mPlusSignInButton.setVisibility(View.GONE);
+            Button signOutButton = (Button) mBaseView.findViewById(R.id.plus_sign_out_button);
+            signOutButton.setVisibility(View.GONE);
         }
 
         // Set up the login form.
@@ -124,21 +119,52 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
         spannableString.setSpan(new UnderlineSpan(), 0, spannableString.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
         txtSignup.setText(spannableString);
 
-        LoginButton btnFBLogin = (LoginButton) mBaseView.findViewById(R.id.btnFBLogin);
-        initializeGooglePlusSignIn();
+        mFacebookLoginButton = (LoginButton) mBaseView.findViewById(R.id.btnFBLogin);
+
+
         if (isInLogoutMode()) {
-            View layoutEmailLogin = mBaseView.findViewById(R.id.layoutEmailLogin);
-            layoutEmailLogin.setVisibility(View.GONE);
-            btnFBLogin.setVisibility(View.GONE);
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+            String socialAccountType = preferences.getString(Constants.SOCIAL_ACCOUNT_TYPE, "");
+            boolean isFbLoggedIn = socialAccountType.equalsIgnoreCase(SocialAccount.FB);
+            boolean isGplusLoggedIn = socialAccountType.equalsIgnoreCase(SocialAccount.GP);
+            if (isFbLoggedIn) {
+                initializeFacebookLogin(mFacebookLoginButton);
+            } else if (isGplusLoggedIn) {
+                initializeGooglePlusSignIn();
+            }
+            updateViewStateInLogoutMode();
         } else {
-            initializeFacebookLogin(btnFBLogin);
+            initializeGooglePlusSignIn();
+            initializeFacebookLogin(mFacebookLoginButton);
+        }
+    }
+
+    private void updateViewStateInLogoutMode() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String socialAccountType = preferences.getString(Constants.SOCIAL_ACCOUNT_TYPE, "");
+        boolean isFbLoggedIn = socialAccountType.equalsIgnoreCase(SocialAccount.FB);
+        boolean isGplusLoggedIn = socialAccountType.equalsIgnoreCase(SocialAccount.GP);
+        View layoutEmailLogin = mBaseView.findViewById(R.id.layoutEmailLogin);
+        if (isGplusLoggedIn || isFbLoggedIn) {
+            layoutEmailLogin.setVisibility(View.GONE);
+        } else {
+            layoutEmailLogin.setVisibility(View.VISIBLE);
+        }
+
+        if (isGplusLoggedIn) {
+            mFacebookLoginButton.setVisibility(View.GONE);
+        }
+        if (isFbLoggedIn) {
+            mFacebookLoginButton.setVisibility(View.VISIBLE);
+            mPlusSignInButton.setVisibility(View.GONE);
+            Button signOutButton = (Button) mBaseView.findViewById(R.id.plus_sign_out_button);
+            signOutButton.setVisibility(View.GONE);
         }
     }
 
     public boolean isInLogoutMode() {
         return getIntent().getBooleanExtra(Constants.SOCIAL_LOGOUT, false);
     }
-
 
     /**
      * Attempts to sign in or register the account specified by the login form.

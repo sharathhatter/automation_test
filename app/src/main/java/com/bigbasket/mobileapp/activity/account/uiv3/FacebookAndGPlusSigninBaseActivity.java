@@ -3,7 +3,6 @@ package com.bigbasket.mobileapp.activity.account.uiv3;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.bigbasket.mobileapp.R;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
@@ -16,8 +15,6 @@ public abstract class FacebookAndGPlusSigninBaseActivity extends PlusBaseActivit
     private UiLifecycleHelper mFacebookUiLifeCycleHelper;
 
     public void initializeFacebookLogin(LoginButton btnFBLogin) {
-
-        btnFBLogin = (LoginButton) findViewById(R.id.btnFBLogin);
         btnFBLogin.setReadPermissions(Arrays.asList("public_profile", "email"));
 
         Session.StatusCallback facebookSessionCallback = new Session.StatusCallback() {
@@ -38,7 +35,9 @@ public abstract class FacebookAndGPlusSigninBaseActivity extends PlusBaseActivit
         }
 
         if (session.isOpened()) {
-            onFacebookSignIn(session);
+            if (!isInLogoutMode()) {
+                onFacebookSignIn(session);
+            }
         } else if (session.isClosed()) {
             if (isInLogoutMode()) {
                 onFacebookSignOut();
