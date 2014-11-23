@@ -69,10 +69,7 @@ public abstract class PlusBaseActivity extends BaseSignInSignupActivity
      */
     protected abstract void updatePlusConnectedButtonState();
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
+    public void initializeGooglePlusSignIn() {
         // Initialize the PlusClient connection.
         // Scopes indicate the information about the user your application will be able to access.
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -87,6 +84,7 @@ public abstract class PlusBaseActivity extends BaseSignInSignupActivity
      * Try to sign in the user.
      */
     public void signInViaGPlus() {
+        if (mGoogleApiClient == null) return;
         if (!mGoogleApiClient.isConnected()) {
             // Show the dialog as we are now signing in.
             setProgressBarVisible(true);
@@ -113,12 +111,14 @@ public abstract class PlusBaseActivity extends BaseSignInSignupActivity
      * {@link #onConnectionFailed(com.google.android.gms.common.ConnectionResult)}.
      */
     private void initiatePlusClientConnect() {
+        if (mGoogleApiClient == null) return;
         if (!mGoogleApiClient.isConnected() && !mGoogleApiClient.isConnecting()) {
             mGoogleApiClient.connect();
         }
     }
 
     private void initiatePlusClientDisconnect() {
+        if (mGoogleApiClient == null) return;
         if (mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }
@@ -128,6 +128,7 @@ public abstract class PlusBaseActivity extends BaseSignInSignupActivity
      * Sign out the user (so they can switch to another account).
      */
     public void signOutFromGplus() {
+        if (mGoogleApiClient == null) return;
 
         // We only want to sign out if we're connected.
         if (mGoogleApiClient.isConnected()) {
@@ -150,6 +151,7 @@ public abstract class PlusBaseActivity extends BaseSignInSignupActivity
      * Revoke Google+ authorization completely.
      */
     public void revokeAccess() {
+        if (mGoogleApiClient == null) return;
 
         if (mGoogleApiClient.isConnected()) {
             // Clear the default account as in the Sign Out.
@@ -195,6 +197,7 @@ public abstract class PlusBaseActivity extends BaseSignInSignupActivity
      * of the ConnectionResult from the failed connect() call.
      */
     private void startResolution() {
+        if (mGoogleApiClient == null) return;
         try {
             // Don't start another resolution now until we have a result from the activity we're
             // about to start.
@@ -219,7 +222,9 @@ public abstract class PlusBaseActivity extends BaseSignInSignupActivity
      */
     @Override
     protected void onActivityResult(int requestCode, int responseCode, Intent intent) {
-        updatePlusConnectedButtonState();
+        if (mGoogleApiClient != null) {
+            updatePlusConnectedButtonState();
+        }
         if (requestCode == RC_SIGN_IN) {
             if (responseCode == RESULT_OK) {
                 // If we have a successful result, we will want to be able to resolve any further
@@ -234,6 +239,8 @@ public abstract class PlusBaseActivity extends BaseSignInSignupActivity
                 // in, so we can stop the progress spinner.
                 setProgressBarVisible(false);
             }
+        } else {
+            super.onActivityResult(requestCode, responseCode, intent);
         }
     }
 
@@ -242,6 +249,8 @@ public abstract class PlusBaseActivity extends BaseSignInSignupActivity
      */
     @Override
     public void onConnected(Bundle connectionHint) {
+        if (mGoogleApiClient == null) return;
+
         updatePlusConnectedButtonState();
         setProgressBarVisible(false);
         onPlusClientSignIn(Plus.AccountApi.getAccountName(mGoogleApiClient),
@@ -257,6 +266,8 @@ public abstract class PlusBaseActivity extends BaseSignInSignupActivity
      */
     @Override
     public void onConnectionFailed(ConnectionResult result) {
+        if (mGoogleApiClient == null) return;
+
         updatePlusConnectedButtonState();
 
         // Most of the time, the connection will fail with a user resolvable result. We can store
@@ -278,6 +289,8 @@ public abstract class PlusBaseActivity extends BaseSignInSignupActivity
 
     @Override
     public void onConnectionSuspended(int cause) {
+        if (mGoogleApiClient == null) return;
+
         mGoogleApiClient.connect();
     }
 }

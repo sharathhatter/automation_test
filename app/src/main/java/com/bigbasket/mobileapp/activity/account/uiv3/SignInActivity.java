@@ -30,6 +30,11 @@ import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.model.GraphUser;
+import com.facebook.widget.LoginButton;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.plus.model.people.Person;
@@ -38,6 +43,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import org.apache.http.impl.client.BasicCookieStore;
+import org.json.JSONException;
 
 import java.util.HashMap;
 
@@ -49,7 +55,7 @@ import java.util.HashMap;
  * https://developers.google.com/+/mobile/android/getting-started#step_1_enable_the_google_api
  * and follow the steps in "Step 1" to create an OAuth 2.0 client for your package.
  */
-public class SignInActivity extends PlusBaseActivity {
+public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
 
     // UI references.
     private EditText mPasswordView;
@@ -118,15 +124,18 @@ public class SignInActivity extends PlusBaseActivity {
         spannableString.setSpan(new UnderlineSpan(), 0, spannableString.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
         txtSignup.setText(spannableString);
 
+        LoginButton btnFBLogin = (LoginButton) mBaseView.findViewById(R.id.btnFBLogin);
+        initializeGooglePlusSignIn();
         if (isInLogoutMode()) {
             View layoutEmailLogin = mBaseView.findViewById(R.id.layoutEmailLogin);
             layoutEmailLogin.setVisibility(View.GONE);
-            Button btnFBLogin = (Button) mBaseView.findViewById(R.id.btnFBLogin);
             btnFBLogin.setVisibility(View.GONE);
+        } else {
+            initializeFacebookLogin(btnFBLogin);
         }
     }
 
-    private boolean isInLogoutMode() {
+    public boolean isInLogoutMode() {
         return getIntent().getBooleanExtra(Constants.SOCIAL_LOGOUT, false);
     }
 
@@ -222,7 +231,7 @@ public class SignInActivity extends PlusBaseActivity {
         }
     }
 
-    public void OnLogoutButtonClicked(View v) {
+    public void OnPlusLogoutButtonClicked(View v) {
         signOutFromGplus();
     }
 
@@ -274,16 +283,62 @@ public class SignInActivity extends PlusBaseActivity {
         mSocialAccount = new SocialAccount(email, displayName, gender, profileLink, uid,
                 isVerified, firstName, lastName, imgUrl);
 
+        startSocialLogin(SocialAccount.GP);
+    }
+
+    private void startSocialLogin(String loginType) {
         HashMap<String, String> params = new HashMap<>();
         params.put(Constants.LOGIN_TYPE, SocialAccount.GP);
         Gson gson = new Gson();
         params.put(Constants.LOGIN_PARAMS, gson.toJson(mSocialAccount, SocialAccount.class));
         HashMap<Object, String> loginTypeMap = new HashMap<>();
-        loginTypeMap.put(Constants.LOGIN_TYPE, SocialAccount.GP);
+        loginTypeMap.put(Constants.LOGIN_TYPE, loginType);
         showProgress(true);
         startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.SOCIAL_LOGIN_URL,
                 params, true, AuthParameters.getInstance(this), new BasicCookieStore(),
                 loginTypeMap, false);
+    }
+
+    @Override
+    public void onFacebookSignIn(Session facebookSession) {
+        Request facebookUserDetailRequest = Request.newMeRequest(facebookSession, new Request.GraphUserCallback() {
+            @Override
+            public void onCompleted(GraphUser user, Response response) {
+                if (user != null) {
+                    String email = response.getGraphObject().getProperty(Constants.EMAIL).toString();
+                    String firstName = user.getFirstName();
+                    String lastName = user.getLastName();
+                    String gender = null;
+                    try {
+                        gender = user.getInnerJSONObject().getString(Constants.FB_GENDER);
+                    } catch (JSONException e) {
+
+                    }
+                    String profileLink = user.getLink();
+                    String imgUrl = "http://graph.facebook.com/" + user.getId() + "/picture?type=large";
+                    boolean isVerified = false;
+                    try {
+                        isVerified = user.getInnerJSONObject().getString(Constants.FB_VERIFIED).equalsIgnoreCase("verified");
+                    } catch (JSONException e) {
+
+                    }
+                    String uid = user.getId();
+                    mSocialAccount = new SocialAccount(email, firstName, gender, profileLink, uid,
+                            isVerified, firstName, lastName, imgUrl);
+                    startSocialLogin(SocialAccount.FB);
+                } else if (response.getError() != null) {
+                    showAlertDialog(getCurrentActivity(), null, response.getError().getErrorMessage());
+                }
+            }
+        });
+        Request.executeBatchAsync(facebookUserDetailRequest);
+    }
+
+    @Override
+    public void onFacebookSignOut() {
+        doLogout();
+        setResult(Constants.GO_TO_HOME);
+        finish();
     }
 
     @Override
@@ -293,6 +348,8 @@ public class SignInActivity extends PlusBaseActivity {
 
     @Override
     protected void updatePlusConnectedButtonState() {
+        if (getPlusClient() == null) return;
+
         boolean connected = getPlusClient().isConnected();
 
         if (mPlusSignInButton != null) {
