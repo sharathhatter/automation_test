@@ -86,9 +86,6 @@ public class SignInActivity extends PlusBaseActivity {
             mPlusSignInButton.setVisibility(View.GONE);
         }
 
-        if (isInLogoutMode()) {
-            return;
-        }
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) mBaseView.findViewById(R.id.emailInput);
         populateAutoComplete();
@@ -120,6 +117,13 @@ public class SignInActivity extends PlusBaseActivity {
         SpannableString spannableString = new SpannableString(getString(R.string.loginPageSignUpText));
         spannableString.setSpan(new UnderlineSpan(), 0, spannableString.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
         txtSignup.setText(spannableString);
+
+        if (isInLogoutMode()) {
+            View layoutEmailLogin = mBaseView.findViewById(R.id.layoutEmailLogin);
+            layoutEmailLogin.setVisibility(View.GONE);
+            Button btnFBLogin = (Button) mBaseView.findViewById(R.id.btnFBLogin);
+            btnFBLogin.setVisibility(View.GONE);
+        }
     }
 
     private boolean isInLogoutMode() {
@@ -235,18 +239,7 @@ public class SignInActivity extends PlusBaseActivity {
             }
         });
 
-        if (isInLogoutMode()) {
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-            String socialAccountType = preferences.getString(Constants.SOCIAL_ACCOUNT_TYPE, null);
-            if (!TextUtils.isEmpty(socialAccountType)) {
-                switch (socialAccountType) {
-                    case SocialAccount.GP:
-                        signOutFromGplus();
-                        break;
-                }
-            }
-            return;
-        }
+        if (isInLogoutMode()) return;
 
         if (TextUtils.isEmpty(email)) {
             signOutFromGplus();
@@ -314,14 +307,15 @@ public class SignInActivity extends PlusBaseActivity {
     protected void onPlusClientRevokeAccess() {
         // TODO: Access to the user's G+ account has been revoked.  Per the developer terms, delete
         // any stored user data here.
+        revokeAccess();
     }
 
     @Override
     protected void onPlusClientSignOut() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.remove(Constants.SOCIAL_ACCOUNT_TYPE);
-        editor.commit();
+        Button signOutButton = (Button) mBaseView.findViewById(R.id.plus_sign_out_button);
+        signOutButton.setVisibility(View.GONE);
+
+        doLogout();
         setResult(Constants.GO_TO_HOME);
         finish();
     }

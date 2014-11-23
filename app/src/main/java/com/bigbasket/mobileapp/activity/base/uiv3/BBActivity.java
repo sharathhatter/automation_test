@@ -359,8 +359,12 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 startActivityForResult(intent, Constants.GO_TO_HOME);
                 return true;
             case R.id.action_logout:
-                showAlertDialog(this, getString(R.string.signOut), getString(R.string.signoutConfirmation),
-                        DialogButton.YES, DialogButton.NO, Constants.LOGOUT);
+                if (isSocialLogin()) {
+                    onLogoutRequested();
+                } else {
+                    showAlertDialog(this, getString(R.string.signOut), getString(R.string.signoutConfirmation),
+                            DialogButton.YES, DialogButton.NO, Constants.LOGOUT);
+                }
                 return true;
             case R.id.action_change_city:
                 intent = new Intent(this, BackButtonActivity.class);
@@ -589,7 +593,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         if (!TextUtils.isEmpty(sourceName)) {
             switch (sourceName) {
                 case Constants.LOGOUT:
-                    doLogout();
+                    onLogoutRequested();
                     this.invalidateOptionsMenu();
                     addToMainLayout(new HomeFragment(), Constants.HOME);
                     break;
@@ -739,7 +743,12 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                         launchKonotor();
                         break;
                     case Constants.LOGOUT:
-                        doLogout();
+                        if (isSocialLogin()) {
+                            onLogoutRequested();
+                        } else {
+                            showAlertDialog(getCurrentActivity(), getString(R.string.signOut), getString(R.string.signoutConfirmation),
+                                    DialogButton.YES, DialogButton.NO, Constants.LOGOUT);
+                        }
                         break;
                 }
                 return true;

@@ -87,7 +87,7 @@ public class SignInFragment extends FacebookRegisterLogIn {
         chkRememberMe.setTypeface(faceRobotoRegular);
         chkRememberMe.setChecked(preferences.getBoolean(Constants.REMEMBER_ME_PREF, false));
 
-        progressBarLogin = (ProgressBar) base.findViewById(R.id.progressBarLogin);
+        //progressBarLogin = (ProgressBar) base.findViewById(R.id.progressBarLogin);
 
         btnLogin = (Button) base.findViewById(R.id.btnLogin);
         btnLogin.setTypeface(faceRobotoRegular);

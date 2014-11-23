@@ -120,7 +120,7 @@ public class HomeFragment extends BaseSectionFragment {
                 Intent result = new Intent();
                 result.putExtra(Constants.FORCE_REGISTER_DEVICE, true);
                 getActivity().setResult(Constants.FORCE_REGISTER_CODE, result);
-                getCurrentActivity().doLogout();
+                getCurrentActivity().onLogoutRequested();
                 getActivity().finish();
             }
         } else if (url.contains(Constants.GET_HOME_PG_URL)) {

@@ -36,7 +36,6 @@ import android.widget.Toast;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.StartActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
-import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.CheckoutQCActivity;
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 import com.bigbasket.mobileapp.adapter.order.PrescriptionImageAdapter;
@@ -54,13 +53,11 @@ import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.model.request.HttpRequestData;
 import com.bigbasket.mobileapp.task.COReserveQuantityCheckTask;
-import com.bigbasket.mobileapp.task.GetCartCountTask;
 import com.bigbasket.mobileapp.task.UploadImageService;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.MessageCode;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.demach.konotor.Konotor;
 
@@ -613,6 +610,21 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         editor.commit();
     }
 
+    public void onLogoutRequested() {
+        if (isSocialLogin()) {
+            Intent intent = new Intent(getCurrentActivity(), SignInActivity.class);
+            intent.putExtra(Constants.SOCIAL_LOGOUT, true);
+            startActivityForResult(intent, Constants.GO_TO_HOME);
+        } else {
+            doLogout();
+        }
+    }
+
+    public boolean isSocialLogin() {
+        return PreferenceManager.
+                getDefaultSharedPreferences(getCurrentActivity()).contains(Constants.SOCIAL_ACCOUNT_TYPE);
+    }
+
     public void doLogout() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
         SharedPreferences.Editor editor = preferences.edit();
@@ -622,13 +634,9 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         editor.remove(Constants.MID_KEY);
         editor.remove(Constants.MEMBER_FULL_NAME_KEY);
         editor.remove(Constants.MEMBER_EMAIL_KEY);
+        editor.remove(Constants.SOCIAL_ACCOUNT_TYPE);
         editor.commit();
         AuthParameters.updateInstance(getCurrentActivity());
-        if (preferences.contains(Constants.SOCIAL_ACCOUNT_TYPE)) {
-            Intent intent = new Intent(getCurrentActivity(), SignInActivity.class);
-            intent.putExtra(Constants.SOCIAL_LOGOUT, true);
-            startActivityForResult(intent, Constants.GO_TO_HOME);
-        }
     }
 
     public void onLoginSuccess() {
