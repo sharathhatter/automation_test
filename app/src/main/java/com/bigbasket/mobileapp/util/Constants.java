@@ -607,7 +607,6 @@ public class Constants {
     public static final String PARAMS = "params";
 
     // home
-    public static final String FLURRY_AGENT = "MH9S229NFHTBCV9TVJVK";
     public static final String OS = "os";
     public static final String FIRST_NAME = "firstname";
     public static final String BB_TOKEN = "bb_token";
@@ -716,25 +715,8 @@ public class Constants {
     public static final String FINAL_QTY = "final_quantity";
 
     //fb login and register
-    public static final String FB_LOGIN_REGISTER = "fb-register-and-login/";
-    public static final String FROM_FB_CONFIRM_DIALOG = "fb-confirm-dialog";
-    public static final int FB_CONFIRM_ERROR = 183;
     public static final String FB_GENDER = "gender";
-    public static final String FB_LINK = "link";
     public static final String FB_VERIFIED = "verified";
-    public static final String FB_ID = "id";
-    public static final String FB_FULL_NAME = "name";
-    public static final String FB_CONFIRM = "fb-confirm/";
-    public static final String FB_CONFIRM_TYPE = "confirm-type";
-    public static final String FB_LINK_FROM = "link_from";
-    public static final String FB_ACCESS_TOKEN = "fb_access_token";
-    public static final String FB_ACCESS_EXPIRES = "fb_access_expires";
-    public static final String FB_EMAIL_ID = "fb_email_id";
-    public static final String FB_FIRST_NAME = "fb_first_name";
-    public static final String FB_LAST_NAME = "fb_last_name";
-    public static final int FB_INTERNAL_SERVER_ERROR = 101;
-    public static final String FB_SERVER_ERROR_MSG = "fb_server_msg";
-    public static final String FB_EMAIL = "fb_email";
     public static final String SOCIAL_LOGIN_URL = "social-login/";
     public static final String SOCIAL_LINK_ACCOUNT_URL = "social-link-account/";
     public static final String SOCIAL_REGISTER_MEMBER_URL = "social-register-member/";
@@ -742,5 +724,4 @@ public class Constants {
     public static final String SOCIAL_LOGIN_PARAMS = "social_login_params";
     public static final String SOCIAL_ACCOUNT_TYPE = "social_account_type";
     public static final String SOCIAL_LOGOUT = "social_logout";
-    public static final int ON_SOCIAL_LOGOUT = 2516;
 }
