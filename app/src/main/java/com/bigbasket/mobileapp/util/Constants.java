@@ -736,6 +736,8 @@ public class Constants {
     public static final String FB_SERVER_ERROR_MSG = "fb_server_msg";
     public static final String FB_EMAIL = "fb_email";
     public static final String SOCIAL_LOGIN_URL = "social-login/";
+    public static final String SOCIAL_LINK_ACCOUNT_URL = "social-link-account/";
+    public static final String SOCIAL_REGISTER_MEMBER_URL = "social-register-member/";
     public static final String SOCIAL_LOGIN_TYPE = "social_login_type";
     public static final String SOCIAL_LOGIN_PARAMS = "social_login_params";
     public static final String SOCIAL_ACCOUNT_TYPE = "social_account_type";

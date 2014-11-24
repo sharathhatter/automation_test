@@ -621,8 +621,9 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     }
 
     public boolean isSocialLogin() {
-        return PreferenceManager.
-                getDefaultSharedPreferences(getCurrentActivity()).contains(Constants.SOCIAL_ACCOUNT_TYPE);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
+        return preferences.contains(Constants.SOCIAL_ACCOUNT_TYPE) &&
+                !TextUtils.isEmpty(preferences.getString(Constants.SOCIAL_ACCOUNT_TYPE, null));
     }
 
     public void doLogout() {

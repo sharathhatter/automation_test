@@ -24,6 +24,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.account.base.SocialLoginConfirmActivity;
 import com.bigbasket.mobileapp.model.account.SocialAccount;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
@@ -56,6 +57,7 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
     private View mLoginFormView;
     private View mBaseView;
     private LoginButton mFacebookLoginButton;
+    private CheckBox mChkRememberMe;
 
     private SocialAccount mSocialAccount;
 
@@ -121,6 +123,7 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
 
         mFacebookLoginButton = (LoginButton) mBaseView.findViewById(R.id.btnFBLogin);
 
+        mChkRememberMe = (CheckBox) mBaseView.findViewById(R.id.chkRememberMe);
 
         if (isInLogoutMode()) {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -133,9 +136,25 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
                 initializeGooglePlusSignIn();
             }
             updateViewStateInLogoutMode();
+            setTitle(getString(R.string.signOut));
         } else {
+            initializeRememberedDataForLoginInput();
             initializeGooglePlusSignIn();
             initializeFacebookLogin(mFacebookLoginButton);
+        }
+    }
+
+    private void initializeRememberedDataForLoginInput() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean rememberMe = preferences.getBoolean(Constants.REMEMBER_ME_PREF, false);
+        if (rememberMe) {
+            String email = preferences.getString(Constants.EMAIL_PREF, null);
+            String passwd = preferences.getString(Constants.PASSWD_PREF, null);
+            if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(passwd)) {
+                mChkRememberMe.setChecked(true);
+                mEmailView.setText(email);
+                mPasswordView.setText(passwd);
+            }
         }
     }
 
@@ -314,7 +333,7 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
 
     private void startSocialLogin(String loginType) {
         HashMap<String, String> params = new HashMap<>();
-        params.put(Constants.SOCIAL_LOGIN_TYPE, SocialAccount.GP);
+        params.put(Constants.SOCIAL_LOGIN_TYPE, loginType);
         Gson gson = new Gson();
         params.put(Constants.SOCIAL_LOGIN_PARAMS, gson.toJson(mSocialAccount, SocialAccount.class));
         HashMap<Object, String> loginTypeMap = new HashMap<>();
@@ -438,20 +457,10 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
                 case Constants.OK:
                     String loginType = httpOperationResult.getAdditionalCtx() != null ?
                             httpOperationResult.getAdditionalCtx().get(Constants.SOCIAL_LOGIN_TYPE) : null;
-                    saveUserDetailInPreference(responseJsonObj, loginType);
-                    break;
-                case Constants.NO_ACCOUNT:
-                    loginType = httpOperationResult.getAdditionalCtx().get(Constants.SOCIAL_LOGIN_TYPE);
-                    switch (loginType) {
-                        case SocialAccount.FB:
-                            // TODO : Plugin fb API
-                            break;
-                        case SocialAccount.GP:
-                            Intent intent = new Intent(this, GoogleSignInConfirmActivity.class);
-                            intent.putExtra(Constants.REGISTER_MEMBER, mSocialAccount);
-                            startActivityForResult(intent, Constants.GO_TO_HOME);
-                            break;
-                    }
+
+                    saveLoginUserDetailInPreference(responseJsonObj, loginType,
+                            mEmailView.getText().toString().trim(),
+                            mPasswordView.getText().toString().trim(), mChkRememberMe.isChecked());
                     break;
                 case Constants.ERROR:
                     //TODO : Replace with handler
@@ -460,45 +469,22 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
                         case Constants.INVALID_USER_PASS:
                             showAlertDialog(this, null, getString(R.string.INVALID_USER_PASS));
                             break;
+                        case Constants.NO_ACCOUNT:
+                            loginType = httpOperationResult.getAdditionalCtx().get(Constants.SOCIAL_LOGIN_TYPE);
+                            Intent intent = new Intent(this, SocialLoginConfirmActivity.class);
+                            intent.putExtra(Constants.SOCIAL_LOGIN_PARAMS, mSocialAccount);
+                            intent.putExtra(Constants.SOCIAL_LOGIN_TYPE, loginType);
+                            startActivityForResult(intent, Constants.GO_TO_HOME);
+                            break;
                         default:
                             showAlertDialog(this, null, getString(R.string.server_error));
                             break;
                     }
+                    break;
             }
         } else {
             super.onAsyncTaskComplete(httpOperationResult);
         }
-    }
-
-    public void saveUserDetailInPreference(JsonObject responseJsonObj, String socialAccountType) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = preferences.edit();
-        String bbToken = responseJsonObj.get(Constants.BB_TOKEN).getAsString();
-        String mid = responseJsonObj.get(Constants.MID_KEY).getAsString();
-        JsonObject userDetailsJsonObj = responseJsonObj.get("user_details").getAsJsonObject();
-        String firstName = userDetailsJsonObj.get("first_name").getAsString();
-        String lastName = userDetailsJsonObj.get("last_name").getAsString();
-        String fullName = firstName + " " + lastName;
-        String email = mEmailView.getText().toString().trim();
-        String passwd = mPasswordView.getText().toString().trim();
-        editor.putString(Constants.FIRST_NAME_PREF, firstName);
-        editor.putString(Constants.BBTOKEN_KEY, bbToken);
-        editor.putString(Constants.MID_KEY, mid);
-        editor.putString(Constants.MEMBER_FULL_NAME_KEY, fullName);
-        editor.putString(Constants.MEMBER_EMAIL_KEY, email);
-        editor.putString(Constants.SOCIAL_ACCOUNT_TYPE, socialAccountType);
-        CheckBox chkRememberMe = (CheckBox) mBaseView.findViewById(R.id.chkRememberMe);
-        if (chkRememberMe.isChecked()) {
-            editor.putString(Constants.EMAIL_PREF, email);
-            editor.putBoolean(Constants.REMEMBER_ME_PREF, true);
-            editor.putString(Constants.PASSWD_PREF, passwd);
-        } else {
-            editor.remove(Constants.EMAIL_PREF);
-            editor.remove(Constants.REMEMBER_ME_PREF);
-            editor.remove(Constants.PASSWD_PREF);
-        }
-        editor.commit();
-        onLoginSuccess();
     }
 
     public void OnRegistrationLinkClicked(View v) {

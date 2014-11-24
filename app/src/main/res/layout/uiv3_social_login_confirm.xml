@@ -17,8 +17,8 @@
                 android:id="@+id/txtSocialLoggedInAs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/margin_small"
-                android:layout_marginRight="@dimen/margin_small"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:layout_marginRight="@dimen/margin_normal"
                 android:layout_marginTop="@dimen/margin_normal"
                 android:textColor="@color/uiv3_primary_text_color"
                 android:textSize="@dimen/primary_text_size" />
@@ -27,8 +27,8 @@
                 android:id="@+id/txtNoAccountForSocialLogin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/margin_small"
-                android:layout_marginRight="@dimen/margin_small"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:layout_marginRight="@dimen/margin_normal"
                 android:layout_marginTop="@dimen/margin_normal"
                 android:textColor="@color/uiv3_primary_text_color"
                 android:textSize="@dimen/primary_text_size" />
@@ -37,8 +37,8 @@
                 android:id="@+id/txtSocialChooseMethod"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/margin_small"
-                android:layout_marginRight="@dimen/margin_small"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:layout_marginRight="@dimen/margin_normal"
                 android:layout_marginTop="@dimen/margin_normal"
                 android:textColor="@color/uiv3_primary_text_color"
                 android:textSize="@dimen/primary_text_size" />
@@ -46,7 +46,7 @@
             <RadioGroup
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_small"
+                android:layout_margin="@dimen/margin_normal"
                 android:background="@color/white"
                 android:padding="@dimen/padding_normal">
 
@@ -59,7 +59,7 @@
                     android:textColor="@color/uiv3_primary_text_color"
                     android:textSize="@dimen/primary_text_size" />
 
-                <include android:layout="@layout/uiv3_login_input_layout" />
+                <include layout="@layout/uiv3_login_input_layout" />
 
                 <CheckBox
                     android:id="@+id/chkAcceptTerms"

@@ -5,14 +5,20 @@ import android.app.LoaderManager;
 import android.content.ContentResolver;
 import android.content.CursorLoader;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
+import android.text.TextUtils;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+
+import com.bigbasket.mobileapp.util.Constants;
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -122,5 +128,38 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity {
         };
 
         int ADDRESS = 0;
+    }
+
+    public void saveLoginUserDetailInPreference(JsonObject responseJsonObj, String socialAccountType,
+                                                String email, String password, boolean rememberMe) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = preferences.edit();
+        String bbToken = responseJsonObj.get(Constants.BB_TOKEN).getAsString();
+        String mid = responseJsonObj.get(Constants.MID_KEY).getAsString();
+        JsonObject userDetailsJsonObj = responseJsonObj.get("user_details").getAsJsonObject();
+        String firstName = userDetailsJsonObj.get("first_name").getAsString();
+        String lastName = userDetailsJsonObj.get("last_name").getAsString();
+        String fullName = firstName + " " + lastName;
+        editor.putString(Constants.FIRST_NAME_PREF, firstName);
+        editor.putString(Constants.BBTOKEN_KEY, bbToken);
+        editor.putString(Constants.MID_KEY, mid);
+        editor.putString(Constants.MEMBER_FULL_NAME_KEY, fullName);
+        editor.putString(Constants.MEMBER_EMAIL_KEY, email);
+        if (!TextUtils.isEmpty(socialAccountType)) {
+            editor.putString(Constants.SOCIAL_ACCOUNT_TYPE, socialAccountType);
+        } else {
+            editor.remove(Constants.SOCIAL_ACCOUNT_TYPE);
+        }
+        if (rememberMe && !TextUtils.isEmpty(password)) {
+            editor.putString(Constants.EMAIL_PREF, email);
+            editor.putBoolean(Constants.REMEMBER_ME_PREF, true);
+            editor.putString(Constants.PASSWD_PREF, password);
+        } else {
+            editor.remove(Constants.EMAIL_PREF);
+            editor.remove(Constants.REMEMBER_ME_PREF);
+            editor.remove(Constants.PASSWD_PREF);
+        }
+        editor.commit();
+        onLoginSuccess();
     }
 }
