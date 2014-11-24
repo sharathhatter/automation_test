@@ -314,11 +314,11 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
 
     private void startSocialLogin(String loginType) {
         HashMap<String, String> params = new HashMap<>();
-        params.put(Constants.LOGIN_TYPE, SocialAccount.GP);
+        params.put(Constants.SOCIAL_LOGIN_TYPE, SocialAccount.GP);
         Gson gson = new Gson();
-        params.put(Constants.LOGIN_PARAMS, gson.toJson(mSocialAccount, SocialAccount.class));
+        params.put(Constants.SOCIAL_LOGIN_PARAMS, gson.toJson(mSocialAccount, SocialAccount.class));
         HashMap<Object, String> loginTypeMap = new HashMap<>();
-        loginTypeMap.put(Constants.LOGIN_TYPE, loginType);
+        loginTypeMap.put(Constants.SOCIAL_LOGIN_TYPE, loginType);
         showProgress(true);
         startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.SOCIAL_LOGIN_URL,
                 params, true, AuthParameters.getInstance(this), new BasicCookieStore(),
@@ -437,11 +437,11 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
             switch (status) {
                 case Constants.OK:
                     String loginType = httpOperationResult.getAdditionalCtx() != null ?
-                            httpOperationResult.getAdditionalCtx().get(Constants.LOGIN_TYPE) : null;
+                            httpOperationResult.getAdditionalCtx().get(Constants.SOCIAL_LOGIN_TYPE) : null;
                     saveUserDetailInPreference(responseJsonObj, loginType);
                     break;
                 case Constants.NO_ACCOUNT:
-                    loginType = httpOperationResult.getAdditionalCtx().get(Constants.LOGIN_TYPE);
+                    loginType = httpOperationResult.getAdditionalCtx().get(Constants.SOCIAL_LOGIN_TYPE);
                     switch (loginType) {
                         case SocialAccount.FB:
                             // TODO : Plugin fb API
