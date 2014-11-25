@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.order.MemberAddressFormActivity;
+import com.bigbasket.mobileapp.activity.order.uiv3.SlotPaymentSelectionActivity;
 import com.bigbasket.mobileapp.adapter.account.MemberAddressListAdapter;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.model.account.Address;
@@ -156,8 +157,9 @@ public class MemberAddressListFragment extends BaseFragment {
     }
 
     private void launchSlotSelection(String addressId) {
-        Address.setAddressIdInPreferences(getActivity(), addressId);
-        changeFragment(new SlotSelectionFragment());
+        Intent intent = new Intent(getCurrentActivity(), SlotPaymentSelectionActivity.class);
+        intent.putExtra(Constants.MEMBER_ADDRESS_ID, addressId);
+        startActivityForResult(intent, Constants.GO_TO_HOME);
     }
 
     public LinearLayout getContentView() {

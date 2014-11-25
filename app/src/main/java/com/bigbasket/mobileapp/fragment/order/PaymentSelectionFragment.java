@@ -6,33 +6,27 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.order.uiv3.AvailableVoucherListActivity;
-import com.bigbasket.mobileapp.activity.order.uiv3.PlaceOrderActivity;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.order.ActiveVouchers;
 import com.bigbasket.mobileapp.model.order.Order;
-import com.bigbasket.mobileapp.model.order.OrderSummary;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
-import com.bigbasket.mobileapp.model.slot.SelectedSlotType;
-import com.bigbasket.mobileapp.model.slot.SlotGroup;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.ParserUtil;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,45 +35,54 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 
 public class PaymentSelectionFragment extends BaseFragment {
 
-    private CartSummary cartSummary;
-    private ArrayList<SlotGroup> selectedSlotGroupList;
-    private ArrayList<ActiveVouchers> activeVouchersList;
-    private LinkedHashMap<String, String> paymentTypeMap;
-    private String amtPayable, walletUsed, walletRemaining;
-    private String potentialOrderId;
-    private Spinner spinnerPaymentMethod;
+    private CartSummary mCartSummary;
+    private ArrayList<ActiveVouchers> mActiveVouchersList;
+    private LinkedHashMap<String, String> mPaymentTypeMap;
+    private String mAmtPayable, mWalletUsed, mWalletRemaining;
+    private String mPotentialOrderId;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.uiv3_list_container, null);
-        view.setBackgroundColor(getResources().getColor(R.color.white));
-        return view;
+        return inflater.inflate(R.layout.uiv3_list_container, null);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        loadPaymentMethods();
-    }
 
-    private void loadPaymentMethods() {
-        ArrayList<SelectedSlotType> selectedSlotTypes = getArguments().getParcelableArrayList(Constants.SLOTS);
+        Bundle args = getArguments();
+        mCartSummary = args.getParcelable(Constants.C_SUMMARY);
+        mActiveVouchersList = args.getParcelableArrayList(Constants.VOUCHERS);
+        mAmtPayable = args.getString(Constants.AMT_PAYABLE);
+        mWalletUsed = args.getString(Constants.WALLET_USED);
+
+        if (TextUtils.isEmpty(mWalletUsed)) {
+            mWalletUsed = "0";
+        }
+        mWalletRemaining = args.getString(Constants.WALLET_REMAINING);
+        if (TextUtils.isEmpty(mWalletRemaining)) {
+            mWalletRemaining = "0";
+        }
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        potentialOrderId = preferences.getString(Constants.POTENTIAL_ORDER_ID, null);
-        Gson gson = new Gson();
-        HashMap<String, String> params = new HashMap<>();
-        params.put(Constants.P_ORDER_ID, potentialOrderId);
-        params.put(Constants.SLOTS, gson.toJson(selectedSlotTypes));
-        params.put(Constants.SUPPORT_CC, "yes");
-        String url = MobileApiUrl.getBaseAPIUrl() + Constants.CO_POST_SLOTS;
-        startAsyncActivity(url, params, true, true, null);
+        mPotentialOrderId = preferences.getString(Constants.POTENTIAL_ORDER_ID, null);
+
+        String paymentTypeJsonArrayStr = args.getString(Constants.PAYMENT_TYPES);
+        try {
+            JSONArray paymentTypesJsonArray = new JSONArray(paymentTypeJsonArrayStr);
+            mPaymentTypeMap = ParserUtil.parsePaymentTypes(paymentTypesJsonArray);
+        } catch (JSONException e) {
+            return;
+        }
+        renderPaymentOptions();
     }
 
+    @Nullable
     public LinearLayout getContentView() {
         return getView() != null ? (LinearLayout) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
     }
@@ -87,38 +90,7 @@ public class PaymentSelectionFragment extends BaseFragment {
     @Override
     public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
         String url = httpOperationResult.getUrl();
-        if (url.contains(Constants.CO_POST_SLOTS)) {
-            try {
-                JSONObject jsonObject = new JSONObject(httpOperationResult.getReponseString());
-                String status = jsonObject.getString(Constants.STATUS);
-                switch (status) {
-                    case Constants.OK:
-                        JSONObject responseJsonObj = jsonObject.getJSONObject(Constants.RESPONSE);
-                        JSONObject cartSummaryJsonObj = responseJsonObj.getJSONObject(Constants.CART_SUMMARY);
-                        cartSummary = ParserUtil.parseCartSummaryFromJSON(cartSummaryJsonObj);
-                        JSONArray slotsInfo = responseJsonObj.getJSONArray(Constants.SLOTS_INFO);
-                        selectedSlotGroupList = ParserUtil.parseSlotsList(slotsInfo);
-                        amtPayable = cartSummaryJsonObj.getString(Constants.AMT_PAYABLE);
-                        walletUsed = cartSummaryJsonObj.getString(Constants.WALLET_USED);
-                        walletRemaining = cartSummaryJsonObj.getString(Constants.WALLET_REMAINING);
-                        JSONArray activeVouchersJsonArray = responseJsonObj.optJSONArray(Constants.VOUCHERS);
-                        if (activeVouchersJsonArray != null && activeVouchersJsonArray.length() > 0) {
-                            activeVouchersList = ParserUtil.parseActiveVouchersList(activeVouchersJsonArray);
-                        }
-                        JSONArray paymentTypesJsonArray = responseJsonObj.getJSONArray(Constants.PAYMENT_TYPES);
-                        paymentTypeMap = ParserUtil.parsePaymentTypes(paymentTypesJsonArray);
-                        renderPaymentOptions();
-                        break;
-                    default:
-                        showErrorMsg("Server Error");
-                        // TODO : Improve error handling
-                        break;
-                }
-            } catch (JSONException e) {
-                // TODO : Improve error handling
-                showErrorMsg("Server Error");
-            }
-        } else if (url.contains(Constants.CO_POST_VOUCHER)) {
+        if (url.contains(Constants.CO_POST_VOUCHER)) {
             try {
                 JSONObject jsonObject = new JSONObject(httpOperationResult.getReponseString());
                 String status = jsonObject.getString(Constants.STATUS);
@@ -143,23 +115,6 @@ public class PaymentSelectionFragment extends BaseFragment {
                 // TODO : Improve error handling
                 showErrorMsg("Server Error");
             }
-        } else if (url.contains(Constants.CO_POST_PAYMENT)) {
-            JsonObject jsonObject = new JsonParser().parse(httpOperationResult.getReponseString()).getAsJsonObject();
-            int status = jsonObject.get(Constants.STATUS).getAsInt();
-            switch (status) {
-                case 0:
-                    JsonObject responseJsonObj = jsonObject.get(Constants.RESPONSE).getAsJsonObject();
-                    OrderSummary orderSummary = ParserUtil.parseOrderSummary(responseJsonObj);
-                    HashMap<Object, String> additionalCtx = httpOperationResult.getAdditionalCtx();
-                    String paymentMethodDisplay = additionalCtx.get(Constants.PAYMENT_METHOD_DISPLAY);
-                    orderSummary.getOrderDetails().setPaymentMethodDisplay(paymentMethodDisplay);
-                    launchPlaceOrderActivity(orderSummary);
-                    break;
-                default:
-                    // TODO : Add error handling
-                    showErrorMsg("Server Error");
-                    break;
-            }
         } else {
             super.onAsyncTaskComplete(httpOperationResult);
         }
@@ -175,22 +130,68 @@ public class PaymentSelectionFragment extends BaseFragment {
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View base = inflater.inflate(R.layout.uiv3_payment_option, null);
 
-        spinnerPaymentMethod = (Spinner) base.findViewById(R.id.spinnerPaymentMethod);
-        ArrayList<String> paymentMethodsDisplayList = new ArrayList<>(paymentTypeMap.keySet());
-        ArrayAdapter<String> spinnerAdapter =
-                new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item,
-                        paymentMethodsDisplayList);
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerPaymentMethod.setAdapter(spinnerAdapter);
-        View viewPaymentOptionSeparator = base.findViewById(R.id.viewPaymentOptionSeparator);
-        if (Double.parseDouble(amtPayable) <= 0 && Double.parseDouble(walletUsed) > 0) {
-            // TODO : Plugin in wallet handling
+        TextView lblPaymentMethod = (TextView) base.findViewById(R.id.lblPaymentMethod);
+        View layoutChoosePayment = base.findViewById(R.id.layoutChoosePayment);
+
+        double amtPayable = Double.parseDouble(mAmtPayable);
+        double walletUsed = Double.parseDouble(mWalletUsed);
+        double walletRemaining = Double.parseDouble(mWalletRemaining);
+
+        TextView lblWalletUsed = (TextView) base.findViewById(R.id.lblWalletUsed);
+        TextView txtWalletUsed = (TextView) base.findViewById(R.id.txtWalletUsed);
+        TextView lblAmtToPay = (TextView) base.findViewById(R.id.lblOrderTotal);
+        TextView txtAmtToPay = (TextView) base.findViewById(R.id.txtOrderTotal);
+        TextView lblWalletRemaining = (TextView) base.findViewById(R.id.lblWalletRemaining);
+        TextView txtWalletRemaining = (TextView) base.findViewById(R.id.txtWalletRemaining);
+        TextView lblSaving = (TextView) base.findViewById(R.id.lblSaving);
+        TextView txtSaving = (TextView) base.findViewById(R.id.txtSaving);
+
+        lblAmtToPay.setTypeface(faceRobotoRegular);
+        txtAmtToPay.setTypeface(faceRobotoRegular);
+        txtAmtToPay.setText(asRupeeSpannable(amtPayable));
+
+        if (walletUsed > 0) {
+            lblWalletUsed.setTypeface(faceRobotoRegular);
+            txtWalletUsed.setTypeface(faceRobotoRegular);
+            txtWalletUsed.setText(asRupeeSpannable(walletUsed));
+
+            lblWalletRemaining.setTypeface(faceRobotoRegular);
+            txtWalletRemaining.setTypeface(faceRobotoRegular);
+            txtWalletRemaining.
+                    setText(walletRemaining > 0 ? asRupeeSpannable(walletRemaining) : "0");
         } else {
-            viewPaymentOptionSeparator.setVisibility(View.GONE);
+            lblWalletRemaining.setVisibility(View.GONE);
+            lblWalletUsed.setVisibility(View.GONE);
+            txtWalletRemaining.setVisibility(View.GONE);
+            txtWalletUsed.setVisibility(View.GONE);
         }
 
-        TextView lblPaymentMethod = (TextView) base.findViewById(R.id.lblPaymentMethod);
-        lblPaymentMethod.setTypeface(faceRobotoRegular);
+        if (mCartSummary.getSavings() > 0) {
+            lblSaving.setTypeface(faceRobotoRegular);
+            txtSaving.setTypeface(faceRobotoRegular);
+            txtSaving.setText(asRupeeSpannable(mCartSummary.getSavings()));
+        } else {
+            lblSaving.setVisibility(View.GONE);
+            txtSaving.setVisibility(View.GONE);
+        }
+
+        if (amtPayable > 0) {
+            RadioGroup layoutPaymentOptions = (RadioGroup) base.findViewById(R.id.layoutPaymentOptions);
+            int i = 0;
+            for (Map.Entry<String, String> entrySet : mPaymentTypeMap.entrySet()) {
+                RadioButton rbtnPaymentType = getPaymentOptionRadioButton();
+                rbtnPaymentType.setText(entrySet.getKey());
+                rbtnPaymentType.setTag(entrySet.getValue());
+                rbtnPaymentType.setId(i);
+                rbtnPaymentType.setChecked(i == 0);
+                layoutPaymentOptions.addView(rbtnPaymentType);
+                i++;
+            }
+            lblPaymentMethod.setTypeface(faceRobotoRegular);
+        } else {
+            lblPaymentMethod.setVisibility(View.GONE);
+            layoutChoosePayment.setVisibility(View.GONE);
+        }
 
         TextView txtApplyVoucher = (TextView) base.findViewById(R.id.txtApplyVoucher);
         final EditText editTextVoucherCode = (EditText) base.findViewById(R.id.editTextVoucherCode);
@@ -198,18 +199,18 @@ public class PaymentSelectionFragment extends BaseFragment {
         txtApplyVoucher.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                applyVoucher(editTextVoucherCode.getText().toString());
+                applyVoucher(editTextVoucherCode.getText().toString().trim());
             }
         });
 
         TextView txtViewAvailableVouchers = (TextView) base.findViewById(R.id.txtViewAvailableVouchers);
-        if (activeVouchersList != null && activeVouchersList.size() > 0) {
+        if (mActiveVouchersList != null && mActiveVouchersList.size() > 0) {
             txtViewAvailableVouchers.setTypeface(faceRobotoRegular);
             txtViewAvailableVouchers.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent availableVoucherListActivity = new Intent(getActivity(), AvailableVoucherListActivity.class);
-                    availableVoucherListActivity.putParcelableArrayListExtra(Constants.VOUCHERS, activeVouchersList);
+                    availableVoucherListActivity.putParcelableArrayListExtra(Constants.VOUCHERS, mActiveVouchersList);
                     startActivityForResult(availableVoucherListActivity, Constants.VOUCHER_APPLIED);
                 }
             });
@@ -217,56 +218,19 @@ public class PaymentSelectionFragment extends BaseFragment {
             txtViewAvailableVouchers.setVisibility(View.GONE);
         }
 
-        LinearLayout layoutDeliverySlot = (LinearLayout) base.findViewById(R.id.layoutDeliverySlot);
-        renderSlots(layoutDeliverySlot);
         contentView.addView(base);
-
-        TextView txtReviewOrder = (TextView) base.findViewById(R.id.txtReviewOrder);
-        txtReviewOrder.setTypeface(faceRobotoThin);
-        txtReviewOrder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startPostPayment();
-            }
-        });
     }
 
-    private void renderSlots(LinearLayout layoutDeliverySlot) {
-        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        boolean hasMultipleSlots = selectedSlotGroupList.size() > 1;
-        for (SlotGroup slotGroup : selectedSlotGroupList) {
-            View row = inflater.inflate(R.layout.uiv3_slot_info_row, null);
-            renderSlotInfoRow(row, slotGroup, hasMultipleSlots);
-            layoutDeliverySlot.addView(row);
-        }
-    }
-
-    private void renderSlotInfoRow(View row, SlotGroup slotGroup, boolean hasMultipleSlots) {
-        if (getActivity() == null || getCurrentActivity() == null) return;
-        TextView txtNumItems = (TextView) row.findViewById(R.id.txtNumItems);
-        TextView txtBasketVal = (TextView) row.findViewById(R.id.txtBasketVal);
-        TextView txtSlotDate = (TextView) row.findViewById(R.id.txtSlotDate);
-        TextView txtSlotTime = (TextView) row.findViewById(R.id.txtSlotTime);
-        TextView txtFulfilledBy = (TextView) row.findViewById(R.id.txtFulfilledBy);
-        txtBasketVal.setTypeface(faceRobotoRegular);
-        txtFulfilledBy.setTypeface(faceRobotoRegular);
-        txtSlotDate.setTypeface(faceRobotoRegular);
-        txtNumItems.setTypeface(faceRobotoRegular);
-        txtSlotTime.setTypeface(faceRobotoRegular);
-
-        txtSlotDate.setText(slotGroup.getSelectedSlot().getFormattedSlotDate());
-        txtSlotTime.setText(slotGroup.getSelectedSlot().getDisplayName());
-        if (hasMultipleSlots) {
-            txtNumItems.setVisibility(View.GONE);
-            txtBasketVal.setVisibility(View.GONE);
-            txtFulfilledBy.setText(slotGroup.getFulfillmentInfo().getFulfilledBy());
-        } else {
-            int numItems = cartSummary.getNoOfItems();
-            txtNumItems.setText(numItems + "Item" + (numItems > 1 ? "s" : ""));
-            txtBasketVal.setText(getCurrentActivity().
-                    asRupeeSpannable(getCurrentActivity().getDecimalAmount(cartSummary.getTotal())));
-            txtFulfilledBy.setVisibility(View.GONE);
-        }
+    private RadioButton getPaymentOptionRadioButton() {
+        RadioButton radioButton = new RadioButton(getCurrentActivity());
+        RadioGroup.LayoutParams layoutParams = new RadioGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins(0, 0, 0, (int) getResources().getDimension(R.dimen.margin_small));
+        radioButton.setLayoutParams(layoutParams);
+        radioButton.setTypeface(faceRobotoRegular);
+        radioButton.setTextColor(getResources().getColor(R.color.uiv3_primary_text_color));
+        radioButton.setTextSize(getResources().getDimension(R.dimen.primary_text_size));
+        return radioButton;
     }
 
     private void applyVoucher(String voucherCode) {
@@ -276,29 +240,12 @@ public class PaymentSelectionFragment extends BaseFragment {
         if (checkInternetConnection()) {
             String url = MobileApiUrl.getBaseAPIUrl() + Constants.CO_POST_VOUCHER;
             HashMap<String, String> params = new HashMap<>();
-            params.put(Constants.P_ORDER_ID, potentialOrderId);
+            params.put(Constants.P_ORDER_ID, mPotentialOrderId);
             params.put(Constants.EVOUCHER_CODE, voucherCode);
             startAsyncActivity(url, params, true, false, null);
         } else {
             showErrorMsg(getString(R.string.connectionOffline));
         }
-    }
-
-    private void startPostPayment() {
-        String url = MobileApiUrl.getBaseAPIUrl() + Constants.CO_POST_PAYMENT;
-        String paymentMethodSlug = paymentTypeMap.get(spinnerPaymentMethod.getSelectedItem().toString());
-        HashMap<String, String> params = new HashMap<>();
-        params.put(Constants.P_ORDER_ID, potentialOrderId);
-        params.put(Constants.PAYMENT_TYPE, paymentMethodSlug);
-        HashMap<Object, String> additionalCtx = new HashMap<>();
-        additionalCtx.put(Constants.PAYMENT_METHOD_DISPLAY, spinnerPaymentMethod.getSelectedItem().toString());
-        startAsyncActivity(url, params, true, false, additionalCtx);
-    }
-
-    private void launchPlaceOrderActivity(OrderSummary orderSummary) {
-        Intent placeOrderIntent = new Intent(getActivity(), PlaceOrderActivity.class);
-        placeOrderIntent.putExtra(Constants.ORDER_REVIEW_SUMMARY, orderSummary);
-        startActivityForResult(placeOrderIntent, Constants.ORDER_COMPLETE);
     }
 
     @Override
@@ -326,8 +273,13 @@ public class PaymentSelectionFragment extends BaseFragment {
     }
 
     @Override
+    public void setTitle() {
+        // Do nothing
+    }
+
+    @Override
     public String getTitle() {
-        return "Choose Payment Mode";
+        return null;
     }
 
     @NonNull

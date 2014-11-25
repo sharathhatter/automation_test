@@ -138,7 +138,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         } else {
             SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
             String pharmaPrescriptionId = prefer.getString(Constants.PHARMA_PRESCRIPTION_ID, null);
-            new COReserveQuantityCheckTask(getCurrentActivity(), pharmaPrescriptionId).execute();
+            new COReserveQuantityCheckTask<>(getCurrentActivity(), pharmaPrescriptionId).execute();
         }
     }
 

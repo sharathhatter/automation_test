@@ -220,30 +220,4 @@ public class Address implements Parcelable {
                 (!TextUtils.isEmpty(cityName) ? cityName + "\n" : "") +
                 (!TextUtils.isEmpty(pincode) ? "Pin - " + pincode + "\n" : "");
     }
-
-    public static String getAddressIdFromPreferences(Context context) {
-        // Using globals, since get-setExtra in Intent won't work in all scenarios as back-button handling is incorrect right now
-        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(context);
-        if (prefer != null) {
-            return prefer.getString(Constants.MEMBER_ADDRESS_ID, null);
-        }
-        return null;
-    }
-
-    public static void setAddressIdInPreferences(Context context, String addressId) {
-        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(context);
-        if (prefer != null) {
-            SharedPreferences.Editor editor = prefer.edit();
-            if (addressId == null || TextUtils.isEmpty(addressId)) {
-                editor.remove(Constants.MEMBER_ADDRESS_ID);
-            } else {
-                editor.putString(Constants.MEMBER_ADDRESS_ID, addressId);
-            }
-            editor.commit();
-        }
-    }
-
-    public static void clearAddressIdFromPreferences(Context context) {
-        setAddressIdInPreferences(context, null);
-    }
 }

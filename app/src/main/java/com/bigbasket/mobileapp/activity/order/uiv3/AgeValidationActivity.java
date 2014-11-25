@@ -77,7 +77,7 @@ public class AgeValidationActivity extends BackButtonActivity {
     private void proceedToQc() {
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(this);
         String pharmaPrescriptionId = prefer.getString(Constants.PHARMA_PRESCRIPTION_ID, null);
-        new COReserveQuantityCheckTask(getCurrentActivity(), pharmaPrescriptionId).execute();
+        new COReserveQuantityCheckTask<>(getCurrentActivity(), pharmaPrescriptionId).execute();
     }
 
     private void renderMarketPlaceValidationErrors() {
@@ -294,7 +294,7 @@ public class AgeValidationActivity extends BackButtonActivity {
                 if (cartInfo.getNoOfItems() == 0) {
                     showAlertDialogFinish(this, null, getResources().getString(R.string.basketEmpty));
                 } else {
-                    new COMarketPlaceCheckTask(getCurrentActivity()).execute();
+                    new COMarketPlaceCheckTask<>(getCurrentActivity()).execute();
                 }
             } else {
                 String msgString = status == ExceptionUtil.INTERNAL_SERVER_ERROR ?

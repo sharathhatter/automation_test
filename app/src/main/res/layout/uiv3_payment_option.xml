@@ -1,163 +1,215 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/uiv3_list_bkg_color"
+    android:orientation="vertical">
 
-    <TextView
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/orderReview"
-        style="@style/FooterButtonStyle"
-        android:id="@+id/txtReviewOrder"
-        android:layout_alignParentBottom="true" />
+        android:layout_height="wrap_content">
 
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_above="@id/txtReviewOrder">
-
-        <TableLayout
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:stretchColumns="1">
+            android:orientation="vertical">
 
-            <TableRow
+            <TextView
+                android:id="@+id/lblPaymentMethod"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="@dimen/padding_normal">
+                android:layout_marginBottom="@dimen/margin_small"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:layout_marginRight="@dimen/margin_normal"
+                android:layout_marginTop="@dimen/margin_normal"
+                android:text="@string/choosePayment"
+                android:textColor="@color/uiv3_primary_text_color"
+                android:textSize="@dimen/heading_2_text_size" />
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin_small"
-                    android:layout_marginLeft="@dimen/margin_normal"
-                    android:src="@drawable/payment_large"
-                    android:contentDescription="@string/amtToPay"
-                    android:id="@+id/imgPaymentOption" />
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/layoutChoosePayment"
-                    android:paddingBottom="@dimen/padding_mini"
-                    android:layout_marginLeft="@dimen/margin_normal"
-                    android:layout_weight="1">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:text="@string/choosePayment"
-                        android:textSize="@dimen/primary_text_size"
-                        android:layout_marginRight="10dp"
-                        android:id="@+id/lblPaymentMethod"
-                        android:textColor="@color/uiv3_primary_text_color"
-                        android:layout_height="wrap_content" />
-
-                    <Spinner
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/spinnerPaymentMethod" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:id="@+id/viewPaymentOptionSeparator"
-                        android:background="@color/uiv3_list_separator_color" />
-                </LinearLayout>
-            </TableRow>
-
-            <TableRow
-                android:layout_width="wrap_content"
+            <android.support.v7.widget.CardView
+                android:id="@+id/layoutChoosePayment"
+                style="@style/CardViewStyle"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="@dimen/padding_normal">
+                android:layout_gravity="center"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="@dimen/card_corner_radius"
+                app:cardElevation="@dimen/card_elevation"
+                app:contentPaddingLeft="@dimen/padding_small"
+                app:contentPaddingRight="@dimen/padding_small"
+                app:contentPaddingTop="@dimen/padding_small">
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin_small"
-                    android:src="@drawable/voucher_large"
-                    android:layout_marginLeft="@dimen/margin_normal"
-                    android:contentDescription="@string/amtToPay"
-                    android:id="@+id/imgVoucherApply" />
+                <RadioGroup
+                    android:id="@+id/layoutPaymentOptions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                </RadioGroup>
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/layoutWalletPayment"
+                style="@style/CardViewStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="@dimen/card_corner_radius"
+                app:cardElevation="@dimen/card_elevation"
+                app:contentPadding="@dimen/padding_normal">
 
                 <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/layoutApplyVoucher"
-                    android:paddingBottom="@dimen/margin_mini"
-                    android:layout_weight="1"
-                    android:layout_marginLeft="@dimen/margin_normal"
-                    android:layout_marginRight="@dimen/margin_mini">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/apply"
-                        android:paddingLeft="@dimen/padding_small"
-                        android:clickable="true"
-                        android:textSize="@dimen/primary_text_size"
-                        android:layout_alignParentRight="true"
-                        android:textColor="@color/uiv3_ok_label_color"
-                        android:id="@+id/txtApplyVoucher" />
-
-                    <EditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="text"
-                        android:textSize="@dimen/primary_text_size"
-                        android:layout_toLeftOf="@id/txtApplyVoucher"
-                        android:hint="@string/enterVoucher"
-                        android:id="@+id/editTextVoucherCode" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/viewAvailableVouchers"
-                        android:textSize="@dimen/secondary_text_size"
-                        android:clickable="true"
-                        android:paddingBottom="@dimen/padding_mini"
-                        android:layout_marginTop="@dimen/margin_normal"
-                        android:layout_below="@id/editTextVoucherCode"
-                        android:textColor="@color/uiv3_accept_label_color"
-                        android:id="@+id/txtViewAvailableVouchers" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_alignParentBottom="true"
-                        android:background="@color/uiv3_list_separator_color" />
-                </RelativeLayout>
-            </TableRow>
-
-            <TableRow
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingTop="@dimen/padding_normal">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin_small"
-                    android:src="@drawable/schedule"
-                    android:layout_marginLeft="@dimen/margin_normal"
-                    android:contentDescription="@string/amtToPay"
-                    android:id="@+id/imgSlots" />
-
-                <LinearLayout
+                    android:id="@+id/layoutOrderSummary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_weight="1"
-                    android:layout_marginLeft="@dimen/margin_normal"
-                    android:paddingBottom="@dimen/padding_mini"
-                    android:layout_marginRight="@dimen/padding_mini"
-                    android:id="@+id/layoutDeliverySlot">
+                    android:background="@color/white">
 
-                </LinearLayout>
-            </TableRow>
-        </TableLayout>
+                    <TextView
+                        android:id="@+id/txtWalletUsed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginBottom="@dimen/margin_small"
+                        android:layout_marginLeft="@dimen/margin_small"
+                        android:text="Rs 200"
+                        android:textColor="@color/dark_red"
+                        android:textSize="@dimen/primary_text_size" />
+
+                    <TextView
+                        android:id="@+id/lblWalletUsed"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_marginBottom="@dimen/margin_small"
+                        android:layout_toLeftOf="@id/txtWalletUsed"
+                        android:text="@string/walletUsed"
+                        android:textColor="@color/uiv3_primary_text_color"
+                        android:textSize="@dimen/primary_text_size" />
+
+                    <TextView
+                        android:id="@+id/txtOrderTotal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_below="@id/txtWalletUsed"
+                        android:text="Rs. 2177.00"
+                        android:textColor="@color/uiv3_primary_text_color"
+                        android:textSize="@dimen/primary_text_size" />
+
+                    <TextView
+                        android:id="@+id/lblOrderTotal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_below="@id/txtWalletUsed"
+                        android:layout_toLeftOf="@id/txtOrderTotal"
+                        android:text="@string/amountpay"
+                        android:textColor="@color/uiv3_primary_text_color"
+                        android:textSize="@dimen/primary_text_size" />
+
+                    <TextView
+                        android:id="@+id/txtWalletRemaining"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_below="@id/txtOrderTotal"
+                        android:layout_marginLeft="@dimen/margin_small"
+                        android:layout_marginTop="@dimen/margin_small"
+                        android:text="Rs 200"
+                        android:textColor="@color/uiv3_primary_text_color"
+                        android:textSize="@dimen/primary_text_size" />
+
+                    <TextView
+                        android:id="@+id/lblWalletRemaining"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/txtOrderTotal"
+                        android:layout_marginTop="@dimen/margin_small"
+                        android:layout_toLeftOf="@id/txtWalletRemaining"
+                        android:text="@string/walletBal"
+                        android:textColor="@color/uiv3_primary_text_color"
+                        android:textSize="@dimen/primary_text_size" />
+
+                    <TextView
+                        android:id="@+id/txtSaving"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_below="@id/txtWalletRemaining"
+                        android:layout_marginTop="@dimen/margin_small"
+                        android:text="Rs. 340"
+                        android:textColor="@color/dark_red"
+                        android:textSize="@dimen/small_text_size" />
+
+                    <TextView
+                        android:id="@+id/lblSaving"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/txtWalletRemaining"
+                        android:layout_marginRight="@dimen/margin_mini"
+                        android:layout_marginTop="@dimen/margin_small"
+                        android:layout_toLeftOf="@id/txtSaving"
+                        android:text="@string/youSaved"
+                        android:textColor="@color/dark_red"
+                        android:textSize="@dimen/small_text_size" />
+                </RelativeLayout>
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                style="@style/CardViewStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="@dimen/card_corner_radius"
+                app:cardElevation="@dimen/card_elevation"
+                app:contentPadding="@dimen/padding_normal">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/txtApplyVoucher"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginTop="@dimen/margin_mini"
+                        android:clickable="true"
+                        android:paddingLeft="@dimen/padding_small"
+                        android:text="@string/apply"
+                        android:textColor="@color/uiv3_ok_label_color"
+                        android:textSize="@dimen/primary_text_size" />
+
+                    <EditText
+                        android:id="@+id/editTextVoucherCode"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_toLeftOf="@id/txtApplyVoucher"
+                        android:hint="@string/enterVoucher"
+                        android:inputType="text"
+                        android:textSize="@dimen/primary_text_size" />
+
+
+                    <TextView
+                        android:id="@+id/txtViewAvailableVouchers"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_below="@id/editTextVoucherCode"
+                        android:layout_marginTop="@dimen/margin_normal"
+                        android:clickable="true"
+                        android:gravity="center_horizontal"
+                        android:paddingBottom="@dimen/padding_mini"
+                        android:text="@string/viewAvailableVouchers"
+                        android:textColor="@color/uiv3_accept_label_color"
+                        android:textSize="@dimen/secondary_text_size" />
+                </RelativeLayout>
+            </android.support.v7.widget.CardView>
+
+        </LinearLayout>
     </ScrollView>
-</RelativeLayout>
+</LinearLayout>

@@ -5,11 +5,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
+    <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/FooterButtonStyle"
-        android:id="@+id/txtListFooter"
+        android:id="@+id/btnListFooter"
         android:layout_margin="0dp"
         android:layout_alignParentBottom="true" />
 
@@ -18,6 +18,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/listWithFixedFooter"
         android:layout_alignParentTop="true"
-        android:layout_above="@id/txtListFooter" />
+        android:layout_above="@id/btnListFooter" />
 
 </RelativeLayout>

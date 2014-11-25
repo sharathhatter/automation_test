@@ -218,10 +218,10 @@ public class ShowCartFragment extends BaseFragment {
 
         ListView cartItemListView = (ListView) basketView.findViewById(R.id.listWithFixedFooter);
         cartItemListView.addHeaderView(basketSummaryView);
-        TextView txtCheckout = (TextView) basketView.findViewById(R.id.txtListFooter);
-        txtCheckout.setText(getString(R.string.check_out));
-        txtCheckout.setTypeface(faceRobotoThin);
-        txtCheckout.setOnClickListener(new View.OnClickListener() {
+        Button btnFooterCheckout = (Button) basketView.findViewById(R.id.btnListFooter);
+        btnFooterCheckout.setText(getString(R.string.check_out));
+        btnFooterCheckout.setTypeface(faceRobotoRegular);
+        btnFooterCheckout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (cartInfo != null && cartInfo.getNoOfItems() > 0) {
@@ -229,7 +229,7 @@ public class ShowCartFragment extends BaseFragment {
                         showAlertDialog(getActivity(), "Login", getString(R.string.login_to_place_order),
                                 DialogButton.OK, DialogButton.NO, Constants.LOGIN_REQUIRED, null, "Login");
                     } else {
-                        new COMarketPlaceCheckTask(getCurrentActivity()).execute();
+                        new COMarketPlaceCheckTask<>(getCurrentActivity()).execute();
                     }
                 }
             }
@@ -241,10 +241,6 @@ public class ShowCartFragment extends BaseFragment {
         cartItemListView.setDividerHeight(0);
         cartItemListView.setAdapter(activeOrderRowAdapter);
         contentView.addView(basketView);
-    }
-
-    private BaseFragment getFragment() {
-        return this;
     }
 
     @Override

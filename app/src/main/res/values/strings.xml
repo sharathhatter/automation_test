@@ -115,8 +115,9 @@
     <string name="modepayment">Mode of payment:</string>
     <string name="invoicenumber">Invoice No:</string>
     <string name="ordernumber">Order No:</string>
-    <string name="amountpay">Amount to Pay:</string>
+    <string name="amountpay">Amount to Pay</string>
     <string name="almostDone">Almost done!</string>
+    <string name="proceedToOrderReview">Proceed to Order Review</string>
     <string name="vat">VAT</string>
     <string name="type">Type</string>
     <string name="message">Message</string>
@@ -134,6 +135,7 @@
     <string name="amtToPay">Amount to Pay:</string>
     <string name="walletBal">Balance in wallet:</string>
     <string name="basketVal">Basket Value:</string>
+    <string name="youSaved">You saved:</string>
     <string name="basketCount">"0"</string>
     <string name="falseString">false</string>
     <string name="last3Month">View Wallet Activity for last 3 Months</string>
@@ -314,8 +316,8 @@
     <string name="choosePayment">Choose payment method</string>
     <string name="paymentMethod">Payment Method</string>
     <string name="orderItems">Order Items</string>
-    <string name="enterVoucher">Enter a voucher</string>
-    <string name="viewAvailableVouchers">View available vouchers</string>
+    <string name="enterVoucher">Enter your eVoucher code</string>
+    <string name="viewAvailableVouchers">You have an active eVoucher!\nClick here to view</string>
     <string name="connectionOffline">Cannot proceed with the operation. No network connection.</string>
     <string name="info">Information</string>
     <string name="memberName">Member Name</string>

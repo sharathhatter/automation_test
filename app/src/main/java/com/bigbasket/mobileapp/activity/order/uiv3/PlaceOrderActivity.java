@@ -12,7 +12,6 @@ import com.bigbasket.mobileapp.activity.base.uiv3.TabActivity;
 import com.bigbasket.mobileapp.fragment.order.OrderItemListFragment;
 import com.bigbasket.mobileapp.fragment.order.OrderSummaryFragment;
 import com.bigbasket.mobileapp.interfaces.PlaceOrderAware;
-import com.bigbasket.mobileapp.model.account.Address;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.OrderSummary;
 import com.bigbasket.mobileapp.model.order.PayuResponse;
@@ -176,7 +175,6 @@ public class PlaceOrderActivity extends TabActivity implements PlaceOrderAware {
 
     private void postOrderCreation(ArrayList<Order> orders) {
         PayuResponse.clearTxnDetail(this);
-        Address.clearAddressIdFromPreferences(this);
         VoucherApplied.clearFromPreference(this);
         Intent data = new Intent();
         data.putParcelableArrayListExtra(Constants.ORDERS, orders);

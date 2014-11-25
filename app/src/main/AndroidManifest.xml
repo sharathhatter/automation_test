@@ -196,6 +196,8 @@
         <activity
             android:name=".activity.account.base.SocialLoginConfirmActivity"
             android:windowSoftInputMode="stateHidden|adjustPan" />
+        <activity android:name=".activity.order.uiv3.SlotPaymentSelectionActivity"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"

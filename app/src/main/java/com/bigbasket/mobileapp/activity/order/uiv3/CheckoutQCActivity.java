@@ -78,7 +78,7 @@ public class CheckoutQCActivity extends BackButtonActivity {
         if (checkInternetConnection()) {
             SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(this);
             String pharmaPrescriptionId = prefer.getString(Constants.PHARMA_PRESCRIPTION_ID, null);
-            new COReserveQuantityCheckTask(this, pharmaPrescriptionId).execute();
+            new COReserveQuantityCheckTask<>(this, pharmaPrescriptionId).execute();
         } else {
             // TODO : Improve error handling
             showAlertDialogFinish(this, null, getString(R.string.checkinternet));

@@ -23,30 +23,21 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
-import com.bigbasket.mobileapp.model.account.Address;
 import com.bigbasket.mobileapp.model.cart.FulfillmentInfo;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.model.slot.BaseSlot;
 import com.bigbasket.mobileapp.model.slot.SelectedSlotType;
 import com.bigbasket.mobileapp.model.slot.Slot;
 import com.bigbasket.mobileapp.model.slot.SlotGroup;
 import com.bigbasket.mobileapp.model.slot.SlotHeader;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
-import com.bigbasket.mobileapp.util.ParserUtil;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 
 public class SlotSelectionFragment extends BaseFragment {
 
-    private List<SlotGroup> slotGroupList;
+    private List<SlotGroup> mSlotGroupList;
     private Dialog mSlotListDialog;
     private SlotGroupListAdapter mSlotGroupListAdapter;
 
@@ -58,45 +49,8 @@ public class SlotSelectionFragment extends BaseFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        loadSlots();
-    }
-
-    private void loadSlots() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String addressId = Address.getAddressIdFromPreferences(getActivity());
-        String potentialOrderId = preferences.getString(Constants.POTENTIAL_ORDER_ID, null);
-        String url = MobileApiUrl.getBaseAPIUrl() + Constants.POST_DELIVERY_ADDR;
-        HashMap<String, String> params = new HashMap<>();
-        params.put(Constants.P_ORDER_ID, potentialOrderId);
-        params.put(Constants.ADDRESS_ID, addressId);
-        startAsyncActivity(url, params, true, true, null);
-    }
-
-    @Override
-    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-        String url = httpOperationResult.getUrl();
-        if (url.contains(Constants.POST_DELIVERY_ADDR)) {
-            try {
-                JSONObject responseJsonObj = new JSONObject(httpOperationResult.getReponseString());
-                String status = responseJsonObj.getString(Constants.STATUS);
-                switch (status) {
-                    case Constants.OK:
-                        JSONObject response = responseJsonObj.getJSONObject(Constants.RESPONSE);
-                        JSONArray slotsInfo = response.getJSONArray(Constants.SLOTS_INFO);
-                        slotGroupList = ParserUtil.parseSlotsList(slotsInfo);
-                        displaySlotGroups();
-                        break;
-                    case Constants.ERROR:
-                        showErrorMsg("Server Error");
-                        break;
-                }
-            } catch (JSONException ex) {
-                // TODO : Change this later on
-                showErrorMsg("Invalid response");
-            }
-        } else {
-            super.onAsyncTaskComplete(httpOperationResult);
-        }
+        mSlotGroupList = getArguments().getParcelableArrayList(Constants.SLOTS_INFO);
+        displaySlotGroups();
     }
 
     private void displaySlotGroups() {
@@ -106,12 +60,12 @@ public class SlotSelectionFragment extends BaseFragment {
         if (contentView == null) return;
 
         contentView.removeAllViews();
-        if (slotGroupList.size() == 1) {
+        if (mSlotGroupList.size() == 1) {
             ListView listViewSlots = new ListView(getActivity());
             listViewSlots.setDividerHeight(0);
             listViewSlots.setDivider(null);
             contentView.addView(listViewSlots);
-            fillSlotList(listViewSlots, slotGroupList.get(0));
+            fillSlotList(listViewSlots, mSlotGroupList.get(0));
         } else {
             // info message for multiple slot selection
             TextView infoMsgMultipleSlotSelection = new TextView(getActivity());
@@ -134,7 +88,7 @@ public class SlotSelectionFragment extends BaseFragment {
             slotGroupListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    SlotGroup slotGroup = slotGroupList.get(position);
+                    SlotGroup slotGroup = mSlotGroupList.get(position);
                     showSlotListDialog(slotGroup);
                 }
             });
@@ -187,7 +141,7 @@ public class SlotSelectionFragment extends BaseFragment {
 
     private void onSlotSelected(SlotGroup slotGroup, Slot slot) {
         slotGroup.setSelectedSlot(slot);
-        if (slotGroupList.size() > 1) {
+        if (mSlotGroupList.size() > 1) {
             if (mSlotListDialog != null && mSlotListDialog.isShowing()) {
                 mSlotListDialog.dismiss();
             } else {
@@ -208,21 +162,21 @@ public class SlotSelectionFragment extends BaseFragment {
             return;
         }
         ArrayList<SelectedSlotType> selectedSlotTypeList = new ArrayList<>();
-        for (SlotGroup slotGroup : slotGroupList) {
+        for (SlotGroup slotGroup : mSlotGroupList) {
             Slot slot = slotGroup.getSelectedSlot();
             selectedSlotTypeList.add(new SelectedSlotType(slotGroup.getFulfillmentInfo().getFulfillmentId(),
                     slot.getSlotId(), slot.getSlotDate()));
         }
 
-        PaymentSelectionFragment paymentSelectionFragment = new PaymentSelectionFragment();
-        Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList(Constants.SLOTS, selectedSlotTypeList);
-        paymentSelectionFragment.setArguments(bundle);
-        changeFragment(paymentSelectionFragment);
+//        PaymentSelectionFragment paymentSelectionFragment = new PaymentSelectionFragment();
+//        Bundle bundle = new Bundle();
+//        bundle.putParcelableArrayList(Constants.SLOTS, selectedSlotTypeList);
+//        paymentSelectionFragment.setArguments(bundle);
+//        changeFragment(paymentSelectionFragment);
     }
 
     private boolean areAllSlotGroupsSelected() {
-        for (SlotGroup slotGroup : slotGroupList) {
+        for (SlotGroup slotGroup : mSlotGroupList) {
             if (!slotGroup.isSelected()) {
                 return false;
             }
@@ -327,7 +281,7 @@ public class SlotSelectionFragment extends BaseFragment {
     private class SlotGroupListAdapter extends BaseAdapter {
         @Override
         public Object getItem(int position) {
-            return slotGroupList.get(position);
+            return mSlotGroupList.get(position);
         }
 
         @Override
@@ -337,7 +291,7 @@ public class SlotSelectionFragment extends BaseFragment {
 
         @Override
         public int getCount() {
-            return slotGroupList.size();
+            return mSlotGroupList.size();
         }
 
         private class SlotGroupHolder {
@@ -395,7 +349,7 @@ public class SlotSelectionFragment extends BaseFragment {
             } else {
                 slotGroupHolder = (SlotGroupHolder) row.getTag();
             }
-            SlotGroup slotGroup = slotGroupList.get(position);
+            SlotGroup slotGroup = mSlotGroupList.get(position);
             TextView txtFulfilledBy = slotGroupHolder.getTxtFulfilledBy();
             TextView txtFulfillmentDisplayName = slotGroupHolder.getTxtFulfillmentDisplayName();
             TextView txtSlotSelected = slotGroupHolder.getTxtSlotSelected();
@@ -427,9 +381,15 @@ public class SlotSelectionFragment extends BaseFragment {
         return getView() != null ? (LinearLayout) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
     }
 
+
+    @Override
+    public void setTitle() {
+        // Do nothing
+    }
+
     @Override
     public String getTitle() {
-        return "Choose Slot";
+        return null;
     }
 
     @NonNull

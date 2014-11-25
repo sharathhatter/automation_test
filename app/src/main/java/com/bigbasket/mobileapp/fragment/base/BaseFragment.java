@@ -222,7 +222,9 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     }
 
     private void changeTitle(String title) {
-        getCurrentActivity().onChangeTitle(title);
+        if (getCurrentActivity() != null) {
+            getCurrentActivity().onChangeTitle(title);
+        }
     }
 
     public void setTitle() {

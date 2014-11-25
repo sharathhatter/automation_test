@@ -26,11 +26,11 @@
         <item name="android:paddingTop">@dimen/padding_small</item>
         <item name="android:paddingBottom">@dimen/padding_small</item>
         <item name="android:textColor">@android:color/white</item>
-        <item name="android:background">@color/uiv3_action_bar_background</item>
+        <item name="android:background">@color/uiv3_main_button_background</item>
         <item name="android:layout_gravity">center</item>
         <item name="android:minHeight">1dp</item>
         <item name="android:minWidth">1dp</item>
-        <item name="android:textSize">@dimen/secondary_text_size</item>
+        <item name="android:textSize">@dimen/primary_text_size</item>
     </style>
     <style name="Uiv2BigYellowButton">
         <item name="android:layout_margin">10dp</item>
@@ -87,8 +87,7 @@
     <style name="CardViewStyle" />
 
     <style name="FooterButtonStyle">
-        <item name="android:clickable">true</item>
-        <item name="android:background">@color/uiv3_action_bar_background</item>
+        <item name="android:background">@color/uiv3_main_button_background</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">@dimen/heading_1_text_size</item>
         <item name="android:gravity">center</item>

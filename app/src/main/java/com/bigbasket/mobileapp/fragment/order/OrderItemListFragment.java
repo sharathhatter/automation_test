@@ -107,7 +107,7 @@ public class OrderItemListFragment extends BaseFragment {
                 OrderItemDisplaySource.ORDER_DISPLAY, fulfillmentInfoIdAndIconHashMap, annotationHashMap);
         listView.setAdapter(activeOrderRowAdapter);
 
-        TextView txtListFooter = (TextView) base.findViewById(R.id.txtListFooter);
+        TextView txtListFooter = (TextView) base.findViewById(R.id.btnListFooter);
         txtListFooter.setText(getString(R.string.placeorder));
         txtListFooter.setTypeface(faceRobotoThin);
 

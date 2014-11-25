@@ -402,7 +402,7 @@ public final class ProductView {
                     @Override
                     public void onClick(View view) {
                         if (DataUtil.isInternetAvailable(context) && !TextUtils.isEmpty(editTextQty.getText())) {
-                            BasketOperationTask basketOperationTask = new BasketOperationTask<>(basketOperationAware,
+                            BasketOperationTask<T> basketOperationTask = new BasketOperationTask<>(basketOperationAware,
                                     MobileApiUrl.getBaseAPIUrl() + Constants.CART_INC, BasketOperation.ADD, product,
                                     txtInBasket, imgDecBasketQty, imgIncBasketQty, btnAddToBasket, editTextQty);
                             basketOperationTask.execute();
@@ -417,7 +417,7 @@ public final class ProductView {
                     @Override
                     public void onClick(View view) {
                         if (DataUtil.isInternetAvailable(context) && !TextUtils.isEmpty(editTextQty.getText())) {
-                            BasketOperationTask myTask = new BasketOperationTask<>(basketOperationAware,
+                            BasketOperationTask<T> myTask = new BasketOperationTask<>(basketOperationAware,
                                     MobileApiUrl.getBaseAPIUrl() + Constants.CART_DEC, BasketOperation.DELETE,
                                     product, txtInBasket, imgDecBasketQty, imgIncBasketQty, btnAddToBasket, editTextQty);
                             myTask.execute();
@@ -437,7 +437,7 @@ public final class ProductView {
                                 return;
                             }
                             String qty = editTextQty.getText() != null ? editTextQty.getText().toString() : "1";
-                            BasketOperationTask basketOperationTask = new BasketOperationTask<>(basketOperationAware,
+                            BasketOperationTask<T> basketOperationTask = new BasketOperationTask<>(basketOperationAware,
                                     MobileApiUrl.getBaseAPIUrl() + Constants.CART_INC, BasketOperation.ADD, product,
                                     txtInBasket, imgDecBasketQty, imgIncBasketQty, btnAddToBasket, editTextQty, qty);
                             basketOperationTask.execute();
