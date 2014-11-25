@@ -315,6 +315,7 @@
     <string name="evoucherApplied">eVoucher added successfully.Please select payment method.</string>
     <string name="choosePayment">Choose payment method</string>
     <string name="paymentMethod">Payment Method</string>
+    <string name="pleaseChoosePaymentMethod">Please choose a payment method</string>
     <string name="orderItems">Order Items</string>
     <string name="enterVoucher">Enter your eVoucher code</string>
     <string name="viewAvailableVouchers">You have an active eVoucher!\nClick here to view</string>

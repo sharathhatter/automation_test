@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -20,6 +21,7 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.order.uiv3.AvailableVoucherListActivity;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.interfaces.SelectedPaymentAware;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.order.ActiveVouchers;
 import com.bigbasket.mobileapp.model.order.Order;
@@ -178,12 +180,27 @@ public class PaymentSelectionFragment extends BaseFragment {
         if (amtPayable > 0) {
             RadioGroup layoutPaymentOptions = (RadioGroup) base.findViewById(R.id.layoutPaymentOptions);
             int i = 0;
-            for (Map.Entry<String, String> entrySet : mPaymentTypeMap.entrySet()) {
+            for (final Map.Entry<String, String> entrySet : mPaymentTypeMap.entrySet()) {
                 RadioButton rbtnPaymentType = getPaymentOptionRadioButton();
                 rbtnPaymentType.setText(entrySet.getKey());
-                rbtnPaymentType.setTag(entrySet.getValue());
                 rbtnPaymentType.setId(i);
-                rbtnPaymentType.setChecked(i == 0);
+                if (i == 0) {
+                    if (getCurrentActivity() != null) {
+                        rbtnPaymentType.setChecked(true);
+                        ((SelectedPaymentAware) getCurrentActivity()).setPaymentMethod(entrySet.getValue());
+                    } else {
+                        return;
+                    }
+                }
+                rbtnPaymentType.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (isChecked && getCurrentActivity() != null) {
+                            ((SelectedPaymentAware) getCurrentActivity()).
+                                    setPaymentMethod(entrySet.getValue());
+                        }
+                    }
+                });
                 layoutPaymentOptions.addView(rbtnPaymentType);
                 i++;
             }
@@ -222,14 +239,13 @@ public class PaymentSelectionFragment extends BaseFragment {
     }
 
     private RadioButton getPaymentOptionRadioButton() {
-        RadioButton radioButton = new RadioButton(getCurrentActivity());
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        RadioButton radioButton = (RadioButton) inflater.inflate(R.layout.uiv3_payment_option_rbtn, null);
         RadioGroup.LayoutParams layoutParams = new RadioGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams.setMargins(0, 0, 0, (int) getResources().getDimension(R.dimen.margin_small));
         radioButton.setLayoutParams(layoutParams);
         radioButton.setTypeface(faceRobotoRegular);
-        radioButton.setTextColor(getResources().getColor(R.color.uiv3_primary_text_color));
-        radioButton.setTextSize(getResources().getDimension(R.dimen.primary_text_size));
         return radioButton;
     }
 

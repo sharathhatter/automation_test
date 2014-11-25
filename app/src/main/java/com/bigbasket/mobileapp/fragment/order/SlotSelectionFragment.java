@@ -1,10 +1,8 @@
 package com.bigbasket.mobileapp.fragment.order;
 
 import android.app.Dialog;
-import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.text.Html;
 import android.text.TextUtils;
@@ -23,6 +21,7 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.interfaces.SelectedSlotAware;
 import com.bigbasket.mobileapp.model.cart.FulfillmentInfo;
 import com.bigbasket.mobileapp.model.slot.BaseSlot;
 import com.bigbasket.mobileapp.model.slot.SelectedSlotType;
@@ -40,6 +39,7 @@ public class SlotSelectionFragment extends BaseFragment {
     private List<SlotGroup> mSlotGroupList;
     private Dialog mSlotListDialog;
     private SlotGroupListAdapter mSlotGroupListAdapter;
+    private SlotListAdapter mSlotListAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -58,6 +58,12 @@ public class SlotSelectionFragment extends BaseFragment {
 
         LinearLayout contentView = getContentView();
         if (contentView == null) return;
+
+        // Set default selected slot
+        for (SlotGroup slotGroup : mSlotGroupList) {
+            // Manually trigger slot selected event
+            slotGroup.setSelectedSlot(slotGroup.getNextAvailableSlot());
+        }
 
         contentView.removeAllViews();
         if (mSlotGroupList.size() == 1) {
@@ -80,8 +86,8 @@ public class SlotSelectionFragment extends BaseFragment {
                     (int) getResources().getDimension(R.dimen.padding_normal));
             infoMsgMultipleSlotSelection.setGravity(Gravity.CENTER_HORIZONTAL);
             contentView.addView(infoMsgMultipleSlotSelection);
-
             mSlotGroupListAdapter = new SlotGroupListAdapter();
+
             ListView slotGroupListView = new ListView(getActivity());
             slotGroupListView.setAdapter(mSlotGroupListAdapter);
             slotGroupListView.setDivider(null);
@@ -121,8 +127,9 @@ public class SlotSelectionFragment extends BaseFragment {
             flattenedSlotGroupList.add(0, slotHeader);
             flattenedSlotGroupList.add(1, nxtAvailableSlot);
         }
-        SlotListAdapter slotListAdapter = new SlotListAdapter(flattenedSlotGroupList);
-        listViewSlot.setAdapter(slotListAdapter);
+        mSlotListAdapter = new SlotListAdapter(flattenedSlotGroupList,
+                slotGroup);
+        listViewSlot.setAdapter(mSlotListAdapter);
         listViewSlot.setDivider(null);
         listViewSlot.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -147,20 +154,26 @@ public class SlotSelectionFragment extends BaseFragment {
             } else {
                 return;
             }
+            if (mSlotGroupListAdapter == null) return;
             mSlotGroupListAdapter.notifyDataSetChanged();
             if (areAllSlotGroupsSelected()) {
-                startCheckout();
+                setSelectedSlot();
             }
         } else {
-            startCheckout();
+            if (mSlotListAdapter == null) return;
+            mSlotListAdapter.notifyDataSetChanged();
+            setSelectedSlot();
         }
     }
 
-    private void startCheckout() {
+    private void setSelectedSlot() {
+        if (getCurrentActivity() == null) return;
+
         if (!areAllSlotGroupsSelected()) {
-            showErrorMsg(getString(R.string.selectAllSlotsErrMsg));
+            ((SelectedSlotAware) getCurrentActivity()).setSelectedSlotType(null);
             return;
         }
+
         ArrayList<SelectedSlotType> selectedSlotTypeList = new ArrayList<>();
         for (SlotGroup slotGroup : mSlotGroupList) {
             Slot slot = slotGroup.getSelectedSlot();
@@ -168,11 +181,7 @@ public class SlotSelectionFragment extends BaseFragment {
                     slot.getSlotId(), slot.getSlotDate()));
         }
 
-//        PaymentSelectionFragment paymentSelectionFragment = new PaymentSelectionFragment();
-//        Bundle bundle = new Bundle();
-//        bundle.putParcelableArrayList(Constants.SLOTS, selectedSlotTypeList);
-//        paymentSelectionFragment.setArguments(bundle);
-//        changeFragment(paymentSelectionFragment);
+        ((SelectedSlotAware) getCurrentActivity()).setSelectedSlotType(selectedSlotTypeList);
     }
 
     private boolean areAllSlotGroupsSelected() {
@@ -187,15 +196,15 @@ public class SlotSelectionFragment extends BaseFragment {
 
     private class SlotListAdapter extends BaseAdapter {
         private List<BaseSlot> flattenedSlotGroupList;
-        private int slotNotAvailableTextColor;
+        private SlotGroup slotGroup;
         private int size;
         private int VIEW_TYPE_HEADER = 0;
         private int VIEW_TYPE_ITEM = 1;
 
-        public SlotListAdapter(List<BaseSlot> flattenedSlotGroupList) {
+        public SlotListAdapter(List<BaseSlot> flattenedSlotGroupList, SlotGroup slotGroup) {
             this.flattenedSlotGroupList = flattenedSlotGroupList;
-            this.slotNotAvailableTextColor = getResources().getColor(R.color.slotSeletionNotAvailableColor);
             this.size = flattenedSlotGroupList.size();
+            this.slotGroup = slotGroup;
         }
 
         @Override
@@ -229,12 +238,9 @@ public class SlotSelectionFragment extends BaseFragment {
             if (getItemViewType(position) == VIEW_TYPE_ITEM) {
                 View slotView = getSlotView((Slot) baseSlot, convertView);
                 View listSeparator = slotView.findViewById(R.id.listSeparator);
-                LinearLayout itemTextLayout = (LinearLayout) slotView.findViewById(R.id.itemTextLayout);
                 if ((position + 1) < size && getItemViewType(position + 1) == VIEW_TYPE_HEADER) {
                     listSeparator.setVisibility(View.VISIBLE);
-                    itemTextLayout.setPadding(0, (int) getResources().getDimension(R.dimen.padding_normal), 0, (int) getResources().getDimension(R.dimen.padding_normal));
                 } else {
-                    itemTextLayout.setPadding(0, (int) getResources().getDimension(R.dimen.padding_normal), 0, (int) getResources().getDimension(R.dimen.padding_normal));
                     listSeparator.setVisibility(View.GONE);
                 }
                 return slotView;
@@ -243,28 +249,33 @@ public class SlotSelectionFragment extends BaseFragment {
         }
 
         private View getHeaderView(SlotHeader slotHeader, View row) {
+            SlotHeaderViewHolder slotHeaderViewHolder;
             if (row == null) {
                 row = getActivity().getLayoutInflater().inflate(R.layout.uiv3_list_title, null);
+                slotHeaderViewHolder = new SlotHeaderViewHolder(row);
+                row.setBackgroundColor(getResources().getColor(R.color.uiv3_list_bkg_light_color));
+                row.setTag(slotHeaderViewHolder);
+            } else {
+                slotHeaderViewHolder = (SlotHeaderViewHolder) row.getTag();
             }
-            TextView txtHeaderMsg = (TextView) row.findViewById(R.id.txtHeaderMsg);
-
-            txtHeaderMsg.setTypeface(faceRobotoRegular);
-
+            TextView txtHeaderMsg = slotHeaderViewHolder.getTxtHeaderMsg();
             txtHeaderMsg.setText(slotHeader.getFormattedDisplayName());
             return row;
         }
 
         private View getSlotView(Slot slot, View row) {
+            SlotViewHolder slotViewHolder;
             if (row == null) {
                 row = getActivity().getLayoutInflater().inflate(R.layout.uiv3_list_icon_and_two_texts_row, null);
                 row.setBackgroundColor(getResources().getColor(R.color.uiv3_list_bkg_light_color));
+                slotViewHolder = new SlotViewHolder(row);
+                row.setTag(slotViewHolder);
+            } else {
+                slotViewHolder = (SlotViewHolder) row.getTag();
             }
-            TextView txtTitle = (TextView) row.findViewById(R.id.itemTitle);
-            TextView txtSubTitle = (TextView) row.findViewById(R.id.itemSubTitle);
-            ImageView imgRow = (ImageView) row.findViewById(R.id.itemImg);
-
-            txtTitle.setTypeface(faceRobotoRegular);
-            txtSubTitle.setTypeface(faceRobotoRegular);
+            TextView txtTitle = slotViewHolder.getTxtTitle();
+            TextView txtSubTitle = slotViewHolder.getTxtSubTitle();
+            ImageView imgRow = slotViewHolder.getImgRow();
 
             txtTitle.setText(slot.getFormattedSlotDate());
             txtSubTitle.setText(slot.getFormattedDisplayName());
@@ -274,7 +285,77 @@ public class SlotSelectionFragment extends BaseFragment {
             } else {
                 imgRow.setImageResource(R.drawable.deliveryslot_deactive);
             }
+
+            CheckBox itemTick = slotViewHolder.getItemTick();
+            if (slot == slotGroup.getSelectedSlot()) {
+                itemTick.setChecked(true);
+                itemTick.setVisibility(View.VISIBLE);
+                row.setBackgroundColor(getResources().getColor(R.color.uiv3_list_bkg_color));
+            } else {
+                itemTick.setChecked(false);
+                itemTick.setVisibility(View.GONE);
+                row.setBackgroundColor(getResources().getColor(R.color.uiv3_list_bkg_light_color));
+            }
             return row;
+        }
+
+        private class SlotViewHolder {
+            private TextView txtTitle;
+            private TextView txtSubTitle;
+            private ImageView imgRow;
+            private CheckBox itemTick;
+            private View base;
+
+            private SlotViewHolder(View base) {
+                this.base = base;
+            }
+
+            public TextView getTxtTitle() {
+                if (txtTitle == null) {
+                    txtTitle = (TextView) base.findViewById(R.id.itemTitle);
+                    txtTitle.setTypeface(faceRobotoRegular);
+                }
+                return txtTitle;
+            }
+
+            public TextView getTxtSubTitle() {
+                if (txtSubTitle == null) {
+                    txtSubTitle = (TextView) base.findViewById(R.id.itemSubTitle);
+                    txtSubTitle.setTypeface(faceRobotoRegular);
+                }
+                return txtSubTitle;
+            }
+
+            public ImageView getImgRow() {
+                if (imgRow == null) {
+                    imgRow = (ImageView) base.findViewById(R.id.itemImg);
+                }
+                return imgRow;
+            }
+
+            public CheckBox getItemTick() {
+                if (itemTick == null) {
+                    itemTick = (CheckBox) base.findViewById(R.id.itemTick);
+                }
+                return itemTick;
+            }
+        }
+
+        private class SlotHeaderViewHolder {
+            private TextView txtHeaderMsg;
+            private View base;
+
+            private SlotHeaderViewHolder(View base) {
+                this.base = base;
+            }
+
+            public TextView getTxtHeaderMsg() {
+                if (txtHeaderMsg == null) {
+                    txtHeaderMsg = (TextView) base.findViewById(R.id.txtHeaderMsg);
+                    txtHeaderMsg.setTypeface(faceRobotoRegular);
+                }
+                return txtHeaderMsg;
+            }
         }
     }
 

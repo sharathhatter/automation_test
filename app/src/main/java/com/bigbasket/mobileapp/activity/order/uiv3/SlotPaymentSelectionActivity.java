@@ -6,8 +6,10 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 
 import com.astuetz.PagerSlidingTabStrip;
@@ -16,10 +18,13 @@ import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.adapter.TabPagerAdapter;
 import com.bigbasket.mobileapp.fragment.order.PaymentSelectionFragment;
 import com.bigbasket.mobileapp.fragment.order.SlotSelectionFragment;
+import com.bigbasket.mobileapp.interfaces.SelectedPaymentAware;
+import com.bigbasket.mobileapp.interfaces.SelectedSlotAware;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.order.ActiveVouchers;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
+import com.bigbasket.mobileapp.model.slot.SelectedSlotType;
 import com.bigbasket.mobileapp.model.slot.SlotGroup;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
@@ -34,7 +39,11 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class SlotPaymentSelectionActivity extends BackButtonActivity {
+public class SlotPaymentSelectionActivity extends BackButtonActivity
+        implements SelectedSlotAware, SelectedPaymentAware {
+
+    private ArrayList<SelectedSlotType> mSelectedSlotType;
+    private String mPaymentMethod;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -131,5 +140,34 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity {
         PagerSlidingTabStrip pagerSlidingTabStrip = (PagerSlidingTabStrip) base.findViewById(R.id.slidingTabs);
         contentView.addView(base);
         pagerSlidingTabStrip.setViewPager(viewPager);
+
+        Button btnFooter = (Button) base.findViewById(R.id.btnFooter);
+        btnFooter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launchOrderReview();
+            }
+        });
+    }
+
+    private void launchOrderReview() {
+        if (mSelectedSlotType == null || mSelectedSlotType.size() == 0) {
+            showAlertDialog(this, null, getString(R.string.selectAllSlotsErrMsg));
+            return;
+        }
+        if (TextUtils.isEmpty(mPaymentMethod)) {
+            showAlertDialog(this, null, getString(R.string.pleaseChoosePaymentMethod));
+            return;
+        }
+    }
+
+    @Override
+    public void setSelectedSlotType(ArrayList<SelectedSlotType> selectedSlotType) {
+        this.mSelectedSlotType = selectedSlotType;
+    }
+
+    @Override
+    public void setPaymentMethod(String paymentMethod) {
+        this.mPaymentMethod = paymentMethod;
     }
 }
