@@ -30,6 +30,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.ParserUtil;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
+import com.google.gson.Gson;
 
 import org.apache.http.impl.client.BasicCookieStore;
 import org.json.JSONArray;
@@ -159,6 +160,16 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
             showAlertDialog(this, null, getString(R.string.pleaseChoosePaymentMethod));
             return;
         }
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String potentialOrderId = preferences.getString(Constants.POTENTIAL_ORDER_ID, null);
+        HashMap<String, String> params = new HashMap<>();
+        params.put(Constants.P_ORDER_ID, potentialOrderId);
+        params.put(Constants.SLOTS, new Gson().toJson(mSelectedSlotType));
+        params.put(Constants.PAYMENT_TYPE, mPaymentMethod);
+        params.put(Constants.SUPPORT_CC, "yes");
+        startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.CO_POST_SLOTS_AND_PAYMENT,
+                params, true, AuthParameters.getInstance(this), new BasicCookieStore());
     }
 
     @Override

@@ -259,7 +259,6 @@ public class Constants {
     public static final String CART_INC = "c-incr-i/";
     public static final String CART_DEC = "c-decr-i/";
     public static final String CART_EMPTY = "c-empty/";
-    public static final String CO_POST_PAYMENT = "co-post-payment/";
     public static final String PRODUCT_DETAILS = "product_details";
     public static final String GET_INVOICE = "get-invoice/";
     public static final String ORDER_ID = "order_id";
@@ -594,7 +593,7 @@ public class Constants {
     public static final String REGISTER_DEVICE = "register-device/";
     public static final String NEWSLETTER_SUBSCRIPTION = "newsletter_subscription";
     public static final String FIRST_NAME_PREF = "firstname";
-    public static final String CO_POST_SLOTS = "co-post-slots/";
+    public static final String CO_POST_SLOTS_AND_PAYMENT = "co-post-slot-and-payment/";
 
     //invoice
     public static final String DELIVERY_DATE = "delivery_date";
