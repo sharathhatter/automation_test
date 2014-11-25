@@ -62,7 +62,7 @@ public class SlotSelectionFragment extends BaseFragment {
         // Set default selected slot
         for (SlotGroup slotGroup : mSlotGroupList) {
             // Manually trigger slot selected event
-            slotGroup.setSelectedSlot(slotGroup.getNextAvailableSlot());
+            onSlotSelected(slotGroup, slotGroup.getNextAvailableSlot());
         }
 
         contentView.removeAllViews();
@@ -148,6 +148,7 @@ public class SlotSelectionFragment extends BaseFragment {
 
     private void onSlotSelected(SlotGroup slotGroup, Slot slot) {
         slotGroup.setSelectedSlot(slot);
+        setSelectedSlot();
         if (mSlotGroupList.size() > 1) {
             if (mSlotListDialog != null && mSlotListDialog.isShowing()) {
                 mSlotListDialog.dismiss();
@@ -162,7 +163,6 @@ public class SlotSelectionFragment extends BaseFragment {
         } else {
             if (mSlotListAdapter == null) return;
             mSlotListAdapter.notifyDataSetChanged();
-            setSelectedSlot();
         }
     }
 
