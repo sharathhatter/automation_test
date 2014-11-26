@@ -159,9 +159,17 @@ public class UIUtil {
         return btn;
     }
 
-    public static RecyclerView getResponsiveRecyclerView(Context context) {
+    public static RecyclerView getResponsiveRecyclerView(Context context, int portraitModeGridCount,
+                                                         int landscapeModeGridCount) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         RecyclerView recyclerView = (RecyclerView) inflater.inflate(R.layout.recyclerview_layout, null);
+        configureRecyclerView(recyclerView, context, portraitModeGridCount, landscapeModeGridCount);
+        return recyclerView;
+    }
+
+    public static void configureRecyclerView(RecyclerView recyclerView,
+                                             Context context, int portraitModeGridCount,
+                                             int landscapeModeGridCount) {
         recyclerView.setHasFixedSize(false);
         Configuration configuration = context.getResources().getConfiguration();
         int screenLayout = configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK;
@@ -171,11 +179,11 @@ public class UIUtil {
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
             recyclerView.setLayoutManager(linearLayoutManager);
         } else {
-            int rowCount = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE ? 3 : 2;
+            int rowCount = configuration.orientation == Configuration.ORIENTATION_PORTRAIT ?
+                    portraitModeGridCount : landscapeModeGridCount;
             StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(rowCount,
                     StaggeredGridLayoutManager.VERTICAL);
             recyclerView.setLayoutManager(staggeredGridLayoutManager);
         }
-        return recyclerView;
     }
 }

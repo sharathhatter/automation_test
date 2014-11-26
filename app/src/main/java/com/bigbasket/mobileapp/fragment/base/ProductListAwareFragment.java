@@ -135,7 +135,7 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity());
+        RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 2, 3);
 
         // Set product-list header view
         View headerView = inflater.inflate(R.layout.uiv3_product_list_filter_layout, null);

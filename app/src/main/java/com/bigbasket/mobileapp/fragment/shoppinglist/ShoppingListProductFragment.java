@@ -169,7 +169,7 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
         LinearLayout contentView = getContentView();
         if (contentView == null) return;
 
-        RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity());
+        RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 2, 3);
 
         ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
                 .setCommonTypeface(faceRobotoRegular)

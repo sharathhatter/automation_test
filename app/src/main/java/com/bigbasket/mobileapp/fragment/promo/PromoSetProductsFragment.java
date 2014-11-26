@@ -256,7 +256,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
         if (contentView == null) return;
 
         showProgressDialog(getString(R.string.please_wait));
-        RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity());
+        RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 2, 3);
 
         ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
                 .setCommonTypeface(faceRobotoRegular)

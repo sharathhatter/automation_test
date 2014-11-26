@@ -4,11 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.LinearLayout;
 
 import com.bigbasket.mobileapp.R;
@@ -17,6 +18,7 @@ import com.bigbasket.mobileapp.activity.order.MemberAddressFormActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.SlotPaymentSelectionActivity;
 import com.bigbasket.mobileapp.adapter.account.MemberAddressListAdapter;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.interfaces.AddressSelectionAware;
 import com.bigbasket.mobileapp.model.account.Address;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
@@ -24,7 +26,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.ExceptionUtil;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.ParserUtil;
-import com.etsy.android.grid.StaggeredGridView;
+import com.bigbasket.mobileapp.util.UIUtil;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.melnykov.fab.FloatingActionButton;
@@ -32,7 +34,7 @@ import com.melnykov.fab.FloatingActionButton;
 import java.util.ArrayList;
 
 
-public class MemberAddressListFragment extends BaseFragment {
+public class MemberAddressListFragment extends BaseFragment implements AddressSelectionAware {
 
     protected ArrayList<Address> addressArrayList;
     private boolean fromAccountPage = false;
@@ -113,21 +115,19 @@ public class MemberAddressListFragment extends BaseFragment {
         contentView.removeAllViews();
         LayoutInflater layoutInflater = (LayoutInflater) getActivity().
                 getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View addressView = layoutInflater.inflate(R.layout.uiv3_fab_staggered_grid, null);
+        View addressView = layoutInflater.inflate(R.layout.uiv3_fab_recycler_view, null);
 
-        StaggeredGridView addressListView = (StaggeredGridView) addressView.findViewById(R.id.fabStaggeredGridView);
+        RecyclerView addressRecyclerView = (RecyclerView) addressView.findViewById(R.id.fabRecyclerView);
+        UIUtil.configureRecyclerView(addressRecyclerView, getActivity(), 1, 3);
         MemberAddressListAdapter memberAddressListAdapter =
-                new MemberAddressListAdapter(addressArrayList, getActivity(), fromAccountPage);
-        addressListView.setAdapter(memberAddressListAdapter);
-        addressListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                OnAddressSelected(addressArrayList.get(position));
-            }
-        });
+                new MemberAddressListAdapter(this, addressArrayList, getActivity(), faceRobotoRegular,
+                        fromAccountPage);
+        addressRecyclerView.setAdapter(memberAddressListAdapter);
 
         FloatingActionButton floatingActionButton = (FloatingActionButton) addressView.findViewById(R.id.btnFab);
-        floatingActionButton.attachToListView(addressListView);
+        if (addressRecyclerView.getLayoutManager() instanceof LinearLayoutManager) {
+            floatingActionButton.attachToRecyclerView(addressRecyclerView);
+        }
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -148,7 +148,8 @@ public class MemberAddressListFragment extends BaseFragment {
         startActivityForResult(memberAddressFormIntent, Constants.ADDRESS_CREATED_MODIFIED);
     }
 
-    protected void OnAddressSelected(Address address) {
+    @Override
+    public void onAddressSelected(Address address) {
         if (!fromAccountPage) {
             launchSlotSelection(address.getId());
         } else {
