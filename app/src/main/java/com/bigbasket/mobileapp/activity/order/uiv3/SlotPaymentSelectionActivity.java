@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.activity.order.uiv3;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -22,6 +23,7 @@ import com.bigbasket.mobileapp.interfaces.SelectedPaymentAware;
 import com.bigbasket.mobileapp.interfaces.SelectedSlotAware;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.order.ActiveVouchers;
+import com.bigbasket.mobileapp.model.order.OrderSummary;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.model.slot.SelectedSlotType;
@@ -31,6 +33,8 @@ import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.ParserUtil;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import org.apache.http.impl.client.BasicCookieStore;
 import org.json.JSONArray;
@@ -44,7 +48,8 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
         implements SelectedSlotAware, SelectedPaymentAware {
 
     private ArrayList<SelectedSlotType> mSelectedSlotType;
-    private String mPaymentMethod;
+    private String mPaymentMethodSlug;
+    private String mPaymentMethodDisplay;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,7 +73,9 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
 
     @Override
     public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-        if (httpOperationResult.getUrl().contains(Constants.POST_DELIVERY_ADDR)) {
+        String url = httpOperationResult.getUrl();
+
+        if (url.contains(Constants.POST_DELIVERY_ADDR)) {
             try {
                 JSONObject httpResponseJsonObj = new JSONObject(httpOperationResult.getReponseString());
                 String status = httpResponseJsonObj.getString(Constants.STATUS);
@@ -102,9 +109,30 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
                 // TODO : Change this later on
                 showAlertDialog("Invalid response");
             }
+        } else if (url.contains(Constants.CO_POST_SLOTS_AND_PAYMENT)) {
+            JsonObject jsonObject = new JsonParser().parse(httpOperationResult.getReponseString()).getAsJsonObject();
+            int status = jsonObject.get(Constants.STATUS).getAsInt();
+            switch (status) {
+                case 0:
+                    JsonObject responseJsonObj = jsonObject.get(Constants.RESPONSE).getAsJsonObject();
+                    OrderSummary orderSummary = ParserUtil.parseOrderSummary(responseJsonObj);
+                    orderSummary.getOrderDetails().setPaymentMethodDisplay(mPaymentMethodDisplay);
+                    launchPlaceOrderActivity(orderSummary);
+                    break;
+                default:
+                    // TODO : Add error handling
+                    showAlertDialog("Server Error");
+                    break;
+            }
         } else {
             super.onAsyncTaskComplete(httpOperationResult);
         }
+    }
+
+    private void launchPlaceOrderActivity(OrderSummary orderSummary) {
+        Intent intent = new Intent(this, PlaceOrderActivity.class);
+        intent.putExtra(Constants.ORDER_REVIEW_SUMMARY, orderSummary);
+        startActivityForResult(intent, Constants.GO_TO_HOME);
     }
 
     private void setTabs(ArrayList<SlotGroup> slotGroupList, CartSummary cartSummary,
@@ -113,7 +141,7 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
                          JSONArray paymentTypesJsonArray) {
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View base = inflater.inflate(R.layout.uiv3_slot_payment_layout, null);
+        View base = inflater.inflate(R.layout.uiv3_tab_with_footer_btn, null);
 
         FrameLayout contentView = (FrameLayout) findViewById(R.id.content_frame);
         contentView.removeAllViews();
@@ -156,7 +184,7 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
             showAlertDialog(this, null, getString(R.string.selectAllSlotsErrMsg));
             return;
         }
-        if (TextUtils.isEmpty(mPaymentMethod)) {
+        if (TextUtils.isEmpty(mPaymentMethodSlug)) {
             showAlertDialog(this, null, getString(R.string.pleaseChoosePaymentMethod));
             return;
         }
@@ -166,7 +194,7 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
         HashMap<String, String> params = new HashMap<>();
         params.put(Constants.P_ORDER_ID, potentialOrderId);
         params.put(Constants.SLOTS, new Gson().toJson(mSelectedSlotType));
-        params.put(Constants.PAYMENT_TYPE, mPaymentMethod);
+        params.put(Constants.PAYMENT_TYPE, mPaymentMethodSlug);
         params.put(Constants.SUPPORT_CC, "yes");
         startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.CO_POST_SLOTS_AND_PAYMENT,
                 params, true, AuthParameters.getInstance(this), new BasicCookieStore());
@@ -178,7 +206,8 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
     }
 
     @Override
-    public void setPaymentMethod(String paymentMethod) {
-        this.mPaymentMethod = paymentMethod;
+    public void setPaymentMethod(String paymentMethodSlug, String paymentMethodDisplay) {
+        this.mPaymentMethodSlug = paymentMethodSlug;
+        this.mPaymentMethodDisplay = paymentMethodDisplay;
     }
 }

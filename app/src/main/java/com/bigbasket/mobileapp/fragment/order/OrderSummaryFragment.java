@@ -12,13 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.fragment.base.AbstractOrderSummaryFragment;
-import com.bigbasket.mobileapp.interfaces.PlaceOrderAware;
 import com.bigbasket.mobileapp.model.order.CreditDetails;
 import com.bigbasket.mobileapp.model.order.OrderDetails;
 import com.bigbasket.mobileapp.model.order.OrderSummary;
@@ -28,13 +25,9 @@ import com.bigbasket.mobileapp.util.Constants;
 
 public class OrderSummaryFragment extends AbstractOrderSummaryFragment {
 
-    private OrderSummary orderSummary;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.uiv3_list_container, container, false);
-        view.setBackgroundColor(getResources().getColor(R.color.white));
-        return view;
+        return inflater.inflate(R.layout.uiv3_list_container, container, false);
     }
 
     @Override
@@ -44,11 +37,11 @@ public class OrderSummaryFragment extends AbstractOrderSummaryFragment {
     }
 
     private void loadPlaceOrderData() {
-        orderSummary = getArguments().getParcelable(Constants.ACTION_TAB_TAG);
-        renderOrderSummary();
+        OrderSummary orderSummary = getArguments().getParcelable(Constants.ORDER_REVIEW_SUMMARY);
+        renderOrderSummary(orderSummary);
     }
 
-    private void renderOrderSummary() {
+    private void renderOrderSummary(OrderSummary orderSummary) {
         if (getActivity() == null) return;
 
         LinearLayout contentView = getContentView();
@@ -83,7 +76,7 @@ public class OrderSummaryFragment extends AbstractOrderSummaryFragment {
 
         // Show delivery slots
         LinearLayout layoutDeliverySlot = (LinearLayout) base.findViewById(R.id.layoutDeliverySlot);
-        renderSlots(layoutDeliverySlot);
+        renderSlots(layoutDeliverySlot, orderSummary);
 
         // Show member details
         TextView txtMemberName = (TextView) base.findViewById(R.id.txtMemberName);
@@ -95,67 +88,76 @@ public class OrderSummaryFragment extends AbstractOrderSummaryFragment {
         txtMemberAddress.setText(orderSummary.getMemberSummary().getAddress());
 
         // Show invoice and other order details
-        TableLayout layoutOrderSummaryInfo = (TableLayout) base.findViewById(R.id.layoutOrderSummaryInfo);
+        int normalColor = getResources().getColor(R.color.uiv3_list_primary_text_color);
+        int orderTotalLabelColor = getResources().getColor(R.color.uiv3_primary_text_color);
+        int orderTotalValueColor = getResources().getColor(R.color.uiv3_ok_label_color);
+        LinearLayout layoutOrderSummaryInfo = (LinearLayout) base.findViewById(R.id.layoutOrderSummaryInfo);
         OrderDetails orderDetails = orderSummary.getOrderDetails();
 
         if (orderSummary.getCreditDetails() != null && orderSummary.getCreditDetails().size() > 0) {
             for (CreditDetails creditDetails : orderSummary.getCreditDetails()) {
-                TableRow creditDetailRow = getOrderSummaryRow(inflater, creditDetails.getMessage(),
-                        asRupeeSpannable(creditDetails.getCreditValue()));
+                View creditDetailRow = getOrderSummaryRow(inflater, creditDetails.getMessage().toUpperCase(),
+                        asRupeeSpannable(creditDetails.getCreditValue()), normalColor);
                 layoutOrderSummaryInfo.addView(creditDetailRow);
             }
         }
 
-        TableRow paymentInformationRow = getOrderSummaryRow(inflater, getString(R.string.paymentMethod),
-                orderDetails.getPaymentMethodDisplay());
+        View paymentInformationRow = getOrderSummaryRow(inflater, getString(R.string.paymentMethod).toUpperCase(),
+                orderDetails.getPaymentMethodDisplay(), normalColor);
         layoutOrderSummaryInfo.addView(paymentInformationRow);
 
         String numItems = orderDetails.getTotalItems() + " Item" + (orderDetails.getTotalItems() > 1 ? "s" : "");
-        TableRow orderItemsRow = getOrderSummaryRow(inflater, getString(R.string.orderItems),
-                numItems);
+        View orderItemsRow = getOrderSummaryRow(inflater, getString(R.string.orderItems).toUpperCase(),
+                numItems, normalColor);
         layoutOrderSummaryInfo.addView(orderItemsRow);
 
-        TableRow subTotalRow = getOrderSummaryRow(inflater, getString(R.string.subTotal),
-                asRupeeSpannable(orderDetails.getSubTotal()));
+        View subTotalRow = getOrderSummaryRow(inflater, getString(R.string.subTotal).toUpperCase(),
+                asRupeeSpannable(orderDetails.getSubTotal()), normalColor);
         layoutOrderSummaryInfo.addView(subTotalRow);
 
-        TableRow deliveryChargeRow = getOrderSummaryRow(inflater, getString(R.string.deliveryCharges),
-                asRupeeSpannable(orderDetails.getDeliveryCharge()));
+        View deliveryChargeRow = getOrderSummaryRow(inflater, getString(R.string.deliveryCharges).toUpperCase(),
+                asRupeeSpannable(orderDetails.getDeliveryCharge()), normalColor);
         layoutOrderSummaryInfo.addView(deliveryChargeRow);
 
-        TableRow finalTotalRow = getOrderSummaryRow(inflater, getString(R.string.finalTotal),
-                asRupeeSpannable(orderDetails.getFinalTotal()));
+        View finalTotalRow = getOrderSummaryRow(inflater, getString(R.string.finalTotal).toUpperCase(),
+                asRupeeSpannable(orderDetails.getFinalTotal()), orderTotalLabelColor, orderTotalValueColor);
         layoutOrderSummaryInfo.addView(finalTotalRow);
-
-        TextView txtPlaceOrder = (TextView) base.findViewById(R.id.txtPlaceOrder);
-        txtPlaceOrder.setTypeface(faceRobotoThin);
-        txtPlaceOrder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((PlaceOrderAware) getActivity()).onPlaceOrderAction(orderSummary);
-            }
-        });
 
         hideProgressView();
         contentView.addView(base);
     }
 
-    private void renderSlots(LinearLayout layoutDeliverySlot) {
+    private void renderSlots(LinearLayout layoutDeliverySlot, OrderSummary orderSummary) {
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        boolean hasMultipleSlots = orderSummary.getSlotGroups().size() > 1;
-        for (SlotGroup slotGroup : orderSummary.getSlotGroups()) {
+        int numSlots = orderSummary.getSlotGroups().size();
+        boolean hasMultipleSlots = numSlots > 1;
+        for (int i = 0; i < numSlots; i++) {
+            SlotGroup slotGroup = orderSummary.getSlotGroups().get(i);
             View row = inflater.inflate(R.layout.uiv3_slot_info_row, null);
             renderSlotInfoRow(row, slotGroup.getSelectedSlot().getFormattedSlotDate(),
                     slotGroup.getSelectedSlot().getDisplayName(),
                     "Slot & fulfilled by " + slotGroup.getFulfillmentInfo().getFulfilledBy(),
                     hasMultipleSlots);
             layoutDeliverySlot.addView(row);
+            if (hasMultipleSlots && i != numSlots - 1) {
+                View separatorView = new View(getCurrentActivity());
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1);
+                layoutParams.setMargins(0, 0, 0, (int) getResources().getDimension(R.dimen.margin_mini));
+                separatorView.setLayoutParams(layoutParams);
+                separatorView.setBackgroundColor(getResources().getColor(R.color.uiv3_list_separator_color));
+                layoutDeliverySlot.addView(separatorView);
+            }
         }
     }
 
     @Override
     public LinearLayout getContentView() {
         return getView() != null ? (LinearLayout) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
+    }
+
+    @Override
+    public void setTitle() {
+        // Do nothing
     }
 
     @Override

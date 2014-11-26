@@ -14,4 +14,5 @@ public class FragmentCodes {
     public static final int START_WALLET_FRAGMENT = 14;
     public static final int START_VIEW_BASKET = 15;
     public static final int START_PRODUCT_DETAIL = 16;
+    public static final int START_ORDER_THANKYOU = 17;
 }

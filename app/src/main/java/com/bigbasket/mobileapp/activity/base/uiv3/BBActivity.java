@@ -50,6 +50,7 @@ import com.bigbasket.mobileapp.fragment.account.UpdatePinFragment;
 import com.bigbasket.mobileapp.fragment.account.UpdateProfileFragment;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.order.MemberAddressListFragment;
+import com.bigbasket.mobileapp.fragment.order.OrderThankYouFragment;
 import com.bigbasket.mobileapp.fragment.order.ShowCartFragment;
 import com.bigbasket.mobileapp.fragment.order.SlotSelectionFragment;
 import com.bigbasket.mobileapp.fragment.product.BrowseByOffersFragment;
@@ -69,6 +70,7 @@ import com.bigbasket.mobileapp.model.cart.BasketOperationResponse;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.navigation.NavigationItem;
 import com.bigbasket.mobileapp.model.navigation.NavigationSubItem;
+import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.TopCategoryModel;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -292,6 +294,14 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 bundle.putString(Constants.SKU_ID, getIntent().getStringExtra(Constants.SKU_ID));
                 productDetailFragment.setArguments(bundle);
                 addToMainLayout(productDetailFragment);
+                break;
+            case FragmentCodes.START_ORDER_THANKYOU:
+                ArrayList<Order> orders = getIntent().getParcelableArrayListExtra(Constants.ORDERS);
+                OrderThankYouFragment orderThankYouFragment = new OrderThankYouFragment();
+                bundle = new Bundle();
+                bundle.putParcelableArrayList(Constants.ORDERS, orders);
+                orderThankYouFragment.setArguments(bundle);
+                addToMainLayout(orderThankYouFragment);
                 break;
         }
     }

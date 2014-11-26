@@ -65,6 +65,7 @@
     <string name="txtViewProducts">View products</string>
     <string name="txtChooseSlots">Choose slot</string>
     <string name="leaveCheckOutProcess">Are you sure you want to leave Checkout Process?</string>
+    <string name="deliverySlotHeading">DELIVERY SLOT</string>
 	
 	<string name="UNKNOWN_HOST_EXP">Unknown host</string>
 	<string name="SOCKET_EXP">Connection timedout</string>
@@ -322,6 +323,8 @@
     <string name="connectionOffline">Cannot proceed with the operation. No network connection.</string>
     <string name="info">Information</string>
     <string name="memberName">Member Name</string>
+    <string name="addressHeading">ADDRESS</string>
+    <string name="paymentHeading">PAYMENT DETAILS</string>
     <string name="subTotal">Sub Total</string>
     <string name="finalTotal">Total</string>
     <string name="deliveryCharges">Delivery Charges</string>

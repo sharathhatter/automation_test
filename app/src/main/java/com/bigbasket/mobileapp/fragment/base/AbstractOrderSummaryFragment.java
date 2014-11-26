@@ -3,7 +3,6 @@ package com.bigbasket.mobileapp.fragment.base;
 import android.text.Spannable;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -11,32 +10,48 @@ import com.bigbasket.mobileapp.R;
 public abstract class AbstractOrderSummaryFragment extends BaseFragment {
 
 
-    public TableRow getOrderSummaryRow(LayoutInflater inflater, String label, String text) {
-        TableRow tableRow = (TableRow) inflater.inflate(R.layout.uiv3_label_value_table_row, null);
-
-        TextView txtLabel = (TextView) tableRow.findViewById(R.id.txtLabel);
-        txtLabel.setTypeface(faceRobotoRegular);
-
-        TextView txtValue = (TextView) tableRow.findViewById(R.id.txtValue);
-        txtValue.setTypeface(faceRobotoRegular);
-
-        txtLabel.setText(label);
-        txtValue.setText(text);
-        return tableRow;
+    public View getOrderSummaryRow(LayoutInflater inflater, String label, String text,
+                                   int textColor) {
+        return getOrderSummaryRow(inflater, label, text, textColor, textColor);
     }
 
-    public TableRow getOrderSummaryRow(LayoutInflater inflater, String label, Spannable text) {
-        TableRow tableRow = (TableRow) inflater.inflate(R.layout.uiv3_label_value_table_row, null);
+    public View getOrderSummaryRow(LayoutInflater inflater, String label, Spannable text,
+                                   int textColor) {
+        return getOrderSummaryRow(inflater, label, text, textColor, textColor);
+    }
 
-        TextView txtLabel = (TextView) tableRow.findViewById(R.id.txtLabel);
+    public View getOrderSummaryRow(LayoutInflater inflater, String label, String text,
+                                   int labelColor, int valueColor) {
+        View row = inflater.inflate(R.layout.uiv3_label_value_table_row, null);
+
+        TextView txtLabel = (TextView) row.findViewById(R.id.txtLabel);
         txtLabel.setTypeface(faceRobotoRegular);
+        txtLabel.setTextColor(labelColor);
 
-        TextView txtValue = (TextView) tableRow.findViewById(R.id.txtValue);
+        TextView txtValue = (TextView) row.findViewById(R.id.txtValue);
         txtValue.setTypeface(faceRobotoRegular);
+        txtValue.setTextColor(valueColor);
 
         txtLabel.setText(label);
         txtValue.setText(text);
-        return tableRow;
+        return row;
+    }
+
+    public View getOrderSummaryRow(LayoutInflater inflater, String label, Spannable text,
+                                   int labelColor, int valueColor) {
+        View row = inflater.inflate(R.layout.uiv3_label_value_table_row, null);
+
+        TextView txtLabel = (TextView) row.findViewById(R.id.txtLabel);
+        txtLabel.setTypeface(faceRobotoRegular);
+        txtLabel.setTextColor(labelColor);
+
+        TextView txtValue = (TextView) row.findViewById(R.id.txtValue);
+        txtValue.setTypeface(faceRobotoRegular);
+        txtValue.setTextColor(valueColor);
+
+        txtLabel.setText(label);
+        txtValue.setText(text);
+        return row;
     }
 
     public void renderSlotInfoRow(View row, String slotDate, String slotTime,

@@ -37,7 +37,7 @@ public class OrderItemListFragment extends BaseFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        OrderSummary orderSummary = getArguments().getParcelable(Constants.ACTION_TAB_TAG);
+        OrderSummary orderSummary = getArguments().getParcelable(Constants.ORDER_REVIEW_SUMMARY);
         renderCartItems(orderSummary);
     }
 
@@ -98,26 +98,26 @@ public class OrderItemListFragment extends BaseFragment {
         }
 
         // Render the consolidated listview
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        View base = inflater.inflate(R.layout.uiv3_list_with_action, null);
-        ListView listView = (ListView) base.findViewById(R.id.listWithFixedFooter);
+        ListView listView = new ListView(getActivity());
         listView.setDividerHeight(0);
         listView.setDivider(null);
-        ActiveOrderRowAdapter activeOrderRowAdapter = new ActiveOrderRowAdapter(cartItemConsolidatedList, getCurrentActivity(), faceRupee, faceRobotoRegular, faceRobotoRegular, faceRobotoRegular, faceRobotoRegular,
+        ActiveOrderRowAdapter activeOrderRowAdapter = new ActiveOrderRowAdapter(cartItemConsolidatedList, getCurrentActivity(),
+                faceRupee, faceRobotoRegular, faceRobotoRegular, faceRobotoRegular, faceRobotoRegular,
                 OrderItemDisplaySource.ORDER_DISPLAY, fulfillmentInfoIdAndIconHashMap, annotationHashMap);
         listView.setAdapter(activeOrderRowAdapter);
 
-        TextView txtListFooter = (TextView) base.findViewById(R.id.btnListFooter);
-        txtListFooter.setText(getString(R.string.placeorder));
-        txtListFooter.setTypeface(faceRobotoThin);
-
         hideProgressView();
-        contentView.addView(base);
+        contentView.addView(listView);
     }
 
     @Override
     public LinearLayout getContentView() {
         return getView() != null ? (LinearLayout) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
+    }
+
+    @Override
+    public void setTitle() {
+        // Do nothing
     }
 
     @Override

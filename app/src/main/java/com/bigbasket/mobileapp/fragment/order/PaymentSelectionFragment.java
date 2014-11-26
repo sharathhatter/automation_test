@@ -24,7 +24,6 @@ import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.SelectedPaymentAware;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.order.ActiveVouchers;
-import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
@@ -187,7 +186,8 @@ public class PaymentSelectionFragment extends BaseFragment {
                 if (i == 0) {
                     if (getCurrentActivity() != null) {
                         rbtnPaymentType.setChecked(true);
-                        ((SelectedPaymentAware) getCurrentActivity()).setPaymentMethod(entrySet.getValue());
+                        ((SelectedPaymentAware) getCurrentActivity()).
+                                setPaymentMethod(entrySet.getValue(), entrySet.getKey());
                     } else {
                         return;
                     }
@@ -197,7 +197,7 @@ public class PaymentSelectionFragment extends BaseFragment {
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked && getCurrentActivity() != null) {
                             ((SelectedPaymentAware) getCurrentActivity()).
-                                    setPaymentMethod(entrySet.getValue());
+                                    setPaymentMethod(entrySet.getValue(), entrySet.getKey());
                         }
                     }
                 });
@@ -272,20 +272,9 @@ public class PaymentSelectionFragment extends BaseFragment {
             if (!TextUtils.isEmpty(voucherCode)) {
                 applyVoucher(voucherCode);
             }
-        } else if (resultCode == Constants.ORDER_COMPLETE && data != null) {
-            ArrayList<Order> orders = data.getParcelableArrayListExtra(Constants.ORDERS);
-            showOrderThankyou(orders);
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
-    }
-
-    private void showOrderThankyou(ArrayList<Order> orders) {
-        OrderThankYouFragment orderThankYouFragment = new OrderThankYouFragment();
-        Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList(Constants.ORDERS, orders);
-        orderThankYouFragment.setArguments(bundle);
-        changeFragment(orderThankYouFragment);
     }
 
     @Override

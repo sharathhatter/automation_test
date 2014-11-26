@@ -1,17 +1,25 @@
 package com.bigbasket.mobileapp.activity.order.uiv3;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.FrameLayout;
 
+import com.astuetz.PagerSlidingTabStrip;
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.uiv3.TabActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
+import com.bigbasket.mobileapp.adapter.TabPagerAdapter;
 import com.bigbasket.mobileapp.fragment.order.OrderItemListFragment;
 import com.bigbasket.mobileapp.fragment.order.OrderSummaryFragment;
-import com.bigbasket.mobileapp.interfaces.PlaceOrderAware;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.OrderSummary;
 import com.bigbasket.mobileapp.model.order.PayuResponse;
@@ -19,6 +27,7 @@ import com.bigbasket.mobileapp.model.order.VoucherApplied;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.ParserUtil;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
@@ -33,31 +42,54 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 
-public class PlaceOrderActivity extends TabActivity implements PlaceOrderAware {
+public class PlaceOrderActivity extends BackButtonActivity {
 
     private String potentialOrderId;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Place Order");
+        setTitle(getString(R.string.placeorder));
+
+        OrderSummary orderSummary = getIntent().getParcelableExtra(Constants.ORDER_REVIEW_SUMMARY);
+        renderOrderSummary(orderSummary);
     }
 
-    @Override
-    public ArrayList<BBTab> getTabs() {
-        OrderSummary orderSummary = getIntent().getParcelableExtra(Constants.ORDER_REVIEW_SUMMARY);
+    private void renderOrderSummary(final OrderSummary orderSummary) {
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View base = inflater.inflate(R.layout.uiv3_tab_with_footer_btn, null);
 
-        ArrayList<BBTab> bbTabs = new ArrayList<>();
+        FrameLayout contentView = (FrameLayout) findViewById(R.id.content_frame);
+        contentView.removeAllViews();
+
+        final ArrayList<BBTab> bbTabs = new ArrayList<>();
 
         Bundle bundle = new Bundle();
-        bundle.putParcelable(Constants.ACTION_TAB_TAG, orderSummary);
+        bundle.putParcelable(Constants.ORDER_REVIEW_SUMMARY, orderSummary);
+
         bbTabs.add(new BBTab<>(getString(R.string.summary), OrderSummaryFragment.class, bundle));
         bbTabs.add(new BBTab<>(getString(R.string.items), OrderItemListFragment.class, bundle));
 
-        return bbTabs;
+
+        ViewPager viewPager = (ViewPager) base.findViewById(R.id.pager);
+        FragmentStatePagerAdapter fragmentStatePagerAdapter = new
+                TabPagerAdapter(getCurrentActivity(), getSupportFragmentManager(), bbTabs);
+        viewPager.setAdapter(fragmentStatePagerAdapter);
+
+        PagerSlidingTabStrip pagerSlidingTabStrip = (PagerSlidingTabStrip) base.findViewById(R.id.slidingTabs);
+        contentView.addView(base);
+        pagerSlidingTabStrip.setViewPager(viewPager);
+
+        Button btnFooter = (Button) base.findViewById(R.id.btnFooter);
+        btnFooter.setText(getString(R.string.placeorder));
+        btnFooter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onPlaceOrderAction(orderSummary);
+            }
+        });
     }
 
-    @Override
     public void onPlaceOrderAction(OrderSummary orderSummary) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         potentialOrderId = preferences.getString(Constants.POTENTIAL_ORDER_ID, "");
@@ -139,10 +171,6 @@ public class PlaceOrderActivity extends TabActivity implements PlaceOrderAware {
                     placeOrder(potentialOrderId, payuResponse.getTxnId());
                 }
                 break;
-            case Constants.GO_TO_HOME:
-                setResult(Constants.GO_TO_HOME);
-                finish();
-                break;
             default:
                 super.onActivityResult(requestCode, resultCode, data);
                 break;
@@ -176,9 +204,14 @@ public class PlaceOrderActivity extends TabActivity implements PlaceOrderAware {
     private void postOrderCreation(ArrayList<Order> orders) {
         PayuResponse.clearTxnDetail(this);
         VoucherApplied.clearFromPreference(this);
-        Intent data = new Intent();
-        data.putParcelableArrayListExtra(Constants.ORDERS, orders);
-        setResult(Constants.ORDER_COMPLETE, data);
+        showOrderThankyou(orders);
         finish();
+    }
+
+    private void showOrderThankyou(ArrayList<Order> orders) {
+        Intent invoiceIntent = new Intent(this, OrderInvoiceActivity.class);
+        invoiceIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_THANKYOU);
+        invoiceIntent.putExtra(Constants.ORDERS, orders);
+        startActivityForResult(invoiceIntent, Constants.GO_TO_HOME);
     }
 }

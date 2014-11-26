@@ -6,8 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -74,19 +72,23 @@ public class OrderInvoiceSummaryFragment extends AbstractOrderSummaryFragment {
         txtMemberAddress.setText(orderInvoice.getMemberSummary().getAddress());
 
         // Show order & invoice details
-        TableLayout layoutOrderSummaryInfo = (TableLayout) base.findViewById(R.id.layoutOrderSummaryInfo);
+        int normalColor = getResources().getColor(R.color.uiv3_list_primary_text_color);
+        int orderTotalLabelColor = getResources().getColor(R.color.uiv3_primary_text_color);
+        int orderTotalValueColor = getResources().getColor(R.color.uiv3_ok_label_color);
+
+        LinearLayout layoutOrderSummaryInfo = (LinearLayout) base.findViewById(R.id.layoutOrderSummaryInfo);
         OrderInvoiceDetails orderInvoiceDetails = orderInvoice.getOrderInvoiceDetails();
 
-        TableRow orderNumberRow = getOrderSummaryRow(inflater, getString(R.string.ordernumber),
-                orderInvoice.getOrderNumber());
+        View orderNumberRow = getOrderSummaryRow(inflater, getString(R.string.ordernumber),
+                orderInvoice.getOrderNumber(), normalColor);
         layoutOrderSummaryInfo.addView(orderNumberRow);
 
-        TableRow invoiceNumberRow = getOrderSummaryRow(inflater, getString(R.string.invoicenumber),
-                orderInvoice.getInvoiceNumber());
+        View invoiceNumberRow = getOrderSummaryRow(inflater, getString(R.string.invoicenumber),
+                orderInvoice.getInvoiceNumber(), normalColor);
         layoutOrderSummaryInfo.addView(invoiceNumberRow);
 
-        TableRow paymentMethodRow = getOrderSummaryRow(inflater, getString(R.string.paymentMethod),
-                orderInvoiceDetails.getPaymentMethod());
+        View paymentMethodRow = getOrderSummaryRow(inflater, getString(R.string.paymentMethod),
+                orderInvoiceDetails.getPaymentMethod(), normalColor);
         layoutOrderSummaryInfo.addView(paymentMethodRow);
 
         int numOrderItems = orderInvoiceDetails.getTotalItems();
@@ -94,34 +96,35 @@ public class OrderInvoiceSummaryFragment extends AbstractOrderSummaryFragment {
         if (numOrderItems > 1) {
             itemsStr += "s";
         }
-        TableRow orderItemsNumRow = getOrderSummaryRow(inflater, getString(R.string.orderItems),
-                itemsStr);
+        View orderItemsNumRow = getOrderSummaryRow(inflater, getString(R.string.orderItems),
+                itemsStr, normalColor);
         layoutOrderSummaryInfo.addView(orderItemsNumRow);
 
-        TableRow deliveryChargeRow = getOrderSummaryRow(inflater, getString(R.string.deliveryCharges),
-                asRupeeSpannable(orderInvoiceDetails.getDeliveryCharge()));
+        View deliveryChargeRow = getOrderSummaryRow(inflater, getString(R.string.deliveryCharges),
+                asRupeeSpannable(orderInvoiceDetails.getDeliveryCharge()), normalColor);
         layoutOrderSummaryInfo.addView(deliveryChargeRow);
 
         if (orderInvoice.getCreditDetails() != null && orderInvoice.getCreditDetails().size() > 0) {
             for (CreditDetails creditDetails : orderInvoice.getCreditDetails()) {
-                TableRow creditDetailRow = getOrderSummaryRow(inflater, creditDetails.getMessage(),
-                        asRupeeSpannable(creditDetails.getCreditValue()));
+                View creditDetailRow = getOrderSummaryRow(inflater, creditDetails.getMessage(),
+                        asRupeeSpannable(creditDetails.getCreditValue()), normalColor);
                 layoutOrderSummaryInfo.addView(creditDetailRow);
             }
         }
 
         if (orderInvoiceDetails.getVatValue() > 0) {
-            TableRow vatRow = getOrderSummaryRow(inflater, getString(R.string.vat),
-                    asRupeeSpannable(orderInvoiceDetails.getVatValue()));
+            View vatRow = getOrderSummaryRow(inflater, getString(R.string.vat),
+                    asRupeeSpannable(orderInvoiceDetails.getVatValue()), normalColor);
             layoutOrderSummaryInfo.addView(vatRow);
         }
 
-        TableRow subTotalRow = getOrderSummaryRow(inflater, getString(R.string.subTotal),
-                asRupeeSpannable(orderInvoiceDetails.getSubTotal()));
+        View subTotalRow = getOrderSummaryRow(inflater, getString(R.string.subTotal),
+                asRupeeSpannable(orderInvoiceDetails.getSubTotal()), normalColor);
         layoutOrderSummaryInfo.addView(subTotalRow);
 
-        TableRow finalTotalRow = getOrderSummaryRow(inflater, getString(R.string.finalTotal),
-                asRupeeSpannable(orderInvoiceDetails.getTotal()));
+        View finalTotalRow = getOrderSummaryRow(inflater, getString(R.string.finalTotal),
+                asRupeeSpannable(orderInvoiceDetails.getTotal()), orderTotalLabelColor,
+                orderTotalValueColor);
         layoutOrderSummaryInfo.addView(finalTotalRow);
 
         contentView.removeAllViews();
