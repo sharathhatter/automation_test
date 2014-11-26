@@ -169,13 +169,7 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
         LinearLayout contentView = getContentView();
         if (contentView == null) return;
 
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-
-        View base = inflater.inflate(R.layout.product_list, null);
-        RecyclerView productRecyclerView = (RecyclerView) base.findViewById(R.id.lstProducts);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        productRecyclerView.setHasFixedSize(false);
-        productRecyclerView.setLayoutManager(linearLayoutManager);
+        RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity());
 
         ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
                 .setCommonTypeface(faceRobotoRegular)
@@ -192,7 +186,7 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
                 getCurrentActivity(), productViewDisplayDataHolder, this, 1);
 
         productRecyclerView.setAdapter(productListAdapter);
-        contentView.addView(base);
+        contentView.addView(productRecyclerView);
     }
 
     @Override

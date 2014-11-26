@@ -256,12 +256,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
         if (contentView == null) return;
 
         showProgressDialog(getString(R.string.please_wait));
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        View base = inflater.inflate(R.layout.product_list, null);
-        RecyclerView productRecyclerView = (RecyclerView) base.findViewById(R.id.lstProducts);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        productRecyclerView.setHasFixedSize(false);
-        productRecyclerView.setLayoutManager(linearLayoutManager);
+        RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity());
 
         ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
                 .setCommonTypeface(faceRobotoRegular)
@@ -278,7 +273,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
 
         productRecyclerView.setAdapter(productListAdapter);
 
-        contentView.addView(base);
+        contentView.addView(productRecyclerView);
         if (promoType.equalsIgnoreCase(Promo.PromoType.FIXED_FREE_COMBO) ||
                 promoType.equalsIgnoreCase(Promo.PromoType.FIXED_COMBO)) {
             // TODO : Add Bundle button implementation

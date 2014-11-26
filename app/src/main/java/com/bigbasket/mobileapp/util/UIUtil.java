@@ -1,14 +1,18 @@
 package com.bigbasket.mobileapp.util;
 
 import android.content.Context;
-import android.graphics.Color;
+import android.content.res.Configuration;
 import android.graphics.Typeface;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.BulletSpan;
 import android.util.Patterns;
+import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -153,5 +157,25 @@ public class UIUtil {
         btn.setTextSize(ctx.getResources().getDimension(R.dimen.bb_button_text_size));
         btn.setTextColor(ctx.getResources().getColor(R.color.uiv3_primary_text_color));
         return btn;
+    }
+
+    public static RecyclerView getResponsiveRecyclerView(Context context) {
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        RecyclerView recyclerView = (RecyclerView) inflater.inflate(R.layout.recyclerview_layout, null);
+        recyclerView.setHasFixedSize(false);
+        Configuration configuration = context.getResources().getConfiguration();
+        int screenLayout = configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK;
+        if (screenLayout == Configuration.SCREENLAYOUT_SIZE_SMALL ||
+                screenLayout == Configuration.SCREENLAYOUT_SIZE_NORMAL ||
+                screenLayout == Configuration.SCREENLAYOUT_SIZE_UNDEFINED) {
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
+            recyclerView.setLayoutManager(linearLayoutManager);
+        } else {
+            int rowCount = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE ? 3 : 2;
+            StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(rowCount,
+                    StaggeredGridLayoutManager.VERTICAL);
+            recyclerView.setLayoutManager(staggeredGridLayoutManager);
+        }
+        return recyclerView;
     }
 }

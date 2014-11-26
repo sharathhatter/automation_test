@@ -33,6 +33,7 @@ import com.bigbasket.mobileapp.task.uiv3.ProductListTask;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListDoAddDeleteTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
+import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.FilterProductDialog;
 import com.bigbasket.mobileapp.view.uiv3.SortProductDialog;
 
@@ -134,11 +135,7 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        View base = inflater.inflate(R.layout.product_list, null);
-        RecyclerView productRecyclerView = (RecyclerView) base.findViewById(R.id.lstProducts);
-        productRecyclerView.setHasFixedSize(false);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        productRecyclerView.setLayoutManager(linearLayoutManager);
+        RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity());
 
         // Set product-list header view
         View headerView = inflater.inflate(R.layout.uiv3_product_list_filter_layout, null);
@@ -195,7 +192,7 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
                 getCurrentActivity(), productViewDisplayDataHolder, this, productListData.getProductCount());
 
         productRecyclerView.setAdapter(mProductListRecyclerAdapter);
-        contentView.addView(base);
+        contentView.addView(productRecyclerView);
     }
 
     @Override
