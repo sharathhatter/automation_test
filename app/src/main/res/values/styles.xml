@@ -12,7 +12,7 @@
     </style>
 
     <style name="DefaultButtonStyle">
-        <item name="android:textSize">@dimen/primary_text_size</item>
+        <item name="android:textSize">@dimen/bb_button_text_size</item>
         <item name="android:textColor">@color/uiv3_primary_text_color</item>
     </style>
 
@@ -91,7 +91,6 @@
     <style name="CardViewStyle" />
 
     <style name="FooterButtonStyle" parent="@style/DefaultButtonStyle">
-        <item name="android:textSize">@dimen/heading_1_text_size</item>
         <item name="android:gravity">center</item>
         <item name="android:paddingBottom">@dimen/footer_button_vertical_padding</item>
         <item name="android:paddingTop">@dimen/footer_button_vertical_padding</item>

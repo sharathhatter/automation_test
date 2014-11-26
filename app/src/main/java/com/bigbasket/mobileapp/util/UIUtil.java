@@ -150,13 +150,8 @@ public class UIUtil {
 
     public static Button getPrimaryButton(Context ctx) {
         Button btn = new Button(ctx);
-        btn.setPadding(0, (int) ctx.getResources().getDimension(R.dimen.padding_small), 0,
-                (int) ctx.getResources().getDimension(R.dimen.padding_small));
-        btn.setTextColor(Color.WHITE);
-        btn.setBackgroundColor(ctx.getResources().getColor(R.color.uiv3_action_bar_background));
-        btn.setMinHeight(1);
-        btn.setMinWidth(1);
-        btn.setTextSize(ctx.getResources().getDimension(R.dimen.secondary_text_size));
+        btn.setTextSize(ctx.getResources().getDimension(R.dimen.bb_button_text_size));
+        btn.setTextColor(ctx.getResources().getColor(R.color.uiv3_primary_text_color));
         return btn;
     }
 }

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="CardViewStyle">
-        <item name="android:layout_marginTop">@dimen/margin_mini</item>
-        <item name="android:layout_marginLeft">@dimen/margin_mini</item>
-        <item name="android:layout_marginRight">@dimen/margin_mini</item>
+        <item name="android:layout_marginTop">@dimen/margin_small</item>
+        <item name="android:layout_marginLeft">@dimen/margin_small</item>
+        <item name="android:layout_marginRight">@dimen/margin_small</item>
     </style>
 </resources>

@@ -74,17 +74,10 @@ public class SlotSelectionFragment extends BaseFragment {
             fillSlotList(listViewSlots, mSlotGroupList.get(0));
         } else {
             // info message for multiple slot selection
-            TextView infoMsgMultipleSlotSelection = new TextView(getActivity());
-            infoMsgMultipleSlotSelection.setText(getResources().getString(R.string.multipleDeliverySlotMsg1));
-            infoMsgMultipleSlotSelection.setTextSize(getResources().getDimension(R.dimen.primary_text_size));
-            infoMsgMultipleSlotSelection.setGravity(Gravity.CENTER_HORIZONTAL);
-            infoMsgMultipleSlotSelection.setTextColor(getResources().getColor(R.color.dark_red));
+            LayoutInflater inflater = getActivity().getLayoutInflater();
+            TextView infoMsgMultipleSlotSelection = (TextView)
+                    inflater.inflate(R.layout.uiv3_multiple_delivery_slot_msg, null);
             infoMsgMultipleSlotSelection.setTypeface(faceRobotoRegular);
-            infoMsgMultipleSlotSelection.setPadding((int) getResources().getDimension(R.dimen.padding_small),
-                    (int) getResources().getDimension(R.dimen.padding_normal),
-                    (int) getResources().getDimension(R.dimen.padding_small),
-                    (int) getResources().getDimension(R.dimen.padding_normal));
-            infoMsgMultipleSlotSelection.setGravity(Gravity.CENTER_HORIZONTAL);
             contentView.addView(infoMsgMultipleSlotSelection);
             mSlotGroupListAdapter = new SlotGroupListAdapter();
 

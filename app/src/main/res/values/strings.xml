@@ -118,7 +118,7 @@
     <string name="ordernumber">Order No:</string>
     <string name="amountpay">Amount to Pay</string>
     <string name="almostDone">Almost done!</string>
-    <string name="proceedToOrderReview">Proceed to Order Review</string>
+    <string name="proceedToOrderReview">Review Order</string>
     <string name="vat">VAT</string>
     <string name="type">Type</string>
     <string name="message">Message</string>

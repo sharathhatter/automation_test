@@ -13,9 +13,8 @@ public class OrderInvoiceActivity extends BackButtonActivity {
             setResult(Constants.GO_TO_HOME);
             finish();
             return true;
-        } else {
-            return super.onOptionsItemSelected(item);
         }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
