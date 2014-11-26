@@ -2,17 +2,17 @@ package com.bigbasket.mobileapp.fragment.shoppinglist;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.adapter.product.ProductListAdapter;
+import com.bigbasket.mobileapp.adapter.product.ProductListRecyclerAdapter;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.handler.MessageHandler;
 import com.bigbasket.mobileapp.model.product.Product;
@@ -24,7 +24,6 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.ParserUtil;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.etsy.android.grid.StaggeredGridView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -173,8 +172,10 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
         View base = inflater.inflate(R.layout.product_list, null);
-        AbsListView productListView = (AbsListView) base.findViewById(R.id.lstProducts);
-
+        RecyclerView productRecyclerView = (RecyclerView) base.findViewById(R.id.lstProducts);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        productRecyclerView.setHasFixedSize(false);
+        productRecyclerView.setLayoutManager(linearLayoutManager);
 
         ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
                 .setCommonTypeface(faceRobotoRegular)
@@ -184,17 +185,13 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
                 .setShowBasketBtn(true)
                 .setShowShopListDeleteBtn(!mShoppingListName.isSystem())
                 .setShoppingListName(mShoppingListName)
+                .setRupeeTypeface(faceRupee)
                 .build();
 
-        ProductListAdapter productListAdapter = new ProductListAdapter(productList, null,
+        ProductListRecyclerAdapter productListAdapter = new ProductListRecyclerAdapter(productList, null,
                 getCurrentActivity(), productViewDisplayDataHolder, this, 1);
 
-        // AbsListView doesn't have setAdapter below API 11, hence doing this way
-        if (productListView instanceof ListView) {
-            ((ListView) productListView).setAdapter(productListAdapter);
-        } else if (productListView instanceof StaggeredGridView) {
-            ((StaggeredGridView) productListView).setAdapter(productListAdapter);
-        }
+        productRecyclerView.setAdapter(productListAdapter);
         contentView.addView(base);
     }
 

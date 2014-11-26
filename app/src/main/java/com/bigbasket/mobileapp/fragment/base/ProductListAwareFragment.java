@@ -4,19 +4,20 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.adapter.product.ProductListAdapter;
+import com.bigbasket.mobileapp.adapter.product.ProductListRecyclerAdapter;
 import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.interfaces.SortAware;
@@ -47,8 +48,7 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
     private ProductListData productListData;
     private ArrayList<ShoppingListName> shoppingListNames;
     private String selectedProductId;
-    private ProductListAdapter productListAdapter;
-    private ListView mProductAbsListView;
+    private ProductListRecyclerAdapter mProductListRecyclerAdapter;
     private View mFooterView;
     private boolean mIsNextPageLoading;
 
@@ -96,7 +96,7 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
                 LayoutInflater inflater = getActivity().getLayoutInflater();
                 mFooterView = inflater.inflate(R.layout.uiv3_list_loading_footer, null);
             }
-            mProductAbsListView.addFooterView(mFooterView, null, false);
+            //mProductRecyclerView.addFooterView(mFooterView, null, false);
             getProductListAsyncTask(nextPage).execute();
         }
     }
@@ -135,7 +135,10 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
         View base = inflater.inflate(R.layout.product_list, null);
-        mProductAbsListView = (ListView) base.findViewById(R.id.lstProducts);
+        RecyclerView productRecyclerView = (RecyclerView) base.findViewById(R.id.lstProducts);
+        productRecyclerView.setHasFixedSize(false);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        productRecyclerView.setLayoutManager(linearLayoutManager);
 
         // Set product-list header view
         View headerView = inflater.inflate(R.layout.uiv3_product_list_filter_layout, null);
@@ -145,7 +148,8 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
         TextView txtNumProducts = (TextView) headerView.findViewById(R.id.txtNumProducts);
         txtNumProducts.setText(getNumProductsMessage());
 
-        mProductAbsListView.addHeaderView(headerView, null, false);
+        contentView.addView(headerView);
+        //mProductRecyclerView.addHeaderView(headerView, null, false);
 
         TextView txtFilterBy = (TextView) headerView.findViewById(R.id.txtFilterBy);
         TextView txtSortedOnValue = (TextView) headerView.findViewById(R.id.txtSortedOnValue);
@@ -187,21 +191,21 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
                 .setShowBasketBtn(true)
                 .setShowShopListDeleteBtn(false)
                 .build();
-        productListAdapter = new ProductListAdapter(productListData.getProducts(), null,
+        mProductListRecyclerAdapter = new ProductListRecyclerAdapter(productListData.getProducts(), null,
                 getCurrentActivity(), productViewDisplayDataHolder, this, productListData.getProductCount());
 
-        mProductAbsListView.setAdapter(productListAdapter);
+        productRecyclerView.setAdapter(mProductListRecyclerAdapter);
         contentView.addView(base);
     }
 
     @Override
     public void updateProductList(List<Product> nextPageProducts) {
-        if (productListData == null || productListAdapter == null) return;
+        if (productListData == null || mProductListRecyclerAdapter == null) return;
         setNextPageLoading(false);
-        mProductAbsListView.removeFooterView(mFooterView);
+        //mProductRecyclerView.removeFooterView(mFooterView);
         List<Product> currentProducts = productListData.getProducts();
         currentProducts.addAll(nextPageProducts);
-        productListAdapter.notifyDataSetChanged();
+        mProductListRecyclerAdapter.notifyDataSetChanged();
     }
 
     public String getNumProductsMessage() {

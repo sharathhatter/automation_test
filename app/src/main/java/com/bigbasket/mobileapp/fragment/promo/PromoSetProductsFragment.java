@@ -3,23 +3,23 @@ package com.bigbasket.mobileapp.fragment.promo;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.adapter.product.ProductListAdapter;
+import com.bigbasket.mobileapp.adapter.product.ProductListRecyclerAdapter;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
@@ -37,7 +37,6 @@ import com.bigbasket.mobileapp.util.ExceptionUtil;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.ParserUtil;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.etsy.android.grid.StaggeredGridView;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -259,7 +258,10 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
         showProgressDialog(getString(R.string.please_wait));
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View base = inflater.inflate(R.layout.product_list, null);
-        AbsListView productListView = (AbsListView) base.findViewById(R.id.lstProducts);
+        RecyclerView productRecyclerView = (RecyclerView) base.findViewById(R.id.lstProducts);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        productRecyclerView.setHasFixedSize(false);
+        productRecyclerView.setLayoutManager(linearLayoutManager);
 
         ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
                 .setCommonTypeface(faceRobotoRegular)
@@ -271,14 +273,10 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
                 .setShowShopListDeleteBtn(false)
                 .build();
 
-        ProductListAdapter productListAdapter = new ProductListAdapter(products, baseImgUrl,
+        ProductListRecyclerAdapter productListAdapter = new ProductListRecyclerAdapter(products, baseImgUrl,
                 getCurrentActivity(), productViewDisplayDataHolder, this, 1);
 
-        if (productListView instanceof ListView) {
-            ((ListView) productListView).setAdapter(productListAdapter);
-        } else if (productListView instanceof StaggeredGridView) {
-            ((StaggeredGridView) productListView).setAdapter(productListAdapter);
-        }
+        productRecyclerView.setAdapter(productListAdapter);
 
         contentView.addView(base);
         if (promoType.equalsIgnoreCase(Promo.PromoType.FIXED_FREE_COMBO) ||
