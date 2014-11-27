@@ -166,7 +166,7 @@
                     android:layout_weight="1"
                     android:background="@color/gplus_red"
                     android:drawableLeft="@drawable/btn_gplus_normal"
-                    android:onClick="OnPlusLogoutButtonClicked"
+                    android:onClick="onPlusLogoutButtonClicked"
                     android:paddingRight="@dimen/padding_normal"
                     android:text="@string/signOut"
                     android:textColor="@color/com_facebook_loginview_text_color"

@@ -137,6 +137,7 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
             }
             updateViewStateInLogoutMode();
             setTitle(getString(R.string.signOut));
+            showProgressDialog(getString(R.string.please_wait));
         } else {
             initializeRememberedDataForLoginInput();
             initializeGooglePlusSignIn();
@@ -276,7 +277,7 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
         }
     }
 
-    public void OnPlusLogoutButtonClicked(View v) {
+    public void onPlusLogoutButtonClicked(View v) {
         signOutFromGplus();
     }
 
@@ -293,7 +294,10 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
             }
         });
 
-        if (isInLogoutMode()) return;
+        if (isInLogoutMode()) {
+            hideProgressDialog();
+            return;
+        }
 
         if (TextUtils.isEmpty(email)) {
             signOutFromGplus();
