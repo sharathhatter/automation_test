@@ -226,6 +226,18 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         }
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        isActivitySuspended = false;
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        isActivitySuspended = false;
+    }
+
     protected void onResume() {
         super.onResume();
         com.facebook.AppEventsLogger.activateApp(getCurrentActivity(), Constants.FB_APP_ID);

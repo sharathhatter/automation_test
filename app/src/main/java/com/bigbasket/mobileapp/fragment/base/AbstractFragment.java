@@ -60,6 +60,7 @@ public abstract class AbstractFragment extends Fragment implements CancelableAwa
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        isFragmentSuspended = false;
         AssetManager assetManager = getActivity().getAssets();
         faceRupee = Typeface.createFromAsset(assetManager, "Rupee.ttf");
         faceRobotoRegular = Typeface.createFromAsset(assetManager, "Roboto-Regular.ttf");
