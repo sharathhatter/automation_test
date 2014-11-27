@@ -38,6 +38,7 @@ import com.bigbasket.mobileapp.activity.account.uiv3.OrderListActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignupActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.adapter.NavigationListAdapter;
 import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
 import com.bigbasket.mobileapp.adapter.product.CategoryAdapter;
@@ -306,6 +307,9 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 bundle.putParcelableArrayList(Constants.ORDERS, orders);
                 orderThankYouFragment.setArguments(bundle);
                 addToMainLayout(orderThankYouFragment);
+                break;
+            case FragmentCodes.START_BROWSE_BY_OFFERS:
+                addToMainLayout(new BrowseByOffersFragment());
                 break;
         }
     }
@@ -799,7 +803,9 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 if (navigationSubItem.getTag() != null) {
                     switch (navigationSubItem.getTag()) {
                         case Constants.DISCOUNT_TYPE:
-                            addToMainLayout(new BrowseByOffersFragment());
+                            Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
+                            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_BROWSE_BY_OFFERS);
+                            startActivityForResult(intent, Constants.GO_TO_HOME);
                             return true;
                         case Constants.PROMO:
                             addToMainLayout(new PromoCategoryFragment());
