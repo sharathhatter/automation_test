@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/txtListRow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/highlighted_text_material_dark"
+        android:drawableRight="@drawable/list_arrow"
+        android:gravity="left|center_vertical"
+        android:paddingBottom="@dimen/padding_mini"
+        android:paddingLeft="@dimen/padding_small"
+        android:paddingTop="@dimen/padding_mini"
+        android:textColor="@color/primary_text_default_material_dark"
+        android:textSize="@dimen/primary_text_size" />
+</LinearLayout>

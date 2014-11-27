@@ -99,7 +99,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.uiv3_main_layout);
+        setContentView(getMainLayout());
 
         handler = new MessageHandler(this);
         mTitle = mDrawerTitle = getTitle().toString();
@@ -126,6 +126,10 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             }
         });
         setNavDrawer(toolbar, savedInstanceState);
+    }
+
+    public int getMainLayout() {
+        return R.layout.uiv3_main_layout;
     }
 
     public Toolbar getToolbar() {
@@ -817,5 +821,9 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
 
     protected FrameLayout getContentView() {
         return (FrameLayout) findViewById(R.id.content_frame);
+    }
+
+    protected BBDrawerLayout getDrawerLayout() {
+        return mDrawerLayout;
     }
 }
