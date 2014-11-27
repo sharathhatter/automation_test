@@ -419,7 +419,7 @@
     <string name="sortBy">Sort By</string>
     <string name="filter">Filter</string>
     <string name="filterOn">Filter On</string>
-    <string name="clear">Clear</string>
+    <string name="clear">Clear all</string>
 
     <!-- Invoice -->
     <string name="orderThankyouText">Thank you! Your order is placed\n Order #</string>

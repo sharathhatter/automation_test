@@ -41,7 +41,7 @@
         tools:replace="android:allowBackup">
         <meta-data
             android:name="android.app.default_searchable"
-            android:value=".activity.product.SearchableActivity" />
+            android:value=".activity.product.ProductListActivity" />
 
         <activity
             android:name="com.bigbasket.mobileapp.activity.StartActivity"
@@ -153,7 +153,7 @@
             android:name="com.bigbasket.mobileapp.activity.base.uiv3.BBActivity"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name="com.bigbasket.mobileapp.activity.product.SearchableActivity"
+            android:name="com.bigbasket.mobileapp.activity.product.ProductListActivity"
             android:launchMode="singleTop"
             android:windowSoftInputMode="stateHidden|adjustPan">
             <meta-data

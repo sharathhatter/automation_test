@@ -1,22 +1,18 @@
 package com.bigbasket.mobileapp.fragment.base;
 
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.product.ProductListRecyclerAdapter;
+import com.bigbasket.mobileapp.interfaces.FilterDisplayAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.interfaces.SortAware;
@@ -33,7 +29,6 @@ import com.bigbasket.mobileapp.task.uiv3.ShoppingListDoAddDeleteTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.bigbasket.mobileapp.view.uiv3.FilterProductDialog;
 import com.bigbasket.mobileapp.view.uiv3.SortProductDialog;
 
 import java.util.ArrayList;
@@ -126,56 +121,29 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
         setProductListView();
     }
 
+    @Override
+    public void onBackResume() {
+        super.onBackResume();
+
+        if (productListData != null) {
+            ((FilterDisplayAware) getActivity()).setFilterView(productListData.getFilterOptions(),
+                    productListData.getFilteredOn(), getFragmentTxnTag());
+        } else {
+            ((FilterDisplayAware) getActivity()).setFilterView(null, null, getFragmentTxnTag());
+        }
+    }
+
     private void setProductListView() {
         if (getActivity() == null) return;
         LinearLayout contentView = getContentView();
         if (contentView == null) return;
         if (productListData == null) return;
 
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+        ((FilterDisplayAware) getActivity()).setFilterView(productListData.getFilterOptions(),
+                productListData.getFilteredOn(), getFragmentTxnTag());
 
         RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 2, 3);
 
-        // Set product-list header view
-        View headerView = inflater.inflate(R.layout.uiv3_product_list_filter_layout, null);
-        LinearLayout layoutFilterBy = (LinearLayout) headerView.findViewById(R.id.layoutFilterBy);
-        RelativeLayout layoutSortBy = (RelativeLayout) headerView.findViewById(R.id.layoutSortBy);
-        LinearLayout layoutFilterSort = (LinearLayout) headerView.findViewById(R.id.layoutFilterSort);
-        TextView txtNumProducts = (TextView) headerView.findViewById(R.id.txtNumProducts);
-        txtNumProducts.setText(getNumProductsMessage());
-
-        contentView.addView(headerView);
-        //mProductRecyclerView.addHeaderView(headerView, null, false);
-
-        TextView txtFilterBy = (TextView) headerView.findViewById(R.id.txtFilterBy);
-        TextView txtSortedOnValue = (TextView) headerView.findViewById(R.id.txtSortedOnValue);
-
-        if (productListData.getProductCount() > 0) {
-            if (productListData.getFilterOptions().size() > 0) {
-                layoutFilterBy.setVisibility(View.VISIBLE);
-                layoutFilterBy.setOnTouchListener(new FilterOptionsOnClickListener());
-                int filterDrawableId = productListData.isFilterSelected() ? R.drawable.filter_applied : R.drawable.no_filter;
-                txtFilterBy.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(filterDrawableId), null, null, null);
-            } else {
-                layoutFilterBy.setVisibility(View.GONE);
-            }
-
-            if (productListData.getSortOptions().size() > 0) {
-                layoutSortBy.setVisibility(View.VISIBLE);
-                layoutSortBy.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        return false;
-                    }
-                });
-                layoutSortBy.setOnTouchListener(new SortOptionsOnClickListener());
-                txtSortedOnValue.setText(productListData.getSortedOnDisplay());
-            } else {
-                layoutSortBy.setVisibility(View.GONE);
-            }
-        } else {
-            layoutFilterSort.setVisibility(View.GONE);
-        }
         // Set product-list data
         AuthParameters authParameters = AuthParameters.getInstance(getActivity());
         ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
@@ -198,31 +166,9 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
     public void updateProductList(List<Product> nextPageProducts) {
         if (productListData == null || mProductListRecyclerAdapter == null) return;
         setNextPageLoading(false);
-        //mProductRecyclerView.removeFooterView(mFooterView);
         List<Product> currentProducts = productListData.getProducts();
         currentProducts.addAll(nextPageProducts);
         mProductListRecyclerAdapter.notifyDataSetChanged();
-    }
-
-    public String getNumProductsMessage() {
-        if (productListData == null) return null;
-        String msg = "No products found";
-        if (productListData.getProductCount() > 0) {
-            int firstCount = (productListData.getCurrentPage() - 1) * Constants.PAGE_SIZE + 1;
-            int endCount;
-            if (productListData.getCurrentPage() * Constants.PAGE_SIZE > productListData.getProductCount()) {
-                endCount = productListData.getProductCount();
-            } else {
-                endCount = productListData.getCurrentPage() * Constants.PAGE_SIZE;
-            }
-            String products = "product" + (productListData.getProductCount() > 1 ? "s" : "");
-            msg = "Showing " + firstCount + " - " + endCount + " of " +
-                    productListData.getProductCount() + " " + products;
-        }
-        if (!TextUtils.isEmpty(productListData.getQuery())) {
-            msg += " for \"" + productListData.getQuery() + "\"";
-        }
-        return msg;
     }
 
     public abstract String getProductListSlug();
@@ -273,38 +219,6 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
     @Nullable
     public LinearLayout getContentView() {
         return getView() != null ? (LinearLayout) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
-    }
-
-    private class FilterOptionsOnClickListener implements View.OnTouchListener {
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                v.setBackgroundColor(Color.YELLOW);
-            } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                v.setBackgroundColor(Color.TRANSPARENT);
-                FilterProductDialog filterProductDialog = FilterProductDialog.newInstance(
-                        productListData.getFilterOptions(), productListData.getFilteredOn());
-                filterProductDialog.setTargetFragment(getFragment(), 0);
-                filterProductDialog.show(getFragmentManager(), Constants.FILTER_ON);
-            }
-            return true;
-        }
-    }
-
-    private class SortOptionsOnClickListener implements View.OnTouchListener {
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                v.setBackgroundColor(Color.YELLOW);
-            } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                v.setBackgroundColor(Color.TRANSPARENT);
-                SortProductDialog sortProductDialog = SortProductDialog.newInstance(productListData.getSortedOn(),
-                        productListData.getSortOptions());
-                sortProductDialog.setTargetFragment(getFragment(), 0);
-                sortProductDialog.show(getFragmentManager(), Constants.SORT_ON);
-            }
-            return true;
-        }
     }
 
     @Override
@@ -362,5 +276,19 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
                         MobileApiUrl.getBaseAPIUrl() + "sl-add-item/", selectedShoppingListNames,
                         ShoppingListOption.ADD_TO_LIST);
         shoppingListDoAddDeleteTask.execute();
+    }
+
+    public void onFilterApplied(Map<String, Set<String>> filteredOn) {
+        if (productListData != null) {
+            productListData.setFilteredOn(filteredOn);
+            loadProducts();
+        }
+    }
+
+    public void onSortViewRequested() {
+        SortProductDialog sortProductDialog = SortProductDialog.newInstance(productListData.getSortedOn(),
+                productListData.getSortOptions());
+        sortProductDialog.setTargetFragment(getFragment(), 0);
+        sortProductDialog.show(getFragmentManager(), Constants.SORT_ON);
     }
 }

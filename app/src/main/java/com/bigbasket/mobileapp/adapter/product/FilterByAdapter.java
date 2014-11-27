@@ -22,8 +22,6 @@ public class FilterByAdapter extends BaseExpandableListAdapter {
     private List<FilterOptionCategory> filterOptionCategories;
     private Map<String, Set<String>> filteredOn;
     private Context context;
-    private int childTextLeftPadding;
-    private int childTextOtherPadding;
 
     public FilterByAdapter(List<FilterOptionCategory> filterOptionCategories,
                            Map<String, Set<String>> filteredOn,
@@ -31,8 +29,6 @@ public class FilterByAdapter extends BaseExpandableListAdapter {
         this.filterOptionCategories = filterOptionCategories;
         this.filteredOn = filteredOn;
         this.context = context;
-        this.childTextLeftPadding = context.getResources().getDimensionPixelSize(R.dimen.padding_normal);
-        this.childTextOtherPadding = context.getResources().getDimensionPixelSize(R.dimen.padding_small);
     }
 
     @Override
@@ -73,22 +69,28 @@ public class FilterByAdapter extends BaseExpandableListAdapter {
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
         View row = convertView;
-        FilterbyViewHolder filterbyViewHolder;
+        FilterbyHeaderViewHolder filterbyViewHolder;
         if (row == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            row = inflater.inflate(R.layout.uiv3_product_filterby_list_row, null);
-            filterbyViewHolder = new FilterbyViewHolder(row, true, childTextLeftPadding, childTextOtherPadding);
+            row = inflater.inflate(R.layout.uiv3_product_filterby_header, null);
+            filterbyViewHolder = new FilterbyHeaderViewHolder(row);
             row.setTag(filterbyViewHolder);
         } else {
-            filterbyViewHolder = (FilterbyViewHolder) row.getTag();
+            filterbyViewHolder = (FilterbyHeaderViewHolder) row.getTag();
         }
 
         FilterOptionCategory filterOptionCategory = filterOptionCategories.get(groupPosition);
         TextView txtListRow = filterbyViewHolder.getTxtListRow();
-        CheckBox chkFilter = filterbyViewHolder.getChkFilter();
-        chkFilter.setVisibility(View.GONE);
         txtListRow.setText(filterOptionCategory.getFilterName());
-        int expandIndicatorDrawable = isExpanded ? R.drawable.small_down_arrow : R.drawable.small_list_arrow;
+        int expandIndicatorDrawable = R.drawable.small_list_arrow;
+        if (isExpanded) {
+            expandIndicatorDrawable = R.drawable.small_down_arrow;
+            txtListRow.setTextColor(context.getResources().getColor(R.color.white));
+            row.setBackgroundColor(context.getResources().getColor(R.color.fbutton_color_nephritis));
+        } else {
+            txtListRow.setTextColor(context.getResources().getColor(R.color.primary_text_default_material_light));
+            row.setBackgroundColor(context.getResources().getColor(R.color.background_material_light));
+        }
         txtListRow.setCompoundDrawablesWithIntrinsicBounds(null, null,
                 context.getResources().getDrawable(expandIndicatorDrawable), null);
         return row;
@@ -101,7 +103,7 @@ public class FilterByAdapter extends BaseExpandableListAdapter {
         if (row == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             row = inflater.inflate(R.layout.uiv3_product_filterby_list_row, null);
-            filterbyViewHolder = new FilterbyViewHolder(row, false, childTextLeftPadding, childTextOtherPadding);
+            filterbyViewHolder = new FilterbyViewHolder(row);
             row.setTag(filterbyViewHolder);
         } else {
             filterbyViewHolder = (FilterbyViewHolder) row.getTag();
@@ -144,27 +146,34 @@ public class FilterByAdapter extends BaseExpandableListAdapter {
         return true;
     }
 
-    private static class FilterbyViewHolder {
-        private View base;
+    private static class FilterbyHeaderViewHolder {
         private TextView txtListRow;
-        private CheckBox chkFilter;
-        private boolean isParent;
-        private int childTextLeftPadding;
-        private int childTextOtherPadding;
+        private View base;
 
-        public FilterbyViewHolder(View base, boolean isParent, int childTextLeftPadding, int childTextOtherPadding) {
+        private FilterbyHeaderViewHolder(View base) {
             this.base = base;
-            this.isParent = isParent;
-            this.childTextLeftPadding = childTextLeftPadding;
-            this.childTextOtherPadding = childTextOtherPadding;
         }
 
         public TextView getTxtListRow() {
             if (txtListRow == null) {
                 txtListRow = (TextView) base.findViewById(R.id.txtListRow);
-                if (!isParent) {
-                    txtListRow.setPadding(childTextLeftPadding, childTextOtherPadding, childTextOtherPadding, childTextOtherPadding);
-                }
+            }
+            return txtListRow;
+        }
+    }
+
+    private static class FilterbyViewHolder {
+        private View base;
+        private TextView txtListRow;
+        private CheckBox chkFilter;
+
+        public FilterbyViewHolder(View base) {
+            this.base = base;
+        }
+
+        public TextView getTxtListRow() {
+            if (txtListRow == null) {
+                txtListRow = (TextView) base.findViewById(R.id.txtListRow);
             }
             return txtListRow;
         }

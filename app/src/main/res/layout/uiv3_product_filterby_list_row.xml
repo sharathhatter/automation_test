@@ -3,7 +3,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#77303030">
+    android:paddingLeft="@dimen/padding_small">
 
     <CheckBox
         android:id="@+id/chkFilter"
@@ -23,6 +23,6 @@
         android:layout_toLeftOf="@id/chkFilter"
         android:drawablePadding="@dimen/padding_small"
         android:padding="@dimen/padding_small"
-        android:textColor="@color/white"
+        android:textColor="@color/primary_dark_material_light"
         android:textSize="@dimen/primary_text_size" />
 </RelativeLayout>
