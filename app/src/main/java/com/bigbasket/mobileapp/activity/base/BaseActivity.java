@@ -1,6 +1,5 @@
 package com.bigbasket.mobileapp.activity.base;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -82,7 +81,6 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     //protected MarketPlace marketPlace;
     protected COReserveQuantity coReserveQuantity;
 
-    @SuppressLint("NewApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

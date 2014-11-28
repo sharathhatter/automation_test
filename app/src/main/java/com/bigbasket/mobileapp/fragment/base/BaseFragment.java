@@ -218,7 +218,8 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     }
 
     public void changeFragment(AbstractFragment newFragment) {
-        ((BaseActivity) getActivity()).onChangeFragment(newFragment);
+        if (getCurrentActivity() == null) return;
+        getCurrentActivity().onChangeFragment(newFragment);
     }
 
     private void changeTitle(String title) {
