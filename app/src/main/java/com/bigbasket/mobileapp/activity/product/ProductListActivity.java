@@ -101,8 +101,12 @@ public class ProductListActivity extends BBActivity implements FilterDisplayAwar
         mFilterOptionItems = filterOptionCategories;
         mFilteredOn = filteredOn;
         mFragmentTag = fragmentTag;
+        TextView lblFilter = (TextView) findViewById(R.id.lblFilter);
+        lblFilter.setTypeface(faceRobotoRegular);
         Button btnApplyFilter = (Button) findViewById(R.id.btnApplyFilter);
+        btnApplyFilter.setTypeface(faceRobotoRegular);
         Button btnClearFilter = (Button) findViewById(R.id.btnClearFilters);
+        btnClearFilter.setTypeface(faceRobotoRegular);
         ExpandableListView listFilter = (ExpandableListView) findViewById(R.id.listFilter);
 
         if (isFilteredOnEmpty()) {
