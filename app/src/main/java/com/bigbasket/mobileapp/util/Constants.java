@@ -3,15 +3,14 @@ package com.bigbasket.mobileapp.util;
 public class Constants {
 
     // connection parameters
+    public static final String MO_APP_ID = "YSD6Y5AVT60X4AWNLL35EIDJ";
     public static final int CONNECTION_TIMEOUT = 20000;
     public static final int SOCKET_TIMEOUT = 25000;
 
-    public static final int PAGE_SIZE = 20;
     public static final String FB_APP_ID = "1406239262971187";
 
     public static final String CURRENT_PAGE = "page";
     public static final String TOTAL_PAGES = "tot_pages";
-    public static final String PRODUCT_ARRAY = "products";
 
     public static final String SEARCH_QUERY = "q";
     public static final String PRODUCT_COUNT = "p_count";
@@ -70,7 +69,6 @@ public class Constants {
     public static String GET_WALLET_ACTIVITY_URL = "get-wallet-activity";
 
     public static String PRODUCT_SORT_OPTION = "sort_opts";
-    public static String PRODUCT_PACK_DESC = "pack_desc";
 
     public static final String CART_SUMMARY = "c_summary";
     public static final String CART_INFO_TOTAL = "total";
@@ -84,35 +82,23 @@ public class Constants {
     public static final String BASKET_CART_INNER = "sku";
     public static final String BASKET_CART_INNER_PRICE = "unit_p";
     public static final String BASKET_CART_INNER_TOTAl_PRICE = "tot_p";
-    public static final String BASKET_CART_INNER_TOTAl_SAVE_PRICE = "tot_s";
     public static final String BASKET_CART_INNER_CART_COUNT = "tot_qty";
     public static final String BASKET_CART_OUTER = "cart";
-    public static final String BASKET_CART_OUTER_TOTAl_PRICE = "tot_p";
     public static final String BASKET_CART_OUTER_TOTAl_SAVE_PRICE = "tot_s";
     public static final String BASKET_CART_OUTER_CART_COUNT = "num_items";
-    public static final String BASKET_CART_OUTER_CLOSE = "cart";
-    public static final String BASKET_CART_OUTER_TOTAl_PRICE_CLOSE = "tot_p";
-    public static final String BASKET_CART_OUTER_TOTAl_SAVE_PRICE_CLOSE = "tot_s";
-    public static final String BASKET_CART_OUTER_CART_COUNT_CLOSE = "num_item";
 
 
     public static final String TOP_CATEGORY = "top_category";
     public static String CATEGORIES = "categories";
     //sub category
     public static String SUB_CATEGORY_ITEMS = "items";
-    public static String SUB_CATEGORY_SLUG_NAME = "slug_name";
-    public static String SUB_CATEGORY_ARRAY = "sub_cats";
-    public static String SUB_CATEGORY_ARRAY_SLUG_NAME = "slug_name";
     public static final String DISPLAY_NAME = "display_name";
     public static final String DISPLAY_VALUE = "display_value";
     public static final String ORDER_MONTH_RANGE = "order_month_range";
     public static final String MONTHS_DATA = "months_data";
     public static final String ORDER_RANGE = "order_range";
     public static final String ORDER_TYPE = "order_type";
-    public static final String SUB_CATEGORY_NO_ITEM = "no_items";
     public static final String SUB_CATEGORY_BANNER_IMAGE = "banner_images";
-    public static final String SUB_CATEGORY_NEW_LAUNCHES = "new_launches";
-    public static final String SUB_CATEGORY_OFFER = "great_offers";
     public static final String VERSION = "version";
     public static final String A_OK = "a_ok";
     public static final String EXTRA_ATTR = "extra_attr";
@@ -128,10 +114,6 @@ public class Constants {
     public static String FILTER_VALUES = "values";
     public static String FILTER_VALUES_NAME = DISPLAY_NAME;
     public static String FILTER_VALUES_SLUG = "filter_value_slug";
-
-    //
-    public static final String PRODUCT_NAME_BASKET = "tlc_s";
-    public static final String PRODUCT_SLUG_NAME_BASKET = "tlc_n";
 
     //Error codes
     public static final String PRODUCT_ID_NOT_FOUND = "101";
@@ -178,8 +160,6 @@ public class Constants {
     public static final String QUICK_SHOP = "quickshop";
     public static final String SMART_BASKET = "Smart Basket";
     public static final String SMART_BASKET_SLUG = "smart-basket";
-    public static final String SOURCE = "source";
-    public static final String SHOP_MENU = "shop_menu";
     public static final String SHOP_ID = "shopId";
 
     public static final String PROMO_CATS = "promo_categories";
@@ -215,8 +195,6 @@ public class Constants {
     public static final String PROMO_DETAILS = "promo-details";
     public static final String AMOUNT = "amount";
     public static final String QUANTITY = "quantity";
-    public static final String CRITERIA = "criteria";
-    public static final String PROMO_PRODUCT = "promo_product";
     public static final String PROMO_DETAIL = "promo-details";
     public static final String PRODUCT_LIST = "p_list";
     public static final String TERM = "term";
@@ -226,8 +204,6 @@ public class Constants {
     public static final int successRespCode = 200;
     public static final int invalidInputRespCode = 119;
     public static final int notMemberRespCode = 104;
-
-    public static final String successRespCodeString = "200";
 
     public static final String FLURRY_AGENT_KEY = "MH9S229NFHTBCV9TVJVK";
     public static final String TOP_MENU_SLUG = "top-menu";
@@ -239,8 +215,6 @@ public class Constants {
     public static final String GET_PROMO_SET_PRODUCTS = "get-promo-set-products/";
     public static final String ADD_PROMO_BUNDLE = "add-promo-bundle/";
     public static final String GET_PROMO_SUMMARY = "get-promo-summary/";
-    public static final String DO_SEARCH = "do_search";
-    public static final String EXTRA = "exa";
     public static final String PROMO_SET_PRODUCTS = "promo_set_products";
     public static final String TOTAL_QTY = "total_q";
     public static final String PROMO_APPLIED_TYPE = "p_applied_type";
@@ -270,9 +244,8 @@ public class Constants {
     public static final String PRODUCT_DETAIL = "product-details/";
     public static final String PROD_ID = "prod_id";
     public static final String PRODUCT = "product";
-    public static final String ADDITIONAL_INFO = "additional_info";
     public static final String ADDITIONAL_INFOS = "additional_infos";
-    public static final String USER_AGENT_PREFIX = "BB Android/v1.4.1/os ";
+    public static final String USER_AGENT_PREFIX = "BB Android/v2.0.0/os ";
     public static final String TOP_CATEGORY_NAME = "top_category_name";
 
     public static final String FORCE_REGISTER_DEVICE = "forceRegisterDevice";
@@ -287,19 +260,18 @@ public class Constants {
     public static final String MEMBER_EMAIL_KEY = "email_id";
     public static final String FULL_NAME = "full_name";
     public static final String MEMBER_FULL_NAME_KEY = "memberName";
+    public static final String HUB = "hub";
+    public static final String CREATED_ON = "created_on";
+    public static final String ADDITIONAL_ATTRS = "additional_attrs";
+    public static final String GENDER = "gender";
+    public static final String SOURCE = "src";
+    public static final String DOB = "dob";
+    public static final String SOURCE_ID = "src_id";
 
     public static final String CHANGE_PIN_URL = "change-pin/";
 
     public static final String AUTO_SEARCH_URL = "search-tc/";
-    public static final String LIST_CATEGORY = "Popular Categories";
-    public static final String LIST_SUGGEST = "Did you mean?";
-    public static final String LIST_TOP_SEARCHES = "Top Searches";
-    public static String AUTO_SEARCH_QUERY = "autoCompQuery";
-    public static int LEN_TERMS = 0;
-    public static int LEN_CATEGORY = 0;
-    public static boolean AUTO_COMPLETE_ONCLICK = false;
 
-    public static final String CHANGE_PAYMENT_OPTION = "change-payment-method";
     public static final String GET_PAYMENT_PARAMS = "get-payment-params";
     public static final String PID = "pid";
     public static final String POTENTIAL_ORDER_ID = "potentialid";
@@ -490,18 +462,13 @@ public class Constants {
     public static final String MARKET_PLACE_INTENT = "marketPlaceIntent";
     public static final String UPLOAD_PRESCRIPTION = "upload-prescription/";
     public static final String CO_RESERVE_QTY = "co-reserve-quantity/";
-    public static final int FROM_MARKET_PLACE_TO_QC = 11;
     public static final String QC_LEN = "qc_len";
     public static final String C_BULK_REMOVE = "c-bulk-remove";
     public static final String CO_BASKET_CHECK = "co-basket-check/";
     public static final String SKU_ID = "sku_id";
-    public static final String AGE_VALIDATION_INFO_DATA = "ageValidationInfoData";
     public static final String RULE_VALIDATION_ERROR_NOT_PASSED = "ruleValidationErrorNotPassed";
     public static final String GO_TO_HOME_STRING = "gotoHome";
-    public static final String INDEX_TAG = "indexTag";
     public static final String RULE_MAX_WEIGHT_LIMIT = "rule_max_wt_limit";
-    public static final String FROM_AGE_VALIDATION = "fromAgeValidation";
-    public static final String FROM_BIGBASKET_ACTIVITY = "fromBigBasketActivity";
 
 
     public static final String VALIDATE_NUMBER_NUMBER = "validateNumber";
@@ -606,7 +573,6 @@ public class Constants {
     public static final String PARAMS = "params";
 
     // home
-    public static final String OS = "os";
     public static final String FIRST_NAME = "firstname";
     public static final String BB_TOKEN = "bb_token";
     public static final String OK = "OK";
@@ -617,32 +583,14 @@ public class Constants {
     public static final String DEVICE_MAKE = "device_make";
     public static final String SCREEN_RESOLUTION = "screen_resolution";
     public static final String SCREEN_DPI = "screen_dpi";
-    public static final String IS_DUAL_PANE = "is_dual_pane";
     public static final String OS_NAME = "os_name";
     public static final String OS_VERSION = "os_version";
 
     public static final String APP_VERSION = "app_version";
-    public static final String CLIENT_NAME = "android";
 
-    //signin
-    public static final String CHECK_BOX = "CHECKBOX";
-    public static final String NAME = "NAME";
-    public static final String PWD = "PWD";
-    public static final String BBAUTHTOKEN = "BBAUTHTOKEN";
-    public static final String USER_DETAIL = "user_details";
-    public static final String PASSWD = "passwd";
-
-    //signup
-    public static final String CONF_PWD = "confpwd";
-    public static final String FST_NAME = "firnam";
-    public static final String LAST_NAME = "firnam";
-    public static final String DOB = "firnam";
-    public static final String MOB_NUMBER = "firnam";
     public static final String CITY = "city";
-    public static final String CHECK = "check1";
     public static final String PIN_CODE_MAP = "pincode_map";
     public static final String VALUE = "value";
-    public static final String BASKET_ERROR_FLAG = "basket_empty_flag";
 
     //update pin
     public static final String GET_PIN = "get-pin/";
@@ -676,24 +624,17 @@ public class Constants {
     public static final String MOB_NUMBER_PREF = "mobnum";
     public static final String HOUSE_NO_PREF = "homno";
     public static final String NEWS_PREF = "news";
-    public static final int DATE_DIALOG_ID = 999;
     public static final String DATE_PICKER = "datePicker";
     public static final String OTP_DIALOG_FLAG = "otp_dialog_flag";
 
-    public static final String MEG_OBJ = "message_obj";
     public static final String PAYMENT_TYPES = "payment_types";
     public static final String PAYMENT_TYPE = "payment_type";
     public static final String PAYMENT_METHOD = "payment_method";
-    public static final String PAYMENT_METHOD_DISPLAY = "payment_method_display";
     public static final String CANCELLED = "Cancelled";
+
     //urls
-    public static final String LOGIN_URL = "login/";
     public static final String GET_ORDERS = "get-orders/";
     public static final String NC = "nc";
-    public static final String LEAVE_CHECK_OUT_PROCESS_PROD_BTN = "leave_check_out_process_prod_btn";
-    public static final String LEAVE_CHECK_OUT_PROCESS_OFFER_BTN = "leave_check_out_process_offer_btn";
-    public static final String LEAVE_CHECK_OUT_PROCESS_SHOP_BTN = "leave_check_out_process_shop_btn";
-    public static final String LEAVE_CHECK_OUT_PROCESS_BASKET_BTN = "leave_check_out_process_basket_btn";
     public static final String ALL_OFFERS = "all-offers";
     public static final String BROWSE_CATEGORY = "browse-category/";
     public static final String CATEGORIES_URL = "categories_url";

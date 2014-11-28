@@ -33,6 +33,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.moe.pushlibrary.MoEHelper;
 
 import org.apache.http.impl.client.BasicCookieStore;
 import org.json.JSONException;
@@ -56,6 +57,10 @@ public class StartActivity extends BaseActivity {
             showAlertDialogFinish(this, null, getString(R.string.deviceOffline));
             return;
         }
+
+        MoEHelper moEHelper = new MoEHelper(this);
+        moEHelper.initialize("", Constants.MO_APP_ID);
+
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String savedCityName = preferences.getString(Constants.CITY, null);
         boolean forceRegisterDevice = getIntent().getBooleanExtra(Constants.FORCE_REGISTER_DEVICE, false);

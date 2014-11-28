@@ -3,8 +3,11 @@ package com.bigbasket.mobileapp.fragment.product;
 import android.support.annotation.NonNull;
 
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
 import com.bigbasket.mobileapp.util.Constants;
+
+import java.util.HashMap;
 
 public class SearchFragment extends ProductListAwareFragment {
 
@@ -27,5 +30,13 @@ public class SearchFragment extends ProductListAwareFragment {
     @Override
     public String getFragmentTxnTag() {
         return SearchFragment.class.getName();
+    }
+
+    @Override
+    public void updateData() {
+        super.updateData();
+        HashMap<String, String> map = new HashMap<>();
+        map.put("query", getProductListSlug());
+        trackEvent(TrackingAware.SEARCH, map);
     }
 }
