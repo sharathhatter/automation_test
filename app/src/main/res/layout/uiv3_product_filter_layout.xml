@@ -24,6 +24,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="@dimen/margin_mini"
         android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_marginRight="@dimen/margin_small"
         android:orientation="horizontal">
 
         <Button

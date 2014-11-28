@@ -142,7 +142,7 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
         ((FilterDisplayAware) getActivity()).setFilterView(productListData.getFilterOptions(),
                 productListData.getFilteredOn(), getFragmentTxnTag());
 
-        RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 2, 3);
+        RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 2, 2);
 
         // Set product-list data
         AuthParameters authParameters = AuthParameters.getInstance(getActivity());
