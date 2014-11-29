@@ -78,13 +78,16 @@ public class StartActivity extends BaseActivity {
     private void requestTopCategories() {
         if (checkInternetConnection()) {
             CategoryAdapter categoryAdapter = new CategoryAdapter(this);
-            String version = categoryAdapter.getCategoriesVersion();
-            String url = MobileApiUrl.getBaseAPIUrl() + Constants.BROWSE_CATEGORY;
-            if (!TextUtils.isEmpty(version)) {
-                url += "?version=" + version;
+            if (!categoryAdapter.isPossiblyStale(CategoryAdapter.TOP_CATEGORY_TIMEOUT_PREF_KEY,
+                    CategoryAdapter.CATEGORY_TIMEOUT_IN_MINS)) {
+                String version = categoryAdapter.getCategoriesVersion();
+                String url = MobileApiUrl.getBaseAPIUrl() + Constants.BROWSE_CATEGORY;
+                if (!TextUtils.isEmpty(version)) {
+                    url += "?version=" + version;
+                }
+                startAsyncActivity(url, null, false, AuthParameters.getInstance(this),
+                        new BasicCookieStore());
             }
-            startAsyncActivity(url, null, false, AuthParameters.getInstance(this),
-                    new BasicCookieStore());
         } else {
             // TODO : Add error handling
         }
@@ -137,13 +140,15 @@ public class StartActivity extends BaseActivity {
             JsonObject httpOperationJsonObj = new JsonParser().parse(httpOperationResult.getReponseString()).getAsJsonObject();
             JsonObject responseJsonObj = httpOperationJsonObj.get(Constants.RESPONSE).getAsJsonObject();
             boolean aOk = responseJsonObj.get(Constants.A_OK).getAsBoolean();
+
+            CategoryAdapter categoryAdapter = new CategoryAdapter(this);
+            categoryAdapter.setLastFetchedTime(CategoryAdapter.TOP_CATEGORY_TIMEOUT_PREF_KEY);
             if (!aOk) {
                 String responseVersion = responseJsonObj.get(Constants.VERSION).getAsString();
                 JsonArray categoriesJsonObject = responseJsonObj.get(Constants.CATEGORIES).getAsJsonArray();
 
                 ArrayList<TopCategoryModel> topCategoryModels =
                         ParserUtil.parseTopCategory(categoriesJsonObject);
-                CategoryAdapter categoryAdapter = new CategoryAdapter(this);
                 categoryAdapter.insert(topCategoryModels, responseVersion);
             }
             loadHomePage();
