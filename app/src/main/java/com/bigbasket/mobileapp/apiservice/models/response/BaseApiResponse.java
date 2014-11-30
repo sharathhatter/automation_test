@@ -5,21 +5,9 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
 public class BaseApiResponse {
-    private int status;
-    private String message;
+    public int status;
+    public String message;
 
     @SerializedName(Constants.CART_SUMMARY)
-    private CartSummary cartSummary;
-
-    public int getStatus() {
-        return status;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public CartSummary getCartSummary() {
-        return cartSummary;
-    }
+    public CartSummary cartSummary;
 }

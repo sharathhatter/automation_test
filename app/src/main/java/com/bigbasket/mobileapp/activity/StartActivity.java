@@ -87,10 +87,10 @@ public class StartActivity extends BaseActivity {
                         hideProgressDialog();
                         categoryAdapter.setLastFetchedTime(CategoryAdapter.TOP_CATEGORY_TIMEOUT_PREF_KEY);
                         BrowseCategoryApiResponseContent browseCategoryApiResponseContent =
-                                browseCategoryApiResponse.getBrowseCategoryApiResponseContent();
-                        if (!browseCategoryApiResponseContent.isaOk()) {
-                            categoryAdapter.insert(browseCategoryApiResponseContent.getTopCategoryModels(),
-                                    browseCategoryApiResponseContent.getVersion());
+                                browseCategoryApiResponse.browseCategoryApiResponseContent;
+                        if (!browseCategoryApiResponseContent.aOk) {
+                            categoryAdapter.insert(browseCategoryApiResponseContent.topCategoryModels,
+                                    browseCategoryApiResponseContent.version);
                         }
                         loadHomePage();
                     }
@@ -194,7 +194,7 @@ public class StartActivity extends BaseActivity {
                         editor.putString(Constants.CITY, city.getName());
                         editor.putString(Constants.CITY_ID, String.valueOf(city.getId()));
                         editor.putString(Constants.DEVICE_ID, deviceID);
-                        editor.putString(Constants.VISITOR_ID_KEY, registerDeviceResponse.getVisitorId());
+                        editor.putString(Constants.VISITOR_ID_KEY, registerDeviceResponse.visitorId);
                         editor.putString(Constants.MID_KEY, null);
                         editor.putString(Constants.MEMBER_EMAIL_KEY, null);
                         editor.putString(Constants.MEMBER_FULL_NAME_KEY, null);

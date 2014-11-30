@@ -4,12 +4,8 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
 public class RegisterDeviceResponse {
-    private String status;
+    public String status;
 
     @SerializedName(Constants.VISITOR_ID)
-    private String visitorId;
-
-    public String getVisitorId() {
-        return visitorId;
-    }
+    public String visitorId;
 }

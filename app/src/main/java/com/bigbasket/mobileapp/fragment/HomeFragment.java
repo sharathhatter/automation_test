@@ -17,21 +17,28 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.HomePageApiResponse;
 import com.bigbasket.mobileapp.fragment.base.BaseSectionFragment;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
+import com.bigbasket.mobileapp.model.section.DestinationInfo;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.task.GetCartCountTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
-import com.bigbasket.mobileapp.util.ParserUtil;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class HomeFragment extends BaseSectionFragment {
 
@@ -123,23 +130,6 @@ public class HomeFragment extends BaseSectionFragment {
                 getCurrentActivity().onLogoutRequested();
                 getActivity().finish();
             }
-        } else if (url.contains(Constants.GET_HOME_PG_URL)) {
-            JsonObject httpResponseObj = new JsonParser().parse(httpOperationResult.getReponseString()).getAsJsonObject();
-            int status = httpResponseObj.get(Constants.STATUS).getAsInt();
-            switch (status) {
-                case 0:
-                    JsonObject responseJsonObj = httpResponseObj.get(Constants.RESPONSE).getAsJsonObject();
-                    JsonArray sectionsJsonArray = responseJsonObj.get(Constants.SECTIONS).getAsJsonArray();
-                    JsonArray destinationInfoJsonArray =
-                            responseJsonObj.get(Constants.DESTINATIONS_INFO).getAsJsonArray();
-                    mSections = ParserUtil.parseSectionResponse(sectionsJsonArray);
-                    mDestinationInfoHashMap = ParserUtil.parseDestinationInfo(destinationInfoJsonArray);
-                    renderHomePage();
-                    break;
-                default:
-                    // TODO : Add error handling
-                    break;
-            }
         } else {
             super.onAsyncTaskComplete(httpOperationResult);
         }
@@ -154,8 +144,29 @@ public class HomeFragment extends BaseSectionFragment {
     }
 
     private void getHomePage() {
-        startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.GET_HOME_PG_URL,
-                null, false, true, null);
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+        showProgressView();
+        bigBasketApiService.loadHomePage(new Callback<HomePageApiResponse>() {
+            @Override
+            public void success(HomePageApiResponse homePageApiResponse, Response response) {
+                hideProgressView();
+                mSections = homePageApiResponse.homePageApiResponseContent.sections;
+                ArrayList<DestinationInfo> destinationInfos =
+                        homePageApiResponse.homePageApiResponseContent.destinationInfos;
+                if (destinationInfos != null && destinationInfos.size() > 0) {
+                    mDestinationInfoHashMap = new HashMap<>();
+                    for (DestinationInfo destinationInfo : destinationInfos) {
+                        mDestinationInfoHashMap.put(destinationInfo.getDestinationInfoId(), destinationInfo);
+                    }
+                }
+                renderHomePage();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                hideProgressView();
+            }
+        });
     }
 
     private void renderHomePage() {
