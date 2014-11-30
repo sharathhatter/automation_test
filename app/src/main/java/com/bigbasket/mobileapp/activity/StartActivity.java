@@ -20,29 +20,26 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.adapter.product.CategoryAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.BrowseCategoryApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.BrowseCategoryApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.model.account.City;
-import com.bigbasket.mobileapp.model.product.TopCategoryModel;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
-import com.bigbasket.mobileapp.util.ParserUtil;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.moe.pushlibrary.MoEHelper;
 
-import org.apache.http.impl.client.BasicCookieStore;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
 public class StartActivity extends BaseActivity {
@@ -77,16 +74,32 @@ public class StartActivity extends BaseActivity {
 
     private void requestTopCategories() {
         if (checkInternetConnection()) {
-            CategoryAdapter categoryAdapter = new CategoryAdapter(this);
+            final CategoryAdapter categoryAdapter = new CategoryAdapter(this);
+
             if (!categoryAdapter.isPossiblyStale(CategoryAdapter.TOP_CATEGORY_TIMEOUT_PREF_KEY,
                     CategoryAdapter.CATEGORY_TIMEOUT_IN_MINS)) {
+                BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
                 String version = categoryAdapter.getCategoriesVersion();
-                String url = MobileApiUrl.getBaseAPIUrl() + Constants.BROWSE_CATEGORY;
-                if (!TextUtils.isEmpty(version)) {
-                    url += "?version=" + version;
-                }
-                startAsyncActivity(url, null, false, AuthParameters.getInstance(this),
-                        new BasicCookieStore());
+                showProgressDialog(getString(R.string.please_wait));
+                bigBasketApiService.browseCategory(version, new Callback<BrowseCategoryApiResponse>() {
+                    @Override
+                    public void success(BrowseCategoryApiResponse browseCategoryApiResponse, Response response) {
+                        hideProgressDialog();
+                        categoryAdapter.setLastFetchedTime(CategoryAdapter.TOP_CATEGORY_TIMEOUT_PREF_KEY);
+                        BrowseCategoryApiResponseContent browseCategoryApiResponseContent =
+                                browseCategoryApiResponse.getBrowseCategoryApiResponseContent();
+                        if (!browseCategoryApiResponseContent.isaOk()) {
+                            categoryAdapter.insert(browseCategoryApiResponseContent.getTopCategoryModels(),
+                                    browseCategoryApiResponseContent.getVersion());
+                        }
+                        loadHomePage();
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        hideProgressDialog();
+                    }
+                });
             }
         } else {
             // TODO : Add error handling
@@ -100,64 +113,24 @@ public class StartActivity extends BaseActivity {
     }
 
     private void loadCities() {
-        String url = MobileApiUrl.getBaseAPIUrl() + Constants.GET_CITIES;
-        startAsyncActivity(url, null, false, null, new BasicCookieStore(), null);
-    }
-
-    @Override
-    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-        String url = httpOperationResult.getUrl();
-        if (url.contains(Constants.GET_CITIES)) {
-
-            JsonObject jsonObject = new JsonParser().parse(httpOperationResult.getReponseString()).getAsJsonObject();
-            Set<Map.Entry<String, JsonElement>> citiesJsonObjEntrySet = jsonObject.entrySet();
-            ArrayList<City> cities = new ArrayList<>();
-            cities.add(new City(getString(R.string.chooseYourLocation), -1));
-            for (Map.Entry<String, JsonElement> cityObj : citiesJsonObjEntrySet) {
-                cities.add(new City(cityObj.getKey(), cityObj.getValue().getAsInt()));
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
+        showProgressDialog(getString(R.string.please_wait));
+        bigBasketApiService.listCities(new Callback<ArrayList<City>>() {
+            @Override
+            public void success(ArrayList<City> cities, Response response) {
+                hideProgressDialog();
+                renderCitySelectionDropDown(cities);
             }
-            renderCitySelectionDropDown(cities);
-        } else if (url.contains(Constants.REGISTER_DEVICE)) {
-            JsonObject responseJsonObj = new JsonParser().parse(httpOperationResult.getReponseString()).getAsJsonObject();
-            String vid = responseJsonObj.get(Constants.VISITOR_ID).getAsString();
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-            SharedPreferences.Editor editor = preferences.edit();
 
-            String deviceID = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
-            String cityName = httpOperationResult.getAdditionalCtx().get(Constants.CITY);
-            String cityId = httpOperationResult.getAdditionalCtx().get(Constants.CITY_ID);
-            editor.putString(Constants.CITY, cityName);
-            editor.putString(Constants.CITY_ID, cityId);
-            editor.putString(Constants.DEVICE_ID, deviceID);
-            editor.putString(Constants.VISITOR_ID_KEY, vid);
-            editor.putString(Constants.MID_KEY, null);
-            editor.putString(Constants.MEMBER_EMAIL_KEY, null);
-            editor.putString(Constants.MEMBER_FULL_NAME_KEY, null);
-            editor.commit();
-            AuthParameters.updateInstance(this);
-            loadNavigation();
-        } else if (url.contains(Constants.BROWSE_CATEGORY)) {
-            JsonObject httpOperationJsonObj = new JsonParser().parse(httpOperationResult.getReponseString()).getAsJsonObject();
-            JsonObject responseJsonObj = httpOperationJsonObj.get(Constants.RESPONSE).getAsJsonObject();
-            boolean aOk = responseJsonObj.get(Constants.A_OK).getAsBoolean();
-
-            CategoryAdapter categoryAdapter = new CategoryAdapter(this);
-            categoryAdapter.setLastFetchedTime(CategoryAdapter.TOP_CATEGORY_TIMEOUT_PREF_KEY);
-            if (!aOk) {
-                String responseVersion = responseJsonObj.get(Constants.VERSION).getAsString();
-                JsonArray categoriesJsonObject = responseJsonObj.get(Constants.CATEGORIES).getAsJsonArray();
-
-                ArrayList<TopCategoryModel> topCategoryModels =
-                        ParserUtil.parseTopCategory(categoriesJsonObject);
-                categoryAdapter.insert(topCategoryModels, responseVersion);
+            @Override
+            public void failure(RetrofitError error) {
+                hideProgressDialog();
             }
-            loadHomePage();
-        } else {
-            super.onAsyncTaskComplete(httpOperationResult);
-        }
+        });
     }
 
     private void renderCitySelectionDropDown(final ArrayList<City> cities) {
+        cities.add(0, new City(getString(R.string.chooseYourLocation), -1));
         Spinner spinnerCity = (Spinner) findViewById(R.id.spinnerCity);
         ProgressBar progressBarLoading = (ProgressBar) findViewById(R.id.progressBarLoading);
         ArrayAdapter<City> citySpinnerAdapter = new ArrayAdapter<>(this,
@@ -182,16 +155,8 @@ public class StartActivity extends BaseActivity {
         spinnerCity.setVisibility(View.VISIBLE);
     }
 
-    private void doRegisterDevice(City city) {
-        String url = MobileApiUrl.getBaseAPIUrl() + Constants.REGISTER_DEVICE;
-        HashMap<Object, String> additionalCtx = new HashMap<>();
-        additionalCtx.put(Constants.CITY, city.getName());
-        additionalCtx.put(Constants.CITY_ID, String.valueOf(city.getId()));
-
-        HashMap<String, String> params = new HashMap<>();
+    private void doRegisterDevice(final City city) {
         String deviceID = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
-        params.put(Constants.DEVICE_ID, deviceID);
-        params.put(Constants.CITY_ID, String.valueOf(city.getId()));
 
         // Get the screen width and height
         DisplayMetrics dm = getResources().getDisplayMetrics();
@@ -213,8 +178,36 @@ public class StartActivity extends BaseActivity {
         } catch (JSONException e) {
             Log.e("StartActivity", "Error while creating device-properties json");
         }
-        params.put(Constants.PROPERTIES, devicePropertiesJsonObj.toString());
-        startAsyncActivity(url, params, true, null, new BasicCookieStore(), additionalCtx);
+
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
+        showProgressDialog(getString(R.string.please_wait));
+        bigBasketApiService.registerDevice(deviceID, String.valueOf(city.getId()), devicePropertiesJsonObj.toString(),
+                new Callback<RegisterDeviceResponse>() {
+                    @Override
+                    public void success(RegisterDeviceResponse registerDeviceResponse, Response response) {
+                        hideProgressDialog();
+                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
+                        SharedPreferences.Editor editor = preferences.edit();
+
+                        String deviceID = Settings.Secure.getString(getCurrentActivity().getContentResolver(),
+                                Settings.Secure.ANDROID_ID);
+                        editor.putString(Constants.CITY, city.getName());
+                        editor.putString(Constants.CITY_ID, String.valueOf(city.getId()));
+                        editor.putString(Constants.DEVICE_ID, deviceID);
+                        editor.putString(Constants.VISITOR_ID_KEY, registerDeviceResponse.getVisitorId());
+                        editor.putString(Constants.MID_KEY, null);
+                        editor.putString(Constants.MEMBER_EMAIL_KEY, null);
+                        editor.putString(Constants.MEMBER_FULL_NAME_KEY, null);
+                        editor.commit();
+                        AuthParameters.updateInstance(getCurrentActivity());
+                        loadNavigation();
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        hideProgressDialog();
+                    }
+                });
     }
 
     private String getAppVersion() {

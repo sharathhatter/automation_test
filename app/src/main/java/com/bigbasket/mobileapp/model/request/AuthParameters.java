@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.util.Constants;
 
 public class AuthParameters {
@@ -21,6 +22,7 @@ public class AuthParameters {
 
     public static void updateInstance(Context context) {
         authParameters = new AuthParameters(context);
+        BigBasketApiAdapter.refreshBigBasketApiService(context);
     }
 
     public static AuthParameters getInstance(Context context) {

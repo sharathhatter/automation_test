@@ -89,9 +89,9 @@ public class Constants {
 
 
     public static final String TOP_CATEGORY = "top_category";
-    public static String CATEGORIES = "categories";
+    public static final String CATEGORIES = "categories";
     //sub category
-    public static String SUB_CATEGORY_ITEMS = "items";
+    public static final String SUB_CATEGORY_ITEMS = "items";
     public static final String DISPLAY_NAME = "display_name";
     public static final String DISPLAY_VALUE = "display_value";
     public static final String ORDER_MONTH_RANGE = "order_month_range";

@@ -156,8 +156,6 @@ public class DataUtil {
             client = new DefaultHttpClient(httpParams);
             client.setCookieStore(cookieStore);
             HttpPost httpPost = new HttpPost(postUrl);
-            HttpContext localContext1 = new BasicHttpContext();
-            localContext1.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
             String requestCookieVal = null;
             if (!TextUtils.isEmpty(bbVisitorId)) {
                 requestCookieVal = "_bb_vid=\"" + bbVisitorId + "\"";
