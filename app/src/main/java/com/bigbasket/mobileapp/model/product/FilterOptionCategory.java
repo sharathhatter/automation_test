@@ -3,13 +3,21 @@ package com.bigbasket.mobileapp.model.product;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.bigbasket.mobileapp.util.Constants;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class FilterOptionCategory implements Parcelable {
 
+    @SerializedName(Constants.FILTER_SLUG)
     private String filterSlug;
+
+    @SerializedName(Constants.FILTER_NAME)
     private String filterName;
+
+    @SerializedName(Constants.FILTER_VALUES)
     private List<FilterOptionItem> filterOptionItems;
 
     @Override

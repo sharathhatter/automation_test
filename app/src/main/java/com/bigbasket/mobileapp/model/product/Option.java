@@ -3,9 +3,15 @@ package com.bigbasket.mobileapp.model.product;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.bigbasket.mobileapp.util.Constants;
+import com.google.gson.annotations.SerializedName;
+
 public class Option implements Parcelable {
 
+    @SerializedName(Constants.DISPLAY_NAME)
     private String sortName;
+
+    @SerializedName(Constants.VALUE)
     private String sortSlug;
 
     @Override

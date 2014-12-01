@@ -8,15 +8,9 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,7 +20,7 @@ public class ProductQuery implements Parcelable {
     private String slug;
     private String sortedOn;
     private boolean _wasSortedOnNull;
-    private Map<String, Set<String>> filteredOn;
+    private ArrayList<FilteredOn> filteredOn;
     private boolean _wasFilteredOnNull;
     private int page;
 
@@ -41,7 +35,7 @@ public class ProductQuery implements Parcelable {
         this(type, slug, 1);
     }
 
-    public ProductQuery(String type, String slug, String sortedOn, Map<String, Set<String>> filteredOn, int page) {
+    public ProductQuery(String type, String slug, String sortedOn, ArrayList<FilteredOn> filteredOn, int page) {
         this(type, slug, page);
         this.sortedOn = sortedOn;
         this.filteredOn = filteredOn;
@@ -89,11 +83,11 @@ public class ProductQuery implements Parcelable {
         this.sortedOn = sortedOn;
     }
 
-    public Map<String, Set<String>> getFilteredOn() {
+    public ArrayList<FilteredOn> getFilteredOn() {
         return filteredOn;
     }
 
-    public void setFilteredOn(Map<String, Set<String>> filteredOn) {
+    public void setFilteredOn(ArrayList<FilteredOn> filteredOn) {
         this.filteredOn = filteredOn;
     }
 
@@ -105,41 +99,20 @@ public class ProductQuery implements Parcelable {
         this.page = page;
     }
 
-    public List<NameValuePair> getAsNameValuePair() {
-        List<NameValuePair> nameValuePairList = new ArrayList<>();
-        nameValuePairList.add(new BasicNameValuePair(Constants.TYPE, type));
-        nameValuePairList.add(new BasicNameValuePair(Constants.SLUG, slug));
-        nameValuePairList.add(new BasicNameValuePair(Constants.CURRENT_PAGE, String.valueOf(page)));
+    public Map<String, String> getAsQueryMap() {
+        Map<String, String> productQueryMap = new HashMap<>();
+        productQueryMap.put(Constants.TYPE, type);
+        productQueryMap.put(Constants.SLUG, slug);
+        productQueryMap.put(Constants.CURRENT_PAGE, String.valueOf(page));
         if (!TextUtils.isEmpty(sortedOn)) {
-            nameValuePairList.add(new BasicNameValuePair(Constants.SORT_ON, sortedOn));
+            productQueryMap.put(Constants.SORT_ON, sortedOn);
         }
         if (filteredOn != null && !filteredOn.isEmpty()) {
-            JSONArray filterJsonArray = getFilteredOnJsonArray(filteredOn);
-            nameValuePairList.add(new BasicNameValuePair(Constants.FILTER_ON,
-                    filterJsonArray.toString()));
+            Gson gson = new Gson();
+            productQueryMap.put(Constants.FILTER_ON,
+                    gson.toJson(filteredOn));
         }
-        return nameValuePairList;
-    }
-
-    private JSONArray getFilteredOnJsonArray(Map<String, Set<String>> filteredOnMap) {
-        JSONArray filterJsonArray = new JSONArray();
-        for (Map.Entry<String, Set<String>> filterEntry : filteredOnMap.entrySet()) {
-            if (filterEntry.getValue().size() != 0) {
-                JSONArray array = new JSONArray();
-                for (String key : filterEntry.getValue()) {
-                    array.put(key);
-                }
-                JSONObject jsonObject = new JSONObject();
-                try {
-                    jsonObject.put("filter_slug", filterEntry.getKey());
-                    jsonObject.put("values", array);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                filterJsonArray.put(jsonObject);
-            }
-        }
-        return filterJsonArray;
+        return productQueryMap;
     }
 
     @Override

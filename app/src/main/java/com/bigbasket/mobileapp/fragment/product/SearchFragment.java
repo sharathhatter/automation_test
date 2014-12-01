@@ -13,7 +13,9 @@ public class SearchFragment extends ProductListAwareFragment {
 
     @Override
     public String getProductListSlug() {
-        return getArguments().getString(Constants.SEARCH_QUERY);
+        String searchQuery = getArguments().getString(Constants.SEARCH_QUERY);
+        setTitle(searchQuery);
+        return searchQuery;
     }
 
     @Override

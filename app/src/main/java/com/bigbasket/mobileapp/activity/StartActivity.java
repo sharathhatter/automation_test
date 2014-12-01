@@ -76,7 +76,7 @@ public class StartActivity extends BaseActivity {
         if (checkInternetConnection()) {
             final CategoryAdapter categoryAdapter = new CategoryAdapter(this);
 
-            if (!categoryAdapter.isPossiblyStale(CategoryAdapter.TOP_CATEGORY_TIMEOUT_PREF_KEY,
+            if (categoryAdapter.isPossiblyStale(CategoryAdapter.TOP_CATEGORY_TIMEOUT_PREF_KEY,
                     CategoryAdapter.CATEGORY_TIMEOUT_IN_MINS)) {
                 BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
                 String version = categoryAdapter.getCategoriesVersion();
@@ -100,6 +100,8 @@ public class StartActivity extends BaseActivity {
                         hideProgressDialog();
                     }
                 });
+            } else {
+                loadHomePage();
             }
         } else {
             // TODO : Add error handling

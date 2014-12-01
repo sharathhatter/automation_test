@@ -1,37 +1,27 @@
 package com.bigbasket.mobileapp.task.uiv3;
 
-import android.content.SharedPreferences;
-import android.os.AsyncTask;
-import android.preference.PreferenceManager;
-import android.text.TextUtils;
-import android.util.Log;
-
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
-import com.bigbasket.mobileapp.interfaces.CancelableAware;
-import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
+import com.bigbasket.mobileapp.model.product.FilterOptionCategory;
+import com.bigbasket.mobileapp.model.product.FilterOptionItem;
+import com.bigbasket.mobileapp.model.product.FilteredOn;
 import com.bigbasket.mobileapp.model.product.ProductListData;
 import com.bigbasket.mobileapp.model.product.ProductQuery;
-import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
-import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.DataUtil;
-import com.bigbasket.mobileapp.util.HttpCode;
 import com.bigbasket.mobileapp.util.MessageCode;
-import com.bigbasket.mobileapp.util.ParserUtil;
 
-import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.impl.client.BasicCookieStore;
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.ArrayList;
 
-import java.util.List;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
-public class ProductListTask<T> extends AsyncTask {
+public class ProductListTask<T> {
     private static final String TAG = ProductListTask.class.getName();
 
     private int page;
@@ -47,98 +37,71 @@ public class ProductListTask<T> extends AsyncTask {
         this.ctx = ctx;
     }
 
-    @Override
-    protected Object doInBackground(Object[] params) {
-        if (isCancelled()) {
-            return null;
-        }
+    public void startTask() {
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.
+                getApiService(((ActivityAware) ctx).getCurrentActivity());
         ProductQuery productQuery = ((ProductListDataAware) ctx).getProductQuery();
-        String url = ((ProductListDataAware) ctx).getProductListUrl();
-        if (productQuery != null) {
-            if (page > 1) {
-                productQuery.setPage(page);
-            }
-            List<NameValuePair> parameterList = productQuery.getAsNameValuePair();
-            url += URLEncodedUtils.format(parameterList, "utf-8");
+        if (page > 1) {
+            productQuery.setPage(page);
         }
-        if (((ConnectivityAware) ctx).checkInternetConnection()) {
-            SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(((ActivityAware) ctx).getCurrentActivity());
-            String visitorId = AuthParameters.getInstance(((ActivityAware) ctx).getCurrentActivity()).getVisitorId();
-            String bbAuthToken = AuthParameters.getInstance(((ActivityAware) ctx).getCurrentActivity()).getBbAuthToken();
-            String osVersion = prefer.getString("os", "");
-            httpOperationResult = DataUtil.doHttpGet(url, new BasicCookieStore(), visitorId,
-                    bbAuthToken, osVersion);
-        } else {
-            ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.INTERNET_ERROR);
-            Log.d(TAG, "Sending message: MessageCode.INTERNET_ERROR");
-        }
-        return null;
-    }
 
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        if (((CancelableAware) ctx).isSuspended()) {
-            cancel(true);
-        } else if (page == 1) {
+        if (page == 1) {
             ((ProgressIndicationAware) ctx).showProgressView();
         }
-    }
-
-    @Override
-    protected void onPostExecute(Object result) {
-        if (((CancelableAware) ctx).isSuspended()) {
-            return;
-        } else {
-            if (page == 1) {
-                try {
-                    ((ProgressIndicationAware) ctx).hideProgressView();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
-            }
-        }
-        if (httpOperationResult != null) {
-            if (isSuccessFull(httpOperationResult)) {
-                ProductListData productListData = ParserUtil.parseProductListData(httpOperationResult.getJsonObject());
-                if (page > 1) {
-                    ProductListData existingProductListData = ((ProductListDataAware) ctx).getProductListData();
-                    existingProductListData.setCurrentPage(productListData.getCurrentPage());
-                    ((ProductListDataAware) ctx).updateProductList(productListData.getProducts());
-                } else {
-                    ((ProductListDataAware) ctx).setProductListData(productListData);
-                    if (!TextUtils.isEmpty(productListData.getSortedOn())) {
-                        ((ProductListDataAware) ctx).getProductListData().
-                                setUserSortedOn(((ProductListDataAware) ctx).getProductListData().getUserSortedOn());
+        bigBasketApiService.productListUrl(productQuery.getAsQueryMap(), new Callback<ApiResponse<ProductListData>>() {
+            @Override
+            public void success(ApiResponse<ProductListData> productListDataApiResponse, Response response) {
+                if (page == 1) {
+                    try {
+                        ((ProgressIndicationAware) ctx).hideProgressView();
+                    } catch (IllegalArgumentException e) {
+                        return;
                     }
-                    ((ProductListDataAware) ctx).updateData();
                 }
-                Log.d(TAG, "Product list fetch and display completed");
-            } else if (httpOperationResult.getResponseCode() == HttpCode.UNAUTHORIZED) {
-                ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.UNAUTHORIZED);
-                Log.d(TAG, "Sending message: MessageCode.UNAUTHORIZED");
-            } else {
-                ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
-                Log.d(TAG, "Sending message: MessageCode.SERVER_ERROR");
+                if (productListDataApiResponse.status == 0) {
+                    ProductListData productListData = productListDataApiResponse.apiResponseContent;
+                    if (page > 1) {
+                        ProductListData existingProductListData = ((ProductListDataAware) ctx).getProductListData();
+                        existingProductListData.setCurrentPage(productListData.getCurrentPage());
+                        ((ProductListDataAware) ctx).updateProductList(productListData.getProducts());
+                    } else {
+                        if (productListData.getFilteredOn() == null) {
+                            productListData.setFilteredOn(new ArrayList<FilteredOn>());
+                        }
+                        ArrayList<FilterOptionCategory> filterOptionCategories = productListData.getFilterOptions();
+                        ArrayList<FilteredOn> filteredOns = productListData.getFilteredOn();
+                        if (filteredOns != null && filteredOns.size() > 0) {
+                            for (FilterOptionCategory filterOptionCategory : filterOptionCategories) {
+                                for (FilterOptionItem filterOptionItem : filterOptionCategory.getFilterOptionItems()) {
+                                    for (FilteredOn filteredOn : filteredOns) {
+                                        if (filteredOn.getFilterSlug().equalsIgnoreCase(filterOptionItem.getFilterValueSlug())
+                                                && filteredOn.getFilterValues() != null
+                                                && filteredOn.getFilterValues().size() > 0) {
+                                            filterOptionItem.setSelected(true);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        ((ProductListDataAware) ctx).setProductListData(productListData);
+                        ((ProductListDataAware) ctx).updateData();
+                    }
+                } else {
+                    ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
+                }
             }
-        } else {
-            ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
-            Log.d(TAG, "Sending message: MessageCode.SERVER_ERROR");
-        }
-    }
 
-    private boolean isSuccessFull(HttpOperationResult httpOperationResult) {
-        if (httpOperationResult.getResponseCode() == HttpStatus.SC_OK) {
-            JSONObject jsonObject = httpOperationResult.getJsonObject();
-            try {
-                if (jsonObject != null) {
-                    int status = jsonObject.getInt(Constants.STATUS);
-                    return status == 0;
+            @Override
+            public void failure(RetrofitError error) {
+                if (page == 1) {
+                    try {
+                        ((ProgressIndicationAware) ctx).hideProgressView();
+                    } catch (IllegalArgumentException e) {
+                        return;
+                    }
                 }
-            } catch (JSONException ex) {
-                ex.printStackTrace();
+                ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
             }
-        }
-        return false;
+        });
     }
 }

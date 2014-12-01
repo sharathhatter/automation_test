@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -28,17 +29,16 @@ import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.interfaces.FilterDisplayAware;
 import com.bigbasket.mobileapp.model.product.FilterOptionCategory;
 import com.bigbasket.mobileapp.model.product.FilterOptionItem;
+import com.bigbasket.mobileapp.model.product.FilteredOn;
 import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
 
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.Set;
 
 
 public class ProductListActivity extends BBActivity implements FilterDisplayAware {
 
     private String mFragmentTag;
-    private Map<String, Set<String>> mFilteredOn;
+    private ArrayList<FilteredOn> mFilteredOn;
     private ArrayList<FilterOptionCategory> mFilterOptionItems;
 
     @Override
@@ -69,6 +69,12 @@ public class ProductListActivity extends BBActivity implements FilterDisplayAwar
     protected void setOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
 
+        if (isLargeScreenUiInUse()) {
+            BBDrawerLayout drawerLayout = (BBDrawerLayout) findViewById(R.id.drawer_layout);
+            if (drawerLayout != null) {
+                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            }
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             menuInflater.inflate(R.menu.search_menu, menu);
 
@@ -114,7 +120,7 @@ public class ProductListActivity extends BBActivity implements FilterDisplayAwar
 
     @Override
     public void setFilterView(ArrayList<FilterOptionCategory> filterOptionCategories,
-                              Map<String, Set<String>> filteredOn, String fragmentTag) {
+                              ArrayList<FilteredOn> filteredOn, String fragmentTag) {
         mFilterOptionItems = filterOptionCategories;
         mFilteredOn = filteredOn;
         mFragmentTag = fragmentTag;
@@ -150,8 +156,8 @@ public class ProductListActivity extends BBActivity implements FilterDisplayAwar
 
     private boolean isFilteredOnEmpty() {
         if (mFilteredOn == null || mFilteredOn.size() == 0) return true;
-        for (Map.Entry<String, Set<String>> filteredOnSet : mFilteredOn.entrySet()) {
-            if (filteredOnSet.getValue() != null && filteredOnSet.getValue().size() > 0) {
+        for (FilteredOn filteredOn : mFilteredOn) {
+            if (filteredOn.getFilterValues() != null && filteredOn.getFilterValues().size() > 0) {
                 return false;
             }
         }
@@ -184,9 +190,7 @@ public class ProductListActivity extends BBActivity implements FilterDisplayAwar
     public void onClearFilterButtonClicked(View view) {
         closeFilterDrawer();
         if (mFilteredOn != null) {
-            for (Map.Entry<String, Set<String>> filteredOnOption : mFilteredOn.entrySet()) {
-                filteredOnOption.getValue().clear();
-            }
+            mFilteredOn = null;
         }
 
         if (mFilterOptionItems != null) {
@@ -207,6 +211,7 @@ public class ProductListActivity extends BBActivity implements FilterDisplayAwar
         // or is in portrait mode, and so the filter list is in a drawer
         return findViewById(R.id.layoutProductFragmentContainer) != null;
     }
+
     private void closeFilterDrawer() {
         if (getDrawerLayout() != null) {
             if (!isLargeScreenUiInUse()) {

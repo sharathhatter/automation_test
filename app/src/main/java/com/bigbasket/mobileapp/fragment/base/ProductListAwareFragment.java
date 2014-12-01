@@ -1,6 +1,5 @@
 package com.bigbasket.mobileapp.fragment.base;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +15,7 @@ import com.bigbasket.mobileapp.interfaces.FilterDisplayAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.interfaces.SortAware;
+import com.bigbasket.mobileapp.model.product.FilteredOn;
 import com.bigbasket.mobileapp.model.product.Option;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductListData;
@@ -33,8 +33,6 @@ import com.bigbasket.mobileapp.view.uiv3.SortProductDialog;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 
 public abstract class ProductListAwareFragment extends BaseFragment implements ProductListDataAware,
@@ -79,7 +77,7 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
     }
 
     public void loadProducts() {
-        getProductListAsyncTask().execute();
+        getProductListAsyncTask().startTask();
     }
 
     public void loadMoreProducts() {
@@ -92,19 +90,15 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
                 mFooterView = inflater.inflate(R.layout.uiv3_list_loading_footer, null);
             }
             //mProductRecyclerView.addFooterView(mFooterView, null, false);
-            getProductListAsyncTask(nextPage).execute();
+            getProductListAsyncTask(nextPage).startTask();
         }
     }
 
-    public String getProductListUrl() {
-        return MobileApiUrl.getBaseAPIUrl() + Constants.PRODUCT_LIST_URL + "/?";
-    }
-
-    public AsyncTask getProductListAsyncTask() {
+    public ProductListTask<ProductListAwareFragment> getProductListAsyncTask() {
         return new ProductListTask<>(this);
     }
 
-    public AsyncTask getProductListAsyncTask(int page) {
+    public ProductListTask<ProductListAwareFragment> getProductListAsyncTask(int page) {
         return new ProductListTask<>(page, this);
     }
 
@@ -176,15 +170,15 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
     public abstract String getProductQueryType();
 
     public ProductQuery getProductQuery() {
-        Map<String, Set<String>> filteredOnMap = null;
+        ArrayList<FilteredOn> filteredOnArrayList = null;
         String sortedOn = null;
         ProductListData productListData = getProductListData();
         if (productListData != null) {
-            filteredOnMap = productListData.getFilteredOn();
+            filteredOnArrayList = productListData.getFilteredOn();
             sortedOn = productListData.getSortedOn();
         }
         return new ProductQuery(getProductQueryType(),
-                getProductListSlug(), sortedOn, filteredOnMap, 1);
+                getProductListSlug(), sortedOn, filteredOnArrayList, 1);
     }
 
     @Override
@@ -278,7 +272,7 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
         shoppingListDoAddDeleteTask.execute();
     }
 
-    public void onFilterApplied(Map<String, Set<String>> filteredOn) {
+    public void onFilterApplied(ArrayList<FilteredOn> filteredOn) {
         if (productListData != null) {
             productListData.setFilteredOn(filteredOn);
             loadProducts();

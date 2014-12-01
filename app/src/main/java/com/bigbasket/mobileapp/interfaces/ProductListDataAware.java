@@ -19,7 +19,5 @@ public interface ProductListDataAware {
 
     void setNextPageLoading(boolean isNextPageLoading);
 
-    String getProductListUrl();
-
     ProductQuery getProductQuery();
 }

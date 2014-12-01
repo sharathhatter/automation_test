@@ -179,9 +179,6 @@ public class ParserUtil {
                     optionArray = sortOptionJsonArray.getJSONArray(i);
                     String sortListSlug = optionArray.getString(1);
                     String sortListDisplay = optionArray.getString(0);
-                    if (sortListSlug.equals(sortedOnSlug)) {
-                        data.setSortedOnDisplay(sortListDisplay);
-                    }
                     sortOptions.add(new Option(sortListDisplay, sortListSlug));
                 }
             }
@@ -233,13 +230,12 @@ public class ParserUtil {
                     for (FilterOptionItem filterOptionItem : filterOptionCategory.getFilterOptionItems()) {
                         if (filteredOnOptions.get(filterOptionCategory.getFilterSlug()).contains(filterOptionItem.getFilterValueSlug())) {
                             filterOptionItem.setSelected(true);
-                            data.setFilterSelected(true);
                         }
                     }
                 }
             }
             data.setFilterOptions(filterOptionCategories);
-            data.setFilteredOn(filteredOnOptions);
+            //data.setFilteredOn(filteredOnOptions);
 
             // current page
             data.setCurrentPage(productListJsonData.optInt(Constants.CURRENT_PAGE));

@@ -555,6 +555,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
     }
 
     private void doSearch(String searchQuery) {
+        searchQuery = searchQuery.trim();
         MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(this);
         mostSearchesAdapter.update(searchQuery);
         SearchFragment searchFragment = new SearchFragment();

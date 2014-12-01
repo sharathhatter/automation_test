@@ -3,6 +3,9 @@ package com.bigbasket.mobileapp.model.product;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.bigbasket.mobileapp.util.Constants;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,18 +14,32 @@ import java.util.Set;
 
 public class ProductListData implements Parcelable {
 
+    @SerializedName(Constants.SORT_ON)
     private String sortedOn;
-    private String userSortedOn;
+
+    @SerializedName(Constants.PRODUCT_COUNT)
     private int productCount;
+
+    @SerializedName(Constants.CURRENT_PAGE)
     private int currentPage;
+
+    @SerializedName(Constants.TOTAL_PAGES)
     private int totalPages;
+
+    @SerializedName(Constants.SEARCH_QUERY)
     private String query;
+
+    @SerializedName(Constants.PRODUCTS)
     private List<Product> products;
-    private Map<String, Set<String>> filteredOn;
+
+    @SerializedName(Constants.FILTERED_ON)
+    private ArrayList<FilteredOn> filteredOn;
+
+    @SerializedName(Constants.PRODUCT_SORT_OPTION)
     private ArrayList<Option> sortOptions;
-    private boolean isFilterSelected = false;
+
+    @SerializedName(Constants.FILTER_OPTIONS)
     private ArrayList<FilterOptionCategory> filterOptionItems;
-    private String sortedOnDisplay;
 
     @Override
     public int describeContents() {
@@ -38,11 +55,6 @@ public class ProductListData implements Parcelable {
         dest.writeByte(isSortedOnNull ? (byte) 1 : (byte) 0);
         if (!isSortedOnNull) {
             dest.writeString(sortedOn);
-        }
-        boolean isUserSortedOnNull = userSortedOn == null;
-        dest.writeByte(isUserSortedOnNull ? (byte) 1 : (byte) 0);
-        if (!isUserSortedOnNull) {
-            dest.writeString(userSortedOn);
         }
         dest.writeInt(productCount);
         dest.writeInt(currentPage);
@@ -60,30 +72,17 @@ public class ProductListData implements Parcelable {
         boolean isFilteredOnNull = filteredOn == null;
         dest.writeByte(isFilteredOnNull ? (byte) 1 : (byte) 0);
         if (!isFilteredOnNull) {
-            ArrayList<String> filteredOnMapKeyList = new ArrayList<>();
-            ArrayList<Set<String>> filteredOnMapValueList = new ArrayList<>();
-            for (Map.Entry<String, Set<String>> entrySet : filteredOn.entrySet()) {
-                filteredOnMapKeyList.add(entrySet.getKey());
-                filteredOnMapValueList.add(entrySet.getValue());
-            }
-            dest.writeStringList(filteredOnMapKeyList);
-            dest.writeValue(filteredOnMapValueList);
+            dest.writeTypedList(filteredOn);
         }
         boolean isSortOptionsNull = sortOptions == null;
         dest.writeByte(isSortOptionsNull ? (byte) 1 : (byte) 0);
         if (!isSortOptionsNull) {
             dest.writeTypedList(sortOptions);
         }
-        dest.writeByte(isFilterSelected ? (byte) 1 : (byte) 0);
         boolean isFilterOptionCategoryNull = filterOptionItems == null;
         dest.writeByte(isFilterOptionCategoryNull ? (byte) 1 : (byte) 0);
         if (!isFilterOptionCategoryNull) {
             dest.writeTypedList(filterOptionItems);
-        }
-        boolean isSortedOnDisplayNull = sortedOnDisplay == null;
-        dest.writeByte(isSortedOnDisplayNull ? (byte) 1 : (byte) 0);
-        if (!isSortedOnDisplayNull) {
-            dest.writeString(sortedOnDisplay);
         }
     }
 
@@ -91,10 +90,6 @@ public class ProductListData implements Parcelable {
         boolean isSortedOnNull = source.readByte() == (byte) 1;
         if (!isSortedOnNull) {
             sortedOn = source.readString();
-        }
-        boolean isUserSortedOnNull = source.readByte() == (byte) 1;
-        if (!isUserSortedOnNull) {
-            userSortedOn = source.readString();
         }
         productCount = source.readInt();
         currentPage = source.readInt();
@@ -110,14 +105,8 @@ public class ProductListData implements Parcelable {
         }
         boolean isFilteredOnNull = source.readByte() == (byte) 1;
         if (!isFilteredOnNull) {
-            ArrayList<String> filteredOnMapKeyList = new ArrayList<>();
-            ArrayList<Set<String>> filteredOnMapValueList;
-            source.readStringList(filteredOnMapKeyList);
-            filteredOnMapValueList = (ArrayList<Set<String>>) source.readValue(ArrayList.class.getClassLoader());
-            filteredOn = new HashMap<>();
-            for (int i = 0; i < filteredOnMapKeyList.size(); i++) {
-                filteredOn.put(filteredOnMapKeyList.get(i), filteredOnMapValueList.get(i));
-            }
+            filteredOn = new ArrayList<>();
+            source.readTypedList(filteredOn, FilteredOn.CREATOR);
         }
         boolean isSortOptionsNull = source.readByte() == (byte) 1;
         if (!isSortOptionsNull) {
@@ -128,10 +117,6 @@ public class ProductListData implements Parcelable {
         if (!isFilterOptionCategoryNull) {
             filterOptionItems = new ArrayList<>();
             source.readTypedList(filterOptionItems, FilterOptionCategory.CREATOR);
-        }
-        boolean isSortedOnDisplayNull = source.readByte() == (byte) 1;
-        if (!isSortedOnDisplayNull) {
-            sortedOnDisplay = source.readString();
         }
     }
 
@@ -146,14 +131,6 @@ public class ProductListData implements Parcelable {
             return new ProductListData[size];
         }
     };
-
-    public String getSortedOnDisplay() {
-        return sortedOnDisplay;
-    }
-
-    public void setSortedOnDisplay(String sortedOnDisplay) {
-        this.sortedOnDisplay = sortedOnDisplay;
-    }
 
     public String getSortedOn() {
         return sortedOn;
@@ -211,11 +188,11 @@ public class ProductListData implements Parcelable {
         this.products = products;
     }
 
-    public Map<String, Set<String>> getFilteredOn() {
+    public ArrayList<FilteredOn> getFilteredOn() {
         return filteredOn;
     }
 
-    public void setFilteredOn(Map<String, Set<String>> filteredOn) {
+    public void setFilteredOn(ArrayList<FilteredOn> filteredOn) {
         this.filteredOn = filteredOn;
     }
 
@@ -227,28 +204,8 @@ public class ProductListData implements Parcelable {
         this.sortOptions = sortOptions;
     }
 
-    public boolean isFilterSelected() {
-        return isFilterSelected;
-    }
-
-    public void setFilterSelected(boolean filterSelected) {
-        isFilterSelected = filterSelected;
-    }
-
     public boolean isSortSelected() {
         return sortedOn != null;
-    }
-
-    public String getUserSortedOn() {
-        return userSortedOn;
-    }
-
-    public void setUserSortedOn(String userSortedOn) {
-        this.userSortedOn = userSortedOn;
-    }
-
-    public boolean isUserSortSelected() {
-        return userSortedOn != null;
     }
 
 }

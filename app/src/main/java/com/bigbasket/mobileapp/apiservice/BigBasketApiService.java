@@ -7,9 +7,11 @@ import com.bigbasket.mobileapp.apiservice.models.response.CartGetApiResponseCont
 import com.bigbasket.mobileapp.apiservice.models.response.HomePageApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse;
 import com.bigbasket.mobileapp.model.account.City;
+import com.bigbasket.mobileapp.model.product.ProductListData;
 import com.bigbasket.mobileapp.util.Constants;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import retrofit.Callback;
 import retrofit.http.Field;
@@ -17,6 +19,7 @@ import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
 import retrofit.http.POST;
 import retrofit.http.Query;
+import retrofit.http.QueryMap;
 
 public interface BigBasketApiService {
 
@@ -42,4 +45,7 @@ public interface BigBasketApiService {
 
     @POST("/c-empty/")
     void emptyCart(Callback<BaseApiResponse> cartEmptyApiResponseCallback);
+
+    @GET("/product-list/")
+    void productListUrl(@QueryMap Map<String, String> productQueryMap, Callback<ApiResponse<ProductListData>> productListApiCallback);
 }

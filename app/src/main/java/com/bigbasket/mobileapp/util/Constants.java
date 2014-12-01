@@ -68,7 +68,7 @@ public class Constants {
     public static String GET_WALLET_BALANCE_URL = "get-current-wallet-balance";
     public static String GET_WALLET_ACTIVITY_URL = "get-wallet-activity";
 
-    public static String PRODUCT_SORT_OPTION = "sort_opts";
+    public static final String PRODUCT_SORT_OPTION = "sort_opts";
 
     public static final String CART_SUMMARY = "c_summary";
     public static final String CART_INFO_TOTAL = "total";
@@ -108,12 +108,12 @@ public class Constants {
     public static final String TOP_CATEGORY_SLUG = "top_category_slug";
 
 
-    public static String FILTER_OPTIONS = "filter_opts";
-    public static String FILTER_SLUG = "filter_slug";
-    public static String FILTER_NAME = "filter_name";
-    public static String FILTER_VALUES = "values";
-    public static String FILTER_VALUES_NAME = DISPLAY_NAME;
-    public static String FILTER_VALUES_SLUG = "filter_value_slug";
+    public static final String FILTER_OPTIONS = "filter_opts";
+    public static final String FILTER_SLUG = "filter_slug";
+    public static final String FILTER_NAME = "filter_name";
+    public static final String FILTER_VALUES = "values";
+    public static final String FILTER_VALUES_NAME = DISPLAY_NAME;
+    public static final String FILTER_VALUES_SLUG = "filter_value_slug";
 
     //Error codes
     public static final String PRODUCT_ID_NOT_FOUND = "101";

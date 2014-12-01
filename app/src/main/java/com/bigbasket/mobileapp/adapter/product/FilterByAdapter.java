@@ -6,28 +6,28 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.model.product.FilterOptionCategory;
 import com.bigbasket.mobileapp.model.product.FilterOptionItem;
+import com.bigbasket.mobileapp.model.product.FilteredOn;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class FilterByAdapter extends BaseExpandableListAdapter {
 
     private List<FilterOptionCategory> filterOptionCategories;
-    private Map<String, Set<String>> filteredOn;
+    private ArrayList<FilteredOn> filteredOnList;
     private Context context;
 
     public FilterByAdapter(List<FilterOptionCategory> filterOptionCategories,
-                           Map<String, Set<String>> filteredOn,
+                           ArrayList<FilteredOn> filteredOnList,
                            Context context) {
         this.filterOptionCategories = filterOptionCategories;
-        this.filteredOn = filteredOn;
+        this.filteredOnList = filteredOnList;
         this.context = context;
     }
 
@@ -97,7 +97,7 @@ public class FilterByAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+    public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         View row = convertView;
         FilterbyViewHolder filterbyViewHolder;
         if (row == null) {
@@ -111,23 +111,27 @@ public class FilterByAdapter extends BaseExpandableListAdapter {
         final FilterOptionCategory filterOptionCategory = filterOptionCategories.get(groupPosition);
         final FilterOptionItem filterOptionItem = filterOptionCategory.getFilterOptionItems().get(childPosition);
         TextView txtListRow = filterbyViewHolder.getTxtListRow();
-        final CheckBox chkFilter = filterbyViewHolder.getChkFilter();
+        CheckBox chkFilter = filterbyViewHolder.getChkFilter();
         chkFilter.setChecked(filterOptionItem.isSelected());
         txtListRow.setText(filterOptionItem.getDisplayName());
-        row.setOnClickListener(new View.OnClickListener() {
+        chkFilter.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                chkFilter.toggle();
-                filterOptionItem.setSelected(chkFilter.isSelected());
-                Set<String> values = filteredOn.get(filterOptionCategory.getFilterSlug());
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                filterOptionItem.setSelected(isChecked);
+                FilteredOn filteredOn = FilteredOn.getFilteredOn(filteredOnList, filterOptionCategory.getFilterSlug());
+                if (filteredOn == null) {
+                    filteredOn = new FilteredOn(filterOptionItem.getFilterValueSlug());
+                    filteredOnList.add(filteredOn);
+                }
+                ArrayList<String> values = filteredOn.getFilterValues();
                 if (values == null) {
-                    values = new HashSet<>();
+                    values = new ArrayList<>();
                 }
                 if (values.size() == 0) {
-                    filteredOn.put(filterOptionCategory.getFilterSlug(), values);
+                    filteredOn.setFilterValues(values);
                 }
                 boolean hasFilterOption = values.contains(filterOptionItem.getFilterValueSlug());
-                if (!chkFilter.isChecked()) {
+                if (!isChecked) {
                     if (hasFilterOption) {
                         values.remove(filterOptionItem.getFilterValueSlug());
                     }
