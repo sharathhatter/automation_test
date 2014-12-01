@@ -335,7 +335,7 @@ public class UpdateProfileFragment extends BaseFragment {
         editor.putString(Constants.NEWS_PREF, String.valueOf(chkReceivePromos.isChecked()));
         editor.commit();
         AuthParameters.updateInstance(getActivity());
-        finishFragment();
+        finish();
     }
 
     private void fillUpdateProfileData(UpdateProfileModel updateProfileModel) {

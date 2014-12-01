@@ -6,6 +6,7 @@ import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.MobileApiUrl;
 
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
@@ -53,7 +54,7 @@ public class BigBasketApiAdapter {
         };
 
         RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint("http://dev1.bigbasket.com/mapi/v2.0.0")
+                .setEndpoint(MobileApiUrl.DOMAIN + "mapi/" + MobileApiUrl.API_VERSION)
                 .setRequestInterceptor(requestInterceptor)
                 .build();
 

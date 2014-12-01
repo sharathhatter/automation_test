@@ -26,6 +26,11 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.adapter.order.ActiveOrderRowAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.BaseApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.CartGetApiResponseContent;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
@@ -39,20 +44,18 @@ import com.bigbasket.mobileapp.model.cart.FulfillmentInfo;
 import com.bigbasket.mobileapp.model.order.OrderItemDisplaySource;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.task.COMarketPlaceCheckTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.ExceptionUtil;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
-import com.bigbasket.mobileapp.util.ParserUtil;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class ShowCartFragment extends BaseFragment {
 
@@ -94,74 +97,6 @@ public class ShowCartFragment extends BaseFragment {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    @Override
-    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-        super.onAsyncTaskComplete(httpOperationResult);
-        JsonObject jsonObject = new JsonParser().parse(httpOperationResult.
-                getReponseString()).getAsJsonObject();
-        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        SharedPreferences.Editor editor = prefer.edit();
-        if (httpOperationResult.getUrl().contains(Constants.CART_GET)) {
-            int status = jsonObject.get(Constants.STATUS).getAsInt();
-            if (status == 0) {
-                JsonObject responseJsonObject = jsonObject.get(Constants.RESPONSE).getAsJsonObject();
-                JsonObject cartItemsJsonObject = responseJsonObject.get(Constants.CART_ITEMS).getAsJsonObject();
-                JsonObject cartSummaryJsonObj = responseJsonObject.get(Constants.CART_SUMMARY).getAsJsonObject();
-                CartSummary cartSummary = ParserUtil.parseCartSummary(cartSummaryJsonObj);
-                if (!isReadOnly) {
-                    setCartInfo(cartSummary);
-                    setBasketNumItemsDisplay();
-                    editor.putString(Constants.GET_CART, String.valueOf(cartSummary.getNoOfItems()));
-                }
-                if (responseJsonObject.has(Constants.FULFILLMENT_INFOS) &&
-                        !responseJsonObject.get(Constants.FULFILLMENT_INFOS).isJsonNull()) {
-                    JsonArray cartFulfillmentInfoJsonArray = responseJsonObject.get(Constants.FULFILLMENT_INFOS).getAsJsonArray();
-                    fullfillmentInfos = ParserUtil.parseCartFulfillmentInfoList(cartFulfillmentInfoJsonArray);
-                }
-
-                if (responseJsonObject.has(Constants.ANNOTATION_INFO) &&
-                        !responseJsonObject.get(Constants.ANNOTATION_INFO).isJsonNull()) {
-                    JsonArray cartAnnotaionInfoJsonArray = responseJsonObject.get(Constants.ANNOTATION_INFO).getAsJsonArray();
-                    annotationInfoArrayList = ParserUtil.parseCartAnnotationInfoList(cartAnnotaionInfoJsonArray);
-                }
-
-                if (cartItemsJsonObject.has(Constants.ITEMS) &&
-                        !cartItemsJsonObject.get(Constants.ITEMS).isJsonNull()) {
-                    JsonArray cartItemsJsonArray = cartItemsJsonObject.get(Constants.ITEMS).getAsJsonArray();
-                    cartItemLists = ParserUtil.parseCartItemList(cartItemsJsonArray);
-                    String baseImageUrl = cartItemsJsonObject.get(Constants.BASE_IMG_URL).getAsString();
-                    renderCartItemList(cartSummary, baseImageUrl);
-                } else {
-                    showBasketEmptyMessage();
-                    editor.putString(Constants.GET_CART, "0");
-                }
-            } else {
-                showErrorMsg(getString(R.string.INTERNAL_SERVER_ERROR));
-            }
-        } else if (httpOperationResult.getUrl().contains(Constants.CART_EMPTY)) {
-            if (jsonObject.has(Constants.SUCCESS) && !jsonObject.get(Constants.SUCCESS).isJsonNull()) {
-                boolean success = jsonObject.get(Constants.SUCCESS).getAsBoolean();
-                if (success) {
-                    editor.putString(Constants.GET_CART, "0");
-                    //showBasketEmptyMessage();
-                    CartSummary cartSummary = new CartSummary(0, 0, 0);
-                    setCartInfo(cartSummary);
-                    setBasketNumItemsDisplay();
-                    finishFragment();
-                }
-            } else if (jsonObject.has(Constants.STATUS) && !jsonObject.get(Constants.STATUS).isJsonNull()) {
-                String status = jsonObject.get(Constants.STATUS).getAsString();
-                if (status.equalsIgnoreCase(Constants.ERROR)) {
-                    int errorType = jsonObject.get(Constants.ERROR_TYPE).getAsInt();
-                    if (errorType == ExceptionUtil.CART_NOT_EXISTS_ERROR) {
-                        showErrorMsg("Cart is already empty");
-                    }
-                }
-            }
-        }
-        editor.commit();
     }
 
     private void renderCartItemList(CartSummary cartSummary, String baseImageUrl) {
@@ -322,13 +257,81 @@ public class ShowCartFragment extends BaseFragment {
 
 
     private void emptyCart() {
-        startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.CART_EMPTY, null, true,
-                false, null);
+        if (getActivity() == null) return;
+        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        final SharedPreferences.Editor editor = prefer.edit();
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+        showProgressView();
+        bigBasketApiService.emptyCart(new Callback<BaseApiResponse>() {
+            @Override
+            public void success(BaseApiResponse cartEmptyApiResponseCallback, Response response) {
+                if (cartEmptyApiResponseCallback.status == 0) {
+                    editor.putString(Constants.GET_CART, "0");
+                    showBasketEmptyMessage();
+                    CartSummary cartSummary = new CartSummary(0, 0, 0);
+                    setCartInfo(cartSummary);
+                    setBasketNumItemsDisplay();
+                } else if (cartEmptyApiResponseCallback.status == ExceptionUtil.CART_NOT_EXISTS_ERROR) {
+                    showErrorMsg("Cart is already empty");
+                } else {
+                    // TODO : Improve error handling
+                    showErrorMsg("Server Error");
+                }
+                editor.commit();
+
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        });
     }
 
     private void getCartItems() {
-        startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.CART_GET, null, false,
-                true, null);
+        if (getActivity() == null) return;
+        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        final SharedPreferences.Editor editor = prefer.edit();
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+        showProgressView();
+        bigBasketApiService.cartGet(new Callback<ApiResponse<CartGetApiResponseContent>>() {
+            @Override
+            public void success(ApiResponse<CartGetApiResponseContent> cartGetApiResponseContentApiResponse, Response response) {
+                hideProgressView();
+                if (cartGetApiResponseContentApiResponse.status == 0) {
+                    CartSummary cartSummary = cartGetApiResponseContentApiResponse.apiResponseContent.cartSummary;
+                    if (!isReadOnly) {
+                        setCartInfo(cartSummary);
+                        setBasketNumItemsDisplay();
+                        editor.putString(Constants.GET_CART,
+                                String.valueOf(cartSummary.getNoOfItems()));
+                    }
+                    fullfillmentInfos = cartGetApiResponseContentApiResponse.apiResponseContent.fulfillmentInfos;
+                    annotationInfoArrayList = cartGetApiResponseContentApiResponse.apiResponseContent.annotationInfos;
+                    if (cartGetApiResponseContentApiResponse.apiResponseContent.
+                            cartGetApiCartItemsContent != null
+                            && cartGetApiResponseContentApiResponse.apiResponseContent.cartGetApiCartItemsContent.cartItemLists != null
+                            && cartGetApiResponseContentApiResponse.apiResponseContent.cartGetApiCartItemsContent.cartItemLists.size() > 0) {
+                        cartItemLists = cartGetApiResponseContentApiResponse.apiResponseContent.
+                                cartGetApiCartItemsContent.cartItemLists;
+                        renderCartItemList(cartSummary, cartGetApiResponseContentApiResponse
+                                .apiResponseContent.cartGetApiCartItemsContent.baseImgUrl);
+                    } else {
+                        showBasketEmptyMessage();
+                        editor.putString(Constants.GET_CART, "0");
+                    }
+                } else {
+                    showErrorMsg("Server Error");
+                    // TODO : Improve error handling
+                }
+                editor.commit();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                hideProgressView();
+            }
+        });
     }
 
 

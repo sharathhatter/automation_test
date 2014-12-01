@@ -203,7 +203,7 @@ public class ChangePasswordFragment extends BaseFragment {
             editor.commit();
         }
         ((BaseActivity) getActivity()).showToast(getString(R.string.passwordUpdated));
-        finishFragment();
+        finish();
 
     }
 

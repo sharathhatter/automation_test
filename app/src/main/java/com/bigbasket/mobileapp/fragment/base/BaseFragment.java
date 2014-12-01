@@ -261,10 +261,6 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     @Nullable
     public abstract LinearLayout getContentView();
 
-    public void finishFragment() {
-
-    }
-
     @Nullable
     public BaseActivity getCurrentActivity() {
         return getActivity() != null ? (BaseActivity) getActivity() : null;
@@ -413,44 +409,6 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         //if (isSuspended())
         //    return;
         alertDialog.show();
-    }
-
-    public void showAlertDialogForGoToHome(String msg) {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-        alertDialogBuilder.setTitle("BigBasket");
-        alertDialogBuilder.setMessage(msg).setCancelable(false).setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.dismiss();
-                goToHome();
-            }
-        });
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        //if (isSuspended())
-        //    return;
-        alertDialog.show();
-    }
-
-
-    public void showAlertDialogFinish(Context context, String title,
-                                      String msg) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(title == null ? "BigBasket" : title);
-        builder.setMessage(msg);
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                finishFragment();
-            }
-        });
-        AlertDialog alertDialog = builder.create();
-        //if (isSuspended())
-        //    return;
-        alertDialog.show();
-    }
-
-    public void goToHome() {
-        //setResult(Constants.GO_TO_HOME);
-        //getCurrentActivity().finish();
     }
 
     protected void onPositiveButtonClicked(DialogInterface dialogInterface, int id, @Nullable String sourceName, Object valuePassed) {

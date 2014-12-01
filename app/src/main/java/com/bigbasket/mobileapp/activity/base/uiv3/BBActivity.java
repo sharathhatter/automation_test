@@ -493,6 +493,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
 
     @Override
     public void updateUIForCartInfo() {
+        if (cartInfo == null) return;
         SharedPreferences.Editor editor = getSharedPreferences("myCustomSharedPrefs", Activity.MODE_PRIVATE).edit();
         editor.putString(Constants.GET_CART, "" + cartInfo.getNoOfItems());
         editor.commit();
