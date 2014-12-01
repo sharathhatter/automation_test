@@ -22,7 +22,7 @@ import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.adapter.product.CategoryAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
-import com.bigbasket.mobileapp.apiservice.models.response.BrowseCategoryApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.BrowseCategoryApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
@@ -81,13 +81,13 @@ public class StartActivity extends BaseActivity {
                 BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
                 String version = categoryAdapter.getCategoriesVersion();
                 showProgressDialog(getString(R.string.please_wait));
-                bigBasketApiService.browseCategory(version, new Callback<BrowseCategoryApiResponse>() {
+                bigBasketApiService.browseCategory(version, new Callback<ApiResponse<BrowseCategoryApiResponseContent>>() {
                     @Override
-                    public void success(BrowseCategoryApiResponse browseCategoryApiResponse, Response response) {
+                    public void success(ApiResponse<BrowseCategoryApiResponseContent> browseCategoryApiResponse, Response response) {
                         hideProgressDialog();
                         categoryAdapter.setLastFetchedTime(CategoryAdapter.TOP_CATEGORY_TIMEOUT_PREF_KEY);
                         BrowseCategoryApiResponseContent browseCategoryApiResponseContent =
-                                browseCategoryApiResponse.browseCategoryApiResponseContent;
+                                browseCategoryApiResponse.apiResponseContent;
                         if (!browseCategoryApiResponseContent.aOk) {
                             categoryAdapter.insert(browseCategoryApiResponseContent.topCategoryModels,
                                     browseCategoryApiResponseContent.version);

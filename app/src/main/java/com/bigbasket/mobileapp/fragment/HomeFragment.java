@@ -19,7 +19,8 @@ import android.widget.ScrollView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
-import com.bigbasket.mobileapp.apiservice.models.response.HomePageApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.HomePageApiResponseContent;
 import com.bigbasket.mobileapp.fragment.base.BaseSectionFragment;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
@@ -146,13 +147,13 @@ public class HomeFragment extends BaseSectionFragment {
     private void getHomePage() {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressView();
-        bigBasketApiService.loadHomePage(new Callback<HomePageApiResponse>() {
+        bigBasketApiService.loadHomePage(new Callback<ApiResponse<HomePageApiResponseContent>>() {
             @Override
-            public void success(HomePageApiResponse homePageApiResponse, Response response) {
+            public void success(ApiResponse<HomePageApiResponseContent> homePageApiResponse, Response response) {
                 hideProgressView();
-                mSections = homePageApiResponse.homePageApiResponseContent.sections;
+                mSections = homePageApiResponse.apiResponseContent.sections;
                 ArrayList<DestinationInfo> destinationInfos =
-                        homePageApiResponse.homePageApiResponseContent.destinationInfos;
+                        homePageApiResponse.apiResponseContent.destinationInfos;
                 if (destinationInfos != null && destinationInfos.size() > 0) {
                     mDestinationInfoHashMap = new HashMap<>();
                     for (DestinationInfo destinationInfo : destinationInfos) {

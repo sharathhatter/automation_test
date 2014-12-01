@@ -1,7 +1,8 @@
 package com.bigbasket.mobileapp.apiservice;
 
-import com.bigbasket.mobileapp.apiservice.models.response.BrowseCategoryApiResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.HomePageApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.BrowseCategoryApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.HomePageApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.util.Constants;
@@ -29,8 +30,11 @@ public interface BigBasketApiService {
 
     @GET("/browse-category/")
     void browseCategory(@Query(Constants.VERSION) String version,
-                        Callback<BrowseCategoryApiResponse> browseCategoryApiResponseCallback);
+                        Callback<ApiResponse<BrowseCategoryApiResponseContent>> browseCategoryApiResponseCallback);
 
     @GET("/get-home-page/")
-    void loadHomePage(Callback<HomePageApiResponse> homePageApiResponseCallback);
+    void loadHomePage(Callback<ApiResponse<HomePageApiResponseContent>> homePageApiResponseCallback);
+
+//    @GET("/c-get/")
+//    void cartGet()
 }
