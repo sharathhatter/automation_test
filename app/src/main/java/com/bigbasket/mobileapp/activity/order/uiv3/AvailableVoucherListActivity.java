@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,6 +54,9 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
                 }
             }
         });
+
+        FrameLayout contentLayout = (FrameLayout) findViewById(R.id.content_frame);
+        contentLayout.addView(listVoucher);
     }
 
     @Override
@@ -162,15 +166,17 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
             TextView txtVoucherMsg = activeVoucherViewHolder.getTxtVoucherMsg();
 
             if (activeVouchers.canApply()) {
+                txtVoucherMsg.setTextColor(getResources().getColor(R.color.uiv3_list_secondary_text_color));
             } else {
-
+                txtVoucherMsg.setTextColor(getResources().getColor(R.color.dark_red));
             }
 
             txtVoucherCode.setText(activeVouchers.getCode());
             txtVoucherCode.setBackgroundColor(randomColor());
             txtVoucherDesc.setText(activeVouchers.getCustomerDesc());
             txtVoucherMsg.setText(activeVouchers.getMessage());
-            txtVoucherValidity.setText(activeVouchers.getValidity());
+            txtVoucherValidity.setText(getString(R.string.pleaseNote) + " " +
+                    activeVouchers.getValidity());
             return row;
         }
 

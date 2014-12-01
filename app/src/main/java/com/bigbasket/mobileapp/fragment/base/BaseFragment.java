@@ -34,6 +34,7 @@ import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.cart.BasketOperationResponse;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
@@ -52,11 +53,12 @@ import org.apache.http.impl.client.BasicCookieStore;
 
 import java.text.NumberFormat;
 import java.util.HashMap;
+import java.util.Map;
 
 
 public abstract class BaseFragment extends AbstractFragment implements HandlerAware,
         CartInfoAware, BasketOperationAware, COReserveQuantityCheckAware, ProgressIndicationAware,
-        ConnectivityAware {
+        ConnectivityAware, TrackingAware {
 
     protected Handler handler;
     private ProgressDialog progressDialog;
@@ -218,7 +220,8 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     }
 
     public void changeFragment(AbstractFragment newFragment) {
-        ((BaseActivity) getActivity()).onChangeFragment(newFragment);
+        if (getCurrentActivity() == null) return;
+        getCurrentActivity().onChangeFragment(newFragment);
     }
 
     private void changeTitle(String title) {
@@ -486,5 +489,17 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         nf.setMaximumFractionDigits(2);
         nf.setGroupingUsed(false);
         return (nf.format(amount).equals("0.00") || nf.format(amount).equals("0.0")) ? "0" : nf.format(amount);
+    }
+
+    @Override
+    public void trackEvent(String eventName, Map<String, String> eventAttribs) {
+        if (getCurrentActivity() == null) return;
+        getCurrentActivity().trackEvent(eventName, eventAttribs);
+    }
+
+    @Override
+    public void trackEvent(String eventName, Map<String, String> eventAttribs, String source, String sourceValue) {
+        if (getCurrentActivity() == null) return;
+        getCurrentActivity().trackEvent(eventName, eventAttribs, source, sourceValue);
     }
 }

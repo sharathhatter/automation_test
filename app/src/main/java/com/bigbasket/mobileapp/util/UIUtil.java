@@ -176,7 +176,7 @@ public class UIUtil {
         if (screenLayout == Configuration.SCREENLAYOUT_SIZE_SMALL ||
                 screenLayout == Configuration.SCREENLAYOUT_SIZE_NORMAL ||
                 screenLayout == Configuration.SCREENLAYOUT_SIZE_UNDEFINED ||
-                portraitModeGridCount == 1) {
+                (portraitModeGridCount == 1 && configuration.orientation == Configuration.ORIENTATION_PORTRAIT)) {
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
             recyclerView.setLayoutManager(linearLayoutManager);
         } else {

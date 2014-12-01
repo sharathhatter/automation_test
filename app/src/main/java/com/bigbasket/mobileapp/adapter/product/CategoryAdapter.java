@@ -3,8 +3,11 @@ package com.bigbasket.mobileapp.adapter.product;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
+import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.bigbasket.mobileapp.adapter.db.DatabaseHelper;
@@ -12,11 +15,17 @@ import com.bigbasket.mobileapp.model.product.TopCategoryModel;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.ResponseSerializer;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class CategoryAdapter {
 
     private Context context;
+    public static final int CATEGORY_TIMEOUT_IN_MINS = 15;
+    public static final String TOP_CATEGORY_TIMEOUT_PREF_KEY = "top_category_last_time";
 
     public CategoryAdapter(Context context) {
         this.context = context;
@@ -144,5 +153,30 @@ public class CategoryAdapter {
         return imagePath;
     }
 
+    public boolean isPossiblyStale(String preferenceKey, int timeout) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String topCategoryLastFetchTime = preferences.getString(preferenceKey, null);
+        if (!TextUtils.isEmpty(topCategoryLastFetchTime)) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+            try {
+                Date createdOnDate = dateFormat.parse(topCategoryLastFetchTime);
+                Date now = new Date();
+                long minutes = TimeUnit.MINUTES.convert(now.getTime() - createdOnDate.getTime(),
+                        TimeUnit.MILLISECONDS);
+                return minutes > timeout;
+            } catch (ParseException e) {
+                return false;
+            }
+        }
+        return false;
+    }
 
+    public void setLastFetchedTime(String preferenceKey) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String lastFetchedTime = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").
+                format(new Date(System.currentTimeMillis()));
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(preferenceKey, lastFetchedTime);
+        editor.commit();
+    }
 }

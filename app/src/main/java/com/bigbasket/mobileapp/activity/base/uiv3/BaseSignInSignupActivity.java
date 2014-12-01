@@ -18,10 +18,14 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 
 import com.bigbasket.mobileapp.util.Constants;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.moe.pushlibrary.MoEHelper;
+import com.moe.pushlibrary.utils.MoEHelperConstants;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public abstract class BaseSignInSignupActivity extends BackButtonActivity {
 
@@ -160,6 +164,38 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity {
             editor.remove(Constants.PASSWD_PREF);
         }
         editor.commit();
+
+        // Pass user details to MoEngage
+        String mobileNum = userDetailsJsonObj.get(Constants.MOBILE_NUMBER).getAsString();
+        String hub = userDetailsJsonObj.get(Constants.HUB).getAsString();
+        String createdOn = userDetailsJsonObj.get(Constants.CREATED_ON).getAsString();
+        String dateOfBirth = userDetailsJsonObj.get(Constants.DOB).getAsString();
+        String gender = userDetailsJsonObj.get(Constants.GENDER).getAsString();
+        JsonObject additionalAttrsJsonObj = userDetailsJsonObj.get(Constants.ADDITIONAL_ATTRS).getAsJsonObject();
+
+        MoEHelper moEHelper = MoEHelper.getInstance(getCurrentActivity());
+        moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_UNIQUE_ID, mid);
+        moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_EMAIL, email);
+        moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_MOBILE, mobileNum);
+        moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_FIRST_NAME, firstName);
+        moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_LAST_NAME, lastName);
+        moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_NAME, fullName);
+        moEHelper.setUserAttribute("Created On", createdOn);
+        if (!TextUtils.isEmpty(gender)) {
+            moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_GENDER, gender);
+        }
+        if (!TextUtils.isEmpty(hub)) {
+            moEHelper.setUserAttribute("Hub", hub);
+        }
+        if (!TextUtils.isEmpty(dateOfBirth)) {
+            moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_BDAY, dateOfBirth);
+        }
+
+        if (additionalAttrsJsonObj != null) {
+            for (Map.Entry<String, JsonElement> additionalObj : additionalAttrsJsonObj.entrySet()) {
+                moEHelper.setUserAttribute(additionalObj.getKey(), additionalObj.getValue().toString());
+            }
+        }
         onLoginSuccess();
     }
 }

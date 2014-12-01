@@ -19,6 +19,8 @@ public class Section implements Parcelable {
     public static final String IMAGE = "image";
     public static final String TILE = "tile";
 
+    public static final int SECTION_TIMEOUT_IN_MINUTES = 15;
+
     public static Set<String> getSupportedSectionTypes() {
         Set<String> sectionTypeSets = new HashSet<>();
         sectionTypeSets.add(BANNER);

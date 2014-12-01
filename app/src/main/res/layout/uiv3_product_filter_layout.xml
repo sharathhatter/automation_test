@@ -8,13 +8,13 @@
         android:id="@+id/lblFilter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/margin_small"
-        android:layout_marginRight="@dimen/margin_mini"
-        android:layout_marginTop="@dimen/margin_small"
-        android:gravity="center_horizontal"
         android:text="@string/filter"
-        android:textColor="@color/primary_text_default_material_light"
-        android:textSize="@dimen/heading_2_text_size" />
+        android:textColor="@color/uiv3_status_bar_background"
+        android:textSize="@dimen/heading_2_text_size"
+        android:paddingTop="@dimen/padding_normal"
+        android:paddingBottom="@dimen/padding_normal"
+        android:paddingLeft="@dimen/padding_normal"
+        android:background="@drawable/uiv3_btn_background_shadow"/>
 
 
     <LinearLayout
@@ -23,7 +23,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="@dimen/margin_mini"
-        android:layout_marginLeft="@dimen/margin_small"
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_marginRight="@dimen/margin_small"
         android:orientation="horizontal">
 
         <Button
@@ -37,12 +38,12 @@
             android:paddingTop="@dimen/padding_small"
             android:paddingBottom="@dimen/padding_small"
             android:id="@+id/btnApplyFilter"
-            android:onClick="onApplyFilterButtonClicked"/>
+            android:onClick="onApplyFilterButtonClicked"
+            android:layout_marginRight="@dimen/margin_mini"/>
 
         <Button
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/margin_mini"
             android:layout_marginRight="@dimen/margin_small"
             android:layout_weight="1"
             android:background="@color/material_blue_grey_800"

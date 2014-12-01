@@ -1,6 +1,5 @@
 package com.bigbasket.mobileapp.activity.base;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -17,7 +16,6 @@ import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBarActivity;
-import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -47,6 +45,7 @@ import com.bigbasket.mobileapp.interfaces.COReserveQuantityCheckAware;
 import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.order.COReserveQuantity;
 import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -58,10 +57,12 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.MessageCode;
-import com.bigbasket.mobileapp.util.UIUtil;
 import com.demach.konotor.Konotor;
+import com.moe.pushlibrary.MoEHelper;
 
 import org.apache.http.client.CookieStore;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.NumberFormat;
@@ -69,11 +70,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public abstract class BaseActivity extends ActionBarActivity implements COMarketPlaceAware,
         COReserveQuantityCheckAware, CancelableAware, ProgressIndicationAware, ActivityAware,
-        ConnectivityAware {
+        ConnectivityAware, TrackingAware {
 
     public static Typeface faceRupee;
     public static Typeface faceRobotoRegular;
@@ -82,7 +84,6 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     //protected MarketPlace marketPlace;
     protected COReserveQuantity coReserveQuantity;
 
-    @SuppressLint("NewApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,12 +93,14 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         faceRobotoRegular = Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");
     }
 
+    @Override
     public boolean checkInternetConnection() {
         return DataUtil.isInternetAvailable(getCurrentActivity());
     }
 
     protected ProgressDialog progressDialog = null;
 
+    @Override
     public void showProgressDialog(String msg) {
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
@@ -105,6 +108,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         progressDialog.show();
     }
 
+    @Override
     public void hideProgressDialog() {
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
@@ -112,6 +116,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         }
     }
 
+    @Override
     public void showProgressView() {
     }
 
@@ -230,6 +235,14 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     protected void onStart() {
         super.onStart();
         isActivitySuspended = false;
+        MoEHelper.getInstance(this).onStart(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        isActivitySuspended = true;
+        MoEHelper.getInstance(this).onStop(this);
     }
 
     @Override
@@ -410,10 +423,6 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         showAlertDialog(context, title, msg, dialogButton, nxtDialogButton, null);
     }
 
-    public Spannable asRupeeSpannable(String amtTxt) {
-        return UIUtil.asRupeeSpannable(amtTxt, faceRupee);
-    }
-
     protected void onPositiveButtonClicked(DialogInterface dialogInterface, int id, String sourceName, Object valuePassed) {
         if (sourceName != null) {
             switch (sourceName) {
@@ -493,14 +502,6 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     public void goToHome() {
         setResult(Constants.GO_TO_HOME);
         getCurrentActivity().finish();
-//        Intent intent = new Intent(this, BBActivity.class);
-//        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_HOME);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//        } else {
-//            intent.setFlags(IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
-//        }
-//        startActivity(intent);
     }
 
     public String getDecimalAmount(Double amount) {
@@ -587,10 +588,12 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         return false;
     }
 
+    @Override
     public boolean isSuspended() {
         return isActivitySuspended;
     }
 
+    @Override
     public void setSuspended(boolean state) {
         isActivitySuspended = state;
     }
@@ -681,6 +684,30 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
             spannableStringBuilder.setSpan(new ForegroundColorSpan(Color.BLACK), 0, errMsg.length(),
                     Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
             autoCompleteTextView.setError(spannableStringBuilder);
+        }
+    }
+
+    @Override
+    public void trackEvent(String eventName, Map<String, String> eventAttribs) {
+        trackEvent(eventName, eventAttribs, null, null);
+    }
+
+    @Override
+    public void trackEvent(String eventName, Map<String, String> eventAttribs, String source, String sourceValue) {
+        JSONObject analyticsJsonObj = new JSONObject();
+        try {
+            for (Map.Entry<String, String> entry : eventAttribs.entrySet()) {
+                analyticsJsonObj.put(entry.getKey(), entry.getValue());
+            }
+            if (!TextUtils.isEmpty(source)) {
+                analyticsJsonObj.put(Constants.SOURCE, source);
+            }
+            if (!TextUtils.isEmpty(sourceValue)) {
+                analyticsJsonObj.put(Constants.SOURCE_ID, sourceValue);
+            }
+            MoEHelper.getInstance(getCurrentActivity()).trackEvent(eventName, analyticsJsonObj);
+        } catch (JSONException e) {
+            Log.e("Analytics", "Failed to send event = " + eventName + " to analytics");
         }
     }
 }

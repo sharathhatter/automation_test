@@ -10,9 +10,10 @@
         android:layout_height="wrap_content"
         android:drawableRight="@drawable/list_arrow"
         android:gravity="left|center_vertical"
-        android:paddingBottom="@dimen/padding_mini"
+        android:paddingBottom="@dimen/padding_small"
         android:paddingLeft="@dimen/padding_small"
-        android:paddingTop="@dimen/padding_mini"
+        android:paddingTop="@dimen/padding_small"
+        android:paddingRight="@dimen/padding_mini"
         android:textColor="@color/primary_text_default_material_light"
         android:textSize="@dimen/large_text_size" />
 </LinearLayout>

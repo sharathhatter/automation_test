@@ -19,6 +19,7 @@ import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
+import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
@@ -140,15 +141,10 @@ public class BasketOperationTask<T> extends AsyncTask<String, Long, Void> {
         return null;
     }
 
-    private boolean isSuspended() {
-        return (context instanceof BaseFragment && ((BaseFragment) context).isSuspended()) ||
-                (context instanceof BaseActivity && ((BaseActivity) context).isSuspended());
-    }
-
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        if (isSuspended()) {
+        if (((CancelableAware) context).isSuspended()) {
             cancel(true);
         } else {
             if (context instanceof BaseFragment) {
@@ -161,7 +157,7 @@ public class BasketOperationTask<T> extends AsyncTask<String, Long, Void> {
 
     @Override
     protected void onPostExecute(Void result) {
-        if (isSuspended()) {
+        if (((CancelableAware) context).isSuspended()) {
             return;
         } else {
             try {
