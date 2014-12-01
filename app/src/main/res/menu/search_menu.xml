@@ -6,14 +6,14 @@
         android:id="@+id/action_apply_filter"
         android:icon="@drawable/filter"
         android:orderInCategory="9999"
-        android:title="@string/viewBasket"
+        android:title="@string/filter"
         bb:showAsAction="always" />
 
     <item
         android:id="@+id/action_sort_products"
         android:icon="@drawable/sort_hover"
         android:orderInCategory="9999"
-        android:title="@string/viewBasket"
+        android:title="@string/sortBy"
         bb:showAsAction="always" />
 
     <item

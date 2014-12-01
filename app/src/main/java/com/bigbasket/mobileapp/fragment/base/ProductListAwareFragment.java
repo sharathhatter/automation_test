@@ -64,7 +64,7 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
     }
 
     /**
-     * This method is called by onActivityCreated and can is used to load products on fresh start or restore state,
+     * This method is called by onActivityCreated and can be used to load products on fresh start or restore state,
      * when screen is rotated
      *
      * @param savedInstanceState Bundle containing parceled data, when the screen was rotated

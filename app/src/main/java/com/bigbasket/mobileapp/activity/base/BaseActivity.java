@@ -78,7 +78,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     public static Typeface faceRupee;
     public static Typeface faceRobotoRegular;
     protected Handler handler = new MessageHandler(getCurrentActivity());
-    private boolean isActivitySuspended;
+    protected boolean isActivitySuspended;
     //protected MarketPlace marketPlace;
     protected COReserveQuantity coReserveQuantity;
 

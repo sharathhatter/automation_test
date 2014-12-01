@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.activity.order.uiv3;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -49,24 +50,38 @@ import java.util.HashMap;
 
 public class AgeValidationActivity extends BackButtonActivity {
     private MarketPlace marketPlace;
-
+    private HashMap<String, Boolean> hashMapRadioBtnAgeCheckNo = new HashMap<>(); // todo need to save this to savedInstanceState
+    private boolean fromOnCreate, isPharmaRadioBtnNoSelected;
+    private Button btnContinueOrUploadPrescription;
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState); // todo back button override for GO_TO_HOME
         if (savedInstanceState != null) {
+            fromOnCreate = false;
             marketPlace = savedInstanceState.getParcelable(Constants.MARKET_PLACE_INTENT);
             if (marketPlace != null) {
                 renderMarketPlaceValidationErrors();
                 return;
             }
         }
+        fromOnCreate = true;
         marketPlace = getIntent().getParcelableExtra(Constants.MARKET_PLACE_INTENT);
         renderMarketPlaceValidationErrors();
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (marketPlace != null) {
+            outState.putParcelable(Constants.MARKET_PLACE_INTENT, marketPlace);
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public void onCoMarketPlaceSuccess(MarketPlace marketPlace) {
         this.marketPlace = marketPlace;
+        isPharmaRadioBtnNoSelected = false;
+        hashMapRadioBtnAgeCheckNo.clear();
         if (!marketPlace.isPharamaPrescriptionNeeded() && !marketPlace.isAgeCheckRequired()) {
             proceedToQc();
         } else {
@@ -90,21 +105,42 @@ public class AgeValidationActivity extends BackButtonActivity {
         renderAgeValidations(base);
         renderPharmaPrescriptionValidations(base);
 
-        Button btnContinue = UIUtil.getPrimaryButton(this);
+        btnContinueOrUploadPrescription = UIUtil.getPrimaryButton(this);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         int btnMargin = (int) getResources().getDimension(R.dimen.margin_large);
         layoutParams.setMargins(btnMargin, btnMargin, btnMargin, btnMargin);
-        btnContinue.setLayoutParams(layoutParams);
-        btnContinue.setTypeface(faceRobotoRegular);
-        btnContinue.setText("Continue");
-        btnContinue.setOnClickListener(new View.OnClickListener() {
+        btnContinueOrUploadPrescription.setLayoutParams(layoutParams);
+        btnContinueOrUploadPrescription.setTypeface(faceRobotoRegular);
+        if (marketPlace.isPharamaPrescriptionNeeded()){
+            btnContinueOrUploadPrescription.setText(getString(R.string.uploadPrescription));
+            btnContinueOrUploadPrescription.setTag(Constants.UPLOAD_PRESCRIPTION_BTN_TAG);
+        }else {
+            btnContinueOrUploadPrescription.setText("Continue");
+            btnContinueOrUploadPrescription.setTag(Constants.CONTINUE_BTN_TAG);
+        }
+        btnContinueOrUploadPrescription.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                proceedToQc();
+                if(isPharmaRadioBtnNoSelected){ // check if pharma radio btn no selected
+                    showAlertDialog(getResources().getString(R.string.pharma_msg));
+                }else if(hashMapRadioBtnAgeCheckNo.size()>0){  //check if any age-validation radio btn no selected
+                    showAlertDialog(getResources().getString(R.string.age_validation_required));
+                }else {
+                    if(String.valueOf(btnContinueOrUploadPrescription.getTag()).equals(Constants.CONTINUE_BTN_TAG)){
+                        proceedToQc();
+                    }else {
+                        Intent intent = new Intent(getCurrentActivity(), PrescriptionListActivity.class);
+                        intent.putExtra(Constants.FROM_AGE_VALIDATION, true);
+                        intent.putExtra(Constants.MARKET_PLACE_INTENT, marketPlace);
+                        startActivityForResult(intent, Constants.GO_TO_HOME);
+                        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+                    }
+                }
             }
         });
-        base.addView(btnContinue);
+        base.addView(btnContinueOrUploadPrescription);
+
 
         contentView.addView(scrollView);
     }
@@ -119,17 +155,30 @@ public class AgeValidationActivity extends BackButtonActivity {
             txtAgeMsg.setTypeface(faceRobotoRegular);
             txtAgeMsg.setText(marketPlaceAgeCheck.getAgeMessage());
 
-            RadioButton rbtnYes = (RadioButton) ageLayout.findViewById(R.id.radioBtnYes);
+            final RadioButton rbtnYes = (RadioButton) ageLayout.findViewById(R.id.radioBtnYes);
+            rbtnYes.setTag(marketPlaceAgeCheck.getFulfillmentId());
             final RadioButton rbtnNo = (RadioButton) ageLayout.findViewById(R.id.radioBtnNo);
+            rbtnNo.setTag(marketPlaceAgeCheck.getFulfillmentId());
             rbtnYes.setTypeface(faceRobotoRegular);
             rbtnNo.setTypeface(faceRobotoRegular);
             rbtnYes.setText(getString(R.string.preYesRadioBtnAgeMsg) + " " + marketPlaceAgeCheck.getAgeLimit() + " year");
             rbtnNo.setText(getString(R.string.preNoRadioBtnAgeMsg) + " " + marketPlaceAgeCheck.getAgeLimit()
                     + " year, remove " + marketPlaceAgeCheck.getDisplayName() + " from this order");
+
+            rbtnYes.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (isChecked) {
+                        hashMapRadioBtnAgeCheckNo.remove(rbtnYes.getTag().toString());
+                    }
+                }
+            });
+
             rbtnNo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (isChecked) {
+                        hashMapRadioBtnAgeCheckNo.put(rbtnNo.getTag().toString(), true);
                         showAlertDialog(getCurrentActivity(), null,
                                 "Remove all " + marketPlaceAgeCheck.getDisplayName() + " products from Basket?",
                                 DialogButton.YES, DialogButton.NO, Constants.REMOVE_ALL_MARKETPLACE_FROM_BASKET,
@@ -154,21 +203,50 @@ public class AgeValidationActivity extends BackButtonActivity {
         txtAgeMsg.setText(getString(R.string.pharmaPrescriptionHeading));
 
         RadioButton rbtnYes = (RadioButton) ageLayout.findViewById(R.id.radioBtnYes);
-        RadioButton rbtnNo = (RadioButton) ageLayout.findViewById(R.id.radioBtnNo);
+        final RadioButton rbtnNo = (RadioButton) ageLayout.findViewById(R.id.radioBtnNo);
         rbtnYes.setTypeface(faceRobotoRegular);
         rbtnNo.setTypeface(faceRobotoRegular);
         rbtnYes.setText(getString(R.string.YesRadioBtnPharmaMsg));
         rbtnNo.setText(getString(R.string.NoRadioBtnPharmaMsg));
+
+        ArrayList<MessageParamInfo> messageParamInfos = marketPlace.getPharmaPrescriptionInfo().getMsgInfo().getParams();
+        String fulFillmentIds = null;
+        int pharmaInfoSize = messageParamInfos.size();
+        if(pharmaInfoSize == 1){
+            fulFillmentIds = messageParamInfos.get(0).getInternalValue();
+        }else {
+            fulFillmentIds = messageParamInfos.get(0).getInternalValue();
+            for(int j=1; j<pharmaInfoSize; j++) {
+                fulFillmentIds ="," +messageParamInfos.get(j).getInternalValue();
+            }
+        }
+        if(fulFillmentIds!=null) {
+            rbtnNo.setTag(fulFillmentIds);
+        }else {
+            assert false:"Pharma Prescription Id is null"; return; //todo check
+        }
+
         rbtnYes.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
+                if(isChecked){
+                    btnContinueOrUploadPrescription.setText(getString(R.string.uploadPrescription));
+                    btnContinueOrUploadPrescription.setTag(Constants.UPLOAD_PRESCRIPTION_BTN_TAG);
+                    isPharmaRadioBtnNoSelected = false;
+                }
             }
         });
         rbtnNo.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
+                if(isChecked){
+                    btnContinueOrUploadPrescription.setText("Continue");
+                    btnContinueOrUploadPrescription.setTag(Constants.CONTINUE_BTN_TAG);
+                    isPharmaRadioBtnNoSelected = true;
+                    showAlertDialog(getCurrentActivity(), null,
+                            "Remove all pharma products from basket", DialogButton.YES,
+                            DialogButton.NO, Constants.REMOVE_ALL_MARKETPLACE_FROM_BASKET, String.valueOf(rbtnNo.getTag()));
+                }
             }
         });
 
@@ -198,6 +276,7 @@ public class AgeValidationActivity extends BackButtonActivity {
         }
         base.addView(ageLayout);
 
+        /*
         // Add upload/choose prescription button
         Button btnUploadPrescription = UIUtil.getPrimaryButton(this);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
@@ -214,6 +293,7 @@ public class AgeValidationActivity extends BackButtonActivity {
             }
         });
         base.addView(btnUploadPrescription);
+        */
 
         // Display any additional terms and condition
         if (msgInfo != null && msgInfo.getParams() != null) {
