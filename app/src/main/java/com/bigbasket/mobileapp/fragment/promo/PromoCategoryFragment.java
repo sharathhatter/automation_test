@@ -11,21 +11,23 @@ import android.widget.ListView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.product.PromoCategoryAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.BrowsePromoCategoryApiResponseContent;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.model.promo.Promo;
 import com.bigbasket.mobileapp.model.promo.PromoCategory;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.ExceptionUtil;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
-import com.bigbasket.mobileapp.util.ParserUtil;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
 public class PromoCategoryFragment extends BaseFragment {
@@ -53,41 +55,39 @@ public class PromoCategoryFragment extends BaseFragment {
     }
 
     private void getPromoCategories() {
-        startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.BROWSE_PROMO_CAT,
-                null, false, true, null);
-    }
-
-    @Override
-    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-        String url = httpOperationResult.getUrl();
-        if (url.contains(Constants.BROWSE_PROMO_CAT)) {
-            String responseJson = httpOperationResult.getReponseString();
-            JsonObject jsonObject = new JsonParser().parse(responseJson).getAsJsonObject();
-            int status = jsonObject.get(Constants.STATUS).getAsInt();
-            switch (status) {
-                case 0:
-                    JsonArray promoCategories = jsonObject.get(Constants.RESPONSE).
-                            getAsJsonObject().get(Constants.PROMO_CATS).getAsJsonArray();
-                    if (promoCategories != null && promoCategories.size() > 0) {
-                        mPromoCategoryList = ParserUtil.parsePromoCategory(promoCategories);
-                        mPromoCategoryList = filterPromoCategories();
-                        if (mPromoCategoryList.size() > 0)
-                            renderPromoCategories();
-                        else {
-                            // TODO : Improve error handling
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+        showProgressView();
+        bigBasketApiService.browsePromoCategory(new Callback<ApiResponse<BrowsePromoCategoryApiResponseContent>>() {
+            @Override
+            public void success(ApiResponse<BrowsePromoCategoryApiResponseContent> browsePromoCategoryApiResponseContentApiResponse, Response response) {
+                hideProgressView();
+                switch (browsePromoCategoryApiResponseContentApiResponse.status) {
+                    case 0:
+                        if (browsePromoCategoryApiResponseContentApiResponse.apiResponseContent.promoCategories != null
+                                && browsePromoCategoryApiResponseContentApiResponse.apiResponseContent.promoCategories.size() > 0) {
+                            mPromoCategoryList = browsePromoCategoryApiResponseContentApiResponse.apiResponseContent.promoCategories;
+                            mPromoCategoryList = filterPromoCategories();
+                            if (mPromoCategoryList.size() > 0) {
+                                renderPromoCategories();
+                            } else {
+                                // TODO : Improve error handling
+                                showErrorMsg(getResources().getString(R.string.no_promo_cat));
+                            }
+                        } else {
                             showErrorMsg(getResources().getString(R.string.no_promo_cat));
                         }
-                    } else {
+                        break;
+                    case ExceptionUtil.PROMO_CATEGORY_NOT_EXIST:
                         showErrorMsg(getResources().getString(R.string.no_promo_cat));
-                    }
-                    break;
-                case ExceptionUtil.PROMO_CATEGORY_NOT_EXIST:
-                    showErrorMsg(getResources().getString(R.string.no_promo_cat));
-                    break;
+                        break;
+                }
             }
-        } else {
-            super.onAsyncTaskComplete(httpOperationResult);
-        }
+
+            @Override
+            public void failure(RetrofitError error) {
+                hideProgressView();
+            }
+        });
     }
 
     private ArrayList<PromoCategory> filterPromoCategories() {

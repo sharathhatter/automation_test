@@ -210,11 +210,6 @@ public class Constants {
     public static final String TOP_CAT_SLUG = "top_category_slug";
     public static final String TOP_MENU = "Top Menu";
 
-    public static final String BROWSE_PROMO_CAT = "browse-promo-cat/";
-    public static final String GET_PROMO_DETAIL = "get-promo-detail/";
-    public static final String GET_PROMO_SET_PRODUCTS = "get-promo-set-products/";
-    public static final String ADD_PROMO_BUNDLE = "add-promo-bundle/";
-    public static final String GET_PROMO_SUMMARY = "get-promo-summary/";
     public static final String PROMO_SET_PRODUCTS = "promo_set_products";
     public static final String TOTAL_QTY = "total_q";
     public static final String PROMO_APPLIED_TYPE = "p_applied_type";
@@ -232,7 +227,6 @@ public class Constants {
     public static final String ITEMS = "items";
     public static final String CART_INC = "c-incr-i/";
     public static final String CART_DEC = "c-decr-i/";
-    public static final String CART_EMPTY = "c-empty/";
     public static final String PRODUCT_DETAILS = "product_details";
     public static final String GET_INVOICE = "get-invoice/";
     public static final String ORDER_ID = "order_id";
@@ -511,7 +505,6 @@ public class Constants {
 
     public static final String ORDER_NUMBER = "order_number";
     public static final String ORDERS = "orders";
-    public static final String PRODUCT_LIST_URL = "product-list";
     public static final String HAS_EXPRESS = "has_express_shops";
     public static final int UPDATE_MANDATORY = 2;
     public static final int UPDATE_OPTIONAL = 1;
@@ -636,7 +629,6 @@ public class Constants {
     public static final String GET_ORDERS = "get-orders/";
     public static final String NC = "nc";
     public static final String ALL_OFFERS = "all-offers";
-    public static final String BROWSE_CATEGORY = "browse-category/";
     public static final String CATEGORIES_URL = "categories_url";
     public static final String SUGGESTED_TERM = "suggest_term";
     public static final String TOP_SEARCHES = "top_search";
@@ -649,7 +641,6 @@ public class Constants {
     public static final String DESTINATIONS_INFO = "destinations_info";
     public static final String DESTINATION_TYPE = "dest_type";
     public static final String DESTINATION_SLUG = "dest_slug";
-    public static final String GET_HOME_PG_URL = "get-home-page/";
 
     //checkOutQC
     public static final String FINAL_QTY = "final_quantity";

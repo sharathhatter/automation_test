@@ -20,11 +20,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.PromoDetailApiResponseContent;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.common.ProductViewHolder;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.handler.ProductDetailOnClickListener;
-import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.model.promo.Promo;
@@ -32,20 +35,19 @@ import com.bigbasket.mobileapp.model.promo.PromoCategory;
 import com.bigbasket.mobileapp.model.promo.PromoDetail;
 import com.bigbasket.mobileapp.model.promo.PromoSet;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.ExceptionUtil;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.ParserUtil;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv2.ProductView;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
 public class PromoDetailFragment extends BaseFragment {
@@ -87,39 +89,36 @@ public class PromoDetailFragment extends BaseFragment {
 
     private void getPromoDetail(int promoId) {
         if (promoId > -1) {
-            HashMap<String, String> promoDetailRequestParamMap = new HashMap<>();
-            promoDetailRequestParamMap.put(Constants.PROMO_ID, String.valueOf(promoId));
-            startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.GET_PROMO_DETAIL,
-                    promoDetailRequestParamMap, false, true, null);
-        }
-    }
+            BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+            showProgressView();
+            bigBasketApiService.getPromoDetail(String.valueOf(promoId), new Callback<ApiResponse<PromoDetailApiResponseContent>>() {
+                @Override
+                public void success(ApiResponse<PromoDetailApiResponseContent> promoDetailApiResponseContentApiResponse, Response response) {
+                    hideProgressView();
+                    int status = promoDetailApiResponseContentApiResponse.status;
+                    if (status == ExceptionUtil.PROMO_NOT_EXIST || status == ExceptionUtil.PROMO_NOT_ACTIVE
+                            || status == ExceptionUtil.INVALID_INPUT) {
+                        // TODO : Improve error handling
+                        showErrorMsg(promoDetailApiResponseContentApiResponse.message);
+                    } else if (status == 0) {
+                        mPromoDetail = promoDetailApiResponseContentApiResponse.apiResponseContent.promoDetail;
+                        if (mPromoDetail != null) {
+                            renderPromoDetail();
+                            setCartInfo(promoDetailApiResponseContentApiResponse.cartSummary);
+                            updateUIForCartInfo();
+                        } else {
+                            showErrorMsg("Server Error");
+                        }
+                    }
+                }
 
-    @Override
-    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-        String url = httpOperationResult.getUrl();
-        if (url.contains(Constants.GET_PROMO_DETAIL)) {
-            String responseString = httpOperationResult.getReponseString();
-            JsonObject jsonObject = new JsonParser().parse(responseString).getAsJsonObject();
-            int status = jsonObject.get(Constants.STATUS).getAsInt();
-            if (status == ExceptionUtil.PROMO_NOT_EXIST || status == ExceptionUtil.PROMO_NOT_ACTIVE
-                    || status == ExceptionUtil.INVALID_INPUT) {
-                String errMsg = jsonObject.get(Constants.MESSAGE).getAsString();
-                // TODO : Improve error handling
-                showErrorMsg(errMsg);
-            } else if (status == 0) {
-                mPromoDetail = ParserUtil.parsePromoDetail(jsonObject);
-                if (mPromoDetail != null) {
-                    renderPromoDetail();
-                    JsonObject cartSummaryJsonObj = jsonObject.get(Constants.CART_SUMMARY).getAsJsonObject();
-                    CartSummary cartSummary = ParserUtil.parseCartSummary(cartSummaryJsonObj);
-                    setCartInfo(cartSummary);
-                    updateUIForCartInfo();
-                } else {
+                @Override
+                public void failure(RetrofitError error) {
+                    hideProgressView();
+                    // TODO : Improve error handling
                     showErrorMsg("Server Error");
                 }
-            }
-        } else {
-            super.onAsyncTaskComplete(httpOperationResult);
+            });
         }
     }
 

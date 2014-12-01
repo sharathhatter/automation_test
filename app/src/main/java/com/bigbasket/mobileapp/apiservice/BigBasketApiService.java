@@ -3,8 +3,12 @@ package com.bigbasket.mobileapp.apiservice;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.BaseApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.BrowseCategoryApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.BrowsePromoCategoryApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.CartGetApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.HomePageApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.PromoDetailApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.PromoSetProductsApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.PromoSummaryApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.product.ProductListData;
@@ -48,4 +52,20 @@ public interface BigBasketApiService {
 
     @GET("/product-list/")
     void productListUrl(@QueryMap Map<String, String> productQueryMap, Callback<ApiResponse<ProductListData>> productListApiCallback);
+
+    @GET("/browse-promo-cat/")
+    void browsePromoCategory(Callback<ApiResponse<BrowsePromoCategoryApiResponseContent>> browsePromoCategoryApiResponseCallback);
+
+    @GET("/get-promo-detail")
+    void getPromoDetail(@Query(Constants.PROMO_ID) String promoId, Callback<ApiResponse<PromoDetailApiResponseContent>> promoDetailApiResponseCallback);
+
+    @GET("/get-promo-set-products")
+    void getPromoSetProducts(@Query(Constants.PROMO_ID) String promoId, @Query(Constants.SET_ID) String setId,
+                             Callback<ApiResponse<PromoSetProductsApiResponseContent>> promoSetProductsApiResponseCallback);
+
+    @GET("/get-promo-summary/")
+    void getPromoSummary(@Query(Constants.PROMO_ID) String promoId, Callback<ApiResponse<PromoSummaryApiResponseContent>> promoSummaryApiResponseCallback);
+
+    @POST("/add-promo-bundle/")
+    void addPromoBundle(@Field(Constants.PROMO_ID) String promoId, Callback<BaseApiResponse> addPromoBundleApiResponseCallback);
 }

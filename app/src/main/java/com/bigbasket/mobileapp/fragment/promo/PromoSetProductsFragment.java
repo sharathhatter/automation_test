@@ -3,7 +3,6 @@ package com.bigbasket.mobileapp.fragment.promo;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.TextUtils;
@@ -20,30 +19,33 @@ import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.product.ProductListRecyclerAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.BaseApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.PromoSetProductsApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.PromoSummaryApiResponseContent;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
-import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.model.promo.Promo;
 import com.bigbasket.mobileapp.model.promo.PromoDetail;
 import com.bigbasket.mobileapp.model.promo.PromoMessage;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.ExceptionUtil;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.ParserUtil;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
 public class PromoSetProductsFragment extends ProductListAwareFragment implements CartInfoAware, BasketOperationAware {
@@ -105,11 +107,27 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
         if (products != null) {
             displayProductList(products, baseImgUrl);
         } else {
-            HashMap<String, String> promoSetProductRequestMap = new HashMap<>();
-            promoSetProductRequestMap.put(Constants.PROMO_ID, String.valueOf(promoId));
-            promoSetProductRequestMap.put(Constants.SET_ID, String.valueOf(setId));
-            startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.GET_PROMO_SET_PRODUCTS,
-                    promoSetProductRequestMap, false, false, null);
+            BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+            showProgressDialog(getString(R.string.please_wait));
+            bigBasketApiService.getPromoSetProducts(String.valueOf(promoId), String.valueOf(setId), new Callback<ApiResponse<PromoSetProductsApiResponseContent>>() {
+                @Override
+                public void success(ApiResponse<PromoSetProductsApiResponseContent> promoSetProductsApiResponseContent, Response response) {
+                    hideProgressDialog();
+                    int status = promoSetProductsApiResponseContent.status;
+                    if (status == ExceptionUtil.PROMO_NOT_EXIST || status == ExceptionUtil.PROMO_NOT_ACTIVE
+                            || status == ExceptionUtil.INVALID_FIELD || status == ExceptionUtil.PROMO_SET_NOT_EXIST) {
+                        showErrorMsg(promoSetProductsApiResponseContent.message);
+                    } else if (status == 0) {
+                        displayProductList(promoSetProductsApiResponseContent.apiResponseContent.promoSetProducts,
+                                promoSetProductsApiResponseContent.apiResponseContent.baseImgUrl);
+                    }
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                    hideProgressDialog();
+                }
+            });
         }
 
         if (promoType.equalsIgnoreCase(Promo.PromoType.FIXED_COMBO) ||
@@ -139,77 +157,67 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
     }
 
     private void addBundle() {
-        String url = MobileApiUrl.getBaseAPIUrl() + Constants.ADD_PROMO_BUNDLE;
-        HashMap<String, String> requestParamMap = new HashMap<>();
-        requestParamMap.put(Constants.PROMO_ID, String.valueOf(promoId));
-        startAsyncActivity(url, requestParamMap, true, false, null);
-    }
-
-    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-        super.onAsyncTaskComplete(httpOperationResult);
-        String responseString = httpOperationResult.getReponseString();
-        JsonObject jsonObject = new JsonParser().parse(responseString).getAsJsonObject();
-        int status = jsonObject.get(Constants.STATUS).getAsInt();
-        // TODO : Improved error handling
-        if (httpOperationResult.getUrl().contains(Constants.ADD_PROMO_BUNDLE)) {
-            if (status == ExceptionUtil.PROMO_NOT_EXIST || status == ExceptionUtil.PROMO_NOT_ACTIVE
-                    || status == ExceptionUtil.INVALID_FIELD || status == ExceptionUtil.INVALID_PROMO) {
-                String errMsg = jsonObject.get(Constants.MESSAGE).getAsString();
-                showErrorMsg(errMsg);
-            } else if (status == 0) {
-                // Operation Successfull, now do a get-promo-summary API call
-                JsonObject cartSummaryJsonObj = jsonObject.get(Constants.CART_SUMMARY).getAsJsonObject();
-                CartSummary cartSummary = ParserUtil.parseCartSummary(cartSummaryJsonObj);
-                setCartInfo(cartSummary);
-                updateUIForCartInfo();
-                getPromoSummary();
-            } else {
-                showErrorMsg("Server Error");
-            }
-        } else if (httpOperationResult.getUrl().contains(Constants.GET_PROMO_SUMMARY)) {
-            if (status == ExceptionUtil.PROMO_NOT_EXIST || status == ExceptionUtil.PROMO_NOT_ACTIVE
-                    || status == ExceptionUtil.INVALID_FIELD) {
-                String errMsg = jsonObject.get(Constants.MESSAGE).getAsString();
-                showErrorMsg(errMsg);
-            } else if (status == 0) {
-                // Operation Successful, now do a get-promo-summary API call
-                JsonObject responseJsonObj = jsonObject.get(Constants.RESPONSE).getAsJsonObject();
-                double promoSaving = responseJsonObj.get(Constants.SAVING).getAsDouble();
-                int numCompletedInBasket = responseJsonObj.get(Constants.NUM_IN_BASKET).getAsInt();
-                Gson gson = new Gson();
-                PromoMessage promoMessage = gson.fromJson(responseJsonObj.get(Constants.INFO_MESSAGE),
-                        PromoMessage.class);
-                if (promoType.equalsIgnoreCase(Promo.PromoType.FIXED_FREE_COMBO) ||
-                        promoType.equalsIgnoreCase(Promo.PromoType.FIXED_COMBO)) {
-                    Toast aToastForSuccess = Toast.makeText(getActivity(), "Added bundle successfully", Toast.LENGTH_SHORT);
-                    aToastForSuccess.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
-                    aToastForSuccess.show();
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+        showProgressDialog(getString(R.string.please_wait));
+        bigBasketApiService.addPromoBundle(String.valueOf(promoId), new Callback<BaseApiResponse>() {
+            @Override
+            public void success(BaseApiResponse addBundleApiResponse, Response response) {
+                hideProgressDialog();
+                int status = addBundleApiResponse.status;
+                if (status == ExceptionUtil.PROMO_NOT_EXIST || status == ExceptionUtil.PROMO_NOT_ACTIVE
+                        || status == ExceptionUtil.INVALID_FIELD || status == ExceptionUtil.INVALID_PROMO) {
+                    showErrorMsg(addBundleApiResponse.message);
+                } else if (status == 0) {
+                    // Operation Successful, now do a get-promo-summary API call
+                    setCartInfo(addBundleApiResponse.cartSummary);
+                    updateUIForCartInfo();
+                    getPromoSummary();
+                } else {
+                    showErrorMsg("Server Error");
                 }
-                displayPromoSummary(promoMessage.getPromoMessage(), promoMessage.getCriteriaMessages(),
-                        promoSaving, numCompletedInBasket);
-            } else {
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                hideProgressDialog();
                 showErrorMsg("Server Error");
             }
-        } else if (httpOperationResult.getUrl().contains(Constants.GET_PROMO_SET_PRODUCTS)) {
-            if (status == ExceptionUtil.PROMO_NOT_EXIST || status == ExceptionUtil.PROMO_NOT_ACTIVE
-                    || status == ExceptionUtil.INVALID_FIELD || status == ExceptionUtil.PROMO_SET_NOT_EXIST) {
-                String errMsg = jsonObject.get(Constants.MESSAGE).getAsString();
-                showErrorMsg(errMsg);
-            } else if (status == 0) {
-                JsonObject responseJsonObj = jsonObject.get(Constants.RESPONSE).getAsJsonObject();
-                String baseImgUrl = responseJsonObj.get(Constants.BASE_IMG_URL).getAsString();
-                String productsJson = responseJsonObj.get(Constants.PROMO_SET_PRODUCTS).toString();
-                ArrayList<Product> products = ParserUtil.parseProductList(productsJson);
-                displayProductList(products, baseImgUrl);
-            }
-        }
+        });
     }
 
     private void getPromoSummary() {
-        String url = MobileApiUrl.getBaseAPIUrl() + Constants.GET_PROMO_SUMMARY;
-        HashMap<String, String> requestParamMap = new HashMap<>();
-        requestParamMap.put(Constants.PROMO_ID, String.valueOf(promoId));
-        startAsyncActivity(url, requestParamMap, false, false, null);
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+        showProgressDialog(getString(R.string.please_wait));
+        bigBasketApiService.getPromoSummary(String.valueOf(promoId), new Callback<ApiResponse<PromoSummaryApiResponseContent>>() {
+            @Override
+            public void success(ApiResponse<PromoSummaryApiResponseContent> promoSummaryApiResponseContent, Response response) {
+                hideProgressDialog();
+                int status = promoSummaryApiResponseContent.status;
+                if (status == ExceptionUtil.PROMO_NOT_EXIST || status == ExceptionUtil.PROMO_NOT_ACTIVE
+                        || status == ExceptionUtil.INVALID_FIELD) {
+                    showErrorMsg(promoSummaryApiResponseContent.message);
+                } else if (status == 0) {
+                    PromoMessage promoMessage = promoSummaryApiResponseContent.apiResponseContent.promoMessage;
+                    if (promoType.equalsIgnoreCase(Promo.PromoType.FIXED_FREE_COMBO) ||
+                            promoType.equalsIgnoreCase(Promo.PromoType.FIXED_COMBO)) {
+                        Toast aToastForSuccess = Toast.makeText(getActivity(), "Added bundle successfully", Toast.LENGTH_SHORT);
+                        aToastForSuccess.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
+                        aToastForSuccess.show();
+                    }
+                    displayPromoSummary(promoMessage.getPromoMessage(), promoMessage.getCriteriaMessages(),
+                            promoSummaryApiResponseContent.apiResponseContent.saving,
+                            promoSummaryApiResponseContent.apiResponseContent.numInBasket);
+                } else {
+                    showErrorMsg("Server Error");
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                hideProgressDialog();
+                showErrorMsg("Server Error");
+            }
+        });
     }
 
     private void displayPromoSummary(String promoInfoMsg, ArrayList<String> criteriaMsgs,
@@ -308,7 +316,6 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
         try {
             hideProgressDialog();
         } catch (IllegalArgumentException e) {
-            return;
         }
     }
 
