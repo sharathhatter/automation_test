@@ -42,7 +42,6 @@
         <meta-data
             android:name="android.app.default_searchable"
             android:value=".activity.product.ProductListActivity" />
-
         <activity
             android:name="com.bigbasket.mobileapp.activity.StartActivity"
             android:configChanges="orientation|screenSize"
@@ -230,6 +229,17 @@
             android:configChanges="orientation|screenSize" />
         <activity
             android:name="com.bigbasket.mobileapp.activity.order.uiv3.AgeValidationActivity"
+            android:windowSoftInputMode="stateHidden|adjustPan"
+            android:configChanges="orientation|screenSize" />
+
+
+        <activity
+            android:name="com.bigbasket.mobileapp.activity.order.uiv3.PrescriptionListActivity"
+            android:windowSoftInputMode="stateHidden|adjustPan"
+            android:configChanges="orientation|screenSize" />
+
+        <activity
+            android:name="com.bigbasket.mobileapp.activity.order.uiv3.UploadNewPrescriptionActivity"
             android:windowSoftInputMode="stateHidden|adjustPan"
             android:configChanges="orientation|screenSize" />
 

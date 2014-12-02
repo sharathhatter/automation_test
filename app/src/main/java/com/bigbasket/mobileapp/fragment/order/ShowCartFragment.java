@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.fragment.order;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -25,6 +26,7 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.bigbasket.mobileapp.activity.order.uiv3.UploadNewPrescriptionActivity;
 import com.bigbasket.mobileapp.adapter.order.ActiveOrderRowAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
@@ -159,14 +161,16 @@ public class ShowCartFragment extends BaseFragment {
         btnFooterCheckout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (cartInfo != null && cartInfo.getNoOfItems() > 0) {
-                    if (AuthParameters.getInstance(getActivity()).isAuthTokenEmpty()) {
-                        showAlertDialog(getActivity(), "Login", getString(R.string.login_to_place_order),
-                                DialogButton.OK, DialogButton.NO, Constants.LOGIN_REQUIRED, null, "Login");
-                    } else {
-                        new COMarketPlaceCheckTask<>(getCurrentActivity()).execute();
-                    }
-                }
+                Intent intent = new Intent(getCurrentActivity(), UploadNewPrescriptionActivity.class);
+                startActivity(intent);
+//                if (cartInfo != null && cartInfo.getNoOfItems() > 0) {
+//                    if (AuthParameters.getInstance(getActivity()).isAuthTokenEmpty()) {
+//                        showAlertDialog(getActivity(), "Login", getString(R.string.login_to_place_order),
+//                                DialogButton.OK, DialogButton.NO, Constants.LOGIN_REQUIRED, null, "Login");
+//                    } else {
+//                        new COMarketPlaceCheckTask<>(getCurrentActivity()).execute();
+//                    }
+//                }
             }
         });
         ActiveOrderRowAdapter activeOrderRowAdapter = new ActiveOrderRowAdapter(cartItemHeaderList, ((BaseActivity) getActivity()),

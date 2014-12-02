@@ -454,6 +454,7 @@ public class Constants {
     public static final String PRESCRIPTION_IMAGE = "prescription_image";
     public static final String REMOVE_ALL_MARKETPLACE_FROM_BASKET = "FromMarketPlaceAgeValidation";
     public static final String MARKET_PLACE_INTENT = "marketPlaceIntent";
+    public static final String PRESCRIPTION_INTENT_DATA = "prescriptionIntentData";
     public static final String UPLOAD_PRESCRIPTION = "upload-prescription/";
     public static final String CO_RESERVE_QTY = "co-reserve-quantity/";
     public static final String QC_LEN = "qc_len";
@@ -655,4 +656,8 @@ public class Constants {
     public static final String SOCIAL_LOGIN_PARAMS = "social_login_params";
     public static final String SOCIAL_ACCOUNT_TYPE = "social_account_type";
     public static final String SOCIAL_LOGOUT = "social_logout";
+
+    //Agevalidation
+    public static final String CONTINUE_BTN_TAG = "btnContinueTag";
+    public static final String UPLOAD_PRESCRIPTION_BTN_TAG = "btnUploadPrescriptionTag";
 }

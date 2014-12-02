@@ -14,7 +14,7 @@
     <string name="search">Search</string>
     <string name="searchHint">Search Products</string>
     <string name="pharma_msg">Please choose/upload pharma prescription or remove pharma products</string>
-    <string name="age_validation_required">Age check validation is required</string>
+    <string name="age_validation_required">Age check validation is required.</string>
 
     <string name="checkinternet">Cannot proceed with the operation. No network connection.</string>
     <string name="clickToExit">Click yes to exit!</string>
@@ -263,6 +263,7 @@
     <string name="resendOtpMsg">Code has been resent</string>
     <string name="viewPrescriptionImage">View prescription image</string>
     <string name="viewPrescriptionImages">View Prescription images</string>
+    <string name="txtChoosePrescription">Choose prescription</string>
     <string name="selectPrescriptionLabel">Select this prescription</string>
     <string name="imageUploadFailed">Unable to upload Prescription, please try again later</string>
     <string name="uploadServiceForPrescriptionImage">Prescription Image Upload Service</string>

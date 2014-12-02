@@ -220,8 +220,7 @@ public class UpdateProfileFragment extends BaseFragment {
                     }
                     break;
             }
-        }
-        if (httpOperationResult.getUrl().contains(Constants.GET_AREA_INFO)) {
+        } else if (httpOperationResult.getUrl().contains(Constants.GET_AREA_INFO)) {
             int j = 0;
             AreaPinInfoAdapter areaPinInfoAdapter = new AreaPinInfoAdapter(getActivity());
             areaPinInfoAdapter.deleteTable();
