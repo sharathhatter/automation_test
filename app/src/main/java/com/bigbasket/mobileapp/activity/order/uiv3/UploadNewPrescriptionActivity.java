@@ -38,7 +38,7 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
     private static final String TAG = UploadNewPrescriptionActivity.class.getName();
     private ArrayList<Object> uploadImageList = new ArrayList<>();
     private EditText editTextPatientName, editTextDoctorName, editTextPrescriptionName;
-    private TextView txtViewImages;
+    //private TextView txtViewImages;
     private View base;
     private ArrayList<byte[]> arrayListByteArray = new ArrayList<>();
     private String[] all_path;
@@ -65,7 +65,7 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         base = inflater.inflate(R.layout.uiv3_upload_new_prescription_layout, null);
-        txtViewImages = (TextView) findViewById(R.id.txtViewImages);
+        //txtViewImages = (TextView) findViewById(R.id.txtViewImages);
         linearLayout.addView(base);
     }
 
@@ -77,7 +77,7 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
 
     public void onSelectImagesFromGallery(View view) {
         uploadImageList.clear();
-        txtViewImages.setVisibility(View.GONE);
+        //txtViewImages.setVisibility(View.GONE);
         launchImageSelectActivity();
     }
 
@@ -204,11 +204,11 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
         if (sourceName != null) {
             if(sourceName.equals(Constants.MORE_IMAGES)){
                 uploadImageList.clear();
-                txtViewImages.setVisibility(View.GONE);
+                //txtViewImages.setVisibility(View.GONE);
                 return;
             }else if(sourceName.equals(Constants.LARGE_SIZE_IMAGE)){
                 uploadImageList.clear();
-                txtViewImages.setVisibility(View.GONE);
+                //txtViewImages.setVisibility(View.GONE);
                 return;
             }
         }
@@ -285,10 +285,10 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
             }
             arrayListByteArray.add(imageByte);
         }
-        if(all_path.length>1)
-            txtViewImages.setText(getResources().getString(R.string.viewPrescriptionImages));
-        if(notBreak)
-            txtViewImages.setVisibility(View.VISIBLE);
+//        if(all_path.length>1)
+//            txtViewImages.setText(getResources().getString(R.string.viewPrescriptionImages));
+//        if(notBreak)
+//            txtViewImages.setVisibility(View.VISIBLE);
     }
 
     private byte[] sampleImage(String filePath){
