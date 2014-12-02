@@ -244,7 +244,8 @@ public class ShowCartFragment extends BaseFragment {
 
 
     public final void setBasketNumItemsDisplay() {
-        SharedPreferences.Editor editor = getActivity().getSharedPreferences("myCustomSharedPrefs", Activity.MODE_PRIVATE).edit();
+        if (getActivity() == null) return;
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
         editor.putString(Constants.GET_CART, String.valueOf(cartInfo.getNoOfItems()));
         editor.commit();
         //cartCountTextView.setText("" + cartInfo.getNoOfItems());
@@ -254,7 +255,6 @@ public class ShowCartFragment extends BaseFragment {
             //cartCountTextView.setVisibility(View.VISIBLE);
         }
     }
-
 
     private void emptyCart() {
         if (getActivity() == null) return;

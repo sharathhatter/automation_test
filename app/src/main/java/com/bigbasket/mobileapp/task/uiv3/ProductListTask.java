@@ -4,6 +4,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
@@ -12,7 +13,6 @@ import com.bigbasket.mobileapp.model.product.FilterOptionItem;
 import com.bigbasket.mobileapp.model.product.FilteredOn;
 import com.bigbasket.mobileapp.model.product.ProductListData;
 import com.bigbasket.mobileapp.model.product.ProductQuery;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.util.MessageCode;
 
 import java.util.ArrayList;
@@ -22,10 +22,8 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class ProductListTask<T> {
-    private static final String TAG = ProductListTask.class.getName();
 
     private int page;
-    private HttpOperationResult httpOperationResult;
     private T ctx;
 
     public ProductListTask(T ctx) {
@@ -51,6 +49,7 @@ public class ProductListTask<T> {
         bigBasketApiService.productListUrl(productQuery.getAsQueryMap(), new Callback<ApiResponse<ProductListData>>() {
             @Override
             public void success(ApiResponse<ProductListData> productListDataApiResponse, Response response) {
+                if (((CancelableAware) ctx).isSuspended()) return;
                 if (page == 1) {
                     try {
                         ((ProgressIndicationAware) ctx).hideProgressView();
@@ -93,6 +92,7 @@ public class ProductListTask<T> {
 
             @Override
             public void failure(RetrofitError error) {
+                if (((CancelableAware) ctx).isSuspended()) return;
                 if (page == 1) {
                     try {
                         ((ProgressIndicationAware) ctx).hideProgressView();

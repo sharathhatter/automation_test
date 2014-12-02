@@ -5,6 +5,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.BaseApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.BrowseCategoryApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.BrowsePromoCategoryApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.CartGetApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.CartOperationApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListDetailsApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListSummaryApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListsApiResponse;
@@ -100,4 +101,19 @@ public interface BigBasketApiService {
     @POST("/sl-get-list-details/")
     void getShoppingListDetails(@Field(Constants.SLUG) String shoppingListSlug, @Field(Constants.TOP_CAT_SLUG) String topCategorySlug,
                                 Callback<ApiResponse<GetShoppingListDetailsApiResponse>> getShoppingListDetailsApiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/c-incr-i/")
+    void incrementCartItem(@Field(Constants.PROD_ID) String productId, @Field(Constants.QTY) String qty,
+                           Callback<CartOperationApiResponse> cartOperationApiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/c-decr-i/")
+    void decrementCartItem(@Field(Constants.PROD_ID) String productId, @Field(Constants.QTY) String qty,
+                           Callback<CartOperationApiResponse> cartOperationApiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/c-set-i/")
+    void setCartItem(@Field(Constants.PROD_ID) String productId, @Field(Constants.QTY) String qty,
+                     Callback<CartOperationApiResponse> cartOperationApiResponseCallback);
 }

@@ -403,9 +403,9 @@ public final class ProductView {
                     public void onClick(View view) {
                         if (DataUtil.isInternetAvailable(context) && !TextUtils.isEmpty(editTextQty.getText())) {
                             BasketOperationTask<T> basketOperationTask = new BasketOperationTask<>(basketOperationAware,
-                                    MobileApiUrl.getBaseAPIUrl() + Constants.CART_INC, BasketOperation.ADD, product,
+                                    BasketOperation.INC, product,
                                     txtInBasket, imgDecBasketQty, imgIncBasketQty, btnAddToBasket, editTextQty);
-                            basketOperationTask.execute();
+                            basketOperationTask.startTask();
 
                         } else {
                             productViewDisplayDataHolder.getHandler().sendEmptyMessage(MessageCode.INTERNET_ERROR);
@@ -418,9 +418,9 @@ public final class ProductView {
                     public void onClick(View view) {
                         if (DataUtil.isInternetAvailable(context) && !TextUtils.isEmpty(editTextQty.getText())) {
                             BasketOperationTask<T> myTask = new BasketOperationTask<>(basketOperationAware,
-                                    MobileApiUrl.getBaseAPIUrl() + Constants.CART_DEC, BasketOperation.DELETE,
+                                    BasketOperation.DEC,
                                     product, txtInBasket, imgDecBasketQty, imgIncBasketQty, btnAddToBasket, editTextQty);
-                            myTask.execute();
+                            myTask.startTask();
                         } else {
                             productViewDisplayDataHolder.getHandler().sendEmptyMessage(MessageCode.INTERNET_ERROR);
                         }
@@ -438,9 +438,9 @@ public final class ProductView {
                             }
                             String qty = editTextQty.getText() != null ? editTextQty.getText().toString() : "1";
                             BasketOperationTask<T> basketOperationTask = new BasketOperationTask<>(basketOperationAware,
-                                    MobileApiUrl.getBaseAPIUrl() + Constants.CART_INC, BasketOperation.ADD, product,
+                                    BasketOperation.INC, product,
                                     txtInBasket, imgDecBasketQty, imgIncBasketQty, btnAddToBasket, editTextQty, qty);
-                            basketOperationTask.execute();
+                            basketOperationTask.startTask();
                         } else {
                             productViewDisplayDataHolder.getHandler().sendEmptyMessage(MessageCode.INTERNET_ERROR);
                         }
