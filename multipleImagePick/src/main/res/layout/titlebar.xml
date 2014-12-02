@@ -2,7 +2,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/top_bar" >
+    android:background="@color/medium_dark_green"
+    android:padding="10dp">
 
     <TextView
         android:id="@+id/tvTitleText"
@@ -11,6 +12,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
-        android:text="@string/app_name" />
+        android:text="Select Image(s)" />
 
 </FrameLayout>
