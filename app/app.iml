@@ -102,6 +102,7 @@
     <orderEntry type="module" module-name="androidHorizontalListView" exported="" />
     <orderEntry type="module" module-name="konotorActivity" exported="" />
     <orderEntry type="module" module-name="facebook" exported="" />
+    <orderEntry type="module" module-name="multipleImagePick" exported="" />
   </component>
 </module>
 
