@@ -5,7 +5,10 @@ import com.bigbasket.mobileapp.apiservice.models.response.BaseApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.BrowseCategoryApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.BrowsePromoCategoryApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.CartGetApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListSummaryApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListsApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.HomePageApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PromoDetailApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PromoSetProductsApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PromoSummaryApiResponseContent;
@@ -66,6 +69,33 @@ public interface BigBasketApiService {
     @GET("/get-promo-summary/")
     void getPromoSummary(@Query(Constants.PROMO_ID) String promoId, Callback<ApiResponse<PromoSummaryApiResponseContent>> promoSummaryApiResponseCallback);
 
+    @FormUrlEncoded
     @POST("/add-promo-bundle/")
     void addPromoBundle(@Field(Constants.PROMO_ID) String promoId, Callback<BaseApiResponse> addPromoBundleApiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/sl-get-lists/")
+    void getShoppingLists(@Field(Constants.SYSTEM) String isSystemListAlsoNeeded,
+                          Callback<GetShoppingListsApiResponse> getShoppingListsApiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/sl-edit-list/")
+    void editShoppingList(@Field(Constants.SLUG) String shoppingListSlug, @Field("name") String newName,
+                          Callback<OldBaseApiResponse> editShoppingListApiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/sl-delete-list/")
+    void deleteShoppingList(@Field(Constants.SLUG) String shoppingListSlug, Callback<OldBaseApiResponse> deleteShoppingListApiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/sl-create-list/")
+    void createShoppingList(@Field(Constants.SL_NAME) String shoppingListName, @Field(Constants.IS_PUBLIC) String isPublic,
+                            Callback<OldBaseApiResponse> createShoppingListApiResponseCallback);
+
+    @GET("/sl-get-list-summary/")
+    void getShoppingListSummary(@Query(Constants.SLUG) String shoppingListSlug, Callback<GetShoppingListSummaryApiResponse> getShoppingListSummaryApiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/sl-get-list-details/")
+    void getShoppingListDetails(@Field(Constants.SLUG) String shoppingListSlug, @Field(Constants.TOP_CAT_SLUG) String topCategorySlug);
 }
