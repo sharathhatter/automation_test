@@ -1,5 +1,4 @@
-apply plugin: 'com.android.application'
-
+apply plugin: 'com.android.library'
 android {
     compileSdkVersion 19
     buildToolsVersion "19.1.0"
@@ -23,6 +22,5 @@ android {
 }
 
 dependencies {
-    provided 'com.android.support:support-v4:19.+'
-    provided files('libs/universal-image-loader-1.9.0.jar')
+    provided 'com.nostra13.universalimageloader:universal-image-loader:1.9.3'
 }

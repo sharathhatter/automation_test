@@ -16,3 +16,4 @@ app/proguard\\seeds.txt
 app/proguard\\configuration.txt
 floatingActionButton/build/*
 *.iml
+import-summary.txt
