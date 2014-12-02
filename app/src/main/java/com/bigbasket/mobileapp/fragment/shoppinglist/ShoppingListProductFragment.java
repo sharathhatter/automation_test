@@ -2,7 +2,6 @@ package com.bigbasket.mobileapp.fragment.shoppinglist;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,30 +12,31 @@ import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.product.ProductListRecyclerAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListDetailsApiResponse;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.handler.MessageHandler;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
+import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListDetail;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
-import com.bigbasket.mobileapp.util.ParserUtil;
 import com.bigbasket.mobileapp.util.UIUtil;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.HashMap;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
 public class ShoppingListProductFragment extends ProductListAwareFragment {
 
     private ShoppingListName mShoppingListName;
-    private JSONArray mShoppingListItemsInfoJsonArray;
+    private ShoppingListDetail mShoppingListDetail;
     private String mBaseImgUrl;
 
     @Override
@@ -58,15 +58,11 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
     public void restoreProductList(Bundle savedInstanceState) {
         mShoppingListName = getArguments().getParcelable(Constants.SHOPPING_LIST_NAME);
         if (savedInstanceState != null) {
-            String shoppingListItemsJsonStr = savedInstanceState.getString(Constants.SHOPPING_LIST_ITEMS);
-            if (shoppingListItemsJsonStr != null) {
-                try {
-                    mShoppingListItemsInfoJsonArray = new JSONArray(shoppingListItemsJsonStr);
-                    mBaseImgUrl = savedInstanceState.getString(Constants.BASE_IMG_URL);
-                    renderShoppingListItems();
-                    return;
-                } catch (JSONException e) {
-                }
+            mShoppingListDetail = savedInstanceState.getParcelable(Constants.SHOPPING_LIST_ITEMS);
+            if (mShoppingListDetail != null) {
+                mBaseImgUrl = savedInstanceState.getString(Constants.BASE_IMG_URL);
+                renderShoppingListItems();
+                return;
             }
         }
         loadProducts();
@@ -86,41 +82,32 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
         Bundle bundle = getArguments();
         String topCatSlug = bundle.getString(Constants.TOP_CAT_SLUG);
 
-        HashMap<String, String> params = new HashMap<>();
-        params.put(Constants.SLUG, mShoppingListName.getSlug());
-        if (mShoppingListName.getSlug().equalsIgnoreCase(Constants.SMART_BASKET_SLUG)) {
-            setTitle("Smart Basket Products");
-        }
-        params.put(Constants.TOP_CAT_SLUG, topCatSlug);
-        String url = MobileApiUrl.getBaseAPIUrl() + Constants.SL_GET_LIST_DETAILS;
-        startAsyncActivity(url, params, true, true, null);
-    }
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+        showProgressView();
+        bigBasketApiService.getShoppingListDetails(mShoppingListName.getSlug(), topCatSlug,
+                new Callback<ApiResponse<GetShoppingListDetailsApiResponse>>() {
+                    @Override
+                    public void success(ApiResponse<GetShoppingListDetailsApiResponse> getShoppingListDetailsApiResponse, Response response) {
+                        hideProgressView();
+                        switch (getShoppingListDetailsApiResponse.status) {
+                            case 0:
+                                mBaseImgUrl = getShoppingListDetailsApiResponse.apiResponseContent.baseImgUrl;
+                                mShoppingListDetail = getShoppingListDetailsApiResponse.apiResponseContent.shoppingListDetail;
+                                renderShoppingListItems();
+                                break;
+                            default:
+                                // TODO : Improved json handling
+                                showErrorMsg("Server Error");
+                                break;
+                        }
+                    }
 
-    @Override
-    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-        try {
-            String url = httpOperationResult.getUrl();
-            if (url.contains(Constants.SL_GET_LIST_DETAILS)) {
-                JSONObject httpResponseJsonObj = new JSONObject(httpOperationResult.getReponseString());
-                int status = httpResponseJsonObj.getInt(Constants.STATUS);
-                switch (status) {
-                    case 0:
-                        JSONObject responseJsonObj = httpResponseJsonObj.getJSONObject(Constants.RESPONSE);
-                        mBaseImgUrl = responseJsonObj.getString(Constants.BASE_IMG_URL);
-                        mShoppingListItemsInfoJsonArray = responseJsonObj.getJSONArray(Constants.SHOPPING_LIST_ITEMS);
-                        renderShoppingListItems();
-                        break;
-                    default:
+                    @Override
+                    public void failure(RetrofitError error) {
+                        hideProgressView();
                         showErrorMsg("Server Error");
-                        break;
-                }
-            } else {
-                super.onAsyncTaskComplete(httpOperationResult);
-            }
-        } catch (JSONException e) {
-            // TODO : Improved json handling
-            showErrorMsg("Server Error");
-        }
+                    }
+                });
     }
 
     private void renderShoppingListItems() {
@@ -128,40 +115,35 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
         LinearLayout contentView = getContentView();
         if (contentView == null) return;
         contentView.removeAllViews();
-        try {
-            LayoutInflater inflater = getActivity().getLayoutInflater();
-            for (int i = 0; i < mShoppingListItemsInfoJsonArray.length(); i++) {
-                JSONObject jsonObject = mShoppingListItemsInfoJsonArray.getJSONObject(i);
-                JSONArray productJsonArray = jsonObject.getJSONArray(Constants.ITEMS);
-                String topname = jsonObject.getString(Constants.TOP_CATEGORY_NAME);
-                View shopListHeaderLayout = inflater.inflate(R.layout.my_shopping_list_listheader, null);
-                TextView brandNameTxt = (TextView) shopListHeaderLayout.findViewById(R.id.brandNameTxt);
-                brandNameTxt.setTypeface(faceRobotoRegular);
-                topname = topname.replaceAll("<br/>", " ");
-                brandNameTxt.setText(UIUtil.abbreviate(topname, 25));
-                ArrayList<Product> productList = ParserUtil.parseProductJsonArray(productJsonArray, mBaseImgUrl);
-                Button btnAddAllToBasket = (Button) shopListHeaderLayout.findViewById(R.id.btnAddAllToBasket);
-                if (Product.areAllProductsOutOfStock(productList)) {
-                    btnAddAllToBasket.setVisibility(View.GONE);
-                } else {
-                    btnAddAllToBasket.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            if (checkInternetConnection()) {
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+
+        View shopListHeaderLayout = inflater.inflate(R.layout.my_shopping_list_listheader, null);
+        TextView brandNameTxt = (TextView) shopListHeaderLayout.findViewById(R.id.brandNameTxt);
+        String topname = mShoppingListDetail.getTopCategoryName();
+
+        topname = topname.replaceAll("<br/>", " ");
+        brandNameTxt.setText(UIUtil.abbreviate(topname, 25));
+        brandNameTxt.setTypeface(faceRobotoRegular);
+
+        ArrayList<Product> productList = mShoppingListDetail.getProducts();
+        Button btnAddAllToBasket = (Button) shopListHeaderLayout.findViewById(R.id.btnAddAllToBasket);
+        if (Product.areAllProductsOutOfStock(productList)) {
+            btnAddAllToBasket.setVisibility(View.GONE);
+        } else {
+            btnAddAllToBasket.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (checkInternetConnection()) {
 //                            showAlertDialog(getCurrentActivity(), null, "Are you sure you want to add all products to the basket?",
 //                                    "addall");
-                            } else {
-                                Toast.makeText(getActivity(), "No network connection", Toast.LENGTH_LONG).show();
-                            }
-                        }
-                    });
+                    } else {
+                        Toast.makeText(getActivity(), "No network connection", Toast.LENGTH_LONG).show();
+                    }
                 }
-                contentView.addView(shopListHeaderLayout);
-                renderProducts(productList);
-            }
-        } catch (JSONException e) {
-            Toast.makeText(getActivity(), "No products in this list", Toast.LENGTH_LONG).show();
+            });
         }
+        contentView.addView(shopListHeaderLayout);
+        renderProducts(productList);
     }
 
     private void renderProducts(ArrayList<Product> productList) {
@@ -182,8 +164,8 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
                 .setRupeeTypeface(faceRupee)
                 .build();
 
-        ProductListRecyclerAdapter productListAdapter = new ProductListRecyclerAdapter(productList, null,
-                getCurrentActivity(), productViewDisplayDataHolder, this, 1);
+        ProductListRecyclerAdapter productListAdapter = new ProductListRecyclerAdapter(productList, mBaseImgUrl,
+                getCurrentActivity(), productViewDisplayDataHolder, this, productList.size());
 
         productRecyclerView.setAdapter(productListAdapter);
         contentView.addView(productRecyclerView);
@@ -196,8 +178,8 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
 
     @Override
     public void parcelProductList(Bundle outState) {
-        if (mShoppingListItemsInfoJsonArray != null) {
-            outState.putString(Constants.SHOPPING_LIST_ITEMS, mShoppingListItemsInfoJsonArray.toString());
+        if (mShoppingListDetail != null) {
+            outState.putParcelable(Constants.SHOPPING_LIST_ITEMS, mShoppingListDetail);
             outState.putString(Constants.BASE_IMG_URL, mBaseImgUrl);
         }
     }
