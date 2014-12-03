@@ -508,16 +508,10 @@ public class Constants {
     public static final String HAS_EXPRESS = "has_express_shops";
     public static final int UPDATE_MANDATORY = 2;
     public static final int UPDATE_OPTIONAL = 1;
-    public static final String SL_GET_LISTS = "sl-get-lists/";
-    public static final String SL_EDIT_LIST = "sl-edit-list/";
-    public static final String SL_DELETE_LIST = "sl-delete-list/";
-    public static final String SL_LIST_SUMMARY = "sl-get-list-summary/";
     public static final String SHOPPING_LIST_SUMMARY = "shoplist_summary";
-    public static final String SL_GET_LIST_DETAILS = "sl-get-list-details/";
     public static final String SHOPPING_LIST_ITEMS = "shoplist_items";
     public static final String SMART_BASKET_ADD_ALL = "sb-cat-items-to-cart/";
     public static final String SL_ADD_ALL = "sl-cat-items-to-cart/";
-    public static final String SL_CREATE_LIST = "sl-create-list/";
     public static final String SL_NAME = "name";
     public static final String IS_PUBLIC = "is_public";
 
@@ -550,7 +544,6 @@ public class Constants {
     public static final String MOBILE_NUMBER = "mobile_number";
     public static final String CITY_ID = "city_id";
     public static final String REGISTER_MEMBER = "register-member/";
-    public static final String REGISTER_DEVICE = "register-device/";
     public static final String NEWSLETTER_SUBSCRIPTION = "newsletter_subscription";
     public static final String FIRST_NAME_PREF = "firstname";
     public static final String CO_POST_SLOTS_AND_PAYMENT = "co-post-slot-and-payment/";
@@ -648,11 +641,9 @@ public class Constants {
     //fb login and register
     public static final String FB_GENDER = "gender";
     public static final String FB_VERIFIED = "verified";
-    public static final String SOCIAL_LOGIN_URL = "social-login/";
-    public static final String SOCIAL_LINK_ACCOUNT_URL = "social-link-account/";
-    public static final String SOCIAL_REGISTER_MEMBER_URL = "social-register-member/";
     public static final String SOCIAL_LOGIN_TYPE = "social_login_type";
     public static final String SOCIAL_LOGIN_PARAMS = "social_login_params";
     public static final String SOCIAL_ACCOUNT_TYPE = "social_account_type";
     public static final String SOCIAL_LOGOUT = "social_logout";
+    public static final int SOCIAL_ACCOUNT_NOT_LINKED = 1835;
 }

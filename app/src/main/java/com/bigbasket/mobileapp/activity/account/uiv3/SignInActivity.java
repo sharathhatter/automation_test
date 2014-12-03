@@ -19,17 +19,16 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.account.base.SocialLoginConfirmActivity;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.model.account.SocialAccount;
-import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.facebook.Request;
 import com.facebook.Response;
@@ -40,13 +39,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.plus.model.people.Person;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
-import org.apache.http.impl.client.BasicCookieStore;
 import org.json.JSONException;
-
-import java.util.HashMap;
 
 public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
 
@@ -134,15 +128,23 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
                 initializeFacebookLogin(mFacebookLoginButton);
             } else if (isGplusLoggedIn) {
                 initializeGooglePlusSignIn();
+                showProgressDialog(getString(R.string.please_wait));
             }
             updateViewStateInLogoutMode();
             setTitle(getString(R.string.signOut));
-            showProgressDialog(getString(R.string.please_wait));
         } else {
             initializeRememberedDataForLoginInput();
             initializeGooglePlusSignIn();
             initializeFacebookLogin(mFacebookLoginButton);
         }
+
+        CheckBox chkShowPassword = (CheckBox) mBaseView.findViewById(R.id.chkShowPasswd);
+        chkShowPassword.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                togglePasswordView(mPasswordView, isChecked);
+            }
+        });
     }
 
     private void initializeRememberedDataForLoginInput() {
@@ -336,23 +338,22 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
     }
 
     private void startSocialLogin(String loginType) {
-        HashMap<String, String> params = new HashMap<>();
-        params.put(Constants.SOCIAL_LOGIN_TYPE, loginType);
-        Gson gson = new Gson();
-        params.put(Constants.SOCIAL_LOGIN_PARAMS, gson.toJson(mSocialAccount, SocialAccount.class));
-        HashMap<Object, String> loginTypeMap = new HashMap<>();
-        loginTypeMap.put(Constants.SOCIAL_LOGIN_TYPE, loginType);
         showProgress(true);
-        startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.SOCIAL_LOGIN_URL,
-                params, true, AuthParameters.getInstance(this), new BasicCookieStore(),
-                loginTypeMap, false);
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
+        Gson gson = new Gson();
+        bigBasketApiService.socialLogin(loginType, gson.toJson(mSocialAccount, SocialAccount.class),
+                new LoginApiResponseCallback(mEmailView.getText().toString().trim(),
+                        mPasswordView.getText().toString().trim(),
+                        mChkRememberMe.isChecked(), loginType, mSocialAccount));
     }
 
     @Override
     public void onFacebookSignIn(Session facebookSession) {
+        showProgress(true);
         Request facebookUserDetailRequest = Request.newMeRequest(facebookSession, new Request.GraphUserCallback() {
             @Override
             public void onCompleted(GraphUser user, Response response) {
+                showProgress(false);
                 if (user != null) {
                     String email = response.getGraphObject().getProperty(Constants.EMAIL).toString();
                     String firstName = user.getFirstName();
@@ -413,7 +414,13 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
     protected void onPlusClientRevokeAccess() {
         // TODO: Access to the user's G+ account has been revoked.  Per the developer terms, delete
         // any stored user data here.
-        revokeAccess();
+        showProgress(false);
+
+        Button signOutButton = (Button) mBaseView.findViewById(R.id.plus_sign_out_button);
+        signOutButton.setVisibility(View.GONE);
+
+        mPlusSignInButton.setVisibility(View.VISIBLE);
+        initializeGooglePlusSignIn();
     }
 
     @Override
@@ -437,63 +444,45 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
                 ConnectionResult.SUCCESS;
     }
 
-
     /**
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
     private void startLogin(String email, String password) {
-        HashMap<String, String> params = new HashMap<>();
-        params.put(Constants.EMAIL, email);
-        params.put(Constants.PASSWORD, password);
-        startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.LOGIN, params, true,
-                AuthParameters.getInstance(this), new BasicCookieStore(), null, true);
-    }
-
-    @Override
-    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-        if (httpOperationResult.getUrl().contains(Constants.SOCIAL_LOGIN_URL) ||
-                httpOperationResult.getUrl().contains(Constants.LOGIN)) {
-            showProgress(false);
-            JsonObject responseJsonObj = new JsonParser().parse(httpOperationResult.getReponseString()).getAsJsonObject();
-            String status = responseJsonObj.get(Constants.STATUS).getAsString();
-            switch (status) {
-                case Constants.OK:
-                    String loginType = httpOperationResult.getAdditionalCtx() != null ?
-                            httpOperationResult.getAdditionalCtx().get(Constants.SOCIAL_LOGIN_TYPE) : null;
-
-                    saveLoginUserDetailInPreference(responseJsonObj, loginType,
-                            mEmailView.getText().toString().trim(),
-                            mPasswordView.getText().toString().trim(), mChkRememberMe.isChecked());
-                    break;
-                case Constants.ERROR:
-                    //TODO : Replace with handler
-                    String errorType = responseJsonObj.get(Constants.ERROR_TYPE).getAsString();
-                    switch (errorType) {
-                        case Constants.INVALID_USER_PASS:
-                            showAlertDialog(this, null, getString(R.string.INVALID_USER_PASS));
-                            break;
-                        case Constants.NO_ACCOUNT:
-                            loginType = httpOperationResult.getAdditionalCtx().get(Constants.SOCIAL_LOGIN_TYPE);
-                            Intent intent = new Intent(this, SocialLoginConfirmActivity.class);
-                            intent.putExtra(Constants.SOCIAL_LOGIN_PARAMS, mSocialAccount);
-                            intent.putExtra(Constants.SOCIAL_LOGIN_TYPE, loginType);
-                            startActivityForResult(intent, Constants.GO_TO_HOME);
-                            break;
-                        default:
-                            showAlertDialog(this, null, getString(R.string.server_error));
-                            break;
-                    }
-                    break;
-            }
-        } else {
-            super.onAsyncTaskComplete(httpOperationResult);
-        }
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
+        bigBasketApiService.login(email, password,
+                new LoginApiResponseCallback(email, password, mChkRememberMe.isChecked()));
     }
 
     public void OnRegistrationLinkClicked(View v) {
         Intent intent = new Intent(this, SignupActivity.class);
         startActivityForResult(intent, Constants.GO_TO_HOME);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Constants.SOCIAL_ACCOUNT_NOT_LINKED && data != null) {
+            String loginType = data.getStringExtra(Constants.SOCIAL_LOGIN_TYPE);
+            if (!TextUtils.isEmpty(loginType)) {
+                switch (loginType) {
+                    case SocialAccount.GP:
+                        revokeGPlusAccess();
+                        break;
+                    case SocialAccount.FB:
+                        revokeFbAccess();
+                        initializeFacebookLogin(mFacebookLoginButton);
+                        break;
+                }
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
+    public void revokeGPlusAccess() {
+        showProgress(true);
+        super.revokeGPlusAccess();
     }
 }
 

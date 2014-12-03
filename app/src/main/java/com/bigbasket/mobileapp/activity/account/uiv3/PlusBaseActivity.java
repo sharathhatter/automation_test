@@ -40,6 +40,9 @@ public abstract class PlusBaseActivity extends BaseSignInSignupActivity
     // If this IS null, then the connect method is still running.
     private ConnectionResult mConnectionResult;
 
+    // A flag to track if connection is being established to revoke access
+    private boolean mRevokeAccess;
+
 
     /**
      * Called when the {@link PlusClient} revokes access to this app.
@@ -150,7 +153,7 @@ public abstract class PlusBaseActivity extends BaseSignInSignupActivity
     /**
      * Revoke Google+ authorization completely.
      */
-    public void revokeAccess() {
+    public void revokeGPlusAccess() {
         if (mGoogleApiClient == null) return;
 
         if (mGoogleApiClient.isConnected()) {
@@ -167,6 +170,9 @@ public abstract class PlusBaseActivity extends BaseSignInSignupActivity
                     onPlusClientRevokeAccess();
                 }
             });
+        } else {
+            mRevokeAccess = true;
+            initiatePlusClientConnect();
         }
 
     }
@@ -250,6 +256,12 @@ public abstract class PlusBaseActivity extends BaseSignInSignupActivity
     @Override
     public void onConnected(Bundle connectionHint) {
         if (mGoogleApiClient == null) return;
+
+        if (mRevokeAccess) {
+            mRevokeAccess = false;
+            revokeGPlusAccess();
+            return;
+        }
 
         updatePlusConnectedButtonState();
         setProgressBarVisible(false);

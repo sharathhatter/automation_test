@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fb="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/margin_small"
+    android:orientation="vertical">
+
+
+    <Button
+        android:id="@+id/plus_sign_in_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_small"
+        android:background="@color/gplus_red"
+        android:drawableLeft="@drawable/btn_gplus_normal"
+        android:paddingRight="@dimen/padding_normal"
+        android:text="@string/use_google"
+        android:textColor="@color/com_facebook_loginview_text_color"
+        android:textSize="@dimen/secondary_text_size" />
+
+    <Button
+        android:id="@+id/plus_sign_out_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_small"
+        android:background="@color/gplus_red"
+        android:drawableLeft="@drawable/btn_gplus_normal"
+        android:onClick="onPlusLogoutButtonClicked"
+        android:paddingRight="@dimen/padding_normal"
+        android:text="@string/signOut"
+        android:textColor="@color/com_facebook_loginview_text_color"
+        android:textSize="@dimen/secondary_text_size"
+        android:visibility="gone" />
+
+    <com.facebook.widget.LoginButton
+        android:id="@+id/btnFBLogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/margin_small"
+        fb:login_text="@string/use_facebook"
+        fb:logout_text="@string/signOut" />
+
+</LinearLayout>

@@ -1,12 +1,14 @@
-package com.bigbasket.mobileapp.activity.account.base;
+package com.bigbasket.mobileapp.activity.account.uiv3;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -19,21 +21,16 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BaseSignInSignupActivity;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.model.account.SocialAccount;
-import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-import org.apache.http.impl.client.BasicCookieStore;
-
-import java.util.HashMap;
 
 public class SocialLoginConfirmActivity extends BaseSignInSignupActivity {
+
+    private String mLoginType;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,14 +46,22 @@ public class SocialLoginConfirmActivity extends BaseSignInSignupActivity {
         contentView.addView(base);
 
         SocialAccount socialAccount = getIntent().getParcelableExtra(Constants.SOCIAL_LOGIN_PARAMS);
-        String loginType = getIntent().getStringExtra(Constants.SOCIAL_LOGIN_TYPE);
-        setSocialConfirmationView(base, loginType, socialAccount);
+        mLoginType = getIntent().getStringExtra(Constants.SOCIAL_LOGIN_TYPE);
+        setSocialConfirmationView(base, socialAccount);
     }
 
-    public void setSocialConfirmationView(View base,
-                                          final String loginType, final SocialAccount socialAccount) {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onAccountNotLinked();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void setSocialConfirmationView(View base, final SocialAccount socialAccount) {
         String socialServiceName = null;
-        switch (loginType) {
+        switch (mLoginType) {
             case SocialAccount.GP:
                 socialServiceName = "Google";
                 break;
@@ -169,7 +174,7 @@ public class SocialLoginConfirmActivity extends BaseSignInSignupActivity {
                 } else {
                     // Show a progress spinner, and kick off a background task to
                     // perform the user login attempt.
-                    onLinkToExistingAccount(email, password, loginType, socialAccount);
+                    onLinkToExistingAccount(email, password, socialAccount);
                 }
             }
         });
@@ -177,74 +182,44 @@ public class SocialLoginConfirmActivity extends BaseSignInSignupActivity {
         btnCreateNewAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onCreateNewAccount(loginType, socialAccount);
+                onCreateNewAccount(socialAccount);
             }
         });
     }
 
-    public void onLinkToExistingAccount(String email, String password, String loginType,
-                                        SocialAccount socialAccount) {
-        HashMap<String, String> params = new HashMap<>();
-        params.put(Constants.EMAIL, email);
-        params.put(Constants.PASSWORD, password);
-        params.put(Constants.SOCIAL_LOGIN_TYPE, loginType);
-        params.put(Constants.SOCIAL_LOGIN_PARAMS,
-                new Gson().toJson(socialAccount, SocialAccount.class));
-
-        HashMap<Object, String> loginTypeMap = new HashMap<>();
-        loginTypeMap.put(Constants.SOCIAL_LOGIN_TYPE, loginType);
-        loginTypeMap.put(Constants.EMAIL, email);
-
-        startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.SOCIAL_LINK_ACCOUNT_URL,
-                params, true, AuthParameters.getInstance(this), new BasicCookieStore(),
-                loginTypeMap);
+    public void onLinkToExistingAccount(String email, String password, SocialAccount socialAccount) {
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
+        showProgress(true);
+        bigBasketApiService.socialLinkAccount(email, password, mLoginType,
+                new Gson().toJson(socialAccount, SocialAccount.class),
+                new LoginApiResponseCallback(email, password, false, mLoginType, socialAccount));
     }
 
-    public void onCreateNewAccount(String loginType, SocialAccount socialAccount) {
-        HashMap<String, String> params = new HashMap<>();
-        params.put(Constants.SOCIAL_LOGIN_TYPE, loginType);
-        params.put(Constants.SOCIAL_LOGIN_PARAMS,
-                new Gson().toJson(socialAccount, SocialAccount.class));
-
-        HashMap<Object, String> loginTypeMap = new HashMap<>();
-        loginTypeMap.put(Constants.SOCIAL_LOGIN_TYPE, loginType);
-        loginTypeMap.put(Constants.EMAIL, socialAccount.getEmail());
-
-        startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.SOCIAL_REGISTER_MEMBER_URL,
-                params, true, AuthParameters.getInstance(this), new BasicCookieStore(),
-                loginTypeMap);
+    public void onCreateNewAccount(SocialAccount socialAccount) {
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
+        showProgress(true);
+        bigBasketApiService.socialRegisterMember(mLoginType, new Gson().toJson(socialAccount, SocialAccount.class),
+                new LoginApiResponseCallback(socialAccount.getEmail(), null, false, mLoginType, socialAccount));
     }
 
     @Override
-    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-        String url = httpOperationResult.getUrl();
-        if (url.contains(Constants.SOCIAL_LINK_ACCOUNT_URL) ||
-                url.contains(Constants.SOCIAL_REGISTER_MEMBER_URL)) {
-            JsonObject responseJsonObj = new JsonParser().parse(httpOperationResult.getReponseString()).getAsJsonObject();
-            String status = responseJsonObj.get(Constants.STATUS).getAsString();
-            switch (status) {
-                case Constants.OK:
-                    String loginType = httpOperationResult.getAdditionalCtx() != null ?
-                            httpOperationResult.getAdditionalCtx().get(Constants.SOCIAL_LOGIN_TYPE) : null;
-                    String email = httpOperationResult.getAdditionalCtx() != null ?
-                            httpOperationResult.getAdditionalCtx().get(Constants.EMAIL) : null;
-                    saveLoginUserDetailInPreference(responseJsonObj, loginType, email, null, false);
-                    break;
-                case Constants.ERROR:
-                    //TODO : Replace with handler
-                    String errorType = responseJsonObj.get(Constants.ERROR_TYPE).getAsString();
-                    switch (errorType) {
-                        case Constants.INVALID_USER_PASS:
-                            showAlertDialog(this, null, getString(R.string.INVALID_USER_PASS));
-                            break;
-                        default:
-                            showAlertDialog(this, null, getString(R.string.server_error));
-                            break;
-                    }
-                    break;
-            }
+    public void showProgress(boolean show) {
+        if (show) {
+            showProgressDialog(getString(R.string.please_wait));
         } else {
-            super.onAsyncTaskComplete(httpOperationResult);
+            hideProgressDialog();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        onAccountNotLinked();
+    }
+
+    private void onAccountNotLinked() {
+        Intent data = new Intent();
+        data.putExtra(Constants.SOCIAL_LOGIN_TYPE, mLoginType);
+        setResult(Constants.SOCIAL_ACCOUNT_NOT_LINKED, data);
+        finish();
     }
 }
