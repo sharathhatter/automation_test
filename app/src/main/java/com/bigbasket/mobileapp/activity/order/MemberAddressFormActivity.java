@@ -26,22 +26,26 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.CreateUpdateAddressApiResponseContent;
 import com.bigbasket.mobileapp.model.account.Address;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.ExceptionUtil;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
-import com.bigbasket.mobileapp.util.UIUtil;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import org.apache.http.impl.client.BasicCookieStore;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
 public class MemberAddressFormActivity extends BackButtonActivity {
@@ -53,7 +57,7 @@ public class MemberAddressFormActivity extends BackButtonActivity {
     private AutoCompleteTextView editTextArea;
     private Dialog numberValidateDialog;
     private TextView txtErrorValidateNumber, txtResendNumber;
-    private String errorMsg;
+    private String mErrorMsg;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -140,60 +144,58 @@ public class MemberAddressFormActivity extends BackButtonActivity {
         final EditText editTextLandmark = (EditText) base.findViewById(R.id.editTextLandmark);
         final CheckBox chkIsAddrDefault = (CheckBox) base.findViewById(R.id.chkIsAddrDefault);
 
+        editTextAddressNick.setError(null);
+        editTextFirstName.setError(null);
+        editTextLastName.setError(null);
+        editTextContactNum.setError(null);
+        editTextHouseNum.setError(null);
+        editTextStreetName.setError(null);
+        editTextLandmark.setError(null);
+        editTextArea.setError(null);
+        editTextPincode.setError(null);
+
         // Validation
-        ArrayList<String> missingFields = new ArrayList<>();
-        int errorSymbolResx = R.drawable.error_symbol;
+        boolean cancel = false;
+        View focusView = null;
         if (isEditTextEmpty(editTextFirstName)) {
-            missingFields.add(editTextFirstName.getHint().toString());
-            editTextFirstName.setCompoundDrawablesWithIntrinsicBounds(0, 0, errorSymbolResx, 0);
-        } else {
-            editTextFirstName.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+            reportFormInputFieldError(editTextFirstName, getString(R.string.error_field_required));
+            focusView = editTextFirstName;
+            cancel = true;
         }
         if (isEditTextEmpty(editTextLastName)) {
-            missingFields.add(editTextLastName.getHint().toString());
-            editTextLastName.setCompoundDrawablesWithIntrinsicBounds(0, 0, errorSymbolResx, 0);
-        } else {
-            editTextLastName.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+            reportFormInputFieldError(editTextLastName, getString(R.string.error_field_required));
+            focusView = editTextLastName;
+            cancel = true;
         }
         if (isEditTextEmpty(editTextContactNum)) {
-            missingFields.add(editTextContactNum.getHint().toString());
-            editTextContactNum.setCompoundDrawablesWithIntrinsicBounds(0, 0, errorSymbolResx, 0);
-        } else {
-            editTextContactNum.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+            reportFormInputFieldError(editTextContactNum, getString(R.string.error_field_required));
+            focusView = editTextContactNum;
+            cancel = true;
+        } else if (editTextContactNum.getText().toString().length() < 10) {
+            reportFormInputFieldError(editTextContactNum, getString(R.string.contactNoMin10));
+            focusView = editTextContactNum;
+            cancel = true;
         }
         if (isEditTextEmpty(editTextHouseNum)) {
-            missingFields.add(editTextHouseNum.getHint().toString());
-            editTextHouseNum.setCompoundDrawablesWithIntrinsicBounds(0, 0, errorSymbolResx, 0);
-        } else {
-            editTextHouseNum.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+            reportFormInputFieldError(editTextHouseNum, getString(R.string.error_field_required));
+            focusView = editTextHouseNum;
+            cancel = true;
         }
         if (isEditTextEmpty(editTextArea)) {
-            missingFields.add(editTextArea.getHint().toString());
-            editTextArea.setCompoundDrawablesWithIntrinsicBounds(0, 0, errorSymbolResx, 0);
-        } else {
-            editTextArea.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+            reportFormInputFieldError(editTextArea, getString(R.string.error_field_required));
+            focusView = editTextArea;
+            cancel = true;
         }
         if (isEditTextEmpty(editTextPincode)) {
-            missingFields.add(editTextPincode.getHint().toString());
-            editTextPincode.setCompoundDrawablesWithIntrinsicBounds(0, 0, errorSymbolResx, 0);
-        } else {
-            editTextPincode.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-        }
-        int missingFieldsListSize = missingFields.size();
-        if (missingFieldsListSize > 0) {
-            String msg;
-            if (missingFieldsListSize == 1) {
-                msg = missingFields.get(0) + " is mandatory";
-            } else {
-                msg = "Following fields are mandatory: " + UIUtil.sentenceJoin(missingFields);
-            }
-            showAlertDialog(this, null, msg);
-            return;
+            reportFormInputFieldError(editTextPincode, getString(R.string.error_field_required));
+            focusView = editTextPincode;
+            cancel = true;
         }
 
-        if (editTextContactNum.getText().toString().length() < 10) {
-            showAlertDialog(this, null, getResources().getString(R.string.contactNoMin10));
-            editTextContactNum.setCompoundDrawablesWithIntrinsicBounds(0, 0, errorSymbolResx, 0);
+        if (cancel) {
+            // There was an error, don't sign-up
+            focusView.requestFocus();
+            return;
         }
 
         // Sending request
@@ -247,14 +249,63 @@ public class MemberAddressFormActivity extends BackButtonActivity {
         if (otp_code != null) {
             payload.put(Constants.OTP_CODE, otp_code);
         }
-        String url = Constants.CREATE_ADDRESS;
+
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         if (address != null) {
-            url = Constants.UPDATE_ADDRESS;
             payload.put(Constants.ID, address.getId());
+            showProgressDialog(getString(R.string.please_wait));
+            bigBasketApiService.updateAddress(payload, new CreateUpdateAddressApiCallback());
+        } else {
+            showProgressDialog(getString(R.string.please_wait));
+            bigBasketApiService.createAddress(payload, new CreateUpdateAddressApiCallback());
+        }
+    }
+
+    class CreateUpdateAddressApiCallback implements Callback<ApiResponse<CreateUpdateAddressApiResponseContent>> {
+
+        @Override
+        public void success(ApiResponse<CreateUpdateAddressApiResponseContent> createUpdateAddressApiResponse, Response response) {
+            hideProgressDialog();
+            switch (createUpdateAddressApiResponse.status) {
+                case 0:
+                    if (address == null) {
+                        Toast.makeText(getCurrentActivity(), "Address updated successfully", Toast.LENGTH_LONG).show();
+                        addressCreatedModified(createUpdateAddressApiResponse.apiResponseContent.addressId);
+                    } else {
+                        Toast.makeText(getCurrentActivity(), "Address updated successfully", Toast.LENGTH_LONG).show();
+                        addressCreatedModified();
+                    }
+                    if (numberValidateDialog != null && numberValidateDialog.isShowing())
+                        numberValidateDialog.dismiss();
+                    break;
+                case Constants.NUMBER_USED_BY_ANOTHER_MEMBER:
+                    mErrorMsg = createUpdateAddressApiResponse.message;
+                    hRefresh.sendEmptyMessage(Constants.MOBILE_NUMBER_USED_BY_ANOTHER_MEMBER);
+                    break;
+                case Constants.OPT_NEEDED:
+                    mErrorMsg = createUpdateAddressApiResponse.message;
+                    hRefresh.sendEmptyMessage(Constants.VALIDATE_MOBILE_NUMBER_POPUP);
+                    break;
+                case Constants.INVALID_OTP:
+                    mErrorMsg = createUpdateAddressApiResponse.message;
+                    hRefresh.sendEmptyMessage(Constants.VALIDATE_MOBILE_NUMBER_POPUP_ERROR_MSG);
+                    break;
+                case ExceptionUtil.INTERNAL_SERVER_ERROR:
+                    showAlertDialog(getCurrentActivity(), "BigBasket", "Server Error");
+                    break;
+                default:
+                    String msg = createUpdateAddressApiResponse.message;
+                    showAlertDialog(getCurrentActivity(), "BigBasket", msg);
+                    break;
+            }
         }
 
-        startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + url, payload, true,
-                AuthParameters.getInstance(this), new BasicCookieStore());
+        @Override
+        public void failure(RetrofitError error) {
+            hideProgressDialog();
+            showAlertDialog(getCurrentActivity(), null, "Server Error");
+            // TODO : Improve error handling
+        }
     }
 
     @Override
@@ -299,45 +350,7 @@ public class MemberAddressFormActivity extends BackButtonActivity {
                 }
 
             }
-        } else {
-            JsonObject jsonObject = new JsonParser().parse(httpOperationResult.getReponseString()).getAsJsonObject();
-            int status = jsonObject.get(Constants.STATUS).getAsInt();
-            switch (status) {
-                case 0:
-                    if (address == null) {
-                        JsonObject responseJsonObj = jsonObject.get(Constants.RESPONSE).getAsJsonObject();
-                        String addressId = responseJsonObj.get(Constants.ID).getAsString();
-                        Toast.makeText(getCurrentActivity(), "Address updated successfully", Toast.LENGTH_LONG).show();
-                        addressCreatedModified(addressId);
-                    } else {
-                        Toast.makeText(getCurrentActivity(), "Address updated successfully", Toast.LENGTH_LONG).show();
-                        addressCreatedModified();
-                    }
-                    if (numberValidateDialog != null && numberValidateDialog.isShowing())
-                        numberValidateDialog.dismiss();
-                    break;
-                case Constants.NUMBER_USED_BY_ANOTHER_MEMBER:
-                    errorMsg = jsonObject.get(Constants.MESSAGE).getAsString();
-                    hRefresh.sendEmptyMessage(Constants.MOBILE_NUMBER_USED_BY_ANOTHER_MEMBER);
-                    break;
-                case Constants.OPT_NEEDED:
-                    errorMsg = jsonObject.get(Constants.MESSAGE).getAsString();
-                    hRefresh.sendEmptyMessage(Constants.VALIDATE_MOBILE_NUMBER_POPUP);
-                    break;
-                case Constants.INVALID_OTP:
-                    errorMsg = jsonObject.get(Constants.MESSAGE).getAsString();
-                    hRefresh.sendEmptyMessage(Constants.VALIDATE_MOBILE_NUMBER_POPUP_ERROR_MSG);
-                    break;
-                case ExceptionUtil.INTERNAL_SERVER_ERROR:
-                    showAlertDialog(this, "BigBasket", "Server Error");
-                    break;
-                default:
-                    String msg = jsonObject.get(Constants.MESSAGE).getAsString();
-                    showAlertDialog(this, "BigBasket", msg);
-                    break;
-            }
         }
-
     }
 
     private void addressCreatedModified(String addressId) {
@@ -466,13 +479,13 @@ public class MemberAddressFormActivity extends BackButtonActivity {
                             authParameters, new BasicCookieStore());
                     break;
                 case Constants.VALIDATE_MOBILE_NUMBER_POPUP:
-                    validateMobileNumber(false, errorMsg);
+                    validateMobileNumber(false, mErrorMsg);
                     break;
                 case Constants.VALIDATE_MOBILE_NUMBER_POPUP_ERROR_MSG:
-                    validateMobileNumber(true, errorMsg);
+                    validateMobileNumber(true, mErrorMsg);
                     break;
                 case Constants.MOBILE_NUMBER_USED_BY_ANOTHER_MEMBER:
-                    showAlertDialog(errorMsg != null ? errorMsg : getResources().getString(R.string.numberUsedByAnotherMember));
+                    showAlertDialog(mErrorMsg != null ? mErrorMsg : getResources().getString(R.string.numberUsedByAnotherMember));
                     break;
             }
         }

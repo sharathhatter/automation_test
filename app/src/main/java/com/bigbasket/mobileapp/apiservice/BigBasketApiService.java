@@ -6,6 +6,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.BrowseCategoryApiRespo
 import com.bigbasket.mobileapp.apiservice.models.response.BrowsePromoCategoryApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.CartGetApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.CartOperationApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.CreateUpdateAddressApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListDetailsApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListSummaryApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListsApiResponse;
@@ -21,10 +22,12 @@ import com.bigbasket.mobileapp.model.product.ProductListData;
 import com.bigbasket.mobileapp.util.Constants;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import retrofit.Callback;
 import retrofit.http.Field;
+import retrofit.http.FieldMap;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
 import retrofit.http.POST;
@@ -142,4 +145,13 @@ public interface BigBasketApiService {
     @FormUrlEncoded
     @POST("/register-member/")
     void registerMember(@Field(Constants.USER_DETAILS) String userDetails, Callback<LoginApiResponse> loginApiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/create-address/")
+    void createAddress(@FieldMap HashMap<String, String> params, Callback<ApiResponse<CreateUpdateAddressApiResponseContent>> createUpdateAddressApiResponseCallback);
+
+
+    @FormUrlEncoded
+    @POST("/update-address/")
+    void updateAddress(@FieldMap HashMap<String, String> params, Callback<ApiResponse<CreateUpdateAddressApiResponseContent>> createUpdateAddressApiResponseCallback);
 }
