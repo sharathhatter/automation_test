@@ -1,6 +1,5 @@
 package com.bigbasket.mobileapp.activity.base.uiv3;
 
-import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,6 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -407,8 +407,9 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
     @Override
     public void updateUIAfterBasketOperationFailed(BasketOperation basketOperation, TextView basketCountTextView,
                                                    ImageView imgDecQty, ImageView imgIncQty, Button btnAddToBasket,
-                                                   EditText editTextQty, Product product, String qty) {
-        if (basketOperationResponse.getErrorType().equals(Constants.PRODUCT_ID_NOT_FOUND)) {
+                                                   EditText editTextQty, Product product, String qty,
+                                                   String errorType) {
+        if (errorType.equals(Constants.PRODUCT_ID_NOT_FOUND)) {
             Toast.makeText(this, "0 added to basket.", Toast.LENGTH_SHORT).show();
         }
     }
@@ -418,10 +419,10 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                                                     ImageView imgDecQty, ImageView imgIncQty, Button btnAddToBasket,
                                                     EditText editTextQty, Product product, String qty) {
 
-        int productQtyInBasket = Integer.parseInt(basketOperationResponse.getTotalQuantity());
-        int totalProductsInBasket = Integer.parseInt(basketOperationResponse.getNoOfItems());
+        int productQtyInBasket = Integer.parseInt(basketOperationResponse.getBasketResponseProductInfo().getTotalQty());
+        int totalProductsInBasket = basketOperationResponse.getCartSummary().getNoOfItems();
 
-        if (basketOperation == BasketOperation.ADD) {
+        if (basketOperation == BasketOperation.INC) {
             if (productQtyInBasket == 1) {
                 Toast.makeText(this, "Product added to basket.", Toast.LENGTH_SHORT).show();
             } else {
@@ -475,7 +476,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             product.setNoOfItemsInCart(productQtyInBasket);
         }
 
-        SharedPreferences.Editor editor = getSharedPreferences("myCustomSharedPrefs", Activity.MODE_PRIVATE).edit();
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
         editor.putString(Constants.GET_CART, String.valueOf(totalProductsInBasket));
         editor.commit();
         cartInfo.setNoOfItems(totalProductsInBasket);
@@ -494,7 +495,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
     @Override
     public void updateUIForCartInfo() {
         if (cartInfo == null) return;
-        SharedPreferences.Editor editor = getSharedPreferences("myCustomSharedPrefs", Activity.MODE_PRIVATE).edit();
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
         editor.putString(Constants.GET_CART, "" + cartInfo.getNoOfItems());
         editor.commit();
     }

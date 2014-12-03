@@ -277,7 +277,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
                 .build();
 
         ProductListRecyclerAdapter productListAdapter = new ProductListRecyclerAdapter(products, baseImgUrl,
-                getCurrentActivity(), productViewDisplayDataHolder, this, 1);
+                getCurrentActivity(), productViewDisplayDataHolder, this, products.size());
 
         productRecyclerView.setAdapter(productListAdapter);
 

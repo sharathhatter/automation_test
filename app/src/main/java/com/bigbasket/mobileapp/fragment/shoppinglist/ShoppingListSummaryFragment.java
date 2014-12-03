@@ -15,20 +15,21 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListSummaryApiResponse;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListSummary;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
-import com.bigbasket.mobileapp.util.ParserUtil;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
 public class ShoppingListSummaryFragment extends BaseFragment {
@@ -79,31 +80,31 @@ public class ShoppingListSummaryFragment extends BaseFragment {
     }
 
     private void loadShoppingListCategories() {
-        String url = MobileApiUrl.getBaseAPIUrl() + Constants.SL_LIST_SUMMARY + "?" +
-                Constants.SLUG + "=" + mShoppingListName.getSlug();
-        startAsyncActivity(url, null, false, true, null);
-    }
-
-    @Override
-    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-        String url = httpOperationResult.getUrl();
-        if (url.contains(Constants.SL_LIST_SUMMARY)) {
-            JsonObject httpResponseJsonObj = new JsonParser().parse(httpOperationResult.getReponseString()).getAsJsonObject();
-            String status = httpResponseJsonObj.get(Constants.STATUS).getAsString();
-            switch (status) {
-                case Constants.OK:
-                    JsonArray shoppingListSummaryJsonArray = httpResponseJsonObj.get(Constants.SHOPPING_LIST_SUMMARY).getAsJsonArray();
-                    mShoppingListSummaries = ParserUtil.parseShoppingListSummary(shoppingListSummaryJsonArray);
-                    renderShoppingListSummary();
-                    break;
-                default:
-                    // TODO : Add error handling
-                    showErrorMsg("Server Error");
-                    break;
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+        showProgressView();
+        bigBasketApiService.getShoppingListSummary(mShoppingListName.getSlug(), new Callback<GetShoppingListSummaryApiResponse>() {
+            @Override
+            public void success(GetShoppingListSummaryApiResponse getShoppingListSummaryApiResponse, Response response) {
+                hideProgressView();
+                switch (getShoppingListSummaryApiResponse.status) {
+                    case Constants.OK:
+                        mShoppingListSummaries = getShoppingListSummaryApiResponse.shoppingListSummaries;
+                        renderShoppingListSummary();
+                        break;
+                    default:
+                        // TODO : Add error handling
+                        showErrorMsg("Server Error");
+                        break;
+                }
             }
-        } else {
-            super.onAsyncTaskComplete(httpOperationResult);
-        }
+
+            @Override
+            public void failure(RetrofitError error) {
+                hideProgressView();
+                // TODO : Add error handling
+                showErrorMsg("Server Error");
+            }
+        });
     }
 
     private void renderShoppingListSummary() {

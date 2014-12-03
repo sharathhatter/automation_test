@@ -286,8 +286,8 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     @Override
     public void updateUIAfterBasketOperationFailed(BasketOperation basketOperation, TextView basketCountTextView,
                                                    ImageView imgDecQty, ImageView imgIncQty, Button btnAddToBasket,
-                                                   EditText editTextQty, Product product, String qty) {
-        if (basketOperationResponse.getErrorType().equals(Constants.PRODUCT_ID_NOT_FOUND)) {
+                                                   EditText editTextQty, Product product, String qty, String errorType) {
+        if (errorType.equals(Constants.PRODUCT_ID_NOT_FOUND)) {
             Toast.makeText(getActivity(), "0 added to basket.", Toast.LENGTH_SHORT).show();
         }
     }
@@ -297,10 +297,10 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
                                                     ImageView imgDecQty, ImageView imgIncQty, Button btnAddToBasket,
                                                     EditText editTextQty, Product product, String qty) {
 
-        int productQtyInBasket = Integer.parseInt(basketOperationResponse.getTotalQuantity());
-        int totalProductsInBasket = Integer.parseInt(basketOperationResponse.getNoOfItems());
+        int productQtyInBasket = Integer.parseInt(basketOperationResponse.getBasketResponseProductInfo().getTotalQty());
+        int totalProductsInBasket = basketOperationResponse.getCartSummary().getNoOfItems();
 
-        if (basketOperation == BasketOperation.ADD) {
+        if (basketOperation == BasketOperation.INC) {
             if (productQtyInBasket == 1) {
                 Toast.makeText(getActivity(), "Product added to basket.", Toast.LENGTH_SHORT).show();
             } else {
@@ -354,7 +354,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
             product.setNoOfItemsInCart(productQtyInBasket);
         }
 
-        SharedPreferences.Editor editor = getActivity().getSharedPreferences("myCustomSharedPrefs", Activity.MODE_PRIVATE).edit();
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
         editor.putString(Constants.GET_CART, String.valueOf(totalProductsInBasket));
         editor.commit();
         cartInfo.setNoOfItems(totalProductsInBasket);

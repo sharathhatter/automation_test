@@ -28,7 +28,8 @@ public class CreateShoppingListDialog extends DialogFragment {
                 .setPositiveButton(R.string.createList, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        ((ShoppingListFragment) getTargetFragment()).createShoppingList(editTextShoppingListName.getText().toString());
+                        ((ShoppingListFragment) getTargetFragment()).
+                                createShoppingList(editTextShoppingListName.getText().toString().trim());
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

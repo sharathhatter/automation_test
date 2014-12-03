@@ -13,26 +13,27 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListsApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
-import com.bigbasket.mobileapp.util.ParserUtil;
 import com.bigbasket.mobileapp.view.uiv3.CreateShoppingListDialog;
 import com.bigbasket.mobileapp.view.uiv3.DeleteShoppingListDialog;
 import com.bigbasket.mobileapp.view.uiv3.EditShoppingDialog;
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.adapters.BaseSwipeAdapter;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
 public class ShoppingListFragment extends BaseFragment {
@@ -64,76 +65,32 @@ public class ShoppingListFragment extends BaseFragment {
             getCurrentActivity().showAlertDialog(getActivity(), null, getString(R.string.login_required), Constants.LOGIN_REQUIRED);
             return;
         }
-        HashMap<String, String> params = new HashMap<>();
-        params.put(Constants.SYSTEM, "1");
-        startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.SL_GET_LISTS,
-                params, true, true, null);
-    }
 
-    @Override
-    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-        String url = httpOperationResult.getUrl();
-        if (url.contains(Constants.SL_GET_LISTS)) {
-            JsonObject httpJsonObj = new JsonParser().parse(httpOperationResult.getReponseString()).getAsJsonObject();
-            String status = httpJsonObj.get(Constants.STATUS).getAsString();
-            switch (status) {
-                case Constants.OK:
-                    JsonArray shoppingListNamesJsonArray = httpJsonObj.get(Constants.SHOPPING_LISTS).getAsJsonArray();
-                    mShoppingListNames = ParserUtil.parseShoppingList(shoppingListNamesJsonArray);
-                    renderShoppingList();
-                    break;
-                default:
-                    // TODO : Add error handling
-                    showErrorMsg("Server Error");
-                    break;
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+        showProgressView();
+        bigBasketApiService.getShoppingLists("1", new Callback<GetShoppingListsApiResponse>() {
+            @Override
+            public void success(GetShoppingListsApiResponse getShoppingListsApiResponse, Response response) {
+                hideProgressView();
+                switch (getShoppingListsApiResponse.status) {
+                    case Constants.OK:
+                        mShoppingListNames = getShoppingListsApiResponse.shoppingListNames;
+                        renderShoppingList();
+                        break;
+                    default:
+                        // TODO : Add error handling
+                        showErrorMsg("Server Error");
+                        break;
+                }
             }
-        } else if (url.contains(Constants.SL_EDIT_LIST)) {
-            JsonObject httpJsonObj = new JsonParser().parse(httpOperationResult.getReponseString()).getAsJsonObject();
-            String status = httpJsonObj.get(Constants.STATUS).getAsString();
-            switch (status) {
-                case Constants.OK:
-                    Toast.makeText(getActivity(), getString(R.string.shoppingListUpdated),
-                            Toast.LENGTH_LONG).show();
-                    loadShoppingLists();
-                    break;
-                default:
-                    // TODO : Improve error handling
-                    showErrorMsg("Server Error");
-                    break;
+
+            @Override
+            public void failure(RetrofitError error) {
+                hideProgressView();
+                // TODO : Add error handling
+                showErrorMsg("Server Error");
             }
-        } else if (url.contains(Constants.SL_DELETE_LIST)) {
-            JsonObject httpJsonObj = new JsonParser().parse(httpOperationResult.getReponseString()).getAsJsonObject();
-            String status = httpJsonObj.get(Constants.STATUS).getAsString();
-            switch (status) {
-                case Constants.OK:
-                    HashMap<Object, String> additionalCtx = httpOperationResult.getAdditionalCtx();
-                    String msg = "\"" + additionalCtx.get(Constants.SHOPPING_LIST_NAME) + "\" was deleted successfully";
-                    Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
-                    loadShoppingLists();
-                    break;
-                default:
-                    // TODO : Add error handling
-                    showErrorMsg("Server Error");
-                    break;
-            }
-        } else if (url.contains(Constants.SL_CREATE_LIST)) {
-            JsonObject httpJsonObj = new JsonParser().parse(httpOperationResult.getReponseString()).getAsJsonObject();
-            String status = httpJsonObj.get(Constants.STATUS).getAsString();
-            switch (status) {
-                case Constants.OK:
-                    Toast.makeText(getActivity(),
-                            "List \"" + httpOperationResult.getAdditionalCtx().get(Constants.SL_NAME)
-                                    + "\" was created successfully", Toast.LENGTH_LONG).show();
-                    loadShoppingLists();
-                    break;
-                default:
-                    // TODO : Add error handling
-                    showErrorMsg("Server Error");
-                    break;
-            }
-        } else {
-            super.onAsyncTaskComplete(httpOperationResult);
-        }
+        });
     }
 
     private void renderShoppingList() {
@@ -167,19 +124,38 @@ public class ShoppingListFragment extends BaseFragment {
         contentView.addView(base);
     }
 
-    public void createShoppingList(String shoppingListName) {
-        shoppingListName = shoppingListName.trim();
+    public void createShoppingList(final String shoppingListName) {
         if (shoppingListName.length() == 0) {
             Toast.makeText(getActivity(), "Please enter a valid name", Toast.LENGTH_SHORT).show();
             return;
         }
-        HashMap<String, String> params = new HashMap<>();
-        params.put(Constants.SL_NAME, shoppingListName);
-        params.put(Constants.IS_PUBLIC, "1");
-        HashMap<Object, String> additionalCtx = new HashMap<>();
-        additionalCtx.put(Constants.SL_NAME, shoppingListName);
-        startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.SL_CREATE_LIST, params,
-                true, false, additionalCtx);
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+        showProgressDialog(getString(R.string.please_wait));
+        bigBasketApiService.createShoppingList(shoppingListName, "1", new Callback<OldBaseApiResponse>() {
+            @Override
+            public void success(OldBaseApiResponse oldBaseApiResponse, Response response) {
+                hideProgressDialog();
+                switch (oldBaseApiResponse.status) {
+                    case Constants.OK:
+                        Toast.makeText(getActivity(),
+                                "List \"" + shoppingListName
+                                        + "\" was created successfully", Toast.LENGTH_LONG).show();
+                        loadShoppingLists();
+                        break;
+                    default:
+                        // TODO : Add error handling
+                        showErrorMsg("Server Error");
+                        break;
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                hideProgressDialog();
+                // TODO : Add error handling
+                showErrorMsg("Server Error");
+            }
+        });
     }
 
     private void launchShoppingListSummary(ShoppingListName shoppingListName) {
@@ -312,18 +288,61 @@ public class ShoppingListFragment extends BaseFragment {
 
 
     public void editShoppingListName(ShoppingListName shoppingListName, String newName) {
-        HashMap<String, String> params = new HashMap<>();
-        params.put(Constants.SLUG, shoppingListName.getSlug());
-        params.put("name", newName);
-        startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.SL_EDIT_LIST, params, true, false, null);
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+        showProgressDialog(getString(R.string.please_wait));
+        bigBasketApiService.editShoppingList(shoppingListName.getSlug(), newName, new Callback<OldBaseApiResponse>() {
+            @Override
+            public void success(OldBaseApiResponse oldBaseApiResponse, Response response) {
+                hideProgressDialog();
+                switch (oldBaseApiResponse.status) {
+                    case Constants.OK:
+                        Toast.makeText(getActivity(), getString(R.string.shoppingListUpdated),
+                                Toast.LENGTH_LONG).show();
+                        loadShoppingLists();
+                        break;
+                    default:
+                        // TODO : Improve error handling
+                        showErrorMsg("Server Error");
+                        break;
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                hideProgressDialog();
+                // TODO : Improve error handling
+                showErrorMsg("Server Error");
+            }
+        });
     }
 
-    public void deleteShoppingList(ShoppingListName shoppingListName) {
-        HashMap<String, String> params = new HashMap<>();
-        params.put(Constants.SLUG, shoppingListName.getSlug());
-        HashMap<Object, String> additionalCtx = new HashMap<>();
-        additionalCtx.put(Constants.SHOPPING_LIST_NAME, shoppingListName.getName());
-        startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.SL_DELETE_LIST, params, true, false, additionalCtx);
+    public void deleteShoppingList(final ShoppingListName shoppingListName) {
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+        showProgressDialog(getString(R.string.please_wait));
+        bigBasketApiService.deleteShoppingList(shoppingListName.getSlug(), new Callback<OldBaseApiResponse>() {
+            @Override
+            public void success(OldBaseApiResponse oldBaseApiResponse, Response response) {
+                hideProgressDialog();
+                switch (oldBaseApiResponse.status) {
+                    case Constants.OK:
+                        String msg = "\"" + shoppingListName.getName() + "\" was deleted successfully";
+                        Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+                        loadShoppingLists();
+                        break;
+                    default:
+                        // TODO : Add error handling
+                        showErrorMsg("Server Error");
+                        break;
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                hideProgressDialog();
+                // TODO : Add error handling
+                showErrorMsg("Server Error");
+            }
+        });
     }
 
     @Override

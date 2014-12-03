@@ -365,10 +365,10 @@ public class ActiveOrderRowAdapter extends android.widget.BaseAdapter {
                     public void onClick(View v) {
                         if (DataUtil.isInternetAvailable(baseActivity)) {
                             BasketOperationTask<BaseFragment> basketOperationTask = new BasketOperationTask<>(fragment,
-                                    MobileApiUrl.getBaseAPIUrl() + Constants.CART_DEC, BasketOperation.DELETE, productId,
+                                    BasketOperation.DEC, productId,
                                     null, null, null, null, null
                             );
-                            basketOperationTask.execute();
+                            basketOperationTask.startTask();
                         } else {
                             Toast toast = Toast.makeText(baseActivity, "Unable to connect to Internet", Toast.LENGTH_LONG);
                             toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
@@ -381,11 +381,10 @@ public class ActiveOrderRowAdapter extends android.widget.BaseAdapter {
                     public void onClick(View v) {
                         if (DataUtil.isInternetAvailable(baseActivity)) {
                             BasketOperationTask<BaseFragment> basketOperationTask = new BasketOperationTask<>(fragment,
-                                    MobileApiUrl.getBaseAPIUrl() + Constants.CART_INC, BasketOperation.ADD, productId,
+                                    BasketOperation.INC, productId,
                                     null, null, null, null, null
                             );
-                            basketOperationTask.execute();
-                            //}
+                            basketOperationTask.startTask();
 
                         } else {
                             Toast toast = Toast.makeText(baseActivity, "Unable to connect to Internet", Toast.LENGTH_LONG);
@@ -399,10 +398,10 @@ public class ActiveOrderRowAdapter extends android.widget.BaseAdapter {
                     public void onClick(View v) {
                         if (DataUtil.isInternetAvailable(baseActivity)) {
                             BasketOperationTask<BaseFragment> basketOperationTask = new BasketOperationTask<>(fragment,
-                                    MobileApiUrl.getBaseAPIUrl() + Constants.CART_SET_ITEM, BasketOperation.EMPTY,
+                                    BasketOperation.EMPTY,
                                     productId, itemCountTxtView, null, null, null, null, "0"
                             );
-                            basketOperationTask.execute();
+                            basketOperationTask.startTask();
                         } else {
                             Toast toast = Toast.makeText(baseActivity, "Unable to connect to Internet", Toast.LENGTH_LONG);
                             toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);

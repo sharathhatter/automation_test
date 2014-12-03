@@ -5,7 +5,12 @@ import com.bigbasket.mobileapp.apiservice.models.response.BaseApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.BrowseCategoryApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.BrowsePromoCategoryApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.CartGetApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.CartOperationApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListDetailsApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListSummaryApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListsApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.HomePageApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PromoDetailApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PromoSetProductsApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PromoSummaryApiResponseContent;
@@ -114,4 +119,45 @@ public interface BigBasketApiService {
                             @Query(Constants.DATE_TO) String dateTo,
                             Callback<ApiResponse> walletActivityCallback);
 
+    @FormUrlEncoded
+    @POST("/sl-get-lists/")
+    void getShoppingLists(@Field(Constants.SYSTEM) String isSystemListAlsoNeeded,
+                          Callback<GetShoppingListsApiResponse> getShoppingListsApiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/sl-edit-list/")
+    void editShoppingList(@Field(Constants.SLUG) String shoppingListSlug, @Field("name") String newName,
+                          Callback<OldBaseApiResponse> editShoppingListApiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/sl-delete-list/")
+    void deleteShoppingList(@Field(Constants.SLUG) String shoppingListSlug, Callback<OldBaseApiResponse> deleteShoppingListApiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/sl-create-list/")
+    void createShoppingList(@Field(Constants.SL_NAME) String shoppingListName, @Field(Constants.IS_PUBLIC) String isPublic,
+                            Callback<OldBaseApiResponse> createShoppingListApiResponseCallback);
+
+    @GET("/sl-get-list-summary/")
+    void getShoppingListSummary(@Query(Constants.SLUG) String shoppingListSlug, Callback<GetShoppingListSummaryApiResponse> getShoppingListSummaryApiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/sl-get-list-details/")
+    void getShoppingListDetails(@Field(Constants.SLUG) String shoppingListSlug, @Field(Constants.TOP_CAT_SLUG) String topCategorySlug,
+                                Callback<ApiResponse<GetShoppingListDetailsApiResponse>> getShoppingListDetailsApiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/c-incr-i/")
+    void incrementCartItem(@Field(Constants.PROD_ID) String productId, @Field(Constants.QTY) String qty,
+                           Callback<CartOperationApiResponse> cartOperationApiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/c-decr-i/")
+    void decrementCartItem(@Field(Constants.PROD_ID) String productId, @Field(Constants.QTY) String qty,
+                           Callback<CartOperationApiResponse> cartOperationApiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/c-set-i/")
+    void setCartItem(@Field(Constants.PROD_ID) String productId, @Field(Constants.QTY) String qty,
+                     Callback<CartOperationApiResponse> cartOperationApiResponseCallback);
 }

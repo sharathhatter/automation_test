@@ -41,6 +41,9 @@ public class ProductListData implements Parcelable {
     @SerializedName(Constants.FILTER_OPTIONS)
     private ArrayList<FilterOptionCategory> filterOptionItems;
 
+    @SerializedName(Constants.BASE_IMG_URL)
+    private String baseImgUrl;
+
     @Override
     public int describeContents() {
         return 0;
@@ -84,6 +87,11 @@ public class ProductListData implements Parcelable {
         if (!isFilterOptionCategoryNull) {
             dest.writeTypedList(filterOptionItems);
         }
+        boolean isBaseImgUrlNull = baseImgUrl == null;
+        dest.writeByte(isBaseImgUrlNull ? (byte) 1 : (byte) 0);
+        if (!isBaseImgUrlNull) {
+            dest.writeString(baseImgUrl);
+        }
     }
 
     public ProductListData(Parcel source) {
@@ -117,6 +125,10 @@ public class ProductListData implements Parcelable {
         if (!isFilterOptionCategoryNull) {
             filterOptionItems = new ArrayList<>();
             source.readTypedList(filterOptionItems, FilterOptionCategory.CREATOR);
+        }
+        boolean isBaseImgUrlNull = source.readByte() == (byte) 1;
+        if (!isBaseImgUrlNull) {
+            baseImgUrl = source.readString();
         }
     }
 
@@ -208,4 +220,7 @@ public class ProductListData implements Parcelable {
         return sortedOn != null;
     }
 
+    public String getBaseImgUrl() {
+        return baseImgUrl;
+    }
 }

@@ -18,5 +18,5 @@ public interface BasketOperationAware {
 
     void updateUIAfterBasketOperationFailed(BasketOperation basketOperation, TextView basketCountTextView, ImageView imgDecQty,
                                             ImageView imgIncQty, Button btnAddToBasket, EditText editTextQty,
-                                            Product product, String qty);
+                                            Product product, String qty, String errorType);
 }

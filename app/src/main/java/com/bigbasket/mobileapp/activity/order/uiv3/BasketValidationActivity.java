@@ -157,9 +157,9 @@ public class BasketValidationActivity extends BackButtonActivity {
                         public void onClick(View v) {
                             if (DataUtil.isInternetAvailable(getCurrentActivity())) {
                                 BasketOperationTask<BaseActivity> basketOperationTask = new BasketOperationTask<>(getCurrentActivity(),
-                                        MobileApiUrl.getBaseAPIUrl() + Constants.CART_DEC, BasketOperation.DELETE, marketPlaceItems.getSku(),
+                                        BasketOperation.DEC, marketPlaceItems.getSku(),
                                         null, null, null, null, null);
-                                basketOperationTask.execute();
+                                basketOperationTask.startTask();
                             } else {
                                 Toast toast = Toast.makeText(getCurrentActivity(), "Unable to connect to Internet", Toast.LENGTH_LONG);
                                 toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
@@ -173,9 +173,9 @@ public class BasketValidationActivity extends BackButtonActivity {
                         public void onClick(View v) {
                             if (DataUtil.isInternetAvailable(getCurrentActivity())) {
                                 BasketOperationTask<BaseActivity> basketOperationTask = new BasketOperationTask<>(getCurrentActivity(),
-                                        MobileApiUrl.getBaseAPIUrl() + Constants.CART_INC, BasketOperation.ADD, marketPlaceItems.getSku(),
+                                        BasketOperation.INC, marketPlaceItems.getSku(),
                                         null, null, null, null, null);
-                                basketOperationTask.execute();
+                                basketOperationTask.startTask();
                             } else {
                                 Toast toast = Toast.makeText(getCurrentActivity(), "Unable to connect to Internet", Toast.LENGTH_LONG);
                                 toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
@@ -189,9 +189,9 @@ public class BasketValidationActivity extends BackButtonActivity {
                             if (DataUtil.isInternetAvailable(getCurrentActivity())) {
 
                                 BasketOperationTask<BaseActivity> basketOperationTask = new BasketOperationTask<>(getCurrentActivity(),
-                                        MobileApiUrl.getBaseAPIUrl() + Constants.CART_SET_ITEM, BasketOperation.EMPTY, marketPlaceItems.getSku(),
+                                        BasketOperation.EMPTY, marketPlaceItems.getSku(),
                                         null, null, null, null, null, "0");
-                                basketOperationTask.execute();
+                                basketOperationTask.startTask();
                             } else {
                                 Toast toast = Toast.makeText(getCurrentActivity(), "Unable to connect to Internet", Toast.LENGTH_LONG);
                                 toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
