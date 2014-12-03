@@ -13,11 +13,13 @@ import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListsApiRes
 import com.bigbasket.mobileapp.apiservice.models.response.HomePageApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.OrderListApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PromoDetailApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PromoSetProductsApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PromoSummaryApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse;
 import com.bigbasket.mobileapp.model.account.City;
+import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.model.product.ProductListData;
 import com.bigbasket.mobileapp.util.Constants;
 
@@ -154,4 +156,11 @@ public interface BigBasketApiService {
     @FormUrlEncoded
     @POST("/update-address/")
     void updateAddress(@FieldMap HashMap<String, String> params, Callback<ApiResponse<CreateUpdateAddressApiResponseContent>> createUpdateAddressApiResponseCallback);
+
+    @GET("/get-orders/")
+    void getOrders(@Query(Constants.ORDER_TYPE) String orderType, @Query(Constants.ORDER_RANGE) String orderRange,
+                   Callback<OrderListApiResponse> orderListApiResponseCallback);
+
+    @GET("/get-invoice/")
+    void getInvoice(@Query(Constants.ORDER_ID) String orderId, Callback<ApiResponse<OrderInvoice>> getInvoiceApiResponseCallback);
 }

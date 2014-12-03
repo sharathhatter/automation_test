@@ -23,22 +23,20 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.OrderDetailActivity;
 import com.bigbasket.mobileapp.adapter.order.OrderListAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.OrderListApiResponse;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.model.order.OrderMonthRange;
-import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
-import com.bigbasket.mobileapp.util.ParserUtil;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-import org.apache.http.impl.client.BasicCookieStore;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
 public class OrderListActivity extends BackButtonActivity {
@@ -73,55 +71,34 @@ public class OrderListActivity extends BackButtonActivity {
     }
 
     private void loadOrders(int orderRange) {
-        HashMap<String, String> params = new HashMap<>();
-        params.put(Constants.ORDER_TYPE, orderType);
-        if (orderRange > 0) {
-            params.put(Constants.ORDER_RANGE, String.valueOf(orderRange));
-        }
-        startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.GET_ORDERS,
-                params, false, AuthParameters.getInstance(this), new BasicCookieStore());
-    }
-
-    @Override
-    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-        String url = httpOperationResult.getUrl();
-        if (url.contains(Constants.GET_ORDERS)) {
-            JsonObject httpResponseJsonObj = new JsonParser().parse(httpOperationResult.getReponseString()).getAsJsonObject();
-            String status = httpResponseJsonObj.get(Constants.STATUS).getAsString();
-            switch (status) {
-                case Constants.OK:
-                    JsonArray ordersJsonArray = httpResponseJsonObj.get(Constants.RESPONSE).getAsJsonArray();
-                    if (ordersJsonArray.size() > 0) {
-                        orders = ParserUtil.parseOrderList(ordersJsonArray);
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
+        showProgressDialog(getString(R.string.please_wait));
+        bigBasketApiService.getOrders(orderType, orderRange > 0 ? String.valueOf(orderRange) : null,
+                new Callback<OrderListApiResponse>() {
+                    @Override
+                    public void success(OrderListApiResponse orderListApiResponse, Response response) {
+                        hideProgressDialog();
+                        switch (orderListApiResponse.status) {
+                            case Constants.OK:
+                                orders = orderListApiResponse.orders;
+                                orderMonthRanges = orderListApiResponse.orderMonthRanges;
+                                selectedMonth = orderListApiResponse.selectedMonth;
+                                renderOrderList();
+                                break;
+                            default:
+                                // TODO : Add error handling
+                                showAlertDialogFinish(getCurrentActivity(), null, "Server Error");
+                                break;
+                        }
                     }
-                    JsonArray orderMonthRangeJsonArray = httpResponseJsonObj.get(Constants.ORDER_MONTH_RANGE).getAsJsonArray();
-                    orderMonthRanges = ParserUtil.parseOrderMonthList(orderMonthRangeJsonArray);
-                    selectedMonth = httpResponseJsonObj.get(Constants.MONTHS_DATA).getAsInt();
-                    renderOrderList();
-                    break;
-                default:
-                    // TODO : Add error handling
-                    showAlertDialogFinish(this, null, "Server Error");
-                    break;
-            }
-        } else if (url.contains(Constants.GET_INVOICE)) {
-            JsonObject httpResponseJsonObj = new JsonParser().parse(httpOperationResult.getReponseString()).getAsJsonObject();
-            int status = httpResponseJsonObj.get(Constants.STATUS).getAsInt();
-            switch (status) {
-                case 0:
-                    JsonObject responseJsonObj = httpResponseJsonObj.get(Constants.RESPONSE).getAsJsonObject();
-                    OrderInvoice orderInvoice = ParserUtil.parseOrderInvoice(responseJsonObj);
-                    Intent orderDetailIntent = new Intent(this, OrderDetailActivity.class);
-                    orderDetailIntent.putExtra(Constants.ORDER_REVIEW_SUMMARY, orderInvoice);
-                    startActivityForResult(orderDetailIntent, Constants.GO_TO_HOME);
-                    break;
-                default:
-                    // TODO : Implement error handling
-                    break;
-            }
-        } else {
-            super.onAsyncTaskComplete(httpOperationResult);
-        }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        hideProgressDialog();
+                        // TODO : Add error handling
+                        showAlertDialogFinish(getCurrentActivity(), null, "Server Error");
+                    }
+                });
     }
 
     private void renderOrderList() {
@@ -224,8 +201,33 @@ public class OrderListActivity extends BackButtonActivity {
     }
 
     private void showInvoice(Order order) {
-        String url = MobileApiUrl.getBaseAPIUrl() + Constants.GET_INVOICE + "?" + Constants.ORDER_ID + "=" + order.getOrderId();
-        startAsyncActivity(url, null, false, AuthParameters.getInstance(this), new BasicCookieStore());
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
+        showProgressDialog(getString(R.string.please_wait));
+        bigBasketApiService.getInvoice(order.getOrderId(), new Callback<ApiResponse<OrderInvoice>>() {
+            @Override
+            public void success(ApiResponse<OrderInvoice> orderApiResponse, Response response) {
+                hideProgressDialog();
+                switch (orderApiResponse.status) {
+                    case 0:
+                        OrderInvoice orderInvoice = orderApiResponse.apiResponseContent;
+                        Intent orderDetailIntent = new Intent(getCurrentActivity(), OrderDetailActivity.class);
+                        orderDetailIntent.putExtra(Constants.ORDER_REVIEW_SUMMARY, orderInvoice);
+                        startActivityForResult(orderDetailIntent, Constants.GO_TO_HOME);
+                        break;
+                    default:
+                        // TODO : Implement error handling
+                        showAlertDialogFinish(getCurrentActivity(), null, "Server Error");
+                        break;
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                hideProgressDialog();
+                // TODO : Implement error handling
+                showAlertDialogFinish(getCurrentActivity(), null, "Server Error");
+            }
+        });
     }
 
     @Override

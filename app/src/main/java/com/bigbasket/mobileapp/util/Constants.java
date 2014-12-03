@@ -619,7 +619,6 @@ public class Constants {
     public static final String CANCELLED = "Cancelled";
 
     //urls
-    public static final String GET_ORDERS = "get-orders/";
     public static final String NC = "nc";
     public static final String ALL_OFFERS = "all-offers";
     public static final String CATEGORIES_URL = "categories_url";
