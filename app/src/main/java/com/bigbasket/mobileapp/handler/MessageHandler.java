@@ -101,17 +101,6 @@ public class MessageHandler extends Handler {
                 alertDialog.show();
                 break;
 
-            case MessageCode.GET_SHOPPINGLIST_NAMES_OK:
-                ArrayList<ShoppingListName> shoppingListNames = ((ShoppingListNamesAware) baseFragment).getShoppingListNames();
-                if (shoppingListNames == null || shoppingListNames.size() == 0) {
-                    Toast.makeText(activity, "Create a new shopping list", Toast.LENGTH_SHORT).show();
-                } else {
-                    ShoppingListNamesDialog shoppingListNamesDialog = ShoppingListNamesDialog.newInstance(shoppingListNames);
-                    shoppingListNamesDialog.setTargetFragment(baseFragment, 0);
-                    shoppingListNamesDialog.show(baseFragment.getFragmentManager(), Constants.SHOP_LST);
-                }
-                break;
-
             case MessageCode.ADD_TO_SHOPPINGLIST_OK:
 
                 Toast.makeText(activity, "Product successfully added to lists", Toast.LENGTH_SHORT).show();

@@ -27,6 +27,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.ParserUtil;
 import com.bigbasket.mobileapp.view.uiv2.ProductView;
+import com.bigbasket.mobileapp.view.uiv3.ShoppingListNamesDialog;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -36,8 +37,6 @@ import java.util.List;
 
 public class ProductDetailFragment extends BaseFragment implements ShoppingListNamesAware {
 
-
-    private ArrayList<ShoppingListName> shoppingListNames;
     private String selectedProductId;
     private Product mProduct;
 
@@ -140,13 +139,14 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
     }
 
     @Override
-    public ArrayList<ShoppingListName> getShoppingListNames() {
-        return shoppingListNames;
-    }
-
-    @Override
-    public void setShoppingListNames(ArrayList<ShoppingListName> shoppingListNames) {
-        this.shoppingListNames = shoppingListNames;
+    public void onShoppingListFetched(ArrayList<ShoppingListName> shoppingListNames) {
+        if (shoppingListNames == null || shoppingListNames.size() == 0) {
+            Toast.makeText(getActivity(), "Create a new shopping list", Toast.LENGTH_SHORT).show();
+        } else {
+            ShoppingListNamesDialog shoppingListNamesDialog = ShoppingListNamesDialog.newInstance(shoppingListNames);
+            shoppingListNamesDialog.setTargetFragment(this, 0);
+            shoppingListNamesDialog.show(getFragmentManager(), Constants.SHOP_LST);
+        }
     }
 
     @Override

@@ -29,6 +29,7 @@ import com.bigbasket.mobileapp.task.uiv3.ShoppingListDoAddDeleteTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.bigbasket.mobileapp.view.uiv3.ShoppingListNamesDialog;
 import com.bigbasket.mobileapp.view.uiv3.SortProductDialog;
 
 import java.util.ArrayList;
@@ -39,7 +40,6 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
         ShoppingListNamesAware, SortAware {
 
     private ProductListData productListData;
-    private ArrayList<ShoppingListName> shoppingListNames;
     private String selectedProductId;
     private ProductListRecyclerAdapter mProductListRecyclerAdapter;
     private View mFooterView;
@@ -182,13 +182,14 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
     }
 
     @Override
-    public ArrayList<ShoppingListName> getShoppingListNames() {
-        return shoppingListNames;
-    }
-
-    @Override
-    public void setShoppingListNames(ArrayList<ShoppingListName> shoppingListNames) {
-        this.shoppingListNames = shoppingListNames;
+    public void onShoppingListFetched(ArrayList<ShoppingListName> shoppingListNames) {
+        if (shoppingListNames == null || shoppingListNames.size() == 0) {
+            Toast.makeText(getActivity(), "Create a new shopping list", Toast.LENGTH_SHORT).show();
+        } else {
+            ShoppingListNamesDialog shoppingListNamesDialog = ShoppingListNamesDialog.newInstance(shoppingListNames);
+            shoppingListNamesDialog.setTargetFragment(getFragment(), 0);
+            shoppingListNamesDialog.show(getFragment().getFragmentManager(), Constants.SHOP_LST);
+        }
     }
 
     @Override

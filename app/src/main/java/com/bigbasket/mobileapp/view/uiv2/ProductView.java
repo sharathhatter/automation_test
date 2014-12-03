@@ -284,8 +284,7 @@ public final class ProductView {
                             switch (item.getItemId()) {
                                 case R.id.menuAddToShoppingList:
                                     ((ShoppingListNamesAware) shoppingListNamesAware).setSelectedProductId(product.getSku());
-                                    new ShoppingListNamesTask<>(shoppingListNamesAware,
-                                            MobileApiUrl.getBaseAPIUrl() + "sl-get-lists/", false).execute();
+                                    new ShoppingListNamesTask<>(shoppingListNamesAware, false).startTask();
                                     return true;
                                 default:
                                     return false;
