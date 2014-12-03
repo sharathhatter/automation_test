@@ -6,13 +6,21 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.adapter.order.PrescriptionImageAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.model.order.PrescriptionId;
 import com.bigbasket.mobileapp.model.order.PrescriptionImageModel;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.model.request.HttpRequestData;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
+import com.bigbasket.mobileapp.util.ExceptionUtil;
+import com.bigbasket.mobileapp.util.ImageUtil;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -23,6 +31,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class UploadImageService extends Service {
     public IBinder onBind(Intent intent) {
@@ -67,7 +79,9 @@ public class UploadImageService extends Service {
                 if (DataUtil.isInternetAvailable(context)) {
                     for (int i = 0; i < prescriptionImageList.size(); i++) {
                         final PrescriptionImageModel prescriptionImageModel = prescriptionImageList.get(i);
+                        postPrescriptionImages(prescriptionImageModel);
 
+                        /*
                         HashMap<String, String> imagePayload = new HashMap<String, String>() {
                             {
                                 put(Constants.PHARMA_PRESCRIPTION_ID, prescriptionImageModel.getPharmaPrescriptionId());
@@ -90,8 +104,12 @@ public class UploadImageService extends Service {
                             }
                         };
                         Log.d("******************************************** Upload for image=>", String.valueOf(i));
+
+
+
                         AuthParameters authParameters = AuthParameters.getInstance(context);
-                        HttpRequestData httpRequestData = new HttpRequestData(MobileApiUrl.getBaseAPIUrl() + Constants.UPLOAD_PRESCRIPTION_IMAGE_CHUNK,
+                        HttpRequestData httpRequestData = new HttpRequestData(MobileApiUrl.getBaseAPIUrl() +
+                                Constants.UPLOAD_PRESCRIPTION_IMAGE_CHUNK,
                                 imagePayload, true,
                                 authParameters.getBbAuthToken(), authParameters.getVisitorId(),
                                 authParameters.getOsVersion(), new BasicCookieStore(), new HashMap<Object, String>() {
@@ -112,6 +130,9 @@ public class UploadImageService extends Service {
                         } else {
                             Log.e("***************************************Error response while uploading image", "");
                         }
+
+
+                        */
                     }
                 }
             }
@@ -119,6 +140,32 @@ public class UploadImageService extends Service {
             e.printStackTrace();
         }
 
+    }
+
+
+    private void postPrescriptionImages(final PrescriptionImageModel prescriptionImageModel){
+        if(!DataUtil.isInternetAvailable(context)) {return;}
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(context);
+        bigBasketApiService.uploadPrescriptionImages(prescriptionImageModel.getPharmaPrescriptionId(),
+                prescriptionImageModel.getChunkNumber(),
+                prescriptionImageModel.getMaxChunks(),
+                prescriptionImageModel.getPrescriptionImageChunk(),
+                prescriptionImageModel.getImageSequence(),
+                new Callback<ApiResponse>() {
+                    @Override
+                    public void success(ApiResponse apiResponse, Response response) {
+                        if (apiResponse.status == 0 && apiResponse.message.equals(Constants.SUCCESS)) {
+                            deleteChuckFromLocalStorage(prescriptionImageModel.getChunkNumber());
+                        } else {
+                            Log.e("***************************************Error response while uploading image", "");
+                        }
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        ((BaseActivity) context).showAlertDialog("server error");
+                    }
+                });
     }
 
 

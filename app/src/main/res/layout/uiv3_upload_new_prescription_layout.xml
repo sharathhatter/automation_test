@@ -139,7 +139,7 @@
                     android:layout_centerInParent="true"
                     android:background="@color/strokeLine"
                     android:layout_marginRight="10dp"
-                    android:layout_height="25dp" />
+                    android:layout_height="@dimen/vertical_separator_line" />
             </RelativeLayout>
 
         </TableLayout>
@@ -147,6 +147,8 @@
             <TextView
                 android:layout_width="match_parent"
                 android:id="@+id/txtViewImages"
+                android:textSize="@dimen/secondary_text_size"
+                android:visibility="gone"
                 android:textColor="@color/link_color"
                 android:text="@string/viewPrescriptionImage"
                 android:layout_height="wrap_content" />

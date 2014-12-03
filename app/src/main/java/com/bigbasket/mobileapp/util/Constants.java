@@ -535,7 +535,8 @@ public class Constants {
     public static final String MORE_IMAGES = "more_images";
     public static final String LARGE_SIZE_IMAGE = "large_size_image";
     public static final String GET_PRSCRIPTION_IMAGES = "get-prescription-images/";
-    public static final String IMAGE_URLS = "image_urls/";
+    //public static final String IMAGE_URLS = "image_urls/";
+    public static final String IMAGE_URLS = "image_urls";
 
     public static final String FRAGMENT_CODE = "fragmentCode";
     public static final String FRAGMENT_TAG = "fragmentTag";
@@ -598,6 +599,8 @@ public class Constants {
     public static final String GET_WALLET_ACTIVITY = "get-wallet-activity/";
     public static final String WALLET_ACTIVITY_DATA = "wallet_activity_data";
     public static final String WALLET_DATA = "wallet_data";
+    public static final String DATE_FROM = "date_from";
+    public static final String DATE_TO = "date_to";
 
     //change password
     public static final String CHANGE_PASSWORD = "change-password/";

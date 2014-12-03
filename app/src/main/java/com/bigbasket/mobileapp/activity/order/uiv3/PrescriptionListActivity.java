@@ -33,7 +33,6 @@ public class PrescriptionListActivity extends BackButtonActivity {
     @Override
     public void onCreate(Bundle saveInstanceState) {
         super.onCreate(saveInstanceState);
-
         if (saveInstanceState != null) {
             savedPrescriptionArrayList = saveInstanceState.getParcelableArrayList(Constants.PRESCRIPTION_INTENT_DATA);
             if (savedPrescriptionArrayList != null) {
@@ -110,6 +109,7 @@ public class PrescriptionListActivity extends BackButtonActivity {
     }
 
 
+    /*
     @Override
     public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
         String responseString = httpOperationResult.getReponseString();
@@ -132,6 +132,7 @@ public class PrescriptionListActivity extends BackButtonActivity {
             }
         }
     }
+
 
 
     private void showPrescriptionImageDialog(JsonArray jsonArrayImageUrls){
@@ -159,5 +160,7 @@ public class PrescriptionListActivity extends BackButtonActivity {
         prescriptionImageDialog.show();
 
     }
+
+    */
 
 }

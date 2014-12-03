@@ -3,12 +3,17 @@ package com.bigbasket.mobileapp.model.account;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.bigbasket.mobileapp.util.Constants;
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by jugal on 10/11/14.
  */
 public class CurrentWalletBalance implements Parcelable {
 
+    @SerializedName(Constants.CURRENT_BALANCE)
     private float currentBalance;
+
     private String responseJsonStringWalletActivity;
 
     public float getCurrentBalance() {

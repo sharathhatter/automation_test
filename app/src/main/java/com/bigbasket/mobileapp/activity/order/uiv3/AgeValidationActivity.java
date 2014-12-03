@@ -22,6 +22,9 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.general.MessageInfo;
@@ -29,13 +32,17 @@ import com.bigbasket.mobileapp.model.general.MessageParamInfo;
 import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.order.MarketPlaceAgeCheck;
 import com.bigbasket.mobileapp.model.order.PharmaPrescriptionInfo;
+import com.bigbasket.mobileapp.model.order.PrescriptionId;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.task.COMarketPlaceCheckTask;
 import com.bigbasket.mobileapp.task.COReserveQuantityCheckTask;
+import com.bigbasket.mobileapp.task.UploadImageService;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.ExceptionUtil;
+import com.bigbasket.mobileapp.util.ImageUtil;
 import com.bigbasket.mobileapp.util.MessageFormatUtil;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.ParserUtil;
@@ -47,6 +54,10 @@ import org.apache.http.impl.client.BasicCookieStore;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class AgeValidationActivity extends BackButtonActivity {
     private MarketPlace marketPlace;
@@ -258,7 +269,7 @@ public class AgeValidationActivity extends BackButtonActivity {
         if (msgInfo != null && msgInfo.getParams() != null) {
             ArrayList<Class<?>> activitiesList = new ArrayList<>();
             for (int i = 0; i < msgInfo.getParams().size(); i++) {
-                activitiesList.add(BackButtonActivity.class);
+                activitiesList.add(BackButtonActivity.class); //todo why backbtn activity
             }
 
             if (!TextUtils.isEmpty(msgInfo.getMessageStr())) {
@@ -334,6 +345,8 @@ public class AgeValidationActivity extends BackButtonActivity {
         if (sourceName != null) {
             switch (sourceName) {
                 case Constants.REMOVE_ALL_MARKETPLACE_FROM_BASKET:
+                    serverCallForBulkRemoveProducts(String.valueOf(valuePassed));
+                    /*
                     AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());
                     startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.C_BULK_REMOVE,
                             new HashMap<String, String>() {
@@ -344,6 +357,7 @@ public class AgeValidationActivity extends BackButtonActivity {
                             authParameters,
                             new BasicCookieStore()
                     );
+                    */
                     break;
                 default:
                     super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
@@ -354,6 +368,46 @@ public class AgeValidationActivity extends BackButtonActivity {
         }
     }
 
+
+
+    private void serverCallForBulkRemoveProducts(String fulfilmentIds){
+        if(!DataUtil.isInternetAvailable(getCurrentActivity())) {return;}
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
+        showProgressDialog("Please wait...");
+        bigBasketApiService.bulkRemoveProducts(fulfilmentIds, new Callback<ApiResponse<CartSummary>>() {
+                    @Override
+                    public void success(ApiResponse<CartSummary> bulkRemoveCallback, Response response) {
+                        hideProgressView();
+                        if(bulkRemoveCallback.status==0){
+                            CartSummary cartInfo = bulkRemoveCallback.apiResponseContent;
+                            ((CartInfoAware) getCurrentActivity()).setCartInfo(cartInfo);
+                            ((CartInfoAware) getCurrentActivity()).updateUIForCartInfo();
+                            SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
+                            SharedPreferences.Editor editor = prefer.edit();
+                            editor.putString(Constants.GET_CART, String.valueOf(cartInfo.getNoOfItems()));
+                            editor.commit();
+                            if (cartInfo.getNoOfItems() == 0) {
+                                showAlertDialogFinish(getCurrentActivity(), null, getResources().getString(R.string.basketEmpty));
+                            } else {
+                                new COMarketPlaceCheckTask<>(getCurrentActivity()).execute();
+                            }
+                        }else {
+                            String errorMsg = bulkRemoveCallback.status == ExceptionUtil.INTERNAL_SERVER_ERROR ?
+                                    getResources().getString(R.string.imageUploadFailed):bulkRemoveCallback.message;
+                            showAlertDialog(getCurrentActivity(), null, errorMsg);
+                        }
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        hideProgressDialog();
+                        showAlertDialog("server error");
+                    }
+                });
+    }
+
+
+    /*
     @Override
     public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
         super.onAsyncTaskComplete(httpOperationResult);
@@ -383,4 +437,6 @@ public class AgeValidationActivity extends BackButtonActivity {
             }
         }
     }
+
+    */
 }

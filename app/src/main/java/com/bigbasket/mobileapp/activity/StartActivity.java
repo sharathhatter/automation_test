@@ -19,12 +19,14 @@ import android.widget.Spinner;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
+import com.bigbasket.mobileapp.activity.order.uiv3.UploadNewPrescriptionActivity;
 import com.bigbasket.mobileapp.adapter.product.CategoryAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.BrowseCategoryApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse;
+import com.bigbasket.mobileapp.fragment.account.UpdatePinFragment;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -109,6 +111,8 @@ public class StartActivity extends BaseActivity {
     }
 
     private void loadHomePage() {
+//        Intent homePageIntent = new Intent(this, UpdatePinFragment.class);
+//        startActivity(homePageIntent);
         Intent homePageIntent = new Intent(this, BBActivity.class);
         homePageIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_HOME);
         startActivityForResult(homePageIntent, Constants.FORCE_REGISTER_CODE);

@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
@@ -18,15 +19,22 @@ import android.view.animation.AnimationUtils;
 import android.widget.*;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.interfaces.COMarketPlaceAware;
+import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.model.account.Address;
+import com.bigbasket.mobileapp.model.cart.CartSummary;
+import com.bigbasket.mobileapp.model.order.ImageUrls;
 import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.order.SavedPrescription;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.model.request.HttpRequestData;
 import com.bigbasket.mobileapp.model.slot.SlotGroup;
+import com.bigbasket.mobileapp.task.COMarketPlaceCheckTask;
 import com.bigbasket.mobileapp.task.COReserveQuantityCheckTask;
 import com.bigbasket.mobileapp.util.*;
 import com.google.gson.Gson;
@@ -38,6 +46,10 @@ import org.apache.http.impl.client.BasicCookieStore;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
 public class PrescriptionListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -234,14 +246,72 @@ public class PrescriptionListAdapter extends RecyclerView.Adapter<RecyclerView.V
     }
 
 
+//    private void getImageUrls(final String pharmaPrescriptionId){
+//        AuthParameters authParameters = AuthParameters.getInstance(context);
+//        context.startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.GET_PRSCRIPTION_IMAGES, new HashMap<String, String>() {
+//                    {
+//                        put(Constants.PHARMA_PRESCRIPTION_ID, pharmaPrescriptionId);
+//                    }
+//                }, false,
+//                authParameters, new BasicCookieStore());
+//    }
+
+
     private void getImageUrls(final String pharmaPrescriptionId){
-        AuthParameters authParameters = AuthParameters.getInstance(context);
-        context.startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.GET_PRSCRIPTION_IMAGES, new HashMap<String, String>() {
-                    {
-                        put(Constants.PHARMA_PRESCRIPTION_ID, pharmaPrescriptionId);
+        if(!DataUtil.isInternetAvailable(context)) {return;}
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(context);
+        context.showProgressDialog("Please wait...");
+        bigBasketApiService.getImageUrls(pharmaPrescriptionId, new Callback<ApiResponse<ImageUrls>>() {
+            @Override
+            public void success(ApiResponse<ImageUrls> imageUrlsCallback, Response response) {
+                context.hideProgressView();
+                if (imageUrlsCallback.status == 0) {
+                    JsonArray jsonArrayImageUrls = imageUrlsCallback.apiResponseContent.jsonArrayImageUrls;
+                    if (jsonArrayImageUrls.size() > 0) {
+                        showPrescriptionImageDialog(jsonArrayImageUrls);
+                    } else {
+                        context.showAlertDialog(context, null, "Images are uploading....");
                     }
-                }, false,
-                authParameters, new BasicCookieStore());
+                } else {
+                    String errorMsg = imageUrlsCallback.status == ExceptionUtil.INTERNAL_SERVER_ERROR ?
+                            context.getResources().getString(R.string.INTERNAL_SERVER_ERROR) : imageUrlsCallback.message;
+                    context.showAlertDialog(context, null, errorMsg);
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                context.hideProgressDialog();
+                context.showAlertDialog("server error");
+            }
+        });
+    }
+
+
+    private void showPrescriptionImageDialog(JsonArray jsonArrayImageUrls){
+        final Dialog prescriptionImageDialog = new Dialog(context);
+        prescriptionImageDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        prescriptionImageDialog.setCanceledOnTouchOutside(true);
+        ListView listView = new ListView(context);
+        listView.setDividerHeight(0);
+        listView.setDivider(null);
+        prescriptionImageDialog.setContentView(listView);
+
+        Rect displayRectangle = new Rect();
+        context.getWindow().getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
+        prescriptionImageDialog.getWindow().setLayout(displayRectangle.width() - 20,
+                (int) (displayRectangle.height() * 0.7f));
+
+        ArrayList<Object> arrayListImgUrls = new ArrayList<>();
+        for(int i=0; i<jsonArrayImageUrls.size(); i++){
+            arrayListImgUrls.add(jsonArrayImageUrls.get(i).getAsString());
+        }
+
+        MultipleImagesPrescriptionAdapter multipleImagesPrescriptionAdapter = new MultipleImagesPrescriptionAdapter(context,
+                arrayListImgUrls);
+        listView.setAdapter(multipleImagesPrescriptionAdapter);
+        prescriptionImageDialog.show();
+
     }
 
 }
