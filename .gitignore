@@ -17,3 +17,4 @@ app/proguard\\configuration.txt
 floatingActionButton/build/*
 *.iml
 import-summary.txt
+gradle/local.properties
