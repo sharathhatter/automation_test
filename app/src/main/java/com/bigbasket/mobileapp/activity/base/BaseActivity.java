@@ -8,13 +8,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBarActivity;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -49,8 +47,6 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.order.COReserveQuantity;
 import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
-import com.bigbasket.mobileapp.model.request.HttpRequestData;
 import com.bigbasket.mobileapp.task.COReserveQuantityCheckTask;
 import com.bigbasket.mobileapp.task.UploadImageService;
 import com.bigbasket.mobileapp.util.Constants;
@@ -60,7 +56,6 @@ import com.bigbasket.mobileapp.util.MessageCode;
 import com.demach.konotor.Konotor;
 import com.moe.pushlibrary.MoEHelper;
 
-import org.apache.http.client.CookieStore;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -69,7 +64,6 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
@@ -124,14 +118,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     public void hideProgressView() {
     }
 
-    public void onHttpError() {
-
-    }
-
     public abstract BaseActivity getCurrentActivity();
-
-    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-    }
 
     @Override
     public void onCoMarketPlaceSuccess(MarketPlace marketPlace) {
@@ -163,72 +150,6 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         Intent intent = new Intent(getCurrentActivity(), CheckoutQCActivity.class);
         intent.putExtra(Constants.QC_LEN, coReserveQuantity.getQc_len());
         startActivityForResult(intent, Constants.GO_TO_HOME);
-    }
-
-
-    public void startAsyncActivity(String url, HashMap<String, String> params,
-                                   boolean post, @Nullable AuthParameters authParameters,
-                                   CookieStore cookieStore) {
-        startAsyncActivity(url, params, post, authParameters, cookieStore, null);
-    }
-
-    public void startAsyncActivity(String url, HashMap<String, String> params,
-                                   boolean post, @Nullable AuthParameters authParameters,
-                                   CookieStore cookieStore, @Nullable HashMap<Object, String> additionalCtx) {
-        startAsyncActivity(url, params, post, authParameters, cookieStore, additionalCtx, false);
-    }
-
-    public void startAsyncActivity(String url, HashMap<String, String> params,
-                                   boolean post, @Nullable AuthParameters authParameters,
-                                   CookieStore cookieStore, @Nullable HashMap<Object, String> additionalCtx,
-                                   boolean noProgressView) {
-        if (DataUtil.isInternetAvailable(getCurrentActivity())) {
-            if (isSuspended()) {
-                return;
-            }
-            if (!noProgressView) {
-                showProgressDialog(getString(R.string.please_wait));
-            }
-            String authToken = null, vid = null, osVersion = null;
-            if (authParameters != null) {
-                authToken = authParameters.getBbAuthToken();
-                vid = authParameters.getVisitorId();
-                osVersion = authParameters.getOsVersion();
-            }
-            HttpRequestData httpRequestData = new HttpRequestData(url, params, post,
-                    authToken, vid, osVersion, cookieStore, additionalCtx);
-            new HttpAsyncActivity().execute(httpRequestData);
-        } else {
-            handler.sendEmptyMessage(MessageCode.INTERNET_ERROR);
-        }
-    }
-
-    private class HttpAsyncActivity extends AsyncTask<HttpRequestData, Integer, HttpOperationResult> {
-
-        protected HttpOperationResult doInBackground(HttpRequestData... httpRequestDatas) {
-            if (isCancelled()) {
-                return null;
-            }
-            HttpRequestData httpRequestData = httpRequestDatas[0];
-            HttpOperationResult httpOperationResult;
-            httpOperationResult = httpRequestData.isPost() ? DataUtil.doHttpPost(httpRequestData)
-                    : DataUtil.doHttpGet(httpRequestData);
-            return httpOperationResult;
-        }
-
-        protected void onPostExecute(HttpOperationResult httpOperationResult) {
-            Log.d("OnPostExecute", "");
-            try {
-                hideProgressDialog();
-            } catch (IllegalArgumentException e) {
-                return;
-            }
-            if (httpOperationResult != null) {
-                onAsyncTaskComplete(httpOperationResult);
-            } else {
-                onHttpError();
-            }
-        }
     }
 
     @Override

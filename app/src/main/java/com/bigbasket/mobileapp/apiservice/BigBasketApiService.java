@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.apiservice;
 
+import com.bigbasket.mobileapp.apiservice.callbacks.CallbackGetAreaInfo;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.AutoSearchApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.BaseApiResponse;
@@ -21,6 +22,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OrderListApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostDeliveryAddressApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.PostFeedbackApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostVoucherApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.ProductDetailApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PromoDetailApiResponseContent;
@@ -195,9 +197,7 @@ public interface BigBasketApiService {
     void setUserDetailsData(@Field(Constants.USER_DETAILS) String userDetails,
                             Callback<UpdateProfileOldApiResponse> changePasswordCallback);
 
-    @GET("/get-area-info/")
-    void getAreaInfo(Callback<ApiResponse<JSONObject>> areaInfoCallback);
-
+    @FormUrlEncoded
     @POST("/login/")
     void login(@Field(Constants.EMAIL) String email, @Field(Constants.PASSWORD) String password,
                Callback<LoginApiResponse> loginApiResponseContent);
@@ -299,4 +299,13 @@ public interface BigBasketApiService {
 
     @GET("/change-city/")
     void changeCity(@Query("new_city_id") String newCityId, Callback<OldBaseApiResponse> oldBaseApiResponseCallback);
+
+    @GET("/get-area-info/")
+    void getAreaInfo(CallbackGetAreaInfo callbackGetAreaInfo);
+
+    @FormUrlEncoded
+    @POST("/post-case-feedback/")
+    void postCaseFeedback(@Field(Constants.CASE_ID) String caseId, @Field(Constants.RATING) String rating,
+                          @Field(Constants.COMMENTS) String comments,
+                          Callback<ApiResponse<PostFeedbackApiResponseContent>> postFeedbackApiResponseCallback);
 }

@@ -17,12 +17,12 @@ import android.widget.Toast;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.callbacks.CallbackGetAreaInfo;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.interfaces.PinCodeAware;
 import com.bigbasket.mobileapp.model.account.City;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
 
 import java.util.ArrayList;
 
@@ -31,7 +31,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class ChangeCityFragment extends BaseFragment {
+public class ChangeCityFragment extends BaseFragment implements PinCodeAware {
 
     private Spinner spinnerChooseCity;
     private String currentCityName;
@@ -75,15 +75,6 @@ public class ChangeCityFragment extends BaseFragment {
         });
     }
 
-    @Override
-    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-        if (httpOperationResult.getUrl().contains(Constants.GET_AREA_INFO)) {
-            getActivity().finish();
-        } else {
-            super.onAsyncTaskComplete(httpOperationResult);
-        }
-    }
-
     private void onCityChanged() {
         Toast.makeText(getActivity(), getResources().getString(R.string.cityChangeSuccess), Toast.LENGTH_SHORT).show();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -91,7 +82,8 @@ public class ChangeCityFragment extends BaseFragment {
         editor.putString(Constants.CITY, selectedCity.getName());
         editor.putString(Constants.CITY_ID, String.valueOf(selectedCity.getId()));
         editor.commit();
-        startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.GET_AREA_INFO, null, false, false, null);
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
+        bigBasketApiService.getAreaInfo(new CallbackGetAreaInfo<>(this));
     }
 
     private void displayCities(final ArrayList<City> cities) {
@@ -152,5 +144,15 @@ public class ChangeCityFragment extends BaseFragment {
     @Override
     public String getFragmentTxnTag() {
         return ChangeCityFragment.class.getName();
+    }
+
+    @Override
+    public void onPinCodeFetchSuccess() {
+        finish();
+    }
+
+    @Override
+    public void onPinCodeFetchFailure() {
+        finish();
     }
 }

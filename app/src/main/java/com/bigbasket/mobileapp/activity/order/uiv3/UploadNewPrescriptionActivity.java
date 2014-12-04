@@ -369,11 +369,6 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
         return null;
     }
 
-    @Override
-    public void onHttpError() {
-        showAlertDialog(this, null, "A network error occurred, while uploading your prescription");
-    }
-
 //    public void onTxtViewImages(View view){
 //        showPrescriptionImageDialog(uploadImageList);
 //    }

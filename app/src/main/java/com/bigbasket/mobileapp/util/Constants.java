@@ -39,7 +39,6 @@ public class Constants {
     public static final String PRODUCT_IS_NEW = "is_new";
     public static final String PROMO_LABEL = "promo_label";
     public static final String PRODUCT_IS_BBY = "is_bby";
-    public static final String GET_AREA_INFO = "get-area-info/";
 
     public static final String QC_STATUS = "status";
     public static final String QC_HAS_VALIDATION_ERRORS = "has_qc_validation_errors";
@@ -305,7 +304,6 @@ public class Constants {
     public static final String COMMENTS = "comments";
     public static final String CASE_ID = "case_id";
     public static final String FEEDBACK = "feedback";
-    public static final String POST_FEEDBACK = "post-case-feedback/";
     public static final String CODE = "code";
     public static final String CUSTOMER_DESC = "customer_desc";
     public static final String VALIDITY = "validity";

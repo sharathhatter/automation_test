@@ -11,18 +11,17 @@ import android.widget.RatingBar;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.PostFeedbackApiResponseContent;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
-import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
-import org.apache.http.impl.client.BasicCookieStore;
-
-import java.util.HashMap;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class CustomerFeedbackActivity extends BaseActivity {
 
@@ -65,41 +64,47 @@ public class CustomerFeedbackActivity extends BaseActivity {
         if (editTextComments.getText() == null)
             return;
         final RatingBar ratingBar = (RatingBar) base.findViewById(R.id.ratingBar);
-        HashMap<String, String> postParams = new HashMap<String, String>() {
-            {
-                put(Constants.CASE_ID, caseId);
-            }
+        String comments = editTextComments.getText().toString().trim();
 
-            {
-                put(Constants.RATING, String.valueOf(Math.round(ratingBar.getRating())));
-            }
-        };
-        String comments = editTextComments.getText().toString();
-        if (!TextUtils.isEmpty(comments)) {
-            postParams.put(Constants.COMMENTS, comments);
-        }
-        startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.POST_FEEDBACK,
-                postParams, true, AuthParameters.getInstance(this), new BasicCookieStore());
-    }
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
+        bigBasketApiService.postCaseFeedback(caseId, String.valueOf(Math.round(ratingBar.getRating())),
+                comments, new Callback<ApiResponse<PostFeedbackApiResponseContent>>() {
+                    @Override
+                    public void success(ApiResponse<PostFeedbackApiResponseContent> postFeedbackApiResponse, Response response) {
+                        if (isSuspended()) return;
+                        try {
+                            hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
+                        // TODO : Improve error handling
+                        switch (postFeedbackApiResponse.status) {
+                            case 0:
+                                if (postFeedbackApiResponse.apiResponseContent.success) {
+                                    showToast("You feedback was submitted successfully!");
+                                    finish();
+                                } else {
+                                    showAlertDialog(getCurrentActivity(), null, "Failed to submit your feedback. Please try later");
+                                }
+                                break;
+                            default:
+                                showAlertDialog(getCurrentActivity(), null, "Failed to submit your feedback. Please try later");
+                                break;
+                        }
+                    }
 
-    @Override
-    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-        super.onAsyncTaskComplete(httpOperationResult);
-        String responseString = httpOperationResult.getReponseString();
-        JsonObject jsonObject = new JsonParser().parse(responseString).getAsJsonObject();
-        int status = jsonObject.get(Constants.STATUS).getAsInt();
-        if (status == 0) {
-            JsonObject responseJson = jsonObject.get(Constants.RESPONSE).getAsJsonObject();
-            boolean successVal = responseJson.get(Constants.SUCCESS).getAsBoolean();
-            if (successVal) {
-                showToast("You feedback was submitted successfully!");
-                finish();
-            } else {
-                showAlertDialog(this, null, "Failed to submit your feedback. Please try later");
-            }
-        } else {
-            showAlertDialog(this, null, "Failed to submit your feedback. Please try later");
-        }
+                    @Override
+                    public void failure(RetrofitError error) {
+                        // TODO : Improve error handling
+                        if (isSuspended()) return;
+                        try {
+                            hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
+                        showAlertDialog(getCurrentActivity(), null, "Failed to submit your feedback. Please try later");
+                    }
+                });
     }
 
     @Override

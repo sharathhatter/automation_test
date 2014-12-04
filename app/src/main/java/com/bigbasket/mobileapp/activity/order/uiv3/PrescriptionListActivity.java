@@ -6,7 +6,8 @@ import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.*;
+import android.widget.FrameLayout;
+
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
@@ -14,11 +15,10 @@ import com.bigbasket.mobileapp.adapter.order.PrescriptionListAdapter;
 import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.order.SavedPrescription;
 import com.bigbasket.mobileapp.task.COMarketPlaceCheckTask;
-import com.bigbasket.mobileapp.util.*;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.UIUtil;
 import com.melnykov.fab.FloatingActionButton;
+
 import java.util.ArrayList;
 
 
@@ -53,12 +53,12 @@ public class PrescriptionListActivity extends BackButtonActivity {
     @Override
     public void onResume() {
         super.onResume();
-        if(!fromOnCreate)
-            new COMarketPlaceCheckTask<>(getCurrentActivity()).execute();
+        if (!fromOnCreate)
+            new COMarketPlaceCheckTask<>(getCurrentActivity()).startTask();
     }
 
     @Override
-    public void onPause(){
+    public void onPause() {
         super.onPause();
         fromOnCreate = false;
     }
@@ -66,7 +66,7 @@ public class PrescriptionListActivity extends BackButtonActivity {
     @Override
     public void onCoMarketPlaceSuccess(MarketPlace marketPlace) {
         savedPrescriptionArrayList = marketPlace.getSavedPrescription();
-        if(savedPrescriptionArrayList==null || savedPrescriptionArrayList.size()==0) return;
+        if (savedPrescriptionArrayList == null || savedPrescriptionArrayList.size() == 0) return;
         renderPrescriptionList(savedPrescriptionArrayList);
     }
 
@@ -79,7 +79,7 @@ public class PrescriptionListActivity extends BackButtonActivity {
         RecyclerView prescriptionRecyclerView = (RecyclerView) prescriptionView.findViewById(R.id.fabRecyclerView);
         UIUtil.configureRecyclerView(prescriptionRecyclerView, this, 1, 3);
         PrescriptionListAdapter prescriptionListAdapter = new PrescriptionListAdapter(getCurrentActivity(),
-                                                                            savedPrescriptionArrayList, faceRobotoRegular);
+                savedPrescriptionArrayList, faceRobotoRegular);
         prescriptionRecyclerView.setAdapter(prescriptionListAdapter);
 
         FloatingActionButton floatingActionButton = (FloatingActionButton) prescriptionView.findViewById(R.id.btnFab);
@@ -100,7 +100,7 @@ public class PrescriptionListActivity extends BackButtonActivity {
     }
 
 
-    private void addNewPrescription(){
+    private void addNewPrescription() {
         Intent intent = new Intent(getCurrentActivity(), UploadNewPrescriptionActivity.class);
         startActivityForResult(intent, Constants.GO_TO_HOME);
     }

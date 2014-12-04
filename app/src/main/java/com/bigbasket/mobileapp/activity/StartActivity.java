@@ -257,12 +257,6 @@ public class StartActivity extends BaseActivity {
     }
 
     @Override
-    public void onHttpError() {
-        // TODO : Add error handling
-        showAlertDialogFinish(this, null, "Server error");
-    }
-
-    @Override
     public BaseActivity getCurrentActivity() {
         return this;
     }

@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -25,30 +24,24 @@ import android.widget.Toast;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
-import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.callbacks.CallbackGetAreaInfo;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.CreateUpdateAddressApiResponseContent;
+import com.bigbasket.mobileapp.interfaces.PinCodeAware;
 import com.bigbasket.mobileapp.model.account.Address;
-import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.ExceptionUtil;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
-
-import org.apache.http.impl.client.BasicCookieStore;
-import org.json.JSONObject;
 
 import java.util.HashMap;
-import java.util.Iterator;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class MemberAddressFormActivity extends BackButtonActivity {
+public class MemberAddressFormActivity extends BackButtonActivity implements PinCodeAware {
 
     private Address address;
     private View base;
@@ -69,14 +62,9 @@ public class MemberAddressFormActivity extends BackButtonActivity {
         }
         if (getSystemAreaInfo()) {
             hRefresh.sendEmptyMessage(1);
+        } else {
+            showForm();
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        showForm();
-        setAdapterArea(editTextArea, editTextPincode);
     }
 
     private void showForm() {
@@ -261,6 +249,17 @@ public class MemberAddressFormActivity extends BackButtonActivity {
         }
     }
 
+    @Override
+    public void onPinCodeFetchSuccess() {
+        showForm();
+        setAdapterArea(editTextArea, editTextPincode);
+    }
+
+    @Override
+    public void onPinCodeFetchFailure() {
+        showForm();
+    }
+
     class CreateUpdateAddressApiCallback implements Callback<ApiResponse<CreateUpdateAddressApiResponseContent>> {
 
         @Override
@@ -305,51 +304,6 @@ public class MemberAddressFormActivity extends BackButtonActivity {
             hideProgressDialog();
             showAlertDialog(getCurrentActivity(), null, "Server Error");
             // TODO : Improve error handling
-        }
-    }
-
-    @Override
-    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-        super.onAsyncTaskComplete(httpOperationResult);
-        if (httpOperationResult.getUrl().contains(Constants.GET_AREA_INFO)) {
-            String responseJson = httpOperationResult.getReponseString();
-            int responseCode = httpOperationResult.getResponseCode();
-            int j = 0;
-            AreaPinInfoAdapter areaPinInfoAdapter = new AreaPinInfoAdapter(this);
-            areaPinInfoAdapter.deleteTable();
-            if (responseCode == Constants.successRespCode) {
-                Log.d("Response Code", "" + responseCode);
-                try {
-                    if (responseJson != null) {
-                        JSONObject responseJSONObject = new JSONObject(responseJson);
-
-                        JSONObject responseJSON = responseJSONObject.getJSONObject("response");
-                        JSONObject pinCodeObj = responseJSON.getJSONObject("pincode_map");
-
-                        @SuppressWarnings("unchecked") Iterator<String> myIter = pinCodeObj.keys();
-                        String area1[] = new String[pinCodeObj.length()];
-                        while (myIter.hasNext()) {
-                            area1[j] = myIter.next();
-                            for (int i = 0; i < pinCodeObj.getJSONArray(area1[j]).length(); i++) {
-                                String areaName = String.valueOf(pinCodeObj.getJSONArray(area1[j]).get(i));
-                                areaPinInfoAdapter.insert(areaName.toLowerCase(), String.valueOf(pinCodeObj.names().get(j)));
-                            }
-                            j++;
-                        }
-
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else {
-                switch (responseCode) {
-                    default:
-                        String defaultMsg = "Please try again later";
-                        showAlertDialogFinish(this, null, defaultMsg);
-                        break;
-                }
-
-            }
         }
     }
 
@@ -458,11 +412,6 @@ public class MemberAddressFormActivity extends BackButtonActivity {
     }
 
     @Override
-    public void onHttpError() {
-        showAlertDialog(this, null, "Server Error");
-    }
-
-    @Override
     protected void onPositiveButtonClicked(DialogInterface dialogInterface, int id, String sourceName, Object valuePassed) {
         if (sourceName != null && sourceName.equalsIgnoreCase(Constants.ERROR)) {
             finish();
@@ -470,13 +419,23 @@ public class MemberAddressFormActivity extends BackButtonActivity {
         super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
     }
 
+    @Override
+    public void showProgressView() {
+        showProgressDialog(getString(R.string.please_wait));
+    }
+
+    @Override
+    public void hideProgressView() {
+        hideProgressDialog();
+    }
+
     Handler hRefresh = new Handler() {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
                 case 1:
-                    AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());
-                    startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.GET_AREA_INFO, null, false,
-                            authParameters, new BasicCookieStore());
+                    BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
+                    showProgressView();
+                    bigBasketApiService.getAreaInfo(new CallbackGetAreaInfo<>(getCurrentActivity()));
                     break;
                 case Constants.VALIDATE_MOBILE_NUMBER_POPUP:
                     validateMobileNumber(false, mErrorMsg);

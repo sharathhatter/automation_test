@@ -9,7 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.text.InputFilter;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,39 +22,29 @@ import android.widget.ProgressBar;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
-import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
-import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
+import com.bigbasket.mobileapp.apiservice.callbacks.CallbackGetAreaInfo;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateProfileOldApiResponse;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.interfaces.PinCodeAware;
 import com.bigbasket.mobileapp.model.account.UpdateProfileModel;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
-import com.bigbasket.mobileapp.util.DialogButton;
-import com.bigbasket.mobileapp.util.ExceptionUtil;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
-import com.bigbasket.mobileapp.util.ParserUtil;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class UpdateProfileFragment extends BaseFragment {
+public class UpdateProfileFragment extends BaseFragment implements PinCodeAware {
 
     private EditText editTextEmail, editTextFirstName, editTextLastName, editTextDob,
             editTextHouseAndDetails, editTextStreetDetails, editTextCity, editTextMobileNumber,
@@ -174,13 +163,13 @@ public class UpdateProfileFragment extends BaseFragment {
         imgPinCodeErr = (ImageView) view.findViewById(R.id.imgPinCodeErr);
         imgPinCodeErr.setVisibility(View.GONE);
 
-        callForMemberData();
+        loadMemberDetails();
 //        if (checkInternetConnection()) {
 //            if (((BaseActivity) getActivity()).getSystemAreaInfo()) {
 //                getAreaInfo();
 //                //startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.GET_AREA_INFO, null, false, true, null);
 //            } else {
-//                callForMemberData();
+//                loadMemberDetails();
 //            }
 //
 //        } else {
@@ -188,52 +177,13 @@ public class UpdateProfileFragment extends BaseFragment {
 //        }
     }
 
-    protected void getAreaInfo(){
-        if(!DataUtil.isInternetAvailable(getActivity())){return;}
+    protected void getAreaInfo() {
+        if (!DataUtil.isInternetAvailable(getActivity())) {
+            return;
+        }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressView();
-        bigBasketApiService.getAreaInfo(new Callback<ApiResponse<JSONObject>>() {
-            @Override
-            public void success(ApiResponse<JSONObject> areaInfoCallback, Response response) {
-                hideProgressView();
-                if(areaInfoCallback.status==0){
-                    int j = 0;
-                    AreaPinInfoAdapter areaPinInfoAdapter = new AreaPinInfoAdapter(getActivity());
-                    areaPinInfoAdapter.deleteTable();
-                    try {
-                        JSONObject responseJSON = areaInfoCallback.apiResponseContent;
-                        JSONObject pinCodeObj = responseJSON.getJSONObject(Constants.PIN_CODE_MAP);
-                        @SuppressWarnings("unchecked") Iterator<String> myIter = pinCodeObj.keys();
-                        String area1[] = new String[pinCodeObj.length()];
-                        while (myIter.hasNext()) {
-                            area1[j] = myIter.next();
-                            for (int i = 0; i < pinCodeObj.getJSONArray(area1[j]).length(); i++) {
-                                String areaName = String.valueOf(pinCodeObj.getJSONArray(area1[j]).get(i));
-                                areaPinInfoAdapter.insert(areaName.toLowerCase(), String.valueOf(pinCodeObj.names().get(j)));
-                            }
-                            j++;
-                        }
-                        //callForMemberData();
-                        initiateUpdateProfileActivity();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        showAlertDialog(getActivity(), null, e.toString(), DialogButton.OK, null,
-                                Constants.ERROR_AREA_PIN_CODE,null, Constants.OK);
-                    }
-
-                }else {
-                    String errorMsg = areaInfoCallback.status == ExceptionUtil.INTERNAL_SERVER_ERROR ?
-                            getResources().getString(R.string.INTERNAL_SERVER_ERROR) : areaInfoCallback.message;
-                    showAlertDialog(getActivity(), null, errorMsg, DialogButton.OK, null, Constants.ERROR_AREA_PIN_CODE,null, null);
-                }
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                hideProgressView();
-                showErrorMsg(getString(R.string.server_error));
-            }
-        });
+        bigBasketApiService.getAreaInfo(new CallbackGetAreaInfo<>(this));
     }
 
     @Override
@@ -327,7 +277,7 @@ public class UpdateProfileFragment extends BaseFragment {
                             j++;
                         }
                     }
-                    callForMemberData();
+                    loadMemberDetails();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -341,36 +291,38 @@ public class UpdateProfileFragment extends BaseFragment {
 
     */
 
-    private void callForMemberData() {
-        if(!DataUtil.isInternetAvailable(getActivity())){return;}
+    private void loadMemberDetails() {
+        if (!DataUtil.isInternetAvailable(getActivity())) {
+            return;
+        }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.getMemberProfileData(new Callback<UpdateProfileOldApiResponse>() {
-                    @Override
-                    public void success(UpdateProfileOldApiResponse memberProfileDataCallback, Response response) {
-                        hideProgressDialog();
-                        if (memberProfileDataCallback.status.equals(Constants.OK)) {
-                            UpdateProfileModel updateProfileModel = memberProfileDataCallback.memberDetails;
-                            fillUpdateProfileData(updateProfileModel);
-                        } else {
-                            String errorType = memberProfileDataCallback.errorType;
-                            switch (errorType) {
-                                case Constants.INVALID_USER_PASS:
-                                    showErrorMsg(getString(R.string.OLD_PASS_NOT_CORRECT));
-                                    break;
-                                default:
-                                    showErrorMsg(getString(R.string.INTERNAL_SERVER_ERROR));
-                                    break;
-                            }
-                        }
+            @Override
+            public void success(UpdateProfileOldApiResponse memberProfileDataCallback, Response response) {
+                hideProgressDialog();
+                if (memberProfileDataCallback.status.equals(Constants.OK)) {
+                    UpdateProfileModel updateProfileModel = memberProfileDataCallback.memberDetails;
+                    fillUpdateProfileData(updateProfileModel);
+                } else {
+                    String errorType = memberProfileDataCallback.errorType;
+                    switch (errorType) {
+                        case Constants.INVALID_USER_PASS:
+                            showErrorMsg(getString(R.string.OLD_PASS_NOT_CORRECT));
+                            break;
+                        default:
+                            showErrorMsg(getString(R.string.INTERNAL_SERVER_ERROR));
+                            break;
                     }
+                }
+            }
 
-                    @Override
-                    public void failure(RetrofitError error) {
-                        hideProgressDialog();
-                        showErrorMsg(getString(R.string.server_error));
-                    }
-                });
+            @Override
+            public void failure(RetrofitError error) {
+                hideProgressDialog();
+                showErrorMsg(getString(R.string.server_error));
+            }
+        });
 
 //
 //        startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.UPDATE_PROFILE,
@@ -394,6 +346,16 @@ public class UpdateProfileFragment extends BaseFragment {
                 validateMobileNumber(true, errorMsg);
                 break;
         }
+    }
+
+    @Override
+    public void onPinCodeFetchSuccess() {
+        initiateUpdateProfileActivity();
+    }
+
+    @Override
+    public void onPinCodeFetchFailure() {
+        initiateUpdateProfileActivity();
     }
 
     public static class OTPDialog extends OTPValidationDialogFragment {
@@ -591,8 +553,10 @@ public class UpdateProfileFragment extends BaseFragment {
         }
     }
 
-    private void postUserDetails(String userDetails){
-        if(!DataUtil.isInternetAvailable(getActivity())){return;}
+    private void postUserDetails(String userDetails) {
+        if (!DataUtil.isInternetAvailable(getActivity())) {
+            return;
+        }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.setUserDetailsData(userDetails, new Callback<UpdateProfileOldApiResponse>() {
