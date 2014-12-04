@@ -163,4 +163,14 @@ public interface BigBasketApiService {
 
     @GET("/get-invoice/")
     void getInvoice(@Query(Constants.ORDER_ID) String orderId, Callback<ApiResponse<OrderInvoice>> getInvoiceApiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/sl-add-item/")
+    void addItemToShoppingList(@Field("product_id") String productId, @Field("slugs") String shoppingListSlugs,
+                               Callback<OldBaseApiResponse> addItemToShoppingListApiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/sl-delete-item/")
+    void deleteItemFromShoppingList(@Field("product_id") String productId, @Field(Constants.SLUG) String shoppingListSlug,
+                                    Callback<OldBaseApiResponse> deleteItemFromShoppingListApiResponseCallback);
 }

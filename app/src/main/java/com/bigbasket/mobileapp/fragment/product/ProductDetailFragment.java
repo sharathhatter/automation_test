@@ -172,10 +172,9 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
             return;
         }
         ShoppingListDoAddDeleteTask shoppingListDoAddDeleteTask =
-                new ShoppingListDoAddDeleteTask<>(this,
-                        MobileApiUrl.getBaseAPIUrl() + "sl-add-item/", selectedShoppingListNames,
+                new ShoppingListDoAddDeleteTask<>(this, selectedShoppingListNames,
                         ShoppingListOption.ADD_TO_LIST);
-        shoppingListDoAddDeleteTask.execute();
+        shoppingListDoAddDeleteTask.startTask();
     }
 
     @Override

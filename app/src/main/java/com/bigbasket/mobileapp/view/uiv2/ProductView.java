@@ -27,19 +27,19 @@ import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.common.ProductViewHolder;
 import com.bigbasket.mobileapp.handler.ProductDetailOnClickListener;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.model.promo.Promo;
+import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
 import com.bigbasket.mobileapp.task.BasketOperationTask;
-import com.bigbasket.mobileapp.task.ShoppingListDoOperationTask;
+import com.bigbasket.mobileapp.task.uiv3.ShoppingListDoAddDeleteTask;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListNamesTask;
-import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.MessageCode;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -326,14 +326,13 @@ public final class ProductView {
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(
                                                 DialogInterface dialog, int id) {
-                                            if (DataUtil.isInternetAvailable(context)) {
-                                                ArrayList<String> shoppingListNames = new ArrayList<>();
-                                                shoppingListNames.add(productViewDisplayDataHolder.getShoppingListName().getSlug());
-                                                ShoppingListDoOperationTask shoppingListDoOperationTask = new ShoppingListDoOperationTask<>(context,
-                                                        MobileApiUrl.getBaseAPIUrl() + "sl-delete-item/",
-                                                        shoppingListNames, ShoppingListOption.DELETE_ITEM);
+                                            if (((ConnectivityAware) shoppingListNamesAware).checkInternetConnection()) {
+                                                List<ShoppingListName> shoppingListNames = new ArrayList<>();
+                                                shoppingListNames.add(productViewDisplayDataHolder.getShoppingListName());
+                                                ShoppingListDoAddDeleteTask shoppingListDoAddDeleteTask =
+                                                        new ShoppingListDoAddDeleteTask<>(shoppingListNamesAware, shoppingListNames, ShoppingListOption.DELETE_ITEM);
                                                 ((ShoppingListNamesAware) shoppingListNamesAware).setSelectedProductId(product.getSku());
-                                                shoppingListDoOperationTask.execute();
+                                                shoppingListDoAddDeleteTask.startTask();
                                             } else {
                                                 context.showToast("No internet connection found!");
                                             }

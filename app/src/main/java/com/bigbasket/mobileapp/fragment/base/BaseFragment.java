@@ -384,7 +384,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(!TextUtils.isEmpty(title) ? title : "BigBasket");
         builder.setMessage(msg);
-        if (dialogButton != null && nxtDialogButton != null) {
+        if (dialogButton != null) {
             if (dialogButton.equals(DialogButton.YES) || dialogButton.equals(DialogButton.OK)) {
                 if (TextUtils.isEmpty(positiveBtnText)) {
                     int textId = dialogButton.equals(DialogButton.YES) ? R.string.yesTxt : R.string.ok;
@@ -397,7 +397,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
                     }
                 });
             }
-            if (nxtDialogButton.equals(DialogButton.NO))
+            if (nxtDialogButton != null && nxtDialogButton.equals(DialogButton.NO))
                 builder.setNegativeButton(R.string.noTxt, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int id) {

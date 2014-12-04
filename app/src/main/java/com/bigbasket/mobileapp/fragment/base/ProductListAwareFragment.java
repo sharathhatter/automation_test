@@ -27,7 +27,6 @@ import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
 import com.bigbasket.mobileapp.task.uiv3.ProductListTask;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListDoAddDeleteTask;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.ShoppingListNamesDialog;
 import com.bigbasket.mobileapp.view.uiv3.SortProductDialog;
@@ -267,10 +266,8 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
             return;
         }
         ShoppingListDoAddDeleteTask shoppingListDoAddDeleteTask =
-                new ShoppingListDoAddDeleteTask<>(this,
-                        MobileApiUrl.getBaseAPIUrl() + "sl-add-item/", selectedShoppingListNames,
-                        ShoppingListOption.ADD_TO_LIST);
-        shoppingListDoAddDeleteTask.execute();
+                new ShoppingListDoAddDeleteTask<>(this, selectedShoppingListNames, ShoppingListOption.ADD_TO_LIST);
+        shoppingListDoAddDeleteTask.startTask();
     }
 
     public void onFilterApplied(ArrayList<FilteredOn> filteredOn) {
