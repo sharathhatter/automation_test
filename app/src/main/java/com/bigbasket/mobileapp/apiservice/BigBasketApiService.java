@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.apiservice;
 
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.AutoSearchApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.BaseApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.BrowseCategoryApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.BrowsePromoCategoryApiResponseContent;
@@ -20,6 +21,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OrderListApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostDeliveryAddressApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.PostVoucherApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.ProductDetailApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PromoDetailApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PromoSetProductsApiResponseContent;
@@ -215,4 +217,18 @@ public interface BigBasketApiService {
     @POST("/co-place-order/")
     void placeOrder(@Field(Constants.P_ORDER_ID) String potentialOrderId, @Field(Constants.TXN_ID) String txnId,
                     Callback<OldApiResponse<PlaceOrderApiResponseContent>> placeOrderApiResponseCallback);
+
+    @GET("/c-bulk-remove/")
+    void cartBulkRemove(@Query(Constants.FULFILLMENT_ID) String fulfillmentId,
+                        Callback<BaseApiResponse> cartBulkRemoveApiResponseCallback);
+
+    @GET("/search-tc/")
+    ApiResponse<AutoSearchApiResponseContent> autoSearch(@Query("t") String term);
+
+    @POST("/co-post-voucher/")
+    void postVoucher(@Field(Constants.P_ORDER_ID) String potentialOrderId, @Field(Constants.EVOUCHER_CODE) String evoucherCode,
+                     Callback<PostVoucherApiResponse> postVoucherApiResponseCallback);
+
+    @GET("/change-city/")
+    void changeCity(@Query("new_city_id") String newCityId, Callback<OldBaseApiResponse> oldBaseApiResponseCallback);
 }

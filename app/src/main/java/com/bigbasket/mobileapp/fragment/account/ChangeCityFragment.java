@@ -15,17 +15,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
-import java.util.Map;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
 public class ChangeCityFragment extends BaseFragment {
@@ -52,25 +55,29 @@ public class ChangeCityFragment extends BaseFragment {
         lblChangeCity.setTypeface(faceRobotoRegular);
 
         spinnerChooseCity = (Spinner) base.findViewById(R.id.spinnerChooseCity);
-        startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.GET_CITIES, null, false, false, null);
 
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
         currentCityName = prefer.getString("city", "");
+
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+        showProgressDialog(getString(R.string.please_wait));
+        bigBasketApiService.listCities(new Callback<ArrayList<City>>() {
+            @Override
+            public void success(ArrayList<City> cities, Response response) {
+                hideProgressDialog();
+                displayCities(cities);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                hideProgressDialog();
+            }
+        });
     }
 
     @Override
     public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-        if (httpOperationResult.getUrl().contains(Constants.GET_CITIES)) {
-            JsonObject responseJsonObj = new JsonParser().parse(httpOperationResult.getReponseString()).getAsJsonObject();
-            ArrayList<City> cities = new ArrayList<>();
-            for (Map.Entry<String, JsonElement> cityEntry : responseJsonObj.entrySet()) {
-                String cityName = cityEntry.getKey();
-                cities.add(new City(cityName, cityEntry.getValue().getAsInt(), cityName.equalsIgnoreCase(currentCityName)));
-            }
-            displayCities(cities);
-        } else if (httpOperationResult.getUrl().contains(Constants.CHANGE_CITY)) {
-            onCityChanged();
-        } else if (httpOperationResult.getUrl().contains(Constants.GET_AREA_INFO)) {
+        if (httpOperationResult.getUrl().contains(Constants.GET_AREA_INFO)) {
             getActivity().finish();
         } else {
             super.onAsyncTaskComplete(httpOperationResult);
@@ -101,8 +108,28 @@ public class ChangeCityFragment extends BaseFragment {
                 if (selectedCity.getName().equalsIgnoreCase(currentCityName)) {
                     return;
                 }
-                String url = MobileApiUrl.getBaseAPIUrl() + Constants.CHANGE_CITY + "?new_city_id=" + selectedCity.getId();
-                startAsyncActivity(url, null, false, false, null);
+                BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+                showProgressDialog(getString(R.string.please_wait));
+                bigBasketApiService.changeCity(String.valueOf(selectedCity.getId()), new Callback<OldBaseApiResponse>() {
+                    @Override
+                    public void success(OldBaseApiResponse oldBaseApiResponse, Response response) {
+                        hideProgressDialog();
+                         switch (oldBaseApiResponse.status) {
+                             case Constants.OK:
+                                 onCityChanged();
+                                 break;
+                             default:
+                                 showErrorMsg("Server Error");
+                                 break;
+                         }
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        hideProgressDialog();
+                        showErrorMsg("Server Error");
+                    }
+                });
             }
 
             @Override

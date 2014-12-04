@@ -21,6 +21,9 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.BaseApiResponse;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.general.MessageInfo;
@@ -28,24 +31,19 @@ import com.bigbasket.mobileapp.model.general.MessageParamInfo;
 import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.order.MarketPlaceAgeCheck;
 import com.bigbasket.mobileapp.model.order.PharmaPrescriptionInfo;
-import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.task.COMarketPlaceCheckTask;
 import com.bigbasket.mobileapp.task.COReserveQuantityCheckTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.ExceptionUtil;
 import com.bigbasket.mobileapp.util.MessageFormatUtil;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
-import com.bigbasket.mobileapp.util.ParserUtil;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-import org.apache.http.impl.client.BasicCookieStore;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class AgeValidationActivity extends BackButtonActivity {
     private MarketPlace marketPlace;
@@ -255,16 +253,49 @@ public class AgeValidationActivity extends BackButtonActivity {
         if (sourceName != null) {
             switch (sourceName) {
                 case Constants.REMOVE_ALL_MARKETPLACE_FROM_BASKET:
-                    AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());
-                    startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.C_BULK_REMOVE,
-                            new HashMap<String, String>() {
-                                {
-                                    put(Constants.FULFILLMENT_ID, String.valueOf(valuePassed));
+                    BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
+                    showProgressDialog(getString(R.string.please_wait));
+                    bigBasketApiService.cartBulkRemove(valuePassed.toString(), new Callback<BaseApiResponse>() {
+                        @Override
+                        public void success(BaseApiResponse cartBulkRemoveApiResponseCallback, Response response) {
+                            if (isSuspended()) return;
+                            try {
+                                hideProgressDialog();
+                            } catch (IllegalArgumentException e) {
+                                return;
+                            }
+                            if (cartBulkRemoveApiResponseCallback.status == 0) {
+                                CartSummary cartInfo = cartBulkRemoveApiResponseCallback.cartSummary;
+                                ((CartInfoAware) getCurrentActivity()).setCartInfo(cartInfo);
+                                ((CartInfoAware) getCurrentActivity()).updateUIForCartInfo();
+                                SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
+                                SharedPreferences.Editor editor = prefer.edit();
+                                editor.putString(Constants.GET_CART, String.valueOf(cartInfo.getNoOfItems()));
+                                editor.commit();
+                                if (cartInfo.getNoOfItems() == 0) {
+                                    showAlertDialogFinish(getCurrentActivity(), null, getResources().getString(R.string.basketEmpty));
+                                } else {
+                                    new COMarketPlaceCheckTask<>(getCurrentActivity()).startTask();
                                 }
-                            }, false,
-                            authParameters,
-                            new BasicCookieStore()
-                    );
+                            } else {
+                                String msgString = cartBulkRemoveApiResponseCallback.status == ExceptionUtil.INTERNAL_SERVER_ERROR ?
+                                        getResources().getString(R.string.INTERNAL_SERVER_ERROR) : cartBulkRemoveApiResponseCallback.message;
+                                showAlertDialog(getCurrentActivity(), null, msgString);
+                            }
+                        }
+
+                        @Override
+                        public void failure(RetrofitError error) {
+                            if (isSuspended()) return;
+                            try {
+                                hideProgressDialog();
+                            } catch (IllegalArgumentException e) {
+                                return;
+                            }
+                            // TODO : Improve error handling
+                            showAlertDialog(getCurrentActivity(), null, "Server Error");
+                        }
+                    });
                     break;
                 default:
                     super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
@@ -272,36 +303,6 @@ public class AgeValidationActivity extends BackButtonActivity {
             }
         } else {
             super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
-        }
-    }
-
-    @Override
-    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-        super.onAsyncTaskComplete(httpOperationResult);
-        String responseString = httpOperationResult.getReponseString();
-        JsonObject jsonObject = new JsonParser().parse(responseString).getAsJsonObject();
-        if (httpOperationResult.getUrl().contains(Constants.C_BULK_REMOVE)) {
-            int status = jsonObject.get(Constants.STATUS).getAsInt();
-            if (status == 0) {
-                CartSummary cartInfo = ParserUtil.parseGetCartSummaryResponse(jsonObject.
-                        get(Constants.CART_SUMMARY).getAsJsonObject());
-                ((CartInfoAware) getCurrentActivity()).setCartInfo(cartInfo);
-                ((CartInfoAware) getCurrentActivity()).updateUIForCartInfo();
-                SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(this);
-                SharedPreferences.Editor editor = prefer.edit();
-                editor.putString(Constants.GET_CART, String.valueOf(cartInfo.getNoOfItems()));
-                editor.commit();
-                if (cartInfo.getNoOfItems() == 0) {
-                    showAlertDialogFinish(this, null, getResources().getString(R.string.basketEmpty));
-                } else {
-                    new COMarketPlaceCheckTask<>(getCurrentActivity()).startTask();
-                }
-            } else {
-                String msgString = status == ExceptionUtil.INTERNAL_SERVER_ERROR ?
-                        getResources().getString(R.string.INTERNAL_SERVER_ERROR) :
-                        jsonObject.get(Constants.MESSAGE).getAsString();
-                showAlertDialog(this, null, msgString, Constants.GO_TO_HOME_STRING);
-            }
         }
     }
 }

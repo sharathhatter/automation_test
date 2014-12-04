@@ -3,28 +3,15 @@ package com.bigbasket.mobileapp.util;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.bigbasket.mobileapp.model.account.Address;
 import com.bigbasket.mobileapp.model.account.UpdateProfileModel;
 import com.bigbasket.mobileapp.model.account.WalletDataItem;
-import com.bigbasket.mobileapp.model.cart.CartSummary;
-import com.bigbasket.mobileapp.model.cart.FulfillmentInfo;
-import com.bigbasket.mobileapp.model.order.ActiveVouchers;
 import com.bigbasket.mobileapp.model.order.COReserveQuantity;
-import com.bigbasket.mobileapp.model.order.Order;
-import com.bigbasket.mobileapp.model.order.OrderInvoice;
-import com.bigbasket.mobileapp.model.order.OrderMonthRange;
-import com.bigbasket.mobileapp.model.order.OrderSummary;
 import com.bigbasket.mobileapp.model.order.QCErrorData;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.TopCategoryModel;
 import com.bigbasket.mobileapp.model.promo.ProductPromoInfo;
-import com.bigbasket.mobileapp.model.search.AutoSearchResponse;
-import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
-import com.bigbasket.mobileapp.model.slot.Slot;
-import com.bigbasket.mobileapp.model.slot.SlotGroup;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
@@ -35,7 +22,6 @@ import org.json.JSONObject;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 public class ParserUtil {
@@ -48,11 +34,6 @@ public class ParserUtil {
         }.getType();
         topCategoryModels = gson.fromJson(topCategoryArray, collectionType);
         return topCategoryModels;
-    }
-
-    public static OrderSummary parseOrderSummary(JsonObject orderSummaryJsonObj) {
-        Gson gson = new Gson();
-        return gson.fromJson(orderSummaryJsonObj, OrderSummary.class);
     }
 
     public static ArrayList<Product> parseProductList(String productListStr) {
@@ -178,22 +159,6 @@ public class ParserUtil {
         return result;
     }
 
-    public static CartSummary parseGetCartSummaryResponse(JsonObject cartJsonobject) {
-        CartSummary cartInfo = new CartSummary();
-        try {
-            if (cartJsonobject != null) {
-                String savingStr = cartJsonobject.get(Constants.CART_INFO_SAVING).getAsString();
-                String totalStr = cartJsonobject.get(Constants.CART_INFO_TOTAL).getAsString();
-                cartInfo.setTotal(Double.parseDouble(totalStr != null ? totalStr : "0"));
-                cartInfo.setSavings(Double.parseDouble(savingStr != null ? savingStr : "0"));
-                cartInfo.setNoOfItems(cartJsonobject.get(Constants.CART_INFO_NUM_OF_ITEMS).getAsInt());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return cartInfo;
-    }
-
     public static ArrayList<WalletDataItem> getListData(String resp) {
         ArrayList<WalletDataItem> results = new ArrayList<WalletDataItem>();
         try {
@@ -218,44 +183,9 @@ public class ParserUtil {
         return results;
     }
 
-    public static ArrayList<Order> parseOrderList(JsonArray ordersJsonArray) {
-        ArrayList<Order> orderArrayList;
-        Gson gson = new Gson();
-        Type collectionType = new TypeToken<Collection<Order>>() {
-        }.getType();
-        orderArrayList = gson.fromJson(ordersJsonArray, collectionType);
-        return orderArrayList;
-    }
-
-    public static List<Slot> parseSlot(JSONArray slotJsonArray) {
-        List<Slot> slots = new ArrayList<>();
-        for (int i = 0; i < slotJsonArray.length(); i++) {
-            try {
-                JSONObject jsonObject = slotJsonArray.getJSONObject(i);
-                slots.add(new Slot(jsonObject));
-            } catch (JSONException e) {
-            }
-        }
-        return slots;
-    }
-
     public static UpdateProfileModel parseUpdateProfileData(JsonObject jsonObjectUpdateProfile) {
         Gson gson = new Gson();
         UpdateProfileModel updateProfileModel = gson.fromJson(jsonObjectUpdateProfile, UpdateProfileModel.class);
         return updateProfileModel;
-    }
-
-    public static AutoSearchResponse parseAutoSearchResponse(JsonObject termsJsonObj) {
-        AutoSearchResponse autoSearchResponse;
-        Gson gson = new Gson();
-        autoSearchResponse = gson.fromJson(termsJsonObj, AutoSearchResponse.class);
-        return autoSearchResponse;
-    }
-
-    public static OrderInvoice parseOrderInvoice(JsonObject orderInvoiceJsonObj) {
-        OrderInvoice orderInvoice;
-        Gson gson = new Gson();
-        orderInvoice = gson.fromJson(orderInvoiceJsonObj, OrderInvoice.class);
-        return orderInvoice;
     }
 }

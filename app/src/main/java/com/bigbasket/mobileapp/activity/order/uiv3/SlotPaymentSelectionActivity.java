@@ -112,30 +112,6 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
                 });
     }
 
-    @Override
-    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-        String url = httpOperationResult.getUrl();
-
-        if (url.contains(Constants.CO_POST_SLOTS_AND_PAYMENT)) {
-            JsonObject jsonObject = new JsonParser().parse(httpOperationResult.getReponseString()).getAsJsonObject();
-            int status = jsonObject.get(Constants.STATUS).getAsInt();
-            switch (status) {
-                case 0:
-                    JsonObject responseJsonObj = jsonObject.get(Constants.RESPONSE).getAsJsonObject();
-                    OrderSummary orderSummary = ParserUtil.parseOrderSummary(responseJsonObj);
-                    orderSummary.getOrderDetails().setPaymentMethodDisplay(mPaymentMethodDisplay);
-                    launchPlaceOrderActivity(orderSummary);
-                    break;
-                default:
-                    // TODO : Add error handling
-                    showAlertDialog("Server Error");
-                    break;
-            }
-        } else {
-            super.onAsyncTaskComplete(httpOperationResult);
-        }
-    }
-
     private void launchPlaceOrderActivity(OrderSummary orderSummary) {
         Intent intent = new Intent(this, PlaceOrderActivity.class);
         intent.putExtra(Constants.ORDER_REVIEW_SUMMARY, orderSummary);

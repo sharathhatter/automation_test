@@ -11,22 +11,14 @@ import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
 import com.bigbasket.mobileapp.adapter.db.SearchSuggestionAdapter;
-import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
-import com.bigbasket.mobileapp.model.request.HttpRequestData;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.AutoSearchApiResponseContent;
 import com.bigbasket.mobileapp.model.search.AutoSearchResponse;
 import com.bigbasket.mobileapp.model.search.MostSearchedItem;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.DataUtil;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
-import com.bigbasket.mobileapp.util.ParserUtil;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
-import org.apache.http.HttpStatus;
-import org.apache.http.impl.client.BasicCookieStore;
-
-import java.util.HashMap;
 import java.util.List;
 
 public class SearchSuggestionProvider extends ContentProvider {
@@ -63,28 +55,13 @@ public class SearchSuggestionProvider extends ContentProvider {
             }
 
             // Get the results by querying server
-            String autoSearchUrl = MobileApiUrl.getBaseAPIUrl() + Constants.AUTO_SEARCH_URL;
-            HashMap<String, String> params = new HashMap<>();
-            params.put("t", query);
-            AuthParameters authParameters = AuthParameters.getInstance(getContext());
-            HttpRequestData httpRequestData = new HttpRequestData(autoSearchUrl, params, false,
-                    authParameters.getBbAuthToken(), authParameters.getVisitorId(),
-                    authParameters.getOsVersion(), new BasicCookieStore(), null);
-            HttpOperationResult httpOperationResult = DataUtil.doHttpGet(httpRequestData);
-            if (httpOperationResult.getResponseCode() == HttpStatus.SC_OK ||
-                    httpOperationResult.getResponseCode() == HttpStatus.SC_ACCEPTED) {
-                JsonObject httpResponseJsonObj = new JsonParser().parse(httpOperationResult.getReponseString()).getAsJsonObject();
-                int status = httpResponseJsonObj.get(Constants.STATUS).getAsInt();
-                switch (status) {
-                    case 0:
-                        JsonObject responseObj = httpResponseJsonObj.get(Constants.RESPONSE).getAsJsonObject();
-                        JsonObject termsJsonObj = responseObj.get(Constants.TC).getAsJsonObject();
-                        autoSearchResponse = ParserUtil.parseAutoSearchResponse(termsJsonObj);
-                        searchSuggestionAdapter.insert(autoSearchResponse);
-                        break;
-                    default:
-                        break;
-                }
+            BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getContext());
+            ApiResponse<AutoSearchApiResponseContent> autoSearchApiResponse = bigBasketApiService.autoSearch(query);
+            switch (autoSearchApiResponse.status) {
+                case 0:
+                    autoSearchResponse = autoSearchApiResponse.apiResponseContent.autoSearchResponse;
+                    searchSuggestionAdapter.insert(autoSearchResponse);
+                    break;
             }
         }
 
