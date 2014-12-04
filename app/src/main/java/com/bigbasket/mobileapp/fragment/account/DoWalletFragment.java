@@ -13,17 +13,28 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.model.account.CurrentWalletBalance;
+import com.bigbasket.mobileapp.model.account.UpdatePin;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
+import com.bigbasket.mobileapp.util.DialogButton;
+import com.bigbasket.mobileapp.util.ExceptionUtil;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.util.Calendar;
 import java.util.HashMap;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
 public class DoWalletFragment extends BaseFragment {
@@ -55,9 +66,35 @@ public class DoWalletFragment extends BaseFragment {
     }
 
     private void getCurrentMemberWalletBalance() {
-        startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.GET_CURRENT_WALLET_BALANCE, null, false, false, null);
+        if(!DataUtil.isInternetAvailable(getActivity())){return;}
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+        showProgressDialog(getString(R.string.please_wait));
+        bigBasketApiService.getCurrentWalletBalance(new Callback<ApiResponse<CurrentWalletBalance>>() {
+            @Override
+            public void success(ApiResponse<CurrentWalletBalance> currentWalletBalCallback, Response response) {
+                hideProgressDialog();
+                if (currentWalletBalCallback.status == 0) {
+                    currentBalance = currentWalletBalCallback.apiResponseContent.getCurrentBalance();
+                    setCurrentBalance(currentBalance);
+                } else {
+                    String errorMsg = currentWalletBalCallback.status == ExceptionUtil.INTERNAL_SERVER_ERROR ?
+                            getResources().getString(R.string.INTERNAL_SERVER_ERROR) : currentWalletBalCallback.message;
+                    showAlertDialog(getActivity(), null, errorMsg, DialogButton.OK, null, null, null, null);
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                hideProgressDialog();
+                showErrorMsg(getString(R.string.server_error));
+            }
+        });
+
+
+        //startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.GET_CURRENT_WALLET_BALANCE, null, false, false, null);
     }
 
+    /*
     @Override
     public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
         super.onAsyncTaskComplete(httpOperationResult);
@@ -103,6 +140,8 @@ public class DoWalletFragment extends BaseFragment {
 
         }
     }
+
+    */
 
     private void setCurrentBalance(float currentBalance) {
         txtCurrentBalance.append(!TextUtils.isEmpty(String.valueOf(currentBalance)) ?
@@ -232,6 +271,9 @@ public class DoWalletFragment extends BaseFragment {
                     Log.d("Date from::::::::::", dateFrom);
 
                     monthClickText = month1;
+                    getWalletActivityForMonth(dateFrom, dateTo);
+
+                    /*
                     startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.GET_WALLET_ACTIVITY,
                             new HashMap<String, String>() {
                                 {
@@ -242,6 +284,8 @@ public class DoWalletFragment extends BaseFragment {
                                     put("date_to", dateTo);
                                 }
                             }, false, false, null);
+
+                    */
                 } else {
                     String msg = "Cannot proceed with the operation. No network connection.";
                     showErrorMsg(msg);
@@ -270,6 +314,9 @@ public class DoWalletFragment extends BaseFragment {
                     Log.d("Date to::::::::::::", dateTo);
                     Log.d("Date from::::::::::", dateFrom);
                     monthClickText = month2;
+
+                    getWalletActivityForMonth(dateFrom, dateTo);
+                    /*
                     startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + "get-wallet-activity/",
                             new HashMap<String, String>() {
                                 {
@@ -280,6 +327,7 @@ public class DoWalletFragment extends BaseFragment {
                                     put("date_to", dateTo);
                                 }
                             }, false, false, null);
+                    */
 
                 } else {
                     String msg = "Cannot proceed with the operation. No network connection.";
@@ -306,6 +354,8 @@ public class DoWalletFragment extends BaseFragment {
                     Log.d("Date to::::::::::::", dateTo);
                     Log.d("Date from::::::::::", dateFrom);
                     monthClickText = month1;
+                    getWalletActivityForMonth(dateFrom, dateTo);
+                    /*
                     startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + "get-wallet-activity/",
                             new HashMap<String, String>() {
                                 {
@@ -316,6 +366,7 @@ public class DoWalletFragment extends BaseFragment {
                                     put("date_to", dateTo);
                                 }
                             }, false, false, null);
+                    */
                 } else {
                     String msg = "Cannot proceed with the operation. No network connection.";
                     showErrorMsg(msg);
@@ -324,6 +375,38 @@ public class DoWalletFragment extends BaseFragment {
         });
     }
 
+
+    private void getWalletActivityForMonth(String dateFrom, String dateTo) {
+        if(!DataUtil.isInternetAvailable(getActivity())){return;}
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+        showProgressDialog(getString(R.string.please_wait));
+        bigBasketApiService.getWalletActivity(dateFrom,dateTo,
+                                                        new Callback<ApiResponse>() {
+            @Override
+            public void success(ApiResponse walletActivityCallback, Response response) {
+                hideProgressDialog();
+                if(walletActivityCallback.status==0){
+                    String responseJsonString = String.valueOf(walletActivityCallback.apiResponseContent);
+                    if (TextUtils.isEmpty(responseJsonString) || responseJsonString.equals("[]")) {
+                        showErrorMsg(getString(R.string.noActivityErrorMsg) + " " + monthClickText);
+                    } else {
+                        renderIntent(responseJsonString);
+                    }
+                }else {
+                    String errorMsg = walletActivityCallback.status == ExceptionUtil.INTERNAL_SERVER_ERROR ?
+                            getResources().getString(R.string.INTERNAL_SERVER_ERROR) : walletActivityCallback.message;
+                    showAlertDialog(getActivity(), null, errorMsg, DialogButton.OK, null, null,null, null);
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                hideProgressDialog();
+                showErrorMsg(getString(R.string.server_error));
+            }
+        });
+
+    }
     @Override
     public LinearLayout getContentView() {
         return getView() != null ? (LinearLayout) getView().findViewById(R.id.layoutDoWallet) : null;

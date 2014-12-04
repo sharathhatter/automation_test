@@ -19,18 +19,23 @@ import android.widget.ViewAnimator;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.animation.AnimationFactory;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.BaseApiResponse;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
+import com.bigbasket.mobileapp.model.account.UpdatePin;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.bigbasket.mobileapp.util.DataUtil;
+import com.bigbasket.mobileapp.util.DialogButton;
+import com.bigbasket.mobileapp.util.ExceptionUtil;
 
-import java.util.HashMap;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class UpdatePinFragment extends BaseFragment {
     private String currentPin;
-    //private LinearLayout layoutEditPin, layoutCurrentPin;
     private TextView txtPinValue;
     private EditText editTextNewPin;
     private ViewAnimator viewAnimator;
@@ -38,9 +43,6 @@ public class UpdatePinFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.uiv3_updatepin, container, false);
-        //renderCurrentMemberPin(view);
-        //clickEventHandler(view);
-        //return view;
     }
 
     @Override
@@ -66,14 +68,10 @@ public class UpdatePinFragment extends BaseFragment {
         if (getActivity() == null) return;
         LinearLayout view = getContentView();
         if (view == null) return;
-        //layoutEditPin = (LinearLayout) view.findViewById(R.id.layoutEditPin);
-        //layoutCurrentPin = (LinearLayout) view.findViewById(R.id.layoutCurrentPin);
         ImageView imgEditPin = (ImageView) view.findViewById(R.id.imgEditPin);
         imgEditPin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //layoutEditPin.setVisibility(View.VISIBLE);
-                //layoutCurrentPin.setVisibility(View.GONE);
                 AnimationFactory.flipTransition(viewAnimator, AnimationFactory.FlipDirection.LEFT_RIGHT);
                 editTextNewPin.requestFocus();
                 BaseActivity.showKeyboard(editTextNewPin);
@@ -85,8 +83,6 @@ public class UpdatePinFragment extends BaseFragment {
         txtCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                layoutEditPin.setVisibility(View.GONE);
-//                layoutCurrentPin.setVisibility(View.VISIBLE);
                 AnimationFactory.flipTransition(viewAnimator, AnimationFactory.FlipDirection.LEFT_RIGHT);
                 BaseActivity.hideKeyboard((BaseActivity) getActivity(), editTextNewPin);
             }
@@ -103,10 +99,36 @@ public class UpdatePinFragment extends BaseFragment {
     }
 
     private void getCurrentMemberPin() {
-        startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.GET_PIN,
-                null, false, false, getString(R.string.please_wait), null);
+        if (!DataUtil.isInternetAvailable(getActivity())) {
+            return;
+        }
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+        showProgressDialog(getString(R.string.please_wait));
+        bigBasketApiService.getCurrentMemberPin(new Callback<ApiResponse<UpdatePin>>() {
+            @Override
+            public void success(ApiResponse<UpdatePin> updatePinApiResponse, Response response) {
+                hideProgressDialog();
+                if (updatePinApiResponse.status == 0) {
+                    currentPin = updatePinApiResponse.apiResponseContent.currentPin;
+                    setCurrentPin(currentPin);
+                } else {
+                    String errorMsg = updatePinApiResponse.status == ExceptionUtil.INTERNAL_SERVER_ERROR ?
+                            getResources().getString(R.string.INTERNAL_SERVER_ERROR) : updatePinApiResponse.message;
+                    showAlertDialog(getActivity(), null, errorMsg, DialogButton.OK, null, null, null, null);
+                }
+
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                hideProgressDialog();
+                showErrorMsg(getString(R.string.server_error));
+            }
+        });
     }
 
+
+    /*
     @Override
     public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
         super.onAsyncTaskComplete(httpOperationResult);
@@ -121,8 +143,6 @@ public class UpdatePinFragment extends BaseFragment {
             } else {
                 switch (responseCode) {
                     case Constants.successRespCode:
-                        //layoutEditPin.setVisibility(View.GONE);
-                        //layoutCurrentPin.setVisibility(View.VISIBLE);
                         AnimationFactory.flipTransition(viewAnimator, AnimationFactory.FlipDirection.LEFT_RIGHT);
                         currentPin = editTextNewPin.getText().toString();
                         setCurrentPin(editTextNewPin.getText().toString());
@@ -131,11 +151,6 @@ public class UpdatePinFragment extends BaseFragment {
                     case Constants.notMemberRespCode:
                         String msgInvalidUser = getString(R.string.login_required);
                         //showAlertDialog(this, null, msgInvalidUser); //todo handle for sign-in page
-                        //Intent intent = new Intent(getCurrentActivity(), Signin.class);
-                        //intent.putExtra("from", "changePin");
-                        //startActivityForResult(intent, Constants.GO_TO_HOME);
-                        //overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
-//                        finish();
                         break;
                     default:
                         showErrorMsg(getString(R.string.INTERNAL_SERVER_ERROR));
@@ -145,6 +160,8 @@ public class UpdatePinFragment extends BaseFragment {
             }
         }
     }
+
+    */
 
     public void onUpdatePinButtonClicked() {
         if (editTextNewPin != null) {
@@ -160,14 +177,30 @@ public class UpdatePinFragment extends BaseFragment {
                     showErrorMsg(getString(R.string.not0000));
                     editTextNewPin.setText("");
                 } else {
-                    startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.CHANGE_PIN_URL,
-                            new HashMap<String, String>() {
-                                {
-                                    put(Constants.NEW_PIN, newPin);
-                                }
-                            }, true,
-                            false, getString(R.string.please_wait), null
-                    );
+                    BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+                    showProgressDialog(getString(R.string.please_wait));
+                    bigBasketApiService.updateCurrentMemberPin(newPin, new Callback<BaseApiResponse>() {
+                        @Override
+                        public void success(BaseApiResponse ApiResponse, Response response) {
+                            hideProgressDialog();
+                            int status = ApiResponse.status;
+                            String msg = ApiResponse.message;
+                            setCurrentPin(currentPin);
+                            if (status == 0) {
+                                AnimationFactory.flipTransition(viewAnimator, AnimationFactory.FlipDirection.LEFT_RIGHT);
+                                currentPin = newPin;
+                                setCurrentPin(editTextNewPin.getText().toString());
+                                BaseActivity.hideKeyboard((BaseActivity) getActivity(), editTextNewPin);
+                            } else {
+                                showErrorMsg(msg);
+                            }
+                        }
+
+                        @Override
+                        public void failure(RetrofitError error) {
+                            hideProgressDialog();
+                        }
+                    });
                 }
             } else {
                 showErrorMsg(getString(R.string.enterPin));

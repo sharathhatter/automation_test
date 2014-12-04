@@ -31,6 +31,7 @@
     <dimen name="primary_text_size">16sp</dimen>
     <dimen name="secondary_text_size">14sp</dimen>
     <dimen name="small_text_size">12sp</dimen>
+    <dimen name="very_small_text_size">11sp</dimen>
     <dimen name="banner_slider_height">200dp</dimen>
     <dimen name="swipe_element_width">160dp</dimen>
     <dimen name="grid_col_width">160dp</dimen>
@@ -58,4 +59,5 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="card_img_content_margin">8dp</dimen>
     <dimen name="bb_button_text_size">@dimen/primary_text_size</dimen>
+    <dimen name="vertical_separator_line">25dp</dimen>
 </resources>

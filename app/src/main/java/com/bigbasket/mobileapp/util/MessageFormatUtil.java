@@ -20,7 +20,8 @@ public class MessageFormatUtil {
 
     public SpannableStringBuilder replaceStringArgWithDisplayNameAndLink(final BaseActivity activity, String msgStr,
                                                                          final ArrayList<MessageParamInfo> messageParamInfoList,
-                                                                         final ArrayList<Class<?>> activityArrayList) {
+                                                                         final ArrayList<Class<?>> activityArrayList,
+                                                                         final ArrayList<Integer> fragmentCodeArrayList) {
         SpannableString spannableString = null;
         int replacedStringIndex = 0;
         ArrayList<Integer> arrayListIndex = new ArrayList<>();
@@ -44,7 +45,7 @@ public class MessageFormatUtil {
         }
         if (activityArrayList != null && activityArrayList.size() > 0) {
             return addClickablePart(spannableString.toString().replaceAll("\\s*\\[\\s*", "["), activity, messageParamInfoList, activityArrayList,
-                    arrayListIndex);
+                    arrayListIndex, fragmentCodeArrayList);
         } else {
             return addClickablePart(spannableString.toString().replaceAll("\\s*\\[\\s*", "["), activity, messageParamInfoList,
                     arrayListIndex);
@@ -55,7 +56,8 @@ public class MessageFormatUtil {
     private static SpannableStringBuilder addClickablePart(String str, final BaseActivity currentActivity,
                                                            final ArrayList<MessageParamInfo> messageParamInfoList,
                                                            final ArrayList<Class<?>> activityArrayList,
-                                                           final ArrayList<Integer> arrayListIndex) {
+                                                           final ArrayList<Integer> arrayListIndex,
+                                                           final ArrayList<Integer> fragmentCodeArrayList) {
         str = str.replaceAll("\\s*\\]\\s*", "]");
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(str);
         int idx1 = str.indexOf("[");
@@ -68,12 +70,14 @@ public class MessageFormatUtil {
             final String clickString = str.substring(idx1, idx2);
             final MessageParamInfo messageParamInfoArrayList = messageParamInfoList.get(arrayListIndex.get(index));
             final Class<?> callingActivity = activityArrayList.get(index);
+            final int fragmentCode = fragmentCodeArrayList.get(index);
             spannableStringBuilder.setSpan(new ClickableSpan() {
                 @Override
                 public void onClick(View widget) {
                     if (messageParamInfoArrayList.getType().equals(Constants.APP_LINK)) {
                         if (callingActivity != null && messageParamInfoArrayList.getInternalValue() != null) {
                             Intent intent = new Intent(currentActivity, callingActivity);
+                            intent.putExtra(Constants.FRAGMENT_CODE, fragmentCode);
                             intent.putExtra(Constants.INTERNAL_VALUE, messageParamInfoArrayList.getInternalValue());
                             currentActivity.startActivityForResult(intent, Constants.GO_TO_HOME);
                             currentActivity.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);

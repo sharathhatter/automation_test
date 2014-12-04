@@ -291,7 +291,11 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 startActivityForResult(orderListIntent, Constants.GO_TO_HOME);
                 break;
             case FragmentCodes.START_VIEW_BASKET:
-                addToMainLayout(new ShowCartFragment());
+                ShowCartFragment showCartFragment = new ShowCartFragment();
+                Bundle cartBundle = new Bundle();
+                cartBundle.putString(Constants.INTERNAL_VALUE, getIntent().getStringExtra(Constants.INTERNAL_VALUE));
+                showCartFragment.setArguments(cartBundle);
+                addToMainLayout(showCartFragment);
                 break;
             case FragmentCodes.START_PRODUCT_DETAIL:
                 ProductDetailFragment productDetailFragment = new ProductDetailFragment();

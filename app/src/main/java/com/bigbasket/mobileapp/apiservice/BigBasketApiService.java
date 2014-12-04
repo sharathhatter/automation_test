@@ -27,12 +27,18 @@ import com.bigbasket.mobileapp.apiservice.models.response.PromoDetailApiResponse
 import com.bigbasket.mobileapp.apiservice.models.response.PromoSetProductsApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PromoSummaryApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.UpdateProfileOldApiResponse;
 import com.bigbasket.mobileapp.model.account.City;
+import com.bigbasket.mobileapp.model.account.CurrentWalletBalance;
+import com.bigbasket.mobileapp.model.account.UpdatePin;
 import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.model.order.OrderSummary;
+import com.bigbasket.mobileapp.model.order.PrescriptionId;
 import com.bigbasket.mobileapp.model.product.ProductListData;
 import com.bigbasket.mobileapp.util.Constants;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -69,6 +75,10 @@ public interface BigBasketApiService {
     @GET("/c-get/")
     void cartGet(Callback<ApiResponse<CartGetApiResponseContent>> cartGetApiResponseCallback);
 
+    @GET("/c-get/")
+    void cartGetForIds(@Query(Constants.FULFILLMENT_ID) String fulfillmentId,
+                       Callback<ApiResponse<CartGetApiResponseContent>> cartGetApiResponseCallback);
+
     @POST("/c-empty/")
     void emptyCart(Callback<BaseApiResponse> cartEmptyApiResponseCallback);
 
@@ -92,6 +102,41 @@ public interface BigBasketApiService {
     @POST("/add-promo-bundle/")
     void addPromoBundle(@Field(Constants.PROMO_ID) String promoId, Callback<BaseApiResponse> addPromoBundleApiResponseCallback);
 
+    @GET("/get-pin/")
+    void getCurrentMemberPin(Callback<ApiResponse<UpdatePin>> updatePinCallback);
+
+    @FormUrlEncoded
+    @POST("/change-pin/")
+    void updateCurrentMemberPin(@Field(Constants.NEW_PIN) String newPin, Callback<BaseApiResponse> updatePinCallback);
+
+    @FormUrlEncoded
+    @POST("/upload-prescription/")
+    void uploadPrescription(@Field(Constants.PATIENT_NAME) String patientName,
+                            @Field(Constants.DOCTOR_NAME) String docName,
+                            @Field(Constants.PRESCRIPTION_NAME) String PrescriptionName,
+                            Callback<ApiResponse<PrescriptionId>> prescriptionId);
+
+    @FormUrlEncoded
+    @POST("/upload-prescription/")
+    void uploadPrescriptionImages(@Field(Constants.PHARMA_PRESCRIPTION_ID) String prescriptionId,
+                                  @Field(Constants.CHUNK_NUMBER) String chunkNumber,
+                                  @Field(Constants.MAX_CHUNKS) String maxChunk,
+                                  @Field(Constants.PRESCRIPTION_IMAGE_CHUNK) String prescriptionImageChunk,
+                                  @Field(Constants.IMAGE_SEQUENCE) String imageSeq,
+                                  Callback<BaseApiResponse> uploadPrescriptionImageCallback);
+
+    @GET("/get-prescription-images/")
+    void getPrescriptionImageUrls(@Query(Constants.PHARMA_PRESCRIPTION_ID) String prescriptionId,
+                                  Callback<ApiResponse<ArrayList<String>>> imageUrlsCallback);
+
+    @GET("/get-current-wallet-balance/")
+    void getCurrentWalletBalance(Callback<ApiResponse<CurrentWalletBalance>> currentWalletBalCallback);
+
+    @GET("/get-wallet-activity/")
+    void getWalletActivity(@Query(Constants.DATE_FROM) String dateFrom,
+                           @Query(Constants.DATE_TO) String dateTo,
+                           Callback<ApiResponse> walletActivityCallback);
+
     @FormUrlEncoded
     @POST("/sl-get-lists/")
     void getShoppingLists(@Field(Constants.SYSTEM) String isSystemListAlsoNeeded,
@@ -112,7 +157,8 @@ public interface BigBasketApiService {
                             Callback<OldBaseApiResponse> createShoppingListApiResponseCallback);
 
     @GET("/sl-get-list-summary/")
-    void getShoppingListSummary(@Query(Constants.SLUG) String shoppingListSlug, Callback<GetShoppingListSummaryApiResponse> getShoppingListSummaryApiResponseCallback);
+    void getShoppingListSummary(@Query(Constants.SLUG) String shoppingListSlug,
+                                Callback<GetShoppingListSummaryApiResponse> getShoppingListSummaryApiResponseCallback);
 
     @FormUrlEncoded
     @POST("/sl-get-list-details/")
@@ -135,6 +181,23 @@ public interface BigBasketApiService {
                      Callback<CartOperationApiResponse> cartOperationApiResponseCallback);
 
     @FormUrlEncoded
+    @POST("/change-password/")
+    void changePassword(@Field(Constants.OLD_PASSWORD) String oldPassword,
+                        @Field(Constants.NEW_PASSWORD) String newPassword,
+                        @Field(Constants.CONFIRM_PASSWORD) String confirmPassword,
+                        Callback<OldBaseApiResponse> changePasswordCallback);
+
+    @GET("/update-profile/")
+    void getMemberProfileData(Callback<UpdateProfileOldApiResponse> memberProfileDataCallback);
+
+    @FormUrlEncoded
+    @POST("/update-profile/")
+    void setUserDetailsData(@Field(Constants.USER_DETAILS) String userDetails,
+                            Callback<UpdateProfileOldApiResponse> changePasswordCallback);
+
+    @GET("/get-area-info/")
+    void getAreaInfo(Callback<ApiResponse<JSONObject>> areaInfoCallback);
+
     @POST("/login/")
     void login(@Field(Constants.EMAIL) String email, @Field(Constants.PASSWORD) String password,
                Callback<LoginApiResponse> loginApiResponseContent);
@@ -147,12 +210,14 @@ public interface BigBasketApiService {
     @FormUrlEncoded
     @POST("/social-link-account/")
     void socialLinkAccount(@Field(Constants.EMAIL) String email, @Field(Constants.PASSWORD) String password,
-                           @Field(Constants.SOCIAL_LOGIN_TYPE) String socialLoginType, @Field(Constants.SOCIAL_LOGIN_PARAMS) String socialLoginParams,
+                           @Field(Constants.SOCIAL_LOGIN_TYPE) String socialLoginType,
+                           @Field(Constants.SOCIAL_LOGIN_PARAMS) String socialLoginParams,
                            Callback<LoginApiResponse> loginApiResponseContent);
 
     @FormUrlEncoded
     @POST("/social-register-member/")
-    void socialRegisterMember(@Field(Constants.SOCIAL_LOGIN_TYPE) String socialLoginType, @Field(Constants.SOCIAL_LOGIN_PARAMS) String socialLoginParams,
+    void socialRegisterMember(@Field(Constants.SOCIAL_LOGIN_TYPE) String socialLoginType,
+                              @Field(Constants.SOCIAL_LOGIN_PARAMS) String socialLoginParams,
                               Callback<LoginApiResponse> loginApiResponseContent);
 
     @FormUrlEncoded
@@ -161,12 +226,14 @@ public interface BigBasketApiService {
 
     @FormUrlEncoded
     @POST("/create-address/")
-    void createAddress(@FieldMap HashMap<String, String> params, Callback<ApiResponse<CreateUpdateAddressApiResponseContent>> createUpdateAddressApiResponseCallback);
+    void createAddress(@FieldMap HashMap<String, String> params,
+                       Callback<ApiResponse<CreateUpdateAddressApiResponseContent>> createUpdateAddressApiResponseCallback);
 
 
     @FormUrlEncoded
     @POST("/update-address/")
-    void updateAddress(@FieldMap HashMap<String, String> params, Callback<ApiResponse<CreateUpdateAddressApiResponseContent>> createUpdateAddressApiResponseCallback);
+    void updateAddress(@FieldMap HashMap<String, String> params,
+                       Callback<ApiResponse<CreateUpdateAddressApiResponseContent>> createUpdateAddressApiResponseCallback);
 
     @GET("/get-orders/")
     void getOrders(@Query(Constants.ORDER_TYPE) String orderType, @Query(Constants.ORDER_RANGE) String orderRange,
@@ -225,6 +292,7 @@ public interface BigBasketApiService {
     @GET("/search-tc/")
     ApiResponse<AutoSearchApiResponseContent> autoSearch(@Query("t") String term);
 
+    @FormUrlEncoded
     @POST("/co-post-voucher/")
     void postVoucher(@Field(Constants.P_ORDER_ID) String potentialOrderId, @Field(Constants.EVOUCHER_CODE) String evoucherCode,
                      Callback<PostVoucherApiResponse> postVoucherApiResponseCallback);

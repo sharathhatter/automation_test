@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/padding_normal"
+        android:paddingLeft="@dimen/padding_normal"
+        android:paddingRight="@dimen/padding_normal">
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="1">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="@dimen/margin_small"
+                android:contentDescription="@string/addressNick"
+                android:src="@drawable/create" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:layout_marginRight="@dimen/margin_normal"
+                android:hint="@string/prescriptionName"
+                android:textSize="@dimen/secondary_text_size"
+                android:textColor="@color/uiv3_primary_text_color"
+                android:id="@+id/editTextPrescriptionName" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="@dimen/margin_small"
+                android:contentDescription="@string/contactFirstName"
+                android:src="@drawable/person" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:ems="10"
+                android:hint="@string/patientName"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:layout_marginRight="@dimen/margin_normal"
+                android:layout_marginTop="@dimen/margin_small"
+                android:textSize="@dimen/secondary_text_size"
+                android:textColor="@color/uiv3_primary_text_color"
+                android:id="@+id/editTextPatientName" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="@dimen/margin_small"
+                android:contentDescription="@string/contactLastName"
+                android:src="@drawable/person" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:ems="10"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:layout_marginRight="@dimen/margin_normal"
+                android:layout_marginTop="@dimen/margin_small"
+                android:textSize="@dimen/secondary_text_size"
+                android:hint="@string/doctorName"
+                android:textColor="@color/uiv3_primary_text_color"
+                android:id="@+id/editTextDoctorName" />
+        </TableRow>
+
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/imgPicture"
+                    android:layout_centerVertical="true"
+                    android:layout_marginTop="5dp"
+                    android:contentDescription="@string/prescriptionImageList"
+                    android:src="@drawable/person" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:id="@+id/txtPinValue"
+                    android:text="@string/imageUpload"
+                    android:layout_centerInParent="true"
+                    android:layout_marginLeft="@dimen/margin_normal"
+                    android:textColor="@color/uiv3_primary_text_color"
+                    android:textSize="@dimen/secondary_text_size"
+                    android:layout_toRightOf="@id/imgPicture"
+                    android:layout_height="wrap_content" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="@dimen/margin_normal"
+                    android:padding="@dimen/padding_mini"
+                    android:layout_centerInParent="true"
+                    android:id="@+id/imgAttachment"
+                    android:onClick="onSelectImagesFromGallery"
+                    android:contentDescription="@string/editPin"
+                    android:clickable="true"
+                    android:src="@drawable/ic_action_attachment" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_toLeftOf="@id/imgAttachment"
+                    android:layout_centerInParent="true"
+                    android:background="@color/strokeLine"
+                    android:layout_marginRight="10dp"
+                    android:layout_height="@dimen/vertical_separator_line" />
+            </RelativeLayout>
+
+        </TableLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="10dp"
+            android:visibility="gone"
+            android:id="@+id/txtViewImages"
+            android:textSize="@dimen/secondary_text_size"
+            android:textColor="@color/link_color"
+            android:text="@string/viewPrescriptionImage"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/btnAddress"
+            android:layout_width="match_parent"
+            style="@style/Uiv3BigGreenButton"
+            android:layout_height="wrap_content"
+            android:text="@string/UploadPrescription"
+            android:layout_marginTop="@dimen/margin_small"
+            android:onClick="OnUploadButtonClicked" />
+    </LinearLayout>
+
+</ScrollView>
