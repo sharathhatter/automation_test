@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.LoaderManager;
 import android.content.ContentResolver;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -14,18 +15,26 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
 
+import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginConfirmActivity;
+import com.bigbasket.mobileapp.apiservice.models.response.LoginApiResponse;
+import com.bigbasket.mobileapp.model.account.SocialAccount;
 import com.bigbasket.mobileapp.util.Constants;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.moe.pushlibrary.MoEHelper;
 import com.moe.pushlibrary.utils.MoEHelperConstants;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
 
 public abstract class BaseSignInSignupActivity extends BackButtonActivity {
 
@@ -134,20 +143,73 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity {
         int ADDRESS = 0;
     }
 
-    public void saveLoginUserDetailInPreference(JsonObject responseJsonObj, String socialAccountType,
+    public class LoginApiResponseCallback implements Callback<LoginApiResponse> {
+
+        private String loginType;
+        private String email;
+        private String password;
+        private boolean rememberMe;
+        private SocialAccount socialAccount;
+
+        public LoginApiResponseCallback(String email, String password, boolean rememberMe) {
+            this.email = email;
+            this.password = password;
+            this.rememberMe = rememberMe;
+        }
+
+        public LoginApiResponseCallback(String email, String password, boolean rememberMe, String loginType,
+                                        SocialAccount socialAccount) {
+            this(email, password, rememberMe);
+            this.loginType = loginType;
+            this.socialAccount = socialAccount;
+        }
+
+        @Override
+        public void success(LoginApiResponse loginApiResponse, retrofit.client.Response response) {
+            showProgress(false);
+            switch (loginApiResponse.status) {
+                case Constants.OK:
+                    saveLoginUserDetailInPreference(loginApiResponse, loginType,
+                            email, password, rememberMe);
+                    break;
+                case Constants.ERROR:
+                    //TODO : Replace with handler
+                    switch (loginApiResponse.errorType) {
+                        case Constants.INVALID_USER_PASS:
+                            showAlertDialog(getCurrentActivity(), null, getString(R.string.INVALID_USER_PASS));
+                            break;
+                        case Constants.NO_ACCOUNT:
+                            Intent intent = new Intent(getCurrentActivity(), SocialLoginConfirmActivity.class);
+                            intent.putExtra(Constants.SOCIAL_LOGIN_PARAMS, socialAccount);
+                            intent.putExtra(Constants.SOCIAL_LOGIN_TYPE, loginType);
+                            startActivityForResult(intent, Constants.SOCIAL_ACCOUNT_NOT_LINKED);
+                            break;
+                        default:
+                            showAlertDialog(getCurrentActivity(), null, getString(R.string.server_error));
+                            break;
+                    }
+                    break;
+            }
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            showProgress(false);
+            //TODO : Replace with handler
+            showAlertDialog(getCurrentActivity(), null, getString(R.string.server_error));
+        }
+    }
+
+    public abstract void showProgress(boolean show);
+
+    public void saveLoginUserDetailInPreference(LoginApiResponse loginApiResponse, String socialAccountType,
                                                 String email, String password, boolean rememberMe) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = preferences.edit();
-        String bbToken = responseJsonObj.get(Constants.BB_TOKEN).getAsString();
-        String mid = responseJsonObj.get(Constants.MID_KEY).getAsString();
-        JsonObject userDetailsJsonObj = responseJsonObj.get("user_details").getAsJsonObject();
-        String firstName = userDetailsJsonObj.get("first_name").getAsString();
-        String lastName = userDetailsJsonObj.get("last_name").getAsString();
-        String fullName = firstName + " " + lastName;
-        editor.putString(Constants.FIRST_NAME_PREF, firstName);
-        editor.putString(Constants.BBTOKEN_KEY, bbToken);
-        editor.putString(Constants.MID_KEY, mid);
-        editor.putString(Constants.MEMBER_FULL_NAME_KEY, fullName);
+        editor.putString(Constants.FIRST_NAME_PREF, loginApiResponse.userDetails.firstName);
+        editor.putString(Constants.BBTOKEN_KEY, loginApiResponse.bbToken);
+        editor.putString(Constants.MID_KEY, loginApiResponse.mId);
+        editor.putString(Constants.MEMBER_FULL_NAME_KEY, loginApiResponse.userDetails.fullName);
         editor.putString(Constants.MEMBER_EMAIL_KEY, email);
         if (!TextUtils.isEmpty(socialAccountType)) {
             editor.putString(Constants.SOCIAL_ACCOUNT_TYPE, socialAccountType);
@@ -165,37 +227,37 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity {
         }
         editor.commit();
 
-        // Pass user details to MoEngage
-        String mobileNum = userDetailsJsonObj.get(Constants.MOBILE_NUMBER).getAsString();
-        String hub = userDetailsJsonObj.get(Constants.HUB).getAsString();
-        String createdOn = userDetailsJsonObj.get(Constants.CREATED_ON).getAsString();
-        String dateOfBirth = userDetailsJsonObj.get(Constants.DOB).getAsString();
-        String gender = userDetailsJsonObj.get(Constants.GENDER).getAsString();
-        JsonObject additionalAttrsJsonObj = userDetailsJsonObj.get(Constants.ADDITIONAL_ATTRS).getAsJsonObject();
-
         MoEHelper moEHelper = MoEHelper.getInstance(getCurrentActivity());
-        moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_UNIQUE_ID, mid);
+        moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_UNIQUE_ID, loginApiResponse.mId);
         moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_EMAIL, email);
-        moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_MOBILE, mobileNum);
-        moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_FIRST_NAME, firstName);
-        moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_LAST_NAME, lastName);
-        moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_NAME, fullName);
-        moEHelper.setUserAttribute("Created On", createdOn);
-        if (!TextUtils.isEmpty(gender)) {
-            moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_GENDER, gender);
+        moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_MOBILE, loginApiResponse.userDetails.mobileNumber);
+        moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_FIRST_NAME, loginApiResponse.userDetails.firstName);
+        moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_LAST_NAME, loginApiResponse.userDetails.lastName);
+        moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_NAME, loginApiResponse.userDetails.fullName);
+        moEHelper.setUserAttribute("Created On", loginApiResponse.userDetails.createdOn);
+        if (!TextUtils.isEmpty(loginApiResponse.userDetails.gender)) {
+            moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_GENDER, loginApiResponse.userDetails.gender);
         }
-        if (!TextUtils.isEmpty(hub)) {
-            moEHelper.setUserAttribute("Hub", hub);
+        if (!TextUtils.isEmpty(loginApiResponse.userDetails.hub)) {
+            moEHelper.setUserAttribute("Hub", loginApiResponse.userDetails.hub);
         }
-        if (!TextUtils.isEmpty(dateOfBirth)) {
-            moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_BDAY, dateOfBirth);
+        if (!TextUtils.isEmpty(loginApiResponse.userDetails.dateOfBirth)) {
+            moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_BDAY, loginApiResponse.userDetails.dateOfBirth);
         }
 
-        if (additionalAttrsJsonObj != null) {
-            for (Map.Entry<String, JsonElement> additionalObj : additionalAttrsJsonObj.entrySet()) {
-                moEHelper.setUserAttribute(additionalObj.getKey(), additionalObj.getValue().toString());
+        if (loginApiResponse.userDetails.additionalAttrs != null) {
+            for (Map.Entry<String, Object> additionalInfoObj : loginApiResponse.userDetails.additionalAttrs.entrySet()) {
+                moEHelper.setUserAttribute(additionalInfoObj.getKey(), additionalInfoObj.getValue().toString());
             }
         }
         onLoginSuccess();
+    }
+
+    public void togglePasswordView(EditText passwordEditText, boolean isChecked) {
+        if (!isChecked) {
+            passwordEditText.setTransformationMethod(PasswordTransformationMethod.getInstance());
+        } else {
+            passwordEditText.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+        }
     }
 }

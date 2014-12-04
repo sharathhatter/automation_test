@@ -1,6 +1,5 @@
 package com.bigbasket.mobileapp.fragment.order;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -224,7 +223,7 @@ public class ShowCartFragment extends BaseFragment {
                         showAlertDialog(getActivity(), "Login", getString(R.string.login_to_place_order),
                                 DialogButton.OK, DialogButton.NO, Constants.LOGIN_REQUIRED, null, "Login");
                     } else {
-                        new COMarketPlaceCheckTask<>(getCurrentActivity()).execute();
+                        new COMarketPlaceCheckTask<>(getCurrentActivity()).startTask();
                     }
                 }
             }

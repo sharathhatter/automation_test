@@ -20,23 +20,23 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.order.uiv3.AvailableVoucherListActivity;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.PostVoucherApiResponse;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.SelectedPaymentAware;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.order.ActiveVouchers;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
+import com.bigbasket.mobileapp.model.order.PaymentType;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
-import com.bigbasket.mobileapp.util.ParserUtil;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
 public class PaymentSelectionFragment extends BaseFragment {
@@ -73,12 +73,10 @@ public class PaymentSelectionFragment extends BaseFragment {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         mPotentialOrderId = preferences.getString(Constants.POTENTIAL_ORDER_ID, null);
 
-        String paymentTypeJsonArrayStr = args.getString(Constants.PAYMENT_TYPES);
-        try {
-            JSONArray paymentTypesJsonArray = new JSONArray(paymentTypeJsonArrayStr);
-            mPaymentTypeMap = ParserUtil.parsePaymentTypes(paymentTypesJsonArray);
-        } catch (JSONException e) {
-            return;
+        ArrayList<PaymentType> paymentTypes = args.getParcelableArrayList(Constants.PAYMENT_TYPES);
+        mPaymentTypeMap = new LinkedHashMap<>();
+        for (PaymentType paymentType : paymentTypes) {
+            mPaymentTypeMap.put(paymentType.getDisplayName(), paymentType.getValue());
         }
         renderPaymentOptions();
     }
@@ -86,39 +84,6 @@ public class PaymentSelectionFragment extends BaseFragment {
     @Nullable
     public LinearLayout getContentView() {
         return getView() != null ? (LinearLayout) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
-    }
-
-    @Override
-    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-        String url = httpOperationResult.getUrl();
-        if (url.contains(Constants.CO_POST_VOUCHER)) {
-            try {
-                JSONObject jsonObject = new JSONObject(httpOperationResult.getReponseString());
-                String status = jsonObject.getString(Constants.STATUS);
-                switch (status) {
-                    case Constants.OK:
-                        // TODO : Add previous applied voucher handling logic for credit card
-                        String voucherMsg;
-                        if (jsonObject.has(Constants.EVOUCHER_MSG) &&
-                                !TextUtils.isEmpty(jsonObject.getString(Constants.EVOUCHER_MSG))) {
-                            voucherMsg = jsonObject.getString(Constants.EVOUCHER_MSG);
-                        } else {
-                            voucherMsg = "eVoucher has been successfully applied";
-                        }
-                        showErrorMsg(voucherMsg); // TODO : Change this
-                        break;
-                    default:
-                        String msg = jsonObject.getString(Constants.MESSAGE);
-                        showErrorMsg(msg);
-                        break;
-                }
-            } catch (JSONException e) {
-                // TODO : Improve error handling
-                showErrorMsg("Server Error");
-            }
-        } else {
-            super.onAsyncTaskComplete(httpOperationResult);
-        }
     }
 
     private void renderPaymentOptions() {
@@ -254,11 +219,37 @@ public class PaymentSelectionFragment extends BaseFragment {
             return;
         }
         if (checkInternetConnection()) {
-            String url = MobileApiUrl.getBaseAPIUrl() + Constants.CO_POST_VOUCHER;
-            HashMap<String, String> params = new HashMap<>();
-            params.put(Constants.P_ORDER_ID, mPotentialOrderId);
-            params.put(Constants.EVOUCHER_CODE, voucherCode);
-            startAsyncActivity(url, params, true, false, null);
+            BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+            bigBasketApiService.postVoucher(mPotentialOrderId, voucherCode, new Callback<PostVoucherApiResponse>() {
+                @Override
+                public void success(PostVoucherApiResponse postVoucherApiResponse, Response response) {
+                    switch (postVoucherApiResponse.status) {
+                        case Constants.OK:
+                            // TODO : Add previous applied voucher handling logic for credit card
+                            String voucherMsg;
+                            if (!TextUtils.isEmpty(postVoucherApiResponse.evoucherMsg)) {
+                                voucherMsg = postVoucherApiResponse.evoucherMsg;
+                            } else {
+                                voucherMsg = "eVoucher has been successfully applied";
+                            }
+                            showErrorMsg(voucherMsg); // TODO : Change this
+                            break;
+                        case Constants.INTERNAL_SERVER_ERROR:
+                            // TODO : Improve error handling
+                            showErrorMsg("Server Error");
+                            break;
+                        default:
+                            showErrorMsg(postVoucherApiResponse.message);
+                            break;
+                    }
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                    // TODO : Improve error handling
+                    showErrorMsg("Server Error");
+                }
+            });
         } else {
             showErrorMsg(getString(R.string.connectionOffline));
         }

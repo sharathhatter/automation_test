@@ -202,7 +202,7 @@
             android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".activity.account.base.SocialLoginConfirmActivity"
+            android:name=".activity.account.uiv3.SocialLoginConfirmActivity"
             android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity

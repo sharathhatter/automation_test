@@ -10,23 +10,25 @@ import android.webkit.WebView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.GetPaymentParamsApiResponseContent;
 import com.bigbasket.mobileapp.handler.PayUWebViewClientHandler;
 import com.bigbasket.mobileapp.model.order.PayuResponse;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.ExceptionUtil;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
-import org.apache.http.impl.client.BasicCookieStore;
-
 import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.Map;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
 public class PayuTransactionActivity extends BBActivity {
@@ -41,47 +43,47 @@ public class PayuTransactionActivity extends BBActivity {
         final String potentialOrderId = getIntent().getStringExtra(Constants.POTENTIAL_ORDER_ID);
         String amount = getIntent().getStringExtra(Constants.FINAL_PAY);
         if (!TextUtils.isEmpty(potentialOrderId)) {
-            HashMap<String, String> params = new HashMap<>();
-            params.put(Constants.PID, potentialOrderId);
-            params.put(Constants.AMOUNT, amount);
-            startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.GET_PAYMENT_PARAMS, params,
-                    false, AuthParameters.getInstance(this), new BasicCookieStore(),
-                    new HashMap<Object, String>() {
-                        {
-                            put(Constants.PID, potentialOrderId);
-                        }
-                    });
-        }
-    }
+            BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
+            showProgressDialog(getString(R.string.please_wait));
+            bigBasketApiService.getPaymentParams(potentialOrderId, amount, new Callback<ApiResponse<GetPaymentParamsApiResponseContent>>() {
+                @Override
+                public void success(ApiResponse<GetPaymentParamsApiResponseContent> getPaymentParamsApiResponse, Response response) {
+                    if (isSuspended()) return;
+                    try {
+                        hideProgressDialog();
+                    } catch (IllegalArgumentException e) {
+                        return;
+                    }
+                    switch (getPaymentParamsApiResponse.status) {
+                        case 0:
+                            openPayuGateway(potentialOrderId, getPaymentParamsApiResponse.apiResponseContent.payuGatewayUrl,
+                                    getPaymentParamsApiResponse.apiResponseContent.payuPostParamsJson,
+                                    getPaymentParamsApiResponse.apiResponseContent.successCaptureUrl,
+                                    getPaymentParamsApiResponse.apiResponseContent.failureCaptureUrl);
+                            break;
+                        case ExceptionUtil.INVALID_FIELD:
+                            showAlertDialog(getCurrentActivity(), null, "An error occurred. Please try again",
+                                    Constants.PAYU_CANCELLED);
+                            break;
+                        default:
+                            showAlertDialog(getCurrentActivity(), null, "Server Error",
+                                    Constants.PAYU_CANCELLED);
+                            break;
+                    }
+                }
 
-    @Override
-    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-        String url = httpOperationResult.getUrl();
-        if (url.contains(Constants.GET_PAYMENT_PARAMS)) {
-            JsonObject httpResponseJsonObj = new JsonParser().parse(httpOperationResult.getReponseString()).getAsJsonObject();
-            int status = httpResponseJsonObj.get(Constants.STATUS).getAsInt();
-            switch (status) {
-                case 0:
-                    JsonObject responseJsonObj = httpResponseJsonObj.get(Constants.RESPONSE).getAsJsonObject();
-                    String payuGatewayUrl = responseJsonObj.get(Constants.PAYU_GATEWAY_URL).getAsString();
-                    String payuPostParamStrJson = responseJsonObj.get(Constants.PAYU_POST_PARAMS).toString();
-                    String successCaptureUrl = responseJsonObj.get(Constants.SUCCESS_CAPTURE_URL).getAsString();
-                    String failureCaptureUrl = responseJsonObj.get(Constants.FAILURE_CAPTURE_URL).getAsString();
-                    String potentialOrderId = httpOperationResult.getAdditionalCtx().get(Constants.PID);
-                    openPayuGateway(potentialOrderId, payuGatewayUrl, payuPostParamStrJson,
-                            successCaptureUrl, failureCaptureUrl);
-                    break;
-                case ExceptionUtil.INVALID_FIELD:
-                    showAlertDialog(this, null, "An error occurred. Please try again",
+                @Override
+                public void failure(RetrofitError error) {
+                    if (isSuspended()) return;
+                    try {
+                        hideProgressDialog();
+                    } catch (IllegalArgumentException e) {
+                        return;
+                    }
+                    showAlertDialog(getCurrentActivity(), null, "Server Error",
                             Constants.PAYU_CANCELLED);
-                    break;
-                default:
-                    showAlertDialog(this, null, "Server Error",
-                            Constants.PAYU_CANCELLED);
-                    break;
-            }
-        } else {
-            super.onAsyncTaskComplete(httpOperationResult);
+                }
+            });
         }
     }
 

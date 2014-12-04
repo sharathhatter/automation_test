@@ -106,13 +106,13 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
                     android:layout_marginBottom="@dimen/margin_small"
-                    android:contentDescription="@string/contactLastName"
-                    android:src="@drawable/person" />
+                    android:contentDescription="@string/contactNum"
+                    android:src="@drawable/call" />
 
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
+                    android:inputType="numberSigned"
                     android:ems="10"
                     android:layout_marginLeft="@dimen/margin_normal"
                     android:layout_marginRight="@dimen/margin_normal"

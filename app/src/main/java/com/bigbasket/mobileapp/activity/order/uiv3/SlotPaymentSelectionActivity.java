@@ -17,6 +17,12 @@ import com.astuetz.PagerSlidingTabStrip;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.adapter.TabPagerAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.PostDeliveryAddressApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.PostDeliveryAddressCartSummary;
 import com.bigbasket.mobileapp.fragment.order.PaymentSelectionFragment;
 import com.bigbasket.mobileapp.fragment.order.SlotSelectionFragment;
 import com.bigbasket.mobileapp.interfaces.SelectedPaymentAware;
@@ -24,25 +30,22 @@ import com.bigbasket.mobileapp.interfaces.SelectedSlotAware;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.order.ActiveVouchers;
 import com.bigbasket.mobileapp.model.order.OrderSummary;
-import com.bigbasket.mobileapp.model.request.AuthParameters;
+import com.bigbasket.mobileapp.model.order.PaymentType;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.model.slot.SelectedSlotType;
 import com.bigbasket.mobileapp.model.slot.SlotGroup;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.ParserUtil;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import org.apache.http.impl.client.BasicCookieStore;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.HashMap;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class SlotPaymentSelectionActivity extends BackButtonActivity
         implements SelectedSlotAware, SelectedPaymentAware {
@@ -63,70 +66,50 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String potentialOrderId = preferences.getString(Constants.POTENTIAL_ORDER_ID, null);
 
-        String url = MobileApiUrl.getBaseAPIUrl() + Constants.POST_DELIVERY_ADDR;
-        HashMap<String, String> params = new HashMap<>();
-        params.put(Constants.P_ORDER_ID, potentialOrderId);
-        params.put(Constants.ADDRESS_ID, addressId);
-        params.put(Constants.SUPPORT_CC, "yes");
-        startAsyncActivity(url, params, true, AuthParameters.getInstance(this), new BasicCookieStore());
-    }
-
-    @Override
-    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-        String url = httpOperationResult.getUrl();
-
-        if (url.contains(Constants.POST_DELIVERY_ADDR)) {
-            try {
-                JSONObject httpResponseJsonObj = new JSONObject(httpOperationResult.getReponseString());
-                String status = httpResponseJsonObj.getString(Constants.STATUS);
-                switch (status) {
-                    case Constants.OK:
-                        JSONObject responseJsonObj = httpResponseJsonObj.getJSONObject(Constants.RESPONSE);
-                        JSONArray slotsInfo = responseJsonObj.getJSONArray(Constants.SLOTS_INFO);
-                        ArrayList<SlotGroup> slotGroupList = ParserUtil.parseSlotsList(slotsInfo);
-
-                        JSONObject cartSummaryJsonObj = responseJsonObj.getJSONObject(Constants.CART_SUMMARY);
-                        CartSummary cartSummary = ParserUtil.parseCartSummaryFromJSON(cartSummaryJsonObj);
-
-                        String amtPayable = cartSummaryJsonObj.getString(Constants.AMT_PAYABLE);
-                        String walletUsed = cartSummaryJsonObj.getString(Constants.WALLET_USED);
-                        String walletRemaining = cartSummaryJsonObj.getString(Constants.WALLET_REMAINING);
-                        JSONArray activeVouchersJsonArray = responseJsonObj.optJSONArray(Constants.VOUCHERS);
-                        ArrayList<ActiveVouchers> activeVouchersList = new ArrayList<>();
-                        if (activeVouchersJsonArray != null && activeVouchersJsonArray.length() > 0) {
-                            activeVouchersList = ParserUtil.parseActiveVouchersList(activeVouchersJsonArray);
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
+        showProgressDialog(getString(R.string.please_wait));
+        bigBasketApiService.postDeliveryAddresses(potentialOrderId, addressId, "yes",
+                new Callback<OldApiResponse<PostDeliveryAddressApiResponseContent>>() {
+                    @Override
+                    public void success(OldApiResponse<PostDeliveryAddressApiResponseContent> postDeliveryAddressApiResponse, Response response) {
+                        if (isSuspended()) return;
+                        try {
+                            hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
                         }
-                        JSONArray paymentTypesJsonArray = responseJsonObj.getJSONArray(Constants.PAYMENT_TYPES);
-                        setTabs(slotGroupList, cartSummary, amtPayable, walletUsed, walletRemaining,
-                                activeVouchersList, paymentTypesJsonArray);
-                        break;
-                    case Constants.ERROR:
+                        switch (postDeliveryAddressApiResponse.status) {
+                            case Constants.OK:
+                                PostDeliveryAddressCartSummary postDeliveryAddressCartSummary =
+                                        postDeliveryAddressApiResponse.apiResponseContent.cartSummary;
+                                CartSummary cartSummary = new CartSummary(postDeliveryAddressCartSummary.getTotal(),
+                                        postDeliveryAddressCartSummary.getSavings(), postDeliveryAddressCartSummary.getNoOfItems());
+
+                                setTabs(postDeliveryAddressApiResponse.apiResponseContent.slotGroupArrayList,
+                                        cartSummary, postDeliveryAddressCartSummary.amtPayable, postDeliveryAddressCartSummary.walletUsed,
+                                        postDeliveryAddressCartSummary.walletRemaining,
+                                        postDeliveryAddressApiResponse.apiResponseContent.activeVouchersArrayList,
+                                        postDeliveryAddressApiResponse.apiResponseContent.paymentTypes);
+                                break;
+                            case Constants.ERROR:
+                                // TODO : Change this later on
+                                showAlertDialog("Server Error");
+                                break;
+                        }
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        if (isSuspended()) return;
+                        try {
+                            hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
                         // TODO : Change this later on
                         showAlertDialog("Server Error");
-                        break;
-                }
-            } catch (JSONException ex) {
-                // TODO : Change this later on
-                showAlertDialog("Invalid response");
-            }
-        } else if (url.contains(Constants.CO_POST_SLOTS_AND_PAYMENT)) {
-            JsonObject jsonObject = new JsonParser().parse(httpOperationResult.getReponseString()).getAsJsonObject();
-            int status = jsonObject.get(Constants.STATUS).getAsInt();
-            switch (status) {
-                case 0:
-                    JsonObject responseJsonObj = jsonObject.get(Constants.RESPONSE).getAsJsonObject();
-                    OrderSummary orderSummary = ParserUtil.parseOrderSummary(responseJsonObj);
-                    orderSummary.getOrderDetails().setPaymentMethodDisplay(mPaymentMethodDisplay);
-                    launchPlaceOrderActivity(orderSummary);
-                    break;
-                default:
-                    // TODO : Add error handling
-                    showAlertDialog("Server Error");
-                    break;
-            }
-        } else {
-            super.onAsyncTaskComplete(httpOperationResult);
-        }
+                    }
+                });
     }
 
     private void launchPlaceOrderActivity(OrderSummary orderSummary) {
@@ -138,7 +121,7 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
     private void setTabs(ArrayList<SlotGroup> slotGroupList, CartSummary cartSummary,
                          String amtPayable, String walletUsed, String walletRemaining,
                          ArrayList<ActiveVouchers> activeVouchersList,
-                         JSONArray paymentTypesJsonArray) {
+                         ArrayList<PaymentType> paymentTypes) {
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View base = inflater.inflate(R.layout.uiv3_tab_with_footer_btn, null);
@@ -158,7 +141,7 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
         paymentSelectionBundle.putString(Constants.WALLET_USED, walletUsed);
         paymentSelectionBundle.putString(Constants.WALLET_REMAINING, walletRemaining);
         paymentSelectionBundle.putParcelableArrayList(Constants.VOUCHERS, activeVouchersList);
-        paymentSelectionBundle.putString(Constants.PAYMENT_TYPES, paymentTypesJsonArray.toString());
+        paymentSelectionBundle.putParcelableArrayList(Constants.PAYMENT_TYPES, paymentTypes);
         bbTabs.add(new BBTab<>("Payment Method", PaymentSelectionFragment.class, paymentSelectionBundle));
 
         ViewPager viewPager = (ViewPager) base.findViewById(R.id.pager);
@@ -191,13 +174,44 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String potentialOrderId = preferences.getString(Constants.POTENTIAL_ORDER_ID, null);
-        HashMap<String, String> params = new HashMap<>();
-        params.put(Constants.P_ORDER_ID, potentialOrderId);
-        params.put(Constants.SLOTS, new Gson().toJson(mSelectedSlotType));
-        params.put(Constants.PAYMENT_TYPE, mPaymentMethodSlug);
-        params.put(Constants.SUPPORT_CC, "yes");
-        startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.CO_POST_SLOTS_AND_PAYMENT,
-                params, true, AuthParameters.getInstance(this), new BasicCookieStore());
+
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
+        showProgressDialog(getString(R.string.please_wait));
+        bigBasketApiService.postSlotAndPayment(potentialOrderId, new Gson().toJson(mSelectedSlotType),
+                mPaymentMethodSlug, "yes", new Callback<ApiResponse<OrderSummary>>() {
+                    @Override
+                    public void success(ApiResponse<OrderSummary> orderSummaryApiResponse, Response response) {
+                        if (isSuspended()) return;
+                        try {
+                            hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
+                        switch (orderSummaryApiResponse.status) {
+                            case 0:
+                                OrderSummary orderSummary = orderSummaryApiResponse.apiResponseContent;
+                                orderSummary.getOrderDetails().setPaymentMethodDisplay(mPaymentMethodDisplay);
+                                launchPlaceOrderActivity(orderSummary);
+                                break;
+                            default:
+                                // TODO : Add error handling
+                                showAlertDialog("Server Error");
+                                break;
+                        }
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        if (isSuspended()) return;
+                        try {
+                            hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
+                        // TODO : Add error handling
+                        showAlertDialog("Server Error");
+                    }
+                });
     }
 
     @Override

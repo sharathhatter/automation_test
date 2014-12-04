@@ -55,9 +55,8 @@ public class HomeFragment extends BaseSectionFragment {
         boolean sectionStateRestored = tryRestoreSectionState(savedInstanceState);
         if (sectionStateRestored) {
             renderHomePage();
-            new GetCartCountTask<>(getCurrentActivity(),
-                    MobileApiUrl.getBaseAPIUrl() + Constants.C_SUMMARY).execute();
         } else {
+            new GetCartCountTask<>(getCurrentActivity()).startTask();
             requestHomePage();
         }
     }

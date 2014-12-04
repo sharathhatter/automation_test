@@ -387,7 +387,7 @@ public class DoWalletFragment extends BaseFragment {
                 hideProgressDialog();
                 if(walletActivityCallback.status==0){
                     String responseJsonString = String.valueOf(walletActivityCallback.apiResponseContent);
-                    if (responseJsonString.equals("[]")) {
+                    if (TextUtils.isEmpty(responseJsonString) || responseJsonString.equals("[]")) {
                         showErrorMsg(getString(R.string.noActivityErrorMsg) + " " + monthClickText);
                     } else {
                         renderIntent(responseJsonString);

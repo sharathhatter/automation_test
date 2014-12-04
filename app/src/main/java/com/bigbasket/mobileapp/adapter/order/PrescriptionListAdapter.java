@@ -1,52 +1,35 @@
 package com.bigbasket.mobileapp.adapter.order;
 
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.*;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
-import com.bigbasket.mobileapp.interfaces.COMarketPlaceAware;
-import com.bigbasket.mobileapp.interfaces.CartInfoAware;
-import com.bigbasket.mobileapp.interfaces.HandlerAware;
-import com.bigbasket.mobileapp.model.account.Address;
-import com.bigbasket.mobileapp.model.cart.CartSummary;
-import com.bigbasket.mobileapp.model.order.ImageUrls;
-import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.order.SavedPrescription;
-import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
-import com.bigbasket.mobileapp.model.request.HttpRequestData;
-import com.bigbasket.mobileapp.model.slot.SlotGroup;
-import com.bigbasket.mobileapp.task.COMarketPlaceCheckTask;
 import com.bigbasket.mobileapp.task.COReserveQuantityCheckTask;
-import com.bigbasket.mobileapp.util.*;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import org.apache.http.impl.client.BasicCookieStore;
+import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.DataUtil;
+import com.bigbasket.mobileapp.util.ExceptionUtil;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -60,6 +43,7 @@ public class PrescriptionListAdapter extends RecyclerView.Adapter<RecyclerView.V
     private Typeface faceRobotoRegular;
     private LinearLayout visibleChoosePrescriptionAndViewPrescriptionImages;
     private Animation bottomDown, bottomUp;
+
     public PrescriptionListAdapter(BaseActivity context, ArrayList<SavedPrescription> savedPrescriptionArrayList,
                                    Typeface faceRobotoRegular) {
         this.context = context;
@@ -139,38 +123,37 @@ public class PrescriptionListAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     }
 
-    private void hideFrameOnDialogClose(){
+    private void hideFrameOnDialogClose() {
         visibleChoosePrescriptionAndViewPrescriptionImages.setVisibility(View.GONE);
     }
 
-    private void onListItemClick(View view){
-        if(visibleChoosePrescriptionAndViewPrescriptionImages != null){
-            if(visibleChoosePrescriptionAndViewPrescriptionImages == (LinearLayout)view.getTag() &&
-                    visibleChoosePrescriptionAndViewPrescriptionImages.getVisibility() == View.VISIBLE){
+    private void onListItemClick(View view) {
+        if (visibleChoosePrescriptionAndViewPrescriptionImages != null) {
+            if (visibleChoosePrescriptionAndViewPrescriptionImages == (LinearLayout) view.getTag() &&
+                    visibleChoosePrescriptionAndViewPrescriptionImages.getVisibility() == View.VISIBLE) {
                 visibleChoosePrescriptionAndViewPrescriptionImages.startAnimation(bottomDown);
                 visibleChoosePrescriptionAndViewPrescriptionImages.setVisibility(View.GONE);
-            }else {
-                if(visibleChoosePrescriptionAndViewPrescriptionImages.getVisibility() == View.VISIBLE){
+            } else {
+                if (visibleChoosePrescriptionAndViewPrescriptionImages.getVisibility() == View.VISIBLE) {
                     // hide current view
                     visibleChoosePrescriptionAndViewPrescriptionImages.startAnimation(bottomDown);
                     visibleChoosePrescriptionAndViewPrescriptionImages.setVisibility(View.GONE);
                 }
                 // show new view
-                visibleChoosePrescriptionAndViewPrescriptionImages = (LinearLayout)view.getTag();
+                visibleChoosePrescriptionAndViewPrescriptionImages = (LinearLayout) view.getTag();
                 visibleChoosePrescriptionAndViewPrescriptionImages.startAnimation(bottomUp);
                 visibleChoosePrescriptionAndViewPrescriptionImages.setVisibility(View.VISIBLE);
 
             }
-        }else {
-            visibleChoosePrescriptionAndViewPrescriptionImages = (LinearLayout)view.getTag();
+        } else {
+            visibleChoosePrescriptionAndViewPrescriptionImages = (LinearLayout) view.getTag();
             visibleChoosePrescriptionAndViewPrescriptionImages.startAnimation(bottomUp);
             visibleChoosePrescriptionAndViewPrescriptionImages.setVisibility(View.VISIBLE);
         }
     }
 
 
-
-    class ViewHolder extends RecyclerView.ViewHolder{
+    class ViewHolder extends RecyclerView.ViewHolder {
         private TextView dateCreated;
         private TextView patientName;
         private TextView doctorName;
@@ -188,34 +171,34 @@ public class PrescriptionListAdapter extends RecyclerView.Adapter<RecyclerView.V
 
 
         public LinearLayout getLayoutListView() {
-            if(layoutListView == null) {
+            if (layoutListView == null) {
                 layoutListView = (LinearLayout) base.findViewById(R.id.layoutListView);
             }
             return layoutListView;
         }
 
         public TextView getTxtViewPrescriptionImages() {
-            if(txtViewPrescriptionImages == null) {
+            if (txtViewPrescriptionImages == null) {
                 txtViewPrescriptionImages = (TextView) base.findViewById(R.id.txtViewPrescriptionImages);
             }
             return txtViewPrescriptionImages;
         }
 
         public TextView getTxtChoosePrescription() {
-            if(txtChoosePrescription == null) {
+            if (txtChoosePrescription == null) {
                 txtChoosePrescription = (TextView) base.findViewById(R.id.txtChoosePrescription);
             }
             return txtChoosePrescription;
         }
 
         public LinearLayout getLayoutViewPrescriptionImageAndChoosePrescription() {
-            if(layoutViewPrescriptionImageAndChoosePrescription == null)
+            if (layoutViewPrescriptionImageAndChoosePrescription == null)
                 layoutViewPrescriptionImageAndChoosePrescription = (LinearLayout) base.findViewById(R.id.layoutViewPrescriptionImageAndChoosePrescription);
             return layoutViewPrescriptionImageAndChoosePrescription;
         }
 
         public TextView getDateCreated() {
-            if(dateCreated == null) {
+            if (dateCreated == null) {
                 dateCreated = (TextView) base.findViewById(R.id.txtDateCreated);
                 dateCreated.setTypeface(faceRobotoRegular);
             }
@@ -223,7 +206,7 @@ public class PrescriptionListAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
 
         public TextView getPatientName() {
-            if(patientName == null) {
+            if (patientName == null) {
                 patientName = (TextView) base.findViewById(R.id.txtPatientName);
                 patientName.setTypeface(faceRobotoRegular);
             }
@@ -231,7 +214,7 @@ public class PrescriptionListAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
 
         public TextView getDoctorName() {
-            if(doctorName == null) {
+            if (doctorName == null) {
                 doctorName = (TextView) base.findViewById(R.id.txtDoctorName);
                 doctorName.setTypeface(faceRobotoRegular);
             }
@@ -239,7 +222,7 @@ public class PrescriptionListAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
 
         public TextView getPrescriptionName() {
-            if(prescriptionName == null) {
+            if (prescriptionName == null) {
                 prescriptionName = (TextView) base.findViewById(R.id.txtPrescriptionName);
                 prescriptionName.setTypeface(faceRobotoRegular);
             }
@@ -248,7 +231,7 @@ public class PrescriptionListAdapter extends RecyclerView.Adapter<RecyclerView.V
     }
 
 
-//    private void getImageUrls(final String pharmaPrescriptionId){
+//    private void getPrescriptionImageUrls(final String pharmaPrescriptionId){
 //        AuthParameters authParameters = AuthParameters.getInstance(context);
 //        context.startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.GET_PRSCRIPTION_IMAGES, new HashMap<String, String>() {
 //                    {
@@ -259,21 +242,21 @@ public class PrescriptionListAdapter extends RecyclerView.Adapter<RecyclerView.V
 //    }
 
 
-    private void getImageUrls(final String pharmaPrescriptionId){
-        if(!DataUtil.isInternetAvailable(context)) {return;}
+    private void getImageUrls(final String pharmaPrescriptionId) {
+        if (!DataUtil.isInternetAvailable(context)) {
+            return;
+        }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(context);
         context.showProgressDialog("Please wait...");
-        bigBasketApiService.getImageUrls(pharmaPrescriptionId, new Callback<ApiResponse<ImageUrls>>() {
+        bigBasketApiService.getPrescriptionImageUrls(pharmaPrescriptionId, new Callback<ApiResponse<ArrayList<String>>>() {
             @Override
-            public void success(ApiResponse<ImageUrls> imageUrlsCallback, Response response) {
+            public void success(ApiResponse<ArrayList<String>> imageUrlsCallback, Response response) {
                 context.hideProgressDialog();
                 if (imageUrlsCallback.status == 0) {
-                    JsonArray jsonArrayImageUrls = imageUrlsCallback.apiResponseContent.jsonArrayImageUrls;
-                    if (jsonArrayImageUrls.size() > 0) {
+                    ArrayList<String> imageUrls = imageUrlsCallback.apiResponseContent;
+                    if (imageUrls != null && imageUrls.size() > 0) {
                         ArrayList<Object> arrayListImgUrls = new ArrayList<>();
-                        for(int i=0; i<jsonArrayImageUrls.size(); i++){
-                            arrayListImgUrls.add(jsonArrayImageUrls.get(i).getAsString());
-                        }
+                        arrayListImgUrls.addAll(imageUrls);
                         showPrescriptionImageDialog(arrayListImgUrls);
                     } else {
                         context.showAlertDialog(context, null, "Images are uploading....");
@@ -294,7 +277,7 @@ public class PrescriptionListAdapter extends RecyclerView.Adapter<RecyclerView.V
     }
 
 
-    private void showPrescriptionImageDialog(ArrayList<Object> uploadImageList){
+    private void showPrescriptionImageDialog(ArrayList<Object> uploadImageList) {
         final Dialog prescriptionImageDialog = new Dialog(context);
         prescriptionImageDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         prescriptionImageDialog.setCanceledOnTouchOutside(true);

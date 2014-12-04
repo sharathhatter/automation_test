@@ -114,6 +114,13 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
         if (getActivity() == null) return;
         LinearLayout contentView = getContentView();
         if (contentView == null) return;
+
+        if (mShoppingListDetail == null || mShoppingListDetail.getProducts() == null
+                || mShoppingListDetail.getProducts().size() == 0) {
+            Toast.makeText(getActivity(), "This shopping list has no products", Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
         contentView.removeAllViews();
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
@@ -182,6 +189,11 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
             outState.putParcelable(Constants.SHOPPING_LIST_ITEMS, mShoppingListDetail);
             outState.putString(Constants.BASE_IMG_URL, mBaseImgUrl);
         }
+    }
+
+    @Override
+    public void postShoppingListItemDeleteOperation() {
+        loadShoppingListProducts();
     }
 
     @Override

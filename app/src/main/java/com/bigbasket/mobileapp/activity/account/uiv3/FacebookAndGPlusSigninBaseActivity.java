@@ -13,18 +13,19 @@ import java.util.Arrays;
 public abstract class FacebookAndGPlusSigninBaseActivity extends PlusBaseActivity {
 
     private UiLifecycleHelper mFacebookUiLifeCycleHelper;
+    private Session.StatusCallback mFacebookSessionCallback;
 
     public void initializeFacebookLogin(LoginButton btnFBLogin) {
         btnFBLogin.setReadPermissions(Arrays.asList("public_profile", "email"));
 
-        Session.StatusCallback facebookSessionCallback = new Session.StatusCallback() {
+        mFacebookSessionCallback = new Session.StatusCallback() {
             @Override
             public void call(Session session, SessionState state, Exception exception) {
                 onFacebookSessionStateChanged(session, state, exception);
             }
         };
 
-        mFacebookUiLifeCycleHelper = new UiLifecycleHelper(this, facebookSessionCallback);
+        mFacebookUiLifeCycleHelper = new UiLifecycleHelper(this, mFacebookSessionCallback);
     }
 
     private void onFacebookSessionStateChanged(Session session, SessionState sessionState,
@@ -42,7 +43,6 @@ public abstract class FacebookAndGPlusSigninBaseActivity extends PlusBaseActivit
             if (isInLogoutMode()) {
                 onFacebookSignOut();
             }
-            session.closeAndClearTokenInformation();
         }
     }
 
@@ -56,7 +56,8 @@ public abstract class FacebookAndGPlusSigninBaseActivity extends PlusBaseActivit
     protected void onResume() {
         super.onResume();
         Session facebookSession = Session.getActiveSession();
-        if (facebookSession != null && (facebookSession.isOpened() || facebookSession.isClosed())) {
+        if (mFacebookSessionCallback == null &&
+                facebookSession != null && (facebookSession.isOpened() || facebookSession.isClosed())) {
             onFacebookSessionStateChanged(facebookSession, facebookSession.getState(), null);
         }
         if (mFacebookUiLifeCycleHelper != null) {
@@ -93,6 +94,13 @@ public abstract class FacebookAndGPlusSigninBaseActivity extends PlusBaseActivit
         super.onSaveInstanceState(outState);
         if (mFacebookUiLifeCycleHelper != null) {
             mFacebookUiLifeCycleHelper.onSaveInstanceState(outState);
+        }
+    }
+
+    public void revokeFbAccess() {
+        Session facebookSession = Session.getActiveSession();
+        if (facebookSession != null && facebookSession.isOpened()) {
+            facebookSession.closeAndClearTokenInformation();
         }
     }
 }

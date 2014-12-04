@@ -2,15 +2,11 @@ package com.bigbasket.mobileapp.activity.product;
 
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -47,20 +43,6 @@ public class ProductListActivity extends BBActivity implements FilterDisplayAwar
     }
 
     @Override
-    public void setNavDrawer(Toolbar toolbar, Bundle savedInstanceState) {
-        if (isLargeScreenUiInUse()) {
-            ActionBar supportActionBar = getSupportActionBar();
-            if (supportActionBar != null) {
-                supportActionBar.setDisplayHomeAsUpEnabled(true);
-            }
-            Intent intent = getIntent();
-            handleIntent(intent, savedInstanceState);
-        } else {
-            super.setNavDrawer(toolbar, savedInstanceState);
-        }
-    }
-
-    @Override
     public int getMainLayout() {
         return R.layout.uiv3_search_layout;
     }
@@ -69,12 +51,6 @@ public class ProductListActivity extends BBActivity implements FilterDisplayAwar
     protected void setOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
 
-        if (isLargeScreenUiInUse()) {
-            BBDrawerLayout drawerLayout = (BBDrawerLayout) findViewById(R.id.drawer_layout);
-            if (drawerLayout != null) {
-                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-            }
-        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             menuInflater.inflate(R.menu.search_menu, menu);
 
@@ -206,17 +182,9 @@ public class ProductListActivity extends BBActivity implements FilterDisplayAwar
         }
     }
 
-    private boolean isLargeScreenUiInUse() {
-        // This view is only present in large-landscape mode, hence if this is null, then this is small screen
-        // or is in portrait mode, and so the filter list is in a drawer
-        return findViewById(R.id.layoutProductFragmentContainer) != null;
-    }
-
     private void closeFilterDrawer() {
         if (getDrawerLayout() != null) {
-            if (!isLargeScreenUiInUse()) {
-                getDrawerLayout().closeDrawer(Gravity.RIGHT);
-            }
+            getDrawerLayout().closeDrawer(Gravity.RIGHT);
         }
     }
 }

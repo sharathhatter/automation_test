@@ -15,11 +15,12 @@ import android.widget.Toast;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
-import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListsApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
+import com.bigbasket.mobileapp.task.uiv3.ShoppingListNamesTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.view.uiv3.CreateShoppingListDialog;
 import com.bigbasket.mobileapp.view.uiv3.DeleteShoppingListDialog;
@@ -36,7 +37,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class ShoppingListFragment extends BaseFragment {
+public class ShoppingListFragment extends BaseFragment implements ShoppingListNamesAware {
 
     private ArrayList<ShoppingListName> mShoppingListNames;
 
@@ -66,31 +67,7 @@ public class ShoppingListFragment extends BaseFragment {
             return;
         }
 
-        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
-        showProgressView();
-        bigBasketApiService.getShoppingLists("1", new Callback<GetShoppingListsApiResponse>() {
-            @Override
-            public void success(GetShoppingListsApiResponse getShoppingListsApiResponse, Response response) {
-                hideProgressView();
-                switch (getShoppingListsApiResponse.status) {
-                    case Constants.OK:
-                        mShoppingListNames = getShoppingListsApiResponse.shoppingListNames;
-                        renderShoppingList();
-                        break;
-                    default:
-                        // TODO : Add error handling
-                        showErrorMsg("Server Error");
-                        break;
-                }
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                hideProgressView();
-                // TODO : Add error handling
-                showErrorMsg("Server Error");
-            }
-        });
+        new ShoppingListNamesTask<>(this, false).startTask();
     }
 
     private void renderShoppingList() {
@@ -169,6 +146,32 @@ public class ShoppingListFragment extends BaseFragment {
     @Override
     public LinearLayout getContentView() {
         return getView() != null ? (LinearLayout) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
+    }
+
+    @Override
+    public void onShoppingListFetched(ArrayList<ShoppingListName> shoppingListNames) {
+        mShoppingListNames = shoppingListNames;
+        renderShoppingList();
+    }
+
+    @Override
+    public String getSelectedProductId() {
+        return null;
+    }
+
+    @Override
+    public void setSelectedProductId(String selectedProductId) {
+
+    }
+
+    @Override
+    public void postShoppingListItemDeleteOperation() {
+
+    }
+
+    @Override
+    public void addToShoppingList(List<ShoppingListName> selectedShoppingListNames) {
+
     }
 
     private class ShoppingListNameAndOpAdapter extends BaseSwipeAdapter {

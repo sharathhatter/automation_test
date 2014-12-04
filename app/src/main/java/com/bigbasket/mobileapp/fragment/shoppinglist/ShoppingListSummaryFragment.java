@@ -79,6 +79,12 @@ public class ShoppingListSummaryFragment extends BaseFragment {
         loadShoppingListCategories();
     }
 
+    @Override
+    public void onBackResume() {
+        super.onBackResume();
+        loadShoppingListCategories();
+    }
+
     private void loadShoppingListCategories() {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressView();

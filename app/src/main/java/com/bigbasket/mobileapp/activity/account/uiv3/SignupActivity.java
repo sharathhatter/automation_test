@@ -12,23 +12,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BaseSignInSignupActivity;
-import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-import org.apache.http.impl.client.BasicCookieStore;
-
-import java.util.HashMap;
 
 public class SignupActivity extends BaseSignInSignupActivity {
 
@@ -65,6 +60,15 @@ public class SignupActivity extends BaseSignInSignupActivity {
         mEmailView = (AutoCompleteTextView) base.findViewById(R.id.editTextEmailSignup);
 
         ((EditText) base.findViewById(R.id.editTextCity)).setText(currentCityName);
+
+        CheckBox chkShowPassword = (CheckBox) base.findViewById(R.id.chkShowPasswd);
+        chkShowPassword.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                togglePasswordView(mPasswordView, isChecked);
+            }
+        });
+
         populateAutoComplete();
     }
 
@@ -167,57 +171,9 @@ public class SignupActivity extends BaseSignInSignupActivity {
         String cityId = preferences.getString(Constants.CITY_ID, "");
         userDetailsJsonObj.addProperty(Constants.CITY_ID, cityId);
 
-        HashMap<String, String> params = new HashMap<>();
-        params.put(Constants.USER_DETAILS, userDetailsJsonObj.toString());
-        startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.REGISTER_MEMBER, params, true,
-                AuthParameters.getInstance(this), new BasicCookieStore(), null, true);
-    }
-
-    @Override
-    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-        if (httpOperationResult.getUrl().contains(Constants.REGISTER_MEMBER)) {
-            showProgress(false);
-            JsonObject responseJsonObj = new JsonParser().parse(httpOperationResult.getReponseString()).getAsJsonObject();
-            String status = responseJsonObj.get(Constants.STATUS).getAsString();
-            switch (status) {
-                case Constants.OK:
-                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-                    SharedPreferences.Editor editor = preferences.edit();
-
-                    String bbToken = responseJsonObj.get(Constants.BB_TOKEN).getAsString();
-                    String mid = responseJsonObj.get(Constants.MID_KEY).getAsString();
-                    String firstName = mFirstNameView.getText().toString();
-                    String lastName = mLastNameView.getText().toString();
-                    String email = mEmailView.getText().toString();
-                    editor.putString(Constants.BBTOKEN_KEY, bbToken);
-                    editor.putString(Constants.MID_KEY, mid);
-                    editor.putString(Constants.FIRST_NAME_PREF, firstName);
-                    editor.putString(Constants.MEMBER_FULL_NAME_KEY, firstName + " " + lastName);
-                    editor.putString(Constants.MEMBER_EMAIL_KEY, email);
-                    editor.commit();
-                    OnRegistrationSuccess(email, mPasswordView.getText().toString());
-                    break;
-                case Constants.ERROR:
-                    showAlertDialog(this, null, getString(R.string.server_error));
-                    // TODO : Replace with error
-                    break;
-            }
-        } else if (httpOperationResult.getUrl().contains(Constants.LOGIN)) {
-            showProgress(false);
-            onLoginSuccess();
-        } else {
-            super.onAsyncTaskComplete(httpOperationResult);
-        }
-    }
-
-    private void OnRegistrationSuccess(String email, String password) {
-        showProgress(true);
-        AuthParameters.updateInstance(this);
-        HashMap<String, String> params = new HashMap<>();
-        params.put(Constants.EMAIL, email);
-        params.put(Constants.PASSWORD, password);
-        startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.LOGIN, params, true,
-                AuthParameters.getInstance(this), new BasicCookieStore());
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
+        bigBasketApiService.registerMember(userDetailsJsonObj.toString(),
+                new LoginApiResponseCallback(email, passwd, true));
     }
 
     /**

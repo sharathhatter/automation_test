@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -18,28 +17,26 @@ import com.astuetz.PagerSlidingTabStrip;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.adapter.TabPagerAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseContent;
 import com.bigbasket.mobileapp.fragment.order.OrderItemListFragment;
 import com.bigbasket.mobileapp.fragment.order.OrderSummaryFragment;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.OrderSummary;
 import com.bigbasket.mobileapp.model.order.PayuResponse;
 import com.bigbasket.mobileapp.model.order.VoucherApplied;
-import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
-import com.bigbasket.mobileapp.util.ParserUtil;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-import org.apache.http.impl.client.BasicCookieStore;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
 public class PlaceOrderActivity extends BackButtonActivity {
@@ -114,36 +111,40 @@ public class PlaceOrderActivity extends BackButtonActivity {
     }
 
     private void placeOrder(String potentialOrderId, String txnId) {
-        HashMap<String, String> params = new HashMap<>();
-        params.put(Constants.P_ORDER_ID, potentialOrderId);
-        if (!TextUtils.isEmpty(txnId)) {
-            params.put(Constants.TXN_ID, txnId);
-        }
-        startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.PLACE_ORDER_URL,
-                params, true, AuthParameters.getInstance(this), new BasicCookieStore());
-    }
-
-    @Override
-    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-        String url = httpOperationResult.getUrl();
-        if (url.contains(Constants.PLACE_ORDER_URL)) {
-            JsonObject responseJsonObj = new JsonParser().parse(httpOperationResult.getReponseString()).getAsJsonObject();
-            String status = responseJsonObj.get(Constants.STATUS).getAsString();
-            switch (status) {
-                case Constants.OK:
-                    JsonObject response = responseJsonObj.get(Constants.RESPONSE).getAsJsonObject();
-                    JsonArray ordersJsonArray = response.get(Constants.ORDERS).getAsJsonArray();
-                    ArrayList<Order> orders = ParserUtil.parseOrderList(ordersJsonArray);
-                    postOrderCreation(orders);
-                    break;
-                default:
-                    // TODO : Add error handling
-                    showAlertDialog(this, null, "Server Error");
-                    break;
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
+        showProgressDialog(getString(R.string.please_wait));
+        bigBasketApiService.placeOrder(potentialOrderId, txnId, new Callback<OldApiResponse<PlaceOrderApiResponseContent>>() {
+            @Override
+            public void success(OldApiResponse<PlaceOrderApiResponseContent> placeOrderApiResponse, Response response) {
+                if (isSuspended()) return;
+                try {
+                    hideProgressDialog();
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
+                switch (placeOrderApiResponse.status) {
+                    case Constants.OK:
+                        postOrderCreation(placeOrderApiResponse.apiResponseContent.orders);
+                        break;
+                    default:
+                        // TODO : Add error handling
+                        showAlertDialog(getCurrentActivity(), null, "Server Error");
+                        break;
+                }
             }
-        } else {
-            super.onAsyncTaskComplete(httpOperationResult);
-        }
+
+            @Override
+            public void failure(RetrofitError error) {
+                if (isSuspended()) return;
+                try {
+                    hideProgressDialog();
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
+                // TODO : Add error handling
+                showAlertDialog(getCurrentActivity(), null, "Server Error");
+            }
+        });
     }
 
     @Override

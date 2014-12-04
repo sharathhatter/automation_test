@@ -22,22 +22,13 @@ import com.bigbasket.mobileapp.animation.AnimationFactory;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.HomePageApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.BaseApiResponse;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.model.account.UpdatePin;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
-import com.bigbasket.mobileapp.model.section.DestinationInfo;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.ExceptionUtil;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -108,20 +99,22 @@ public class UpdatePinFragment extends BaseFragment {
     }
 
     private void getCurrentMemberPin() {
-        if(!DataUtil.isInternetAvailable(getActivity())){return;}
+        if (!DataUtil.isInternetAvailable(getActivity())) {
+            return;
+        }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.getCurrentMemberPin(new Callback<ApiResponse<UpdatePin>>() {
             @Override
             public void success(ApiResponse<UpdatePin> updatePinApiResponse, Response response) {
                 hideProgressDialog();
-                if(updatePinApiResponse.status==0){
+                if (updatePinApiResponse.status == 0) {
                     currentPin = updatePinApiResponse.apiResponseContent.currentPin;
                     setCurrentPin(currentPin);
-                }else {
+                } else {
                     String errorMsg = updatePinApiResponse.status == ExceptionUtil.INTERNAL_SERVER_ERROR ?
                             getResources().getString(R.string.INTERNAL_SERVER_ERROR) : updatePinApiResponse.message;
-                    showAlertDialog(getActivity(), null, errorMsg, DialogButton.OK, null, null,null, null);
+                    showAlertDialog(getActivity(), null, errorMsg, DialogButton.OK, null, null, null, null);
                 }
 
             }
@@ -186,19 +179,19 @@ public class UpdatePinFragment extends BaseFragment {
                 } else {
                     BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
                     showProgressDialog(getString(R.string.please_wait));
-                    bigBasketApiService.updateCurrentMemberPin(newPin, new Callback<ApiResponse>() {
+                    bigBasketApiService.updateCurrentMemberPin(newPin, new Callback<BaseApiResponse>() {
                         @Override
-                        public void success(ApiResponse ApiResponse, Response response) {
+                        public void success(BaseApiResponse ApiResponse, Response response) {
                             hideProgressDialog();
                             int status = ApiResponse.status;
                             String msg = ApiResponse.message;
                             setCurrentPin(currentPin);
-                            if(status==0){
+                            if (status == 0) {
                                 AnimationFactory.flipTransition(viewAnimator, AnimationFactory.FlipDirection.LEFT_RIGHT);
                                 currentPin = newPin;
                                 setCurrentPin(editTextNewPin.getText().toString());
                                 BaseActivity.hideKeyboard((BaseActivity) getActivity(), editTextNewPin);
-                            }else {
+                            } else {
                                 showErrorMsg(msg);
                             }
                         }

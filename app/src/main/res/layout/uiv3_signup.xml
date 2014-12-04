@@ -67,9 +67,9 @@
                         android:layout_marginTop="@dimen/margin_small"
                         android:ems="10"
                         android:hint="@string/email"
+                        android:imeOptions="actionNext"
                         android:inputType="textEmailAddress"
                         android:singleLine="true"
-                        android:imeOptions="actionNext"
                         android:textColor="@color/uiv3_primary_text_color"
                         android:textSize="@dimen/secondary_text_size" />
                 </TableRow>
@@ -81,26 +81,42 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="bottom"
-                        android:layout_marginBottom="@dimen/margin_small"
+                        android:layout_gravity="top"
+                        android:layout_marginTop="@dimen/margin_normal"
                         android:contentDescription="@string/password"
                         android:src="@drawable/password_lock" />
 
-
-                    <EditText
-                        android:id="@+id/editTextPasswd"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/margin_normal"
-                        android:layout_marginRight="@dimen/margin_normal"
-                        android:layout_marginTop="@dimen/margin_small"
-                        android:ems="10"
-                        android:hint="@string/password"
-                        android:inputType="textVisiblePassword"
-                        android:maxLength="30"
-                        android:singleLine="true"
-                        android:textColor="@color/uiv3_primary_text_color"
-                        android:textSize="@dimen/secondary_text_size" />
+                        android:orientation="vertical">
+
+                        <EditText
+                            android:id="@+id/editTextPasswd"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/margin_normal"
+                            android:layout_marginRight="@dimen/margin_normal"
+                            android:layout_marginTop="@dimen/margin_small"
+                            android:ems="10"
+                            android:hint="@string/password"
+                            android:inputType="textPassword"
+                            android:maxLength="30"
+                            android:singleLine="true"
+                            android:textColor="@color/uiv3_primary_text_color"
+                            android:textSize="@dimen/secondary_text_size" />
+
+                        <CheckBox
+                            android:id="@+id/chkShowPasswd"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/margin_small"
+                            android:layout_marginLeft="@dimen/margin_normal"
+                            android:text="@string/showPassword"
+                            android:textColor="@color/uiv3_primary_text_color"
+                            android:textSize="@dimen/secondary_text_size" />
+                    </LinearLayout>
+
                 </TableRow>
 
                 <TableRow

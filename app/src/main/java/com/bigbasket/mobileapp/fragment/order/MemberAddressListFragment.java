@@ -17,27 +17,30 @@ import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.order.MemberAddressFormActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.SlotPaymentSelectionActivity;
 import com.bigbasket.mobileapp.adapter.account.MemberAddressListAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.GetDeliveryAddressApiResponseContent;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.AddressSelectionAware;
 import com.bigbasket.mobileapp.model.account.Address;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.ExceptionUtil;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
-import com.bigbasket.mobileapp.util.ParserUtil;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+
 
 public class MemberAddressListFragment extends BaseFragment implements AddressSelectionAware {
 
-    protected ArrayList<Address> addressArrayList;
-    private boolean fromAccountPage = false;
+    protected ArrayList<Address> mAddressArrayList;
+    private boolean mFromAccountPage = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -48,10 +51,10 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Bundle args = getArguments();
-        fromAccountPage = args != null && args.getBoolean(Constants.FROM_ACCOUNT_PAGE, false);
+        mFromAccountPage = args != null && args.getBoolean(Constants.FROM_ACCOUNT_PAGE, false);
         if (savedInstanceState != null) {
-            addressArrayList = savedInstanceState.getParcelableArrayList(Constants.ADDRESSES);
-            if (addressArrayList != null) {
+            mAddressArrayList = savedInstanceState.getParcelableArrayList(Constants.ADDRESSES);
+            if (mAddressArrayList != null) {
                 showAddresses();
                 return;
             }
@@ -65,43 +68,43 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
                     "You are not signed in.\nPlease sign-in to continue", Constants.LOGIN_REQUIRED);
             return;
         }
-        startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.GET_DELIVERY_ADDR, null, false, true, null);
-    }
-
-    @Override
-    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-        if (httpOperationResult.getUrl().contains(Constants.GET_DELIVERY_ADDR)) {
-            JsonObject jsonObject = new JsonParser().parse(httpOperationResult.getReponseString()).getAsJsonObject();
-            int status = jsonObject.get(Constants.STATUS).getAsInt();
-            switch (status) {
-                case 0:
-                    parseAddresses(jsonObject);
-                    break;
-                case ExceptionUtil.INTERNAL_SERVER_ERROR:
-                    ((BaseActivity) getActivity()).showAlertDialog(getActivity(), "BigBasket", "Server Error");
-                    break;
-                case ExceptionUtil.EMPTY_ADDRESS:
-                    showCreateAddressForm();
-                    break;
-                default:
-                    String msg = jsonObject.get(Constants.MESSAGE).getAsString();
-                    ((BaseActivity) getActivity()).showAlertDialog(getActivity(), "BigBasket", msg);
-                    break;
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+        showProgressView();
+        bigBasketApiService.getDeliveryAddresses(new Callback<ApiResponse<GetDeliveryAddressApiResponseContent>>() {
+            @Override
+            public void success(ApiResponse<GetDeliveryAddressApiResponseContent> getDeliveryAddressApiResponse, Response response) {
+                if (isSuspended()) return;
+                hideProgressView();
+                switch (getDeliveryAddressApiResponse.status) {
+                    case 0:
+                        mAddressArrayList = getDeliveryAddressApiResponse.apiResponseContent.addresses;
+                        showAddresses();
+                        break;
+                    case ExceptionUtil.INTERNAL_SERVER_ERROR:
+                        ((BaseActivity) getActivity()).showAlertDialog(getActivity(), "BigBasket", "Server Error");
+                        break;
+                    case ExceptionUtil.EMPTY_ADDRESS:
+                        showCreateAddressForm();
+                        break;
+                    default:
+                        ((BaseActivity) getActivity()).showAlertDialog(getActivity(), "BigBasket",
+                                getDeliveryAddressApiResponse.message);
+                        break;
+                }
             }
-        } else {
-            super.onAsyncTaskComplete(httpOperationResult);
-        }
-    }
 
-    private void parseAddresses(JsonObject jsonObject) {
-        JsonObject responseJsonObject = jsonObject.get(Constants.RESPONSE).getAsJsonObject();
-        addressArrayList = ParserUtil.parseAddressList(
-                responseJsonObject.get(Constants.ADDRESSES).toString());
-        showAddresses();
+            @Override
+            public void failure(RetrofitError error) {
+                if (isSuspended()) return;
+                hideProgressView();
+                // TODO : Improve error handling
+                ((BaseActivity) getActivity()).showAlertDialog(getActivity(), "BigBasket", "Server Error");
+            }
+        });
     }
 
     private void showAddresses() {
-        if (addressArrayList.size() > 0) {
+        if (mAddressArrayList != null && mAddressArrayList.size() > 0) {
             renderAddressList();
         } else {
             showCreateAddressForm();
@@ -120,8 +123,8 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         RecyclerView addressRecyclerView = (RecyclerView) addressView.findViewById(R.id.fabRecyclerView);
         UIUtil.configureRecyclerView(addressRecyclerView, getActivity(), 1, 3);
         MemberAddressListAdapter memberAddressListAdapter =
-                new MemberAddressListAdapter(this, addressArrayList, getActivity(), faceRobotoRegular,
-                        fromAccountPage);
+                new MemberAddressListAdapter(this, mAddressArrayList, getActivity(), faceRobotoRegular,
+                        mFromAccountPage);
         addressRecyclerView.setAdapter(memberAddressListAdapter);
 
         FloatingActionButton floatingActionButton = (FloatingActionButton) addressView.findViewById(R.id.btnFab);
@@ -150,7 +153,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
 
     @Override
     public void onAddressSelected(Address address) {
-        if (!fromAccountPage) {
+        if (!mFromAccountPage) {
             launchSlotSelection(address.getId());
         } else {
             showAddressForm(address);
@@ -180,8 +183,8 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        if (addressArrayList != null) {
-            outState.putParcelableArrayList(Constants.ADDRESSES, addressArrayList);
+        if (mAddressArrayList != null) {
+            outState.putParcelableArrayList(Constants.ADDRESSES, mAddressArrayList);
         }
         super.onSaveInstanceState(outState);
     }
@@ -192,7 +195,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         if (resultCode == Constants.ADDRESS_CREATED_MODIFIED) {
             if (data != null) {
                 String addressId = data.getStringExtra(Constants.MEMBER_ADDRESS_ID);
-                if (!TextUtils.isEmpty(addressId) && !fromAccountPage) {
+                if (!TextUtils.isEmpty(addressId) && !mFromAccountPage) {
                     launchSlotSelection(addressId);
                 } else {
                     loadAddresses();

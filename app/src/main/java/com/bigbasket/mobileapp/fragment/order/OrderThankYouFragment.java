@@ -12,19 +12,18 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.order.uiv3.OrderDetailActivity;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.callbacks.CallbackOrderInvoice;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.interfaces.InvoiceDataAware;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
-import com.bigbasket.mobileapp.util.ParserUtil;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
 
-public class OrderThankYouFragment extends BaseFragment {
+public class OrderThankYouFragment extends BaseFragment implements InvoiceDataAware {
 
     @Nullable
     @Override
@@ -71,31 +70,8 @@ public class OrderThankYouFragment extends BaseFragment {
     }
 
     private void showInvoice(Order order) {
-        String url = MobileApiUrl.getBaseAPIUrl() + Constants.GET_INVOICE + "?" + Constants.ORDER_ID + "=" + order.getOrderId();
-        startAsyncActivity(url, null, false, false, null);
-    }
-
-    @Override
-    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-        String url = httpOperationResult.getUrl();
-        if (url.contains(Constants.GET_INVOICE)) {
-            JsonObject httpResponseJsonObj = new JsonParser().parse(httpOperationResult.getReponseString()).getAsJsonObject();
-            int status = httpResponseJsonObj.get(Constants.STATUS).getAsInt();
-            switch (status) {
-                case 0:
-                    JsonObject responseJsonObj = httpResponseJsonObj.get(Constants.RESPONSE).getAsJsonObject();
-                    OrderInvoice orderInvoice = ParserUtil.parseOrderInvoice(responseJsonObj);
-                    Intent orderDetailIntent = new Intent(getActivity(), OrderDetailActivity.class);
-                    orderDetailIntent.putExtra(Constants.ORDER_REVIEW_SUMMARY, orderInvoice);
-                    startActivityForResult(orderDetailIntent, Constants.GO_TO_HOME);
-                    break;
-                default:
-                    // TODO : Implement error handling
-                    break;
-            }
-        } else {
-            super.onAsyncTaskComplete(httpOperationResult);
-        }
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+        bigBasketApiService.getInvoice(order.getOrderId(), new CallbackOrderInvoice<>(this));
     }
 
     @Override
@@ -112,5 +88,12 @@ public class OrderThankYouFragment extends BaseFragment {
     @Override
     public String getFragmentTxnTag() {
         return OrderThankYouFragment.class.getName();
+    }
+
+    @Override
+    public void onDisplayOrderInvoice(OrderInvoice orderInvoice) {
+        Intent orderDetailIntent = new Intent(getActivity(), OrderDetailActivity.class);
+        orderDetailIntent.putExtra(Constants.ORDER_REVIEW_SUMMARY, orderInvoice);
+        startActivityForResult(orderDetailIntent, Constants.GO_TO_HOME);
     }
 }

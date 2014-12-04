@@ -25,7 +25,6 @@ public class Constants {
     public static final String PRODUCT_WEIGHT = "w";
     public static final String PRODUCT_BRAND = "p_brand";
     public static final String PRODUCT_DESC = "p_desc";
-    public static final String PRODUCT_SHORT_DESC = "p_short_desc";
     public static final String PACKAGE_DESC = "pack_desc";
     public static final String PRODUCT_STATUS = "pstat";
     public static final String DISCOUNT_TYPE = "dis_t";
@@ -36,7 +35,6 @@ public class Constants {
     public static final String PROMO_ID = "promo_id";
     public static final String PROMO_ICON = "icon";
     public static final String PROMO_NAME = "promo_name";
-    public static final int PROMO_TEXT_MAX_LEN = 40;
     public static final String BASE_IMG_URL = "base_img_url";
     public static final String PRODUCT_IS_NEW = "is_new";
     public static final String PROMO_LABEL = "promo_label";
@@ -48,7 +46,6 @@ public class Constants {
     public static final String QC_VALIDATION_ERROR_DATA = "qc_validation_errors_data";
     public static final String QC_RESPONSE = "response";
     public static final String QC_ORDER_ID = "p_order_id";
-    public static final String PO_ORDER_ID = QC_ORDER_ID;
     public static final String QC_RESERVED_QUANTITY = "reserved_q";
     public static final String QC_RESERVED_PRODUCT = "product";
     public static final String QC_ORIGINAL_QUANTITY = "original_quantity";
@@ -57,7 +54,6 @@ public class Constants {
     public static final String STATUS = "status";
     public static final String RESPONSE = "response";
 
-    public static final String SHOPPING_STATUS = "status";
     public static final String SHOPPING_LISTS = "shopping_lists";
     public static final String SHOPPING_LIST_NAME = "list_name";
     public static final String SHOPPING_LIST_SLUG = "list_slug";
@@ -71,21 +67,16 @@ public class Constants {
     public static final String PRODUCT_SORT_OPTION = "sort_opts";
 
     public static final String CART_SUMMARY = "c_summary";
-    public static final String CART_INFO_TOTAL = "total";
-    public static final String CART_INFO_SAVING = "saving";
     public static final String CART_INFO_NUM_OF_ITEMS = "num_items";
 
     public static final String SORT_ON = "sorted_on";
     public static final String FILTER_ON = "filter_on";
     public static final String FILTERED_ON = "filtered_on";
-    public static final String BASKET_CART_OVER = "response";
     public static final String BASKET_CART_INNER = "sku";
     public static final String BASKET_CART_INNER_PRICE = "unit_p";
     public static final String BASKET_CART_INNER_TOTAl_PRICE = "tot_p";
     public static final String BASKET_CART_INNER_CART_COUNT = "tot_qty";
-    public static final String BASKET_CART_OUTER = "cart";
     public static final String BASKET_CART_OUTER_TOTAl_SAVE_PRICE = "tot_s";
-    public static final String BASKET_CART_OUTER_CART_COUNT = "num_items";
 
 
     public static final String TOP_CATEGORY = "top_category";
@@ -112,7 +103,6 @@ public class Constants {
     public static final String FILTER_SLUG = "filter_slug";
     public static final String FILTER_NAME = "filter_name";
     public static final String FILTER_VALUES = "values";
-    public static final String FILTER_VALUES_NAME = DISPLAY_NAME;
     public static final String FILTER_VALUES_SLUG = "filter_value_slug";
 
     //Error codes
@@ -189,8 +179,6 @@ public class Constants {
     public static final String SET_ID = "set_id";
     public static final String SET_TYPE = "set_type";
     public static final String VALUE_TYPE = "value_type";
-    public static final String FIX_COMBO_PRODS = "fixed_combo_products";
-    public static final String FREE_PRODS = "free_products";
     public static final String TERMS_AND_COND = "t_and_c";
     public static final String PROMO_DETAILS = "promo-details";
     public static final String AMOUNT = "amount";
@@ -215,7 +203,6 @@ public class Constants {
     public static final String PROMO_APPLIED_TYPE = "p_applied_type";
     public static final String PROMO_INFO = "promo_info";
     public static final String REGULAR = "regular";
-    public static final String CART_GET = "c-get/";
     public static final String GET_PRODUCTS_FOR_ORDER = "get-products-for-order/";
 
     public static final String LINE_ITEMS = "line_items";
@@ -225,17 +212,12 @@ public class Constants {
 
     public static final String CART_ITEMS = "c_items";
     public static final String ITEMS = "items";
-    public static final String CART_INC = "c-incr-i/";
-    public static final String CART_DEC = "c-decr-i/";
     public static final String PRODUCT_DETAILS = "product_details";
-    public static final String GET_INVOICE = "get-invoice/";
     public static final String ORDER_ID = "order_id";
     public static final String GET_CART = "getcart";
     public static final String ERROR = "ERROR";
     public static final String ERROR_TYPE = "error_type";
-    public static final String CART_SET_ITEM = "c-set-i/";
     public static final String CART = "cart";
-    public static final String PRODUCT_DETAIL = "product-details/";
     public static final String PROD_ID = "prod_id";
     public static final String PRODUCT = "product";
     public static final String ADDITIONAL_INFOS = "additional_infos";
@@ -264,9 +246,6 @@ public class Constants {
 
     public static final String CHANGE_PIN_URL = "change-pin/";
 
-    public static final String AUTO_SEARCH_URL = "search-tc/";
-
-    public static final String GET_PAYMENT_PARAMS = "get-payment-params";
     public static final String PID = "pid";
     public static final String POTENTIAL_ORDER_ID = "potentialid";
     public static final String PAYU_POST_PARAMS = "post_params";
@@ -277,7 +256,6 @@ public class Constants {
     public static final String IS_PAYU_SUCCESS_KEY = "isPayuSuccess";
     public static final String TXN_ID = "txn_id";
     public static final String P_ORDER_ID = "p_order_id";
-    public static final String PLACE_ORDER_URL = "co-place-order/";
     public static final int PAYU_FAILED = 255;
     public static final int PAYU_SUCCESS = 256;
     public static final int PAYU_ABORTED = 257;
@@ -291,8 +269,6 @@ public class Constants {
     public static final String WALLET_USED = "wallet_used";
     public static final String AMT_PAYABLE = "amount_payable";
     public static final String WALLET_REMAINING = "wallet_remaining";
-    public static final String IS_SYSTEM_LST = "is_system_lst";
-    public static final String FROM_SMART_BASKET = "fromSmartBasket";
 
     public static final int GO_TO_HOME = 1360;
     public static final int GO_TO_CHECKOUT = 1735;
@@ -302,9 +278,7 @@ public class Constants {
     public static final int PRESCRIPTION_CHOSEN = 4568;
     public static final int GO_TO_SLOT_SELECTION = 9876;
     public static final int GO_TO_CHECK_OUT = 1109;
-    public static boolean FROM_FOOTER_CHECKOUT_CLICK = false;
     public static final String HOME = "home";
-    public static final String GET_DELIVERY_ADDR = "co-get-delivery-addresses/";
     public static final String POST_DELIVERY_ADDR = "co-post-delivery-addresses/";
     public static final String ADDRESSES = "addresses";
     public static final String ID = "id";
@@ -337,11 +311,6 @@ public class Constants {
     public static final String VALIDITY = "validity";
     public static final String CAN_APPLY = "can_apply";
     public static final String VOUCHERS = "vouchers";
-    public static final String CO_POST_VOUCHER = "co-post-voucher/";
-
-    public static final String BASKET_PRODUCT_SLUG = "pslug";
-    public static final String BASKET_ERROR_MESSAGE = MESSAGE;
-    public static final String BASKET_ERROR_TYPE = "error_type";
 
     public static final String KONOTOR_APP_ID = "d2c94ed6-1946-4d40-9d3f-affc719949a6";
     public static final String KONOTOR_APP_KEY = "97689aa4-af46-423d-9518-24828113d074";
@@ -358,21 +327,12 @@ public class Constants {
     public static final String SLOTS = "slots";
     public static final String SLOT_INFO = "slot_info";
     public static final String SLOTS_INFO = "slots_info";
-    public static final String NORMAL = "normal";
     public static final String NEXT_AVAILABLE_SLOT = "next_available_slot";
-    public static final String IS_SLOT = "isSlot";
-    public static final String IS_SLOT_HEADER = "isSlotHeader";
-    public static final String TRUE = "true";
-    public static final String FALSE = "false";
     public static final String DATE_SHOW = "date_show";
     public static final String TIME_SHOW = "time_show";
 
     public static final String GET_VERSION_NUMBER = "update-version-number/";
     public static final String VIA_INVOICE = "viaInvoice";
-
-    public static final int GO_TO_PRODUCTS = 1511;
-    public static final int GO_TO_SHOP = 1512;
-    public static final int GO_TO_OFFERS = 1513;
 
     public static final String IS_NOT_SUPPORTED = "is_not_supported";
     //public static final String IS_FORCE_UPDATE = "is_force_update";
@@ -458,8 +418,6 @@ public class Constants {
     public static final String UPLOAD_PRESCRIPTION = "upload-prescription/";
     public static final String CO_RESERVE_QTY = "co-reserve-quantity/";
     public static final String QC_LEN = "qc_len";
-    public static final String C_BULK_REMOVE = "c-bulk-remove";
-    public static final String CO_BASKET_CHECK = "co-basket-check/";
     public static final String SKU_ID = "sku_id";
     public static final String RULE_VALIDATION_ERROR_NOT_PASSED = "ruleValidationErrorNotPassed";
     public static final String GO_TO_HOME_STRING = "gotoHome";
@@ -509,16 +467,10 @@ public class Constants {
     public static final String HAS_EXPRESS = "has_express_shops";
     public static final int UPDATE_MANDATORY = 2;
     public static final int UPDATE_OPTIONAL = 1;
-    public static final String SL_GET_LISTS = "sl-get-lists/";
-    public static final String SL_EDIT_LIST = "sl-edit-list/";
-    public static final String SL_DELETE_LIST = "sl-delete-list/";
-    public static final String SL_LIST_SUMMARY = "sl-get-list-summary/";
     public static final String SHOPPING_LIST_SUMMARY = "shoplist_summary";
-    public static final String SL_GET_LIST_DETAILS = "sl-get-list-details/";
     public static final String SHOPPING_LIST_ITEMS = "shoplist_items";
     public static final String SMART_BASKET_ADD_ALL = "sb-cat-items-to-cart/";
     public static final String SL_ADD_ALL = "sl-cat-items-to-cart/";
-    public static final String SL_CREATE_LIST = "sl-create-list/";
     public static final String SL_NAME = "name";
     public static final String IS_PUBLIC = "is_public";
 
@@ -541,8 +493,6 @@ public class Constants {
     public static final String FRAGMENT_CODE = "fragmentCode";
     public static final String FRAGMENT_TAG = "fragmentTag";
     public static final String FRAGMENT_STATE = "fragmentState";
-    public static final String GET_CITIES = "cities/";
-    public static final String CHANGE_CITY = "change-city/";
     public static final String LOGIN = "login/";
     public static final String LOGOUT = "logout";
     public static final String REMEMBER_ME_PREF = "CHECKBOX"; // Sybrant gave this name, can't change it for compatibility with older versions
@@ -552,10 +502,8 @@ public class Constants {
     public static final String MOBILE_NUMBER = "mobile_number";
     public static final String CITY_ID = "city_id";
     public static final String REGISTER_MEMBER = "register-member/";
-    public static final String REGISTER_DEVICE = "register-device/";
     public static final String NEWSLETTER_SUBSCRIPTION = "newsletter_subscription";
     public static final String FIRST_NAME_PREF = "firstname";
-    public static final String CO_POST_SLOTS_AND_PAYMENT = "co-post-slot-and-payment/";
 
     //invoice
     public static final String DELIVERY_DATE = "delivery_date";
@@ -631,7 +579,6 @@ public class Constants {
     public static final String CANCELLED = "Cancelled";
 
     //urls
-    public static final String GET_ORDERS = "get-orders/";
     public static final String NC = "nc";
     public static final String ALL_OFFERS = "all-offers";
     public static final String CATEGORIES_URL = "categories_url";
@@ -653,13 +600,11 @@ public class Constants {
     //fb login and register
     public static final String FB_GENDER = "gender";
     public static final String FB_VERIFIED = "verified";
-    public static final String SOCIAL_LOGIN_URL = "social-login/";
-    public static final String SOCIAL_LINK_ACCOUNT_URL = "social-link-account/";
-    public static final String SOCIAL_REGISTER_MEMBER_URL = "social-register-member/";
     public static final String SOCIAL_LOGIN_TYPE = "social_login_type";
     public static final String SOCIAL_LOGIN_PARAMS = "social_login_params";
     public static final String SOCIAL_ACCOUNT_TYPE = "social_account_type";
     public static final String SOCIAL_LOGOUT = "social_logout";
+    public static final int SOCIAL_ACCOUNT_NOT_LINKED = 1835;
 
     //Agevalidation
     public static final String CONTINUE_BTN_TAG = "btnContinueTag";

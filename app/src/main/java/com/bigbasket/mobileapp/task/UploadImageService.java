@@ -6,29 +6,16 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.adapter.order.PrescriptionImageAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
-import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
-import com.bigbasket.mobileapp.model.order.PrescriptionId;
+import com.bigbasket.mobileapp.apiservice.models.response.BaseApiResponse;
 import com.bigbasket.mobileapp.model.order.PrescriptionImageModel;
-import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
-import com.bigbasket.mobileapp.model.request.HttpRequestData;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
-import com.bigbasket.mobileapp.util.ExceptionUtil;
-import com.bigbasket.mobileapp.util.ImageUtil;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-import org.apache.http.impl.client.BasicCookieStore;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -143,17 +130,19 @@ public class UploadImageService extends Service {
     }
 
 
-    private void postPrescriptionImages(final PrescriptionImageModel prescriptionImageModel){
-        if(!DataUtil.isInternetAvailable(context)) {return;}
+    private void postPrescriptionImages(final PrescriptionImageModel prescriptionImageModel) {
+        if (!DataUtil.isInternetAvailable(context)) {
+            return;
+        }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(context);
         bigBasketApiService.uploadPrescriptionImages(prescriptionImageModel.getPharmaPrescriptionId(),
                 prescriptionImageModel.getChunkNumber(),
                 prescriptionImageModel.getMaxChunks(),
                 prescriptionImageModel.getPrescriptionImageChunk(),
                 prescriptionImageModel.getImageSequence(),
-                new Callback<ApiResponse>() {
+                new Callback<BaseApiResponse>() {
                     @Override
-                    public void success(ApiResponse apiResponse, Response response) {
+                    public void success(BaseApiResponse apiResponse, Response response) {
                         if (apiResponse.status == 0 && apiResponse.message.equals(Constants.SUCCESS)) {
                             deleteChuckFromLocalStorage(prescriptionImageModel.getChunkNumber());
                         } else {
