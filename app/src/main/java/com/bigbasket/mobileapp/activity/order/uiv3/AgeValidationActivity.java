@@ -294,7 +294,7 @@ public class AgeValidationActivity extends BackButtonActivity {
                 if (cartInfo.getNoOfItems() == 0) {
                     showAlertDialogFinish(this, null, getResources().getString(R.string.basketEmpty));
                 } else {
-                    new COMarketPlaceCheckTask<>(getCurrentActivity()).execute();
+                    new COMarketPlaceCheckTask<>(getCurrentActivity()).startTask();
                 }
             } else {
                 String msgString = status == ExceptionUtil.INTERNAL_SERVER_ERROR ?

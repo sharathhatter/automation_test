@@ -225,15 +225,12 @@ public class Constants {
 
     public static final String CART_ITEMS = "c_items";
     public static final String ITEMS = "items";
-    public static final String CART_INC = "c-incr-i/";
-    public static final String CART_DEC = "c-decr-i/";
     public static final String PRODUCT_DETAILS = "product_details";
     public static final String GET_INVOICE = "get-invoice/";
     public static final String ORDER_ID = "order_id";
     public static final String GET_CART = "getcart";
     public static final String ERROR = "ERROR";
     public static final String ERROR_TYPE = "error_type";
-    public static final String CART_SET_ITEM = "c-set-i/";
     public static final String CART = "cart";
     public static final String PRODUCT_DETAIL = "product-details/";
     public static final String PROD_ID = "prod_id";

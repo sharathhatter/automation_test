@@ -12,6 +12,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.ProductDetailApiResponse;
 import com.bigbasket.mobileapp.common.ProductViewHolder;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
@@ -19,20 +22,19 @@ import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductAdditionalInfo;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListDoAddDeleteTask;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
-import com.bigbasket.mobileapp.util.ParserUtil;
 import com.bigbasket.mobileapp.view.uiv2.ProductView;
 import com.bigbasket.mobileapp.view.uiv3.ShoppingListNamesDialog;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
 public class ProductDetailFragment extends BaseFragment implements ShoppingListNamesAware {
@@ -63,31 +65,37 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
         if (args == null) return;
         String productId = args.getString(Constants.SKU_ID);
         if (TextUtils.isEmpty(productId)) return;
-        String url = MobileApiUrl.getBaseAPIUrl() + Constants.PRODUCT_DETAIL + "?" +
-                Constants.PROD_ID + "=" + productId;
-        startAsyncActivity(url, null, false, false, null);
-    }
-
-    @Override
-    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-        String url = httpOperationResult.getUrl();
-        if (url.contains(Constants.PRODUCT_DETAIL)) {
-            JsonObject httpResponseJsonOj = new JsonParser().parse(httpOperationResult.getReponseString()).getAsJsonObject();
-            String status = httpResponseJsonOj.get(Constants.STATUS).getAsString();
-            switch (status) {
-                case Constants.OK:
-                    JsonObject productJsonObj = httpResponseJsonOj.get(Constants.PRODUCT).getAsJsonObject();
-                    mProduct = ParserUtil.parseProduct(productJsonObj, null);
-                    renderProductDetail();
-                    break;
-                default:
-                    showErrorMsg("Server Error");
-                    // TODO : Add error handling
-                    break;
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+        showProgressDialog(getString(R.string.please_wait));
+        bigBasketApiService.productDetails(productId, new Callback<ProductDetailApiResponse>() {
+            @Override
+            public void success(ProductDetailApiResponse productDetailApiResponse, Response response) {
+                if (isSuspended()) return;
+                try {
+                    hideProgressDialog();
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
+                switch (productDetailApiResponse.status) {
+                    case Constants.OK:
+                        mProduct = productDetailApiResponse.product;
+                        renderProductDetail();
+                        break;
+                    default:
+                        showErrorMsg("Server Error");
+                        // TODO : Add error handling
+                        break;
+                }
             }
-        } else {
-            super.onAsyncTaskComplete(httpOperationResult);
-        }
+
+            @Override
+            public void failure(RetrofitError error) {
+                if (isSuspended()) return;
+                hideProgressDialog();
+                // TODO : Improve error handing
+                showErrorMsg("Server Error");
+            }
+        });
     }
 
     private void renderProductDetail() {

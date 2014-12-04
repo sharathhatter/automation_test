@@ -56,8 +56,7 @@ public class HomeFragment extends BaseSectionFragment {
         if (sectionStateRestored) {
             renderHomePage();
         } else {
-            new GetCartCountTask<>(getCurrentActivity(),
-                    MobileApiUrl.getBaseAPIUrl() + Constants.C_SUMMARY).execute();
+            new GetCartCountTask<>(getCurrentActivity()).startTask();
             requestHomePage();
         }
     }

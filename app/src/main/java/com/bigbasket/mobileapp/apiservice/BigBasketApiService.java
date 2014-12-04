@@ -6,6 +6,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.BrowseCategoryApiRespo
 import com.bigbasket.mobileapp.apiservice.models.response.BrowsePromoCategoryApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.CartGetApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.CartOperationApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.CartSummaryApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.CreateUpdateAddressApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListDetailsApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListSummaryApiResponse;
@@ -14,11 +15,13 @@ import com.bigbasket.mobileapp.apiservice.models.response.HomePageApiResponseCon
 import com.bigbasket.mobileapp.apiservice.models.response.LoginApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OrderListApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.ProductDetailApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PromoDetailApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PromoSetProductsApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PromoSummaryApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse;
 import com.bigbasket.mobileapp.model.account.City;
+import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.model.product.ProductListData;
 import com.bigbasket.mobileapp.util.Constants;
@@ -173,4 +176,13 @@ public interface BigBasketApiService {
     @POST("/sl-delete-item/")
     void deleteItemFromShoppingList(@Field("product_id") String productId, @Field(Constants.SLUG) String shoppingListSlug,
                                     Callback<OldBaseApiResponse> deleteItemFromShoppingListApiResponseCallback);
+
+    @GET("/co-basket-check/")
+    void checkoutBasketCheck(Callback<ApiResponse<MarketPlace>> marketPlaceApiResponseCallback);
+
+    @GET("/c-summary/")
+    void cartSummary(Callback<CartSummaryApiResponse> cartSummaryApiResponseCallback);
+
+    @GET("/product-details/")
+    void productDetails(@Query(Constants.PROD_ID) String productId, Callback<ProductDetailApiResponse> productDetailApiResponseCallback);
 }

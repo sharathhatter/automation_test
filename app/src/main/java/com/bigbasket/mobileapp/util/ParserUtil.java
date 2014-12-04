@@ -187,60 +187,6 @@ public class ParserUtil {
         return result;
     }
 
-    public static ArrayList<ShoppingListName> parseShoppingList(JsonObject jsonObject) {
-        ArrayList<ShoppingListName> shoppingListNames = null;
-
-        String success = jsonObject.get(Constants.SHOPPING_STATUS).getAsString();
-        if (success != null && success.equals("OK")) {
-            JsonArray shoppingListNamesJsonArray = jsonObject.getAsJsonArray(Constants.SHOPPING_LISTS);
-            if (shoppingListNamesJsonArray != null) {
-                shoppingListNames = parseShoppingList(shoppingListNamesJsonArray);
-            }
-        }
-        return shoppingListNames;
-    }
-
-    public static ArrayList<ShoppingListName> parseShoppingList(JsonArray shoppingListNamesJsonArray) {
-        ArrayList<ShoppingListName> shoppingListNames = new ArrayList<>();
-        for (JsonElement shopJsonElement : shoppingListNamesJsonArray) {
-            JsonObject shopJsonObj = shopJsonElement.getAsJsonObject();
-            shoppingListNames.add(parseShoppingListName(shopJsonObj));
-        }
-        return shoppingListNames;
-    }
-
-    private static ShoppingListName parseShoppingListName(JsonObject jsonObject) {
-        ShoppingListName shoppingListName = new ShoppingListName();
-        shoppingListName.setName(jsonObject.get(Constants.SHOPPING_LIST_NAME).getAsString());
-        shoppingListName.setSlug(jsonObject.get(Constants.SHOPPING_LIST_SLUG).getAsString());
-        shoppingListName.setSystem(jsonObject.get(Constants.SHOPPING_LIST_IS_SYSTEM).getAsInt() == 1);
-        return shoppingListName;
-    }
-
-    public static CartSummary parseGetCartCountResponse(JSONObject object) {
-        CartSummary cartInfo = null;
-        String status = object.optString(Constants.STATUS);
-        if (status != null && status.equals("OK")) {
-            cartInfo = new CartSummary();
-            JSONObject responseJsonObject = object.optJSONObject(Constants.RESPONSE);
-            if (responseJsonObject != null) {
-                JSONObject summaryJsonObject = responseJsonObject.optJSONObject(Constants.CART_SUMMARY);
-                String savingStr = summaryJsonObject.optString(Constants.CART_INFO_SAVING);
-                String totalStr = summaryJsonObject.optString(Constants.CART_INFO_TOTAL);
-                cartInfo.setTotal(Double.parseDouble(totalStr != null ? totalStr : "0"));
-                cartInfo.setSavings(Double.parseDouble(savingStr != null ? savingStr : "0"));
-                cartInfo.setNoOfItems(summaryJsonObject.optInt(Constants.CART_INFO_NUM_OF_ITEMS));
-                cartInfo.setNotSupported(summaryJsonObject.optBoolean(Constants.IS_NOT_SUPPORTED, false));
-                cartInfo.setKonotorEnabled(summaryJsonObject.optBoolean(Constants.ENABLE_KONOTOR, false));
-                //cartInfo.setForceUpdate(summaryJsonObject.optBoolean(Constants.IS_FORCE_UPDATE, false));
-                cartInfo.setIsUpdateRequired(summaryJsonObject.optInt(Constants.IS_UPDATE_REQUIRED));
-                cartInfo.setAppExpireBy(summaryJsonObject.optString(Constants.APP_EXPIRE_BY));
-                cartInfo.setHasExpressShops(summaryJsonObject.optBoolean(Constants.HAS_EXPRESS, false));
-            }
-        }
-        return cartInfo;
-    }
-
     public static CartSummary parseGetCartSummaryResponse(JsonObject cartJsonobject) {
         CartSummary cartInfo = new CartSummary();
         try {
@@ -350,15 +296,6 @@ public class ParserUtil {
             }
         }
         return slotsList;
-    }
-
-    public static ArrayList<OrderMonthRange> parseOrderMonthList(JsonArray jsonArray) {
-        ArrayList<OrderMonthRange> orderMonthRanges;
-        Gson gson = new Gson();
-        Type collectionType = new TypeToken<Collection<OrderMonthRange>>() {
-        }.getType();
-        orderMonthRanges = gson.fromJson(jsonArray, collectionType);
-        return orderMonthRanges;
     }
 
     public static ArrayList<Order> parseOrderList(JsonArray ordersJsonArray) {
