@@ -144,16 +144,16 @@
 
         </TableLayout>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:id="@+id/txtViewImages"
-                android:textSize="@dimen/secondary_text_size"
-                android:visibility="gone"
-                android:textColor="@color/link_color"
-                android:text="@string/viewPrescriptionImage"
-                android:layout_height="wrap_content" />
-
-
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="10dp"
+            android:visibility="gone"
+            android:id="@+id/txtViewImages"
+            android:textSize="@dimen/secondary_text_size"
+            android:textColor="@color/link_color"
+            android:text="@string/viewPrescriptionImage"
+            android:layout_height="wrap_content" />
 
         <Button
             android:id="@+id/btnAddress"

@@ -16,9 +16,17 @@ import android.widget.ProgressBar;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.model.account.UpdatePin;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.DataUtil;
+import com.bigbasket.mobileapp.util.DialogButton;
+import com.bigbasket.mobileapp.util.ExceptionUtil;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.google.gson.JsonObject;
@@ -27,6 +35,10 @@ import com.google.gson.JsonParser;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * Created by jugal on 22/9/14.
@@ -139,20 +151,42 @@ public class ChangePasswordFragment extends BaseFragment {
     }
 
     private void updatePassword() {
-        startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.CHANGE_PASSWORD,
-                new HashMap<String, String>() {
-                    {
-                        put(Constants.OLD_PASSWORD, oldEditText.getText().toString());
+        if(!DataUtil.isInternetAvailable(getActivity())){return;}
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+        showProgressDialog(getString(R.string.please_wait));
+        resetUpdateButton();
+        bigBasketApiService.changePassword(oldEditText.getText().toString(), newPwdText.getText().toString(),
+                confirmPwdEditText.getText().toString(),
+                new Callback<OldBaseApiResponse>() {
+                    @Override
+                    public void success(OldBaseApiResponse changePasswordCallback, Response response) {
+                        hideProgressDialog();
+                        if (changePasswordCallback.status.equals(Constants.OK)) {
+                            onChangePasswordSuccessResponse();
+                        } else {
+                            String errorType = changePasswordCallback.errorType;
+                            onChangePasswordErrorResponse();
+                            switch (errorType) {
+                                case Constants.INVALID_USER_PASS:
+                                    showErrorMsg(getString(R.string.OLD_PASS_NOT_CORRECT));
+                                    break;
+                                case Constants.INTERNAL_SERVER_ERROR:
+                                    showErrorMsg(getString(R.string.INTERNAL_SERVER_ERROR));
+                                    break;
+                                default:
+                                    showErrorMsg(changePasswordCallback.message);
+                                    break;
+                            }
+                        }
+
                     }
 
-                    {
-                        put(Constants.NEW_PASSWORD, newPwdText.getText().toString());
+                    @Override
+                    public void failure(RetrofitError error) {
+                        hideProgressDialog();
+                        showErrorMsg(getString(R.string.server_error));
                     }
-
-                    {
-                        put(Constants.CONFIRM_PASSWORD, confirmPwdEditText.getText().toString());
-                    }
-                }, true, false, null);
+                });
     }
 
     private void resetUpdateButton() {
@@ -166,6 +200,8 @@ public class ChangePasswordFragment extends BaseFragment {
         });
     }
 
+
+    /*
     @Override
     public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
         if (httpOperationResult.getUrl().contains(Constants.CHANGE_PASSWORD)) {
@@ -194,6 +230,8 @@ public class ChangePasswordFragment extends BaseFragment {
             super.onAsyncTaskComplete(httpOperationResult);
         }
     }
+
+    */
 
     private void onChangePasswordSuccessResponse() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());

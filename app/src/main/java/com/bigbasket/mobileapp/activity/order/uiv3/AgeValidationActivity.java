@@ -33,6 +33,7 @@ import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.order.MarketPlaceAgeCheck;
 import com.bigbasket.mobileapp.model.order.PharmaPrescriptionInfo;
 import com.bigbasket.mobileapp.model.order.PrescriptionId;
+import com.bigbasket.mobileapp.model.order.SavedPrescription;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.task.COMarketPlaceCheckTask;
@@ -42,15 +43,9 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.ExceptionUtil;
+import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.ImageUtil;
 import com.bigbasket.mobileapp.util.MessageFormatUtil;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
-import com.bigbasket.mobileapp.util.ParserUtil;
-import com.bigbasket.mobileapp.util.UIUtil;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-import org.apache.http.impl.client.BasicCookieStore;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,22 +57,30 @@ import retrofit.client.Response;
 public class AgeValidationActivity extends BackButtonActivity {
     private MarketPlace marketPlace;
     private HashMap<String, Boolean> hashMapRadioBtnAgeCheckNo = new HashMap<>(); // todo need to save this to savedInstanceState
-    private boolean fromOnCreate, isPharmaRadioBtnNoSelected;
+    private boolean isPharmaRadioBtnNoSelected;
     private Button btnContinueOrUploadPrescription;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState); // todo back button override for GO_TO_HOME
         if (savedInstanceState != null) {
-            fromOnCreate = false;
             marketPlace = savedInstanceState.getParcelable(Constants.MARKET_PLACE_INTENT);
             if (marketPlace != null) {
                 renderMarketPlaceValidationErrors();
                 return;
             }
         }
-        fromOnCreate = true;
         marketPlace = getIntent().getParcelableExtra(Constants.MARKET_PLACE_INTENT);
         renderMarketPlaceValidationErrors();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        isActivitySuspended = false;
+        if (resultCode == Constants.PRESCRIPTION_UPLOADED) {
+                //do nothing
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     @Override
@@ -88,6 +91,7 @@ public class AgeValidationActivity extends BackButtonActivity {
         super.onSaveInstanceState(outState);
     }
 
+    //After bulk remove
     @Override
     public void onCoMarketPlaceSuccess(MarketPlace marketPlace) {
         this.marketPlace = marketPlace;
@@ -109,6 +113,8 @@ public class AgeValidationActivity extends BackButtonActivity {
     private void renderMarketPlaceValidationErrors() {
         if (marketPlace == null) return;
         FrameLayout contentView = (FrameLayout) findViewById(R.id.content_frame);
+        if(contentView==null) return;
+        contentView.removeAllViews();
         ScrollView scrollView = new ScrollView(this);
         LinearLayout base = new LinearLayout(this);
         base.setOrientation(LinearLayout.VERTICAL);
@@ -116,7 +122,8 @@ public class AgeValidationActivity extends BackButtonActivity {
         renderAgeValidations(base);
         renderPharmaPrescriptionValidations(base);
 
-        btnContinueOrUploadPrescription = UIUtil.getPrimaryButton(this);
+        btnContinueOrUploadPrescription = new Button(this);
+        btnContinueOrUploadPrescription.setTextColor(getResources().getColor(R.color.uiv3_primary_text_color));
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         int btnMargin = (int) getResources().getDimension(R.dimen.margin_large);
@@ -125,9 +132,11 @@ public class AgeValidationActivity extends BackButtonActivity {
         btnContinueOrUploadPrescription.setTypeface(faceRobotoRegular);
         if (marketPlace.isPharamaPrescriptionNeeded()){
             btnContinueOrUploadPrescription.setText(getString(R.string.uploadPrescription));
+            btnContinueOrUploadPrescription.setTextSize(getResources().getDimension(R.dimen.very_small_text_size));
             btnContinueOrUploadPrescription.setTag(Constants.UPLOAD_PRESCRIPTION_BTN_TAG);
         }else {
             btnContinueOrUploadPrescription.setText("Continue");
+            btnContinueOrUploadPrescription.setTextSize(getResources().getDimension(R.dimen.bb_button_text_size));
             btnContinueOrUploadPrescription.setTag(Constants.CONTINUE_BTN_TAG);
         }
         btnContinueOrUploadPrescription.setOnClickListener(new View.OnClickListener() {
@@ -141,10 +150,20 @@ public class AgeValidationActivity extends BackButtonActivity {
                     if(String.valueOf(btnContinueOrUploadPrescription.getTag()).equals(Constants.CONTINUE_BTN_TAG)){
                         proceedToQc();
                     }else {
-                        Intent intent = new Intent(getCurrentActivity(), PrescriptionListActivity.class);
-                        intent.putExtra(Constants.MARKET_PLACE_INTENT, marketPlace);
-                        startActivityForResult(intent, Constants.GO_TO_HOME);
-                        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+                        ArrayList<SavedPrescription> savedPrescriptionArrayList = marketPlace.getSavedPrescription();
+                        if(savedPrescriptionArrayList!=null && savedPrescriptionArrayList.size()>0){
+                            Intent intent = new Intent(getCurrentActivity(), PrescriptionListActivity.class);
+                            intent.putExtra(Constants.MARKET_PLACE_INTENT, marketPlace);
+                            startActivityForResult(intent, Constants.GO_TO_HOME);
+                            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+                        }else {
+                            Intent intent = new Intent(getCurrentActivity(), UploadNewPrescriptionActivity.class);
+                            startActivityForResult(intent, Constants.GO_TO_HOME);
+                            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+                        }
+
+
+
                     }
                 }
             }
@@ -192,7 +211,7 @@ public class AgeValidationActivity extends BackButtonActivity {
                         showAlertDialog(getCurrentActivity(), null,
                                 "Remove all " + marketPlaceAgeCheck.getDisplayName() + " products from Basket?",
                                 DialogButton.YES, DialogButton.NO, Constants.REMOVE_ALL_MARKETPLACE_FROM_BASKET,
-                                marketPlaceAgeCheck.getFulfillmentId(), "Remove " + marketPlaceAgeCheck.getDisplayName());
+                                marketPlaceAgeCheck.getFulfillmentId(), "Yes");
                     }
                 }
             });
@@ -207,10 +226,42 @@ public class AgeValidationActivity extends BackButtonActivity {
 
         PharmaPrescriptionInfo pharmaPrescriptionInfo = marketPlace.getPharmaPrescriptionInfo();
         View ageLayout = inflater.inflate(R.layout.uiv3_age_validation_layout, null);
-        TextView txtAgeMsg = (TextView) ageLayout.findViewById(R.id.txtAgeMsg);
-        txtAgeMsg.setTypeface(faceRobotoRegular);
-        txtAgeMsg.setTextColor(getResources().getColor(R.color.uiv3_primary_text_color));
-        txtAgeMsg.setText(getString(R.string.pharmaPrescriptionHeading));
+
+        // pharma Prescription header
+        TextView txtheaderMsg = (TextView) ageLayout.findViewById(R.id.txtAgeMsg);
+        txtheaderMsg.setTypeface(faceRobotoRegular);
+        txtheaderMsg.setTextColor(getResources().getColor(R.color.uiv3_primary_text_color));
+        //txtAgeMsg.setText(getString(R.string.pharmaPrescriptionHeading));
+
+
+        // Setting info-message
+        //TextView txtInfoMsg = (TextView) ageLayout.findViewById(R.id.txtInfoMsg);
+        //txtInfoMsg.setTypeface(faceRobotoRegular);
+
+        MessageInfo msgInfo = pharmaPrescriptionInfo.getMsgInfo();
+
+        if (msgInfo != null && msgInfo.getParams() != null) {
+            ArrayList<Class<?>> activitiesList = new ArrayList<>();
+            ArrayList<Integer> fragmentCodeArrayList = new ArrayList<>();
+            for (int i = 0; i < msgInfo.getParams().size(); i++) {
+                activitiesList.add(BackButtonActivity.class); //todo why backbtn activity
+                fragmentCodeArrayList.add(FragmentCodes.START_VIEW_BASKET);
+            }
+
+            if (!TextUtils.isEmpty(msgInfo.getMessageStr())) {
+                MessageFormatUtil messageFormatUtil = new MessageFormatUtil();
+                SpannableStringBuilder msgContent = messageFormatUtil.
+                        replaceStringArgWithDisplayNameAndLink(this, msgInfo.getMessageStr(),
+                                msgInfo.getParams(), activitiesList, fragmentCodeArrayList);
+                txtheaderMsg.setMovementMethod(LinkMovementMethod.getInstance());
+                if (msgContent != null) {
+                    txtheaderMsg.setText(msgContent, TextView.BufferType.SPANNABLE);
+                    txtheaderMsg.setSelected(true);
+                    txtheaderMsg.setVisibility(View.VISIBLE);
+                }
+            }
+        }
+
 
         RadioButton rbtnYes = (RadioButton) ageLayout.findViewById(R.id.radioBtnYes);
         final RadioButton rbtnNo = (RadioButton) ageLayout.findViewById(R.id.radioBtnNo);
@@ -241,6 +292,7 @@ public class AgeValidationActivity extends BackButtonActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
                     btnContinueOrUploadPrescription.setText(getString(R.string.uploadPrescription));
+                    btnContinueOrUploadPrescription.setTextSize(getResources().getDimension(R.dimen.very_small_text_size));
                     btnContinueOrUploadPrescription.setTag(Constants.UPLOAD_PRESCRIPTION_BTN_TAG);
                     isPharmaRadioBtnNoSelected = false;
                 }
@@ -251,6 +303,7 @@ public class AgeValidationActivity extends BackButtonActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
                     btnContinueOrUploadPrescription.setText("Continue");
+                    btnContinueOrUploadPrescription.setTextSize(getResources().getDimension(R.dimen.secondary_text_size));
                     btnContinueOrUploadPrescription.setTag(Constants.CONTINUE_BTN_TAG);
                     isPharmaRadioBtnNoSelected = true;
                     showAlertDialog(getCurrentActivity(), null,
@@ -260,30 +313,7 @@ public class AgeValidationActivity extends BackButtonActivity {
             }
         });
 
-        // Setting info-message
-        TextView txtInfoMsg = (TextView) ageLayout.findViewById(R.id.txtInfoMsg);
-        txtInfoMsg.setTypeface(faceRobotoRegular);
 
-        MessageInfo msgInfo = pharmaPrescriptionInfo.getMsgInfo();
-
-        if (msgInfo != null && msgInfo.getParams() != null) {
-            ArrayList<Class<?>> activitiesList = new ArrayList<>();
-            for (int i = 0; i < msgInfo.getParams().size(); i++) {
-                activitiesList.add(BackButtonActivity.class); //todo why backbtn activity
-            }
-
-            if (!TextUtils.isEmpty(msgInfo.getMessageStr())) {
-                MessageFormatUtil messageFormatUtil = new MessageFormatUtil();
-                SpannableStringBuilder msgContent = messageFormatUtil.
-                        replaceStringArgWithDisplayNameAndLink(this, msgInfo.getMessageStr(),
-                                msgInfo.getParams(), activitiesList);
-                txtInfoMsg.setMovementMethod(LinkMovementMethod.getInstance());
-                if (msgContent != null) {
-                    txtInfoMsg.setText(msgContent, TextView.BufferType.SPANNABLE);
-                    txtInfoMsg.setSelected(true);
-                }
-            }
-        }
         base.addView(ageLayout);
 
         /*
@@ -309,7 +339,7 @@ public class AgeValidationActivity extends BackButtonActivity {
         if (msgInfo != null && msgInfo.getParams() != null) {
             int layoutPadding = (int) getResources().getDimension(R.dimen.padding_normal);
             int miniPadding = (int) getResources().getDimension(R.dimen.padding_mini);
-            float textSize = getResources().getDimension(R.dimen.small_text_size);
+            float textSize = this.getResources().getDimension(R.dimen.small_text_size);
             for (MessageParamInfo messageParamInfo : msgInfo.getParams()) {
                 if (!TextUtils.isEmpty(messageParamInfo.getExtraInfo())) {
 
@@ -329,7 +359,7 @@ public class AgeValidationActivity extends BackButtonActivity {
 
                     TextView txtTCMsg = new TextView(getCurrentActivity());
                     txtTCMsg.setPadding(miniPadding, 0, 0, 0);
-                    txtTCMsg.setTextColor(getResources().getColor(R.color.dark_red));
+                    txtTCMsg.setTextColor(getResources().getColor(R.color.red));
                     txtTCMsg.setTextSize(textSize);
                     txtTCMsg.setTypeface(faceRobotoRegular);
                     txtTCMsg.setText(messageParamInfo.getExtraInfo());
@@ -359,6 +389,9 @@ public class AgeValidationActivity extends BackButtonActivity {
                     );
                     */
                     break;
+                case Constants.BASKET_EMPTY:
+                    goToHome();
+                    break;
                 default:
                     super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
                     break;
@@ -374,12 +407,12 @@ public class AgeValidationActivity extends BackButtonActivity {
         if(!DataUtil.isInternetAvailable(getCurrentActivity())) {return;}
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressDialog("Please wait...");
-        bigBasketApiService.bulkRemoveProducts(fulfilmentIds, new Callback<ApiResponse<CartSummary>>() {
+        bigBasketApiService.bulkRemoveProducts(fulfilmentIds, new Callback<ApiResponse>() {
                     @Override
-                    public void success(ApiResponse<CartSummary> bulkRemoveCallback, Response response) {
-                        hideProgressView();
+                    public void success(ApiResponse bulkRemoveCallback, Response response) {
+                        hideProgressDialog();
                         if(bulkRemoveCallback.status==0){
-                            CartSummary cartInfo = bulkRemoveCallback.apiResponseContent;
+                            CartSummary cartInfo = bulkRemoveCallback.cartSummary;
                             ((CartInfoAware) getCurrentActivity()).setCartInfo(cartInfo);
                             ((CartInfoAware) getCurrentActivity()).updateUIForCartInfo();
                             SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
@@ -387,7 +420,7 @@ public class AgeValidationActivity extends BackButtonActivity {
                             editor.putString(Constants.GET_CART, String.valueOf(cartInfo.getNoOfItems()));
                             editor.commit();
                             if (cartInfo.getNoOfItems() == 0) {
-                                showAlertDialogFinish(getCurrentActivity(), null, getResources().getString(R.string.basketEmpty));
+                                showAlertDialog(getCurrentActivity(), null, getResources().getString(R.string.basketEmpty), Constants.BASKET_EMPTY);
                             } else {
                                 new COMarketPlaceCheckTask<>(getCurrentActivity()).execute();
                             }

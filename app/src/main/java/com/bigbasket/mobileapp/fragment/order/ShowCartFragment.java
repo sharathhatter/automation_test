@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.text.Spannable;
@@ -36,6 +37,8 @@ import com.bigbasket.mobileapp.apiservice.models.response.CartGetApiResponseCont
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.handler.MessageHandler;
+import com.bigbasket.mobileapp.interfaces.COMarketPlaceAware;
 import com.bigbasket.mobileapp.model.cart.AnnotationInfo;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.cart.CartItem;
@@ -43,13 +46,16 @@ import com.bigbasket.mobileapp.model.cart.CartItemHeader;
 import com.bigbasket.mobileapp.model.cart.CartItemList;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.cart.FulfillmentInfo;
+import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.order.OrderItemDisplaySource;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.task.COMarketPlaceCheckTask;
+import com.bigbasket.mobileapp.task.COReserveQuantityCheckTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.ExceptionUtil;
+import com.bigbasket.mobileapp.util.MessageCode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -85,10 +91,60 @@ public class ShowCartFragment extends BaseFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getCartItems();
+        //getCartItems();
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(getArguments()!=null){
+            String fulfillmentIds = getArguments().getString(Constants.INTERNAL_VALUE);
+            if(fulfillmentIds!=null){
+                isReadOnly = true;
+                getItemForFulFillmentIds(fulfillmentIds);
+            }else {
+                getCartItems();
+            }
+        }else {
+            getCartItems();
+        }
+    }
+
+    private void getItemForFulFillmentIds(String fulfillmentIds){
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+        showProgressView();
+        bigBasketApiService.cartGetForIds(fulfillmentIds, new Callback<ApiResponse<CartGetApiResponseContent>>() {
+            @Override
+            public void success(ApiResponse<CartGetApiResponseContent> cartGetApiResponseContentApiResponse, Response response) {
+                hideProgressView();
+                if (cartGetApiResponseContentApiResponse.status == 0) {
+                    CartSummary cartSummary = cartGetApiResponseContentApiResponse.apiResponseContent.cartSummary;
+                    fullfillmentInfos = cartGetApiResponseContentApiResponse.apiResponseContent.fulfillmentInfos;
+                    annotationInfoArrayList = cartGetApiResponseContentApiResponse.apiResponseContent.annotationInfos;
+                    if (cartGetApiResponseContentApiResponse.apiResponseContent.
+                            cartGetApiCartItemsContent != null
+                            && cartGetApiResponseContentApiResponse.apiResponseContent.cartGetApiCartItemsContent.cartItemLists != null
+                            && cartGetApiResponseContentApiResponse.apiResponseContent.cartGetApiCartItemsContent.cartItemLists.size() > 0) {
+                        cartItemLists = cartGetApiResponseContentApiResponse.apiResponseContent.
+                                cartGetApiCartItemsContent.cartItemLists;
+                        renderCartItemList(cartSummary, cartGetApiResponseContentApiResponse
+                                .apiResponseContent.cartGetApiCartItemsContent.baseImgUrl);
+                    } else {
+                        showBasketEmptyMessage();
+                    }
+                } else {
+                    showErrorMsg("Server Error");
+                    // TODO : Improve error handling
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                hideProgressView();
+            }
+        });
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -161,20 +217,20 @@ public class ShowCartFragment extends BaseFragment {
         btnFooterCheckout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getCurrentActivity(), UploadNewPrescriptionActivity.class);
-                startActivity(intent);
-//                if (cartInfo != null && cartInfo.getNoOfItems() > 0) {
-//                    if (AuthParameters.getInstance(getActivity()).isAuthTokenEmpty()) {
-//                        showAlertDialog(getActivity(), "Login", getString(R.string.login_to_place_order),
-//                                DialogButton.OK, DialogButton.NO, Constants.LOGIN_REQUIRED, null, "Login");
-//                    } else {
-//                        new COMarketPlaceCheckTask<>(getCurrentActivity()).execute();
-//                    }
-//                }
+                //Intent intent = new Intent(getCurrentActivity(), UploadNewPrescriptionActivity.class);
+                //startActivity(intent);
+                if (cartInfo != null && cartInfo.getNoOfItems() > 0) {
+                    if (AuthParameters.getInstance(getActivity()).isAuthTokenEmpty()) {
+                        showAlertDialog(getActivity(), "Login", getString(R.string.login_to_place_order),
+                                DialogButton.OK, DialogButton.NO, Constants.LOGIN_REQUIRED, null, "Login");
+                    } else {
+                        new COMarketPlaceCheckTask<>(getCurrentActivity()).execute();
+                    }
+                }
             }
         });
         ActiveOrderRowAdapter activeOrderRowAdapter = new ActiveOrderRowAdapter(cartItemHeaderList, ((BaseActivity) getActivity()),
-                this, faceRupee, faceRobotoRegular, OrderItemDisplaySource.BASKET, false,
+                this, faceRupee, faceRobotoRegular, OrderItemDisplaySource.BASKET, isReadOnly,
                 fulfillmentInfoIdAndIconHashMap, annotationHashMap, baseImageUrl);
         cartItemListView.setDivider(null);
         cartItemListView.setDividerHeight(0);

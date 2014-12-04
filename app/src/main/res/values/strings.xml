@@ -262,7 +262,7 @@
     <string name="numberUsedByAnotherMember">This number is used by another member, please use another mobile number</string>
     <string name="resendOtpMsg">Code has been resent</string>
     <string name="viewPrescriptionImage">View prescription image</string>
-    <string name="viewPrescriptionImages">View Prescription images</string>
+    <string name="viewPrescriptionImages">View images</string>
     <string name="txtChoosePrescription">Choose prescription</string>
     <string name="selectPrescriptionLabel">Select this prescription</string>
     <string name="imageUploadFailed">Unable to upload Prescription, please try again later</string>

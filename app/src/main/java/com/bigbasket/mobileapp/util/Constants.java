@@ -623,6 +623,7 @@ public class Constants {
     public static final String NEWS_PREF = "news";
     public static final String DATE_PICKER = "datePicker";
     public static final String OTP_DIALOG_FLAG = "otp_dialog_flag";
+    public static final String ERROR_AREA_PIN_CODE = "errorAreaPinCode";
 
     public static final String PAYMENT_TYPES = "payment_types";
     public static final String PAYMENT_TYPE = "payment_type";

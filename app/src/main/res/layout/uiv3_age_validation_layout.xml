@@ -34,18 +34,18 @@
                 android:textColor="@color/dark_red"
                 android:textSize="@dimen/primary_text_size" />
 
-            <TextView
-                android:id="@+id/txtInfoMsg"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/margin_small"
-                android:layout_marginRight="@dimen/margin_small"
-                android:layout_marginTop="@dimen/margin_small"
-                android:gravity="center"
-                android:text="Pharma message das fad fas f asd sadf adf adsf fadad adfasdf asdfasdf"
-                android:textColor="@color/uiv3_primary_text_color"
-                android:textSize="@dimen/primary_text_size"
-                android:visibility="gone" />
+            <!--<TextView-->
+                <!--android:id="@+id/txtInfoMsg"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginLeft="@dimen/margin_small"-->
+                <!--android:layout_marginRight="@dimen/margin_small"-->
+                <!--android:layout_marginTop="@dimen/margin_small"-->
+                <!--android:gravity="center"-->
+                <!--android:text="Pharma message das fad fas f asd sadf adf adsf fadad adfasdf asdfasdf"-->
+                <!--android:textColor="@color/uiv3_primary_text_color"-->
+                <!--android:textSize="@dimen/primary_text_size"-->
+                <!--android:visibility="gone" />-->
 
             <RadioGroup
                 android:layout_width="match_parent"

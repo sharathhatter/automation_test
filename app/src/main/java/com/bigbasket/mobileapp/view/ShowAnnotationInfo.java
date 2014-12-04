@@ -51,7 +51,7 @@ public class ShowAnnotationInfo {
             MessageFormatUtil messageFormatUtil = new MessageFormatUtil();
             SpannableStringBuilder msgContent = messageFormatUtil.replaceStringArgWithDisplayNameAndLink(activity,
                     " " + annotationInfo.getMsgInfo().getMessageStr(),
-                    annotationInfo.getMsgInfo().getParams(), null);
+                    annotationInfo.getMsgInfo().getParams(), null, null);
             txtFulfilledBy.setMovementMethod(LinkMovementMethod.getInstance());
             if (msgContent != null) {
                 txtFulfilledBy.setText(msgContent, TextView.BufferType.SPANNABLE);

@@ -1,24 +1,19 @@
 package com.bigbasket.mobileapp.activity.order.uiv3;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Rect;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
 import android.widget.*;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
-import com.bigbasket.mobileapp.adapter.order.MultipleImagesPrescriptionAdapter;
 import com.bigbasket.mobileapp.adapter.order.PrescriptionListAdapter;
 import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.order.SavedPrescription;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
+import com.bigbasket.mobileapp.task.COMarketPlaceCheckTask;
 import com.bigbasket.mobileapp.util.*;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -29,10 +24,12 @@ import java.util.ArrayList;
 
 public class PrescriptionListActivity extends BackButtonActivity {
     private ArrayList<SavedPrescription> savedPrescriptionArrayList;
+    private boolean fromOnCreate;
 
     @Override
     public void onCreate(Bundle saveInstanceState) {
         super.onCreate(saveInstanceState);
+        fromOnCreate = true;
         if (saveInstanceState != null) {
             savedPrescriptionArrayList = saveInstanceState.getParcelableArrayList(Constants.PRESCRIPTION_INTENT_DATA);
             if (savedPrescriptionArrayList != null) {
@@ -56,26 +53,36 @@ public class PrescriptionListActivity extends BackButtonActivity {
     @Override
     public void onResume() {
         super.onResume();
+        if(!fromOnCreate)
+            new COMarketPlaceCheckTask<>(getCurrentActivity()).execute();
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        fromOnCreate = false;
+    }
+
+    @Override
+    public void onCoMarketPlaceSuccess(MarketPlace marketPlace) {
+        savedPrescriptionArrayList = marketPlace.getSavedPrescription();
+        if(savedPrescriptionArrayList==null || savedPrescriptionArrayList.size()==0) return;
+        renderPrescriptionList(savedPrescriptionArrayList);
     }
 
     private void renderPrescriptionList(final ArrayList<SavedPrescription> savedPrescriptionArrayList) {
         FrameLayout contentView = (FrameLayout) findViewById(R.id.content_frame);
-        ScrollView scrollView = new ScrollView(this);
-        LinearLayout base = new LinearLayout(this);
-        base.setOrientation(LinearLayout.VERTICAL);
-        scrollView.addView(base);
-        contentView.addView(scrollView);
-
-
+        if (contentView == null) return;
+        contentView.removeAllViews();
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View precriptionView = layoutInflater.inflate(R.layout.uiv3_fab_recycler_view, null);
-        RecyclerView prescriptionRecyclerView = (RecyclerView) precriptionView.findViewById(R.id.fabRecyclerView);
+        View prescriptionView = layoutInflater.inflate(R.layout.uiv3_fab_recycler_view, null);
+        RecyclerView prescriptionRecyclerView = (RecyclerView) prescriptionView.findViewById(R.id.fabRecyclerView);
         UIUtil.configureRecyclerView(prescriptionRecyclerView, this, 1, 3);
         PrescriptionListAdapter prescriptionListAdapter = new PrescriptionListAdapter(getCurrentActivity(),
-                                                                            savedPrescriptionArrayList);
+                                                                            savedPrescriptionArrayList, faceRobotoRegular);
         prescriptionRecyclerView.setAdapter(prescriptionListAdapter);
 
-        FloatingActionButton floatingActionButton = (FloatingActionButton) precriptionView.findViewById(R.id.btnFab);
+        FloatingActionButton floatingActionButton = (FloatingActionButton) prescriptionView.findViewById(R.id.btnFab);
         floatingActionButton.attachToRecyclerView(prescriptionRecyclerView);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,7 +91,7 @@ public class PrescriptionListActivity extends BackButtonActivity {
             }
         });
 
-        base.addView(precriptionView);
+        contentView.addView(prescriptionView);
     }
 
     @Override
@@ -100,9 +107,9 @@ public class PrescriptionListActivity extends BackButtonActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        isActivitySuspended = false;
         if (resultCode == Constants.PRESCRIPTION_UPLOADED) {
-            getCurrentActivity().setResult(Constants.PRESCRIPTION_UPLOADED);
-            getCurrentActivity().finish();
+            //do nothing
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }

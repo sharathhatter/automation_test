@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.adapter.order;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.graphics.Typeface;
@@ -56,13 +57,14 @@ public class PrescriptionListAdapter extends RecyclerView.Adapter<RecyclerView.V
     private BaseActivity context;
     private LayoutInflater inflater;
     private ArrayList<SavedPrescription> savedPrescriptionArrayList;
-    private Typeface robotoTypeface;
+    private Typeface faceRobotoRegular;
     private LinearLayout visibleChoosePrescriptionAndViewPrescriptionImages;
     private Animation bottomDown, bottomUp;
-    public PrescriptionListAdapter(BaseActivity context, ArrayList<SavedPrescription> savedPrescriptionArrayList) {
+    public PrescriptionListAdapter(BaseActivity context, ArrayList<SavedPrescription> savedPrescriptionArrayList,
+                                   Typeface faceRobotoRegular) {
         this.context = context;
         this.savedPrescriptionArrayList = savedPrescriptionArrayList;
-        this.robotoTypeface = Typeface.createFromAsset(context.getAssets(), "roboto-slab.regular.ttf");
+        this.faceRobotoRegular = faceRobotoRegular;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         bottomDown = AnimationUtils.loadAnimation(context, R.anim.bottom_down);
         bottomUp = AnimationUtils.loadAnimation(context, R.anim.bottom_up);
@@ -125,7 +127,7 @@ public class PrescriptionListAdapter extends RecyclerView.Adapter<RecyclerView.V
                 editor.commit();
                 Toast.makeText(context, context.getResources().getString(R.string.prescriptionIDSaved), Toast.LENGTH_SHORT).show();
                 hideFrameOnDialogClose();
-                new COReserveQuantityCheckTask(context, String.valueOf(savedPrescription.getPharmaPrescriptionId())).execute();
+                new COReserveQuantityCheckTask<>(context, String.valueOf(savedPrescription.getPharmaPrescriptionId())).execute();
             }
         });
         TextView prescriptionName = viewHolder.getPrescriptionName();
@@ -215,7 +217,7 @@ public class PrescriptionListAdapter extends RecyclerView.Adapter<RecyclerView.V
         public TextView getDateCreated() {
             if(dateCreated == null) {
                 dateCreated = (TextView) base.findViewById(R.id.txtDateCreated);
-                dateCreated.setTypeface(robotoTypeface);
+                dateCreated.setTypeface(faceRobotoRegular);
             }
             return dateCreated;
         }
@@ -223,7 +225,7 @@ public class PrescriptionListAdapter extends RecyclerView.Adapter<RecyclerView.V
         public TextView getPatientName() {
             if(patientName == null) {
                 patientName = (TextView) base.findViewById(R.id.txtPatientName);
-                patientName.setTypeface(robotoTypeface);
+                patientName.setTypeface(faceRobotoRegular);
             }
             return patientName;
         }
@@ -231,7 +233,7 @@ public class PrescriptionListAdapter extends RecyclerView.Adapter<RecyclerView.V
         public TextView getDoctorName() {
             if(doctorName == null) {
                 doctorName = (TextView) base.findViewById(R.id.txtDoctorName);
-                doctorName.setTypeface(robotoTypeface);
+                doctorName.setTypeface(faceRobotoRegular);
             }
             return doctorName;
         }
@@ -239,7 +241,7 @@ public class PrescriptionListAdapter extends RecyclerView.Adapter<RecyclerView.V
         public TextView getPrescriptionName() {
             if(prescriptionName == null) {
                 prescriptionName = (TextView) base.findViewById(R.id.txtPrescriptionName);
-                prescriptionName.setTypeface(robotoTypeface);
+                prescriptionName.setTypeface(faceRobotoRegular);
             }
             return prescriptionName;
         }
@@ -264,11 +266,15 @@ public class PrescriptionListAdapter extends RecyclerView.Adapter<RecyclerView.V
         bigBasketApiService.getImageUrls(pharmaPrescriptionId, new Callback<ApiResponse<ImageUrls>>() {
             @Override
             public void success(ApiResponse<ImageUrls> imageUrlsCallback, Response response) {
-                context.hideProgressView();
+                context.hideProgressDialog();
                 if (imageUrlsCallback.status == 0) {
                     JsonArray jsonArrayImageUrls = imageUrlsCallback.apiResponseContent.jsonArrayImageUrls;
                     if (jsonArrayImageUrls.size() > 0) {
-                        showPrescriptionImageDialog(jsonArrayImageUrls);
+                        ArrayList<Object> arrayListImgUrls = new ArrayList<>();
+                        for(int i=0; i<jsonArrayImageUrls.size(); i++){
+                            arrayListImgUrls.add(jsonArrayImageUrls.get(i).getAsString());
+                        }
+                        showPrescriptionImageDialog(arrayListImgUrls);
                     } else {
                         context.showAlertDialog(context, null, "Images are uploading....");
                     }
@@ -288,7 +294,7 @@ public class PrescriptionListAdapter extends RecyclerView.Adapter<RecyclerView.V
     }
 
 
-    private void showPrescriptionImageDialog(JsonArray jsonArrayImageUrls){
+    private void showPrescriptionImageDialog(ArrayList<Object> uploadImageList){
         final Dialog prescriptionImageDialog = new Dialog(context);
         prescriptionImageDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         prescriptionImageDialog.setCanceledOnTouchOutside(true);
@@ -302,13 +308,8 @@ public class PrescriptionListAdapter extends RecyclerView.Adapter<RecyclerView.V
         prescriptionImageDialog.getWindow().setLayout(displayRectangle.width() - 20,
                 (int) (displayRectangle.height() * 0.7f));
 
-        ArrayList<Object> arrayListImgUrls = new ArrayList<>();
-        for(int i=0; i<jsonArrayImageUrls.size(); i++){
-            arrayListImgUrls.add(jsonArrayImageUrls.get(i).getAsString());
-        }
-
         MultipleImagesPrescriptionAdapter multipleImagesPrescriptionAdapter = new MultipleImagesPrescriptionAdapter(context,
-                arrayListImgUrls);
+                uploadImageList);
         listView.setAdapter(multipleImagesPrescriptionAdapter);
         prescriptionImageDialog.show();
 

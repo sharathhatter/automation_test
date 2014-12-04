@@ -15,14 +15,18 @@ import com.bigbasket.mobileapp.apiservice.models.response.PromoDetailApiResponse
 import com.bigbasket.mobileapp.apiservice.models.response.PromoSetProductsApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PromoSummaryApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.UpdateProfileOldApiResponse;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.account.CurrentWalletBalance;
 import com.bigbasket.mobileapp.model.account.UpdatePin;
+import com.bigbasket.mobileapp.model.account.UpdateProfileModel;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.order.ImageUrls;
 import com.bigbasket.mobileapp.model.order.PrescriptionId;
 import com.bigbasket.mobileapp.model.product.ProductListData;
 import com.bigbasket.mobileapp.util.Constants;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -56,6 +60,10 @@ public interface BigBasketApiService {
 
     @GET("/c-get/")
     void cartGet(Callback<ApiResponse<CartGetApiResponseContent>> cartGetApiResponseCallback);
+
+    @GET("/c-get/")
+    void cartGetForIds(@Query(Constants.FULFILLMENT_ID) String fulfillmentId,
+                        Callback<ApiResponse<CartGetApiResponseContent>> cartGetApiResponseCallback);
 
     @POST("/c-empty/")
     void emptyCart(Callback<BaseApiResponse> cartEmptyApiResponseCallback);
@@ -105,7 +113,7 @@ public interface BigBasketApiService {
 
     @GET("/c-bulk-remove/")
     void bulkRemoveProducts(@Query(Constants.FULFILLMENT_ID) String fulfillmentId,
-                            Callback<ApiResponse<CartSummary>> bulkRemoveCallback);
+                            Callback<ApiResponse> bulkRemoveCallback);
 
     @GET("/get-prescription-images/")
     void getImageUrls(@Query(Constants.PHARMA_PRESCRIPTION_ID) String prescriptionId,
@@ -160,4 +168,22 @@ public interface BigBasketApiService {
     @POST("/c-set-i/")
     void setCartItem(@Field(Constants.PROD_ID) String productId, @Field(Constants.QTY) String qty,
                      Callback<CartOperationApiResponse> cartOperationApiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/change-password/")
+    void changePassword(@Field(Constants.OLD_PASSWORD) String oldPassword,
+                        @Field(Constants.NEW_PASSWORD) String newPassword,
+                        @Field(Constants.CONFIRM_PASSWORD) String confirmPassword,
+                     Callback<OldBaseApiResponse> changePasswordCallback);
+
+    @GET("/update-profile/")
+    void getMemberProfileData(Callback<UpdateProfileOldApiResponse> memberProfileDataCallback);
+
+    @FormUrlEncoded
+    @POST("/update-profile/")
+    void setUserDetailsData(@Field(Constants.USER_DETAILS) String userDetails,
+                        Callback<UpdateProfileOldApiResponse> changePasswordCallback);
+
+    @GET("/get-area-info/")
+    void getAreaInfo(Callback<ApiResponse<JSONObject>> areaInfoCallback);
 }
