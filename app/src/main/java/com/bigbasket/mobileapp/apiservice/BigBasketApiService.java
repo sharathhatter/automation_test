@@ -8,13 +8,18 @@ import com.bigbasket.mobileapp.apiservice.models.response.CartGetApiResponseCont
 import com.bigbasket.mobileapp.apiservice.models.response.CartOperationApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.CartSummaryApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.CreateUpdateAddressApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.GetDeliveryAddressApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.GetPaymentParamsApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListDetailsApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListSummaryApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListsApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.HomePageApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OrderListApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.PostDeliveryAddressApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.ProductDetailApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PromoDetailApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PromoSetProductsApiResponseContent;
@@ -23,6 +28,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
+import com.bigbasket.mobileapp.model.order.OrderSummary;
 import com.bigbasket.mobileapp.model.product.ProductListData;
 import com.bigbasket.mobileapp.util.Constants;
 
@@ -178,11 +184,35 @@ public interface BigBasketApiService {
                                     Callback<OldBaseApiResponse> deleteItemFromShoppingListApiResponseCallback);
 
     @GET("/co-basket-check/")
-    void checkoutBasketCheck(Callback<ApiResponse<MarketPlace>> marketPlaceApiResponseCallback);
+    void basketCheck(Callback<ApiResponse<MarketPlace>> marketPlaceApiResponseCallback);
 
     @GET("/c-summary/")
     void cartSummary(Callback<CartSummaryApiResponse> cartSummaryApiResponseCallback);
 
     @GET("/product-details/")
     void productDetails(@Query(Constants.PROD_ID) String productId, Callback<ProductDetailApiResponse> productDetailApiResponseCallback);
+
+    @GET("/co-get-delivery-addresses/")
+    void getDeliveryAddresses(Callback<ApiResponse<GetDeliveryAddressApiResponseContent>> getDeliveryAddressApiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/co-post-delivery-addresses/")
+    void postDeliveryAddresses(@Field(Constants.P_ORDER_ID) String potentialOrderId, @Field(Constants.ADDRESS_ID) String addressId,
+                               @Field(Constants.SUPPORT_CC) String supportsCreditCard,
+                               Callback<OldApiResponse<PostDeliveryAddressApiResponseContent>> postDeliveryAddressApiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/co-post-slot-and-payment/")
+    void postSlotAndPayment(@Field(Constants.P_ORDER_ID) String potentialOrderId, @Field(Constants.SLOTS) String slots,
+                            @Field(Constants.PAYMENT_TYPE) String paymentType, @Field(Constants.SUPPORT_CC) String supportsCreditCard,
+                            Callback<ApiResponse<OrderSummary>> postSlotAndPaymentApiResponseCallback);
+
+    @GET("/get-payment-params/")
+    void getPaymentParams(@Query(Constants.PID) String potentialOrderId, @Query(Constants.AMOUNT) String amount,
+                          Callback<ApiResponse<GetPaymentParamsApiResponseContent>> getPaymentParamsApiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/co-place-order/")
+    void placeOrder(@Field(Constants.P_ORDER_ID) String potentialOrderId, @Field(Constants.TXN_ID) String txnId,
+                    Callback<OldApiResponse<PlaceOrderApiResponseContent>> placeOrderApiResponseCallback);
 }

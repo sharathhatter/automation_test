@@ -263,7 +263,6 @@ public class Constants {
 
     public static final String AUTO_SEARCH_URL = "search-tc/";
 
-    public static final String GET_PAYMENT_PARAMS = "get-payment-params";
     public static final String PID = "pid";
     public static final String POTENTIAL_ORDER_ID = "potentialid";
     public static final String PAYU_POST_PARAMS = "post_params";
@@ -301,7 +300,6 @@ public class Constants {
     public static final int GO_TO_CHECK_OUT = 1109;
     public static boolean FROM_FOOTER_CHECKOUT_CLICK = false;
     public static final String HOME = "home";
-    public static final String GET_DELIVERY_ADDR = "co-get-delivery-addresses/";
     public static final String POST_DELIVERY_ADDR = "co-post-delivery-addresses/";
     public static final String ADDRESSES = "addresses";
     public static final String ID = "id";

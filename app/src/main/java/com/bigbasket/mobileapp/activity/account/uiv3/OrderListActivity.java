@@ -25,8 +25,9 @@ import com.bigbasket.mobileapp.activity.order.uiv3.OrderDetailActivity;
 import com.bigbasket.mobileapp.adapter.order.OrderListAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
-import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.callbacks.CallbackOrderInvoice;
 import com.bigbasket.mobileapp.apiservice.models.response.OrderListApiResponse;
+import com.bigbasket.mobileapp.interfaces.InvoiceDataAware;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.model.order.OrderMonthRange;
@@ -39,7 +40,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class OrderListActivity extends BackButtonActivity {
+public class OrderListActivity extends BackButtonActivity implements InvoiceDataAware {
 
     private Spinner orderDurationSpinner;
     private String orderType;
@@ -203,31 +204,7 @@ public class OrderListActivity extends BackButtonActivity {
     private void showInvoice(Order order) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.getInvoice(order.getOrderId(), new Callback<ApiResponse<OrderInvoice>>() {
-            @Override
-            public void success(ApiResponse<OrderInvoice> orderApiResponse, Response response) {
-                hideProgressDialog();
-                switch (orderApiResponse.status) {
-                    case 0:
-                        OrderInvoice orderInvoice = orderApiResponse.apiResponseContent;
-                        Intent orderDetailIntent = new Intent(getCurrentActivity(), OrderDetailActivity.class);
-                        orderDetailIntent.putExtra(Constants.ORDER_REVIEW_SUMMARY, orderInvoice);
-                        startActivityForResult(orderDetailIntent, Constants.GO_TO_HOME);
-                        break;
-                    default:
-                        // TODO : Implement error handling
-                        showAlertDialogFinish(getCurrentActivity(), null, "Server Error");
-                        break;
-                }
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                hideProgressDialog();
-                // TODO : Implement error handling
-                showAlertDialogFinish(getCurrentActivity(), null, "Server Error");
-            }
-        });
+        bigBasketApiService.getInvoice(order.getOrderId(), new CallbackOrderInvoice<>(this));
     }
 
     @Override
@@ -240,5 +217,12 @@ public class OrderListActivity extends BackButtonActivity {
             outState.putInt(Constants.ORDER_RANGE, selectedMonth);
         }
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onDisplayOrderInvoice(OrderInvoice orderInvoice) {
+        Intent orderDetailIntent = new Intent(getCurrentActivity(), OrderDetailActivity.class);
+        orderDetailIntent.putExtra(Constants.ORDER_REVIEW_SUMMARY, orderInvoice);
+        startActivityForResult(orderDetailIntent, Constants.GO_TO_HOME);
     }
 }

@@ -33,7 +33,7 @@ public class COMarketPlaceCheckTask<T> {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.
                 getApiService(((ActivityAware) ctx).getCurrentActivity());
         ((ProgressIndicationAware) ctx).showProgressDialog("Please wait...");
-        bigBasketApiService.checkoutBasketCheck(new Callback<ApiResponse<MarketPlace>>() {
+        bigBasketApiService.basketCheck(new Callback<ApiResponse<MarketPlace>>() {
             @Override
             public void success(ApiResponse<MarketPlace> marketPlaceApiResponse, Response response) {
                 if (((CancelableAware) ctx).isSuspended()) {

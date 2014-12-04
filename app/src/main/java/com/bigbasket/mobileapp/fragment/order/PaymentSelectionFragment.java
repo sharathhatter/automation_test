@@ -24,12 +24,11 @@ import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.SelectedPaymentAware;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.order.ActiveVouchers;
+import com.bigbasket.mobileapp.model.order.PaymentType;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
-import com.bigbasket.mobileapp.util.ParserUtil;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -73,12 +72,10 @@ public class PaymentSelectionFragment extends BaseFragment {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         mPotentialOrderId = preferences.getString(Constants.POTENTIAL_ORDER_ID, null);
 
-        String paymentTypeJsonArrayStr = args.getString(Constants.PAYMENT_TYPES);
-        try {
-            JSONArray paymentTypesJsonArray = new JSONArray(paymentTypeJsonArrayStr);
-            mPaymentTypeMap = ParserUtil.parsePaymentTypes(paymentTypesJsonArray);
-        } catch (JSONException e) {
-            return;
+        ArrayList<PaymentType> paymentTypes = args.getParcelableArrayList(Constants.PAYMENT_TYPES);
+        mPaymentTypeMap = new LinkedHashMap<>();
+        for (PaymentType paymentType : paymentTypes) {
+            mPaymentTypeMap.put(paymentType.getDisplayName(), paymentType.getValue());
         }
         renderPaymentOptions();
     }

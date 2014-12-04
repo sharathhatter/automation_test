@@ -64,15 +64,6 @@ public class ParserUtil {
         return products;
     }
 
-    public static Product parseProduct(JsonObject productJsonObj, String baseImgUrl) {
-        Gson gson = new Gson();
-        Product product = gson.fromJson(productJsonObj, Product.class);
-        if (baseImgUrl != null) {
-            product.setImageUrl(baseImgUrl + product.getImageUrl());
-        }
-        return product;
-    }
-
     private static Product parseProductData(JSONObject productData, String baseImgUrl) {
         Product product = new Product();
         try {
@@ -203,24 +194,6 @@ public class ParserUtil {
         return cartInfo;
     }
 
-    public static CartSummary parseCartSummaryFromJSON(JSONObject cartSummaryJsonObj) {
-        try {
-            CartSummary cartSummary = new CartSummary();
-            if (cartSummaryJsonObj == null) return null;
-
-            String savingStr = cartSummaryJsonObj.optString(Constants.CART_INFO_SAVING);
-            String numItemsStr = cartSummaryJsonObj.getString(Constants.NUM_ITEMS);
-            String totalStr = cartSummaryJsonObj.getString(Constants.TOTAL);
-
-            cartSummary.setSavings(TextUtils.isEmpty(savingStr) ? 0 : Double.parseDouble(savingStr));
-            cartSummary.setTotal(TextUtils.isEmpty(totalStr) ? 0 : Double.parseDouble(totalStr));
-            cartSummary.setNoOfItems(TextUtils.isEmpty(numItemsStr) ? 0 : Integer.parseInt(numItemsStr));
-            return cartSummary;
-        } catch (JSONException e) {
-            return null;
-        }
-    }
-
     public static ArrayList<WalletDataItem> getListData(String resp) {
         ArrayList<WalletDataItem> results = new ArrayList<WalletDataItem>();
         try {
@@ -243,59 +216,6 @@ public class ParserUtil {
             Log.e("Error", "JSONObject Error");
         }
         return results;
-    }
-
-    public static ArrayList<ActiveVouchers> parseActiveVouchersList(JSONArray activeVouchersJsonArray) {
-        ArrayList<ActiveVouchers> activeVouchersList = new ArrayList<>();
-        for (int i = 0; i < activeVouchersJsonArray.length(); i++) {
-            try {
-                JSONObject jsonObject = activeVouchersJsonArray.getJSONObject(i);
-                activeVouchersList.add(new ActiveVouchers(jsonObject.getString(Constants.CODE),
-                        jsonObject.getString(Constants.CUSTOMER_DESC), jsonObject.getString(Constants.MESSAGE),
-                        jsonObject.getString(Constants.VALIDITY), jsonObject.getBoolean(Constants.CAN_APPLY)));
-            } catch (JSONException e) {
-            }
-        }
-        return activeVouchersList;
-    }
-
-    public static ArrayList<Address> parseAddressList(String jsonArrayStr) {
-        ArrayList<Address> list = null;
-        Gson gson = new Gson();
-        Type collectionType = new TypeToken<Collection<Address>>() {
-        }.getType();
-        list = gson.fromJson(jsonArrayStr, collectionType);
-        return list;
-    }
-
-    public static ArrayList<SlotGroup> parseSlotsList(JSONArray slotListJsonArray) {
-        ArrayList<SlotGroup> slotsList = new ArrayList<>();
-        for (int i = 0; i < slotListJsonArray.length(); i++) {
-            try {
-                JSONObject jsonObject = slotListJsonArray.getJSONObject(i);
-                JSONObject jsonObjectFulfillment = jsonObject.getJSONObject(Constants.FULFILLMENT_INFO);
-                JSONArray slotsJsonArray = jsonObject.optJSONArray(Constants.SLOTS);
-
-                FulfillmentInfo fulfillmentInfo = new FulfillmentInfo(jsonObjectFulfillment);
-                List<Slot> slotInGroupList = null;
-                Slot selectedSlot = null, nextAvailableSlot = null;
-                if (slotsJsonArray != null) {
-                    slotInGroupList = parseSlot(slotsJsonArray);
-                }
-                JSONObject selectedSlotJsonObj = jsonObject.optJSONObject(Constants.SLOT);
-                if (selectedSlotJsonObj != null) {
-                    selectedSlot = new Slot(selectedSlotJsonObj);
-                }
-                JSONObject nextAvailableSlotJsonObj = jsonObject.optJSONObject(Constants.NEXT_AVAILABLE_SLOT);
-                if (nextAvailableSlotJsonObj != null) {
-                    nextAvailableSlot = new Slot(nextAvailableSlotJsonObj);
-                }
-                slotsList.add(new SlotGroup(fulfillmentInfo, slotInGroupList, selectedSlot, nextAvailableSlot));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        return slotsList;
     }
 
     public static ArrayList<Order> parseOrderList(JsonArray ordersJsonArray) {
@@ -323,20 +243,6 @@ public class ParserUtil {
         Gson gson = new Gson();
         UpdateProfileModel updateProfileModel = gson.fromJson(jsonObjectUpdateProfile, UpdateProfileModel.class);
         return updateProfileModel;
-    }
-
-    public static LinkedHashMap<String, String> parsePaymentTypes(JSONArray paymentTypeJsonArray) {
-        try {
-            LinkedHashMap<String, String> paymentTypeMap = new LinkedHashMap<>();
-            for (int i = 0; i < paymentTypeJsonArray.length(); i++) {
-                JSONObject paymentJsonObj = paymentTypeJsonArray.getJSONObject(i);
-                paymentTypeMap.put(paymentJsonObj.getString(Constants.DISPLAY_NAME),
-                        paymentJsonObj.getString(Constants.VALUE));
-            }
-            return paymentTypeMap;
-        } catch (JSONException e) {
-            return null;
-        }
     }
 
     public static AutoSearchResponse parseAutoSearchResponse(JsonObject termsJsonObj) {
