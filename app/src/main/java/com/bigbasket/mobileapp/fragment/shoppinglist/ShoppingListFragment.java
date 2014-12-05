@@ -2,10 +2,14 @@ package com.bigbasket.mobileapp.fragment.shoppinglist;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -25,8 +29,6 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.view.uiv3.CreateShoppingListDialog;
 import com.bigbasket.mobileapp.view.uiv3.DeleteShoppingListDialog;
 import com.bigbasket.mobileapp.view.uiv3.EditShoppingDialog;
-import com.daimajia.swipe.SwipeLayout;
-import com.daimajia.swipe.adapters.BaseSwipeAdapter;
 import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -77,8 +79,8 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View base = inflater.inflate(R.layout.uiv3_fab_list_view, null);
         ListView shoppingNameListView = (ListView) base.findViewById(R.id.fabListView);
-        ShoppingListNameAndOpAdapter shoppingListNameAndOpAdapter = new ShoppingListNameAndOpAdapter(mShoppingListNames);
-        shoppingNameListView.setAdapter(shoppingListNameAndOpAdapter);
+        ShoppingListAdapter shoppingListAdapter = new ShoppingListAdapter(mShoppingListNames);
+        shoppingNameListView.setAdapter(shoppingListAdapter);
 
         shoppingNameListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -87,6 +89,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
                 launchShoppingListSummary(shoppingListName);
             }
         });
+
         FloatingActionButton fabCreateShoppingList = (FloatingActionButton) base.findViewById(R.id.btnFab);
         fabCreateShoppingList.attachToListView(shoppingNameListView);
         fabCreateShoppingList.setOnClickListener(new View.OnClickListener() {
@@ -174,99 +177,12 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
 
     }
 
-    private class ShoppingListNameAndOpAdapter extends BaseSwipeAdapter {
+    private class ShoppingListAdapter extends BaseAdapter {
 
         private List<ShoppingListName> shoppingListNames;
 
-        public ShoppingListNameAndOpAdapter(List<ShoppingListName> shoppingListNames) {
+        public ShoppingListAdapter(List<ShoppingListName> shoppingListNames) {
             this.shoppingListNames = shoppingListNames;
-        }
-
-        @Override
-        public int getSwipeLayoutResourceId(int i) {
-            return R.id.swipeShoppingList;
-        }
-
-        @Override
-        public View generateView(int position, ViewGroup viewGroup) {
-            View v = LayoutInflater.from(getActivity()).inflate(R.layout.uiv3_shopping_list_row, null);
-            SwipeLayout swipeLayout = (SwipeLayout) v.findViewById(getSwipeLayoutResourceId(position));
-            swipeLayout.setShowMode(SwipeLayout.ShowMode.LayDown);
-            swipeLayout.setDragEdge(SwipeLayout.DragEdge.Right);
-            TextView txtShoppingListName = (TextView) v.findViewById(R.id.txtShopLstName);
-            txtShoppingListName.setTypeface(faceRobotoRegular);
-            swipeLayout.addSwipeListener(new SwipeLayout.SwipeListener() {
-                @Override
-                public void onStartOpen(SwipeLayout swipeLayout) {
-
-                }
-
-                @Override
-                public void onOpen(SwipeLayout swipeLayout) {
-
-                }
-
-                @Override
-                public void onStartClose(SwipeLayout swipeLayout) {
-
-                }
-
-                @Override
-                public void onClose(SwipeLayout swipeLayout) {
-
-                }
-
-                @Override
-                public void onUpdate(SwipeLayout swipeLayout, int i, int i1) {
-
-                }
-
-                @Override
-                public void onHandRelease(SwipeLayout swipeLayout, float v, float v1) {
-
-                }
-            });
-            return v;
-        }
-
-        @Override
-        public void fillValues(int position, View convertView) {
-
-            final ShoppingListName shoppingListName = shoppingListNames.get(position);
-
-            TextView txtShoppingListName = (TextView) convertView.findViewById(R.id.txtShopLstName);
-
-            ImageView imgEditShoppingListName = (ImageView) convertView.findViewById(R.id.imgEditShopList);
-            ImageView imgDeleteShoppingList = (ImageView) convertView.findViewById(R.id.imgDeleteShoppingList);
-            imgEditShoppingListName.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (shoppingListName.isSystem()) {
-                        if (getCurrentActivity() != null) {
-                            getCurrentActivity().showAlertDialog(getActivity(), null, getString(R.string.isSystemShoppingListMsg));
-                        }
-                        return;
-                    }
-                    EditShoppingDialog editShoppingDialog = EditShoppingDialog.newInstance(shoppingListName);
-                    editShoppingDialog.setTargetFragment(getFragmentInstance(), 0);
-                    editShoppingDialog.show(getFragmentManager(), Constants.SHOPPING_LIST_NAME);
-                }
-            });
-            imgDeleteShoppingList.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (shoppingListName.isSystem()) {
-                        if (getCurrentActivity() != null) {
-                            getCurrentActivity().showAlertDialog(getActivity(), null, getString(R.string.isSystemShoppingListMsg));
-                        }
-                        return;
-                    }
-                    DeleteShoppingListDialog deleteShoppingListDialog = DeleteShoppingListDialog.newInstance(shoppingListName);
-                    deleteShoppingListDialog.setTargetFragment(getFragmentInstance(), 0);
-                    deleteShoppingListDialog.show(getFragmentManager(), Constants.SHOPPING_LIST_NAME);
-                }
-            });
-            txtShoppingListName.setText(shoppingListName.getName());
         }
 
         @Override
@@ -283,12 +199,137 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
         public long getItemId(int position) {
             return position;
         }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            final ShoppingListName shoppingListName = shoppingListNames.get(position);
+            ShoppingListViewHolder shoppingListViewHolder;
+            if (convertView == null) {
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                convertView = inflater.inflate(R.layout.uiv3_shopping_list_name_row, null);
+                shoppingListViewHolder = new ShoppingListViewHolder(convertView);
+                convertView.setTag(shoppingListViewHolder);
+            } else {
+                shoppingListViewHolder = (ShoppingListViewHolder) convertView.getTag();
+            }
+
+            TextView txtShopLstName = shoppingListViewHolder.getTxtShopLstName();
+            txtShopLstName.setText(shoppingListName.getName());
+
+            ImageView imgShoppingListAdditionalAction = shoppingListViewHolder.getImgShoppingListAdditionalAction();
+            if (imgShoppingListAdditionalAction != null) {
+                imgShoppingListAdditionalAction.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        PopupMenu popupMenu = new PopupMenu(getActivity(), v);
+                        MenuInflater menuInflater = popupMenu.getMenuInflater();
+                        menuInflater.inflate(R.menu.shopping_list_menu, popupMenu.getMenu());
+                        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                            @Override
+                            public boolean onMenuItemClick(MenuItem menuItem) {
+                                switch (menuItem.getItemId()) {
+                                    case R.id.menuEditShoppingList:
+                                        showEditShoppingListDialog(shoppingListName);
+                                        return true;
+                                    case R.id.menuDeleteShoppingList:
+                                        showDeleteShoppingListDialog(shoppingListName);
+                                        return true;
+                                }
+                                return false;
+                            }
+                        });
+                        popupMenu.show();
+                    }
+                });
+            } else {
+                ImageView imgEditShopList = shoppingListViewHolder.getImgEditShopList();
+                imgEditShopList.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showEditShoppingListDialog(shoppingListName);
+                    }
+                });
+
+                ImageView imgDeleteShoppingList = shoppingListViewHolder.getImgDeleteShoppingList();
+                imgDeleteShoppingList.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showDeleteShoppingListDialog(shoppingListName);
+                    }
+                });
+            }
+            return convertView;
+        }
+
+        private class ShoppingListViewHolder {
+            private View itemView;
+            private TextView txtShopLstName;
+            private ImageView imgEditShopList;
+            private ImageView imgDeleteShoppingList;
+            private ImageView imgShoppingListAdditionalAction;
+
+            private ShoppingListViewHolder(View itemView) {
+                this.itemView = itemView;
+            }
+
+            public TextView getTxtShopLstName() {
+                if (txtShopLstName == null) {
+                    txtShopLstName = (TextView) itemView.findViewById(R.id.txtShopLstName);
+                    txtShopLstName.setTypeface(faceRobotoRegular);
+                }
+                return txtShopLstName;
+            }
+
+            public ImageView getImgEditShopList() {
+                if (imgEditShopList == null) {
+                    imgEditShopList = (ImageView) itemView.findViewById(R.id.imgEditShopList);
+                }
+                return imgEditShopList;
+            }
+
+            public ImageView getImgDeleteShoppingList() {
+                if (imgDeleteShoppingList == null) {
+                    imgDeleteShoppingList = (ImageView) itemView.findViewById(R.id.imgDeleteShoppingList);
+                }
+                return imgDeleteShoppingList;
+            }
+
+            public ImageView getImgShoppingListAdditionalAction() {
+                if (imgShoppingListAdditionalAction == null) {
+                    imgShoppingListAdditionalAction = (ImageView) itemView.findViewById(R.id.imgShoppingListAdditionalAction);
+                }
+                return imgShoppingListAdditionalAction;
+            }
+        }
     }
 
     public ShoppingListFragment getFragmentInstance() {
         return this;
     }
 
+    private void showEditShoppingListDialog(ShoppingListName shoppingListName) {
+        if (shoppingListName.isSystem()) {
+            if (getCurrentActivity() != null) {
+                getCurrentActivity().showAlertDialog(getActivity(), null, getString(R.string.isSystemShoppingListMsg));
+            }
+            return;
+        }
+        EditShoppingDialog editShoppingDialog = EditShoppingDialog.newInstance(shoppingListName);
+        editShoppingDialog.setTargetFragment(getFragmentInstance(), 0);
+        editShoppingDialog.show(getFragmentManager(), Constants.SHOPPING_LIST_NAME);
+    }
+
+    private void showDeleteShoppingListDialog(ShoppingListName shoppingListName) {
+        if (shoppingListName.isSystem()) {
+            if (getCurrentActivity() != null) {
+                getCurrentActivity().showAlertDialog(getActivity(), null, getString(R.string.isSystemShoppingListMsg));
+            }
+            return;
+        }
+        DeleteShoppingListDialog deleteShoppingListDialog = DeleteShoppingListDialog.newInstance(shoppingListName);
+        deleteShoppingListDialog.setTargetFragment(getFragmentInstance(), 0);
+        deleteShoppingListDialog.show(getFragmentManager(), Constants.SHOPPING_LIST_NAME);
+    }
 
     public void editShoppingListName(ShoppingListName shoppingListName, String newName) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());

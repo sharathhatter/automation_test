@@ -31,10 +31,9 @@
                 android:layout_marginRight="@dimen/margin_small"
                 android:layout_marginTop="@dimen/margin_mini"
                 android:clickable="false"
-                android:drawableLeft="@drawable/create_large"
+                android:drawableLeft="@drawable/ic_mode_edit_grey600_24dp"
                 android:drawablePadding="@dimen/padding_small"
                 android:focusable="false"
-                android:text="@string/edit"
                 android:textSize="@dimen/secondary_text_size" />
 
             <CheckBox

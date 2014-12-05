@@ -5,15 +5,26 @@
     android:layout_height="wrap_content"
     android:background="@color/uiv3_list_bkg_light_color">
 
-
     <ImageView
-        android:id="@+id/imgShoppingListAdditionalAction"
+        android:id="@+id/imgDeleteShoppingList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:contentDescription="@string/additional_action"
+        android:layout_centerVertical="true"
+        android:contentDescription="@string/deleteShoppingList"
         android:padding="@dimen/padding_normal"
-        android:src="@drawable/ic_action_overflow_dark" />
+        android:src="@drawable/ic_delete_grey600_24dp" />
+
+    <ImageView
+        android:id="@+id/imgEditShopList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@id/imgDeleteShoppingList"
+        android:contentDescription="@string/editShoppingList"
+        android:padding="@dimen/padding_normal"
+        android:src="@drawable/ic_mode_edit_grey600_24dp" />
+
 
     <TextView
         android:id="@+id/txtShopLstName"
@@ -21,7 +32,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:layout_toLeftOf="@id/imgShoppingListAdditionalAction"
+        android:layout_toLeftOf="@id/imgEditShopList"
         android:paddingLeft="@dimen/padding_normal"
         android:paddingRight="@dimen/padding_small"
         android:textColor="@color/uiv3_list_primary_text_color"
