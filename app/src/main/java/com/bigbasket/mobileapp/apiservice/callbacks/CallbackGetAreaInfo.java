@@ -27,7 +27,7 @@ public class CallbackGetAreaInfo<T> implements Callback<ApiResponse<GetAreaInfoR
     public void success(ApiResponse<GetAreaInfoResponse> getAreaInfoResponseApiResponse, Response response) {
         if (((CancelableAware) ctx).isSuspended()) return;
         try {
-            ((ProgressIndicationAware) ctx).hideProgressView();
+            ((ProgressIndicationAware) ctx).hideProgressDialog();
         } catch (IllegalArgumentException e) {
             return;
         }
@@ -57,7 +57,7 @@ public class CallbackGetAreaInfo<T> implements Callback<ApiResponse<GetAreaInfoR
     public void failure(RetrofitError error) {
         if (((CancelableAware) ctx).isSuspended()) return;
         try {
-            ((ProgressIndicationAware) ctx).hideProgressView();
+            ((ProgressIndicationAware) ctx).hideProgressDialog();
         } catch (IllegalArgumentException e) {
             return;
         }

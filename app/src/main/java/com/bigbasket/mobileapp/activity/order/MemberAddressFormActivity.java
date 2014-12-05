@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.activity.order;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -29,6 +30,8 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.callbacks.CallbackGetAreaInfo;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.CreateUpdateAddressApiResponseContent;
+import com.bigbasket.mobileapp.fragment.account.OTPValidationDialogFragment;
+import com.bigbasket.mobileapp.fragment.account.UpdateProfileFragment;
 import com.bigbasket.mobileapp.interfaces.PinCodeAware;
 import com.bigbasket.mobileapp.model.account.Address;
 import com.bigbasket.mobileapp.util.Constants;
@@ -48,9 +51,8 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
     private String cityName;
     private EditText editTextPincode;
     private AutoCompleteTextView editTextArea;
-    private Dialog numberValidateDialog;
-    private TextView txtErrorValidateNumber, txtResendNumber;
     private String mErrorMsg;
+    private OTPDialog otpDialog;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,7 +99,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
         EditText editTextAddressNick = (EditText) base.findViewById(R.id.editTextAddressNick);
         EditText editTextFirstName = (EditText) base.findViewById(R.id.editTextFirstName);
         EditText editTextLastName = (EditText) base.findViewById(R.id.editTextLastName);
-        EditText editTextContactNum = (EditText) base.findViewById(R.id.editTextContactNum);
+        EditText editTextMobileNumber = (EditText) base.findViewById(R.id.editTextMobileNumber);
         EditText editTextHouseNum = (EditText) base.findViewById(R.id.editTextHouseNum);
         EditText editTextStreetName = (EditText) base.findViewById(R.id.editTextStreetName);
         EditText editTextResidentialComplex = (EditText) base.findViewById(R.id.editTextResidentialComplex);
@@ -108,7 +110,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
         editTextAddressNick.setText(getValueOrBlank(address.getAddressNickName()));
         editTextFirstName.setText(getValueOrBlank(address.getFirstName()));
         editTextLastName.setText(getValueOrBlank(address.getLastName()));
-        editTextContactNum.setText(getValueOrBlank(address.getContactNum()));
+        editTextMobileNumber.setText(getValueOrBlank(address.getContactNum()));
         editTextHouseNum.setText(getValueOrBlank(address.getHouseNumber()));
         editTextStreetName.setText(getValueOrBlank(address.getStreet()));
         editTextResidentialComplex.setText(getValueOrBlank(address.getResidentialComplex()));
@@ -124,7 +126,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
         final EditText editTextAddressNick = (EditText) base.findViewById(R.id.editTextAddressNick);
         final EditText editTextFirstName = (EditText) base.findViewById(R.id.editTextFirstName);
         final EditText editTextLastName = (EditText) base.findViewById(R.id.editTextLastName);
-        final EditText editTextContactNum = (EditText) base.findViewById(R.id.editTextContactNum);
+        final EditText editTextMobileNumber = (EditText) base.findViewById(R.id.editTextMobileNumber);
         final EditText editTextHouseNum = (EditText) base.findViewById(R.id.editTextHouseNum);
         final EditText editTextStreetName = (EditText) base.findViewById(R.id.editTextStreetName);
         final EditText editTextResidentialComplex = (EditText)
@@ -135,7 +137,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
         editTextAddressNick.setError(null);
         editTextFirstName.setError(null);
         editTextLastName.setError(null);
-        editTextContactNum.setError(null);
+        editTextMobileNumber.setError(null);
         editTextHouseNum.setError(null);
         editTextStreetName.setError(null);
         editTextLandmark.setError(null);
@@ -155,13 +157,13 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
             focusView = editTextLastName;
             cancel = true;
         }
-        if (isEditTextEmpty(editTextContactNum)) {
-            reportFormInputFieldError(editTextContactNum, getString(R.string.error_field_required));
-            focusView = editTextContactNum;
+        if (isEditTextEmpty(editTextMobileNumber)) {
+            reportFormInputFieldError(editTextMobileNumber, getString(R.string.error_field_required));
+            focusView = editTextMobileNumber;
             cancel = true;
-        } else if (editTextContactNum.getText().toString().length() < 10) {
-            reportFormInputFieldError(editTextContactNum, getString(R.string.contactNoMin10));
-            focusView = editTextContactNum;
+        } else if (editTextMobileNumber.getText().toString().length() < 10) {
+            reportFormInputFieldError(editTextMobileNumber, getString(R.string.contactNoMin10));
+            focusView = editTextMobileNumber;
             cancel = true;
         }
         if (isEditTextEmpty(editTextHouseNum)) {
@@ -206,7 +208,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
             }
 
             {
-                put(Constants.CONTACT_NUM, editTextContactNum.getText().toString());
+                put(Constants.CONTACT_NUM, editTextMobileNumber.getText().toString());
             }
 
             {
@@ -274,8 +276,10 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
                         Toast.makeText(getCurrentActivity(), "Address updated successfully", Toast.LENGTH_LONG).show();
                         addressCreatedModified();
                     }
-                    if (numberValidateDialog != null && numberValidateDialog.isShowing())
-                        numberValidateDialog.dismiss();
+                    if (otpDialog != null && otpDialog.isVisible()) {
+                        otpDialog.dismiss();
+                        BaseActivity.hideKeyboard(getCurrentActivity(), otpDialog.getView());
+                    }
                     break;
                 case Constants.NUMBER_USED_BY_ANOTHER_MEMBER:
                     mErrorMsg = createUpdateAddressApiResponse.message;
@@ -339,6 +343,41 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
         uploadAddress(null);
     }
 
+
+    private void validateMobileNumber(boolean txtErrorValidateNumberVisibility, String errorMsg) {
+        if (otpDialog == null)
+            otpDialog = new OTPDialog(getCurrentActivity(), this);
+        if (otpDialog.isVisible()) {
+            if (txtErrorValidateNumberVisibility) {
+                otpDialog.showErrorText(errorMsg);
+            }
+            return;
+        } else {
+            otpDialog.show(getCurrentActivity().getSupportFragmentManager(),
+                    Constants.OTP_DIALOG_FLAG);
+        }
+
+    }
+
+
+    public static class OTPDialog extends OTPValidationDialogFragment {
+        private MemberAddressFormActivity memberAddressFormActivity;
+        public OTPDialog() {
+        }
+
+        @SuppressLint("ValidFragment")
+        public OTPDialog(BaseActivity baseActivity, MemberAddressFormActivity memberAddressFormActivity) {
+            super(baseActivity, faceRobotoRegular);
+            this.memberAddressFormActivity = memberAddressFormActivity;
+        }
+
+        @Override
+        public void resendOrConfirmOTP(String otp) {
+            memberAddressFormActivity.uploadAddress(otp);
+        }
+    }
+
+    /*
     private void validateMobileNumber(boolean txtErrorValidateNumberVisibility, String errorMsg) {
         if (numberValidateDialog != null && numberValidateDialog.isShowing()) {
             if (txtErrorValidateNumberVisibility) {
@@ -411,6 +450,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
         numberValidateDialog.show();
     }
 
+    */
     @Override
     protected void onPositiveButtonClicked(DialogInterface dialogInterface, int id, String sourceName, Object valuePassed) {
         if (sourceName != null && sourceName.equalsIgnoreCase(Constants.ERROR)) {
@@ -434,7 +474,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
             switch (msg.what) {
                 case 1:
                     BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
-                    showProgressView();
+                    showProgressDialog(getString(R.string.please_wait));
                     bigBasketApiService.getAreaInfo(new CallbackGetAreaInfo<>(getCurrentActivity()));
                     break;
                 case Constants.VALIDATE_MOBILE_NUMBER_POPUP:

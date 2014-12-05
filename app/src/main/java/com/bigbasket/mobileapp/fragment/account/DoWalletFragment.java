@@ -20,6 +20,7 @@ import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.model.account.CurrentWalletBalance;
 import com.bigbasket.mobileapp.model.account.UpdatePin;
+import com.bigbasket.mobileapp.model.account.WalletDataItem;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
@@ -29,6 +30,7 @@ import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
@@ -150,10 +152,10 @@ public class DoWalletFragment extends BaseFragment {
     }
 
 
-    public void renderIntent(String resp) {
+    public void renderIntent(ArrayList<WalletDataItem> walletDataItemArrayList) {
         WalletActivityFragment walletActivityFragment = new WalletActivityFragment();
         Bundle bundle = new Bundle();
-        bundle.putString(Constants.WALLET_ACTIVITY_DATA, resp);
+        bundle.putParcelableArrayList(Constants.WALLET_ACTIVITY_DATA, walletDataItemArrayList);
         walletActivityFragment.setArguments(bundle);
         changeFragment(walletActivityFragment);
 
@@ -381,16 +383,16 @@ public class DoWalletFragment extends BaseFragment {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.getWalletActivity(dateFrom,dateTo,
-                                                        new Callback<ApiResponse>() {
+                                                        new Callback<ApiResponse<ArrayList<WalletDataItem>>>() {
             @Override
-            public void success(ApiResponse walletActivityCallback, Response response) {
+            public void success(ApiResponse<ArrayList<WalletDataItem>> walletActivityCallback, Response response) {
                 hideProgressDialog();
                 if(walletActivityCallback.status==0){
-                    String responseJsonString = String.valueOf(walletActivityCallback.apiResponseContent);
-                    if (TextUtils.isEmpty(responseJsonString) || responseJsonString.equals("[]")) {
-                        showErrorMsg(getString(R.string.noActivityErrorMsg) + " " + monthClickText);
+                    if(walletActivityCallback.apiResponseContent !=null &&
+                            walletActivityCallback.apiResponseContent.size()>0){
+                        renderIntent(walletActivityCallback.apiResponseContent);
                     } else {
-                        renderIntent(responseJsonString);
+                        showErrorMsg(getString(R.string.noActivityErrorMsg) + " " + monthClickText);
                     }
                 }else {
                     String errorMsg = walletActivityCallback.status == ExceptionUtil.INTERNAL_SERVER_ERROR ?

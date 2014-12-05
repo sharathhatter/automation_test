@@ -486,7 +486,7 @@ public class Constants {
     public static final String LARGE_SIZE_IMAGE = "large_size_image";
     public static final String GET_PRSCRIPTION_IMAGES = "get-prescription-images/";
     //public static final String IMAGE_URLS = "image_urls/";
-    public static final String IMAGE_URLS = "image_urls";
+    public static final String PRESCRIPTION_IMAGE_URLS = "image_urls";
 
     public static final String FRAGMENT_CODE = "fragmentCode";
     public static final String FRAGMENT_TAG = "fragmentTag";

@@ -348,14 +348,14 @@ public class AgeValidationActivity extends BackButtonActivity {
                     TextView startSign = new TextView(getCurrentActivity());
                     startSign.setText(getResources().getString(R.string.asterisk));
                     startSign.setTextColor(getResources().getColor(R.color.red));
-                    startSign.setTextSize(textSize);
+                    startSign.setTextSize(12);
                     layoutTC.addView(startSign);
 
 
                     TextView txtTCMsg = new TextView(getCurrentActivity());
                     txtTCMsg.setPadding(miniPadding, 0, 0, 0);
                     txtTCMsg.setTextColor(getResources().getColor(R.color.red));
-                    txtTCMsg.setTextSize(textSize);
+                    txtTCMsg.setTextSize(12);
                     txtTCMsg.setTypeface(faceRobotoRegular);
                     txtTCMsg.setText(messageParamInfo.getExtraInfo());
                     layoutTC.addView(txtTCMsg);

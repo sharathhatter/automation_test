@@ -24,6 +24,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseC
 import com.bigbasket.mobileapp.apiservice.models.response.PostDeliveryAddressApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostFeedbackApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostVoucherApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.PrescriptionImageUrls;
 import com.bigbasket.mobileapp.apiservice.models.response.ProductDetailApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PromoDetailApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PromoSetProductsApiResponseContent;
@@ -33,6 +34,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.UpdateProfileOldApiRes
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.account.CurrentWalletBalance;
 import com.bigbasket.mobileapp.model.account.UpdatePin;
+import com.bigbasket.mobileapp.model.account.WalletDataItem;
 import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.model.order.OrderSummary;
@@ -129,7 +131,7 @@ public interface BigBasketApiService {
 
     @GET("/get-prescription-images/")
     void getPrescriptionImageUrls(@Query(Constants.PHARMA_PRESCRIPTION_ID) String prescriptionId,
-                                  Callback<ApiResponse<ArrayList<String>>> imageUrlsCallback);
+                                  Callback<ApiResponse<PrescriptionImageUrls>> imageUrlsCallback);
 
     @GET("/get-current-wallet-balance/")
     void getCurrentWalletBalance(Callback<ApiResponse<CurrentWalletBalance>> currentWalletBalCallback);
@@ -137,7 +139,7 @@ public interface BigBasketApiService {
     @GET("/get-wallet-activity/")
     void getWalletActivity(@Query(Constants.DATE_FROM) String dateFrom,
                            @Query(Constants.DATE_TO) String dateTo,
-                           Callback<ApiResponse> walletActivityCallback);
+                           Callback<ApiResponse<ArrayList<WalletDataItem>>> walletActivityCallback);
 
     @FormUrlEncoded
     @POST("/sl-get-lists/")

@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.fragment.account;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -10,9 +11,16 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.order.uiv3.OrderDetailActivity;
 import com.bigbasket.mobileapp.adapter.account.WalletActivityListAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.callbacks.CallbackOrderInvoice;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.interfaces.InvoiceDataAware;
 import com.bigbasket.mobileapp.model.account.WalletDataItem;
+import com.bigbasket.mobileapp.model.order.Order;
+import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.ParserUtil;
@@ -22,7 +30,7 @@ import java.util.ArrayList;
 /**
  * Created by jugal on 19/9/14.
  */
-public class WalletActivityFragment extends BaseFragment {
+public class WalletActivityFragment extends BaseFragment implements InvoiceDataAware {
 
     private ArrayList<WalletDataItem> walletActivityData;
 
@@ -38,8 +46,7 @@ public class WalletActivityFragment extends BaseFragment {
         if (savedInstanceState != null) {
             walletActivityData = savedInstanceState.getParcelableArrayList(Constants.WALLET_DATA);
         } else {
-            String walletActivityStringData = getArguments().getString(Constants.WALLET_ACTIVITY_DATA);
-            walletActivityData = ParserUtil.getListData(walletActivityStringData);
+            walletActivityData = getArguments().getParcelableArrayList(Constants.WALLET_ACTIVITY_DATA);
         }
         renderWalletActivityList(walletActivityData);
 
@@ -71,12 +78,7 @@ public class WalletActivityFragment extends BaseFragment {
                     String orderId = walletDataItem.getOrderNumber();
                     if (orderId != null && !orderId.equals("null")) {
                         if (DataUtil.isInternetAvailable(getActivity())) {
-//                            Intent inn = new Intent(getActivity(), OrderReview.class);
-//                            inn.putExtra(Constants.ORDER_ID, orderId);
-//                            startActivityForResult(inn, Constants.GO_TO_HOME);
-//                            getActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
-                            // TODO : Replace this with equivalent fragment call
-
+                            showInvoice(orderId);
                         } else {
                             showErrorMsg(getString(R.string.checkinternet));
                         }
@@ -87,6 +89,19 @@ public class WalletActivityFragment extends BaseFragment {
             }
         });
         view.addView(walletActivityList);
+    }
+
+    private void showInvoice(String orderId) {
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+        showProgressDialog(getString(R.string.please_wait));
+        bigBasketApiService.getInvoice(orderId, new CallbackOrderInvoice<>(getActivity()));
+    }
+
+    @Override
+    public void onDisplayOrderInvoice(OrderInvoice orderInvoice) {
+        Intent orderDetailIntent = new Intent(getCurrentActivity(), OrderDetailActivity.class);
+        orderDetailIntent.putExtra(Constants.ORDER_REVIEW_SUMMARY, orderInvoice);
+        startActivityForResult(orderDetailIntent, Constants.GO_TO_HOME);
     }
 
 
