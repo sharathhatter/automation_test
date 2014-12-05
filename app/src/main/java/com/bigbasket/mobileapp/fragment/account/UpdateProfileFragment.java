@@ -65,17 +65,12 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getAreaInfo();
-//        if (((BaseActivity) getActivity()).getSystemAreaInfo()) {
-//            getAreaInfo();
-//        }else {
-//            initiateUpdateProfileActivity();
-//        }
+        initiateUpdateProfileActivity();
     }
 
 
     public void initiateUpdateProfileActivity() {
-        final View view = getView();
+        final View view = getContentView();
         if (view == null) return;
         editTextEmail = (EditText) view.findViewById(R.id.editTextEmail);
         editTextEmail.setTypeface(faceRobotoRegular);
@@ -163,18 +158,11 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware 
         imgPinCodeErr = (ImageView) view.findViewById(R.id.imgPinCodeErr);
         imgPinCodeErr.setVisibility(View.GONE);
 
-        loadMemberDetails();
-//        if (checkInternetConnection()) {
-//            if (((BaseActivity) getActivity()).getSystemAreaInfo()) {
-//                getAreaInfo();
-//                //startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.GET_AREA_INFO, null, false, true, null);
-//            } else {
-//                loadMemberDetails();
-//            }
-//
-//        } else {
-//            ((BaseActivity) getActivity()).showAlertDialogFinish(getActivity(), null, getString(R.string.checkinternet));
-//        }
+        if (((BaseActivity) getActivity()).getSystemAreaInfo()) {
+            getAreaInfo();
+        } else {
+            loadMemberDetails();
+        }
     }
 
     protected void getAreaInfo() {
@@ -182,7 +170,7 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware 
             return;
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
-        showProgressView();
+        showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.getAreaInfo(new CallbackGetAreaInfo<>(this));
     }
 
@@ -350,12 +338,16 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware 
 
     @Override
     public void onPinCodeFetchSuccess() {
-        initiateUpdateProfileActivity();
+        loadMemberDetails();
+        ((BaseActivity) getActivity()).setAdapterArea(editTextArea, editTextPinCode);
+        //initiateUpdateProfileActivity();
     }
 
     @Override
     public void onPinCodeFetchFailure() {
-        initiateUpdateProfileActivity();
+        loadMemberDetails();
+        ((BaseActivity) getActivity()).setAdapterArea(editTextArea, editTextPinCode);
+        //initiateUpdateProfileActivity();
     }
 
     public static class OTPDialog extends OTPValidationDialogFragment {

@@ -83,6 +83,7 @@ public class ChangeCityFragment extends BaseFragment implements PinCodeAware {
         editor.putString(Constants.CITY_ID, String.valueOf(selectedCity.getId()));
         editor.commit();
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
+        showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.getAreaInfo(new CallbackGetAreaInfo<>(this));
     }
 

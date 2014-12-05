@@ -21,11 +21,13 @@ import android.widget.GridView;
 import android.widget.ImageView;
 
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
+import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
 import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 import com.nostra13.universalimageloader.utils.StorageUtils;
 
@@ -64,18 +66,25 @@ public class CustomGalleryActivity extends Activity {
 			File cacheDir = StorageUtils.getOwnCacheDirectory(getBaseContext(),
 					CACHE_DIR);
 
-			DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
-					.cacheOnDisc(true).imageScaleType(ImageScaleType.EXACTLY)
-					.bitmapConfig(Bitmap.Config.RGB_565).build();
-			ImageLoaderConfiguration.Builder builder = new ImageLoaderConfiguration.Builder(
-					getBaseContext())
-					.defaultDisplayImageOptions(defaultOptions)
-					.discCache(new UnlimitedDiscCache(cacheDir))
-					.memoryCache(new WeakMemoryCache());
+            DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
+                    .cacheInMemory(true)
+                    .cacheOnDisk(true)
+                    .bitmapConfig(Bitmap.Config.RGB_565)
+                    .build();
 
-			ImageLoaderConfiguration config = builder.build();
+            ImageLoaderConfiguration builder = new
+                    ImageLoaderConfiguration.Builder(getBaseContext())
+                    .denyCacheImageMultipleSizesInMemory()
+                    .memoryCache(new LruMemoryCache(50 * 1024 * 1024))
+                    .threadPriority(Thread.MAX_PRIORITY)
+                    .threadPoolSize(5)
+                    .tasksProcessingOrder(QueueProcessingType.LIFO)
+                    .diskCache(new UnlimitedDiscCache(cacheDir))
+                    .defaultDisplayImageOptions(defaultOptions)
+                    .build();
+
 			imageLoader = ImageLoader.getInstance();
-			imageLoader.init(config);
+			imageLoader.init(builder);
 
 		} catch (Exception e) {
 

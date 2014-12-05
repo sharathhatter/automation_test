@@ -23,6 +23,7 @@ import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.PrescriptionImageUrls;
 import com.bigbasket.mobileapp.model.order.SavedPrescription;
 import com.bigbasket.mobileapp.task.COReserveQuantityCheckTask;
 import com.bigbasket.mobileapp.util.Constants;
@@ -247,13 +248,13 @@ public class PrescriptionListAdapter extends RecyclerView.Adapter<RecyclerView.V
             return;
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(context);
-        context.showProgressDialog("Please wait...");
-        bigBasketApiService.getPrescriptionImageUrls(pharmaPrescriptionId, new Callback<ApiResponse<ArrayList<String>>>() {
+        context.showProgressDialog(context.getString(R.string.please_wait));
+        bigBasketApiService.getPrescriptionImageUrls(pharmaPrescriptionId, new Callback<ApiResponse<PrescriptionImageUrls>>() {
             @Override
-            public void success(ApiResponse<ArrayList<String>> imageUrlsCallback, Response response) {
+            public void success(ApiResponse<PrescriptionImageUrls> imageUrlsCallback, Response response) {
                 context.hideProgressDialog();
                 if (imageUrlsCallback.status == 0) {
-                    ArrayList<String> imageUrls = imageUrlsCallback.apiResponseContent;
+                    ArrayList<String> imageUrls = imageUrlsCallback.apiResponseContent.arrayListPrescriptionImages;
                     if (imageUrls != null && imageUrls.size() > 0) {
                         ArrayList<Object> arrayListImgUrls = new ArrayList<>();
                         arrayListImgUrls.addAll(imageUrls);

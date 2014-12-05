@@ -37,8 +37,7 @@ public abstract class OTPValidationDialogFragment extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.uiv3_otp_dialog, container, false);
-        return view;
+        return inflater.inflate(R.layout.uiv3_otp_dialog, container, false);
     }
 
     @Override
@@ -83,6 +82,7 @@ public abstract class OTPValidationDialogFragment extends DialogFragment {
                     if (event.getAction() == MotionEvent.ACTION_DOWN) {
                         btnConfirm.setBackgroundColor(getResources().getColor(R.color.light_blue));
                     } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                        btnConfirm.setBackgroundColor(getResources().getColor(R.color.white));
                         if (TextUtils.isEmpty(editTextMobileCode.getText().toString())) {
                         } else if (editTextMobileCode.getText() != null && editTextMobileCode.getText().toString().length() > 0) {
                             resendOrConfirmOTP(editTextMobileCode.getText().toString());

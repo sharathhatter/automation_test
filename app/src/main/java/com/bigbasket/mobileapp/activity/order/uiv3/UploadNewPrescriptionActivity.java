@@ -109,7 +109,7 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
     }
 
     public void OnUploadButtonClicked(View view) {
-        goBacktoPrescriptionList("1234");
+        gotoQCActivity("1234"); //todo remove this
         //validateFormFields();
     }
 
@@ -187,19 +187,19 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
     private void serverCallForUploadPrescription(){
         if(!DataUtil.isInternetAvailable(getCurrentActivity())) {return;}
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
-        showProgressDialog("Please wait...");
+        showProgressDialog(getResources().getString(R.string.please_wait));
         bigBasketApiService.uploadPrescription(editTextPatientName.getText().toString(),
                                                 editTextDoctorName.getText().toString(),
                                                 editTextPrescriptionName.getText().toString(),
                                                 new Callback<ApiResponse<PrescriptionId>>() {
             @Override
             public void success(ApiResponse<PrescriptionId> prescriptionIdApiResponse, Response response) {
-                hideProgressView();
+                hideProgressDialog();
                 if(prescriptionIdApiResponse.status==0 && prescriptionIdApiResponse.message.equals(Constants.SUCCESS)){
                     String prescriptionId = prescriptionIdApiResponse.apiResponseContent.pharmaPrescriptionId;
                     ImageUtil.insertToDB(prescriptionId, arrayListByteArray);
                     startService(new Intent(getCurrentActivity(), UploadImageService.class));
-                    goBacktoPrescriptionList(prescriptionId);
+                    gotoQCActivity(prescriptionId);
                 }else {
                     String errorMsg = prescriptionIdApiResponse.status == ExceptionUtil.INTERNAL_SERVER_ERROR ?
                             getResources().getString(R.string.imageUploadFailed):prescriptionIdApiResponse.message;
@@ -240,7 +240,7 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
     */
 
 
-    private void goBacktoPrescriptionList(String prescriptionId){
+    private void gotoQCActivity(String prescriptionId){
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = prefer.edit();
         editor.putString(Constants.PHARMA_PRESCRIPTION_ID,prescriptionId);
