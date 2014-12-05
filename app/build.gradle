@@ -32,7 +32,6 @@ dependencies {
     compile project(':androidHorizontalListView')
     compile project(':facebook')
     compile files('libs/gcm.jar')
-    compile files('libs/MoEngage_Android_SDK_V3-2.jar')
     compile project(':floatingActionButton')
     compile 'com.google.code.gson:gson:2.3'
     compile 'com.squareup.picasso:picasso:2.3.2'
@@ -47,6 +46,7 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:21.0.2'
     compile 'com.squareup.retrofit:retrofit:1.8.0'
     compile project(':multipleImagePick')
+    compile project(':moEngage')
 }
 
 def toCamelCase(String string) {
