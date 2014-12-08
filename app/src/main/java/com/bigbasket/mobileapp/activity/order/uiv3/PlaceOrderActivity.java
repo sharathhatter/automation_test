@@ -206,7 +206,6 @@ public class PlaceOrderActivity extends BackButtonActivity {
         PayuResponse.clearTxnDetail(this);
         VoucherApplied.clearFromPreference(this);
         showOrderThankyou(orders);
-        finish();
     }
 
     private void showOrderThankyou(ArrayList<Order> orders) {
