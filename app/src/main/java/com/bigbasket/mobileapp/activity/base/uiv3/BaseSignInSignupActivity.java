@@ -26,12 +26,10 @@ import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginConfirmActivity;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginApiResponse;
 import com.bigbasket.mobileapp.model.account.SocialAccount;
 import com.bigbasket.mobileapp.util.Constants;
-import com.moe.pushlibrary.MoEHelper;
-import com.moe.pushlibrary.utils.MoEHelperConstants;
+import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -206,10 +204,7 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity {
                                                 String email, String password, boolean rememberMe) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(Constants.FIRST_NAME_PREF, loginApiResponse.userDetails.firstName);
         editor.putString(Constants.BBTOKEN_KEY, loginApiResponse.bbToken);
-        editor.putString(Constants.MID_KEY, loginApiResponse.mId);
-        editor.putString(Constants.MEMBER_FULL_NAME_KEY, loginApiResponse.userDetails.fullName);
         editor.putString(Constants.MEMBER_EMAIL_KEY, email);
         if (!TextUtils.isEmpty(socialAccountType)) {
             editor.putString(Constants.SOCIAL_ACCOUNT_TYPE, socialAccountType);
@@ -227,29 +222,8 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity {
         }
         editor.commit();
 
-        MoEHelper moEHelper = MoEHelper.getInstance(getCurrentActivity());
-        moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_UNIQUE_ID, loginApiResponse.mId);
-        moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_EMAIL, email);
-        moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_MOBILE, loginApiResponse.userDetails.mobileNumber);
-        moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_FIRST_NAME, loginApiResponse.userDetails.firstName);
-        moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_LAST_NAME, loginApiResponse.userDetails.lastName);
-        moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_NAME, loginApiResponse.userDetails.fullName);
-        moEHelper.setUserAttribute("Created On", loginApiResponse.userDetails.createdOn);
-        if (!TextUtils.isEmpty(loginApiResponse.userDetails.gender)) {
-            moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_GENDER, loginApiResponse.userDetails.gender);
-        }
-        if (!TextUtils.isEmpty(loginApiResponse.userDetails.hub)) {
-            moEHelper.setUserAttribute("Hub", loginApiResponse.userDetails.hub);
-        }
-        if (!TextUtils.isEmpty(loginApiResponse.userDetails.dateOfBirth)) {
-            moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_BDAY, loginApiResponse.userDetails.dateOfBirth);
-        }
-
-        if (loginApiResponse.userDetails.additionalAttrs != null) {
-            for (Map.Entry<String, Object> additionalInfoObj : loginApiResponse.userDetails.additionalAttrs.entrySet()) {
-                moEHelper.setUserAttribute(additionalInfoObj.getKey(), additionalInfoObj.getValue().toString());
-            }
-        }
+        UIUtil.updateStoredUserDetails(getCurrentActivity(),
+                loginApiResponse.userDetails, email, loginApiResponse.mId);
         onLoginSuccess();
     }
 

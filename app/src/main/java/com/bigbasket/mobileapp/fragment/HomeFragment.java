@@ -1,6 +1,5 @@
 package com.bigbasket.mobileapp.fragment;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -21,16 +20,14 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.HomePageApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.UpdateVersionInfoApiResponseContent;
 import com.bigbasket.mobileapp.fragment.base.BaseSectionFragment;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.model.section.DestinationInfo;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.task.GetCartCountTask;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,68 +67,75 @@ public class HomeFragment extends BaseSectionFragment {
     }
 
     private void updateMobileVisitorInfo() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String appVersionName = getAppVersion();
         // Update app-version number in Mobile Visitor
-        HashMap<String, String> params = new HashMap<>();
-        params.put(Constants.DEVICE_ID, preferences.getString(Constants.DEVICE_ID, null));
-        params.put(Constants.APP_VERSION, appVersionName);
-        startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.GET_VERSION_NUMBER,
-                params, true, false, null);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+        showProgressDialog(getString(R.string.please_wait));
+        bigBasketApiService.updateVersionNumber(preferences.getString(Constants.DEVICE_ID, null),
+                getAppVersion(), new Callback<ApiResponse<UpdateVersionInfoApiResponseContent>>() {
+                    @Override
+                    public void success(ApiResponse<UpdateVersionInfoApiResponseContent> updateVersionInfoApiResponse, Response response) {
+                        if (isSuspended()) return;
+                        try {
+                            hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
+                        switch (updateVersionInfoApiResponse.status) {
+                            case 0:
+                                SharedPreferences.Editor editor =
+                                        PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
+                                editor.putString(Constants.VERSION_NAME, getAppVersion());
+                                editor.commit();
+
+                                UIUtil.updateStoredUserDetails(getActivity(),
+                                        updateVersionInfoApiResponse.apiResponseContent.userDetails,
+                                        AuthParameters.getInstance(getActivity()).getMemberEmail(),
+                                        updateVersionInfoApiResponse.apiResponseContent.mId);
+                                AuthParameters.updateInstance(getActivity());
+                                if (getCurrentActivity() != null &&
+                                        !AuthParameters.getInstance(getActivity()).isAuthTokenEmpty()) {
+                                    getCurrentActivity().updateKonotor();
+                                }
+                                getHomePage();
+                                Log.d("HomeFragment", getResources().getString(R.string.versionNoUpdated));
+                                break;
+                            default:
+                                Intent result = new Intent();
+                                result.putExtra(Constants.FORCE_REGISTER_DEVICE, true);
+                                getActivity().setResult(Constants.FORCE_REGISTER_CODE, result);
+                                if (getCurrentActivity() == null) return;
+                                getCurrentActivity().onLogoutRequested();
+                                getActivity().finish();
+                                // TODO : Improve error handling
+                                showErrorMsg("Server Error");
+                                break;
+                        }
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        if (isSuspended()) return;
+                        try {
+                            hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
+                        // TODO : Improve error handling
+                        showErrorMsg("Server Error");
+                    }
+                });
     }
 
     private String getAppVersion() {
-        Activity activity = getActivity();
         String appVersionName;
         try {
-            appVersionName = activity.getPackageManager().
-                    getPackageInfo(activity.getPackageName(), 0).versionName;
+            appVersionName = getActivity().getPackageManager().
+                    getPackageInfo(getActivity().getPackageName(), 0).versionName;
         } catch (PackageManager.NameNotFoundException e) {
             appVersionName = null;
         }
         return appVersionName;
-    }
-
-    @Override
-    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-        if (getActivity() == null || getCurrentActivity() == null) return;
-        String url = httpOperationResult.getUrl();
-        if (url.contains(Constants.GET_VERSION_NUMBER)) {
-            // Is version number call
-            String responseJson = httpOperationResult.getReponseString();
-            JsonObject httpResponseJsonObj = new JsonParser().parse(responseJson).getAsJsonObject();
-            String status = httpResponseJsonObj.get(Constants.STATUS).getAsString();
-            if (status.equalsIgnoreCase(Constants.OK)) {
-                SharedPreferences.Editor editor =
-                        PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
-                editor.putString(Constants.VERSION_NAME, getAppVersion());
-                String memberName = httpResponseJsonObj.has(Constants.FULL_NAME) ?
-                        httpResponseJsonObj.get(Constants.FULL_NAME).getAsString() : null;
-                String mid = httpResponseJsonObj.has(Constants.MID_KEY) ?
-                        httpResponseJsonObj.get(Constants.MID_KEY).getAsString() : null;
-                if (!TextUtils.isEmpty(memberName)) {
-                    editor.putString(Constants.MEMBER_FULL_NAME_KEY, memberName);
-                }
-                if (!TextUtils.isEmpty(mid)) {
-                    editor.putString(Constants.MID_KEY, mid);
-                }
-                editor.commit();
-                AuthParameters.updateInstance(getActivity());
-                if (!AuthParameters.getInstance(getActivity()).isAuthTokenEmpty()) {
-                    getCurrentActivity().updateKonotor();
-                }
-                getHomePage();
-                Log.d("HomeFragment", getResources().getString(R.string.versionNoUpdated));
-            } else {
-                Intent result = new Intent();
-                result.putExtra(Constants.FORCE_REGISTER_DEVICE, true);
-                getActivity().setResult(Constants.FORCE_REGISTER_CODE, result);
-                getCurrentActivity().onLogoutRequested();
-                getActivity().finish();
-            }
-        } else {
-            super.onAsyncTaskComplete(httpOperationResult);
-        }
     }
 
     private void requestHomePage() {

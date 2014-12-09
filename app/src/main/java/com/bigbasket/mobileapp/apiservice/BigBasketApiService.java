@@ -31,6 +31,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.PromoSetProductsApiRes
 import com.bigbasket.mobileapp.apiservice.models.response.PromoSummaryApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateProfileOldApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.UpdateVersionInfoApiResponseContent;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.account.CurrentWalletBalance;
 import com.bigbasket.mobileapp.model.account.UpdatePin;
@@ -310,4 +311,10 @@ public interface BigBasketApiService {
     void postCaseFeedback(@Field(Constants.CASE_ID) String caseId, @Field(Constants.RATING) String rating,
                           @Field(Constants.COMMENTS) String comments,
                           Callback<ApiResponse<PostFeedbackApiResponseContent>> postFeedbackApiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/update-version-number/")
+    void updateVersionNumber(@Field(Constants.DEVICE_ID) String deviceId,
+                             @Field(Constants.APP_VERSION) String appVersion,
+                             Callback<ApiResponse<UpdateVersionInfoApiResponseContent>> updateVersionInfoApiResponseCallback);
 }
