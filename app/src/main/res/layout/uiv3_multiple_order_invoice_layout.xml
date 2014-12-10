@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/uiv3_list_bkg_color"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollView">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/uiv3_list_bkg_color">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView"
+            android:background="@color/white"
+            android:contentDescription="@string/orderPlaced"
+            android:src="@drawable/bigbasket_van" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_below="@id/imageView"
+            android:layout_height="1dp"
+            android:id="@+id/viewSeparator1"
+            android:background="@color/uiv3_list_separator_color" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/viewSeparator1"
+            android:textSize="@dimen/secondary_text_size"
+            android:padding="@dimen/padding_normal"
+            android:textColor="@color/uiv3_action_bar_background_pressed"
+            android:text="@string/locateOnMapViaInvoice"
+            android:id="@+id/lblLocateOnMap" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_below="@id/lblLocateOnMap"
+            android:layout_height="1dp"
+            android:id="@+id/viewSeparator2"
+            android:background="@color/uiv3_list_separator_color" />
+
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@null"
+            android:layout_below="@id/viewSeparator2"
+            android:dividerHeight="0dp"
+            android:id="@+id/listOrders" />
+
+
+
+    </RelativeLayout>
+</RelativeLayout>

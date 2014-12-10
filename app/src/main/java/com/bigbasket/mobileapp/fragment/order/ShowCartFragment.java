@@ -216,8 +216,6 @@ public class ShowCartFragment extends BaseFragment {
         btnFooterCheckout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Intent intent = new Intent(getCurrentActivity(), UploadNewPrescriptionActivity.class);
-                //startActivity(intent);
                 if (cartInfo != null && cartInfo.getNoOfItems() > 0) {
                     if (AuthParameters.getInstance(getActivity()).isAuthTokenEmpty()) {
                         showAlertDialog(getActivity(), "Login", getString(R.string.login_to_place_order),

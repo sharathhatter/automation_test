@@ -180,7 +180,7 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
                 base.removeView(orderAbsListView);
             }
         } else {
-            OrderListAdapter orderListAdapter = new OrderListAdapter(this, faceRobotoRegular, faceRupee, orders);
+            OrderListAdapter orderListAdapter = new OrderListAdapter(this, faceRobotoRegular, faceRupee, orders, false);
 
             if (orderAbsListView instanceof ListView) {
                 ((ListView) orderAbsListView).setAdapter(orderListAdapter);

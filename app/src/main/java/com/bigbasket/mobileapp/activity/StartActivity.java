@@ -30,7 +30,7 @@ import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
-import com.moe.pushlibrary.MoEHelper;
+//import com.moe.pushlibrary.MoEHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -55,8 +55,8 @@ public class StartActivity extends BaseActivity {
             return;
         }
 
-        MoEHelper moEHelper = new MoEHelper(this);
-        moEHelper.initialize("", Constants.MO_APP_ID);
+        //MoEHelper moEHelper = new MoEHelper(this);
+        //moEHelper.initialize("", Constants.MO_APP_ID);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String savedCityName = preferences.getString(Constants.CITY, null);
@@ -109,8 +109,6 @@ public class StartActivity extends BaseActivity {
     }
 
     private void loadHomePage() {
-//        Intent homePageIntent = new Intent(this, UpdatePinFragment.class);
-//        startActivity(homePageIntent);
         Intent homePageIntent = new Intent(this, BBActivity.class);
         homePageIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_HOME);
         startActivityForResult(homePageIntent, Constants.FORCE_REGISTER_CODE);

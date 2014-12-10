@@ -39,13 +39,41 @@
             android:id="@+id/txtOrderStatus"
             android:textColor="@color/white" />
 
+
+        <TextView
+            android:id="@+id/txtDisplayName"
+            android:layout_width="wrap_content"
+            android:text="Display name"
+            android:textSize="@dimen/primary_text_size"
+            android:layout_marginTop="@dimen/margin_small"
+            android:layout_marginLeft="@dimen/margin_normal"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/imgDeliveryVan"
+            android:textColor="@color/uiv3_list_primary_text_color"
+            />
+
+
+        <TextView
+            android:id="@+id/txtFulfilledBy"
+            android:layout_width="wrap_content"
+            android:layout_toRightOf="@id/imgDeliveryVan"
+            android:textSize="@dimen/primary_text_size"
+            android:layout_below="@id/txtDisplayName"
+            android:layout_marginTop="2dp"
+            android:layout_marginLeft="@dimen/margin_normal"
+            android:text="sold and fulfilled by"
+            android:textColor="@color/uiv3_list_primary_text_color"
+            android:layout_height="wrap_content"
+            />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/margin_normal"
-            android:layout_marginTop="@dimen/margin_small"
+            android:layout_marginTop="2dp"
             android:layout_toRightOf="@id/imgDeliveryVan"
             android:text="Tue 30 Sep 2014"
+            android:layout_below="@id/txtFulfilledBy"
             android:textSize="@dimen/primary_text_size"
             android:id="@+id/txtSlotDate"
             android:textColor="@color/uiv3_list_primary_text_color" />
