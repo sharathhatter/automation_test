@@ -87,15 +87,16 @@ public class HomeFragment extends BaseSectionFragment {
                                         PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
                                 editor.putString(Constants.VERSION_NAME, getAppVersion());
                                 editor.commit();
-
-                                UIUtil.updateStoredUserDetails(getActivity(),
-                                        updateVersionInfoApiResponse.apiResponseContent.userDetails,
-                                        AuthParameters.getInstance(getActivity()).getMemberEmail(),
-                                        updateVersionInfoApiResponse.apiResponseContent.mId);
-                                AuthParameters.updateInstance(getActivity());
-                                if (getCurrentActivity() != null &&
-                                        !AuthParameters.getInstance(getActivity()).isAuthTokenEmpty()) {
-                                    getCurrentActivity().updateKonotor();
+                                if (updateVersionInfoApiResponse.apiResponseContent.userDetails != null) {
+                                    UIUtil.updateStoredUserDetails(getActivity(),
+                                            updateVersionInfoApiResponse.apiResponseContent.userDetails,
+                                            AuthParameters.getInstance(getActivity()).getMemberEmail(),
+                                            updateVersionInfoApiResponse.apiResponseContent.mId);
+                                    AuthParameters.updateInstance(getActivity());
+                                    if (getCurrentActivity() != null &&
+                                            !AuthParameters.getInstance(getActivity()).isAuthTokenEmpty()) {
+                                        getCurrentActivity().updateKonotor();
+                                    }
                                 }
                                 getHomePage();
                                 Log.d("HomeFragment", getResources().getString(R.string.versionNoUpdated));
