@@ -10,6 +10,7 @@ import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -67,6 +68,21 @@ public class AgeValidationActivity extends BackButtonActivity {
         }
         marketPlace = getIntent().getParcelableExtra(Constants.MARKET_PLACE_INTENT);
         renderMarketPlaceValidationErrors();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            goToHome();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed(){
+        super.onBackPressed();
+        goToHome();
     }
 
     @Override
@@ -132,7 +148,7 @@ public class AgeValidationActivity extends BackButtonActivity {
             btnContinueOrUploadPrescription.setTag(Constants.UPLOAD_PRESCRIPTION_BTN_TAG);
         } else {
             btnContinueOrUploadPrescription.setText("Continue");
-            btnContinueOrUploadPrescription.setTextSize(getResources().getDimension(R.dimen.bb_button_text_size));
+            btnContinueOrUploadPrescription.setTextSize(getResources().getDimension(R.dimen.secondary_text_size));
             btnContinueOrUploadPrescription.setTag(Constants.CONTINUE_BTN_TAG);
         }
         btnContinueOrUploadPrescription.setOnClickListener(new View.OnClickListener() {
@@ -413,6 +429,7 @@ public class AgeValidationActivity extends BackButtonActivity {
                     break;
                 case ApiErrorCodes.BASKET_EMPTY_STR:
                     goToHome();
+                    break;
                 default:
                     super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
                     break;

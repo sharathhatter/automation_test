@@ -30,6 +30,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.PromoDetailApiResponse
 import com.bigbasket.mobileapp.apiservice.models.response.PromoSetProductsApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PromoSummaryApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.SubCategoryApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateProfileOldApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateVersionInfoApiResponseContent;
 import com.bigbasket.mobileapp.model.account.City;
@@ -53,6 +54,7 @@ import retrofit.http.FieldMap;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
 import retrofit.http.POST;
+import retrofit.http.Path;
 import retrofit.http.Query;
 import retrofit.http.QueryMap;
 
@@ -315,4 +317,8 @@ public interface BigBasketApiService {
     void updateVersionNumber(@Field(Constants.DEVICE_ID) String deviceId,
                              @Field(Constants.APP_VERSION) String appVersion,
                              Callback<ApiResponse<UpdateVersionInfoApiResponseContent>> updateVersionInfoApiResponseCallback);
+
+    @GET("/category-landing/?category_slug={slugAndVersion}")
+    void getSubCategoryData(@Path("slugAndVersion") String slugAndVersion,
+                            Callback<ApiResponse<SubCategoryApiResponse>> subCategoryCallback);
 }

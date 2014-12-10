@@ -316,6 +316,14 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             case FragmentCodes.START_BROWSE_BY_OFFERS:
                 addToMainLayout(new BrowseByOffersFragment());
                 break;
+            case FragmentCodes.START_SUBCAT_FRAGMENT:
+                SubCategoryListFragment subCategoryListFragment = new SubCategoryListFragment();
+                Bundle cubCatBundle = new Bundle();
+                cubCatBundle.putString(Constants.TOP_CATEGORY_SLUG, getIntent().getStringExtra(Constants.TOP_CATEGORY_NAME));
+                cubCatBundle.putString(Constants.TOP_CATEGORY_NAME, getIntent().getStringExtra(Constants.TOP_CATEGORY_NAME));
+                subCategoryListFragment.setArguments(cubCatBundle);
+                addToMainLayout(subCategoryListFragment);
+                break;
             case FragmentCodes.START_PROMO_DETAIL:
                 int promoId = getIntent().getIntExtra(Constants.PROMO_ID, -1);
                 Bundle promoDetailBundle = new Bundle();

@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.fragment.order;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -7,11 +8,17 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.order.uiv3.OrderDetailActivity;
+import com.bigbasket.mobileapp.adapter.order.OrderListAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.callbacks.CallbackOrderInvoice;
@@ -42,7 +49,37 @@ public class OrderThankYouFragment extends BaseFragment implements InvoiceDataAw
     private void showThankyou(ArrayList<Order> orders) {
         if (orders.size() == 1) {
             renderSingleOrderInvoice(orders.get(0));
+        }else {
+            renderMultipleOrderInvoice(orders);
         }
+    }
+
+    private void renderMultipleOrderInvoice(final ArrayList<Order> orders) {
+        if (getActivity() == null) return;
+        LinearLayout contentView = getContentView();
+        if (contentView == null) return;
+
+        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        RelativeLayout base = (RelativeLayout) inflater.inflate(R.layout.uiv3_multiple_order_invoice_layout, null);
+        AbsListView orderAbsListView = (AbsListView) base.findViewById(R.id.listOrders);
+        OrderListAdapter orderListAdapter = new OrderListAdapter(getActivity(), faceRobotoRegular, faceRupee, orders,
+                true);
+
+        if (orderAbsListView instanceof ListView) {
+            ((ListView) orderAbsListView).setAdapter(orderListAdapter);
+        } else if (orderAbsListView instanceof GridView) {
+            ((GridView) orderAbsListView).setAdapter(orderListAdapter);
+        }
+        orderAbsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Order order = orders.get(position);
+                showInvoice(order);
+            }
+        });
+
+        contentView.removeAllViews();
+        contentView.addView(base);
     }
 
     private void renderSingleOrderInvoice(final Order order) {

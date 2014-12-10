@@ -23,12 +23,11 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 public class ShowFulfillmentInfo {
     private FulfillmentInfo fulfillmentInfo;
     private BaseActivity activity;
-    private Typeface faceRobotoSlabNrml, faceItalic;
+    private Typeface faceRobotoSlabNrml;
 
     public ShowFulfillmentInfo(FulfillmentInfo fulfillmentInfo, BaseActivity activity) {
         this.fulfillmentInfo = fulfillmentInfo;
         this.activity = activity;
-        this.faceItalic = Typeface.createFromAsset(activity.getAssets(), "Italic.ttf");
     }
 
     public ShowFulfillmentInfo(FulfillmentInfo fulfillmentInfo, BaseActivity activity,
@@ -36,7 +35,6 @@ public class ShowFulfillmentInfo {
         this.fulfillmentInfo = fulfillmentInfo;
         this.activity = activity;
         this.faceRobotoSlabNrml = faceRobotoSlabNrml;
-        this.faceItalic = Typeface.createFromAsset(activity.getAssets(), "Italic.ttf");
     }
 
     public View showFulfillmentInfo(boolean showImgLiquorIcon, boolean showTC) {
@@ -92,7 +90,7 @@ public class ShowFulfillmentInfo {
         if (showTC) {
             TextView txtTCLabel = (TextView) base.findViewById(R.id.txtTCLabel);
             TextView txtTC1 = (TextView) base.findViewById(R.id.txtTC1);
-            txtTC1.setTypeface(faceItalic);
+            //txtTC1.setTypeface(faceItalic);
             int indexTc = 1;
             if (fulfillmentInfo.getTc1() != null && fulfillmentInfo.getTc1().length() > 0) {
                 txtTC1.setVisibility(View.VISIBLE);
@@ -103,7 +101,7 @@ public class ShowFulfillmentInfo {
             }
 
             TextView txtTC2 = (TextView) base.findViewById(R.id.txtTC2);
-            txtTC2.setTypeface(faceItalic);
+            //txtTC2.setTypeface(faceItalic);
             if (fulfillmentInfo.getTc2() != null && fulfillmentInfo.getTc2().length() > 0) {
                 txtTC2.setVisibility(View.VISIBLE);
                 txtTC2.setText(String.valueOf(indexTc) + ". " + fulfillmentInfo.getTc2());

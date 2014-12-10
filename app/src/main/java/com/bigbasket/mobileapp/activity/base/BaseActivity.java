@@ -54,7 +54,7 @@ import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.demach.konotor.Konotor;
-import com.moe.pushlibrary.MoEHelper;
+//import com.moe.pushlibrary.MoEHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -149,7 +149,8 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     @Override
     public void onCOReserveQuantityCheck() {
         Intent intent = new Intent(getCurrentActivity(), CheckoutQCActivity.class);
-        intent.putExtra(Constants.QC_LEN, coReserveQuantity.getQc_len());
+        intent.putExtra(Constants.CO_RESERVE_QTY_DATA, coReserveQuantity);
+        //intent.putExtra(Constants.QC_LEN, coReserveQuantity.getQc_len());  //todo send complete coReserveQuantity
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
@@ -157,14 +158,21 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     protected void onStart() {
         super.onStart();
         isActivitySuspended = false;
-        MoEHelper.getInstance(this).onStart(this);
+        //MoEHelper.getInstance(this).onStart(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         isActivitySuspended = true;
-        MoEHelper.getInstance(this).onStop(this);
+        //MoEHelper.getInstance(this).onStop(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isActivitySuspended = true;
+        //MoEHelper.getInstance(this).onPause(this);
     }
 
     @Override
@@ -183,6 +191,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         isActivitySuspended = false;
 
         initializeKonotor();
+        //MoEHelper.getInstance(this).onPause(this);
     }
 
     public void launchKonotor() {
@@ -334,12 +343,6 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
                                 String msg, DialogButton dialogButton,
                                 DialogButton nxtDialogButton) {
         showAlertDialog(title, msg, dialogButton, nxtDialogButton, null);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        isActivitySuspended = true;
     }
 
     protected void onPositiveButtonClicked(DialogInterface dialogInterface, int id, String sourceName, Object valuePassed) {
@@ -602,7 +605,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
             if (!TextUtils.isEmpty(sourceValue)) {
                 analyticsJsonObj.put(Constants.SOURCE_ID, sourceValue);
             }
-            MoEHelper.getInstance(getCurrentActivity()).trackEvent(eventName, analyticsJsonObj);
+            //MoEHelper.getInstance(getCurrentActivity()).trackEvent(eventName, analyticsJsonObj);
         } catch (JSONException e) {
             Log.e("Analytics", "Failed to send event = " + eventName + " to analytics");
         }

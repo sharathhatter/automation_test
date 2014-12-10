@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.activity.order.uiv3;
 
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -24,8 +25,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
+import com.bigbasket.mobileapp.interfaces.OnUpdateReserveQtyAware;
 import com.bigbasket.mobileapp.model.order.COReserveQuantity;
 import com.bigbasket.mobileapp.model.order.CheckoutProduct;
 import com.bigbasket.mobileapp.model.order.QCErrorData;
@@ -39,7 +42,7 @@ import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
 
-public class CheckoutQCActivity extends BackButtonActivity {
+public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateReserveQtyAware {
     private COReserveQuantity coReserveQuantity;
     private String categoryName = "";
     private boolean mAlreadyRunning;
@@ -51,11 +54,12 @@ public class CheckoutQCActivity extends BackButtonActivity {
     }
 
     private void doQc() {
-        int qcLen = getIntent().getIntExtra(Constants.QC_LEN, -100);
-        if (qcLen == 0) {
+        //int qcLen = getIntent().getIntExtra(Constants.QC_LEN, -100);
+        coReserveQuantity = getIntent().getParcelableExtra(Constants.CO_RESERVE_QTY_DATA);
+        if (coReserveQuantity.getQc_len() == 0) {
             launchAddressSelection();
         } else {
-            callQCApi();
+            renderQcPage();
         }
     }
 
@@ -79,13 +83,27 @@ public class CheckoutQCActivity extends BackButtonActivity {
         mAlreadyRunning = true;
     }
 
+    private void renderQcPage() {
+        if (coReserveQuantity.isStatus()) {
+            if (!coReserveQuantity.isQcHasErrors()) {
+                showAlertDialogFinish(null, getString(R.string.INTERNAL_SERVER_ERROR));
+            } else {
+                createArrayListOfProducts();
+            }
+        }
+    }
+
+    public void onUpdateReserveSuccessResponse() {
+        callQCApi();
+    }
+
     private void callQCApi() {
         if (checkInternetConnection()) {
             SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(this);
             String pharmaPrescriptionId = prefer.getString(Constants.PHARMA_PRESCRIPTION_ID, null);
             new COReserveQuantityCheckTask<>(this, pharmaPrescriptionId).execute();
         } else {
-            showAlertDialogFinish(null, getString(R.string.checkinternet));
+            showAlertDialog(null, getString(R.string.checkinternet), Constants.GO_TO_HOME_STRING);
         }
     }
 
@@ -101,13 +119,36 @@ public class CheckoutQCActivity extends BackButtonActivity {
 
     @Override
     public void onCOReserveQuantityCheck() {
-        if (coReserveQuantity.isStatus()) {
-            if (!coReserveQuantity.isQcHasErrors()) {
-                // TODO : Jugal improve error handling
-                showAlertDialogFinish(null, getString(R.string.INTERNAL_SERVER_ERROR));
-            } else {
-                createArrayListOfProducts();
+        renderQcORAddress();
+    }
+
+    private void renderQcORAddress() {
+        if (coReserveQuantity.getQc_len() == 0) {
+            launchAddressSelection();
+        } else {
+            if (coReserveQuantity.isStatus()) {
+                if (!coReserveQuantity.isQcHasErrors()) {
+                    showAlertDialog(null, getString(R.string.checkinternet), Constants.GO_TO_HOME_STRING);
+                } else {
+                    createArrayListOfProducts();
+                }
             }
+        }
+    }
+
+    @Override
+    protected void onPositiveButtonClicked(DialogInterface dialogInterface, int id, String sourceName, final Object valuePassed) {
+        if (sourceName != null) {
+            switch (sourceName) {
+                case Constants.GO_TO_HOME_STRING:
+                    goToHome();
+                    break;
+                default:
+                    super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
+                    break;
+            }
+        } else {
+            super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
         }
     }
 
@@ -145,12 +186,14 @@ public class CheckoutQCActivity extends BackButtonActivity {
 
     }
 
+    /*
     private boolean isViaInvoice() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean viaInvoice = sharedPreferences.getBoolean(Constants.VIA_INVOICE, false);
         removeViaInvoiceFlag();
         return viaInvoice;
     }
+    */
 
     private void renderCheckOut(final ArrayList<CheckoutProduct> productWithNoStockList,
                                 final ArrayList<CheckoutProduct> productWithSomeStockList) {
@@ -303,17 +346,16 @@ public class CheckoutQCActivity extends BackButtonActivity {
                                 public boolean onMenuItemClick(MenuItem item) {
                                     switch (item.getItemId()) {
                                         case R.id.menuAddSimilarQCProduct:
-//                                            SubCategoryListFragment subCategoryListFragment = new SubCategoryListFragment();
-//                                            TopCategoryModel topCategoryModel = new
-//                                                    TopCategoryModel(productWithSomeStockList.get(imgProductCheckOutQCAdditionalAction.getId()).getCategoryName(),
-//                                                    productWithSomeStockList.get(imgProductCheckOutQCAdditionalAction.getId()).getTopLevelCategorySlug(), null, null, null);
-//                                            Bundle bundle = new Bundle();
-//                                            bundle.putParcelable(Constants.TOP_CATEGORY, topCategoryModel);
-//                                            subCategoryListFragment.setArguments(bundle);
-//                                            changeFragment(subCategoryListFragment);
+                                            Intent data = new Intent(getCurrentActivity(), BBActivity.class);
+                                            data.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SUBCAT_FRAGMENT);
+                                            data.putExtra(Constants.TOP_CATEGORY_SLUG,
+                                                    productWithSomeStockList.get(imgProductCheckOutQCAdditionalAction.getId()).getTopLevelCategorySlug());
+                                            data.putExtra(Constants.TOP_CATEGORY_NAME,
+                                                    productWithSomeStockList.get(imgProductCheckOutQCAdditionalAction.getId()).getCategoryName());
+                                            startActivityForResult(data, NavigationCodes.GO_TO_HOME);
                                             return true;
                                         case R.id.menuDeleteQCProduct:
-                                            new CoUpdateReservationTask(getCurrentActivity(),
+                                            new CoUpdateReservationTask<>(getCurrentActivity(),
                                                     true, String.valueOf(imgProductCheckOutQCAdditionalAction.getTag()),
                                                     0).execute();
                                             return true;

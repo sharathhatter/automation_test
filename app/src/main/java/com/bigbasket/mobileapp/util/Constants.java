@@ -372,6 +372,7 @@ public class Constants {
     public static final String PRESCRIPTION_INTENT_DATA = "prescriptionIntentData";
     public static final String UPLOAD_PRESCRIPTION = "upload-prescription/";
     public static final String CO_RESERVE_QTY = "co-reserve-quantity/";
+    public static final String CO_RESERVE_QTY_DATA = "coReserveQuantityData";
     public static final String QC_LEN = "qc_len";
     public static final String SKU_ID = "sku_id";
     public static final String RULE_VALIDATION_ERROR_NOT_PASSED = "ruleValidationErrorNotPassed";

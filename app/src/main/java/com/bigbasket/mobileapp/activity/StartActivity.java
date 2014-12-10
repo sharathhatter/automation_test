@@ -56,8 +56,9 @@ public class StartActivity extends BaseActivity {
             return;
         }
 
-        MoEHelper moEHelper = new MoEHelper(this);
-        moEHelper.initialize("", Constants.MO_APP_ID);
+        //MoEHelper moEHelper = new MoEHelper(this);
+        //moEHelper.initialize("", Constants.MO_APP_ID);
+        //mHelper.Register(R.drawable.ic_launcher)
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String savedCityName = preferences.getString(Constants.CITY, null);
@@ -110,8 +111,6 @@ public class StartActivity extends BaseActivity {
     }
 
     private void loadHomePage() {
-//        Intent homePageIntent = new Intent(this, UpdatePinFragment.class);
-//        startActivity(homePageIntent);
         Intent homePageIntent = new Intent(this, BBActivity.class);
         homePageIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_HOME);
         startActivityForResult(homePageIntent, Constants.FORCE_REGISTER_CODE);
