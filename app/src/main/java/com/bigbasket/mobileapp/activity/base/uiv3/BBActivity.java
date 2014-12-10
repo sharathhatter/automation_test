@@ -9,7 +9,6 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -60,9 +59,10 @@ import com.bigbasket.mobileapp.fragment.product.ProductDetailFragment;
 import com.bigbasket.mobileapp.fragment.product.SearchFragment;
 import com.bigbasket.mobileapp.fragment.product.SubCategoryListFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoCategoryFragment;
+import com.bigbasket.mobileapp.fragment.promo.PromoDetailFragment;
 import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListFragment;
 import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListSummaryFragment;
-import com.bigbasket.mobileapp.handler.MessageHandler;
+import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
@@ -79,6 +79,7 @@ import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
 
 import java.util.ArrayList;
@@ -93,7 +94,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
     private String mTitle;
     private BasketOperationResponse basketOperationResponse;
     private CartSummary cartInfo = new CartSummary();
-    protected Handler handler;
+    protected BigBasketMessageHandler handler;
     private BBDrawerLayout mDrawerLayout;
     private String currentFragmentTag;
 
@@ -102,7 +103,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         super.onCreate(savedInstanceState);
         setContentView(getMainLayout());
 
-        handler = new MessageHandler(this);
+        handler = new BigBasketMessageHandler<>(this);
         mTitle = mDrawerTitle = getTitle().toString();
 
         Toolbar toolbar = getToolbar();
@@ -288,7 +289,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 Intent orderListIntent = new Intent(this, OrderListActivity.class);
                 String orderType = getIntent().getStringExtra(Constants.ORDER);
                 orderListIntent.putExtra(Constants.ORDER, orderType);
-                startActivityForResult(orderListIntent, Constants.GO_TO_HOME);
+                startActivityForResult(orderListIntent, NavigationCodes.GO_TO_HOME);
                 break;
             case FragmentCodes.START_VIEW_BASKET:
                 ShowCartFragment showCartFragment = new ShowCartFragment();
@@ -322,6 +323,15 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 cubCatBundle.putString(Constants.TOP_CATEGORY_NAME, getIntent().getStringExtra(Constants.TOP_CATEGORY_NAME));
                 subCategoryListFragment.setArguments(cubCatBundle);
                 addToMainLayout(subCategoryListFragment);
+                break;
+            case FragmentCodes.START_PROMO_DETAIL:
+                int promoId = getIntent().getIntExtra(Constants.PROMO_ID, -1);
+                Bundle promoDetailBundle = new Bundle();
+                promoDetailBundle.putInt(Constants.PROMO_ID, promoId);
+                PromoDetailFragment promoDetailFragment = new PromoDetailFragment();
+                promoDetailFragment.setArguments(promoDetailBundle);
+                addToMainLayout(promoDetailFragment);
+                break;
         }
     }
 
@@ -347,7 +357,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 return true;
             case R.id.action_login:
                 Intent intent = new Intent(this, SignInActivity.class);
-                startActivityForResult(intent, Constants.GO_TO_HOME);
+                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 return true;
             case R.id.action_view_basket:
                 addToMainLayout(new ShowCartFragment());
@@ -355,50 +365,50 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             case R.id.action_active_orders:
                 intent = new Intent(this, OrderListActivity.class);
                 intent.putExtra(Constants.ORDER, getString(R.string.active_label));
-                startActivityForResult(intent, Constants.GO_TO_HOME);
+                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 return true;
             case R.id.action_order_history:
                 intent = new Intent(this, OrderListActivity.class);
                 intent.putExtra(Constants.ORDER, getString(R.string.past_label));
-                startActivityForResult(intent, Constants.GO_TO_HOME);
+                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 return true;
             case R.id.action_update_profile:
                 intent = new Intent(this, BackButtonActivity.class);
                 intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_UPDATE_PROFILE);
-                startActivityForResult(intent, Constants.GO_TO_HOME);
+                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 return true;
             case R.id.action_change_password:
                 intent = new Intent(this, BackButtonActivity.class);
                 intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_CHANGE_PASSWD);
-                startActivityForResult(intent, Constants.GO_TO_HOME);
+                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 return true;
             case R.id.action_wallet_activity:
                 intent = new Intent(this, BackButtonActivity.class);
                 intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WALLET_FRAGMENT);
-                startActivityForResult(intent, Constants.GO_TO_HOME);
+                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 return true;
             case R.id.action_delivery_address:
                 intent = new Intent(this, BackButtonActivity.class);
                 intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_VIEW_DELIVERY_ADDRESS);
-                startActivityForResult(intent, Constants.GO_TO_HOME);
+                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 return true;
             case R.id.action_change_pin:
                 intent = new Intent(this, BackButtonActivity.class);
                 intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_CHANGE_PIN);
-                startActivityForResult(intent, Constants.GO_TO_HOME);
+                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 return true;
             case R.id.action_logout:
                 if (isSocialLogin()) {
                     onLogoutRequested();
                 } else {
-                    showAlertDialog(this, getString(R.string.signOut), getString(R.string.signoutConfirmation),
+                    showAlertDialog(getString(R.string.signOut), getString(R.string.signoutConfirmation),
                             DialogButton.YES, DialogButton.NO, Constants.LOGOUT);
                 }
                 return true;
             case R.id.action_change_city:
                 intent = new Intent(this, BackButtonActivity.class);
                 intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_CHANGE_CITY);
-                startActivityForResult(intent, Constants.GO_TO_HOME);
+                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -512,7 +522,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
     }
 
     @Override
-    public Handler getHandler() {
+    public BigBasketMessageHandler getHandler() {
         return handler;
     }
 
@@ -733,16 +743,16 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 switch (navigationItem.getTag()) {
                     case Constants.SHOP_LST:
                         if (AuthParameters.getInstance(getCurrentActivity()).isAuthTokenEmpty()) {
-                            showAlertDialog(getCurrentActivity(), null,
-                                    "Please sign-in to view your shopping lists", Constants.LOGIN_REQUIRED);
+                            showAlertDialog(null,
+                                    "Please sign-in to view your shopping lists", NavigationCodes.GO_TO_LOGIN);
                         } else {
                             addToMainLayout(new ShoppingListFragment());
                         }
                         break;
                     case Constants.SMART_BASKET_SLUG:
                         if (AuthParameters.getInstance(getCurrentActivity()).isAuthTokenEmpty()) {
-                            showAlertDialog(getCurrentActivity(), null,
-                                    "Please sign-in to view your smart basket", Constants.LOGIN_REQUIRED);
+                            showAlertDialog(null,
+                                    "Please sign-in to view your smart basket", NavigationCodes.GO_TO_LOGIN);
                         } else {
                             ShoppingListName shoppingListName = new ShoppingListName(Constants.SMART_BASKET,
                                     Constants.SMART_BASKET_SLUG, true);
@@ -758,19 +768,19 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                         break;
                     case Constants.FROM_ACCOUNT_PAGE:
                         if (AuthParameters.getInstance(getCurrentActivity()).isAuthTokenEmpty()) {
-                            showAlertDialog(getCurrentActivity(), null,
-                                    "Please sign-in to view your accounts page", Constants.LOGIN_REQUIRED);
+                            showAlertDialog(null,
+                                    "Please sign-in to view your accounts page", NavigationCodes.GO_TO_LOGIN);
                         } else {
                             onChangeFragment(new AccountSettingFragment());
                         }
                         break;
                     case Constants.LOGIN:
                         Intent intent = new Intent(getCurrentActivity(), SignInActivity.class);
-                        startActivityForResult(intent, Constants.GO_TO_HOME);
+                        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                         break;
                     case Constants.REGISTER_MEMBER:
                         intent = new Intent(getCurrentActivity(), SignupActivity.class);
-                        startActivityForResult(intent, Constants.GO_TO_HOME);
+                        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                         break;
                     case Constants.FEEDBACK:
                         launchKonotor();
@@ -779,7 +789,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                         if (isSocialLogin()) {
                             onLogoutRequested();
                         } else {
-                            showAlertDialog(getCurrentActivity(), getString(R.string.signOut), getString(R.string.signoutConfirmation),
+                            showAlertDialog(getString(R.string.signOut), getString(R.string.signoutConfirmation),
                                     DialogButton.YES, DialogButton.NO, Constants.LOGOUT);
                         }
                         break;
@@ -819,7 +829,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                         case Constants.DISCOUNT_TYPE:
                             Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
                             intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_BROWSE_BY_OFFERS);
-                            startActivityForResult(intent, Constants.GO_TO_HOME);
+                            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                             return true;
                         case Constants.PROMO:
                             addToMainLayout(new PromoCategoryFragment());

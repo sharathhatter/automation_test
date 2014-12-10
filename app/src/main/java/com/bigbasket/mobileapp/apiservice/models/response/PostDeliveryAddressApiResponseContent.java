@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-public class PostDeliveryAddressApiResponseContent  {
+public class PostDeliveryAddressApiResponseContent {
 
     @SerializedName(Constants.CART_SUMMARY)
     public PostDeliveryAddressCartSummary cartSummary;

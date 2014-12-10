@@ -18,8 +18,8 @@ import com.bigbasket.mobileapp.apiservice.models.response.BrowsePromoCategoryApi
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.model.promo.Promo;
 import com.bigbasket.mobileapp.model.promo.PromoCategory;
+import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.ExceptionUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,26 +59,28 @@ public class PromoCategoryFragment extends BaseFragment {
         showProgressView();
         bigBasketApiService.browsePromoCategory(new Callback<ApiResponse<BrowsePromoCategoryApiResponseContent>>() {
             @Override
-            public void success(ApiResponse<BrowsePromoCategoryApiResponseContent> browsePromoCategoryApiResponseContentApiResponse, Response response) {
+            public void success(ApiResponse<BrowsePromoCategoryApiResponseContent> browsePromoCategoryApiResponse, Response response) {
                 hideProgressView();
-                switch (browsePromoCategoryApiResponseContentApiResponse.status) {
+                switch (browsePromoCategoryApiResponse.status) {
                     case 0:
-                        if (browsePromoCategoryApiResponseContentApiResponse.apiResponseContent.promoCategories != null
-                                && browsePromoCategoryApiResponseContentApiResponse.apiResponseContent.promoCategories.size() > 0) {
-                            mPromoCategoryList = browsePromoCategoryApiResponseContentApiResponse.apiResponseContent.promoCategories;
+                        if (browsePromoCategoryApiResponse.apiResponseContent.promoCategories != null
+                                && browsePromoCategoryApiResponse.apiResponseContent.promoCategories.size() > 0) {
+                            mPromoCategoryList = browsePromoCategoryApiResponse.apiResponseContent.promoCategories;
                             mPromoCategoryList = filterPromoCategories();
                             if (mPromoCategoryList.size() > 0) {
                                 renderPromoCategories();
                             } else {
-                                // TODO : Improve error handling
-                                showErrorMsg(getResources().getString(R.string.no_promo_cat));
+                                handler.sendEmptyMessage(browsePromoCategoryApiResponse.status);
                             }
                         } else {
-                            showErrorMsg(getResources().getString(R.string.no_promo_cat));
+                            handler.sendEmptyMessage(browsePromoCategoryApiResponse.status);
                         }
                         break;
-                    case ExceptionUtil.PROMO_CATEGORY_NOT_EXIST:
+                    case ApiErrorCodes.PROMO_CATEGORY_NOT_EXIST:
                         showErrorMsg(getResources().getString(R.string.no_promo_cat));
+                        break;
+                    default:
+                        handler.sendEmptyMessage(browsePromoCategoryApiResponse.status);
                         break;
                 }
             }

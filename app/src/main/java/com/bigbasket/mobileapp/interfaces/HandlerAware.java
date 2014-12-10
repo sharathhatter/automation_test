@@ -1,8 +1,8 @@
 package com.bigbasket.mobileapp.interfaces;
 
-import android.os.Handler;
+import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 
 public interface HandlerAware {
 
-    Handler getHandler();
+    public BigBasketMessageHandler getHandler();
 }

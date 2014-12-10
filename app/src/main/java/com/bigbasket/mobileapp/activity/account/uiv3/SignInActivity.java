@@ -29,6 +29,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.model.account.SocialAccount;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.facebook.Request;
 import com.facebook.Response;
@@ -303,13 +304,13 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
 
         if (TextUtils.isEmpty(email)) {
             signOutFromGplus();
-            showAlertDialog(this, null, "Unable to get your email-address\n" +
+            showAlertDialog(null, "Unable to get your email-address\n" +
                     "Please check your privacy settings.");
             return;
         }
         if (person == null) {
             signOutFromGplus();
-            showAlertDialog(this, null, "Unable to read your profile information\n" +
+            showAlertDialog(null, "Unable to read your profile information\n" +
                     "Please check your privacy settings.");
             return;
         }
@@ -377,7 +378,7 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
                             isVerified, firstName, lastName, imgUrl);
                     startSocialLogin(SocialAccount.FB);
                 } else if (response.getError() != null) {
-                    showAlertDialog(getCurrentActivity(), null, response.getError().getErrorMessage());
+                    showAlertDialog(null, response.getError().getErrorMessage());
                 }
             }
         });
@@ -387,7 +388,7 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
     @Override
     public void onFacebookSignOut() {
         doLogout();
-        setResult(Constants.GO_TO_HOME);
+        setResult(NavigationCodes.GO_TO_HOME);
         finish();
     }
 
@@ -412,7 +413,6 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
 
     @Override
     protected void onPlusClientRevokeAccess() {
-        // TODO: Access to the user's G+ account has been revoked.  Per the developer terms, delete
         // any stored user data here.
         showProgress(false);
 
@@ -429,7 +429,7 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
         signOutButton.setVisibility(View.GONE);
 
         doLogout();
-        setResult(Constants.GO_TO_HOME);
+        setResult(NavigationCodes.GO_TO_HOME);
         finish();
     }
 
@@ -456,7 +456,7 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
 
     public void OnRegistrationLinkClicked(View v) {
         Intent intent = new Intent(this, SignupActivity.class);
-        startActivityForResult(intent, Constants.GO_TO_HOME);
+        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
     @Override

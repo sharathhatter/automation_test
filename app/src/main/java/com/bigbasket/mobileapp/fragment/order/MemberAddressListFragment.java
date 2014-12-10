@@ -25,8 +25,9 @@ import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.AddressSelectionAware;
 import com.bigbasket.mobileapp.model.account.Address;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
+import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.ExceptionUtil;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.melnykov.fab.FloatingActionButton;
 
@@ -64,8 +65,8 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
 
     private void loadAddresses() {
         if (AuthParameters.getInstance(getActivity()).isAuthTokenEmpty()) {
-            ((BaseActivity) getActivity()).showAlertDialog(getActivity(), "BigBasket",
-                    "You are not signed in.\nPlease sign-in to continue", Constants.LOGIN_REQUIRED);
+            ((BaseActivity) getActivity()).showAlertDialog("BigBasket",
+                    "You are not signed in.\nPlease sign-in to continue", NavigationCodes.GO_TO_LOGIN);
             return;
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
@@ -74,21 +75,21 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             @Override
             public void success(ApiResponse<GetDeliveryAddressApiResponseContent> getDeliveryAddressApiResponse, Response response) {
                 if (isSuspended()) return;
-                hideProgressView();
+                try {
+                    hideProgressDialog();
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
                 switch (getDeliveryAddressApiResponse.status) {
                     case 0:
                         mAddressArrayList = getDeliveryAddressApiResponse.apiResponseContent.addresses;
                         showAddresses();
                         break;
-                    case ExceptionUtil.INTERNAL_SERVER_ERROR:
-                        ((BaseActivity) getActivity()).showAlertDialog(getActivity(), "BigBasket", "Server Error");
-                        break;
-                    case ExceptionUtil.EMPTY_ADDRESS:
+                    case ApiErrorCodes.EMPTY_ADDRESS:
                         showCreateAddressForm();
                         break;
                     default:
-                        ((BaseActivity) getActivity()).showAlertDialog(getActivity(), "BigBasket",
-                                getDeliveryAddressApiResponse.message);
+                        handler.sendEmptyMessage(getDeliveryAddressApiResponse.status);
                         break;
                 }
             }
@@ -96,9 +97,12 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             @Override
             public void failure(RetrofitError error) {
                 if (isSuspended()) return;
-                hideProgressView();
-                // TODO : Improve error handling
-                ((BaseActivity) getActivity()).showAlertDialog(getActivity(), "BigBasket", "Server Error");
+                try {
+                    hideProgressDialog();
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
+                handler.handleRetrofitError(error);
             }
         });
     }
@@ -148,7 +152,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         if (getActivity() == null) return;
         Intent memberAddressFormIntent = new Intent(getActivity(), MemberAddressFormActivity.class);
         memberAddressFormIntent.putExtra(Constants.UPDATE_ADDRESS, address);
-        startActivityForResult(memberAddressFormIntent, Constants.ADDRESS_CREATED_MODIFIED);
+        startActivityForResult(memberAddressFormIntent, NavigationCodes.ADDRESS_CREATED_MODIFIED);
     }
 
     @Override
@@ -163,7 +167,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
     private void launchSlotSelection(String addressId) {
         Intent intent = new Intent(getCurrentActivity(), SlotPaymentSelectionActivity.class);
         intent.putExtra(Constants.MEMBER_ADDRESS_ID, addressId);
-        startActivityForResult(intent, Constants.GO_TO_HOME);
+        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
     public LinearLayout getContentView() {
@@ -192,7 +196,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         setSuspended(false);
-        if (resultCode == Constants.ADDRESS_CREATED_MODIFIED) {
+        if (resultCode == NavigationCodes.ADDRESS_CREATED_MODIFIED) {
             if (data != null) {
                 String addressId = data.getStringExtra(Constants.MEMBER_ADDRESS_ID);
                 if (!TextUtils.isEmpty(addressId) && !mFromAccountPage) {

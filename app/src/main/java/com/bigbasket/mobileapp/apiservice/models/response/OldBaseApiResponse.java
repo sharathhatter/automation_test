@@ -9,4 +9,8 @@ public class OldBaseApiResponse {
 
     @SerializedName(Constants.ERROR_TYPE)
     public String errorType;
+
+    public int getErrorTypeAsInt() {
+        return Integer.parseInt(errorType);
+    }
 }

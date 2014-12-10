@@ -31,21 +31,21 @@ public class DeepLinkDispatcherActivity extends BaseActivity {
                 int promoId = Integer.parseInt(idStr);
 //                Intent intent = new Intent(this, PromoDetailActivity.class);
 //                intent.putExtra(Constants.PROMO_ID, promoId);
-//                startActivityForResult(intent, Constants.GO_TO_HOME);
+//                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 break;
             case Constants.FEEDBACK:
 //                intent = new Intent(this, CustomerFeedbackActivity.class);
 //                intent.putExtra(Constants.CASE_ID, idStr);
-//                startActivityForResult(intent, Constants.GO_TO_HOME);
+//                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 break;
             case Constants.ORDER:
 //                intent = new Intent(this, OrderReview.class);
 //                intent.putExtra(Constants.ORDER_ID, idStr);
-//                startActivityForResult(intent, Constants.GO_TO_HOME);
+//                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 break;
             case Constants.WALLET:
 //                intent = new Intent(this, DoWalletActivity.class);
-//                startActivityForResult(intent, Constants.GO_TO_HOME);
+//                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
 //                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
                 break;
             default:

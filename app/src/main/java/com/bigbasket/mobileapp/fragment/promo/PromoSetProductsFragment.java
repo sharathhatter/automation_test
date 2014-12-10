@@ -35,8 +35,8 @@ import com.bigbasket.mobileapp.model.promo.Promo;
 import com.bigbasket.mobileapp.model.promo.PromoDetail;
 import com.bigbasket.mobileapp.model.promo.PromoMessage;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
+import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.ExceptionUtil;
 import com.bigbasket.mobileapp.util.ParserUtil;
 import com.bigbasket.mobileapp.util.UIUtil;
 
@@ -114,8 +114,8 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
                 public void success(ApiResponse<PromoSetProductsApiResponseContent> promoSetProductsApiResponseContent, Response response) {
                     hideProgressDialog();
                     int status = promoSetProductsApiResponseContent.status;
-                    if (status == ExceptionUtil.PROMO_NOT_EXIST || status == ExceptionUtil.PROMO_NOT_ACTIVE
-                            || status == ExceptionUtil.INVALID_FIELD || status == ExceptionUtil.PROMO_SET_NOT_EXIST) {
+                    if (status == ApiErrorCodes.PROMO_NOT_EXIST || status == ApiErrorCodes.PROMO_NOT_ACTIVE
+                            || status == ApiErrorCodes.INVALID_FIELD || status == ApiErrorCodes.PROMO_CRITERIA_SET_NOT_EXISTS) {
                         showErrorMsg(promoSetProductsApiResponseContent.message);
                     } else if (status == 0) {
                         displayProductList(promoSetProductsApiResponseContent.apiResponseContent.promoSetProducts,
@@ -164,8 +164,8 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
             public void success(BaseApiResponse addBundleApiResponse, Response response) {
                 hideProgressDialog();
                 int status = addBundleApiResponse.status;
-                if (status == ExceptionUtil.PROMO_NOT_EXIST || status == ExceptionUtil.PROMO_NOT_ACTIVE
-                        || status == ExceptionUtil.INVALID_FIELD || status == ExceptionUtil.INVALID_PROMO) {
+                if (status == ApiErrorCodes.PROMO_NOT_EXIST || status == ApiErrorCodes.PROMO_NOT_ACTIVE
+                        || status == ApiErrorCodes.INVALID_FIELD || status == ApiErrorCodes.INVALID_PROMO) {
                     showErrorMsg(addBundleApiResponse.message);
                 } else if (status == 0) {
                     // Operation Successful, now do a get-promo-summary API call
@@ -193,8 +193,8 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
             public void success(ApiResponse<PromoSummaryApiResponseContent> promoSummaryApiResponseContent, Response response) {
                 hideProgressDialog();
                 int status = promoSummaryApiResponseContent.status;
-                if (status == ExceptionUtil.PROMO_NOT_EXIST || status == ExceptionUtil.PROMO_NOT_ACTIVE
-                        || status == ExceptionUtil.INVALID_FIELD) {
+                if (status == ApiErrorCodes.PROMO_NOT_EXIST || status == ApiErrorCodes.PROMO_NOT_ACTIVE
+                        || status == ApiErrorCodes.INVALID_FIELD) {
                     showErrorMsg(promoSummaryApiResponseContent.message);
                 } else if (status == 0) {
                     PromoMessage promoMessage = promoSummaryApiResponseContent.apiResponseContent.promoMessage;
@@ -254,7 +254,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
         String savingFormattedAmount = UIUtil.formatAsMoney(saving);
         txtSaving.setText(PromoDetail.
                 getSavingSpannable(getResources().getColor(R.color.promo_txt_green_color),
-                        savingFormattedAmount));
+                        savingFormattedAmount, faceRupee));
     }
 
     private void displayProductList(ArrayList<Product> products, String baseImgUrl) {

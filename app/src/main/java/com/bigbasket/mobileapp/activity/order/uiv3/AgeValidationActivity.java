@@ -36,11 +36,12 @@ import com.bigbasket.mobileapp.model.order.PharmaPrescriptionInfo;
 import com.bigbasket.mobileapp.model.order.SavedPrescription;
 import com.bigbasket.mobileapp.task.COMarketPlaceCheckTask;
 import com.bigbasket.mobileapp.task.COReserveQuantityCheckTask;
+import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
-import com.bigbasket.mobileapp.util.ExceptionUtil;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.MessageFormatUtil;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -165,11 +166,11 @@ public class AgeValidationActivity extends BackButtonActivity {
                         if (savedPrescriptionArrayList != null && savedPrescriptionArrayList.size() > 0) {
                             Intent intent = new Intent(getCurrentActivity(), PrescriptionListActivity.class);
                             intent.putExtra(Constants.MARKET_PLACE_INTENT, marketPlace);
-                            startActivityForResult(intent, Constants.GO_TO_HOME);
+                            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
                         } else {
                             Intent intent = new Intent(getCurrentActivity(), UploadNewPrescriptionActivity.class);
-                            startActivityForResult(intent, Constants.GO_TO_HOME);
+                            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
                         }
 
@@ -218,7 +219,7 @@ public class AgeValidationActivity extends BackButtonActivity {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (isChecked) {
                         hashMapRadioBtnAgeCheckNo.put(rbtnNo.getTag().toString(), true);
-                        showAlertDialog(getCurrentActivity(), null,
+                        showAlertDialog(null,
                                 "Remove all " + marketPlaceAgeCheck.getDisplayName() + " products from Basket?",
                                 DialogButton.YES, DialogButton.NO, Constants.REMOVE_ALL_MARKETPLACE_FROM_BASKET,
                                 marketPlaceAgeCheck.getFulfillmentId(), "Yes");
@@ -294,7 +295,6 @@ public class AgeValidationActivity extends BackButtonActivity {
         if (fulFillmentIds != null) {
             rbtnNo.setTag(fulFillmentIds);
         } else {
-            assert false : "Pharma Prescription Id is null";
             return; //todo check
         }
 
@@ -317,7 +317,7 @@ public class AgeValidationActivity extends BackButtonActivity {
                     btnContinueOrUploadPrescription.setTextSize(getResources().getDimension(R.dimen.secondary_text_size));
                     btnContinueOrUploadPrescription.setTag(Constants.CONTINUE_BTN_TAG);
                     isPharmaRadioBtnNoSelected = true;
-                    showAlertDialog(getCurrentActivity(), null,
+                    showAlertDialog(null,
                             "Remove all pharma products from basket", DialogButton.YES,
                             DialogButton.NO, Constants.REMOVE_ALL_MARKETPLACE_FROM_BASKET, String.valueOf(rbtnNo.getTag()));
                 }
@@ -406,14 +406,12 @@ public class AgeValidationActivity extends BackButtonActivity {
                                 editor.putString(Constants.GET_CART, String.valueOf(cartInfo.getNoOfItems()));
                                 editor.commit();
                                 if (cartInfo.getNoOfItems() == 0) {
-                                    showAlertDialogFinish(getCurrentActivity(), null, getResources().getString(R.string.basketEmpty));
+                                    showAlertDialogFinish(null, getResources().getString(R.string.basketEmpty));
                                 } else {
                                     new COMarketPlaceCheckTask<>(getCurrentActivity()).startTask();
                                 }
                             } else {
-                                String msgString = cartBulkRemoveApiResponseCallback.status == ExceptionUtil.INTERNAL_SERVER_ERROR ?
-                                        getResources().getString(R.string.INTERNAL_SERVER_ERROR) : cartBulkRemoveApiResponseCallback.message;
-                                showAlertDialog(getCurrentActivity(), null, msgString);
+                                handler.sendEmptyMessage(cartBulkRemoveApiResponseCallback.status);
                             }
                         }
 
@@ -425,12 +423,11 @@ public class AgeValidationActivity extends BackButtonActivity {
                             } catch (IllegalArgumentException e) {
                                 return;
                             }
-                            // TODO : Improve error handling
-                            showAlertDialog(getCurrentActivity(), null, "Server Error");
+                            handler.handleRetrofitError(error);
                         }
                     });
                     break;
-                case Constants.BASKET_EMPTY:
+                case ApiErrorCodes.BASKET_EMPTY_STR:
                     goToHome();
                     break;
                 default:

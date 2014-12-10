@@ -26,6 +26,7 @@ import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListNamesTask;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.view.uiv3.CreateShoppingListDialog;
 import com.bigbasket.mobileapp.view.uiv3.DeleteShoppingListDialog;
 import com.bigbasket.mobileapp.view.uiv3.EditShoppingDialog;
@@ -65,7 +66,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
         if (getActivity() == null || getCurrentActivity() == null) return;
         AuthParameters authParameters = AuthParameters.getInstance(getActivity());
         if (authParameters.isAuthTokenEmpty()) {
-            getCurrentActivity().showAlertDialog(getActivity(), null, getString(R.string.login_required), Constants.LOGIN_REQUIRED);
+            getCurrentActivity().showAlertDialog(null, getString(R.string.login_required), NavigationCodes.GO_TO_LOGIN);
             return;
         }
 
@@ -114,7 +115,12 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
         bigBasketApiService.createShoppingList(shoppingListName, "1", new Callback<OldBaseApiResponse>() {
             @Override
             public void success(OldBaseApiResponse oldBaseApiResponse, Response response) {
-                hideProgressDialog();
+                if (isSuspended()) return;
+                try {
+                    hideProgressDialog();
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
                 switch (oldBaseApiResponse.status) {
                     case Constants.OK:
                         Toast.makeText(getActivity(),
@@ -123,17 +129,20 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
                         loadShoppingLists();
                         break;
                     default:
-                        // TODO : Add error handling
-                        showErrorMsg("Server Error");
+                        handler.sendEmptyMessage(oldBaseApiResponse.getErrorTypeAsInt());
                         break;
                 }
             }
 
             @Override
             public void failure(RetrofitError error) {
-                hideProgressDialog();
-                // TODO : Add error handling
-                showErrorMsg("Server Error");
+                if (isSuspended()) return;
+                try {
+                    hideProgressDialog();
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
+                handler.handleRetrofitError(error);
             }
         });
     }
@@ -310,7 +319,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
     private void showEditShoppingListDialog(ShoppingListName shoppingListName) {
         if (shoppingListName.isSystem()) {
             if (getCurrentActivity() != null) {
-                getCurrentActivity().showAlertDialog(getActivity(), null, getString(R.string.isSystemShoppingListMsg));
+                getCurrentActivity().showAlertDialog(null, getString(R.string.isSystemShoppingListMsg));
             }
             return;
         }
@@ -322,7 +331,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
     private void showDeleteShoppingListDialog(ShoppingListName shoppingListName) {
         if (shoppingListName.isSystem()) {
             if (getCurrentActivity() != null) {
-                getCurrentActivity().showAlertDialog(getActivity(), null, getString(R.string.isSystemShoppingListMsg));
+                getCurrentActivity().showAlertDialog(null, getString(R.string.isSystemShoppingListMsg));
             }
             return;
         }
@@ -337,7 +346,12 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
         bigBasketApiService.editShoppingList(shoppingListName.getSlug(), newName, new Callback<OldBaseApiResponse>() {
             @Override
             public void success(OldBaseApiResponse oldBaseApiResponse, Response response) {
-                hideProgressDialog();
+                if (isSuspended()) return;
+                try {
+                    hideProgressDialog();
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
                 switch (oldBaseApiResponse.status) {
                     case Constants.OK:
                         Toast.makeText(getActivity(), getString(R.string.shoppingListUpdated),
@@ -345,17 +359,20 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
                         loadShoppingLists();
                         break;
                     default:
-                        // TODO : Improve error handling
-                        showErrorMsg("Server Error");
+                        handler.sendEmptyMessage(oldBaseApiResponse.getErrorTypeAsInt());
                         break;
                 }
             }
 
             @Override
             public void failure(RetrofitError error) {
-                hideProgressDialog();
-                // TODO : Improve error handling
-                showErrorMsg("Server Error");
+                if (isSuspended()) return;
+                try {
+                    hideProgressDialog();
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
+                handler.handleRetrofitError(error);
             }
         });
     }
@@ -366,7 +383,12 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
         bigBasketApiService.deleteShoppingList(shoppingListName.getSlug(), new Callback<OldBaseApiResponse>() {
             @Override
             public void success(OldBaseApiResponse oldBaseApiResponse, Response response) {
-                hideProgressDialog();
+                if (isSuspended()) return;
+                try {
+                    hideProgressDialog();
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
                 switch (oldBaseApiResponse.status) {
                     case Constants.OK:
                         String msg = "\"" + shoppingListName.getName() + "\" was deleted successfully";
@@ -374,17 +396,20 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
                         loadShoppingLists();
                         break;
                     default:
-                        // TODO : Add error handling
-                        showErrorMsg("Server Error");
+                        handler.sendEmptyMessage(oldBaseApiResponse.getErrorTypeAsInt());
                         break;
                 }
             }
 
             @Override
             public void failure(RetrofitError error) {
-                hideProgressDialog();
-                // TODO : Add error handling
-                showErrorMsg("Server Error");
+                if (isSuspended()) return;
+                try {
+                    hideProgressDialog();
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
+                handler.handleRetrofitError(error);
             }
         });
     }

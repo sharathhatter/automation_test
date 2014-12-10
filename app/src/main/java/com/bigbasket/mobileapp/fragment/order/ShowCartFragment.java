@@ -2,10 +2,8 @@ package com.bigbasket.mobileapp.fragment.order;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.text.Spannable;
@@ -26,7 +24,6 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
-import com.bigbasket.mobileapp.activity.order.uiv3.UploadNewPrescriptionActivity;
 import com.bigbasket.mobileapp.adapter.order.ActiveOrderRowAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
@@ -36,8 +33,6 @@ import com.bigbasket.mobileapp.apiservice.models.response.CartGetApiResponseCont
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
-import com.bigbasket.mobileapp.handler.MessageHandler;
-import com.bigbasket.mobileapp.interfaces.COMarketPlaceAware;
 import com.bigbasket.mobileapp.model.cart.AnnotationInfo;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.cart.CartItem;
@@ -45,16 +40,14 @@ import com.bigbasket.mobileapp.model.cart.CartItemHeader;
 import com.bigbasket.mobileapp.model.cart.CartItemList;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.cart.FulfillmentInfo;
-import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.order.OrderItemDisplaySource;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.task.COMarketPlaceCheckTask;
-import com.bigbasket.mobileapp.task.COReserveQuantityCheckTask;
+import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
-import com.bigbasket.mobileapp.util.ExceptionUtil;
-import com.bigbasket.mobileapp.util.MessageCode;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -97,26 +90,31 @@ public class ShowCartFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if(getArguments()!=null){
+        if (getArguments() != null) {
             String fulfillmentIds = getArguments().getString(Constants.INTERNAL_VALUE);
-            if(fulfillmentIds!=null){
+            if (fulfillmentIds != null) {
                 isReadOnly = true;
                 getItemForFulFillmentIds(fulfillmentIds);
-            }else {
+            } else {
                 getCartItems();
             }
-        }else {
+        } else {
             getCartItems();
         }
     }
 
-    private void getItemForFulFillmentIds(String fulfillmentIds){
+    private void getItemForFulFillmentIds(String fulfillmentIds) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressView();
         bigBasketApiService.cartGetForIds(fulfillmentIds, new Callback<ApiResponse<CartGetApiResponseContent>>() {
             @Override
             public void success(ApiResponse<CartGetApiResponseContent> cartGetApiResponseContentApiResponse, Response response) {
-                hideProgressView();
+                if (isSuspended()) return;
+                try {
+                    hideProgressDialog();
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
                 if (cartGetApiResponseContentApiResponse.status == 0) {
                     CartSummary cartSummary = cartGetApiResponseContentApiResponse.apiResponseContent.cartSummary;
                     fullfillmentInfos = cartGetApiResponseContentApiResponse.apiResponseContent.fulfillmentInfos;
@@ -133,22 +131,28 @@ public class ShowCartFragment extends BaseFragment {
                         showBasketEmptyMessage();
                     }
                 } else {
-                    showErrorMsg("Server Error");
-                    // TODO : Improve error handling
+                    handler.sendEmptyMessage(cartGetApiResponseContentApiResponse.status);
                 }
             }
 
             @Override
             public void failure(RetrofitError error) {
-                hideProgressView();
+                if (isSuspended()) return;
+                try {
+                    hideProgressDialog();
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
+                handler.handleRetrofitError(error);
             }
         });
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_empty_basket:
-                showAlertDialog(getActivity(), null, "Remove all the products from basket?", DialogButton.YES,
+                showAlertDialog(null, "Remove all the products from basket?", DialogButton.YES,
                         DialogButton.NO, Constants.EMPTY_BASKET, null, "Empty Basket");
                 return true;
             default:
@@ -218,8 +222,8 @@ public class ShowCartFragment extends BaseFragment {
             public void onClick(View v) {
                 if (cartInfo != null && cartInfo.getNoOfItems() > 0) {
                     if (AuthParameters.getInstance(getActivity()).isAuthTokenEmpty()) {
-                        showAlertDialog(getActivity(), "Login", getString(R.string.login_to_place_order),
-                                DialogButton.OK, DialogButton.NO, Constants.LOGIN_REQUIRED, null, "Login");
+                        showAlertDialog("Login", getString(R.string.login_to_place_order),
+                                DialogButton.OK, DialogButton.NO, NavigationCodes.GO_TO_LOGIN, null, "Login");
                     } else {
                         new COMarketPlaceCheckTask<>(getCurrentActivity()).startTask();
                     }
@@ -322,17 +326,18 @@ public class ShowCartFragment extends BaseFragment {
         bigBasketApiService.emptyCart(new Callback<BaseApiResponse>() {
             @Override
             public void success(BaseApiResponse cartEmptyApiResponseCallback, Response response) {
+                if (isSuspended()) return;
+                hideProgressView();
                 if (cartEmptyApiResponseCallback.status == 0) {
                     editor.putString(Constants.GET_CART, "0");
                     showBasketEmptyMessage();
                     CartSummary cartSummary = new CartSummary(0, 0, 0);
                     setCartInfo(cartSummary);
                     setBasketNumItemsDisplay();
-                } else if (cartEmptyApiResponseCallback.status == ExceptionUtil.CART_NOT_EXISTS_ERROR) {
+                } else if (cartEmptyApiResponseCallback.status == ApiErrorCodes.CART_NOT_EXISTS) {
                     showErrorMsg("Cart is already empty");
                 } else {
-                    // TODO : Improve error handling
-                    showErrorMsg("Server Error");
+                    handler.sendEmptyMessage(cartEmptyApiResponseCallback.status);
                 }
                 editor.commit();
 
@@ -340,7 +345,9 @@ public class ShowCartFragment extends BaseFragment {
 
             @Override
             public void failure(RetrofitError error) {
-
+                if (isSuspended()) return;
+                hideProgressView();
+                handler.handleRetrofitError(error);
             }
         });
     }
@@ -354,6 +361,7 @@ public class ShowCartFragment extends BaseFragment {
         bigBasketApiService.cartGet(new Callback<ApiResponse<CartGetApiResponseContent>>() {
             @Override
             public void success(ApiResponse<CartGetApiResponseContent> cartGetApiResponseContentApiResponse, Response response) {
+                if (isSuspended()) return;
                 hideProgressView();
                 if (cartGetApiResponseContentApiResponse.status == 0) {
                     CartSummary cartSummary = cartGetApiResponseContentApiResponse.apiResponseContent.cartSummary;
@@ -378,15 +386,16 @@ public class ShowCartFragment extends BaseFragment {
                         editor.putString(Constants.GET_CART, "0");
                     }
                 } else {
-                    showErrorMsg("Server Error");
-                    // TODO : Improve error handling
+                    handler.sendEmptyMessage(cartGetApiResponseContentApiResponse.status);
                 }
                 editor.commit();
             }
 
             @Override
             public void failure(RetrofitError error) {
+                if (isSuspended()) return;
                 hideProgressView();
+                handler.handleRetrofitError(error);
             }
         });
     }

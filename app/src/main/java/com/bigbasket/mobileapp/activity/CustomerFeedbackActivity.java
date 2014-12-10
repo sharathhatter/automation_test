@@ -32,7 +32,7 @@ public class CustomerFeedbackActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         caseId = getIntent().getStringExtra(Constants.CASE_ID);
         if (TextUtils.isEmpty(caseId)) {
-            showAlertDialog(this, null, "No case-id provided");
+            showAlertDialog(null, "No case-id provided");
             return;
         }
         showFeedbackLayout();
@@ -57,7 +57,7 @@ public class CustomerFeedbackActivity extends BaseActivity {
 
     private void postFeedback() {
         if (!DataUtil.isInternetAvailable(this)) {
-            showAlertDialog(this, null, "No internet connection found. Please try later");
+            showAlertDialog(null, "No internet connection found. Please try later");
             return;
         }
         EditText editTextComments = (EditText) base.findViewById(R.id.editTextComments);
@@ -77,32 +77,30 @@ public class CustomerFeedbackActivity extends BaseActivity {
                         } catch (IllegalArgumentException e) {
                             return;
                         }
-                        // TODO : Improve error handling
                         switch (postFeedbackApiResponse.status) {
                             case 0:
                                 if (postFeedbackApiResponse.apiResponseContent.success) {
                                     showToast("You feedback was submitted successfully!");
                                     finish();
                                 } else {
-                                    showAlertDialog(getCurrentActivity(), null, "Failed to submit your feedback. Please try later");
+                                    showAlertDialog(null, "Failed to submit your feedback. Please try later");
                                 }
                                 break;
                             default:
-                                showAlertDialog(getCurrentActivity(), null, "Failed to submit your feedback. Please try later");
+                                handler.sendEmptyMessage(postFeedbackApiResponse.status);
                                 break;
                         }
                     }
 
                     @Override
                     public void failure(RetrofitError error) {
-                        // TODO : Improve error handling
                         if (isSuspended()) return;
                         try {
                             hideProgressDialog();
                         } catch (IllegalArgumentException e) {
                             return;
                         }
-                        showAlertDialog(getCurrentActivity(), null, "Failed to submit your feedback. Please try later");
+                        handler.handleRetrofitError(error);
                     }
                 });
     }

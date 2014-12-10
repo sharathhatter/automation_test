@@ -22,19 +22,10 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.SubCategoryApiResponse;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
-import com.bigbasket.mobileapp.model.account.UpdatePin;
 import com.bigbasket.mobileapp.model.product.Category;
 import com.bigbasket.mobileapp.model.product.SubCategoryModel;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
-import com.bigbasket.mobileapp.util.DialogButton;
-import com.bigbasket.mobileapp.util.ExceptionUtil;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
@@ -99,6 +90,7 @@ public class SubCategoryListFragment extends BaseFragment {
         bigBasketApiService.getSubCategoryData(slugAndVersion, new Callback<ApiResponse<SubCategoryApiResponse>>() {
             @Override
             public void success(ApiResponse<SubCategoryApiResponse> subCategoryCallback, Response response) {
+                if (isSuspended()) return;
                 hideProgressView();
                 if (subCategoryCallback.status == 0) {
                     String responseVersion = subCategoryCallback.apiResponseContent.responseVersion;
@@ -110,17 +102,16 @@ public class SubCategoryListFragment extends BaseFragment {
                     }
                     renderSubCategory(responseVersion, response_ok, bannerArrayList, subCategoryModel);
                 } else {
-                    String errorMsg = subCategoryCallback.status == ExceptionUtil.INTERNAL_SERVER_ERROR ?
-                            getResources().getString(R.string.INTERNAL_SERVER_ERROR) : subCategoryCallback.message;
-                    showAlertDialog(getActivity(), null, errorMsg, DialogButton.OK, null, null, null, null);
+                    handler.sendEmptyMessage(subCategoryCallback.status);
                 }
 
             }
 
             @Override
             public void failure(RetrofitError error) {
+                if (isSuspended()) return;
                 hideProgressView();
-                showErrorMsg(getString(R.string.server_error));
+                handler.handleRetrofitError(error);
             }
         });
     }
@@ -298,7 +289,7 @@ public class SubCategoryListFragment extends BaseFragment {
     }
 
     private void renderBanner(final ArrayList<String> bannerArrList, LinearLayout contentView) {
-        if (bannerArrList==null || bannerArrList.size()==0) return;
+        if (bannerArrList == null || bannerArrList.size() == 0) return;
 
 //        final ArrayList<String> bannerArrList = new ArrayList<>();
 //        if (categoriesJsonObject.has(Constants.SUB_CATEGORY_BANNER_IMAGE)) {
@@ -310,49 +301,49 @@ public class SubCategoryListFragment extends BaseFragment {
 //                    bannerArrList.add(banner.get(im).getAsString());
 //                }
 //            }
-            if (bannerArrList.size() > 0) {
-                final LinearLayout childfirst1 = new LinearLayout(getActivity());
-                final LinearLayout.LayoutParams childParams1 =
-                        new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, imageheight);
-                childfirst1.setLayoutParams(childParams1);
-                childfirst1.setOrientation(LinearLayout.VERTICAL);
-                contentView.addView(childfirst1);
-                final ProgressBar parentprocessBar = new ProgressBar(getActivity(), null,
-                        android.R.attr.progressBarStyleInverse);
-                final LinearLayout.LayoutParams processBarParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT);
-                processBarParams.gravity = Gravity.CENTER;
-                parentprocessBar.setLayoutParams(processBarParams);
-                childfirst1.addView(parentprocessBar);
+        if (bannerArrList.size() > 0) {
+            final LinearLayout childfirst1 = new LinearLayout(getActivity());
+            final LinearLayout.LayoutParams childParams1 =
+                    new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, imageheight);
+            childfirst1.setLayoutParams(childParams1);
+            childfirst1.setOrientation(LinearLayout.VERTICAL);
+            contentView.addView(childfirst1);
+            final ProgressBar parentprocessBar = new ProgressBar(getActivity(), null,
+                    android.R.attr.progressBarStyleInverse);
+            final LinearLayout.LayoutParams processBarParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
+            processBarParams.gravity = Gravity.CENTER;
+            parentprocessBar.setLayoutParams(processBarParams);
+            childfirst1.addView(parentprocessBar);
 
-                final ImageView imageView = new ImageView(getActivity());
-                if (bannerArrList.size() > 1) {
-                    final Runnable runnable = new Runnable() {
-                        @Override
-                        public void run() {
+            final ImageView imageView = new ImageView(getActivity());
+            if (bannerArrList.size() > 1) {
+                final Runnable runnable = new Runnable() {
+                    @Override
+                    public void run() {
 
-                            final LinearLayout.LayoutParams processBarParams1 = new LinearLayout.LayoutParams(width, imageheight);
-                            imageView.setLayoutParams(processBarParams1);
-                            ImageLoader.getInstance().displayImage(bannerArrList.get(imageCounter), imageView);
-                            imageCounter++;
-                            if (imageCounter >= bannerArrList.size()) {
-                                imageCounter = 0;
-                            }
-                            childfirst1.postDelayed(this, 5000);
+                        final LinearLayout.LayoutParams processBarParams1 = new LinearLayout.LayoutParams(width, imageheight);
+                        imageView.setLayoutParams(processBarParams1);
+                        ImageLoader.getInstance().displayImage(bannerArrList.get(imageCounter), imageView);
+                        imageCounter++;
+                        if (imageCounter >= bannerArrList.size()) {
+                            imageCounter = 0;
                         }
-                    };
-                    childfirst1.postDelayed(runnable, 5000);
-                    childfirst1.removeAllViews();
-                    childfirst1.addView(imageView);
-                } else if (bannerArrList.size() == 1) {
-                    ImageLoader.getInstance().displayImage(bannerArrList.get(imageCounter), imageView);
-                    childfirst1.removeAllViews();
-                    childfirst1.addView(imageView);
-                } else {
-                    imageView.setBackgroundColor(0);
-                    imageView.setBackgroundResource(R.drawable.noimage);
-                }
+                        childfirst1.postDelayed(this, 5000);
+                    }
+                };
+                childfirst1.postDelayed(runnable, 5000);
+                childfirst1.removeAllViews();
+                childfirst1.addView(imageView);
+            } else if (bannerArrList.size() == 1) {
+                ImageLoader.getInstance().displayImage(bannerArrList.get(imageCounter), imageView);
+                childfirst1.removeAllViews();
+                childfirst1.addView(imageView);
+            } else {
+                imageView.setBackgroundColor(0);
+                imageView.setBackgroundResource(R.drawable.noimage);
             }
+        }
         //}
 
     }

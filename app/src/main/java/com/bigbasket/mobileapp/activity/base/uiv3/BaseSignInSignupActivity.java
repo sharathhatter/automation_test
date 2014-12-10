@@ -25,6 +25,7 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginConfirmActivity;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginApiResponse;
 import com.bigbasket.mobileapp.model.account.SocialAccount;
+import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.UIUtil;
 
@@ -171,19 +172,18 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity {
                             email, password, rememberMe);
                     break;
                 case Constants.ERROR:
-                    //TODO : Replace with handler
-                    switch (loginApiResponse.errorType) {
-                        case Constants.INVALID_USER_PASS:
-                            showAlertDialog(getCurrentActivity(), null, getString(R.string.INVALID_USER_PASS));
+                    switch (loginApiResponse.getErrorTypeAsInt()) {
+                        case ApiErrorCodes.INVALID_USER_PASSED:
+                            showAlertDialog(null, getString(R.string.INVALID_USER_PASS));
                             break;
-                        case Constants.NO_ACCOUNT:
+                        case ApiErrorCodes.NO_ACCOUNT:
                             Intent intent = new Intent(getCurrentActivity(), SocialLoginConfirmActivity.class);
                             intent.putExtra(Constants.SOCIAL_LOGIN_PARAMS, socialAccount);
                             intent.putExtra(Constants.SOCIAL_LOGIN_TYPE, loginType);
                             startActivityForResult(intent, Constants.SOCIAL_ACCOUNT_NOT_LINKED);
                             break;
                         default:
-                            showAlertDialog(getCurrentActivity(), null, getString(R.string.server_error));
+                            handler.sendEmptyMessage(loginApiResponse.getErrorTypeAsInt());
                             break;
                     }
                     break;
@@ -193,8 +193,7 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity {
         @Override
         public void failure(RetrofitError error) {
             showProgress(false);
-            //TODO : Replace with handler
-            showAlertDialog(getCurrentActivity(), null, getString(R.string.server_error));
+            handler.handleRetrofitError(error);
         }
     }
 

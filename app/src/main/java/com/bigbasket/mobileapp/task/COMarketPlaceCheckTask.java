@@ -1,7 +1,5 @@
 package com.bigbasket.mobileapp.task;
 
-import android.util.Log;
-
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
@@ -11,8 +9,6 @@ import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.model.order.MarketPlace;
-import com.bigbasket.mobileapp.util.ExceptionUtil;
-import com.bigbasket.mobileapp.util.MessageCode;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -50,10 +46,7 @@ public class COMarketPlaceCheckTask<T> {
                         ((COMarketPlaceAware) ctx).onCoMarketPlaceSuccess(marketPlaceApiResponse.apiResponseContent);
                         break;
                     default:
-                        String msg = marketPlaceApiResponse.status == ExceptionUtil.INTERNAL_SERVER_ERROR ?
-                                "Server Error" : marketPlaceApiResponse.message;
-                        // TODO : Improve handling
-                        ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
+                        ((HandlerAware) ctx).getHandler().sendEmptyMessage(marketPlaceApiResponse.status);
                         break;
                 }
             }
@@ -69,9 +62,7 @@ public class COMarketPlaceCheckTask<T> {
                         return;
                     }
                 }
-                // TODO : Improve handling
-                ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
-                Log.d(TAG, "Sending message: MessageCode.SERVER_ERROR");
+                ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
             }
         });
     }

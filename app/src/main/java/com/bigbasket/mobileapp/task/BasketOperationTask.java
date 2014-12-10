@@ -23,8 +23,8 @@ import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.product.Product;
+import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.MessageCode;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -92,7 +92,7 @@ public class BasketOperationTask<T> {
 
     public void startTask() {
         if (!((ConnectivityAware) context).checkInternetConnection()) {
-            ((HandlerAware) context).getHandler().sendEmptyMessage(MessageCode.INTERNET_ERROR);
+            ((HandlerAware) context).getHandler().sendOfflineError();
             return;
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.
@@ -142,24 +142,24 @@ public class BasketOperationTask<T> {
                     switch (cartOperationApiResponse.errorType) {
                         case Constants.BASKET_LIMIT_REACHED:
                             if (TextUtils.isEmpty(cartOperationApiResponse.message)) {
-                                ((HandlerAware) context).getHandler().sendEmptyMessage(MessageCode.BASKET_LIMIT_REACHED);
+                                ((HandlerAware) context).getHandler().sendEmptyMessage(ApiErrorCodes.BASKET_LIMIT_REACHED);
                             } else {
                                 if (context instanceof BaseFragment) {
                                     ((BaseFragment) context).showErrorMsg(cartOperationApiResponse.message);
                                 } else {
-                                    ((BaseActivity) context).showAlertDialog((BaseActivity) context,
+                                    ((BaseActivity) context).showAlertDialog(
                                             null, cartOperationApiResponse.message);
                                 }
                             }
                             break;
                         case Constants.PRODUCT_ID_NOT_FOUND:
                             ((HandlerAware) context).getHandler().
-                                    sendEmptyMessage(MessageCode.BASKET_EMPTY);
+                                    sendEmptyMessage(ApiErrorCodes.BASKET_EMPTY);
                             Log.d(TAG, "Sending message: MessageCode.BASKET_EMPTY");
                             break;
                         default:
-                            ((HandlerAware) context).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
-                            Log.d(TAG, "Sending message: MessageCode.SERVER_ERROR");
+                            ((HandlerAware) context).getHandler().sendEmptyMessage(ApiErrorCodes.SERVER_ERROR);
+                            Log.d(TAG, "Sending message: ApiErrorCodes.SERVER_ERROR");
                             break;
                     }
                     ((BasketOperationAware) context).updateUIAfterBasketOperationFailed(basketOperation,

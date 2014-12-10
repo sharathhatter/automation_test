@@ -17,7 +17,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListDetailsApiResponse;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
-import com.bigbasket.mobileapp.handler.MessageHandler;
+import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -88,6 +88,7 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
                 new Callback<ApiResponse<GetShoppingListDetailsApiResponse>>() {
                     @Override
                     public void success(ApiResponse<GetShoppingListDetailsApiResponse> getShoppingListDetailsApiResponse, Response response) {
+                        if (isSuspended()) return;
                         hideProgressView();
                         switch (getShoppingListDetailsApiResponse.status) {
                             case 0:
@@ -96,16 +97,16 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
                                 renderShoppingListItems();
                                 break;
                             default:
-                                // TODO : Improved json handling
-                                showErrorMsg("Server Error");
+                                handler.sendEmptyMessage(getShoppingListDetailsApiResponse.status);
                                 break;
                         }
                     }
 
                     @Override
                     public void failure(RetrofitError error) {
+                        if (isSuspended()) return;
                         hideProgressView();
-                        showErrorMsg("Server Error");
+                        handler.handleRetrofitError(error);
                     }
                 });
     }
@@ -162,7 +163,7 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
 
         ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
                 .setCommonTypeface(faceRobotoRegular)
-                .setHandler(new MessageHandler(getCurrentActivity()))
+                .setHandler(new BigBasketMessageHandler<>(getCurrentActivity()))
                 .setLoggedInMember(!AuthParameters.getInstance(getActivity()).isAuthTokenEmpty())
                 .setShowShoppingListBtn(true)
                 .setShowBasketBtn(true)

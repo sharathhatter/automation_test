@@ -10,7 +10,6 @@ import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.MessageCode;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -27,7 +26,7 @@ public class ShoppingListNamesTask<T> {
 
     public void startTask() {
         if (!((ConnectivityAware) ctx).checkInternetConnection()) {
-            ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.INTERNET_ERROR);
+            ((HandlerAware) ctx).getHandler().sendOfflineError();
             return;
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.
@@ -51,8 +50,7 @@ public class ShoppingListNamesTask<T> {
                         ((ShoppingListNamesAware) ctx).onShoppingListFetched(getShoppingListsApiResponse.shoppingListNames);
                         break;
                     default:
-                        // TODO : Add error handling
-                        ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
+                        ((HandlerAware) ctx).getHandler().sendEmptyMessage(getShoppingListsApiResponse.getErrorTypeAsInt());
                         break;
                 }
             }
@@ -68,7 +66,7 @@ public class ShoppingListNamesTask<T> {
                         return;
                     }
                 }
-                ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
+                ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
             }
         });
     }

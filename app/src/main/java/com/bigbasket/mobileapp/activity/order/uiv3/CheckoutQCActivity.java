@@ -37,6 +37,7 @@ import com.bigbasket.mobileapp.task.COReserveQuantityCheckTask;
 import com.bigbasket.mobileapp.task.CoUpdateReservationTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
@@ -49,8 +50,12 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        coReserveQuantity = getIntent().getParcelableExtra(Constants.CO_RESERVE_QTY_DATA);
+        doQc();
+    }
+
+    private void doQc() {
         //int qcLen = getIntent().getIntExtra(Constants.QC_LEN, -100);
+        coReserveQuantity = getIntent().getParcelableExtra(Constants.CO_RESERVE_QTY_DATA);
         if (coReserveQuantity.getQc_len() == 0) {
             launchAddressSelection();
         } else {
@@ -61,7 +66,7 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
     private void launchAddressSelection() {
         Intent intent = new Intent(this, BackButtonActivity.class);
         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ADDRESS_SELECTION);
-        startActivityForResult(intent, Constants.GO_TO_HOME);
+        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
     @Override
@@ -81,8 +86,7 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
     private void renderQcPage() {
         if (coReserveQuantity.isStatus()) {
             if (!coReserveQuantity.isQcHasErrors()) {
-                // TODO : Improve error handling
-                showAlertDialogFinish(this, null, getString(R.string.INTERNAL_SERVER_ERROR));
+                showAlertDialogFinish(null, getString(R.string.INTERNAL_SERVER_ERROR));
             } else {
                 createArrayListOfProducts();
             }
@@ -99,7 +103,7 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
             String pharmaPrescriptionId = prefer.getString(Constants.PHARMA_PRESCRIPTION_ID, null);
             new COReserveQuantityCheckTask<>(this, pharmaPrescriptionId).execute();
         } else {
-            showAlertDialog(this, null, getString(R.string.checkinternet), Constants.GO_TO_HOME_STRING);
+            showAlertDialog(null, getString(R.string.checkinternet), Constants.GO_TO_HOME_STRING);
         }
     }
 
@@ -124,7 +128,7 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
         } else {
             if (coReserveQuantity.isStatus()) {
                 if (!coReserveQuantity.isQcHasErrors()) {
-                    showAlertDialog(this, null, getString(R.string.checkinternet), Constants.GO_TO_HOME_STRING);
+                    showAlertDialog(null, getString(R.string.checkinternet), Constants.GO_TO_HOME_STRING);
                 } else {
                     createArrayListOfProducts();
                 }
@@ -177,7 +181,7 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
             }
             renderCheckOut(productWithNoStockList, productWithSomeStockList);
         } else {
-            showAlertDialogFinish(this, null, getString(R.string.INTERNAL_SERVER_ERROR));
+            showAlertDialogFinish(null, getString(R.string.INTERNAL_SERVER_ERROR));
         }
 
     }
@@ -348,7 +352,7 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
                                                     productWithSomeStockList.get(imgProductCheckOutQCAdditionalAction.getId()).getTopLevelCategorySlug());
                                             data.putExtra(Constants.TOP_CATEGORY_NAME,
                                                     productWithSomeStockList.get(imgProductCheckOutQCAdditionalAction.getId()).getCategoryName());
-                                            startActivityForResult(data, Constants.GO_TO_HOME);
+                                            startActivityForResult(data, NavigationCodes.GO_TO_HOME);
                                             return true;
                                         case R.id.menuDeleteQCProduct:
                                             new CoUpdateReservationTask<>(getCurrentActivity(),
@@ -384,7 +388,7 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
             });
             contentView.addView(btnContinue);
         } else {
-            showAlertDialogFinish(this, null, getString(R.string.INTERNAL_SERVER_ERROR));
+            showAlertDialogFinish(null, getString(R.string.INTERNAL_SERVER_ERROR));
         }
 
     }
@@ -401,5 +405,15 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
             txtOutOfStockMsg2.setVisibility(View.VISIBLE);
         }
         linearLayoutViewQC.addView(view);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == NavigationCodes.GO_TO_QC) {
+            mAlreadyRunning = false;
+            doQc();
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 }

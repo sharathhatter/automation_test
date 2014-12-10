@@ -18,7 +18,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
-import android.widget.*;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.ScrollView;
+import android.widget.TextView;
+
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
@@ -26,23 +32,18 @@ import com.bigbasket.mobileapp.adapter.order.MultipleImagesPrescriptionAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
-import com.bigbasket.mobileapp.model.account.UpdatePin;
 import com.bigbasket.mobileapp.model.order.PrescriptionId;
-import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.task.COReserveQuantityCheckTask;
 import com.bigbasket.mobileapp.task.UploadImageService;
-import com.bigbasket.mobileapp.util.*;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import org.apache.http.impl.client.BasicCookieStore;
+import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.DataUtil;
+import com.bigbasket.mobileapp.util.ImageUtil;
+import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.UIUtil;
 import com.luminous.pick.Action;
 
-import java.io.*;
-import java.net.NetworkInterface;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -150,7 +151,7 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
             } else {
                 msg = "Following fields are mandatory: " + UIUtil.sentenceJoin(missingFields);
             }
-            showAlertDialog(this, null, msg);
+            showAlertDialog(null, msg);
             return;
         }
 
@@ -184,35 +185,45 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
     }
     */
 
-    private void serverCallForUploadPrescription(){
-        if(!DataUtil.isInternetAvailable(getCurrentActivity())) {return;}
+    private void serverCallForUploadPrescription() {
+        if (!DataUtil.isInternetAvailable(getCurrentActivity())) {
+            return;
+        }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressDialog(getResources().getString(R.string.please_wait));
         bigBasketApiService.uploadPrescription(editTextPatientName.getText().toString(),
-                                                editTextDoctorName.getText().toString(),
-                                                editTextPrescriptionName.getText().toString(),
-                                                new Callback<ApiResponse<PrescriptionId>>() {
-            @Override
-            public void success(ApiResponse<PrescriptionId> prescriptionIdApiResponse, Response response) {
-                hideProgressDialog();
-                if(prescriptionIdApiResponse.status==0 && prescriptionIdApiResponse.message.equals(Constants.SUCCESS)){
-                    String prescriptionId = prescriptionIdApiResponse.apiResponseContent.pharmaPrescriptionId;
-                    ImageUtil.insertToDB(prescriptionId, arrayListByteArray);
-                    startService(new Intent(getCurrentActivity(), UploadImageService.class));
-                    gotoQCActivity(prescriptionId);
-                }else {
-                    String errorMsg = prescriptionIdApiResponse.status == ExceptionUtil.INTERNAL_SERVER_ERROR ?
-                            getResources().getString(R.string.imageUploadFailed):prescriptionIdApiResponse.message;
-                    showAlertDialog(getCurrentActivity(), null, errorMsg);
-                }
-            }
+                editTextDoctorName.getText().toString(),
+                editTextPrescriptionName.getText().toString(),
+                new Callback<ApiResponse<PrescriptionId>>() {
+                    @Override
+                    public void success(ApiResponse<PrescriptionId> prescriptionIdApiResponse, Response response) {
+                        if (isSuspended()) return;
+                        try {
+                            hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
+                        if (prescriptionIdApiResponse.status == 0 && prescriptionIdApiResponse.message.equals(Constants.SUCCESS)) {
+                            String prescriptionId = prescriptionIdApiResponse.apiResponseContent.pharmaPrescriptionId;
+                            ImageUtil.insertToDB(prescriptionId, arrayListByteArray);
+                            startService(new Intent(getCurrentActivity(), UploadImageService.class));
+                            gotoQCActivity(prescriptionId);
+                        } else {
+                            handler.sendEmptyMessage(prescriptionIdApiResponse.status);
+                        }
+                    }
 
-            @Override
-            public void failure(RetrofitError error) {
-                hideProgressDialog();
-                showAlertDialog("server error");
-            }
-        });
+                    @Override
+                    public void failure(RetrofitError error) {
+                        if (isSuspended()) return;
+                        try {
+                            hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
+                        handler.handleRetrofitError(error);
+                    }
+                });
     }
 
     /*
@@ -240,10 +251,10 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
     */
 
 
-    private void gotoQCActivity(String prescriptionId){
+    private void gotoQCActivity(String prescriptionId) {
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = prefer.edit();
-        editor.putString(Constants.PHARMA_PRESCRIPTION_ID,prescriptionId);
+        editor.putString(Constants.PHARMA_PRESCRIPTION_ID, prescriptionId);
         editor.commit();
         new COReserveQuantityCheckTask<>(getCurrentActivity(), prescriptionId).execute();
 
@@ -256,21 +267,21 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
         Intent intent = new Intent(getCurrentActivity(), CheckoutQCActivity.class);
         intent.putExtra(Constants.CO_RESERVE_QTY_DATA, coReserveQuantity);
         //intent.putExtra(Constants.QC_LEN, coReserveQuantity.getQc_len());
-        startActivityForResult(intent, Constants.GO_TO_HOME);
+        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
-    private void showDialogMoreThen5Images(){
-        showAlertDialog(getCurrentActivity(), null, "You can't upload more than 5 images", Constants.MORE_IMAGES);
+    private void showDialogMoreThen5Images() {
+        showAlertDialog(null, "You can't upload more than 5 images", Constants.MORE_IMAGES);
     }
 
     protected void onPositiveButtonClicked(DialogInterface dialogInterface, int id, String sourceName) {
         super.onPositiveButtonClicked(dialogInterface, id, sourceName, null);
         if (sourceName != null) {
-            if(sourceName.equals(Constants.MORE_IMAGES)){
+            if (sourceName.equals(Constants.MORE_IMAGES)) {
                 uploadImageList.clear();
                 txtViewImages.setVisibility(View.GONE);
                 return;
-            }else if(sourceName.equals(Constants.LARGE_SIZE_IMAGE)){
+            } else if (sourceName.equals(Constants.LARGE_SIZE_IMAGE)) {
                 uploadImageList.clear();
                 txtViewImages.setVisibility(View.GONE);
                 return;
@@ -279,12 +290,12 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 100 && resultCode == Activity.RESULT_OK) {
         } else if (requestCode == 200 && resultCode == Activity.RESULT_OK) {
             all_path = data.getStringArrayExtra("all_path");
-            if(all_path != null && all_path.length>5){
+            if (all_path != null && all_path.length > 5) {
                 showDialogMoreThen5Images();
                 return;
             }
@@ -295,7 +306,8 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
 
     private class SamplePrescriptionImage extends AsyncTask<String, Long, Void> {
 
-        private  ProgressDialog progressDialog;
+        private ProgressDialog progressDialog;
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -337,11 +349,11 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
         }
     };
 
-    private void doSampling(){
-        boolean notBreak= true;
-        for(int i=0; i<all_path.length; i++){
-            byte[] imageByte= sampleImage(all_path[i]);
-            if(imageByte == null) {
+    private void doSampling() {
+        boolean notBreak = true;
+        for (int i = 0; i < all_path.length; i++) {
+            byte[] imageByte = sampleImage(all_path[i]);
+            if (imageByte == null) {
                 uploadImageList.clear();
                 arrayListByteArray.clear();
                 notBreak = false;
@@ -349,13 +361,13 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
             }
             arrayListByteArray.add(imageByte);
         }
-        if(all_path.length>1)
+        if (all_path.length > 1)
             txtViewImages.setText(getResources().getString(R.string.viewPrescriptionImages));
-        if(notBreak)
+        if (notBreak)
             txtViewImages.setVisibility(View.VISIBLE);
     }
 
-    private byte[] sampleImage(String filePath){
+    private byte[] sampleImage(String filePath) {
         Bitmap bmpPic = ImageUtil.getBitmap(filePath, getCurrentActivity());
         int compressQuality = 100;
         ByteArrayOutputStream bmpStream = new ByteArrayOutputStream();
@@ -374,7 +386,7 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
 //        showPrescriptionImageDialog(uploadImageList);
 //    }
 
-    private void showPrescriptionImageDialog(ArrayList<Object> uploadImageList){
+    private void showPrescriptionImageDialog(ArrayList<Object> uploadImageList) {
         final Dialog prescriptionImageDialog = new Dialog(this);
         prescriptionImageDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         prescriptionImageDialog.setCanceledOnTouchOutside(true);

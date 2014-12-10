@@ -44,8 +44,6 @@ import com.bigbasket.mobileapp.model.order.PrescriptionId;
 import com.bigbasket.mobileapp.model.product.ProductListData;
 import com.bigbasket.mobileapp.util.Constants;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;

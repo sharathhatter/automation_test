@@ -108,8 +108,6 @@ public class HomeFragment extends BaseSectionFragment {
                                 if (getCurrentActivity() == null) return;
                                 getCurrentActivity().onLogoutRequested();
                                 getActivity().finish();
-                                // TODO : Improve error handling
-                                showErrorMsg("Server Error");
                                 break;
                         }
                     }
@@ -122,8 +120,7 @@ public class HomeFragment extends BaseSectionFragment {
                         } catch (IllegalArgumentException e) {
                             return;
                         }
-                        // TODO : Improve error handling
-                        showErrorMsg("Server Error");
+                        handler.handleRetrofitError(error);
                     }
                 });
     }

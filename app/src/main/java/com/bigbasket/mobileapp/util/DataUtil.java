@@ -7,7 +7,6 @@ import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.model.request.HttpRequestData;
 
@@ -29,8 +28,6 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -57,7 +54,7 @@ public class DataUtil {
     }};
 
     public static boolean isInternetAvailable(Context context) {
-        return getConnectionStatus(context) == MessageCode.NET_CONNECTED;
+        return getConnectionStatus(context) == NetworkStatusCodes.NET_CONNECTED;
     }
 
     public static int getConnectionStatus(Context context) {
@@ -65,12 +62,12 @@ public class DataUtil {
         NetworkInfo networkInfo = conMgr.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isAvailable()) {
             if (networkInfo.isConnected()) {
-                return MessageCode.NET_CONNECTED;
+                return NetworkStatusCodes.NET_CONNECTED;
             } else if (networkInfo.getState() == NetworkInfo.State.CONNECTING) {
-                return MessageCode.NET_CONNECTING;
+                return NetworkStatusCodes.NET_CONNECTING;
             }
         }
-        return MessageCode.NET_DISCONNECTED;
+        return NetworkStatusCodes.NET_DISCONNECTED;
     }
 
     public static HttpOperationResult doHttpGet(HttpRequestData httpRequestData) {
@@ -118,7 +115,7 @@ public class DataUtil {
             response = client.execute(httpGet);
             int responseCode = response.getStatusLine().getStatusCode();
             Log.d(TAG, "Response Code: " + responseCode);
-            if (responseCode == HttpCode.HTTP_OK) {
+            if (responseCode == HttpStatus.SC_OK) {
                 BufferedReader reader = new BufferedReader(new
                         InputStreamReader(response.getEntity().getContent(), HTTP.UTF_8));
                 String strResultJson = reader.readLine();

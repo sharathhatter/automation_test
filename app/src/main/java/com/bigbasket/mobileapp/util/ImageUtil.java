@@ -47,7 +47,7 @@ public class ImageUtil {
             int dstWidth = inHeight;
             int imageSizeInMB = (dstHeight * dstWidth) / (1024 * 1024);
             if (imageSizeInMB > 18) {
-                baseActivity.showAlertDialog(baseActivity, null, "Please upload image size less than 6MB", Constants.LARGE_SIZE_IMAGE);
+                baseActivity.showAlertDialog(null, "Please upload image size less than 6MB", Constants.LARGE_SIZE_IMAGE);
                 return null;
             }
             while (imageSizeInMB > 1) { // previously 1
@@ -96,7 +96,7 @@ public class ImageUtil {
             Log.d("*******************************", " Re-Creating Bit map");
             ImageLoader.getInstance().clearDiskCache();
             ImageLoader.getInstance().clearMemoryCache();
-            baseActivity.showAlertDialog(baseActivity, null, "Please upload image size less than 6MB", Constants.LARGE_SIZE_IMAGE);
+            baseActivity.showAlertDialog(null, "Please upload image size less than 6MB", Constants.LARGE_SIZE_IMAGE);
             return null;
         }
 

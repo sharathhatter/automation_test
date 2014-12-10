@@ -53,7 +53,7 @@ public class Order implements Parcelable {
         this.deliveryDate = parcel.readString();
         this.itemsCount = parcel.readInt();
         this.orderStatus = parcel.readString();
-        this.orderValue = parcel.readString(); // todo null handling
+        this.orderValue = parcel.readString();
         this.fulfillmentInfo = parcel.readParcelable(Order.class.getClassLoader());
     }
 
@@ -64,7 +64,7 @@ public class Order implements Parcelable {
         dest.writeString(this.deliveryDate);
         dest.writeInt(this.itemsCount);
         dest.writeString(this.orderStatus);
-        dest.writeString(this.orderValue);
+        dest.writeString(this.orderValue != null ? this.orderValue : "0");
         dest.writeParcelable(this.fulfillmentInfo, flags);
     }
 

@@ -3,7 +3,6 @@ package com.bigbasket.mobileapp.activity.order.uiv3;
 import android.view.MenuItem;
 
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
-import com.bigbasket.mobileapp.util.Constants;
 
 public class OrderInvoiceActivity extends BackButtonActivity {
 

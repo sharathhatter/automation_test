@@ -1,7 +1,6 @@
 package com.bigbasket.mobileapp.activity.order;
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,14 +11,11 @@ import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
@@ -31,11 +27,11 @@ import com.bigbasket.mobileapp.apiservice.callbacks.CallbackGetAreaInfo;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.CreateUpdateAddressApiResponseContent;
 import com.bigbasket.mobileapp.fragment.account.OTPValidationDialogFragment;
-import com.bigbasket.mobileapp.fragment.account.UpdateProfileFragment;
 import com.bigbasket.mobileapp.interfaces.PinCodeAware;
 import com.bigbasket.mobileapp.model.account.Address;
+import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.ExceptionUtil;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 
 import java.util.HashMap;
 
@@ -266,7 +262,12 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
 
         @Override
         public void success(ApiResponse<CreateUpdateAddressApiResponseContent> createUpdateAddressApiResponse, Response response) {
-            hideProgressDialog();
+            if (isSuspended()) return;
+            try {
+                hideProgressDialog();
+            } catch (IllegalArgumentException e) {
+                return;
+            }
             switch (createUpdateAddressApiResponse.status) {
                 case 0:
                     if (address == null) {
@@ -281,45 +282,45 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
                         BaseActivity.hideKeyboard(getCurrentActivity(), otpDialog.getView());
                     }
                     break;
-                case Constants.NUMBER_USED_BY_ANOTHER_MEMBER:
+                case ApiErrorCodes.NUMBER_IN_USE:
                     mErrorMsg = createUpdateAddressApiResponse.message;
                     hRefresh.sendEmptyMessage(Constants.MOBILE_NUMBER_USED_BY_ANOTHER_MEMBER);
                     break;
-                case Constants.OPT_NEEDED:
+                case ApiErrorCodes.OTP_NEEDED:
                     mErrorMsg = createUpdateAddressApiResponse.message;
                     hRefresh.sendEmptyMessage(Constants.VALIDATE_MOBILE_NUMBER_POPUP);
                     break;
-                case Constants.INVALID_OTP:
+                case ApiErrorCodes.OTP_INVALID:
                     mErrorMsg = createUpdateAddressApiResponse.message;
                     hRefresh.sendEmptyMessage(Constants.VALIDATE_MOBILE_NUMBER_POPUP_ERROR_MSG);
                     break;
-                case ExceptionUtil.INTERNAL_SERVER_ERROR:
-                    showAlertDialog(getCurrentActivity(), "BigBasket", "Server Error");
-                    break;
                 default:
-                    String msg = createUpdateAddressApiResponse.message;
-                    showAlertDialog(getCurrentActivity(), "BigBasket", msg);
+                    handler.sendEmptyMessage(createUpdateAddressApiResponse.status);
                     break;
             }
         }
 
         @Override
         public void failure(RetrofitError error) {
-            hideProgressDialog();
-            showAlertDialog(getCurrentActivity(), null, "Server Error");
-            // TODO : Improve error handling
+            if (isSuspended()) return;
+            try {
+                hideProgressDialog();
+            } catch (IllegalArgumentException e) {
+                return;
+            }
+            handler.handleRetrofitError(error);
         }
     }
 
     private void addressCreatedModified(String addressId) {
         Intent result = new Intent();
         result.putExtra(Constants.MEMBER_ADDRESS_ID, addressId);
-        setResult(Constants.ADDRESS_CREATED_MODIFIED, result);
+        setResult(NavigationCodes.ADDRESS_CREATED_MODIFIED, result);
         finish();
     }
 
     private void addressCreatedModified() {
-        setResult(Constants.ADDRESS_CREATED_MODIFIED);
+        setResult(NavigationCodes.ADDRESS_CREATED_MODIFIED);
         finish();
     }
 
@@ -362,6 +363,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
 
     public static class OTPDialog extends OTPValidationDialogFragment {
         private MemberAddressFormActivity memberAddressFormActivity;
+
         public OTPDialog() {
         }
 

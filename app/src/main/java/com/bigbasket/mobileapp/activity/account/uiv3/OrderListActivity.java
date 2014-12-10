@@ -31,7 +31,9 @@ import com.bigbasket.mobileapp.interfaces.InvoiceDataAware;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.model.order.OrderMonthRange;
+import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 
 import java.util.ArrayList;
 
@@ -78,7 +80,12 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
                 new Callback<OrderListApiResponse>() {
                     @Override
                     public void success(OrderListApiResponse orderListApiResponse, Response response) {
-                        hideProgressDialog();
+                        if (isSuspended()) return;
+                        try {
+                            hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
                         switch (orderListApiResponse.status) {
                             case Constants.OK:
                                 orders = orderListApiResponse.orders;
@@ -87,17 +94,25 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
                                 renderOrderList();
                                 break;
                             default:
-                                // TODO : Add error handling
-                                showAlertDialogFinish(getCurrentActivity(), null, "Server Error");
+                                if (orderListApiResponse.errorType.equals(String.valueOf(ApiErrorCodes.INVALID_FIELD))) {
+                                    showApiErrorDialog("This is not a valid order number");
+                                } else {
+                                    handler.sendEmptyMessage(Integer.parseInt(orderListApiResponse.errorType),
+                                            orderListApiResponse.message);
+                                }
                                 break;
                         }
                     }
 
                     @Override
                     public void failure(RetrofitError error) {
-                        hideProgressDialog();
-                        // TODO : Add error handling
-                        showAlertDialogFinish(getCurrentActivity(), null, "Server Error");
+                        if (isSuspended()) return;
+                        try {
+                            hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
+                        handler.handleRetrofitError(error);
                     }
                 });
     }
@@ -223,6 +238,6 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
     public void onDisplayOrderInvoice(OrderInvoice orderInvoice) {
         Intent orderDetailIntent = new Intent(getCurrentActivity(), OrderDetailActivity.class);
         orderDetailIntent.putExtra(Constants.ORDER_REVIEW_SUMMARY, orderInvoice);
-        startActivityForResult(orderDetailIntent, Constants.GO_TO_HOME);
+        startActivityForResult(orderDetailIntent, NavigationCodes.GO_TO_HOME);
     }
 }

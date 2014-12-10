@@ -13,7 +13,7 @@ import com.bigbasket.mobileapp.model.product.FilterOptionItem;
 import com.bigbasket.mobileapp.model.product.FilteredOn;
 import com.bigbasket.mobileapp.model.product.ProductListData;
 import com.bigbasket.mobileapp.model.product.ProductQuery;
-import com.bigbasket.mobileapp.util.MessageCode;
+import com.bigbasket.mobileapp.util.ApiErrorCodes;
 
 import java.util.ArrayList;
 
@@ -86,7 +86,7 @@ public class ProductListTask<T> {
                         ((ProductListDataAware) ctx).updateData();
                     }
                 } else {
-                    ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
+                    ((HandlerAware) ctx).getHandler().sendEmptyMessage(ApiErrorCodes.SERVER_ERROR);
                 }
             }
 
@@ -100,7 +100,7 @@ public class ProductListTask<T> {
                         return;
                     }
                 }
-                ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
+                ((HandlerAware) ctx).getHandler().sendEmptyMessage(ApiErrorCodes.SERVER_ERROR);
             }
         });
     }

@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.view.uiv2;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.support.v7.widget.PopupMenu;
@@ -21,7 +22,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.adapter.product.ProductListSpinnerAdapter;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.common.ProductViewHolder;
@@ -38,8 +39,9 @@ import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
 import com.bigbasket.mobileapp.task.BasketOperationTask;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListDoAddDeleteTask;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListNamesTask;
-import com.bigbasket.mobileapp.util.DataUtil;
-import com.bigbasket.mobileapp.util.MessageCode;
+import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -51,19 +53,19 @@ public final class ProductView {
     public static <T> void setProductView(final ProductViewHolder productViewHolder, final Product product, String baseImgUrl,
                                           ProductDetailOnClickListener productDetailOnClickListener,
                                           ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                          final BaseActivity context, final boolean skipChildDropDownRendering,
+                                          final boolean skipChildDropDownRendering,
                                           final T productDataAware) {
         setProductImage(productViewHolder, product, baseImgUrl, productDetailOnClickListener);
         setIsNewAndBby(productViewHolder, product);
         if (!skipChildDropDownRendering) {
-            setChildProducts(productViewHolder, product, context, baseImgUrl, productViewDisplayDataHolder, productDataAware);
+            setChildProducts(productViewHolder, product, baseImgUrl, productViewDisplayDataHolder, productDataAware);
         }
         setProductBrand(productViewHolder, product, productViewDisplayDataHolder, productDetailOnClickListener);
         setProductDesc(productViewHolder, product, productViewDisplayDataHolder, productDetailOnClickListener);
-        setPrice(productViewHolder, product, productViewDisplayDataHolder, context);
-        setPromo(productViewHolder, product, productViewDisplayDataHolder, context);
-        setProductAdditionalActionMenu(productViewHolder, product, productViewDisplayDataHolder, context, productDataAware);
-        setBasketAndAvailabilityViews(productViewHolder, product, productViewDisplayDataHolder, context, productDataAware);
+        setPrice(productViewHolder, product, productViewDisplayDataHolder);
+        setPromo(productViewHolder, product, productViewDisplayDataHolder, productDataAware);
+        setProductAdditionalActionMenu(productViewHolder, product, productViewDisplayDataHolder, productDataAware);
+        setBasketAndAvailabilityViews(productViewHolder, product, productViewDisplayDataHolder, productDataAware);
     }
 
     private static void setProductImage(ProductViewHolder productViewHolder, Product product, String baseImgUrl,
@@ -89,7 +91,7 @@ public final class ProductView {
         }
     }
 
-    private static <T> void setChildProducts(final ProductViewHolder productViewHolder, Product product, final BaseActivity context,
+    private static <T> void setChildProducts(final ProductViewHolder productViewHolder, Product product,
                                              final String baseImgUrl,
                                              final ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                              final T productDataAware) {
@@ -98,7 +100,7 @@ public final class ProductView {
         Spinner spinnerPackageDesc = productViewHolder.getSpinnerPackageDesc();
         TextView packageDescTxtView = productViewHolder.getPackageDescTextView();
         if (hasChildren) {
-            ProductListSpinnerAdapter productListSpinnerAdapter = new ProductListSpinnerAdapter(context, android.R.layout.simple_spinner_item,
+            ProductListSpinnerAdapter productListSpinnerAdapter = new ProductListSpinnerAdapter(((ActivityAware) productDataAware).getCurrentActivity(), android.R.layout.simple_spinner_item,
                     childProducts, productViewDisplayDataHolder.getSansSerifMediumTypeface(),
                     productViewDisplayDataHolder.getRupeeTypeface());
             spinnerPackageDesc.setAdapter(productListSpinnerAdapter);
@@ -109,7 +111,7 @@ public final class ProductView {
                     Product childProduct = childProducts.get(position);
                     setProductView(productViewHolder, childProduct, baseImgUrl,
                             new ProductDetailOnClickListener(childProduct.getSku(), (ActivityAware) productDataAware),
-                            productViewDisplayDataHolder, context, true, productDataAware);
+                            productViewDisplayDataHolder, true, productDataAware);
                 }
 
                 @Override
@@ -153,8 +155,7 @@ public final class ProductView {
     }
 
     private static void setPrice(ProductViewHolder productViewHolder, Product product,
-                                 ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                 BaseActivity context) {
+                                 ProductViewDisplayDataHolder productViewDisplayDataHolder) {
         TextView labelMrp = productViewHolder.getLabelMrp();
         TextView txtSalePrice = productViewHolder.getTxtSalePrice();
         boolean hasSavings = product.hasSavings();
@@ -204,8 +205,8 @@ public final class ProductView {
         txtSalePrice.setText(UIUtil.asRupeeSpannable(product.getSellPrice(), productViewDisplayDataHolder.getRupeeTypeface()));
     }
 
-    private static void setPromo(ProductViewHolder productViewHolder, Product product, ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                 final BaseActivity context) {
+    private static <T> void setPromo(ProductViewHolder productViewHolder, Product product, ProductViewDisplayDataHolder productViewDisplayDataHolder,
+                                     final T activityAware) {
         TextView txtPromoLabel = productViewHolder.getTxtPromoLabel();
         TextView txtPromoDesc = productViewHolder.getTxtPromoDesc();
         TextView txtPromoAddSavings = productViewHolder.getTxtPromoAddSavings();
@@ -248,11 +249,10 @@ public final class ProductView {
             View.OnClickListener promoOnClickListener = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    Intent promoDetailIntent = new Intent(context,
-//                            PromoDetailActivity.class);
-//                    promoDetailIntent.putExtra(Constants.PROMO_ID, promoId);
-//                    context.startActivityForResult(promoDetailIntent, Constants.GO_TO_HOME);
-                    // TODO : Replace this with equivalent fragment call
+                    Intent promoDetailIntent = new Intent(((ActivityAware) activityAware).getCurrentActivity(), BackButtonActivity.class);
+                    promoDetailIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PROMO_DETAIL);
+                    promoDetailIntent.putExtra(Constants.PROMO_ID, promoId);
+                    ((ActivityAware) activityAware).getCurrentActivity().startActivityForResult(promoDetailIntent, NavigationCodes.GO_TO_HOME);
                 }
             };
             txtPromoDesc.setOnClickListener(promoOnClickListener);
@@ -266,16 +266,15 @@ public final class ProductView {
 
     private static <T> void setProductAdditionalActionMenu(ProductViewHolder productViewHolder, final Product product,
                                                            final ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                                           final BaseActivity context,
                                                            final T shoppingListNamesAware) {
         final ImageView imgProductAdditionalAction = productViewHolder.getImgProductAdditionalAction();
-        setShoppingDeleteButton(productViewHolder, product, productViewDisplayDataHolder, context, shoppingListNamesAware);
+        setShoppingDeleteButton(productViewHolder, product, productViewDisplayDataHolder, shoppingListNamesAware);
         if (productViewDisplayDataHolder.isShowShoppingListBtn() && productViewDisplayDataHolder.isLoggedInMember()
                 && !product.getProductStatus().equalsIgnoreCase("N")) {
             imgProductAdditionalAction.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    PopupMenu popupMenu = new PopupMenu(context, v);
+                    PopupMenu popupMenu = new PopupMenu(((ActivityAware) shoppingListNamesAware).getCurrentActivity(), v);
                     MenuInflater menuInflater = popupMenu.getMenuInflater();
                     menuInflater.inflate(R.menu.product_menu, popupMenu.getMenu());
                     popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -301,7 +300,6 @@ public final class ProductView {
 
     private static <T> void setShoppingDeleteButton(ProductViewHolder productViewHolder, final Product product,
                                                     final ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                                    final BaseActivity context,
                                                     final T shoppingListNamesAware) {
 
         // for logged in user display add to list icon
@@ -312,7 +310,7 @@ public final class ProductView {
             imgShoppingListDel.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(((ActivityAware) shoppingListNamesAware).getCurrentActivity());
 
                     // set title
                     alertDialogBuilder.setTitle("BigBasket");
@@ -334,7 +332,7 @@ public final class ProductView {
                                                 ((ShoppingListNamesAware) shoppingListNamesAware).setSelectedProductId(product.getSku());
                                                 shoppingListDoAddDeleteTask.startTask();
                                             } else {
-                                                context.showToast("No internet connection found!");
+                                                ((ActivityAware) shoppingListNamesAware).getCurrentActivity().showToast("No internet connection found!");
                                             }
                                         }
                                     }
@@ -362,7 +360,6 @@ public final class ProductView {
 
     private static <T> void setBasketAndAvailabilityViews(ProductViewHolder productViewHolder, final Product product,
                                                           final ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                                          final BaseActivity context,
                                                           final T basketOperationAware) {
         final Button btnAddToBasket = productViewHolder.getBtnAddToBasket();
         final ImageView imgDecBasketQty = productViewHolder.getImgDecBasketQty();
@@ -399,14 +396,14 @@ public final class ProductView {
                 imgIncBasketQty.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if (DataUtil.isInternetAvailable(context) && !TextUtils.isEmpty(editTextQty.getText())) {
+                        if (((ConnectivityAware) basketOperationAware).checkInternetConnection() && !TextUtils.isEmpty(editTextQty.getText())) {
                             BasketOperationTask<T> basketOperationTask = new BasketOperationTask<>(basketOperationAware,
                                     BasketOperation.INC, product,
                                     txtInBasket, imgDecBasketQty, imgIncBasketQty, btnAddToBasket, editTextQty);
                             basketOperationTask.startTask();
 
                         } else {
-                            productViewDisplayDataHolder.getHandler().sendEmptyMessage(MessageCode.INTERNET_ERROR);
+                            productViewDisplayDataHolder.getHandler().sendOfflineError();
                         }
                     }
                 });
@@ -414,13 +411,13 @@ public final class ProductView {
                 imgDecBasketQty.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if (DataUtil.isInternetAvailable(context) && !TextUtils.isEmpty(editTextQty.getText())) {
+                        if (((ConnectivityAware) basketOperationAware).checkInternetConnection() && !TextUtils.isEmpty(editTextQty.getText())) {
                             BasketOperationTask<T> myTask = new BasketOperationTask<>(basketOperationAware,
                                     BasketOperation.DEC,
                                     product, txtInBasket, imgDecBasketQty, imgIncBasketQty, btnAddToBasket, editTextQty);
                             myTask.startTask();
                         } else {
-                            productViewDisplayDataHolder.getHandler().sendEmptyMessage(MessageCode.INTERNET_ERROR);
+                            productViewDisplayDataHolder.getHandler().sendOfflineError();
                         }
                     }
 
@@ -429,9 +426,9 @@ public final class ProductView {
                 btnAddToBasket.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if (DataUtil.isInternetAvailable(context) && !TextUtils.isEmpty(editTextQty.getText())) {
+                        if (((ConnectivityAware) basketOperationAware).checkInternetConnection() && !TextUtils.isEmpty(editTextQty.getText())) {
                             if (TextUtils.isEmpty(editTextQty.getText().toString())) {
-                                context.showToast("Please enter a valid quantity");
+                                ((ActivityAware) basketOperationAware).getCurrentActivity().showToast("Please enter a valid quantity");
                                 return;
                             }
                             String qty = editTextQty.getText() != null ? editTextQty.getText().toString() : "1";
@@ -440,7 +437,7 @@ public final class ProductView {
                                     txtInBasket, imgDecBasketQty, imgIncBasketQty, btnAddToBasket, editTextQty, qty);
                             basketOperationTask.startTask();
                         } else {
-                            productViewDisplayDataHolder.getHandler().sendEmptyMessage(MessageCode.INTERNET_ERROR);
+                            productViewDisplayDataHolder.getHandler().sendOfflineError();
                         }
                     }
                 });

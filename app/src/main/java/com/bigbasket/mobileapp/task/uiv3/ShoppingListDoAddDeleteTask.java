@@ -14,7 +14,7 @@ import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.MessageCode;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -39,8 +39,7 @@ public class ShoppingListDoAddDeleteTask<T> {
 
     public void startTask() {
         if (!((ConnectivityAware) ctx).checkInternetConnection()) {
-            ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.INTERNET_ERROR);
-            Log.d(TAG, "Sending message: MessageCode.INTERNET_ERROR");
+            ((HandlerAware) ctx).getHandler().sendOfflineError();
             return;
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.
@@ -80,19 +79,18 @@ public class ShoppingListDoAddDeleteTask<T> {
                 case Constants.OK:
                     switch (shoppingListOption) {
                         case ADD_TO_LIST:
-                            ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.ADD_TO_SHOPPINGLIST_OK);
+                            ((HandlerAware) ctx).getHandler().sendEmptyMessage(NavigationCodes.ADD_TO_SHOPPINGLIST_OK);
                             Log.d(TAG, "Sending message: MessageCode.ADD_TO_SHOPPINGLIST_OK");
                             break;
                         case DELETE_ITEM:
-                            ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.DELETE_FROM_SHOPPING_LIST_OK);
+                            ((HandlerAware) ctx).getHandler().sendEmptyMessage(NavigationCodes.DELETE_FROM_SHOPPING_LIST_OK);
                             ((ShoppingListNamesAware) ctx).postShoppingListItemDeleteOperation();
                             Log.d(TAG, "Sending message: MessageCode.DELETE_FROM_SHOPPING_LIST_OK");
                             break;
                     }
                     break;
                 default:
-                    // TODO : Improve error handling
-                    ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
+                    ((HandlerAware) ctx).getHandler().sendEmptyMessage(oldBaseApiResponse.getErrorTypeAsInt());
                     break;
             }
         }
@@ -108,7 +106,7 @@ public class ShoppingListDoAddDeleteTask<T> {
                     return;
                 }
             }
-            ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
+            ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
         }
     }
 }

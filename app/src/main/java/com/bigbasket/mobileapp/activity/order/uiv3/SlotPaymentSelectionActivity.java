@@ -31,15 +31,12 @@ import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.order.ActiveVouchers;
 import com.bigbasket.mobileapp.model.order.OrderSummary;
 import com.bigbasket.mobileapp.model.order.PaymentType;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.model.slot.SelectedSlotType;
 import com.bigbasket.mobileapp.model.slot.SlotGroup;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.ParserUtil;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
 
@@ -58,6 +55,11 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle("Checkout");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         loadSlotsAndPayments();
     }
 
@@ -92,8 +94,7 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
                                         postDeliveryAddressApiResponse.apiResponseContent.paymentTypes);
                                 break;
                             case Constants.ERROR:
-                                // TODO : Change this later on
-                                showAlertDialog("Server Error");
+                                handler.sendEmptyMessage(postDeliveryAddressApiResponse.getErrorTypeAsInt());
                                 break;
                         }
                     }
@@ -106,8 +107,7 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
                         } catch (IllegalArgumentException e) {
                             return;
                         }
-                        // TODO : Change this later on
-                        showAlertDialog("Server Error");
+                        handler.handleRetrofitError(error);
                     }
                 });
     }
@@ -115,7 +115,7 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
     private void launchPlaceOrderActivity(OrderSummary orderSummary) {
         Intent intent = new Intent(this, PlaceOrderActivity.class);
         intent.putExtra(Constants.ORDER_REVIEW_SUMMARY, orderSummary);
-        startActivityForResult(intent, Constants.GO_TO_HOME);
+        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
     private void setTabs(ArrayList<SlotGroup> slotGroupList, CartSummary cartSummary,
@@ -164,11 +164,11 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
 
     private void launchOrderReview() {
         if (mSelectedSlotType == null || mSelectedSlotType.size() == 0) {
-            showAlertDialog(this, null, getString(R.string.selectAllSlotsErrMsg));
+            showAlertDialog(null, getString(R.string.selectAllSlotsErrMsg));
             return;
         }
         if (TextUtils.isEmpty(mPaymentMethodSlug)) {
-            showAlertDialog(this, null, getString(R.string.pleaseChoosePaymentMethod));
+            showAlertDialog(null, getString(R.string.pleaseChoosePaymentMethod));
             return;
         }
 
@@ -194,8 +194,7 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
                                 launchPlaceOrderActivity(orderSummary);
                                 break;
                             default:
-                                // TODO : Add error handling
-                                showAlertDialog("Server Error");
+                                handler.sendEmptyMessage(orderSummaryApiResponse.status);
                                 break;
                         }
                     }
@@ -208,8 +207,7 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
                         } catch (IllegalArgumentException e) {
                             return;
                         }
-                        // TODO : Add error handling
-                        showAlertDialog("Server Error");
+                        handler.handleRetrofitError(error);
                     }
                 });
     }
@@ -223,5 +221,12 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
     public void setPaymentMethod(String paymentMethodSlug, String paymentMethodDisplay) {
         this.mPaymentMethodSlug = paymentMethodSlug;
         this.mPaymentMethodDisplay = paymentMethodDisplay;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != NavigationCodes.GO_TO_SLOT_SELECTION) {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 }

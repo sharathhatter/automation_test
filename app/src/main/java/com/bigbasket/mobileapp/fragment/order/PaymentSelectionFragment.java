@@ -29,6 +29,7 @@ import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.order.ActiveVouchers;
 import com.bigbasket.mobileapp.model.order.PaymentType;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -193,7 +194,7 @@ public class PaymentSelectionFragment extends BaseFragment {
                 public void onClick(View v) {
                     Intent availableVoucherListActivity = new Intent(getActivity(), AvailableVoucherListActivity.class);
                     availableVoucherListActivity.putParcelableArrayListExtra(Constants.VOUCHERS, mActiveVouchersList);
-                    startActivityForResult(availableVoucherListActivity, Constants.VOUCHER_APPLIED);
+                    startActivityForResult(availableVoucherListActivity, NavigationCodes.VOUCHER_APPLIED);
                 }
             });
         } else {
@@ -220,9 +221,16 @@ public class PaymentSelectionFragment extends BaseFragment {
         }
         if (checkInternetConnection()) {
             BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+            showProgressDialog(getString(R.string.please_wait));
             bigBasketApiService.postVoucher(mPotentialOrderId, voucherCode, new Callback<PostVoucherApiResponse>() {
                 @Override
                 public void success(PostVoucherApiResponse postVoucherApiResponse, Response response) {
+                    if (isSuspended()) return;
+                    try {
+                        hideProgressDialog();
+                    } catch (IllegalArgumentException e) {
+                        return;
+                    }
                     switch (postVoucherApiResponse.status) {
                         case Constants.OK:
                             // TODO : Add previous applied voucher handling logic for credit card
@@ -232,22 +240,23 @@ public class PaymentSelectionFragment extends BaseFragment {
                             } else {
                                 voucherMsg = "eVoucher has been successfully applied";
                             }
-                            showErrorMsg(voucherMsg); // TODO : Change this
-                            break;
-                        case Constants.INTERNAL_SERVER_ERROR:
-                            // TODO : Improve error handling
-                            showErrorMsg("Server Error");
+                            showErrorMsg(voucherMsg);
                             break;
                         default:
-                            showErrorMsg(postVoucherApiResponse.message);
+                            handler.sendEmptyMessage(postVoucherApiResponse.getErrorTypeAsInt());
                             break;
                     }
                 }
 
                 @Override
                 public void failure(RetrofitError error) {
-                    // TODO : Improve error handling
-                    showErrorMsg("Server Error");
+                    if (isSuspended()) return;
+                    try {
+                        hideProgressDialog();
+                    } catch (IllegalArgumentException e) {
+                        return;
+                    }
+                    handler.handleRetrofitError(error);
                 }
             });
         } else {
@@ -258,7 +267,7 @@ public class PaymentSelectionFragment extends BaseFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         setSuspended(false);
-        if (resultCode == Constants.VOUCHER_APPLIED && data != null) {
+        if (resultCode == NavigationCodes.VOUCHER_APPLIED && data != null) {
             String voucherCode = data.getStringExtra(Constants.EVOUCHER_CODE);
             if (!TextUtils.isEmpty(voucherCode)) {
                 applyVoucher(voucherCode);

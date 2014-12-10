@@ -15,13 +15,13 @@ import com.bigbasket.mobileapp.model.order.COReserveQuantity;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.model.request.HttpRequestData;
+import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
-import com.bigbasket.mobileapp.util.HttpCode;
-import com.bigbasket.mobileapp.util.MessageCode;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.ParserUtil;
 
+import org.apache.http.HttpStatus;
 import org.apache.http.impl.client.BasicCookieStore;
 
 import java.util.HashMap;
@@ -58,7 +58,7 @@ public class COReserveQuantityCheckTask<T> extends AsyncTask<String, Long, Void>
                     authParameters.getOsVersion(), new BasicCookieStore(), null);
             httpOperationResult = DataUtil.doHttpPost(httpRequestData);
         } else {
-            ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.INTERNET_ERROR);
+            ((HandlerAware) ctx).getHandler().sendOfflineError();
             Log.d(TAG, "Sending message: MessageCode.INTERNET_ERROR");
 
         }
@@ -88,7 +88,7 @@ public class COReserveQuantityCheckTask<T> extends AsyncTask<String, Long, Void>
             }
         }
         if (httpOperationResult != null) {
-            if (httpOperationResult.getResponseCode() == HttpCode.HTTP_OK) {
+            if (httpOperationResult.getResponseCode() == HttpStatus.SC_OK) {
                 COReserveQuantity coReserveQuantity = ParserUtil.parseCoReserveQuantity(httpOperationResult.getReponseString());
                 SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(((ActivityAware) ctx).getCurrentActivity()).edit();
                 editor.putString(Constants.POTENTIAL_ORDER_ID, String.valueOf(coReserveQuantity.getOrderId()));
@@ -98,18 +98,18 @@ public class COReserveQuantityCheckTask<T> extends AsyncTask<String, Long, Void>
                 ((COReserveQuantityCheckAware) ctx).onCOReserveQuantityCheck();
                 Log.d(TAG, "Calling on COReserveQuantityCheck()");
 
-            } else if (httpOperationResult.getResponseCode() == HttpCode.UNAUTHORIZED) {
-                ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.UNAUTHORIZED);
-                Log.d(TAG, "Sending message: MessageCode.UNAUTHORIZED");
+            } else if (httpOperationResult.getResponseCode() == HttpStatus.SC_UNAUTHORIZED) {
+                ((HandlerAware) ctx).getHandler().sendEmptyMessage(ApiErrorCodes.LOGIN_REQUIRED);
+                Log.d(TAG, "Sending message: ApiErrorCodes.LOGIN_REQUIRED");
 
             } else {
-                ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
-                Log.d(TAG, "Sending message: MessageCode.SERVER_ERROR");
+                ((HandlerAware) ctx).getHandler().sendEmptyMessage(ApiErrorCodes.SERVER_ERROR);
+                Log.d(TAG, "Sending message: ApiErrorCodes.SERVER_ERROR");
             }
 
         } else {
-            ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
-            Log.d(TAG, "Sending message: MessageCode.SERVER_ERROR");
+            ((HandlerAware) ctx).getHandler().sendEmptyMessage(ApiErrorCodes.SERVER_ERROR);
+            Log.d(TAG, "Sending message: ApiErrorCodes.SERVER_ERROR");
         }
         super.onPostExecute(result);
     }

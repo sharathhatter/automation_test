@@ -19,20 +19,12 @@ import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.model.account.CurrentWalletBalance;
-import com.bigbasket.mobileapp.model.account.UpdatePin;
 import com.bigbasket.mobileapp.model.account.WalletDataItem;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
-import com.bigbasket.mobileapp.util.DialogButton;
-import com.bigbasket.mobileapp.util.ExceptionUtil;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -68,27 +60,37 @@ public class DoWalletFragment extends BaseFragment {
     }
 
     private void getCurrentMemberWalletBalance() {
-        if(!DataUtil.isInternetAvailable(getActivity())){return;}
+        if (!DataUtil.isInternetAvailable(getActivity())) {
+            return;
+        }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.getCurrentWalletBalance(new Callback<ApiResponse<CurrentWalletBalance>>() {
             @Override
             public void success(ApiResponse<CurrentWalletBalance> currentWalletBalCallback, Response response) {
-                hideProgressDialog();
+                if (isSuspended()) return;
+                try {
+                    hideProgressDialog();
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
                 if (currentWalletBalCallback.status == 0) {
                     currentBalance = currentWalletBalCallback.apiResponseContent.getCurrentBalance();
                     setCurrentBalance(currentBalance);
                 } else {
-                    String errorMsg = currentWalletBalCallback.status == ExceptionUtil.INTERNAL_SERVER_ERROR ?
-                            getResources().getString(R.string.INTERNAL_SERVER_ERROR) : currentWalletBalCallback.message;
-                    showAlertDialog(getActivity(), null, errorMsg, DialogButton.OK, null, null, null, null);
+                    handler.sendEmptyMessage(currentWalletBalCallback.status);
                 }
             }
 
             @Override
             public void failure(RetrofitError error) {
-                hideProgressDialog();
-                showErrorMsg(getString(R.string.server_error));
+                if (isSuspended()) return;
+                try {
+                    hideProgressDialog();
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
+                handler.handleRetrofitError(error);
             }
         });
 
@@ -379,36 +381,47 @@ public class DoWalletFragment extends BaseFragment {
 
 
     private void getWalletActivityForMonth(String dateFrom, String dateTo) {
-        if(!DataUtil.isInternetAvailable(getActivity())){return;}
+        if (!DataUtil.isInternetAvailable(getActivity())) {
+            return;
+        }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.getWalletActivity(dateFrom,dateTo,
-                                                        new Callback<ApiResponse<ArrayList<WalletDataItem>>>() {
-            @Override
-            public void success(ApiResponse<ArrayList<WalletDataItem>> walletActivityCallback, Response response) {
-                hideProgressDialog();
-                if(walletActivityCallback.status==0){
-                    if(walletActivityCallback.apiResponseContent !=null &&
-                            walletActivityCallback.apiResponseContent.size()>0){
-                        renderIntent(walletActivityCallback.apiResponseContent);
-                    } else {
-                        showErrorMsg(getString(R.string.noActivityErrorMsg) + " " + monthClickText);
+        bigBasketApiService.getWalletActivity(dateFrom, dateTo,
+                new Callback<ApiResponse<ArrayList<WalletDataItem>>>() {
+                    @Override
+                    public void success(ApiResponse<ArrayList<WalletDataItem>> walletActivityCallback, Response response) {
+                        if (isSuspended()) return;
+                        try {
+                            hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
+                        if (walletActivityCallback.status == 0) {
+                            if (walletActivityCallback.apiResponseContent != null &&
+                                    walletActivityCallback.apiResponseContent.size() > 0) {
+                                renderIntent(walletActivityCallback.apiResponseContent);
+                            } else {
+                                showErrorMsg(getString(R.string.noActivityErrorMsg) + " " + monthClickText);
+                            }
+                        } else {
+                            handler.sendEmptyMessage(walletActivityCallback.status);
+                        }
                     }
-                }else {
-                    String errorMsg = walletActivityCallback.status == ExceptionUtil.INTERNAL_SERVER_ERROR ?
-                            getResources().getString(R.string.INTERNAL_SERVER_ERROR) : walletActivityCallback.message;
-                    showAlertDialog(getActivity(), null, errorMsg, DialogButton.OK, null, null,null, null);
-                }
-            }
 
-            @Override
-            public void failure(RetrofitError error) {
-                hideProgressDialog();
-                showErrorMsg(getString(R.string.server_error));
-            }
-        });
+                    @Override
+                    public void failure(RetrofitError error) {
+                        if (isSuspended()) return;
+                        try {
+                            hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
+                        handler.handleRetrofitError(error);
+                    }
+                });
 
     }
+
     @Override
     public LinearLayout getContentView() {
         return getView() != null ? (LinearLayout) getView().findViewById(R.id.layoutDoWallet) : null;

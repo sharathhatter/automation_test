@@ -15,6 +15,7 @@ import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
 import com.bigbasket.mobileapp.model.cart.AnnotationInfo;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.MessageFormatUtil;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 /**
@@ -91,7 +92,7 @@ public class ShowAnnotationInfo {
     private void showAnnotationInfoPage(String fulfillmentInfoPageUrl) {
         Intent intent = new Intent(activity, FlatPageWebViewActivity.class);
         intent.putExtra(Constants.FULFILLED_BY_INFO_PAGE_URL, fulfillmentInfoPageUrl);
-        activity.startActivityForResult(intent, Constants.GO_TO_HOME);
+        activity.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         activity.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
     }
 

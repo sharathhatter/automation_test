@@ -1,11 +1,8 @@
 package com.bigbasket.mobileapp.model.account;
 
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.widget.CheckBox;
 import android.widget.EditText;
