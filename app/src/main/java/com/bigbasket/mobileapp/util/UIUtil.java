@@ -1,14 +1,17 @@
 package com.bigbasket.mobileapp.util;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.BulletSpan;
 import android.util.Patterns;
@@ -19,11 +22,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.apiservice.models.response.LoginUserDetails;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
+import com.moe.pushlibrary.MoEHelper;
+import com.moe.pushlibrary.utils.MoEHelperConstants;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class UIUtil {
 
@@ -187,4 +194,38 @@ public class UIUtil {
             recyclerView.setLayoutManager(staggeredGridLayoutManager);
         }
     }
+
+    public static void updateStoredUserDetails(Context ctx, LoginUserDetails userDetails, String email, String mId) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ctx);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(Constants.FIRST_NAME_PREF, userDetails.firstName);
+        editor.putString(Constants.MEMBER_FULL_NAME_KEY, userDetails.fullName);
+        editor.putString(Constants.MID_KEY, mId);
+
+        MoEHelper moEHelper = MoEHelper.getInstance(ctx);
+        moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_UNIQUE_ID, mId);
+        moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_EMAIL, email);
+        moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_MOBILE, userDetails.mobileNumber);
+        moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_FIRST_NAME, userDetails.firstName);
+        moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_LAST_NAME, userDetails.lastName);
+        moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_NAME, userDetails.fullName);
+        moEHelper.setUserAttribute("Created On", userDetails.createdOn);
+        if (!TextUtils.isEmpty(userDetails.gender)) {
+            moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_GENDER, userDetails.gender);
+        }
+        if (!TextUtils.isEmpty(userDetails.hub)) {
+            moEHelper.setUserAttribute("Hub", userDetails.hub);
+        }
+        if (!TextUtils.isEmpty(userDetails.dateOfBirth)) {
+            moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_BDAY, userDetails.dateOfBirth);
+        }
+
+        if (userDetails.additionalAttrs != null) {
+            for (Map.Entry<String, Object> additionalInfoObj : userDetails.additionalAttrs.entrySet()) {
+                moEHelper.setUserAttribute(additionalInfoObj.getKey(), additionalInfoObj.getValue().toString());
+            }
+        }
+        editor.commit();
+    }
+
 }

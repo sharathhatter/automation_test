@@ -13,7 +13,7 @@ android {
     }
     buildTypes {
         release {
-            runProguard false
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'konotor-proguard-conf.txt', 'proguard-rules.pro'
         }
     }
@@ -93,7 +93,6 @@ afterEvaluate { project ->
                     exclude "com/google/android/gms/panorama/**"
                     exclude "com/google/android/gms/drive/**"
                     exclude "com/google/android/gms/fitness/**"
-                    exclude "com/google/android/gms/ads/**"
                     exclude "com/google/android/gms/wallet/**"
                     exclude "com/google/android/gms/wearable/**"
                 }
