@@ -1,7 +1,5 @@
 package com.bigbasket.mobileapp.task;
 
-import android.util.Log;
-
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.CartSummaryApiResponse;
@@ -12,7 +10,6 @@ import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.MessageCode;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -49,9 +46,7 @@ public class GetCartCountTask<T> {
                             ((CartInfoAware) ctx).updateUIForCartInfo();
                             break;
                         default:
-                            // TODO : Improve error handling
-                            ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
-                            Log.d(TAG, "Sending message: MessageCode.SERVER_ERROR");
+                            ((HandlerAware) ctx).getHandler().sendEmptyMessage(cartSummaryApiResponse.getErrorTypeAsInt());
                             break;
                     }
                 }
@@ -67,8 +62,7 @@ public class GetCartCountTask<T> {
                             return;
                         }
                     }
-                    ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
-                    Log.d(TAG, "Sending message: MessageCode.SERVER_ERROR");
+                    ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
                 }
             });
         }

@@ -30,6 +30,7 @@ import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.moe.pushlibrary.MoEHelper;
 
 import org.json.JSONException;
@@ -51,7 +52,7 @@ public class StartActivity extends BaseActivity {
         //FlurryAgent.onStartSession(this, Constants.FLURRY_AGENT_KEY);
 
         if (!checkInternetConnection()) {
-            showAlertDialogFinish(this, null, getString(R.string.deviceOffline));
+            showAlertDialogFinish(null, getString(R.string.deviceOffline));
             return;
         }
 
@@ -247,7 +248,7 @@ public class StartActivity extends BaseActivity {
             if (forceRegisterDevice) {
                 loadCities();
             }
-        } else if (resultCode == Constants.GO_TO_HOME) {
+        } else if (resultCode == NavigationCodes.GO_TO_HOME) {
             loadHomePage();
         } else {
             finish();

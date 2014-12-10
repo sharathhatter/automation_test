@@ -20,6 +20,7 @@ import com.bigbasket.mobileapp.interfaces.InvoiceDataAware;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 
 import java.util.ArrayList;
 
@@ -94,6 +95,6 @@ public class OrderThankYouFragment extends BaseFragment implements InvoiceDataAw
     public void onDisplayOrderInvoice(OrderInvoice orderInvoice) {
         Intent orderDetailIntent = new Intent(getActivity(), OrderDetailActivity.class);
         orderDetailIntent.putExtra(Constants.ORDER_REVIEW_SUMMARY, orderInvoice);
-        startActivityForResult(orderDetailIntent, Constants.GO_TO_HOME);
+        startActivityForResult(orderDetailIntent, NavigationCodes.GO_TO_HOME);
     }
 }

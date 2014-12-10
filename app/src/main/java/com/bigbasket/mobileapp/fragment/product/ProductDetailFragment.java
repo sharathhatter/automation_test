@@ -82,8 +82,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
                         renderProductDetail();
                         break;
                     default:
-                        showErrorMsg("Server Error");
-                        // TODO : Add error handling
+                        handler.sendEmptyMessage(productDetailApiResponse.getErrorTypeAsInt());
                         break;
                 }
             }
@@ -91,9 +90,12 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
             @Override
             public void failure(RetrofitError error) {
                 if (isSuspended()) return;
-                hideProgressDialog();
-                // TODO : Improve error handing
-                showErrorMsg("Server Error");
+                try {
+                    hideProgressDialog();
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
+                handler.handleRetrofitError(error);
             }
         });
     }
@@ -118,7 +120,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         productRow.setLayoutParams(productRowParams);
         ProductView.setProductView(new ProductViewHolder(productRow), mProduct, null, null, productViewDisplayDataHolder,
-                getCurrentActivity(), false, this);
+                false, this);
         layoutProductDetail.addView(productRow);
 
         ArrayList<ProductAdditionalInfo> productAdditionalInfos = mProduct.getProductAdditionalInfos();

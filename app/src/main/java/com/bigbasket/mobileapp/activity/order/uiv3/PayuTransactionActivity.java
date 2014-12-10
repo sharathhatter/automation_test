@@ -18,7 +18,6 @@ import com.bigbasket.mobileapp.handler.PayUWebViewClientHandler;
 import com.bigbasket.mobileapp.model.order.PayuResponse;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.ExceptionUtil;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -61,12 +60,8 @@ public class PayuTransactionActivity extends BBActivity {
                                     getPaymentParamsApiResponse.apiResponseContent.successCaptureUrl,
                                     getPaymentParamsApiResponse.apiResponseContent.failureCaptureUrl);
                             break;
-                        case ExceptionUtil.INVALID_FIELD:
-                            showAlertDialog(getCurrentActivity(), null, "An error occurred. Please try again",
-                                    Constants.PAYU_CANCELLED);
-                            break;
                         default:
-                            showAlertDialog(getCurrentActivity(), null, "Server Error",
+                            showAlertDialog(null, getString(R.string.server_error),
                                     Constants.PAYU_CANCELLED);
                             break;
                     }
@@ -80,8 +75,7 @@ public class PayuTransactionActivity extends BBActivity {
                     } catch (IllegalArgumentException e) {
                         return;
                     }
-                    showAlertDialog(getCurrentActivity(), null, "Server Error",
-                            Constants.PAYU_CANCELLED);
+                    handler.handleRetrofitError(error, Constants.PAYU_CANCELLED);
                 }
             });
         }
@@ -150,7 +144,7 @@ public class PayuTransactionActivity extends BBActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                // TODO : Show abort warning
+                showAlertDialog(null, getString(R.string.abortPayu));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

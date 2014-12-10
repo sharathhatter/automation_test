@@ -35,8 +35,8 @@ import com.bigbasket.mobileapp.model.promo.PromoCategory;
 import com.bigbasket.mobileapp.model.promo.PromoDetail;
 import com.bigbasket.mobileapp.model.promo.PromoSet;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
+import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.ExceptionUtil;
 import com.bigbasket.mobileapp.util.ParserUtil;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv2.ProductView;
@@ -94,11 +94,11 @@ public class PromoDetailFragment extends BaseFragment {
             bigBasketApiService.getPromoDetail(String.valueOf(promoId), new Callback<ApiResponse<PromoDetailApiResponseContent>>() {
                 @Override
                 public void success(ApiResponse<PromoDetailApiResponseContent> promoDetailApiResponseContentApiResponse, Response response) {
+                    if (isSuspended()) return;
                     hideProgressView();
                     int status = promoDetailApiResponseContentApiResponse.status;
-                    if (status == ExceptionUtil.PROMO_NOT_EXIST || status == ExceptionUtil.PROMO_NOT_ACTIVE
-                            || status == ExceptionUtil.INVALID_INPUT) {
-                        // TODO : Improve error handling
+                    if (status == ApiErrorCodes.PROMO_NOT_EXIST || status == ApiErrorCodes.PROMO_NOT_ACTIVE
+                            || status == ApiErrorCodes.INVALID_INPUT) {
                         showErrorMsg(promoDetailApiResponseContentApiResponse.message);
                     } else if (status == 0) {
                         mPromoDetail = promoDetailApiResponseContentApiResponse.apiResponseContent.promoDetail;
@@ -107,16 +107,16 @@ public class PromoDetailFragment extends BaseFragment {
                             setCartInfo(promoDetailApiResponseContentApiResponse.cartSummary);
                             updateUIForCartInfo();
                         } else {
-                            showErrorMsg("Server Error");
+                            showErrorMsg(getString(R.string.server_error));
                         }
                     }
                 }
 
                 @Override
                 public void failure(RetrofitError error) {
+                    if (isSuspended()) return;
                     hideProgressView();
-                    // TODO : Improve error handling
-                    showErrorMsg("Server Error");
+                    handler.handleRetrofitError(error);
                 }
             });
         }
@@ -201,7 +201,7 @@ public class PromoDetailFragment extends BaseFragment {
         txtSaving.setTypeface(faceRobotoRegular);
         String promoSavingFormatted = UIUtil.formatAsMoney(mPromoDetail.getSaving());
         txtSaving.setText(PromoDetail.getSavingSpannable(resources.getColor(R.color.promo_txt_green_color),
-                promoSavingFormatted));
+                promoSavingFormatted, faceRupee));
 
         String promoType = mPromoDetail.getPromoType();
 
@@ -290,7 +290,7 @@ public class PromoDetailFragment extends BaseFragment {
 
             ProductView.setProductView(new ProductViewHolder(base), freeProduct, promoDetail.getBaseImgUrl(),
                     new ProductDetailOnClickListener(freeProduct.getSku(), this), productViewDisplayDataHolder,
-                    getCurrentActivity(), false, null);
+                    false, null);
             base.setLayoutParams(productRowParams);
             view.addView(base);
         }

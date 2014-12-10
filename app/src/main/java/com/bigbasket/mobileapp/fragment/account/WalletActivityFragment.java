@@ -19,11 +19,10 @@ import com.bigbasket.mobileapp.apiservice.callbacks.CallbackOrderInvoice;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.InvoiceDataAware;
 import com.bigbasket.mobileapp.model.account.WalletDataItem;
-import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
-import com.bigbasket.mobileapp.util.ParserUtil;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 
 import java.util.ArrayList;
 
@@ -101,7 +100,7 @@ public class WalletActivityFragment extends BaseFragment implements InvoiceDataA
     public void onDisplayOrderInvoice(OrderInvoice orderInvoice) {
         Intent orderDetailIntent = new Intent(getCurrentActivity(), OrderDetailActivity.class);
         orderDetailIntent.putExtra(Constants.ORDER_REVIEW_SUMMARY, orderInvoice);
-        startActivityForResult(orderDetailIntent, Constants.GO_TO_HOME);
+        startActivityForResult(orderDetailIntent, NavigationCodes.GO_TO_HOME);
     }
 
 

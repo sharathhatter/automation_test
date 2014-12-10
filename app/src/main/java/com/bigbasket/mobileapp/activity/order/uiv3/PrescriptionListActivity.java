@@ -16,6 +16,7 @@ import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.order.SavedPrescription;
 import com.bigbasket.mobileapp.task.COMarketPlaceCheckTask;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.melnykov.fab.FloatingActionButton;
 
@@ -102,7 +103,7 @@ public class PrescriptionListActivity extends BackButtonActivity {
 
     private void addNewPrescription() {
         Intent intent = new Intent(getCurrentActivity(), UploadNewPrescriptionActivity.class);
-        startActivityForResult(intent, Constants.GO_TO_HOME);
+        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
     @Override

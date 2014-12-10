@@ -19,15 +19,16 @@ import com.bigbasket.mobileapp.model.order.CheckoutProduct;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.model.request.HttpRequestData;
+import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.FragmentCodes;
-import com.bigbasket.mobileapp.util.HttpCode;
-import com.bigbasket.mobileapp.util.MessageCode;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import org.apache.http.HttpStatus;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -108,12 +109,11 @@ public class CoUpdateReservationTask<T> extends AsyncTask<String, String, String
                 httpOperationResult = DataUtil.doHttpPost(httpRequestData);
 
             } catch (Exception e) {
-                ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
-                Log.d(TAG, "Sending message: MessageCode.SERVER_ERROR");
+                ((HandlerAware) ctx).getHandler().sendEmptyMessage(ApiErrorCodes.SERVER_ERROR);
+                Log.d(TAG, "Sending message: ApiErrorCodes.SERVER_ERROR");
             }
         } else {
-            ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.INTERNET_ERROR);
-            Log.d(TAG, "Sending message: MessageCode.INTERNET_ERROR");
+            ((HandlerAware) ctx).getHandler().sendOfflineError();
         }
 
         return null;
@@ -142,7 +142,7 @@ public class CoUpdateReservationTask<T> extends AsyncTask<String, String, String
             }
         }
         if (httpOperationResult != null) {
-            if (httpOperationResult.getResponseCode() == HttpCode.HTTP_OK) {
+            if (httpOperationResult.getResponseCode() == HttpStatus.SC_OK) {
                 JsonObject resultJson = new JsonParser().parse(httpOperationResult.getReponseString()).getAsJsonObject();
                 String status = resultJson.get(Constants.STATUS).getAsString();
                 SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(((ActivityAware) ctx).getCurrentActivity());
@@ -156,7 +156,7 @@ public class CoUpdateReservationTask<T> extends AsyncTask<String, String, String
                             Intent i1 = new Intent(((ActivityAware) ctx).getCurrentActivity(), BBActivity.class);
                             i1.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ADDRESS_SELECTION);
                             editor.commit();
-                            ((ActivityAware) ctx).getCurrentActivity().startActivityForResult(i1, Constants.GO_TO_HOME);
+                            ((ActivityAware) ctx).getCurrentActivity().startActivityForResult(i1, NavigationCodes.GO_TO_HOME);
                         } else {
                             ((ActivityAware) ctx).getCurrentActivity().goToHome();  // todo test this flow v.carefully
                         }
@@ -164,29 +164,29 @@ public class CoUpdateReservationTask<T> extends AsyncTask<String, String, String
                         Intent intent = new Intent(((ActivityAware) ctx).getCurrentActivity(), BBActivity.class);
                         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ADDRESS_SELECTION);
                         editor.commit();
-                        ((ActivityAware) ctx).getCurrentActivity().startActivityForResult(intent, Constants.GO_TO_HOME);
+                        ((ActivityAware) ctx).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     }
 
                 } else {  // its error case
                     String errorType = resultJson.get(Constants.ERROR_TYPE).getAsString();
                     Toast.makeText(((ActivityAware) ctx).getCurrentActivity(), resultJson.get(Constants.MESSAGE).getAsString(), Toast.LENGTH_SHORT).show();
-                    if (errorType != null && errorType.equalsIgnoreCase(Constants.POTENTIAL_ORDER_ID_EXPIRED)) {
+                    if (errorType != null && errorType.equalsIgnoreCase(String.valueOf(ApiErrorCodes.POTENITAL_ORDER_EXPIRED))) {
                         ((ActivityAware) ctx).getCurrentActivity().goToHome();
                     }
                 }
 
-            } else if (httpOperationResult.getResponseCode() == HttpCode.UNAUTHORIZED) {
-                ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.UNAUTHORIZED);
-                Log.d(TAG, "Sending message: MessageCode.UNAUTHORIZED");
+            } else if (httpOperationResult.getResponseCode() == HttpStatus.SC_UNAUTHORIZED) {
+                ((HandlerAware) ctx).getHandler().sendEmptyMessage(ApiErrorCodes.LOGIN_REQUIRED);
+                Log.d(TAG, "Sending message: ApiErrorCodes.LOGIN_REQUIRED");
 
             } else {
-                ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
-                Log.d(TAG, "Sending message: MessageCode.SERVER_ERROR");
+                ((HandlerAware) ctx).getHandler().sendEmptyMessage(ApiErrorCodes.SERVER_ERROR);
+                Log.d(TAG, "Sending message: ApiErrorCodes.SERVER_ERROR");
             }
 
         } else {
-            ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
-            Log.d(TAG, "Sending message: MessageCode.SERVER_ERROR");
+            ((HandlerAware) ctx).getHandler().sendEmptyMessage(ApiErrorCodes.SERVER_ERROR);
+            Log.d(TAG, "Sending message: ApiErrorCodes.SERVER_ERROR");
         }
 
         super.onPostExecute(result);

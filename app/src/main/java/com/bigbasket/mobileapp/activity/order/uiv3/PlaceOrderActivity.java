@@ -29,6 +29,7 @@ import com.bigbasket.mobileapp.model.order.PayuResponse;
 import com.bigbasket.mobileapp.model.order.VoucherApplied;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
 
 import java.text.DecimalFormat;
@@ -127,8 +128,7 @@ public class PlaceOrderActivity extends BackButtonActivity {
                         postOrderCreation(placeOrderApiResponse.apiResponseContent.orders);
                         break;
                     default:
-                        // TODO : Add error handling
-                        showAlertDialog(getCurrentActivity(), null, "Server Error");
+                        handler.sendEmptyMessage(placeOrderApiResponse.getErrorTypeAsInt());
                         break;
                 }
             }
@@ -141,8 +141,7 @@ public class PlaceOrderActivity extends BackButtonActivity {
                 } catch (IllegalArgumentException e) {
                     return;
                 }
-                // TODO : Add error handling
-                showAlertDialog(getCurrentActivity(), null, "Server Error");
+                handler.handleRetrofitError(error);
             }
         });
     }
@@ -162,7 +161,7 @@ public class PlaceOrderActivity extends BackButtonActivity {
             case Constants.PAYU_SUCCESS:
                 PayuResponse payuResponse = PayuResponse.getInstance(getCurrentActivity());
                 if (payuResponse == null) {
-                    showAlertDialog(this, "Error", "Unable to place your order via credit-card." +
+                    showAlertDialog("Error", "Unable to place your order via credit-card." +
                             "\nPlease choose another method.\n" +
                             "In case your credit card has been charged, " +
                             "BigBasket customer service will get back to you regarding " +
@@ -212,6 +211,6 @@ public class PlaceOrderActivity extends BackButtonActivity {
         Intent invoiceIntent = new Intent(this, OrderInvoiceActivity.class);
         invoiceIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_THANKYOU);
         invoiceIntent.putExtra(Constants.ORDERS, orders);
-        startActivityForResult(invoiceIntent, Constants.GO_TO_HOME);
+        startActivityForResult(invoiceIntent, NavigationCodes.GO_TO_HOME);
     }
 }

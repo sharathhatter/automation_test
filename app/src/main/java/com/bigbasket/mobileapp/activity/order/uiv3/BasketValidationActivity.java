@@ -3,7 +3,6 @@ package com.bigbasket.mobileapp.activity.order.uiv3;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -22,7 +21,7 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
-import com.bigbasket.mobileapp.handler.MessageHandler;
+import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.order.MarketPlaceItems;
@@ -30,8 +29,7 @@ import com.bigbasket.mobileapp.task.BasketOperationTask;
 import com.bigbasket.mobileapp.task.COReserveQuantityCheckTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
-import com.bigbasket.mobileapp.util.MessageCode;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 
 public class BasketValidationActivity extends BackButtonActivity {
 
@@ -60,8 +58,8 @@ public class BasketValidationActivity extends BackButtonActivity {
         if (marketPlace.isRuleValidationError()) {
             renderBasketValidationErrors();
         } else if (marketPlace.isAgeCheckRequired() || marketPlace.isPharamaPrescriptionNeeded()) {
-            Handler handler = new MessageHandler(getCurrentActivity(), marketPlace);
-            handler.sendEmptyMessage(MessageCode.GO_AGE_VALIDATION);
+            BigBasketMessageHandler handler = new BigBasketMessageHandler<>(this, marketPlace);
+            handler.sendEmptyMessage(NavigationCodes.GO_AGE_VALIDATION);
         } else {
             SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
             String pharmaPrescriptionId = prefer.getString(Constants.PHARMA_PRESCRIPTION_ID, null);

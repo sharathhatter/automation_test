@@ -21,6 +21,7 @@ import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.model.order.ActiveVouchers;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 
 import java.util.ArrayList;
 
@@ -46,7 +47,7 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ActiveVouchers activeVouchers = activeVouchersList.get(position);
                 if (activeVouchers.canApply()) {
-                    showAlertDialog(getCurrentActivity(), "Apply " + activeVouchers.getCode() + "?",
+                    showAlertDialog("Apply " + activeVouchers.getCode() + "?",
                             "Are you sure you want to apply \"" + activeVouchers.getCode() + "\"?",
                             DialogButton.YES, DialogButton.NO, Constants.EVOUCHER_CODE, activeVouchers.getCode());
                 } else {
@@ -75,7 +76,7 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
         if (sourceName.equals(Constants.EVOUCHER_CODE)) {
             Intent data = new Intent();
             data.putExtra(Constants.EVOUCHER_CODE, valuePassed.toString());
-            setResult(Constants.VOUCHER_APPLIED, data);
+            setResult(NavigationCodes.VOUCHER_APPLIED, data);
             finish();
         } else {
             super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);

@@ -7,10 +7,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class ProductListData implements Parcelable {
 

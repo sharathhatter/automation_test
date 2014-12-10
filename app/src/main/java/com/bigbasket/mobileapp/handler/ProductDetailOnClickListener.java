@@ -7,6 +7,7 @@ import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 
 public class ProductDetailOnClickListener implements View.OnClickListener {
     private String skuId;
@@ -23,6 +24,6 @@ public class ProductDetailOnClickListener implements View.OnClickListener {
         Intent intent = new Intent(ctx.getCurrentActivity(), BackButtonActivity.class);
         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PRODUCT_DETAIL);
         intent.putExtra(Constants.SKU_ID, skuId);
-        ctx.getCurrentActivity().startActivityForResult(intent, Constants.GO_TO_HOME);
+        ctx.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 }

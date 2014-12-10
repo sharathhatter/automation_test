@@ -79,14 +79,14 @@ public class MessageFormatUtil {
                             Intent intent = new Intent(currentActivity, callingActivity);
                             intent.putExtra(Constants.FRAGMENT_CODE, fragmentCode);
                             intent.putExtra(Constants.INTERNAL_VALUE, messageParamInfoArrayList.getInternalValue());
-                            currentActivity.startActivityForResult(intent, Constants.GO_TO_HOME);
+                            currentActivity.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                             currentActivity.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
                         }
                     } else if (messageParamInfoArrayList.getType().equals(Constants.WEB_LINK)) {
                         if (messageParamInfoArrayList.getInternalValue() != null) {
                             Intent intent = new Intent(currentActivity, FlatPageWebViewActivity.class);
                             intent.putExtra(Constants.FULFILLED_BY_INFO_PAGE_URL, messageParamInfoArrayList.getInternalValue());
-                            currentActivity.startActivityForResult(intent, Constants.GO_TO_HOME);
+                            currentActivity.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                             currentActivity.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
                         }
                     }
@@ -127,7 +127,7 @@ public class MessageFormatUtil {
                         if (messageParamInfoArrayList.getInternalValue() != null) {
                             Intent intent = new Intent(currentActivity, FlatPageWebViewActivity.class);
                             intent.putExtra(Constants.FULFILLED_BY_INFO_PAGE_URL, messageParamInfoArrayList.getInternalValue());
-                            currentActivity.startActivityForResult(intent, Constants.GO_TO_HOME);
+                            currentActivity.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                             currentActivity.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
                         }
                     }

@@ -34,6 +34,7 @@ import com.bigbasket.mobileapp.task.COReserveQuantityCheckTask;
 import com.bigbasket.mobileapp.task.CoUpdateReservationTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
@@ -46,6 +47,10 @@ public class CheckoutQCActivity extends BackButtonActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        doQc();
+    }
+
+    private void doQc() {
         int qcLen = getIntent().getIntExtra(Constants.QC_LEN, -100);
         if (qcLen == 0) {
             launchAddressSelection();
@@ -57,7 +62,7 @@ public class CheckoutQCActivity extends BackButtonActivity {
     private void launchAddressSelection() {
         Intent intent = new Intent(this, BackButtonActivity.class);
         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ADDRESS_SELECTION);
-        startActivityForResult(intent, Constants.GO_TO_HOME);
+        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
     @Override
@@ -80,8 +85,7 @@ public class CheckoutQCActivity extends BackButtonActivity {
             String pharmaPrescriptionId = prefer.getString(Constants.PHARMA_PRESCRIPTION_ID, null);
             new COReserveQuantityCheckTask<>(this, pharmaPrescriptionId).execute();
         } else {
-            // TODO : Improve error handling
-            showAlertDialogFinish(this, null, getString(R.string.checkinternet));
+            showAlertDialogFinish(null, getString(R.string.checkinternet));
         }
     }
 
@@ -99,8 +103,8 @@ public class CheckoutQCActivity extends BackButtonActivity {
     public void onCOReserveQuantityCheck() {
         if (coReserveQuantity.isStatus()) {
             if (!coReserveQuantity.isQcHasErrors()) {
-                // TODO : Improve error handling
-                showAlertDialogFinish(this, null, getString(R.string.INTERNAL_SERVER_ERROR));
+                // TODO : Jugal improve error handling
+                showAlertDialogFinish(null, getString(R.string.INTERNAL_SERVER_ERROR));
             } else {
                 createArrayListOfProducts();
             }
@@ -136,7 +140,7 @@ public class CheckoutQCActivity extends BackButtonActivity {
             }
             renderCheckOut(productWithNoStockList, productWithSomeStockList);
         } else {
-            showAlertDialogFinish(this, null, getString(R.string.INTERNAL_SERVER_ERROR));
+            showAlertDialogFinish(null, getString(R.string.INTERNAL_SERVER_ERROR));
         }
 
     }
@@ -337,12 +341,12 @@ public class CheckoutQCActivity extends BackButtonActivity {
             btnContinue.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    new CoUpdateReservationTask(getCurrentActivity(), false, productWithNoStockList, productWithSomeStockList).execute();
+                    new CoUpdateReservationTask<>(getCurrentActivity(), false, productWithNoStockList, productWithSomeStockList).execute();
                 }
             });
             contentView.addView(btnContinue);
         } else {
-            showAlertDialogFinish(this, null, getString(R.string.INTERNAL_SERVER_ERROR));
+            showAlertDialogFinish(null, getString(R.string.INTERNAL_SERVER_ERROR));
         }
 
     }
@@ -359,5 +363,15 @@ public class CheckoutQCActivity extends BackButtonActivity {
             txtOutOfStockMsg2.setVisibility(View.VISIBLE);
         }
         linearLayoutViewQC.addView(view);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == NavigationCodes.GO_TO_QC) {
+            mAlreadyRunning = false;
+            doQc();
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 }

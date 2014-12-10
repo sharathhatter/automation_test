@@ -30,6 +30,7 @@ import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.PinCodeAware;
 import com.bigbasket.mobileapp.model.account.UpdateProfileModel;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
+import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.UIUtil;
@@ -293,9 +294,9 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware 
                     UpdateProfileModel updateProfileModel = memberProfileDataCallback.memberDetails;
                     fillUpdateProfileData(updateProfileModel);
                 } else {
-                    String errorType = memberProfileDataCallback.errorType;
+                    int errorType = Integer.parseInt(memberProfileDataCallback.errorType);
                     switch (errorType) {
-                        case Constants.INVALID_USER_PASS:
+                        case ApiErrorCodes.INVALID_USER_PASSED:
                             showErrorMsg(getString(R.string.OLD_PASS_NOT_CORRECT));
                             break;
                         default:
@@ -324,13 +325,13 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware 
 
     private void validateOtp(int otp_flag, String errorMsg) {
         switch (otp_flag) {
-            case Constants.NUMBER_USED_BY_ANOTHER_MEMBER:
+            case ApiErrorCodes.NUMBER_IN_USE:
                 showErrorMsg(errorMsg != null ? errorMsg : getResources().getString(R.string.numberUsedByAnotherMember));
                 break;
-            case Constants.OPT_NEEDED:
+            case ApiErrorCodes.OTP_NEEDED:
                 validateMobileNumber(false, errorMsg);
                 break;
-            case Constants.INVALID_OTP:
+            case ApiErrorCodes.OTP_INVALID:
                 validateMobileNumber(true, errorMsg);
                 break;
         }
@@ -541,7 +542,7 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware 
 //                    }, true, false, null);
 
         } else {
-            ((BaseActivity) getActivity()).showAlertDialogFinish(getActivity(), null, getString(R.string.checkinternet));
+            ((BaseActivity) getActivity()).showAlertDialogFinish(null, getString(R.string.checkinternet));
         }
     }
 
@@ -564,14 +565,14 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware 
                     updatePreferenceData();
 
                 } else {
-                    int errorCode = Integer.valueOf(memberProfileDataCallback.errorType);
-                    if (errorCode == Constants.NUMBER_USED_BY_ANOTHER_MEMBER ||
-                            errorCode == Constants.OPT_NEEDED ||
-                            errorCode == Constants.INVALID_OTP) {
+                    int errorCode = memberProfileDataCallback.getErrorTypeAsInt();
+                    if (errorCode == ApiErrorCodes.NUMBER_IN_USE ||
+                            errorCode == ApiErrorCodes.OTP_NEEDED ||
+                            errorCode == ApiErrorCodes.OTP_INVALID) {
                         String errorMsg = memberProfileDataCallback.message;
                         validateOtp(errorCode, errorMsg);
                     } else {
-                        showErrorMsg(getString(R.string.INTERNAL_SERVER_ERROR)); //todo error handler
+                        handler.sendEmptyMessage(errorCode);
                     }
                 }
             }

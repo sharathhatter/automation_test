@@ -12,6 +12,7 @@ import com.bigbasket.mobileapp.common.FixedLayoutViewHolder;
 import com.bigbasket.mobileapp.common.ProductViewHolder;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.handler.ProductDetailOnClickListener;
+import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.view.uiv2.ProductView;
@@ -23,7 +24,7 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
     protected BaseActivity context;
     private String baseImgUrl;
     private ProductViewDisplayDataHolder productViewDisplayDataHolder;
-    private ProductListAwareFragment fragment;
+    private ActivityAware activityAware;
     private List<Product> products;
 
     protected int serverListSize = -1;
@@ -34,11 +35,11 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
 
     public ProductListRecyclerAdapter(List<Product> products, String baseImgUrl, BaseActivity context,
                                       ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                      ProductListAwareFragment fragment, int productCount) {
+                                      ActivityAware activityAware, int productCount) {
         this.context = context;
         this.baseImgUrl = baseImgUrl;
         this.productViewDisplayDataHolder = productViewDisplayDataHolder;
-        this.fragment = fragment;
+        this.activityAware = activityAware;
         this.products = products;
         this.serverListSize = productCount;
     }
@@ -73,11 +74,11 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         if (getItemViewType(position) == VIEW_TYPE_DATA) {
             Product product = products.get(position);
             ProductView.setProductView((ProductViewHolder) viewHolder, product, baseImgUrl,
-                    new ProductDetailOnClickListener(product.getSku(), fragment),
+                    new ProductDetailOnClickListener(product.getSku(), activityAware),
                     productViewDisplayDataHolder,
-                    context, false, fragment);
+                    false, activityAware);
         } else if (getItemViewType(position) == VIEW_TYPE_LOADING) {
-            fragment.loadMoreProducts();
+            ((ProductListAwareFragment) activityAware).loadMoreProducts();
         }
     }
 

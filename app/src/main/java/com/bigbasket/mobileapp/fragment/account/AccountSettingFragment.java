@@ -17,6 +17,7 @@ import com.bigbasket.mobileapp.activity.account.uiv3.OrderListActivity;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.fragment.order.MemberAddressListFragment;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 
 public class AccountSettingFragment extends BaseFragment {
 
@@ -71,12 +72,12 @@ public class AccountSettingFragment extends BaseFragment {
                         case 0:
                             Intent orderListIntent = new Intent(getActivity(), OrderListActivity.class);
                             orderListIntent.putExtra(Constants.ORDER, getString(R.string.active_label));
-                            startActivityForResult(orderListIntent, Constants.GO_TO_HOME);
+                            startActivityForResult(orderListIntent, NavigationCodes.GO_TO_HOME);
                             break;
                         case 1:
                             orderListIntent = new Intent(getActivity(), OrderListActivity.class);
                             orderListIntent.putExtra(Constants.ORDER, getString(R.string.past_label));
-                            startActivityForResult(orderListIntent, Constants.GO_TO_HOME);
+                            startActivityForResult(orderListIntent, NavigationCodes.GO_TO_HOME);
                             break;
                         case 2:
                             changeFragment(new UpdateProfileFragment());

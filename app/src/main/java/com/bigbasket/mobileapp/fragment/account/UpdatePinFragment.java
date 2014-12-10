@@ -27,8 +27,6 @@ import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.model.account.UpdatePin;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
-import com.bigbasket.mobileapp.util.DialogButton;
-import com.bigbasket.mobileapp.util.ExceptionUtil;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -107,22 +105,30 @@ public class UpdatePinFragment extends BaseFragment {
         bigBasketApiService.getCurrentMemberPin(new Callback<ApiResponse<UpdatePin>>() {
             @Override
             public void success(ApiResponse<UpdatePin> updatePinApiResponse, Response response) {
-                hideProgressDialog();
+                if (isSuspended()) return;
+                try {
+                    hideProgressDialog();
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
                 if (updatePinApiResponse.status == 0) {
                     currentPin = updatePinApiResponse.apiResponseContent.currentPin;
                     setCurrentPin(currentPin);
                 } else {
-                    String errorMsg = updatePinApiResponse.status == ExceptionUtil.INTERNAL_SERVER_ERROR ?
-                            getResources().getString(R.string.INTERNAL_SERVER_ERROR) : updatePinApiResponse.message;
-                    showAlertDialog(getActivity(), null, errorMsg, DialogButton.OK, null, null, null, null);
+                    handler.sendEmptyMessage(updatePinApiResponse.status);
                 }
 
             }
 
             @Override
             public void failure(RetrofitError error) {
-                hideProgressDialog();
-                showErrorMsg(getString(R.string.server_error));
+                if (isSuspended()) return;
+                try {
+                    hideProgressDialog();
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
+                handler.handleRetrofitError(error);
             }
         });
     }

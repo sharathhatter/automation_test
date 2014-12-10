@@ -1,8 +1,8 @@
 package com.bigbasket.mobileapp.model.product;
 
 import android.graphics.Typeface;
-import android.os.Handler;
 
+import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 
 public class ProductViewDisplayDataHolder {
@@ -15,7 +15,7 @@ public class ProductViewDisplayDataHolder {
     private boolean isLoggedInMember;
     private boolean showBasketBtn;
     private boolean showShopListDeleteBtn;
-    private Handler handler;
+    private BigBasketMessageHandler handler;
     private ShoppingListName shoppingListName;
 
     public static class Builder {
@@ -27,7 +27,7 @@ public class ProductViewDisplayDataHolder {
         private boolean isLoggedInMember;
         private boolean showBasketBtn;
         private boolean showShopListDeleteBtn;
-        private Handler handler;
+        private BigBasketMessageHandler handler;
         private ShoppingListName shoppingListName;
 
         public Builder() {
@@ -65,7 +65,7 @@ public class ProductViewDisplayDataHolder {
             return this;
         }
 
-        public Builder setHandler(Handler handler) {
+        public Builder setHandler(BigBasketMessageHandler handler) {
             this.handler = handler;
             return this;
         }
@@ -125,7 +125,7 @@ public class ProductViewDisplayDataHolder {
         return showBasketBtn;
     }
 
-    public Handler getHandler() {
+    public BigBasketMessageHandler getHandler() {
         return handler;
     }
 }

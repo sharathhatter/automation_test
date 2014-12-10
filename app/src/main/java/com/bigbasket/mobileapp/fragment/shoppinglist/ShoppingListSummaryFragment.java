@@ -91,6 +91,7 @@ public class ShoppingListSummaryFragment extends BaseFragment {
         bigBasketApiService.getShoppingListSummary(mShoppingListName.getSlug(), new Callback<GetShoppingListSummaryApiResponse>() {
             @Override
             public void success(GetShoppingListSummaryApiResponse getShoppingListSummaryApiResponse, Response response) {
+                if (isSuspended()) return;
                 hideProgressView();
                 switch (getShoppingListSummaryApiResponse.status) {
                     case Constants.OK:
@@ -98,17 +99,16 @@ public class ShoppingListSummaryFragment extends BaseFragment {
                         renderShoppingListSummary();
                         break;
                     default:
-                        // TODO : Add error handling
-                        showErrorMsg("Server Error");
+                        handler.sendEmptyMessage(getShoppingListSummaryApiResponse.getErrorTypeAsInt());
                         break;
                 }
             }
 
             @Override
             public void failure(RetrofitError error) {
+                if (isSuspended()) return;
                 hideProgressView();
-                // TODO : Add error handling
-                showErrorMsg("Server Error");
+                handler.handleRetrofitError(error);
             }
         });
     }

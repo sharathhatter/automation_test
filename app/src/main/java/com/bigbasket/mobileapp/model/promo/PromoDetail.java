@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.model.promo;
 
+import android.graphics.Typeface;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.Spannable;
@@ -7,7 +8,6 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 
-import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
@@ -195,13 +195,12 @@ public class PromoDetail extends Promo {
         return numCompletedOfferSpan;
     }
 
-    public static Spannable getSavingSpannable(int color, String saving) {
+    public static Spannable getSavingSpannable(int color, String saving, Typeface faceRupee) {
         String prefix = "You've saved ";
         String rupeeSymbol = "`";
         String savingStr = prefix + rupeeSymbol + saving;
         Spannable savingSpan = new SpannableString(savingStr);
-        //TODO : Replace this with a better way
-        savingSpan.setSpan(new CustomTypefaceSpan("", BBActivity.faceRupee),
+        savingSpan.setSpan(new CustomTypefaceSpan("", faceRupee),
                 prefix.length(), prefix.length() + rupeeSymbol.length(),
                 Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
         savingSpan.setSpan(new ForegroundColorSpan(color),

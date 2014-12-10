@@ -107,14 +107,14 @@ public class ChangeCityFragment extends BaseFragment implements PinCodeAware {
                     @Override
                     public void success(OldBaseApiResponse oldBaseApiResponse, Response response) {
                         hideProgressDialog();
-                         switch (oldBaseApiResponse.status) {
-                             case Constants.OK:
-                                 onCityChanged();
-                                 break;
-                             default:
-                                 showErrorMsg("Server Error");
-                                 break;
-                         }
+                        switch (oldBaseApiResponse.status) {
+                            case Constants.OK:
+                                onCityChanged();
+                                break;
+                            default:
+                                showErrorMsg("Server Error");
+                                break;
+                        }
                     }
 
                     @Override

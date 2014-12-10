@@ -31,7 +31,6 @@ import com.bigbasket.mobileapp.model.order.OrderItemDisplaySource;
 import com.bigbasket.mobileapp.task.BasketOperationTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.ShowAnnotationInfo;
 import com.bigbasket.mobileapp.view.ShowFulfillmentInfo;

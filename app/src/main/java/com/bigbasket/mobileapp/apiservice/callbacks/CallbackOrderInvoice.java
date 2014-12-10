@@ -6,7 +6,6 @@ import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.InvoiceDataAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
-import com.bigbasket.mobileapp.util.MessageCode;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -36,8 +35,7 @@ public class CallbackOrderInvoice<T> implements Callback<ApiResponse<OrderInvoic
                 ((InvoiceDataAware) ctx).onDisplayOrderInvoice(orderInvoiceApiResponse.apiResponseContent);
                 break;
             default:
-                // TODO : Implement error handling
-                ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
+                ((HandlerAware) ctx).getHandler().sendEmptyMessage(orderInvoiceApiResponse.status);
                 break;
         }
     }
@@ -53,7 +51,6 @@ public class CallbackOrderInvoice<T> implements Callback<ApiResponse<OrderInvoic
                 return;
             }
         }
-        // TODO : Implement error handling
-        ((HandlerAware) ctx).getHandler().sendEmptyMessage(MessageCode.SERVER_ERROR);
+        ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
     }
 }

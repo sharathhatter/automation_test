@@ -107,39 +107,6 @@ public class Constants {
     //Error codes
     public static final String PRODUCT_ID_NOT_FOUND = "101";
     public static final String BASKET_LIMIT_REACHED = "113";
-    public static final String SESSION_EXPIRED = "100";
-    public static final String INTERNAL_SERVER_ERROR = "101";
-    public static final String CAPTCHA_ERROR = "102";
-    public static final String INVALID_FIELD = "103";
-    public static final String INVALID_USER = "104";
-    public static final String EMAIL_ALREADY_EXIST = "105";
-    public static final String CART_NOT_EXISTS_ERROR = "106";
-    public static final String INVALID_USER_PASS = "107";
-    public static final String NO_ACCOUNT = "183";
-    public static final String POTENTIAL_ORDER_ID_EXPIRED = "108";
-    public static final String INVALID_E_VOUCHER = "109";
-    public static final String LOGIN_REQUIRED = "110";
-    public static final String ORDER_NOT_EXIST = "111";
-    public static final String BASKET_EMPTY = "112";
-    public static final String NO_CART_ITEM = "113";
-    public static final String LIST_SLUG_MISSING = "114";
-    public static final String PRODUCT_DOES_NOT_EXISTS = "115";
-    public static final String EMAIL_DOES_NOT_EXIST = "116";
-    public static final String LIST_BY_NAME_ALREADY_EXIST = "117";
-    public static final String CHANGE_CITY_NOT_CONTAIN = "119";
-    public static final String PRODUCT_NOT_CONTAIN_SLUG = "119";
-    public static final String OLD_PASS_NOT_CORRECT = "119";
-    public static final String SERVER_ERROR = "121";
-    public static final String MEMBER_ERROR = "122";
-    public static final String AMOUNT_MISMATCH = "123";
-    public static final String UNKNOWN_HOST_EXP = "409";
-    public static final String SOCKET_EXP = "60";
-    public static final String TIMEOUT_EXP = "402";
-    public static final String MISSING_FIELD = "118";
-    public static final String JSON_EXP = "800";
-    public static final String GENERAL_EXP = "900";
-    public static final String INVALID_CHAR_EXP = "901";
-    public static final String IO_EXCEPTION_EXP = "902";
 
     public static final String BROWSE_CAT = "browsecat";
     public static final String BROWSE_OFFERS = "browse_offers";
@@ -269,16 +236,9 @@ public class Constants {
     public static final String AMT_PAYABLE = "amount_payable";
     public static final String WALLET_REMAINING = "wallet_remaining";
 
-    public static final int GO_TO_HOME = 1360;
-    public static final int GO_TO_CHECKOUT = 1735;
-    public static final int ORDER_COMPLETE = 1335;
-    public static final int VOUCHER_APPLIED = 1336;
     public static final int PRESCRIPTION_UPLOADED = 4569;
     public static final int PRESCRIPTION_CHOSEN = 4568;
-    public static final int GO_TO_SLOT_SELECTION = 9876;
-    public static final int GO_TO_CHECK_OUT = 1109;
     public static final String HOME = "home";
-    public static final String POST_DELIVERY_ADDR = "co-post-delivery-addresses/";
     public static final String ADDRESSES = "addresses";
     public static final String ID = "id";
     public static final String ADDRESS_ID = "address_id";
@@ -296,9 +256,7 @@ public class Constants {
     public static final String LASTNAME = "last_name";
     public static final String ADDR_NICK = "nick";
     public static final String IS_PRODUCT = "isProduct";
-    public static final String CREATE_ADDRESS = "create-address/";
-    public static final String UPDATE_ADDRESS = "update-address/";
-    public static final int ADDRESS_CREATED_MODIFIED = 1001;
+    public static final String UPDATE_ADDRESS = "update-address";
     public static final String FROM_ACCOUNT_PAGE = "from_account_page";
     public static final String RATING = "rating";
     public static final String COMMENTS = "comments";
@@ -329,7 +287,6 @@ public class Constants {
     public static final String DATE_SHOW = "date_show";
     public static final String TIME_SHOW = "time_show";
 
-    public static final String GET_VERSION_NUMBER = "update-version-number/";
     public static final String VIA_INVOICE = "viaInvoice";
 
     public static final String IS_NOT_SUPPORTED = "is_not_supported";
@@ -474,11 +431,6 @@ public class Constants {
 
     //otp
     public static final String OTP_VALIDATION_STATUS = "otp_validation_status";
-    public static final String OTP_STATUS = "otp";
-    public static final int NUMBER_USED_BY_ANOTHER_MEMBER = 180;
-    public static final String NUMBER_USED_BY_ANOTHER_MEMBER_STR = "180";
-    public static final int OPT_NEEDED = 181;
-    public static final int INVALID_OTP = 182;
     //public static final int CAMERA_INTENT_CODE = 1122;
     //public static final int GALLERY_INTENT_CODE = 2233;
     //public static final String PRESCRIPTION_IMAGE_URL = "prescription_image_url";

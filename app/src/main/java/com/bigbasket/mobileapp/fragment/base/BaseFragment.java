@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.text.Spannable;
@@ -27,9 +26,9 @@ import android.widget.Toast;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.CheckoutQCActivity;
-import com.bigbasket.mobileapp.handler.MessageHandler;
+import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
+import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
-import com.bigbasket.mobileapp.interfaces.COMarketPlaceAware;
 import com.bigbasket.mobileapp.interfaces.COReserveQuantityCheckAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
@@ -47,7 +46,7 @@ import com.bigbasket.mobileapp.model.request.HttpRequestData;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.DialogButton;
-import com.bigbasket.mobileapp.util.MessageCode;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
 
 import org.apache.http.impl.client.BasicCookieStore;
@@ -59,9 +58,9 @@ import java.util.Map;
 
 public abstract class BaseFragment extends AbstractFragment implements HandlerAware,
         CartInfoAware, BasketOperationAware, COReserveQuantityCheckAware, ProgressIndicationAware,
-        ConnectivityAware, TrackingAware {
+        ConnectivityAware, TrackingAware, ApiErrorAware {
 
-    protected Handler handler;
+    protected BigBasketMessageHandler handler;
     private ProgressDialog progressDialog;
     protected COReserveQuantity coReserveQuantity;
 
@@ -71,7 +70,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        handler = new MessageHandler((BaseActivity) activity, this);
+        handler = new BigBasketMessageHandler<>(this);
     }
 
     @Override
@@ -125,7 +124,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
                     authParameters.getOsVersion(), new BasicCookieStore(), additionalCtx);
             new HttpAsyncActivity(inlineProgress).execute(httpRequestData);
         } else {
-            baseActivity.getHandler().sendEmptyMessage(MessageCode.INTERNET_ERROR);
+            baseActivity.getHandler().sendOfflineError();
         }
     }
 
@@ -216,7 +215,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     }
 
     @Override
-    public Handler getHandler() {
+    public BigBasketMessageHandler getHandler() {
         return handler;
     }
 
@@ -378,11 +377,12 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         editor.commit();
     }
 
-    public void showAlertDialog(Context context, String title,
+    public void showAlertDialog(String title,
                                 String msg, DialogButton dialogButton,
                                 DialogButton nxtDialogButton, final String sourceName,
                                 final Object passedValue, String positiveBtnText) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        if (getActivity() == null) return;
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(!TextUtils.isEmpty(title) ? title : "BigBasket");
         builder.setMessage(msg);
         if (dialogButton != null) {
@@ -435,7 +435,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         if (coReserveQuantity.isStatus()) {
             Intent intent = new Intent(getActivity(), CheckoutQCActivity.class);
             intent.putExtra(Constants.QC_LEN, coReserveQuantity.getQc_len());
-            startActivityForResult(intent, Constants.GO_TO_HOME);
+            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         }
     }
 
@@ -460,5 +460,33 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     public void trackEvent(String eventName, Map<String, String> eventAttribs, String source, String sourceValue) {
         if (getCurrentActivity() == null) return;
         getCurrentActivity().trackEvent(eventName, eventAttribs, source, sourceValue);
+    }
+
+    @Override
+    public void showApiErrorDialog(String message) {
+        if (getCurrentActivity() == null) return;
+        showErrorMsg(message);
+    }
+
+    @Override
+    public void showApiErrorDialog(String message, boolean finish) {
+        if (getCurrentActivity() == null) return;
+        if (finish) {
+            getCurrentActivity().showAlertDialogFinish(null, message);
+        } else {
+            getCurrentActivity().showAlertDialog(message);
+        }
+    }
+
+    @Override
+    public void showApiErrorDialog(String message, String sourceName, Object valuePassed) {
+        if (getCurrentActivity() == null) return;
+        showAlertDialog(null, message, DialogButton.OK, null, sourceName, valuePassed, null);
+    }
+
+    @Override
+    public void showApiErrorDialog(String message, int resultCode) {
+        if (getCurrentActivity() == null) return;
+        getCurrentActivity().showAlertDialogFinish(null, message, resultCode);
     }
 }

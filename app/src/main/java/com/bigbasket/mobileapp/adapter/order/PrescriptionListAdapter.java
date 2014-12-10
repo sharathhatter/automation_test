@@ -28,7 +28,6 @@ import com.bigbasket.mobileapp.model.order.SavedPrescription;
 import com.bigbasket.mobileapp.task.COReserveQuantityCheckTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
-import com.bigbasket.mobileapp.util.ExceptionUtil;
 
 import java.util.ArrayList;
 
@@ -252,7 +251,12 @@ public class PrescriptionListAdapter extends RecyclerView.Adapter<RecyclerView.V
         bigBasketApiService.getPrescriptionImageUrls(pharmaPrescriptionId, new Callback<ApiResponse<PrescriptionImageUrls>>() {
             @Override
             public void success(ApiResponse<PrescriptionImageUrls> imageUrlsCallback, Response response) {
-                context.hideProgressDialog();
+                if (context.isSuspended()) return;
+                try {
+                    context.hideProgressDialog();
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
                 if (imageUrlsCallback.status == 0) {
                     ArrayList<String> imageUrls = imageUrlsCallback.apiResponseContent.arrayListPrescriptionImages;
                     if (imageUrls != null && imageUrls.size() > 0) {
@@ -260,19 +264,22 @@ public class PrescriptionListAdapter extends RecyclerView.Adapter<RecyclerView.V
                         arrayListImgUrls.addAll(imageUrls);
                         showPrescriptionImageDialog(arrayListImgUrls);
                     } else {
-                        context.showAlertDialog(context, null, "Images are uploading....");
+                        context.showAlertDialog(null, "Images are uploading....");
                     }
                 } else {
-                    String errorMsg = imageUrlsCallback.status == ExceptionUtil.INTERNAL_SERVER_ERROR ?
-                            context.getResources().getString(R.string.INTERNAL_SERVER_ERROR) : imageUrlsCallback.message;
-                    context.showAlertDialog(context, null, errorMsg);
+                    context.getHandler().sendEmptyMessage(imageUrlsCallback.status);
                 }
             }
 
             @Override
             public void failure(RetrofitError error) {
-                context.hideProgressDialog();
-                context.showAlertDialog("server error");
+                if (context.isSuspended()) return;
+                try {
+                    context.hideProgressDialog();
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
+                context.getHandler().handleRetrofitError(error);
             }
         });
     }

@@ -18,22 +18,14 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
-import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
-import com.bigbasket.mobileapp.model.account.UpdatePin;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
+import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
-import com.bigbasket.mobileapp.util.DialogButton;
-import com.bigbasket.mobileapp.util.ExceptionUtil;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import retrofit.Callback;
@@ -151,7 +143,9 @@ public class ChangePasswordFragment extends BaseFragment {
     }
 
     private void updatePassword() {
-        if(!DataUtil.isInternetAvailable(getActivity())){return;}
+        if (!DataUtil.isInternetAvailable(getActivity())) {
+            return;
+        }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));
         resetUpdateButton();
@@ -160,21 +154,22 @@ public class ChangePasswordFragment extends BaseFragment {
                 new Callback<OldBaseApiResponse>() {
                     @Override
                     public void success(OldBaseApiResponse changePasswordCallback, Response response) {
-                        hideProgressDialog();
+                        if (isSuspended()) return;
+                        try {
+                            hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
                         if (changePasswordCallback.status.equals(Constants.OK)) {
                             onChangePasswordSuccessResponse();
                         } else {
-                            String errorType = changePasswordCallback.errorType;
                             onChangePasswordErrorResponse();
-                            switch (errorType) {
-                                case Constants.INVALID_USER_PASS:
+                            switch (changePasswordCallback.getErrorTypeAsInt()) {
+                                case ApiErrorCodes.INVALID_USER_PASSED:
                                     showErrorMsg(getString(R.string.OLD_PASS_NOT_CORRECT));
                                     break;
-                                case Constants.INTERNAL_SERVER_ERROR:
-                                    showErrorMsg(getString(R.string.INTERNAL_SERVER_ERROR));
-                                    break;
                                 default:
-                                    showErrorMsg(changePasswordCallback.message);
+                                    handler.sendEmptyMessage(changePasswordCallback.getErrorTypeAsInt());
                                     break;
                             }
                         }
@@ -183,8 +178,13 @@ public class ChangePasswordFragment extends BaseFragment {
 
                     @Override
                     public void failure(RetrofitError error) {
-                        hideProgressDialog();
-                        showErrorMsg(getString(R.string.server_error));
+                        if (isSuspended()) return;
+                        try {
+                            hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
+                        handler.handleRetrofitError(error);
                     }
                 });
     }
@@ -213,7 +213,6 @@ public class ChangePasswordFragment extends BaseFragment {
                     onChangePasswordSuccessResponse();
                     break;
                 case Constants.ERROR:
-                    //TODO : Replace with handler
                     String errorType = responseJsonObj.get(Constants.ERROR_TYPE).getAsString();
                     onChangePasswordErrorResponse();
                     switch (errorType) {
