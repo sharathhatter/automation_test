@@ -30,7 +30,7 @@ import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
-//import com.moe.pushlibrary.MoEHelper;
+import com.moe.pushlibrary.MoEHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -57,6 +57,7 @@ public class StartActivity extends BaseActivity {
 
         //MoEHelper moEHelper = new MoEHelper(this);
         //moEHelper.initialize("", Constants.MO_APP_ID);
+        //mHelper.Register(R.drawable.ic_launcher)
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String savedCityName = preferences.getString(Constants.CITY, null);

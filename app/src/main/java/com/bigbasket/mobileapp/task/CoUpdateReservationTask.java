@@ -7,12 +7,15 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.COReserveQuantityCheckAware;
 import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
+import com.bigbasket.mobileapp.interfaces.OnUpdateReserveQtyAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.order.CheckoutProduct;
@@ -153,12 +156,13 @@ public class CoUpdateReservationTask<T> extends AsyncTask<String, String, String
                         Toast.makeText(((ActivityAware) ctx).getCurrentActivity(), "Updated successfully.", Toast.LENGTH_SHORT).show();
                         CartSummary cartInfo = ((CartInfoAware) ctx).getCartInfo();
                         if (cartInfo.getNoOfItems() > 0) {
-                            Intent i1 = new Intent(((ActivityAware) ctx).getCurrentActivity(), BBActivity.class);
-                            i1.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ADDRESS_SELECTION);
-                            editor.commit();
-                            ((ActivityAware) ctx).getCurrentActivity().startActivityForResult(i1, Constants.GO_TO_HOME);
+                            // again render QC page
+                            ((OnUpdateReserveQtyAware) ctx).onUpdateReserveSuccessResponse();
                         } else {
-                            ((ActivityAware) ctx).getCurrentActivity().goToHome();  // todo test this flow v.carefully
+                            Toast.makeText(((ActivityAware) ctx).getCurrentActivity(),
+                                    ((ActivityAware) ctx).getCurrentActivity().getResources().getString(R.string.basketEmpty),
+                                    Toast.LENGTH_SHORT).show();
+                            ((ActivityAware) ctx).getCurrentActivity().goToHome();
                         }
                     } else {
                         Intent intent = new Intent(((ActivityAware) ctx).getCurrentActivity(), BBActivity.class);

@@ -253,6 +253,29 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
+        <!-- MOEngage -->
+        <receiver android:name="com.moe.pushlibrary.PushGcmBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+                <category android:name="com.bigbasket.mobileapp" />
+            </intent-filter>
+        </receiver>
+        <service android:name="com.moe.pushlibrary.PushGCMIntentService" />
+        <receiver android:name="com.moe.pushlibrary.PushGcmRegister" />
+        <receiver android:name="com.moe.pushlibrary.SendReport" />
+
+        <!-- on app upgrade, gcm registration id refresh-->
+        <receiver android:name="com.moe.pushlibrary.PushUpdateReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_REPLACED" />
+                <data android:path="com.bigbasket.mobileapp"
+                    android:scheme="package" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

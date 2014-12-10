@@ -148,7 +148,8 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     @Override
     public void onCOReserveQuantityCheck() {
         Intent intent = new Intent(getCurrentActivity(), CheckoutQCActivity.class);
-        intent.putExtra(Constants.QC_LEN, coReserveQuantity.getQc_len());
+        intent.putExtra(Constants.CO_RESERVE_QTY_DATA, coReserveQuantity);
+        //intent.putExtra(Constants.QC_LEN, coReserveQuantity.getQc_len());  //todo send complete coReserveQuantity
         startActivityForResult(intent, Constants.GO_TO_HOME);
     }
 
@@ -167,6 +168,13 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        isActivitySuspended = true;
+        //MoEHelper.getInstance(this).onPause(this);
+    }
+
+    @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         isActivitySuspended = false;
@@ -182,6 +190,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         isActivitySuspended = false;
 
         initializeKonotor();
+        //MoEHelper.getInstance(this).onPause(this);
     }
 
     public void launchKonotor() {
@@ -270,11 +279,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         alertDialog.show();
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        isActivitySuspended = true;
-    }
+
 
     public void showAlertDialog(String msg) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getCurrentActivity());

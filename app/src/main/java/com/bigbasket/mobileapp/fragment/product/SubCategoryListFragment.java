@@ -17,11 +17,19 @@ import android.widget.ProgressBar;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.product.SubCategoryAdapter;
 import com.bigbasket.mobileapp.adapter.product.SubCategoryListAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.SubCategoryApiResponse;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.model.account.UpdatePin;
 import com.bigbasket.mobileapp.model.product.Category;
 import com.bigbasket.mobileapp.model.product.SubCategoryModel;
 import com.bigbasket.mobileapp.model.request.HttpOperationResult;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.DataUtil;
+import com.bigbasket.mobileapp.util.DialogButton;
+import com.bigbasket.mobileapp.util.ExceptionUtil;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -31,6 +39,10 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
 public class SubCategoryListFragment extends BaseFragment {
@@ -64,12 +76,12 @@ public class SubCategoryListFragment extends BaseFragment {
         if (checkInternetConnection()) {
             SubCategoryAdapter subCategoryAdapter = new SubCategoryAdapter(getActivity());
             String version = subCategoryAdapter.getVersion(topCatSlug);
-            String url = MobileApiUrl.getBaseAPIUrl() + "category-landing/?category_slug=" +
-                    topCatSlug;
+            String slugAndVersion = topCatSlug;
             if (version != null) {
-                url += "&version=" + version;
+                slugAndVersion += "&version=" + version;
             }
-            startAsyncActivity(url, null, false, true, null);
+            getSubCategoryData(slugAndVersion);
+            //startAsyncActivity(url, null, false, true, null);
         } else {
             //alert box
             String msg = "Cannot proceed with the operation. No network connection.";
@@ -77,6 +89,43 @@ public class SubCategoryListFragment extends BaseFragment {
         }
     }
 
+
+    private void getSubCategoryData(String slugAndVersion) {
+        if (!DataUtil.isInternetAvailable(getActivity())) {
+            return;
+        }
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+        showProgressView();
+        bigBasketApiService.getSubCategoryData(slugAndVersion, new Callback<ApiResponse<SubCategoryApiResponse>>() {
+            @Override
+            public void success(ApiResponse<SubCategoryApiResponse> subCategoryCallback, Response response) {
+                hideProgressView();
+                if (subCategoryCallback.status == 0) {
+                    String responseVersion = subCategoryCallback.apiResponseContent.responseVersion;
+                    boolean response_ok = subCategoryCallback.apiResponseContent.a_ok;
+                    ArrayList<String> bannerArrayList =
+                            subCategoryCallback.apiResponseContent.categoryLandingApiCategoryKeyContent.bannerArrayList;
+                    if (!response_ok) {
+                        subCategoryModel = subCategoryCallback.apiResponseContent.categoryLandingApiCategoryKeyContent.subCategoryModel;
+                    }
+                    renderSubCategory(responseVersion, response_ok, bannerArrayList, subCategoryModel);
+                } else {
+                    String errorMsg = subCategoryCallback.status == ExceptionUtil.INTERNAL_SERVER_ERROR ?
+                            getResources().getString(R.string.INTERNAL_SERVER_ERROR) : subCategoryCallback.message;
+                    showAlertDialog(getActivity(), null, errorMsg, DialogButton.OK, null, null, null, null);
+                }
+
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                hideProgressView();
+                showErrorMsg(getString(R.string.server_error));
+            }
+        });
+    }
+
+    /*
     @Override
     public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
         super.onAsyncTaskComplete(httpOperationResult);
@@ -123,7 +172,9 @@ public class SubCategoryListFragment extends BaseFragment {
         }
     }
 
-    private void renderSubCategory(String responseVersion, boolean response_ok, JsonObject categoriesJsonObject,
+    */
+
+    private void renderSubCategory(String responseVersion, boolean response_ok, ArrayList<String> bannerArrayList,
                                    SubCategoryModel subCategoryModel) {
 
         if (getActivity() == null) return;
@@ -137,8 +188,9 @@ public class SubCategoryListFragment extends BaseFragment {
         String bannerUrl;
         if (!response_ok) {
             try {
-                Gson gson = new Gson();
-                bannerUrl = gson.toJson(categoriesJsonObject);
+                //Gson gson = new Gson();
+                //bannerUrl = gson.toJson(categoriesJsonObject);
+                bannerUrl = bannerArrayList.toString();
                 subCategoryAdapter.insert(subCategoryModel, responseVersion, bannerUrl, topCatSlug);
                 subCategoryAdapter.close();
             } catch (Exception e) {
@@ -152,8 +204,9 @@ public class SubCategoryListFragment extends BaseFragment {
             try {
                 result = subCategoryAdapter.getSubCategory(topCatSlug);
                 subCategoryModel = (SubCategoryModel) result.get(0);
-                bannerUrl = (String) result.get(1);
-                categoriesJsonObject = new JsonParser().parse(bannerUrl).getAsJsonObject();
+                //bannerUrl = (String) result.get(1);
+                bannerArrayList = (ArrayList<String>) result.get(1);
+                //categoriesJsonObject = new JsonParser().parse(bannerUrl).getAsJsonObject();
             } catch (SQLiteException e) {
                 subCategoryAdapter.close();
                 e.printStackTrace();
@@ -165,7 +218,7 @@ public class SubCategoryListFragment extends BaseFragment {
         }
 
         // banner images
-        renderBanner(categoriesJsonObject, contentView);
+        renderBanner(bannerArrayList, contentView);
 
         final List<Category> categoryArrayList = new ArrayList<>();
 
@@ -244,17 +297,19 @@ public class SubCategoryListFragment extends BaseFragment {
 
     }
 
-    private void renderBanner(JsonObject categoriesJsonObject, LinearLayout contentView) {
-        final ArrayList<String> bannerArrList = new ArrayList<>();
-        if (categoriesJsonObject.has(Constants.SUB_CATEGORY_BANNER_IMAGE)) {
-            JsonArray banner = categoriesJsonObject.getAsJsonArray(Constants.SUB_CATEGORY_BANNER_IMAGE);
-            for (int im = 0; im < banner.size(); im++) {
-                if (banner.get(im).getAsString().startsWith("//")) {
-                    bannerArrList.add("http:" + banner.get(im).getAsString());
-                } else {
-                    bannerArrList.add(banner.get(im).getAsString());
-                }
-            }
+    private void renderBanner(final ArrayList<String> bannerArrList, LinearLayout contentView) {
+        if (bannerArrList==null || bannerArrList.size()==0) return;
+
+//        final ArrayList<String> bannerArrList = new ArrayList<>();
+//        if (categoriesJsonObject.has(Constants.SUB_CATEGORY_BANNER_IMAGE)) {
+//            JsonArray banner = categoriesJsonObject.getAsJsonArray(Constants.SUB_CATEGORY_BANNER_IMAGE);
+//            for (int im = 0; im < banner.size(); im++) {
+//                if (banner.get(im).getAsString().startsWith("//")) {
+//                    bannerArrList.add("http:" + banner.get(im).getAsString());
+//                } else {
+//                    bannerArrList.add(banner.get(im).getAsString());
+//                }
+//            }
             if (bannerArrList.size() > 0) {
                 final LinearLayout childfirst1 = new LinearLayout(getActivity());
                 final LinearLayout.LayoutParams childParams1 =
@@ -298,7 +353,7 @@ public class SubCategoryListFragment extends BaseFragment {
                     imageView.setBackgroundResource(R.drawable.noimage);
                 }
             }
-        }
+        //}
 
     }
 

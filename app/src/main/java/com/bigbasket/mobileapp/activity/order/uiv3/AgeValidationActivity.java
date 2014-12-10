@@ -147,7 +147,7 @@ public class AgeValidationActivity extends BackButtonActivity {
             btnContinueOrUploadPrescription.setTag(Constants.UPLOAD_PRESCRIPTION_BTN_TAG);
         } else {
             btnContinueOrUploadPrescription.setText("Continue");
-            btnContinueOrUploadPrescription.setTextSize(getResources().getDimension(R.dimen.bb_button_text_size));
+            btnContinueOrUploadPrescription.setTextSize(getResources().getDimension(R.dimen.secondary_text_size));
             btnContinueOrUploadPrescription.setTag(Constants.CONTINUE_BTN_TAG);
         }
         btnContinueOrUploadPrescription.setOnClickListener(new View.OnClickListener() {
@@ -432,6 +432,7 @@ public class AgeValidationActivity extends BackButtonActivity {
                     break;
                 case Constants.BASKET_EMPTY:
                     goToHome();
+                    break;
                 default:
                     super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
                     break;
