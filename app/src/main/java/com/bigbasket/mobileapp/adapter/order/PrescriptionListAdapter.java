@@ -113,7 +113,7 @@ public class PrescriptionListAdapter extends RecyclerView.Adapter<RecyclerView.V
                 Toast.makeText(context, context.getResources().getString(R.string.prescriptionIDSaved), Toast.LENGTH_SHORT).show();
                 context.trackEvent(TrackingAware.PRE_CHECKOUT_PHARMA_PRESCRIPTION_CHOSEN, null);
                 hideFrameOnDialogClose();
-                new COReserveQuantityCheckTask<>(context, String.valueOf(savedPrescription.getPharmaPrescriptionId())).execute();
+                new COReserveQuantityCheckTask<>(context, String.valueOf(savedPrescription.getPharmaPrescriptionId())).startTask();
             }
         });
         TextView prescriptionName = viewHolder.getPrescriptionName();

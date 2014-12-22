@@ -7,13 +7,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.text.Spannable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -41,18 +39,12 @@ import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.order.COReserveQuantity;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.model.request.HttpOperationResult;
-import com.bigbasket.mobileapp.model.request.HttpRequestData;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
 
-import org.apache.http.impl.client.BasicCookieStore;
-
 import java.text.NumberFormat;
-import java.util.HashMap;
 import java.util.Map;
 
 
@@ -97,84 +89,6 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
-    }
-
-    public void startAsyncActivity(String url, HashMap<String, String> params, boolean post,
-                                   boolean inlineProgress, HashMap<Object, String> additionalCtx) {
-        startAsyncActivity(url, params, post, inlineProgress, null, additionalCtx);
-    }
-
-    public void startAsyncActivity(String url, HashMap<String, String> params, boolean post,
-                                   boolean inlineProgress, String loadingMsg,
-                                   HashMap<Object, String> additionalCtx) {
-        assert getActivity() != null : "No activity attached to the fragment";
-        BaseActivity baseActivity = (BaseActivity) getActivity();
-        if (DataUtil.isInternetAvailable(baseActivity)) {
-            if (isSuspended()) {
-                return;
-            }
-            if (inlineProgress) {
-                showProgressView();
-            } else {
-                showProgressDialog(loadingMsg);
-            }
-            AuthParameters authParameters = AuthParameters.getInstance(baseActivity);
-            HttpRequestData httpRequestData = new HttpRequestData(url, params, post,
-                    authParameters.getBbAuthToken(), authParameters.getVisitorId(),
-                    authParameters.getOsVersion(), new BasicCookieStore(), additionalCtx);
-            new HttpAsyncActivity(inlineProgress).execute(httpRequestData);
-        } else {
-            baseActivity.getHandler().sendOfflineError();
-        }
-    }
-
-    private class HttpAsyncActivity extends AsyncTask<HttpRequestData, Integer, HttpOperationResult> {
-
-        private boolean inlineProgress;
-
-        private HttpAsyncActivity(boolean inlineProgress) {
-            this.inlineProgress = inlineProgress;
-        }
-
-        protected HttpOperationResult doInBackground(HttpRequestData... httpRequestDatas) {
-            if (isCancelled()) {
-                return null;
-            }
-            HttpRequestData httpRequestData = httpRequestDatas[0];
-            HttpOperationResult httpOperationResult;
-            httpOperationResult = httpRequestData.isPost() ? DataUtil.doHttpPost(httpRequestData)
-                    : DataUtil.doHttpGet(httpRequestData);
-            return httpOperationResult;
-        }
-
-        protected void onPostExecute(HttpOperationResult httpOperationResult) {
-            if (isSuspended()) {
-                return;
-            }
-            if (inlineProgress) {
-                hideProgressView();
-            } else {
-                try {
-                    hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
-            }
-            Log.d("OnPostExecute", "");
-            if (httpOperationResult != null) {
-                onAsyncTaskComplete(httpOperationResult);
-            } else {
-                onHttpError();
-            }
-        }
-    }
-
-    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-
-    }
-
-    public void onHttpError() {
-
     }
 
     public void showProgressView() {
@@ -297,7 +211,10 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
                                                     ImageView imgDecQty, ImageView imgIncQty, Button btnAddToBasket,
                                                     EditText editTextQty, Product product, String qty) {
 
-        int productQtyInBasket = Integer.parseInt(basketOperationResponse.getBasketResponseProductInfo().getTotalQty());
+        int productQtyInBasket = 0;
+        if (basketOperationResponse.getBasketResponseProductInfo() != null) {
+            productQtyInBasket = Integer.parseInt(basketOperationResponse.getBasketResponseProductInfo().getTotalQty());
+        }
         int totalProductsInBasket = basketOperationResponse.getCartSummary().getNoOfItems();
 
         if (basketOperation == BasketOperation.INC) {

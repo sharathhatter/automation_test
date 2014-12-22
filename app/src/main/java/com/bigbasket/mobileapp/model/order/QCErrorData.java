@@ -5,11 +5,18 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.bigbasket.mobileapp.model.product.Product;
+import com.bigbasket.mobileapp.util.Constants;
+import com.google.gson.annotations.SerializedName;
 
 public class QCErrorData implements Parcelable {
 
+    @SerializedName(Constants.QC_RESERVED_QUANTITY)
     private String reservedQuantity;
+
+    @SerializedName(Constants.QC_ORIGINAL_QUANTITY)
     private String originalQuantity;
+
+    @SerializedName(Constants.QC_RESERVED_PRODUCT)
     private Product product;
 
     @Override
@@ -41,12 +48,6 @@ public class QCErrorData implements Parcelable {
             return new QCErrorData[size];
         }
     };
-
-    public QCErrorData(String reservedQuantity, String originalQuantity, Product product) {
-        this.reservedQuantity = reservedQuantity;
-        this.originalQuantity = originalQuantity;
-        this.product = product;
-    }
 
     public String getReservedQuantity() {
         return reservedQuantity;

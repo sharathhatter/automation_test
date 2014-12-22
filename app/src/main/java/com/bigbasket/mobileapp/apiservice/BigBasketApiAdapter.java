@@ -54,7 +54,7 @@ public class BigBasketApiAdapter {
         };
 
         RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint(MobileApiUrl.DOMAIN + "mapi/" + MobileApiUrl.API_VERSION)
+                .setEndpoint(MobileApiUrl.URL)
                 .setRequestInterceptor(requestInterceptor)
                 .build();
 
