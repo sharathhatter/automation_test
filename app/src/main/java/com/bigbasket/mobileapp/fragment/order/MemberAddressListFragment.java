@@ -23,6 +23,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetDeliveryAddressApiResponseContent;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.AddressSelectionAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.Address;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
@@ -109,6 +110,11 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
 
     private void showAddresses() {
         if (mAddressArrayList != null && mAddressArrayList.size() > 0) {
+            if (mFromAccountPage) {
+                trackEvent(TrackingAware.MY_ACCOUNT_DELIVERY_ADDRESS_SHOWN, null);
+            } else {
+                trackEvent(TrackingAware.CHECKOUT_ADDRESS_SHOWN, null);
+            }
             renderAddressList();
         } else {
             showCreateAddressForm();
@@ -151,6 +157,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
     protected void showAddressForm(Address address) {
         if (getActivity() == null) return;
         Intent memberAddressFormIntent = new Intent(getActivity(), MemberAddressFormActivity.class);
+        memberAddressFormIntent.putExtra(Constants.FROM_ACCOUNT_PAGE, mFromAccountPage);
         memberAddressFormIntent.putExtra(Constants.UPDATE_ADDRESS, address);
         startActivityForResult(memberAddressFormIntent, NavigationCodes.ADDRESS_CREATED_MODIFIED);
     }
@@ -158,6 +165,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
     @Override
     public void onAddressSelected(Address address) {
         if (!mFromAccountPage) {
+            trackEvent(TrackingAware.CHECKOUT_ADDRESS_CHOSEN, null);
             launchSlotSelection(address.getId());
         } else {
             showAddressForm(address);

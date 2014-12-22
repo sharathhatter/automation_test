@@ -19,6 +19,7 @@ public class AuthParameters {
     private String memberEmail;
     private String memberFullName;
     private boolean isKonotorEnabled;
+    private boolean isMoEngaleEnabled;
 
     public static void updateInstance(Context context) {
         authParameters = new AuthParameters(context);
@@ -64,6 +65,18 @@ public class AuthParameters {
         return isKonotorEnabled;
     }
 
+    public boolean isMoEngaleEnabled() {
+        return isMoEngaleEnabled;
+    }
+
+    public void setMoEngaleEnabled(boolean isMoEngaleEnabled, Context context) {
+        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefer.edit();
+        editor.putBoolean(Constants.ENABLE_MOENGAGE, isMoEngaleEnabled);
+        editor.commit();
+        this.isMoEngaleEnabled = isMoEngaleEnabled;
+    }
+
     public void setKonotorEnabled(boolean isKonotorEnabled, Context context) {
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefer.edit();
@@ -88,6 +101,7 @@ public class AuthParameters {
             memberFullName = prefer.getString(Constants.MEMBER_FULL_NAME_KEY, "");
             osVersion = prefer.getString(Constants.OS_PREFERENCE_KEY, "");
             isKonotorEnabled = prefer.getBoolean(Constants.ENABLE_KONOTOR, false);
+            isMoEngaleEnabled = prefer.getBoolean(Constants.ENABLE_MOENGAGE, false);
         }
     }
 }

@@ -25,6 +25,10 @@ import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -34,7 +38,7 @@ public class BasketOperationTask<T> {
 
     private static final String TAG = BasketOperationTask.class.getName();
     private T context;
-    private String productId;
+    //private String productId;
     private Product product;
     private BasketOperation basketOperation;
     private String qty;
@@ -43,19 +47,23 @@ public class BasketOperationTask<T> {
     private ImageView imgDecQty;
     private Button btnAddToBasket;
     private EditText editTextQty;
+    private String eventName;
+    private String sourceName;
 
     public BasketOperationTask(T context, BasketOperation basketOperation, @NonNull Product product,
                                TextView basketCountTextView, ImageView imgDecQty,
                                ImageView imgIncQty, Button btnAddToBasket,
-                               EditText editTextQty) {
+                               EditText editTextQty, String eventName,
+                               String sourceName) {
         this(context, basketOperation, product, basketCountTextView, imgDecQty, imgIncQty,
-                btnAddToBasket, editTextQty, "1");
+                btnAddToBasket, editTextQty, "1", eventName, sourceName);
     }
 
     public BasketOperationTask(T context, BasketOperation basketOperation, @NonNull Product product,
                                TextView basketCountTextView, ImageView imgDecQty,
                                ImageView imgIncQty, Button btnAddToBasket,
-                               EditText editTextQty, String qty) {
+                               EditText editTextQty, String qty, String eventName,
+                               String sourceName) {
         this.context = context;
         this.product = product;
         this.basketOperation = basketOperation;
@@ -65,40 +73,44 @@ public class BasketOperationTask<T> {
         this.btnAddToBasket = btnAddToBasket;
         this.editTextQty = editTextQty;
         this.qty = qty;
+        this.eventName = eventName;
+        this.sourceName = sourceName;
     }
 
-    public BasketOperationTask(T context, BasketOperation basketOperation, @NonNull String productId,
-                               TextView basketCountTextView, ImageView imgDecQty,
-                               ImageView imgIncQty, Button btnAddToBasket,
-                               EditText editTextQty) {
-        this(context, basketOperation, productId, basketCountTextView, imgDecQty, imgIncQty,
-                btnAddToBasket, editTextQty, "1");
-    }
-
-    public BasketOperationTask(T context, BasketOperation basketOperation, @NonNull String productId,
-                               TextView basketCountTextView, ImageView imgDecQty,
-                               ImageView imgIncQty, Button btnAddToBasket,
-                               EditText editTextQty, String qty) {
-        this.context = context;
-        this.productId = productId;
-        this.basketOperation = basketOperation;
-        this.basketCountTextView = basketCountTextView;
-        this.imgDecQty = imgDecQty;
-        this.imgIncQty = imgIncQty;
-        this.btnAddToBasket = btnAddToBasket;
-        this.editTextQty = editTextQty;
-        this.qty = qty;
-    }
+//    public BasketOperationTask(T context, BasketOperation basketOperation, @NonNull String productId,
+//                               TextView basketCountTextView, ImageView imgDecQty,
+//                               ImageView imgIncQty, Button btnAddToBasket,
+//                               EditText editTextQty) {
+//        this(context, basketOperation, productId, basketCountTextView, imgDecQty, imgIncQty,
+//                btnAddToBasket, editTextQty, "1");
+//    }
+//
+//    public BasketOperationTask(T context, BasketOperation basketOperation, @NonNull String productId,
+//                               TextView basketCountTextView, ImageView imgDecQty,
+//                               ImageView imgIncQty, Button btnAddToBasket,
+//                               EditText editTextQty, String qty) {
+//        this.context = context;
+//        this.productId = productId;
+//        this.basketOperation = basketOperation;
+//        this.basketCountTextView = basketCountTextView;
+//        this.imgDecQty = imgDecQty;
+//        this.imgIncQty = imgIncQty;
+//        this.btnAddToBasket = btnAddToBasket;
+//        this.editTextQty = editTextQty;
+//        this.qty = qty;
+//    }
 
     public void startTask() {
         if (!((ConnectivityAware) context).checkInternetConnection()) {
             ((HandlerAware) context).getHandler().sendOfflineError();
             return;
         }
+        createEventTrackPayLoad(eventName, product, sourceName);
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.
                 getApiService(((ActivityAware) context).getCurrentActivity());
         ((ProgressIndicationAware) context).showProgressDialog(((BaseFragment) context).getString(R.string.please_wait));
-        String reqProdId = product != null ? product.getSku() : productId;
+        //String reqProdId = product != null ? product.getSku() : productId;
+        String reqProdId = product.getSku();
         switch (basketOperation) {
             case INC:
                 bigBasketApiService.incrementCartItem(reqProdId, qty, new CartOperationApiResponseCallback());
@@ -181,5 +193,17 @@ public class BasketOperationTask<T> {
                 }
             }
         }
+    }
+
+    private void createEventTrackPayLoad(String eventName, Product product, String sourceName) {
+        Map<String, String> eventAttribs = new HashMap<>();
+        eventAttribs.put(TrackEventkeys.PRODUCT_ID, product.getSku());
+        eventAttribs.put(TrackEventkeys.PRODUCT_BRAND, product.getBrand());
+        String desc = product.getDescription();
+        if (!TextUtils.isEmpty(product.getPackageDescription()))
+            desc = " " + product.getPackageDescription();
+        eventAttribs.put(TrackEventkeys.PRODUCT_DESC, desc);
+        eventAttribs.put(TrackEventkeys.PRODUCT_TOP_CAT, product.getTopLevelCategoryName());
+        ((BaseFragment) context).trackEvent(eventName, eventAttribs, sourceName, null);
     }
 }

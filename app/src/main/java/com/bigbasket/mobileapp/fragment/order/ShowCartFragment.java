@@ -33,6 +33,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.CartGetApiResponseCont
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.AnnotationInfo;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.cart.CartItem;
@@ -46,8 +47,10 @@ import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.task.COMarketPlaceCheckTask;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -232,7 +235,7 @@ public class ShowCartFragment extends BaseFragment {
         });
         ActiveOrderRowAdapter activeOrderRowAdapter = new ActiveOrderRowAdapter(cartItemHeaderList, ((BaseActivity) getActivity()),
                 this, faceRupee, faceRobotoRegular, OrderItemDisplaySource.BASKET, isReadOnly,
-                fulfillmentInfoIdAndIconHashMap, annotationHashMap, baseImageUrl);
+                fulfillmentInfoIdAndIconHashMap, annotationHashMap, baseImageUrl, TrackEventkeys.VIEW_BASKET);
         cartItemListView.setDivider(null);
         cartItemListView.setDividerHeight(0);
         cartItemListView.setAdapter(activeOrderRowAdapter);
@@ -319,6 +322,8 @@ public class ShowCartFragment extends BaseFragment {
 
     private void emptyCart() {
         if (getActivity() == null) return;
+        if (!DataUtil.isInternetAvailable(getActivity())) return;
+        trackEvent(TrackingAware.BASKET_EMPTY, null);
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
         final SharedPreferences.Editor editor = prefer.edit();
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
@@ -352,8 +357,11 @@ public class ShowCartFragment extends BaseFragment {
         });
     }
 
+
     private void getCartItems() {
         if (getActivity() == null) return;
+        if (!DataUtil.isInternetAvailable(getActivity())) return;
+        trackEvent(TrackingAware.BASKET_VIEW, null);
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
         final SharedPreferences.Editor editor = prefer.edit();
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());

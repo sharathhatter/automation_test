@@ -21,6 +21,7 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BaseSignInSignupActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.google.gson.JsonObject;
@@ -70,6 +71,7 @@ public class SignupActivity extends BaseSignInSignupActivity {
         });
 
         populateAutoComplete();
+        trackEvent(TrackingAware.MY_ACCOUNT_REGISTRATION_SHOWN, null);
     }
 
     public void OnRegisterButtonClicked(View v) {
@@ -173,7 +175,7 @@ public class SignupActivity extends BaseSignInSignupActivity {
 
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         bigBasketApiService.registerMember(userDetailsJsonObj.toString(),
-                new LoginApiResponseCallback(email, passwd, true));
+                new LoginApiResponseCallback(email, passwd, true, Constants.REGISTER_ACCOUNT_TYPE));
     }
 
     /**

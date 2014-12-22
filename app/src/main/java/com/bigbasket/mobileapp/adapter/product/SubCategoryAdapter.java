@@ -4,7 +4,6 @@ package com.bigbasket.mobileapp.adapter.product;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
@@ -26,12 +25,12 @@ public class SubCategoryAdapter {
     public static final String COLUMN_ID = "_Id";
     public static final String COLUMN_VERSION = "version";
     public static final String COLUMN_BLOB = "subCategoryResponse";
-    public static final String COLUMN_BANNER_URL = "banner";
+    public static final String COLUMN_BLOB_BANNER_URL = "banner";
     public static final String COLUMN_SLUG = "slug";
     public static final String tableName = "subcategory";
 
     public static String createTable = String.format("CREATE TABLE IF NOT EXISTS %1$s (%2$s INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            "%3$s TEXT , %4$s TEXT ,%5$s BLOB, %6$s TEXT );", tableName, COLUMN_ID, COLUMN_VERSION, COLUMN_SLUG, COLUMN_BLOB, COLUMN_BANNER_URL);
+            "%3$s TEXT , %4$s TEXT ,%5$s BLOB, %6$s BLOB );", tableName, COLUMN_ID, COLUMN_VERSION, COLUMN_SLUG, COLUMN_BLOB, COLUMN_BLOB_BANNER_URL);
 
     public void open() {
         DatabaseHelper.getInstance(context).open(context);
@@ -41,9 +40,8 @@ public class SubCategoryAdapter {
         DatabaseHelper.getInstance(context).close();
     }
 
-    public void insert(SubCategoryModel subCategoryModel, String version, String bannerUrl, String slug) {
+    public void insert(SubCategoryModel subCategoryModel, String version, ArrayList<String> bannerArrayList, String slug) {
         Log.d("Inserting sub_categories to database", "");
-        //BaseAdapter.db.execSQL("delete from "+ tableName);
         try {
             ContentValues cv = new ContentValues();
 
@@ -51,8 +49,8 @@ public class SubCategoryAdapter {
             cv.put(COLUMN_SLUG, slug);
             byte[] bytesCategories = ResponseSerializer.serializeObject(subCategoryModel);
             cv.put(COLUMN_BLOB, bytesCategories);
-            String bannerURL = DatabaseUtils.sqlEscapeString(bannerUrl);
-            cv.put(COLUMN_BANNER_URL, bannerURL);
+            byte[] bytesBannerUrl = ResponseSerializer.serializeObject(bannerArrayList);
+            cv.put(COLUMN_BLOB_BANNER_URL, bytesBannerUrl);
             DatabaseHelper.db.insert(tableName, null, cv);
         } catch (Exception e) {
             e.getStackTrace();
@@ -67,20 +65,18 @@ public class SubCategoryAdapter {
     public ArrayList<Object> getSubCategory(String slug) {
         Log.d("Inserting getAllSubCategories Method ", "");
         Cursor subCategoryCursor = null;
-        SubCategoryModel subCategoryModel = null;
         ArrayList<Object> result = new ArrayList<>();
         try {
-            subCategoryCursor = DatabaseHelper.db.query(tableName, new String[]{COLUMN_BLOB, COLUMN_BANNER_URL}
+            subCategoryCursor = DatabaseHelper.db.query(tableName, new String[]{COLUMN_BLOB, COLUMN_BLOB_BANNER_URL}
                     , COLUMN_SLUG + " = " + "\"" + slug + "\"", null, null, null, null);
             if (subCategoryCursor.moveToFirst()) {
 
                 byte[] subCategoryCursorBlob = subCategoryCursor.getBlob(
                         subCategoryCursor.getColumnIndex(SubCategoryAdapter.COLUMN_BLOB));
-                subCategoryModel = (SubCategoryModel) ResponseSerializer.deserializeObject(subCategoryCursorBlob);
-                result.add(subCategoryModel);
-                String bannerUrl = subCategoryCursor.getString(subCategoryCursor.getColumnIndex(
-                        SubCategoryAdapter.COLUMN_BANNER_URL)).replace("\'", "");
-                result.add(bannerUrl);
+                result.add(ResponseSerializer.deserializeObject(subCategoryCursorBlob));
+                byte[] bannerUrlCursorBlob = subCategoryCursor.getBlob(
+                        subCategoryCursor.getColumnIndex(SubCategoryAdapter.COLUMN_BLOB_BANNER_URL));
+                result.add(ResponseSerializer.deserializeObject(bannerUrlCursorBlob));
 
             }
         } catch (SQLiteException ex) {

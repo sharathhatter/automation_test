@@ -22,6 +22,7 @@ public class OrderListAdapter extends BaseAdapter {
     private Typeface faceRupee;
     private ArrayList<Order> orders;
     private boolean showFulfillmentInfo;
+
     public OrderListAdapter(Context context, Typeface typeface, Typeface faceRupee,
                             ArrayList<Order> orders, boolean showFulfillmentInfo) {
         this.context = context;
@@ -67,13 +68,13 @@ public class OrderListAdapter extends BaseAdapter {
         TextView txtOrderTotal = rowHolder.getTxtOrderTotal();
 
         Order order = orders.get(position);
-        if(showFulfillmentInfo){
+        if (showFulfillmentInfo) {
             txtDisplayName.setText(order.getFulfillmentInfo().getDisplayName());
             txtFulfilledBy.setText(order.getFulfillmentInfo().getFulfilledBy());
-        }else {
+        } else {
             txtDisplayName.setVisibility(View.GONE);
             txtFulfilledBy.setVisibility(View.GONE);
-            txtSlotDate.setPadding(0, 6, 0,0);
+            txtSlotDate.setPadding(0, 6, 0, 0);
         }
 
         String deliveryDate = order.getDeliveryDate().replace("between", "");
@@ -164,14 +165,14 @@ public class OrderListAdapter extends BaseAdapter {
         }
 
         public TextView getTxtDisplayName() {
-            if(txtDisplayName == null){
+            if (txtDisplayName == null) {
                 txtDisplayName = (TextView) base.findViewById(R.id.txtDisplayName);
             }
             return txtDisplayName;
         }
 
         public TextView getTxtFulfilledBy() {
-            if(txtFulfilledBy == null){
+            if (txtFulfilledBy == null) {
                 txtFulfilledBy = (TextView) base.findViewById(R.id.txtFulfilledBy);
             }
             return txtFulfilledBy;

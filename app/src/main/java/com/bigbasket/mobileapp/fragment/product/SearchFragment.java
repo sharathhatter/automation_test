@@ -6,6 +6,7 @@ import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.HashMap;
 
@@ -38,7 +39,12 @@ public class SearchFragment extends ProductListAwareFragment {
     public void updateData() {
         super.updateData();
         HashMap<String, String> map = new HashMap<>();
-        map.put("query", getProductListSlug());
+        map.put(TrackEventkeys.QUERY, getProductListSlug());
         trackEvent(TrackingAware.SEARCH, map);
+    }
+
+    @Override
+    public String getSourceName() {
+        return TrackEventkeys.PRODUCT_SEARCH;
     }
 }

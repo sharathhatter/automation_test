@@ -38,6 +38,7 @@ import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.ParserUtil;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
@@ -277,7 +278,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
                 .build();
 
         ProductListRecyclerAdapter productListAdapter = new ProductListRecyclerAdapter(products, baseImgUrl,
-                getCurrentActivity(), productViewDisplayDataHolder, this, products.size());
+                getCurrentActivity(), productViewDisplayDataHolder, this, products.size(), getSourceName());
 
         productRecyclerView.setAdapter(productListAdapter);
 
@@ -360,5 +361,11 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
     @Override
     public String getFragmentTxnTag() {
         return PromoSetProductsFragment.class.getName();
+    }
+
+
+    @Override
+    public String getSourceName() {
+        return TrackEventkeys.PROMO_CAT;
     }
 }

@@ -28,6 +28,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.CreateUpdateAddressApiResponseContent;
 import com.bigbasket.mobileapp.fragment.account.OTPValidationDialogFragment;
 import com.bigbasket.mobileapp.interfaces.PinCodeAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.Address;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
@@ -49,10 +50,12 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
     private AutoCompleteTextView editTextArea;
     private String mErrorMsg;
     private OTPDialog otpDialog;
+    private boolean mFromAccountPage = false;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle(getActivityTitle());
+        mFromAccountPage = getIntent().getBooleanExtra(Constants.FROM_ACCOUNT_PAGE, false);
         if (address == null) {
             address = getIntent().getParcelableExtra(Constants.UPDATE_ADDRESS);
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -271,7 +274,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
             switch (createUpdateAddressApiResponse.status) {
                 case 0:
                     if (address == null) {
-                        Toast.makeText(getCurrentActivity(), "Address updated successfully", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getCurrentActivity(), "Address added successfully", Toast.LENGTH_LONG).show();
                         addressCreatedModified(createUpdateAddressApiResponse.apiResponseContent.addressId);
                     } else {
                         Toast.makeText(getCurrentActivity(), "Address updated successfully", Toast.LENGTH_LONG).show();
@@ -281,6 +284,15 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
                         otpDialog.dismiss();
                         BaseActivity.hideKeyboard(getCurrentActivity(), otpDialog.getView());
                     }
+                    if (mFromAccountPage) {
+                        if (address == null)
+                            trackEvent(TrackingAware.MY_ACCOUNT_ADDRESS_CREATED, null);
+                        else
+                            trackEvent(TrackingAware.MY_ACCOUNT_ADDRESS_EDITED, null);
+                    } else {
+                        trackEvent(TrackingAware.CHECKOUT_ADDRESS_CREATED, null);
+                    }
+
                     break;
                 case ApiErrorCodes.NUMBER_IN_USE:
                     mErrorMsg = createUpdateAddressApiResponse.message;

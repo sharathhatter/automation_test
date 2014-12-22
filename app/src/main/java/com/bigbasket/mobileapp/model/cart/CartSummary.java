@@ -27,6 +27,9 @@ public class CartSummary implements Parcelable {
     @SerializedName(Constants.ENABLE_KONOTOR)
     private boolean isKonotorEnabled;
 
+    @SerializedName(Constants.ENABLE_MOENGAGE)
+    private boolean isMoEngageEnabled;
+
     @SerializedName(Constants.APP_EXPIRE_BY)
     private String appExpireBy;
 
@@ -63,6 +66,7 @@ public class CartSummary implements Parcelable {
         noOfItems = source.readInt();
         isNotSupported = source.readByte() == (byte) 1;
         isKonotorEnabled = source.readByte() == (byte) 1;
+        isMoEngageEnabled = source.readByte() == (byte) 1;
         boolean isAppExpiredByNull = source.readByte() == (byte) 1;
         if (!isAppExpiredByNull) {
             appExpireBy = source.readString();
@@ -93,10 +97,11 @@ public class CartSummary implements Parcelable {
     }
 
     public CartSummary(double total, double savings, int noOfItems, boolean isNotSupported,
-                       boolean isKonotorEnabled, String appExpireBy, boolean hasExpressShops) {
+                       boolean isKonotorEnabled, boolean isMoEngageEnabled, String appExpireBy, boolean hasExpressShops) {
         this(total, savings, noOfItems);
         this.isNotSupported = isNotSupported;
         this.isKonotorEnabled = isKonotorEnabled;
+        this.isMoEngageEnabled = isMoEngageEnabled;
         this.appExpireBy = appExpireBy;
         this.hasExpressShops = hasExpressShops;
     }
@@ -155,6 +160,14 @@ public class CartSummary implements Parcelable {
 
     public boolean isKonotorEnabled() {
         return isKonotorEnabled;
+    }
+
+    public boolean isMoEngageEnabled() {
+        return isMoEngageEnabled;
+    }
+
+    public void setMoEngageEnabled(boolean isMoEngageEnabled) {
+        this.isMoEngageEnabled = isMoEngageEnabled;
     }
 
     public void setNotSupported(boolean isNotSupported) {

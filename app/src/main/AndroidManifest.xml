@@ -276,6 +276,17 @@
             </intent-filter>
         </receiver>
 
+        <!-- push notification landing page -->
+        <activity
+            android:name="com.moe.pushlibrary.activities.MoEActivity"
+            android:parentActivityName=".activity.StartActivity"
+            >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.StartActivity"
+                />
+        </activity>
+
     </application>
 
 </manifest>

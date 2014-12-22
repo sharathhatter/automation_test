@@ -54,7 +54,7 @@ import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.demach.konotor.Konotor;
-//import com.moe.pushlibrary.MoEHelper;
+import com.moe.pushlibrary.MoEHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -158,21 +158,21 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     protected void onStart() {
         super.onStart();
         isActivitySuspended = false;
-        //MoEHelper.getInstance(this).onStart(this);
+        MoEHelper.getInstance(this).onStart(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         isActivitySuspended = true;
-        //MoEHelper.getInstance(this).onStop(this);
+        MoEHelper.getInstance(this).onStop(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         isActivitySuspended = true;
-        //MoEHelper.getInstance(this).onPause(this);
+        MoEHelper.getInstance(this).onPause(this);
     }
 
     @Override
@@ -191,7 +191,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         isActivitySuspended = false;
 
         initializeKonotor();
-        //MoEHelper.getInstance(this).onPause(this);
+        MoEHelper.getInstance(this).onResume(this);
     }
 
     public void launchKonotor() {
@@ -531,6 +531,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
             intent.putExtra(Constants.SOCIAL_LOGOUT, true);
             startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         } else {
+            trackEvent(TrackingAware.MY_ACCOUNT_LOGOUT, null);
             doLogout();
         }
     }
@@ -589,15 +590,24 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
 
     @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs) {
+        // todo check if MoEngage enabled
+        AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());
+        if (!authParameters.isMoEngaleEnabled()) return;
         trackEvent(eventName, eventAttribs, null, null);
     }
 
+
     @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs, String source, String sourceValue) {
+        AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());
+        if (!authParameters.isMoEngaleEnabled()) return;
+
         JSONObject analyticsJsonObj = new JSONObject();
         try {
-            for (Map.Entry<String, String> entry : eventAttribs.entrySet()) {
-                analyticsJsonObj.put(entry.getKey(), entry.getValue());
+            if (eventAttribs != null) {
+                for (Map.Entry<String, String> entry : eventAttribs.entrySet()) {
+                    analyticsJsonObj.put(entry.getKey(), entry.getValue());
+                }
             }
             if (!TextUtils.isEmpty(source)) {
                 analyticsJsonObj.put(Constants.SOURCE, source);
@@ -605,7 +615,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
             if (!TextUtils.isEmpty(sourceValue)) {
                 analyticsJsonObj.put(Constants.SOURCE_ID, sourceValue);
             }
-            //MoEHelper.getInstance(getCurrentActivity()).trackEvent(eventName, analyticsJsonObj);
+            MoEHelper.getInstance(getCurrentActivity()).trackEvent(eventName, analyticsJsonObj);
         } catch (JSONException e) {
             Log.e("Analytics", "Failed to send event = " + eventName + " to analytics");
         }

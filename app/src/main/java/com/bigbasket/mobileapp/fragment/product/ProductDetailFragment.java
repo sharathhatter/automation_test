@@ -26,6 +26,7 @@ import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListDoAddDeleteTask;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.uiv2.ProductView;
 import com.bigbasket.mobileapp.view.uiv3.ShoppingListNamesDialog;
 
@@ -120,7 +121,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         productRow.setLayoutParams(productRowParams);
         ProductView.setProductView(new ProductViewHolder(productRow), mProduct, null, null, productViewDisplayDataHolder,
-                false, this);
+                false, this, TrackEventkeys.PRODUCT_DETAIL);
         layoutProductDetail.addView(productRow);
 
         ArrayList<ProductAdditionalInfo> productAdditionalInfos = mProduct.getProductAdditionalInfos();

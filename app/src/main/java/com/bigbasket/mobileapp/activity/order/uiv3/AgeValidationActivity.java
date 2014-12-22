@@ -80,7 +80,7 @@ public class AgeValidationActivity extends BackButtonActivity {
     }
 
     @Override
-    public void onBackPressed(){
+    public void onBackPressed() {
         super.onBackPressed();
         goToHome();
     }

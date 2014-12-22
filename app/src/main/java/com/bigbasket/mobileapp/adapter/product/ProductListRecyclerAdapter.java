@@ -26,6 +26,7 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
     private ProductViewDisplayDataHolder productViewDisplayDataHolder;
     private ActivityAware activityAware;
     private List<Product> products;
+    private String sourceName;
 
     protected int serverListSize = -1;
 
@@ -35,13 +36,14 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
 
     public ProductListRecyclerAdapter(List<Product> products, String baseImgUrl, BaseActivity context,
                                       ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                      ActivityAware activityAware, int productCount) {
+                                      ActivityAware activityAware, int productCount, String sourceName) {
         this.context = context;
         this.baseImgUrl = baseImgUrl;
         this.productViewDisplayDataHolder = productViewDisplayDataHolder;
         this.activityAware = activityAware;
         this.products = products;
         this.serverListSize = productCount;
+        this.sourceName = sourceName;
     }
 
     @Override
@@ -76,7 +78,7 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
             ProductView.setProductView((ProductViewHolder) viewHolder, product, baseImgUrl,
                     new ProductDetailOnClickListener(product.getSku(), activityAware),
                     productViewDisplayDataHolder,
-                    false, activityAware);
+                    false, activityAware, sourceName);
         } else if (getItemViewType(position) == VIEW_TYPE_LOADING) {
             ((ProductListAwareFragment) activityAware).loadMoreProducts();
         }

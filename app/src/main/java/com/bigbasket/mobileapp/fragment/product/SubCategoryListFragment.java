@@ -68,26 +68,21 @@ public class SubCategoryListFragment extends BaseFragment {
             SubCategoryAdapter subCategoryAdapter = new SubCategoryAdapter(getActivity());
             String version = subCategoryAdapter.getVersion(topCatSlug);
             String slugAndVersion = topCatSlug;
-            if (version != null) {
-                slugAndVersion += "&version=" + version;
-            }
-            getSubCategoryData(slugAndVersion);
-            //startAsyncActivity(url, null, false, true, null);
+            getSubCategoryData(slugAndVersion, version);
         } else {
-            //alert box
             String msg = "Cannot proceed with the operation. No network connection.";
             showErrorMsg(msg);
         }
     }
 
 
-    private void getSubCategoryData(String slugAndVersion) {
+    private void getSubCategoryData(String categorySlug, String version) {
         if (!DataUtil.isInternetAvailable(getActivity())) {
             return;
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressView();
-        bigBasketApiService.getSubCategoryData(slugAndVersion, new Callback<ApiResponse<SubCategoryApiResponse>>() {
+        bigBasketApiService.getSubCategoryData(categorySlug, version, new Callback<ApiResponse<SubCategoryApiResponse>>() {
             @Override
             public void success(ApiResponse<SubCategoryApiResponse> subCategoryCallback, Response response) {
                 if (isSuspended()) return;
@@ -116,55 +111,6 @@ public class SubCategoryListFragment extends BaseFragment {
         });
     }
 
-    /*
-    @Override
-    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-        super.onAsyncTaskComplete(httpOperationResult);
-        String responseJson = httpOperationResult.getReponseString();
-        int responseCode = httpOperationResult.getResponseCode();
-        if (responseJson != null) {
-            if (!httpOperationResult.isPost()) {
-                try {
-                    JsonObject jsonObject = new JsonParser().parse(responseJson).getAsJsonObject();
-                    JsonObject responseJsonObject = jsonObject.get(Constants.RESPONSE).getAsJsonObject();
-                    String responseVersion = responseJsonObject.get(Constants.VERSION).getAsString();
-                    boolean response_ok = responseJsonObject.get(Constants.A_OK).getAsBoolean();
-                    JsonObject categoriesJsonObject = responseJsonObject.get(Constants.CATEGORIES).getAsJsonObject();
-                    if (!response_ok) {
-                        JsonObject subCategoryJsonObject = categoriesJsonObject.get(Constants.SUB_CATEGORY_ITEMS).getAsJsonObject();
-                        Gson gson = new Gson();
-                        subCategoryModel = gson.fromJson(subCategoryJsonObject, SubCategoryModel.class);
-                    }
-
-                    renderSubCategory(responseVersion, response_ok, categoriesJsonObject, subCategoryModel);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    showErrorMsg("Please try again later");
-                }
-            }
-        } else {
-            switch (responseCode) {
-
-                case Constants.invalidInputRespCode:
-                    String msgInvalidInput = "Input is Invalid";
-                    showErrorMsg(msgInvalidInput);
-                    break;
-
-                case Constants.notMemberRespCode:
-                    String msgInvalidUser = "The logged in user is not a member";
-                    showErrorMsg(msgInvalidUser);
-                    break;
-
-                default:
-                    String defaultMsg = "Server Error";
-                    showErrorMsg(defaultMsg);
-                    break;
-            }
-        }
-    }
-
-    */
-
     private void renderSubCategory(String responseVersion, boolean response_ok, ArrayList<String> bannerArrayList,
                                    SubCategoryModel subCategoryModel) {
 
@@ -176,13 +122,9 @@ public class SubCategoryListFragment extends BaseFragment {
         SubCategoryAdapter subCategoryAdapter = new SubCategoryAdapter(getActivity());
 
         ArrayList<Object> result;
-        String bannerUrl;
         if (!response_ok) {
             try {
-                //Gson gson = new Gson();
-                //bannerUrl = gson.toJson(categoriesJsonObject);
-                bannerUrl = bannerArrayList.toString();
-                subCategoryAdapter.insert(subCategoryModel, responseVersion, bannerUrl, topCatSlug);
+                subCategoryAdapter.insert(subCategoryModel, responseVersion, bannerArrayList, topCatSlug);
                 subCategoryAdapter.close();
             } catch (Exception e) {
                 subCategoryAdapter.close();
@@ -195,9 +137,7 @@ public class SubCategoryListFragment extends BaseFragment {
             try {
                 result = subCategoryAdapter.getSubCategory(topCatSlug);
                 subCategoryModel = (SubCategoryModel) result.get(0);
-                //bannerUrl = (String) result.get(1);
                 bannerArrayList = (ArrayList<String>) result.get(1);
-                //categoriesJsonObject = new JsonParser().parse(bannerUrl).getAsJsonObject();
             } catch (SQLiteException e) {
                 subCategoryAdapter.close();
                 e.printStackTrace();
@@ -291,16 +231,6 @@ public class SubCategoryListFragment extends BaseFragment {
     private void renderBanner(final ArrayList<String> bannerArrList, LinearLayout contentView) {
         if (bannerArrList == null || bannerArrList.size() == 0) return;
 
-//        final ArrayList<String> bannerArrList = new ArrayList<>();
-//        if (categoriesJsonObject.has(Constants.SUB_CATEGORY_BANNER_IMAGE)) {
-//            JsonArray banner = categoriesJsonObject.getAsJsonArray(Constants.SUB_CATEGORY_BANNER_IMAGE);
-//            for (int im = 0; im < banner.size(); im++) {
-//                if (banner.get(im).getAsString().startsWith("//")) {
-//                    bannerArrList.add("http:" + banner.get(im).getAsString());
-//                } else {
-//                    bannerArrList.add(banner.get(im).getAsString());
-//                }
-//            }
         if (bannerArrList.size() > 0) {
             final LinearLayout childfirst1 = new LinearLayout(getActivity());
             final LinearLayout.LayoutParams childParams1 =
@@ -324,7 +254,11 @@ public class SubCategoryListFragment extends BaseFragment {
 
                         final LinearLayout.LayoutParams processBarParams1 = new LinearLayout.LayoutParams(width, imageheight);
                         imageView.setLayoutParams(processBarParams1);
-                        ImageLoader.getInstance().displayImage(bannerArrList.get(imageCounter), imageView);
+                        String bannerUrl = bannerArrList.get(imageCounter);
+                        if (bannerUrl.startsWith("//"))
+                            bannerUrl = "http:" + bannerUrl;
+
+                        ImageLoader.getInstance().displayImage(bannerUrl, imageView);
                         imageCounter++;
                         if (imageCounter >= bannerArrList.size()) {
                             imageCounter = 0;
@@ -336,7 +270,10 @@ public class SubCategoryListFragment extends BaseFragment {
                 childfirst1.removeAllViews();
                 childfirst1.addView(imageView);
             } else if (bannerArrList.size() == 1) {
-                ImageLoader.getInstance().displayImage(bannerArrList.get(imageCounter), imageView);
+                String bannerUrl = bannerArrList.get(imageCounter);
+                if (bannerUrl.startsWith("//"))
+                    bannerUrl = "http:" + bannerUrl;
+                ImageLoader.getInstance().displayImage(bannerUrl, imageView);
                 childfirst1.removeAllViews();
                 childfirst1.addView(imageView);
             } else {
@@ -344,7 +281,6 @@ public class SubCategoryListFragment extends BaseFragment {
                 imageView.setBackgroundResource(R.drawable.noimage);
             }
         }
-        //}
 
     }
 

@@ -764,6 +764,14 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                         }
                         break;
                     case Constants.CART:
+//                        SubCategoryListFragment subCategoryListFragment = new SubCategoryListFragment();
+//                        Bundle subCatBundle = new Bundle();
+//                        subCatBundle.putString(Constants.TOP_CATEGORY_SLUG,
+//                                "fruits-vegetables");
+//                        subCatBundle.putString(Constants.TOP_CATEGORY_NAME,
+//                                "Fruits and vegetables");
+//                        subCategoryListFragment.setArguments(subCatBundle);
+//                        addToMainLayout(subCategoryListFragment);
                         onChangeFragment(new ShowCartFragment());
                         break;
                     case Constants.FROM_ACCOUNT_PAGE:

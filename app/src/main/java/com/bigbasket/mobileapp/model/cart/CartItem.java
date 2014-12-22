@@ -39,6 +39,9 @@ public class CartItem extends BaseCartItem {
     @SerializedName(Constants.ANNOTATION_ID)
     private String annotationId;
 
+    private String topCategoryName;
+
+
     private int index;
 
     @Override
@@ -61,6 +64,7 @@ public class CartItem extends BaseCartItem {
         }
         dest.writeString(fulfillmentId);
         dest.writeString(annotationId);
+        dest.writeString(topCategoryName);
     }
 
     CartItem(Parcel source) {
@@ -76,6 +80,7 @@ public class CartItem extends BaseCartItem {
         }
         fulfillmentId = source.readString();
         annotationId = source.readString();
+        topCategoryName = source.readString();
     }
 
     public static final Parcelable.Creator<CartItem> CREATOR = new Parcelable.Creator<CartItem>() {
@@ -132,5 +137,13 @@ public class CartItem extends BaseCartItem {
 
     public CartItemPromoInfo getCartItemPromoInfo() {
         return cartItemPromoInfo;
+    }
+
+    public String getTopCategoryName() {
+        return topCategoryName;
+    }
+
+    public void setTopCategoryName(String topCategoryName) {
+        this.topCategoryName = topCategoryName;
     }
 }

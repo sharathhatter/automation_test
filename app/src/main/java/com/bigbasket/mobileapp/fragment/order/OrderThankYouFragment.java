@@ -49,7 +49,7 @@ public class OrderThankYouFragment extends BaseFragment implements InvoiceDataAw
     private void showThankyou(ArrayList<Order> orders) {
         if (orders.size() == 1) {
             renderSingleOrderInvoice(orders.get(0));
-        }else {
+        } else {
             renderMultipleOrderInvoice(orders);
         }
     }

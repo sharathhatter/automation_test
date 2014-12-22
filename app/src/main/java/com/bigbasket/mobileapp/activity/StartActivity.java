@@ -13,8 +13,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
@@ -56,9 +58,10 @@ public class StartActivity extends BaseActivity {
             return;
         }
 
-        //MoEHelper moEHelper = new MoEHelper(this);
-        //moEHelper.initialize("", Constants.MO_APP_ID);
-        //mHelper.Register(R.drawable.ic_launcher)
+        MoEHelper moEHelper = new MoEHelper(this);
+        moEHelper.initialize(Constants.MO_SENDER_ID, Constants.MO_APP_ID);
+        moEHelper.Register(R.drawable.ic_launcher);
+
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String savedCityName = preferences.getString(Constants.CITY, null);
@@ -135,6 +138,8 @@ public class StartActivity extends BaseActivity {
 
     private void renderCitySelectionDropDown(final ArrayList<City> cities) {
         cities.add(0, new City(getString(R.string.chooseYourLocation), -1));
+        LinearLayout layoutSpinnerAndWhyLink = (LinearLayout) findViewById(R.id.layoutSpinnerAndWhyLink);
+
         Spinner spinnerCity = (Spinner) findViewById(R.id.spinnerCity);
         ProgressBar progressBarLoading = (ProgressBar) findViewById(R.id.progressBarLoading);
         ArrayAdapter<City> citySpinnerAdapter = new ArrayAdapter<>(this,
@@ -156,7 +161,15 @@ public class StartActivity extends BaseActivity {
             }
         });
         progressBarLoading.setVisibility(View.GONE);
-        spinnerCity.setVisibility(View.VISIBLE);
+
+        TextView txtViewWhy = (TextView) findViewById(R.id.txtViewWhy);
+        txtViewWhy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showAlertDialog(getString(R.string.whyMsg));
+            }
+        });
+        layoutSpinnerAndWhyLink.setVisibility(View.VISIBLE);
     }
 
     private void doRegisterDevice(final City city) {
@@ -229,8 +242,8 @@ public class StartActivity extends BaseActivity {
     public void showProgressDialog(String msg) {
         ProgressBar progressBarLoading = (ProgressBar) findViewById(R.id.progressBarLoading);
         progressBarLoading.setVisibility(View.VISIBLE);
-        Spinner spinnerCity = (Spinner) findViewById(R.id.spinnerCity);
-        spinnerCity.setVisibility(View.GONE);
+        LinearLayout layoutSpinnerAndWhyLink = (LinearLayout) findViewById(R.id.layoutSpinnerAndWhyLink);
+        layoutSpinnerAndWhyLink.setVisibility(View.GONE);
     }
 
     @Override

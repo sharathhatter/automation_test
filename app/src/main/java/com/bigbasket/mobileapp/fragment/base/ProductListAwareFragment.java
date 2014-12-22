@@ -149,7 +149,8 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
                 .setShowShopListDeleteBtn(false)
                 .build();
         mProductListRecyclerAdapter = new ProductListRecyclerAdapter(productListData.getProducts(), productListData.getBaseImgUrl(),
-                getCurrentActivity(), productViewDisplayDataHolder, this, productListData.getProductCount());
+                getCurrentActivity(), productViewDisplayDataHolder, this, productListData.getProductCount(),
+                getSourceName());
 
         productRecyclerView.setAdapter(mProductListRecyclerAdapter);
         contentView.addView(productRecyclerView);
@@ -163,6 +164,8 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
         currentProducts.addAll(nextPageProducts);
         mProductListRecyclerAdapter.notifyDataSetChanged();
     }
+
+    public abstract String getSourceName();
 
     public abstract String getProductListSlug();
 

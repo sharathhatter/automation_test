@@ -38,6 +38,7 @@ import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.ParserUtil;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv2.ProductView;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -290,7 +291,7 @@ public class PromoDetailFragment extends BaseFragment {
 
             ProductView.setProductView(new ProductViewHolder(base), freeProduct, promoDetail.getBaseImgUrl(),
                     new ProductDetailOnClickListener(freeProduct.getSku(), this), productViewDisplayDataHolder,
-                    false, null);
+                    false, null, TrackEventkeys.PROMO_DETAIL);
             base.setLayoutParams(productRowParams);
             view.addView(base);
         }
