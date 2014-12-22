@@ -44,7 +44,7 @@ public class SearchFragment extends ProductListAwareFragment {
     }
 
     @Override
-    public String getSourceName(){
+    public String getSourceName() {
         return TrackEventkeys.PRODUCT_SEARCH;
     }
 }

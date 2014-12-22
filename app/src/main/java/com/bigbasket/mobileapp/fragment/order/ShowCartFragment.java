@@ -322,7 +322,7 @@ public class ShowCartFragment extends BaseFragment {
 
     private void emptyCart() {
         if (getActivity() == null) return;
-        if (!DataUtil.isInternetAvailable(getActivity()))return;
+        if (!DataUtil.isInternetAvailable(getActivity())) return;
         trackEvent(TrackingAware.BASKET_EMPTY, null);
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
         final SharedPreferences.Editor editor = prefer.edit();
@@ -358,10 +358,9 @@ public class ShowCartFragment extends BaseFragment {
     }
 
 
-
     private void getCartItems() {
         if (getActivity() == null) return;
-        if (!DataUtil.isInternetAvailable(getActivity()))return;
+        if (!DataUtil.isInternetAvailable(getActivity())) return;
         trackEvent(TrackingAware.BASKET_VIEW, null);
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
         final SharedPreferences.Editor editor = prefer.edit();

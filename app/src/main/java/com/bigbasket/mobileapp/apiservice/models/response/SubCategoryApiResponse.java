@@ -1,10 +1,7 @@
 package com.bigbasket.mobileapp.apiservice.models.response;
 
-import com.bigbasket.mobileapp.model.product.SubCategoryModel;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
-
-import java.util.ArrayList;
 
 /**
  * Created by jugal on 10/12/14.

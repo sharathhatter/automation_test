@@ -28,9 +28,6 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.UpdatePin;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
-import com.bigbasket.mobileapp.util.TrackEventkeys;
-
-import java.util.HashMap;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -198,7 +195,7 @@ public class UpdatePinFragment extends BaseFragment {
         }
     }
 
-    private void updatePinServerCall(final String newPin){
+    private void updatePinServerCall(final String newPin) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.updateCurrentMemberPin(newPin, new Callback<BaseApiResponse>() {

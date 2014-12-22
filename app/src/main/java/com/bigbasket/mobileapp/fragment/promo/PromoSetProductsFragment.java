@@ -365,7 +365,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
 
 
     @Override
-    public String getSourceName(){
+    public String getSourceName() {
         return TrackEventkeys.PROMO_CAT;
     }
 }

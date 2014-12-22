@@ -1,22 +1,25 @@
 package com.bigbasket.mobileapp.fragment.account;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.OrderListActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.fragment.order.MemberAddressListFragment;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 
 public class AccountSettingFragment extends BaseFragment {
@@ -40,7 +43,64 @@ public class AccountSettingFragment extends BaseFragment {
         if (getActivity() == null) return;
         LinearLayout contentView = getContentView();
         if (contentView == null) return;
-        String[] ItemDetails = {
+
+        ListView lstMyAccount = new ListView(getActivity());
+        lstMyAccount.setDivider(null);
+        lstMyAccount.setDividerHeight(0);
+
+        MyAccountListAdapter myAccountListAdapter = new MyAccountListAdapter();
+        lstMyAccount.setAdapter(myAccountListAdapter);
+        lstMyAccount.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 0:
+                        Intent orderListIntent = new Intent(getActivity(), OrderListActivity.class);
+                        orderListIntent.putExtra(Constants.ORDER, getString(R.string.active_label));
+                        startActivityForResult(orderListIntent, NavigationCodes.GO_TO_HOME);
+                        break;
+                    case 1:
+                        orderListIntent = new Intent(getActivity(), OrderListActivity.class);
+                        orderListIntent.putExtra(Constants.ORDER, getString(R.string.past_label));
+                        startActivityForResult(orderListIntent, NavigationCodes.GO_TO_HOME);
+                        break;
+                    case 2:
+                        Intent intent = new Intent(getActivity(), BackButtonActivity.class);
+                        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_UPDATE_PROFILE);
+                        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                        break;
+                    case 3:
+                        intent = new Intent(getActivity(), BackButtonActivity.class);
+                        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_CHANGE_PASSWD);
+                        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                        break;
+                    case 4:
+                        intent = new Intent(getActivity(), BackButtonActivity.class);
+                        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WALLET_FRAGMENT);
+                        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                        break;
+                    case 5:
+                        MemberAddressListFragment memberAddressListFragment = new MemberAddressListFragment();
+                        Bundle addressbundle = new Bundle();
+                        addressbundle.putBoolean(Constants.FROM_ACCOUNT_PAGE, true);
+                        memberAddressListFragment.setArguments(addressbundle);
+                        changeFragment(memberAddressListFragment);
+                        break;
+                    case 6:
+                        intent = new Intent(getActivity(), BackButtonActivity.class);
+                        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_CHANGE_PIN);
+                        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                        break;
+                }
+            }
+        });
+
+        contentView.addView(lstMyAccount);
+    }
+
+    private class MyAccountListAdapter extends BaseAdapter {
+
+        String[] itemDetails = {
                 getResources().getString(R.string.active_order_label),
                 getResources().getString(R.string.past_order_label),
                 getResources().getString(R.string.update_my_profile),
@@ -56,67 +116,83 @@ public class AccountSettingFragment extends BaseFragment {
                 R.drawable.safety_box_large,
                 R.drawable.place_large,
                 R.drawable.edit_large_dark};
-        int imageArrayLen = imageArray.length;
-        contentView.removeAllViews();
-        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        for (int i = 0; i < imageArrayLen; i++) {
-            View base = inflater.inflate(R.layout.uiv3_list_icon_and_text_row, null);
 
-            RelativeLayout accountMainLayout = (RelativeLayout) base.findViewById(R.id.layoutRow);
-            accountMainLayout.setId(i);
+        @Override
+        public int getCount() {
+            return itemDetails.length;
+        }
 
-            accountMainLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    switch (view.getId()) {
-                        case 0:
-                            Intent orderListIntent = new Intent(getActivity(), OrderListActivity.class);
-                            orderListIntent.putExtra(Constants.ORDER, getString(R.string.active_label));
-                            startActivityForResult(orderListIntent, NavigationCodes.GO_TO_HOME);
-                            break;
-                        case 1:
-                            orderListIntent = new Intent(getActivity(), OrderListActivity.class);
-                            orderListIntent.putExtra(Constants.ORDER, getString(R.string.past_label));
-                            startActivityForResult(orderListIntent, NavigationCodes.GO_TO_HOME);
-                            break;
-                        case 2:
-                            changeFragment(new UpdateProfileFragment());
-                            break;
-                        case 3:
-                            changeFragment(new ChangePasswordFragment());
-                            break;
-                        case 4:
-                            changeFragment(new DoWalletFragment());
-                            break;
-                        case 5:
-                            MemberAddressListFragment memberAddressListFragment = new MemberAddressListFragment();
-                            Bundle addressbundle = new Bundle();
-                            addressbundle.putBoolean(Constants.FROM_ACCOUNT_PAGE, true);
-                            memberAddressListFragment.setArguments(addressbundle);
-                            changeFragment(memberAddressListFragment);
-                            break;
-                        case 6:
-                            changeFragment(new UpdatePinFragment());
-                            break;
-                    }
-                }
-            });
+        @Override
+        public Object getItem(int position) {
+            return itemDetails[position];
+        }
 
-            ImageView accountImageView = (ImageView) base.findViewById(R.id.itemImg);
-            accountImageView.setBackgroundResource(imageArray[i]);
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
 
-            final TextView accountTxtView = (TextView) base.findViewById(R.id.itemTitle);
-            accountTxtView.setTypeface(faceRobotoRegular);
-            accountTxtView.setText(ItemDetails[i]);
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View row = convertView;
+            ViewHolder viewHolder;
+            if (row == null) {
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                row = inflater.inflate(R.layout.uiv3_list_icon_and_text_row, parent, false);
+                viewHolder = new ViewHolder(row);
+                row.setTag(viewHolder);
+            } else {
+                viewHolder = (ViewHolder) row.getTag();
+            }
+            ImageView accountImageView = viewHolder.getItemImg();
+            accountImageView.setBackgroundResource(imageArray[position]);
 
-            if (i != imageArrayLen - 1) {
-                View dividerLine = base.findViewById(R.id.dividerLine);
+            final TextView accountTxtView = viewHolder.getItemTitle();
+            accountTxtView.setText(itemDetails[position]);
+
+            View dividerLine = viewHolder.getDividerLine();
+            if (position != imageArray.length - 1) {
                 dividerLine.setVisibility(View.VISIBLE);
-                contentView.addView(base);
+            } else {
+                dividerLine.setVisibility(View.GONE);
+            }
+            return row;
+        }
+
+        private class ViewHolder {
+
+            private ImageView itemImg;
+            private TextView itemTitle;
+            private View dividerLine;
+            private View itemView;
+
+            public ViewHolder(View itemView) {
+                this.itemView = itemView;
+            }
+
+            public ImageView getItemImg() {
+                if (itemImg == null) {
+                    itemImg = (ImageView) itemView.findViewById(R.id.itemImg);
+                }
+                return itemImg;
+            }
+
+            public TextView getItemTitle() {
+                if (itemTitle == null) {
+                    itemTitle = (TextView) itemView.findViewById(R.id.itemTitle);
+                    itemTitle.setTypeface(faceRobotoRegular);
+                }
+                return itemTitle;
+            }
+
+            public View getDividerLine() {
+                if (dividerLine == null) {
+                    dividerLine = itemView.findViewById(R.id.dividerLine);
+                }
+                return dividerLine;
             }
         }
     }
-
 
     public LinearLayout getContentView() {
         return getView() != null ? (LinearLayout) getView().findViewById(R.id.uiv3LayoutListContainer) : null;

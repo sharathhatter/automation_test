@@ -97,7 +97,7 @@ public final class ProductView {
     private static <T> void setChildProducts(final ProductViewHolder productViewHolder, Product product,
                                              final String baseImgUrl,
                                              final ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                             final T productDataAware,final String sourceName) {
+                                             final T productDataAware, final String sourceName) {
         final List<Product> childProducts = product.getAllProducts();
         boolean hasChildren = childProducts != null && childProducts.size() > 0;
         Spinner spinnerPackageDesc = productViewHolder.getSpinnerPackageDesc();
@@ -363,7 +363,7 @@ public final class ProductView {
 
     private static <T> void setBasketAndAvailabilityViews(ProductViewHolder productViewHolder, final Product product,
                                                           final ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                                          final T basketOperationAware,final String sourceName) {
+                                                          final T basketOperationAware, final String sourceName) {
         final Button btnAddToBasket = productViewHolder.getBtnAddToBasket();
         final ImageView imgDecBasketQty = productViewHolder.getImgDecBasketQty();
         final TextView txtInBasket = productViewHolder.getTxtInBasket();

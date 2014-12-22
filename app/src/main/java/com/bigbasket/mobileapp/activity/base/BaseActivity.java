@@ -592,22 +592,19 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     public void trackEvent(String eventName, Map<String, String> eventAttribs) {
         // todo check if MoEngage enabled
         AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());
-        if(!authParameters.isMoEngaleEnabled()) return;
+        if (!authParameters.isMoEngaleEnabled()) return;
         trackEvent(eventName, eventAttribs, null, null);
     }
-
-
-
 
 
     @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs, String source, String sourceValue) {
         AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());
-        if(!authParameters.isMoEngaleEnabled()) return;
+        if (!authParameters.isMoEngaleEnabled()) return;
 
         JSONObject analyticsJsonObj = new JSONObject();
         try {
-            if(eventAttribs!=null){
+            if (eventAttribs != null) {
                 for (Map.Entry<String, String> entry : eventAttribs.entrySet()) {
                     analyticsJsonObj.put(entry.getKey(), entry.getValue());
                 }

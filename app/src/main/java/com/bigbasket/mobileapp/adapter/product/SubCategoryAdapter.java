@@ -4,7 +4,6 @@ package com.bigbasket.mobileapp.adapter.product;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
@@ -12,7 +11,6 @@ import com.bigbasket.mobileapp.adapter.db.DatabaseHelper;
 import com.bigbasket.mobileapp.model.product.SubCategoryModel;
 import com.bigbasket.mobileapp.util.ResponseSerializer;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class SubCategoryAdapter {

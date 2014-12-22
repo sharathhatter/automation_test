@@ -27,11 +27,8 @@ import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -198,15 +195,15 @@ public class BasketOperationTask<T> {
         }
     }
 
-    private void createEventTrackPayLoad(String eventName, Product product, String sourceName){
+    private void createEventTrackPayLoad(String eventName, Product product, String sourceName) {
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.PRODUCT_ID, product.getSku());
         eventAttribs.put(TrackEventkeys.PRODUCT_BRAND, product.getBrand());
         String desc = product.getDescription();
-        if(!TextUtils.isEmpty(product.getPackageDescription()))
-            desc = " "  + product.getPackageDescription();
+        if (!TextUtils.isEmpty(product.getPackageDescription()))
+            desc = " " + product.getPackageDescription();
         eventAttribs.put(TrackEventkeys.PRODUCT_DESC, desc);
         eventAttribs.put(TrackEventkeys.PRODUCT_TOP_CAT, product.getTopLevelCategoryName());
-        ((BaseFragment)context).trackEvent(eventName, eventAttribs, sourceName , null);
+        ((BaseFragment) context).trackEvent(eventName, eventAttribs, sourceName, null);
     }
 }

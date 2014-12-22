@@ -54,7 +54,6 @@ import retrofit.http.FieldMap;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
 import retrofit.http.POST;
-import retrofit.http.Path;
 import retrofit.http.Query;
 import retrofit.http.QueryMap;
 
@@ -319,7 +318,7 @@ public interface BigBasketApiService {
                              Callback<ApiResponse<UpdateVersionInfoApiResponseContent>> updateVersionInfoApiResponseCallback);
 
     @GET("/category-landing/")
-    void getSubCategoryData(@Query(Constants.CATEGORY_SLUG) String  categorySlug,
+    void getSubCategoryData(@Query(Constants.CATEGORY_SLUG) String categorySlug,
                             @Query(Constants.VERSION) String version,
                             Callback<ApiResponse<SubCategoryApiResponse>> subCategoryCallback);
 }

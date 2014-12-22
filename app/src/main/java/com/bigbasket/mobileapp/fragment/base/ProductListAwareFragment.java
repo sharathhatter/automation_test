@@ -164,6 +164,7 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
         currentProducts.addAll(nextPageProducts);
         mProductListRecyclerAdapter.notifyDataSetChanged();
     }
+
     public abstract String getSourceName();
 
     public abstract String getProductListSlug();

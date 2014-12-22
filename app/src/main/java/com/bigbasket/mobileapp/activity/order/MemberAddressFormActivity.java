@@ -284,12 +284,12 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
                         otpDialog.dismiss();
                         BaseActivity.hideKeyboard(getCurrentActivity(), otpDialog.getView());
                     }
-                    if(mFromAccountPage){
-                        if(address==null)
+                    if (mFromAccountPage) {
+                        if (address == null)
                             trackEvent(TrackingAware.MY_ACCOUNT_ADDRESS_CREATED, null);
                         else
                             trackEvent(TrackingAware.MY_ACCOUNT_ADDRESS_EDITED, null);
-                    }else {
+                    } else {
                         trackEvent(TrackingAware.CHECKOUT_ADDRESS_CREATED, null);
                     }
 

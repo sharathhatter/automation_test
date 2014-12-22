@@ -199,7 +199,7 @@ public class BasketValidationActivity extends BackButtonActivity {
                                         null);
                                 BasketOperationTask<BaseActivity> basketOperationTask = new BasketOperationTask<>(getCurrentActivity(),
                                         BasketOperation.EMPTY, product,
-                                        null, null, null, null, null, "0",TrackingAware.BASKET_REMOVE, TrackEventkeys.MARKET_QC);
+                                        null, null, null, null, null, "0", TrackingAware.BASKET_REMOVE, TrackEventkeys.MARKET_QC);
                                 basketOperationTask.startTask();
                             } else {
                                 Toast toast = Toast.makeText(getCurrentActivity(), "Unable to connect to Internet", Toast.LENGTH_LONG);

@@ -110,9 +110,9 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
 
     private void showAddresses() {
         if (mAddressArrayList != null && mAddressArrayList.size() > 0) {
-            if(mFromAccountPage) {
+            if (mFromAccountPage) {
                 trackEvent(TrackingAware.MY_ACCOUNT_DELIVERY_ADDRESS_SHOWN, null);
-            }else {
+            } else {
                 trackEvent(TrackingAware.CHECKOUT_ADDRESS_SHOWN, null);
             }
             renderAddressList();

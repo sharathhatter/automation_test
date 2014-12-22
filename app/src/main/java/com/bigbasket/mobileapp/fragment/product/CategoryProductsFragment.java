@@ -33,7 +33,7 @@ public class CategoryProductsFragment extends ProductListAwareFragment {
     }
 
     @Override
-    public String getSourceName(){
+    public String getSourceName() {
         return TrackEventkeys.CATEGORY_LANDING;
     }
 }
