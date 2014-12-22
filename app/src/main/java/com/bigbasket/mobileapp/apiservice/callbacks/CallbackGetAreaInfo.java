@@ -26,11 +26,6 @@ public class CallbackGetAreaInfo<T> implements Callback<ApiResponse<GetAreaInfoR
     @Override
     public void success(ApiResponse<GetAreaInfoResponse> getAreaInfoResponseApiResponse, Response response) {
         if (((CancelableAware) ctx).isSuspended()) return;
-        try {
-            ((ProgressIndicationAware) ctx).hideProgressDialog();
-        } catch (IllegalArgumentException e) {
-            return;
-        }
         switch (getAreaInfoResponseApiResponse.status) {
             case 0:
                 if (getAreaInfoResponseApiResponse.apiResponseContent.pinCodeMaps != null) {
@@ -42,20 +37,28 @@ public class CallbackGetAreaInfo<T> implements Callback<ApiResponse<GetAreaInfoR
                             areaPinInfoAdapter.insert(areaName.toLowerCase(), pinCodeMapEntry.getKey());
                         }
                     }
+                    try {
+                        ((ProgressIndicationAware) ctx).hideProgressDialog();
+                    } catch (IllegalArgumentException e) {
+                        return;
+                    }
                     ((PinCodeAware) ctx).onPinCodeFetchSuccess();
                     return;
                 }
-                ((PinCodeAware) ctx).onPinCodeFetchFailure();
+                pinCodeFailure();
                 break;
             default:
-                ((PinCodeAware) ctx).onPinCodeFetchFailure();
+                pinCodeFailure();
                 break;
         }
     }
 
     @Override
     public void failure(RetrofitError error) {
-        if (((CancelableAware) ctx).isSuspended()) return;
+        pinCodeFailure();
+    }
+
+    private void pinCodeFailure() {
         try {
             ((ProgressIndicationAware) ctx).hideProgressDialog();
         } catch (IllegalArgumentException e) {

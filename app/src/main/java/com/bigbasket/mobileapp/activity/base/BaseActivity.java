@@ -113,10 +113,17 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
 
     @Override
     public void showProgressView() {
+        showProgressDialog(getString(R.string.please_wait));
     }
 
     @Override
     public void hideProgressView() {
+        if (isSuspended()) return;
+        try {
+            hideProgressDialog();
+        } catch (IllegalArgumentException e) {
+
+        }
     }
 
     public abstract BaseActivity getCurrentActivity();

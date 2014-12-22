@@ -34,7 +34,7 @@
         android:layout_marginRight="@dimen/margin_mini"
         android:contentDescription="@string/remove"
         android:layout_marginTop="@dimen/margin_small"
-        android:src="@drawable/cart_delete_btn" />
+        android:src="@drawable/clear" />
 
     <ImageView
         android:id="@+id/imgAdd"
@@ -45,18 +45,18 @@
         android:layout_toLeftOf="@+id/imgRemove"
         android:layout_marginTop="@dimen/margin_small"
         android:contentDescription="@string/add"
-        android:src="@drawable/add_sign" />
+        android:src="@drawable/add" />
 
     <ImageView
         android:id="@+id/imgDec"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="25dp"
         android:layout_below="@id/txtItemInBasketAndProductDesc"
         android:layout_marginRight="@dimen/margin_small"
         android:layout_toLeftOf="@id/imgAdd"
         android:layout_marginTop="@dimen/margin_small"
         android:contentDescription="@string/decrease"
-        android:src="@drawable/substraction_sign" />
+        android:src="@drawable/remove" />
 
 
     <TextView

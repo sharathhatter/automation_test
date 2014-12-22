@@ -192,7 +192,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
 
     @Override
     public String getTitle() {
-        return "Choose Delivery Address";
+        return mFromAccountPage ? "Delivery Address" : "Choose Delivery Address";
     }
 
     @NonNull
