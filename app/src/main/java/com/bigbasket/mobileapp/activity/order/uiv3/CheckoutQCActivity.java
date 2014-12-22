@@ -29,6 +29,7 @@ import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.interfaces.OnUpdateReserveQtyAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.order.COReserveQuantity;
 import com.bigbasket.mobileapp.model.order.CheckoutProduct;
 import com.bigbasket.mobileapp.model.order.QCErrorData;
@@ -86,7 +87,7 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
     private void renderQcPage() {
         if (coReserveQuantity.isStatus()) {
             if (!coReserveQuantity.isQcHasErrors()) {
-                showAlertDialogFinish(null, getString(R.string.INTERNAL_SERVER_ERROR));
+                showAlertDialog(null, getString(R.string.checkinternet), Constants.GO_TO_HOME_STRING);
             } else {
                 createArrayListOfProducts();
             }
@@ -126,13 +127,7 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
         if (coReserveQuantity.getQc_len() == 0) {
             launchAddressSelection();
         } else {
-            if (coReserveQuantity.isStatus()) {
-                if (!coReserveQuantity.isQcHasErrors()) {
-                    showAlertDialog(null, getString(R.string.checkinternet), Constants.GO_TO_HOME_STRING);
-                } else {
-                    createArrayListOfProducts();
-                }
-            }
+            renderQcPage();
         }
     }
 
@@ -180,6 +175,7 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
                 }
             }
             renderCheckOut(productWithNoStockList, productWithSomeStockList);
+            trackEvent(TrackingAware.CHECKOUT_QC_SHOWN, null);
         } else {
             showAlertDialogFinish(null, getString(R.string.INTERNAL_SERVER_ERROR));
         }

@@ -21,9 +21,11 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 
+import com.bigbasket.mobileapp.BuildConfig;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginConfirmActivity;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginApiResponse;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.SocialAccount;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
@@ -150,15 +152,16 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity {
         private boolean rememberMe;
         private SocialAccount socialAccount;
 
-        public LoginApiResponseCallback(String email, String password, boolean rememberMe) {
+        public LoginApiResponseCallback(String email, String password, boolean rememberMe, String loginType) {
             this.email = email;
             this.password = password;
             this.rememberMe = rememberMe;
+            this.loginType = loginType;
         }
 
         public LoginApiResponseCallback(String email, String password, boolean rememberMe, String loginType,
                                         SocialAccount socialAccount) {
-            this(email, password, rememberMe);
+            this(email, password, rememberMe, loginType);
             this.loginType = loginType;
             this.socialAccount = socialAccount;
         }
@@ -170,6 +173,17 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity {
                 case Constants.OK:
                     saveLoginUserDetailInPreference(loginApiResponse, loginType,
                             email, password, rememberMe);
+                    if(loginType.equals(SocialAccount.FB)){
+                        trackEvent(TrackingAware.MY_ACCOUNT_FACEBOOK_LOGIN_SUCCESS, null);
+                    }else if(loginType.equals(SocialAccount.GP)){
+                        trackEvent(TrackingAware.MY_ACCOUNT_GOOGLE_LOGIN_SUCCESS, null);
+                    }else if(loginType.equals(Constants.SIGN_IN_ACCOUNT_TYPE)){
+                        trackEvent(TrackingAware.MY_ACCOUNT_LOGIN_SUCCESS, null);
+                    }else if(loginType.equals(Constants.REGISTER_ACCOUNT_TYPE)){
+                        trackEvent(TrackingAware.MY_ACCOUNT_REGISTRATION_SUCCESS, null);
+                    }else {
+                        throw new AssertionError("Login or register type error while success(status=OK)");
+                    }
                     break;
                 case Constants.ERROR:
                     switch (loginApiResponse.getErrorTypeAsInt()) {
@@ -186,6 +200,18 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity {
                             handler.sendEmptyMessage(loginApiResponse.getErrorTypeAsInt());
                             break;
                     }
+
+                    if(loginType.equals(SocialAccount.FB)){
+                        trackEvent(TrackingAware.MY_ACCOUNT_FACEBOOK_LOGIN_FAILED, null);
+                    }else if(loginType.equals(SocialAccount.GP)){
+                        trackEvent(TrackingAware.MY_ACCOUNT_GOOGLE_LOGIN_FAILED, null);
+                    }else if(loginType.equals(Constants.SIGN_IN_ACCOUNT_TYPE)){
+                        trackEvent(TrackingAware.MY_ACCOUNT_LOGIN_FAILED, null);
+                    }else if(loginType.equals(Constants.REGISTER_ACCOUNT_TYPE)){
+                        trackEvent(TrackingAware.MY_ACCOUNT_REGISTRATION_FAILED, null);
+                    }else {
+                        throw new AssertionError("Login or register type error while success(status=ERROR)");
+                    }
                     break;
             }
         }
@@ -194,6 +220,17 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity {
         public void failure(RetrofitError error) {
             showProgress(false);
             handler.handleRetrofitError(error);
+            if(loginType.equals(SocialAccount.FB)){
+                trackEvent(TrackingAware.MY_ACCOUNT_FACEBOOK_LOGIN_FAILED, null);
+            }else if(loginType.equals(SocialAccount.GP)){
+                trackEvent(TrackingAware.MY_ACCOUNT_GOOGLE_LOGIN_FAILED, null);
+            }else if(loginType.equals(Constants.SIGN_IN_ACCOUNT_TYPE)){
+                trackEvent(TrackingAware.MY_ACCOUNT_LOGIN_FAILED, null);
+            }else if(loginType.equals(Constants.REGISTER_ACCOUNT_TYPE)){
+                trackEvent(TrackingAware.MY_ACCOUNT_REGISTRATION_FAILED, null);
+            }else {
+                throw new AssertionError("Login or register type error while failure");
+            }
         }
     }
 

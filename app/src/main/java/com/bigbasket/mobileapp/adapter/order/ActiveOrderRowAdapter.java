@@ -22,12 +22,14 @@ import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoDetailFragment;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.AnnotationInfo;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.cart.CartItem;
 import com.bigbasket.mobileapp.model.cart.CartItemHeader;
 import com.bigbasket.mobileapp.model.cart.FulfillmentInfo;
 import com.bigbasket.mobileapp.model.order.OrderItemDisplaySource;
+import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.task.BasketOperationTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
@@ -54,6 +56,7 @@ public class ActiveOrderRowAdapter extends android.widget.BaseAdapter {
     private String baseImgUrl;
     private BaseFragment fragment;
     private Typeface faceRobotoRegular, faceRupee;
+    private String sourceName;
 
     public ActiveOrderRowAdapter(List<Object> orderList, BaseActivity context, Typeface faceRupee,
                                  Typeface faceRobotoSlabLight, Typeface faceRobotoSlabNrml, Typeface faceLatoNormal,
@@ -73,13 +76,13 @@ public class ActiveOrderRowAdapter extends android.widget.BaseAdapter {
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-
+    // basket page
     public ActiveOrderRowAdapter(List<Object> orderList, BaseActivity baseActivity, BaseFragment fragment, Typeface faceRupee,
                                  Typeface faceRobotoRegular, OrderItemDisplaySource orderItemDisplaySource,
                                  boolean isReadOnly,
                                  HashMap<String, String> fulfillmentInfoIdAndIconHashMap,
                                  HashMap<String, AnnotationInfo> annotationHashMap,
-                                 String baseImageUrl) {
+                                 String baseImageUrl, String sourceName) {
         this.baseActivity = baseActivity;
         this.fragment = fragment;
         this.orderList = orderList;
@@ -90,6 +93,7 @@ public class ActiveOrderRowAdapter extends android.widget.BaseAdapter {
         this.annotationHashMap = annotationHashMap;
         this.isReadOnlyBasket = isReadOnly;
         this.baseImgUrl = baseImageUrl;
+        this.sourceName = sourceName;
         this.inflater = (LayoutInflater) baseActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -232,7 +236,6 @@ public class ActiveOrderRowAdapter extends android.widget.BaseAdapter {
         ShowFulfillmentInfo showFulfillmentInfo = new ShowFulfillmentInfo((FulfillmentInfo) obj, baseActivity);
         View view = showFulfillmentInfo.showFulfillmentInfo(true, true);
         if (view == null) {
-            Log.e("************************************", "null coming");
         } else {
             return view;
         }
@@ -247,7 +250,7 @@ public class ActiveOrderRowAdapter extends android.widget.BaseAdapter {
         return null;
     }
 
-    private void renderBasicView(RowHolder rowHolder, int childPosition, CartItem cartItem) {
+    private void renderBasicView(RowHolder rowHolder, int childPosition, final CartItem cartItem) {
         ImageView imgProduct = rowHolder.getImgProduct();
         if (imgProduct != null && !TextUtils.isEmpty(cartItem.getProductImgUrl())) {
             ImageLoader.getInstance().displayImage(baseImgUrl != null ? baseImgUrl + cartItem.getProductImgUrl() : cartItem.getProductImgUrl(),
@@ -363,9 +366,12 @@ public class ActiveOrderRowAdapter extends android.widget.BaseAdapter {
                     @Override
                     public void onClick(View v) {
                         if (DataUtil.isInternetAvailable(baseActivity)) {
+                            Product product = new Product(cartItem.getProductBrand(),
+                                    cartItem.getProductDesc(), String.valueOf(cartItem.getSkuId()),
+                                    cartItem.getTopCategoryName());
                             BasketOperationTask<BaseFragment> basketOperationTask = new BasketOperationTask<>(fragment,
-                                    BasketOperation.DEC, productId,
-                                    null, null, null, null, null
+                                    BasketOperation.DEC, product,
+                                    null, null, null, null, null, TrackingAware.BASKET_DECREMENT, sourceName
                             );
                             basketOperationTask.startTask();
                         } else {
@@ -379,9 +385,12 @@ public class ActiveOrderRowAdapter extends android.widget.BaseAdapter {
                     @Override
                     public void onClick(View v) {
                         if (DataUtil.isInternetAvailable(baseActivity)) {
+                            Product product = new Product(cartItem.getProductBrand(),
+                                    cartItem.getProductDesc(), String.valueOf(cartItem.getSkuId()),
+                                    cartItem.getTopCategoryName());
                             BasketOperationTask<BaseFragment> basketOperationTask = new BasketOperationTask<>(fragment,
-                                    BasketOperation.INC, productId,
-                                    null, null, null, null, null
+                                    BasketOperation.INC, product,
+                                    null, null, null, null, null, TrackingAware.BASKET_INCREMENT, sourceName
                             );
                             basketOperationTask.startTask();
 
@@ -396,9 +405,13 @@ public class ActiveOrderRowAdapter extends android.widget.BaseAdapter {
                     @Override
                     public void onClick(View v) {
                         if (DataUtil.isInternetAvailable(baseActivity)) {
+                            Product product = new Product(cartItem.getProductBrand(),
+                                    cartItem.getProductDesc(), String.valueOf(cartItem.getSkuId()),
+                                    cartItem.getTopCategoryName());
                             BasketOperationTask<BaseFragment> basketOperationTask = new BasketOperationTask<>(fragment,
                                     BasketOperation.EMPTY,
-                                    productId, itemCountTxtView, null, null, null, null, "0"
+                                    product, itemCountTxtView, null, null, null, null, "0",
+                                    TrackingAware.BASKET_REMOVE, sourceName
                             );
                             basketOperationTask.startTask();
                         } else {

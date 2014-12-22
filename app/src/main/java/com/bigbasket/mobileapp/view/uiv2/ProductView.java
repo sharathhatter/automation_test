@@ -30,6 +30,7 @@ import com.bigbasket.mobileapp.handler.ProductDetailOnClickListener;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
@@ -54,18 +55,20 @@ public final class ProductView {
                                           ProductDetailOnClickListener productDetailOnClickListener,
                                           ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                           final boolean skipChildDropDownRendering,
-                                          final T productDataAware) {
+                                          final T productDataAware, String sourceName) {
         setProductImage(productViewHolder, product, baseImgUrl, productDetailOnClickListener);
         setIsNewAndBby(productViewHolder, product);
         if (!skipChildDropDownRendering) {
-            setChildProducts(productViewHolder, product, baseImgUrl, productViewDisplayDataHolder, productDataAware);
+            setChildProducts(productViewHolder, product, baseImgUrl, productViewDisplayDataHolder,
+                    productDataAware, sourceName);
         }
         setProductBrand(productViewHolder, product, productViewDisplayDataHolder, productDetailOnClickListener);
         setProductDesc(productViewHolder, product, productViewDisplayDataHolder, productDetailOnClickListener);
         setPrice(productViewHolder, product, productViewDisplayDataHolder);
         setPromo(productViewHolder, product, productViewDisplayDataHolder, productDataAware);
         setProductAdditionalActionMenu(productViewHolder, product, productViewDisplayDataHolder, productDataAware);
-        setBasketAndAvailabilityViews(productViewHolder, product, productViewDisplayDataHolder, productDataAware);
+        setBasketAndAvailabilityViews(productViewHolder, product, productViewDisplayDataHolder,
+                productDataAware, sourceName);
     }
 
     private static void setProductImage(ProductViewHolder productViewHolder, Product product, String baseImgUrl,
@@ -94,7 +97,7 @@ public final class ProductView {
     private static <T> void setChildProducts(final ProductViewHolder productViewHolder, Product product,
                                              final String baseImgUrl,
                                              final ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                             final T productDataAware) {
+                                             final T productDataAware,final String sourceName) {
         final List<Product> childProducts = product.getAllProducts();
         boolean hasChildren = childProducts != null && childProducts.size() > 0;
         Spinner spinnerPackageDesc = productViewHolder.getSpinnerPackageDesc();
@@ -111,7 +114,7 @@ public final class ProductView {
                     Product childProduct = childProducts.get(position);
                     setProductView(productViewHolder, childProduct, baseImgUrl,
                             new ProductDetailOnClickListener(childProduct.getSku(), (ActivityAware) productDataAware),
-                            productViewDisplayDataHolder, true, productDataAware);
+                            productViewDisplayDataHolder, true, productDataAware, sourceName);
                 }
 
                 @Override
@@ -360,7 +363,7 @@ public final class ProductView {
 
     private static <T> void setBasketAndAvailabilityViews(ProductViewHolder productViewHolder, final Product product,
                                                           final ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                                          final T basketOperationAware) {
+                                                          final T basketOperationAware,final String sourceName) {
         final Button btnAddToBasket = productViewHolder.getBtnAddToBasket();
         final ImageView imgDecBasketQty = productViewHolder.getImgDecBasketQty();
         final TextView txtInBasket = productViewHolder.getTxtInBasket();
@@ -397,9 +400,11 @@ public final class ProductView {
                     @Override
                     public void onClick(View view) {
                         if (((ConnectivityAware) basketOperationAware).checkInternetConnection() && !TextUtils.isEmpty(editTextQty.getText())) {
+
                             BasketOperationTask<T> basketOperationTask = new BasketOperationTask<>(basketOperationAware,
                                     BasketOperation.INC, product,
-                                    txtInBasket, imgDecBasketQty, imgIncBasketQty, btnAddToBasket, editTextQty);
+                                    txtInBasket, imgDecBasketQty, imgIncBasketQty, btnAddToBasket,
+                                    editTextQty, TrackingAware.BASKET_INCREMENT, sourceName);
                             basketOperationTask.startTask();
 
                         } else {
@@ -414,7 +419,8 @@ public final class ProductView {
                         if (((ConnectivityAware) basketOperationAware).checkInternetConnection() && !TextUtils.isEmpty(editTextQty.getText())) {
                             BasketOperationTask<T> myTask = new BasketOperationTask<>(basketOperationAware,
                                     BasketOperation.DEC,
-                                    product, txtInBasket, imgDecBasketQty, imgIncBasketQty, btnAddToBasket, editTextQty);
+                                    product, txtInBasket, imgDecBasketQty, imgIncBasketQty,
+                                    btnAddToBasket, editTextQty, TrackingAware.BASKET_DECREMENT, sourceName);
                             myTask.startTask();
                         } else {
                             productViewDisplayDataHolder.getHandler().sendOfflineError();
@@ -434,7 +440,8 @@ public final class ProductView {
                             String qty = editTextQty.getText() != null ? editTextQty.getText().toString() : "1";
                             BasketOperationTask<T> basketOperationTask = new BasketOperationTask<>(basketOperationAware,
                                     BasketOperation.INC, product,
-                                    txtInBasket, imgDecBasketQty, imgIncBasketQty, btnAddToBasket, editTextQty, qty);
+                                    txtInBasket, imgDecBasketQty, imgIncBasketQty, btnAddToBasket,
+                                    editTextQty, qty, TrackingAware.BASKET_INCREMENT, sourceName);
                             basketOperationTask.startTask();
                         } else {
                             productViewDisplayDataHolder.getHandler().sendOfflineError();

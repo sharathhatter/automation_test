@@ -10,12 +10,36 @@
         android:id="@+id/progressBarLoading"
         android:layout_centerInParent="true" />
 
-    <Spinner
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:weightSum="1"
+        android:layout_centerInParent="true"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:id="@+id/layoutSpinnerAndWhyLink"
         android:layout_marginLeft="@dimen/margin_normal"
         android:layout_marginRight="@dimen/margin_normal"
-        android:id="@+id/spinnerCity"
-        android:layout_centerInParent="true"
-        android:visibility="gone" />
+        android:layout_height="wrap_content">
+
+        <Spinner
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:id="@+id/spinnerCity"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:paddingBottom="@dimen/padding_normal"
+            android:paddingLeft="@dimen/padding_normal"
+            android:paddingRight="@dimen/padding_normal"
+            android:id="@+id/txtViewWhy"
+            android:textSize="@dimen/secondary_text_size"
+            android:textColor="@color/link_color"
+            android:text="@string/why"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+
 </RelativeLayout>

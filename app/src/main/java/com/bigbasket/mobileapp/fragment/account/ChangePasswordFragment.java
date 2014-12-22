@@ -20,6 +20,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
@@ -83,6 +84,7 @@ public class ChangePasswordFragment extends BaseFragment {
             }
         });
 
+        trackEvent(TrackingAware.MY_ACCOUNT_CHANGE_PASSWD_SELECTED, null);
     }
 
 
@@ -162,6 +164,7 @@ public class ChangePasswordFragment extends BaseFragment {
                         }
                         if (changePasswordCallback.status.equals(Constants.OK)) {
                             onChangePasswordSuccessResponse();
+                            trackEvent(TrackingAware.MY_ACCOUNT_CHANGE_PASSWD_SUCCESS, null);
                         } else {
                             onChangePasswordErrorResponse();
                             switch (changePasswordCallback.getErrorTypeAsInt()) {
@@ -172,6 +175,7 @@ public class ChangePasswordFragment extends BaseFragment {
                                     handler.sendEmptyMessage(changePasswordCallback.getErrorTypeAsInt());
                                     break;
                             }
+                            trackEvent(TrackingAware.MY_ACCOUNT_CHANGE_PASSWD_FAILED, null);
                         }
 
                     }
@@ -185,6 +189,7 @@ public class ChangePasswordFragment extends BaseFragment {
                             return;
                         }
                         handler.handleRetrofitError(error);
+                        trackEvent(TrackingAware.MY_ACCOUNT_CHANGE_PASSWD_FAILED, null);
                     }
                 });
     }

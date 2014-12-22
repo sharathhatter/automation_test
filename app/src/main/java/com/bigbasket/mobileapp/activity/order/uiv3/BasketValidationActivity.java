@@ -22,14 +22,17 @@ import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.order.MarketPlaceItems;
+import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.task.BasketOperationTask;
 import com.bigbasket.mobileapp.task.COReserveQuantityCheckTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 public class BasketValidationActivity extends BackButtonActivity {
 
@@ -154,9 +157,12 @@ public class BasketValidationActivity extends BackButtonActivity {
                         @Override
                         public void onClick(View v) {
                             if (DataUtil.isInternetAvailable(getCurrentActivity())) {
+                                Product product = new Product(null,    //todo change api for brand and topcat
+                                        marketPlaceItems.getDesc(), marketPlaceItems.getSku(),
+                                        null);
                                 BasketOperationTask<BaseActivity> basketOperationTask = new BasketOperationTask<>(getCurrentActivity(),
-                                        BasketOperation.DEC, marketPlaceItems.getSku(),
-                                        null, null, null, null, null);
+                                        BasketOperation.DEC, product,
+                                        null, null, null, null, null, TrackingAware.BASKET_DECREMENT, TrackEventkeys.MARKET_QC);
                                 basketOperationTask.startTask();
                             } else {
                                 Toast toast = Toast.makeText(getCurrentActivity(), "Unable to connect to Internet", Toast.LENGTH_LONG);
@@ -170,9 +176,12 @@ public class BasketValidationActivity extends BackButtonActivity {
                         @Override
                         public void onClick(View v) {
                             if (DataUtil.isInternetAvailable(getCurrentActivity())) {
+                                Product product = new Product(null,    //todo change api for brand and topcat
+                                        marketPlaceItems.getDesc(), marketPlaceItems.getSku(),
+                                        null);
                                 BasketOperationTask<BaseActivity> basketOperationTask = new BasketOperationTask<>(getCurrentActivity(),
-                                        BasketOperation.INC, marketPlaceItems.getSku(),
-                                        null, null, null, null, null);
+                                        BasketOperation.INC, product,
+                                        null, null, null, null, null, TrackingAware.BASKET_INCREMENT, TrackEventkeys.MARKET_QC);
                                 basketOperationTask.startTask();
                             } else {
                                 Toast toast = Toast.makeText(getCurrentActivity(), "Unable to connect to Internet", Toast.LENGTH_LONG);
@@ -185,10 +194,12 @@ public class BasketValidationActivity extends BackButtonActivity {
                         @Override
                         public void onClick(View v) {
                             if (DataUtil.isInternetAvailable(getCurrentActivity())) {
-
+                                Product product = new Product(null,    //todo change api for brand and topcat
+                                        marketPlaceItems.getDesc(), marketPlaceItems.getSku(),
+                                        null);
                                 BasketOperationTask<BaseActivity> basketOperationTask = new BasketOperationTask<>(getCurrentActivity(),
-                                        BasketOperation.EMPTY, marketPlaceItems.getSku(),
-                                        null, null, null, null, null, "0");
+                                        BasketOperation.EMPTY, product,
+                                        null, null, null, null, null, "0",TrackingAware.BASKET_REMOVE, TrackEventkeys.MARKET_QC);
                                 basketOperationTask.startTask();
                             } else {
                                 Toast toast = Toast.makeText(getCurrentActivity(), "Unable to connect to Internet", Toast.LENGTH_LONG);

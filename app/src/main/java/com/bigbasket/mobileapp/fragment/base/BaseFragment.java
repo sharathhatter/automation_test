@@ -375,6 +375,9 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
         editor.putString(Constants.GET_CART, "" + cartInfo.getNoOfItems());
         editor.commit();
+
+        AuthParameters.getInstance(getActivity()).setMoEngaleEnabled(cartInfo.isMoEngageEnabled(), getActivity());
+        AuthParameters.updateInstance(getActivity());
     }
 
     public void showAlertDialog(String title,

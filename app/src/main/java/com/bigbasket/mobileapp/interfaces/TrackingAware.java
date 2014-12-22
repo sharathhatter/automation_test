@@ -22,12 +22,16 @@ public interface TrackingAware {
     public static final String PRE_CHECKOUT_PHARMA_PRESCRIPTION_CREATED = "Precheckout.Pharma Prescription Created";
     public static final String PRE_CHECKOUT_PHARMA_PRESCRIPTION_NOT_PROVIDED = "Precheckout.Pharma Prescription Not Provided";
     public static final String PRE_CHECKOUT_CWR_APPICABLE = "Precheckout.Category Weight Restriction Applicable";
+
     public static final String CHECKOUT_QC_SHOWN = "Checkout.Order QC Shown";
+
     public static final String CHECKOUT_ADDRESS_SHOWN = "Checkout.Address Shown";
     public static final String CHECKOUT_ADDRESS_CHOSEN = "Checkout.Address Choosen";
     public static final String CHECKOUT_ADDRESS_CREATED = "Checkout.Address Created";
+
     public static final String CHECKOUT_SLOT_SHOWN = "Checkout.Slot Shown";
     public static final String CHECKOUT_SLOT_CHOOSEN = "Checkout.Slot Choosen";
+
     public static final String CHECKOUT_PAYMENT_SHOWN = "Checkout.Payment Shown";
     public static final String CHECKOUT_PAYMENT_CHOSEN = "Checkout.Payment Chosen";
     public static final String CHECKOUT_VOUCHER_APPLIED = "Checkout.Voucher Applied";
@@ -41,34 +45,52 @@ public interface TrackingAware {
     public static final String ORDER_ACTIVE_ORDERS_SHOWN = "Order.Active Orders Shown";
     public static final String ORDER_PAST_ORDERS = "Order.Past Orders";
     public static final String ORDER_VIEW_INVOICE = "Order.View Invoice";
+
+
     public static final String MY_ACCOUNT_CHANGE_PASSWD_SELECTED = "MyAccount.Change Password Selected";
     public static final String MY_ACCOUNT_CHANGE_PASSWD_SUCCESS = "MyAccount.Change Password Success";
     public static final String MY_ACCOUNT_CHANGE_PASSWD_FAILED = "MyAccount.Change Password Failed";
+
+
     public static final String MY_ACCOUNT_UPDATE_PROFILE_SELECTED = "MyAccount.Update Profile Selected";
     public static final String MY_ACCOUNT_UPDATE_PROFILE_SUCCESS = "MyAccount.Update Profile Success";
-    public static final String MY_ACCOUNT_UPDATE_PROFILE_FAILED = "MyAccount.Update Profile Failed";
-    public static final String MY_ACCOUNT_CHANGE_PIN_SELECTED = "MyAccount.Change Pin Selected";
-    public static final String MY_ACCOUNT_CHANGE_PIN_SUCCESS = "MyAccount.Change Pin Success";
-    public static final String MY_ACCOUNT_CHANGE_PIN_FAILED = "MyAccount.Change Pin Failed";
-    public static final String MY_ACCOUNT_WALLET_ACTIVITY_SHOWN = "MyAccount.Wallet Activity Shown";
+    public static final String MY_ACCOUNT_UPDATE_PROFILE_FAILED = "MyAccount.Update Profile Failed"; //todo otp needed call
+
+
+    public static final String MY_ACCOUNT_CURRENT_PIN_SUCCESS = "MyAccount.Change Current Pin Success";
+    public static final String MY_ACCOUNT_CURRENT_PIN_FAILED = "MyAccount.Change Current Pin Failed";
+    public static final String MY_ACCOUNT_CHANGE_PIN_SUCCESS = "MyAccount.Change Update Pin Success";
+    public static final String MY_ACCOUNT_CHANGE_PIN_FAILED = "MyAccount.Change Update Pin Failed";
+
+    public static final String MY_ACCOUNT_CURRENT_WALLET_BALANCE_SUCCESS = "MyAccount.Wallet Current Wallet Success";
+    public static final String MY_ACCOUNT_CURRENT_WALLET_BALANCE_FAILED = "MyAccount.Wallet Current Wallet Failed";
+    public static final String MY_ACCOUNT_WALLET_ACTIVITY_SUCCESS = "MyAccount.Wallet Activity Success";
+    public static final String MY_ACCOUNT_WALLET_ACTIVITY_FAILED = "MyAccount.Wallet Activity  Failed";
+
     public static final String MY_ACCOUNT_DELIVERY_ADDRESS_SHOWN = "MyAccount.Delivery Addresses Shown";
     public static final String MY_ACCOUNT_ADDRESS_EDITED = "MyAccount.Address Edited";
     public static final String MY_ACCOUNT_ADDRESS_CREATED = "MyAccount.Address Created";
+
     public static final String MY_ACCOUNT_LOGIN_SHOWN = "MyAccount.Login Shown";
     public static final String MY_ACCOUNT_LOGIN_SUCCESS = "MyAccount.Login Success";
     public static final String MY_ACCOUNT_LOGIN_FAILED = "MyAccount.Login Failed";
+
+    public static final String MY_ACCOUNT_FACEBOOK_LOGIN = "MyAccount.Facebook Login"; //onFacebookSignIn()
+    public static final String MY_ACCOUNT_GOOGLE_LOGIN = "MyAccount.Google Login";      // on G-btn clicked
+    public static final String MY_ACCOUNT_FACEBOOK_LOGIN_SUCCESS = "MyAccount.Facebook Login Success"; //on api call retrofit BaseSignInSignupActivity
+    public static final String MY_ACCOUNT_GOOGLE_LOGIN_SUCCESS = "MyAccount.Google Login Success";      //on api call retrofit
+    public static final String MY_ACCOUNT_FACEBOOK_LOGIN_FAILED = "MyAccount.Facebook Login Failed";    //on api call retrofit
+    public static final String MY_ACCOUNT_GOOGLE_LOGIN_FAILED = "MyAccount.Google Login Failed";        //on api call retrofit
+
+    public static final String MY_ACCOUNT_LOGOUT = "MyAccount.Logout";                                  //BaseActivity onLogoutRequested()
+    public static final String MY_ACCOUNT_FACEBOOK_LOGOUT = "MyAccount.Facebook Account Logout";        // onFacebookSignOut()
+    public static final String MY_ACCOUNT_GOOGLE_LOGOUT = "MyAccount.Google Account Logout";            //onPlusClientSignOut()
+
     public static final String MY_ACCOUNT_REGISTRATION_SHOWN = "MyAccount.Registration Shown";
     public static final String MY_ACCOUNT_REGISTRATION_SUCCESS = "MyAccount.Registration Success";
     public static final String MY_ACCOUNT_REGISTRATION_FAILED = "MyAccount.Registration Failed";
-    public static final String MY_ACCOUNT_FACEBOOK_LOGIN = "MyAccount.Facebook Login";
-    public static final String MY_ACCOUNT_GOOGLE_LOGIN = "MyAccount.Google Login";
-    public static final String MY_ACCOUNT_FACEBOOK_LOGIN_SUCCESS = "MyAccount.Facebook Login Success";
-    public static final String MY_ACCOUNT_GOOGLE_LOGIN_SUCCESS = "MyAccount.Google Login Success";
-    public static final String MY_ACCOUNT_FACEBOOK_LOGIN_FAILED = "MyAccount.Facebook Login Failed";
-    public static final String MY_ACCOUNT_GOOGLE_LOGIN_FAILED = "MyAccount.Google Login Failed";
-    public static final String MY_ACCOUNT_LOGOUT = "MyAccount.Logout";
-    public static final String MY_ACCOUNT_FACEBOOK_LOGOUT = "MyAccount.Facebook Account Logout";
-    public static final String MY_ACCOUNT_GOOGLE_LOGOUT = "MyAccount.Google Account Logout";
+
+
     public static final String PROMO_CATEGORY_LIST = "Promo.Category List";
     public static final String PROMO_DETAIL = "Promo.Promo Detail";
     public static final String PROMO_SET_PRODUCTS_SHOWN = "Promo.Promo Set Products Shown";
@@ -81,6 +103,11 @@ public interface TrackingAware {
     public static final String SHOP_LST_DELETED = "ShoppingList.List Deleted";
     public static final String SHOP_LST_CREATED = "ShoppingList.List Created";
     public static final String SHOP_LIST_PRODUCT_ADDED = "ShoppingList.Product Added";
+    //public static final String QC_REMOVE = "QC.Remove";
+    //public static final String QC_SIMILAR_PRODUCT = "QC.Similar Product";
+    //public static final String MARKET_QC_INCREMENT = "Market.QC.Increment";
+    //public static final String MARKET_QC_DECREMENT = "Market.QC.Decrement";
+    //public static final String MARKET_QC_REMOVE = "Market.QC.Remove";
 
     public void trackEvent(String eventName, Map<String, String> eventAttribs,
                            String source, String sourceValue);

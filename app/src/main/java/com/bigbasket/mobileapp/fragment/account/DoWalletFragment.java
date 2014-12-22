@@ -18,13 +18,16 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.CurrentWalletBalance;
 import com.bigbasket.mobileapp.model.account.WalletDataItem;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -77,8 +80,10 @@ public class DoWalletFragment extends BaseFragment {
                 if (currentWalletBalCallback.status == 0) {
                     currentBalance = currentWalletBalCallback.apiResponseContent.getCurrentBalance();
                     setCurrentBalance(currentBalance);
+                    trackEvent(TrackingAware.MY_ACCOUNT_CURRENT_WALLET_BALANCE_SUCCESS, null);
                 } else {
                     handler.sendEmptyMessage(currentWalletBalCallback.status);
+                    trackEvent(TrackingAware.MY_ACCOUNT_CURRENT_WALLET_BALANCE_FAILED, null);
                 }
             }
 
@@ -91,6 +96,7 @@ public class DoWalletFragment extends BaseFragment {
                     return;
                 }
                 handler.handleRetrofitError(error);
+                trackEvent(TrackingAware.MY_ACCOUNT_CURRENT_WALLET_BALANCE_FAILED, null);
             }
         });
 
@@ -380,10 +386,11 @@ public class DoWalletFragment extends BaseFragment {
     }
 
 
-    private void getWalletActivityForMonth(String dateFrom, String dateTo) {
+    private void getWalletActivityForMonth(final String dateFrom, final String dateTo) {
         if (!DataUtil.isInternetAvailable(getActivity())) {
             return;
         }
+        final HashMap<String, String> map = new HashMap<>();
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.getWalletActivity(dateFrom, dateTo,
@@ -403,8 +410,14 @@ public class DoWalletFragment extends BaseFragment {
                             } else {
                                 showErrorMsg(getString(R.string.noActivityErrorMsg) + " " + monthClickText);
                             }
+                            map.put(TrackEventkeys.DATE_FROM, dateFrom);
+                            map.put(TrackEventkeys.DATE_TO, dateTo);
+                            trackEvent(TrackingAware.MY_ACCOUNT_WALLET_ACTIVITY_SUCCESS, map);
                         } else {
                             handler.sendEmptyMessage(walletActivityCallback.status);
+                            map.put(TrackEventkeys.DATE_FROM, dateFrom);
+                            map.put(TrackEventkeys.DATE_TO, dateTo);
+                            trackEvent(TrackingAware.MY_ACCOUNT_WALLET_ACTIVITY_FAILED, map);
                         }
                     }
 
@@ -417,6 +430,9 @@ public class DoWalletFragment extends BaseFragment {
                             return;
                         }
                         handler.handleRetrofitError(error);
+                        map.put(TrackEventkeys.DATE_FROM, dateFrom);
+                        map.put(TrackEventkeys.DATE_TO, dateTo);
+                        trackEvent(TrackingAware.MY_ACCOUNT_WALLET_ACTIVITY_FAILED, map);
                     }
                 });
 

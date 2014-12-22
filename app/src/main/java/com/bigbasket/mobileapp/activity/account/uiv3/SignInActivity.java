@@ -27,6 +27,7 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.SocialAccount;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
@@ -73,6 +74,7 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
             mPlusSignInButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    trackEvent(TrackingAware.MY_ACCOUNT_GOOGLE_LOGIN, null);
                     signInViaGPlus();
                 }
             });
@@ -146,6 +148,8 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
                 togglePasswordView(mPasswordView, isChecked);
             }
         });
+
+        trackEvent(TrackingAware.MY_ACCOUNT_LOGIN_SHOWN, null);
     }
 
     private void initializeRememberedDataForLoginInput() {
@@ -350,6 +354,7 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
 
     @Override
     public void onFacebookSignIn(Session facebookSession) {
+        trackEvent(TrackingAware.MY_ACCOUNT_FACEBOOK_LOGIN, null);
         showProgress(true);
         Request facebookUserDetailRequest = Request.newMeRequest(facebookSession, new Request.GraphUserCallback() {
             @Override
@@ -387,6 +392,7 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
 
     @Override
     public void onFacebookSignOut() {
+        trackEvent(TrackingAware.MY_ACCOUNT_FACEBOOK_LOGOUT, null);
         doLogout();
         setResult(NavigationCodes.GO_TO_HOME);
         finish();
@@ -425,6 +431,7 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
 
     @Override
     protected void onPlusClientSignOut() {
+        trackEvent(TrackingAware.MY_ACCOUNT_GOOGLE_LOGOUT, null);
         Button signOutButton = (Button) mBaseView.findViewById(R.id.plus_sign_out_button);
         signOutButton.setVisibility(View.GONE);
 
@@ -451,7 +458,7 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
     private void startLogin(String email, String password) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         bigBasketApiService.login(email, password,
-                new LoginApiResponseCallback(email, password, mChkRememberMe.isChecked()));
+                new LoginApiResponseCallback(email, password, mChkRememberMe.isChecked(), Constants.SIGN_IN_ACCOUNT_TYPE));
     }
 
     public void OnRegistrationLinkClicked(View v) {

@@ -28,6 +28,7 @@ import com.bigbasket.mobileapp.apiservice.callbacks.CallbackGetAreaInfo;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateProfileOldApiResponse;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.PinCodeAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.UpdateProfileModel;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
@@ -284,6 +285,7 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware 
         if (!DataUtil.isInternetAvailable(getActivity())) {
             return;
         }
+        trackEvent(TrackingAware.MY_ACCOUNT_UPDATE_PROFILE_SELECTED, null);
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.getMemberProfileData(new Callback<UpdateProfileOldApiResponse>() {
@@ -563,6 +565,7 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware 
                     }
                     resetUpdateButtonInProgress();
                     updatePreferenceData();
+                    trackEvent(TrackingAware.MY_ACCOUNT_UPDATE_PROFILE_SUCCESS, null);
 
                 } else {
                     int errorCode = memberProfileDataCallback.getErrorTypeAsInt();
@@ -573,6 +576,7 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware 
                         validateOtp(errorCode, errorMsg);
                     } else {
                         handler.sendEmptyMessage(errorCode);
+                        trackEvent(TrackingAware.MY_ACCOUNT_UPDATE_PROFILE_FAILED, null);
                     }
                 }
             }
@@ -581,6 +585,7 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware 
             public void failure(RetrofitError error) {
                 hideProgressDialog();
                 showErrorMsg(getString(R.string.server_error));
+                trackEvent(TrackingAware.MY_ACCOUNT_UPDATE_PROFILE_FAILED, null);
             }
         });
     }

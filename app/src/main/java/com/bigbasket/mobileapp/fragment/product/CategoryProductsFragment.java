@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 
 public class CategoryProductsFragment extends ProductListAwareFragment {
@@ -29,5 +30,10 @@ public class CategoryProductsFragment extends ProductListAwareFragment {
     @Override
     public String getFragmentTxnTag() {
         return CategoryProductsFragment.class.getName();
+    }
+
+    @Override
+    public String getSourceName(){
+        return TrackEventkeys.CATEGORY_LANDING;
     }
 }

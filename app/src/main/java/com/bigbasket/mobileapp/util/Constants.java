@@ -4,6 +4,7 @@ public class Constants {
 
     // connection parameters
     public static final String MO_APP_ID = "YSD6Y5AVT60X4AWNLL35EIDJ";
+    public static final String MO_SENDER_ID = "551288451469";
     public static final int CONNECTION_TIMEOUT = 20000;
     public static final int SOCKET_TIMEOUT = 25000;
 
@@ -163,6 +164,8 @@ public class Constants {
     public static final String TOP_MENU_SLUG = "top-menu";
     public static final String TOP_CAT_SLUG = "top_category_slug";
     public static final String TOP_MENU = "Top Menu";
+    public static final String CATEGORY_SLUG = "category_slug";
+
 
     public static final String PROMO_SET_PRODUCTS = "promo_set_products";
     public static final String TOTAL_QTY = "total_q";
@@ -297,6 +300,7 @@ public class Constants {
     public static final String VERSION_NAME = "versionName";
     public static final String APPLIED_VOUCHER = "appliedVoucher";
     public static final String ENABLE_KONOTOR = "enable_konotor";
+    public static final String ENABLE_MOENGAGE = "enable_moengage";
     public static final String APP_EXPIRE_BY = "app_expired_by";
     public static final String IS_UPDATE_REQUIRED = "is_update_required";
     public static final String FULFILLED_BY = "fulfilled_by";
@@ -556,6 +560,10 @@ public class Constants {
     public static final String SOCIAL_ACCOUNT_TYPE = "social_account_type";
     public static final String SOCIAL_LOGOUT = "social_logout";
     public static final int SOCIAL_ACCOUNT_NOT_LINKED = 1835;
+
+    //account type signin and register
+    public static final String SIGN_IN_ACCOUNT_TYPE = "signIn";
+    public static final String REGISTER_ACCOUNT_TYPE = "register";
 
     //Agevalidation
     public static final String CONTINUE_BTN_TAG = "btnContinueTag";

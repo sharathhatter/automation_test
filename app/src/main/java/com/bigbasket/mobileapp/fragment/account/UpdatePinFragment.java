@@ -24,9 +24,13 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.BaseApiResponse;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.UpdatePin;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
+
+import java.util.HashMap;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -97,9 +101,8 @@ public class UpdatePinFragment extends BaseFragment {
     }
 
     private void getCurrentMemberPin() {
-        if (!DataUtil.isInternetAvailable(getActivity())) {
-            return;
-        }
+        if (getActivity() == null) return;
+        if (!DataUtil.isInternetAvailable(getActivity())) return;
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.getCurrentMemberPin(new Callback<ApiResponse<UpdatePin>>() {
@@ -114,14 +117,17 @@ public class UpdatePinFragment extends BaseFragment {
                 if (updatePinApiResponse.status == 0) {
                     currentPin = updatePinApiResponse.apiResponseContent.currentPin;
                     setCurrentPin(currentPin);
+                    trackEvent(TrackingAware.MY_ACCOUNT_CURRENT_PIN_SUCCESS, null);
                 } else {
                     handler.sendEmptyMessage(updatePinApiResponse.status);
+                    trackEvent(TrackingAware.MY_ACCOUNT_CURRENT_PIN_FAILED, null);
                 }
 
             }
 
             @Override
             public void failure(RetrofitError error) {
+                trackEvent(TrackingAware.MY_ACCOUNT_CURRENT_PIN_FAILED, null);
                 if (isSuspended()) return;
                 try {
                     hideProgressDialog();
@@ -183,35 +189,44 @@ public class UpdatePinFragment extends BaseFragment {
                     showErrorMsg(getString(R.string.not0000));
                     editTextNewPin.setText("");
                 } else {
-                    BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
-                    showProgressDialog(getString(R.string.please_wait));
-                    bigBasketApiService.updateCurrentMemberPin(newPin, new Callback<BaseApiResponse>() {
-                        @Override
-                        public void success(BaseApiResponse ApiResponse, Response response) {
-                            hideProgressDialog();
-                            int status = ApiResponse.status;
-                            String msg = ApiResponse.message;
-                            setCurrentPin(currentPin);
-                            if (status == 0) {
-                                AnimationFactory.flipTransition(viewAnimator, AnimationFactory.FlipDirection.LEFT_RIGHT);
-                                currentPin = newPin;
-                                setCurrentPin(editTextNewPin.getText().toString());
-                                BaseActivity.hideKeyboard((BaseActivity) getActivity(), editTextNewPin);
-                            } else {
-                                showErrorMsg(msg);
-                            }
-                        }
+                    updatePinServerCall(newPin);
 
-                        @Override
-                        public void failure(RetrofitError error) {
-                            hideProgressDialog();
-                        }
-                    });
                 }
             } else {
                 showErrorMsg(getString(R.string.enterPin));
             }
         }
+    }
+
+    private void updatePinServerCall(final String newPin){
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+        showProgressDialog(getString(R.string.please_wait));
+        bigBasketApiService.updateCurrentMemberPin(newPin, new Callback<BaseApiResponse>() {
+            @Override
+            public void success(BaseApiResponse ApiResponse, Response response) {
+                hideProgressDialog();
+                int status = ApiResponse.status;
+                String msg = ApiResponse.message;
+                setCurrentPin(currentPin);
+                if (status == 0) {
+                    AnimationFactory.flipTransition(viewAnimator, AnimationFactory.FlipDirection.LEFT_RIGHT);
+                    currentPin = newPin;
+                    setCurrentPin(editTextNewPin.getText().toString());
+                    BaseActivity.hideKeyboard((BaseActivity) getActivity(), editTextNewPin);
+
+                    trackEvent(TrackingAware.MY_ACCOUNT_CHANGE_PIN_SUCCESS, null);
+                } else {
+                    showErrorMsg(msg);
+                    trackEvent(TrackingAware.MY_ACCOUNT_CHANGE_PIN_FAILED, null);
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                hideProgressDialog();
+                trackEvent(TrackingAware.MY_ACCOUNT_CHANGE_PIN_FAILED, null);
+            }
+        });
     }
 
     private void renderCurrentMemberPin() {

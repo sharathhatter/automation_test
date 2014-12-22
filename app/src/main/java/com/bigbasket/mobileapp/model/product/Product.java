@@ -356,4 +356,12 @@ public class Product implements Parcelable {
     public ArrayList<ProductAdditionalInfo> getProductAdditionalInfos() {
         return productAdditionalInfos;
     }
+
+
+    public Product(String brand, String description, String sku, String topLevelCategoryName) {
+        this.brand = brand;
+        this.description = description;
+        this.sku = sku;
+        this.topLevelCategoryName = topLevelCategoryName;
+    }
 }

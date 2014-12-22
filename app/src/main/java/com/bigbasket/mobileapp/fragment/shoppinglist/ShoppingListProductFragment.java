@@ -24,6 +24,7 @@ import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListDetail;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
@@ -52,6 +53,11 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
     @Override
     public void updateData() {
         // Do nothing
+    }
+
+    @Override
+    public String getSourceName(){
+        return TrackEventkeys.SHOPPING_LIST;
     }
 
     @Override
@@ -173,7 +179,7 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
                 .build();
 
         ProductListRecyclerAdapter productListAdapter = new ProductListRecyclerAdapter(productList, mBaseImgUrl,
-                getCurrentActivity(), productViewDisplayDataHolder, this, productList.size());
+                getCurrentActivity(), productViewDisplayDataHolder, this, productList.size(), getSourceName());
 
         productRecyclerView.setAdapter(productListAdapter);
         contentView.addView(productRecyclerView);
