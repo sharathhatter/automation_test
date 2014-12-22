@@ -429,6 +429,7 @@
     <string name="orderThankyouText">Thank you! Your order is placed\n Order #</string>
     <string name="viewInvoice">VIEW INVOICE</string>
     <string name="locateOnMapViaInvoice">LOCATE ON MAP</string>
+    <string name="locateOnMap">Locate on map</string>
     <!-- cart page -->
     <string name="empty_basket">Empty the basket</string>
     <string name="check_out">Checkout</string>

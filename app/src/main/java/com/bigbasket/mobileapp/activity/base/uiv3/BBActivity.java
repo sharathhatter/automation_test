@@ -199,8 +199,8 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             menuInflater.inflate(R.menu.action_menu, menu);
 
-            MenuItem searchMenuItem = menu.findItem(R.id.action_search);
-            SearchView searchView = (SearchView) searchMenuItem.getActionView();
+            final MenuItem searchMenuItem = menu.findItem(R.id.action_search);
+            final SearchView searchView = (SearchView) searchMenuItem.getActionView();
 
             // Setting the search listener
             SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
@@ -214,6 +214,17 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                         extended = true;
                         ViewGroup.LayoutParams lp = v.getLayoutParams();
                         lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                    }
+                }
+            });
+            searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                        if (!hasFocus) {
+                            searchMenuItem.collapseActionView();
+                            searchView.setQuery("", false);
+                        }
                     }
                 }
             });

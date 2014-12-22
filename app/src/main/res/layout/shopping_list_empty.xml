@@ -49,7 +49,7 @@
         android:textColor="@color/uiv3_primary_text_color"
         android:drawablePadding="8dp"
         android:gravity="center_vertical"
-        android:drawableRight="@drawable/ic_action_overflow_dark"
+        android:drawableRight="@drawable/ic_more_vert_grey600_36dp"
         android:drawableLeft="@drawable/list_arrow"
         android:layout_height="wrap_content" />
 

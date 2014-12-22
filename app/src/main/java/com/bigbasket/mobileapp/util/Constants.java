@@ -270,6 +270,7 @@ public class Constants {
     public static final String VALIDITY = "validity";
     public static final String CAN_APPLY = "can_apply";
     public static final String VOUCHERS = "vouchers";
+    public static final String IS_MAPPED = "is_mapped";
 
     public static final String KONOTOR_APP_ID = "d2c94ed6-1946-4d40-9d3f-affc719949a6";
     public static final String KONOTOR_APP_KEY = "97689aa4-af46-423d-9518-24828113d074";

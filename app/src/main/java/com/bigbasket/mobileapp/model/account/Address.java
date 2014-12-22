@@ -4,8 +4,6 @@ package com.bigbasket.mobileapp.model.account;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
-import android.widget.CheckBox;
-import android.widget.EditText;
 
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
@@ -51,42 +49,8 @@ public class Address implements Parcelable {
     @SerializedName(Constants.PIN)
     private String pincode;
 
-    public Address(boolean isDefault, String id, String contactNum, String addressNickName,
-                   String firstName, String lastName, String houseNumber, String street,
-                   String residentialComplex, String landmark, String area, String cityName,
-                   String pincode) {
-        this.isDefault = isDefault;
-        this.id = id;
-        this.contactNum = contactNum;
-        this.addressNickName = addressNickName;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.houseNumber = houseNumber;
-        this.street = street;
-        this.residentialComplex = residentialComplex;
-        this.landmark = landmark;
-        this.area = area;
-        this.cityName = cityName;
-        this.pincode = pincode;
-    }
-
-    public Address(EditText editTextAddressNick, EditText editTextFirstName, EditText editTextLastName,
-                   EditText editTextContactNum, EditText editTextHouseNum, EditText editTextStreetName,
-                   EditText editTextResidentialComplex, EditText editTextLandmark, CheckBox chkIsAddrDefault,
-                   EditText editTextArea, EditText editTextCity, EditText editTextPincode) {
-        this.addressNickName = editTextAddressNick.getText() != null ? editTextAddressNick.getText().toString() : "";
-        this.isDefault = chkIsAddrDefault.isChecked();
-        this.contactNum = editTextContactNum.getText() != null ? editTextContactNum.getText().toString() : "";
-        this.firstName = editTextFirstName.getText() != null ? editTextFirstName.getText().toString() : "";
-        this.lastName = editTextLastName.getText() != null ? editTextLastName.getText().toString() : "";
-        this.houseNumber = editTextHouseNum.getText() != null ? editTextHouseNum.getText().toString() : "";
-        this.street = editTextStreetName.getText() != null ? editTextStreetName.getText().toString() : "";
-        this.residentialComplex = editTextResidentialComplex.getText() != null ? editTextResidentialComplex.getText().toString() : "";
-        this.landmark = editTextLandmark.getText() != null ? editTextLandmark.getText().toString() : "";
-        this.area = editTextArea.getText() != null ? editTextArea.getText().toString() : "";
-        this.cityName = editTextCity.getText() != null ? editTextCity.getText().toString() : "";
-        this.pincode = editTextPincode.getText() != null ? editTextPincode.getText().toString() : "";
-    }
+    @SerializedName(Constants.IS_MAPPED)
+    private boolean isMapped;
 
     public Address(Parcel source) {
         byte isDefaultByteVal = source.readByte();
@@ -103,6 +67,7 @@ public class Address implements Parcelable {
         this.area = source.readString();
         this.cityName = source.readString();
         this.pincode = source.readString();
+        this.isMapped = source.readByte() == (byte) 1;
     }
 
     @Override
@@ -120,6 +85,7 @@ public class Address implements Parcelable {
         dest.writeString(area);
         dest.writeString(cityName);
         dest.writeString(pincode);
+        dest.writeByte(isMapped ? (byte) 1 : (byte) 0);
     }
 
     @Override
@@ -205,6 +171,10 @@ public class Address implements Parcelable {
 
     public String getPincode() {
         return pincode;
+    }
+
+    public boolean isMapped() {
+        return isMapped;
     }
 
     @Override

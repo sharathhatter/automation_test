@@ -133,7 +133,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         RecyclerView addressRecyclerView = (RecyclerView) addressView.findViewById(R.id.fabRecyclerView);
         UIUtil.configureRecyclerView(addressRecyclerView, getActivity(), 1, 3);
         MemberAddressListAdapter memberAddressListAdapter =
-                new MemberAddressListAdapter(this, mAddressArrayList, getActivity(), faceRobotoRegular,
+                new MemberAddressListAdapter<>(this, mAddressArrayList, faceRobotoRegular,
                         mFromAccountPage);
         addressRecyclerView.setAdapter(memberAddressListAdapter);
 
@@ -169,6 +169,14 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             launchSlotSelection(address.getId());
         } else {
             showAddressForm(address);
+        }
+    }
+
+    @Override
+    public void onLocateOnMapClicked(Address address) {
+        // Defensive check
+        if (mFromAccountPage) {
+
         }
     }
 

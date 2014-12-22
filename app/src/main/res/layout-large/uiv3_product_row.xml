@@ -100,7 +100,7 @@
             android:layout_below="@id/imgProduct"
             android:contentDescription="@string/additional_action"
             android:minWidth="40dp"
-            android:src="@drawable/ic_action_overflow_dark" />
+            android:src="@drawable/ic_more_vert_grey600_36dp" />
 
         <TextView
             android:id="@+id/txtProductDesc"

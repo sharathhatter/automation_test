@@ -98,7 +98,7 @@
         android:layout_marginTop="@dimen/margin_small"
         android:layout_marginRight="@dimen/margin_small"
         android:visibility="gone"
-        android:src="@drawable/ic_action_overflow_dark"
+        android:src="@drawable/ic_more_vert_grey600_36dp"
         android:id="@+id/imgProductCheckOutQCAdditionalAction"
         android:contentDescription="@string/additional_action"
         android:layout_gravity="right|top" />
