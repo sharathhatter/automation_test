@@ -211,7 +211,10 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
                                                     ImageView imgDecQty, ImageView imgIncQty, Button btnAddToBasket,
                                                     EditText editTextQty, Product product, String qty) {
 
-        int productQtyInBasket = Integer.parseInt(basketOperationResponse.getBasketResponseProductInfo().getTotalQty());
+        int productQtyInBasket = 0;
+        if (basketOperationResponse.getBasketResponseProductInfo() != null) {
+            productQtyInBasket = Integer.parseInt(basketOperationResponse.getBasketResponseProductInfo().getTotalQty());
+        }
         int totalProductsInBasket = basketOperationResponse.getCartSummary().getNoOfItems();
 
         if (basketOperation == BasketOperation.INC) {

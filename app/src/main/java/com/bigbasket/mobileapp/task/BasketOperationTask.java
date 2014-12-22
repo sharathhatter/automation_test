@@ -144,11 +144,9 @@ public class BasketOperationTask<T> {
                 case Constants.OK:
                     ((CartInfoAware) context).setCartInfo(cartOperationApiResponse.basketOperationResponse.getCartSummary());
                     ((CartInfoAware) context).updateUIForCartInfo();
-                    if (basketOperation != BasketOperation.EMPTY) {
-                        ((BasketOperationAware) context).setBasketOperationResponse(cartOperationApiResponse.basketOperationResponse);
-                        ((BasketOperationAware) context).updateUIAfterBasketOperationSuccess(basketOperation,
-                                basketCountTextView, imgDecQty, imgIncQty, btnAddToBasket, editTextQty, product, qty);
-                    }
+                    ((BasketOperationAware) context).setBasketOperationResponse(cartOperationApiResponse.basketOperationResponse);
+                    ((BasketOperationAware) context).updateUIAfterBasketOperationSuccess(basketOperation,
+                            basketCountTextView, imgDecQty, imgIncQty, btnAddToBasket, editTextQty, product, qty);
                     break;
                 case Constants.ERROR:
                     switch (cartOperationApiResponse.errorType) {
@@ -170,7 +168,8 @@ public class BasketOperationTask<T> {
                             Log.d(TAG, "Sending message: MessageCode.BASKET_EMPTY");
                             break;
                         default:
-                            ((HandlerAware) context).getHandler().sendEmptyMessage(ApiErrorCodes.SERVER_ERROR);
+                            ((HandlerAware) context).getHandler().sendEmptyMessage(cartOperationApiResponse.getErrorTypeAsInt(),
+                                    cartOperationApiResponse.message);
                             Log.d(TAG, "Sending message: ApiErrorCodes.SERVER_ERROR");
                             break;
                     }
