@@ -66,6 +66,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // TODO : Jugal, plug-in data upgrade functionality
     }
 
+    public static boolean isConnectionOpen() {
+        return isConnectionOpen;
+    }
+
     @Override
     public void onOpen(SQLiteDatabase db) {
         createTable(db);

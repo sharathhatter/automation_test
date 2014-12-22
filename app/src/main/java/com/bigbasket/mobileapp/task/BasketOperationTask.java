@@ -192,6 +192,7 @@ public class BasketOperationTask<T> {
                     return;
                 }
             }
+            ((HandlerAware) context).getHandler().handleRetrofitError(error);
         }
     }
 

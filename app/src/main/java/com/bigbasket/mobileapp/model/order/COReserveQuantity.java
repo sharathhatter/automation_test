@@ -3,16 +3,26 @@ package com.bigbasket.mobileapp.model.order;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.bigbasket.mobileapp.util.Constants;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class COReserveQuantity implements Parcelable {
 
     private boolean status = false;
+
+    @SerializedName(Constants.QC_HAS_VALIDATION_ERRORS)
     private boolean qcHasErrors = false;
+
     private int qc_len;
-    private int orderId;
-    private List<QCErrorData> QCErrorData = new ArrayList<>();
+
+    @SerializedName(Constants.QC_ORDER_ID)
+    private int potentialOrderId;
+
+    @SerializedName(Constants.QC_VALIDATION_ERROR_DATA)
+    private List<QCErrorData> qcErrorData;
 
     @Override
     public int describeContents() {
@@ -24,18 +34,24 @@ public class COReserveQuantity implements Parcelable {
         dest.writeByte(status ? (byte) 1 : (byte) 0);
         dest.writeByte(qcHasErrors ? (byte) 1 : (byte) 0);
         dest.writeInt(qc_len);
-        dest.writeInt(orderId);
-
+        dest.writeInt(potentialOrderId);
+        boolean _wasQcErrorDataNull = qcErrorData == null;
+        dest.writeByte(_wasQcErrorDataNull ? (byte) 1 : (byte) 0);
+        if (!_wasQcErrorDataNull) {
+            dest.writeTypedList(qcErrorData);
+        }
     }
 
     public COReserveQuantity(Parcel source) {
         status = source.readByte() == (byte) 1;
         qcHasErrors = source.readByte() == (byte) 1;
         qc_len = source.readInt();
-        orderId = source.readInt();
-    }
-
-    public COReserveQuantity() {
+        potentialOrderId = source.readInt();
+        boolean _wasQcErrorDataNull = source.readByte() == (byte) 1;
+        if (!_wasQcErrorDataNull) {
+            qcErrorData = new ArrayList<>();
+            source.readTypedList(qcErrorData, QCErrorData.CREATOR);
+        }
     }
 
     public static final Parcelable.Creator<COReserveQuantity> CREATOR = new Parcelable.Creator<COReserveQuantity>() {
@@ -62,20 +78,12 @@ public class COReserveQuantity implements Parcelable {
         return qcHasErrors;
     }
 
-    public void setQcHasErrors(boolean qcHasErrors) {
-        this.qcHasErrors = qcHasErrors;
+    public int getPotentialOrderId() {
+        return potentialOrderId;
     }
 
-    public int getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(int orderId) {
-        this.orderId = orderId;
-    }
-
-    public List<QCErrorData> getQCErrorData() {
-        return QCErrorData;
+    public List<QCErrorData> getQcErrorData() {
+        return qcErrorData;
     }
 
     public int getQc_len() {

@@ -125,13 +125,13 @@ public class SubCategoryListFragment extends BaseFragment {
         if (!response_ok) {
             try {
                 subCategoryAdapter.insert(subCategoryModel, responseVersion, bannerArrayList, topCatSlug);
-                subCategoryAdapter.close();
+                //subCategoryAdapter.close();
             } catch (Exception e) {
-                subCategoryAdapter.close();
+                //subCategoryAdapter.close();
                 e.printStackTrace();
                 showErrorMsg("Please try again later");
             } finally {
-                subCategoryAdapter.close();
+                //subCategoryAdapter.close();
             }
         } else {
             try {
@@ -139,12 +139,12 @@ public class SubCategoryListFragment extends BaseFragment {
                 subCategoryModel = (SubCategoryModel) result.get(0);
                 bannerArrayList = (ArrayList<String>) result.get(1);
             } catch (SQLiteException e) {
-                subCategoryAdapter.close();
+                //subCategoryAdapter.close();
                 e.printStackTrace();
                 showErrorMsg("Please try again later");
 
             } finally {
-                subCategoryAdapter.close();
+                //subCategoryAdapter.close();
             }
         }
 

@@ -204,9 +204,10 @@ public class ImageUtil {
                     base64EncodedChunkedImage, String.valueOf(imageSequence));
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            if (prescriptionImageAdapter != null)
-                prescriptionImageAdapter.close();
         }
+//        finally {
+//            if (prescriptionImageAdapter != null)
+//                prescriptionImageAdapter.close();
+//        }
     }
 }

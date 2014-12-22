@@ -37,6 +37,7 @@ import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.account.CurrentWalletBalance;
 import com.bigbasket.mobileapp.model.account.UpdatePin;
 import com.bigbasket.mobileapp.model.account.WalletDataItem;
+import com.bigbasket.mobileapp.model.order.COReserveQuantity;
 import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.model.order.OrderSummary;
@@ -321,4 +322,15 @@ public interface BigBasketApiService {
     void getSubCategoryData(@Query(Constants.CATEGORY_SLUG) String categorySlug,
                             @Query(Constants.VERSION) String version,
                             Callback<ApiResponse<SubCategoryApiResponse>> subCategoryCallback);
+
+    @FormUrlEncoded
+    @POST("/co-update-reservation/")
+    void coUpdateReservation(@Field(Constants.P_ORDER_ID) String potentialOrderId,
+                             @Field(Constants.ITEMS) String items,
+                             Callback<OldBaseApiResponse> coUpdateReservationApiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/co-reserve-quantity/")
+    void coReserveQuantity(@Field(Constants.PHARMA_PRESCRIPTION_ID) String pharmaPrescriptionId,
+                           Callback<OldApiResponse<COReserveQuantity>> coReserveQtyApiResponseCallback);
 }

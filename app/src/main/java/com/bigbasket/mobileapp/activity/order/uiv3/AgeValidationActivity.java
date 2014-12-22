@@ -119,7 +119,7 @@ public class AgeValidationActivity extends BackButtonActivity {
     private void proceedToQc() {
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(this);
         String pharmaPrescriptionId = prefer.getString(Constants.PHARMA_PRESCRIPTION_ID, null);
-        new COReserveQuantityCheckTask<>(getCurrentActivity(), pharmaPrescriptionId).execute();
+        new COReserveQuantityCheckTask<>(getCurrentActivity(), pharmaPrescriptionId).startTask();
     }
 
     private void renderMarketPlaceValidationErrors() {

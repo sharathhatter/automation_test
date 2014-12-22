@@ -21,7 +21,9 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
+import com.bigbasket.mobileapp.adapter.db.DatabaseHelper;
 import com.bigbasket.mobileapp.adapter.product.CategoryAdapter;
+import com.bigbasket.mobileapp.adapter.product.SubCategoryAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
@@ -56,6 +58,11 @@ public class StartActivity extends BaseActivity {
         if (!checkInternetConnection()) {
             showAlertDialogFinish(null, getString(R.string.deviceOffline));
             return;
+        }
+
+        if (!DatabaseHelper.isConnectionOpen()) {
+            // Just opening the db connection
+            new SubCategoryAdapter(getCurrentActivity()).open();
         }
 
         MoEHelper moEHelper = new MoEHelper(this);

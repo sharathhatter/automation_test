@@ -256,7 +256,7 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
         SharedPreferences.Editor editor = prefer.edit();
         editor.putString(Constants.PHARMA_PRESCRIPTION_ID, prescriptionId);
         editor.commit();
-        new COReserveQuantityCheckTask<>(getCurrentActivity(), prescriptionId).execute();
+        new COReserveQuantityCheckTask<>(getCurrentActivity(), prescriptionId).startTask();
 
     }
 

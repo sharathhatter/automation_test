@@ -302,7 +302,7 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware 
                             showErrorMsg(getString(R.string.OLD_PASS_NOT_CORRECT));
                             break;
                         default:
-                            showErrorMsg(getString(R.string.INTERNAL_SERVER_ERROR));
+                            handler.sendEmptyMessage(errorType, memberProfileDataCallback.message);
                             break;
                     }
                 }

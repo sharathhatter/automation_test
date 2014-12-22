@@ -102,7 +102,7 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
         if (checkInternetConnection()) {
             SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(this);
             String pharmaPrescriptionId = prefer.getString(Constants.PHARMA_PRESCRIPTION_ID, null);
-            new COReserveQuantityCheckTask<>(this, pharmaPrescriptionId).execute();
+            new COReserveQuantityCheckTask<>(this, pharmaPrescriptionId).startTask();
         } else {
             showAlertDialog(null, getString(R.string.checkinternet), Constants.GO_TO_HOME_STRING);
         }
@@ -152,9 +152,9 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
         if (coReserveQuantity.isQcHasErrors()) {
             ArrayList<CheckoutProduct> productWithNoStockList = new ArrayList<>();
             ArrayList<CheckoutProduct> productWithSomeStockList = new ArrayList<>();
-            for (int i = 0; i < coReserveQuantity.getQCErrorData().size(); i++) {
+            for (int i = 0; i < coReserveQuantity.getQcErrorData().size(); i++) {
                 QCErrorData qcErrorData;
-                qcErrorData = coReserveQuantity.getQCErrorData().get(i);
+                qcErrorData = coReserveQuantity.getQcErrorData().get(i);
                 Product product = qcErrorData.getProduct();
                 CheckoutProduct item_details = new CheckoutProduct();
                 item_details.setReserveQuantity(String.valueOf(qcErrorData.getReservedQuantity()));
@@ -353,7 +353,7 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
                                         case R.id.menuDeleteQCProduct:
                                             new CoUpdateReservationTask<>(getCurrentActivity(),
                                                     true, String.valueOf(imgProductCheckOutQCAdditionalAction.getTag()),
-                                                    0).execute();
+                                                    0).startTask();
                                             return true;
                                         default:
                                             return false;
@@ -379,7 +379,7 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
             btnContinue.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    new CoUpdateReservationTask<>(getCurrentActivity(), false, productWithNoStockList, productWithSomeStockList).execute();
+                    new CoUpdateReservationTask<>(getCurrentActivity(), false, productWithNoStockList, productWithSomeStockList).startTask();
                 }
             });
             contentView.addView(btnContinue);
