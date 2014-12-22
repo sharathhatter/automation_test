@@ -31,6 +31,7 @@ public class Constants {
     public static final String DISCOUNT_TYPE = "dis_t";
     public static final String PRODUCT_TOP_LEVEL_CATEGORY_SLUG = "tlc_s";
     public static final String PRODUCT_TOP_LEVEL_CATEGORY_NAME = "tlc_n";
+    public static final String PRODUCT_CATEGORY_NAME = "pc_n";
     public static final String PRODUCT_CHILD_PRODUCTS = "all_prods";
     public static final String PRODUCT_PROMO_INFO = "p_promo_info";
     public static final String PROMO_ID = "promo_id";
@@ -371,7 +372,8 @@ public class Constants {
     public static final int CAMERA_INTENT_REQUEST_CODE = 1122;
     public static final int GALLERY_INTENT_REQUEST_CODE = 2233;
     public static final String PRESCRIPTION_IMAGE = "prescription_image";
-    public static final String REMOVE_ALL_MARKETPLACE_FROM_BASKET = "FromMarketPlaceAgeValidation";
+    public static final String REMOVE_ALL_MARKETPLACE_FROM_BASKET_VIA_AGE = "FromMarketPlaceAgeValidationAge";
+    public static final String REMOVE_ALL_MARKETPLACE_FROM_BASKET_VIA_PHARMA = "FromMarketPlaceAgeValidationPharma";
     public static final String MARKET_PLACE_INTENT = "marketPlaceIntent";
     public static final String PRESCRIPTION_INTENT_DATA = "prescriptionIntentData";
     public static final String UPLOAD_PRESCRIPTION = "upload-prescription/";

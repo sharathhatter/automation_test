@@ -24,6 +24,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PrescriptionImageUrls;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.order.SavedPrescription;
 import com.bigbasket.mobileapp.task.COReserveQuantityCheckTask;
 import com.bigbasket.mobileapp.util.Constants;
@@ -110,6 +111,7 @@ public class PrescriptionListAdapter extends RecyclerView.Adapter<RecyclerView.V
                         String.valueOf(savedPrescription.getPharmaPrescriptionId()));
                 editor.commit();
                 Toast.makeText(context, context.getResources().getString(R.string.prescriptionIDSaved), Toast.LENGTH_SHORT).show();
+                context.trackEvent(TrackingAware.PRE_CHECKOUT_PHARMA_PRESCRIPTION_CHOSEN, null);
                 hideFrameOnDialogClose();
                 new COReserveQuantityCheckTask<>(context, String.valueOf(savedPrescription.getPharmaPrescriptionId())).execute();
             }

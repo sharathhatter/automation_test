@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
@@ -56,6 +57,12 @@ public class HomeFragment extends BaseSectionFragment {
             new GetCartCountTask<>(getCurrentActivity()).startTask();
             requestHomePage();
         }
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        ((BaseActivity)getActivity()).removePharmaPrescriptionId();
     }
 
     private boolean isVisitorUpdateNeeded() {

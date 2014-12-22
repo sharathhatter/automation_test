@@ -367,7 +367,7 @@ public class ActiveOrderRowAdapter extends android.widget.BaseAdapter {
                         if (DataUtil.isInternetAvailable(baseActivity)) {
                             Product product = new Product(cartItem.getProductBrand(),
                                     cartItem.getProductDesc(), String.valueOf(cartItem.getSkuId()),
-                                    cartItem.getTopCategoryName());
+                                    cartItem.getTopCategoryName(), cartItem.getProductCategoryName());
                             BasketOperationTask<BaseFragment> basketOperationTask = new BasketOperationTask<>(fragment,
                                     BasketOperation.DEC, product,
                                     null, null, null, null, null, TrackingAware.BASKET_DECREMENT, sourceName
@@ -386,7 +386,7 @@ public class ActiveOrderRowAdapter extends android.widget.BaseAdapter {
                         if (DataUtil.isInternetAvailable(baseActivity)) {
                             Product product = new Product(cartItem.getProductBrand(),
                                     cartItem.getProductDesc(), String.valueOf(cartItem.getSkuId()),
-                                    cartItem.getTopCategoryName());
+                                    cartItem.getTopCategoryName(), cartItem.getProductCategoryName());
                             BasketOperationTask<BaseFragment> basketOperationTask = new BasketOperationTask<>(fragment,
                                     BasketOperation.INC, product,
                                     null, null, null, null, null, TrackingAware.BASKET_INCREMENT, sourceName
@@ -406,7 +406,7 @@ public class ActiveOrderRowAdapter extends android.widget.BaseAdapter {
                         if (DataUtil.isInternetAvailable(baseActivity)) {
                             Product product = new Product(cartItem.getProductBrand(),
                                     cartItem.getProductDesc(), String.valueOf(cartItem.getSkuId()),
-                                    cartItem.getTopCategoryName());
+                                    cartItem.getTopCategoryName(), cartItem.getProductCategoryName());
                             BasketOperationTask<BaseFragment> basketOperationTask = new BasketOperationTask<>(fragment,
                                     BasketOperation.EMPTY,
                                     product, itemCountTxtView, null, null, null, null, "0",

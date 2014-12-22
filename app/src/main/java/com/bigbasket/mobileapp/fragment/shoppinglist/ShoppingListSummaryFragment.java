@@ -19,6 +19,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListSummaryApiResponse;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListSummary;
 import com.bigbasket.mobileapp.util.Constants;
@@ -75,6 +76,12 @@ public class ShoppingListSummaryFragment extends BaseFragment {
                 renderShoppingListSummary();
                 return;
             }
+        }
+
+        if(mShoppingListName.isSystem()){
+            trackEvent(TrackingAware.SHOP_LST_SYSTEM_LST_SHOWN, null);
+        }else {
+            trackEvent(TrackingAware.SHOP_LST_SUMMARY_SHOWN, null);
         }
         loadShoppingListCategories();
     }

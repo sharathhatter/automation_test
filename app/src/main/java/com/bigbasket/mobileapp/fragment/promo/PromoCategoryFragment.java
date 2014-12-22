@@ -16,6 +16,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.BrowsePromoCategoryApiResponseContent;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.promo.Promo;
 import com.bigbasket.mobileapp.model.promo.PromoCategory;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
@@ -69,6 +70,7 @@ public class PromoCategoryFragment extends BaseFragment {
                             mPromoCategoryList = filterPromoCategories();
                             if (mPromoCategoryList.size() > 0) {
                                 renderPromoCategories();
+                                trackEvent(TrackingAware.PROMO_CATEGORY_LIST, null);
                             } else {
                                 handler.sendEmptyMessage(browsePromoCategoryApiResponse.status);
                             }

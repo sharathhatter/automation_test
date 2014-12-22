@@ -57,7 +57,14 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
 
     @Override
     public String getSourceName() {
-        return TrackEventkeys.SHOPPING_LIST;
+        if(mShoppingListName.isSystem()){
+            if(mShoppingListName.getSlug().equals(Constants.SMART_BASKET_SLUG))
+                return TrackEventkeys.SMART_BASKET;
+            else
+                return TrackEventkeys.SYSTEM_SHOPPING_LIST;
+        }else {
+            return TrackEventkeys.SHOPPING_LIST;
+        }
     }
 
     @Override
@@ -148,6 +155,7 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
                 @Override
                 public void onClick(View view) {
                     if (checkInternetConnection()) {
+                        //todo add all product event
 //                            showAlertDialog(getCurrentActivity(), null, "Are you sure you want to add all products to the basket?",
 //                                    "addall");
                     } else {

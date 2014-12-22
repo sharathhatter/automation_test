@@ -70,6 +70,9 @@ public class Product implements Parcelable {
     @SerializedName(Constants.ADDITIONAL_INFOS)
     private ArrayList<ProductAdditionalInfo> productAdditionalInfos;
 
+    @SerializedName(Constants.PRODUCT_CATEGORY_NAME)
+    private String productCategoryName;
+
     @Override
     public int describeContents() {
         return 0;
@@ -101,6 +104,7 @@ public class Product implements Parcelable {
         dest.writeString(weight);
         dest.writeString(imageUrl);
         dest.writeString(topLevelCategorySlug);
+        dest.writeString(productCategoryName);
         dest.writeString(topLevelCategoryName);
         dest.writeString(productStatus);
         boolean isChildProductsNull = allProducts == null;
@@ -144,6 +148,7 @@ public class Product implements Parcelable {
         weight = source.readString();
         imageUrl = source.readString();
         topLevelCategorySlug = source.readString();
+        productCategoryName = source.readString();
         topLevelCategoryName = source.readString();
         productStatus = source.readString();
         boolean isChildProductsNull = source.readByte() == (byte) 1;
@@ -303,6 +308,14 @@ public class Product implements Parcelable {
         this.topLevelCategoryName = topLevelCategoryName;
     }
 
+    public String getProductCategoryName() {
+        return productCategoryName;
+    }
+
+    public void setProductCategoryName(String productCategoryName) {
+        this.productCategoryName = productCategoryName;
+    }
+
     public String getProductStatus() {
         return productStatus;
     }
@@ -358,10 +371,12 @@ public class Product implements Parcelable {
     }
 
 
-    public Product(String brand, String description, String sku, String topLevelCategoryName) {
+    public Product(String brand, String description, String sku, String topLevelCategoryName,
+                   String productCategoryName) {
         this.brand = brand;
         this.description = description;
         this.sku = sku;
         this.topLevelCategoryName = topLevelCategoryName;
+        this.productCategoryName = productCategoryName;
     }
 }

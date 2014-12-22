@@ -20,13 +20,13 @@
     </ScrollView>
 
 
-    <com.melnykov.fab.FloatingActionButton xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/btnFabProceedQc"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
         android:layout_alignParentBottom="true"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_margin="@dimen/margin_normal"
-        android:src="@drawable/login_arrow" />
+        android:id="@+id/layoutBtnContinue"
+        android:layout_height="wrap_content">
+
+    </LinearLayout>
 
 </RelativeLayout>

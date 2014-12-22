@@ -22,6 +22,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListNamesTask;
@@ -126,6 +127,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
                         Toast.makeText(getActivity(),
                                 "List \"" + shoppingListName
                                         + "\" was created successfully", Toast.LENGTH_LONG).show();
+                        trackEvent(TrackingAware.SHOP_LST_CREATED, null);
                         loadShoppingLists();
                         break;
                     default:
@@ -164,6 +166,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
     public void onShoppingListFetched(ArrayList<ShoppingListName> shoppingListNames) {
         mShoppingListNames = shoppingListNames;
         renderShoppingList();
+        trackEvent(TrackingAware.SHOP_LST_SHOWN, null);
     }
 
     @Override
@@ -356,6 +359,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
                     case Constants.OK:
                         Toast.makeText(getActivity(), getString(R.string.shoppingListUpdated),
                                 Toast.LENGTH_LONG).show();
+                        trackEvent(TrackingAware.SHOP_LST_NAME_CHANGED, null);
                         loadShoppingLists();
                         break;
                     default:
@@ -393,6 +397,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
                     case Constants.OK:
                         String msg = "\"" + shoppingListName.getName() + "\" was deleted successfully";
                         Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+                        trackEvent(TrackingAware.SHOP_LST_DELETED, null);
                         loadShoppingLists();
                         break;
                     default:

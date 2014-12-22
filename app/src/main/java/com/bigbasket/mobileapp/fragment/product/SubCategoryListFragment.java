@@ -22,6 +22,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.SubCategoryApiResponse;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.product.Category;
 import com.bigbasket.mobileapp.model.product.SubCategoryModel;
 import com.bigbasket.mobileapp.util.Constants;
@@ -96,6 +97,7 @@ public class SubCategoryListFragment extends BaseFragment {
                         subCategoryModel = subCategoryCallback.apiResponseContent.categoryLandingApiCategoryKeyContent.subCategoryModel;
                     }
                     renderSubCategory(responseVersion, response_ok, bannerArrayList, subCategoryModel);
+                    trackEvent(TrackingAware.BROWSE_CATEGORY_LANDING, null);
                 } else {
                     handler.sendEmptyMessage(subCategoryCallback.status);
                 }

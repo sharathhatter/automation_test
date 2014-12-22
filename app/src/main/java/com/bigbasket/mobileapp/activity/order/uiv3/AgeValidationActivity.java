@@ -27,6 +27,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.BaseApiResponse;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.general.MessageInfo;
 import com.bigbasket.mobileapp.model.general.MessageParamInfo;
@@ -68,6 +69,8 @@ public class AgeValidationActivity extends BackButtonActivity {
         }
         marketPlace = getIntent().getParcelableExtra(Constants.MARKET_PLACE_INTENT);
         renderMarketPlaceValidationErrors();
+
+        trackEvent(TrackingAware.PRE_CHECKOUT_AGE_LEGAL_SHOWN, null);
     }
 
     @Override
@@ -159,6 +162,10 @@ public class AgeValidationActivity extends BackButtonActivity {
                 } else if (hashMapRadioBtnAgeCheckNo.size() > 0) {  //check if any age-validation radio btn no selected
                     showAlertDialog(getResources().getString(R.string.age_validation_required));
                 } else {
+                    if(marketPlace.isAgeCheckRequired()){
+                        trackEvent(TrackingAware.PRE_CHECKOUT_AGE_LEGAL_ACCEPTED, null);
+                    }
+
                     if (String.valueOf(btnContinueOrUploadPrescription.getTag()).equals(Constants.CONTINUE_BTN_TAG)) {
                         proceedToQc();
                     } else {
@@ -221,7 +228,7 @@ public class AgeValidationActivity extends BackButtonActivity {
                         hashMapRadioBtnAgeCheckNo.put(rbtnNo.getTag().toString(), true);
                         showAlertDialog(null,
                                 "Remove all " + marketPlaceAgeCheck.getDisplayName() + " products from Basket?",
-                                DialogButton.YES, DialogButton.NO, Constants.REMOVE_ALL_MARKETPLACE_FROM_BASKET,
+                                DialogButton.YES, DialogButton.NO, Constants.REMOVE_ALL_MARKETPLACE_FROM_BASKET_VIA_AGE,
                                 marketPlaceAgeCheck.getFulfillmentId(), "Yes");
                     }
                 }
@@ -319,7 +326,7 @@ public class AgeValidationActivity extends BackButtonActivity {
                     isPharmaRadioBtnNoSelected = true;
                     showAlertDialog(null,
                             "Remove all pharma products from basket", DialogButton.YES,
-                            DialogButton.NO, Constants.REMOVE_ALL_MARKETPLACE_FROM_BASKET, String.valueOf(rbtnNo.getTag()));
+                            DialogButton.NO, Constants.REMOVE_ALL_MARKETPLACE_FROM_BASKET_VIA_PHARMA, String.valueOf(rbtnNo.getTag()));
                 }
             }
         });
@@ -385,47 +392,13 @@ public class AgeValidationActivity extends BackButtonActivity {
     protected void onPositiveButtonClicked(DialogInterface dialogInterface, int id, String sourceName, final Object valuePassed) {
         if (sourceName != null) {
             switch (sourceName) {
-                case Constants.REMOVE_ALL_MARKETPLACE_FROM_BASKET:
-                    BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
-                    showProgressDialog(getString(R.string.please_wait));
-                    bigBasketApiService.cartBulkRemove(valuePassed.toString(), new Callback<BaseApiResponse>() {
-                        @Override
-                        public void success(BaseApiResponse cartBulkRemoveApiResponseCallback, Response response) {
-                            if (isSuspended()) return;
-                            try {
-                                hideProgressDialog();
-                            } catch (IllegalArgumentException e) {
-                                return;
-                            }
-                            if (cartBulkRemoveApiResponseCallback.status == 0) {
-                                CartSummary cartInfo = cartBulkRemoveApiResponseCallback.cartSummary;
-                                ((CartInfoAware) getCurrentActivity()).setCartInfo(cartInfo);
-                                ((CartInfoAware) getCurrentActivity()).updateUIForCartInfo();
-                                SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
-                                SharedPreferences.Editor editor = prefer.edit();
-                                editor.putString(Constants.GET_CART, String.valueOf(cartInfo.getNoOfItems()));
-                                editor.commit();
-                                if (cartInfo.getNoOfItems() == 0) {
-                                    showAlertDialogFinish(null, getResources().getString(R.string.basketEmpty));
-                                } else {
-                                    new COMarketPlaceCheckTask<>(getCurrentActivity()).startTask();
-                                }
-                            } else {
-                                handler.sendEmptyMessage(cartBulkRemoveApiResponseCallback.status);
-                            }
-                        }
-
-                        @Override
-                        public void failure(RetrofitError error) {
-                            if (isSuspended()) return;
-                            try {
-                                hideProgressDialog();
-                            } catch (IllegalArgumentException e) {
-                                return;
-                            }
-                            handler.handleRetrofitError(error);
-                        }
-                    });
+                case Constants.REMOVE_ALL_MARKETPLACE_FROM_BASKET_VIA_AGE:
+                    trackEvent(TrackingAware.PRE_CHECKOUT_AGE_LEGAL_REJECTED, null);
+                    bulkRemoveProducts(valuePassed);
+                    break;
+                case Constants.REMOVE_ALL_MARKETPLACE_FROM_BASKET_VIA_PHARMA:
+                    trackEvent(TrackingAware.PRE_CHECKOUT_PHARMA_PRESCRIPTION_NOT_PROVIDED, null);
+                    bulkRemoveProducts(valuePassed);
                     break;
                 case ApiErrorCodes.BASKET_EMPTY_STR:
                     goToHome();
@@ -437,5 +410,48 @@ public class AgeValidationActivity extends BackButtonActivity {
         } else {
             super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
         }
+    }
+
+    private void bulkRemoveProducts(Object valuePassed){
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
+        showProgressDialog(getString(R.string.please_wait));
+        bigBasketApiService.cartBulkRemove(valuePassed.toString(), new Callback<BaseApiResponse>() {
+            @Override
+            public void success(BaseApiResponse cartBulkRemoveApiResponseCallback, Response response) {
+                if (isSuspended()) return;
+                try {
+                    hideProgressDialog();
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
+                if (cartBulkRemoveApiResponseCallback.status == 0) {
+                    CartSummary cartInfo = cartBulkRemoveApiResponseCallback.cartSummary;
+                    ((CartInfoAware) getCurrentActivity()).setCartInfo(cartInfo);
+                    ((CartInfoAware) getCurrentActivity()).updateUIForCartInfo();
+                    SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
+                    SharedPreferences.Editor editor = prefer.edit();
+                    editor.putString(Constants.GET_CART, String.valueOf(cartInfo.getNoOfItems()));
+                    editor.commit();
+                    if (cartInfo.getNoOfItems() == 0) {
+                        showAlertDialogFinish(null, getResources().getString(R.string.basketEmpty));
+                    } else {
+                        new COMarketPlaceCheckTask<>(getCurrentActivity()).startTask();
+                    }
+                } else {
+                    handler.sendEmptyMessage(cartBulkRemoveApiResponseCallback.status);
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                if (isSuspended()) return;
+                try {
+                    hideProgressDialog();
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
+                handler.handleRetrofitError(error);
+            }
+        });
     }
 }

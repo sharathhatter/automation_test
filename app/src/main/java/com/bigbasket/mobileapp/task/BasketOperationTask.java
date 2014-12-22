@@ -204,6 +204,7 @@ public class BasketOperationTask<T> {
             desc = " " + product.getPackageDescription();
         eventAttribs.put(TrackEventkeys.PRODUCT_DESC, desc);
         eventAttribs.put(TrackEventkeys.PRODUCT_TOP_CAT, product.getTopLevelCategoryName());
+        eventAttribs.put(TrackEventkeys.PRODUCT_CAT, product.getProductCategoryName());
         ((BaseFragment) context).trackEvent(eventName, eventAttribs, sourceName, null);
     }
 }
