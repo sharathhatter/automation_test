@@ -760,18 +760,18 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                             Bundle bundle = new Bundle();
                             bundle.putParcelable(Constants.SHOPPING_LIST_NAME, shoppingListName);
                             shoppingListSummaryFragment.setArguments(bundle);
-                            onChangeFragment(shoppingListSummaryFragment);
+                            addToMainLayout(shoppingListSummaryFragment);
                         }
                         break;
                     case Constants.CART:
-                        onChangeFragment(new ShowCartFragment());
+                        addToMainLayout(new ShowCartFragment());
                         break;
                     case Constants.FROM_ACCOUNT_PAGE:
                         if (AuthParameters.getInstance(getCurrentActivity()).isAuthTokenEmpty()) {
                             showAlertDialog(null,
                                     "Please sign-in to view your accounts page", NavigationCodes.GO_TO_LOGIN);
                         } else {
-                            onChangeFragment(new AccountSettingFragment());
+                            addToMainLayout(new AccountSettingFragment());
                         }
                         break;
                     case Constants.LOGIN:

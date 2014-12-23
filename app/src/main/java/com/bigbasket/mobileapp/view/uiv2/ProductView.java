@@ -26,7 +26,6 @@ import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.adapter.product.ProductListSpinnerAdapter;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.common.ProductViewHolder;
-import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.handler.ProductDetailOnClickListener;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
@@ -288,7 +287,7 @@ public final class ProductView {
                         public boolean onMenuItemClick(MenuItem item) {
                             switch (item.getItemId()) {
                                 case R.id.menuAddToShoppingList:
-                                    ((BaseFragment)(shoppingListNamesAware)).trackEvent(TrackingAware.SHOP_LIST_PRODUCT_ADDED, null);
+                                    ((TrackingAware) (shoppingListNamesAware)).trackEvent(TrackingAware.SHOP_LIST_PRODUCT_ADDED, null);
                                     ((ShoppingListNamesAware) shoppingListNamesAware).setSelectedProductId(product.getSku());
                                     new ShoppingListNamesTask<>(shoppingListNamesAware, false).startTask();
                                     return true;
@@ -313,7 +312,7 @@ public final class ProductView {
         final ImageView imgShoppingListDel = productViewHolder.getImgShoppingListDel();
 
         if (productViewDisplayDataHolder.showShopListDeleteBtn()) {
-            ((BaseFragment)(shoppingListNamesAware)).trackEvent(TrackingAware.SHOP_LST_CATEGORY_DETAIL, null);
+            ((TrackingAware) (shoppingListNamesAware)).trackEvent(TrackingAware.SHOP_LST_CATEGORY_DETAIL, null);
             imgShoppingListDel.setVisibility(View.VISIBLE);
             imgShoppingListDel.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -338,7 +337,7 @@ public final class ProductView {
                                                 ShoppingListDoAddDeleteTask shoppingListDoAddDeleteTask =
                                                         new ShoppingListDoAddDeleteTask<>(shoppingListNamesAware, shoppingListNames, ShoppingListOption.DELETE_ITEM);
                                                 ((ShoppingListNamesAware) shoppingListNamesAware).setSelectedProductId(product.getSku());
-                                                ((BaseFragment)(shoppingListNamesAware)).trackEvent(TrackingAware.SHOP_LIST_PRODUCT_DELETED, null);
+                                                ((TrackingAware) (shoppingListNamesAware)).trackEvent(TrackingAware.SHOP_LIST_PRODUCT_DELETED, null);
                                                 shoppingListDoAddDeleteTask.startTask();
                                             } else {
                                                 ((ActivityAware) shoppingListNamesAware).getCurrentActivity().showToast("No internet connection found!");
@@ -365,7 +364,7 @@ public final class ProductView {
         } else {
             HashMap<String, String> map = new HashMap<>();
             map.put(TrackEventkeys.SYSTEM_SHOPPING_LIST_NAME, productViewDisplayDataHolder.getShoppingListName().getName());
-            ((BaseFragment) (shoppingListNamesAware)).trackEvent(TrackingAware.SHOP_LST_SYSTEM_LIST_CATEGORY_DETAIL, map);
+            ((TrackingAware) (shoppingListNamesAware)).trackEvent(TrackingAware.SHOP_LST_SYSTEM_LIST_CATEGORY_DETAIL, map);
             imgShoppingListDel.setVisibility(View.GONE);
         }
     }

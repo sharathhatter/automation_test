@@ -78,9 +78,9 @@ public class ShoppingListSummaryFragment extends BaseFragment {
             }
         }
 
-        if(mShoppingListName.isSystem()){
+        if (mShoppingListName.isSystem()) {
             trackEvent(TrackingAware.SHOP_LST_SYSTEM_LST_SHOWN, null);
-        }else {
+        } else {
             trackEvent(TrackingAware.SHOP_LST_SUMMARY_SHOWN, null);
         }
         loadShoppingListCategories();

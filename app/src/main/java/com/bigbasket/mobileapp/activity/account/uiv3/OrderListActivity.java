@@ -69,9 +69,9 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
         }
         loadOrders();
 
-        if(orderType.equals(getString(R.string.active_label))){
+        if (orderType.equals(getString(R.string.active_label))) {
             trackEvent(TrackingAware.ORDER_ACTIVE_ORDERS_SHOWN, null);
-        }else {
+        } else {
             trackEvent(TrackingAware.ORDER_PAST_ORDERS, null);
         }
     }

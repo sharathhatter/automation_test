@@ -60,9 +60,9 @@ public class HomeFragment extends BaseSectionFragment {
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
-        ((BaseActivity)getActivity()).removePharmaPrescriptionId();
+        ((BaseActivity) getActivity()).removePharmaPrescriptionId();
     }
 
     private boolean isVisitorUpdateNeeded() {

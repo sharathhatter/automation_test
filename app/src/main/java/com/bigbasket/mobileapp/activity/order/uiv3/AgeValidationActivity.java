@@ -162,7 +162,7 @@ public class AgeValidationActivity extends BackButtonActivity {
                 } else if (hashMapRadioBtnAgeCheckNo.size() > 0) {  //check if any age-validation radio btn no selected
                     showAlertDialog(getResources().getString(R.string.age_validation_required));
                 } else {
-                    if(marketPlace.isAgeCheckRequired()){
+                    if (marketPlace.isAgeCheckRequired()) {
                         trackEvent(TrackingAware.PRE_CHECKOUT_AGE_LEGAL_ACCEPTED, null);
                     }
 
@@ -412,10 +412,10 @@ public class AgeValidationActivity extends BackButtonActivity {
         }
     }
 
-    private void bulkRemoveProducts(Object valuePassed){
+    private void bulkRemoveProducts(Object fulfillmentInfoIds) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.cartBulkRemove(valuePassed.toString(), new Callback<BaseApiResponse>() {
+        bigBasketApiService.cartBulkRemove(fulfillmentInfoIds.toString(), new Callback<BaseApiResponse>() {
             @Override
             public void success(BaseApiResponse cartBulkRemoveApiResponseCallback, Response response) {
                 if (isSuspended()) return;

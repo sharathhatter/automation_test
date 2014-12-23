@@ -57,12 +57,12 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
 
     @Override
     public String getSourceName() {
-        if(mShoppingListName.isSystem()){
-            if(mShoppingListName.getSlug().equals(Constants.SMART_BASKET_SLUG))
+        if (mShoppingListName.isSystem()) {
+            if (mShoppingListName.getSlug().equals(Constants.SMART_BASKET_SLUG))
                 return TrackEventkeys.SMART_BASKET;
             else
                 return TrackEventkeys.SYSTEM_SHOPPING_LIST;
-        }else {
+        } else {
             return TrackEventkeys.SHOPPING_LIST;
         }
     }

@@ -4,11 +4,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
-import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
-
-import java.util.HashMap;
 
 
 public class CategoryProductsFragment extends ProductListAwareFragment {

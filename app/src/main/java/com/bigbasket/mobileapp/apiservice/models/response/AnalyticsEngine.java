@@ -9,7 +9,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Created by jugal on 23/12/14.
  */
-public class AnalyticsEngine implements Parcelable{
+public class AnalyticsEngine implements Parcelable {
 
     @SerializedName(Constants.ENABLE_MOENGAGE)
     private boolean isMoEngageEnabled;
