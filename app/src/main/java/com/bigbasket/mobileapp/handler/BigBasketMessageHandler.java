@@ -160,15 +160,23 @@ public class BigBasketMessageHandler<T> {
     }
 
     public void handleRetrofitError(RetrofitError error, String sourceName) {
+        handleRetrofitError(error, sourceName, false);
+    }
+
+    public void handleRetrofitError(RetrofitError error, boolean finish) {
+        handleRetrofitError(error, null, finish);
+    }
+
+    public void handleRetrofitError(RetrofitError error, String sourceName, boolean finish) {
         switch (error.getKind()) {
             case NETWORK:
-                ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.msgNetworkError));
+                ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.msgNetworkError), finish);
                 break;
             case HTTP:
                 if (error.getResponse() == null) {
                     ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.msgNetworkError));
                 } else {
-                    handleHttpError(error.getResponse().getStatus(), error.getResponse().getReason(), sourceName);
+                    handleHttpError(error.getResponse().getStatus(), error.getResponse().getReason(), sourceName, finish);
                 }
                 break;
             case CONVERSION:
@@ -183,26 +191,34 @@ public class BigBasketMessageHandler<T> {
         handleRetrofitError(error, null);
     }
 
-    public void handleHttpError(int errorCode, String reasonPhrase) {
-        handleHttpError(errorCode, reasonPhrase, null);
-    }
-
-    public void handleHttpError(int errorCode, String reasonPhrase, String sourceName) {
+    public void handleHttpError(int errorCode, String reasonPhrase, String sourceName, boolean finish) {
         switch (errorCode) {
             case HttpStatus.SC_BAD_GATEWAY:
-                ((ActivityAware) ctx).getCurrentActivity().showAlertDialog(getString(R.string.weAreDown), getString(R.string.serviceUnavailable), sourceName);
+                if (!finish) {
+                    ((ActivityAware) ctx).getCurrentActivity().showAlertDialog(getString(R.string.weAreDown), getString(R.string.serviceUnavailable), sourceName);
+                } else {
+                    ((ActivityAware) ctx).getCurrentActivity().showAlertDialogFinish(getString(R.string.weAreDown), getString(R.string.serviceUnavailable));
+                }
                 break;
             case HttpStatus.SC_UNAUTHORIZED:
                 ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.login_required), NavigationCodes.GO_TO_LOGIN, null);
                 break;
             default:
                 String msg = "HTTP " + errorCode + " : " + reasonPhrase;
-                ((ApiErrorAware) ctx).showApiErrorDialog(msg, sourceName, null);
+                if (!finish) {
+                    ((ApiErrorAware) ctx).showApiErrorDialog(msg, sourceName, null);
+                } else {
+                    ((ApiErrorAware) ctx).showApiErrorDialog(msg, true);
+                }
                 break;
         }
     }
 
     public void sendOfflineError() {
-        ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.connectionOffline));
+        sendOfflineError(false);
+    }
+
+    public void sendOfflineError(boolean finish) {
+        ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.connectionOffline), finish);
     }
 }

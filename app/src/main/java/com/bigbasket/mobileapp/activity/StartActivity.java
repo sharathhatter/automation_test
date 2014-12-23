@@ -110,13 +110,14 @@ public class StartActivity extends BaseActivity {
                     @Override
                     public void failure(RetrofitError error) {
                         hideProgressDialog();
+                        handler.handleRetrofitError(error, true);
                     }
                 });
             } else {
                 loadHomePage();
             }
         } else {
-            // TODO : Add error handling
+            handler.sendOfflineError();
         }
     }
 
@@ -139,6 +140,7 @@ public class StartActivity extends BaseActivity {
             @Override
             public void failure(RetrofitError error) {
                 hideProgressDialog();
+                handler.handleRetrofitError(error, true);
             }
         });
     }
@@ -230,6 +232,7 @@ public class StartActivity extends BaseActivity {
                     @Override
                     public void failure(RetrofitError error) {
                         hideProgressDialog();
+                        handler.handleRetrofitError(error, true);
                     }
                 });
     }
