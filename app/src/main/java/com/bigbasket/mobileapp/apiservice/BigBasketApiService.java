@@ -333,4 +333,9 @@ public interface BigBasketApiService {
     @POST("/co-reserve-quantity/")
     void coReserveQuantity(@Field(Constants.PHARMA_PRESCRIPTION_ID) String pharmaPrescriptionId,
                            Callback<OldApiResponse<COReserveQuantity>> coReserveQtyApiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/update-location/")
+    void updateLocation(@Field(Constants.ADDRESS_ID) String addressId, @Field(Constants.LAT) double lat,
+                        @Field(Constants.LNG) double lng, Callback<BaseApiResponse> updateLocationApiResponseCallback);
 }

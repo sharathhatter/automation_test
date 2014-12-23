@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.bigbasket.mobileapp">
+    package="com.bigbasket.mobileapp" >
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -14,6 +14,11 @@
     <!-- Keeps the processor from sleeping when a message is received. -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true"/>
 
     <supports-screens
         android:anyDensity="true"
@@ -31,24 +36,32 @@
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <!--
+ The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
+         Google Maps Android API v2, but are recommended.
+    -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
-        android:name="com.bigbasket.mobileapp.application.BaseApplication"
+        android:name=".application.BaseApplication"
         android:allowBackup="false"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/BBAppTheme"
-        tools:replace="android:allowBackup,android:theme">
+        tools:replace="android:allowBackup,android:theme" >
         <meta-data
             android:name="android.app.default_searchable"
             android:value=".activity.product.ProductListActivity" />
+
         <activity
-            android:name="com.bigbasket.mobileapp.activity.StartActivity"
+            android:name=".activity.StartActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/BBAppTheme"
-            android:windowSoftInputMode="stateHidden|adjustPan">
+            android:windowSoftInputMode="stateHidden|adjustPan" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -56,11 +69,11 @@
             </intent-filter>
         </activity>
 
-        <service android:name="com.bigbasket.mobileapp.GCMIntentService" />
+        <service android:name=".GCMIntentService" />
 
         <receiver
             android:name="com.google.android.gcm.GCMBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND">
+            android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
@@ -73,7 +86,7 @@
         <service android:name="com.demach.konotor.service.KonotorBacklogService" />
 
         <receiver android:name="com.demach.konotor.KonotorAlarmReceiver" />
-        <receiver android:name="com.demach.konotor.NetworkStateReceiver">
+        <receiver android:name="com.demach.konotor.NetworkStateReceiver" >
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
@@ -84,12 +97,12 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name="com.bigbasket.mobileapp.activity.CustomerFeedbackActivity"
+            android:name=".activity.CustomerFeedbackActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name="com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity"
+            android:name=".activity.promo.FlatPageWebViewActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
@@ -104,9 +117,9 @@
         <!-- </activity> -->
 
         <activity
-            android:name="com.bigbasket.mobileapp.activity.DeepLinkDispatcherActivity"
+            android:name=".activity.DeepLinkDispatcherActivity"
             android:configChanges="orientation|screenSize"
-            android:windowSoftInputMode="stateHidden|adjustPan">
+            android:windowSoftInputMode="stateHidden|adjustPan" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -149,12 +162,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.bigbasket.mobileapp.activity.base.uiv3.BBActivity"
+            android:name=".activity.base.uiv3.BBActivity"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name="com.bigbasket.mobileapp.activity.product.ProductListActivity"
+            android:name=".activity.product.ProductListActivity"
             android:launchMode="singleTop"
-            android:windowSoftInputMode="stateHidden|adjustPan">
+            android:windowSoftInputMode="stateHidden|adjustPan" >
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
@@ -164,33 +177,33 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.bigbasket.mobileapp.activity.order.uiv3.PlaceOrderActivity"
+            android:name=".activity.order.uiv3.PlaceOrderActivity"
             android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name="com.bigbasket.mobileapp.activity.order.uiv3.OrderDetailActivity"
+            android:name=".activity.order.uiv3.OrderDetailActivity"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name="com.bigbasket.mobileapp.activity.order.uiv3.AvailableVoucherListActivity"
+            android:name=".activity.order.uiv3.AvailableVoucherListActivity"
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
         <service
-            android:name="com.bigbasket.mobileapp.task.UploadImageService"
+            android:name=".task.UploadImageService"
             android:label="@string/uploadServiceForPrescriptionImage" />
 
         <activity
-            android:name="com.bigbasket.mobileapp.activity.order.MemberAddressFormActivity"
+            android:name=".activity.order.MemberAddressFormActivity"
             android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name="com.bigbasket.mobileapp.activity.order.uiv3.CheckoutQCActivity"
+            android:name=".activity.order.uiv3.CheckoutQCActivity"
             android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name="com.facebook.LoginActivity"
             android:label="@string/app_name" />
         <activity
-            android:name="com.bigbasket.mobileapp.activity.order.uiv3.PayuTransactionActivity"
+            android:name=".activity.order.uiv3.PayuTransactionActivity"
             android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
@@ -198,7 +211,7 @@
             android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name="com.bigbasket.mobileapp.activity.account.uiv3.SignupActivity"
+            android:name=".activity.account.uiv3.SignupActivity"
             android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
@@ -218,33 +231,30 @@
             android:value="@string/fb_app_id" />
 
         <activity
-            android:name="com.bigbasket.mobileapp.activity.account.uiv3.OrderListActivity"
+            android:name=".activity.account.uiv3.OrderListActivity"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name="com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity"
+            android:name=".activity.base.uiv3.BackButtonActivity"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name="com.bigbasket.mobileapp.activity.order.uiv3.BasketValidationActivity"
-            android:windowSoftInputMode="stateHidden|adjustPan"
-            android:configChanges="orientation|screenSize" />
+            android:name=".activity.order.uiv3.BasketValidationActivity"
+            android:configChanges="orientation|screenSize"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name="com.bigbasket.mobileapp.activity.order.uiv3.AgeValidationActivity"
-            android:windowSoftInputMode="stateHidden|adjustPan"
-            android:configChanges="orientation|screenSize" />
-
-
+            android:name=".activity.order.uiv3.AgeValidationActivity"
+            android:configChanges="orientation|screenSize"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name="com.bigbasket.mobileapp.activity.order.uiv3.PrescriptionListActivity"
-            android:windowSoftInputMode="stateHidden|adjustPan"
-            android:configChanges="orientation|screenSize" />
-
+            android:name=".activity.order.uiv3.PrescriptionListActivity"
+            android:configChanges="orientation|screenSize"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name="com.bigbasket.mobileapp.activity.order.uiv3.UploadNewPrescriptionActivity"
-            android:windowSoftInputMode="stateHidden|adjustPan"
-            android:configChanges="orientation|screenSize" />
+            android:name=".activity.order.uiv3.UploadNewPrescriptionActivity"
+            android:configChanges="orientation|screenSize"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
 
         <provider
-            android:name="com.bigbasket.mobileapp.contentProvider.SearchSuggestionProvider"
+            android:name=".contentProvider.SearchSuggestionProvider"
             android:authorities="com.bigbasket.mobileapp.contentProvider.SearchSuggestionProvider"
             android:enabled="true"
             android:exported="false"
@@ -255,23 +265,29 @@
             android:value="@integer/google_play_services_version" />
 
         <!-- MOEngage -->
-        <receiver android:name="com.moe.pushlibrary.PushGcmBroadcastReceiver"
+        <receiver
+            android:name="com.moe.pushlibrary.PushGcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
                 <category android:name="com.bigbasket.mobileapp" />
             </intent-filter>
         </receiver>
+
         <service android:name="com.moe.pushlibrary.PushGCMIntentService" />
+
         <receiver android:name="com.moe.pushlibrary.PushGcmRegister" />
         <receiver android:name="com.moe.pushlibrary.SendReport" />
 
-        <!-- on app upgrade, gcm registration id refresh-->
-        <receiver android:name="com.moe.pushlibrary.PushUpdateReceiver">
+        <!-- on app upgrade, gcm registration id refresh -->
+        <receiver android:name="com.moe.pushlibrary.PushUpdateReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_REPLACED" />
-                <data android:path="com.bigbasket.mobileapp"
+
+                <data
+                    android:path="com.bigbasket.mobileapp"
                     android:scheme="package" />
             </intent-filter>
         </receiver>
@@ -279,14 +295,22 @@
         <!-- push notification landing page -->
         <activity
             android:name="com.moe.pushlibrary.activities.MoEActivity"
-            android:parentActivityName=".activity.StartActivity"
-            >
+            android:parentActivityName=".activity.StartActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.StartActivity"
-                />
+                android:value=".activity.StartActivity" />
         </activity>
 
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="@string/google_maps_key" />
+
+        <activity
+            android:name=".activity.account.uiv3.LocateOnMapActivity"
+            android:label="@string/locateOnMap"
+            android:configChanges="orientation|screenSize"
+            android:windowSoftInputMode="stateHidden|adjustPan" >
+        </activity>
     </application>
 
 </manifest>

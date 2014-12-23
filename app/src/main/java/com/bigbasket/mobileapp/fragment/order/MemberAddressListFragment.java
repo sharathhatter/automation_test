@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.account.uiv3.LocateOnMapActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.order.MemberAddressFormActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.SlotPaymentSelectionActivity;
@@ -176,7 +177,9 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
     public void onLocateOnMapClicked(Address address) {
         // Defensive check
         if (mFromAccountPage) {
-
+            Intent intent = new Intent(getActivity(), LocateOnMapActivity.class);
+            intent.putExtra(Constants.UPDATE_ADDRESS, address);
+            startActivityForResult(intent, NavigationCodes.ADDRESS_CREATED_MODIFIED);
         }
     }
 

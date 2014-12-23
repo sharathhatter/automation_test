@@ -14,7 +14,7 @@ public interface ApiErrorCodes {
     public static final int LOGIN_REQUIRED = 110;
     public static final int BASKET_EMPTY = 112;
     public static final String BASKET_EMPTY_STR = "112";
-    public static final int BASKET_LIMIT_REACHED = 113;
+    public static final int NO_ITEMS_IN_CART = 113;
     public static final int LIST_SLUG_MISSING = 114;
     public static final int PRODUCT_DOES_NOT_EXISTS = 115;
     public static final int EMAIL_DOESNT_EXISTS = 116;
@@ -37,4 +37,6 @@ public interface ApiErrorCodes {
     public static final int OTP_NEEDED = 181;
     public static final int OTP_INVALID = 182;
     public static final int NO_ACCOUNT = 183;
+    public static final int PRODUCT_QTY_LIMIT = 184;
+    public static final int ADDRESS_NOT_SERVED = 185;
 }

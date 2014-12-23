@@ -150,18 +150,6 @@ public class BasketOperationTask<T> {
                     break;
                 case Constants.ERROR:
                     switch (cartOperationApiResponse.errorType) {
-                        case Constants.BASKET_LIMIT_REACHED:
-                            if (TextUtils.isEmpty(cartOperationApiResponse.message)) {
-                                ((HandlerAware) context).getHandler().sendEmptyMessage(ApiErrorCodes.BASKET_LIMIT_REACHED);
-                            } else {
-                                if (context instanceof BaseFragment) {
-                                    ((BaseFragment) context).showErrorMsg(cartOperationApiResponse.message);
-                                } else {
-                                    ((BaseActivity) context).showAlertDialog(
-                                            null, cartOperationApiResponse.message);
-                                }
-                            }
-                            break;
                         case Constants.PRODUCT_ID_NOT_FOUND:
                             ((HandlerAware) context).getHandler().
                                     sendEmptyMessage(ApiErrorCodes.BASKET_EMPTY);

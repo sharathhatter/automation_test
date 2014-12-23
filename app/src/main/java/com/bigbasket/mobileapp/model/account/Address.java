@@ -52,6 +52,12 @@ public class Address implements Parcelable {
     @SerializedName(Constants.IS_MAPPED)
     private boolean isMapped;
 
+    @SerializedName(Constants.LAT)
+    private double latitude;
+
+    @SerializedName(Constants.LNG)
+    private double longitude;
+
     public Address(Parcel source) {
         byte isDefaultByteVal = source.readByte();
         this.isDefault = isDefaultByteVal == (byte) 1;
@@ -68,6 +74,8 @@ public class Address implements Parcelable {
         this.cityName = source.readString();
         this.pincode = source.readString();
         this.isMapped = source.readByte() == (byte) 1;
+        this.latitude = source.readDouble();
+        this.longitude = source.readDouble();
     }
 
     @Override
@@ -86,6 +94,8 @@ public class Address implements Parcelable {
         dest.writeString(cityName);
         dest.writeString(pincode);
         dest.writeByte(isMapped ? (byte) 1 : (byte) 0);
+        dest.writeDouble(latitude);
+        dest.writeDouble(longitude);
     }
 
     @Override
@@ -171,6 +181,14 @@ public class Address implements Parcelable {
 
     public String getPincode() {
         return pincode;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
     }
 
     public boolean isMapped() {

@@ -25,6 +25,7 @@
     <dimen name="margin_normal">16dp</dimen>
     <dimen name="margin_mini">4dp</dimen>
     <dimen name="margin_large">32dp</dimen>
+    <dimen name="margin_extra_large">64dp</dimen>
     <dimen name="heading_1_text_size">22sp</dimen>
     <dimen name="heading_2_text_size">20sp</dimen>
     <dimen name="large_text_size">18sp</dimen>

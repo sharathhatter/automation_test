@@ -72,8 +72,8 @@ public class BigBasketMessageHandler<T> {
             case ApiErrorCodes.BASKET_EMPTY:
                 ((ApiErrorAware) ctx).showApiErrorDialog(!TextUtils.isEmpty(message) ? message : getString(R.string.basketEmpty), true);
                 break;
-            case ApiErrorCodes.BASKET_LIMIT_REACHED:
-                ((ApiErrorAware) ctx).showApiErrorDialog(!TextUtils.isEmpty(message) ? message : getString(R.string.invalidBasketQty));
+            case ApiErrorCodes.NO_ITEMS_IN_CART:
+                ((ApiErrorAware) ctx).showApiErrorDialog(!TextUtils.isEmpty(message) ? message : getString(R.string.basketEmpty));
                 break;
             case ApiErrorCodes.LIST_SLUG_MISSING:
                 ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.server_error), true);
@@ -104,6 +104,12 @@ public class BigBasketMessageHandler<T> {
                 break;
             case ApiErrorCodes.ORDER_IN_PROGRESS:
                 ((ApiErrorAware) ctx).showApiErrorDialog(message);
+                break;
+            case ApiErrorCodes.PRODUCT_QTY_LIMIT:
+                ((ApiErrorAware) ctx).showApiErrorDialog(!TextUtils.isEmpty(message) ? message : getString(R.string.invalidBasketQty));
+                break;
+            case ApiErrorCodes.ADDRESS_NOT_SERVED:
+                ((ApiErrorAware) ctx).showApiErrorDialog(message, true);
                 break;
             case NavigationCodes.ADD_TO_SHOPPINGLIST_OK:
                 if (((ActivityAware) ctx).getCurrentActivity() != null) {
