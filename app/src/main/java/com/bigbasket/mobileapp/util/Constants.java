@@ -302,6 +302,8 @@ public class Constants {
     public static final String APPLIED_VOUCHER = "appliedVoucher";
     public static final String ENABLE_KONOTOR = "enable_konotor";
     public static final String ENABLE_MOENGAGE = "enable_moengage";
+    public static final String ENABLE_LOCALYTICS = "enable_localytics";
+    public static final String ANALYTICS_ENGINE = "analytics_engine";
     public static final String APP_EXPIRE_BY = "app_expired_by";
     public static final String IS_UPDATE_REQUIRED = "is_update_required";
     public static final String FULFILLED_BY = "fulfilled_by";

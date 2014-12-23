@@ -36,6 +36,6 @@ public class ShopInShopFragment extends ProductListAwareFragment {
 
     @Override
     public String getSourceName() {
-        return TrackEventkeys.BROWSE_BY_OFFERS;
+        return TrackEventkeys.SHOP_IN_SHOP;
     }
 }

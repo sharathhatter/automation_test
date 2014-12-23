@@ -32,5 +32,6 @@ public class TrackEventkeys {
     public static final String SYSTEM_SCRATCH_LIST = "sscl";
     public static final String PROMO_DETAIL = "promo_detail";
     public static final String PAST_ORDER = "po";
+    public static final String SHOP_IN_SHOP = "sis";
 
 }
