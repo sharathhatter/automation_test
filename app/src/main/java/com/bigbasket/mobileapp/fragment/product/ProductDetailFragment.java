@@ -18,6 +18,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.ProductDetailApiRespon
 import com.bigbasket.mobileapp.common.ProductViewHolder;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductAdditionalInfo;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
@@ -59,6 +60,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
             }
         }
         loadProductDetail();
+        trackEvent(TrackingAware.BROWSE_PRODUCT_DETAILS, null);
     }
 
     private void loadProductDetail() {

@@ -4,6 +4,7 @@ package com.bigbasket.mobileapp.model.cart;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.bigbasket.mobileapp.apiservice.models.response.AnalyticsEngine;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
@@ -21,14 +22,11 @@ public class CartSummary implements Parcelable {
     @SerializedName(Constants.IS_NOT_SUPPORTED)
     private boolean isNotSupported;
 
-//    @SerializedName(Constants.IS_FORCE_UPDATE)
-//    private boolean isForceUpdate;
-
     @SerializedName(Constants.ENABLE_KONOTOR)
     private boolean isKonotorEnabled;
 
-    @SerializedName(Constants.ENABLE_MOENGAGE)
-    private boolean isMoEngageEnabled;
+    @SerializedName(Constants.ANALYTICS_ENGINE)
+    private AnalyticsEngine analyticsEngine;
 
     @SerializedName(Constants.APP_EXPIRE_BY)
     private String appExpireBy;
@@ -52,6 +50,7 @@ public class CartSummary implements Parcelable {
         dest.writeByte(isNotSupported ? (byte) 1 : (byte) 0);
         dest.writeByte(isKonotorEnabled ? (byte) 1 : (byte) 0);
         boolean isAppExpiredByNull = appExpireBy == null;
+        dest.writeParcelable(analyticsEngine, flags);
         dest.writeByte(isAppExpiredByNull ? (byte) 1 : (byte) 0);
         if (!isAppExpiredByNull) {
             dest.writeString(appExpireBy);
@@ -66,7 +65,7 @@ public class CartSummary implements Parcelable {
         noOfItems = source.readInt();
         isNotSupported = source.readByte() == (byte) 1;
         isKonotorEnabled = source.readByte() == (byte) 1;
-        isMoEngageEnabled = source.readByte() == (byte) 1;
+        analyticsEngine = source.readParcelable(AnalyticsEngine.class.getClassLoader());
         boolean isAppExpiredByNull = source.readByte() == (byte) 1;
         if (!isAppExpiredByNull) {
             appExpireBy = source.readString();
@@ -97,11 +96,12 @@ public class CartSummary implements Parcelable {
     }
 
     public CartSummary(double total, double savings, int noOfItems, boolean isNotSupported,
-                       boolean isKonotorEnabled, boolean isMoEngageEnabled, String appExpireBy, boolean hasExpressShops) {
+                       boolean isKonotorEnabled, AnalyticsEngine analyticsEngine,
+                       String appExpireBy, boolean hasExpressShops) {
         this(total, savings, noOfItems);
         this.isNotSupported = isNotSupported;
         this.isKonotorEnabled = isKonotorEnabled;
-        this.isMoEngageEnabled = isMoEngageEnabled;
+        this.analyticsEngine = analyticsEngine;
         this.appExpireBy = appExpireBy;
         this.hasExpressShops = hasExpressShops;
     }
@@ -162,12 +162,12 @@ public class CartSummary implements Parcelable {
         return isKonotorEnabled;
     }
 
-    public boolean isMoEngageEnabled() {
-        return isMoEngageEnabled;
+    public AnalyticsEngine getAnalyticsEngine() {
+        return analyticsEngine;
     }
 
-    public void setMoEngageEnabled(boolean isMoEngageEnabled) {
-        this.isMoEngageEnabled = isMoEngageEnabled;
+    public void setAnalyticsEngine(AnalyticsEngine analyticsEngine) {
+        this.analyticsEngine = analyticsEngine;
     }
 
     public void setNotSupported(boolean isNotSupported) {

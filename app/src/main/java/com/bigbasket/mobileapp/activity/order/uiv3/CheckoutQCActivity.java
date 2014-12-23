@@ -208,7 +208,7 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
 
             RelativeLayout layoutRelativeMain = (RelativeLayout) inflater.inflate(R.layout.uiv3_checkout_qc_scroll, null);
             LinearLayout linearLayoutViewQC = (LinearLayout) layoutRelativeMain.findViewById(R.id.layoutMainCheckoutQc);
-            //FloatingActionButton btnFabProceedQc = (FloatingActionButton) layoutRelativeMain.findViewById(R.id.btnFabProceedQc);
+            LinearLayout layoutBtnContinue = (LinearLayout) layoutRelativeMain.findViewById(R.id.layoutBtnContinue);
             contentView.addView(layoutRelativeMain);
 
             if (productWithNoStockListSize > 0) {
@@ -379,10 +379,11 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
             btnContinue.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    new CoUpdateReservationTask<>(getCurrentActivity(), false, productWithNoStockList, productWithSomeStockList).startTask();
+                    new CoUpdateReservationTask<>(getCurrentActivity(), false,
+                            productWithNoStockList, productWithSomeStockList).startTask();
                 }
             });
-            contentView.addView(btnContinue);
+            layoutBtnContinue.addView(btnContinue);
         } else {
             showAlertDialogFinish(null, getString(R.string.INTERNAL_SERVER_ERROR));
         }

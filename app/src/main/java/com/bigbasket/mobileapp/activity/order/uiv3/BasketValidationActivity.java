@@ -53,6 +53,7 @@ public class BasketValidationActivity extends BackButtonActivity {
             return;
         }
         renderBasketValidationErrors();
+        trackEvent(TrackingAware.PRE_CHECKOUT_CWR_APPICABLE, null);
     }
 
     @Override
@@ -157,9 +158,9 @@ public class BasketValidationActivity extends BackButtonActivity {
                         @Override
                         public void onClick(View v) {
                             if (DataUtil.isInternetAvailable(getCurrentActivity())) {
-                                Product product = new Product(null,    //todo change api for brand and topcat
+                                Product product = new Product(marketPlaceItems.getProductBrand(),
                                         marketPlaceItems.getDesc(), marketPlaceItems.getSku(),
-                                        null);
+                                        marketPlaceItems.getTopLevelCategoryName(), marketPlaceItems.getTopLevelCategoryName());
                                 BasketOperationTask<BaseActivity> basketOperationTask = new BasketOperationTask<>(getCurrentActivity(),
                                         BasketOperation.DEC, product,
                                         null, null, null, null, null, TrackingAware.BASKET_DECREMENT, TrackEventkeys.MARKET_QC);
@@ -176,9 +177,9 @@ public class BasketValidationActivity extends BackButtonActivity {
                         @Override
                         public void onClick(View v) {
                             if (DataUtil.isInternetAvailable(getCurrentActivity())) {
-                                Product product = new Product(null,    //todo change api for brand and topcat
+                                Product product = new Product(marketPlaceItems.getProductBrand(),
                                         marketPlaceItems.getDesc(), marketPlaceItems.getSku(),
-                                        null);
+                                        marketPlaceItems.getTopLevelCategoryName(), marketPlaceItems.getProductCategoryName());
                                 BasketOperationTask<BaseActivity> basketOperationTask = new BasketOperationTask<>(getCurrentActivity(),
                                         BasketOperation.INC, product,
                                         null, null, null, null, null, TrackingAware.BASKET_INCREMENT, TrackEventkeys.MARKET_QC);
@@ -194,9 +195,9 @@ public class BasketValidationActivity extends BackButtonActivity {
                         @Override
                         public void onClick(View v) {
                             if (DataUtil.isInternetAvailable(getCurrentActivity())) {
-                                Product product = new Product(null,    //todo change api for brand and topcat
+                                Product product = new Product(marketPlaceItems.getProductBrand(),
                                         marketPlaceItems.getDesc(), marketPlaceItems.getSku(),
-                                        null);
+                                        marketPlaceItems.getTopLevelCategoryName(), marketPlaceItems.getProductCategoryName());
                                 BasketOperationTask<BaseActivity> basketOperationTask = new BasketOperationTask<>(getCurrentActivity(),
                                         BasketOperation.EMPTY, product,
                                         null, null, null, null, null, "0", TrackingAware.BASKET_REMOVE, TrackEventkeys.MARKET_QC);

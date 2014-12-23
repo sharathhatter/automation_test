@@ -23,6 +23,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseContent;
 import com.bigbasket.mobileapp.fragment.order.OrderItemListFragment;
 import com.bigbasket.mobileapp.fragment.order.OrderSummaryFragment;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.OrderSummary;
 import com.bigbasket.mobileapp.model.order.PayuResponse;
@@ -83,9 +84,12 @@ public class PlaceOrderActivity extends BackButtonActivity {
         btnFooter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                trackEvent(TrackingAware.CHECKOUT_PLACE_ORDER_CLICKED, null);
                 onPlaceOrderAction(orderSummary);
             }
         });
+
+        trackEvent(TrackingAware.CHECKOUT_ORDER_REVIEW_SHOWN, null);
     }
 
     public void onPlaceOrderAction(OrderSummary orderSummary) {
@@ -151,6 +155,7 @@ public class PlaceOrderActivity extends BackButtonActivity {
         setSuspended(false);
         switch (resultCode) {
             case Constants.PAYU_FAILED:
+                trackEvent(TrackingAware.CHECKOUT_PAYMENT_GATEWAY_FAILURE, null);
                 setResult(resultCode);
                 finish();
                 break;
@@ -159,6 +164,7 @@ public class PlaceOrderActivity extends BackButtonActivity {
                 finish();
                 break;
             case Constants.PAYU_SUCCESS:
+                trackEvent(TrackingAware.CHECKOUT_PAYMENT_GATEWAY_SUCCESS, null);
                 PayuResponse payuResponse = PayuResponse.getInstance(getCurrentActivity());
                 if (payuResponse == null) {
                     showAlertDialog("Error", "Unable to place your order via credit-card." +
@@ -183,6 +189,7 @@ public class PlaceOrderActivity extends BackButtonActivity {
             switch (sourceName) {
                 case Constants.SOURCE_PLACE_ORDER:
                     PayuResponse.clearTxnDetail(this);
+                    trackEvent(TrackingAware.CHECKOUT_PLACE_ORDER_AMOUNT_MISMATCH, null);
 //                    if (paymethod.equals(Constants.CREDIT_CARD)) {
 //                        startCreditCardTxnActivity();
 //                    } else {
@@ -202,8 +209,10 @@ public class PlaceOrderActivity extends BackButtonActivity {
     }
 
     private void postOrderCreation(ArrayList<Order> orders) {
+        trackEvent(TrackingAware.CHECKOUT_ORDER_COMPLETE, null);
         PayuResponse.clearTxnDetail(this);
         VoucherApplied.clearFromPreference(this);
+        removePharmaPrescriptionId();
         showOrderThankyou(orders);
     }
 

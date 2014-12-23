@@ -20,6 +20,7 @@ public class AuthParameters {
     private String memberFullName;
     private boolean isKonotorEnabled;
     private boolean isMoEngaleEnabled;
+    private boolean isLocalyticsEnabled;
 
     public static void updateInstance(Context context) {
         authParameters = new AuthParameters(context);
@@ -69,13 +70,21 @@ public class AuthParameters {
         return isMoEngaleEnabled;
     }
 
-    public void setMoEngaleEnabled(boolean isMoEngaleEnabled, Context context) {
+    public void setMoEngaleLocaliticsEnabled(boolean isMoEngaleEnabled,
+                                             boolean isLocalyticsEnabled, Context context) {
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefer.edit();
         editor.putBoolean(Constants.ENABLE_MOENGAGE, isMoEngaleEnabled);
+        editor.putBoolean(Constants.ENABLE_LOCALYTICS, isLocalyticsEnabled);
         editor.commit();
         this.isMoEngaleEnabled = isMoEngaleEnabled;
+        this.isLocalyticsEnabled = isLocalyticsEnabled;
     }
+
+    public boolean isLocalyticsEnabled() {
+        return isLocalyticsEnabled;
+    }
+
 
     public void setKonotorEnabled(boolean isKonotorEnabled, Context context) {
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(context);

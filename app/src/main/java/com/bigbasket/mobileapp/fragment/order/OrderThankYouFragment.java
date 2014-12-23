@@ -24,6 +24,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.callbacks.CallbackOrderInvoice;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.InvoiceDataAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.util.Constants;
@@ -100,6 +101,7 @@ public class OrderThankYouFragment extends BaseFragment implements InvoiceDataAw
         lblViewInvoice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                trackEvent(TrackingAware.ORDER_VIEW_INVOICE, null);
                 showInvoice(order);
             }
         });

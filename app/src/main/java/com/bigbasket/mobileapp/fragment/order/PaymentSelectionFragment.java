@@ -25,6 +25,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.PostVoucherApiResponse;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.SelectedPaymentAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.order.ActiveVouchers;
 import com.bigbasket.mobileapp.model.order.PaymentType;
@@ -80,6 +81,7 @@ public class PaymentSelectionFragment extends BaseFragment {
             mPaymentTypeMap.put(paymentType.getDisplayName(), paymentType.getValue());
         }
         renderPaymentOptions();
+        trackEvent(TrackingAware.CHECKOUT_PAYMENT_SHOWN, null);
     }
 
     @Nullable
@@ -162,6 +164,7 @@ public class PaymentSelectionFragment extends BaseFragment {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked && getCurrentActivity() != null) {
+                            trackEvent(TrackingAware.CHECKOUT_PAYMENT_CHOSEN, null);
                             ((SelectedPaymentAware) getCurrentActivity()).
                                     setPaymentMethod(entrySet.getValue(), entrySet.getKey());
                         }
@@ -241,9 +244,11 @@ public class PaymentSelectionFragment extends BaseFragment {
                                 voucherMsg = "eVoucher has been successfully applied";
                             }
                             showErrorMsg(voucherMsg);
+                            trackEvent(TrackingAware.CHECKOUT_VOUCHER_APPLIED, null);
                             break;
                         default:
                             handler.sendEmptyMessage(postVoucherApiResponse.getErrorTypeAsInt());
+                            trackEvent(TrackingAware.CHECKOUT_VOUCHER_FAILED, null);
                             break;
                     }
                 }
@@ -257,6 +262,7 @@ public class PaymentSelectionFragment extends BaseFragment {
                         return;
                     }
                     handler.handleRetrofitError(error);
+                    trackEvent(TrackingAware.CHECKOUT_VOUCHER_FAILED, null);
                 }
             });
         } else {

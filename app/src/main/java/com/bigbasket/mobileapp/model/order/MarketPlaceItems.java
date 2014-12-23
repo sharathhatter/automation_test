@@ -26,16 +26,30 @@ public class MarketPlaceItems implements Parcelable {
     @SerializedName(Constants.SALE_PRICE)
     private double salePrice;
 
+    @SerializedName(Constants.PRODUCT_TOP_LEVEL_CATEGORY_NAME)
+    private String topLevelCategoryName;
+
+    @SerializedName(Constants.PRODUCT_CATEGORY_NAME)
+    private String productCategoryName;
+
+    @SerializedName(Constants.PRODUCT_BRAND)
+    private String productBrand;
+
     private int ruleValidationArrayIndex;
     private int itemIndex;
 
-    public MarketPlaceItems(String imageUrl, String desc, int itemInCart, float totalQty, String sku, float salePrice) {
+    public MarketPlaceItems(String imageUrl, String desc, int itemInCart,
+                            float totalQty, String sku, float salePrice, String topLevelCategoryName,
+                            String productCategoryName, String productBrand) {
         this.imageUrl = imageUrl;
         this.desc = desc;
         this.itemInCart = itemInCart;
         this.totalQty = totalQty;
         this.sku = sku;
         this.salePrice = salePrice;
+        this.topLevelCategoryName = topLevelCategoryName;
+        this.productCategoryName = productCategoryName;
+        this.productBrand = productBrand;
     }
 
 
@@ -51,6 +65,9 @@ public class MarketPlaceItems implements Parcelable {
         totalQty = source.readDouble();
         sku = source.readString();
         salePrice = source.readDouble();
+        topLevelCategoryName = source.readString();
+        productCategoryName = source.readString();
+        productBrand = source.readString();
     }
 
     @Override
@@ -61,7 +78,9 @@ public class MarketPlaceItems implements Parcelable {
         dest.writeDouble(totalQty);
         dest.writeString(sku);
         dest.writeDouble(salePrice);
-
+        dest.writeString(topLevelCategoryName);
+        dest.writeString(productCategoryName);
+        dest.writeString(productBrand);
     }
 
     public static final Parcelable.Creator<MarketPlaceItems> CREATOR = new Parcelable.Creator<MarketPlaceItems>() {
@@ -114,5 +133,29 @@ public class MarketPlaceItems implements Parcelable {
 
     public double getTotalQty() {
         return totalQty;
+    }
+
+    public String getTopLevelCategoryName() {
+        return topLevelCategoryName;
+    }
+
+    public void setTopLevelCategoryName(String topLevelCategoryName) {
+        this.topLevelCategoryName = topLevelCategoryName;
+    }
+
+    public String getProductCategoryName() {
+        return productCategoryName;
+    }
+
+    public void setProductCategoryName(String productCategoryName) {
+        this.productCategoryName = productCategoryName;
+    }
+
+    public String getProductBrand() {
+        return productBrand;
+    }
+
+    public void setProductBrand(String productBrand) {
+        this.productBrand = productBrand;
     }
 }

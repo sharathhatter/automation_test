@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.SelectedSlotAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.FulfillmentInfo;
 import com.bigbasket.mobileapp.model.slot.BaseSlot;
 import com.bigbasket.mobileapp.model.slot.SelectedSlotType;
@@ -91,6 +92,7 @@ public class SlotSelectionFragment extends BaseFragment {
                 }
             });
             contentView.addView(slotGroupListView);
+            trackEvent(TrackingAware.CHECKOUT_SLOT_SHOWN, null);
         }
     }
 
@@ -150,10 +152,12 @@ public class SlotSelectionFragment extends BaseFragment {
             if (mSlotGroupListAdapter == null) return;
             mSlotGroupListAdapter.notifyDataSetChanged();
             if (areAllSlotGroupsSelected()) {
+                trackEvent(TrackingAware.CHECKOUT_SLOT_CHOOSEN, null);
                 setSelectedSlot();
             }
         } else {
             if (mSlotListAdapter == null) return;
+            trackEvent(TrackingAware.CHECKOUT_SLOT_CHOOSEN, null);
             mSlotListAdapter.notifyDataSetChanged();
         }
     }

@@ -10,11 +10,13 @@ public interface TrackingAware {
     public static final String BASKET_ADD_PROMO_BUNDLE = "Basket.Add Promo Bundle";
     public static final String BASKET_EMPTY = "Basket.Empty";
     public static final String BASKET_VIEW = "Basket.View";
+
     public static final String BROWSE_CATEGORY_LANDING = "Browse.Category Landing";
-    public static final String BROWSE_PRODUCT_CATEGORY = "Browse.Product Category";
+    public static final String BROWSE_PRODUCT_CATEGORY = "Browse.Product Category";  // todo in BBActivity
     public static final String BROWSE_DISCOUNTS = "Browse.Discounts";
     public static final String BROWSE_PRODUCT_DETAILS = "Browse.Product Details";
     public static final String SEARCH = "Search";
+
     public static final String PRE_CHECKOUT_AGE_LEGAL_SHOWN = "Precheckout.Age Legal Shown";
     public static final String PRE_CHECKOUT_AGE_LEGAL_ACCEPTED = "Precheckout.Age Legal Accepted";
     public static final String PRE_CHECKOUT_AGE_LEGAL_REJECTED = "Precheckout.Age Legal Rejected";
@@ -36,15 +38,17 @@ public interface TrackingAware {
     public static final String CHECKOUT_PAYMENT_CHOSEN = "Checkout.Payment Chosen";
     public static final String CHECKOUT_VOUCHER_APPLIED = "Checkout.Voucher Applied";
     public static final String CHECKOUT_VOUCHER_FAILED = "Checkout.Voucher Failed";
+
     public static final String CHECKOUT_ORDER_REVIEW_SHOWN = "Checkout.Order Review Shown";
     public static final String CHECKOUT_PAYMENT_GATEWAY_SUCCESS = "Checkout.Payment Gateway Success";
     public static final String CHECKOUT_PAYMENT_GATEWAY_FAILURE = "Checkout.Payment Gateway Failure";
     public static final String CHECKOUT_PLACE_ORDER_CLICKED = "Checkout.Place Order Clicked";
     public static final String CHECKOUT_PLACE_ORDER_AMOUNT_MISMATCH = "Checkout.Place Order Amount Mismatch";
+    public static final String ORDER_VIEW_INVOICE = "Order.View Invoice";
     public static final String CHECKOUT_ORDER_COMPLETE = "Checkout.Order Complete";
+
     public static final String ORDER_ACTIVE_ORDERS_SHOWN = "Order.Active Orders Shown";
     public static final String ORDER_PAST_ORDERS = "Order.Past Orders";
-    public static final String ORDER_VIEW_INVOICE = "Order.View Invoice";
 
 
     public static final String MY_ACCOUNT_CHANGE_PASSWD_SELECTED = "MyAccount.Change Password Selected";
@@ -94,6 +98,7 @@ public interface TrackingAware {
     public static final String PROMO_CATEGORY_LIST = "Promo.Category List";
     public static final String PROMO_DETAIL = "Promo.Promo Detail";
     public static final String PROMO_SET_PRODUCTS_SHOWN = "Promo.Promo Set Products Shown";
+
     public static final String SHOP_LST_SHOWN = "ShoppingList.All Lists Shown";
     public static final String SHOP_LST_SUMMARY_SHOWN = "ShoppingList.Summary Shown";
     public static final String SHOP_LST_SYSTEM_LST_SHOWN = "ShoppingList.System ShoppingList.Summary Shown";
@@ -103,11 +108,7 @@ public interface TrackingAware {
     public static final String SHOP_LST_DELETED = "ShoppingList.List Deleted";
     public static final String SHOP_LST_CREATED = "ShoppingList.List Created";
     public static final String SHOP_LIST_PRODUCT_ADDED = "ShoppingList.Product Added";
-    //public static final String QC_REMOVE = "QC.Remove";
-    //public static final String QC_SIMILAR_PRODUCT = "QC.Similar Product";
-    //public static final String MARKET_QC_INCREMENT = "Market.QC.Increment";
-    //public static final String MARKET_QC_DECREMENT = "Market.QC.Decrement";
-    //public static final String MARKET_QC_REMOVE = "Market.QC.Remove";
+    public static final String SHOP_LIST_PRODUCT_DELETED = "ShoppingList.Product Deleted";
 
     public void trackEvent(String eventName, Map<String, String> eventAttribs,
                            String source, String sourceValue);

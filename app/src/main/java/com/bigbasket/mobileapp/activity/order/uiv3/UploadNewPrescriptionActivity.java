@@ -32,6 +32,7 @@ import com.bigbasket.mobileapp.adapter.order.MultipleImagesPrescriptionAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.order.PrescriptionId;
 import com.bigbasket.mobileapp.task.COReserveQuantityCheckTask;
 import com.bigbasket.mobileapp.task.UploadImageService;
@@ -110,8 +111,7 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
     }
 
     public void OnUploadButtonClicked(View view) {
-        gotoQCActivity("1234"); //todo remove this
-        //validateFormFields();
+        validateFormFields();
     }
 
     private boolean isEditTextEmpty(EditText editText) {
@@ -208,6 +208,7 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
                             ImageUtil.insertToDB(prescriptionId, arrayListByteArray);
                             startService(new Intent(getCurrentActivity(), UploadImageService.class));
                             gotoQCActivity(prescriptionId);
+                            trackEvent(TrackingAware.PRE_CHECKOUT_PHARMA_PRESCRIPTION_CREATED, null);
                         } else {
                             handler.sendEmptyMessage(prescriptionIdApiResponse.status);
                         }

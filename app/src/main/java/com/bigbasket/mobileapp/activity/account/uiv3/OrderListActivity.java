@@ -28,6 +28,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.callbacks.CallbackOrderInvoice;
 import com.bigbasket.mobileapp.apiservice.models.response.OrderListApiResponse;
 import com.bigbasket.mobileapp.interfaces.InvoiceDataAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.model.order.OrderMonthRange;
@@ -67,6 +68,12 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
             return;
         }
         loadOrders();
+
+        if (orderType.equals(getString(R.string.active_label))) {
+            trackEvent(TrackingAware.ORDER_ACTIVE_ORDERS_SHOWN, null);
+        } else {
+            trackEvent(TrackingAware.ORDER_PAST_ORDERS, null);
+        }
     }
 
     private void loadOrders() {
