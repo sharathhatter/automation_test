@@ -44,6 +44,7 @@ import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.model.account.SocialAccount;
 import com.bigbasket.mobileapp.model.order.COReserveQuantity;
 import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -190,7 +191,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
 
     protected void onResume() {
         super.onResume();
-        com.facebook.AppEventsLogger.activateApp(getCurrentActivity(), Constants.FB_APP_ID);
+
         PrescriptionImageAdapter prescriptionImageAdapter = new PrescriptionImageAdapter(getCurrentActivity());
         if (!prescriptionImageAdapter.exists()) {
             stopService(new Intent(this, UploadImageService.class));
@@ -545,8 +546,8 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
 
     public boolean isSocialLogin() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
-        return preferences.contains(Constants.SOCIAL_ACCOUNT_TYPE) &&
-                !TextUtils.isEmpty(preferences.getString(Constants.SOCIAL_ACCOUNT_TYPE, null));
+        return preferences.contains(Constants.SOCIAL_ACCOUNT_TYPE)
+                && SocialAccount.getSocialLoginTypes().contains(preferences.getString(Constants.SOCIAL_ACCOUNT_TYPE, ""));
     }
 
     public void doLogout() {

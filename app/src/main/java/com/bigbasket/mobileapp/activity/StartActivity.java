@@ -2,7 +2,6 @@ package com.bigbasket.mobileapp.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -21,9 +20,7 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
-import com.bigbasket.mobileapp.adapter.db.DatabaseHelper;
 import com.bigbasket.mobileapp.adapter.product.CategoryAdapter;
-import com.bigbasket.mobileapp.adapter.product.SubCategoryAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
@@ -61,11 +58,6 @@ public class StartActivity extends BaseActivity {
             return;
         }
 
-        if (!DatabaseHelper.isConnectionOpen()) {
-            // Just opening the db connection
-            new SubCategoryAdapter(getCurrentActivity()).open();
-        }
-
         MoEHelper moEHelper = new MoEHelper(this);
         moEHelper.initialize(Constants.MO_SENDER_ID, Constants.MO_APP_ID);
         moEHelper.Register(R.drawable.ic_launcher);
@@ -79,6 +71,12 @@ public class StartActivity extends BaseActivity {
         } else {
             loadNavigation();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        com.facebook.AppEventsLogger.activateApp(getCurrentActivity(), Constants.FB_APP_ID);
     }
 
     private void loadNavigation() {

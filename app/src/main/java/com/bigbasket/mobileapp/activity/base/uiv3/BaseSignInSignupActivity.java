@@ -256,7 +256,7 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(Constants.BBTOKEN_KEY, loginApiResponse.bbToken);
         editor.putString(Constants.MEMBER_EMAIL_KEY, email);
-        if (!TextUtils.isEmpty(socialAccountType)) {
+        if (!TextUtils.isEmpty(socialAccountType) && SocialAccount.getSocialLoginTypes().contains(socialAccountType)) {
             editor.putString(Constants.SOCIAL_ACCOUNT_TYPE, socialAccountType);
         } else {
             editor.remove(Constants.SOCIAL_ACCOUNT_TYPE);

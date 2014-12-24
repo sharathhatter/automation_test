@@ -6,9 +6,18 @@ import android.os.Parcelable;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+
 public class SocialAccount implements Parcelable {
     public static final String FB = "fb";
     public static final String GP = "gp";
+
+    public static ArrayList<String> getSocialLoginTypes() {
+        ArrayList<String> socialAccountTypes = new ArrayList<>();
+        socialAccountTypes.add(FB);
+        socialAccountTypes.add(GP);
+        return socialAccountTypes;
+    }
 
     private String email;
     private String displayName;
