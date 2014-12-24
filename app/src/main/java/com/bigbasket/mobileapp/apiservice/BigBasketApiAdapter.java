@@ -5,8 +5,8 @@ import android.os.Build;
 import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
+import com.bigbasket.mobileapp.util.UIUtil;
 
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
@@ -25,13 +25,16 @@ public class BigBasketApiAdapter {
         return bigBasketApiService;
     }
 
-    public static void refreshBigBasketApiService(Context context) {
+    public static void refreshBigBasketApiService(final Context context) {
         final AuthParameters authParameters = AuthParameters.getInstance(context);
 
         RequestInterceptor requestInterceptor = new RequestInterceptor() {
             @Override
             public void intercept(RequestFacade request) {
-                request.addHeader("User-Agent", Constants.USER_AGENT_PREFIX + Build.VERSION.RELEASE);
+
+                String appVersion = UIUtil.getAppVersion(context);
+                String userAgentPrefix = "BB Android/" + "v" + appVersion + "/os ";
+                request.addHeader("User-Agent", userAgentPrefix + Build.VERSION.RELEASE);
 
                 String bbVisitorId = authParameters.getVisitorId();
                 String bbAuthToken = authParameters.getBbAuthToken();

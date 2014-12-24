@@ -190,7 +190,6 @@ public class Constants {
     public static final String PROD_ID = "prod_id";
     public static final String PRODUCT = "product";
     public static final String ADDITIONAL_INFOS = "additional_infos";
-    public static final String USER_AGENT_PREFIX = "BB Android/v2.0.0/os ";
     public static final String TOP_CATEGORY_NAME = "top_category_name";
 
     public static final String FORCE_REGISTER_DEVICE = "forceRegisterDevice";

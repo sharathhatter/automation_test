@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.preference.PreferenceManager;
@@ -226,6 +227,17 @@ public class UIUtil {
             }
         }
         editor.commit();
+    }
+
+    public static String getAppVersion(Context context) {
+        String appVersionName;
+        try {
+            appVersionName = context.getPackageManager().
+                    getPackageInfo(context.getPackageName(), 0).versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            appVersionName = null;
+        }
+        return appVersionName;
     }
 
 }

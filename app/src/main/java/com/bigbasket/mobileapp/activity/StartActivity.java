@@ -35,6 +35,7 @@ import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.UIUtil;
 import com.moe.pushlibrary.MoEHelper;
 
 import org.json.JSONException;
@@ -195,7 +196,7 @@ public class StartActivity extends BaseActivity {
             devicePropertiesJsonObj.put(Constants.PLATFORM, "java");
             devicePropertiesJsonObj.put(Constants.OS_NAME, "android");
             devicePropertiesJsonObj.put(Constants.OS_VERSION, Build.VERSION.RELEASE);
-            devicePropertiesJsonObj.put(Constants.APP_VERSION, getAppVersion());
+            devicePropertiesJsonObj.put(Constants.APP_VERSION, UIUtil.getAppVersion(this));
             devicePropertiesJsonObj.put(Constants.DEVICE_MAKE, Build.MANUFACTURER);
             devicePropertiesJsonObj.put(Constants.DEVICE_MODEL, Build.MODEL);
             devicePropertiesJsonObj.put(Constants.SCREEN_RESOLUTION,
@@ -235,17 +236,6 @@ public class StartActivity extends BaseActivity {
                         handler.handleRetrofitError(error, true);
                     }
                 });
-    }
-
-    private String getAppVersion() {
-        String appVersionName;
-        try {
-            appVersionName = getPackageManager().
-                    getPackageInfo(getPackageName(), 0).versionName;
-        } catch (PackageManager.NameNotFoundException e) {
-            appVersionName = null;
-        }
-        return appVersionName;
     }
 
     @Override
