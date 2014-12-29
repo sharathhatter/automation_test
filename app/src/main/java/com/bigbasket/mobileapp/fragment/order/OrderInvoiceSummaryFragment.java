@@ -1,19 +1,24 @@
 package com.bigbasket.mobileapp.fragment.order;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.fragment.base.AbstractOrderSummaryFragment;
 import com.bigbasket.mobileapp.model.order.CreditDetails;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.model.order.OrderInvoiceDetails;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 
 
 public class OrderInvoiceSummaryFragment extends AbstractOrderSummaryFragment {
@@ -35,11 +40,12 @@ public class OrderInvoiceSummaryFragment extends AbstractOrderSummaryFragment {
         OrderInvoice orderInvoice;
         if (getArguments() != null) {
             orderInvoice = getArguments().getParcelable(Constants.ACTION_TAB_TAG);
+            setTitle("Order Details");
             renderOrderInvoice(orderInvoice);
         }
     }
 
-    private void renderOrderInvoice(OrderInvoice orderInvoice) {
+    private void renderOrderInvoice(final OrderInvoice orderInvoice) {
         if (getActivity() == null) return;
 
         LinearLayout contentView = getContentView();
@@ -129,6 +135,15 @@ public class OrderInvoiceSummaryFragment extends AbstractOrderSummaryFragment {
 
         contentView.removeAllViews();
         contentView.addView(base);
+
+        Button btnShopFromOrder = (Button) base.findViewById(R.id.btnShopFromOrder);
+        btnShopFromOrder.setTypeface(faceRobotoRegular);
+        btnShopFromOrder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onShopFromThisOrder(orderInvoice.getOrderNumber());
+            }
+        });
     }
 
     @Override
@@ -145,5 +160,12 @@ public class OrderInvoiceSummaryFragment extends AbstractOrderSummaryFragment {
     @Override
     public String getFragmentTxnTag() {
         return OrderInvoiceSummaryFragment.class.getName();
+    }
+
+    public void onShopFromThisOrder(String orderNumber) {
+        Intent intent = new Intent(getActivity(), BBActivity.class);
+        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_PRODUCT_LIST_FRAGMENT);
+        intent.putExtra(Constants.ORDER_ID, orderNumber);
+        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 }

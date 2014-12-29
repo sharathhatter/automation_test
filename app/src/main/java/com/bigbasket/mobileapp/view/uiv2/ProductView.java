@@ -43,12 +43,10 @@ import com.bigbasket.mobileapp.task.uiv3.ShoppingListNamesTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
-import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public final class ProductView {
@@ -312,7 +310,6 @@ public final class ProductView {
         final ImageView imgShoppingListDel = productViewHolder.getImgShoppingListDel();
 
         if (productViewDisplayDataHolder.showShopListDeleteBtn()) {
-            ((TrackingAware) (shoppingListNamesAware)).trackEvent(TrackingAware.SHOP_LST_CATEGORY_DETAIL, null);
             imgShoppingListDel.setVisibility(View.VISIBLE);
             imgShoppingListDel.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -362,9 +359,6 @@ public final class ProductView {
                 }
             });
         } else {
-            HashMap<String, String> map = new HashMap<>();
-            map.put(TrackEventkeys.SYSTEM_SHOPPING_LIST_NAME, productViewDisplayDataHolder.getShoppingListName().getName());
-            ((TrackingAware) (shoppingListNamesAware)).trackEvent(TrackingAware.SHOP_LST_SYSTEM_LIST_CATEGORY_DETAIL, map);
             imgShoppingListDel.setVisibility(View.GONE);
         }
     }

@@ -18,4 +18,5 @@ public class FragmentCodes {
     public static final int START_BROWSE_BY_OFFERS = 18;
     public static final int START_SUBCAT_FRAGMENT = 19;
     public static final int START_PROMO_DETAIL = 20;
+    public static final int START_ORDER_PRODUCT_LIST_FRAGMENT = 21;
 }

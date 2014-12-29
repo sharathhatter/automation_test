@@ -15,6 +15,7 @@ public class TrackEventkeys {
     public static final String DATE_TO = "date_to";
     public static final String SYSTEM_SHOPPING_LIST_NAME = "Name";
     public static final String ADD_ALL_PRODUCTS = "Add all";
+    public static final String ORDER_DETAILS = "Order Details";
 
 
     // source name

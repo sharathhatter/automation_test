@@ -12,6 +12,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.CartSummaryApiResponse
 import com.bigbasket.mobileapp.apiservice.models.response.CreateUpdateAddressApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.GetDeliveryAddressApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPaymentParamsApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.GetProductsForOrderApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListDetailsApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListSummaryApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListsApiResponse;
@@ -338,4 +339,8 @@ public interface BigBasketApiService {
     @POST("/update-location/")
     void updateLocation(@Field(Constants.ADDRESS_ID) String addressId, @Field(Constants.LAT) double lat,
                         @Field(Constants.LNG) double lng, Callback<BaseApiResponse> updateLocationApiResponseCallback);
+
+    @GET("/get-products-for-order/")
+    void getProductsForOrder(@Query(Constants.ORDER_ID) String orderId,
+                             Callback<ApiResponse<GetProductsForOrderApiResponseContent>> getProductsForOrderApiResponseCallback);
 }

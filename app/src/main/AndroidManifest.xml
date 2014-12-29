@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.bigbasket.mobileapp" >
+    package="com.bigbasket.mobileapp">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -14,11 +14,10 @@
     <!-- Keeps the processor from sleeping when a message is received. -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
     <uses-feature
         android:glEsVersion="0x00020000"
-        android:required="true"/>
+        android:required="true" />
 
     <supports-screens
         android:anyDensity="true"
@@ -44,7 +43,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/BBAppTheme"
-        tools:replace="android:allowBackup,android:theme" >
+        tools:replace="android:allowBackup,android:theme">
         <meta-data
             android:name="android.app.default_searchable"
             android:value=".activity.product.ProductListActivity" />
@@ -55,7 +54,7 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/BBAppTheme"
-            android:windowSoftInputMode="stateHidden|adjustPan" >
+            android:windowSoftInputMode="stateHidden|adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -67,7 +66,7 @@
 
         <receiver
             android:name="com.google.android.gcm.GCMBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND" >
+            android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
@@ -80,7 +79,7 @@
         <service android:name="com.demach.konotor.service.KonotorBacklogService" />
 
         <receiver android:name="com.demach.konotor.KonotorAlarmReceiver" />
-        <receiver android:name="com.demach.konotor.NetworkStateReceiver" >
+        <receiver android:name="com.demach.konotor.NetworkStateReceiver">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
@@ -113,7 +112,7 @@
         <activity
             android:name=".activity.DeepLinkDispatcherActivity"
             android:configChanges="orientation|screenSize"
-            android:windowSoftInputMode="stateHidden|adjustPan" >
+            android:windowSoftInputMode="stateHidden|adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -161,7 +160,7 @@
         <activity
             android:name=".activity.product.ProductListActivity"
             android:launchMode="singleTop"
-            android:windowSoftInputMode="stateHidden|adjustPan" >
+            android:windowSoftInputMode="stateHidden|adjustPan">
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
@@ -261,7 +260,7 @@
         <!-- MOEngage -->
         <receiver
             android:name="com.moe.pushlibrary.PushGcmBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND" >
+            android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
@@ -276,7 +275,7 @@
         <receiver android:name="com.moe.pushlibrary.SendReport" />
 
         <!-- on app upgrade, gcm registration id refresh -->
-        <receiver android:name="com.moe.pushlibrary.PushUpdateReceiver" >
+        <receiver android:name="com.moe.pushlibrary.PushUpdateReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_REPLACED" />
 
@@ -289,7 +288,7 @@
         <!-- push notification landing page -->
         <activity
             android:name="com.moe.pushlibrary.activities.MoEActivity"
-            android:parentActivityName=".activity.StartActivity" >
+            android:parentActivityName=".activity.StartActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.StartActivity" />
@@ -301,10 +300,9 @@
 
         <activity
             android:name=".activity.account.uiv3.LocateOnMapActivity"
-            android:label="@string/locateOnMap"
             android:configChanges="orientation|screenSize"
-            android:windowSoftInputMode="stateHidden|adjustPan" >
-        </activity>
+            android:label="@string/locateOnMap"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
     </application>
 
 </manifest>

@@ -10,9 +10,9 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.common.FixedLayoutViewHolder;
 import com.bigbasket.mobileapp.common.ProductViewHolder;
-import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.handler.ProductDetailOnClickListener;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.InfiniteProductListAware;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.view.uiv2.ProductView;
@@ -80,7 +80,7 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
                     productViewDisplayDataHolder,
                     false, activityAware, sourceName);
         } else if (getItemViewType(position) == VIEW_TYPE_LOADING) {
-            ((ProductListAwareFragment) activityAware).loadMoreProducts();
+            ((InfiniteProductListAware) activityAware).loadMoreProducts();
         }
     }
 

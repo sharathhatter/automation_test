@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.product.ProductListRecyclerAdapter;
 import com.bigbasket.mobileapp.interfaces.FilterDisplayAware;
+import com.bigbasket.mobileapp.interfaces.InfiniteProductListAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.interfaces.SortAware;
@@ -36,7 +37,7 @@ import java.util.List;
 
 
 public abstract class ProductListAwareFragment extends BaseFragment implements ProductListDataAware,
-        ShoppingListNamesAware, SortAware {
+        ShoppingListNamesAware, SortAware, InfiniteProductListAware {
 
     private ProductListData productListData;
     private String selectedProductId;

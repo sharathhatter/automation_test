@@ -34,6 +34,7 @@ import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.OrderListActivity;
+import com.bigbasket.mobileapp.activity.account.uiv3.ShopFromOrderFragment;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignupActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
@@ -342,6 +343,14 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 PromoDetailFragment promoDetailFragment = new PromoDetailFragment();
                 promoDetailFragment.setArguments(promoDetailBundle);
                 addToMainLayout(promoDetailFragment);
+                break;
+            case FragmentCodes.START_ORDER_PRODUCT_LIST_FRAGMENT:
+                String orderId = getIntent().getStringExtra(Constants.ORDER_ID);
+                Bundle orderProductListBundle = new Bundle();
+                orderProductListBundle.putString(Constants.ORDER_ID, orderId);
+                ShopFromOrderFragment shopFromOrderFragment = new ShopFromOrderFragment();
+                shopFromOrderFragment.setArguments(orderProductListBundle);
+                addToMainLayout(shopFromOrderFragment);
                 break;
         }
     }

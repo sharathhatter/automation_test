@@ -12,6 +12,7 @@
         android:orientation="vertical">
 
         <Button
+            android:id="@+id/btnShopFromOrder"
             style="@style/DefaultButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -58,9 +59,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/layoutDeliverySlot"
+                    android:layout_marginLeft="@dimen/card_img_content_margin"
                     android:layout_toRightOf="@id/imgDeliveryVan"
                     android:textColor="@color/uiv3_primary_text_color"
-                    android:layout_marginLeft="@dimen/card_img_content_margin"
                     android:textSize="@dimen/primary_text_size" />
             </RelativeLayout>
 
@@ -126,11 +127,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginBottom="@dimen/margin_small"
             app:cardBackgroundColor="@color/white"
             app:cardCornerRadius="@dimen/card_corner_radius"
             app:cardElevation="@dimen/card_elevation"
-            app:contentPadding="@dimen/padding_normal"
-            android:layout_marginBottom="@dimen/margin_small">
+            app:contentPadding="@dimen/padding_normal">
 
             <RelativeLayout
                 android:layout_width="match_parent"

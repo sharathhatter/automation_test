@@ -32,6 +32,7 @@ public class OrderInvoiceItemsListFragment extends BaseFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         OrderInvoice orderInvoice = getArguments().getParcelable(Constants.ACTION_TAB_TAG);
+        setTitle("Order Details");
         renderCartItems(orderInvoice);
     }
 

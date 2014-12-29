@@ -8,7 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
+import com.bigbasket.mobileapp.interfaces.InfiniteProductListAware;
 import com.bigbasket.mobileapp.interfaces.SortAware;
 import com.bigbasket.mobileapp.model.product.Option;
 import com.bigbasket.mobileapp.util.Constants;
@@ -58,7 +58,7 @@ public class SortProductDialog extends DialogFragment {
                         Option option = sortOptions.get(which);
                         if (!option.getSortName().equals(sortedOn)) {
                             ((SortAware) getTargetFragment()).setSortedOn(option.getSortSlug());
-                            ((ProductListAwareFragment) getTargetFragment()).loadProducts();
+                            ((InfiniteProductListAware) getTargetFragment()).loadProducts();
                             dialog.dismiss();
                         }
                     }

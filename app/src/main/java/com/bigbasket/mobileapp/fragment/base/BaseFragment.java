@@ -293,8 +293,10 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         editor.putString(Constants.GET_CART, "" + cartInfo.getNoOfItems());
         editor.commit();
 
-        AuthParameters.getInstance(getActivity()).setMoEngaleLocaliticsEnabled(cartInfo.getAnalyticsEngine().isMoEngageEnabled(),
-                cartInfo.getAnalyticsEngine().isAnalyticsEnabled(), getActivity());
+        if (cartInfo != null && cartInfo.getAnalyticsEngine() != null) {
+            AuthParameters.getInstance(getActivity()).setMoEngaleLocaliticsEnabled(cartInfo.getAnalyticsEngine().isMoEngageEnabled(),
+                    cartInfo.getAnalyticsEngine().isAnalyticsEnabled(), getActivity());
+        }
         AuthParameters.updateInstance(getActivity());
     }
 

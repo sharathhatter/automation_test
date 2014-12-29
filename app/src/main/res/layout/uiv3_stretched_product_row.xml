@@ -14,8 +14,8 @@
         app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="@dimen/card_corner_radius"
         app:contentPaddingBottom="@dimen/padding_small"
-        app:contentPaddingLeft="@dimen/padding_mini"
-        app:contentPaddingRight="@dimen/padding_mini"
+        app:contentPaddingLeft="@dimen/padding_small"
+        app:contentPaddingRight="@dimen/padding_small"
         app:contentPaddingTop="@dimen/padding_mini">
 
         <LinearLayout
