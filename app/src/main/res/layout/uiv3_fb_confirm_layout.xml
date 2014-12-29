@@ -111,7 +111,7 @@
                                 android:layout_gravity="bottom"
                                 android:layout_marginBottom="@dimen/margin_mini"
                                 android:contentDescription="@string/email"
-                                android:src="@drawable/mail" />
+                                android:src="@drawable/ic_mail_grey600_24dp" />
 
                             <RelativeLayout
                                 android:layout_width="match_parent"
@@ -133,17 +133,6 @@
 
                                 </EditText>
 
-                                <ImageView
-                                    android:id="@+id/imgEmailErr"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_alignRight="@id/editTextEmail"
-                                    android:layout_marginRight="@dimen/margin_mini"
-                                    android:visibility="gone"
-                                    android:paddingBottom="@dimen/padding_mini"
-                                    android:contentDescription="@string/missing"
-                                    android:src="@drawable/error_symbol" />
-
                             </RelativeLayout>
                         </TableRow>
 
@@ -157,7 +146,7 @@
                                 android:layout_gravity="bottom"
                                 android:layout_marginBottom="@dimen/margin_mini"
                                 android:contentDescription="@string/password"
-                                android:src="@drawable/create" />
+                                android:src="@drawable/ic_lock_grey600_24dp" />
 
                             <RelativeLayout
                                 android:layout_width="match_parent"
@@ -176,17 +165,6 @@
                                     android:hint="@string/password"
                                     android:textSize="@dimen/secondary_text_size"
                                     android:textColor="@color/uiv3_primary_text_color" />
-
-                                <ImageView
-                                    android:id="@+id/imgPasswdErr"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_alignRight="@id/editTextPasswd"
-                                    android:contentDescription="@string/missing"
-                                    android:layout_marginRight="@dimen/margin_mini"
-                                    android:visibility="gone"
-                                    android:paddingBottom="@dimen/padding_mini"
-                                    android:src="@drawable/error_symbol" />
 
                             </RelativeLayout>
                         </TableRow>

@@ -69,7 +69,7 @@
                     android:id="@+id/imgEditPin"
                     android:contentDescription="@string/editPin"
                     android:clickable="true"
-                    android:src="@drawable/edit" />
+                    android:src="@drawable/ic_mode_edit_grey600_24dp" />
 
                 <View
                     android:layout_width="1dp"

@@ -24,8 +24,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:layout_marginBottom="@dimen/margin_small"
-                android:contentDescription="@string/addressNick"
-                android:src="@drawable/create" />
+                android:contentDescription="@string/prescriptionName"
+                android:src="@drawable/ic_mode_edit_grey600_24dp" />
 
             <EditText
                 android:layout_width="match_parent"

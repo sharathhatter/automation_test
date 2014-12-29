@@ -1,9 +1,5 @@
 package com.bigbasket.mobileapp.fragment.account;
 
-/**
- * Created by jugal on 18/9/14.
- */
-
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;

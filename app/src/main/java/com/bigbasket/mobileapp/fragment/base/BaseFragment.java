@@ -3,7 +3,6 @@ package com.bigbasket.mobileapp.fragment.base;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -158,18 +157,6 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     public void showErrorMsg(String msg) {
         // Change it later on
         ((BaseActivity) getActivity()).showAlertDialog(msg);
-    }
-
-    public void showInlineErrorMsg(String msg) {
-        if (getActivity() == null) return;
-        LinearLayout contentView = getContentView();
-        if (contentView == null) return;
-        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View base = inflater.inflate(R.layout.uiv3_inline_error_msg, null);
-        TextView txtErrMsg = (TextView) base.findViewById(R.id.txtErrorMsg);
-        txtErrMsg.setText(msg);
-        contentView.removeAllViews();
-        contentView.addView(base);
     }
 
     @Nullable

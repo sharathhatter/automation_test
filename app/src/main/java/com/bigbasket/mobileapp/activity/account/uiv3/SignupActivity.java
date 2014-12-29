@@ -134,12 +134,12 @@ public class SignupActivity extends BaseSignInSignupActivity {
             cancel = true;
         }
         if (!TextUtils.isDigitsOnly(mobileNumber)) {
-            reportFormInputFieldError(mMobileNumView, "Mobile number can only have digits");
+            reportFormInputFieldError(mMobileNumView, getString(R.string.error_invalid_mobile_number));
             focusView = mMobileNumView;
             cancel = true;
         }
         if (mobileNumber.length() > 10) {
-            reportFormInputFieldError(mMobileNumView, "Mobile number can only have 10 digits");
+            reportFormInputFieldError(mMobileNumView, getString(R.string.error_mobile_number_less_digits));
             focusView = mMobileNumView;
             cancel = true;
         }

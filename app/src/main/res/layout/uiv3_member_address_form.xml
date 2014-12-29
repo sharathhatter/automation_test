@@ -7,11 +7,11 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:orientation="vertical"
         android:layout_height="wrap_content"
-        android:paddingTop="@dimen/padding_normal"
+        android:orientation="vertical"
         android:paddingLeft="@dimen/padding_normal"
-        android:paddingRight="@dimen/padding_normal">
+        android:paddingRight="@dimen/padding_normal"
+        android:paddingTop="@dimen/padding_normal">
 
         <TableLayout
             android:layout_width="match_parent"
@@ -28,23 +28,24 @@
                     android:layout_gravity="bottom"
                     android:layout_marginBottom="@dimen/margin_small"
                     android:contentDescription="@string/addressNick"
-                    android:src="@drawable/create" />
+                    android:src="@drawable/ic_mode_edit_grey600_24dp" />
 
                 <EditText
+                    android:id="@+id/editTextAddressNick"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text"
                     android:layout_marginLeft="@dimen/margin_normal"
                     android:layout_marginRight="@dimen/margin_normal"
                     android:hint="@string/addressNick"
-                    android:textSize="@dimen/secondary_text_size"
+                    android:inputType="text"
                     android:textColor="@color/uiv3_primary_text_color"
-                    android:id="@+id/editTextAddressNick" />
+                    android:textSize="@dimen/secondary_text_size" />
             </TableRow>
 
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_normal">
 
 
                 <ImageView
@@ -53,52 +54,43 @@
                     android:layout_gravity="bottom"
                     android:layout_marginBottom="@dimen/margin_small"
                     android:contentDescription="@string/contactFirstName"
-                    android:src="@drawable/person" />
+                    android:src="@drawable/ic_person_grey600_24dp" />
 
-                <EditText
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
-                    android:ems="10"
-                    android:hint="@string/contactFirstName"
-                    android:layout_marginLeft="@dimen/margin_normal"
                     android:layout_marginRight="@dimen/margin_normal"
-                    android:layout_marginTop="@dimen/margin_small"
-                    android:textSize="@dimen/secondary_text_size"
-                    android:textColor="@color/uiv3_primary_text_color"
-                    android:id="@+id/editTextFirstName" />
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/editTextFirstName"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/margin_normal"
+                        android:layout_marginRight="@dimen/margin_small"
+                        android:layout_weight="1"
+                        android:hint="@string/firstName"
+                        android:inputType="textPersonName"
+                        android:textColor="@color/uiv3_primary_text_color"
+                        android:textSize="@dimen/secondary_text_size" />
+
+                    <EditText
+                        android:id="@+id/editTextLastName"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/margin_mini"
+                        android:layout_weight="1"
+                        android:hint="@string/lastName"
+                        android:inputType="textPersonName"
+                        android:textColor="@color/uiv3_primary_text_color"
+                        android:textSize="@dimen/secondary_text_size" />
+                </LinearLayout>
             </TableRow>
 
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:layout_marginBottom="@dimen/margin_small"
-                    android:contentDescription="@string/contactLastName"
-                    android:src="@drawable/person" />
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
-                    android:ems="10"
-                    android:layout_marginLeft="@dimen/margin_normal"
-                    android:layout_marginRight="@dimen/margin_normal"
-                    android:layout_marginTop="@dimen/margin_small"
-                    android:textSize="@dimen/secondary_text_size"
-                    android:hint="@string/contactLastName"
-                    android:textColor="@color/uiv3_primary_text_color"
-                    android:id="@+id/editTextLastName" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_normal">
 
 
                 <ImageView
@@ -107,27 +99,27 @@
                     android:layout_gravity="bottom"
                     android:layout_marginBottom="@dimen/margin_small"
                     android:contentDescription="@string/contactNum"
-                    android:src="@drawable/call" />
+                    android:src="@drawable/ic_call_grey600_24dp" />
 
                 <EditText
+                    android:id="@+id/editTextMobileNumber"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="numberSigned"
-                    android:ems="10"
                     android:layout_marginLeft="@dimen/margin_normal"
                     android:layout_marginRight="@dimen/margin_normal"
-                    android:layout_marginTop="@dimen/margin_small"
-                    android:textSize="@dimen/secondary_text_size"
+                    android:ems="10"
                     android:hint="@string/mobileNumber"
+                    android:inputType="numberSigned"
                     android:maxLength="10"
                     android:textColor="@color/uiv3_primary_text_color"
-                    android:id="@+id/editTextMobileNumber" />
+                    android:textSize="@dimen/secondary_text_size" />
             </TableRow>
 
 
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_normal">
 
 
                 <ImageView
@@ -136,47 +128,38 @@
                     android:layout_gravity="bottom"
                     android:layout_marginBottom="@dimen/margin_small"
                     android:contentDescription="@string/houseNum"
-                    android:src="@drawable/place" />
+                    android:src="@drawable/ic_place_grey600_24dp" />
 
                 <EditText
+                    android:id="@+id/editTextHouseNum"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPostalAddress"
-                    android:ems="10"
                     android:layout_marginLeft="@dimen/margin_normal"
                     android:layout_marginRight="@dimen/margin_normal"
-                    android:layout_marginTop="@dimen/margin_small"
-                    android:textSize="@dimen/secondary_text_size"
-                    android:textColor="@color/uiv3_primary_text_color"
+                    android:ems="10"
                     android:hint="@string/houseNum"
-                    android:id="@+id/editTextHouseNum" />
+                    android:inputType="textPostalAddress"
+                    android:textColor="@color/uiv3_primary_text_color"
+                    android:textSize="@dimen/secondary_text_size" />
             </TableRow>
 
             <TableRow
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:layout_marginBottom="@dimen/margin_small"
-                    android:contentDescription="@string/streetName"
-                    android:src="@drawable/place" />
-
                 <EditText
+                    android:id="@+id/editTextStreetName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPostalAddress"
-                    android:ems="10"
+                    android:layout_column="1"
                     android:layout_marginLeft="@dimen/margin_normal"
                     android:layout_marginRight="@dimen/margin_normal"
                     android:layout_marginTop="@dimen/margin_small"
-                    android:textSize="@dimen/secondary_text_size"
+                    android:ems="10"
                     android:hint="@string/streetName"
+                    android:inputType="textPostalAddress"
                     android:textColor="@color/uiv3_primary_text_color"
-                    android:id="@+id/editTextStreetName" />
+                    android:textSize="@dimen/secondary_text_size" />
             </TableRow>
 
             <TableRow
@@ -184,80 +167,58 @@
                 android:layout_height="wrap_content">
 
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:layout_marginBottom="@dimen/margin_small"
-                    android:contentDescription="@string/streetName"
-                    android:src="@drawable/place" />
-
                 <EditText
+                    android:id="@+id/editTextResidentialComplex"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPostalAddress"
+                    android:layout_column="1"
+                    android:layout_marginLeft="@dimen/margin_normal"
+                    android:layout_marginRight="@dimen/margin_normal"
+                    android:layout_marginTop="@dimen/margin_small"
                     android:ems="10"
                     android:hint="@string/residentialComplex"
-                    android:layout_marginLeft="@dimen/margin_normal"
-                    android:layout_marginRight="@dimen/margin_normal"
-                    android:layout_marginTop="@dimen/margin_small"
-                    android:textSize="@dimen/secondary_text_size"
+                    android:inputType="textPostalAddress"
                     android:textColor="@color/uiv3_primary_text_color"
-                    android:id="@+id/editTextResidentialComplex" />
+                    android:textSize="@dimen/secondary_text_size" />
             </TableRow>
 
             <TableRow
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:layout_marginBottom="@dimen/margin_small"
-                    android:contentDescription="@string/streetName"
-                    android:src="@drawable/place" />
 
                 <EditText
+                    android:id="@+id/editTextLandmark"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPostalAddress"
-                    android:ems="10"
+                    android:layout_column="1"
                     android:layout_marginLeft="@dimen/margin_normal"
                     android:layout_marginRight="@dimen/margin_normal"
                     android:layout_marginTop="@dimen/margin_small"
-                    android:textSize="@dimen/secondary_text_size"
+                    android:ems="10"
                     android:hint="@string/landmark"
+                    android:inputType="textPostalAddress"
                     android:textColor="@color/uiv3_primary_text_color"
-                    android:id="@+id/editTextLandmark" />
+                    android:textSize="@dimen/secondary_text_size" />
             </TableRow>
 
             <TableRow
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:layout_marginBottom="@dimen/margin_small"
-                    android:contentDescription="@string/area"
-                    android:src="@drawable/place" />
 
                 <AutoCompleteTextView
+                    android:id="@+id/editTextArea"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPostalAddress"
-                    android:ems="10"
+                    android:layout_column="1"
                     android:layout_marginLeft="@dimen/margin_normal"
                     android:layout_marginRight="@dimen/margin_normal"
                     android:layout_marginTop="@dimen/margin_small"
-                    android:textSize="@dimen/secondary_text_size"
-                    android:textColor="@color/uiv3_primary_text_color"
+                    android:ems="10"
                     android:hint="@string/area"
-                    android:id="@+id/editTextArea" />
+                    android:inputType="textPostalAddress"
+                    android:textColor="@color/uiv3_primary_text_color"
+                    android:textSize="@dimen/secondary_text_size" />
             </TableRow>
 
             <TableRow
@@ -265,52 +226,37 @@
                 android:layout_height="wrap_content">
 
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:layout_marginBottom="@dimen/margin_small"
-                    android:contentDescription="@string/city"
-                    android:src="@drawable/location" />
-
                 <EditText
+                    android:id="@+id/editTextCity"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="none"
+                    android:layout_column="1"
                     android:layout_marginLeft="@dimen/margin_normal"
                     android:layout_marginRight="@dimen/margin_normal"
                     android:layout_marginTop="@dimen/margin_small"
-                    android:textSize="@dimen/secondary_text_size"
-                    android:textColor="@color/uiv3_primary_text_color"
                     android:hint="@string/city"
-                    android:id="@+id/editTextCity" />
+                    android:inputType="none"
+                    android:textColor="@color/uiv3_primary_text_color"
+                    android:textSize="@dimen/secondary_text_size" />
             </TableRow>
 
             <TableRow
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:layout_marginBottom="@dimen/margin_small"
-                    android:contentDescription="@string/pincode"
-                    android:src="@drawable/create" />
-
                 <EditText
+                    android:id="@+id/editTextPincode"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="numberSigned"
-                    android:ems="10"
+                    android:layout_column="1"
                     android:layout_marginLeft="@dimen/margin_normal"
                     android:layout_marginRight="@dimen/margin_normal"
                     android:layout_marginTop="@dimen/margin_small"
-                    android:textSize="@dimen/secondary_text_size"
-                    android:textColor="@color/uiv3_primary_text_color"
+                    android:ems="10"
                     android:hint="@string/pincode"
-                    android:id="@+id/editTextPincode" />
+                    android:inputType="numberSigned"
+                    android:textColor="@color/uiv3_primary_text_color"
+                    android:textSize="@dimen/secondary_text_size" />
 
             </TableRow>
 
@@ -327,8 +273,8 @@
 
         <Button
             android:id="@+id/btnAddress"
-            android:layout_width="match_parent"
             style="@style/Uiv3BigGreenButton"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_small"
             android:onClick="OnSubmitButtonClicked" />

@@ -176,7 +176,7 @@
     <string name="editFromHeading">Edit address</string>
     <string name="selectForEditAddress">Select address to edit</string>
     <string name="selected">Selected</string>
-    <string name="addressNick">Address nickname</string>
+    <string name="addressNick">Address nickname (Optional)</string>
     <string name="contactFirstName">Contact first name</string>
     <string name="contactLastName">Contact last name</string>
     <string name="contactNum">Contact number</string>
@@ -400,7 +400,7 @@
     <string name="responseStr">Response Code</string>
     <string name="passwordUpdated">Your password is successfully updated</string>
     <string name="psswordMst6Digit">Password must be at least 6 characters.</string>
-    <string name="oldNewPasswordNotMatch">New password and confirm password do not match.</string>
+    <string name="oldNewPasswordNotMatch">The passwords that you\'ve entered don\'t match.</string>
 
     <!-- update profile -->
     <string name="dob">Date of Birth</string>

@@ -82,9 +82,9 @@ public class FilterByAdapter extends BaseExpandableListAdapter {
         FilterOptionCategory filterOptionCategory = filterOptionCategories.get(groupPosition);
         TextView txtListRow = filterbyViewHolder.getTxtListRow();
         txtListRow.setText(filterOptionCategory.getFilterName());
-        int expandIndicatorDrawable = R.drawable.small_list_arrow;
+        int expandIndicatorDrawable = R.drawable.ic_keyboard_arrow_right_grey600_24dp;
         if (isExpanded) {
-            expandIndicatorDrawable = R.drawable.small_down_arrow;
+            expandIndicatorDrawable = R.drawable.ic_keyboard_arrow_down_grey600_24dp;
             txtListRow.setTextColor(context.getResources().getColor(R.color.white));
             row.setBackgroundColor(context.getResources().getColor(R.color.fbutton_color_nephritis));
         } else {

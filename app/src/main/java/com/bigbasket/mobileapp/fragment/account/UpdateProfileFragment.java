@@ -39,8 +39,6 @@ import com.bigbasket.mobileapp.util.UIUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -52,8 +50,6 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware 
             editTextHouseAndDetails, editTextStreetDetails, editTextCity, editTextMobileNumber,
             editTextTelNumber, editTextResAndComplex, editTextLandmark, editTextPinCode;
     private AutoCompleteTextView editTextArea;
-    private ImageView imgEmailErr, imgFirstNameErr, imgLastNameErr, imgMobileNumberErr, imgHouseAndDetailsErr,
-            imgAreaErr, imgCityErr, imgPinCodeErr;
     private CheckBox chkReceivePromos;
     private ProgressBar progressBarUpdateProfile;
     private Button btnUpdate;
@@ -134,31 +130,6 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware 
                 showDatePickerDialog(view);
             }
         });
-
-        imgEmailErr = (ImageView) view.findViewById(R.id.imgEmailErr);
-        imgEmailErr.setVisibility(View.GONE);
-
-        imgFirstNameErr = (ImageView) view.findViewById(R.id.imgFirstNameErr);
-        imgFirstNameErr.setVisibility(View.GONE);
-
-        imgLastNameErr = (ImageView) view.findViewById(R.id.imgLastNameErr);
-        imgLastNameErr.setVisibility(View.GONE);
-
-        imgMobileNumberErr = (ImageView) view.findViewById(R.id.imgMobileNumberErr);
-        imgMobileNumberErr.setVisibility(View.GONE);
-
-
-        imgHouseAndDetailsErr = (ImageView) view.findViewById(R.id.imgHouseAndDetailsErr);
-        imgHouseAndDetailsErr.setVisibility(View.GONE);
-
-        imgAreaErr = (ImageView) view.findViewById(R.id.imgAreaErr);
-        imgAreaErr.setVisibility(View.GONE);
-
-        imgCityErr = (ImageView) view.findViewById(R.id.imgCityErr);
-        imgCityErr.setVisibility(View.GONE);
-
-        imgPinCodeErr = (ImageView) view.findViewById(R.id.imgPinCodeErr);
-        imgPinCodeErr.setVisibility(View.GONE);
 
         if (((BaseActivity) getActivity()).getSystemAreaInfo()) {
             getAreaInfo();
@@ -425,73 +396,6 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware 
         ((BaseActivity) getActivity()).setAdapterArea(editTextArea, editTextPinCode);
     }
 
-    private boolean validateFields() {
-        // Validation
-        ArrayList<String> missingFields = new ArrayList<>();
-        if (TextUtils.isEmpty(editTextEmail.getText().toString())) {
-            missingFields.add(getString(R.string.email));
-            imgEmailErr.setVisibility(View.VISIBLE);
-        } else {
-            imgEmailErr.setVisibility(View.GONE);
-        }
-        if (TextUtils.isEmpty(editTextFirstName.getText().toString())) {
-            missingFields.add(getString(R.string.firstName));
-            imgFirstNameErr.setVisibility(View.VISIBLE);
-        } else {
-            imgFirstNameErr.setVisibility(View.GONE);
-        }
-        if (TextUtils.isEmpty(editTextLastName.getText().toString())) {
-            missingFields.add(getString(R.string.lastName));
-            imgLastNameErr.setVisibility(View.VISIBLE);
-        } else {
-            imgLastNameErr.setVisibility(View.GONE);
-        }
-
-        if (TextUtils.isEmpty(editTextMobileNumber.getText().toString())) {
-            missingFields.add(getString(R.string.mobileNumber));
-            imgMobileNumberErr.setVisibility(View.VISIBLE);
-        } else {
-            imgMobileNumberErr.setVisibility(View.GONE);
-        }
-
-        if (TextUtils.isEmpty(editTextMobileNumber.getText().toString())) {
-            missingFields.add(getString(R.string.mobileNumber));
-            imgMobileNumberErr.setVisibility(View.VISIBLE);
-        } else {
-            imgMobileNumberErr.setVisibility(View.GONE);
-        }
-        if (TextUtils.isEmpty(editTextHouseAndDetails.getText().toString())) {
-            missingFields.add(getString(R.string.HNDetails));
-            imgHouseAndDetailsErr.setVisibility(View.VISIBLE);
-        } else {
-            imgHouseAndDetailsErr.setVisibility(View.GONE);
-        }
-        if (TextUtils.isEmpty(editTextArea.getText().toString())) {
-            missingFields.add(getString(R.string.area));
-            imgAreaErr.setVisibility(View.VISIBLE);
-        } else {
-            imgAreaErr.setVisibility(View.GONE);
-        }
-        if (TextUtils.isEmpty(editTextCity.getText().toString())) {
-            missingFields.add(getString(R.string.city));
-            imgAreaErr.setVisibility(View.VISIBLE);
-        } else {
-            imgAreaErr.setVisibility(View.GONE);
-        }
-        int missingFieldsListSize = missingFields.size();
-        if (missingFieldsListSize > 0) {
-            String msg;
-            if (missingFieldsListSize == 1) {
-                msg = missingFields.get(0) + " is mandatory";
-            } else {
-                msg = "Following fields are mandatory: " + UIUtil.sentenceJoin(missingFields);
-            }
-            showErrorMsg(msg);
-            return false;
-        }
-        return true;
-    }
-
     private void setUpdateButtonInProgress() {
         btnUpdate.setText(getString(R.string.updating));
         progressBarUpdateProfile.setVisibility(View.VISIBLE);
@@ -505,8 +409,76 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware 
     }
 
     public void btnUpdateAfterSuccessNumberValidation(String otp_code) {
-        if (!validateFields())
+        editTextEmail.setError(null);
+        editTextFirstName.setError(null);
+        editTextLastName.setError(null);
+        editTextArea.setError(null);
+        editTextDob.setError(null);
+        editTextPinCode.setError(null);
+        editTextMobileNumber.setError(null);
+        editTextHouseAndDetails.setError(null);
+
+        boolean cancel = false;
+        View focusView = null;
+        if (TextUtils.isEmpty(editTextEmail.getText().toString())) {
+            cancel = true;
+            focusView = editTextEmail;
+            UIUtil.reportFormInputFieldError(editTextEmail, getString(R.string.error_field_required));
+        }
+        if (!UIUtil.isValidEmail(editTextEmail.getText().toString())) {
+            UIUtil.reportFormInputFieldError(editTextEmail, getString(R.string.error_invalid_email));
+            focusView = editTextEmail;
+            cancel = true;
+        }
+        if (TextUtils.isEmpty(editTextFirstName.getText().toString())) {
+            cancel = true;
+            focusView = editTextFirstName;
+            UIUtil.reportFormInputFieldError(editTextFirstName, getString(R.string.error_field_required));
+        }
+        if (TextUtils.isEmpty(editTextLastName.getText().toString())) {
+            cancel = true;
+            focusView = editTextLastName;
+            UIUtil.reportFormInputFieldError(editTextLastName, getString(R.string.error_field_required));
+        }
+
+        if (TextUtils.isEmpty(editTextMobileNumber.getText().toString())) {
+            cancel = true;
+            focusView = editTextMobileNumber;
+            UIUtil.reportFormInputFieldError(editTextMobileNumber, getString(R.string.error_field_required));
+        }
+
+        if (!TextUtils.isDigitsOnly(editTextMobileNumber.getText().toString())) {
+            UIUtil.reportFormInputFieldError(editTextMobileNumber, getString(R.string.error_invalid_mobile_number));
+            focusView = editTextMobileNumber;
+            cancel = true;
+        }
+        if (editTextMobileNumber.getText().toString().length() > 10) {
+            UIUtil.reportFormInputFieldError(editTextMobileNumber, getString(R.string.error_mobile_number_less_digits));
+            focusView = editTextMobileNumber;
+            cancel = true;
+        }
+        if (TextUtils.isEmpty(editTextHouseAndDetails.getText().toString())) {
+            cancel = true;
+            focusView = editTextHouseAndDetails;
+            UIUtil.reportFormInputFieldError(editTextHouseAndDetails, getString(R.string.error_field_required));
+        }
+        if (TextUtils.isEmpty(editTextArea.getText().toString())) {
+            cancel = true;
+            focusView = editTextArea;
+            UIUtil.reportFormInputFieldError(editTextArea, getString(R.string.error_field_required));
+
+        }
+        if (TextUtils.isEmpty(editTextCity.getText().toString())) {
+            cancel = true;
+            focusView = editTextCity;
+            UIUtil.reportFormInputFieldError(editTextCity, getString(R.string.error_field_required));
+
+        }
+
+        if (cancel) {
+            focusView.requestFocus();
             return;
+        }
         if (checkInternetConnection()) {
             SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
             String cityId = prefer.getString(Constants.CITY_ID, "");
@@ -535,14 +507,6 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware 
             }
             setUpdateButtonInProgress();
             postUserDetails(user_details.toString());
-//
-//            startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.UPDATE_PROFILE,
-//                    new HashMap<String, String>() {
-//                        {
-//                            put(Constants.USER_DETAILS, user_details.toString());
-//                        }
-//                    }, true, false, null);
-
         } else {
             ((BaseActivity) getActivity()).showAlertDialogFinish(null, getString(R.string.checkinternet));
         }

@@ -5,7 +5,7 @@
     <!-- Search / will display always -->
     <item
         android:id="@+id/action_search"
-        android:icon="@drawable/ic_search"
+        android:icon="@drawable/ic_search_white_24dp"
         android:orderInCategory="9999"
         android:title="@string/search"
         bb:actionLayout="@layout/uiv3_search_view"
@@ -14,14 +14,14 @@
 
     <item
         android:id="@+id/action_view_basket"
-        android:icon="@drawable/view_basket"
+        android:icon="@drawable/ic_shopping_cart_white_24dp"
         android:orderInCategory="9999"
         android:title="@string/viewBasket"
         bb:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_account"
-        android:icon="@drawable/person_header"
+        android:icon="@drawable/ic_person_white_24dp"
         android:orderInCategory="9999"
         android:title="@string/myAccount"
         bb:showAsAction="ifRoom">
@@ -36,7 +36,7 @@
 
             <item
                 android:id="@+id/action_login"
-                android:icon="@drawable/login_arrow"
+                android:icon="@drawable/ic_person_outline_white_24dp"
                 android:orderInCategory="9999"
                 android:title="@string/action_sign_in"
                 bb:showAsAction="never" />
@@ -50,7 +50,7 @@
 
             <item
                 android:id="@+id/action_active_orders"
-                android:icon="@drawable/active_orders"
+                android:icon="@drawable/ic_local_shipping_white_24dp"
                 android:orderInCategory="9999"
                 android:title="@string/active_order_label"
                 bb:showAsAction="never" />
@@ -71,27 +71,27 @@
 
             <item
                 android:id="@+id/action_change_password"
-                android:icon="@drawable/lock"
+                android:icon="@drawable/ic_lock_white_24dp"
                 android:orderInCategory="9999"
                 android:title="@string/change_password"
                 bb:showAsAction="never" />
 
             <item
                 android:id="@+id/action_wallet_activity"
-                android:icon="@drawable/safety_box"
+                android:icon="@drawable/ic_account_balance_wallet_white_24dp"
                 android:title="@string/wallet_activity"
                 bb:showAsAction="never" />
 
             <item
                 android:id="@+id/action_delivery_address"
-                android:icon="@drawable/place_small"
+                android:icon="@drawable/ic_place_white_24dp"
                 android:orderInCategory="9999"
                 android:title="@string/delivery_address"
                 bb:showAsAction="never" />
 
             <item
                 android:id="@+id/action_change_pin"
-                android:icon="@drawable/edit_large"
+                android:icon="@drawable/ic_edit_white_24dp"
                 android:orderInCategory="9999"
                 android:title="@string/view_edit_pin_label"
                 bb:showAsAction="never" />

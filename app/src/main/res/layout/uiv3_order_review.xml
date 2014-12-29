@@ -29,7 +29,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/info"
-                    android:src="@drawable/info" />
+                    android:src="@drawable/ic_info_outline_grey600_36dp" />
 
                 <TextView
                     android:id="@+id/lblAlmostDone"
@@ -93,7 +93,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_mini"
                     android:contentDescription="@string/delivery_van"
-                    android:src="@drawable/van" />
+                    android:src="@drawable/ic_local_shipping_grey600_36dp" />
 
                 <LinearLayout
                     android:id="@+id/layoutDeliverySlot"
@@ -130,7 +130,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_mini"
                     android:contentDescription="@string/memberName"
-                    android:src="@drawable/person_large" />
+                    android:src="@drawable/ic_person_grey600_36dp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -181,7 +181,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_mini"
                     android:contentDescription="@string/paymentMethod"
-                    android:src="@drawable/payment_large" />
+                    android:src="@drawable/ic_payment_method_36dp" />
 
                 <LinearLayout
                     android:id="@+id/layoutOrderSummaryInfo"

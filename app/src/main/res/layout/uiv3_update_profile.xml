@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layoutUpdateProfile"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:id="@+id/layoutUpdateProfile">
+    android:orientation="vertical">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -14,9 +14,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingTop="@dimen/padding_normal"
             android:paddingLeft="@dimen/padding_normal"
-            android:paddingRight="@dimen/padding_normal">
+            android:paddingRight="@dimen/padding_normal"
+            android:paddingTop="@dimen/padding_normal">
 
             <TableLayout
                 android:layout_width="match_parent"
@@ -33,43 +33,28 @@
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="@dimen/margin_small"
                         android:contentDescription="@string/email"
-                        android:src="@drawable/mail" />
+                        android:src="@drawable/ic_mail_grey600_24dp" />
 
-                    <RelativeLayout
+                    <EditText
+                        android:id="@+id/editTextEmail"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_small">
+                        android:layout_marginLeft="@dimen/margin_normal"
+                        android:layout_marginRight="@dimen/margin_normal"
+                        android:layout_marginTop="@dimen/margin_small"
+                        android:ems="10"
+                        android:hint="@string/email"
+                        android:inputType="textEmailAddress"
+                        android:singleLine="true"
+                        android:textColor="@color/uiv3_primary_text_color"
+                        android:textSize="@dimen/secondary_text_size" />
 
-                        <EditText
-                            android:id="@+id/editTextEmail"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/margin_normal"
-                            android:layout_marginRight="@dimen/margin_normal"
-                            android:textSize="@dimen/secondary_text_size"
-                            android:ems="10"
-                            android:hint="@string/email"
-                            android:inputType="textEmailAddress"
-                            android:singleLine="true"
-                            android:textColor="@color/uiv3_primary_text_color" />
-
-                        <ImageView
-                            android:id="@+id/imgEmailErr"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignRight="@id/editTextEmail"
-                            android:visibility="gone"
-                            android:layout_centerVertical="true"
-                            android:layout_marginRight="10dp"
-                            android:contentDescription="@string/missing"
-                            android:src="@drawable/error_symbol" />
-
-                    </RelativeLayout>
                 </TableRow>
 
                 <TableRow
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_normal">
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -77,89 +62,47 @@
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="@dimen/margin_small"
                         android:contentDescription="@string/firstName"
-                        android:src="@drawable/person" />
+                        android:src="@drawable/ic_person_grey600_24dp" />
 
-                    <RelativeLayout
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_small">
+                        android:layout_marginRight="@dimen/margin_normal"
+                        android:orientation="horizontal">
 
                         <EditText
                             android:id="@+id/editTextFirstName"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:hint="@string/firstName"
                             android:layout_marginLeft="@dimen/margin_normal"
-                            android:layout_marginRight="@dimen/margin_normal"
-                            android:textSize="@dimen/secondary_text_size"
-                            android:ems="10"
+                            android:layout_marginRight="@dimen/margin_mini"
+                            android:layout_weight="1"
+                            android:hint="@string/firstName"
                             android:inputType="textVisiblePassword"
-                            android:singleLine="true"
                             android:maxLength="30"
-                            android:textColor="@color/uiv3_primary_text_color" />
-
-                        <ImageView
-                            android:id="@+id/imgFirstNameErr"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignRight="@id/editTextFirstName"
-                            android:layout_centerVertical="true"
-                            android:contentDescription="@string/missing"
-                            android:layout_marginRight="10dp"
-                            android:visibility="gone"
-                            android:src="@drawable/error_symbol" />
-
-                    </RelativeLayout>
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom"
-                        android:layout_marginBottom="@dimen/margin_small"
-                        android:contentDescription="@string/lastName"
-                        android:src="@drawable/person" />
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_small">
+                            android:singleLine="true"
+                            android:textColor="@color/uiv3_primary_text_color"
+                            android:textSize="@dimen/secondary_text_size" />
 
                         <EditText
                             android:id="@+id/editTextLastName"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/margin_mini"
+                            android:layout_weight="1"
                             android:hint="@string/lastName"
-                            android:layout_marginLeft="@dimen/margin_normal"
-                            android:layout_marginRight="@dimen/margin_normal"
-                            android:textSize="@dimen/secondary_text_size"
-                            android:ems="10"
                             android:inputType="textVisiblePassword"
-                            android:singleLine="true"
                             android:maxLength="30"
-                            android:textColor="@color/uiv3_primary_text_color" />
-
-                        <ImageView
-                            android:id="@+id/imgLastNameErr"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignRight="@id/editTextLastName"
-                            android:layout_centerVertical="true"
-                            android:contentDescription="@string/missing"
-                            android:layout_marginRight="10dp"
-                            android:visibility="gone"
-                            android:src="@drawable/error_symbol" />
-
-                    </RelativeLayout>
+                            android:singleLine="true"
+                            android:textColor="@color/uiv3_primary_text_color"
+                            android:textSize="@dimen/secondary_text_size" />
+                    </LinearLayout>
                 </TableRow>
 
                 <TableRow
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_normal">
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -167,25 +110,24 @@
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="@dimen/margin_small"
                         android:contentDescription="@string/dob"
-                        android:src="@drawable/create" />
+                        android:src="@drawable/ic_mode_edit_grey600_24dp" />
 
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_small">
+                        android:layout_height="wrap_content">
 
                         <EditText
                             android:id="@+id/editTextDob"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="@string/dob"
                             android:layout_marginLeft="@dimen/margin_normal"
                             android:layout_marginRight="@dimen/margin_normal"
-                            android:textSize="@dimen/secondary_text_size"
                             android:ems="10"
-                            android:singleLine="true"
+                            android:hint="@string/dob"
                             android:maxLength="30"
-                            android:textColor="@color/uiv3_primary_text_color" />
+                            android:singleLine="true"
+                            android:textColor="@color/uiv3_primary_text_color"
+                            android:textSize="@dimen/secondary_text_size" />
 
                         <ImageView
                             android:id="@+id/imgCalc"
@@ -193,18 +135,18 @@
                             android:layout_height="wrap_content"
                             android:layout_alignRight="@id/editTextDob"
                             android:layout_centerVertical="true"
-                            android:contentDescription="@string/calender"
                             android:layout_marginRight="10dp"
-                            android:src="@drawable/calander" />
+                            android:contentDescription="@string/calender"
+                            android:src="@drawable/ic_today_grey600_24dp" />
 
                     </RelativeLayout>
-                    <!-- todo change image -->
 
                 </TableRow>
 
                 <TableRow
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_normal">
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -212,44 +154,28 @@
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="@dimen/margin_small"
                         android:contentDescription="@string/mobileNumber"
-                        android:src="@drawable/call" />
+                        android:src="@drawable/ic_call_grey600_24dp" />
 
-                    <RelativeLayout
+                    <EditText
+                        android:id="@+id/editTextMobileNumber"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_small">
+                        android:layout_marginLeft="@dimen/margin_normal"
+                        android:layout_marginRight="@dimen/margin_normal"
+                        android:ems="10"
+                        android:hint="@string/mobileNumber"
+                        android:inputType="numberSigned"
+                        android:maxLength="10"
+                        android:singleLine="true"
+                        android:textColor="@color/uiv3_primary_text_color"
+                        android:textSize="@dimen/secondary_text_size" />
 
-                        <EditText
-                            android:id="@+id/editTextMobileNumber"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/mobileNumber"
-                            android:layout_marginLeft="@dimen/margin_normal"
-                            android:layout_marginRight="@dimen/margin_normal"
-                            android:textSize="@dimen/secondary_text_size"
-                            android:ems="10"
-                            android:inputType="numberSigned"
-                            android:singleLine="true"
-                            android:maxLength="10"
-                            android:textColor="@color/uiv3_primary_text_color" />
-
-                        <ImageView
-                            android:id="@+id/imgMobileNumberErr"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignRight="@id/editTextMobileNumber"
-                            android:layout_centerVertical="true"
-                            android:contentDescription="@string/missing"
-                            android:layout_marginRight="10dp"
-                            android:visibility="gone"
-                            android:src="@drawable/error_symbol" />
-
-                    </RelativeLayout>
                 </TableRow>
 
                 <TableRow
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_normal">
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -257,32 +183,27 @@
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="@dimen/margin_small"
                         android:contentDescription="@string/telNumber"
-                        android:src="@drawable/call" />
+                        android:src="@drawable/ic_call_grey600_24dp" />
 
-                    <RelativeLayout
+                    <EditText
+                        android:id="@+id/editTextTelNumber"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_small">
+                        android:layout_marginLeft="@dimen/margin_normal"
+                        android:layout_marginRight="@dimen/margin_normal"
+                        android:ems="10"
+                        android:hint="@string/telNumber"
+                        android:inputType="numberSigned"
+                        android:singleLine="true"
+                        android:textColor="@color/uiv3_primary_text_color"
+                        android:textSize="@dimen/secondary_text_size" />
 
-                        <EditText
-                            android:id="@+id/editTextTelNumber"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/telNumber"
-                            android:layout_marginLeft="@dimen/margin_normal"
-                            android:layout_marginRight="@dimen/margin_normal"
-                            android:textSize="@dimen/secondary_text_size"
-                            android:ems="10"
-                            android:inputType="numberSigned"
-                            android:singleLine="true"
-                            android:textColor="@color/uiv3_primary_text_color" />
-
-                    </RelativeLayout>
                 </TableRow>
 
                 <TableRow
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_normal">
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -290,278 +211,144 @@
                         android:layout_gravity="bottom"
                         android:layout_marginBottom="@dimen/margin_small"
                         android:contentDescription="@string/HNDetails"
-                        android:src="@drawable/call" />
+                        android:src="@drawable/ic_place_grey600_24dp" />
 
-                    <RelativeLayout
+                    <EditText
+                        android:id="@+id/editTextHouseAndDetails"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_small">
-
-                        <EditText
-                            android:id="@+id/editTextHouseAndDetails"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/HNDetails"
-                            android:layout_marginLeft="@dimen/margin_normal"
-                            android:layout_marginRight="@dimen/margin_normal"
-                            android:textSize="@dimen/secondary_text_size"
-                            android:ems="10"
-                            android:singleLine="true"
-                            android:textColor="@color/uiv3_primary_text_color" />
-
-                        <ImageView
-                            android:id="@+id/imgHouseAndDetailsErr"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignRight="@id/editTextHouseAndDetails"
-                            android:layout_centerVertical="true"
-                            android:contentDescription="@string/missing"
-                            android:layout_marginRight="10dp"
-                            android:visibility="gone"
-                            android:src="@drawable/error_symbol" />
-
-                    </RelativeLayout>
+                        android:layout_marginLeft="@dimen/margin_normal"
+                        android:layout_marginRight="@dimen/margin_normal"
+                        android:ems="10"
+                        android:hint="@string/HNDetails"
+                        android:singleLine="true"
+                        android:textColor="@color/uiv3_primary_text_color"
+                        android:textSize="@dimen/secondary_text_size" />
                 </TableRow>
 
                 <TableRow
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_small">
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom"
-                        android:layout_marginBottom="@dimen/margin_small"
-                        android:contentDescription="@string/streetDetails"
-                        android:src="@drawable/call" />
 
-                    <RelativeLayout
+                    <EditText
+                        android:id="@+id/editTextStreetDetails"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_small">
-
-                        <EditText
-                            android:id="@+id/editTextStreetDetails"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/streetDetails"
-                            android:layout_marginLeft="@dimen/margin_normal"
-                            android:layout_marginRight="@dimen/margin_normal"
-                            android:textSize="@dimen/secondary_text_size"
-                            android:ems="10"
-                            android:singleLine="true"
-                            android:textColor="@color/uiv3_primary_text_color" />
-
-                    </RelativeLayout>
+                        android:layout_column="1"
+                        android:layout_marginLeft="@dimen/margin_normal"
+                        android:layout_marginRight="@dimen/margin_normal"
+                        android:ems="10"
+                        android:hint="@string/streetDetails"
+                        android:singleLine="true"
+                        android:textColor="@color/uiv3_primary_text_color"
+                        android:textSize="@dimen/secondary_text_size" />
                 </TableRow>
 
 
                 <TableRow
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_small">
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom"
-                        android:layout_marginBottom="@dimen/margin_small"
-                        android:contentDescription="@string/area"
-                        android:src="@drawable/call" />
-
-                    <RelativeLayout
+                    <AutoCompleteTextView
+                        android:id="@+id/editTextArea"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_small">
-
-                        <AutoCompleteTextView
-                            android:id="@+id/editTextArea"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/area"
-                            android:layout_marginLeft="@dimen/margin_normal"
-                            android:layout_marginRight="@dimen/margin_normal"
-                            android:textSize="@dimen/secondary_text_size"
-                            android:ems="10"
-                            android:singleLine="true"
-                            android:textColor="@color/uiv3_primary_text_color" />
-
-                        <ImageView
-                            android:id="@+id/imgAreaErr"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignRight="@id/editTextArea"
-                            android:layout_centerVertical="true"
-                            android:layout_marginRight="10dp"
-                            android:layout_marginTop="@dimen/margin_small"
-                            android:visibility="gone"
-                            android:contentDescription="@string/missing"
-                            android:src="@drawable/error_symbol" />
-
-
-                    </RelativeLayout>
+                        android:layout_column="1"
+                        android:layout_marginLeft="@dimen/margin_normal"
+                        android:layout_marginRight="@dimen/margin_normal"
+                        android:ems="10"
+                        android:hint="@string/area"
+                        android:singleLine="true"
+                        android:textColor="@color/uiv3_primary_text_color"
+                        android:textSize="@dimen/secondary_text_size" />
                 </TableRow>
 
                 <TableRow
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_small">
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom"
-                        android:layout_marginBottom="@dimen/margin_small"
-                        android:contentDescription="@string/resAndComplex"
-                        android:src="@drawable/call" />
-
-                    <RelativeLayout
+                    <EditText
+                        android:id="@+id/editTextResAndComplex"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_small">
-
-                        <EditText
-                            android:id="@+id/editTextResAndComplex"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/resAndComplex"
-                            android:layout_marginLeft="@dimen/margin_normal"
-                            android:layout_marginRight="@dimen/margin_normal"
-                            android:textSize="@dimen/secondary_text_size"
-                            android:ems="10"
-                            android:singleLine="true"
-                            android:textColor="@color/uiv3_primary_text_color" />
-
-                    </RelativeLayout>
+                        android:layout_column="1"
+                        android:layout_marginLeft="@dimen/margin_normal"
+                        android:layout_marginRight="@dimen/margin_normal"
+                        android:ems="10"
+                        android:hint="@string/resAndComplex"
+                        android:singleLine="true"
+                        android:textColor="@color/uiv3_primary_text_color"
+                        android:textSize="@dimen/secondary_text_size" />
                 </TableRow>
 
 
                 <TableRow
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_small">
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom"
-                        android:layout_marginBottom="@dimen/margin_small"
-                        android:contentDescription="@string/landmark"
-                        android:src="@drawable/call" />
-
-                    <RelativeLayout
+                    <EditText
+                        android:id="@+id/editTextLandmark"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_small">
-
-                        <EditText
-                            android:id="@+id/editTextLandmark"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/landmark"
-                            android:layout_marginLeft="@dimen/margin_normal"
-                            android:layout_marginRight="@dimen/margin_normal"
-                            android:textSize="@dimen/secondary_text_size"
-                            android:ems="10"
-                            android:singleLine="true"
-                            android:textColor="@color/uiv3_primary_text_color" />
-
-                    </RelativeLayout>
+                        android:layout_column="1"
+                        android:layout_marginLeft="@dimen/margin_normal"
+                        android:layout_marginRight="@dimen/margin_normal"
+                        android:ems="10"
+                        android:hint="@string/landmark"
+                        android:singleLine="true"
+                        android:textColor="@color/uiv3_primary_text_color"
+                        android:textSize="@dimen/secondary_text_size" />
                 </TableRow>
 
                 <TableRow
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_small">
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom"
-                        android:layout_marginBottom="@dimen/margin_small"
-                        android:contentDescription="@string/city"
-                        android:src="@drawable/place" />
-
-                    <RelativeLayout
+                    <EditText
+                        android:id="@+id/editTextCity"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_small">
-
-                        <EditText
-                            android:id="@+id/editTextCity"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:ems="10"
-                            android:inputType="text"
-                            android:hint="@string/city"
-                            android:focusableInTouchMode="false"
-                            android:imeOptions="actionNext"
-                            android:enabled="false"
-                            android:layout_marginLeft="@dimen/margin_normal"
-                            android:layout_marginRight="@dimen/margin_normal"
-                            android:textSize="@dimen/secondary_text_size"
-                            android:singleLine="true"
-                            android:textColor="@color/uiv3_primary_text_color" />
-
-                        <ImageView
-                            android:id="@+id/imgCityErr"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignRight="@id/editTextCity"
-                            android:layout_centerVertical="true"
-                            android:layout_marginRight="10dp"
-                            android:layout_marginTop="@dimen/margin_small"
-                            android:visibility="gone"
-                            android:contentDescription="@string/missing"
-                            android:src="@drawable/error_symbol" />
-
-
-                    </RelativeLayout>
+                        android:layout_column="1"
+                        android:layout_marginLeft="@dimen/margin_normal"
+                        android:layout_marginRight="@dimen/margin_normal"
+                        android:ems="10"
+                        android:enabled="false"
+                        android:focusableInTouchMode="false"
+                        android:hint="@string/city"
+                        android:imeOptions="actionNext"
+                        android:inputType="text"
+                        android:singleLine="true"
+                        android:textColor="@color/uiv3_primary_text_color"
+                        android:textSize="@dimen/secondary_text_size" />
                 </TableRow>
 
                 <TableRow
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_small">
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom"
-                        android:layout_marginBottom="@dimen/margin_small"
-                        android:contentDescription="@string/pinCode"
-                        android:src="@drawable/place" />
-
-                    <RelativeLayout
+                    <EditText
+                        android:id="@+id/editTextPinCode"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_small">
-
-                        <EditText
-                            android:id="@+id/editTextPinCode"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/margin_normal"
-                            android:layout_marginRight="@dimen/margin_normal"
-                            android:textSize="@dimen/secondary_text_size"
-                            android:ems="10"
-                            android:inputType="text"
-                            android:hint="@string/pinCode"
-                            android:focusableInTouchMode="false"
-                            android:imeOptions="actionNext"
-                            android:enabled="false"
-                            android:singleLine="true"
-                            android:textColor="@color/uiv3_primary_text_color" />
-
-                        <ImageView
-                            android:id="@+id/imgPinCodeErr"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignRight="@id/editTextPinCode"
-                            android:layout_centerVertical="true"
-                            android:layout_marginRight="10dp"
-                            android:layout_marginTop="@dimen/margin_small"
-                            android:visibility="gone"
-                            android:contentDescription="@string/missing"
-                            android:src="@drawable/error_symbol" />
-
-
-                    </RelativeLayout>
+                        android:layout_column="1"
+                        android:layout_marginLeft="@dimen/margin_normal"
+                        android:layout_marginRight="@dimen/margin_normal"
+                        android:ems="10"
+                        android:enabled="false"
+                        android:focusableInTouchMode="false"
+                        android:hint="@string/pinCode"
+                        android:imeOptions="actionNext"
+                        android:inputType="text"
+                        android:singleLine="true"
+                        android:textColor="@color/uiv3_primary_text_color"
+                        android:textSize="@dimen/secondary_text_size" />
                 </TableRow>
             </TableLayout>
 
@@ -570,10 +357,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin_small"
+                android:checked="true"
                 android:text="@string/receivePromos"
                 android:textColor="@color/uiv3_primary_text_color"
-                android:textSize="@dimen/secondary_text_size"
-                android:checked="true" />
+                android:textSize="@dimen/secondary_text_size" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -582,20 +369,20 @@
 
                 <Button
                     android:id="@+id/btnUpdateProfile"
-                    android:layout_width="match_parent"
                     style="@style/Uiv3BigGreenButton"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/UPDATE" />
 
                 <ProgressBar
+                    android:id="@+id/progressBarUpdateProfile"
                     style="?android:attr/progressBarStyleSmall"
                     android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="8dp"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    android:id="@+id/progressBarUpdateProfile" />
+                    android:visibility="gone" />
 
             </RelativeLayout>
         </LinearLayout>

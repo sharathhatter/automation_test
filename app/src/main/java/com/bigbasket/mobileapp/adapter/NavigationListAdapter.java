@@ -83,9 +83,9 @@ public class NavigationListAdapter extends BaseExpandableListAdapter {
         if (navigationItem.isExpandable()) {
             int expandableArrowDrawableId;
             if (isExpanded) {
-                expandableArrowDrawableId = R.drawable.small_down_arrow;
+                expandableArrowDrawableId = R.drawable.ic_keyboard_arrow_down_grey600_24dp;
             } else {
-                expandableArrowDrawableId = R.drawable.small_list_arrow;
+                expandableArrowDrawableId = R.drawable.ic_keyboard_arrow_right_grey600_24dp;
             }
             expandArrowDrawable = context.getResources().getDrawable(expandableArrowDrawableId);
         }
