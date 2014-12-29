@@ -1,50 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/padding_normal"
+    android:paddingRight="@dimen/padding_normal">
 
     <TextView
+        android:id="@+id/labelRating"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/rating"
-        android:layout_marginTop="10dp"
-        android:id="@+id/labelRating" />
+        android:layout_marginTop="@dimen/margin_normal"
+        android:text="@string/rating" />
 
     <RatingBar
+        android:id="@+id/ratingBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:stepSize="1"
+        android:layout_marginTop="@dimen/margin_small"
         android:rating="5"
-        android:layout_marginTop="10dp"
-        android:id="@+id/ratingBar" />
+        android:stepSize="1" />
 
     <EditText
+        android:id="@+id/editTextComments"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textMultiLine"
+        android:layout_marginTop="@dimen/margin_small"
         android:gravity="top"
-        android:layout_marginTop="10dp"
-        android:minLines="5"
         android:hint="@string/yourComments"
-        android:id="@+id/editTextComments" />
+        android:inputType="textMultiLine"
+        android:minLines="5" />
 
     <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/submit"
-        style="@style/Uiv2BigYellowButton"
         android:id="@+id/btnSubmit"
-        android:onClick="OnSubmitButtonClicked" />
-
-    <Button
+        style="@style/Uiv3BigGreenButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/Uiv2BigGreyButton"
-        android:text="@string/cancel"
+        android:layout_marginTop="@dimen/margin_normal"
+        android:onClick="OnSubmitButtonClicked"
+        android:text="@string/submit" />
+
+    <Button
         android:id="@+id/btnCancel"
-        android:onClick="OnCancelButtonClicked" />
+        style="@style/DefaultButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_small"
+        android:onClick="OnCancelButtonClicked"
+        android:text="@string/cancel" />
 </LinearLayout>

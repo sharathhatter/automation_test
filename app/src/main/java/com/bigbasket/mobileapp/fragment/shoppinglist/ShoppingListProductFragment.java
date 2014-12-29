@@ -138,7 +138,7 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
         contentView.removeAllViews();
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        View shopListHeaderLayout = inflater.inflate(R.layout.my_shopping_list_listheader, null);
+        View shopListHeaderLayout = inflater.inflate(R.layout.uiv3_shopping_list_products_header, null);
         TextView brandNameTxt = (TextView) shopListHeaderLayout.findViewById(R.id.brandNameTxt);
         String topname = mShoppingListDetail.getTopCategoryName();
 
