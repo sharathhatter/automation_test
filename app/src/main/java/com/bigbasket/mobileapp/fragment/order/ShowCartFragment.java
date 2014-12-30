@@ -33,6 +33,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.CartGetApiResponseCont
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.AnnotationInfo;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
@@ -223,7 +224,7 @@ public class ShowCartFragment extends BaseFragment {
         btnFooterCheckout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (cartInfo != null && cartInfo.getNoOfItems() > 0) {
+                if (getCartInfo() != null && getCartInfo().getNoOfItems() > 0) {
                     if (AuthParameters.getInstance(getActivity()).isAuthTokenEmpty()) {
                         showAlertDialog("Login", getString(R.string.login_to_place_order),
                                 DialogButton.OK, DialogButton.NO, NavigationCodes.GO_TO_LOGIN, null, "Login");
@@ -308,15 +309,9 @@ public class ShowCartFragment extends BaseFragment {
 
 
     public final void setBasketNumItemsDisplay() {
-        if (getActivity() == null) return;
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
-        editor.putString(Constants.GET_CART, String.valueOf(cartInfo.getNoOfItems()));
-        editor.commit();
-        //cartCountTextView.setText("" + cartInfo.getNoOfItems());
-        if (cartInfo.getNoOfItems() == 0) {
-            //cartCountTextView.setVisibility(View.INVISIBLE);
-        } else {
-            //cartCountTextView.setVisibility(View.VISIBLE);
+        if (getActivity() == null || getCartInfo() == null) return;
+        if (getActivity() instanceof CartInfoAware) {
+            ((CartInfoAware) getActivity()).updateUIForCartInfo();
         }
     }
 

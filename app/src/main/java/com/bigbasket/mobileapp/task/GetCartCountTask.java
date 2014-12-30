@@ -42,7 +42,7 @@ public class GetCartCountTask<T> {
                     }
                     switch (cartSummaryApiResponse.status) {
                         case Constants.OK:
-                            ((CartInfoAware) ctx).setCartInfo(cartSummaryApiResponse.cartSummary);
+                            ((CartInfoAware) ctx).setCartInfo(cartSummaryApiResponse.cartSummaryApiResponseContent.cartSummary);
                             ((CartInfoAware) ctx).updateUIForCartInfo();
                             break;
                         default:

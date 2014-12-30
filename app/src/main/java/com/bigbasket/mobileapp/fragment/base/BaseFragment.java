@@ -37,7 +37,6 @@ import com.bigbasket.mobileapp.model.cart.BasketOperationResponse;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.order.COReserveQuantity;
 import com.bigbasket.mobileapp.model.product.Product;
-import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.NavigationCodes;
@@ -56,7 +55,6 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     protected COReserveQuantity coReserveQuantity;
 
     private BasketOperationResponse basketOperationResponse;
-    protected CartSummary cartInfo = new CartSummary();
 
     @Override
     public void onAttach(Activity activity) {
@@ -261,30 +259,31 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
         editor.putString(Constants.GET_CART, String.valueOf(totalProductsInBasket));
         editor.commit();
-        cartInfo.setNoOfItems(totalProductsInBasket);
+        if (getCartInfo() != null) {
+            getCartInfo().setNoOfItems(totalProductsInBasket);
+        }
     }
 
     @Override
     public void setCartInfo(CartSummary cartInfo) {
-        this.cartInfo = cartInfo;
+        if (getCurrentActivity() instanceof CartInfoAware) {
+            ((CartInfoAware) getCurrentActivity()).setCartInfo(cartInfo);
+        }
     }
 
     @Override
     public CartSummary getCartInfo() {
-        return cartInfo;
+        if (getCurrentActivity() instanceof CartInfoAware) {
+            return ((CartInfoAware) getCurrentActivity()).getCartInfo();
+        }
+        return null;
     }
 
     @Override
     public void updateUIForCartInfo() {
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
-        editor.putString(Constants.GET_CART, "" + cartInfo.getNoOfItems());
-        editor.commit();
-
-        if (cartInfo != null && cartInfo.getAnalyticsEngine() != null) {
-            AuthParameters.getInstance(getActivity()).setMoEngaleLocaliticsEnabled(cartInfo.getAnalyticsEngine().isMoEngageEnabled(),
-                    cartInfo.getAnalyticsEngine().isAnalyticsEnabled(), getActivity());
+        if (getCurrentActivity() != null && getCurrentActivity() instanceof CartInfoAware) {
+            ((CartInfoAware) getCurrentActivity()).updateUIForCartInfo();
         }
-        AuthParameters.updateInstance(getActivity());
     }
 
     public void showAlertDialog(String title,

@@ -14,7 +14,6 @@
 
     <item
         android:id="@+id/action_view_basket"
-        android:icon="@drawable/ic_shopping_cart_white_24dp"
         android:orderInCategory="9999"
         android:title="@string/viewBasket"
         bb:showAsAction="ifRoom" />
