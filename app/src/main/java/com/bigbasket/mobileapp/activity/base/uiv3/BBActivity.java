@@ -730,12 +730,12 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 R.drawable.main_nav_shopping_list, Constants.SHOP_LST, false));
         navigationItems.add(new NavigationItem(Constants.SMART_BASKET, R.drawable.main_nav_shopping_list,
                 Constants.SMART_BASKET_SLUG, false));
-        navigationItems.add(new NavigationItem(getString(R.string.viewBasket), R.drawable.ic_shopping_cart_grey600_36dp,
+        navigationItems.add(new NavigationItem(getString(R.string.viewBasket), R.drawable.ic_shopping_cart_grey600_24dp,
                 Constants.CART, false));
         navigationItems.add(new NavigationItem(getString(R.string.bbCommHub), R.drawable.b_logo_bubble,
                 Constants.FEEDBACK, false));
         if (isLoggedIn) {
-            navigationItems.add(new NavigationItem(getString(R.string.myAccount), R.drawable.ic_person_grey600_36dp,
+            navigationItems.add(new NavigationItem(getString(R.string.myAccount), R.drawable.ic_person_grey600_24dp,
                     Constants.FROM_ACCOUNT_PAGE, false));
             navigationItems.add(new NavigationItem(getString(R.string.signOut), R.drawable.main_nav_logout,
                     Constants.LOGOUT, false));
