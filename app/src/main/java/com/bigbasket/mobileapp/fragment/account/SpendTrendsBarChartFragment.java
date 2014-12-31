@@ -3,6 +3,8 @@ package com.bigbasket.mobileapp.fragment.account;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +12,9 @@ import android.widget.LinearLayout;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
+import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
+import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
+import com.github.ksoichiro.android.observablescrollview.ScrollState;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -49,7 +54,40 @@ public class SpendTrendsBarChartFragment extends AbstractFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        initializeScroll();
         initializeBarChart();
+    }
+
+    private void initializeScroll() {
+        if (getActivity() == null || getView() == null) return;
+
+        final ObservableScrollView scrollViewSpendTrends = (ObservableScrollView) getView().findViewById(R.id.scrollViewSpendTrends);
+
+        final ActionBar actionBar = ((ActionBarActivity) getActivity()).getSupportActionBar();
+        scrollViewSpendTrends.setScrollViewCallbacks(new ObservableScrollViewCallbacks() {
+            @Override
+            public void onScrollChanged(int i, boolean b, boolean b2) {
+
+            }
+
+            @Override
+            public void onDownMotionEvent() {
+
+            }
+
+            @Override
+            public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+                if (scrollState == ScrollState.UP) {
+                    if (actionBar.isShowing()) {
+                        actionBar.hide();
+                    }
+                } else if (scrollState == ScrollState.DOWN) {
+                    if (!actionBar.isShowing()) {
+                        actionBar.show();
+                    }
+                }
+            }
+        });
     }
 
     private void initializeBarChart() {
