@@ -8,16 +8,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.text.TextUtils;
-import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -54,6 +50,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.UIUtil;
 import com.demach.konotor.Konotor;
 import com.moe.pushlibrary.MoEHelper;
 
@@ -574,25 +571,11 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     public abstract void onChangeTitle(String title);
 
     protected void reportFormInputFieldError(EditText editText, String errMsg) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            editText.setError(errMsg);
-        } else {
-            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(errMsg);
-            spannableStringBuilder.setSpan(new ForegroundColorSpan(Color.BLACK), 0, errMsg.length(),
-                    Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-            editText.setError(spannableStringBuilder);
-        }
+        UIUtil.reportFormInputFieldError(editText, errMsg);
     }
 
     protected void reportFormInputFieldError(AutoCompleteTextView autoCompleteTextView, String errMsg) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            autoCompleteTextView.setError(errMsg);
-        } else {
-            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(errMsg);
-            spannableStringBuilder.setSpan(new ForegroundColorSpan(Color.BLACK), 0, errMsg.length(),
-                    Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-            autoCompleteTextView.setError(spannableStringBuilder);
-        }
+        UIUtil.reportFormInputFieldError(autoCompleteTextView, errMsg);
     }
 
     @Override

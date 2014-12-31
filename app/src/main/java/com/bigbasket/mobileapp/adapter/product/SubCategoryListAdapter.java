@@ -175,9 +175,28 @@ public class SubCategoryListAdapter extends BaseExpandableListAdapter {
             imgArrow.setVisibility(View.GONE);
         }
 
-        imgArrow.setImageResource(isExpanded ? R.drawable.small_down_arrow :
-                R.drawable.small_list_arrow);
+        imgArrow.setImageResource(isExpanded ? R.drawable.ic_keyboard_arrow_down_grey600_24dp :
+                R.drawable.ic_keyboard_arrow_right_grey600_24dp);
 
+        /*
+        row.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (subcategory.getCategory() != null && subcategory.getCategory().size() > 0) {
+                    if (!isExpanded) {
+                        v.getParent().requestDisallowInterceptTouchEvent(true);
+                    } else {
+                        v.getParent().requestDisallowInterceptTouchEvent(false);
+                    }
+                } else {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("slug_name_category", subcategory.getSlug());
+                    CategoryProductsFragment categoryProductsFragment = new CategoryProductsFragment();
+                    categoryProductsFragment.setArguments(bundle);
+                    baseFragment.changeFragment(categoryProductsFragment);
+                }
+            }
+        });
         /*
         row.setOnClickListener(new View.OnClickListener() {
             @Override

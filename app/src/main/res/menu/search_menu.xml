@@ -3,23 +3,20 @@
     xmlns:bb="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_apply_filter"
-        android:icon="@drawable/filter"
-        android:orderInCategory="9999"
-        android:title="@string/filter"
-        bb:showAsAction="always" />
-
-    <item
         android:id="@+id/action_sort_products"
-        android:icon="@drawable/sort_hover"
-        android:orderInCategory="9999"
+        android:icon="@drawable/ic_sort_white_24dp"
         android:title="@string/sortBy"
         bb:showAsAction="always" />
 
     <item
+        android:id="@+id/action_apply_filter"
+        android:icon="@drawable/ic_filter_list_white_24dp"
+        android:title="@string/filter"
+        bb:showAsAction="always" />
+
+    <item
         android:id="@+id/action_search"
-        android:icon="@drawable/ic_search"
-        android:orderInCategory="1000"
+        android:icon="@drawable/ic_search_white_24dp"
         android:title="@string/search"
         bb:actionLayout="@layout/uiv3_search_view"
         bb:actionViewClass="android.support.v7.widget.SearchView"
@@ -27,8 +24,6 @@
 
     <item
         android:id="@+id/action_view_basket"
-        android:icon="@drawable/view_basket"
-        android:orderInCategory="1000"
         android:title="@string/viewBasket"
         bb:showAsAction="ifRoom" />
 </menu>

@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
@@ -27,9 +26,7 @@ import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -43,7 +40,6 @@ public class ChangePasswordFragment extends BaseFragment {
     private EditText oldEditText, newPwdText, confirmPwdEditText;
     private Button updateButton;
     private ProgressBar progressBarUpdatePassword;
-    private ImageView imgOldPwdErr, imgNewPwdErr, imgConfPwdErr;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -66,10 +62,6 @@ public class ChangePasswordFragment extends BaseFragment {
         newPwdText.setTypeface(faceRobotoRegular);
 
         progressBarUpdatePassword = (ProgressBar) base.findViewById(R.id.progressBarUpdatePassword);
-
-        imgOldPwdErr = (ImageView) base.findViewById(R.id.imgOldPasswdErr);
-        imgNewPwdErr = (ImageView) base.findViewById(R.id.imgNewPasswdErr);
-        imgConfPwdErr = (ImageView) base.findViewById(R.id.imgConfPasswdErr);
 
         confirmPwdEditText = (EditText) base.findViewById(R.id.confirmPwdEditTxt);
         confirmPwdEditText.setTypeface(faceRobotoRegular);
@@ -97,53 +89,62 @@ public class ChangePasswordFragment extends BaseFragment {
     }
 
     private void OnUpdateBtnClick() {
-        imgOldPwdErr.setVisibility(View.GONE);
-        imgNewPwdErr.setVisibility(View.GONE);
-        imgConfPwdErr.setVisibility(View.GONE);
+        oldEditText.setError(null);
+        newPwdText.setError(null);
+        confirmPwdEditText.setError(null);
         String oldPassword = oldEditText.getText().toString();
         String newPassword = newPwdText.getText().toString();
         String confPassword = confirmPwdEditText.getText().toString();
-        List<String> missingFields = new ArrayList<>();
+        boolean cancel = false;
+        View focusView = null;
         if (TextUtils.isEmpty(oldPassword)) {
-            oldEditText.setText("");
-            imgOldPwdErr.setVisibility(View.VISIBLE);
-            missingFields.add("old password");
+            cancel = true;
+            focusView = oldEditText;
+            UIUtil.reportFormInputFieldError(oldEditText, getString(R.string.error_field_required));
         }
         if (TextUtils.isEmpty(newPassword)) {
-            newPwdText.setText("");
-            imgNewPwdErr.setVisibility(View.VISIBLE);
-            missingFields.add("current password");
+            cancel = true;
+            focusView = newPwdText;
+            UIUtil.reportFormInputFieldError(newPwdText, getString(R.string.error_field_required));
         }
         if (TextUtils.isEmpty(confPassword)) {
-            confirmPwdEditText.setText("");
-            imgConfPwdErr.setVisibility(View.VISIBLE);
-            missingFields.add("confirm password");
+            cancel = true;
+            focusView = confirmPwdEditText;
+            UIUtil.reportFormInputFieldError(confirmPwdEditText, getString(R.string.error_field_required));
         }
-        if (missingFields.size() > 0) {
-            showErrorMsg("Please enter " + UIUtil.sentenceJoin(missingFields));
-        } else if (newPassword.length() < 6 || confPassword.length() < 6 || oldPassword.length() < 6) {
-            if (newPwdText.getText().toString().length() < 6)
-                newPwdText.setText("");
-            if (confirmPwdEditText.getText().toString().length() < 6)
-                confirmPwdEditText.setText("");
-            if (oldEditText.getText().toString().length() < 6)
-                oldEditText.setText("");
-            else {
-                newPwdText.setText("");
-                confirmPwdEditText.setText("");
-                oldEditText.setText("");
-            }
-            ((BaseActivity) getActivity()).showToast(getString(R.string.psswordMst6Digit));
 
-        } else if (!newPassword.equals(confPassword)) {
+        if (cancel) {
+            focusView.requestFocus();
+            return;
+        }
+
+        if (newPassword.length() < 6) {
+            cancel = true;
+            focusView = newPwdText;
+            UIUtil.reportFormInputFieldError(newPwdText, getString(R.string.psswordMst6Digit));
+        }
+
+        if (confPassword.length() < 6) {
+            cancel = true;
+            focusView = confirmPwdEditText;
+            UIUtil.reportFormInputFieldError(confirmPwdEditText, getString(R.string.psswordMst6Digit));
+        }
+
+        if (cancel) {
+            focusView.requestFocus();
+            return;
+        }
+
+        if (!newPassword.equals(confPassword)) {
+            newPwdText.requestFocus();
+            ((BaseActivity) getActivity()).showToast(getString(R.string.oldNewPasswordNotMatch));
             newPwdText.setText("");
             confirmPwdEditText.setText("");
-            ((BaseActivity) getActivity()).showToast(getString(R.string.oldNewPasswordNotMatch));
-        } else {
-            setUpdateButtonInProgress();
-            updatePassword();
-
+            return;
         }
+        setUpdateButtonInProgress();
+        updatePassword();
+
     }
 
     private void updatePassword() {
@@ -177,7 +178,7 @@ public class ChangePasswordFragment extends BaseFragment {
                                     handler.sendEmptyMessage(changePasswordCallback.getErrorTypeAsInt());
                                     break;
                             }
-                            HashMap<String,String> map = new HashMap<>();
+                            HashMap<String, String> map = new HashMap<>();
                             map.put(TrackEventkeys.CHANGE_PASSWORD_FAILURE_REASON, changePasswordCallback.message);
                             trackEvent(TrackingAware.MY_ACCOUNT_CHANGE_PASSWD_FAILED, map);
                         }
@@ -193,7 +194,7 @@ public class ChangePasswordFragment extends BaseFragment {
                             return;
                         }
                         handler.handleRetrofitError(error);
-                        HashMap<String,String> map = new HashMap<>();
+                        HashMap<String, String> map = new HashMap<>();
                         map.put(TrackEventkeys.CHANGE_PASSWORD_FAILURE_REASON, error.toString());
                         trackEvent(TrackingAware.MY_ACCOUNT_CHANGE_PASSWD_FAILED, null);
                     }

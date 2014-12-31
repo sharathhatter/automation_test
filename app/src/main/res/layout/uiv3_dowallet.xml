@@ -43,7 +43,7 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/wallet"
                         android:layout_centerVertical="true"
-                        android:background="@drawable/wallet" />
+                        android:background="@drawable/ic_account_balance_wallet_grey600_36dp" />
 
                     <TextView
                         android:id="@+id/walletActivitySubHeading"

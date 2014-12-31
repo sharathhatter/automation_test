@@ -18,7 +18,7 @@
         android:layout_marginLeft="@dimen/margin_normal"
         android:layout_marginRight="@dimen/margin_normal"
         android:contentDescription="@string/alt_placeholder"
-        android:src="@drawable/categories" />
+        android:src="@drawable/ic_mail_grey600_24dp" />
 
     <CheckBox
         android:id="@+id/itemTick"

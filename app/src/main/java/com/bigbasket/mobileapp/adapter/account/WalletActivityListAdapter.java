@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -71,7 +70,6 @@ public class WalletActivityListAdapter extends BaseAdapter {
             holder.orderIdHolder.setTypeface(faceRobotoRegular);
             holder.creditCreatedHolder = (TextView) convertView.findViewById(R.id.creditCreated);
             holder.creditCreatedHolder.setTypeface(faceRobotoRegular);
-            holder.colorHolder = (LinearLayout) convertView.findViewById(R.id.backgroundLayout);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -136,7 +134,6 @@ public class WalletActivityListAdapter extends BaseAdapter {
         TextView endingBalanceHolder;
         TextView orderIdHolder;
         TextView creditCreatedHolder;
-        LinearLayout colorHolder;
     }
 
     public String getDecimalAmount(Double amount) {

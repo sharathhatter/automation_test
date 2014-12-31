@@ -147,7 +147,7 @@ public class AgeValidationActivity extends BackButtonActivity {
         btnContinueOrUploadPrescription.setTypeface(faceRobotoRegular);
         if (marketPlace.isPharamaPrescriptionNeeded()) {
             btnContinueOrUploadPrescription.setText(getString(R.string.uploadPrescription));
-            btnContinueOrUploadPrescription.setTextSize(getResources().getDimension(R.dimen.very_small_text_size));
+            btnContinueOrUploadPrescription.setTextSize(getResources().getDimension(R.dimen.small_text_size));
             btnContinueOrUploadPrescription.setTag(Constants.UPLOAD_PRESCRIPTION_BTN_TAG);
         } else {
             btnContinueOrUploadPrescription.setText("Continue");
@@ -310,7 +310,7 @@ public class AgeValidationActivity extends BackButtonActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     btnContinueOrUploadPrescription.setText(getString(R.string.uploadPrescription));
-                    btnContinueOrUploadPrescription.setTextSize(getResources().getDimension(R.dimen.very_small_text_size));
+                    btnContinueOrUploadPrescription.setTextSize(getResources().getDimension(R.dimen.small_text_size));
                     btnContinueOrUploadPrescription.setTag(Constants.UPLOAD_PRESCRIPTION_BTN_TAG);
                     isPharmaRadioBtnNoSelected = false;
                 }

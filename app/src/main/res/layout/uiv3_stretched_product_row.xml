@@ -199,10 +199,9 @@
                     android:layout_marginRight="@dimen/margin_mini"
                     android:layout_marginTop="@dimen/margin_normal"
                     android:contentDescription="@string/decrease"
-                    android:minHeight="25dp"
                     android:paddingBottom="@dimen/padding_mini"
                     android:paddingTop="@dimen/padding_mini"
-                    android:src="@drawable/remove" />
+                    android:src="@drawable/ic_remove_grey600_24dp" />
 
                 <TextView
                     android:id="@+id/txtInBasket"
@@ -213,7 +212,6 @@
                     android:layout_marginTop="@dimen/margin_normal"
                     android:drawablePadding="@dimen/padding_mini"
                     android:gravity="center"
-                    android:minHeight="25dp"
                     android:paddingLeft="@dimen/padding_mini"
                     android:paddingRight="@dimen/padding_mini"
                     android:text="10 in basket"
@@ -228,7 +226,7 @@
                     android:layout_marginRight="@dimen/margin_normal"
                     android:layout_marginTop="@dimen/margin_normal"
                     android:contentDescription="@string/add"
-                    android:src="@drawable/add" />
+                    android:src="@drawable/ic_add_grey600_24dp" />
             </LinearLayout>
 
             <LinearLayout

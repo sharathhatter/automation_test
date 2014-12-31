@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginRight="@dimen/padding_normal"
-        android:src="@drawable/small_list_arrow"
+        android:src="@drawable/ic_keyboard_arrow_right_grey600_24dp"
         android:id="@+id/listArrow"
         android:layout_alignParentRight="true"
         android:contentDescription="@string/more" />

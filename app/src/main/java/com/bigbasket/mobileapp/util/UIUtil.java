@@ -4,21 +4,27 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.BulletSpan;
+import android.text.style.ForegroundColorSpan;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -240,4 +246,25 @@ public class UIUtil {
         return appVersionName;
     }
 
+    public static void reportFormInputFieldError(EditText editText, String errMsg) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            editText.setError(errMsg);
+        } else {
+            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(errMsg);
+            spannableStringBuilder.setSpan(new ForegroundColorSpan(Color.BLACK), 0, errMsg.length(),
+                    Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+            editText.setError(spannableStringBuilder);
+        }
+    }
+
+    public static void reportFormInputFieldError(AutoCompleteTextView autoCompleteTextView, String errMsg) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            autoCompleteTextView.setError(errMsg);
+        } else {
+            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(errMsg);
+            spannableStringBuilder.setSpan(new ForegroundColorSpan(Color.BLACK), 0, errMsg.length(),
+                    Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+            autoCompleteTextView.setError(spannableStringBuilder);
+        }
+    }
 }

@@ -14,6 +14,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
@@ -100,6 +101,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
     protected BigBasketMessageHandler handler;
     private BBDrawerLayout mDrawerLayout;
     private String currentFragmentTag;
+    private TextView mTextCartCount;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -131,6 +133,15 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             }
         });
         setNavDrawer(toolbar, savedInstanceState);
+
+        if (cartInfo != null && cartInfo.getNoOfItems() == 0) {
+            // Update from preference
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
+            String cartCountStr = preferences.getString(Constants.GET_CART, null);
+            if (!TextUtils.isEmpty(cartCountStr) && TextUtils.isDigitsOnly(cartCountStr)) {
+                cartInfo.setNoOfItems(Integer.parseInt(cartCountStr));
+            }
+        }
     }
 
     public int getMainLayout() {
@@ -193,6 +204,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         setOptionsMenu(menu);
+        initializeCartCountTextView(menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -238,6 +250,26 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             hideMemberMenuItems(menu);
         } else {
             hideGuestMenuItems(menu);
+        }
+    }
+
+    public void initializeCartCountTextView(Menu menu) {
+        MenuItem menuItemViewBasket = menu.findItem(R.id.action_view_basket);
+        if (menuItemViewBasket == null) return;
+        MenuItemCompat.setActionView(menuItemViewBasket, R.layout.uiv3_basket_count_icon);
+        View basketCountView = MenuItemCompat.getActionView(menuItemViewBasket);
+        if (basketCountView != null) {
+            basketCountView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    addToMainLayout(new ShowCartFragment());
+                }
+            });
+            mTextCartCount = (TextView) basketCountView.findViewById(R.id.txtNumItemsInBasket);
+            if (mTextCartCount != null) {
+                mTextCartCount.setTypeface(faceRobotoRegular);
+                updateCartCountHeaderTextView();
+            }
         }
     }
 
@@ -539,8 +571,26 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
     public void updateUIForCartInfo() {
         if (cartInfo == null) return;
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
-        editor.putString(Constants.GET_CART, "" + cartInfo.getNoOfItems());
+        editor.putString(Constants.GET_CART, String.valueOf(cartInfo.getNoOfItems()));
         editor.commit();
+
+        if (cartInfo.getAnalyticsEngine() != null) {
+            AuthParameters.getInstance(getCurrentActivity()).setMoEngaleLocaliticsEnabled(cartInfo.getAnalyticsEngine().isMoEngageEnabled(),
+                    cartInfo.getAnalyticsEngine().isAnalyticsEnabled(), getCurrentActivity());
+        }
+        updateCartCountHeaderTextView();
+        AuthParameters.updateInstance(getCurrentActivity());
+    }
+
+    private void updateCartCountHeaderTextView() {
+        if (cartInfo != null && mTextCartCount != null) {
+            if (cartInfo.getNoOfItems() <= 0) {
+                mTextCartCount.setVisibility(View.GONE);
+            } else {
+                mTextCartCount.setVisibility(View.VISIBLE);
+                mTextCartCount.setText(String.valueOf(cartInfo.getNoOfItems()));
+            }
+        }
     }
 
     @Override
@@ -732,12 +782,12 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 R.drawable.main_nav_shopping_list, Constants.SHOP_LST, false));
         navigationItems.add(new NavigationItem(Constants.SMART_BASKET, R.drawable.main_nav_shopping_list,
                 Constants.SMART_BASKET_SLUG, false));
-        navigationItems.add(new NavigationItem(getString(R.string.viewBasket), R.drawable.main_nav_basket,
+        navigationItems.add(new NavigationItem(getString(R.string.viewBasket), R.drawable.ic_shopping_cart_grey600_24dp,
                 Constants.CART, false));
-        navigationItems.add(new NavigationItem(getString(R.string.bbCommHub), R.drawable.main_nav_account,
+        navigationItems.add(new NavigationItem(getString(R.string.bbCommHub), R.drawable.b_logo_bubble,
                 Constants.FEEDBACK, false));
         if (isLoggedIn) {
-            navigationItems.add(new NavigationItem(getString(R.string.myAccount), R.drawable.main_nav_account,
+            navigationItems.add(new NavigationItem(getString(R.string.myAccount), R.drawable.ic_person_grey600_24dp,
                     Constants.FROM_ACCOUNT_PAGE, false));
             navigationItems.add(new NavigationItem(getString(R.string.signOut), R.drawable.main_nav_logout,
                     Constants.LOGOUT, false));

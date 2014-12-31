@@ -15,7 +15,7 @@
             android:layout_gravity="bottom"
             android:layout_marginBottom="@dimen/margin_small"
             android:contentDescription="@string/email"
-            android:src="@drawable/mail" />
+            android:src="@drawable/ic_mail_grey600_24dp" />
 
         <AutoCompleteTextView
             android:id="@+id/emailInput"
@@ -40,9 +40,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:layout_marginBottom="@dimen/padding_small"
+            android:layout_marginBottom="@dimen/margin_small"
             android:contentDescription="@string/password"
-            android:src="@drawable/password_lock" />
+            android:src="@drawable/ic_lock_grey600_24dp" />
 
         <EditText
             android:id="@+id/editTextPasswd"

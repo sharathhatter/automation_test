@@ -82,7 +82,7 @@
                 android:layout_marginRight="@dimen/margin_mini"
                 android:layout_marginTop="@dimen/margin_small"
                 android:layout_toLeftOf="@id/imgAddressAdditionalAction"
-                android:drawableLeft="@drawable/call"
+                android:drawableLeft="@drawable/ic_call_grey600_18dp"
                 android:drawablePadding="@dimen/padding_mini"
                 android:singleLine="false"
                 android:textColor="@color/uiv3_list_primary_text_color"

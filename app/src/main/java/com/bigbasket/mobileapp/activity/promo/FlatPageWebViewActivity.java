@@ -5,18 +5,18 @@ import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
 import android.widget.ProgressBar;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.util.Constants;
 
 /**
  * Created by jugal on 7/8/14.
  */
-public class FlatPageWebViewActivity extends BaseActivity {
+public class FlatPageWebViewActivity extends BackButtonActivity {
     private ProgressBar progressBar;
 
     @Override
@@ -27,20 +27,13 @@ public class FlatPageWebViewActivity extends BaseActivity {
 
         progressBar = (ProgressBar) findViewById(R.id.progressbar_Horizontal);
 
-        Button btnHome = (Button) findViewById(R.id.homeBBbtn);
-        btnHome.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FlatPageWebViewActivity.this.finish();
-            }
-        });
-        WebView wevViewFulfillmentPage = (WebView) findViewById(R.id.wevViewFulfillmentPage);
+        WebView wevViewFulfillmentPage = (WebView) findViewById(R.id.webViewFulfillmentPage);
         wevViewFulfillmentPage.getSettings().setJavaScriptEnabled(true);
         wevViewFulfillmentPage.getSettings().setLoadWithOverviewMode(true); // fit to webview
         wevViewFulfillmentPage.getSettings().setUseWideViewPort(true); // supporting tags
         if (fulfillmentInfoPageUrl != null) {
             wevViewFulfillmentPage.loadUrl(fulfillmentInfoPageUrl);
-            wevViewFulfillmentPage.setWebViewClient(new MyWebViewClient());
+            wevViewFulfillmentPage.setWebViewClient(new FulFillmentWebViewClient());
         }
 
         wevViewFulfillmentPage.setWebChromeClient((new WebChromeClient() {
@@ -81,7 +74,7 @@ public class FlatPageWebViewActivity extends BaseActivity {
         return this;
     }
 
-    private class MyWebViewClient extends WebViewClient {
+    private class FulFillmentWebViewClient extends WebViewClient {
 
         @Override
         //show the web page in webview but not in web browser

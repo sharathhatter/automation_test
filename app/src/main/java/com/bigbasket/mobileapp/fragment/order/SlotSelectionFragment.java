@@ -290,7 +290,7 @@ public class SlotSelectionFragment extends BaseFragment {
             txtSubTitle.setText(slot.getFormattedDisplayName());
 
             if (slot.isAvailable()) {
-                imgRow.setImageResource(R.drawable.van);
+                imgRow.setImageResource(R.drawable.ic_local_shipping_grey600_36dp);
             } else {
                 imgRow.setImageResource(R.drawable.deliveryslot_deactive);
             }

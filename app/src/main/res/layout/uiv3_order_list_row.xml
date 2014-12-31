@@ -14,7 +14,7 @@
         android:paddingTop="@dimen/padding_normal"
         android:contentDescription="@string/delivery_van"
         android:id="@+id/imgDeliveryVan"
-        android:src="@drawable/van" />
+        android:src="@drawable/ic_local_shipping_grey600_36dp" />
 
     <TextView
         android:layout_width="wrap_content"

@@ -109,13 +109,13 @@ public class AccountSettingFragment extends BaseFragment {
                 getResources().getString(R.string.delivery_address),
                 getResources().getString(R.string.view_edit_pin_label)};
         int[] imageArray = {
-                R.drawable.active_orders_dark,
+                R.drawable.ic_local_shipping_grey600_36dp,
                 R.drawable.history_dark,
                 R.drawable.user_modify_dark,
-                R.drawable.lock_large,
-                R.drawable.safety_box_large,
-                R.drawable.place_large,
-                R.drawable.edit_large_dark};
+                R.drawable.ic_lock_grey600_36dp,
+                R.drawable.ic_account_balance_wallet_grey600_36dp,
+                R.drawable.ic_place_grey600_36dp,
+                R.drawable.ic_edit_grey600_36dp};
 
         @Override
         public int getCount() {
@@ -149,13 +149,6 @@ public class AccountSettingFragment extends BaseFragment {
 
             final TextView accountTxtView = viewHolder.getItemTitle();
             accountTxtView.setText(itemDetails[position]);
-
-            View dividerLine = viewHolder.getDividerLine();
-            if (position != imageArray.length - 1) {
-                dividerLine.setVisibility(View.VISIBLE);
-            } else {
-                dividerLine.setVisibility(View.GONE);
-            }
             return row;
         }
 
@@ -163,7 +156,6 @@ public class AccountSettingFragment extends BaseFragment {
 
             private ImageView itemImg;
             private TextView itemTitle;
-            private View dividerLine;
             private View itemView;
 
             public ViewHolder(View itemView) {
@@ -183,13 +175,6 @@ public class AccountSettingFragment extends BaseFragment {
                     itemTitle.setTypeface(faceRobotoRegular);
                 }
                 return itemTitle;
-            }
-
-            public View getDividerLine() {
-                if (dividerLine == null) {
-                    dividerLine = itemView.findViewById(R.id.dividerLine);
-                }
-                return dividerLine;
             }
         }
     }
