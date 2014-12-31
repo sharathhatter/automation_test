@@ -45,6 +45,7 @@ import com.bigbasket.mobileapp.view.uiv2.ProductView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import retrofit.Callback;
@@ -79,7 +80,9 @@ public class PromoDetailFragment extends BaseFragment {
 
         int promoId = getArguments().getInt(Constants.PROMO_ID, -1);
         mPromoCategory = getArguments().getParcelable(Constants.PROMO_CATS);
-        trackEvent(TrackingAware.PROMO_DETAIL, null);
+        HashMap<String, String> map =  new HashMap<>();
+        map.put(TrackEventkeys.PROMO_NAME, mPromoCategory.getName());
+        trackEvent(TrackingAware.PROMO_DETAIL, map);
         getPromoDetail(promoId);
     }
 
@@ -107,7 +110,11 @@ public class PromoDetailFragment extends BaseFragment {
                         mPromoDetail = promoDetailApiResponseContentApiResponse.apiResponseContent.promoDetail;
                         if (mPromoDetail != null) {
                             renderPromoDetail();
-                            trackEvent(TrackingAware.PROMO_SET_PRODUCTS_SHOWN, null);
+                            HashMap<String, String> map = new HashMap<>();
+                            map.put(TrackEventkeys.PROMO_NAME, mPromoDetail.getPromoName());
+                            //map.put(TrackEventkeys.PROMO_SET_NAME,
+                            //        mPromoDetail.getPromoRedemptionInfo().getPromoSets().ge); todo promo set_name
+                            trackEvent(TrackingAware.PROMO_SET_PRODUCTS_SHOWN, map);
                             setCartInfo(promoDetailApiResponseContentApiResponse.cartSummary);
                             updateUIForCartInfo();
                         } else {

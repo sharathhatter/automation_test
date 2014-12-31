@@ -1,8 +1,10 @@
 package com.bigbasket.mobileapp.fragment.order;
 
 import android.app.Dialog;
+import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.text.Html;
 import android.text.TextUtils;
@@ -29,8 +31,10 @@ import com.bigbasket.mobileapp.model.slot.Slot;
 import com.bigbasket.mobileapp.model.slot.SlotGroup;
 import com.bigbasket.mobileapp.model.slot.SlotHeader;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -92,7 +96,10 @@ public class SlotSelectionFragment extends BaseFragment {
                 }
             });
             contentView.addView(slotGroupListView);
-            trackEvent(TrackingAware.CHECKOUT_SLOT_SHOWN, null);
+            HashMap<String, String> map = new HashMap<>();
+            SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            map.put(TrackEventkeys.POTENTIAL_ORDER, prefer.getString(Constants.POTENTIAL_ORDER_ID, null));
+            trackEvent(TrackingAware.CHECKOUT_SLOT_SHOWN, map);
         }
     }
 
@@ -152,12 +159,18 @@ public class SlotSelectionFragment extends BaseFragment {
             if (mSlotGroupListAdapter == null) return;
             mSlotGroupListAdapter.notifyDataSetChanged();
             if (areAllSlotGroupsSelected()) {
-                trackEvent(TrackingAware.CHECKOUT_SLOT_CHOOSEN, null);
+                HashMap<String, String> map = new HashMap<>();
+                SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                map.put(TrackEventkeys.POTENTIAL_ORDER, prefer.getString(Constants.POTENTIAL_ORDER_ID, null));
+                trackEvent(TrackingAware.CHECKOUT_SLOT_CHOOSEN, map);
                 setSelectedSlot();
             }
         } else {
             if (mSlotListAdapter == null) return;
-            trackEvent(TrackingAware.CHECKOUT_SLOT_CHOOSEN, null);
+            HashMap<String, String> map = new HashMap<>();
+            SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            map.put(TrackEventkeys.POTENTIAL_ORDER, prefer.getString(Constants.POTENTIAL_ORDER_ID, null));
+            trackEvent(TrackingAware.CHECKOUT_SLOT_CHOOSEN, map);
             mSlotListAdapter.notifyDataSetChanged();
         }
     }

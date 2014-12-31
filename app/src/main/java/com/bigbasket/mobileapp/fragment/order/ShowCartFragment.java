@@ -192,7 +192,12 @@ public class ShowCartFragment extends BaseFragment {
             for (int i = 0; i < cartItemsSize; i++) {
                 cartItems.get(i).setIndex(i);
                 cartItemHeaderList.add(cartItems.get(i));
-
+                if (cartItems.get(i).getPromoAppliedType() == 2 ||
+                        cartItems.get(i).getPromoAppliedType() == 3) {
+                    HashMap<String, String> map = new HashMap<>();
+                    map.put(TrackEventkeys.PROMO_NAME, cartItems.get(i).getCartItemPromoInfo().getPromoInfo().getPromoName());
+                    trackEvent(TrackingAware.PROMO_REDEEMED, map);
+                }
             }
         }
         HashMap<String, String> fulfillmentInfoIdAndIconHashMap = new HashMap<>();

@@ -39,9 +39,11 @@ import com.bigbasket.mobileapp.task.CoUpdateReservationTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateReserveQtyAware {
     private COReserveQuantity coReserveQuantity;
@@ -175,7 +177,9 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
                 }
             }
             renderCheckOut(productWithNoStockList, productWithSomeStockList);
-            trackEvent(TrackingAware.CHECKOUT_QC_SHOWN, null);
+            HashMap<String, String> map = new HashMap<>();
+            map.put(TrackEventkeys.POTENTIAL_ORDER, String.valueOf(coReserveQuantity.getPotentialOrderId()));
+            trackEvent(TrackingAware.CHECKOUT_QC_SHOWN, map);
         } else {
             showAlertDialogFinish(null, getString(R.string.INTERNAL_SERVER_ERROR));
         }

@@ -33,6 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.account.uiv3.MemberReferral;
 import com.bigbasket.mobileapp.activity.account.uiv3.OrderListActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.ShopFromOrderFragment;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
@@ -47,6 +48,7 @@ import com.bigbasket.mobileapp.fragment.account.AccountSettingFragment;
 import com.bigbasket.mobileapp.fragment.account.ChangeCityFragment;
 import com.bigbasket.mobileapp.fragment.account.ChangePasswordFragment;
 import com.bigbasket.mobileapp.fragment.account.DoWalletFragment;
+import com.bigbasket.mobileapp.fragment.account.MemberReferralTCFragment;
 import com.bigbasket.mobileapp.fragment.account.UpdatePinFragment;
 import com.bigbasket.mobileapp.fragment.account.UpdateProfileFragment;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
@@ -784,7 +786,15 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                         }
                         break;
                     case Constants.CART:
-                        addToMainLayout(new ShowCartFragment());
+//                        Intent intent = new Intent(getCurrentActivity(), MemberReferral.class);
+//                        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                        if (AuthParameters.getInstance(getCurrentActivity()).isAuthTokenEmpty()) {
+                            showAlertDialog(null,
+                                    "Please sign-in to view your accounts page", NavigationCodes.GO_TO_LOGIN);
+                        } else {
+                            addToMainLayout(new MemberReferralTCFragment());
+                        }
+                        //addToMainLayout(new ShowCartFragment());
                         break;
                     case Constants.FROM_ACCOUNT_PAGE:
                         if (AuthParameters.getInstance(getCurrentActivity()).isAuthTokenEmpty()) {

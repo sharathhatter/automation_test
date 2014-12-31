@@ -98,6 +98,7 @@ public interface TrackingAware {
     public static final String PROMO_CATEGORY_LIST = "Promo.Category List";
     public static final String PROMO_DETAIL = "Promo.Promo Detail";
     public static final String PROMO_SET_PRODUCTS_SHOWN = "Promo.Promo Set Products Shown";
+    public static final String PROMO_REDEEMED = "Promo.Promo Redeemed";
 
     public static final String SHOP_LST_SHOWN = "ShoppingList.All Lists Shown";
     public static final String SHOP_LST_SUMMARY_SHOWN = "ShoppingList.Summary Shown";
@@ -109,6 +110,8 @@ public interface TrackingAware {
     public static final String SHOP_LST_CREATED = "ShoppingList.List Created";
     public static final String SHOP_LIST_PRODUCT_ADDED = "ShoppingList.Product Added";
     public static final String SHOP_LIST_PRODUCT_DELETED = "ShoppingList.Product Deleted";
+
+    public static final String SHOP_FROM_PAST_ORDER_SHOWN = "Order.Shop from Past Order";
 
     public void trackEvent(String eventName, Map<String, String> eventAttribs,
                            String source, String sourceValue);

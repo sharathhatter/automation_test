@@ -23,6 +23,7 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListSummary;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -78,10 +79,12 @@ public class ShoppingListSummaryFragment extends BaseFragment {
             }
         }
 
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.SHOPPING_LIST_NAME, mShoppingListName.getName());
         if (mShoppingListName.isSystem()) {
-            trackEvent(TrackingAware.SHOP_LST_SYSTEM_LST_SHOWN, null);
+            trackEvent(TrackingAware.SHOP_LST_SYSTEM_LST_SHOWN, map);
         } else {
-            trackEvent(TrackingAware.SHOP_LST_SUMMARY_SHOWN, null);
+            trackEvent(TrackingAware.SHOP_LST_SUMMARY_SHOWN, map);
         }
         loadShoppingListCategories();
     }

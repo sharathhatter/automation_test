@@ -2,7 +2,9 @@ package com.bigbasket.mobileapp.fragment.order;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,6 +25,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetDeliveryAddressApiResponseContent;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.AddressSelectionAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.Address;
@@ -30,10 +33,12 @@ import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -114,7 +119,10 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             if (mFromAccountPage) {
                 trackEvent(TrackingAware.MY_ACCOUNT_DELIVERY_ADDRESS_SHOWN, null);
             } else {
-                trackEvent(TrackingAware.CHECKOUT_ADDRESS_SHOWN, null);
+                HashMap<String, String> map = new HashMap<>();
+                SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                map.put(TrackEventkeys.POTENTIAL_ORDER, prefer.getString(Constants.POTENTIAL_ORDER_ID, null));
+                trackEvent(TrackingAware.CHECKOUT_ADDRESS_SHOWN, map);
             }
             renderAddressList();
         } else {
@@ -166,7 +174,10 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
     @Override
     public void onAddressSelected(Address address) {
         if (!mFromAccountPage) {
-            trackEvent(TrackingAware.CHECKOUT_ADDRESS_CHOSEN, null);
+            HashMap<String, String> map = new HashMap<>();
+            SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            map.put(TrackEventkeys.POTENTIAL_ORDER, prefer.getString(Constants.POTENTIAL_ORDER_ID, null));
+            trackEvent(TrackingAware.CHECKOUT_ADDRESS_CHOSEN, map);
             launchSlotSelection(address.getId());
         } else {
             showAddressForm(address);

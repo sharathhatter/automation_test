@@ -34,12 +34,14 @@ import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -576,7 +578,9 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware 
                         validateOtp(errorCode, errorMsg);
                     } else {
                         handler.sendEmptyMessage(errorCode);
-                        trackEvent(TrackingAware.MY_ACCOUNT_UPDATE_PROFILE_FAILED, null);
+                        HashMap<String, String> map = new HashMap<>();
+                        map.put(TrackEventkeys.UPDATE_PROFILE_FAILURE_REASON, memberProfileDataCallback.message);
+                        trackEvent(TrackingAware.MY_ACCOUNT_UPDATE_PROFILE_FAILED, map);
                     }
                 }
             }
@@ -585,7 +589,9 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware 
             public void failure(RetrofitError error) {
                 hideProgressDialog();
                 showErrorMsg(getString(R.string.server_error));
-                trackEvent(TrackingAware.MY_ACCOUNT_UPDATE_PROFILE_FAILED, null);
+                HashMap<String, String> map = new HashMap<>();
+                map.put(TrackEventkeys.UPDATE_PROFILE_FAILURE_REASON, error.toString());
+                trackEvent(TrackingAware.MY_ACCOUNT_UPDATE_PROFILE_FAILED, map);
             }
         });
     }

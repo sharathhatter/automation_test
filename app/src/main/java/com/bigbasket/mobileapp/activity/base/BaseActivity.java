@@ -76,7 +76,6 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     public static Typeface faceRobotoRegular;
     protected BigBasketMessageHandler handler;
     protected boolean isActivitySuspended;
-    //protected MarketPlace marketPlace;
     protected COReserveQuantity coReserveQuantity;
 
     @Override
@@ -166,21 +165,21 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     protected void onStart() {
         super.onStart();
         isActivitySuspended = false;
-        MoEHelper.getInstance(this).onStart(this);
+        //MoEHelper.getInstance(this).onStart(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         isActivitySuspended = true;
-        MoEHelper.getInstance(this).onStop(this);
+        //MoEHelper.getInstance(this).onStop(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         isActivitySuspended = true;
-        MoEHelper.getInstance(this).onPause(this);
+        //MoEHelper.getInstance(this).onPause(this);
     }
 
     @Override
@@ -199,7 +198,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         isActivitySuspended = false;
 
         initializeKonotor();
-        MoEHelper.getInstance(this).onResume(this);
+        //MoEHelper.getInstance(this).onResume(this);
     }
 
     public void launchKonotor() {
@@ -623,7 +622,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
             if (!TextUtils.isEmpty(sourceValue)) {
                 analyticsJsonObj.put(Constants.SOURCE_ID, sourceValue);
             }
-            MoEHelper.getInstance(getCurrentActivity()).trackEvent(eventName, analyticsJsonObj);
+            //MoEHelper.getInstance(getCurrentActivity()).trackEvent(eventName, analyticsJsonObj);
         } catch (JSONException e) {
             Log.e("Analytics", "Failed to send event = " + eventName + " to analytics");
         }

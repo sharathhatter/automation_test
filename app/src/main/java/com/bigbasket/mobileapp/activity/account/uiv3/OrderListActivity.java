@@ -29,14 +29,18 @@ import com.bigbasket.mobileapp.apiservice.callbacks.CallbackOrderInvoice;
 import com.bigbasket.mobileapp.apiservice.models.response.OrderListApiResponse;
 import com.bigbasket.mobileapp.interfaces.InvoiceDataAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.model.order.OrderMonthRange;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
+import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -68,12 +72,6 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
             return;
         }
         loadOrders();
-
-        if (orderType.equals(getString(R.string.active_label))) {
-            trackEvent(TrackingAware.ORDER_ACTIVE_ORDERS_SHOWN, null);
-        } else {
-            trackEvent(TrackingAware.ORDER_PAST_ORDERS, null);
-        }
     }
 
     private void loadOrders() {
@@ -99,6 +97,16 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
                                 orderMonthRanges = orderListApiResponse.orderMonthRanges;
                                 selectedMonth = orderListApiResponse.selectedMonth;
                                 renderOrderList();
+                                if (orderType.equals(getString(R.string.active_label))) {
+                                    trackEvent(TrackingAware.ORDER_ACTIVE_ORDERS_SHOWN, null);
+                                } else {
+                                    final ArrayList<String> orderMothRangeArray = new ArrayList<>();
+                                    for(OrderMonthRange orderMonthRange: orderMonthRanges)
+                                        orderMothRangeArray.add(orderMonthRange.getDisplayValue());
+                                    HashMap<String, String> map = new HashMap<>();
+                                    map.put(TrackEventkeys.MONTH_RANGE, UIUtil.strJoin(orderMothRangeArray, ","));
+                                    trackEvent(TrackingAware.ORDER_PAST_ORDERS, map);
+                                }
                                 break;
                             default:
                                 if (orderListApiResponse.errorType.equals(String.valueOf(ApiErrorCodes.INVALID_FIELD))) {

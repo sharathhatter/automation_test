@@ -367,6 +367,7 @@ public class Constants {
     public static final String NULL = "null";
     public static final String EVOUCHER_MSG = "evoucher_msg";
     public static final String EVOUCHER_CODE = "evoucher_code";
+    public static final String EVOUCHER_NAME = "evoucher_name";
 
     public static final String ORDER = "order";
     public static final String WALLET = "wallet";
@@ -573,4 +574,22 @@ public class Constants {
     //Agevalidation
     public static final String CONTINUE_BTN_TAG = "btnContinueTag";
     public static final String UPLOAD_PRESCRIPTION_BTN_TAG = "btnUploadPrescriptionTag";
+
+    public static final String CONTACT_SELECTED = "contactSelected";
+
+    //referral
+    public static final String REFERRAL_EARN_AMOUNT = "ref_amount";
+    public static final String MIN_ORDER_VAL = "min_order_value";
+    public static final String REF_IMAGE_URL = "ref_p_img_url";
+    public static final String REF_LINK_FB = "referral_link_fb";
+    public static final String REF_LINK = "referral_link";
+    public static final String MAX_EMAIL_LEN = "max_email_len";
+    public static final String MAX_MSG_LEN = "max_msg_len";
+    public static final String INCENTIVE_DESC = "incentive_desc";
+    public static final String REFERRAL_MSG = "referral_msg";
+    public static final String INCENTIVE_TYPE = "incentive_type";
+    public static final String MEMBER_CREDIT_AMOUNT = "member_credit_amount";
+    public static final String VOUCHER_CODE = "voucher_code";
+    public static final String VOUCHER_CODE_DESC = "voucher_code_desc";
+
 }

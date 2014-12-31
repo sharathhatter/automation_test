@@ -24,9 +24,11 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import retrofit.Callback;
@@ -175,7 +177,9 @@ public class ChangePasswordFragment extends BaseFragment {
                                     handler.sendEmptyMessage(changePasswordCallback.getErrorTypeAsInt());
                                     break;
                             }
-                            trackEvent(TrackingAware.MY_ACCOUNT_CHANGE_PASSWD_FAILED, null);
+                            HashMap<String,String> map = new HashMap<>();
+                            map.put(TrackEventkeys.CHANGE_PASSWORD_FAILURE_REASON, changePasswordCallback.message);
+                            trackEvent(TrackingAware.MY_ACCOUNT_CHANGE_PASSWD_FAILED, map);
                         }
 
                     }
@@ -189,6 +193,8 @@ public class ChangePasswordFragment extends BaseFragment {
                             return;
                         }
                         handler.handleRetrofitError(error);
+                        HashMap<String,String> map = new HashMap<>();
+                        map.put(TrackEventkeys.CHANGE_PASSWORD_FAILURE_REASON, error.toString());
                         trackEvent(TrackingAware.MY_ACCOUNT_CHANGE_PASSWD_FAILED, null);
                     }
                 });

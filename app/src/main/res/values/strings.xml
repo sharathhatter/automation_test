@@ -459,6 +459,15 @@
     <string name="serviceUnavailable">Service is temporarily unavailable due to an issue.\nPlease try later</string>
     <string name="weAreDown">We are down!</string>
     <string name="why">Why?</string>
-    <string name="whyMsg">Currently we serve in Bangalore, Hyderabad, Mumbai, and Pune.\nThe promotions and pricing are specific to the city.</string>
+    <!--<string name="whyMsg">Currently we serve in Bangalore, Hyderabad, Mumbai, and Pune.\nThe promotions and pricing are specific to the city.</string>-->
 
+    <!-- member referral -->
+    <string name="benefitToYou">Benefit to you</string>
+    <string name="benefitToYourFriend">Benefit for your friends</string>
+    <string name="freeProductRef">Following product will be added to your friend\'s first order absolutely free.</string>
+    <string name="tcForFreeProduct">This product is subject to change depending on when your friend places his/her first order.</string>
+    <string name="referralTC">Terms and Conditions:</string>
+    <string name="howItWorks">How does it work?</string>
+    <string name="HowItWorksStr">When you refer your friends, a registration link gets included in the email that is sent to them.</string>
+    <string name="spreadJoy">We will also send a complimentary gift to your friends along with their first BigBasket order. So, spread the joy.</string>
 </resources>

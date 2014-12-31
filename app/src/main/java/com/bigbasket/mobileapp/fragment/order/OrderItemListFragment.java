@@ -101,8 +101,8 @@ public class OrderItemListFragment extends BaseFragment {
         listView.setDividerHeight(0);
         listView.setDivider(null);
         ActiveOrderRowAdapter activeOrderRowAdapter = new ActiveOrderRowAdapter(cartItemConsolidatedList, getCurrentActivity(),
-                faceRupee, faceRobotoRegular, faceRobotoRegular, faceRobotoRegular, faceRobotoRegular,
-                OrderItemDisplaySource.ORDER_DISPLAY, fulfillmentInfoIdAndIconHashMap, annotationHashMap);
+                this, faceRupee, faceRobotoRegular, OrderItemDisplaySource.ORDER_DISPLAY, true,
+                fulfillmentInfoIdAndIconHashMap, annotationHashMap, null, null);
         listView.setAdapter(activeOrderRowAdapter);
 
         hideProgressView();

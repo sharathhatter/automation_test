@@ -13,5 +13,7 @@ public interface NavigationCodes {
     public static final int CO_RESERVE_QUANTITY_CHECK_OK = 102;
     public static final int ADD_TO_SHOPPINGLIST_OK = 1221;
     public static final int DELETE_FROM_SHOPPING_LIST_OK = 200;
+    public static final int PICK_CONTACT = 1331;
+    public static final int CONTACT_NUMBET_SELECTED = 1332;
 
 }

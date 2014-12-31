@@ -203,6 +203,17 @@
             android:name=".activity.account.uiv3.SignInActivity"
             android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="stateHidden|adjustPan" />
+
+        <activity
+            android:name=".activity.account.uiv3.MemberReferral"
+            android:configChanges="orientation|screenSize"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+
+        <activity
+            android:name=".activity.account.uiv3.ContactListActivity"
+            android:configChanges="orientation|screenSize"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+
         <activity
             android:name=".activity.account.uiv3.SignupActivity"
             android:configChanges="orientation|screenSize"
