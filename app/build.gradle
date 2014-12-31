@@ -32,6 +32,7 @@ dependencies {
     compile project(':androidHorizontalListView')
     compile project(':facebook')
     compile files('libs/gcm.jar')
+    compile files('libs/achartengine-1.1.0.jar')
     compile project(':multipleImagePick')
     compile project(':moEngage')
     compile 'com.google.code.gson:gson:2.3'

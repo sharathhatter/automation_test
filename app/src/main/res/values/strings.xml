@@ -461,4 +461,7 @@
     <string name="why">Why?</string>
     <string name="whyMsg">Currently we serve in Bangalore, Hyderabad, Mumbai, and Pune.\nThe promotions and pricing are specific to the city.</string>
 
+    <string name="spendTrends">Spend Trends</string>
+    <string name="howMuchSpent">How much did I spend on orders?</string>
+    <string name="across">Across</string>
 </resources>

@@ -38,6 +38,7 @@ import com.bigbasket.mobileapp.activity.account.uiv3.OrderListActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.ShopFromOrderFragment;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignupActivity;
+import com.bigbasket.mobileapp.activity.account.uiv3.SpendTrendsActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.adapter.NavigationListAdapter;
@@ -449,6 +450,10 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_CHANGE_PIN);
                 startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 return true;
+            case R.id.action_spend_trends:
+                intent = new Intent(this, SpendTrendsActivity.class);
+                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                return true;
             case R.id.action_logout:
                 if (isSocialLogin()) {
                     onLogoutRequested();
@@ -690,6 +695,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         MenuItem deliveryAddressesMenuItem = menu.findItem(R.id.action_delivery_address);
         MenuItem changePinMenuItem = menu.findItem(R.id.action_change_pin);
         MenuItem logoutMenuItem = menu.findItem(R.id.action_logout);
+        MenuItem spendTrendsMenuItem = menu.findItem(R.id.action_spend_trends);
 
         activeOrderMenuItem.setVisible(false);
         orderHistoryMenuItem.setVisible(false);
@@ -699,6 +705,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         deliveryAddressesMenuItem.setVisible(false);
         changePinMenuItem.setVisible(false);
         logoutMenuItem.setVisible(false);
+        spendTrendsMenuItem.setVisible(false);
     }
 
     @Override
