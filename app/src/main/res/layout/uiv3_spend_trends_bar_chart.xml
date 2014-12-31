@@ -11,13 +11,13 @@
         style="@style/CardViewStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
         app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="@dimen/card_corner_radius"
         app:contentPaddingBottom="@dimen/padding_small"
         app:contentPaddingLeft="@dimen/padding_small"
         app:contentPaddingRight="@dimen/padding_small"
-        app:contentPaddingTop="@dimen/padding_mini">
+        app:contentPaddingTop="@dimen/padding_mini"
+        android:layout_marginTop="?attr/actionBarSize">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -36,7 +36,7 @@
             <LinearLayout
                 android:id="@+id/layoutBarChart"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/bar_chart_height"
                 android:layout_below="@id/lblHowMuchSpend"
                 android:layout_marginTop="@dimen/margin_normal"
                 android:orientation="vertical" />

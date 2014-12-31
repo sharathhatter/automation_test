@@ -12,6 +12,7 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.adapter.TabPagerAdapter;
 import com.bigbasket.mobileapp.fragment.account.SpendTrendsBarChartFragment;
+import com.bigbasket.mobileapp.fragment.account.SpendTrendsPieChartFragment;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
 
 import java.util.ArrayList;
@@ -34,7 +35,8 @@ public class SpendTrendsActivity extends BackButtonActivity {
     private void setTabs(View base) {
         final ArrayList<BBTab> bbTabs = new ArrayList<>();
 
-        bbTabs.add(new BBTab<>(getString(R.string.summary), SpendTrendsBarChartFragment.class, null));
+        bbTabs.add(new BBTab<>(getString(R.string.spent), SpendTrendsBarChartFragment.class, null));
+        bbTabs.add(new BBTab<>(getString(R.string.saved), SpendTrendsPieChartFragment.class, null));
 
         ViewPager viewPager = (ViewPager) base.findViewById(R.id.pager);
         FragmentStatePagerAdapter fragmentStatePagerAdapter = new

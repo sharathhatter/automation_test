@@ -97,9 +97,6 @@ public class SpendTrendsBarChartFragment extends AbstractFragment {
         addSampleData();
         LinearLayout layoutBarChart = (LinearLayout) base.findViewById(R.id.layoutBarChart);
         GraphicalView graphicalView = ChartFactory.getBarChartView(getActivity(), mDataset, mRenderer, BarChart.Type.DEFAULT);
-        LinearLayout.LayoutParams chartParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                (int) getResources().getDimension(R.dimen.bar_chart_height));
-        graphicalView.setLayoutParams(chartParams);
         layoutBarChart.addView(graphicalView);
     }
 
