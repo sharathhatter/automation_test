@@ -96,7 +96,7 @@
 
             <item
                 android:id="@+id/action_spend_trends"
-                android:icon="@drawable/ic_local_shipping_grey600_36dp"
+                android:icon="@drawable/ic_trending_up_white_24dp"
                 android:orderInCategory="9999"
                 android:title="@string/spendTrends"
                 bb:showAsAction="never" />

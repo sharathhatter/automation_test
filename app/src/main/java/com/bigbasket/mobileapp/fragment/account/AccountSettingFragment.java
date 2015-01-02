@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.OrderListActivity;
+import com.bigbasket.mobileapp.activity.account.uiv3.SpendTrendsActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.fragment.order.MemberAddressListFragment;
@@ -91,6 +92,10 @@ public class AccountSettingFragment extends BaseFragment {
                         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_CHANGE_PIN);
                         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                         break;
+                    case 7:
+                        intent = new Intent(getActivity(), SpendTrendsActivity.class);
+                        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                        break;
                 }
             }
         });
@@ -107,7 +112,8 @@ public class AccountSettingFragment extends BaseFragment {
                 getResources().getString(R.string.change_password),
                 getResources().getString(R.string.wallet_activity),
                 getResources().getString(R.string.delivery_address),
-                getResources().getString(R.string.view_edit_pin_label)};
+                getResources().getString(R.string.view_edit_pin_label),
+                getString(R.string.spendTrends)};
         int[] imageArray = {
                 R.drawable.ic_local_shipping_grey600_36dp,
                 R.drawable.history_dark,
@@ -115,7 +121,8 @@ public class AccountSettingFragment extends BaseFragment {
                 R.drawable.ic_lock_grey600_36dp,
                 R.drawable.ic_account_balance_wallet_grey600_36dp,
                 R.drawable.ic_place_grey600_36dp,
-                R.drawable.ic_edit_grey600_36dp};
+                R.drawable.ic_edit_grey600_36dp,
+                R.drawable.ic_trending_up_grey600_36dp};
 
         @Override
         public int getCount() {
