@@ -38,6 +38,7 @@ import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.account.CurrentWalletBalance;
 import com.bigbasket.mobileapp.model.account.UpdatePin;
 import com.bigbasket.mobileapp.model.account.WalletDataItem;
+import com.bigbasket.mobileapp.model.account.spendTrends.SpendTrends;
 import com.bigbasket.mobileapp.model.order.COReserveQuantity;
 import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
@@ -45,6 +46,7 @@ import com.bigbasket.mobileapp.model.order.OrderSummary;
 import com.bigbasket.mobileapp.model.order.PrescriptionId;
 import com.bigbasket.mobileapp.model.product.ProductListData;
 import com.bigbasket.mobileapp.util.Constants;
+import com.google.gson.JsonElement;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -343,4 +345,7 @@ public interface BigBasketApiService {
     @GET("/get-products-for-order/")
     void getProductsForOrder(@Query(Constants.ORDER_ID) String orderId,
                              Callback<ApiResponse<GetProductsForOrderApiResponseContent>> getProductsForOrderApiResponseCallback);
+
+    @GET("/spend-trends/")
+    void spendTrends(Callback<ApiResponse<SpendTrends>> spendTrendsApiResponseCallback);
 }

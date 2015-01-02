@@ -573,4 +573,16 @@ public class Constants {
     //Agevalidation
     public static final String CONTINUE_BTN_TAG = "btnContinueTag";
     public static final String UPLOAD_PRESCRIPTION_BTN_TAG = "btnUploadPrescriptionTag";
+
+    // Spend Trends
+    public static final String RANGE_NAME = "range_name";
+    public static final String RANGE_VAL = "range_value";
+    public static final String CASHBACK_VOUCHERS = "cashback_vouchers";
+    public static final String RANGE_DATA = "range_data";
+    public static final String TOP_CAT_MAP = "top_cat_map";
+    public static final String DEFAULT_RANGE = "default_range";
+    public static final String SPENT_SAVED = "spent_saved";
+    public static final String CATEGORY_SPENT = "category_spent";
+    public static final String DATE_RANGE_MAP = "date_range_map";
+    public static final String ALL_CATEGORIES = "All Categories";
 }

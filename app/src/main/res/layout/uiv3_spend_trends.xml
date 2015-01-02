@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/chartContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -17,38 +16,25 @@
         android:paddingRight="@dimen/padding_normal"
         android:paddingTop="@dimen/padding_small">
 
-        <Spinner
-            android:id="@+id/spinnerMonthRange"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
         <TextView
+            style="?android:attr/spinnerItemStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/across"
-            android:textColor="@color/white"
-            android:textSize="@dimen/primary_text_size" />
+            android:textColor="@color/white" />
 
         <Spinner
             android:id="@+id/spinnerCategories"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_normal" />
 
     </LinearLayout>
 
-    <com.astuetz.PagerSlidingTabStrip
-        android:id="@+id/slidingTabs"
+    <LinearLayout
+        android:id="@+id/layoutSpendTrendsTab"
         android:layout_width="match_parent"
-        android:layout_height="48dip"
-        android:background="@color/uiv3_action_bar_background"
-        android:textColor="@color/white"
-        app:pstsIndicatorColor="@color/white"
-        app:pstsIndicatorHeight="4dp"
-        app:pstsShouldExpand="true" />
-
-    <android.support.v4.view.ViewPager
-        android:id="@+id/pager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
 
 </LinearLayout>
