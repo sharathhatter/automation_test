@@ -12,8 +12,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
@@ -54,7 +56,7 @@ public class HomeFragment extends BaseSectionFragment {
         if (sectionStateRestored) {
             renderHomePage();
         } else {
-            new GetCartCountTask<>(getCurrentActivity()).startTask();
+            new GetCartCountTask<>(getCurrentActivity(), true).startTask();
             requestHomePage();
         }
     }
@@ -75,6 +77,10 @@ public class HomeFragment extends BaseSectionFragment {
 
     private void updateMobileVisitorInfo() {
         // Update app-version number in Mobile Visitor
+        if (!checkInternetConnection()) {
+            displayNetworkError(getString(R.string.deviceOfflineSmallTxt));
+            return;
+        }
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));
@@ -127,7 +133,11 @@ public class HomeFragment extends BaseSectionFragment {
                         } catch (IllegalArgumentException e) {
                             return;
                         }
-                        handler.handleRetrofitError(error);
+                        if (error.getKind() == RetrofitError.Kind.NETWORK) {
+                            displayNetworkError(getString(R.string.networkError));
+                        } else {
+                            handler.handleRetrofitError(error);
+                        }
                     }
                 });
     }
@@ -152,27 +162,46 @@ public class HomeFragment extends BaseSectionFragment {
     }
 
     private void getHomePage() {
+        if (!checkInternetConnection()) {
+            displayNetworkError(getString(R.string.deviceOfflineSmallTxt));
+            return;
+        }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressView();
         bigBasketApiService.loadHomePage(new Callback<ApiResponse<HomePageApiResponseContent>>() {
             @Override
             public void success(ApiResponse<HomePageApiResponseContent> homePageApiResponse, Response response) {
+                if (isSuspended()) return;
                 hideProgressView();
-                mSections = homePageApiResponse.apiResponseContent.sections;
-                ArrayList<DestinationInfo> destinationInfos =
-                        homePageApiResponse.apiResponseContent.destinationInfos;
-                if (destinationInfos != null && destinationInfos.size() > 0) {
-                    mDestinationInfoHashMap = new HashMap<>();
-                    for (DestinationInfo destinationInfo : destinationInfos) {
-                        mDestinationInfoHashMap.put(destinationInfo.getDestinationInfoId(), destinationInfo);
-                    }
+                switch (homePageApiResponse.status) {
+                    case 0:
+                        mSections = homePageApiResponse.apiResponseContent.sections;
+                        ArrayList<DestinationInfo> destinationInfos =
+                                homePageApiResponse.apiResponseContent.destinationInfos;
+                        if (destinationInfos != null && destinationInfos.size() > 0) {
+                            mDestinationInfoHashMap = new HashMap<>();
+                            for (DestinationInfo destinationInfo : destinationInfos) {
+                                mDestinationInfoHashMap.put(destinationInfo.getDestinationInfoId(), destinationInfo);
+                            }
+                        }
+                        renderHomePage();
+                        break;
+                    default:
+                        handler.sendEmptyMessage(homePageApiResponse.status, homePageApiResponse.message,
+                                true);
+                        break;
                 }
-                renderHomePage();
             }
 
             @Override
             public void failure(RetrofitError error) {
+                if (isSuspended()) return;
                 hideProgressView();
+                if (error.getKind() == RetrofitError.Kind.NETWORK) {
+                    displayNetworkError(getString(R.string.networkError));
+                } else {
+                    handler.handleRetrofitError(error);
+                }
             }
         });
     }
@@ -222,6 +251,26 @@ public class HomeFragment extends BaseSectionFragment {
     public void onSaveInstanceState(Bundle outState) {
         retainSectionState(outState);
         super.onSaveInstanceState(outState);
+    }
+
+    private void displayNetworkError(String msg) {
+        if (getActivity() == null) return;
+        LinearLayout contentView = getContentView();
+        if (contentView == null) return;
+        contentView.removeAllViews();
+        View base = getActivity().getLayoutInflater().inflate(R.layout.uiv3_network_error_page, null);
+        TextView txtNetworkError = (TextView) base.findViewById(R.id.txtNetworkError);
+        Button btnRetry = (Button) base.findViewById(R.id.btnRetry);
+        txtNetworkError.setTypeface(faceRobotoRegular);
+        btnRetry.setTypeface(faceRobotoRegular);
+        txtNetworkError.setText(msg);
+        btnRetry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                requestHomePage();
+            }
+        });
+        contentView.addView(base);
     }
 
     @NonNull

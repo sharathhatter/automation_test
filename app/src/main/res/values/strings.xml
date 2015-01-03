@@ -473,4 +473,7 @@
     <string name="spendTrendsEmptyPt4">It helps you understand your overall expenditure by Category.</string>
     <string name="spendTrendsEmpty1">Since you are a first time user with no orders, we do not have data to help you understand the Spent Trends.</string>
     <string name="spendTrendsEmpty2">Please visit this section after a wonderful shopping experience to get more insights!</string>
+    <string name="networkError">Network Error</string>
+    <string name="deviceOfflineSmallTxt">No Internet connection</string>
+    <string name="retry">Retry</string>
 </resources>
