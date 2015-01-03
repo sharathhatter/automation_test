@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bb="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_filter_spend_trends"
+        android:icon="@drawable/ic_settings_white_24dp"
+        android:title="@string/filter"
+        bb:showAsAction="always" />
+</menu>

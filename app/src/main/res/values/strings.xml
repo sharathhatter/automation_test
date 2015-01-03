@@ -463,6 +463,7 @@
 
     <string name="spendTrends">Spend Trends</string>
     <string name="howMuchSpent">How much did I spend on orders?</string>
+    <string name="howMuchSaved">How much did I saved on orders?</string>
     <string name="across">Across</string>
     <string name="spent">Spent</string>
     <string name="saved">Saved</string>
