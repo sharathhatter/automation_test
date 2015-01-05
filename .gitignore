@@ -18,5 +18,5 @@ floatingActionButton/build/*
 *.iml
 import-summary.txt
 gradle/local.properties
-moEngage/build/*
+moEngageSDK/build/*
 androidViewPagerIndicator/build/*

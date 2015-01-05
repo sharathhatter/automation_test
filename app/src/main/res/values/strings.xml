@@ -203,7 +203,7 @@
     <string name="patientName">Patient Name</string>
     <string name="doctorName">Doctor Name</string>
     <string name="prescriptionName">Prescription Name</string>
-    <string name="imageUpload">Upload prescription image</string>
+    <string name="imageUpload">Attach prescription image</string>
     <string name="dateCreatedList">Date Created:</string>
     <string name="patientNameList">Patient Name:</string>
     <string name="doctorNameList">Doctor Name:</string>

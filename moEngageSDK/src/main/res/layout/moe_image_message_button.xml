@@ -25,6 +25,7 @@
     	android:adjustViewBounds="true"
 		android:cropToPadding="false"
 		android:scaleType="fitXY"
+		android:layout_gravity="center_horizontal"
     />
     
     
