@@ -842,15 +842,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                         }
                         break;
                     case Constants.CART:
-//                        Intent intent = new Intent(getCurrentActivity(), MemberReferral.class);
-//                        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                        if (AuthParameters.getInstance(getCurrentActivity()).isAuthTokenEmpty()) {
-                            showAlertDialog(null,
-                                    "Please sign-in to view your accounts page", NavigationCodes.GO_TO_LOGIN);
-                        } else {
-                            addToMainLayout(new MemberReferralTCFragment());
-                        }
-                        //addToMainLayout(new ShowCartFragment());
+                        addToMainLayout(new ShowCartFragment());
                         break;
                     case Constants.FROM_ACCOUNT_PAGE:
                         if (AuthParameters.getInstance(getCurrentActivity()).isAuthTokenEmpty()) {
