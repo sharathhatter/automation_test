@@ -585,4 +585,5 @@ public class Constants {
     public static final String CATEGORY_SPENT = "category_spent";
     public static final String DATE_RANGE_MAP = "date_range_map";
     public static final String ALL_CATEGORIES = "All Categories";
+    public static final String SUMMARY = "summary";
 }

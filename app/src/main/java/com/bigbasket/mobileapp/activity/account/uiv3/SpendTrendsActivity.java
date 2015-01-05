@@ -18,9 +18,11 @@ import com.bigbasket.mobileapp.adapter.TabPagerAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.fragment.account.spendTrends.CategorySpentFragment;
 import com.bigbasket.mobileapp.fragment.account.spendTrends.SavedFragment;
 import com.bigbasket.mobileapp.fragment.account.spendTrends.SpentFragment;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
+import com.bigbasket.mobileapp.model.account.spendTrends.SpendTrendSummary;
 import com.bigbasket.mobileapp.model.account.spendTrends.SpendTrends;
 import com.bigbasket.mobileapp.model.account.spendTrends.SpendTrendsCategoryExpRangeData;
 import com.bigbasket.mobileapp.model.account.spendTrends.SpendTrendsCategoryExpRangeInfo;
@@ -59,7 +61,7 @@ public class SpendTrendsActivity extends BaseActivity {
         getSupportActionBar().setTitle(getString(R.string.spendTrends));
         mDrawerLayout = (BBDrawerLayout) findViewById(R.id.drawer_layout);
 
-        loadSpendTrends();
+        loadSpendTrends(savedInstanceState);
     }
 
     @Override
@@ -95,7 +97,14 @@ public class SpendTrendsActivity extends BaseActivity {
 
     }
 
-    private void loadSpendTrends() {
+    private void loadSpendTrends(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            mSpendTrends = savedInstanceState.getParcelable(Constants.SPENT_SAVED);
+            if (mSpendTrends != null) {
+                renderSpendTrends();
+                return;
+            }
+        }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.spendTrends(new Callback<ApiResponse<SpendTrends>>() {
@@ -126,7 +135,7 @@ public class SpendTrendsActivity extends BaseActivity {
                 } catch (IllegalArgumentException e) {
                     return;
                 }
-                handler.handleRetrofitError(error);
+                handler.handleRetrofitError(error, true);
             }
         });
     }
@@ -193,20 +202,33 @@ public class SpendTrendsActivity extends BaseActivity {
         ArrayList<SpendTrendsCategoryExpRangeData> filteredCategoryExpRangeData =
                 SpendTrendsCategoryExpRangeInfo.getFilteredCategoryExpRangeData(selectedCategoryExpRangeInfo, categoryName);
 
-        displayChartFragments(filteredSpentSavedRangeData, filteredCategoryExpRangeData, categoryName);
+        SpendTrendSummary selectedSummary = mSpendTrends.getSummary().
+                get(selectedSpendTrendsDateRange.getRangeName()).get(categoryName);
+        displayChartFragments(filteredSpentSavedRangeData, filteredCategoryExpRangeData, categoryName,
+                selectedSummary, selectedSpendTrendsDateRange.getRangeVal());
     }
 
     private void displayChartFragments(ArrayList<SpendTrendsRangeData> filteredSpentSavedRangeData,
                                        ArrayList<SpendTrendsCategoryExpRangeData> filteredCategoryExpRangeData,
-                                       String categoryName) {
+                                       String categoryName, SpendTrendSummary selectedSummary,
+                                       int rangeVal) {
         View base = getLayoutInflater().inflate(R.layout.uiv3_spend_trends_tab, null);
 
         final ArrayList<BBTab> bbTabs = new ArrayList<>();
-        Bundle spentBundle = new Bundle();
-        spentBundle.putParcelableArrayList(Constants.RANGE_DATA, filteredSpentSavedRangeData);
-        spentBundle.putString(Constants.TOP_CATEGORY, categoryName);
-        bbTabs.add(new BBTab<>(getString(R.string.spent), SpentFragment.class, spentBundle));
-        bbTabs.add(new BBTab<>(getString(R.string.saved), SavedFragment.class, spentBundle));
+        Bundle spentSavedBundle = new Bundle();
+        spentSavedBundle.putParcelableArrayList(Constants.RANGE_DATA, filteredSpentSavedRangeData);
+        spentSavedBundle.putString(Constants.TOP_CATEGORY, categoryName);
+        spentSavedBundle.putParcelable(Constants.SUMMARY, selectedSummary);
+        spentSavedBundle.putInt(Constants.RANGE_VAL, rangeVal);
+
+        Bundle categorySpentBundle = new Bundle();
+        categorySpentBundle.putParcelableArrayList(Constants.CATEGORY_SPENT, filteredCategoryExpRangeData);
+        categorySpentBundle.putString(Constants.TOP_CATEGORY, categoryName);
+        categorySpentBundle.putParcelable(Constants.SUMMARY, selectedSummary);
+
+        bbTabs.add(new BBTab<>(getString(R.string.spent), SpentFragment.class, spentSavedBundle));
+        bbTabs.add(new BBTab<>(getString(R.string.saved), SavedFragment.class, spentSavedBundle));
+        bbTabs.add(new BBTab<>(getString(R.string.saved), CategorySpentFragment.class, categorySpentBundle));
 
         ViewPager viewPager = (ViewPager) base.findViewById(R.id.pager);
         FragmentStatePagerAdapter fragmentStatePagerAdapter = new
@@ -230,5 +252,13 @@ public class SpendTrendsActivity extends BaseActivity {
         mDrawerLayout.closeDrawer(Gravity.RIGHT);
         renderCharts(mSpinnerMonthRange.getSelectedItemPosition(),
                 mSpinnerCategories.getSelectedItemPosition());
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        if (mSpendTrends != null) {
+            outState.putParcelable(Constants.SPENT_SAVED, mSpendTrends);
+        }
+        super.onSaveInstanceState(outState);
     }
 }

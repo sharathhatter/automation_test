@@ -476,4 +476,9 @@
     <string name="networkError">Network Error</string>
     <string name="deviceOfflineSmallTxt">No Internet connection</string>
     <string name="retry">Retry</string>
+    <string name="amountInRs">Amount in Rs</string>
+    <string name="whatCategoryMoneySpent">What categories did I spend money on?</string>
+    <string name="amountSpent">Total Amount Spent</string>
+    <string name="amountSaved">Total Amount Saved</string>
+    <string name="amountSpentPerMonth">Amount Spent per month</string>
 </resources>

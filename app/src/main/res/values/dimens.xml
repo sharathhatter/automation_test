@@ -60,5 +60,5 @@
     <dimen name="card_img_content_margin">8dp</dimen>
     <dimen name="bb_button_text_size">@dimen/primary_text_size</dimen>
     <dimen name="vertical_separator_line">25dp</dimen>
-    <dimen name="bar_chart_height">300dp</dimen>
+    <dimen name="bar_chart_height">350dp</dimen>
 </resources>

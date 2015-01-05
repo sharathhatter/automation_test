@@ -27,12 +27,15 @@ public class SpendTrends implements Parcelable {
     @SerializedName(Constants.TOP_CAT_MAP)
     private HashMap<String, String> topCategoryNameSlugMap;
 
+    private HashMap<String, HashMap<String, SpendTrendSummary>> summary;
+
     public SpendTrends(Parcel source) {
         defaultRange = source.readParcelable(SpendTrends.class.getClassLoader());
         spentSavedRangeInfos = new ArrayList<>();
         source.readTypedList(spentSavedRangeInfos, SpendTrendsSpentSavedRangeInfo.CREATOR);
         categoryExpRangeInfos = new ArrayList<>();
         source.readTypedList(categoryExpRangeInfos, SpendTrendsCategoryExpRangeInfo.CREATOR);
+        dateRanges = new ArrayList<>();
         source.readTypedList(dateRanges, SpendTrendsDateRange.CREATOR);
         int mapSize = source.readInt();
         topCategoryNameSlugMap = new HashMap<>();
@@ -89,5 +92,9 @@ public class SpendTrends implements Parcelable {
 
     public ArrayList<SpendTrendsDateRange> getDateRanges() {
         return dateRanges;
+    }
+
+    public HashMap<String, HashMap<String, SpendTrendSummary>> getSummary() {
+        return summary;
     }
 }
