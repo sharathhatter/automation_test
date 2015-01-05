@@ -209,7 +209,7 @@ public class UIUtil {
         editor.putString(Constants.MEMBER_FULL_NAME_KEY, userDetails.fullName);
         editor.putString(Constants.MID_KEY, mId);
 
-        MoEHelper moEHelper = MoEHelper.getInstance(ctx);
+        MoEHelper moEHelper = new MoEHelper(ctx);
         moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_UNIQUE_ID, mId);
         moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_EMAIL, email);
         moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_MOBILE, userDetails.mobileNumber);

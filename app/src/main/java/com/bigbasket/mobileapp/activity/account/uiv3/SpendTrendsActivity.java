@@ -94,7 +94,7 @@ public class SpendTrendsActivity extends BaseActivity {
 
     @Override
     public void onChangeTitle(String title) {
-
+        getSupportActionBar().setTitle(getString(R.string.spendTrends));
     }
 
     private void loadSpendTrends(Bundle savedInstanceState) {

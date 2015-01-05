@@ -90,22 +90,27 @@ public abstract class BaseSpendTrendsFragment extends AbstractFragment {
         // Creating XYMultipleSeriesRenderer to customize the whole graph
         XYMultipleSeriesRenderer multipleSeriesRenderer = new XYMultipleSeriesRenderer();
         multipleSeriesRenderer.setXLabels(0);
-        multipleSeriesRenderer.setChartTitle(chartTitle);
         multipleSeriesRenderer.setXTitle(xTitle);
         multipleSeriesRenderer.setYTitle(yTitle);
         multipleSeriesRenderer.setApplyBackgroundColor(true);
         multipleSeriesRenderer.setBackgroundColor(Color.WHITE);
         multipleSeriesRenderer.setMarginsColor(Color.WHITE);
-        multipleSeriesRenderer.setLabelsColor(Color.BLACK);
+        multipleSeriesRenderer.setLabelsColor(getResources().getColor(R.color.uiv3_primary_text_color));
         multipleSeriesRenderer.setTextTypeface(faceRobotoRegular);
-        multipleSeriesRenderer.setXLabelsColor(Color.BLACK);
-        multipleSeriesRenderer.setYLabelsColor(0, Color.BLACK);
+        multipleSeriesRenderer.setXLabelsColor(getResources().getColor(R.color.uiv3_primary_text_color));
+        multipleSeriesRenderer.setYLabelsColor(0, getResources().getColor(R.color.uiv3_primary_text_color));
         multipleSeriesRenderer.setBarSpacing(2);
         multipleSeriesRenderer.setChartTitleTextSize(getResources().getDimension(R.dimen.primary_text_size));
+        multipleSeriesRenderer.setMargins(new int[]{0, (int) getResources().getDimension(R.dimen.margin_normal), 0, 0});
+        multipleSeriesRenderer.setZoomButtonsVisible(true);
         for (int i = 0; i < xAxisLabels.length; i++) {
             multipleSeriesRenderer.addXTextLabel(i, xAxisLabels[i]);
         }
         multipleSeriesRenderer.addSeriesRenderer(seriesRenderer);
+
+        TextView txtChartTitle = (TextView) base.findViewById(R.id.txtChartTile);
+        txtChartTitle.setTypeface(faceRobotoRegular);
+        txtChartTitle.setText(chartTitle);
 
         GraphicalView graphicalView = ChartFactory.getBarChartView(getActivity(), dataset,
                 multipleSeriesRenderer, BarChart.Type.DEFAULT);

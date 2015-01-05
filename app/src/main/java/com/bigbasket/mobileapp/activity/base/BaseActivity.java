@@ -75,6 +75,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     protected boolean isActivitySuspended;
     //protected MarketPlace marketPlace;
     protected COReserveQuantity coReserveQuantity;
+    private MoEHelper moEHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +85,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
 
         faceRupee = Typeface.createFromAsset(getAssets(), "Rupee.ttf");
         faceRobotoRegular = Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");
+        moEHelper = new MoEHelper(getCurrentActivity());
     }
 
     @Override
@@ -163,21 +165,21 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     protected void onStart() {
         super.onStart();
         isActivitySuspended = false;
-        MoEHelper.getInstance(this).onStart(this);
+        moEHelper.onStart(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         isActivitySuspended = true;
-        MoEHelper.getInstance(this).onStop(this);
+        moEHelper.onStop(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         isActivitySuspended = true;
-        MoEHelper.getInstance(this).onPause(this);
+        moEHelper.onPause(this);
     }
 
     @Override
@@ -196,7 +198,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         isActivitySuspended = false;
 
         initializeKonotor();
-        MoEHelper.getInstance(this).onResume(this);
+        moEHelper.onResume(this);
     }
 
     public void launchKonotor() {
@@ -606,7 +608,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
             if (!TextUtils.isEmpty(sourceValue)) {
                 analyticsJsonObj.put(Constants.SOURCE_ID, sourceValue);
             }
-            MoEHelper.getInstance(getCurrentActivity()).trackEvent(eventName, analyticsJsonObj);
+            moEHelper.trackEvent(eventName, analyticsJsonObj);
         } catch (JSONException e) {
             Log.e("Analytics", "Failed to send event = " + eventName + " to analytics");
         }
