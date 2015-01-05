@@ -174,7 +174,8 @@ public class ActiveOrderRowAdapter extends android.widget.BaseAdapter {
     }
 
     private View getFulfillmentInfo(Object obj) {
-        ShowFulfillmentInfo showFulfillmentInfo = new ShowFulfillmentInfo((FulfillmentInfo) obj, baseActivity);
+        ShowFulfillmentInfo showFulfillmentInfo = new ShowFulfillmentInfo((FulfillmentInfo) obj,
+                baseActivity, faceRobotoRegular);
         View view = showFulfillmentInfo.showFulfillmentInfo(true, true);
         if (view == null) {
         } else {

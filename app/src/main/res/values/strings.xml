@@ -250,7 +250,7 @@
     <string name="confirmMobileNumber">Confirm your mobile number</string>
     <string name="txtConfirm">CONFIRM</string>
     <string name="txtResendCodeStr">RESEND</string>
-    <string name="headerMsgForMobileConfirm">Enter the confirmation code that was texted to your phone</string>
+    <string name="headerMsgForMobileConfirm">Enter the confirmation code that was texted to your phone.</string>
     <string name="txtConfirmNumberHint">Enter code</string>
     <string name="pleaseEnterTxt">Please enter confirmation code</string>
     <string name="contactNoMin10">Enter a valid 10 digit mobile number</string>
@@ -463,6 +463,7 @@
 
     <!-- member referral -->
     <string name="benefitToYou">Benefit to you</string>
+    <string name="inviteFriend">Invite friends</string>
     <string name="benefitToYourFriend">Benefit for your friends</string>
     <string name="freeProductRef">Following product will be added to your friend\'s first order absolutely free.</string>
     <string name="tcForFreeProduct">This product is subject to change depending on when your friend places his/her first order.</string>

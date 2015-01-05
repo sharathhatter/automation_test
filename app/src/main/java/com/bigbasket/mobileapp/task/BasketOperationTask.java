@@ -188,7 +188,7 @@ public class BasketOperationTask<T> {
         eventAttribs.put(TrackEventkeys.PRODUCT_BRAND, product.getBrand());
         String desc = product.getDescription();
         if (!TextUtils.isEmpty(product.getPackageDescription()))
-            desc = " " + product.getPackageDescription();
+            desc = " " + product.getWeightAndPackDesc();
         eventAttribs.put(TrackEventkeys.PRODUCT_DESC, desc);
         eventAttribs.put(TrackEventkeys.PRODUCT_TOP_CAT, product.getTopLevelCategoryName());
         eventAttribs.put(TrackEventkeys.PRODUCT_CAT, product.getProductCategoryName());

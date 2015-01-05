@@ -7,7 +7,7 @@ public interface TrackingAware {
     public static final String BASKET_INCREMENT = "Basket.Increment";
     public static final String BASKET_DECREMENT = "Basket.Decrement";
     public static final String BASKET_REMOVE = "Basket.Remove";
-    public static final String BASKET_ADD_PROMO_BUNDLE = "Basket.Add Promo Bundle";
+    public static final String BASKET_ADD_PROMO_BUNDLE = "Basket.Add Promo Bundle"; //todo
     public static final String BASKET_EMPTY = "Basket.Empty";
     public static final String BASKET_VIEW = "Basket.View";
 

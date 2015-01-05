@@ -24,7 +24,7 @@ import java.util.ArrayList;
 /**
  * Created by jugal on 23/12/14.
  */
-public class MemberReferral extends BackButtonActivity {
+public class MemberReferralOptions extends BackButtonActivity {
 
     private String text = "Jugal Joshi has referred you for https://bigbasket.com";
     private static final ArrayList<Integer> referralImageArrayList = new ArrayList<>();

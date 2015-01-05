@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.fragment.account;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -10,11 +11,13 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.account.uiv3.MemberReferralOptions;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
@@ -25,6 +28,7 @@ import com.bigbasket.mobileapp.fragment.product.ProductDetailFragment;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import retrofit.Callback;
@@ -121,8 +125,8 @@ public class MemberReferralTCFragment extends BaseFragment {
                     prefix3 += " worth `";
                     String refAmountStr3 = memberReferralProduct.getMinorderVal() + "";
                     int prefixLen3 = prefix3.length();
-                    SpannableString spannableOrderWorth = new SpannableString(prefix3 + refAmountStr3 +
-                            spannableRefAmount2);
+                    SpannableString spannableOrderWorth = new SpannableString(spannableRefAmount2
+                            +prefix3 + refAmountStr3);
                     spannableOrderWorth.setSpan(new CustomTypefaceSpan("", faceRupee), prefixLen3 - 1,
                             prefixLen3, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
                     txtPara6.setText(spannableOrderWorth);
@@ -152,37 +156,49 @@ public class MemberReferralTCFragment extends BaseFragment {
                 }else {
                     txtPara6.setText(giftMsgString);
                 }
+                txtPara7.setVisibility(View.GONE);
             }
-        }
 
-        ImageView imgFreeProduct = (ImageView)referralView.findViewById(R.id.imgFreeProduct);
-        if(!TextUtils.isEmpty(memberReferralProduct.getRefImageUrl())){
-        ImageLoader.getInstance().displayImage(memberReferralProduct.getRefImageUrl(), imgFreeProduct);
-        }else {
-            imgFreeProduct.setImageResource(R.drawable.noimage);
-        }
-        imgFreeProduct.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ProductDetailFragment productDetailFragment = new ProductDetailFragment();
-                Bundle bundle = new Bundle();
-                bundle.putString(Constants.SKU_ID, memberReferralProduct.getSkuId());
-                productDetailFragment.setArguments(bundle);
-                changeFragment(productDetailFragment);
+            ImageView imgFreeProduct = (ImageView)referralView.findViewById(R.id.imgFreeProduct);
+            if(!TextUtils.isEmpty(memberReferralProduct.getRefImageUrl())){
+            ImageLoader.getInstance().displayImage(memberReferralProduct.getRefImageUrl(), imgFreeProduct);
+            }else {
+                imgFreeProduct.setImageResource(R.drawable.noimage);
             }
-        });
+            imgFreeProduct.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ProductDetailFragment productDetailFragment = new ProductDetailFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putString(Constants.SKU_ID, memberReferralProduct.getSkuId());
+                    productDetailFragment.setArguments(bundle);
+                    changeFragment(productDetailFragment);
+                }
+            });
 
-        LinearLayout layoutInnerTC = (LinearLayout) referralView.findViewById(R.id.layoutInnerTC);
-        int i = 1;
-        for(String termAndCondition : memberReferralProduct.getTermAndCondition()){
-            TextView txtTermCondition = new TextView(getActivity());
-            txtTermCondition.setTextSize(getResources().getDimension(R.dimen.very_small_text_size));
-            txtTermCondition.setText(i+". "+termAndCondition);
-            layoutInnerTC.addView(txtTermCondition);
-            i++;
+            LinearLayout layoutInnerTC = (LinearLayout) referralView.findViewById(R.id.layoutInnerTC);
+            int i = 1;
+            for(String termAndCondition : memberReferralProduct.getTermAndCondition()){
+                TextView txtTermCondition = new TextView(getActivity());
+                txtTermCondition.setTextSize(10);
+                txtTermCondition.setText(i+". "+termAndCondition);
+                layoutInnerTC.addView(txtTermCondition);
+                i++;
+            }
+
+            contentView.addView(referralView);
+
+
+            Button btnRefFriend = (Button)referralView.findViewById(R.id.btnRefFriend);
+            btnRefFriend.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getCurrentActivity(), MemberReferralOptions.class);
+                    startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                }
+            });
         }
 
-        contentView.addView(referralView);
     }
 
     @Override

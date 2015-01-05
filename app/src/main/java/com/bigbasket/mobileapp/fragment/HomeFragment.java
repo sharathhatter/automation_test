@@ -21,6 +21,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.HomePageApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateVersionInfoApiResponseContent;
 import com.bigbasket.mobileapp.fragment.base.BaseSectionFragment;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -79,17 +80,19 @@ public class HomeFragment extends BaseSectionFragment {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.updateVersionNumber(preferences.getString(Constants.DEVICE_ID, null),
-                getAppVersion(), new Callback<ApiResponse<UpdateVersionInfoApiResponseContent>>() {
+                getAppVersion(), new Callback<OldApiResponse<UpdateVersionInfoApiResponseContent>>() {
                     @Override
-                    public void success(ApiResponse<UpdateVersionInfoApiResponseContent> updateVersionInfoApiResponse, Response response) {
+                    public void success(OldApiResponse<UpdateVersionInfoApiResponseContent> updateVersionInfoApiResponse, Response response) {
                         if (isSuspended()) return;
                         try {
                             hideProgressDialog();
                         } catch (IllegalArgumentException e) {
                             return;
                         }
+                        getHomePage();
+                        /*
                         switch (updateVersionInfoApiResponse.status) {
-                            case 0:
+                            case Constants.OK:
                                 SharedPreferences.Editor editor =
                                         PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
                                 editor.putString(Constants.VERSION_NAME, getAppVersion());
@@ -117,6 +120,7 @@ public class HomeFragment extends BaseSectionFragment {
                                 getActivity().finish();
                                 break;
                         }
+                        */
                     }
 
                     @Override

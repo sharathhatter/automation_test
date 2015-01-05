@@ -1,6 +1,5 @@
 package com.bigbasket.mobileapp.apiservice;
 
-import com.bigbasket.mobileapp.activity.account.uiv3.MemberReferral;
 import com.bigbasket.mobileapp.apiservice.callbacks.CallbackGetAreaInfo;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.AutoSearchApiResponseContent;
@@ -319,7 +318,7 @@ public interface BigBasketApiService {
     @POST("/update-version-number/")
     void updateVersionNumber(@Field(Constants.DEVICE_ID) String deviceId,
                              @Field(Constants.APP_VERSION) String appVersion,
-                             Callback<ApiResponse<UpdateVersionInfoApiResponseContent>> updateVersionInfoApiResponseCallback);
+                             Callback<OldApiResponse<UpdateVersionInfoApiResponseContent>> updateVersionInfoApiResponseCallback);
 
     @GET("/category-landing/")
     void getSubCategoryData(@Query(Constants.CATEGORY_SLUG) String categorySlug,

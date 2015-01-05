@@ -207,18 +207,22 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity {
                             break;
                     }
                     HashMap<String, String> map = new HashMap<>();
-                    map.put(TrackEventkeys.LOGIN_FAILURE_REASON, loginApiResponse.message);
+
                     switch (loginType) {
                         case SocialAccount.FB:
+                            map.put(TrackEventkeys.FB_LOGIN_FAILURE_REASON, loginApiResponse.message);
                             trackEvent(TrackingAware.MY_ACCOUNT_FACEBOOK_LOGIN_FAILED, map);
                             break;
                         case SocialAccount.GP:
+                            map.put(TrackEventkeys.GOOGLE_LOGIN_FAILURE_REASON, loginApiResponse.message);
                             trackEvent(TrackingAware.MY_ACCOUNT_GOOGLE_LOGIN_FAILED, map);
                             break;
                         case Constants.SIGN_IN_ACCOUNT_TYPE:
+                            map.put(TrackEventkeys.LOGIN_FAILURE_REASON, loginApiResponse.message);
                             trackEvent(TrackingAware.MY_ACCOUNT_LOGIN_FAILED, map);
                             break;
                         case Constants.REGISTER_ACCOUNT_TYPE:
+                            map.put(TrackEventkeys.REGISTRATION_FAILURE_REASON, loginApiResponse.message);
                             trackEvent(TrackingAware.MY_ACCOUNT_REGISTRATION_FAILED, map);
                             break;
                         default:
@@ -232,23 +236,26 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity {
         public void failure(RetrofitError error) {
             showProgress(false);
             HashMap<String, String> map = new HashMap<>();
-            map.put(TrackEventkeys.LOGIN_FAILURE_REASON, error.toString());
             handler.handleRetrofitError(error);
             switch (loginType) {
                 case SocialAccount.FB:
+                    map.put(TrackEventkeys.FB_LOGIN_FAILURE_REASON, error.toString());
                     trackEvent(TrackingAware.MY_ACCOUNT_FACEBOOK_LOGIN_FAILED, map);
                     break;
                 case SocialAccount.GP:
+                    map.put(TrackEventkeys.GOOGLE_LOGIN_FAILURE_REASON, error.toString());
                     trackEvent(TrackingAware.MY_ACCOUNT_GOOGLE_LOGIN_FAILED, map);
                     break;
                 case Constants.SIGN_IN_ACCOUNT_TYPE:
+                    map.put(TrackEventkeys.LOGIN_FAILURE_REASON, error.toString());
                     trackEvent(TrackingAware.MY_ACCOUNT_LOGIN_FAILED, map);
                     break;
                 case Constants.REGISTER_ACCOUNT_TYPE:
+                    map.put(TrackEventkeys.REGISTRATION_FAILURE_REASON, error.toString());
                     trackEvent(TrackingAware.MY_ACCOUNT_REGISTRATION_FAILED, map);
                     break;
                 default:
-                    throw new AssertionError("Login or register type error while failure");
+                    throw new AssertionError("Login or register type error while success(status=ERROR)");
             }
         }
     }

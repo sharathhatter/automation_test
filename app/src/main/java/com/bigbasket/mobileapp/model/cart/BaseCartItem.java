@@ -1,11 +1,12 @@
 package com.bigbasket.mobileapp.model.cart;
 
+import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
-public abstract class BaseCartItem implements Parcelable {
+public class BaseCartItem implements Parcelable {
     private double saving;
     private double mrp;
 
@@ -14,6 +15,36 @@ public abstract class BaseCartItem implements Parcelable {
 
     protected BaseCartItem() {
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeDouble(saving);
+        dest.writeDouble(mrp);
+        dest.writeDouble(salePrice);
+    }
+
+    BaseCartItem(Parcel source) {
+        saving = source.readDouble();
+        mrp = source.readDouble();
+        salePrice = source.readDouble();
+    }
+
+    public static final Parcelable.Creator<BaseCartItem> CREATOR = new Parcelable.Creator<BaseCartItem>() {
+        @Override
+        public BaseCartItem createFromParcel(Parcel source) {
+            return new BaseCartItem(source);
+        }
+
+        @Override
+        public BaseCartItem[] newArray(int size) {
+            return new CartItem[size];
+        }
+    };
 
     protected BaseCartItem(double saving, double mrp, double salePrice) {
         this.saving = saving;

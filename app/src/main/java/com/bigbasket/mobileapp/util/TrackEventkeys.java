@@ -5,53 +5,61 @@ package com.bigbasket.mobileapp.util;
  */
 public class TrackEventkeys {
 
-    public static final String PRODUCT_ID = "sku_id";
+    public static final String PRODUCT_ID = "skuId";
     public static final String PRODUCT_BRAND = "brand";
-    public static final String PRODUCT_DESC = "sku_description";
-    public static final String PRODUCT_TOP_CAT = "top_level_category";
+    public static final String PRODUCT_DESC = "description";
+    public static final String PRODUCT_TOP_CAT = "top level category";
     public static final String PRODUCT_CAT = "category";
     public static final String QUERY = "query";
-    public static final String DATE_FROM = "date_from";
-    public static final String DATE_TO = "date_to";
-    public static final String SHOPPING_LIST_NAME = "shopping_list_name";
+    public static final String DATE_FROM = "date from";
+    public static final String DATE_TO = "date to";
+
+    public static final String SHOPPING_LIST_NAME = "shopping list name";
     public static final String ADD_ALL_PRODUCTS = "add_all";
     public static final String ORDER_DETAILS = "order_details";
-    public static final String POTENTIAL_ORDER = "potential_order";
-    public static final String PAYMENT_MODE = "payment_mode";
-    public static final String VOUCHER_NAME = "voucher_name";
-    public static final String VOUCHER_FAILURE_REASON = "voucher_failure_reason";
-    public static final String PAYMENT_GATEWAY_FAILURE_REASON = "payment_gateway_failure_reason";
-    public static final String EXPECTED_AMOUNT = "expected_amount";
-    public static final String ORDER_AMOUNT = "order_amount";
-    public static final String ORDER_ID = "order_id";
-    public static final String ORDER_NUMBER = "order_number";
-    public static final String ORDER_TYPE = "order_type";
-    public static final String MONTH_RANGE = "month_range";
-    public static final String CHANGE_PASSWORD_FAILURE_REASON = "change_password_failure_reason";
-    public static final String UPDATE_PROFILE_FAILURE_REASON = "update_profile_failure_reason";
-    public static final String UPDATE_PIN_FAILURE_REASON = "update_pin_failure_reason";
-    public static final String WALLET_ACTIVITY_FAILURE_REASON = "wallet_activity_failure_reason";
-    public static final String LOGIN_FAILURE_REASON = "login_failure_reason";
+
+    public static final String POTENTIAL_ORDER = "potential order";
+    public static final String PAYMENT_MODE = "payment mode";
+    public static final String VOUCHER_NAME = "voucher name";
+    public static final String VOUCHER_FAILURE_REASON = "voucher failure reason";
+    public static final String PAYMENT_GATEWAY_FAILURE_REASON = "payment gateway failure reason";
+    public static final String EXPECTED_AMOUNT = "expected amount";
+    public static final String ORDER_AMOUNT = "order amount";
+    public static final String ORDER_ID = "order id";
+    public static final String ORDER_NUMBER = "order number";
+    public static final String ORDER_TYPE = "order type";
+    public static final String MONTH_RANGE = "month range";
+    public static final String CHANGE_PASSWORD_FAILURE_REASON = "change password failure reason";
+    public static final String UPDATE_PROFILE_FAILURE_REASON = "update profile failure reason";
+    public static final String UPDATE_PIN_FAILURE_REASON = "update pin failure reason";
+
+    public static final String WALLET_ACTIVITY_FAILURE_REASON = "wallet activity failure reason";
+    public static final String REGISTRATION_FAILURE_REASON = "registration failure reason";
+    public static final String LOGIN_FAILURE_REASON = "login failure reason";
+    public static final String GOOGLE_LOGIN_FAILURE_REASON = "google plus login failure reason";
+    public static final String FB_LOGIN_FAILURE_REASON = "facebook login failure reason";
     public static final String PROMO_NAME = "promo_name";
     public static final String PROMO_SET_NAME = "promo_set_name";
     public static final String SHOP_FROM_PAST_ORDER= "shop_from_past_order";
+    public static final String NEW_ACCOUNT = "new account created";
+    public static final String EXISTING_ACCOUNT_EMAIL = "existing account email ";
 
 
     // source name
-    public static final String BROWSE_BY_OFFERS = "of";
-    public static final String SHOPPING_LIST = "sl";
-    public static final String SYSTEM_SHOPPING_LIST = "ssl";
-    public static final String PRODUCT_DETAIL = "pd";
-    public static final String PROMO_CAT = "promo_cat";
-    public static final String MARKET_QC = "market_qc";
-    public static final String VIEW_BASKET = "vb";
-    public static final String CATEGORY_LANDING = "cl";
-    public static final String PRODUCT_SEARCH = "ps";
-    public static final String SMART_BASKET = "sb";
-    public static final String SCRATCH_LIST = "scl";
-    public static final String SYSTEM_SCRATCH_LIST = "sscl";
-    public static final String PROMO_DETAIL = "promo_detail";
-    public static final String PAST_ORDER = "po";
-    public static final String SHOP_IN_SHOP = "sis";
+    public static final String BROWSE_BY_OFFERS = "offer";
+    public static final String SHOPPING_LIST = "shopping list";
+    public static final String SYSTEM_SHOPPING_LIST = "system shopping list";
+    public static final String PRODUCT_DETAIL = "product detail";
+    public static final String PROMO_CAT = "promo category";
+    public static final String MARKET_QC = "market qc";
+    public static final String VIEW_BASKET = "view basket";
+    public static final String CATEGORY_LANDING = "category landing";
+    public static final String PRODUCT_SEARCH = "search";
+    public static final String SMART_BASKET = "smart basket";
+    public static final String SCRATCH_LIST = "scratch list";
+    public static final String SYSTEM_SCRATCH_LIST = "system scratch list";
+    public static final String PROMO_DETAIL = "promo detail";
+    public static final String PAST_ORDER = "past order";
+    public static final String SHOP_IN_SHOP = "shop in shop";
 
 }

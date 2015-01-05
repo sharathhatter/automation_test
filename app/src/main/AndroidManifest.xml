@@ -205,7 +205,7 @@
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
         <activity
-            android:name=".activity.account.uiv3.MemberReferral"
+            android:name=".activity.account.uiv3.MemberReferralOptions"
             android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="stateHidden|adjustPan" />
 

@@ -25,11 +25,6 @@ public class ShowFulfillmentInfo {
     private BaseActivity activity;
     private Typeface faceRobotoSlabNrml;
 
-    public ShowFulfillmentInfo(FulfillmentInfo fulfillmentInfo, BaseActivity activity) {
-        this.fulfillmentInfo = fulfillmentInfo;
-        this.activity = activity;
-    }
-
     public ShowFulfillmentInfo(FulfillmentInfo fulfillmentInfo, BaseActivity activity,
                                Typeface faceRobotoSlabNrml) {
         this.fulfillmentInfo = fulfillmentInfo;
@@ -47,7 +42,7 @@ public class ShowFulfillmentInfo {
                 imgLiquorIcon.setVisibility(View.VISIBLE);
                 ImageLoader.getInstance().displayImage(fulfillmentInfo.getIcon(), imgLiquorIcon);
             } else {
-                imgLiquorIcon.setVisibility(View.VISIBLE); // todo change to gone
+                imgLiquorIcon.setVisibility(View.VISIBLE);
             }
         }
 
@@ -90,7 +85,6 @@ public class ShowFulfillmentInfo {
         if (showTC) {
             TextView txtTCLabel = (TextView) base.findViewById(R.id.txtTCLabel);
             TextView txtTC1 = (TextView) base.findViewById(R.id.txtTC1);
-            //txtTC1.setTypeface(faceItalic);
             int indexTc = 1;
             if (fulfillmentInfo.getTc1() != null && fulfillmentInfo.getTc1().length() > 0) {
                 txtTC1.setVisibility(View.VISIBLE);
@@ -101,7 +95,6 @@ public class ShowFulfillmentInfo {
             }
 
             TextView txtTC2 = (TextView) base.findViewById(R.id.txtTC2);
-            //txtTC2.setTypeface(faceItalic);
             if (fulfillmentInfo.getTc2() != null && fulfillmentInfo.getTc2().length() > 0) {
                 txtTC2.setVisibility(View.VISIBLE);
                 txtTC2.setText(String.valueOf(indexTc) + ". " + fulfillmentInfo.getTc2());

@@ -228,7 +228,7 @@ public class PlaceOrderActivity extends BackButtonActivity {
             map.put(TrackEventkeys.ORDER_ID, order.getOrderId());
             map.put(TrackEventkeys.ORDER_AMOUNT, order.getOrderValue());
             map.put(TrackEventkeys.ORDER_NUMBER, order.getOrderNumber());
-            //map.put(TrackEventkeys.ORDER_TYPE, order.)  //todo order type
+            map.put(TrackEventkeys.ORDER_TYPE, order.getOrderType());
             map.put(TrackEventkeys.VOUCHER_NAME , preferences.getString(Constants.EVOUCHER_NAME, ""));
             map.put(TrackEventkeys.PAYMENT_MODE , preferences.getString(Constants.PAYMENT_METHOD, ""));
             map.put(TrackEventkeys.POTENTIAL_ORDER , potentialOrderId);

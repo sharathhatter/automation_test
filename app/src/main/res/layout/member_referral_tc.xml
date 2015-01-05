@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+<ScrollView
             android:layout_width="match_parent"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/layoutReferralScrollView"
             android:layout_height="wrap_content">
 
     <RelativeLayout
         android:layout_width="match_parent"
+        android:paddingBottom="@dimen/padding_large"
         android:layout_height="wrap_content">
 
         <TextView
@@ -170,6 +176,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:orientation="vertical"
+            android:layout_below="@id/txtTC"
             android:id="@+id/layoutInnerTC"
             android:layout_height="wrap_content">
 
@@ -181,3 +188,15 @@
     </RelativeLayout>
 
 </ScrollView>
+
+<Button
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    style="@style/FooterButtonStyle"
+    android:id="@+id/btnRefFriend"
+    android:text="@string/inviteFriend"
+    android:onClick="onRefFriendClick"
+    android:layout_margin="0dp"
+    android:layout_alignParentBottom="true" />
+
+</RelativeLayout>
