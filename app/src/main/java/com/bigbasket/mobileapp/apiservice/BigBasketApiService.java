@@ -39,6 +39,7 @@ import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.account.CurrentWalletBalance;
 import com.bigbasket.mobileapp.model.account.UpdatePin;
 import com.bigbasket.mobileapp.model.account.WalletDataItem;
+import com.bigbasket.mobileapp.model.account.spendTrends.SpendTrends;
 import com.bigbasket.mobileapp.model.order.COReserveQuantity;
 import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
@@ -347,4 +348,7 @@ public interface BigBasketApiService {
 
     @GET("/get-referral-product/")
     void getReferralProduct(Callback<ApiResponse<MemberReferralProduct>> getRefProductApiResponseCallback);
+
+    @GET("/spend-trends/")
+    void spendTrends(Callback<ApiResponse<SpendTrends>> spendTrendsApiResponseCallback);
 }

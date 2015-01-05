@@ -52,7 +52,6 @@ import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.demach.konotor.Konotor;
-import com.moe.pushlibrary.MoEHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;

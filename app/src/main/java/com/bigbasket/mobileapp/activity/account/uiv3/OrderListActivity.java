@@ -2,16 +2,13 @@ package com.bigbasket.mobileapp.activity.account.uiv3;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.CheckedTextView;
 import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ListView;
@@ -29,7 +26,6 @@ import com.bigbasket.mobileapp.apiservice.callbacks.CallbackOrderInvoice;
 import com.bigbasket.mobileapp.apiservice.models.response.OrderListApiResponse;
 import com.bigbasket.mobileapp.interfaces.InvoiceDataAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
-import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.model.order.OrderMonthRange;
@@ -38,6 +34,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.bigbasket.mobileapp.view.uiv3.BBArrayAdapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -141,42 +138,19 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
         int spinnerSelectedIdx = OrderMonthRange.getSelectedIndex(orderMonthRanges, selectedMonth);
 
         if (orderMonthRanges != null && orderMonthRanges.size() > 0) {
-            ArrayAdapter<OrderMonthRange> spinnerDateRangeArrayAdapter;
+            BBArrayAdapter<OrderMonthRange> spinnerDateRangeArrayAdapter;
             if (orderDurationSpinner == null) {
                 orderDurationSpinner = new Spinner(this);
                 spinnerDateRangeArrayAdapter =
-                        new ArrayAdapter<OrderMonthRange>(this, android.R.layout.simple_spinner_item, orderMonthRanges) {
-                            @Override
-                            public View getView(int position, View convertView, ViewGroup parent) {
-                                View view = super.getView(position, convertView, parent);
-                                if (view instanceof TextView) {
-                                    ((TextView) view).setTypeface(faceRobotoRegular);
-                                    ((TextView) view).setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
-                                    ((TextView) view).setTextColor(getResources().getColor(R.color.white));
-                                }
-                                return view;
-                            }
-
-                            @Override
-                            public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                                View view = super.getDropDownView(position, convertView, parent);
-                                if (view instanceof CheckedTextView) {
-                                    ((CheckedTextView) view).setTypeface(faceRobotoRegular);
-                                    ((CheckedTextView) view).setTextColor(getResources().getColor(R.color.uiv3_primary_text_color));
-                                } else if (view instanceof TextView) {
-                                    ((TextView) view).setTypeface(faceRobotoRegular);
-                                    ((TextView) view).setTextColor(getResources().getColor(R.color.uiv3_primary_text_color));
-                                }
-                                return view;
-                            }
-                        };
+                        new BBArrayAdapter<>(this, android.R.layout.simple_spinner_item, orderMonthRanges,
+                                faceRobotoRegular, Color.WHITE, getResources().getColor(R.color.uiv3_primary_text_color));
                 spinnerDateRangeArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 orderDurationSpinner.setAdapter(spinnerDateRangeArrayAdapter);
                 Toolbar toolbar = getToolbar();
                 toolbar.addView(orderDurationSpinner);
                 getSupportActionBar().setDisplayShowTitleEnabled(false);
             } else {
-                spinnerDateRangeArrayAdapter = (ArrayAdapter<OrderMonthRange>) orderDurationSpinner.getAdapter();
+                spinnerDateRangeArrayAdapter = (BBArrayAdapter<OrderMonthRange>) orderDurationSpinner.getAdapter();
             }
 
             orderDurationSpinner.setSelection(spinnerSelectedIdx);

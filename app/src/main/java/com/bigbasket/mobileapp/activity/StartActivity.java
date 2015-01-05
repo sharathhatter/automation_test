@@ -54,14 +54,14 @@ public class StartActivity extends BaseActivity {
         //FlurryAgent.onStartSession(this, Constants.FLURRY_AGENT_KEY);
 
         if (!checkInternetConnection()) {
-            showAlertDialogFinish(null, getString(R.string.deviceOffline));
+            showAlertDialogFinish(getString(R.string.deviceOfflineSmallTxt),
+                    getString(R.string.deviceOffline));
             return;
         }
 
         MoEHelper moEHelper = new MoEHelper(this);
         moEHelper.initialize(Constants.MO_SENDER_ID, Constants.MO_APP_ID);
         moEHelper.Register(R.drawable.ic_launcher);
-
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String savedCityName = preferences.getString(Constants.CITY, null);

@@ -19,9 +19,11 @@ public class GetCartCountTask<T> {
 
     private static final String TAG = GetCartCountTask.class.getName();
     private T ctx;
+    boolean failSilently;
 
-    public GetCartCountTask(T ctx) {
+    public GetCartCountTask(T ctx, boolean failSilently) {
         this.ctx = ctx;
+        this.failSilently = failSilently;
     }
 
     public void startTask() {
@@ -46,7 +48,9 @@ public class GetCartCountTask<T> {
                             ((CartInfoAware) ctx).updateUIForCartInfo();
                             break;
                         default:
-                            ((HandlerAware) ctx).getHandler().sendEmptyMessage(cartSummaryApiResponse.getErrorTypeAsInt());
+                            if (!failSilently) {
+                                ((HandlerAware) ctx).getHandler().sendEmptyMessage(cartSummaryApiResponse.getErrorTypeAsInt());
+                            }
                             break;
                     }
                 }
@@ -62,7 +66,9 @@ public class GetCartCountTask<T> {
                             return;
                         }
                     }
-                    ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
+                    if (!failSilently) {
+                        ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
+                    }
                 }
             });
         }

@@ -95,6 +95,13 @@
                 bb:showAsAction="never" />
 
             <item
+                android:id="@+id/action_spend_trends"
+                android:icon="@drawable/ic_trending_up_white_24dp"
+                android:orderInCategory="9999"
+                android:title="@string/spendTrends"
+                bb:showAsAction="never" />
+
+            <item
                 android:id="@+id/action_logout"
                 android:icon="@drawable/logout"
                 android:orderInCategory="9999"

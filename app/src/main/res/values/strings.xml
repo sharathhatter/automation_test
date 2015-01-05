@@ -203,7 +203,7 @@
     <string name="patientName">Patient Name</string>
     <string name="doctorName">Doctor Name</string>
     <string name="prescriptionName">Prescription Name</string>
-    <string name="imageUpload">Upload prescription image</string>
+    <string name="imageUpload">Attach prescription image</string>
     <string name="dateCreatedList">Date Created:</string>
     <string name="patientNameList">Patient Name:</string>
     <string name="doctorNameList">Doctor Name:</string>
@@ -471,4 +471,21 @@
     <string name="howItWorks">How does it work?</string>
     <string name="HowItWorksStr">When you refer your friends, a registration link gets included in the email that is sent to them.</string>
     <string name="spreadJoy">We will also send a complimentary gift to your friends along with their first BigBasket order. So, spread the joy.</string>
+
+    <!-- spendTrends -->
+    <string name="spendTrends">Spend Trends</string>
+    <string name="howMuchSpent">How much did I spend on orders?</string>
+    <string name="howMuchSaved">How much did I saved on orders?</string>
+    <string name="across">Across</string>
+    <string name="spent">Spent</string>
+    <string name="saved">Saved</string>
+    <string name="spendTrendsEmptyPt1">Helps you understand your spending pattern on BigBasket.com</string>
+    <string name="spendTrendsEmptyPt2">It helps you understand your expenditure on groceries and supplies by Month</string>
+    <string name="spendTrendsEmptyPt3">It helps you understand the amount spent &amp; saved during each order.</string>
+    <string name="spendTrendsEmptyPt4">It helps you understand your overall expenditure by Category.</string>
+    <string name="spendTrendsEmpty1">Since you are a first time user with no orders, we do not have data to help you understand the Spent Trends.</string>
+    <string name="spendTrendsEmpty2">Please visit this section after a wonderful shopping experience to get more insights!</string>
+    <string name="networkError">Network Error</string>
+    <string name="deviceOfflineSmallTxt">No Internet connection</string>
+    <string name="retry">Retry</string>
 </resources>
