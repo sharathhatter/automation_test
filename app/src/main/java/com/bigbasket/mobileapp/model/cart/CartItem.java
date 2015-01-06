@@ -55,6 +55,7 @@ public class CartItem extends BaseCartItem {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
         dest.writeInt(skuId);
         dest.writeDouble(totalQty);
         dest.writeString(productDesc);
@@ -73,6 +74,7 @@ public class CartItem extends BaseCartItem {
     }
 
     CartItem(Parcel source) {
+        super(source);
         skuId = source.readInt();
         totalQty = source.readDouble();
         productDesc = source.readString();

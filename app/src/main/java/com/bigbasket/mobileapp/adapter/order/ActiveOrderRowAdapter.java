@@ -17,10 +17,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
-import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.fragment.order.ShowCartFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoDetailFragment;
+import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.AnnotationInfo;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
@@ -41,49 +41,27 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class ActiveOrderRowAdapter extends android.widget.BaseAdapter {
+public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
 
-    private BaseActivity baseActivity;
-    private Context context;
     private List<Object> orderList;
     private LayoutInflater inflater;
-    private Typeface faceRobotoSlabLight, faceRobotoSlabNrml, faceLatoNormal, faceLatoLight;
     private OrderItemDisplaySource orderItemDisplaySource;
-    private boolean isReadOnlyBasket; //showCartOperationBtn,
+    private boolean isReadOnlyBasket;
     private HashMap<String, String> fulfillmentInfoIdAndIconHashMap;
     private HashMap<String, AnnotationInfo> annotationHashMap;
     private String baseImgUrl;
-    private BaseFragment fragment;
     private Typeface faceRobotoRegular, faceRupee;
     private String sourceName;
+    private T context;
 
-    public ActiveOrderRowAdapter(List<Object> orderList, BaseActivity context, Typeface faceRupee,
-                                 Typeface faceRobotoSlabLight, Typeface faceRobotoSlabNrml, Typeface faceLatoNormal,
-                                 Typeface faceLatoLight,
-                                 OrderItemDisplaySource orderItemDisplaySource, HashMap<String, String> fulfillmentInfoIdAndIconHashMap,
-                                 HashMap<String, AnnotationInfo> annotationHashMap) {
-        this.baseActivity = context;
-        this.orderList = orderList;
-        this.faceRupee = faceRupee;
-        this.faceRobotoSlabLight = faceRobotoSlabLight;
-        this.faceRobotoSlabNrml = faceRobotoSlabNrml;
-        this.faceLatoNormal = faceLatoNormal;
-        this.faceLatoLight = faceLatoLight;
-        this.orderItemDisplaySource = orderItemDisplaySource;
-        this.fulfillmentInfoIdAndIconHashMap = fulfillmentInfoIdAndIconHashMap;
-        this.annotationHashMap = annotationHashMap;
-        this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    }
 
-    // basket page
-    public ActiveOrderRowAdapter(List<Object> orderList, BaseActivity baseActivity, BaseFragment fragment, Typeface faceRupee,
+    public ActiveOrderRowAdapter(List<Object> orderList, T context, Typeface faceRupee,
                                  Typeface faceRobotoRegular, OrderItemDisplaySource orderItemDisplaySource,
                                  boolean isReadOnly,
                                  HashMap<String, String> fulfillmentInfoIdAndIconHashMap,
                                  HashMap<String, AnnotationInfo> annotationHashMap,
                                  String baseImageUrl, String sourceName) {
-        this.baseActivity = baseActivity;
-        this.fragment = fragment;
+        this.context = context;
         this.orderList = orderList;
         this.faceRupee = faceRupee;
         this.faceRobotoRegular = faceRobotoRegular;
@@ -93,45 +71,7 @@ public class ActiveOrderRowAdapter extends android.widget.BaseAdapter {
         this.isReadOnlyBasket = isReadOnly;
         this.baseImgUrl = baseImageUrl;
         this.sourceName = sourceName;
-        this.inflater = (LayoutInflater) baseActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    }
-
-    public ActiveOrderRowAdapter(List<Object> orderList, BaseActivity context, Typeface faceRupee,
-                                 Typeface faceRobotoSlabLight, Typeface faceRobotoSlabNrml, Typeface faceLatoNormal,
-                                 Typeface faceLatoLight,
-                                 OrderItemDisplaySource orderItemDisplaySource) {
-        this.baseActivity = context;
-        this.orderList = orderList;
-        this.faceRupee = faceRupee;
-        this.faceRobotoSlabLight = faceRobotoSlabLight;
-        this.faceRobotoSlabNrml = faceRobotoSlabNrml;
-        this.faceLatoNormal = faceLatoNormal;
-        this.faceLatoLight = faceLatoLight;
-        this.orderItemDisplaySource = orderItemDisplaySource;
-        this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    }
-
-
-    public ActiveOrderRowAdapter(List<Object> orderList, BaseActivity context, Typeface faceRupee,
-                                 Typeface faceRobotoSlabLight, Typeface faceRobotoSlabNrml, Typeface faceLatoNormal,
-                                 Typeface faceLatoLight,
-                                 OrderItemDisplaySource orderItemDisplaySource, boolean showCartOperationBtn,
-                                 HashMap<String, String> fulfillmentInfoIdAndIconHashMap, boolean isReadOnlyBasket,
-                                 HashMap<String, AnnotationInfo> annotationHashMap, String baseImageUrl) {
-        this.baseActivity = context;
-        this.orderList = orderList;
-        this.faceRupee = faceRupee;
-        this.faceRobotoSlabLight = faceRobotoSlabLight;
-        this.faceRobotoSlabNrml = faceRobotoSlabNrml;
-        this.faceLatoNormal = faceLatoNormal;
-        this.orderItemDisplaySource = orderItemDisplaySource;
-        //this.showCartOperationBtn = showCartOperationBtn;
-        this.faceLatoLight = faceLatoLight;
-        this.fulfillmentInfoIdAndIconHashMap = fulfillmentInfoIdAndIconHashMap;
-        this.isReadOnlyBasket = isReadOnlyBasket;
-        this.annotationHashMap = annotationHashMap;
-        this.baseImgUrl = baseImageUrl;
-        this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.inflater = (LayoutInflater) ((ActivityAware) context).getCurrentActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
@@ -167,8 +107,7 @@ public class ActiveOrderRowAdapter extends android.widget.BaseAdapter {
             topCatTotalItems.setVisibility(View.GONE);
         }
 
-
-        String topCatTotalAmount = baseActivity.getDecimalAmount(cartItemList.getTopCatTotal());
+        String topCatTotalAmount = ((ActivityAware) context).getCurrentActivity().getDecimalAmount(cartItemList.getTopCatTotal());
         TextView topCatTotal = headerTitleHolder.getTopCatTotal();
         if (!topCatTotalAmount.equals("0")) {
             topCatTotal.setVisibility(View.VISIBLE);
@@ -232,7 +171,8 @@ public class ActiveOrderRowAdapter extends android.widget.BaseAdapter {
     }
 
     private View getFulfillmentInfo(Object obj) {
-        ShowFulfillmentInfo showFulfillmentInfo = new ShowFulfillmentInfo((FulfillmentInfo) obj, baseActivity);
+        ShowFulfillmentInfo showFulfillmentInfo = new ShowFulfillmentInfo((FulfillmentInfo) obj,
+                ((ActivityAware) context).getCurrentActivity(), faceRobotoRegular);
         View view = showFulfillmentInfo.showFulfillmentInfo(true, true);
         if (view == null) {
         } else {
@@ -242,7 +182,8 @@ public class ActiveOrderRowAdapter extends android.widget.BaseAdapter {
     }
 
     private View showAnnotationInfo(Object obj) {
-        ShowAnnotationInfo showAnnotationInfo = new ShowAnnotationInfo((AnnotationInfo) obj, baseActivity);
+        ShowAnnotationInfo showAnnotationInfo = new ShowAnnotationInfo((AnnotationInfo) obj,
+                ((ActivityAware) context).getCurrentActivity());
         View view = showAnnotationInfo.showAnnotationInfo();
         if (view != null)
             return view;
@@ -252,7 +193,8 @@ public class ActiveOrderRowAdapter extends android.widget.BaseAdapter {
     private void renderBasicView(RowHolder rowHolder, int childPosition, final CartItem cartItem) {
         ImageView imgProduct = rowHolder.getImgProduct();
         if (imgProduct != null && !TextUtils.isEmpty(cartItem.getProductImgUrl())) {
-            ImageLoader.getInstance().displayImage(baseImgUrl != null ? baseImgUrl + cartItem.getProductImgUrl() : cartItem.getProductImgUrl(),
+            ImageLoader.getInstance().displayImage(baseImgUrl != null ? baseImgUrl +
+                            cartItem.getProductImgUrl() : cartItem.getProductImgUrl(),
                     imgProduct);
         }
 
@@ -299,13 +241,12 @@ public class ActiveOrderRowAdapter extends android.widget.BaseAdapter {
         txtProductDesc.setText(cartItem.getProductDesc());
 
         TextView txtSalePrice = rowHolder.getTxtSalePrice();
-        //txtSalePrice.setTypeface(faceRobotoSlabNrml);
         if (cartItem.getTotalPrice() > 0) {
-            String salePriceText = baseActivity.getDecimalAmount(cartItem.getTotalPrice());
+            String salePriceText = ((ActivityAware) context).getCurrentActivity().getDecimalAmount(cartItem.getTotalPrice());
             Spannable salePriceSpannable = new SpannableString("` " + salePriceText);
             salePriceSpannable.setSpan(new CustomTypefaceSpan("", faceRupee), 0, 1,
                     Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
-            salePriceSpannable.setSpan(new ForegroundColorSpan(baseActivity.getResources().getColor(R.color.medium_grey)),
+            salePriceSpannable.setSpan(new ForegroundColorSpan(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.medium_grey)),
                     0, 1, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
             txtSalePrice.setText(salePriceSpannable);
         } else {
@@ -314,11 +255,10 @@ public class ActiveOrderRowAdapter extends android.widget.BaseAdapter {
 
 
         TextView txtTotalPriceAndQty = rowHolder.getTxtTotalPriceAndQty();
-        //txtTotalPriceAndQty.setTypeface(faceRobotoSlabNrml);
         String qtyStr = "(" + UIUtil.roundOrInt(cartItem.getTotalQty());
         String separator = " @ ";
         String rupeeSign = "`";
-        String totalSalePriceStr = baseActivity.getDecimalAmount(cartItem.getSalePrice()) + ")";
+        String totalSalePriceStr = ((ActivityAware) context).getCurrentActivity().getDecimalAmount(cartItem.getSalePrice()) + ")";
         Spannable totalPriceAndQtySpannable = new SpannableString(qtyStr + separator + rupeeSign + totalSalePriceStr);
         totalPriceAndQtySpannable.setSpan(new CustomTypefaceSpan("", faceRupee), qtyStr.length() + separator.length(),
                 qtyStr.length() + separator.length() + rupeeSign.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
@@ -330,7 +270,7 @@ public class ActiveOrderRowAdapter extends android.widget.BaseAdapter {
         if (cartItem.getSaving() > 0) {
             lblSaving.setVisibility(View.VISIBLE);
             txtSaving.setVisibility(View.VISIBLE);
-            Spannable savingSpannable = new SpannableString("`" + baseActivity.getDecimalAmount(cartItem.getSaving()));
+            Spannable savingSpannable = new SpannableString("`" + (((ActivityAware) context).getCurrentActivity().getDecimalAmount(cartItem.getSaving())));
             savingSpannable.setSpan(new CustomTypefaceSpan("", faceRupee), 0, 1,
                     Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
             txtSaving.setText(savingSpannable);
@@ -338,8 +278,6 @@ public class ActiveOrderRowAdapter extends android.widget.BaseAdapter {
             lblSaving.setVisibility(View.GONE);
             txtSaving.setVisibility(View.GONE);
         }
-
-        final String productId = String.valueOf(cartItem.getSkuId());
 
         final TextView itemCountTxtView = rowHolder.getItemCountTxtView();
         if (cartItem.getTotalQty() > 0) {
@@ -364,17 +302,17 @@ public class ActiveOrderRowAdapter extends android.widget.BaseAdapter {
                 imgDec.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (DataUtil.isInternetAvailable(baseActivity)) {
+                        if (DataUtil.isInternetAvailable(((ActivityAware) context).getCurrentActivity())) {
                             Product product = new Product(cartItem.getProductBrand(),
                                     cartItem.getProductDesc(), String.valueOf(cartItem.getSkuId()),
                                     cartItem.getTopCategoryName(), cartItem.getProductCategoryName());
-                            BasketOperationTask<BaseFragment> basketOperationTask = new BasketOperationTask<>(fragment,
+                            BasketOperationTask basketOperationTask = new BasketOperationTask<>(context,
                                     BasketOperation.DEC, product,
                                     null, null, null, null, null, TrackingAware.BASKET_DECREMENT, sourceName
                             );
                             basketOperationTask.startTask();
                         } else {
-                            Toast toast = Toast.makeText(baseActivity, "Unable to connect to Internet", Toast.LENGTH_LONG);
+                            Toast toast = Toast.makeText(((ActivityAware) context).getCurrentActivity(), "Unable to connect to Internet", Toast.LENGTH_LONG);
                             toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
                             toast.show();
                         }
@@ -383,18 +321,18 @@ public class ActiveOrderRowAdapter extends android.widget.BaseAdapter {
                 imgAdd.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (DataUtil.isInternetAvailable(baseActivity)) {
+                        if (DataUtil.isInternetAvailable(((ActivityAware) context).getCurrentActivity())) {
                             Product product = new Product(cartItem.getProductBrand(),
                                     cartItem.getProductDesc(), String.valueOf(cartItem.getSkuId()),
                                     cartItem.getTopCategoryName(), cartItem.getProductCategoryName());
-                            BasketOperationTask<BaseFragment> basketOperationTask = new BasketOperationTask<>(fragment,
+                            BasketOperationTask basketOperationTask = new BasketOperationTask<>(context,
                                     BasketOperation.INC, product,
                                     null, null, null, null, null, TrackingAware.BASKET_INCREMENT, sourceName
                             );
                             basketOperationTask.startTask();
 
                         } else {
-                            Toast toast = Toast.makeText(baseActivity, "Unable to connect to Internet", Toast.LENGTH_LONG);
+                            Toast toast = Toast.makeText(((ActivityAware) context).getCurrentActivity(), "Unable to connect to Internet", Toast.LENGTH_LONG);
                             toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
                             toast.show();
                         }
@@ -403,18 +341,18 @@ public class ActiveOrderRowAdapter extends android.widget.BaseAdapter {
                 imgRemove.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (DataUtil.isInternetAvailable(baseActivity)) {
+                        if (DataUtil.isInternetAvailable(((ActivityAware) context).getCurrentActivity())) {
                             Product product = new Product(cartItem.getProductBrand(),
                                     cartItem.getProductDesc(), String.valueOf(cartItem.getSkuId()),
                                     cartItem.getTopCategoryName(), cartItem.getProductCategoryName());
-                            BasketOperationTask<BaseFragment> basketOperationTask = new BasketOperationTask<>(fragment,
+                            BasketOperationTask basketOperationTask = new BasketOperationTask<>(context,
                                     BasketOperation.EMPTY,
                                     product, itemCountTxtView, null, null, null, null, "0",
                                     TrackingAware.BASKET_REMOVE, sourceName
                             );
                             basketOperationTask.startTask();
                         } else {
-                            Toast toast = Toast.makeText(baseActivity, "Unable to connect to Internet", Toast.LENGTH_LONG);
+                            Toast toast = Toast.makeText(((ActivityAware) context).getCurrentActivity(), "Unable to connect to Internet", Toast.LENGTH_LONG);
                             toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
                             toast.show();
                         }
@@ -441,22 +379,18 @@ public class ActiveOrderRowAdapter extends android.widget.BaseAdapter {
         imgRegularImg.setVisibility(View.GONE);
 
         TextView txtRegularPriceAndQty = rowHolder.getTxtRegularPriceAndQty();
-        //txtRegularPriceAndQty.setTypeface(faceRobotoSlabNrml);
         txtRegularPriceAndQty.setVisibility(View.GONE);
 
         TextView lblRegularPrice = rowHolder.getLblRegularPrice();
-        //lblRegularPrice.setTypeface(faceRobotoSlabLight);
         lblRegularPrice.setVisibility(View.GONE);
 
         ImageView imgPromoUsed = rowHolder.getImgPromoUsed();
         imgPromoUsed.setVisibility(View.GONE);
 
         TextView txtPromoPriceAndQty = rowHolder.getTxtPromoPriceAndQty();
-        //txtPromoPriceAndQty.setTypeface(faceRobotoSlabNrml);
         txtPromoPriceAndQty.setVisibility(View.GONE);
 
         TextView txtPromoNameDesc = rowHolder.getTxtPromoNameDesc();
-        //txtPromoNameDesc.setTypeface(faceRobotoSlabNrml);
         txtPromoNameDesc.setVisibility(View.GONE);
     }
 
@@ -470,28 +404,24 @@ public class ActiveOrderRowAdapter extends android.widget.BaseAdapter {
         imgRegularImg.setVisibility(View.GONE);
 
         TextView txtRegularPriceAndQty = rowHolder.getTxtRegularPriceAndQty();
-        //txtRegularPriceAndQty.setTypeface(faceRobotoSlabNrml);
         txtRegularPriceAndQty.setVisibility(View.GONE);
 
         TextView lblRegularPrice = rowHolder.getLblRegularPrice();
-        //lblRegularPrice.setTypeface(faceRobotoSlabLight);
         lblRegularPrice.setVisibility(View.GONE);
 
         ImageView imgPromoUsed = rowHolder.getImgPromoUsed();
-        imgPromoUsed.setVisibility(View.VISIBLE);   // gone
-        imgPromoUsed.setBackgroundResource(R.drawable.promo_unused);  //unused
+        imgPromoUsed.setVisibility(View.VISIBLE);
+        imgPromoUsed.setBackgroundResource(R.drawable.promo_unused);
 
         TextView txtPromoPriceAndQty = rowHolder.getTxtPromoPriceAndQty();
-        txtPromoPriceAndQty.setVisibility(View.VISIBLE);  // gone
+        txtPromoPriceAndQty.setVisibility(View.VISIBLE);
         txtPromoPriceAndQty.setText("Promo not used  ");
-        //txtPromoPriceAndQty.setTypeface(faceRobotoSlabNrml);
 
         TextView txtPromoNameDesc = rowHolder.getTxtPromoNameDesc();
         txtPromoNameDesc.setVisibility(View.VISIBLE);
-        //txtPromoNameDesc.setTypeface(faceRobotoSlabLight);
         String promoTxtName = cartItem.getCartItemPromoInfo().getPromoInfo().getPromoName();
         txtPromoNameDesc.setText(promoTxtName);
-        txtPromoNameDesc.setTextColor(baseActivity.getResources().getColor(R.color.dark_red));
+        txtPromoNameDesc.setTextColor(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.dark_red));
 
         if (orderItemDisplaySource == OrderItemDisplaySource.BASKET) {
             txtPromoNameDesc.setOnClickListener(new PromoListener(cartItem.getCartItemPromoInfo().getPromoInfo().getPromoId()));
@@ -508,29 +438,25 @@ public class ActiveOrderRowAdapter extends android.widget.BaseAdapter {
         imgRegularImg.setVisibility(View.GONE);
 
         TextView txtRegularPriceAndQty = rowHolder.getTxtRegularPriceAndQty();
-        //txtRegularPriceAndQty.setTypeface(faceRobotoSlabNrml);
         txtRegularPriceAndQty.setVisibility(View.GONE);
 
         TextView lblRegularPrice = rowHolder.getLblRegularPrice();
-        //lblRegularPrice.setTypeface(faceRobotoSlabLight);
         lblRegularPrice.setVisibility(View.GONE);
 
         ImageView imgPromoUsed = rowHolder.getImgPromoUsed();
         imgPromoUsed.setVisibility(View.VISIBLE);
 
         TextView txtPromoPriceAndQty = rowHolder.getTxtPromoPriceAndQty();
-        //txtPromoPriceAndQty.setTypeface(faceRobotoSlabNrml);
         txtPromoPriceAndQty.setVisibility(View.GONE);
 
         TextView txtPromoNameDesc = rowHolder.getTxtPromoNameDesc();
         txtPromoNameDesc.setVisibility(View.VISIBLE);
-        //txtPromoNameDesc.setTypeface(faceRobotoSlabLight);
         String promoTxtName = cartItem.getCartItemPromoInfo().getPromoInfo().getPromoName();
         txtPromoNameDesc.setText(promoTxtName);
-        if (false) { // TODO : Change this with equivalent of "if (baseActivity instanceof ShowCartActivity)"
-            txtPromoNameDesc.setTextColor(baseActivity.getResources().getColor(R.color.promo_txt_green_color));
+        if (context instanceof ShowCartFragment) {
+            txtPromoNameDesc.setTextColor(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.promo_txt_green_color));
         } else {
-            txtPromoNameDesc.setTextColor(baseActivity.getResources().getColor(R.color.link_color));
+            txtPromoNameDesc.setTextColor(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.link_color));
         }
         if (orderItemDisplaySource == OrderItemDisplaySource.BASKET) {
             txtPromoNameDesc.setOnClickListener(new PromoListener(cartItem.getCartItemPromoInfo().getPromoInfo().getPromoId()));
@@ -548,29 +474,27 @@ public class ActiveOrderRowAdapter extends android.widget.BaseAdapter {
 
         TextView txtRegularPriceAndQty = rowHolder.getTxtRegularPriceAndQty();
         txtRegularPriceAndQty.setVisibility(View.VISIBLE);
-        //txtRegularPriceAndQty.setTypeface(faceRobotoSlabNrml);
         String regularQtyStr = UIUtil.roundOrInt(cartItem.getCartItemPromoInfo().
                 getRegularInfo().getNumItemInCart());
         String separator = " @ ";
-        String regularSalePriceStr = "`" + baseActivity.getDecimalAmount(cartItem.getCartItemPromoInfo().getRegularInfo().getSalePrice());
+        String regularSalePriceStr = "`" + (((ActivityAware) context).getCurrentActivity()).getDecimalAmount(cartItem.getCartItemPromoInfo().getRegularInfo().getSalePrice());
         Spannable regularSpannable = new SpannableString(regularQtyStr + separator + regularSalePriceStr);
         regularSpannable.setSpan(new CustomTypefaceSpan("", faceRupee), regularQtyStr.length()
                         + separator.length(), regularQtyStr.length() + separator.length() + 1,
                 Spanned.SPAN_EXCLUSIVE_INCLUSIVE
         );
-        regularSpannable.setSpan(new ForegroundColorSpan(baseActivity.getResources().getColor(R.color.tabDark)), regularSalePriceStr.length() - 1,
+        regularSpannable.setSpan(new ForegroundColorSpan(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.tabDark)), regularSalePriceStr.length() - 1,
                 regularQtyStr.length() + separator.length() + regularSalePriceStr.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
-        regularSpannable.setSpan(new ForegroundColorSpan(baseActivity.getResources().getColor(R.color.medium_grey)), 0,
+        regularSpannable.setSpan(new ForegroundColorSpan(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.medium_grey)), 0,
                 regularQtyStr.length() + separator.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
         txtRegularPriceAndQty.setText(regularSpannable);
 
         TextView txtPromoPriceAndQty = rowHolder.getTxtPromoPriceAndQty();
         txtPromoPriceAndQty.setVisibility(View.VISIBLE);
-        //txtPromoPriceAndQty.setTypeface(faceRobotoSlabNrml);
         if (cartItem.getCartItemPromoInfo().getPromoInfo().getSalePrice() > 0) {
             String promoQtyStr = UIUtil.roundOrInt(cartItem.getCartItemPromoInfo().
                     getPromoInfo().getNumItemInCart());
-            String promoSalePriceStr = "`" + baseActivity.getDecimalAmount(cartItem.getCartItemPromoInfo().getPromoInfo().getSalePrice());
+            String promoSalePriceStr = "`" + (((ActivityAware) context).getCurrentActivity()).getDecimalAmount(cartItem.getCartItemPromoInfo().getPromoInfo().getSalePrice());
             Spannable promoSpannable = new SpannableString(promoQtyStr + separator + promoSalePriceStr);//
             promoSpannable.setSpan(new CustomTypefaceSpan("", faceRupee), promoQtyStr.length() +
                             separator.length(), separator.length() + promoQtyStr.length() + 1, //
@@ -587,13 +511,12 @@ public class ActiveOrderRowAdapter extends android.widget.BaseAdapter {
 
         TextView txtPromoNameDesc = rowHolder.getTxtPromoNameDesc();
         txtPromoNameDesc.setVisibility(View.VISIBLE);
-        //txtPromoNameDesc.setTypeface(faceRobotoSlabLight);
         String promoTxtName = cartItem.getCartItemPromoInfo().getPromoInfo().getPromoName();
         txtPromoNameDesc.setText(promoTxtName);
-        if (false) { // TODO : Change this with equivalent of "if (baseActivity instanceof ShowCartActivity)"
-            txtPromoNameDesc.setTextColor(baseActivity.getResources().getColor(R.color.promo_txt_green_color));
+        if (context instanceof ShowCartFragment) {
+            txtPromoNameDesc.setTextColor(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.promo_txt_green_color));
         } else {
-            txtPromoNameDesc.setTextColor(baseActivity.getResources().getColor(R.color.link_color));
+            txtPromoNameDesc.setTextColor(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.link_color));
         }
         if (orderItemDisplaySource == OrderItemDisplaySource.BASKET) {
             txtPromoNameDesc.setOnClickListener(new PromoListener(cartItem.getCartItemPromoInfo().getPromoInfo().getPromoId()));
@@ -824,7 +747,7 @@ public class ActiveOrderRowAdapter extends android.widget.BaseAdapter {
             bundle.putInt(Constants.PROMO_ID, promoId);
             PromoDetailFragment promoDetailFragment = new PromoDetailFragment();
             promoDetailFragment.setArguments(bundle);
-            baseActivity.onChangeFragment(promoDetailFragment);
+            ((ActivityAware) context).getCurrentActivity().onChangeFragment(promoDetailFragment);
         }
     }
 }

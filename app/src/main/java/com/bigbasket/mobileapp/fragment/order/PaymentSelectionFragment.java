@@ -31,8 +31,10 @@ import com.bigbasket.mobileapp.model.order.ActiveVouchers;
 import com.bigbasket.mobileapp.model.order.PaymentType;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -48,6 +50,8 @@ public class PaymentSelectionFragment extends BaseFragment {
     private LinkedHashMap<String, String> mPaymentTypeMap;
     private String mAmtPayable, mWalletUsed, mWalletRemaining;
     private String mPotentialOrderId;
+    private SharedPreferences preferences;
+    private SharedPreferences.Editor editor;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -72,7 +76,8 @@ public class PaymentSelectionFragment extends BaseFragment {
             mWalletRemaining = "0";
         }
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        editor = preferences.edit();
         mPotentialOrderId = preferences.getString(Constants.POTENTIAL_ORDER_ID, null);
 
         ArrayList<PaymentType> paymentTypes = args.getParcelableArrayList(Constants.PAYMENT_TYPES);
@@ -156,6 +161,8 @@ public class PaymentSelectionFragment extends BaseFragment {
                         rbtnPaymentType.setChecked(true);
                         ((SelectedPaymentAware) getCurrentActivity()).
                                 setPaymentMethod(entrySet.getValue(), entrySet.getKey());
+                        editor.putString(Constants.PAYMENT_METHOD, entrySet.getValue());
+                        editor.commit();
                     } else {
                         return;
                     }
@@ -164,9 +171,10 @@ public class PaymentSelectionFragment extends BaseFragment {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked && getCurrentActivity() != null) {
-                            trackEvent(TrackingAware.CHECKOUT_PAYMENT_CHOSEN, null);
                             ((SelectedPaymentAware) getCurrentActivity()).
                                     setPaymentMethod(entrySet.getValue(), entrySet.getKey());
+                            editor.putString(Constants.PAYMENT_METHOD, entrySet.getValue());
+                            editor.commit();
                         }
                     }
                 });
@@ -218,7 +226,7 @@ public class PaymentSelectionFragment extends BaseFragment {
         return radioButton;
     }
 
-    private void applyVoucher(String voucherCode) {
+    private void applyVoucher(final String voucherCode) {
         if (TextUtils.isEmpty(voucherCode)) {
             return;
         }
@@ -234,6 +242,11 @@ public class PaymentSelectionFragment extends BaseFragment {
                     } catch (IllegalArgumentException e) {
                         return;
                     }
+                    editor.putString(Constants.EVOUCHER_NAME, voucherCode);
+                    editor.commit();
+                    HashMap<String, String> map = new HashMap<>();
+                    map.put(TrackEventkeys.POTENTIAL_ORDER, mPotentialOrderId);
+                    map.put(TrackEventkeys.VOUCHER_NAME, voucherCode);
                     switch (postVoucherApiResponse.status) {
                         case Constants.OK:
                             // TODO : Add previous applied voucher handling logic for credit card
@@ -244,10 +257,11 @@ public class PaymentSelectionFragment extends BaseFragment {
                                 voucherMsg = "eVoucher has been successfully applied";
                             }
                             showErrorMsg(voucherMsg);
-                            trackEvent(TrackingAware.CHECKOUT_VOUCHER_APPLIED, null);
+                            trackEvent(TrackingAware.CHECKOUT_VOUCHER_APPLIED, map);
                             break;
                         default:
                             handler.sendEmptyMessage(postVoucherApiResponse.getErrorTypeAsInt());
+                            map.put(TrackEventkeys.VOUCHER_FAILURE_REASON, postVoucherApiResponse.message);
                             trackEvent(TrackingAware.CHECKOUT_VOUCHER_FAILED, null);
                             break;
                     }

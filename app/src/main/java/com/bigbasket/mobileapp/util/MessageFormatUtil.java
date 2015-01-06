@@ -94,7 +94,7 @@ public class MessageFormatUtil {
 
                 @Override
                 public void updateDrawState(TextPaint textPaint) {
-                    textPaint.setColor(textPaint.linkColor);
+                    textPaint.setColor(currentActivity.getResources().getColor(R.color.link_color));
                     textPaint.setUnderlineText(false); // set to false to remove underline
                 }
             }, idx1, idx2, 0);
@@ -131,13 +131,11 @@ public class MessageFormatUtil {
                             currentActivity.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
                         }
                     }
-//                    Toast.makeText(currentActivity, clickString,
-//                            Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
                 public void updateDrawState(TextPaint textPaint) {
-                    textPaint.setColor(textPaint.linkColor);
+                    textPaint.setColor(currentActivity.getResources().getColor(R.color.link_color));
                     textPaint.setUnderlineText(false); // set to false to remove underline
                 }
             }, idx1, idx2, 0);

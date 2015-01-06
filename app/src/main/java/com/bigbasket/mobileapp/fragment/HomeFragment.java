@@ -23,6 +23,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.HomePageApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateVersionInfoApiResponseContent;
 import com.bigbasket.mobileapp.fragment.base.BaseSectionFragment;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -94,6 +95,7 @@ public class HomeFragment extends BaseSectionFragment {
                         } catch (IllegalArgumentException e) {
                             return;
                         }
+
                         switch (updateVersionInfoApiResponse.status) {
                             case 0:
                                 SharedPreferences.Editor editor =
@@ -123,6 +125,7 @@ public class HomeFragment extends BaseSectionFragment {
                                 getActivity().finish();
                                 break;
                         }
+
                     }
 
                     @Override

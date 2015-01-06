@@ -67,9 +67,9 @@ public class OrderInvoiceItemsListFragment extends BaseFragment {
         ListView listView = new ListView(getActivity());
         listView.setDivider(null);
         listView.setDividerHeight(0);
-        ActiveOrderRowAdapter activeOrderRowAdapter = new ActiveOrderRowAdapter(cartItemConsolidatedList,
-                getCurrentActivity(), faceRupee, faceRobotoRegular, faceRobotoRegular, faceRobotoRegular, faceRobotoRegular,
-                OrderItemDisplaySource.ORDER_DISPLAY);
+        ActiveOrderRowAdapter activeOrderRowAdapter = new ActiveOrderRowAdapter(cartItemConsolidatedList,  this,
+                faceRupee, faceRobotoRegular, OrderItemDisplaySource.ORDER_DISPLAY, true,
+                null, null, null, null);
         listView.setAdapter(activeOrderRowAdapter);
         hideProgressView();
         contentView.addView(listView);

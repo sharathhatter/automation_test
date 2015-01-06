@@ -31,10 +31,12 @@ import com.bigbasket.mobileapp.model.order.VoucherApplied;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -44,6 +46,7 @@ import retrofit.client.Response;
 public class PlaceOrderActivity extends BackButtonActivity {
 
     private String potentialOrderId;
+    private SharedPreferences preferences;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,6 +58,9 @@ public class PlaceOrderActivity extends BackButtonActivity {
     }
 
     private void renderOrderSummary(final OrderSummary orderSummary) {
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        potentialOrderId = preferences.getString(Constants.POTENTIAL_ORDER_ID, "");
+
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View base = inflater.inflate(R.layout.uiv3_tab_with_footer_btn, null);
 
@@ -81,20 +87,21 @@ public class PlaceOrderActivity extends BackButtonActivity {
 
         Button btnFooter = (Button) base.findViewById(R.id.btnFooter);
         btnFooter.setText(getString(R.string.placeorder));
+        final HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.POTENTIAL_ORDER, potentialOrderId);
         btnFooter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                trackEvent(TrackingAware.CHECKOUT_PLACE_ORDER_CLICKED, null);
+                trackEvent(TrackingAware.CHECKOUT_PLACE_ORDER_CLICKED, map);
                 onPlaceOrderAction(orderSummary);
             }
         });
 
-        trackEvent(TrackingAware.CHECKOUT_ORDER_REVIEW_SHOWN, null);
+        trackEvent(TrackingAware.CHECKOUT_ORDER_REVIEW_SHOWN, map);
     }
 
     public void onPlaceOrderAction(OrderSummary orderSummary) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        potentialOrderId = preferences.getString(Constants.POTENTIAL_ORDER_ID, "");
+
         double amount = orderSummary.getOrderDetails().getFinalTotal();
         if (orderSummary.getOrderDetails().getPaymentMethod().equals(Constants.CREDIT_CARD)
                 && amount > 0) {
@@ -153,9 +160,12 @@ public class PlaceOrderActivity extends BackButtonActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         setSuspended(false);
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.POTENTIAL_ORDER, potentialOrderId);
         switch (resultCode) {
             case Constants.PAYU_FAILED:
-                trackEvent(TrackingAware.CHECKOUT_PAYMENT_GATEWAY_FAILURE, null);
+                map.put(TrackEventkeys.PAYMENT_GATEWAY_FAILURE_REASON, ""); //todo failure reason
+                trackEvent(TrackingAware.CHECKOUT_PAYMENT_GATEWAY_FAILURE, map);
                 setResult(resultCode);
                 finish();
                 break;
@@ -164,7 +174,7 @@ public class PlaceOrderActivity extends BackButtonActivity {
                 finish();
                 break;
             case Constants.PAYU_SUCCESS:
-                trackEvent(TrackingAware.CHECKOUT_PAYMENT_GATEWAY_SUCCESS, null);
+                trackEvent(TrackingAware.CHECKOUT_PAYMENT_GATEWAY_SUCCESS, map);
                 PayuResponse payuResponse = PayuResponse.getInstance(getCurrentActivity());
                 if (payuResponse == null) {
                     showAlertDialog("Error", "Unable to place your order via credit-card." +
@@ -185,10 +195,14 @@ public class PlaceOrderActivity extends BackButtonActivity {
 
     protected void onPositiveButtonClicked(DialogInterface dialogInterface, int id, String sourceName, Object valuePassed) {
         if (sourceName != null) {
+            HashMap<String, String> map = new HashMap<>();
+            map.put(TrackEventkeys.POTENTIAL_ORDER, potentialOrderId);
             // When user clicks the Yes button in Alert Dialog that is shown when there's a amount mismatch
             switch (sourceName) {
                 case Constants.SOURCE_PLACE_ORDER:
                     PayuResponse.clearTxnDetail(this);
+                    map.put(TrackEventkeys.EXPECTED_AMOUNT, ""); //todo
+                    map.put(TrackEventkeys.ORDER_AMOUNT, ""); //todo
                     trackEvent(TrackingAware.CHECKOUT_PLACE_ORDER_AMOUNT_MISMATCH, null);
 //                    if (paymethod.equals(Constants.CREDIT_CARD)) {
 //                        startCreditCardTxnActivity();
@@ -209,7 +223,18 @@ public class PlaceOrderActivity extends BackButtonActivity {
     }
 
     private void postOrderCreation(ArrayList<Order> orders) {
-        trackEvent(TrackingAware.CHECKOUT_ORDER_COMPLETE, null);
+        for(Order order:orders){
+            HashMap<String, String> map = new HashMap<>();
+            map.put(TrackEventkeys.ORDER_ID, order.getOrderId());
+            map.put(TrackEventkeys.ORDER_AMOUNT, order.getOrderValue());
+            map.put(TrackEventkeys.ORDER_NUMBER, order.getOrderNumber());
+            map.put(TrackEventkeys.ORDER_TYPE, order.getOrderType());
+            map.put(TrackEventkeys.VOUCHER_NAME , preferences.getString(Constants.EVOUCHER_NAME, ""));
+            map.put(TrackEventkeys.PAYMENT_MODE , preferences.getString(Constants.PAYMENT_METHOD, ""));
+            map.put(TrackEventkeys.POTENTIAL_ORDER , potentialOrderId);
+            trackEvent(TrackingAware.CHECKOUT_ORDER_COMPLETE, map);
+        }
+
         PayuResponse.clearTxnDetail(this);
         VoucherApplied.clearFromPreference(this);
         removePharmaPrescriptionId();

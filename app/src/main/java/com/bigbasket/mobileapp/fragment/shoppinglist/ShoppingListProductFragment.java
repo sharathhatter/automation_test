@@ -18,6 +18,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListDetailsApiResponse;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -28,6 +29,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -39,6 +41,7 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
     private ShoppingListName mShoppingListName;
     private ShoppingListDetail mShoppingListDetail;
     private String mBaseImgUrl;
+    private String topcatName;
 
     @Override
     public void loadProducts() {
@@ -70,6 +73,7 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
     @Override
     public void restoreProductList(Bundle savedInstanceState) {
         mShoppingListName = getArguments().getParcelable(Constants.SHOPPING_LIST_NAME);
+        topcatName = getArguments().getString(Constants.TOP_CATEGORY_NAME);
         if (savedInstanceState != null) {
             mShoppingListDetail = savedInstanceState.getParcelable(Constants.SHOPPING_LIST_ITEMS);
             if (mShoppingListDetail != null) {
@@ -134,6 +138,15 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
             Toast.makeText(getActivity(), "This shopping list has no products", Toast.LENGTH_LONG).show();
             finish();
             return;
+        }
+
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.SHOPPING_LIST_NAME, mShoppingListName.getName());
+        map.put(TrackEventkeys.PRODUCT_TOP_CAT, topcatName);
+        if(mShoppingListName.isSystem()){
+            trackEvent(TrackingAware.SHOP_LST_SYSTEM_LIST_CATEGORY_DETAIL, map);
+        }else {
+            trackEvent(TrackingAware.SHOP_LST_CATEGORY_DETAIL, null);
         }
         contentView.removeAllViews();
         LayoutInflater inflater = getActivity().getLayoutInflater();

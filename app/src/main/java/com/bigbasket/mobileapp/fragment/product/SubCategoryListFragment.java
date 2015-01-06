@@ -27,9 +27,11 @@ import com.bigbasket.mobileapp.model.product.Category;
 import com.bigbasket.mobileapp.model.product.SubCategoryModel;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import retrofit.Callback;
@@ -97,7 +99,9 @@ public class SubCategoryListFragment extends BaseFragment {
                         subCategoryModel = subCategoryCallback.apiResponseContent.categoryLandingApiCategoryKeyContent.subCategoryModel;
                     }
                     renderSubCategory(responseVersion, response_ok, bannerArrayList, subCategoryModel);
-                    trackEvent(TrackingAware.BROWSE_CATEGORY_LANDING, null);
+                    HashMap<String, String> map = new HashMap<>();
+                    map.put(TrackEventkeys.PRODUCT_TOP_CAT, topCatName);
+                    trackEvent(TrackingAware.BROWSE_CATEGORY_LANDING, map);
                 } else {
                     handler.sendEmptyMessage(subCategoryCallback.status);
                 }

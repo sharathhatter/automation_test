@@ -136,9 +136,10 @@ public class BigBasketMessageHandler<T> {
                 break;
 
             case NavigationCodes.CO_RESERVE_QUANTITY_CHECK_OK:
-                int qc_len = ((COReserveQuantityCheckAware) ctx).getCOReserveQuantity().isQcHasErrors() ? 0 : 1;
+                //int qc_len = ((COReserveQuantityCheckAware) ctx).getCOReserveQuantity().isQcHasErrors() ? 0 : 1;
                 intent = new Intent(((ActivityAware) ctx).getCurrentActivity(), CheckoutQCActivity.class);
-                intent.putExtra(Constants.QC_LEN, qc_len);
+                intent.putExtra(Constants.CO_RESERVE_QTY_DATA, ((COReserveQuantityCheckAware) ctx).getCOReserveQuantity());
+                //intent.putExtra(Constants.QC_LEN, qc_len);
                 ((ActivityAware) ctx).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 break;
             default:

@@ -24,6 +24,9 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.UpdatePin;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
+
+import java.util.HashMap;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -210,13 +213,17 @@ public class UpdatePinFragment extends BaseFragment {
                     trackEvent(TrackingAware.MY_ACCOUNT_CHANGE_PIN_SUCCESS, null);
                 } else {
                     showErrorMsg(msg);
-                    trackEvent(TrackingAware.MY_ACCOUNT_CHANGE_PIN_FAILED, null);
+                    HashMap<String, String> map = new HashMap<String, String>();
+                    map.put(TrackEventkeys.UPDATE_PIN_FAILURE_REASON, msg);
+                    trackEvent(TrackingAware.MY_ACCOUNT_CHANGE_PIN_FAILED, map);
                 }
             }
 
             @Override
             public void failure(RetrofitError error) {
                 hideProgressDialog();
+                HashMap<String, String> map = new HashMap<String, String>();
+                map.put(TrackEventkeys.UPDATE_PIN_FAILURE_REASON, error.toString());
                 trackEvent(TrackingAware.MY_ACCOUNT_CHANGE_PIN_FAILED, null);
             }
         });

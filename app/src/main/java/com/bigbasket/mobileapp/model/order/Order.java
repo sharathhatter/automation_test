@@ -30,6 +30,10 @@ public class Order implements Parcelable {
     @SerializedName(Constants.FULFILLMENT_INFO)
     private FulfillmentInfo fulfillmentInfo;
 
+    @SerializedName(Constants.ORDER_TYPE)
+    private String orderType;
+
+
 //    public Order(String orderId, String orderNumber, FulfillmentInfo fulfillmentInfo) {
 //        this.orderId = orderId;
 //        this.orderNumber = orderNumber;
@@ -38,13 +42,14 @@ public class Order implements Parcelable {
 
 
     public Order(String orderId, String orderNumber, String deliveryDate, int itemsCount, String orderStatus,
-                 String orderValue) {
+                 String orderValue, String orderType) {
         this.orderId = orderId;
         this.orderNumber = orderNumber;
         this.deliveryDate = deliveryDate;
         this.itemsCount = itemsCount;
         this.orderStatus = orderStatus;
         this.orderValue = orderValue;
+        this.orderType = orderType;
     }
 
     public Order(Parcel parcel) {
@@ -55,6 +60,7 @@ public class Order implements Parcelable {
         this.orderStatus = parcel.readString();
         this.orderValue = parcel.readString();
         this.fulfillmentInfo = parcel.readParcelable(Order.class.getClassLoader());
+        this.orderType = parcel.readString();
     }
 
     @Override
@@ -66,6 +72,7 @@ public class Order implements Parcelable {
         dest.writeString(this.orderStatus);
         dest.writeString(this.orderValue != null ? this.orderValue : "0");
         dest.writeParcelable(this.fulfillmentInfo, flags);
+        dest.writeString(this.orderType);
     }
 
     @Override
@@ -111,5 +118,9 @@ public class Order implements Parcelable {
 
     public String getOrderValue() {
         return orderValue;
+    }
+
+    public String getOrderType() {
+        return orderType;
     }
 }

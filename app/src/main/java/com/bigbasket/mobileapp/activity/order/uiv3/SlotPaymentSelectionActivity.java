@@ -27,6 +27,7 @@ import com.bigbasket.mobileapp.fragment.order.PaymentSelectionFragment;
 import com.bigbasket.mobileapp.fragment.order.SlotSelectionFragment;
 import com.bigbasket.mobileapp.interfaces.SelectedPaymentAware;
 import com.bigbasket.mobileapp.interfaces.SelectedSlotAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.order.ActiveVouchers;
 import com.bigbasket.mobileapp.model.order.OrderSummary;
@@ -35,10 +36,12 @@ import com.bigbasket.mobileapp.model.slot.SelectedSlotType;
 import com.bigbasket.mobileapp.model.slot.SlotGroup;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -50,7 +53,8 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
     private ArrayList<SelectedSlotType> mSelectedSlotType;
     private String mPaymentMethodSlug;
     private String mPaymentMethodDisplay;
-
+    private SharedPreferences preferences;
+    private String potentialOrderId;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,8 +69,8 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
 
     private void loadSlotsAndPayments() {
         String addressId = getIntent().getStringExtra(Constants.ADDRESS_ID);
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String potentialOrderId = preferences.getString(Constants.POTENTIAL_ORDER_ID, null);
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        potentialOrderId = preferences.getString(Constants.POTENTIAL_ORDER_ID, null);
 
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
@@ -157,6 +161,10 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
         btnFooter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                HashMap<String, String> map = new HashMap<>();
+                map.put(TrackEventkeys.POTENTIAL_ORDER, potentialOrderId);
+                map.put(TrackEventkeys.PAYMENT_MODE, preferences.getString(Constants.PAYMENT_METHOD, ""));
+                trackEvent(TrackingAware.CHECKOUT_PAYMENT_CHOSEN, map);
                 launchOrderReview();
             }
         });

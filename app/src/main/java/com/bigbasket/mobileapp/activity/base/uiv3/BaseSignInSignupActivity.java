@@ -28,9 +28,11 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.SocialAccount;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import retrofit.Callback;
@@ -173,7 +175,7 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity {
                     saveLoginUserDetailInPreference(loginApiResponse, loginType,
                             email, password, rememberMe);
                     switch (loginType) {
-                        case SocialAccount.FB:
+                        case SocialAccount.FB: //todo new account created (=yes/no), existing account email (if applicable)
                             trackEvent(TrackingAware.MY_ACCOUNT_FACEBOOK_LOGIN_SUCCESS, null);
                             break;
                         case SocialAccount.GP:
@@ -204,19 +206,24 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity {
                             handler.sendEmptyMessage(loginApiResponse.getErrorTypeAsInt());
                             break;
                     }
+                    HashMap<String, String> map = new HashMap<>();
 
                     switch (loginType) {
                         case SocialAccount.FB:
-                            trackEvent(TrackingAware.MY_ACCOUNT_FACEBOOK_LOGIN_FAILED, null);
+                            map.put(TrackEventkeys.FB_LOGIN_FAILURE_REASON, loginApiResponse.message);
+                            trackEvent(TrackingAware.MY_ACCOUNT_FACEBOOK_LOGIN_FAILED, map);
                             break;
                         case SocialAccount.GP:
-                            trackEvent(TrackingAware.MY_ACCOUNT_GOOGLE_LOGIN_FAILED, null);
+                            map.put(TrackEventkeys.GOOGLE_LOGIN_FAILURE_REASON, loginApiResponse.message);
+                            trackEvent(TrackingAware.MY_ACCOUNT_GOOGLE_LOGIN_FAILED, map);
                             break;
                         case Constants.SIGN_IN_ACCOUNT_TYPE:
-                            trackEvent(TrackingAware.MY_ACCOUNT_LOGIN_FAILED, null);
+                            map.put(TrackEventkeys.LOGIN_FAILURE_REASON, loginApiResponse.message);
+                            trackEvent(TrackingAware.MY_ACCOUNT_LOGIN_FAILED, map);
                             break;
                         case Constants.REGISTER_ACCOUNT_TYPE:
-                            trackEvent(TrackingAware.MY_ACCOUNT_REGISTRATION_FAILED, null);
+                            map.put(TrackEventkeys.REGISTRATION_FAILURE_REASON, loginApiResponse.message);
+                            trackEvent(TrackingAware.MY_ACCOUNT_REGISTRATION_FAILED, map);
                             break;
                         default:
                             throw new AssertionError("Login or register type error while success(status=ERROR)");
@@ -228,22 +235,27 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity {
         @Override
         public void failure(RetrofitError error) {
             showProgress(false);
+            HashMap<String, String> map = new HashMap<>();
             handler.handleRetrofitError(error);
             switch (loginType) {
                 case SocialAccount.FB:
-                    trackEvent(TrackingAware.MY_ACCOUNT_FACEBOOK_LOGIN_FAILED, null);
+                    map.put(TrackEventkeys.FB_LOGIN_FAILURE_REASON, error.toString());
+                    trackEvent(TrackingAware.MY_ACCOUNT_FACEBOOK_LOGIN_FAILED, map);
                     break;
                 case SocialAccount.GP:
-                    trackEvent(TrackingAware.MY_ACCOUNT_GOOGLE_LOGIN_FAILED, null);
+                    map.put(TrackEventkeys.GOOGLE_LOGIN_FAILURE_REASON, error.toString());
+                    trackEvent(TrackingAware.MY_ACCOUNT_GOOGLE_LOGIN_FAILED, map);
                     break;
                 case Constants.SIGN_IN_ACCOUNT_TYPE:
-                    trackEvent(TrackingAware.MY_ACCOUNT_LOGIN_FAILED, null);
+                    map.put(TrackEventkeys.LOGIN_FAILURE_REASON, error.toString());
+                    trackEvent(TrackingAware.MY_ACCOUNT_LOGIN_FAILED, map);
                     break;
                 case Constants.REGISTER_ACCOUNT_TYPE:
-                    trackEvent(TrackingAware.MY_ACCOUNT_REGISTRATION_FAILED, null);
+                    map.put(TrackEventkeys.REGISTRATION_FAILURE_REASON, error.toString());
+                    trackEvent(TrackingAware.MY_ACCOUNT_REGISTRATION_FAILED, map);
                     break;
                 default:
-                    throw new AssertionError("Login or register type error while failure");
+                    throw new AssertionError("Login or register type error while success(status=ERROR)");
             }
         }
     }

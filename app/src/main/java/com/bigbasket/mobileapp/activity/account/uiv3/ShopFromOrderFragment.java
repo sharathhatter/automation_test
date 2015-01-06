@@ -12,6 +12,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetProductsForOrderApiResponseContent;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -20,6 +21,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -72,6 +74,9 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
                 switch (getProductsForOrderApiResponse.status) {
                     case 0:
                         mProducts = getProductsForOrderApiResponse.apiResponseContent.products;
+                        HashMap<String, String> map = new HashMap<String, String>();
+                        map.put(TrackEventkeys.ORDER_ID, mOrderId);
+                        trackEvent(TrackingAware.SHOP_FROM_PAST_ORDER_SHOWN, map);
                         loadProducts();
                         break;
                     default:
@@ -113,7 +118,7 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
 
         ProductListRecyclerAdapter productListRecyclerAdapter = new ProductListRecyclerAdapter(mProducts, null,
                 getCurrentActivity(), productViewDisplayDataHolder, this, mProducts.size(),
-                Constants.ORDER_DETAILS);
+                TrackEventkeys.PAST_ORDER);
 
         productRecyclerView.setAdapter(productListRecyclerAdapter);
         if (getContentView() != null) {
@@ -128,7 +133,7 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
 
     @Override
     public String getSourceName() {
-        return TrackEventkeys.ORDER_DETAILS;
+        return TrackEventkeys.SHOP_FROM_PAST_ORDER;
     }
 
     @Override

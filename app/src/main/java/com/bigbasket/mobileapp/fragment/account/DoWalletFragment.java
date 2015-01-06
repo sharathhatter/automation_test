@@ -417,6 +417,7 @@ public class DoWalletFragment extends BaseFragment {
                             handler.sendEmptyMessage(walletActivityCallback.status);
                             map.put(TrackEventkeys.DATE_FROM, dateFrom);
                             map.put(TrackEventkeys.DATE_TO, dateTo);
+                            map.put(TrackEventkeys.WALLET_ACTIVITY_FAILURE_REASON, walletActivityCallback.message);
                             trackEvent(TrackingAware.MY_ACCOUNT_WALLET_ACTIVITY_FAILED, map);
                         }
                     }
@@ -432,6 +433,7 @@ public class DoWalletFragment extends BaseFragment {
                         handler.handleRetrofitError(error);
                         map.put(TrackEventkeys.DATE_FROM, dateFrom);
                         map.put(TrackEventkeys.DATE_TO, dateTo);
+                        map.put(TrackEventkeys.WALLET_ACTIVITY_FAILURE_REASON, error.toString());
                         trackEvent(TrackingAware.MY_ACCOUNT_WALLET_ACTIVITY_FAILED, map);
                     }
                 });

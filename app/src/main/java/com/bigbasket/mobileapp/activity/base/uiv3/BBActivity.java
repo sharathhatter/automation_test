@@ -49,6 +49,7 @@ import com.bigbasket.mobileapp.fragment.account.AccountSettingFragment;
 import com.bigbasket.mobileapp.fragment.account.ChangeCityFragment;
 import com.bigbasket.mobileapp.fragment.account.ChangePasswordFragment;
 import com.bigbasket.mobileapp.fragment.account.DoWalletFragment;
+import com.bigbasket.mobileapp.fragment.account.MemberReferralTCFragment;
 import com.bigbasket.mobileapp.fragment.account.UpdatePinFragment;
 import com.bigbasket.mobileapp.fragment.account.UpdateProfileFragment;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
