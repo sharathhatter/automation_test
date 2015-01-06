@@ -29,6 +29,7 @@ public class CategorySpentFragment extends BaseSpendTrendsFragment {
                 getArguments().getParcelableArrayList(Constants.CATEGORY_SPENT);
         String categoryName = getArguments().getString(Constants.TOP_CATEGORY_NAME);
         SpendTrendSummary summary = getArguments().getParcelable(Constants.SUMMARY);
+        initializeScroll();
         displayPieChart(filteredCategoryExpRangeData, categoryName, summary);
     }
 

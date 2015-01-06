@@ -175,7 +175,7 @@ public class BigBasketMessageHandler<T> {
                 break;
             case HTTP:
                 if (error.getResponse() == null) {
-                    ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.msgNetworkError));
+                    ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.msgNetworkError), finish);
                 } else {
                     handleHttpError(error.getResponse().getStatus(), error.getResponse().getReason(), sourceName, finish);
                 }

@@ -10,7 +10,6 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Spinner;
 
@@ -52,7 +51,6 @@ public class SpendTrendsActivity extends BaseActivity implements OnObservableScr
     private ArrayList<String> mCategoryDropdown;
     private Spinner mSpinnerMonthRange;
     private Spinner mSpinnerCategories;
-    private Button mBtnAnalyseSpendTrends;
     private View mLayoutSpendTrendsFilter, mLayoutSpendTrendsFilterEmpty;
 
     @Override
@@ -234,7 +232,6 @@ public class SpendTrendsActivity extends BaseActivity implements OnObservableScr
                                        String categoryName, SpendTrendSummary selectedSummary,
                                        int rangeVal) {
         View base = getLayoutInflater().inflate(R.layout.uiv3_spend_trends_tab, null);
-        mBtnAnalyseSpendTrends = (Button) base.findViewById(R.id.btnAnalyseSpendTrends);
 
         final ArrayList<BBTab> bbTabs = new ArrayList<>();
         Bundle spentSavedBundle = new Bundle();
@@ -289,9 +286,6 @@ public class SpendTrendsActivity extends BaseActivity implements OnObservableScr
         ActionBar actionBar = getSupportActionBar();
         if (actionBar.isShowing()) {
             actionBar.hide();
-            if (mBtnAnalyseSpendTrends != null) {
-                mBtnAnalyseSpendTrends.setVisibility(View.GONE);
-            }
         }
     }
 
@@ -300,9 +294,6 @@ public class SpendTrendsActivity extends BaseActivity implements OnObservableScr
         ActionBar actionBar = getSupportActionBar();
         if (!actionBar.isShowing()) {
             actionBar.show();
-            if (mBtnAnalyseSpendTrends != null) {
-                mBtnAnalyseSpendTrends.setVisibility(View.VISIBLE);
-            }
         }
     }
 }

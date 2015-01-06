@@ -7,9 +7,13 @@ import android.text.TextUtils;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.squareup.okhttp.OkHttpClient;
+
+import java.util.concurrent.TimeUnit;
 
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
+import retrofit.client.OkClient;
 
 public class BigBasketApiAdapter {
 
@@ -56,9 +60,13 @@ public class BigBasketApiAdapter {
             }
         };
 
+        final OkHttpClient okHttpClient = new OkHttpClient();
+        okHttpClient.setReadTimeout(45, TimeUnit.SECONDS);
+        okHttpClient.setConnectTimeout(20, TimeUnit.SECONDS);
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint(MobileApiUrl.URL)
                 .setRequestInterceptor(requestInterceptor)
+                .setClient(new OkClient(okHttpClient))
                 .build();
 
         bigBasketApiService = restAdapter.create(BigBasketApiService.class);

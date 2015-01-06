@@ -4,19 +4,11 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/btnAnalyseSpendTrends"
-        style="@style/DefaultButtonStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_normal"
-        android:text="@string/analyseSpendTrends" />
-
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.8" />
+        android:layout_weight="1" />
 
     <com.viewpagerindicator.CirclePageIndicator
         android:id="@+id/pagerCircles"
