@@ -193,7 +193,12 @@ public class ShowCartFragment extends BaseFragment {
             for (int i = 0; i < cartItemsSize; i++) {
                 cartItems.get(i).setIndex(i);
                 cartItemHeaderList.add(cartItems.get(i));
-
+                if (cartItems.get(i).getPromoAppliedType() == 2 ||
+                        cartItems.get(i).getPromoAppliedType() == 3) {
+                    HashMap<String, String> map = new HashMap<>();
+                    map.put(TrackEventkeys.PROMO_NAME, cartItems.get(i).getCartItemPromoInfo().getPromoInfo().getPromoName());
+                    trackEvent(TrackingAware.PROMO_REDEEMED, map);
+                }
             }
         }
         HashMap<String, String> fulfillmentInfoIdAndIconHashMap = new HashMap<>();
@@ -234,8 +239,8 @@ public class ShowCartFragment extends BaseFragment {
                 }
             }
         });
-        ActiveOrderRowAdapter activeOrderRowAdapter = new ActiveOrderRowAdapter(cartItemHeaderList, ((BaseActivity) getActivity()),
-                this, faceRupee, faceRobotoRegular, OrderItemDisplaySource.BASKET, isReadOnly,
+        ActiveOrderRowAdapter activeOrderRowAdapter = new ActiveOrderRowAdapter(cartItemHeaderList, this,
+                faceRupee, faceRobotoRegular, OrderItemDisplaySource.BASKET, isReadOnly,
                 fulfillmentInfoIdAndIconHashMap, annotationHashMap, baseImageUrl, TrackEventkeys.VIEW_BASKET);
         cartItemListView.setDivider(null);
         cartItemListView.setDividerHeight(0);

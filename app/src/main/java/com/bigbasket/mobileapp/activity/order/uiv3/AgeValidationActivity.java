@@ -262,7 +262,7 @@ public class AgeValidationActivity extends BackButtonActivity {
             ArrayList<Class<?>> activitiesList = new ArrayList<>();
             ArrayList<Integer> fragmentCodeArrayList = new ArrayList<>();
             for (int i = 0; i < msgInfo.getParams().size(); i++) {
-                activitiesList.add(BackButtonActivity.class); //todo why backbtn activity
+                activitiesList.add(BackButtonActivity.class);
                 fragmentCodeArrayList.add(FragmentCodes.START_VIEW_BASKET);
             }
 

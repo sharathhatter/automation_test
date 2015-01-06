@@ -32,9 +32,11 @@ import com.bigbasket.mobileapp.model.order.OrderMonthRange;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.uiv3.BBArrayAdapter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -66,15 +68,10 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
             return;
         }
         loadOrders();
-
-        if (orderType.equals(getString(R.string.active_label))) {
-            trackEvent(TrackingAware.ORDER_ACTIVE_ORDERS_SHOWN, null);
-        } else {
-            trackEvent(TrackingAware.ORDER_PAST_ORDERS, null);
-        }
     }
 
     private void loadOrders() {
+        traceOrderEvent(orderType, -1);
         loadOrders(-1);
     }
 
@@ -152,6 +149,7 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     OrderMonthRange orderMonthRange = orderMonthRanges.get(position);
                     if (orderMonthRange.getValue() != selectedMonth) {
+                        traceOrderEvent(orderType, orderMonthRange.getValue());
                         loadOrders(orderMonthRange.getValue());
                     }
                 }
@@ -221,5 +219,20 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
         Intent orderDetailIntent = new Intent(getCurrentActivity(), OrderDetailActivity.class);
         orderDetailIntent.putExtra(Constants.ORDER_REVIEW_SUMMARY, orderInvoice);
         startActivityForResult(orderDetailIntent, NavigationCodes.GO_TO_HOME);
+    }
+
+    private void traceOrderEvent(String orderType, int monthVal){
+        if (orderType.equals(getString(R.string.active_label))) {
+            trackEvent(TrackingAware.ORDER_ACTIVE_ORDERS_SHOWN, null);
+        } else {
+            if(monthVal!=-1){
+                HashMap<String, String> map = new HashMap<>();
+                map.put(TrackEventkeys.MONTH_RANGE, String.valueOf(monthVal));
+                trackEvent(TrackingAware.ORDER_PAST_ORDERS, map);
+            }else {
+                trackEvent(TrackingAware.ORDER_PAST_ORDERS, null);
+            }
+
+        }
     }
 }

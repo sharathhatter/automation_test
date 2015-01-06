@@ -73,7 +73,6 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     public static Typeface faceRobotoRegular;
     protected BigBasketMessageHandler handler;
     protected boolean isActivitySuspended;
-    //protected MarketPlace marketPlace;
     protected COReserveQuantity coReserveQuantity;
     private MoEHelper moEHelper;
 

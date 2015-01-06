@@ -3,65 +3,59 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="10dp"
-        android:paddingLeft="10dp"
-        android:paddingBottom="5dp"
-        android:paddingTop="5dp"
-        android:paddingRight="10dp"
+        android:layout_marginLeft="@dimen/margin_small"
+        android:layout_marginTop="@dimen/margin_small"
+        android:layout_marginRight="@dimen/margin_small"
+        android:paddingBottom="@dimen/padding_small"
+        android:id="@+id/layoutInfoMsg"
         android:layout_height="wrap_content">
 
         <ImageView
-            android:layout_width="12dp"
+            android:layout_width="@dimen/fulfillment_image_size"
             android:id="@+id/imgLiquorIcon"
-            android:src="@drawable/breverages"
-            android:layout_marginTop="3dp"
-            android:layout_height="13dp" />
+            android:layout_marginTop="@dimen/margin_mini"
+            android:layout_height="@dimen/fulfillment_image_size" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_toRightOf="@id/imgLiquorIcon"
             android:id="@+id/txtFulfilledBy"
-            android:layout_marginTop="-3dp"
-            android:layout_alignTop="@id/imgLiquorIcon"
+            android:textSize="@dimen/secondary_text_size"
             android:textColor="@color/tabDark"
             android:layout_height="wrap_content" />
 
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_below="@id/txtFulfilledBy"
-            android:id="@+id/txtTCLabel"
-            android:textSize="12sp"
-            android:textColor="@color/promo_red_color"
-            android:text="@string/txtTCMsg"
-            android:visibility="gone"
-            android:layout_height="wrap_content" />
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_below="@id/txtFulfilledBy"-->
+            <!--android:id="@+id/txtTCLabel"-->
+            <!--android:textSize="@dimen/small_text_size"-->
+            <!--android:textColor="@color/promo_red_color"-->
+            <!--android:text="@string/txtFulfilledBy"-->
+            <!--android:visibility="gone"-->
+            <!--android:layout_height="wrap_content" />-->
 
         <TextView
             android:layout_width="wrap_content"
             android:id="@+id/txtTC1"
-            android:textSize="11sp"
+            android:textSize="@dimen/small_text_size"
             android:visibility="gone"
-            android:layout_marginRight="10dp"
-            android:textColor="@color/promo_red_color"
-            android:layout_below="@id/txtTCLabel"
+            android:textColor="@color/medium_grey"
+            android:layout_below="@id/txtFulfilledBy"
             android:layout_height="wrap_content" />
 
 
         <TextView
             android:layout_width="wrap_content"
             android:id="@+id/txtTC2"
-            android:layout_marginRight="10dp"
-            android:textColor="@color/promo_red_color"
+            android:textColor="@color/medium_grey"
             android:visibility="gone"
             android:layout_below="@+id/txtTC1"
-            android:textSize="11sp"
+            android:textSize="@dimen/small_text_size"
             android:layout_height="wrap_content" />
     </RelativeLayout>
 

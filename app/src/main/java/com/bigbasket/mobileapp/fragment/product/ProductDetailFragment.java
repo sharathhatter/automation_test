@@ -32,6 +32,7 @@ import com.bigbasket.mobileapp.view.uiv2.ProductView;
 import com.bigbasket.mobileapp.view.uiv3.ShoppingListNamesDialog;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import retrofit.Callback;
@@ -60,7 +61,6 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
             }
         }
         loadProductDetail();
-        trackEvent(TrackingAware.BROWSE_PRODUCT_DETAILS, null);
     }
 
     private void loadProductDetail() {
@@ -82,6 +82,17 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
                 switch (productDetailApiResponse.status) {
                     case Constants.OK:
                         mProduct = productDetailApiResponse.product;
+
+                        HashMap<String, String> map = new HashMap<>();
+                        map.put(TrackEventkeys.PRODUCT_TOP_CAT, mProduct.getTopLevelCategoryName());
+                        map.put(TrackEventkeys.PRODUCT_CAT, mProduct.getProductCategoryName());
+                        map.put(TrackEventkeys.PRODUCT_BRAND, mProduct.getBrand());
+                        String desc = mProduct.getDescription();
+                        if (!TextUtils.isEmpty(mProduct.getPackageDescription()))
+                            desc = " " + mProduct.getWeightAndPackDesc();
+                        map.put(TrackEventkeys.PRODUCT_DESC, desc);
+                        trackEvent(TrackingAware.BROWSE_PRODUCT_DETAILS, map);
+
                         renderProductDetail();
                         break;
                     default:
@@ -102,6 +113,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
             }
         });
     }
+
 
     private void renderProductDetail() {
         if (getActivity() == null || getView() == null) return;

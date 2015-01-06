@@ -250,7 +250,7 @@
     <string name="confirmMobileNumber">Confirm your mobile number</string>
     <string name="txtConfirm">CONFIRM</string>
     <string name="txtResendCodeStr">RESEND</string>
-    <string name="headerMsgForMobileConfirm">Enter the confirmation code that was texted to your phone</string>
+    <string name="headerMsgForMobileConfirm">Enter the confirmation code that was texted to your phone.</string>
     <string name="txtConfirmNumberHint">Enter code</string>
     <string name="pleaseEnterTxt">Please enter confirmation code</string>
     <string name="contactNoMin10">Enter a valid 10 digit mobile number</string>
@@ -459,8 +459,22 @@
     <string name="serviceUnavailable">Service is temporarily unavailable due to an issue.\nPlease try later</string>
     <string name="weAreDown">We are down!</string>
     <string name="why">Why?</string>
-    <string name="whyMsg">Currently we serve in Bangalore, Hyderabad, Mumbai, and Pune.\nThe promotions and pricing are specific to the city.</string>
+    <string name="PreWhyMsg">Currently we serve in </string>
+    <string name="postWhyMsg">The promotions and pricing are specific to the city.</string>
+    <!--<string name="whyMsg">Currently we serve in Bangalore, Hyderabad, Mumbai, and Pune.\nThe promotions and pricing are specific to the city.</string>-->
 
+    <!-- member referral -->
+    <string name="benefitToYou">Benefit to you</string>
+    <string name="inviteFriend">Invite friends</string>
+    <string name="benefitToYourFriend">Benefit for your friends</string>
+    <string name="freeProductRef">Following product will be added to your friend\'s first order absolutely free.</string>
+    <string name="tcForFreeProduct">This product is subject to change depending on when your friend places his/her first order.</string>
+    <string name="referralTC">Terms and Conditions:</string>
+    <string name="howItWorks">How does it work?</string>
+    <string name="HowItWorksStr">When you refer your friends, a registration link gets included in the email that is sent to them.</string>
+    <string name="spreadJoy">We will also send a complimentary gift to your friends along with their first BigBasket order. So, spread the joy.</string>
+
+    <!-- spendTrends -->
     <string name="spendTrends">Spend Trends</string>
     <string name="howMuchSpent">How much did I spend on orders?</string>
     <string name="howMuchSaved">How much did I saved on orders?</string>

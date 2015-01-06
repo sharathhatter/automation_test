@@ -1,8 +1,10 @@
 package com.bigbasket.mobileapp.fragment.order;
 
 import android.app.Dialog;
+import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.text.Html;
 import android.text.TextUtils;
@@ -29,8 +31,10 @@ import com.bigbasket.mobileapp.model.slot.Slot;
 import com.bigbasket.mobileapp.model.slot.SlotGroup;
 import com.bigbasket.mobileapp.model.slot.SlotHeader;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -40,6 +44,7 @@ public class SlotSelectionFragment extends BaseFragment {
     private Dialog mSlotListDialog;
     private SlotGroupListAdapter mSlotGroupListAdapter;
     private SlotListAdapter mSlotListAdapter;
+    private String potentialOrderId;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -50,6 +55,8 @@ public class SlotSelectionFragment extends BaseFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mSlotGroupList = getArguments().getParcelableArrayList(Constants.SLOTS_INFO);
+        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        potentialOrderId = prefer.getString(Constants.POTENTIAL_ORDER_ID, null);
         displaySlotGroups();
     }
 
@@ -92,8 +99,8 @@ public class SlotSelectionFragment extends BaseFragment {
                 }
             });
             contentView.addView(slotGroupListView);
-            trackEvent(TrackingAware.CHECKOUT_SLOT_SHOWN, null);
-        }
+            trackSlotSelectionEvent(TrackEventkeys.POTENTIAL_ORDER, potentialOrderId);
+          }
     }
 
     public void showSlotListDialog(SlotGroup slotGroup) {
@@ -152,16 +159,21 @@ public class SlotSelectionFragment extends BaseFragment {
             if (mSlotGroupListAdapter == null) return;
             mSlotGroupListAdapter.notifyDataSetChanged();
             if (areAllSlotGroupsSelected()) {
-                trackEvent(TrackingAware.CHECKOUT_SLOT_CHOOSEN, null);
+                trackSlotSelectionEvent(TrackingAware.CHECKOUT_SLOT_CHOOSEN, potentialOrderId);
                 setSelectedSlot();
             }
         } else {
             if (mSlotListAdapter == null) return;
-            trackEvent(TrackingAware.CHECKOUT_SLOT_CHOOSEN, null);
+            trackSlotSelectionEvent(TrackEventkeys.POTENTIAL_ORDER, potentialOrderId);
             mSlotListAdapter.notifyDataSetChanged();
         }
     }
 
+    private void trackSlotSelectionEvent(String eventKeyName, String potentialOrderId){
+        HashMap<String, String> map = new HashMap<>();
+        map.put(eventKeyName, potentialOrderId);
+        trackEvent(TrackingAware.CHECKOUT_SLOT_CHOOSEN, map);
+    }
     private void setSelectedSlot() {
         if (getCurrentActivity() == null) return;
 
