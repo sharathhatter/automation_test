@@ -85,7 +85,7 @@ public class MessageFormatUtil {
                     } else if (messageParamInfoArrayList.getType().equals(Constants.WEB_LINK)) {
                         if (messageParamInfoArrayList.getInternalValue() != null) {
                             Intent intent = new Intent(currentActivity, FlatPageWebViewActivity.class);
-                            intent.putExtra(Constants.FULFILLED_BY_INFO_PAGE_URL, messageParamInfoArrayList.getInternalValue());
+                            intent.putExtra(Constants.WEBVIEW_URL, messageParamInfoArrayList.getInternalValue());
                             currentActivity.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                             currentActivity.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
                         }
@@ -126,7 +126,7 @@ public class MessageFormatUtil {
                     if (messageParamInfoArrayList.getType().equals(Constants.WEB_LINK)) {
                         if (messageParamInfoArrayList.getInternalValue() != null) {
                             Intent intent = new Intent(currentActivity, FlatPageWebViewActivity.class);
-                            intent.putExtra(Constants.FULFILLED_BY_INFO_PAGE_URL, messageParamInfoArrayList.getInternalValue());
+                            intent.putExtra(Constants.WEBVIEW_URL, messageParamInfoArrayList.getInternalValue());
                             currentActivity.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                             currentActivity.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
                         }

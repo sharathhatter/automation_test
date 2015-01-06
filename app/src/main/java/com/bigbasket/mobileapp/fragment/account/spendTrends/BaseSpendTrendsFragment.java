@@ -1,14 +1,17 @@
 package com.bigbasket.mobileapp.fragment.account.spendTrends;
 
 import android.graphics.Color;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
+import com.bigbasket.mobileapp.interfaces.OnObservableScrollEvent;
 import com.bigbasket.mobileapp.model.account.spendTrends.SpendTrendSummary;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
@@ -28,14 +31,22 @@ import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 
 public abstract class BaseSpendTrendsFragment extends AbstractFragment {
-    public abstract ObservableScrollView getObservableScrollView();
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.uiv3_spend_trends_chart, container, false);
+    }
+
+    public ObservableScrollView getObservableScrollView() {
+        assert getView() != null;
+        return (ObservableScrollView) getView().findViewById(R.id.scrollViewSpendTrends);
+    }
 
     public void initializeScroll() {
         if (getActivity() == null || getView() == null) return;
 
         final ObservableScrollView scrollViewSpendTrends = getObservableScrollView();
 
-        final ActionBar actionBar = ((ActionBarActivity) getActivity()).getSupportActionBar();
         scrollViewSpendTrends.setScrollViewCallbacks(new ObservableScrollViewCallbacks() {
             @Override
             public void onScrollChanged(int i, boolean b, boolean b2) {
@@ -50,13 +61,9 @@ public abstract class BaseSpendTrendsFragment extends AbstractFragment {
             @Override
             public void onUpOrCancelMotionEvent(ScrollState scrollState) {
                 if (scrollState == ScrollState.UP) {
-                    if (actionBar.isShowing()) {
-                        actionBar.hide();
-                    }
+                    ((OnObservableScrollEvent) getActivity()).onScrollUp();
                 } else if (scrollState == ScrollState.DOWN) {
-                    if (!actionBar.isShowing()) {
-                        actionBar.show();
-                    }
+                    ((OnObservableScrollEvent) getActivity()).onScrollDown();
                 }
             }
         });
@@ -166,6 +173,9 @@ public abstract class BaseSpendTrendsFragment extends AbstractFragment {
         // Inspiration http://stackoverflow.com/a/19389478 and http://stackoverflow.com/a/19389478
 
         int[] colors = new int[numPieSlices];
+        if (numPieSlices <= 0) {
+            return colors;
+        }
         colors[0] = baseColor;
         float hsv[] = new float[3];
         Color.RGBToHSV(Color.red(baseColor), Color.green(baseColor), Color.blue(baseColor),

@@ -87,6 +87,8 @@ public class SocialLoginConfirmActivity extends BaseSignInSignupActivity {
         rbtnCreateAccount.setTypeface(faceRobotoRegular);
         final CheckBox chkAcceptTerms = (CheckBox) base.findViewById(R.id.chkAcceptTerms);
         chkAcceptTerms.setTypeface(faceRobotoRegular);
+        final TextView txtViewTermsAndCond = (TextView) base.findViewById(R.id.txtViewTermsAndCond);
+        setTermsAndCondition(txtViewTermsAndCond);
         mEmailView = (AutoCompleteTextView) base.findViewById(R.id.emailInput);
         populateAutoComplete();
         final EditText editTextPasswd = (EditText) base.findViewById(R.id.editTextPasswd);
@@ -115,11 +117,8 @@ public class SocialLoginConfirmActivity extends BaseSignInSignupActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    layoutLoginInput.setVisibility(View.VISIBLE);
-                    txtCreateNewAccount.setVisibility(View.GONE);
-                    btnCreateNewAccount.setVisibility(View.GONE);
-                    btnLinkToExistingSocialAccount.setVisibility(View.VISIBLE);
-                    chkAcceptTerms.setVisibility(View.VISIBLE);
+                    toggleViewState(true, layoutLoginInput, txtCreateNewAccount, btnCreateNewAccount,
+                            btnLinkToExistingSocialAccount, chkAcceptTerms, txtViewTermsAndCond);
                 }
             }
         });
@@ -128,15 +127,14 @@ public class SocialLoginConfirmActivity extends BaseSignInSignupActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    layoutLoginInput.setVisibility(View.GONE);
-                    txtCreateNewAccount.setVisibility(View.VISIBLE);
-                    btnCreateNewAccount.setVisibility(View.VISIBLE);
-                    btnLinkToExistingSocialAccount.setVisibility(View.GONE);
-                    chkAcceptTerms.setVisibility(View.GONE);
+                    toggleViewState(false, layoutLoginInput, txtCreateNewAccount, btnCreateNewAccount,
+                            btnLinkToExistingSocialAccount, chkAcceptTerms, txtViewTermsAndCond);
                 }
             }
         });
-
+        toggleViewState(rbtnLinkToExistingSocialAccount.isChecked(),
+                layoutLoginInput, txtCreateNewAccount, btnCreateNewAccount,
+                btnLinkToExistingSocialAccount, chkAcceptTerms, txtViewTermsAndCond);
         btnLinkToExistingSocialAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -182,9 +180,34 @@ public class SocialLoginConfirmActivity extends BaseSignInSignupActivity {
         btnCreateNewAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!chkAcceptTerms.isChecked()) {
+                    showToast(getString(R.string.acceptTermsMsg));
+                    return;
+                }
                 onCreateNewAccount(socialAccount);
             }
         });
+    }
+
+    private void toggleViewState(boolean linkAccount,
+                                 View layoutLoginInput, TextView txtCreateNewAccount,
+                                 Button btnCreateNewAccount, Button btnLinkToExistingSocialAccount,
+                                 CheckBox chkAcceptTerms, TextView termsAndCondHeading) {
+        if (linkAccount) {
+            layoutLoginInput.setVisibility(View.VISIBLE);
+            txtCreateNewAccount.setVisibility(View.GONE);
+            btnCreateNewAccount.setVisibility(View.GONE);
+            btnLinkToExistingSocialAccount.setVisibility(View.VISIBLE);
+            chkAcceptTerms.setVisibility(View.GONE);
+            termsAndCondHeading.setVisibility(View.GONE);
+        } else {
+            layoutLoginInput.setVisibility(View.GONE);
+            txtCreateNewAccount.setVisibility(View.VISIBLE);
+            btnCreateNewAccount.setVisibility(View.VISIBLE);
+            btnLinkToExistingSocialAccount.setVisibility(View.GONE);
+            chkAcceptTerms.setVisibility(View.VISIBLE);
+            termsAndCondHeading.setVisibility(View.VISIBLE);
+        }
     }
 
     public void onLinkToExistingAccount(String email, String password, SocialAccount socialAccount) {

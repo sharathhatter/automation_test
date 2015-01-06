@@ -332,13 +332,15 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
                     }
                 });
             }
-            if (nxtDialogButton.equals(DialogButton.NO))
-                builder.setNegativeButton(R.string.noTxt, new DialogInterface.OnClickListener() {
+            if (nxtDialogButton.equals(DialogButton.NO) || nxtDialogButton.equals(DialogButton.CANCEL)) {
+                int textId = nxtDialogButton.equals(DialogButton.NO) ? R.string.noTxt : R.string.cancel;
+                builder.setNegativeButton(textId, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int id) {
                         onNegativeButtonClicked(dialogInterface, id, sourceName);
                     }
                 });
+            }
         }
         AlertDialog alertDialog = builder.create();
         if (isSuspended())

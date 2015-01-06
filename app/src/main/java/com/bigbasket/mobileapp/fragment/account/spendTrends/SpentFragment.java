@@ -2,31 +2,15 @@ package com.bigbasket.mobileapp.fragment.account.spendTrends;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.model.account.spendTrends.SpendTrendSummary;
 import com.bigbasket.mobileapp.model.account.spendTrends.SpendTrendsRangeData;
 import com.bigbasket.mobileapp.util.Constants;
-import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
 
 import java.util.ArrayList;
 
 public class SpentFragment extends BaseSpendTrendsFragment {
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.uiv3_spend_trends_chart, container, false);
-    }
-
-    @Override
-    public ObservableScrollView getObservableScrollView() {
-        assert getView() != null;
-        return (ObservableScrollView) getView().findViewById(R.id.scrollViewSpendTrends);
-    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {

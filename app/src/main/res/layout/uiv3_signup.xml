@@ -244,6 +244,16 @@
                 android:textColor="@color/uiv3_primary_text_color"
                 android:textSize="@dimen/secondary_text_size" />
 
+            <TextView
+                android:id="@+id/txtViewTermsAndCond"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_large"
+                android:layout_marginTop="@dimen/margin_mini"
+                android:text="@string/viewTerms"
+                android:textColor="@color/uiv3_link_color"
+                android:textSize="@dimen/secondary_text_size" />
+
             <CheckBox
                 android:id="@+id/chkReceivePromos"
                 android:layout_width="wrap_content"

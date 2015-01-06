@@ -481,4 +481,10 @@
     <string name="amountSpent">Total Amount Spent</string>
     <string name="amountSaved">Total Amount Saved</string>
     <string name="amountSpentPerMonth">Amount Spent per month</string>
+    <string name="analyseSpendTrends">Analyse Spend Trends</string>
+    <string name="nothingToFilter">Nothing to filter!</string>
+    <string name="updateGooglePlayServices">Update Google Play Services</string>
+    <string name="updateGooglePlayServicesDesc">You are using an outdated version of Google Play Services.\nPlease update it, in order to login with Google.</string>
+    <string name="viewTerms">View terms and conditions</string>
+    <string name="termsAndCondHeading">Terms and conditions</string>
 </resources>

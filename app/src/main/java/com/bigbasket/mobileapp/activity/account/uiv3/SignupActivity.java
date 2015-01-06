@@ -16,6 +16,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BaseSignInSignupActivity;
@@ -57,6 +58,8 @@ public class SignupActivity extends BaseSignInSignupActivity {
         mLastNameView = (EditText) base.findViewById(R.id.editTextLastName);
         mMobileNumView = (EditText) base.findViewById(R.id.editTextMobileNumber);
         mChkAcceptTerms = (CheckBox) base.findViewById(R.id.chkAcceptTerms);
+        TextView txtViewTermsAndCond = (TextView) base.findViewById(R.id.txtViewTermsAndCond);
+        setTermsAndCondition(txtViewTermsAndCond);
         mChkReceivePromos = (CheckBox) base.findViewById(R.id.chkReceivePromos);
         mEmailView = (AutoCompleteTextView) base.findViewById(R.id.editTextEmailSignup);
 

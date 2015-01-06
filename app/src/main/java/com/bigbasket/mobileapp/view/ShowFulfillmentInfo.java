@@ -118,7 +118,7 @@ public class ShowFulfillmentInfo {
 
     public void showFulfillmentInfoPage(String fulfillmentInfoPageUrl) {
         Intent intent = new Intent(activity, FlatPageWebViewActivity.class);
-        intent.putExtra(Constants.FULFILLED_BY_INFO_PAGE_URL, fulfillmentInfoPageUrl);
+        intent.putExtra(Constants.WEBVIEW_URL, fulfillmentInfoPageUrl);
         activity.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         activity.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
     }

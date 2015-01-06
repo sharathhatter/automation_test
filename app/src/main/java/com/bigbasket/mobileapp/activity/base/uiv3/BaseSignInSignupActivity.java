@@ -14,20 +14,28 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
+import android.text.style.UnderlineSpan;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginConfirmActivity;
+import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginApiResponse;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.SocialAccount;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.MobileApiUrl;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
@@ -283,5 +291,23 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity {
         } else {
             passwordEditText.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
         }
+    }
+
+    public void setTermsAndCondition(TextView txtVw) {
+        txtVw.setTypeface(faceRobotoRegular);
+        SpannableString spannableString = new SpannableString(txtVw.getText());
+        spannableString.setSpan(new UnderlineSpan(), 0, spannableString.length(),
+                Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+        txtVw.setText(spannableString);
+        txtVw.setClickable(true);
+        txtVw.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent flatPageWebviewActivity = new Intent(getCurrentActivity(), FlatPageWebViewActivity.class);
+                flatPageWebviewActivity.putExtra(Constants.WEBVIEW_URL, MobileApiUrl.DOMAIN + "terms-and-conditions/");
+                flatPageWebviewActivity.putExtra(Constants.WEBVIEW_TITLE, getString(R.string.termsAndCondHeading));
+                startActivityForResult(flatPageWebviewActivity, NavigationCodes.GO_TO_HOME);
+            }
+        });
     }
 }

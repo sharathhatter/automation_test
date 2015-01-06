@@ -4,11 +4,13 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Spinner;
 
@@ -22,6 +24,7 @@ import com.bigbasket.mobileapp.fragment.account.spendTrends.CategorySpentFragmen
 import com.bigbasket.mobileapp.fragment.account.spendTrends.SavedFragment;
 import com.bigbasket.mobileapp.fragment.account.spendTrends.SpentFragment;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
+import com.bigbasket.mobileapp.interfaces.OnObservableScrollEvent;
 import com.bigbasket.mobileapp.model.account.spendTrends.SpendTrendSummary;
 import com.bigbasket.mobileapp.model.account.spendTrends.SpendTrends;
 import com.bigbasket.mobileapp.model.account.spendTrends.SpendTrendsCategoryExpRangeData;
@@ -42,13 +45,15 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class SpendTrendsActivity extends BaseActivity {
+public class SpendTrendsActivity extends BaseActivity implements OnObservableScrollEvent {
 
     private BBDrawerLayout mDrawerLayout;
     private SpendTrends mSpendTrends;
     private ArrayList<String> mCategoryDropdown;
     private Spinner mSpinnerMonthRange;
     private Spinner mSpinnerCategories;
+    private Button mBtnAnalyseSpendTrends;
+    private View mLayoutSpendTrendsFilter, mLayoutSpendTrendsFilterEmpty;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,7 +65,8 @@ public class SpendTrendsActivity extends BaseActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(getString(R.string.spendTrends));
         mDrawerLayout = (BBDrawerLayout) findViewById(R.id.drawer_layout);
-
+        mLayoutSpendTrendsFilter = findViewById(R.id.layoutSpendTrendsFilter);
+        mLayoutSpendTrendsFilterEmpty = findViewById(R.id.layoutSpendTrendsFilterEmpty);
         loadSpendTrends(savedInstanceState);
     }
 
@@ -140,13 +146,28 @@ public class SpendTrendsActivity extends BaseActivity {
         });
     }
 
+    private boolean isSpendTrendsEmpty() {
+        return mSpendTrends == null || mSpendTrends.getSpentSavedRangeInfos() == null ||
+                mSpendTrends.getSpentSavedRangeInfos().size() == 0;
+    }
+
+    private void toggleFilterLayoutVisibility() {
+        if (isSpendTrendsEmpty()) {
+            mLayoutSpendTrendsFilterEmpty.setVisibility(View.VISIBLE);
+            mLayoutSpendTrendsFilter.setVisibility(View.GONE);
+        } else {
+            mLayoutSpendTrendsFilterEmpty.setVisibility(View.GONE);
+            mLayoutSpendTrendsFilter.setVisibility(View.VISIBLE);
+        }
+    }
+
     private void renderSpendTrends() {
         FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
         contentFrame.removeAllViews();
-        if (mSpendTrends == null || mSpendTrends.getSpentSavedRangeInfos() == null ||
-                mSpendTrends.getSpentSavedRangeInfos().size() == 0) {
+        if (isSpendTrendsEmpty()) {
             View spendTrendsEmptyView = getLayoutInflater().inflate(R.layout.uiv3_empty_spend_trends, null);
             contentFrame.addView(spendTrendsEmptyView);
+            toggleFilterLayoutVisibility();
             return;
         }
 
@@ -213,6 +234,7 @@ public class SpendTrendsActivity extends BaseActivity {
                                        String categoryName, SpendTrendSummary selectedSummary,
                                        int rangeVal) {
         View base = getLayoutInflater().inflate(R.layout.uiv3_spend_trends_tab, null);
+        mBtnAnalyseSpendTrends = (Button) base.findViewById(R.id.btnAnalyseSpendTrends);
 
         final ArrayList<BBTab> bbTabs = new ArrayList<>();
         Bundle spentSavedBundle = new Bundle();
@@ -260,5 +282,27 @@ public class SpendTrendsActivity extends BaseActivity {
             outState.putParcelable(Constants.SPENT_SAVED, mSpendTrends);
         }
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onScrollUp() {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar.isShowing()) {
+            actionBar.hide();
+            if (mBtnAnalyseSpendTrends != null) {
+                mBtnAnalyseSpendTrends.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    @Override
+    public void onScrollDown() {
+        ActionBar actionBar = getSupportActionBar();
+        if (!actionBar.isShowing()) {
+            actionBar.show();
+            if (mBtnAnalyseSpendTrends != null) {
+                mBtnAnalyseSpendTrends.setVisibility(View.VISIBLE);
+            }
+        }
     }
 }

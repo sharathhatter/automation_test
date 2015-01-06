@@ -316,7 +316,8 @@ public class Constants {
     public static final String TC = "tc";
     public static final String ICON = "icon";
     public static final String FULLFILLMENT_ITEM_ICON = "icon";
-    public static final String FULFILLED_BY_INFO_PAGE_URL = "fullfillmentInfoPageUrl";
+    public static final String WEBVIEW_URL = "webViewUrl";
+    public static final String WEBVIEW_TITLE = "webTitle";
     public static final String FULFILLMENT_INFO = "fulfillment_info";
     public static final String ANNOTATIONS = "annotations";
     public static final String ANNOTATION_ID = "annotation_id";
@@ -586,4 +587,5 @@ public class Constants {
     public static final String DATE_RANGE_MAP = "date_range_map";
     public static final String ALL_CATEGORIES = "All Categories";
     public static final String SUMMARY = "summary";
+    public static final String GOOGLE_PLAY_SERVICES = "googlePlayServices";
 }
