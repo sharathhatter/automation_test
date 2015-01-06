@@ -35,9 +35,6 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-/**
- * Created by jugal on 29/12/14.
- */
 public class MemberReferralTCFragment extends BaseFragment {
 
     @Override

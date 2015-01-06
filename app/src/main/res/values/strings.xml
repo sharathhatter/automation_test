@@ -459,6 +459,8 @@
     <string name="serviceUnavailable">Service is temporarily unavailable due to an issue.\nPlease try later</string>
     <string name="weAreDown">We are down!</string>
     <string name="why">Why?</string>
+    <string name="PreWhyMsg">Currently we serve in </string>
+    <string name="postWhyMsg">The promotions and pricing are specific to the city.</string>
     <!--<string name="whyMsg">Currently we serve in Bangalore, Hyderabad, Mumbai, and Pune.\nThe promotions and pricing are specific to the city.</string>-->
 
     <!-- member referral -->

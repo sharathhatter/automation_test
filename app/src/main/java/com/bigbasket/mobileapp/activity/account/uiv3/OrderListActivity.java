@@ -33,7 +33,6 @@ import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
-import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.BBArrayAdapter;
 
 import java.util.ArrayList;
@@ -72,6 +71,7 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
     }
 
     private void loadOrders() {
+        traceOrderEvent(orderType, -1);
         loadOrders(-1);
     }
 
@@ -94,16 +94,6 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
                                 orderMonthRanges = orderListApiResponse.orderMonthRanges;
                                 selectedMonth = orderListApiResponse.selectedMonth;
                                 renderOrderList();
-                                if (orderType.equals(getString(R.string.active_label))) {
-                                    trackEvent(TrackingAware.ORDER_ACTIVE_ORDERS_SHOWN, null);
-                                } else {
-                                    final ArrayList<String> orderMothRangeArray = new ArrayList<>();
-                                    for(OrderMonthRange orderMonthRange: orderMonthRanges)
-                                        orderMothRangeArray.add(orderMonthRange.getDisplayValue());
-                                    HashMap<String, String> map = new HashMap<>();
-                                    map.put(TrackEventkeys.MONTH_RANGE, UIUtil.strJoin(orderMothRangeArray, ","));
-                                    trackEvent(TrackingAware.ORDER_PAST_ORDERS, map);
-                                }
                                 break;
                             default:
                                 if (orderListApiResponse.errorType.equals(String.valueOf(ApiErrorCodes.INVALID_FIELD))) {
@@ -159,6 +149,7 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     OrderMonthRange orderMonthRange = orderMonthRanges.get(position);
                     if (orderMonthRange.getValue() != selectedMonth) {
+                        traceOrderEvent(orderType, orderMonthRange.getValue());
                         loadOrders(orderMonthRange.getValue());
                     }
                 }
@@ -228,5 +219,20 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
         Intent orderDetailIntent = new Intent(getCurrentActivity(), OrderDetailActivity.class);
         orderDetailIntent.putExtra(Constants.ORDER_REVIEW_SUMMARY, orderInvoice);
         startActivityForResult(orderDetailIntent, NavigationCodes.GO_TO_HOME);
+    }
+
+    private void traceOrderEvent(String orderType, int monthVal){
+        if (orderType.equals(getString(R.string.active_label))) {
+            trackEvent(TrackingAware.ORDER_ACTIVE_ORDERS_SHOWN, null);
+        } else {
+            if(monthVal!=-1){
+                HashMap<String, String> map = new HashMap<>();
+                map.put(TrackEventkeys.MONTH_RANGE, String.valueOf(monthVal));
+                trackEvent(TrackingAware.ORDER_PAST_ORDERS, map);
+            }else {
+                trackEvent(TrackingAware.ORDER_PAST_ORDERS, null);
+            }
+
+        }
     }
 }

@@ -319,7 +319,7 @@ public interface BigBasketApiService {
     @POST("/update-version-number/")
     void updateVersionNumber(@Field(Constants.DEVICE_ID) String deviceId,
                              @Field(Constants.APP_VERSION) String appVersion,
-                             Callback<OldApiResponse<UpdateVersionInfoApiResponseContent>> updateVersionInfoApiResponseCallback);
+                             Callback<ApiResponse<UpdateVersionInfoApiResponseContent>> updateVersionInfoApiResponseCallback);
 
     @GET("/category-landing/")
     void getSubCategoryData(@Query(Constants.CATEGORY_SLUG) String categorySlug,

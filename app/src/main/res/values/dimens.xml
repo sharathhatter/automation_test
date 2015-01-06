@@ -31,7 +31,7 @@
     <dimen name="large_text_size">18sp</dimen>
     <dimen name="primary_text_size">16sp</dimen>
     <dimen name="secondary_text_size">14sp</dimen>
-    <dimen name="very_small_text_size">10sp</dimen>
+    <dimen name="very_small_text_size">11sp</dimen>
     <dimen name="dialog_btn_height">36dp</dimen>
     <dimen name="dialog_btn_layout_height">48dp</dimen>
     <dimen name="small_text_size">12sp</dimen>
@@ -64,4 +64,5 @@
     <dimen name="bb_button_text_size">@dimen/primary_text_size</dimen>
     <dimen name="vertical_separator_line">25dp</dimen>
     <dimen name="bar_chart_height">300dp</dimen>
+    <dimen name="fulfillment_image_size">12dp</dimen>
 </resources>

@@ -103,4 +103,8 @@ public class AnnotationInfo implements Parcelable {
     public MessageInfo getMsgInfo() {
         return msgInfo;
     }
+
+    public String getInfoPage() {
+        return infoPage;
+    }
 }

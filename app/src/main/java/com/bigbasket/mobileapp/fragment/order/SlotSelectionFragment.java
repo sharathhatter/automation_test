@@ -44,6 +44,7 @@ public class SlotSelectionFragment extends BaseFragment {
     private Dialog mSlotListDialog;
     private SlotGroupListAdapter mSlotGroupListAdapter;
     private SlotListAdapter mSlotListAdapter;
+    private String potentialOrderId;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -54,6 +55,8 @@ public class SlotSelectionFragment extends BaseFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mSlotGroupList = getArguments().getParcelableArrayList(Constants.SLOTS_INFO);
+        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        potentialOrderId = prefer.getString(Constants.POTENTIAL_ORDER_ID, null);
         displaySlotGroups();
     }
 
@@ -96,11 +99,8 @@ public class SlotSelectionFragment extends BaseFragment {
                 }
             });
             contentView.addView(slotGroupListView);
-            HashMap<String, String> map = new HashMap<>();
-            SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            map.put(TrackEventkeys.POTENTIAL_ORDER, prefer.getString(Constants.POTENTIAL_ORDER_ID, null));
-            trackEvent(TrackingAware.CHECKOUT_SLOT_SHOWN, map);
-        }
+            trackSlotSelectionEvent(TrackEventkeys.POTENTIAL_ORDER, potentialOrderId);
+          }
     }
 
     public void showSlotListDialog(SlotGroup slotGroup) {
@@ -159,22 +159,21 @@ public class SlotSelectionFragment extends BaseFragment {
             if (mSlotGroupListAdapter == null) return;
             mSlotGroupListAdapter.notifyDataSetChanged();
             if (areAllSlotGroupsSelected()) {
-                HashMap<String, String> map = new HashMap<>();
-                SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
-                map.put(TrackEventkeys.POTENTIAL_ORDER, prefer.getString(Constants.POTENTIAL_ORDER_ID, null));
-                trackEvent(TrackingAware.CHECKOUT_SLOT_CHOOSEN, map);
+                trackSlotSelectionEvent(TrackingAware.CHECKOUT_SLOT_CHOOSEN, potentialOrderId);
                 setSelectedSlot();
             }
         } else {
             if (mSlotListAdapter == null) return;
-            HashMap<String, String> map = new HashMap<>();
-            SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            map.put(TrackEventkeys.POTENTIAL_ORDER, prefer.getString(Constants.POTENTIAL_ORDER_ID, null));
-            trackEvent(TrackingAware.CHECKOUT_SLOT_CHOOSEN, map);
+            trackSlotSelectionEvent(TrackEventkeys.POTENTIAL_ORDER, potentialOrderId);
             mSlotListAdapter.notifyDataSetChanged();
         }
     }
 
+    private void trackSlotSelectionEvent(String eventKeyName, String potentialOrderId){
+        HashMap<String, String> map = new HashMap<>();
+        map.put(eventKeyName, potentialOrderId);
+        trackEvent(TrackingAware.CHECKOUT_SLOT_CHOOSEN, map);
+    }
     private void setSelectedSlot() {
         if (getCurrentActivity() == null) return;
 

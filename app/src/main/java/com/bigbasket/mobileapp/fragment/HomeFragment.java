@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.fragment;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,10 +26,12 @@ import com.bigbasket.mobileapp.apiservice.models.response.HomePageApiResponseCon
 import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateVersionInfoApiResponseContent;
 import com.bigbasket.mobileapp.fragment.base.BaseSectionFragment;
+import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.section.DestinationInfo;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.task.GetCartCountTask;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -82,19 +86,18 @@ public class HomeFragment extends BaseSectionFragment {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.updateVersionNumber(preferences.getString(Constants.DEVICE_ID, null),
-                getAppVersion(), new Callback<OldApiResponse<UpdateVersionInfoApiResponseContent>>() {
+                getAppVersion(), new Callback<ApiResponse<UpdateVersionInfoApiResponseContent>>() {
                     @Override
-                    public void success(OldApiResponse<UpdateVersionInfoApiResponseContent> updateVersionInfoApiResponse, Response response) {
+                    public void success(ApiResponse<UpdateVersionInfoApiResponseContent> updateVersionInfoApiResponse, Response response) {
                         if (isSuspended()) return;
                         try {
                             hideProgressDialog();
                         } catch (IllegalArgumentException e) {
                             return;
                         }
-                        getHomePage();
-                        /*
+
                         switch (updateVersionInfoApiResponse.status) {
-                            case Constants.OK:
+                            case 0:
                                 SharedPreferences.Editor editor =
                                         PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
                                 editor.putString(Constants.VERSION_NAME, getAppVersion());
@@ -122,7 +125,7 @@ public class HomeFragment extends BaseSectionFragment {
                                 getActivity().finish();
                                 break;
                         }
-                        */
+
                     }
 
                     @Override

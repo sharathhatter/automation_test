@@ -171,13 +171,15 @@ public class StartActivity extends BaseActivity {
         progressBarLoading.setVisibility(View.GONE);
 
         final ArrayList<String> citiesStr = new ArrayList<>();
-        for(City city: cities)
-            citiesStr.add(city.getName());
+        for(int i=1; i<cities.size(); i++){
+            citiesStr.add(cities.get(i).getName());
+        }
         TextView txtViewWhy = (TextView) findViewById(R.id.txtViewWhy);
         txtViewWhy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showAlertDialog(UIUtil.strJoin(citiesStr, ","));
+                String cityString = UIUtil.sentenceJoin(citiesStr);
+                showAlertDialog(getString(R.string.PreWhyMsg)+ " "+ cityString +". "+getString(R.string.postWhyMsg));
             }
         });
         layoutSpinnerAndWhyLink.setVisibility(View.VISIBLE);

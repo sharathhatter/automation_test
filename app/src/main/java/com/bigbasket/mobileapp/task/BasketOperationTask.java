@@ -37,7 +37,6 @@ public class BasketOperationTask<T> {
 
     private static final String TAG = BasketOperationTask.class.getName();
     private T context;
-    //private String productId;
     private Product product;
     private BasketOperation basketOperation;
     private String qty;
@@ -76,29 +75,6 @@ public class BasketOperationTask<T> {
         this.sourceName = sourceName;
     }
 
-//    public BasketOperationTask(T context, BasketOperation basketOperation, @NonNull String productId,
-//                               TextView basketCountTextView, ImageView imgDecQty,
-//                               ImageView imgIncQty, Button btnAddToBasket,
-//                               EditText editTextQty) {
-//        this(context, basketOperation, productId, basketCountTextView, imgDecQty, imgIncQty,
-//                btnAddToBasket, editTextQty, "1");
-//    }
-//
-//    public BasketOperationTask(T context, BasketOperation basketOperation, @NonNull String productId,
-//                               TextView basketCountTextView, ImageView imgDecQty,
-//                               ImageView imgIncQty, Button btnAddToBasket,
-//                               EditText editTextQty, String qty) {
-//        this.context = context;
-//        this.productId = productId;
-//        this.basketOperation = basketOperation;
-//        this.basketCountTextView = basketCountTextView;
-//        this.imgDecQty = imgDecQty;
-//        this.imgIncQty = imgIncQty;
-//        this.btnAddToBasket = btnAddToBasket;
-//        this.editTextQty = editTextQty;
-//        this.qty = qty;
-//    }
-
     public void startTask() {
         if (!((ConnectivityAware) context).checkInternetConnection()) {
             ((HandlerAware) context).getHandler().sendOfflineError();
@@ -108,7 +84,6 @@ public class BasketOperationTask<T> {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.
                 getApiService(((ActivityAware) context).getCurrentActivity());
         ((ProgressIndicationAware) context).showProgressDialog(((BaseFragment) context).getString(R.string.please_wait));
-        //String reqProdId = product != null ? product.getSku() : productId;
         String reqProdId = product.getSku();
         switch (basketOperation) {
             case INC:

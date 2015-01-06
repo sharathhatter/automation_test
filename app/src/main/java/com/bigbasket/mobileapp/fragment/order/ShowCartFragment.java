@@ -239,8 +239,8 @@ public class ShowCartFragment extends BaseFragment {
                 }
             }
         });
-        ActiveOrderRowAdapter activeOrderRowAdapter = new ActiveOrderRowAdapter(cartItemHeaderList, ((BaseActivity) getActivity()),
-                this, faceRupee, faceRobotoRegular, OrderItemDisplaySource.BASKET, isReadOnly,
+        ActiveOrderRowAdapter activeOrderRowAdapter = new ActiveOrderRowAdapter(cartItemHeaderList, this,
+                faceRupee, faceRobotoRegular, OrderItemDisplaySource.BASKET, isReadOnly,
                 fulfillmentInfoIdAndIconHashMap, annotationHashMap, baseImageUrl, TrackEventkeys.VIEW_BASKET);
         cartItemListView.setDivider(null);
         cartItemListView.setDividerHeight(0);
