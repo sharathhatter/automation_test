@@ -1,4 +1,4 @@
-include ':app', ':facebook'
+include ':app', ':facebook', ':androidImageSlider'
 include ':konotorActivity'
 include ':androidHorizontalListView'
 include ':multipleImagePick'
