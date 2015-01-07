@@ -14,8 +14,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.model.section.DestinationInfo;
 import com.bigbasket.mobileapp.model.section.Section;
+import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.model.section.SectionItem;
 import com.bigbasket.mobileapp.util.Constants;
 import com.daimajia.slider.library.SliderLayout;
@@ -24,17 +24,14 @@ import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public abstract class BaseSectionFragment extends BaseFragment {
 
-    protected ArrayList<Section> mSections;
-    protected HashMap<Integer, DestinationInfo> mDestinationInfoHashMap;
+    protected SectionData mSectionData;
 
     public void displaySections(LinearLayout mainLayout) {
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        for (Section section : mSections) {
+        for (Section section : mSectionData.getSections()) {
             switch (section.getSectionType()) {
                 case Section.BANNER:
                     View bannerView = getBannerView(section, inflater);
@@ -72,9 +69,10 @@ public abstract class BaseSectionFragment extends BaseFragment {
         View baseSlider = inflater.inflate(R.layout.uiv3_image_slider, null);
         SliderLayout bannerSlider = (SliderLayout) baseSlider.findViewById(R.id.imgSlider);
         for (SectionItem sectionItem : section.getSectionItems()) {
-            if (!TextUtils.isEmpty(sectionItem.getDisplayName())) {
+            if (!TextUtils.isEmpty(sectionItem.getTitle().getText())) {
                 TextSliderView textSliderView = new TextSliderView(getActivity());
-                textSliderView.description(sectionItem.getDisplayName()).image(sectionItem.getImage());
+                textSliderView.description(sectionItem.getTitle().getText())
+                        .image(sectionItem.getImage());
                 bannerSlider.addSlider(textSliderView);
             } else {
                 DefaultSliderView defaultSliderView = new DefaultSliderView(getActivity());
@@ -88,9 +86,9 @@ public abstract class BaseSectionFragment extends BaseFragment {
     private View getSalutationView(Section section, LayoutInflater inflater) {
         View baseSalutation = inflater.inflate(R.layout.uiv3_salutation_box, null);
         TextView txtSalutationTitle = (TextView) baseSalutation.findViewById(R.id.txtSalutationTitle);
-        if (!TextUtils.isEmpty(section.getDisplayName())) {
+        if (!TextUtils.isEmpty(section.getTitle().getText())) {
             txtSalutationTitle.setTypeface(faceRobotoRegular);
-            txtSalutationTitle.setText(section.getDisplayName());
+            txtSalutationTitle.setText(section.getTitle().getText());
         } else {
             txtSalutationTitle.setVisibility(View.GONE);
         }
@@ -121,9 +119,9 @@ public abstract class BaseSectionFragment extends BaseFragment {
                     imgSalutationItem = (ImageView) baseSalutation.findViewById(R.id.imgSalutationItem1);
                     break;
             }
-            if (!TextUtils.isEmpty(sectionItem.getDisplayName())) {
+            if (!TextUtils.isEmpty(sectionItem.getTitle().getText())) {
                 txtSalutationItem.setTypeface(faceRobotoRegular);
-                txtSalutationItem.setText(sectionItem.getDisplayName());
+                txtSalutationItem.setText(sectionItem.getTitle().getText());
             }
             if (!TextUtils.isEmpty(sectionItem.getImage())) {
                 ImageLoader.getInstance().displayImage(sectionItem.getImage(), imgSalutationItem);
@@ -162,10 +160,10 @@ public abstract class BaseSectionFragment extends BaseFragment {
             SectionItem productSectionItem = productSectionItemList.get(position);
             ImageView imgProduct = holder.getImgProduct();
             TextView txtProductDesc = holder.getTxtProductDesc();
-            if (!TextUtils.isEmpty(productSectionItem.getDisplayName())) {
+            if (!TextUtils.isEmpty(productSectionItem.getTitle().getText())) {
                 txtProductDesc.setVisibility(View.VISIBLE);
                 txtProductDesc.setTypeface(faceRobotoRegular);
-                txtProductDesc.setText(productSectionItem.getDisplayName());
+                txtProductDesc.setText(productSectionItem.getTitle().getText());
             } else {
                 txtProductDesc.setVisibility(View.GONE);
             }
@@ -216,17 +214,26 @@ public abstract class BaseSectionFragment extends BaseFragment {
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams.setMargins(0, 4, 0, 0);
         webView.setLayoutParams(layoutParams);
-        webView.loadData(section.getDisplayName(), "text/html", "UTF-8");
+        webView.loadData(section.getDescription().getText(), "text/html", "UTF-8");
         return webView;
     }
 
     private View getImageView(Section section) {
-        ImageView imageView = new ImageView(getActivity());
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+        LinearLayout linearLayout = new LinearLayout(getActivity());
+        LinearLayout.LayoutParams baseLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
-        imageView.setLayoutParams(layoutParams);
-        ImageLoader.getInstance().displayImage(section.getDisplayName(), imageView);
-        return imageView;
+        linearLayout.setLayoutParams(baseLayoutParams);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        for (SectionItem sectionItem : section.getSectionItems()) {
+            if (TextUtils.isEmpty(sectionItem.getImage()))
+                continue;
+            ImageView imageView = new ImageView(getActivity());
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
+            imageView.setLayoutParams(layoutParams);
+            ImageLoader.getInstance().displayImage(sectionItem.getImage(), imageView);
+        }
+        return linearLayout;
     }
 
     private View getTileView(Section section, LayoutInflater inflater) {
@@ -246,9 +253,9 @@ public abstract class BaseSectionFragment extends BaseFragment {
             tileItemView.setLayoutParams(tileItemLayoutParams);
             TextView txtCaption = (TextView) tileItemView.findViewById(R.id.txtCaption);
             ImageView imgContent = (ImageView) tileItemView.findViewById(R.id.imgContent);
-            if (!TextUtils.isEmpty(sectionItem.getDisplayName())) {
+            if (!TextUtils.isEmpty(sectionItem.getTitle().getText())) {
                 txtCaption.setTypeface(faceRobotoRegular);
-                txtCaption.setText(sectionItem.getDisplayName());
+                txtCaption.setText(sectionItem.getTitle().getText());
             } else {
                 txtCaption.setVisibility(View.GONE);
             }
@@ -270,34 +277,16 @@ public abstract class BaseSectionFragment extends BaseFragment {
     }
 
     protected void retainSectionState(Bundle outState) {
-        if (mSections != null) {
-            outState.putParcelableArrayList(Constants.SECTIONS, mSections);
-        }
-        if (mDestinationInfoHashMap != null) {
-            ArrayList<Integer> destInfoIdKeyArray = new ArrayList<>();
-            ArrayList<DestinationInfo> destInfoObjArray = new ArrayList<>();
-            for (Map.Entry<Integer, DestinationInfo> entry : mDestinationInfoHashMap.entrySet()) {
-                destInfoIdKeyArray.add(entry.getKey());
-                destInfoObjArray.add(entry.getValue());
-            }
-            outState.putIntegerArrayList(Constants.DESTINATION_INFO_ID, destInfoIdKeyArray);
-            outState.putParcelableArrayList(Constants.DESTINATIONS_INFO, destInfoObjArray);
+        if (mSectionData != null) {
+            outState.putParcelable(Constants.SECTIONS, mSectionData);
         }
     }
 
     protected boolean tryRestoreSectionState(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-            mSections = savedInstanceState.getParcelableArrayList(Constants.SECTIONS);
-            ArrayList<Integer> destInfoIdKeyArray = savedInstanceState.getIntegerArrayList(Constants.DESTINATION_INFO_ID);
-            ArrayList<DestinationInfo> destInfoObjArray = savedInstanceState.getParcelableArrayList(Constants.DESTINATIONS_INFO);
-
-            if (destInfoIdKeyArray != null && destInfoObjArray != null) {
-                mDestinationInfoHashMap = new HashMap<>();
-                for (int i = 0; i < destInfoIdKeyArray.size(); i++) {
-                    mDestinationInfoHashMap.put(destInfoIdKeyArray.get(i), destInfoObjArray.get(i));
-                }
-            }
-            return mSections != null && mSections.size() > 0;
+            mSectionData = savedInstanceState.getParcelable(Constants.SECTIONS);
+            return mSectionData != null && mSectionData.getSections() != null &&
+                    mSectionData.getSections().size() > 0;
         }
         return false;
     }

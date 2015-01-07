@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Section implements Parcelable {
+public class Section extends BaseSectionTextItem implements Parcelable {
     public static final String BANNER = "banner";
     public static final String SALUTATION = "salutation";
     public static final String PRODUCT_CAROUSEL = "product_carousel";
@@ -36,21 +36,15 @@ public class Section implements Parcelable {
     @SerializedName(Constants.SECTION_TYPE)
     private String sectionType;
 
-    @SerializedName(Constants.DISPLAY_NAME)
-    private String displayName;
-
     @SerializedName(Constants.ITEMS)
     private ArrayList<SectionItem> sectionItems;
 
     @SerializedName(Constants.MORE)
     private SectionItem moreSectionItem;
 
+
     public String getSectionType() {
         return sectionType;
-    }
-
-    public String getDisplayName() {
-        return displayName;
     }
 
     public ArrayList<SectionItem> getSectionItems() {
@@ -68,12 +62,8 @@ public class Section implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
         dest.writeString(sectionType);
-        boolean _wasDisplayNameNull = displayName == null;
-        dest.writeByte(_wasDisplayNameNull ? (byte) 1 : (byte) 0);
-        if (!_wasDisplayNameNull) {
-            dest.writeString(displayName);
-        }
         boolean _wasSectionItemsNull = sectionItems == null;
         dest.writeByte(_wasSectionItemsNull ? (byte) 1 : (byte) 0);
         if (!_wasSectionItemsNull) {
@@ -84,14 +74,12 @@ public class Section implements Parcelable {
         if (!_wasMoreSectionItemNull) {
             dest.writeParcelable(moreSectionItem, flags);
         }
+
     }
 
     public Section(Parcel source) {
+        super(source);
         sectionType = source.readString();
-        boolean _wasDisplayNameNull = source.readByte() == (byte) 1;
-        if (!_wasDisplayNameNull) {
-            displayName = source.readString();
-        }
         boolean _wasSectionItemsNull = source.readByte() == (byte) 1;
         if (!_wasSectionItemsNull) {
             sectionItems = new ArrayList<>();

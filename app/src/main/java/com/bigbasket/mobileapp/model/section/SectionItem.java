@@ -6,19 +6,12 @@ import android.os.Parcelable;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
-public class SectionItem implements Parcelable {
-
-    @SerializedName(Constants.DISPLAY_NAME)
-    private String displayName;
+public class SectionItem extends BaseSectionTextItem implements Parcelable {
 
     private String image;
 
     @SerializedName(Constants.DESTINATION_INFO_ID)
     private int destinationInfoId;
-
-    public String getDisplayName() {
-        return displayName;
-    }
 
     public String getImage() {
         return image;
@@ -35,12 +28,8 @@ public class SectionItem implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        boolean _wasDisplayNameNull = displayName == null;
+        super.writeToParcel(dest, flags);
         boolean _wasImageNull = image == null;
-        dest.writeByte(_wasDisplayNameNull ? (byte) 1 : (byte) 0);
-        if (!_wasDisplayNameNull) {
-            dest.writeString(displayName);
-        }
         dest.writeByte(_wasImageNull ? (byte) 1 : (byte) 0);
         if (!_wasImageNull) {
             dest.writeString(image);
@@ -49,10 +38,7 @@ public class SectionItem implements Parcelable {
     }
 
     public SectionItem(Parcel source) {
-        boolean _wasDisplayNameNull = source.readByte() == (byte) 1;
-        if (!_wasDisplayNameNull) {
-            displayName = source.readString();
-        }
+        super(source);
         boolean _wasImageNull = source.readByte() == (byte) 1;
         if (!_wasImageNull) {
             image = source.readString();

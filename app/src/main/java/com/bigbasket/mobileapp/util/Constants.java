@@ -555,7 +555,13 @@ public class Constants {
     public static final String DESTINATIONS_INFO = "destinations_info";
     public static final String DESTINATION_TYPE = "dest_type";
     public static final String DESTINATION_SLUG = "dest_slug";
-
+    public static final String RENDERING_ID = "rendering_id";
+    public static final String TEXT_COLOR = "text_color";
+    public static final String BACKGROUND_COLOR = "background_color";
+    public static final String PADDING = "padding";
+    public static final String MARGIN = "margin";
+    public static final String ALIGNMENT = "alignment";
+    public static final String RENDERERS = "renderers";
     //checkOutQC
     public static final String FINAL_QTY = "final_quantity";
 

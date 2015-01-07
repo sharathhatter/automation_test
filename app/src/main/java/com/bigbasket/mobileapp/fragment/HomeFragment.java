@@ -22,19 +22,15 @@ import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.HomePageApiResponseContent;
-import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateVersionInfoApiResponseContent;
 import com.bigbasket.mobileapp.fragment.base.BaseSectionFragment;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.model.section.DestinationInfo;
 import com.bigbasket.mobileapp.model.section.Section;
+import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.task.GetCartCountTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.UIUtil;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -171,22 +167,14 @@ public class HomeFragment extends BaseSectionFragment {
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressView();
-        bigBasketApiService.loadHomePage(new Callback<ApiResponse<HomePageApiResponseContent>>() {
+        bigBasketApiService.loadHomePage(new Callback<ApiResponse<SectionData>>() {
             @Override
-            public void success(ApiResponse<HomePageApiResponseContent> homePageApiResponse, Response response) {
+            public void success(ApiResponse<SectionData> homePageApiResponse, Response response) {
                 if (isSuspended()) return;
                 hideProgressView();
                 switch (homePageApiResponse.status) {
                     case 0:
-                        mSections = homePageApiResponse.apiResponseContent.sections;
-                        ArrayList<DestinationInfo> destinationInfos =
-                                homePageApiResponse.apiResponseContent.destinationInfos;
-                        if (destinationInfos != null && destinationInfos.size() > 0) {
-                            mDestinationInfoHashMap = new HashMap<>();
-                            for (DestinationInfo destinationInfo : destinationInfos) {
-                                mDestinationInfoHashMap.put(destinationInfo.getDestinationInfoId(), destinationInfo);
-                            }
-                        }
+                        mSectionData = homePageApiResponse.apiResponseContent;
                         renderHomePage();
                         break;
                     default:
@@ -211,11 +199,12 @@ public class HomeFragment extends BaseSectionFragment {
 
     private void renderHomePage() {
         LinearLayout contentView = getContentView();
-        if (contentView == null) return;
+        if (contentView == null || mSectionData == null || mSectionData.getSections() == null
+                || mSectionData.getSections().size() == 0) return;
 
         // Filter sections
         Set<String> supportedSectionTypes = Section.getSupportedSectionTypes();
-        for (Iterator<Section> iterator = mSections.iterator(); iterator.hasNext(); ) {
+        for (Iterator<Section> iterator = mSectionData.getSections().iterator(); iterator.hasNext(); ) {
             Section section = iterator.next();
             if (!supportedSectionTypes.contains(section.getSectionType())) {
                 iterator.remove();
