@@ -29,7 +29,6 @@ android {
 
 dependencies {
     compile project(':konotorActivity')
-    compile project(':androidHorizontalListView')
     compile project(':facebook')
     compile files('libs/gcm.jar')
     compile files('libs/achartengine-1.1.0.jar')

@@ -1,12 +1,14 @@
 package com.bigbasket.mobileapp.fragment.base;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -19,7 +21,6 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.DefaultSliderView;
 import com.daimajia.slider.library.SliderTypes.TextSliderView;
-import com.meetme.android.horizontallistview.HorizontalListView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
@@ -132,14 +133,16 @@ public abstract class BaseSectionFragment extends BaseFragment {
     }
 
     private View getProductCarouselView(Section section, LayoutInflater inflater) {
-        View baseProductCarousel = inflater.inflate(R.layout.uiv3_horizontal_grid_layout, null);
-        HorizontalListView gridViewProduct = (HorizontalListView) baseProductCarousel.findViewById(R.id.listViewProduct);
-        ProductCarouselAdapter productCarouselAdapter = new ProductCarouselAdapter(section.getSectionItems());
-        gridViewProduct.setAdapter(productCarouselAdapter);
+        View baseProductCarousel = inflater.inflate(R.layout.uiv3_horizontal_recycler_view, null);
+        RecyclerView horizontalRecyclerView = (RecyclerView) baseProductCarousel.findViewById(R.id.horizontalRecyclerView);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+        horizontalRecyclerView.setLayoutManager(linearLayoutManager);
+        horizontalRecyclerView.setHasFixedSize(true);
+        horizontalRecyclerView.setAdapter(new ProductCarouselAdapter(section.getSectionItems()));
         return baseProductCarousel;
     }
 
-    private class ProductCarouselAdapter extends BaseAdapter {
+    private class ProductCarouselAdapter extends RecyclerView.Adapter<ProductCarouselAdapter.ProductCarouselViewHolder> {
 
         private ArrayList<SectionItem> productSectionItemList;
 
@@ -148,13 +151,25 @@ public abstract class BaseSectionFragment extends BaseFragment {
         }
 
         @Override
-        public int getCount() {
-            return productSectionItemList.size();
+        public ProductCarouselViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            LayoutInflater inflater = getActivity().getLayoutInflater();
+            View row = inflater.inflate(R.layout.uiv3_product_grid_row, null);
+            return new ProductCarouselViewHolder(row, faceRobotoRegular);
         }
 
         @Override
-        public Object getItem(int position) {
-            return productSectionItemList.get(position);
+        public void onBindViewHolder(ProductCarouselViewHolder holder, int position) {
+            SectionItem productSectionItem = productSectionItemList.get(position);
+            ImageView imgProduct = holder.getImgProduct();
+            TextView txtProductDesc = holder.getTxtProductDesc();
+            if (!TextUtils.isEmpty(productSectionItem.getDisplayName())) {
+                txtProductDesc.setVisibility(View.VISIBLE);
+                txtProductDesc.setTypeface(faceRobotoRegular);
+                txtProductDesc.setText(productSectionItem.getDisplayName());
+            } else {
+                txtProductDesc.setVisibility(View.GONE);
+            }
+            ImageLoader.getInstance().displayImage(productSectionItem.getImage(), imgProduct);
         }
 
         @Override
@@ -163,25 +178,35 @@ public abstract class BaseSectionFragment extends BaseFragment {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View row = convertView;
-            if (row == null) {
-                LayoutInflater inflater = getActivity().getLayoutInflater();
-                row = inflater.inflate(R.layout.uiv3_product_grid_row, null);
-            }
-            SectionItem productSectionItem = productSectionItemList.get(position);
-            ImageView imgProduct = (ImageView) row.findViewById(R.id.imgProduct);
-            TextView txtProductDesc = (TextView) row.findViewById(R.id.txtProductDesc);
-            if (!TextUtils.isEmpty(productSectionItem.getDisplayName())) {
-                txtProductDesc.setVisibility(View.VISIBLE);
-                txtProductDesc.setTypeface(faceRobotoRegular);
-                txtProductDesc.setText(productSectionItem.getDisplayName());
-            } else {
-                txtProductDesc.setVisibility(View.GONE);
+        public int getItemCount() {
+            return productSectionItemList.size();
+        }
+
+        public class ProductCarouselViewHolder extends RecyclerView.ViewHolder {
+
+            private ImageView imgProduct;
+            private TextView txtProductDesc;
+            private Typeface typeface;
+
+            public ProductCarouselViewHolder(View itemView, Typeface typeface) {
+                super(itemView);
+                this.typeface = typeface;
             }
 
-            ImageLoader.getInstance().displayImage(productSectionItem.getImage(), imgProduct);
-            return row;
+            public ImageView getImgProduct() {
+                if (imgProduct == null) {
+                    imgProduct = (ImageView) itemView.findViewById(R.id.imgProduct);
+                }
+                return imgProduct;
+            }
+
+            public TextView getTxtProductDesc() {
+                if (txtProductDesc == null) {
+                    txtProductDesc = (TextView) itemView.findViewById(R.id.txtProductDesc);
+                    txtProductDesc.setTypeface(typeface);
+                }
+                return txtProductDesc;
+            }
         }
     }
 
