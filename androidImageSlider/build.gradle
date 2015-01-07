@@ -27,5 +27,6 @@ dependencies {
     provided 'com.android.support:support-v4:21.0.3'
     provided 'com.android.support:appcompat-v7:21.0.3'
     provided 'com.nineoldandroids:library:2.4.0'
+    compile 'com.android.support:palette-v7:21.0.3'
 }
 apply from: './gradle-mvn-push.gradle'
