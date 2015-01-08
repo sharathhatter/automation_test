@@ -282,6 +282,11 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
     }
 
     public void onSortViewRequested() {
+        if (productListData == null || productListData.getSortOptions() == null ||
+                productListData.getSortOptions().size() == 0) {
+            Toast.makeText(getActivity(), getString(R.string.noSortOptions), Toast.LENGTH_SHORT).show();
+            return;
+        }
         SortProductDialog sortProductDialog = SortProductDialog.newInstance(productListData.getSortedOn(),
                 productListData.getSortOptions());
         sortProductDialog.setTargetFragment(getFragment(), 0);

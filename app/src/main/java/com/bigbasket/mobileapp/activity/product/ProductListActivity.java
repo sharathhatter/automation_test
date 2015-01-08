@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
@@ -82,7 +83,16 @@ public class ProductListActivity extends BBActivity implements FilterDisplayAwar
         if (item.getItemId() == R.id.action_apply_filter && getDrawerLayout() != null) {
             BBDrawerLayout drawerLayout = getDrawerLayout();
             drawerLayout.closeDrawer(Gravity.LEFT);
-            drawerLayout.openDrawer(Gravity.RIGHT);
+            ProductListAwareFragment productListAwareFragment = getProductListAwareFragment();
+            if (productListAwareFragment != null) {
+                if (productListAwareFragment.getProductListData() == null ||
+                        productListAwareFragment.getProductListData().getFilterOptions() == null ||
+                        productListAwareFragment.getProductListData().getFilterOptions().size() == 0) {
+                    Toast.makeText(getCurrentActivity(), getString(R.string.noFilterOptions), Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+                drawerLayout.openDrawer(Gravity.RIGHT);
+            }
             return true;
         } else if (item.getItemId() == R.id.action_sort_products) {
             closeFilterDrawer();

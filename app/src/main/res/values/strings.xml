@@ -501,4 +501,6 @@
     <string name="updateGooglePlayServicesDesc">You are using an outdated version of Google Play Services.\nPlease update it, in order to login with Google.</string>
     <string name="viewTerms">View terms and conditions</string>
     <string name="termsAndCondHeading">Terms and conditions</string>
+    <string name="noSortOptions">There are no sort options currently available</string>
+    <string name="noFilterOptions">No products to filter</string>
 </resources>
