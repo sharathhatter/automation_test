@@ -32,7 +32,7 @@ public class Section extends BaseSectionTextItem implements Parcelable {
         sectionTypeSets.add(AD_IMAGE);
         sectionTypeSets.add(TILE);
         sectionTypeSets.add(NON_PRODUCT_CAROUSEL);
-        //sectionTypeSets.add(MENU);
+        sectionTypeSets.add(MENU);
         sectionTypeSets.add(MSG);
         return sectionTypeSets;
     }

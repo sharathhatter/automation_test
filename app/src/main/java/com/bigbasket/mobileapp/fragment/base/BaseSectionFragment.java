@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -85,6 +86,11 @@ public abstract class BaseSectionFragment extends BaseFragment {
                         mainLayout.addView(msgView);
                     }
                     break;
+                case Section.MENU:
+                    View menuView = getMenuView(section, inflater);
+                    if (menuView != null) {
+                        mainLayout.addView(menuView);
+                    }
             }
         }
     }
@@ -244,6 +250,30 @@ public abstract class BaseSectionFragment extends BaseFragment {
             linearLayout.addView(txtVw);
         }
         return linearLayout;
+    }
+
+    private View getMenuView(Section section, LayoutInflater inflater) {
+        LinearLayout menuContainer = new LinearLayout(getActivity());
+        menuContainer.setOrientation(LinearLayout.VERTICAL);
+        if (section.getTitle() != null && !TextUtils.isEmpty(section.getTitle().getText())) {
+            TextView txtVw = (TextView) inflater.inflate(R.layout.uiv3_msg_text, null);
+            txtVw.setText(section.getTitle().getText());
+            txtVw.setTypeface(faceRobotoRegular);
+            txtVw.setGravity(Gravity.LEFT);
+            menuContainer.addView(txtVw);
+        }
+        for (SectionItem sectionItem : section.getSectionItems()) {
+            if (sectionItem == null || sectionItem.getTitle() == null || TextUtils.isEmpty(sectionItem.getTitle().getText()))
+                continue;
+            View base = inflater.inflate(R.layout.uiv3_list_text, null);
+            TextView txtListText = (TextView) base.findViewById(R.id.txtListText);
+            txtListText.setTypeface(faceRobotoRegular);
+            txtListText.setText(sectionItem.getTitle().getText());
+            View viewSeparator = base.findViewById(R.id.viewSeparator);
+            viewSeparator.setVisibility(View.VISIBLE);
+            menuContainer.addView(base);
+        }
+        return menuContainer;
     }
 
     private View getTileView(Section section, LayoutInflater inflater) {
