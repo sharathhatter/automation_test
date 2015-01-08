@@ -20,6 +20,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -750,6 +751,9 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         ArrayList<NavigationItem> navigationItems = new ArrayList<>();
         boolean isLoggedIn = !AuthParameters.getInstance(this).isAuthTokenEmpty();
 
+        navigationItems.add(new NavigationItem(getString(R.string.home),
+                R.drawable.ic_home_grey600_24dp, Constants.HOME, false));
+
         if (!isLoggedIn) {
             navigationItems.add(new NavigationItem(getString(R.string.action_sign_in),
                     R.drawable.main_nav_login_arrow, Constants.LOGIN, false));
@@ -814,6 +818,15 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             NavigationItem navigationItem = navigationItems.get(groupPosition);
             if (!navigationItem.isExpandable()) {
                 switch (navigationItem.getTag()) {
+                    case Constants.HOME:
+                        FragmentManager ft = getSupportFragmentManager();
+                        // If there are more than one fragment, then go to home, otherwise, already on home
+                        if (ft.getFragments() != null && ft.getFragments().size() > 1) {
+                            goToHome();
+                        } else if (mDrawerLayout != null) {
+                            mDrawerLayout.closeDrawer(Gravity.LEFT);
+                        }
+                        break;
                     case Constants.SHOP_LST:
                         if (AuthParameters.getInstance(getCurrentActivity()).isAuthTokenEmpty()) {
                             showAlertDialog(null,

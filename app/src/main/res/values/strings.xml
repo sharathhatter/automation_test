@@ -503,4 +503,5 @@
     <string name="termsAndCondHeading">Terms and conditions</string>
     <string name="noSortOptions">There are no sort options currently available</string>
     <string name="noFilterOptions">No products to filter</string>
+    <string name="home">Home</string>
 </resources>
