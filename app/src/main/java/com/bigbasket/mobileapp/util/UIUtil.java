@@ -267,4 +267,16 @@ public class UIUtil {
             autoCompleteTextView.setError(spannableStringBuilder);
         }
     }
+
+    public static int parseAsNativeColor(String rgbColorCode) {
+        return parseAsNativeColor(rgbColorCode, Color.BLACK);
+    }
+
+    public static int parseAsNativeColor(String rgbColorCode, int defaultColor) {
+        try {
+            return Color.parseColor(rgbColorCode);
+        } catch (IllegalArgumentException e) {
+            return defaultColor;
+        }
+    }
 }

@@ -1,6 +1,5 @@
 package com.bigbasket.mobileapp.fragment.base;
 
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,9 +10,12 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.adapter.CarouselAdapter;
+import com.bigbasket.mobileapp.model.section.Renderer;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.model.section.SectionItem;
@@ -35,31 +37,53 @@ public abstract class BaseSectionFragment extends BaseFragment {
             switch (section.getSectionType()) {
                 case Section.BANNER:
                     View bannerView = getBannerView(section, inflater);
-                    mainLayout.addView(bannerView);
+                    if (bannerView != null) {
+                        mainLayout.addView(bannerView);
+                    }
                     break;
                 case Section.SALUTATION:
                     View salutationView = getSalutationView(section, inflater);
-                    mainLayout.addView(salutationView);
+                    if (salutationView != null) {
+                        mainLayout.addView(salutationView);
+                    }
                     break;
                 case Section.TILE:
                     View tileView = getTileView(section, inflater);
-                    mainLayout.addView(tileView);
+                    if (tileView != null) {
+                        mainLayout.addView(tileView);
+                    }
                     break;
                 case Section.PRODUCT_CAROUSEL:
-                    View productCarouselView = getProductCarouselView(section, inflater);
-                    mainLayout.addView(productCarouselView);
+                    View productCarouselView = getCarouselView(section, inflater,
+                            R.layout.uiv3_product_carousel_row, R.layout.uiv3_horizontal_product_recyclerview);
+                    if (productCarouselView != null) {
+                        mainLayout.addView(productCarouselView);
+                    }
+                    break;
+                case Section.NON_PRODUCT_CAROUSEL:
+                    View carouselView = getCarouselView(section, inflater,
+                            R.layout.uiv3_carousel_row, R.layout.uiv3_horizontal_recycler_view);
+                    if (carouselView != null) {
+                        mainLayout.addView(carouselView);
+                    }
                     break;
                 case Section.INFO_WIDGET:
                     View infoWidgetView = getInfoWidgetView(section);
-                    mainLayout.addView(infoWidgetView);
+                    if (infoWidgetView != null) {
+                        mainLayout.addView(infoWidgetView);
+                    }
                     break;
-                case Section.IMAGE:
+                case Section.AD_IMAGE:
                     View imageView = getImageView(section);
-                    mainLayout.addView(imageView);
+                    if (imageView != null) {
+                        mainLayout.addView(imageView);
+                    }
                     break;
-                case Section.AD:
-                    imageView = getImageView(section);
-                    mainLayout.addView(imageView);
+                case Section.MSG:
+                    View msgView = getMsgView(section, inflater);
+                    if (msgView != null) {
+                        mainLayout.addView(msgView);
+                    }
                     break;
             }
         }
@@ -101,20 +125,25 @@ public abstract class BaseSectionFragment extends BaseFragment {
             SectionItem sectionItem = sectionItems.get(i);
             TextView txtSalutationItem;
             ImageView imgSalutationItem;
+            LinearLayout layoutSalutationItem;
             switch (i) {
                 case 0:
+                    layoutSalutationItem = (LinearLayout) baseSalutation.findViewById(R.id.layoutSalutationItem1);
                     txtSalutationItem = (TextView) baseSalutation.findViewById(R.id.txtSalutationItem1);
                     imgSalutationItem = (ImageView) baseSalutation.findViewById(R.id.imgSalutationItem1);
                     break;
                 case 1:
+                    layoutSalutationItem = (LinearLayout) baseSalutation.findViewById(R.id.layoutSalutationItem2);
                     txtSalutationItem = (TextView) baseSalutation.findViewById(R.id.txtSalutationItem2);
                     imgSalutationItem = (ImageView) baseSalutation.findViewById(R.id.imgSalutationItem2);
                     break;
                 case 2:
+                    layoutSalutationItem = (LinearLayout) baseSalutation.findViewById(R.id.layoutSalutationItem3);
                     txtSalutationItem = (TextView) baseSalutation.findViewById(R.id.txtSalutationItem3);
                     imgSalutationItem = (ImageView) baseSalutation.findViewById(R.id.imgSalutationItem3);
                     break;
                 default:
+                    layoutSalutationItem = (LinearLayout) baseSalutation.findViewById(R.id.layoutSalutationItem1);
                     txtSalutationItem = (TextView) baseSalutation.findViewById(R.id.txtSalutationItem1);
                     imgSalutationItem = (ImageView) baseSalutation.findViewById(R.id.imgSalutationItem1);
                     break;
@@ -122,93 +151,57 @@ public abstract class BaseSectionFragment extends BaseFragment {
             if (!TextUtils.isEmpty(sectionItem.getTitle().getText())) {
                 txtSalutationItem.setTypeface(faceRobotoRegular);
                 txtSalutationItem.setText(sectionItem.getTitle().getText());
+                layoutSalutationItem.setVisibility(View.VISIBLE);
             }
             if (!TextUtils.isEmpty(sectionItem.getImage())) {
+                layoutSalutationItem.setVisibility(View.VISIBLE);
                 ImageLoader.getInstance().displayImage(sectionItem.getImage(), imgSalutationItem);
             }
         }
         return baseSalutation;
     }
 
-    private View getProductCarouselView(Section section, LayoutInflater inflater) {
-        View baseProductCarousel = inflater.inflate(R.layout.uiv3_horizontal_recycler_view, null);
+    private View getCarouselView(Section section, LayoutInflater inflater, int layoutId,
+                                 int listLayoutId) {
+        View baseProductCarousel = inflater.inflate(listLayoutId, null);
+        TextView txtListTitle = (TextView) baseProductCarousel.findViewById(R.id.txtListTitle);
+        if (section.getTitle() == null || TextUtils.isEmpty(section.getTitle().getText())) {
+            txtListTitle.setVisibility(View.GONE);
+        } else {
+            txtListTitle.setTypeface(faceRobotoRegular);
+            txtListTitle.setText(section.getTitle().getText());
+            Renderer renderer = mSectionData.getRenderersMap() != null ?
+                    mSectionData.getRenderersMap().get(section.getTitle().getRenderingId()) : null;
+            if (renderer != null) {
+                int margin = renderer.getMargin() > 0 ? renderer.getMargin() * Renderer.MARGIN : 0;
+                int padding = renderer.getPadding() > 0 ? renderer.getMargin() * Renderer.PADDING : 0;
+                if (margin > 0) {
+                    RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT);
+                    layoutParams.setMargins(margin, margin, margin, margin);
+                    txtListTitle.setLayoutParams(layoutParams);
+                }
+                if (padding > 0) {
+                    txtListTitle.setPadding((int) getResources().getDimension(R.dimen.padding_mini), padding,
+                            (int) getResources().getDimension(R.dimen.padding_mini), padding);
+                }
+            }
+        }
+
         RecyclerView horizontalRecyclerView = (RecyclerView) baseProductCarousel.findViewById(R.id.horizontalRecyclerView);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         horizontalRecyclerView.setLayoutManager(linearLayoutManager);
-        horizontalRecyclerView.setHasFixedSize(true);
-        horizontalRecyclerView.setAdapter(new ProductCarouselAdapter(section.getSectionItems()));
+        horizontalRecyclerView.setHasFixedSize(false);
+
+        CarouselAdapter carouselAdapter = new CarouselAdapter<>(this, section.getSectionItems(), mSectionData.getRenderersMap(),
+                layoutId, faceRobotoRegular);
+        horizontalRecyclerView.setAdapter(carouselAdapter);
         return baseProductCarousel;
     }
 
-    private class ProductCarouselAdapter extends RecyclerView.Adapter<ProductCarouselAdapter.ProductCarouselViewHolder> {
-
-        private ArrayList<SectionItem> productSectionItemList;
-
-        public ProductCarouselAdapter(ArrayList<SectionItem> productSectionItemList) {
-            this.productSectionItemList = productSectionItemList;
-        }
-
-        @Override
-        public ProductCarouselViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            LayoutInflater inflater = getActivity().getLayoutInflater();
-            View row = inflater.inflate(R.layout.uiv3_product_grid_row, null);
-            return new ProductCarouselViewHolder(row, faceRobotoRegular);
-        }
-
-        @Override
-        public void onBindViewHolder(ProductCarouselViewHolder holder, int position) {
-            SectionItem productSectionItem = productSectionItemList.get(position);
-            ImageView imgProduct = holder.getImgProduct();
-            TextView txtProductDesc = holder.getTxtProductDesc();
-            if (!TextUtils.isEmpty(productSectionItem.getTitle().getText())) {
-                txtProductDesc.setVisibility(View.VISIBLE);
-                txtProductDesc.setTypeface(faceRobotoRegular);
-                txtProductDesc.setText(productSectionItem.getTitle().getText());
-            } else {
-                txtProductDesc.setVisibility(View.GONE);
-            }
-            ImageLoader.getInstance().displayImage(productSectionItem.getImage(), imgProduct);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public int getItemCount() {
-            return productSectionItemList.size();
-        }
-
-        public class ProductCarouselViewHolder extends RecyclerView.ViewHolder {
-
-            private ImageView imgProduct;
-            private TextView txtProductDesc;
-            private Typeface typeface;
-
-            public ProductCarouselViewHolder(View itemView, Typeface typeface) {
-                super(itemView);
-                this.typeface = typeface;
-            }
-
-            public ImageView getImgProduct() {
-                if (imgProduct == null) {
-                    imgProduct = (ImageView) itemView.findViewById(R.id.imgProduct);
-                }
-                return imgProduct;
-            }
-
-            public TextView getTxtProductDesc() {
-                if (txtProductDesc == null) {
-                    txtProductDesc = (TextView) itemView.findViewById(R.id.txtProductDesc);
-                    txtProductDesc.setTypeface(typeface);
-                }
-                return txtProductDesc;
-            }
-        }
-    }
-
     private View getInfoWidgetView(Section section) {
+        if (section.getDescription() == null || TextUtils.isEmpty(section.getDescription().getText()))
+            return null;
         WebView webView = new WebView(getActivity());
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -232,6 +225,23 @@ public abstract class BaseSectionFragment extends BaseFragment {
                     ViewGroup.LayoutParams.WRAP_CONTENT);
             imageView.setLayoutParams(layoutParams);
             ImageLoader.getInstance().displayImage(sectionItem.getImage(), imageView);
+        }
+        return linearLayout;
+    }
+
+    private View getMsgView(Section section, LayoutInflater inflater) {
+        LinearLayout linearLayout = new LinearLayout(getActivity());
+        LinearLayout.LayoutParams baseLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        linearLayout.setLayoutParams(baseLayoutParams);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        for (SectionItem sectionItem : section.getSectionItems()) {
+            if (sectionItem.getTitle() == null || TextUtils.isEmpty(sectionItem.getTitle().getText()))
+                continue;
+            TextView txtVw = (TextView) inflater.inflate(R.layout.uiv3_msg_text, null);
+            txtVw.setText(sectionItem.getTitle().getText());
+            txtVw.setTypeface(faceRobotoRegular);
+            linearLayout.addView(txtVw);
         }
         return linearLayout;
     }

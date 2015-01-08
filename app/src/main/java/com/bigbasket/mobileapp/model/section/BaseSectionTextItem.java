@@ -45,4 +45,16 @@ public class BaseSectionTextItem implements Parcelable {
             description = source.readParcelable(BaseSectionTextItem.class.getClassLoader());
         }
     }
+
+    public static final Parcelable.Creator<BaseSectionTextItem> CREATOR = new Parcelable.Creator<BaseSectionTextItem>() {
+        @Override
+        public BaseSectionTextItem createFromParcel(Parcel source) {
+            return new BaseSectionTextItem(source);
+        }
+
+        @Override
+        public BaseSectionTextItem[] newArray(int size) {
+            return new BaseSectionTextItem[size];
+        }
+    };
 }

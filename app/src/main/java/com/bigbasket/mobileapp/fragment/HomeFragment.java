@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -25,6 +26,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateVersionInfoApiResponseContent;
 import com.bigbasket.mobileapp.fragment.base.BaseSectionFragment;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
+import com.bigbasket.mobileapp.model.section.Renderer;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.task.GetCartCountTask;
@@ -175,6 +177,7 @@ public class HomeFragment extends BaseSectionFragment {
                 switch (homePageApiResponse.status) {
                     case 0:
                         mSectionData = homePageApiResponse.apiResponseContent;
+                        parseRendererColors();
                         renderHomePage();
                         break;
                     default:
@@ -195,6 +198,15 @@ public class HomeFragment extends BaseSectionFragment {
                 }
             }
         });
+    }
+
+    private void parseRendererColors() {
+        if (mSectionData == null || mSectionData.getRenderersMap() == null) return;
+        int defaultTextColor = getResources().getColor(R.color.uiv3_list_secondary_text_color);
+        for (Renderer renderer : mSectionData.getRenderersMap().values()) {
+            renderer.setNativeBkgColor(UIUtil.parseAsNativeColor(renderer.getBackgroundColor(), Color.WHITE));
+            renderer.setNativeTextColor(UIUtil.parseAsNativeColor(renderer.getTextColor(), defaultTextColor));
+        }
     }
 
     private void renderHomePage() {

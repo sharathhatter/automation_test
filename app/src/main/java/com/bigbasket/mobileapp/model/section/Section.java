@@ -14,10 +14,12 @@ public class Section extends BaseSectionTextItem implements Parcelable {
     public static final String BANNER = "banner";
     public static final String SALUTATION = "salutation";
     public static final String PRODUCT_CAROUSEL = "product_carousel";
+    public static final String NON_PRODUCT_CAROUSEL = "non_product_carousel";
     public static final String INFO_WIDGET = "info-widget";
-    public static final String AD = "ad";
-    public static final String IMAGE = "image";
+    public static final String AD_IMAGE = "ad-image";
     public static final String TILE = "tile";
+    public static final String MENU = "menu";
+    public static final String MSG = Constants.MSG;
 
     public static final int SECTION_TIMEOUT_IN_MINUTES = 15;
 
@@ -27,9 +29,11 @@ public class Section extends BaseSectionTextItem implements Parcelable {
         sectionTypeSets.add(SALUTATION);
         sectionTypeSets.add(PRODUCT_CAROUSEL);
         sectionTypeSets.add(INFO_WIDGET);
-        sectionTypeSets.add(AD);
-        sectionTypeSets.add(IMAGE);
+        sectionTypeSets.add(AD_IMAGE);
         sectionTypeSets.add(TILE);
+        sectionTypeSets.add(NON_PRODUCT_CAROUSEL);
+        //sectionTypeSets.add(MENU);
+        sectionTypeSets.add(MSG);
         return sectionTypeSets;
     }
 

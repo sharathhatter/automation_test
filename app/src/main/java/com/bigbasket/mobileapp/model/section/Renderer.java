@@ -2,17 +2,25 @@ package com.bigbasket.mobileapp.model.section;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.UIUtil;
 import com.google.gson.annotations.SerializedName;
 
 public class Renderer implements Parcelable {
+
+    public static final int PADDING = 4;
+    public static final int MARGIN = 4;
+
     @SerializedName(Constants.TEXT_COLOR)
     private String textColor;
 
+    private int nativeTextColor;
+
     @SerializedName(Constants.BACKGROUND_COLOR)
     private String backgroundColor;
+
+    private int nativeBkgColor;
 
     @SerializedName(Constants.PADDING)
     private int padding;
@@ -24,11 +32,27 @@ public class Renderer implements Parcelable {
     private int alignment;
 
     public String getTextColor() {
-        return !TextUtils.isEmpty(textColor) ? textColor : "77000000";
+        return textColor;
     }
 
     public String getBackgroundColor() {
-        return !TextUtils.isEmpty(backgroundColor) ? backgroundColor : "FFFFFFFF";
+        return backgroundColor;
+    }
+
+    public int getNativeTextColor() {
+        return nativeTextColor;
+    }
+
+    public void setNativeTextColor(int nativeTextColor) {
+        this.nativeTextColor = nativeTextColor;
+    }
+
+    public int getNativeBkgColor() {
+        return nativeBkgColor;
+    }
+
+    public void setNativeBkgColor(int nativeBkgColor) {
+        this.nativeBkgColor = nativeBkgColor;
     }
 
     public int getPadding() {
@@ -74,6 +98,8 @@ public class Renderer implements Parcelable {
         if (!wasBkgColorNull) {
             backgroundColor = source.readString();
         }
+        nativeBkgColor = UIUtil.parseAsNativeColor(backgroundColor);
+        nativeTextColor = UIUtil.parseAsNativeColor(textColor);
         padding = source.readInt();
         margin = source.readInt();
         alignment = source.readInt();
