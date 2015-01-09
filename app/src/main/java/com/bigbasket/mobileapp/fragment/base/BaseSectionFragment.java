@@ -179,8 +179,8 @@ public abstract class BaseSectionFragment extends BaseFragment {
             Renderer renderer = mSectionData.getRenderersMap() != null ?
                     mSectionData.getRenderersMap().get(section.getTitle().getRenderingId()) : null;
             if (renderer != null) {
-                int margin = renderer.getMargin() > 0 ? renderer.getMargin() * Renderer.MARGIN : 0;
-                int padding = renderer.getPadding() > 0 ? renderer.getMargin() * Renderer.PADDING : 0;
+                int margin = renderer.getSafeMargin(0);
+                int padding = renderer.getSafePadding(0);
                 if (margin > 0) {
                     RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                             ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -211,7 +211,12 @@ public abstract class BaseSectionFragment extends BaseFragment {
         WebView webView = new WebView(getActivity());
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams.setMargins(0, 4, 0, 0);
+        Renderer renderer = mSectionData.getRenderersMap() != null ?
+                mSectionData.getRenderersMap().get(section.getDescription().getRenderingId()) : null;
+        if (renderer != null) {
+            int margin = renderer.getSafeMargin(0);
+            layoutParams.setMargins(margin, margin, margin, 0);
+        }
         webView.setLayoutParams(layoutParams);
         webView.loadData(section.getDescription().getText(), "text/html", "UTF-8");
         return webView;
@@ -229,6 +234,12 @@ public abstract class BaseSectionFragment extends BaseFragment {
             ImageView imageView = new ImageView(getActivity());
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
+            Renderer renderer = mSectionData.getRenderersMap() != null ?
+                    mSectionData.getRenderersMap().get(sectionItem.getRenderingId()) : null;
+            if (renderer != null) {
+                int margin = renderer.getSafeMargin(0);
+                layoutParams.setMargins(margin, margin, margin, margin);
+            }
             imageView.setLayoutParams(layoutParams);
             ImageLoader.getInstance().displayImage(sectionItem.getImage(), imageView);
         }
@@ -245,6 +256,21 @@ public abstract class BaseSectionFragment extends BaseFragment {
             if (sectionItem.getTitle() == null || TextUtils.isEmpty(sectionItem.getTitle().getText()))
                 continue;
             TextView txtVw = (TextView) inflater.inflate(R.layout.uiv3_msg_text, null);
+            Renderer renderer = mSectionData.getRenderersMap() != null ?
+                    mSectionData.getRenderersMap().get(sectionItem.getRenderingId()) : null;
+            if (renderer != null) {
+                int margin = renderer.getSafeMargin(0);
+                int padding = renderer.getSafePadding(0);
+                if (margin > 0) {
+                    LinearLayout.LayoutParams txtLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT);
+                    txtLayoutParams.setMargins(margin, margin, margin, margin);
+                    txtVw.setLayoutParams(txtLayoutParams);
+                }
+                if (padding > 0) {
+                    txtVw.setPadding(padding, padding, padding, padding);
+                }
+            }
             txtVw.setText(sectionItem.getTitle().getText());
             txtVw.setTypeface(faceRobotoRegular);
             linearLayout.addView(txtVw);
@@ -257,6 +283,21 @@ public abstract class BaseSectionFragment extends BaseFragment {
         menuContainer.setOrientation(LinearLayout.VERTICAL);
         if (section.getTitle() != null && !TextUtils.isEmpty(section.getTitle().getText())) {
             TextView txtVw = (TextView) inflater.inflate(R.layout.uiv3_msg_text, null);
+            Renderer renderer = mSectionData.getRenderersMap() != null ?
+                    mSectionData.getRenderersMap().get(section.getTitle().getRenderingId()) : null;
+            if (renderer != null) {
+                int margin = renderer.getSafeMargin(0);
+                int padding = renderer.getSafePadding(0);
+                if (margin > 0) {
+                    LinearLayout.LayoutParams txtLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT);
+                    txtLayoutParams.setMargins(margin, margin, margin, margin);
+                    txtVw.setLayoutParams(txtLayoutParams);
+                }
+                if (padding > 0) {
+                    txtVw.setPadding(padding, padding, padding, padding);
+                }
+            }
             txtVw.setText(section.getTitle().getText());
             txtVw.setTypeface(faceRobotoRegular);
             txtVw.setGravity(Gravity.LEFT);
@@ -267,6 +308,21 @@ public abstract class BaseSectionFragment extends BaseFragment {
                 continue;
             View base = inflater.inflate(R.layout.uiv3_list_text, null);
             TextView txtListText = (TextView) base.findViewById(R.id.txtListText);
+            Renderer renderer = mSectionData.getRenderersMap() != null ?
+                    mSectionData.getRenderersMap().get(sectionItem.getRenderingId()) : null;
+            if (renderer != null) {
+                int margin = renderer.getSafeMargin(0);
+                int padding = renderer.getSafePadding(0);
+                if (margin > 0) {
+                    LinearLayout.LayoutParams txtLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT);
+                    txtLayoutParams.setMargins(margin, margin, margin, margin);
+                    txtListText.setLayoutParams(txtLayoutParams);
+                }
+                if (padding > 0) {
+                    txtListText.setPadding(padding, padding, padding, padding);
+                }
+            }
             txtListText.setTypeface(faceRobotoRegular);
             txtListText.setText(sectionItem.getTitle().getText());
             View viewSeparator = base.findViewById(R.id.viewSeparator);

@@ -59,7 +59,7 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<CarouselAdapter.Vie
         Renderer sectionRenderer = rendererHashMap != null ?
                 rendererHashMap.get(sectionItem.getRenderingId()) : null;
         if (sectionRenderer != null) {
-            int margin = sectionRenderer.getMargin() > 0 ? sectionRenderer.getMargin() * Renderer.MARGIN : 0;
+            int margin = sectionRenderer.getSafeMargin(0);
             if (margin > 0) {
 //                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
 //                        ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -91,10 +91,8 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<CarouselAdapter.Vie
             if (renderer != null) {
                 txtVw.setBackgroundColor(renderer.getNativeBkgColor());
                 txtVw.setTextColor(renderer.getNativeTextColor());
-                int padding = renderer.getPadding() > 0 ?
-                        renderer.getPadding() * Renderer.PADDING : Renderer.PADDING;
-                int margin = renderer.getMargin() > 0 ?
-                        renderer.getMargin() * Renderer.MARGIN : 0;
+                int padding = renderer.getSafePadding(Renderer.PADDING);
+                int margin = renderer.getSafeMargin(0);
                 txtVw.setPadding(padding, padding, padding, padding);
                 if (margin > 0) {
                     RelativeLayout.LayoutParams layoutParams =

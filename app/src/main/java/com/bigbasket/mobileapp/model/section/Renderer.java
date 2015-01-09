@@ -11,6 +11,8 @@ public class Renderer implements Parcelable {
 
     public static final int PADDING = 4;
     public static final int MARGIN = 4;
+    public static final int MAX_MARGIN = 32;
+    public static final int MAX_PADDING = 32;
 
     @SerializedName(Constants.TEXT_COLOR)
     private String textColor;
@@ -53,14 +55,6 @@ public class Renderer implements Parcelable {
 
     public void setNativeBkgColor(int nativeBkgColor) {
         this.nativeBkgColor = nativeBkgColor;
-    }
-
-    public int getPadding() {
-        return padding;
-    }
-
-    public int getMargin() {
-        return margin;
     }
 
     public int getAlignment() {
@@ -116,4 +110,18 @@ public class Renderer implements Parcelable {
             return new Renderer[size];
         }
     };
+
+
+    public int getSafeMargin(int defaultValue) {
+        return getSafeUnit(margin, Renderer.MARGIN, defaultValue, Renderer.MAX_MARGIN);
+    }
+
+    public int getSafePadding(int defaultValue) {
+        return getSafeUnit(padding, Renderer.PADDING, defaultValue, Renderer.MAX_PADDING);
+    }
+
+    public static int getSafeUnit(int coefficient, int unitValue, int defaultValue, int maxValue) {
+        int value = coefficient > 0 ? coefficient * unitValue : defaultValue;
+        return value > maxValue ? defaultValue : value;
+    }
 }
