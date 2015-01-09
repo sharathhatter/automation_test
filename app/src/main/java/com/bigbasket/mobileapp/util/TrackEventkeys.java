@@ -47,6 +47,9 @@ public class TrackEventkeys {
 
     // source name
     public static final String BROWSE_BY_OFFERS = "offer";
+    public static final String NEW_AT_BB = Constants.NEW_AT_BB;
+    public static final String NOW_AT_BB = Constants.NOW_AT_BB;
+    public static final String BUNDLE_PACK = Constants.BUNDLE_PACK;
     public static final String SHOPPING_LIST = "shopping list";
     public static final String SYSTEM_SHOPPING_LIST = "system shopping list";
     public static final String PRODUCT_DETAIL = "product detail";

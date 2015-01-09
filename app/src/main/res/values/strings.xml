@@ -411,13 +411,19 @@
     <string name="profileUpdated">Profile updated successfully</string>
 
     <!-- main nav -->
-    <string name="browseByCats">Browse by Categories</string>
-    <string name="browseByOffers">Browse by Offers</string>
+    <string name="browseByCats">Shop by Categpry</string>
+    <string name="browseByOffers">Offers</string>
+    <string name="newArrivals">New Arrivals</string>
+    <string name="nowAtBB">Now Available @ BigBasket</string>
+    <string name="newLaunches">New Launches</string>
+    <string name="specialShops">Special shops</string>
     <string name="shoppingList">Shopping Lists</string>
+    <string name="bundlePack">Bundle Packs</string>
     <string name="sortBy">Sort By</string>
     <string name="filter">Filter</string>
     <string name="filterOn">Filter On</string>
     <string name="clear">Clear all</string>
+    <string name="noProducts">At present we do not have any products for this offering, please visit back to see offers at a later stage</string>
 
     <!-- Invoice -->
     <string name="orderThankyouText">Thank you! Your order is placed\n Order #</string>

@@ -102,7 +102,9 @@ public class ProductQuery implements Parcelable {
     public Map<String, String> getAsQueryMap() {
         Map<String, String> productQueryMap = new HashMap<>();
         productQueryMap.put(Constants.TYPE, type);
-        productQueryMap.put(Constants.SLUG, slug);
+        if (!TextUtils.isEmpty(slug)) {
+            productQueryMap.put(Constants.SLUG, slug);
+        }
         productQueryMap.put(Constants.CURRENT_PAGE, String.valueOf(page));
         if (!TextUtils.isEmpty(sortedOn)) {
             productQueryMap.put(Constants.SORT_ON, sortedOn);

@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.fragment.product;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
@@ -25,6 +26,7 @@ public class SearchFragment extends ProductListAwareFragment {
     }
 
     @Override
+    @Nullable
     public String getTitle() {
         return "Search Products";
     }

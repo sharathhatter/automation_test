@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.fragment.product;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
@@ -11,6 +12,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 public class CategoryProductsFragment extends ProductListAwareFragment {
 
     @Override
+    @Nullable
     public String getProductListSlug() {
         Bundle bundle = getArguments();
         return bundle.getString("slug_name_category");

@@ -58,7 +58,10 @@ import com.bigbasket.mobileapp.fragment.order.OrderThankYouFragment;
 import com.bigbasket.mobileapp.fragment.order.ShowCartFragment;
 import com.bigbasket.mobileapp.fragment.order.SlotSelectionFragment;
 import com.bigbasket.mobileapp.fragment.product.BrowseByOffersFragment;
+import com.bigbasket.mobileapp.fragment.product.BundlePackFragment;
 import com.bigbasket.mobileapp.fragment.product.CategoryProductsFragment;
+import com.bigbasket.mobileapp.fragment.product.NewAtBBFragment;
+import com.bigbasket.mobileapp.fragment.product.NowAtBBFragment;
 import com.bigbasket.mobileapp.fragment.product.ProductDetailFragment;
 import com.bigbasket.mobileapp.fragment.product.SearchFragment;
 import com.bigbasket.mobileapp.fragment.product.SubCategoryListFragment;
@@ -379,6 +382,15 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 ShopFromOrderFragment shopFromOrderFragment = new ShopFromOrderFragment();
                 shopFromOrderFragment.setArguments(orderProductListBundle);
                 addToMainLayout(shopFromOrderFragment);
+                break;
+            case FragmentCodes.START_NOW_AT_BB:
+                addToMainLayout(new NowAtBBFragment());
+                break;
+            case FragmentCodes.START_NEW_AT_BB:
+                addToMainLayout(new NewAtBBFragment());
+                break;
+            case FragmentCodes.START_BUNDLE_PACK:
+                addToMainLayout(new BundlePackFragment());
                 break;
         }
     }
@@ -778,9 +790,23 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 -1, Constants.DISCOUNT_TYPE, false));
         browseByOffersSubNavItems.add(new NavigationSubItem(getString(R.string.promotions),
                 -1, Constants.PROMO, false));
+        browseByOffersSubNavItems.add(new NavigationSubItem(getString(R.string.bundlePack),
+                -1, Constants.BUNDLE_PACK, false));
+
         NavigationItem browseByOffersNavItem = new NavigationItem(getString(R.string.browseByOffers),
                 R.drawable.main_nav_discount, Constants.BROWSE_OFFERS, true, browseByOffersSubNavItems);
         navigationItems.add(browseByOffersNavItem);
+
+        // Populate new arrivals
+        ArrayList<NavigationSubItem> newArrivalsSubNavItems = new ArrayList<>();
+        newArrivalsSubNavItems.add(new NavigationSubItem(getString(R.string.nowAtBB), -1,
+                Constants.NOW_AT_BB, false));
+        newArrivalsSubNavItems.add(new NavigationSubItem(getString(R.string.newLaunches), -1,
+                Constants.NEW_AT_BB, false));
+
+        NavigationItem newArrivalsNavItem = new NavigationItem(getString(R.string.newArrivals),
+                R.drawable.main_nav_discount, Constants.NEW_ARRIVALS, true, newArrivalsSubNavItems);
+        navigationItems.add(newArrivalsNavItem);
 
         // Populate other items
         navigationItems.add(new NavigationItem(getString(R.string.shoppingList),
@@ -926,6 +952,21 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                         case Constants.PROMO:
                             addToMainLayout(new PromoCategoryFragment());
                             return true;
+                        case Constants.NOW_AT_BB:
+                            intent = new Intent(getCurrentActivity(), ProductListActivity.class);
+                            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_NOW_AT_BB);
+                            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                            break;
+                        case Constants.NEW_AT_BB:
+                            intent = new Intent(getCurrentActivity(), ProductListActivity.class);
+                            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_NEW_AT_BB);
+                            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                            break;
+                        case Constants.BUNDLE_PACK:
+                            intent = new Intent(getCurrentActivity(), ProductListActivity.class);
+                            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_BUNDLE_PACK);
+                            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                            break;
                     }
                 }
             }

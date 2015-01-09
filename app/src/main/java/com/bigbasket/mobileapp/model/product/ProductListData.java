@@ -220,4 +220,16 @@ public class ProductListData implements Parcelable {
     public String getBaseImgUrl() {
         return baseImgUrl;
     }
+
+    public boolean areFiltersEmpty() {
+        if (filterOptionItems == null || filterOptionItems.size() == 0) return true;
+
+        for (FilterOptionCategory filterOptionCategory: filterOptionItems) {
+            if (filterOptionCategory.getFilterOptionItems() != null
+                    && filterOptionCategory.getFilterOptionItems().size() > 0) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

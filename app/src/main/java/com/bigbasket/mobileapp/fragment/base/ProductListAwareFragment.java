@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
@@ -132,6 +133,16 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
         LinearLayout contentView = getContentView();
         if (contentView == null) return;
         if (productListData == null) return;
+        contentView.removeAllViews();
+        if (productListData.getProductCount() == 0) {
+            LayoutInflater inflater = getActivity().getLayoutInflater();
+            View emptyView = inflater.inflate(R.layout.uiv3_empty_data_text, null);
+            TextView txtEmptyDataMsg = (TextView) emptyView.findViewById(R.id.txtEmptyDataMsg);
+            txtEmptyDataMsg.setTypeface(faceRobotoRegular);
+            txtEmptyDataMsg.setText(getString(R.string.noProducts));
+            contentView.addView(emptyView);
+            return;
+        }
 
         ((FilterDisplayAware) getActivity()).setFilterView(productListData.getFilterOptions(),
                 productListData.getFilteredOn(), getFragmentTxnTag());
@@ -168,6 +179,7 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
 
     public abstract String getSourceName();
 
+    @Nullable
     public abstract String getProductListSlug();
 
     public abstract String getProductQueryType();

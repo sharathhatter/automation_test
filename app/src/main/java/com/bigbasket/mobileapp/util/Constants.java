@@ -612,4 +612,8 @@ public class Constants {
     public static final String ALL_CATEGORIES = "All Categories";
     public static final String SUMMARY = "summary";
     public static final String GOOGLE_PLAY_SERVICES = "googlePlayServices";
+    public static final String BUNDLE_PACK = "bundle-pack";
+    public static final String NOW_AT_BB = "now-at-bb";
+    public static final String NEW_AT_BB = "new-at-bb";
+    public static final String NEW_ARRIVALS = "newArrivals";
 }

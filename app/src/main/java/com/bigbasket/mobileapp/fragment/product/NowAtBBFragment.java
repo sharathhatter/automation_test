@@ -5,44 +5,34 @@ import android.support.annotation.Nullable;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
-import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
-import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
-
-public class BrowseByOffersFragment extends ProductListAwareFragment {
+public class NowAtBBFragment extends ProductListAwareFragment {
+    @Override
+    public String getSourceName() {
+        return TrackEventkeys.NOW_AT_BB;
+    }
 
     @Override
     @Nullable
     public String getProductListSlug() {
-        return Constants.ALL_OFFERS;
+        return null;
     }
 
     @Override
     public String getProductQueryType() {
-        return ProductListType.CATEGORY.get();
+        return ProductListType.NOW_AT_BB.get();
     }
 
     @Override
     public String getTitle() {
-        return getString(R.string.discount);
+        return getString(R.string.nowAtBB);
     }
 
     @NonNull
     @Override
     public String getFragmentTxnTag() {
-        return BrowseByOffersFragment.class.getName();
-    }
-
-    @Override
-    public void updateData() {
-        super.updateData();
-        trackEvent(TrackingAware.BROWSE_DISCOUNTS, null);
-    }
-
-    @Override
-    public String getSourceName() {
-        return TrackEventkeys.BROWSE_BY_OFFERS;
+        return NowAtBBFragment.class.getName();
     }
 }

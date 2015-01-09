@@ -86,8 +86,7 @@ public class ProductListActivity extends BBActivity implements FilterDisplayAwar
             ProductListAwareFragment productListAwareFragment = getProductListAwareFragment();
             if (productListAwareFragment != null) {
                 if (productListAwareFragment.getProductListData() == null ||
-                        productListAwareFragment.getProductListData().getFilterOptions() == null ||
-                        productListAwareFragment.getProductListData().getFilterOptions().size() == 0) {
+                        productListAwareFragment.getProductListData().areFiltersEmpty()) {
                     Toast.makeText(getCurrentActivity(), getString(R.string.noFilterOptions), Toast.LENGTH_SHORT).show();
                     return true;
                 }
