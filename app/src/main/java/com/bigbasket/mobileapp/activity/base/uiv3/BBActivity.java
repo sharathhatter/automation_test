@@ -823,8 +823,12 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                         // If there are more than one fragment, then go to home, otherwise, already on home
                         if (ft.getFragments() != null && ft.getFragments().size() > 1) {
                             goToHome();
-                        } else if (mDrawerLayout != null) {
-                            mDrawerLayout.closeDrawer(Gravity.LEFT);
+                        } else {
+                            if (ft.getFragments() != null && !(ft.getFragments().get(0) instanceof HomeFragment)) {
+                                goToHome();
+                            } else if (mDrawerLayout != null) {
+                                mDrawerLayout.closeDrawer(Gravity.LEFT);
+                            }
                         }
                         break;
                     case Constants.SHOP_LST:
