@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
@@ -86,6 +87,14 @@ public class OrderSummaryFragment extends AbstractOrderSummaryFragment {
         TextView txtMemberAddress = (TextView) base.findViewById(R.id.txtMemberAddress);
         txtMemberAddress.setTypeface(faceRobotoRegular);
         txtMemberAddress.setText(orderSummary.getMemberSummary().getAddress());
+
+        TextView txtMemberContactNum = (TextView) base.findViewById(R.id.txtMemberContactNum);
+        if (TextUtils.isEmpty(orderSummary.getMemberSummary().getMobile())) {
+            txtMemberContactNum.setVisibility(View.GONE);
+        } else {
+            txtMemberContactNum.setTypeface(faceRobotoRegular);
+            txtMemberContactNum.setText(orderSummary.getMemberSummary().getMobile());
+        }
 
         // Show invoice and other order details
         int normalColor = getResources().getColor(R.color.uiv3_list_primary_text_color);

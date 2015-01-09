@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.fragment.order;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,6 +77,14 @@ public class OrderInvoiceSummaryFragment extends AbstractOrderSummaryFragment {
         TextView txtMemberAddress = (TextView) base.findViewById(R.id.txtMemberAddress);
         txtMemberAddress.setTypeface(faceRobotoRegular);
         txtMemberAddress.setText(orderInvoice.getMemberSummary().getAddress());
+
+        TextView txtMemberContactNum = (TextView) base.findViewById(R.id.txtMemberContactNum);
+        if (TextUtils.isEmpty(orderInvoice.getMemberSummary().getMobile())) {
+            txtMemberContactNum.setVisibility(View.GONE);
+        } else {
+            txtMemberContactNum.setTypeface(faceRobotoRegular);
+            txtMemberContactNum.setText(orderInvoice.getMemberSummary().getMobile());
+        }
 
         // Show order & invoice details
         int normalColor = getResources().getColor(R.color.uiv3_list_primary_text_color);
