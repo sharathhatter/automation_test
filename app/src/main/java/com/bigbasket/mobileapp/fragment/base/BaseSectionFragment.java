@@ -270,6 +270,8 @@ public abstract class BaseSectionFragment extends BaseFragment {
                 if (padding > 0) {
                     txtVw.setPadding(padding, padding, padding, padding);
                 }
+                txtVw.setTextColor(renderer.getNativeTextColor());
+                txtVw.setBackgroundColor(renderer.getNativeBkgColor());
             }
             txtVw.setText(sectionItem.getTitle().getText());
             txtVw.setTypeface(faceRobotoRegular);
@@ -297,6 +299,8 @@ public abstract class BaseSectionFragment extends BaseFragment {
                 if (padding > 0) {
                     txtVw.setPadding(padding, padding, padding, padding);
                 }
+                txtVw.setBackgroundColor(renderer.getNativeBkgColor());
+                txtVw.setTextColor(renderer.getNativeTextColor());
             }
             txtVw.setText(section.getTitle().getText());
             txtVw.setTypeface(faceRobotoRegular);
@@ -322,6 +326,8 @@ public abstract class BaseSectionFragment extends BaseFragment {
                 if (padding > 0) {
                     txtListText.setPadding(padding, padding, padding, padding);
                 }
+                txtListText.setBackgroundColor(renderer.getNativeBkgColor());
+                txtListText.setTextColor(renderer.getNativeTextColor());
             }
             txtListText.setTypeface(faceRobotoRegular);
             txtListText.setText(sectionItem.getTitle().getText());
