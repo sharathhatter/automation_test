@@ -343,7 +343,7 @@
     <string name="searchForProducts">Search for products</string>
     <string name="fromSearchResults">From search result use</string>
     <string name="toAddToList">to add to the list</string>
-    <string name="smartBasketEmpty">You haven\'t placed any orders yet, hence your Smart Basket is currently empty</string>
+    <string name="smartBasketEmpty">Currently your Smart Basket is empty. It will be updated 3 days after your first order is delivered!\n Enjoy awesome grocery shopping experience using BigBasket Mobile apps!</string>
 
     <!-- account -->
     <string name="active_order_label">Active Orders</string>
