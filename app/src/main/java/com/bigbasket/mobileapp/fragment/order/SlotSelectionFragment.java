@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.interfaces.OnObservableScrollEvent;
 import com.bigbasket.mobileapp.interfaces.SelectedSlotAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.FulfillmentInfo;
@@ -32,6 +33,9 @@ import com.bigbasket.mobileapp.model.slot.SlotGroup;
 import com.bigbasket.mobileapp.model.slot.SlotHeader;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
+import com.github.ksoichiro.android.observablescrollview.ObservableListView;
+import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
+import com.github.ksoichiro.android.observablescrollview.ScrollState;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -74,11 +78,31 @@ public class SlotSelectionFragment extends BaseFragment {
 
         contentView.removeAllViews();
         if (mSlotGroupList.size() == 1) {
-            ListView listViewSlots = new ListView(getActivity());
+            ObservableListView listViewSlots = new ObservableListView(getActivity());
             listViewSlots.setDividerHeight(0);
             listViewSlots.setDivider(null);
             contentView.addView(listViewSlots);
             fillSlotList(listViewSlots, mSlotGroupList.get(0));
+            listViewSlots.setScrollViewCallbacks(new ObservableScrollViewCallbacks() {
+                @Override
+                public void onScrollChanged(int i, boolean b, boolean b2) {
+
+                }
+
+                @Override
+                public void onDownMotionEvent() {
+
+                }
+
+                @Override
+                public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+                    if (scrollState == ScrollState.UP) {
+                        ((OnObservableScrollEvent) getActivity()).onScrollUp();
+                    } else if (scrollState == ScrollState.DOWN) {
+                        ((OnObservableScrollEvent) getActivity()).onScrollDown();
+                    }
+                }
+            });
         } else {
             // info message for multiple slot selection
             LayoutInflater inflater = getActivity().getLayoutInflater();

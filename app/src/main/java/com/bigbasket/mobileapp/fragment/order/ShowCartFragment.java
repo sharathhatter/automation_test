@@ -224,7 +224,7 @@ public class ShowCartFragment extends BaseFragment {
         ListView cartItemListView = (ListView) basketView.findViewById(R.id.listWithFixedFooter);
         cartItemListView.addHeaderView(basketSummaryView);
         Button btnFooterCheckout = (Button) basketView.findViewById(R.id.btnListFooter);
-        btnFooterCheckout.setText(getString(R.string.check_out));
+        btnFooterCheckout.setText(getString(R.string.check_out).toUpperCase());
         btnFooterCheckout.setTypeface(faceRobotoRegular);
         btnFooterCheckout.setOnClickListener(new View.OnClickListener() {
             @Override
