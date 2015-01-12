@@ -62,6 +62,12 @@ public class HomeFragment extends BaseSectionFragment {
     }
 
     @Override
+    public void onBackResume() {
+        super.onBackResume();
+        new GetCartCountTask<>(getCurrentActivity(), true).startTask();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         ((BaseActivity) getActivity()).removePharmaPrescriptionId();
