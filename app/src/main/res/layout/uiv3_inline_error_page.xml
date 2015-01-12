@@ -7,6 +7,7 @@
     android:paddingTop="@dimen/padding_normal">
 
     <ImageView
+        android:id="@+id/imgInlineError"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -14,7 +15,7 @@
         android:src="@drawable/ic_signal_wifi_off_grey600_48dp" />
 
     <TextView
-        android:id="@+id/txtNetworkError"
+        android:id="@+id/txtInlineErrorMsg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/margin_normal"

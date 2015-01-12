@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -77,7 +78,7 @@ public class HomeFragment extends BaseSectionFragment {
     private void updateMobileVisitorInfo() {
         // Update app-version number in Mobile Visitor
         if (!checkInternetConnection()) {
-            displayNetworkError(getString(R.string.deviceOfflineSmallTxt));
+            displayHomePageError(getString(R.string.deviceOfflineSmallTxt), R.drawable.ic_signal_wifi_off_grey600_48dp);
             return;
         }
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -135,7 +136,7 @@ public class HomeFragment extends BaseSectionFragment {
                             return;
                         }
                         if (error.getKind() == RetrofitError.Kind.NETWORK) {
-                            displayNetworkError(getString(R.string.networkError));
+                            displayHomePageError(getString(R.string.networkError), R.drawable.ic_signal_wifi_off_grey600_48dp);
                         } else {
                             handler.handleRetrofitError(error);
                         }
@@ -164,7 +165,7 @@ public class HomeFragment extends BaseSectionFragment {
 
     private void getHomePage() {
         if (!checkInternetConnection()) {
-            displayNetworkError(getString(R.string.deviceOfflineSmallTxt));
+            displayHomePageError(getString(R.string.deviceOfflineSmallTxt), R.drawable.ic_signal_wifi_off_grey600_48dp);
             return;
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
@@ -181,8 +182,7 @@ public class HomeFragment extends BaseSectionFragment {
                         renderHomePage();
                         break;
                     default:
-                        handler.sendEmptyMessage(homePageApiResponse.status, homePageApiResponse.message,
-                                true);
+                        displayHomePageError(getString(R.string.otherError), R.drawable.ic_report_problem_grey600_48dp);
                         break;
                 }
             }
@@ -191,13 +191,23 @@ public class HomeFragment extends BaseSectionFragment {
             public void failure(RetrofitError error) {
                 if (isSuspended()) return;
                 hideProgressView();
-                if (error.getKind() == RetrofitError.Kind.NETWORK) {
-                    displayNetworkError(getString(R.string.networkError));
-                } else {
-                    handler.handleRetrofitError(error);
-                }
+                handleHomePageRetrofitError(error);
             }
         });
+    }
+
+    private void handleHomePageRetrofitError(RetrofitError error) {
+        switch (error.getKind()) {
+            case NETWORK:
+                displayHomePageError(getString(R.string.networkError), R.drawable.ic_signal_wifi_off_grey600_48dp);
+                break;
+            case HTTP:
+                displayHomePageError(getString(R.string.communicationError), R.drawable.ic_signal_wifi_off_grey600_48dp);
+                break;
+            default:
+                displayHomePageError(getString(R.string.otherError), R.drawable.ic_report_problem_grey600_48dp);
+                break;
+        }
     }
 
     private void parseRendererColors() {
@@ -257,17 +267,21 @@ public class HomeFragment extends BaseSectionFragment {
         super.onSaveInstanceState(outState);
     }
 
-    private void displayNetworkError(String msg) {
+    private void displayHomePageError(String msg, int errorDrawableId) {
         if (getActivity() == null) return;
         LinearLayout contentView = getContentView();
         if (contentView == null) return;
         contentView.removeAllViews();
-        View base = getActivity().getLayoutInflater().inflate(R.layout.uiv3_network_error_page, null);
-        TextView txtNetworkError = (TextView) base.findViewById(R.id.txtNetworkError);
+        View base = getActivity().getLayoutInflater().inflate(R.layout.uiv3_inline_error_page, null);
+        TextView txtInlineErrMsg = (TextView) base.findViewById(R.id.txtInlineErrorMsg);
+        ImageView imgInlineError = (ImageView) base.findViewById(R.id.imgInlineError);
         Button btnRetry = (Button) base.findViewById(R.id.btnRetry);
-        txtNetworkError.setTypeface(faceRobotoRegular);
+
+        txtInlineErrMsg.setTypeface(faceRobotoRegular);
         btnRetry.setTypeface(faceRobotoRegular);
-        txtNetworkError.setText(msg);
+
+        txtInlineErrMsg.setText(msg);
+        imgInlineError.setImageResource(errorDrawableId);
         btnRetry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

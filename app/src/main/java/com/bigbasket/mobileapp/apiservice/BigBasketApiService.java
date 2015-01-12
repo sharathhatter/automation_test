@@ -16,6 +16,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.GetProductsForOrderApi
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListDetailsApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListSummaryApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListsApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.GetShopsResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.MemberReferralProduct;
 import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
@@ -351,4 +352,7 @@ public interface BigBasketApiService {
 
     @GET("/spend-trends/")
     void spendTrends(Callback<ApiResponse<SpendTrends>> spendTrendsApiResponseCallback);
+
+    @GET("/get-shops")
+    void getShops(Callback<ApiResponse<GetShopsResponse>> getShopsApiResponseCallback);
 }

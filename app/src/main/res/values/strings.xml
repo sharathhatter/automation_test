@@ -491,6 +491,8 @@
     <string name="spendTrendsEmpty1">Since you are a first time user with no orders, we do not have data to help you understand the Spent Trends.</string>
     <string name="spendTrendsEmpty2">Please visit this section after a wonderful shopping experience to get more insights!</string>
     <string name="networkError">Network Error</string>
+    <string name="communicationError">Failed to connect to the server</string>
+    <string name="otherError">An error occurred</string>
     <string name="deviceOfflineSmallTxt">No Internet connection</string>
     <string name="retry">Retry</string>
     <string name="amountInRs">Amount in Rs</string>
@@ -507,4 +509,5 @@
     <string name="noSortOptions">There are no sort options currently available</string>
     <string name="noFilterOptions">No products to filter</string>
     <string name="home">Home</string>
+    <string name="shopEmpty">Sorry, but there are no active shops for this try.\nCheck this section later to find some interesting offers!</string>
 </resources>

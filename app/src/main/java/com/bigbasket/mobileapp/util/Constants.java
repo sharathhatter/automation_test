@@ -117,7 +117,6 @@ public class Constants {
     public static final String QUICK_SHOP = "quickshop";
     public static final String SMART_BASKET = "Smart Basket";
     public static final String SMART_BASKET_SLUG = "smart-basket";
-    public static final String SHOP_ID = "shopId";
 
     public static final String PROMO_CATS = "promo_categories";
     public static final String NUM_IN_BASKET = "num_completed_in_basket";
@@ -611,9 +610,13 @@ public class Constants {
     public static final String DATE_RANGE_MAP = "date_range_map";
     public static final String ALL_CATEGORIES = "All Categories";
     public static final String SUMMARY = "summary";
+
     public static final String GOOGLE_PLAY_SERVICES = "googlePlayServices";
     public static final String BUNDLE_PACK = "bundle-pack";
     public static final String NOW_AT_BB = "now-at-bb";
     public static final String NEW_AT_BB = "new-at-bb";
     public static final String NEW_ARRIVALS = "newArrivals";
+    public static final String SPECIAL_SHOPS = "specialShops";
+    public static final String IS_EXPRESS= "is_express";
+    public static final String IS_DISCOUNT = "is_discount";
 }

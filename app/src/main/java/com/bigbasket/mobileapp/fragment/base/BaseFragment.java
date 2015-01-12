@@ -389,6 +389,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
 
     @Override
     public void showApiErrorDialog(String message, boolean finish) {
+        // Fix this implementation as fragment shouldn't finish activity
         if (getCurrentActivity() == null) return;
         if (finish) {
             getCurrentActivity().showAlertDialogFinish(null, message);

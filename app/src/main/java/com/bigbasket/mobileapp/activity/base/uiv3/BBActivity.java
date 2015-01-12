@@ -46,6 +46,7 @@ import com.bigbasket.mobileapp.adapter.NavigationListAdapter;
 import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
 import com.bigbasket.mobileapp.adapter.product.CategoryAdapter;
 import com.bigbasket.mobileapp.fragment.HomeFragment;
+import com.bigbasket.mobileapp.fragment.ShopInShopListFragment;
 import com.bigbasket.mobileapp.fragment.account.AccountSettingFragment;
 import com.bigbasket.mobileapp.fragment.account.ChangeCityFragment;
 import com.bigbasket.mobileapp.fragment.account.ChangePasswordFragment;
@@ -808,6 +809,10 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 R.drawable.main_nav_discount, Constants.NEW_ARRIVALS, true, newArrivalsSubNavItems);
         navigationItems.add(newArrivalsNavItem);
 
+        // Add special shops
+        navigationItems.add(new NavigationItem(getString(R.string.specialShops),
+                R.drawable.main_nav_discount, Constants.SPECIAL_SHOPS, false));
+
         // Populate other items
         navigationItems.add(new NavigationItem(getString(R.string.shoppingList),
                 R.drawable.main_nav_shopping_list, Constants.SHOP_LST, false));
@@ -910,6 +915,9 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                             showAlertDialog(getString(R.string.signOut), getString(R.string.signoutConfirmation),
                                     DialogButton.YES, DialogButton.NO, Constants.LOGOUT);
                         }
+                        break;
+                    case Constants.SPECIAL_SHOPS:
+                        addToMainLayout(new ShopInShopListFragment());
                         break;
                 }
                 return true;
