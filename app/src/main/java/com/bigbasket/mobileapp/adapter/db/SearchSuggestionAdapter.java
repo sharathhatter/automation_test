@@ -47,7 +47,6 @@ public class SearchSuggestionAdapter {
         String[] categoriesArray = autoSearchResponse.getCategories();
         String[] categoriesUrlArray = autoSearchResponse.getCategoriesUrl();
         String[] suggestedTermsArray = autoSearchResponse.getSuggestedTerm();
-        String[] topSearchesArray = autoSearchResponse.getTopSearches();
 
         if (termsArray != null && termsArray.length > 0) {
             contentValues.put(COLUMN_TERMS, UIUtil.strJoin(termsArray, ","));

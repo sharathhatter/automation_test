@@ -12,7 +12,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_normal"
-        android:text="@string/rating" />
+        android:text="@string/rating"
+        android:textColor="@color/uiv3_primary_text_color"
+        android:textSize="@dimen/primary_text_size" />
 
     <RatingBar
         android:id="@+id/ratingBar"
@@ -30,7 +32,9 @@
         android:gravity="top"
         android:hint="@string/yourComments"
         android:inputType="textMultiLine"
-        android:minLines="5" />
+        android:minLines="5"
+        android:textColor="@color/uiv3_primary_text_color"
+        android:textSize="@dimen/primary_text_size" />
 
     <Button
         android:id="@+id/btnSubmit"
@@ -39,7 +43,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_normal"
         android:onClick="OnSubmitButtonClicked"
-        android:text="@string/submit" />
+        android:text="@string/submit"
+        android:textColor="@color/uiv3_primary_text_color"
+        android:textSize="@dimen/primary_text_size" />
 
     <Button
         android:id="@+id/btnCancel"
@@ -48,5 +54,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_small"
         android:onClick="OnCancelButtonClicked"
-        android:text="@string/cancel" />
+        android:text="@string/cancel"
+        android:textColor="@color/uiv3_primary_text_color"
+        android:textSize="@dimen/primary_text_size" />
 </LinearLayout>
