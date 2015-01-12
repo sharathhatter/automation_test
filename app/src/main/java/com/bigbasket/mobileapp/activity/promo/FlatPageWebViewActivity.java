@@ -1,6 +1,8 @@
 package com.bigbasket.mobileapp.activity.promo;
 
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -13,9 +15,7 @@ import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.util.Constants;
 
-/**
- * Created by jugal on 7/8/14.
- */
+
 public class FlatPageWebViewActivity extends BackButtonActivity {
     private ProgressBar progressBar;
 
@@ -23,16 +23,21 @@ public class FlatPageWebViewActivity extends BackButtonActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fullfill_info_web_view);
-        String fulfillmentInfoPageUrl = getIntent().getStringExtra(Constants.FULFILLED_BY_INFO_PAGE_URL);
+        String webViewUrl = getIntent().getStringExtra(Constants.WEBVIEW_URL);
+        String webViewTitle = getIntent().getStringExtra(Constants.WEBVIEW_TITLE);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarMain);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (!TextUtils.isEmpty(webViewTitle)) {
+            getSupportActionBar().setTitle(webViewTitle);
+        }
         progressBar = (ProgressBar) findViewById(R.id.progressbar_Horizontal);
 
         WebView wevViewFulfillmentPage = (WebView) findViewById(R.id.webViewFulfillmentPage);
         wevViewFulfillmentPage.getSettings().setJavaScriptEnabled(true);
-        wevViewFulfillmentPage.getSettings().setLoadWithOverviewMode(true); // fit to webview
-        wevViewFulfillmentPage.getSettings().setUseWideViewPort(true); // supporting tags
-        if (fulfillmentInfoPageUrl != null) {
-            wevViewFulfillmentPage.loadUrl(fulfillmentInfoPageUrl);
+        if (webViewUrl != null) {
+            wevViewFulfillmentPage.loadUrl(webViewUrl + "?source=app"); // To get responsive templace
             wevViewFulfillmentPage.setWebViewClient(new FulFillmentWebViewClient());
         }
 
@@ -51,22 +56,11 @@ public class FlatPageWebViewActivity extends BackButtonActivity {
                     progressBar.setVisibility(View.GONE);
                 } else {
                     progressBar.setVisibility(View.VISIBLE);
-
                 }
-
             }
         }));
 
     }
-
-//    private Map<String, String> getAuthParams(){
-//        final AuthParameters authParameters = AuthParameters.getInstance(this);
-//         return new HashMap<String, String>() {{
-//            put("Cookie", "_bb_vid=\""+authParameters.getVisitorId());
-//            put("\";BBAUTHTOKEN=\"", authParameters.getBbAuthToken()+"\"");
-//            put("User-Agent", Constants.USER_AGENT_PREFIX +authParameters.getOsVersion());
-//        }};
-//    }
 
 
     @Override

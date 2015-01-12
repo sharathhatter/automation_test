@@ -316,7 +316,8 @@ public class Constants {
     public static final String TC = "tc";
     public static final String ICON = "icon";
     public static final String FULLFILLMENT_ITEM_ICON = "icon";
-    public static final String FULFILLED_BY_INFO_PAGE_URL = "fullfillmentInfoPageUrl";
+    public static final String WEBVIEW_URL = "webViewUrl";
+    public static final String WEBVIEW_TITLE = "webTitle";
     public static final String FULFILLMENT_INFO = "fulfillment_info";
     public static final String ANNOTATIONS = "annotations";
     public static final String ANNOTATION_ID = "annotation_id";
@@ -554,7 +555,13 @@ public class Constants {
     public static final String DESTINATIONS_INFO = "destinations_info";
     public static final String DESTINATION_TYPE = "dest_type";
     public static final String DESTINATION_SLUG = "dest_slug";
-
+    public static final String RENDERING_ID = "rendering_id";
+    public static final String TEXT_COLOR = "text_color";
+    public static final String BACKGROUND_COLOR = "background_color";
+    public static final String PADDING = "padding";
+    public static final String MARGIN = "margin";
+    public static final String ALIGNMENT = "alignment";
+    public static final String RENDERERS = "renderers";
     //checkOutQC
     public static final String FINAL_QTY = "final_quantity";
 
@@ -608,4 +615,10 @@ public class Constants {
     public static final String CATEGORY_SPENT = "category_spent";
     public static final String DATE_RANGE_MAP = "date_range_map";
     public static final String ALL_CATEGORIES = "All Categories";
-    }
+    public static final String SUMMARY = "summary";
+    public static final String GOOGLE_PLAY_SERVICES = "googlePlayServices";
+    public static final String BUNDLE_PACK = "bundle-pack";
+    public static final String NOW_AT_BB = "now-at-bb";
+    public static final String NEW_AT_BB = "new-at-bb";
+    public static final String NEW_ARRIVALS = "newArrivals";
+}

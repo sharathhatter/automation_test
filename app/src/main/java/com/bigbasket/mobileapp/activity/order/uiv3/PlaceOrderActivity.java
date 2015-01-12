@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -23,6 +24,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseContent;
 import com.bigbasket.mobileapp.fragment.order.OrderItemListFragment;
 import com.bigbasket.mobileapp.fragment.order.OrderSummaryFragment;
+import com.bigbasket.mobileapp.interfaces.OnObservableScrollEvent;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.OrderSummary;
@@ -43,7 +45,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class PlaceOrderActivity extends BackButtonActivity {
+public class PlaceOrderActivity extends BackButtonActivity implements OnObservableScrollEvent {
 
     private String potentialOrderId;
     private SharedPreferences preferences;
@@ -85,8 +87,9 @@ public class PlaceOrderActivity extends BackButtonActivity {
         contentView.addView(base);
         pagerSlidingTabStrip.setViewPager(viewPager);
 
-        Button btnFooter = (Button) base.findViewById(R.id.btnFooter);
-        btnFooter.setText(getString(R.string.placeorder));
+        Button btnFooter = (Button) base.findViewById(R.id.btnListFooter);
+        btnFooter.setTypeface(faceRobotoRegular);
+        btnFooter.setText(getString(R.string.placeorder).toUpperCase());
         final HashMap<String, String> map = new HashMap<>();
         map.put(TrackEventkeys.POTENTIAL_ORDER, potentialOrderId);
         btnFooter.setOnClickListener(new View.OnClickListener() {
@@ -223,15 +226,15 @@ public class PlaceOrderActivity extends BackButtonActivity {
     }
 
     private void postOrderCreation(ArrayList<Order> orders) {
-        for(Order order:orders){
+        for (Order order : orders) {
             HashMap<String, String> map = new HashMap<>();
             map.put(TrackEventkeys.ORDER_ID, order.getOrderId());
             map.put(TrackEventkeys.ORDER_AMOUNT, order.getOrderValue());
             map.put(TrackEventkeys.ORDER_NUMBER, order.getOrderNumber());
             map.put(TrackEventkeys.ORDER_TYPE, order.getOrderType());
-            map.put(TrackEventkeys.VOUCHER_NAME , preferences.getString(Constants.EVOUCHER_NAME, ""));
-            map.put(TrackEventkeys.PAYMENT_MODE , preferences.getString(Constants.PAYMENT_METHOD, ""));
-            map.put(TrackEventkeys.POTENTIAL_ORDER , potentialOrderId);
+            map.put(TrackEventkeys.VOUCHER_NAME, preferences.getString(Constants.EVOUCHER_NAME, ""));
+            map.put(TrackEventkeys.PAYMENT_MODE, preferences.getString(Constants.PAYMENT_METHOD, ""));
+            map.put(TrackEventkeys.POTENTIAL_ORDER, potentialOrderId);
             trackEvent(TrackingAware.CHECKOUT_ORDER_COMPLETE, map);
         }
 
@@ -246,5 +249,21 @@ public class PlaceOrderActivity extends BackButtonActivity {
         invoiceIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_THANKYOU);
         invoiceIntent.putExtra(Constants.ORDERS, orders);
         startActivityForResult(invoiceIntent, NavigationCodes.GO_TO_HOME);
+    }
+
+    @Override
+    public void onScrollUp() {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar.isShowing()) {
+            actionBar.hide();
+        }
+    }
+
+    @Override
+    public void onScrollDown() {
+        ActionBar actionBar = getSupportActionBar();
+        if (!actionBar.isShowing()) {
+            actionBar.show();
+        }
     }
 }

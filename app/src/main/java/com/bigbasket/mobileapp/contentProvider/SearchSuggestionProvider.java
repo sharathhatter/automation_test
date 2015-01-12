@@ -18,6 +18,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.AutoSearchApiResponseC
 import com.bigbasket.mobileapp.model.search.AutoSearchResponse;
 import com.bigbasket.mobileapp.model.search.MostSearchedItem;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.DataUtil;
 
 import java.util.List;
 
@@ -55,13 +56,15 @@ public class SearchSuggestionProvider extends ContentProvider {
             }
 
             // Get the results by querying server
-            BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getContext());
-            ApiResponse<AutoSearchApiResponseContent> autoSearchApiResponse = bigBasketApiService.autoSearch(query);
-            switch (autoSearchApiResponse.status) {
-                case 0:
-                    autoSearchResponse = autoSearchApiResponse.apiResponseContent.autoSearchResponse;
-                    searchSuggestionAdapter.insert(autoSearchResponse);
-                    break;
+            if (DataUtil.isInternetAvailable(getContext())) {
+                BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getContext());
+                ApiResponse<AutoSearchApiResponseContent> autoSearchApiResponse = bigBasketApiService.autoSearch(query);
+                switch (autoSearchApiResponse.status) {
+                    case 0:
+                        autoSearchResponse = autoSearchApiResponse.apiResponseContent.autoSearchResponse;
+                        searchSuggestionAdapter.insert(autoSearchResponse);
+                        break;
+                }
             }
         }
 

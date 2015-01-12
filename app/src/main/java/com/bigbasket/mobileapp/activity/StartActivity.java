@@ -51,7 +51,6 @@ public class StartActivity extends BaseActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash);
-        //FlurryAgent.onStartSession(this, Constants.FLURRY_AGENT_KEY);
 
         if (!checkInternetConnection()) {
             showAlertDialogFinish(getString(R.string.deviceOfflineSmallTxt),

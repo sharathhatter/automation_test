@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
@@ -16,11 +17,15 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.fragment.base.AbstractOrderSummaryFragment;
+import com.bigbasket.mobileapp.interfaces.OnObservableScrollEvent;
 import com.bigbasket.mobileapp.model.order.CreditDetails;
 import com.bigbasket.mobileapp.model.order.OrderDetails;
 import com.bigbasket.mobileapp.model.order.OrderSummary;
 import com.bigbasket.mobileapp.model.slot.SlotGroup;
 import com.bigbasket.mobileapp.util.Constants;
+import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
+import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
+import com.github.ksoichiro.android.observablescrollview.ScrollState;
 
 
 public class OrderSummaryFragment extends AbstractOrderSummaryFragment {
@@ -87,6 +92,14 @@ public class OrderSummaryFragment extends AbstractOrderSummaryFragment {
         txtMemberAddress.setTypeface(faceRobotoRegular);
         txtMemberAddress.setText(orderSummary.getMemberSummary().getAddress());
 
+        TextView txtMemberContactNum = (TextView) base.findViewById(R.id.txtMemberContactNum);
+        if (TextUtils.isEmpty(orderSummary.getMemberSummary().getMobile())) {
+            txtMemberContactNum.setVisibility(View.GONE);
+        } else {
+            txtMemberContactNum.setTypeface(faceRobotoRegular);
+            txtMemberContactNum.setText(orderSummary.getMemberSummary().getMobile());
+        }
+
         // Show invoice and other order details
         int normalColor = getResources().getColor(R.color.uiv3_list_primary_text_color);
         int orderTotalLabelColor = getResources().getColor(R.color.uiv3_primary_text_color);
@@ -123,6 +136,27 @@ public class OrderSummaryFragment extends AbstractOrderSummaryFragment {
                 asRupeeSpannable(orderDetails.getFinalTotal()), orderTotalLabelColor, orderTotalValueColor);
         layoutOrderSummaryInfo.addView(finalTotalRow);
 
+        ObservableScrollView scrollViewOrderReview = (ObservableScrollView) base.findViewById(R.id.scrollViewOrderReview);
+        scrollViewOrderReview.setScrollViewCallbacks(new ObservableScrollViewCallbacks() {
+            @Override
+            public void onScrollChanged(int i, boolean b, boolean b2) {
+
+            }
+
+            @Override
+            public void onDownMotionEvent() {
+
+            }
+
+            @Override
+            public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+                if (scrollState == ScrollState.UP) {
+                    ((OnObservableScrollEvent) getActivity()).onScrollUp();
+                } else if (scrollState == ScrollState.DOWN) {
+                    ((OnObservableScrollEvent) getActivity()).onScrollDown();
+                }
+            }
+        });
         hideProgressView();
         contentView.addView(base);
     }

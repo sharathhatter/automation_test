@@ -1,7 +1,6 @@
 package com.bigbasket.mobileapp.fragment.base;
 
 import android.content.Intent;
-import android.content.res.AssetManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -17,7 +16,6 @@ public abstract class AbstractFragment extends Fragment implements CancelableAwa
 
     public static Typeface faceRupee;
     public static Typeface faceRobotoRegular;
-    public static Typeface faceRobotoThin;
 
     private boolean mAlreadyLoaded = false;
     private boolean isFragmentSuspended;
@@ -61,10 +59,8 @@ public abstract class AbstractFragment extends Fragment implements CancelableAwa
         super.onActivityCreated(savedInstanceState);
 
         isFragmentSuspended = false;
-        AssetManager assetManager = getActivity().getAssets();
-        faceRupee = Typeface.createFromAsset(assetManager, "Rupee.ttf");
-        faceRobotoRegular = Typeface.createFromAsset(assetManager, "Roboto-Regular.ttf");
-        faceRobotoThin = Typeface.createFromAsset(assetManager, "Roboto-Thin.ttf");
+        faceRupee = BaseActivity.faceRupee;
+        faceRobotoRegular = BaseActivity.faceRobotoRegular;
     }
 
     @Override

@@ -209,7 +209,7 @@ public class UIUtil {
         editor.putString(Constants.MEMBER_FULL_NAME_KEY, userDetails.fullName);
         editor.putString(Constants.MID_KEY, mId);
 
-        MoEHelper moEHelper = MoEHelper.getInstance(ctx);
+        MoEHelper moEHelper = new MoEHelper(ctx);
         moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_UNIQUE_ID, mId);
         moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_EMAIL, email);
         moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_MOBILE, userDetails.mobileNumber);
@@ -265,6 +265,18 @@ public class UIUtil {
             spannableStringBuilder.setSpan(new ForegroundColorSpan(Color.BLACK), 0, errMsg.length(),
                     Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
             autoCompleteTextView.setError(spannableStringBuilder);
+        }
+    }
+
+    public static int parseAsNativeColor(String rgbColorCode) {
+        return parseAsNativeColor(rgbColorCode, Color.BLACK);
+    }
+
+    public static int parseAsNativeColor(String rgbColorCode, int defaultColor) {
+        try {
+            return Color.parseColor(rgbColorCode);
+        } catch (IllegalArgumentException e) {
+            return defaultColor;
         }
     }
 }

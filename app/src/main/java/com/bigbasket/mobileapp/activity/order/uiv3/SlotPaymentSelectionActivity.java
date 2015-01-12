@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +26,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.PostDeliveryAddressApi
 import com.bigbasket.mobileapp.apiservice.models.response.PostDeliveryAddressCartSummary;
 import com.bigbasket.mobileapp.fragment.order.PaymentSelectionFragment;
 import com.bigbasket.mobileapp.fragment.order.SlotSelectionFragment;
+import com.bigbasket.mobileapp.interfaces.OnObservableScrollEvent;
 import com.bigbasket.mobileapp.interfaces.SelectedPaymentAware;
 import com.bigbasket.mobileapp.interfaces.SelectedSlotAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
@@ -48,7 +50,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class SlotPaymentSelectionActivity extends BackButtonActivity
-        implements SelectedSlotAware, SelectedPaymentAware {
+        implements SelectedSlotAware, SelectedPaymentAware, OnObservableScrollEvent {
 
     private ArrayList<SelectedSlotType> mSelectedSlotType;
     private String mPaymentMethodSlug;
@@ -58,7 +60,7 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Checkout");
+        setTitle(getString(R.string.check_out));
     }
 
     @Override
@@ -157,7 +159,9 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
         contentView.addView(base);
         pagerSlidingTabStrip.setViewPager(viewPager);
 
-        Button btnFooter = (Button) base.findViewById(R.id.btnFooter);
+        Button btnFooter = (Button) base.findViewById(R.id.btnListFooter);
+        btnFooter.setTypeface(faceRobotoRegular);
+        btnFooter.setText(getString(R.string.orderReview).toUpperCase());
         btnFooter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -235,6 +239,22 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != NavigationCodes.GO_TO_SLOT_SELECTION) {
             super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
+    public void onScrollUp() {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar.isShowing()) {
+            actionBar.hide();
+        }
+    }
+
+    @Override
+    public void onScrollDown() {
+        ActionBar actionBar = getSupportActionBar();
+        if (!actionBar.isShowing()) {
+            actionBar.show();
         }
     }
 }

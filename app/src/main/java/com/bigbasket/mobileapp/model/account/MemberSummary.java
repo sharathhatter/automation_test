@@ -103,4 +103,8 @@ public class MemberSummary implements Parcelable {
     public void setCity(String city) {
         this.city = city;
     }
+
+    public String getMobile() {
+        return mobile;
+    }
 }

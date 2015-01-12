@@ -57,17 +57,9 @@ public class SpendTrendsDateRange implements Parcelable {
         return rangeName;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (o instanceof SpendTrendsDateRange) {
-            return this.rangeVal == ((SpendTrendsDateRange) o).getRangeVal();
-        }
-        return super.equals(o);
-    }
-
     public static int getSelectedIndex(ArrayList<SpendTrendsDateRange> spendTrendsDateRanges, SpendTrendsDateRange defaultSpendTrendsDateRange) {
         for (int i = 0; i < spendTrendsDateRanges.size(); i++) {
-            if (spendTrendsDateRanges.get(i) == defaultSpendTrendsDateRange) {
+            if (spendTrendsDateRanges.get(i).getRangeVal() == defaultSpendTrendsDateRange.getRangeVal()) {
                 return i;
             }
         }

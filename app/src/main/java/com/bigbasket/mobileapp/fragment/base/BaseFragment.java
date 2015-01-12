@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.CheckoutQCActivity;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
@@ -322,6 +323,14 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     }
 
     protected void onPositiveButtonClicked(DialogInterface dialogInterface, int id, @Nullable String sourceName, Object valuePassed) {
+        if (sourceName != null && getActivity() != null) {
+            switch (sourceName) {
+                case NavigationCodes.GO_TO_LOGIN:
+                    Intent loginIntent = new Intent(getActivity(), SignInActivity.class);
+                    startActivityForResult(loginIntent, NavigationCodes.GO_TO_HOME);
+                    break;
+            }
+        }
     }
 
     protected void onNegativeButtonClicked(DialogInterface dialogInterface, int id, String sourceName) {

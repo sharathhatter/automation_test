@@ -16,7 +16,6 @@ import com.bigbasket.mobileapp.apiservice.models.response.GetProductsForOrderApi
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListDetailsApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListSummaryApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListsApiResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.HomePageApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.MemberReferralProduct;
 import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
@@ -46,6 +45,7 @@ import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.model.order.OrderSummary;
 import com.bigbasket.mobileapp.model.order.PrescriptionId;
 import com.bigbasket.mobileapp.model.product.ProductListData;
+import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.util.Constants;
 
 import java.util.ArrayList;
@@ -78,7 +78,7 @@ public interface BigBasketApiService {
                         Callback<ApiResponse<BrowseCategoryApiResponseContent>> browseCategoryApiResponseCallback);
 
     @GET("/get-home-page/")
-    void loadHomePage(Callback<ApiResponse<HomePageApiResponseContent>> homePageApiResponseCallback);
+    void loadHomePage(Callback<ApiResponse<SectionData>> homePageApiResponseCallback);
 
     @GET("/c-get/")
     void cartGet(Callback<ApiResponse<CartGetApiResponseContent>> cartGetApiResponseCallback);

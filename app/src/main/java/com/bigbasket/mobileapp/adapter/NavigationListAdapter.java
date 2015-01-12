@@ -117,7 +117,9 @@ public class NavigationListAdapter extends BaseExpandableListAdapter {
         } else {
             txtNavListRow.setVisibility(View.VISIBLE);
             progressBarNavItem.setVisibility(View.GONE);
-            txtNavListRow.setPadding(context.getResources().getDimensionPixelSize(R.dimen.padding_small), 0, 0, 0);
+            txtNavListRow.setPadding((int) context.getResources().getDimension(R.dimen.padding_small),
+                    (int) context.getResources().getDimension(R.dimen.padding_small), 0,
+                    (int) context.getResources().getDimension(R.dimen.nav_padding_bottom));
             txtNavListRow.setTypeface(typeface);
             txtNavListRow.setText(navigationSubItem.getItemName());
 

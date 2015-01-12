@@ -19,6 +19,7 @@
     <dimen name="padding_small">8dp</dimen>
     <dimen name="padding_mini">4dp</dimen>
     <dimen name="padding_normal">16dp</dimen>
+    <dimen name="nav_padding_bottom">10dp</dimen>
     <dimen name="padding_large">32dp</dimen>
     <dimen name="margin_small">8dp</dimen>
     <dimen name="margin_medium_large">24dp</dimen>
@@ -63,6 +64,12 @@
     <dimen name="card_img_content_margin">8dp</dimen>
     <dimen name="bb_button_text_size">@dimen/primary_text_size</dimen>
     <dimen name="vertical_separator_line">25dp</dimen>
-    <dimen name="bar_chart_height">300dp</dimen>
+    <dimen name="bar_chart_height">350dp</dimen>
     <dimen name="fulfillment_image_size">12dp</dimen>
+    <dimen name="product_carousel_height">200dp</dimen>
+    <dimen name="product_carousel_width">160dp</dimen>
+    <dimen name="carousel_height">180dp</dimen>
+    <dimen name="carousel_width">160dp</dimen>
+    <dimen name="carousel_img_height">120dp</dimen>
+    <dimen name="carousel_img_width">120dp</dimen>
 </resources>

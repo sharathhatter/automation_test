@@ -7,11 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.order.ActiveOrderRowAdapter;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.interfaces.OnObservableScrollEvent;
 import com.bigbasket.mobileapp.model.cart.AnnotationInfo;
 import com.bigbasket.mobileapp.model.cart.CartItem;
 import com.bigbasket.mobileapp.model.cart.CartItemHeader;
@@ -20,6 +20,9 @@ import com.bigbasket.mobileapp.model.order.OrderItemDisplaySource;
 import com.bigbasket.mobileapp.model.order.OrderSummary;
 import com.bigbasket.mobileapp.model.slot.SlotGroup;
 import com.bigbasket.mobileapp.util.Constants;
+import com.github.ksoichiro.android.observablescrollview.ObservableListView;
+import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
+import com.github.ksoichiro.android.observablescrollview.ScrollState;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -97,14 +100,33 @@ public class OrderItemListFragment extends BaseFragment {
         }
 
         // Render the consolidated listview
-        ListView listView = new ListView(getActivity());
+        ObservableListView listView = new ObservableListView(getActivity());
         listView.setDividerHeight(0);
         listView.setDivider(null);
-        ActiveOrderRowAdapter activeOrderRowAdapter = new ActiveOrderRowAdapter(cartItemConsolidatedList,
+        ActiveOrderRowAdapter activeOrderRowAdapter = new ActiveOrderRowAdapter<>(cartItemConsolidatedList,
                 this, faceRupee, faceRobotoRegular, OrderItemDisplaySource.ORDER_DISPLAY, true,
                 fulfillmentInfoIdAndIconHashMap, annotationHashMap, null, null);
         listView.setAdapter(activeOrderRowAdapter);
+        listView.setScrollViewCallbacks(new ObservableScrollViewCallbacks() {
+            @Override
+            public void onScrollChanged(int i, boolean b, boolean b2) {
 
+            }
+
+            @Override
+            public void onDownMotionEvent() {
+
+            }
+
+            @Override
+            public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+                if (scrollState == ScrollState.UP) {
+                    ((OnObservableScrollEvent) getActivity()).onScrollUp();
+                } else if (scrollState == ScrollState.DOWN) {
+                    ((OnObservableScrollEvent) getActivity()).onScrollDown();
+                }
+            }
+        });
         hideProgressView();
         contentView.addView(listView);
     }

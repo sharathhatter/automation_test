@@ -48,7 +48,7 @@ public class SpendTrendsCategoryExpRangeInfo extends SpendTrendsDateRange {
 
     public static SpendTrendsCategoryExpRangeInfo getSelectedCategoryExpRangeInfo(
             ArrayList<SpendTrendsCategoryExpRangeInfo> spendTrendsCategoryExpRangeInfos, SpendTrendsDateRange spendTrendsDateRange) {
-        for (SpendTrendsCategoryExpRangeInfo categoryExpRangeInfo: spendTrendsCategoryExpRangeInfos) {
+        for (SpendTrendsCategoryExpRangeInfo categoryExpRangeInfo : spendTrendsCategoryExpRangeInfos) {
             if (categoryExpRangeInfo.getRangeVal() == spendTrendsDateRange.getRangeVal()) {
                 return categoryExpRangeInfo;
             }
@@ -59,7 +59,10 @@ public class SpendTrendsCategoryExpRangeInfo extends SpendTrendsDateRange {
     public static ArrayList<SpendTrendsCategoryExpRangeData> getFilteredCategoryExpRangeData(
             SpendTrendsCategoryExpRangeInfo categoryExpRangeInfo, String categoryName) {
         ArrayList<SpendTrendsCategoryExpRangeData> categoryExpRangeDatas = new ArrayList<>();
-        for (SpendTrendsCategoryExpRangeData categoryExpRangeData: categoryExpRangeInfo.getSpendTrendsCategoryExpRangeDataList()) {
+        if (categoryName.equals(Constants.ALL_CATEGORIES)) {
+            return categoryExpRangeInfo.getSpendTrendsCategoryExpRangeDataList();
+        }
+        for (SpendTrendsCategoryExpRangeData categoryExpRangeData : categoryExpRangeInfo.getSpendTrendsCategoryExpRangeDataList()) {
             if (categoryExpRangeData.getCategory().equals(categoryName)) {
                 categoryExpRangeDatas.add(categoryExpRangeData);
             }

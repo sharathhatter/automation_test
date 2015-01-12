@@ -17,6 +17,8 @@
         android:layout_alignRight="@id/imgContent"
         android:textSize="@dimen/secondary_text_size"
         android:textColor="@color/white"
+        android:lines="1"
+        android:ellipsize="end"
         android:paddingTop="@dimen/padding_small"
         android:paddingBottom="@dimen/padding_small"
         android:paddingLeft="@dimen/padding_mini"

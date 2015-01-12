@@ -25,6 +25,7 @@
         android:id="@+id/layoutSalutationItem1"
         android:layout_alignParentLeft="true"
         android:layout_below="@id/txtSalutationTitle"
+        android:visibility="gone"
         android:layout_marginRight="@dimen/margin_normal">
 
         <ImageView
@@ -52,6 +53,7 @@
         android:id="@+id/layoutSalutationItem2"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/txtSalutationTitle"
+        android:visibility="gone"
         android:layout_marginRight="@dimen/margin_normal">
 
         <ImageView
@@ -78,6 +80,7 @@
         android:id="@+id/layoutSalutationItem3"
         android:layout_alignParentRight="true"
         android:layout_below="@id/txtSalutationTitle"
+        android:visibility="gone"
         android:layout_marginRight="@dimen/margin_small">
 
         <ImageView

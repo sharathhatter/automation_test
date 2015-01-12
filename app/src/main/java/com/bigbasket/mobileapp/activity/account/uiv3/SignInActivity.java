@@ -2,8 +2,11 @@ package com.bigbasket.mobileapp.activity.account.uiv3;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.content.ActivityNotFoundException;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -30,6 +33,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.SocialAccount;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.facebook.Request;
@@ -81,7 +85,21 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
         } else {
             // Don't offer G+ sign in if the app's version is too low to support Google Play
             // Services.
-            mPlusSignInButton.setVisibility(View.GONE);
+            mPlusSignInButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Suppose the user updated the Google Play Services, and now tries to click on Google button
+                    if (supportsGooglePlayServices()) {
+                        initializeGooglePlusSignIn();
+                        trackEvent(TrackingAware.MY_ACCOUNT_GOOGLE_LOGIN, null);
+                        signInViaGPlus();
+                    } else {
+                        // Show update dialog
+                        showAlertDialog(getString(R.string.updateGooglePlayServices), getString(R.string.updateGooglePlayServicesDesc),
+                                DialogButton.OK, DialogButton.CANCEL, Constants.GOOGLE_PLAY_SERVICES, null, getString(R.string.update));
+                    }
+                }
+            });
             Button signOutButton = (Button) mBaseView.findViewById(R.id.plus_sign_out_button);
             signOutButton.setVisibility(View.GONE);
         }
@@ -137,7 +155,9 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
             setTitle(getString(R.string.signOut));
         } else {
             initializeRememberedDataForLoginInput();
-            initializeGooglePlusSignIn();
+            if (supportsGooglePlayServices()) {
+                initializeGooglePlusSignIn();
+            }
             initializeFacebookLogin(mFacebookLoginButton);
         }
 
@@ -490,6 +510,19 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
     public void revokeGPlusAccess() {
         showProgress(true);
         super.revokeGPlusAccess();
+    }
+
+    @Override
+    protected void onPositiveButtonClicked(DialogInterface dialogInterface, int id, String sourceName, Object valuePassed) {
+        if (sourceName != null && sourceName.equals(Constants.GOOGLE_PLAY_SERVICES)) {
+            try {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.google.android.gms")));
+            } catch (ActivityNotFoundException e) {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.google.android.gms")));
+            }
+        } else {
+            super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
+        }
     }
 }
 

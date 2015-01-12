@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.github.ksoichiro.android.observablescrollview.ObservableScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/uiv3_list_bkg_color">
+    android:background="@color/uiv3_list_bkg_color"
+    android:id="@+id/scrollViewOrderReview">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -108,7 +109,7 @@
 
         <TextView
             style="@style/CardViewHeading"
-            android:text="@string/addressHeading" />
+            android:text="@string/contactHeading" />
 
         <android.support.v7.widget.CardView
             style="@style/CardViewStyle"
@@ -153,6 +154,18 @@
                         android:layout_height="wrap_content"
                         android:textColor="@color/uiv3_primary_text_color"
                         android:textSize="@dimen/secondary_text_size" />
+
+                    <TextView
+                        android:id="@+id/txtMemberContactNum"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/margin_mini"
+                        android:layout_marginTop="@dimen/margin_small"
+                        android:drawableLeft="@drawable/ic_call_grey600_18dp"
+                        android:drawablePadding="@dimen/padding_mini"
+                        android:singleLine="false"
+                        android:textColor="@color/uiv3_list_primary_text_color"
+                        android:textSize="@dimen/secondary_text_size" />
                 </LinearLayout>
             </RelativeLayout>
         </android.support.v7.widget.CardView>
@@ -195,4 +208,4 @@
             </RelativeLayout>
         </android.support.v7.widget.CardView>
     </LinearLayout>
-</ScrollView>
+</com.github.ksoichiro.android.observablescrollview.ObservableScrollView>

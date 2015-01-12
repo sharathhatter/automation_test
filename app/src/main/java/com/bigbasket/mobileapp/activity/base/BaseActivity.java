@@ -52,6 +52,7 @@ import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.demach.konotor.Konotor;
+import com.moe.pushlibrary.MoEHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -73,6 +74,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     protected BigBasketMessageHandler handler;
     protected boolean isActivitySuspended;
     protected COReserveQuantity coReserveQuantity;
+    private MoEHelper moEHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +84,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
 
         faceRupee = Typeface.createFromAsset(getAssets(), "Rupee.ttf");
         faceRobotoRegular = Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");
+        moEHelper = new MoEHelper(getCurrentActivity());
     }
 
     @Override
@@ -161,21 +164,21 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     protected void onStart() {
         super.onStart();
         isActivitySuspended = false;
-        //MoEHelper.getInstance(this).onStart(this);
+        moEHelper.onStart(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         isActivitySuspended = true;
-        //MoEHelper.getInstance(this).onStop(this);
+        moEHelper.onStop(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         isActivitySuspended = true;
-        //MoEHelper.getInstance(this).onPause(this);
+        moEHelper.onPause(this);
     }
 
     @Override
@@ -194,7 +197,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         isActivitySuspended = false;
 
         initializeKonotor();
-        //MoEHelper.getInstance(this).onResume(this);
+        moEHelper.onResume(this);
     }
 
     public void launchKonotor() {
@@ -328,13 +331,15 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
                     }
                 });
             }
-            if (nxtDialogButton.equals(DialogButton.NO))
-                builder.setNegativeButton(R.string.noTxt, new DialogInterface.OnClickListener() {
+            if (nxtDialogButton.equals(DialogButton.NO) || nxtDialogButton.equals(DialogButton.CANCEL)) {
+                int textId = nxtDialogButton.equals(DialogButton.NO) ? R.string.noTxt : R.string.cancel;
+                builder.setNegativeButton(textId, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int id) {
                         onNegativeButtonClicked(dialogInterface, id, sourceName);
                     }
                 });
+            }
         }
         AlertDialog alertDialog = builder.create();
         if (isSuspended())
@@ -604,7 +609,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
             if (!TextUtils.isEmpty(sourceValue)) {
                 analyticsJsonObj.put(Constants.SOURCE_ID, sourceValue);
             }
-            //MoEHelper.getInstance(getCurrentActivity()).trackEvent(eventName, analyticsJsonObj);
+            moEHelper.trackEvent(eventName, analyticsJsonObj);
         } catch (JSONException e) {
             Log.e("Analytics", "Failed to send event = " + eventName + " to analytics");
         }

@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.fragment.order;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.fragment.base.AbstractOrderSummaryFragment;
 import com.bigbasket.mobileapp.model.order.CreditDetails;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
@@ -76,6 +77,14 @@ public class OrderInvoiceSummaryFragment extends AbstractOrderSummaryFragment {
         TextView txtMemberAddress = (TextView) base.findViewById(R.id.txtMemberAddress);
         txtMemberAddress.setTypeface(faceRobotoRegular);
         txtMemberAddress.setText(orderInvoice.getMemberSummary().getAddress());
+
+        TextView txtMemberContactNum = (TextView) base.findViewById(R.id.txtMemberContactNum);
+        if (TextUtils.isEmpty(orderInvoice.getMemberSummary().getMobile())) {
+            txtMemberContactNum.setVisibility(View.GONE);
+        } else {
+            txtMemberContactNum.setTypeface(faceRobotoRegular);
+            txtMemberContactNum.setText(orderInvoice.getMemberSummary().getMobile());
+        }
 
         // Show order & invoice details
         int normalColor = getResources().getColor(R.color.uiv3_list_primary_text_color);
@@ -163,7 +172,7 @@ public class OrderInvoiceSummaryFragment extends AbstractOrderSummaryFragment {
     }
 
     public void onShopFromThisOrder(String orderNumber) {
-        Intent intent = new Intent(getActivity(), BBActivity.class);
+        Intent intent = new Intent(getActivity(), BackButtonActivity.class);
         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_PRODUCT_LIST_FRAGMENT);
         intent.putExtra(Constants.ORDER_ID, orderNumber);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);

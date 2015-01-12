@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.fragment.product;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
@@ -16,6 +17,8 @@ public class ShopInShopFragment extends ProductListAwareFragment {
         return ProductListType.SHOP.get();
     }
 
+    @Override
+    @Nullable
     public String getProductListSlug() {
         Bundle bundle = getArguments();
         String shopId = bundle != null ? bundle.getString(Constants.SHOP_ID) : null;
