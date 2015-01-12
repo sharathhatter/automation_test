@@ -349,6 +349,19 @@ public interface BigBasketApiService {
     @GET("/get-referral-product/")
     void getReferralProduct(Callback<ApiResponse<MemberReferralProduct>> getRefProductApiResponseCallback);
 
+    @FormUrlEncoded
+    @POST("/post-referral/")
+    void postProduct(@Field(Constants.REF_EMAILS) String refEmails,
+                     @Field(Constants.REF_MESSAGE) String refMessage,
+                     @Field(Constants.REF_TYPE) String refType,
+                     Callback<ApiResponse> postReferralApiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/post-referral/")
+    void postReferralSms(@Field(Constants.REF_TYPE) String refType,
+                        @Field(Constants.REF_MOB_NUMBERS) String refMobNumbers,
+                        Callback<ApiResponse> postReferralApiResponseCallback);
+
     @GET("/spend-trends/")
     void spendTrends(Callback<ApiResponse<SpendTrends>> spendTrendsApiResponseCallback);
 }

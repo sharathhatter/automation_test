@@ -11,100 +11,47 @@ import java.util.ArrayList;
 public class MemberReferralProduct {
 
     @SerializedName(Constants.SKU_ID)
-    private String skuId;
+    public String skuId;
 
     @SerializedName(Constants.REF_IMAGE_URL)
-    private String refImageUrl;
+    public String refImageUrl;
 
     @SerializedName(Constants.INCENTIVE_TYPE)
-    private String incentiveType;
+    public String incentiveType;
 
     @SerializedName(Constants.MEMBER_CREDIT_AMOUNT)
-    private String memberCreditAmount;
+    public String memberCreditAmount;
 
     @SerializedName(Constants.VOUCHER_CODE)
-    private String voucherCode;
+    public String voucherCode;
 
     @SerializedName(Constants.VOUCHER_CODE_DESC)
-    private String voucherCodeDesc;
+    public String voucherCodeDesc;
 
     @SerializedName(Constants.INCENTIVE_DESC)
-    private String incentiveDesc;
+    public String incentiveDesc;
 
     @SerializedName(Constants.MIN_ORDER_VAL)
-    private int minorderVal;
+    public int minOrderVal;
 
     @SerializedName(Constants.TC)
-    private ArrayList<String> termAndCondition;
+    public ArrayList<String> termAndCondition;
 
     @SerializedName(Constants.REF_LINK_FB)
-    private String refLinkFb;
+    public String refLinkFb;
 
     @SerializedName(Constants.REF_LINK)
-    private String refLink;
+    public String refLink;
 
     @SerializedName(Constants.MAX_EMAIL_LEN)
-    private String maxEmailLen;
+    public int maxEmailLen;
 
     @SerializedName(Constants.MAX_MSG_LEN)
-    private String maxMsgLen;
+    public int maxMsgLen;
 
     @SerializedName(Constants.REFERRAL_MSG)
-    private String referralMsg;
+    public String referralMsg;
 
-    public String getSkuId() {
-        return skuId;
-    }
-
-    public String getIncentiveType() {
-        return incentiveType;
-    }
-
-    public String getMemberCreditAmount() {
-        return memberCreditAmount;
-    }
-
-    public String getVoucherCode() {
-        return voucherCode;
-    }
-
-    public String getVoucherCodeDesc() {
-        return voucherCodeDesc;
-    }
-
-    public int getMinorderVal() {
-        return minorderVal;
-    }
-
-    public String getRefLinkFb() {
-        return refLinkFb;
-    }
-
-    public String getRefLink() {
-        return refLink;
-    }
-
-    public String getMaxEmailLen() {
-        return maxEmailLen;
-    }
-
-    public String getMaxMsgLen() {
-        return maxMsgLen;
-    }
-
-    public String getReferralMsg() {
-        return referralMsg;
-    }
-
-    public String getRefImageUrl() {
-        return refImageUrl;
-    }
-
-    public ArrayList<String> getTermAndCondition() {
-        return termAndCondition;
-    }
-
-    public String getIncentiveDesc() {
-        return incentiveDesc;
-    }
+    @SerializedName(Constants.P_DESC)
+    public String productDesc;
 }

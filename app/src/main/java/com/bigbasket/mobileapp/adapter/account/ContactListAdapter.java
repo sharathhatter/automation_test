@@ -5,113 +5,70 @@ package com.bigbasket.mobileapp.adapter.account;
  */
 
 import android.content.Context;
+import android.database.Cursor;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CursorAdapter;
 import android.widget.TextView;
+import android.provider.ContactsContract;
+import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.account.uiv3.ContactListActivity;
+import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.ContactNumberAware;
 
-import java.util.ArrayList;
+public class ContactListAdapter<T> extends CursorAdapter{
 
-public class ContactListAdapter extends BaseAdapter{
+    private T ctx;
+    private Cursor contactCursor;
+    private LayoutInflater inflater;
 
-    private Context context;
-    ArrayList<String> arrayListContactNumber;
-    private ArrayList<String> arrayListContactName;
-    private ContactNumberAware contactNumberAware;
-
-    public ContactListAdapter(Context context, ArrayList<String> arrayListContactNumber,
-                              ArrayList<String> arrayListContactName, ContactNumberAware contactNumberAware) {
-        this.context = context;
-        this.arrayListContactNumber = arrayListContactNumber;
-        this.arrayListContactName = arrayListContactName;
-        this.contactNumberAware = contactNumberAware;
+    public ContactListAdapter(T context, Cursor contactCursor) {
+        super(((ActivityAware)context).getCurrentActivity(), contactCursor, false);
+        this.ctx = context;
+        this.contactCursor = contactCursor;
+        inflater = LayoutInflater.from(((ActivityAware)context).getCurrentActivity());
     }
 
     @Override
-    public int getCount() {
-        return arrayListContactNumber.size();
-    }
+    public void bindView(View view, Context context, Cursor cursor) {
+        String hasPhone = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER));
+        final CheckBox checkbox = (CheckBox) view.findViewById(R.id.checkbox);
+        if (hasPhone.equals("1") || Boolean.parseBoolean(hasPhone)) {
+            final String contactId = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+            String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+            if (!TextUtils.isEmpty(contactId) && !TextUtils.isEmpty(name)) {
+                view.setVisibility(View.VISIBLE);
+                checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (isChecked) {
+                            ((ContactListActivity) ctx).onContactNumberSelected(contactId);
+                        } else {
+                            ((ContactListActivity) ctx).onContactNumberNotSelected(contactId);
+                        }
+                    }
+                });
+                TextView txtContactName = (TextView) view.findViewById(R.id.txtContactName);
+                txtContactName.setText(name);
+                checkbox.setChecked(((ContactNumberAware) ctx).getSelectedContacts() != null &&
+                        ((ContactNumberAware) ctx).getSelectedContacts().contains(contactId));
 
-    @Override
-    public Object getItem(int position) {
-        return arrayListContactNumber.get(position);
-    }
-
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ContactRowHolder rowHolder;
-        if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.uiv3_contact_list, null);
-            rowHolder = new ContactRowHolder(convertView);
-            convertView.setTag(rowHolder);
-        } else {
-            rowHolder = (ContactRowHolder) convertView.getTag();
-        }
-
-        TextView txtContactName = rowHolder.getTxtContactName();
-        txtContactName.setText(arrayListContactName.get(position));
-
-        TextView txtContactNumber = rowHolder.getTxtContactNumber();
-        txtContactNumber.setText(arrayListContactName.get(position));
-
-        CheckBox checkBox = rowHolder.getCheckbox();
-        if(checkBox.isChecked())
-            checkBox.setChecked(true);
-        else
-            checkBox.setChecked(false);
-
-        convertView.setId(position);
-
-        return convertView;
-    }
-
-
-    private class ContactRowHolder implements View.OnClickListener {
-        private View base;
-        private TextView txtContactName;
-        private TextView txtContactNumber;
-        private CheckBox checkbox;
-
-        private ContactRowHolder(View base) {
-            this.base = base;
-        }
-
-        public TextView getTxtContactName() {
-            if (txtContactName == null) {
-                txtContactName = (TextView) base.findViewById(R.id.txtContactName);
+            }else {
+                view.setVisibility(View.GONE);
             }
-            return txtContactName;
         }
+    }
 
-        public TextView getTxtContactNumber() {
-            if (txtContactNumber == null) {
-                txtContactNumber = (TextView) base.findViewById(R.id.txtContactNumber);
-            }
-            return txtContactNumber;
-        }
-
-        public CheckBox getCheckbox() {
-            if (checkbox == null) {
-                checkbox = (CheckBox) base.findViewById(R.id.checkbox);
-            }
-            return checkbox;
-        }
-
-        @Override
-        public void onClick(View view) {
-            String contactNumber = arrayListContactNumber.get(view.getId());
-            contactNumberAware.onContactNumberSelected(contactNumber);
-        }
+    @Override
+    public View newView(Context context, Cursor cursor, ViewGroup parent) {
+        final View view = inflater.inflate(R.layout.uiv3_contact_list, parent, false);
+        bindView(view, context, cursor);
+        return view;
     }
 }

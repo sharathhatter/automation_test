@@ -842,7 +842,8 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                         }
                         break;
                     case Constants.CART:
-                        addToMainLayout(new ShowCartFragment());
+                        addToMainLayout(new MemberReferralTCFragment());
+                        //addToMainLayout(new ShowCartFragment());
                         break;
                     case Constants.FROM_ACCOUNT_PAGE:
                         if (AuthParameters.getInstance(getCurrentActivity()).isAuthTokenEmpty()) {

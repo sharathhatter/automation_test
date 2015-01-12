@@ -473,6 +473,10 @@
     <string name="howItWorks">How does it work?</string>
     <string name="HowItWorksStr">When you refer your friends, a registration link gets included in the email that is sent to them.</string>
     <string name="spreadJoy">We will also send a complimentary gift to your friends along with their first BigBasket order. So, spread the joy.</string>
+    <string name="addMultipleEmail">Comma(,) separated Email-id\'s</string>
+    <string name="yourMsg">Your message (Optional)</string>
+    <string name="refDialogHeading">Refer Friends to BigBasket</string>
+    <string name="invalid_email">Email address is invalid</string>
 
     <!-- spendTrends -->
     <string name="spendTrends">Spend Trends</string>
@@ -490,4 +494,5 @@
     <string name="networkError">Network Error</string>
     <string name="deviceOfflineSmallTxt">No Internet connection</string>
     <string name="retry">Retry</string>
+    <string name="ref_submit">SUBMIT</string>
 </resources>

@@ -591,6 +591,11 @@ public class Constants {
     public static final String MEMBER_CREDIT_AMOUNT = "member_credit_amount";
     public static final String VOUCHER_CODE = "voucher_code";
     public static final String VOUCHER_CODE_DESC = "voucher_code_desc";
+    public static final String REF_DIALOG_FLAG = "ref_dialog_flag";
+    public static final String REF_EMAILS = "referral_emails";
+    public static final String REF_MESSAGE = "referral_msg";
+    public static final String REF_TYPE = "type";
+    public static final String REF_MOB_NUMBERS = "mob_numbers";
 
     // Spend Trends
     public static final String RANGE_NAME = "range_name";

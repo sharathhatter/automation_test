@@ -17,7 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.account.uiv3.MemberReferralOptions;
+import com.bigbasket.mobileapp.activity.account.uiv3.MemberReferralOptionsActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
@@ -83,10 +83,10 @@ public class MemberReferralTCFragment extends BaseFragment {
         contentView.removeAllViews();
         contentView.setBackgroundColor(getResources().getColor(R.color.uiv3_list_bkg_color));
 
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+        final LayoutInflater inflater = getActivity().getLayoutInflater();
         View referralView = inflater.inflate(R.layout.member_referral_tc, null);
 
-        if(!TextUtils.isEmpty(memberReferralProduct.getIncentiveDesc())){
+        if(!TextUtils.isEmpty(memberReferralProduct.incentiveDesc)){
             //todo need to refer Sid
         }else {
             TextView txtPara1 = (TextView) referralView.findViewById(R.id.txtPara1);
@@ -98,9 +98,9 @@ public class MemberReferralTCFragment extends BaseFragment {
             TextView txtPara7 = (TextView) referralView.findViewById(R.id.txtPara7);
 
 
-            if(memberReferralProduct.getIncentiveType().equals("credit")){
+            if(memberReferralProduct.incentiveType.equals("credit")){
                 String prefix1 = "Refer you friends and earn `";
-                String refAmountStr1 = memberReferralProduct.getMemberCreditAmount() + " with each referral!";
+                String refAmountStr1 = memberReferralProduct.memberCreditAmount + " with each referral!";
                 int prefixLen1 = prefix1.length();
                 SpannableString spannableRefAmount1 = new SpannableString(prefix1 + refAmountStr1);
                 spannableRefAmount1.setSpan(new CustomTypefaceSpan("", faceRupee), prefixLen1 - 1,
@@ -111,16 +111,16 @@ public class MemberReferralTCFragment extends BaseFragment {
 
 
                 String prefix2 = "Your BigBasket Wallet will be credited with `";
-                String refAmountStr2 = memberReferralProduct.getMemberCreditAmount() + " with each referral!";
+                String refAmountStr2 = memberReferralProduct.memberCreditAmount + " with each referral!";
                 int prefixLen2 = prefix2.length();
                 SpannableString spannableRefAmount2 = new SpannableString(prefix2 + refAmountStr2);
                 spannableRefAmount2.setSpan(new CustomTypefaceSpan("", faceRupee), prefixLen2 - 1,
                         prefixLen2, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
 
                 String prefix3 = " within 2 days of delivery of their first order";
-                if(memberReferralProduct.getMinorderVal()>10){
+                if(memberReferralProduct.minOrderVal>10){
                     prefix3 += " worth `";
-                    String refAmountStr3 = memberReferralProduct.getMinorderVal() + "";
+                    String refAmountStr3 = memberReferralProduct.minOrderVal + "";
                     int prefixLen3 = prefix3.length();
                     SpannableString spannableOrderWorth = new SpannableString(spannableRefAmount2
                             +prefix3 + refAmountStr3);
@@ -134,17 +134,17 @@ public class MemberReferralTCFragment extends BaseFragment {
 
             }else {
                 String voucherMsg = "Refer you friends and get " +
-                        memberReferralProduct.getVoucherCode() + "with each referral";
-                if(!TextUtils.isEmpty(memberReferralProduct.getVoucherCodeDesc())){
-                    voucherMsg =  " which gives you" + memberReferralProduct.getVoucherCodeDesc();
+                        memberReferralProduct.voucherCode + "with each referral";
+                if(!TextUtils.isEmpty(memberReferralProduct.voucherCodeDesc)){
+                    voucherMsg =  " which gives you" + memberReferralProduct.voucherCodeDesc;
                 }
                 txtPara1.setText(voucherMsg);
                 txtPara5City.setText("Your friend needs to register with BigBasket using that link.");
-                String giftMsgString = "You will be given "+ memberReferralProduct.getVoucherCode() +
+                String giftMsgString = "You will be given "+ memberReferralProduct.voucherCode +
                         " voucher within 2 days of delivery of their first order ";
-                if(memberReferralProduct.getMinorderVal()>10){
+                if(memberReferralProduct.minOrderVal>10){
                     giftMsgString += "worth `";
-                    String refMinOrderVal = memberReferralProduct.getMinorderVal() + "";
+                    String refMinOrderVal = memberReferralProduct.minOrderVal + "";
                     int giftMsgStringLen = giftMsgString.length();
                     SpannableString spannableVoucherGift = new SpannableString(giftMsgString + refMinOrderVal);
                     spannableVoucherGift.setSpan(new CustomTypefaceSpan("", faceRupee), giftMsgStringLen - 1,
@@ -157,8 +157,8 @@ public class MemberReferralTCFragment extends BaseFragment {
             }
 
             ImageView imgFreeProduct = (ImageView)referralView.findViewById(R.id.imgFreeProduct);
-            if(!TextUtils.isEmpty(memberReferralProduct.getRefImageUrl())){
-            ImageLoader.getInstance().displayImage(memberReferralProduct.getRefImageUrl(), imgFreeProduct);
+            if(!TextUtils.isEmpty(memberReferralProduct.refImageUrl)){
+            ImageLoader.getInstance().displayImage(memberReferralProduct.refImageUrl, imgFreeProduct);
             }else {
                 imgFreeProduct.setImageResource(R.drawable.noimage);
             }
@@ -167,15 +167,18 @@ public class MemberReferralTCFragment extends BaseFragment {
                 public void onClick(View v) {
                     ProductDetailFragment productDetailFragment = new ProductDetailFragment();
                     Bundle bundle = new Bundle();
-                    bundle.putString(Constants.SKU_ID, memberReferralProduct.getSkuId());
+                    bundle.putString(Constants.SKU_ID, memberReferralProduct.skuId);
                     productDetailFragment.setArguments(bundle);
                     changeFragment(productDetailFragment);
                 }
             });
 
+            TextView txtProductDesc = (TextView)referralView.findViewById(R.id.txtProductDesc);
+            txtProductDesc.setText(memberReferralProduct.productDesc);
+
             LinearLayout layoutInnerTC = (LinearLayout) referralView.findViewById(R.id.layoutInnerTC);
             int i = 1;
-            for(String termAndCondition : memberReferralProduct.getTermAndCondition()){
+            for(String termAndCondition : memberReferralProduct.termAndCondition){
                 TextView txtTermCondition = new TextView(getActivity());
                 txtTermCondition.setTextSize(10);
                 txtTermCondition.setText(i+". "+termAndCondition);
@@ -190,7 +193,14 @@ public class MemberReferralTCFragment extends BaseFragment {
             btnRefFriend.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(getCurrentActivity(), MemberReferralOptions.class);
+                    Intent intent = new Intent(getCurrentActivity(), MemberReferralOptionsActivity.class);
+                    intent.putExtra(Constants.REF_LINK, memberReferralProduct.refLink);
+                    intent.putExtra(Constants.REF_LINK_FB, memberReferralProduct.refLinkFb);
+                    intent.putExtra(Constants.MAX_MSG_LEN, memberReferralProduct.maxMsgLen);
+                    intent.putExtra(Constants.MAX_EMAIL_LEN, memberReferralProduct.maxEmailLen);
+                    intent.putExtra(Constants.REFERRAL_MSG, memberReferralProduct.referralMsg);
+                    intent.putExtra(Constants.P_DESC, memberReferralProduct.productDesc);
+                    intent.putExtra(Constants.REF_IMAGE_URL, memberReferralProduct.refImageUrl);
                     startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 }
             });

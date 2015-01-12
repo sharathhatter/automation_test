@@ -569,7 +569,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
 
     public abstract void onChangeTitle(String title);
 
-    protected void reportFormInputFieldError(EditText editText, String errMsg) {
+    public void reportFormInputFieldError(EditText editText, String errMsg) {
         UIUtil.reportFormInputFieldError(editText, errMsg);
     }
 
