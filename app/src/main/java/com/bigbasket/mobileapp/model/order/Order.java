@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.model.order;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.bigbasket.mobileapp.model.account.Address;
 import com.bigbasket.mobileapp.model.cart.FulfillmentInfo;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
@@ -33,24 +34,7 @@ public class Order implements Parcelable {
     @SerializedName(Constants.ORDER_TYPE)
     private String orderType;
 
-
-//    public Order(String orderId, String orderNumber, FulfillmentInfo fulfillmentInfo) {
-//        this.orderId = orderId;
-//        this.orderNumber = orderNumber;
-//        this.fulfillmentInfo = fulfillmentInfo;
-//    }
-
-
-    public Order(String orderId, String orderNumber, String deliveryDate, int itemsCount, String orderStatus,
-                 String orderValue, String orderType) {
-        this.orderId = orderId;
-        this.orderNumber = orderNumber;
-        this.deliveryDate = deliveryDate;
-        this.itemsCount = itemsCount;
-        this.orderStatus = orderStatus;
-        this.orderValue = orderValue;
-        this.orderType = orderType;
-    }
+    private Address address;
 
     public Order(Parcel parcel) {
         this.orderId = parcel.readString();
@@ -61,6 +45,10 @@ public class Order implements Parcelable {
         this.orderValue = parcel.readString();
         this.fulfillmentInfo = parcel.readParcelable(Order.class.getClassLoader());
         this.orderType = parcel.readString();
+        boolean _wasAddressNull = parcel.readByte() == (byte) 1;
+        if (!_wasAddressNull) {
+            address = parcel.readParcelable(Order.class.getClassLoader());
+        }
     }
 
     @Override
@@ -73,6 +61,11 @@ public class Order implements Parcelable {
         dest.writeString(this.orderValue != null ? this.orderValue : "0");
         dest.writeParcelable(this.fulfillmentInfo, flags);
         dest.writeString(this.orderType);
+        boolean _wasAddressNull = address == null;
+        dest.writeByte(_wasAddressNull ? (byte) 1 : (byte) 0);
+        if (!_wasAddressNull) {
+            dest.writeParcelable(address, flags);
+        }
     }
 
     @Override
@@ -118,6 +111,10 @@ public class Order implements Parcelable {
 
     public String getOrderValue() {
         return orderValue;
+    }
+
+    public Address getAddress() {
+        return address;
     }
 
     public String getOrderType() {

@@ -17,6 +17,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.account.uiv3.LocateOnMapActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.OrderDetailActivity;
 import com.bigbasket.mobileapp.adapter.order.OrderListAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
@@ -105,6 +106,24 @@ public class OrderThankYouFragment extends BaseFragment implements InvoiceDataAw
                 showInvoice(order);
             }
         });
+
+        TextView lblLocateOnMap = (TextView) base.findViewById(R.id.lblLocateOnMap);
+
+        if (order.getAddress() != null && !order.getAddress().isMapped()) {
+            lblLocateOnMap.setTypeface(faceRobotoRegular);
+            lblLocateOnMap.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getCurrentActivity(), LocateOnMapActivity.class);
+                    intent.putExtra(Constants.UPDATE_ADDRESS, order.getAddress());
+                    startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                }
+            });
+        } else {
+            View viewLocateOnMapSeparator = base.findViewById(R.id.viewLocateOnMapSeparator);
+            viewLocateOnMapSeparator.setVisibility(View.GONE);
+            lblLocateOnMap.setVisibility(View.GONE);
+        }
         contentView.removeAllViews();
         contentView.addView(base);
     }
