@@ -1,5 +1,5 @@
 package com.bigbasket.mobileapp.interfaces;
 
 public interface SelectedPaymentAware {
-    public void setPaymentMethod(String paymentMethodSlug, String paymentMethodDisplay);
+    public void setPaymentMethod(String paymentMethodSlug);
 }

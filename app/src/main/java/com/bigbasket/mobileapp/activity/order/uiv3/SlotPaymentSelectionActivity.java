@@ -60,7 +60,6 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
 
     private ArrayList<SelectedSlotType> mSelectedSlotType;
     private String mPaymentMethodSlug;
-    private String mPaymentMethodDisplay;
     private SharedPreferences preferences;
     private String potentialOrderId;
     private ArrayList<VoucherApplied> mVoucherAppliedList;
@@ -174,26 +173,10 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
         if (hasPayuFailed) {
             mViewPager.setCurrentItem(1);
         }
+
         PayuResponse payuResponse = PayuResponse.getInstance(this);
         if (payuResponse != null && payuResponse.isSuccess()) {
-//            viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-//                @Override
-//                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-//
-//                }
-//
-//                @Override
-//                public void onPageSelected(int position) {
-//                    if (position == 0) return;
-//                    viewPager.setCurrentItem(0);
-//                    showAlertDialog(getString(R.string.paymentSelectionNotAvailable));
-//                }
-//
-//                @Override
-//                public void onPageScrollStateChanged(int state) {
-//
-//                }
-//            });
+            mPaymentMethodSlug = Constants.CREDIT_CARD;
         }
 
         PagerSlidingTabStrip pagerSlidingTabStrip = (PagerSlidingTabStrip) base.findViewById(R.id.slidingTabs);
@@ -254,7 +237,6 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
                         switch (orderSummaryApiResponse.status) {
                             case 0:
                                 OrderSummary orderSummary = orderSummaryApiResponse.apiResponseContent;
-                                orderSummary.getOrderDetails().setPaymentMethodDisplay(mPaymentMethodDisplay);
                                 launchPlaceOrderActivity(orderSummary);
                                 break;
                             default:
@@ -282,9 +264,8 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
     }
 
     @Override
-    public void setPaymentMethod(String paymentMethodSlug, String paymentMethodDisplay) {
+    public void setPaymentMethod(String paymentMethodSlug) {
         this.mPaymentMethodSlug = paymentMethodSlug;
-        this.mPaymentMethodDisplay = paymentMethodDisplay;
     }
 
     @Override

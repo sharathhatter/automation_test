@@ -353,6 +353,6 @@ public interface BigBasketApiService {
     @GET("/spend-trends/")
     void spendTrends(Callback<ApiResponse<SpendTrends>> spendTrendsApiResponseCallback);
 
-    @GET("/get-shops")
+    @GET("/get-shops/")
     void getShops(Callback<ApiResponse<GetShopsResponse>> getShopsApiResponseCallback);
 }

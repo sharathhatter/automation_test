@@ -28,6 +28,7 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.order.ActiveVouchers;
 import com.bigbasket.mobileapp.model.order.PaymentType;
+import com.bigbasket.mobileapp.model.order.PayuResponse;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
@@ -81,13 +82,34 @@ public class PaymentSelectionFragment extends BaseFragment {
         for (PaymentType paymentType : paymentTypes) {
             mPaymentTypeMap.put(paymentType.getDisplayName(), paymentType.getValue());
         }
-        renderPaymentOptions();
-        trackEvent(TrackingAware.CHECKOUT_PAYMENT_SHOWN, null);
 
-        String payuFailureReason = args.getString(Constants.PAYU_CANCELLED);
-        if (!TextUtils.isEmpty(payuFailureReason)) {
-            displayPayuFailure(payuFailureReason);
+        PayuResponse payuResponse = PayuResponse.getInstance(getActivity());
+        if (payuResponse != null && payuResponse.isSuccess()) {
+            renderPayuFailedToCreateOrderScenario();
+        } else {
+            renderPaymentOptions();
+            trackEvent(TrackingAware.CHECKOUT_PAYMENT_SHOWN, null);
+
+            String payuFailureReason = args.getString(Constants.PAYU_CANCELLED);
+            if (!TextUtils.isEmpty(payuFailureReason)) {
+                displayPayuFailure(payuFailureReason);
+            }
         }
+    }
+
+    private void renderPayuFailedToCreateOrderScenario() {
+        if (getActivity() == null) return;
+
+        LinearLayout contentView = getContentView();
+        if (contentView == null) return;
+        contentView.removeAllViews();
+
+        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View base = inflater.inflate(R.layout.uiv3_payment_option, null);
+        View layoutPaymentContainer = base.findViewById(R.id.layoutPaymentContainer);
+        layoutPaymentContainer.setVisibility(View.GONE);
+
+        contentView.addView(base);
     }
 
     @Nullable
@@ -104,6 +126,9 @@ public class PaymentSelectionFragment extends BaseFragment {
 
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View base = inflater.inflate(R.layout.uiv3_payment_option, null);
+
+        View layoutPressOrderReview = base.findViewById(R.id.layoutPressOrderReviewContainer);
+        layoutPressOrderReview.setVisibility(View.GONE);
 
         TextView lblPaymentMethod = (TextView) base.findViewById(R.id.lblPaymentMethod);
         View layoutChoosePayment = base.findViewById(R.id.layoutChoosePayment);
@@ -161,7 +186,7 @@ public class PaymentSelectionFragment extends BaseFragment {
                     if (getCurrentActivity() != null) {
                         rbtnPaymentType.setChecked(true);
                         ((SelectedPaymentAware) getCurrentActivity()).
-                                setPaymentMethod(entrySet.getValue(), entrySet.getKey());
+                                setPaymentMethod(entrySet.getValue());
                         // TODO : get rid of this!
                         mEditor.putString(Constants.PAYMENT_METHOD, entrySet.getValue());
                         mEditor.commit();
@@ -174,7 +199,7 @@ public class PaymentSelectionFragment extends BaseFragment {
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked && getCurrentActivity() != null) {
                             ((SelectedPaymentAware) getCurrentActivity()).
-                                    setPaymentMethod(entrySet.getValue(), entrySet.getKey());
+                                    setPaymentMethod(entrySet.getValue());
                             // TODO : get rid of this!
                             mEditor.putString(Constants.PAYMENT_METHOD, entrySet.getValue());
                             mEditor.commit();

@@ -178,7 +178,7 @@ public class PlaceOrderActivity extends BackButtonActivity implements OnObservab
                         );
                         break;
                     default:
-                        handler.sendEmptyMessage(placeOrderApiResponse.getErrorTypeAsInt());
+                        handler.sendEmptyMessage(placeOrderApiResponse.getErrorTypeAsInt(), placeOrderApiResponse.message);
                         break;
                 }
             }

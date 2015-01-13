@@ -174,11 +174,9 @@ public class AgeValidationActivity extends BackButtonActivity {
                             Intent intent = new Intent(getCurrentActivity(), PrescriptionListActivity.class);
                             intent.putExtra(Constants.MARKET_PLACE_INTENT, marketPlace);
                             startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
                         } else {
                             Intent intent = new Intent(getCurrentActivity(), UploadNewPrescriptionActivity.class);
                             startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
                         }
 
 

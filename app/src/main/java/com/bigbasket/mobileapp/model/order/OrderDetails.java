@@ -11,6 +11,7 @@ public class OrderDetails implements Parcelable {
     @SerializedName(Constants.PAYMENT_METHOD)
     private String paymentMethod;
 
+    @SerializedName(Constants.PAYMENT_METHOD_DISPLAY)
     private String paymentMethodDisplay;
 
     @SerializedName(Constants.TOTAL_ITEMS)
@@ -83,9 +84,5 @@ public class OrderDetails implements Parcelable {
 
     public String getPaymentMethodDisplay() {
         return paymentMethodDisplay;
-    }
-
-    public void setPaymentMethodDisplay(String paymentMethodDisplay) {
-        this.paymentMethodDisplay = paymentMethodDisplay;
     }
 }

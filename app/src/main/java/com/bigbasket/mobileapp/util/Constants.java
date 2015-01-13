@@ -537,6 +537,7 @@ public class Constants {
     public static final String PAYMENT_TYPES = "payment_types";
     public static final String PAYMENT_TYPE = "payment_type";
     public static final String PAYMENT_METHOD = "payment_method";
+    public static final String PAYMENT_METHOD_DISPLAY = "payment_method_display";
     public static final String CANCELLED = "Cancelled";
 
     //urls
