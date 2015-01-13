@@ -30,10 +30,13 @@ import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.OrderSummary;
 import com.bigbasket.mobileapp.model.order.PayuResponse;
 import com.bigbasket.mobileapp.model.order.VoucherApplied;
+import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
+import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
 
 import java.text.DecimalFormat;
@@ -47,22 +50,38 @@ import retrofit.client.Response;
 
 public class PlaceOrderActivity extends BackButtonActivity implements OnObservableScrollEvent {
 
-    private String potentialOrderId;
+    private String mPotentialOrderId;
     private SharedPreferences preferences;
+    private OrderSummary mOrderSummary;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle(getString(R.string.placeorder));
 
-        OrderSummary orderSummary = getIntent().getParcelableExtra(Constants.ORDER_REVIEW_SUMMARY);
-        renderOrderSummary(orderSummary);
+        mOrderSummary = getIntent().getParcelableExtra(Constants.ORDER_REVIEW_SUMMARY);
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mPotentialOrderId = preferences.getString(Constants.POTENTIAL_ORDER_ID, "");
+        renderOrderSummary();
+
+        PayuResponse payuResponse = PayuResponse.getInstance(this);
+        if (payuResponse != null && payuResponse.isSuccess()) {
+            if (mOrderSummary.getOrderDetails().getFinalTotal() == Double.parseDouble(payuResponse.getAmount())) {
+                placeOrder(mPotentialOrderId, payuResponse.getTxnId());
+            } else {
+                showAlertDialog("Create a separate order?",
+                        "We are sorry. The payment amount of Rs." + payuResponse.getAmount() + " does not match the" +
+                                " order amount of Rs." + UIUtil.formatAsMoney(mOrderSummary.getOrderDetails().getFinalTotal()) + ". Please go through the " +
+                                "payment process to complete this" +
+                                " transaction. BigBasket customer service will get back to you regarding " +
+                                "the payment made by you.",
+                        DialogButton.YES, DialogButton.NO, Constants.SOURCE_POST_PAYMENT
+                );
+            }
+        }
     }
 
-    private void renderOrderSummary(final OrderSummary orderSummary) {
-        preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        potentialOrderId = preferences.getString(Constants.POTENTIAL_ORDER_ID, "");
-
+    private void renderOrderSummary() {
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View base = inflater.inflate(R.layout.uiv3_tab_with_footer_btn, null);
 
@@ -72,7 +91,7 @@ public class PlaceOrderActivity extends BackButtonActivity implements OnObservab
         final ArrayList<BBTab> bbTabs = new ArrayList<>();
 
         Bundle bundle = new Bundle();
-        bundle.putParcelable(Constants.ORDER_REVIEW_SUMMARY, orderSummary);
+        bundle.putParcelable(Constants.ORDER_REVIEW_SUMMARY, mOrderSummary);
 
         bbTabs.add(new BBTab<>(getString(R.string.summary), OrderSummaryFragment.class, bundle));
         bbTabs.add(new BBTab<>(getString(R.string.items), OrderItemListFragment.class, bundle));
@@ -91,12 +110,12 @@ public class PlaceOrderActivity extends BackButtonActivity implements OnObservab
         btnFooter.setTypeface(faceRobotoRegular);
         btnFooter.setText(getString(R.string.placeorder).toUpperCase());
         final HashMap<String, String> map = new HashMap<>();
-        map.put(TrackEventkeys.POTENTIAL_ORDER, potentialOrderId);
+        map.put(TrackEventkeys.POTENTIAL_ORDER, mPotentialOrderId);
         btnFooter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 trackEvent(TrackingAware.CHECKOUT_PLACE_ORDER_CLICKED, map);
-                onPlaceOrderAction(orderSummary);
+                onPlaceOrderAction(mOrderSummary);
             }
         });
 
@@ -106,17 +125,22 @@ public class PlaceOrderActivity extends BackButtonActivity implements OnObservab
     public void onPlaceOrderAction(OrderSummary orderSummary) {
 
         double amount = orderSummary.getOrderDetails().getFinalTotal();
-        if (orderSummary.getOrderDetails().getPaymentMethod().equals(Constants.CREDIT_CARD)
+        PayuResponse existingPayuResponse = PayuResponse.getInstance(getCurrentActivity());
+        boolean wasPayuTxnSuccessfulButOrderCreationFailed =
+                existingPayuResponse != null && existingPayuResponse.isSuccess();
+        if (!wasPayuTxnSuccessfulButOrderCreationFailed &&
+                orderSummary.getOrderDetails().getPaymentMethod().equals(Constants.CREDIT_CARD)
                 && amount > 0) {
             startCreditCardTxnActivity(amount);
         } else {
-            placeOrder(potentialOrderId);
+            String txnId = wasPayuTxnSuccessfulButOrderCreationFailed ? existingPayuResponse.getTxnId() : null;
+            placeOrder(mPotentialOrderId, txnId);
         }
     }
 
     private void startCreditCardTxnActivity(double amount) {
         Intent intent = new Intent(getApplicationContext(), PayuTransactionActivity.class);
-        intent.putExtra(Constants.POTENTIAL_ORDER_ID, potentialOrderId);
+        intent.putExtra(Constants.POTENTIAL_ORDER_ID, mPotentialOrderId);
         intent.putExtra(Constants.FINAL_PAY, new DecimalFormat("0.00").format(amount));
         startActivityForResult(intent, Constants.PAYU_SUCCESS);
     }
@@ -141,6 +165,18 @@ public class PlaceOrderActivity extends BackButtonActivity implements OnObservab
                     case Constants.OK:
                         postOrderCreation(placeOrderApiResponse.apiResponseContent.orders);
                         break;
+                    case ApiErrorCodes.AMOUNT_MISMATCH_STR:
+                        PayuResponse payuResponse = PayuResponse.getInstance(getCurrentActivity());
+                        String amtTxt = payuResponse != null ? "of Rs. " + payuResponse.getAmount() + " " : "";
+                        showAlertDialog("Create a separate order?",
+                                "We are sorry. The payment amount " + amtTxt + "does not match the" +
+                                        " order amount of Rs." + UIUtil.formatAsMoney(mOrderSummary.getOrderDetails().getFinalTotal()) + ". Please go through the " +
+                                        "payment process to complete this" +
+                                        " transaction. BigBasket customer service will get back to you regarding " +
+                                        "the payment made by you.",
+                                DialogButton.YES, DialogButton.NO, Constants.SOURCE_PLACE_ORDER
+                        );
+                        break;
                     default:
                         handler.sendEmptyMessage(placeOrderApiResponse.getErrorTypeAsInt());
                         break;
@@ -164,7 +200,7 @@ public class PlaceOrderActivity extends BackButtonActivity implements OnObservab
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         setSuspended(false);
         HashMap<String, String> map = new HashMap<>();
-        map.put(TrackEventkeys.POTENTIAL_ORDER, potentialOrderId);
+        map.put(TrackEventkeys.POTENTIAL_ORDER, mPotentialOrderId);
         switch (resultCode) {
             case Constants.PAYU_FAILED:
                 map.put(TrackEventkeys.PAYMENT_GATEWAY_FAILURE_REASON, ""); //todo failure reason
@@ -187,7 +223,7 @@ public class PlaceOrderActivity extends BackButtonActivity implements OnObservab
                             "the payment made by you.", Constants.SOURCE_PAYU_EMPTY);
                     setResult(Constants.PAYU_FAILED);
                 } else {
-                    placeOrder(potentialOrderId, payuResponse.getTxnId());
+                    placeOrder(mPotentialOrderId, payuResponse.getTxnId());
                 }
                 break;
             default:
@@ -199,7 +235,7 @@ public class PlaceOrderActivity extends BackButtonActivity implements OnObservab
     protected void onPositiveButtonClicked(DialogInterface dialogInterface, int id, String sourceName, Object valuePassed) {
         if (sourceName != null) {
             HashMap<String, String> map = new HashMap<>();
-            map.put(TrackEventkeys.POTENTIAL_ORDER, potentialOrderId);
+            map.put(TrackEventkeys.POTENTIAL_ORDER, mPotentialOrderId);
             // When user clicks the Yes button in Alert Dialog that is shown when there's a amount mismatch
             switch (sourceName) {
                 case Constants.SOURCE_PLACE_ORDER:
@@ -207,11 +243,11 @@ public class PlaceOrderActivity extends BackButtonActivity implements OnObservab
                     map.put(TrackEventkeys.EXPECTED_AMOUNT, ""); //todo
                     map.put(TrackEventkeys.ORDER_AMOUNT, ""); //todo
                     trackEvent(TrackingAware.CHECKOUT_PLACE_ORDER_AMOUNT_MISMATCH, null);
-//                    if (paymethod.equals(Constants.CREDIT_CARD)) {
-//                        startCreditCardTxnActivity();
-//                    } else {
-//                        callWebservicePlaceOrder(MobileApiUrl.getBaseAPIUrl() + Constants.PLACE_ORDER_URL, null);
-//                    }
+                    if (mOrderSummary.getOrderDetails().getPaymentMethod().equals(Constants.CREDIT_CARD)) {
+                        startCreditCardTxnActivity(mOrderSummary.getOrderDetails().getFinalTotal());
+                    } else {
+                        placeOrder(mPotentialOrderId);
+                    }
                     break;
                 case Constants.SOURCE_POST_PAYMENT:
                     PayuResponse.clearTxnDetail(this);
@@ -234,7 +270,7 @@ public class PlaceOrderActivity extends BackButtonActivity implements OnObservab
             map.put(TrackEventkeys.ORDER_TYPE, order.getOrderType());
             map.put(TrackEventkeys.VOUCHER_NAME, preferences.getString(Constants.EVOUCHER_NAME, ""));
             map.put(TrackEventkeys.PAYMENT_MODE, preferences.getString(Constants.PAYMENT_METHOD, ""));
-            map.put(TrackEventkeys.POTENTIAL_ORDER, potentialOrderId);
+            map.put(TrackEventkeys.POTENTIAL_ORDER, mPotentialOrderId);
             trackEvent(TrackingAware.CHECKOUT_ORDER_COMPLETE, map);
         }
 

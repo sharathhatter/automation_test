@@ -1,7 +1,9 @@
 package com.bigbasket.mobileapp.activity.order.uiv3;
 
 import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.webkit.CookieManager;
@@ -9,7 +11,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
@@ -30,11 +32,22 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class PayuTransactionActivity extends BBActivity {
+public class PayuTransactionActivity extends BackButtonActivity {
+
+    private WebView mWebView;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.webview);
+
+        mWebView = (WebView) findViewById(R.id.webView);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarMain);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        setTitle("");
         startPaymentGateway();
     }
 
@@ -56,7 +69,7 @@ public class PayuTransactionActivity extends BBActivity {
                     switch (getPaymentParamsApiResponse.status) {
                         case 0:
                             openPayuGateway(potentialOrderId, getPaymentParamsApiResponse.apiResponseContent.payuGatewayUrl,
-                                    getPaymentParamsApiResponse.apiResponseContent.payuPostParamsJson,
+                                    getPaymentParamsApiResponse.apiResponseContent.payuPostParamsJson.toString(),
                                     getPaymentParamsApiResponse.apiResponseContent.successCaptureUrl,
                                     getPaymentParamsApiResponse.apiResponseContent.failureCaptureUrl);
                             break;
@@ -86,8 +99,6 @@ public class PayuTransactionActivity extends BBActivity {
                                  String payuPostParamStr,
                                  String successCaptureUrl,
                                  String failureCaptureUrl) {
-        WebView payuTxnWebView = (WebView) findViewById(R.id.webView);
-
         // Set _bb_vid and BBAUTHTOKEN cookies
         CookieManager cookieManager = CookieManager.getInstance();
         cookieManager.setAcceptCookie(true);
@@ -95,12 +106,18 @@ public class PayuTransactionActivity extends BBActivity {
         cookieManager.setCookie(MobileApiUrl.DOMAIN, "_bb_vid=" + authParameters.getVisitorId());
         cookieManager.setCookie(MobileApiUrl.DOMAIN, "BBAUTHTOKEN=" + authParameters.getBbAuthToken());
 
-        WebSettings webSettings = payuTxnWebView.getSettings();
+        WebSettings webSettings = mWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
-        payuTxnWebView.setWebViewClient(new PayUWebViewClientHandler(
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            cookieManager.setAcceptThirdPartyCookies(mWebView, true);
+            webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
+        }
+
+        mWebView.setWebViewClient(new PayUWebViewClientHandler(
                 this, potentialOrderId,
                 successCaptureUrl, failureCaptureUrl));
-        payuTxnWebView.loadData(getPayuWebViewContent(payuGatewayUrl, payuPostParamStr), "text/html", null);
+        mWebView.loadData(getPayuWebViewContent(payuGatewayUrl, payuPostParamStr), "text/html", null);
     }
 
     private Map<String, String> getPayuInputParamMap(String payuPostParamStrJson) {
@@ -144,11 +161,19 @@ public class PayuTransactionActivity extends BBActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                showAlertDialog(null, getString(R.string.abortPayu));
+                showAlertDialog(null, getString(R.string.abortPayu), Constants.PAYU_CANCELLED);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        if (mWebView.canGoBack()) {
+            mWebView.goBack();
+        } else {
+            showAlertDialog(null, getString(R.string.abortPayu), Constants.PAYU_CANCELLED);
+        }
+    }
 }

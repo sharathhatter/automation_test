@@ -24,6 +24,7 @@ public interface ApiErrorCodes {
     public static final int SERVER_ERROR = 121;
     public static final int MEMBER_SHOPPING_LIST_DOESNT_EXISTS = 122;
     public static final int AMOUNT_MISMATCH = 123;
+    public static final String AMOUNT_MISMATCH_STR = "123";
     public static final int PROMO_NOT_EXIST = 123;
     public static final int PROMO_CATEGORY_NOT_EXIST = 124;
     public static final int PROMO_CRITERIA_SET_NOT_EXISTS = 125;

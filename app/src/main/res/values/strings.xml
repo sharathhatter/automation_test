@@ -510,4 +510,8 @@
     <string name="noFilterOptions">No products to filter</string>
     <string name="home">Home</string>
     <string name="shopEmpty">Sorry, but there are no active shops for this try.\nCheck this section later to find some interesting offers!</string>
+    <string name="transactionFailed">Transaction Failed!</string>
+    <string name="failedToProcess">Failed to process your transaction</string>
+    <string name="youAborted">You aborted the transaction</string>
+    <string name="paymentSelectionNotAvailable">Sorry, but you can\'t change the payment method.\nAfter you\'ve chosen the slot, click on \"Review order\" button, and your order will be automatically created</string>
 </resources>

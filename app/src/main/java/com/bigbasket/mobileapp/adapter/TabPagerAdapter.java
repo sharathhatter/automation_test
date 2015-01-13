@@ -23,7 +23,7 @@ public class TabPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int i) {
         BBTab bbTab = bbTabs.get(i);
-        return Fragment.instantiate(ctx, bbTab.getmFragmentClass().getName(),
+        return Fragment.instantiate(ctx, bbTab.getFragmentClass().getName(),
                 bbTab.getArgs());
     }
 
