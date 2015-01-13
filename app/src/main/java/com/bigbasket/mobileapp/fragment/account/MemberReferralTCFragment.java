@@ -84,7 +84,7 @@ public class MemberReferralTCFragment extends BaseFragment {
         contentView.setBackgroundColor(getResources().getColor(R.color.uiv3_list_bkg_color));
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View referralView = inflater.inflate(R.layout.member_referral_tc, null);
+        View referralView = inflater.inflate(R.layout.member_referral_tc, contentView, false);
 
         if(!TextUtils.isEmpty(memberReferralProduct.getIncentiveDesc())){
             //todo need to refer Sid

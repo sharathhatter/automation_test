@@ -52,7 +52,7 @@ public class ContactListAdapter extends BaseAdapter{
     public View getView(int position, View convertView, ViewGroup parent) {
         ContactRowHolder rowHolder;
         if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.uiv3_contact_list, null);
+            convertView = LayoutInflater.from(context).inflate(R.layout.uiv3_contact_list, parent, false);
             rowHolder = new ContactRowHolder(convertView);
             convertView.setTag(rowHolder);
         } else {

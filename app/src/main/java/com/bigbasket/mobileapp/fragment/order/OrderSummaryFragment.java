@@ -55,7 +55,7 @@ public class OrderSummaryFragment extends AbstractOrderSummaryFragment {
         showProgressView();
 
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View base = inflater.inflate(R.layout.uiv3_order_review, null);
+        View base = inflater.inflate(R.layout.uiv3_order_review, contentView, false);
 
         // Set roboto font on static messages
         TextView lblAlmostDone = (TextView) base.findViewById(R.id.lblAlmostDone);
@@ -167,7 +167,7 @@ public class OrderSummaryFragment extends AbstractOrderSummaryFragment {
         boolean hasMultipleSlots = numSlots > 1;
         for (int i = 0; i < numSlots; i++) {
             SlotGroup slotGroup = orderSummary.getSlotGroups().get(i);
-            View row = inflater.inflate(R.layout.uiv3_slot_info_row, null);
+            View row = inflater.inflate(R.layout.uiv3_slot_info_row, layoutDeliverySlot, false);
             renderSlotInfoRow(row, slotGroup.getSelectedSlot().getFormattedSlotDate(),
                     slotGroup.getSelectedSlot().getDisplayName(),
                     "Slot & fulfilled by " + slotGroup.getFulfillmentInfo().getFulfilledBy(),

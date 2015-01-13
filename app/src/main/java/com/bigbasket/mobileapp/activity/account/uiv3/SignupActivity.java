@@ -45,7 +45,7 @@ public class SignupActivity extends BaseSignInSignupActivity {
         FrameLayout contentView = (FrameLayout) findViewById(R.id.content_frame);
         LayoutInflater inflater = getLayoutInflater();
 
-        View base = inflater.inflate(R.layout.uiv3_signup, null);
+        View base = inflater.inflate(R.layout.uiv3_signup, contentView, false);
         setTitle(getString(R.string.signUp));
         contentView.addView(base);
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(this);

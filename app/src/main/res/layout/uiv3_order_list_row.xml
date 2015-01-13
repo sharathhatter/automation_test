@@ -41,8 +41,7 @@
         android:layout_marginLeft="@dimen/margin_normal"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/imgDeliveryVan"
-        android:textColor="@color/uiv3_list_primary_text_color"
-        />
+        android:textColor="@color/uiv3_list_primary_text_color" />
 
 
     <TextView
@@ -55,8 +54,7 @@
         android:layout_marginLeft="@dimen/margin_normal"
         android:text="sold and fulfilled by"
         android:textColor="@color/uiv3_list_primary_text_color"
-        android:layout_height="wrap_content"
-        />
+        android:layout_height="wrap_content" />
 
     <TextView
         android:layout_width="wrap_content"

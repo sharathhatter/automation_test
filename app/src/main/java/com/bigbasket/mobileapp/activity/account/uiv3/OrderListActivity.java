@@ -121,8 +121,9 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
 
     private void renderOrderList() {
 
+        FrameLayout contentLayout = (FrameLayout) findViewById(R.id.content_frame);
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        RelativeLayout base = (RelativeLayout) inflater.inflate(R.layout.uiv3_order_list, null);
+        RelativeLayout base = (RelativeLayout) inflater.inflate(R.layout.uiv3_order_list, contentLayout, false);
 
         AbsListView orderAbsListView = (AbsListView) base.findViewById(R.id.listOrders);
         int spinnerSelectedIdx = OrderMonthRange.getSelectedIndex(orderMonthRanges, selectedMonth);
@@ -191,7 +192,6 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
             });
         }
 
-        FrameLayout contentLayout = (FrameLayout) findViewById(R.id.content_frame);
         contentLayout.removeAllViews();
         contentLayout.addView(base);
     }

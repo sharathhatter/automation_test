@@ -174,9 +174,9 @@ public class UIUtil {
     }
 
     public static RecyclerView getResponsiveRecyclerView(Context context, int portraitModeGridCount,
-                                                         int landscapeModeGridCount) {
+                                                         int landscapeModeGridCount, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        RecyclerView recyclerView = (RecyclerView) inflater.inflate(R.layout.recyclerview_layout, null);
+        RecyclerView recyclerView = (RecyclerView) inflater.inflate(R.layout.recyclerview_layout, parent, false);
         configureRecyclerView(recyclerView, context, portraitModeGridCount, landscapeModeGridCount);
         return recyclerView;
     }

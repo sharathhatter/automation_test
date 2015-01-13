@@ -125,7 +125,7 @@ public class ProductListActivity extends BBActivity implements FilterDisplayAwar
 
         if (mFilterOptionItems == null || mFilterOptionItems.size() == 0) {
             LayoutInflater inflater = getLayoutInflater();
-            View emptyView = inflater.inflate(R.layout.uiv3_empty_data_text, null);
+            View emptyView = inflater.inflate(R.layout.uiv3_empty_data_text, listFilter, false);
             TextView txtEmptyDataMsg = (TextView) emptyView.findViewById(R.id.txtEmptyDataMsg);
             txtEmptyDataMsg.setText("Nothing to filter!");
             txtEmptyDataMsg.setTextColor(getResources().getColor(R.color.white));

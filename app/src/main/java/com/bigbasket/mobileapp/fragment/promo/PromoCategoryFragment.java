@@ -129,7 +129,7 @@ public class PromoCategoryFragment extends BaseFragment {
         }
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View base = inflater.inflate(R.layout.uiv3_promo_category, null);
+        View base = inflater.inflate(R.layout.uiv3_promo_category, contentView, false);
         ListView promoCategoryList = (ListView) base.findViewById(R.id.lstPromoCategory);
         PromoCategoryAdapter promoCategoryAdapter = new PromoCategoryAdapter(getActivity(),
                 promoConsolidatedList, faceRobotoRegular);

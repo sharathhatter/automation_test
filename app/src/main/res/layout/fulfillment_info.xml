@@ -30,14 +30,14 @@
 
 
         <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_below="@id/txtFulfilledBy"-->
-            <!--android:id="@+id/txtTCLabel"-->
-            <!--android:textSize="@dimen/small_text_size"-->
-            <!--android:textColor="@color/promo_red_color"-->
-            <!--android:text="@string/txtFulfilledBy"-->
-            <!--android:visibility="gone"-->
-            <!--android:layout_height="wrap_content" />-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_below="@id/txtFulfilledBy"-->
+        <!--android:id="@+id/txtTCLabel"-->
+        <!--android:textSize="@dimen/small_text_size"-->
+        <!--android:textColor="@color/promo_red_color"-->
+        <!--android:text="@string/txtFulfilledBy"-->
+        <!--android:visibility="gone"-->
+        <!--android:layout_height="wrap_content" />-->
 
         <TextView
             android:layout_width="wrap_content"

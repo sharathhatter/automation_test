@@ -195,7 +195,7 @@ public class AgeValidationActivity extends BackButtonActivity {
             return;
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         for (final MarketPlaceAgeCheck marketPlaceAgeCheck : marketPlace.getAgeCheckRequiredDetail()) {
-            View ageLayout = inflater.inflate(R.layout.uiv3_age_validation_layout, null);
+            View ageLayout = inflater.inflate(R.layout.uiv3_age_validation_layout, base, false);
             TextView txtAgeMsg = (TextView) ageLayout.findViewById(R.id.txtAgeMsg);
             txtAgeMsg.setTypeface(faceRobotoRegular);
             txtAgeMsg.setText(marketPlaceAgeCheck.getAgeMessage());
@@ -241,7 +241,7 @@ public class AgeValidationActivity extends BackButtonActivity {
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         PharmaPrescriptionInfo pharmaPrescriptionInfo = marketPlace.getPharmaPrescriptionInfo();
-        View ageLayout = inflater.inflate(R.layout.uiv3_age_validation_layout, null);
+        View ageLayout = inflater.inflate(R.layout.uiv3_age_validation_layout, base, false);
 
         // pharma Prescription header
         TextView txtheaderMsg = (TextView) ageLayout.findViewById(R.id.txtAgeMsg);

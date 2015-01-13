@@ -58,7 +58,7 @@ public class WalletActivityListAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
-            convertView = layoutInflater.inflate(R.layout.uiv3_wallet_activity, null);
+            convertView = layoutInflater.inflate(R.layout.uiv3_wallet_activity, parent, false);
             holder = new ViewHolder();
             holder.dateHolder = (TextView) convertView.findViewById(R.id.date);
             holder.dateHolder.setTypeface(faceRobotoRegular);

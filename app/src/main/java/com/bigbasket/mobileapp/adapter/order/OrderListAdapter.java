@@ -51,7 +51,7 @@ public class OrderListAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         OrderListRowHolder rowHolder;
         if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.uiv3_order_list_row, null);
+            convertView = LayoutInflater.from(context).inflate(R.layout.uiv3_order_list_row, parent, false);
             rowHolder = new OrderListRowHolder(convertView);
             convertView.setTag(rowHolder);
         } else {

@@ -105,7 +105,7 @@ public class PaymentSelectionFragment extends BaseFragment {
         contentView.removeAllViews();
 
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View base = inflater.inflate(R.layout.uiv3_payment_option, null);
+        View base = inflater.inflate(R.layout.uiv3_payment_option, contentView, false);
         View layoutPaymentContainer = base.findViewById(R.id.layoutPaymentContainer);
         layoutPaymentContainer.setVisibility(View.GONE);
 
@@ -125,7 +125,7 @@ public class PaymentSelectionFragment extends BaseFragment {
         contentView.removeAllViews();
 
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View base = inflater.inflate(R.layout.uiv3_payment_option, null);
+        View base = inflater.inflate(R.layout.uiv3_payment_option, contentView, false);
 
         View layoutPressOrderReview = base.findViewById(R.id.layoutPressOrderReviewContainer);
         layoutPressOrderReview.setVisibility(View.GONE);
@@ -179,7 +179,7 @@ public class PaymentSelectionFragment extends BaseFragment {
             RadioGroup layoutPaymentOptions = (RadioGroup) base.findViewById(R.id.layoutPaymentOptions);
             int i = 0;
             for (final Map.Entry<String, String> entrySet : mPaymentTypeMap.entrySet()) {
-                RadioButton rbtnPaymentType = getPaymentOptionRadioButton();
+                RadioButton rbtnPaymentType = getPaymentOptionRadioButton(layoutPaymentOptions);
                 rbtnPaymentType.setText(entrySet.getKey());
                 rbtnPaymentType.setId(i);
                 if (i == 0) {
@@ -275,9 +275,9 @@ public class PaymentSelectionFragment extends BaseFragment {
         contentView.addView(base);
     }
 
-    private RadioButton getPaymentOptionRadioButton() {
+    private RadioButton getPaymentOptionRadioButton(ViewGroup parent) {
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        RadioButton radioButton = (RadioButton) inflater.inflate(R.layout.uiv3_payment_option_rbtn, null);
+        RadioButton radioButton = (RadioButton) inflater.inflate(R.layout.uiv3_payment_option_rbtn, parent, false);
         RadioGroup.LayoutParams layoutParams = new RadioGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams.setMargins(0, 0, 0, (int) getResources().getDimension(R.dimen.margin_small));

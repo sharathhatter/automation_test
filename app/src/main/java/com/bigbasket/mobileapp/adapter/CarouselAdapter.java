@@ -41,7 +41,7 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<CarouselAdapter.Vie
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = ((ActivityAware) context).getCurrentActivity().getLayoutInflater();
-        View row = inflater.inflate(layoutId, null);
+        View row = inflater.inflate(layoutId, parent, false);
         return new ViewHolder(row, typeface);
     }
 

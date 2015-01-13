@@ -136,7 +136,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         contentView.removeAllViews();
         LayoutInflater layoutInflater = (LayoutInflater) getActivity().
                 getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View addressView = layoutInflater.inflate(R.layout.uiv3_fab_recycler_view, null);
+        View addressView = layoutInflater.inflate(R.layout.uiv3_fab_recycler_view, contentView, false);
 
         RecyclerView addressRecyclerView = (RecyclerView) addressView.findViewById(R.id.fabRecyclerView);
         UIUtil.configureRecyclerView(addressRecyclerView, getActivity(), 1, 3);

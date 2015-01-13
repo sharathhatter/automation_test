@@ -23,6 +23,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 
 public class ShowFulfillmentInfo<T> {
+    // TODO : Jugal fix this
     private FulfillmentInfo fulfillmentInfo;
     private Activity context;
     private Typeface faceRobotoSlabNrml;

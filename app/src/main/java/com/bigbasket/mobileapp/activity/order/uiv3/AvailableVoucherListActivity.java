@@ -155,7 +155,8 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
             ActiveVoucherViewHolder activeVoucherViewHolder;
             final ActiveVouchers activeVouchers = activeVouchersList.get(position);
             if (row == null) {
-                row = getInflatedView();
+                LayoutInflater inflater = (LayoutInflater) getCurrentActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                row = inflater.inflate(R.layout.uiv3_active_voucher_list_row, parent, false);
                 activeVoucherViewHolder = new ActiveVoucherViewHolder(row);
                 row.setTag(activeVoucherViewHolder);
             } else {
@@ -179,11 +180,6 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
             txtVoucherValidity.setText(getString(R.string.pleaseNote) + " " +
                     activeVouchers.getValidity());
             return row;
-        }
-
-        private View getInflatedView() {
-            LayoutInflater inflater = (LayoutInflater) getCurrentActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            return inflater.inflate(R.layout.uiv3_active_voucher_list_row, null);
         }
     }
 }

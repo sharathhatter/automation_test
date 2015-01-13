@@ -14,7 +14,7 @@
         android:paddingTop="@dimen/padding_normal"
         android:paddingBottom="@dimen/padding_normal"
         android:paddingLeft="@dimen/padding_normal"
-        android:background="@drawable/uiv3_btn_background_shadow"/>
+        android:background="@drawable/uiv3_btn_background_shadow" />
 
 
     <LinearLayout
@@ -39,7 +39,7 @@
             android:paddingBottom="@dimen/padding_small"
             android:id="@+id/btnApplyFilter"
             android:onClick="onApplyFilterButtonClicked"
-            android:layout_marginRight="@dimen/margin_mini"/>
+            android:layout_marginRight="@dimen/margin_mini" />
 
         <Button
             android:layout_width="0dp"
@@ -53,7 +53,7 @@
             android:paddingTop="@dimen/padding_small"
             android:paddingBottom="@dimen/padding_small"
             android:id="@+id/btnClearFilters"
-            android:onClick="onClearFilterButtonClicked"/>
+            android:onClick="onClearFilterButtonClicked" />
     </LinearLayout>
 
     <ExpandableListView

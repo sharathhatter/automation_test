@@ -80,7 +80,7 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
         contentView.addView(scrollView);
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        base = inflater.inflate(R.layout.uiv3_upload_new_prescription_layout, null);
+        base = inflater.inflate(R.layout.uiv3_upload_new_prescription_layout, linearLayout, false);
         txtViewImages = (TextView) base.findViewById(R.id.txtViewImages);
         txtViewImages.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -278,7 +278,7 @@ public class HomeFragment extends BaseSectionFragment {
         LinearLayout contentView = getContentView();
         if (contentView == null) return;
         contentView.removeAllViews();
-        View base = getActivity().getLayoutInflater().inflate(R.layout.uiv3_inline_error_page, null);
+        View base = getActivity().getLayoutInflater().inflate(R.layout.uiv3_inline_error_page, contentView, false);
         TextView txtInlineErrMsg = (TextView) base.findViewById(R.id.txtInlineErrorMsg);
         ImageView imgInlineError = (ImageView) base.findViewById(R.id.imgInlineError);
         Button btnRetry = (Button) base.findViewById(R.id.btnRetry);

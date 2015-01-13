@@ -67,7 +67,7 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
 
         FrameLayout contentView = (FrameLayout) findViewById(R.id.content_frame);
         LayoutInflater inflater = getLayoutInflater();
-        mBaseView = inflater.inflate(R.layout.uiv3_login, null);
+        mBaseView = inflater.inflate(R.layout.uiv3_login, contentView, false);
         contentView.addView(mBaseView);
 
         setTitle(getString(R.string.signIn));

@@ -98,10 +98,11 @@ public class ShopInShopListFragment extends BaseFragment {
         contentView.removeAllViews();
 
         if (mShopInShopList == null || mShopInShopList.size() == 0) {
-            View base = getActivity().getLayoutInflater().inflate(R.layout.uiv3_empty_data_text, null);
+            View base = getActivity().getLayoutInflater().inflate(R.layout.uiv3_empty_data_text, contentView, false);
             TextView txtEmptyDataMsg = (TextView) base.findViewById(R.id.txtEmptyDataMsg);
             txtEmptyDataMsg.setTypeface(faceRobotoRegular);
             txtEmptyDataMsg.setText(getString(R.string.shopEmpty));
+            contentView.addView(base);
             return;
         }
 
@@ -146,7 +147,7 @@ public class ShopInShopListFragment extends BaseFragment {
             View row = convertView;
             ViewHolder viewHolder;
             if (row == null) {
-                row = getActivity().getLayoutInflater().inflate(R.layout.uiv3_list_text, null);
+                row = getActivity().getLayoutInflater().inflate(R.layout.uiv3_list_text, parent, false);
                 viewHolder = new ViewHolder(row);
                 row.setTag(viewHolder);
             } else {

@@ -73,7 +73,7 @@ public class PromoCategoryAdapter extends BaseAdapter {
         if (row == null) {
             LayoutInflater layoutInflater = (LayoutInflater)
                     context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            row = layoutInflater.inflate(R.layout.uiv3_promo_category_list_item, null);
+            row = layoutInflater.inflate(R.layout.uiv3_promo_category_list_item, parent, false);
             promoCatItemHolder = new PromoCatItemHolder(row);
             row.setTag(promoCatItemHolder);
         } else {
@@ -99,7 +99,7 @@ public class PromoCategoryAdapter extends BaseAdapter {
         if (row == null) {
             LayoutInflater layoutInflater = (LayoutInflater)
                     context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            row = layoutInflater.inflate(R.layout.uiv3_promo_category_list_header, null);
+            row = layoutInflater.inflate(R.layout.uiv3_promo_category_list_header, parent, false);
             promoCatViewWrapper = new PromoCatViewHolder(row);
             row.setTag(promoCatViewWrapper);
             row.setEnabled(false);

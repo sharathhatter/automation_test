@@ -140,9 +140,9 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
                          ArrayList<PaymentType> paymentTypes) {
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View base = inflater.inflate(R.layout.uiv3_tab_with_footer_btn, null);
-
         FrameLayout contentView = (FrameLayout) findViewById(R.id.content_frame);
+        View base = inflater.inflate(R.layout.uiv3_tab_with_footer_btn, contentView, false);
+
         contentView.removeAllViews();
 
         final ArrayList<BBTab> bbTabs = new ArrayList<>();

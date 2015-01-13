@@ -133,7 +133,7 @@ public class ShoppingListSummaryFragment extends BaseFragment {
                 showErrorMsg(getString(R.string.smartBasketEmpty));
             } else {
                 LayoutInflater inflater = getActivity().getLayoutInflater();
-                RelativeLayout relativeLayout = (RelativeLayout) inflater.inflate(R.layout.shopping_list_empty, null);
+                RelativeLayout relativeLayout = (RelativeLayout) inflater.inflate(R.layout.shopping_list_empty, contentView, false);
                 TextView txtShoppingListMsg1 = (TextView) relativeLayout.findViewById(R.id.txtShoppingListMsg1);
                 txtShoppingListMsg1.setTypeface(faceRobotoRegular);
                 TextView txtShoppingListMsg2 = (TextView) relativeLayout.findViewById(R.id.txtShoppingListMsg2);
@@ -200,7 +200,7 @@ public class ShoppingListSummaryFragment extends BaseFragment {
             ShoppingListSummaryHolder shoppingListSummaryHolder;
             if (row == null) {
                 LayoutInflater inflater = getActivity().getLayoutInflater();
-                row = inflater.inflate(R.layout.uiv3_shopping_list_summary, null);
+                row = inflater.inflate(R.layout.uiv3_shopping_list_summary, parent, false);
                 shoppingListSummaryHolder = new ShoppingListSummaryHolder(row);
                 row.setTag(shoppingListSummaryHolder);
             } else {

@@ -107,7 +107,7 @@ public class SlotSelectionFragment extends BaseFragment {
             // info message for multiple slot selection
             LayoutInflater inflater = getActivity().getLayoutInflater();
             TextView infoMsgMultipleSlotSelection = (TextView)
-                    inflater.inflate(R.layout.uiv3_multiple_delivery_slot_msg, null);
+                    inflater.inflate(R.layout.uiv3_multiple_delivery_slot_msg, contentView, false);
             infoMsgMultipleSlotSelection.setTypeface(faceRobotoRegular);
             contentView.addView(infoMsgMultipleSlotSelection);
             mSlotGroupListAdapter = new SlotGroupListAdapter();
@@ -268,7 +268,7 @@ public class SlotSelectionFragment extends BaseFragment {
         public View getView(int position, View convertView, ViewGroup parent) {
             BaseSlot baseSlot = flattenedSlotGroupList.get(position);
             if (getItemViewType(position) == VIEW_TYPE_ITEM) {
-                View slotView = getSlotView((Slot) baseSlot, convertView);
+                View slotView = getSlotView((Slot) baseSlot, convertView, parent);
                 View listSeparator = slotView.findViewById(R.id.listSeparator);
                 if ((position + 1) < size && getItemViewType(position + 1) == VIEW_TYPE_HEADER) {
                     listSeparator.setVisibility(View.VISIBLE);
@@ -277,13 +277,13 @@ public class SlotSelectionFragment extends BaseFragment {
                 }
                 return slotView;
             }
-            return getHeaderView((SlotHeader) baseSlot, convertView);
+            return getHeaderView((SlotHeader) baseSlot, convertView, parent);
         }
 
-        private View getHeaderView(SlotHeader slotHeader, View row) {
+        private View getHeaderView(SlotHeader slotHeader, View row, ViewGroup parent) {
             SlotHeaderViewHolder slotHeaderViewHolder;
             if (row == null) {
-                row = getActivity().getLayoutInflater().inflate(R.layout.uiv3_list_title, null);
+                row = getActivity().getLayoutInflater().inflate(R.layout.uiv3_list_title, parent, false);
                 slotHeaderViewHolder = new SlotHeaderViewHolder(row);
                 row.setBackgroundColor(getResources().getColor(R.color.uiv3_list_bkg_light_color));
                 row.setTag(slotHeaderViewHolder);
@@ -295,10 +295,10 @@ public class SlotSelectionFragment extends BaseFragment {
             return row;
         }
 
-        private View getSlotView(Slot slot, View row) {
+        private View getSlotView(Slot slot, View row, ViewGroup parent) {
             SlotViewHolder slotViewHolder;
             if (row == null) {
-                row = getActivity().getLayoutInflater().inflate(R.layout.uiv3_list_icon_and_two_texts_row, null);
+                row = getActivity().getLayoutInflater().inflate(R.layout.uiv3_list_icon_and_two_texts_row, parent, false);
                 row.setBackgroundColor(getResources().getColor(R.color.uiv3_list_bkg_light_color));
                 slotViewHolder = new SlotViewHolder(row);
                 row.setTag(slotViewHolder);
@@ -456,7 +456,7 @@ public class SlotSelectionFragment extends BaseFragment {
             SlotGroupHolder slotGroupHolder;
             if (row == null) {
                 LayoutInflater inflater = getActivity().getLayoutInflater();
-                row = inflater.inflate(R.layout.uiv3_slot_group_card, null);
+                row = inflater.inflate(R.layout.uiv3_slot_group_card, parent, false);
                 slotGroupHolder = new SlotGroupHolder(row);
                 row.setTag(slotGroupHolder);
             } else {

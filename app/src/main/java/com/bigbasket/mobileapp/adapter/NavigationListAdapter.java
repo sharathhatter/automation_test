@@ -73,7 +73,7 @@ public class NavigationListAdapter extends BaseExpandableListAdapter {
         View row = convertView;
         if (row == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            row = inflater.inflate(R.layout.uiv3_main_nav_list_row, null);
+            row = inflater.inflate(R.layout.uiv3_main_nav_list_row, parent, false);
         }
         NavigationItem navigationItem = navigationItems.get(groupPosition);
         TextView txtNavListRow = (TextView) row.findViewById(R.id.txtNavListRow);
@@ -104,7 +104,7 @@ public class NavigationListAdapter extends BaseExpandableListAdapter {
         }
         if (row == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            row = inflater.inflate(R.layout.uiv3_main_nav_list_row, null);
+            row = inflater.inflate(R.layout.uiv3_main_nav_list_row, parent, false);
         }
         NavigationSubItem navigationSubItem = navigationSubItems.get(childPosition);
         TextView txtNavListRow = (TextView) row.findViewById(R.id.txtNavListRow);

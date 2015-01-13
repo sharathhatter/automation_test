@@ -5,6 +5,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.View;
+import android.widget.LinearLayout;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.product.ProductListRecyclerAdapter;
@@ -103,7 +105,9 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
     @Override
     public void loadProducts() {
         if (getActivity() == null) return;
-        RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 2, 2);
+        LinearLayout contentView = getContentView();
+        if (contentView == null) return;
+        RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 2, 2, contentView);
 
         // Set product-list data
         AuthParameters authParameters = AuthParameters.getInstance(getActivity());
@@ -122,9 +126,7 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
                 TrackEventkeys.PAST_ORDER);
 
         productRecyclerView.setAdapter(productListRecyclerAdapter);
-        if (getContentView() != null) {
-            getContentView().addView(productRecyclerView);
-        }
+        contentView.addView(productRecyclerView);
     }
 
     @Override

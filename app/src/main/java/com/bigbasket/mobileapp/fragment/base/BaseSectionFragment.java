@@ -37,33 +37,33 @@ public abstract class BaseSectionFragment extends BaseFragment {
         for (Section section : mSectionData.getSections()) {
             switch (section.getSectionType()) {
                 case Section.BANNER:
-                    View bannerView = getBannerView(section, inflater);
+                    View bannerView = getBannerView(section, inflater, mainLayout);
                     if (bannerView != null) {
                         mainLayout.addView(bannerView);
                     }
                     break;
                 case Section.SALUTATION:
-                    View salutationView = getSalutationView(section, inflater);
+                    View salutationView = getSalutationView(section, inflater, mainLayout);
                     if (salutationView != null) {
                         mainLayout.addView(salutationView);
                     }
                     break;
                 case Section.TILE:
-                    View tileView = getTileView(section, inflater);
+                    View tileView = getTileView(section, inflater, mainLayout);
                     if (tileView != null) {
                         mainLayout.addView(tileView);
                     }
                     break;
                 case Section.PRODUCT_CAROUSEL:
                     View productCarouselView = getCarouselView(section, inflater,
-                            R.layout.uiv3_product_carousel_row, R.layout.uiv3_horizontal_product_recyclerview);
+                            R.layout.uiv3_product_carousel_row, R.layout.uiv3_horizontal_product_recyclerview, mainLayout);
                     if (productCarouselView != null) {
                         mainLayout.addView(productCarouselView);
                     }
                     break;
                 case Section.NON_PRODUCT_CAROUSEL:
                     View carouselView = getCarouselView(section, inflater,
-                            R.layout.uiv3_carousel_row, R.layout.uiv3_horizontal_recycler_view);
+                            R.layout.uiv3_carousel_row, R.layout.uiv3_horizontal_recycler_view, mainLayout);
                     if (carouselView != null) {
                         mainLayout.addView(carouselView);
                     }
@@ -95,8 +95,8 @@ public abstract class BaseSectionFragment extends BaseFragment {
         }
     }
 
-    private View getBannerView(Section section, LayoutInflater inflater) {
-        View baseSlider = inflater.inflate(R.layout.uiv3_image_slider, null);
+    private View getBannerView(Section section, LayoutInflater inflater, ViewGroup parent) {
+        View baseSlider = inflater.inflate(R.layout.uiv3_image_slider, parent, false);
         SliderLayout bannerSlider = (SliderLayout) baseSlider.findViewById(R.id.imgSlider);
         for (SectionItem sectionItem : section.getSectionItems()) {
             if (!TextUtils.isEmpty(sectionItem.getTitle().getText())) {
@@ -113,8 +113,8 @@ public abstract class BaseSectionFragment extends BaseFragment {
         return baseSlider;
     }
 
-    private View getSalutationView(Section section, LayoutInflater inflater) {
-        View baseSalutation = inflater.inflate(R.layout.uiv3_salutation_box, null);
+    private View getSalutationView(Section section, LayoutInflater inflater, ViewGroup parent) {
+        View baseSalutation = inflater.inflate(R.layout.uiv3_salutation_box, parent, false);
         TextView txtSalutationTitle = (TextView) baseSalutation.findViewById(R.id.txtSalutationTitle);
         if (!TextUtils.isEmpty(section.getTitle().getText())) {
             txtSalutationTitle.setTypeface(faceRobotoRegular);
@@ -168,8 +168,8 @@ public abstract class BaseSectionFragment extends BaseFragment {
     }
 
     private View getCarouselView(Section section, LayoutInflater inflater, int layoutId,
-                                 int listLayoutId) {
-        View baseProductCarousel = inflater.inflate(listLayoutId, null);
+                                 int listLayoutId, ViewGroup parent) {
+        View baseProductCarousel = inflater.inflate(listLayoutId, parent, false);
         TextView txtListTitle = (TextView) baseProductCarousel.findViewById(R.id.txtListTitle);
         if (section.getTitle() == null || TextUtils.isEmpty(section.getTitle().getText())) {
             txtListTitle.setVisibility(View.GONE);
@@ -255,7 +255,7 @@ public abstract class BaseSectionFragment extends BaseFragment {
         for (SectionItem sectionItem : section.getSectionItems()) {
             if (sectionItem.getTitle() == null || TextUtils.isEmpty(sectionItem.getTitle().getText()))
                 continue;
-            TextView txtVw = (TextView) inflater.inflate(R.layout.uiv3_msg_text, null);
+            TextView txtVw = (TextView) inflater.inflate(R.layout.uiv3_msg_text, linearLayout, false);
             Renderer renderer = mSectionData.getRenderersMap() != null ?
                     mSectionData.getRenderersMap().get(sectionItem.getRenderingId()) : null;
             if (renderer != null) {
@@ -284,7 +284,7 @@ public abstract class BaseSectionFragment extends BaseFragment {
         LinearLayout menuContainer = new LinearLayout(getActivity());
         menuContainer.setOrientation(LinearLayout.VERTICAL);
         if (section.getTitle() != null && !TextUtils.isEmpty(section.getTitle().getText())) {
-            TextView txtVw = (TextView) inflater.inflate(R.layout.uiv3_msg_text, null);
+            TextView txtVw = (TextView) inflater.inflate(R.layout.uiv3_msg_text, menuContainer, false);
             Renderer renderer = mSectionData.getRenderersMap() != null ?
                     mSectionData.getRenderersMap().get(section.getTitle().getRenderingId()) : null;
             if (renderer != null) {
@@ -310,7 +310,7 @@ public abstract class BaseSectionFragment extends BaseFragment {
         for (SectionItem sectionItem : section.getSectionItems()) {
             if (sectionItem == null || sectionItem.getTitle() == null || TextUtils.isEmpty(sectionItem.getTitle().getText()))
                 continue;
-            View base = inflater.inflate(R.layout.uiv3_list_text, null);
+            View base = inflater.inflate(R.layout.uiv3_list_text, menuContainer, false);
             TextView txtListText = (TextView) base.findViewById(R.id.txtListText);
             Renderer renderer = mSectionData.getRenderersMap() != null ?
                     mSectionData.getRenderersMap().get(sectionItem.getRenderingId()) : null;
@@ -338,7 +338,7 @@ public abstract class BaseSectionFragment extends BaseFragment {
         return menuContainer;
     }
 
-    private View getTileView(Section section, LayoutInflater inflater) {
+    private View getTileView(Section section, LayoutInflater inflater, ViewGroup parent) {
         LinearLayout tileContainer = new LinearLayout(getActivity());
         tileContainer.setOrientation(LinearLayout.HORIZONTAL);
         LinearLayout.LayoutParams tileContainerParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
@@ -347,7 +347,7 @@ public abstract class BaseSectionFragment extends BaseFragment {
         tileContainer.setLayoutParams(tileContainerParams);
         double tileWidth = getTileImageWidth(section, 8);
         for (SectionItem sectionItem : section.getSectionItems()) {
-            View tileItemView = inflater.inflate(R.layout.uiv3_image_caption_layout, null);
+            View tileItemView = inflater.inflate(R.layout.uiv3_image_caption_layout, tileContainer, false);
             LinearLayout.LayoutParams tileItemLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
             tileItemLayoutParams.width = (int) tileWidth;

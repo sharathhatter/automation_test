@@ -79,7 +79,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
         LinearLayout contentView = getContentView();
         if (contentView == null) return;
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View base = inflater.inflate(R.layout.uiv3_fab_list_view, null);
+        View base = inflater.inflate(R.layout.uiv3_fab_list_view, contentView, false);
         ListView shoppingNameListView = (ListView) base.findViewById(R.id.fabListView);
         ShoppingListAdapter shoppingListAdapter = new ShoppingListAdapter(mShoppingListNames);
         shoppingNameListView.setAdapter(shoppingListAdapter);
@@ -218,7 +218,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
             ShoppingListViewHolder shoppingListViewHolder;
             if (convertView == null) {
                 LayoutInflater inflater = getActivity().getLayoutInflater();
-                convertView = inflater.inflate(R.layout.uiv3_shopping_list_name_row, null);
+                convertView = inflater.inflate(R.layout.uiv3_shopping_list_name_row, parent, false);
                 shoppingListViewHolder = new ShoppingListViewHolder(convertView);
                 convertView.setTag(shoppingListViewHolder);
             } else {

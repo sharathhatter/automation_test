@@ -62,7 +62,7 @@ public class OrderThankYouFragment extends BaseFragment implements InvoiceDataAw
         if (contentView == null) return;
 
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        RelativeLayout base = (RelativeLayout) inflater.inflate(R.layout.uiv3_multiple_order_invoice_layout, null);
+        RelativeLayout base = (RelativeLayout) inflater.inflate(R.layout.uiv3_multiple_order_invoice_layout, contentView, false);
         AbsListView orderAbsListView = (AbsListView) base.findViewById(R.id.listOrders);
         OrderListAdapter orderListAdapter = new OrderListAdapter(getActivity(), faceRobotoRegular, faceRupee, orders,
                 true);
@@ -91,7 +91,7 @@ public class OrderThankYouFragment extends BaseFragment implements InvoiceDataAw
         if (contentView == null) return;
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View base = inflater.inflate(R.layout.uiv3_single_order_invoice_layout, null);
+        View base = inflater.inflate(R.layout.uiv3_single_order_invoice_layout, contentView, false);
         TextView txtThankYou = (TextView) base.findViewById(R.id.txtThankYou);
         txtThankYou.setTypeface(faceRobotoRegular);
         txtThankYou.setText(getString(R.string.orderThankyouText) + order.getOrderNumber());

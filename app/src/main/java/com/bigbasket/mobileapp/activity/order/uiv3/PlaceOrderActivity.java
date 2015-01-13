@@ -82,10 +82,10 @@ public class PlaceOrderActivity extends BackButtonActivity implements OnObservab
     }
 
     private void renderOrderSummary() {
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View base = inflater.inflate(R.layout.uiv3_tab_with_footer_btn, null);
-
         FrameLayout contentView = (FrameLayout) findViewById(R.id.content_frame);
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View base = inflater.inflate(R.layout.uiv3_tab_with_footer_btn, contentView, false);
+
         contentView.removeAllViews();
 
         final ArrayList<BBTab> bbTabs = new ArrayList<>();

@@ -64,7 +64,7 @@ public class MemberReferralOptions extends BackButtonActivity {
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         for (int i = 0; i < referralImageArrayList.size(); i++) {
-            View view = inflater.inflate(R.layout.uiv3_list_icon_and_text_row, null);
+            View view = inflater.inflate(R.layout.uiv3_list_icon_and_text_row, contentView, false);
             final RelativeLayout layoutRow = (RelativeLayout) view.findViewById(R.id.layoutRow);
             layoutRow.setId(i);
 

@@ -136,7 +136,7 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
         contentView.removeAllViews();
         if (productListData.getProductCount() == 0) {
             LayoutInflater inflater = getActivity().getLayoutInflater();
-            View emptyView = inflater.inflate(R.layout.uiv3_empty_data_text, null);
+            View emptyView = inflater.inflate(R.layout.uiv3_empty_data_text, contentView, false);
             TextView txtEmptyDataMsg = (TextView) emptyView.findViewById(R.id.txtEmptyDataMsg);
             txtEmptyDataMsg.setTypeface(faceRobotoRegular);
             txtEmptyDataMsg.setText(getString(R.string.noProducts));
@@ -147,7 +147,7 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
         ((FilterDisplayAware) getActivity()).setFilterView(productListData.getFilterOptions(),
                 productListData.getFilteredOn(), getFragmentTxnTag());
 
-        RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 2, 2);
+        RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 2, 2, contentView);
 
         // Set product-list data
         AuthParameters authParameters = AuthParameters.getInstance(getActivity());

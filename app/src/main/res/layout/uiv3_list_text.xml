@@ -32,5 +32,5 @@
         android:layout_below="@id/txtListText"
         android:background="@color/uiv3_list_separator_color"
         android:visibility="gone"
-        android:id="@+id/viewSeparator"/>
+        android:id="@+id/viewSeparator" />
 </RelativeLayout>

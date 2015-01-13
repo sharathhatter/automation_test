@@ -267,7 +267,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
         if (contentView == null) return;
 
         showProgressDialog(getString(R.string.please_wait));
-        RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 2, 3);
+        RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 2, 3, contentView);
 
         ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
                 .setCommonTypeface(faceRobotoRegular)
@@ -329,7 +329,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
             if (contentView == null) return null;
 
             LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            promoSummaryView = inflater.inflate(R.layout.promo_info_box, null);
+            promoSummaryView = inflater.inflate(R.layout.promo_info_box, contentView, false);
             View layoutPromoInfoBox = promoSummaryView.findViewById(R.id.layoutPromoInfoBox);
             int fiveDp = 5;
             layoutPromoInfoBox.setPadding(0, fiveDp, 0, fiveDp);

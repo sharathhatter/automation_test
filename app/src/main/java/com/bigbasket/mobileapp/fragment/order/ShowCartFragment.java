@@ -174,9 +174,10 @@ public class ShowCartFragment extends BaseFragment {
         contentView.setBackgroundColor(getResources().getColor(R.color.uiv3_list_bkg_color));
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View basketView = inflater.inflate(R.layout.uiv3_list_with_action, null);
+        View basketView = inflater.inflate(R.layout.uiv3_list_with_action, contentView, false);
 
-        View basketSummaryView = getCartSummaryView(cartSummary);
+        ListView cartItemListView = (ListView) basketView.findViewById(R.id.listWithFixedFooter);
+        View basketSummaryView = getCartSummaryView(cartSummary, cartItemListView);
 
         List<Object> cartItemHeaderList = new ArrayList<>();
         for (CartItemList cartItemInfoArray : cartItemLists) {
@@ -221,7 +222,6 @@ public class ShowCartFragment extends BaseFragment {
             }
         }
 
-        ListView cartItemListView = (ListView) basketView.findViewById(R.id.listWithFixedFooter);
         cartItemListView.addHeaderView(basketSummaryView);
         Button btnFooterCheckout = (Button) basketView.findViewById(R.id.btnListFooter);
         btnFooterCheckout.setText(getString(R.string.check_out).toUpperCase());
@@ -265,10 +265,10 @@ public class ShowCartFragment extends BaseFragment {
         }
     }
 
-    public View getCartSummaryView(CartSummary cartSummary) {
+    public View getCartSummaryView(CartSummary cartSummary, ViewGroup parent) {
         if (cartSummary == null) return null;
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View base = inflater.inflate(R.layout.uiv3_basket_header, null);
+        View base = inflater.inflate(R.layout.uiv3_basket_header, parent, false);
         TextView lblSaving = (TextView) base.findViewById(R.id.lblSaving);
         lblSaving.setTypeface(faceRobotoRegular);
 
@@ -436,7 +436,7 @@ public class ShowCartFragment extends BaseFragment {
         LinearLayout contentView = getContentView();
         if (contentView == null) return;
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View base = inflater.inflate(R.layout.uiv3_empty_data_text, null);
+        View base = inflater.inflate(R.layout.uiv3_empty_data_text, contentView, false);
         TextView txtEmptyDataMsg = (TextView) base.findViewById(R.id.txtEmptyDataMsg);
         txtEmptyDataMsg.setText(getString(R.string.BASKET_EMPTY));
         contentView.removeAllViews();
