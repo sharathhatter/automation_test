@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.activity.base.uiv3;
 
 import android.app.SearchManager;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -35,11 +36,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.account.uiv3.OrderListActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.ShopFromOrderFragment;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
-import com.bigbasket.mobileapp.activity.account.uiv3.SignupActivity;
-import com.bigbasket.mobileapp.activity.account.uiv3.SpendTrendsActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.adapter.NavigationListAdapter;
@@ -257,6 +255,13 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             hideMemberMenuItems(menu);
         } else {
             hideGuestMenuItems(menu);
+            MenuItem userInfoMenuItem = menu.findItem(R.id.action_user_info);
+            String memberFullName = AuthParameters.getInstance(this).getMemberFullName();
+            if (TextUtils.isEmpty(memberFullName)) {
+                userInfoMenuItem.setVisible(false);
+            } else {
+                userInfoMenuItem.setTitle(memberFullName);
+            }
         }
     }
 
@@ -419,6 +424,39 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             case R.id.action_communication_hub:
                 launchKonotor();
                 return true;
+            case R.id.action_shopping_list:
+                if (AuthParameters.getInstance(getCurrentActivity()).isAuthTokenEmpty()) {
+                    showAlertDialog(null,
+                            "Please sign-in to view your shopping lists", NavigationCodes.GO_TO_LOGIN);
+                } else {
+                    addToMainLayout(new ShoppingListFragment());
+                }
+                return true;
+            case R.id.action_smart_basket:
+                if (AuthParameters.getInstance(getCurrentActivity()).isAuthTokenEmpty()) {
+                    showAlertDialog(null,
+                            "Please sign-in to view your smart basket", NavigationCodes.GO_TO_LOGIN);
+                } else {
+                    ShoppingListName shoppingListName = new ShoppingListName(Constants.SMART_BASKET,
+                            Constants.SMART_BASKET_SLUG, true);
+                    ShoppingListSummaryFragment shoppingListSummaryFragment = new ShoppingListSummaryFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable(Constants.SHOPPING_LIST_NAME, shoppingListName);
+                    shoppingListSummaryFragment.setArguments(bundle);
+                    addToMainLayout(shoppingListSummaryFragment);
+                }
+                return true;
+            case R.id.action_refer_friend:
+                return true;
+            case R.id.action_rate_app:
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("market://details?id=" + Constants.BASE_PKG_NAME)));
+                } catch (ActivityNotFoundException e) {
+                    startActivity(new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("https://play.google.com/store/apps/details?id=" + Constants.BASE_PKG_NAME)));
+                }
+                return true;
             case R.id.action_login:
                 Intent intent = new Intent(this, SignInActivity.class);
                 startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
@@ -426,45 +464,6 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             case R.id.action_view_basket:
                 intent = new Intent(this, BackButtonActivity.class);
                 intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_VIEW_BASKET);
-                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                return true;
-            case R.id.action_active_orders:
-                intent = new Intent(this, OrderListActivity.class);
-                intent.putExtra(Constants.ORDER, getString(R.string.active_label));
-                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                return true;
-            case R.id.action_order_history:
-                intent = new Intent(this, OrderListActivity.class);
-                intent.putExtra(Constants.ORDER, getString(R.string.past_label));
-                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                return true;
-            case R.id.action_update_profile:
-                intent = new Intent(this, BackButtonActivity.class);
-                intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_UPDATE_PROFILE);
-                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                return true;
-            case R.id.action_change_password:
-                intent = new Intent(this, BackButtonActivity.class);
-                intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_CHANGE_PASSWD);
-                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                return true;
-            case R.id.action_wallet_activity:
-                intent = new Intent(this, BackButtonActivity.class);
-                intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WALLET_FRAGMENT);
-                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                return true;
-            case R.id.action_delivery_address:
-                intent = new Intent(this, BackButtonActivity.class);
-                intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_VIEW_DELIVERY_ADDRESS);
-                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                return true;
-            case R.id.action_change_pin:
-                intent = new Intent(this, BackButtonActivity.class);
-                intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_CHANGE_PIN);
-                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                return true;
-            case R.id.action_spend_trends:
-                intent = new Intent(this, SpendTrendsActivity.class);
                 startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 return true;
             case R.id.action_logout:
@@ -693,32 +692,24 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
 
     private void hideGuestMenuItems(Menu menu) {
         MenuItem loginMenuItem = menu.findItem(R.id.action_login);
-        loginMenuItem.setVisible(false);
-
         MenuItem changeCityRegisterMenu = menu.findItem(R.id.action_change_city);
+
+        loginMenuItem.setVisible(false);
         changeCityRegisterMenu.setVisible(false);
     }
 
     private void hideMemberMenuItems(Menu menu) {
-        MenuItem activeOrderMenuItem = menu.findItem(R.id.action_active_orders);
-        MenuItem orderHistoryMenuItem = menu.findItem(R.id.action_order_history);
-        MenuItem updateProfileMenuItem = menu.findItem(R.id.action_update_profile);
-        MenuItem changePasswdMenuItem = menu.findItem(R.id.action_change_password);
-        MenuItem walletActivityMenuItem = menu.findItem(R.id.action_wallet_activity);
-        MenuItem deliveryAddressesMenuItem = menu.findItem(R.id.action_delivery_address);
-        MenuItem changePinMenuItem = menu.findItem(R.id.action_change_pin);
+        MenuItem userInfoMenuItem = menu.findItem(R.id.action_user_info);
         MenuItem logoutMenuItem = menu.findItem(R.id.action_logout);
-        MenuItem spendTrendsMenuItem = menu.findItem(R.id.action_spend_trends);
+        MenuItem shoppingListMenuItem = menu.findItem(R.id.action_shopping_list);
+        MenuItem smartBasketMenuItem = menu.findItem(R.id.action_smart_basket);
+        MenuItem referFriendsMenuItem = menu.findItem(R.id.action_refer_friend);
 
-        activeOrderMenuItem.setVisible(false);
-        orderHistoryMenuItem.setVisible(false);
-        updateProfileMenuItem.setVisible(false);
-        changePasswdMenuItem.setVisible(false);
-        walletActivityMenuItem.setVisible(false);
-        deliveryAddressesMenuItem.setVisible(false);
-        changePinMenuItem.setVisible(false);
         logoutMenuItem.setVisible(false);
-        spendTrendsMenuItem.setVisible(false);
+        userInfoMenuItem.setVisible(false);
+        shoppingListMenuItem.setVisible(false);
+        smartBasketMenuItem.setVisible(false);
+        referFriendsMenuItem.setVisible(false);
     }
 
     @Override
@@ -770,10 +761,20 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         navigationItems.add(new NavigationItem(getString(R.string.home),
                 R.drawable.ic_home_grey600_24dp, Constants.HOME, false));
 
-        if (!isLoggedIn) {
-            navigationItems.add(new NavigationItem(getString(R.string.action_sign_in),
-                    R.drawable.main_nav_login_arrow, Constants.LOGIN, false));
+        // Populate browse by offers
+        ArrayList<NavigationSubItem> browseByOffersSubNavItems = new ArrayList<>();
+        browseByOffersSubNavItems.add(new NavigationSubItem(getString(R.string.discount),
+                -1, Constants.DISCOUNT_TYPE, false));
+        browseByOffersSubNavItems.add(new NavigationSubItem(getString(R.string.promotions),
+                -1, Constants.PROMO, false));
+
+        if (CitySpecificAppSettings.getInstance(this).hasBundlePack()) {
+            browseByOffersSubNavItems.add(new NavigationSubItem(getString(R.string.bundlePack),
+                    -1, Constants.BUNDLE_PACK, false));
         }
+        NavigationItem browseByOffersNavItem = new NavigationItem(getString(R.string.browseByOffers),
+                R.drawable.main_nav_discount, Constants.BROWSE_OFFERS, true, browseByOffersSubNavItems);
+        navigationItems.add(browseByOffersNavItem);
 
         // Populate top-category list
         ArrayList<TopCategoryModel> topCategoryModels = getStoredTopCategories();
@@ -788,33 +789,6 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             navigationItems.add(browseByTopCatNavigationItem);
         }
 
-        // Populate browse by offers
-        ArrayList<NavigationSubItem> browseByOffersSubNavItems = new ArrayList<>();
-        browseByOffersSubNavItems.add(new NavigationSubItem(getString(R.string.discount),
-                -1, Constants.DISCOUNT_TYPE, false));
-        browseByOffersSubNavItems.add(new NavigationSubItem(getString(R.string.promotions),
-                -1, Constants.PROMO, false));
-
-        if (CitySpecificAppSettings.getInstance(this).hasBundlePack()) {
-            browseByOffersSubNavItems.add(new NavigationSubItem(getString(R.string.bundlePack),
-                    -1, Constants.BUNDLE_PACK, false));
-        }
-
-        NavigationItem browseByOffersNavItem = new NavigationItem(getString(R.string.browseByOffers),
-                R.drawable.main_nav_discount, Constants.BROWSE_OFFERS, true, browseByOffersSubNavItems);
-        navigationItems.add(browseByOffersNavItem);
-
-        // Populate new arrivals
-        ArrayList<NavigationSubItem> newArrivalsSubNavItems = new ArrayList<>();
-        newArrivalsSubNavItems.add(new NavigationSubItem(getString(R.string.nowAtBB), -1,
-                Constants.NOW_AT_BB, false));
-        newArrivalsSubNavItems.add(new NavigationSubItem(getString(R.string.newLaunches), -1,
-                Constants.NEW_AT_BB, false));
-
-        NavigationItem newArrivalsNavItem = new NavigationItem(getString(R.string.newArrivals),
-                R.drawable.main_nav_discount, Constants.NEW_ARRIVALS, true, newArrivalsSubNavItems);
-        navigationItems.add(newArrivalsNavItem);
-
         // Add special shops
         ShopInShopAdapter shopInShopAdapter = new ShopInShopAdapter(this);
         ArrayList<ShopInShop> shopInShops = shopInShopAdapter.getAllShopInShops();
@@ -827,20 +801,25 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                     R.drawable.main_nav_discount, Constants.SPECIAL_SHOPS, true, shopInShopSubNavItems));
         }
 
-        // Populate other items
-        navigationItems.add(new NavigationItem(getString(R.string.shoppingList),
-                R.drawable.main_nav_shopping_list, Constants.SHOP_LST, false));
-        navigationItems.add(new NavigationItem(Constants.SMART_BASKET, R.drawable.main_nav_shopping_list,
-                Constants.SMART_BASKET_SLUG, false));
-        navigationItems.add(new NavigationItem(getString(R.string.viewBasket), R.drawable.ic_shopping_cart_grey600_24dp,
-                Constants.CART, false));
-        navigationItems.add(new NavigationItem(getString(R.string.bbCommHub), R.drawable.b_logo_bubble,
-                Constants.FEEDBACK, false));
+        // Populate new arrivals
+        ArrayList<NavigationSubItem> newArrivalsSubNavItems = new ArrayList<>();
+        newArrivalsSubNavItems.add(new NavigationSubItem(getString(R.string.nowAtBB), -1,
+                Constants.NOW_AT_BB, false));
+        newArrivalsSubNavItems.add(new NavigationSubItem(getString(R.string.newLaunches), -1,
+                Constants.NEW_AT_BB, false));
+
+        NavigationItem newArrivalsNavItem = new NavigationItem(getString(R.string.newArrivals),
+                R.drawable.main_nav_discount, Constants.NEW_ARRIVALS, true, newArrivalsSubNavItems);
+        navigationItems.add(newArrivalsNavItem);
+
         if (isLoggedIn) {
-            navigationItems.add(new NavigationItem(getString(R.string.myAccount), R.drawable.ic_person_grey600_24dp,
+            navigationItems.add(new NavigationItem(getString(R.string.myAccount), R.drawable.ic_account_circle_grey600_24dp,
                     Constants.FROM_ACCOUNT_PAGE, false));
             navigationItems.add(new NavigationItem(getString(R.string.signOut), R.drawable.main_nav_logout,
                     Constants.LOGOUT, false));
+        } else {
+            navigationItems.add(new NavigationItem(getString(R.string.signIn), R.drawable.main_nav_login_arrow,
+                    Constants.LOGIN, false));
         }
         return navigationItems;
     }
@@ -876,33 +855,6 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                             }
                         }
                         break;
-                    case Constants.SHOP_LST:
-                        if (AuthParameters.getInstance(getCurrentActivity()).isAuthTokenEmpty()) {
-                            showAlertDialog(null,
-                                    "Please sign-in to view your shopping lists", NavigationCodes.GO_TO_LOGIN);
-                        } else {
-                            addToMainLayout(new ShoppingListFragment());
-                        }
-                        break;
-                    case Constants.SMART_BASKET_SLUG:
-                        if (AuthParameters.getInstance(getCurrentActivity()).isAuthTokenEmpty()) {
-                            showAlertDialog(null,
-                                    "Please sign-in to view your smart basket", NavigationCodes.GO_TO_LOGIN);
-                        } else {
-                            ShoppingListName shoppingListName = new ShoppingListName(Constants.SMART_BASKET,
-                                    Constants.SMART_BASKET_SLUG, true);
-                            ShoppingListSummaryFragment shoppingListSummaryFragment = new ShoppingListSummaryFragment();
-                            Bundle bundle = new Bundle();
-                            bundle.putParcelable(Constants.SHOPPING_LIST_NAME, shoppingListName);
-                            shoppingListSummaryFragment.setArguments(bundle);
-                            addToMainLayout(shoppingListSummaryFragment);
-                        }
-                        break;
-                    case Constants.CART:
-                        Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
-                        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_VIEW_BASKET);
-                        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                        break;
                     case Constants.FROM_ACCOUNT_PAGE:
                         if (AuthParameters.getInstance(getCurrentActivity()).isAuthTokenEmpty()) {
                             showAlertDialog(null,
@@ -912,11 +864,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                         }
                         break;
                     case Constants.LOGIN:
-                        intent = new Intent(getCurrentActivity(), SignInActivity.class);
-                        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                        break;
-                    case Constants.REGISTER_MEMBER:
-                        intent = new Intent(getCurrentActivity(), SignupActivity.class);
+                        Intent intent = new Intent(getCurrentActivity(), SignInActivity.class);
                         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                         break;
                     case Constants.FEEDBACK:

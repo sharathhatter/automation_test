@@ -515,4 +515,7 @@
     <string name="youAborted">You aborted the transaction</string>
     <string name="paymentSelectionNotAvailable">Sorry, but you can\'t change the payment method.\nAfter you\'ve chosen the slot, click on \"Review order\" button, and your order will be automatically created</string>
     <string name="pressOrderReview">Press the \'Review Order\' button to place your order</string>
+    <string name="smartBasket">Smart Basket</string>
+    <string name="referFriends">Refer Friends</string>
+    <string name="rateTheApp">Rate this app</string>
 </resources>

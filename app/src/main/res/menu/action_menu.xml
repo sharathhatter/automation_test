@@ -27,6 +27,13 @@
         <menu>
 
             <item
+                android:id="@+id/action_user_info"
+                android:icon="@drawable/ic_account_circle_white_24dp"
+                android:orderInCategory="9999"
+                android:title="@string/memberName"
+                bb:showAsAction="never" />
+
+            <item
                 android:id="@+id/action_communication_hub"
                 android:icon="@drawable/b_logo_bubble"
                 android:orderInCategory="9999"
@@ -48,58 +55,31 @@
                 bb:showAsAction="never" />
 
             <item
-                android:id="@+id/action_active_orders"
-                android:icon="@drawable/ic_local_shipping_white_24dp"
+                android:id="@+id/action_shopping_list"
+                android:icon="@drawable/ic_filter_list_white_24dp"
                 android:orderInCategory="9999"
-                android:title="@string/active_order_label"
+                android:title="@string/shoppingList"
                 bb:showAsAction="never" />
 
             <item
-                android:id="@+id/action_order_history"
-                android:icon="@drawable/history"
+                android:id="@+id/action_smart_basket"
+                android:icon="@drawable/ic_filter_list_white_24dp"
                 android:orderInCategory="9999"
-                android:title="@string/past_order_label"
+                android:title="@string/smartBasket"
                 bb:showAsAction="never" />
 
             <item
-                android:id="@+id/action_update_profile"
-                android:icon="@drawable/user_modify"
+                android:id="@+id/action_refer_friend"
+                android:icon="@drawable/ic_wallet_giftcard_white_24dp"
                 android:orderInCategory="9999"
-                android:title="@string/update_my_profile"
+                android:title="@string/referFriends"
                 bb:showAsAction="never" />
 
             <item
-                android:id="@+id/action_change_password"
-                android:icon="@drawable/ic_lock_white_24dp"
+                android:id="@+id/action_rate_app"
+                android:icon="@drawable/ic_star_rate_white_36dp"
                 android:orderInCategory="9999"
-                android:title="@string/change_password"
-                bb:showAsAction="never" />
-
-            <item
-                android:id="@+id/action_wallet_activity"
-                android:icon="@drawable/ic_account_balance_wallet_white_24dp"
-                android:title="@string/wallet_activity"
-                bb:showAsAction="never" />
-
-            <item
-                android:id="@+id/action_delivery_address"
-                android:icon="@drawable/ic_place_white_24dp"
-                android:orderInCategory="9999"
-                android:title="@string/delivery_address"
-                bb:showAsAction="never" />
-
-            <item
-                android:id="@+id/action_change_pin"
-                android:icon="@drawable/ic_edit_white_24dp"
-                android:orderInCategory="9999"
-                android:title="@string/view_edit_pin_label"
-                bb:showAsAction="never" />
-
-            <item
-                android:id="@+id/action_spend_trends"
-                android:icon="@drawable/ic_trending_up_white_24dp"
-                android:orderInCategory="9999"
-                android:title="@string/spendTrends"
+                android:title="@string/rateTheApp"
                 bb:showAsAction="never" />
 
             <item
