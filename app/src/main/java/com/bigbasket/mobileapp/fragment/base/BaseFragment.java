@@ -392,10 +392,29 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         // Fix this implementation as fragment shouldn't finish activity
         if (getCurrentActivity() == null) return;
         if (finish) {
-            getCurrentActivity().showAlertDialogFinish(null, message);
+            showAlertDialogFinish(null, message);
         } else {
             getCurrentActivity().showAlertDialog(message);
         }
+    }
+
+    public void showAlertDialogFinish(String title, String msg) {
+        if (getCurrentActivity() == null || isSuspended()) return;
+        AlertDialog.Builder builder = new AlertDialog.Builder(getCurrentActivity());
+        builder.setTitle(title == null ? "BigBasket" : title);
+        builder.setMessage(msg);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (getCurrentActivity() != null) {
+                    finish();
+                }
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        if (isSuspended())
+            return;
+        alertDialog.show();
     }
 
     @Override

@@ -82,6 +82,8 @@ public class Constants {
 
     public static final String TOP_CATEGORY = "top_category";
     public static final String CATEGORIES = "categories";
+    public static final String HAS_BUNDLE_PACK = "has_bundle_pack";
+
     //sub category
     public static final String SUB_CATEGORY_ITEMS = "items";
     public static final String DISPLAY_NAME = "display_name";

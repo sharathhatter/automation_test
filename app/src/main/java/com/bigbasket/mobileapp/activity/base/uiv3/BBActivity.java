@@ -45,8 +45,8 @@ import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.adapter.NavigationListAdapter;
 import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
 import com.bigbasket.mobileapp.adapter.product.CategoryAdapter;
+import com.bigbasket.mobileapp.adapter.product.ShopInShopAdapter;
 import com.bigbasket.mobileapp.fragment.HomeFragment;
-import com.bigbasket.mobileapp.fragment.ShopInShopListFragment;
 import com.bigbasket.mobileapp.fragment.account.AccountSettingFragment;
 import com.bigbasket.mobileapp.fragment.account.ChangeCityFragment;
 import com.bigbasket.mobileapp.fragment.account.ChangePasswordFragment;
@@ -65,6 +65,7 @@ import com.bigbasket.mobileapp.fragment.product.NewAtBBFragment;
 import com.bigbasket.mobileapp.fragment.product.NowAtBBFragment;
 import com.bigbasket.mobileapp.fragment.product.ProductDetailFragment;
 import com.bigbasket.mobileapp.fragment.product.SearchFragment;
+import com.bigbasket.mobileapp.fragment.product.ShopInShopFragment;
 import com.bigbasket.mobileapp.fragment.product.SubCategoryListFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoCategoryFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoDetailFragment;
@@ -74,9 +75,11 @@ import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
+import com.bigbasket.mobileapp.model.CitySpecificAppSettings;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.cart.BasketOperationResponse;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
+import com.bigbasket.mobileapp.model.general.ShopInShop;
 import com.bigbasket.mobileapp.model.navigation.NavigationItem;
 import com.bigbasket.mobileapp.model.navigation.NavigationSubItem;
 import com.bigbasket.mobileapp.model.order.Order;
@@ -778,7 +781,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             ArrayList<NavigationSubItem> browseByCatNavSubItem = new ArrayList<>();
             for (TopCategoryModel topCategoryModel : topCategoryModels) {
                 browseByCatNavSubItem.add(new NavigationSubItem(topCategoryModel.getName(),
-                        topCategoryModel.getImagePath(), Constants.BROWSE_CAT, false));
+                        null, Constants.BROWSE_CAT, false));
             }
             NavigationItem browseByTopCatNavigationItem = new NavigationItem(getString(R.string.browseByCats),
                     R.drawable.main_nav_category, Constants.BROWSE_CAT, true, browseByCatNavSubItem);
@@ -791,8 +794,11 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 -1, Constants.DISCOUNT_TYPE, false));
         browseByOffersSubNavItems.add(new NavigationSubItem(getString(R.string.promotions),
                 -1, Constants.PROMO, false));
-        browseByOffersSubNavItems.add(new NavigationSubItem(getString(R.string.bundlePack),
-                -1, Constants.BUNDLE_PACK, false));
+
+        if (CitySpecificAppSettings.getInstance(this).hasBundlePack()) {
+            browseByOffersSubNavItems.add(new NavigationSubItem(getString(R.string.bundlePack),
+                    -1, Constants.BUNDLE_PACK, false));
+        }
 
         NavigationItem browseByOffersNavItem = new NavigationItem(getString(R.string.browseByOffers),
                 R.drawable.main_nav_discount, Constants.BROWSE_OFFERS, true, browseByOffersSubNavItems);
@@ -810,8 +816,16 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         navigationItems.add(newArrivalsNavItem);
 
         // Add special shops
-        navigationItems.add(new NavigationItem(getString(R.string.specialShops),
-                R.drawable.main_nav_discount, Constants.SPECIAL_SHOPS, false));
+        ShopInShopAdapter shopInShopAdapter = new ShopInShopAdapter(this);
+        ArrayList<ShopInShop> shopInShops = shopInShopAdapter.getAllShopInShops();
+        if (shopInShops != null && shopInShops.size() > 0) {
+            ArrayList<NavigationSubItem> shopInShopSubNavItems = new ArrayList<>();
+            for (ShopInShop shopInShop : shopInShops) {
+                shopInShopSubNavItems.add(new NavigationSubItem(shopInShop.getName(), -1, shopInShop.getSlug(), false));
+            }
+            navigationItems.add(new NavigationItem(getString(R.string.specialShops),
+                    R.drawable.main_nav_discount, Constants.SPECIAL_SHOPS, true, shopInShopSubNavItems));
+        }
 
         // Populate other items
         navigationItems.add(new NavigationItem(getString(R.string.shoppingList),
@@ -916,9 +930,6 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                                     DialogButton.YES, DialogButton.NO, Constants.LOGOUT);
                         }
                         break;
-                    case Constants.SPECIAL_SHOPS:
-                        addToMainLayout(new ShopInShopListFragment());
-                        break;
                 }
                 return true;
             }
@@ -974,6 +985,14 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                             intent = new Intent(getCurrentActivity(), ProductListActivity.class);
                             intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_BUNDLE_PACK);
                             startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                            break;
+                        default:
+                            // It is a shop-in-shop
+                            ShopInShopFragment shopInShopFragment = new ShopInShopFragment();
+                            Bundle args = new Bundle();
+                            args.putString(Constants.SLUG, navigationSubItem.getTag());
+                            shopInShopFragment.setArguments(args);
+                            addToMainLayout(shopInShopFragment);
                             break;
                     }
                 }

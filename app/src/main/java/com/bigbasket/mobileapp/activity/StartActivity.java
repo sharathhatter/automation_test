@@ -21,12 +21,14 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.adapter.product.CategoryAdapter;
+import com.bigbasket.mobileapp.adapter.product.ShopInShopAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.BrowseCategoryApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
+import com.bigbasket.mobileapp.model.CitySpecificAppSettings;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.Constants;
@@ -91,7 +93,7 @@ public class StartActivity extends BaseActivity {
                 BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
                 String version = categoryAdapter.getCategoriesVersion();
                 showProgressDialog(getString(R.string.please_wait));
-                bigBasketApiService.browseCategory(version, new Callback<ApiResponse<BrowseCategoryApiResponseContent>>() {
+                bigBasketApiService.getMainMenu(version, new Callback<ApiResponse<BrowseCategoryApiResponseContent>>() {
                     @Override
                     public void success(ApiResponse<BrowseCategoryApiResponseContent> browseCategoryApiResponse, Response response) {
                         hideProgressDialog();
@@ -102,6 +104,12 @@ public class StartActivity extends BaseActivity {
                             categoryAdapter.insert(browseCategoryApiResponseContent.topCategoryModels,
                                     browseCategoryApiResponseContent.version);
                         }
+                        if (browseCategoryApiResponse.apiResponseContent.shops != null) {
+                            ShopInShopAdapter shopInShopAdapter = new ShopInShopAdapter(getCurrentActivity());
+                            shopInShopAdapter.deleteAll();
+                            shopInShopAdapter.insertAll(browseCategoryApiResponse.apiResponseContent.shops);
+                        }
+                        CitySpecificAppSettings.setHasBundlePack(browseCategoryApiResponse.apiResponseContent.hasBundlePack, getCurrentActivity());
                         loadHomePage();
                     }
 
@@ -263,7 +271,7 @@ public class StartActivity extends BaseActivity {
                 loadCities();
             }
         } else if (resultCode == NavigationCodes.GO_TO_HOME) {
-            loadHomePage();
+            loadNavigation();
         } else {
             finish();
         }

@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.apiservice.models.response;
 
+import com.bigbasket.mobileapp.model.general.ShopInShop;
 import com.bigbasket.mobileapp.model.product.TopCategoryModel;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
@@ -14,4 +15,9 @@ public class BrowseCategoryApiResponseContent {
 
     @SerializedName(Constants.CATEGORIES)
     public ArrayList<TopCategoryModel> topCategoryModels;
+
+    @SerializedName(Constants.HAS_BUNDLE_PACK)
+    public boolean hasBundlePack;
+
+    public ArrayList<ShopInShop> shops;
 }

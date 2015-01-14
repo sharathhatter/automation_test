@@ -1,8 +1,10 @@
 package com.bigbasket.mobileapp.model.general;
 
+import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.bigbasket.mobileapp.adapter.product.ShopInShopAdapter;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
@@ -44,6 +46,13 @@ public class ShopInShop implements Parcelable {
         dest.writeString(slug);
         dest.writeByte(isExpress ? (byte) 1 : (byte) 0);
         dest.writeByte(isDiscount ? (byte) 1 : (byte) 0);
+    }
+
+    public ShopInShop(Cursor cursor) {
+        name = cursor.getString(cursor.getColumnIndex(ShopInShopAdapter.COLUMN_NAME));
+        slug = cursor.getString(cursor.getColumnIndex(ShopInShopAdapter.COLUMN_SLUG));
+        isExpress = cursor.getInt(cursor.getColumnIndex(ShopInShopAdapter.COLUMN_IS_EXPRESS)) != 0;
+        isDiscount = cursor.getInt(cursor.getColumnIndex(ShopInShopAdapter.COLUMN_IS_DISCOUNT)) != 0;
     }
 
     public ShopInShop(Parcel source) {
