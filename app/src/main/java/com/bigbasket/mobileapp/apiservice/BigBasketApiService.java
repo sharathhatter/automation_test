@@ -351,4 +351,8 @@ public interface BigBasketApiService {
 
     @GET("/spend-trends/")
     void spendTrends(Callback<ApiResponse<SpendTrends>> spendTrendsApiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/forgot-password/")
+    void forgotPassword(@Field(Constants.EMAIL) String email, Callback<OldBaseApiResponse> forgotPasswordApiResponseCallback);
 }

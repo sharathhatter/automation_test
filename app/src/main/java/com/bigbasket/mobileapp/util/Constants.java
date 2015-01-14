@@ -5,8 +5,7 @@ public class Constants {
     // connection parameters
     public static final String MO_APP_ID = "YSD6Y5AVT60X4AWNLL35EIDJ";
     public static final String MO_SENDER_ID = "551288451469";
-    public static final int CONNECTION_TIMEOUT = 20000;
-    public static final int SOCKET_TIMEOUT = 25000;
+    public static final String CITIES = "cities";
 
     public static final String FB_APP_ID = "1406239262971187";
 
@@ -42,17 +41,14 @@ public class Constants {
     public static final String PROMO_LABEL = "promo_label";
     public static final String PRODUCT_IS_BBY = "is_bby";
 
-    public static final String QC_STATUS = "status";
     public static final String QC_HAS_VALIDATION_ERRORS = "has_qc_validation_errors";
     public static final String QC_VALIDATION_ERROR_DATA = "qc_validation_errors_data";
-    public static final String QC_RESPONSE = "response";
     public static final String QC_ORDER_ID = "p_order_id";
     public static final String QC_RESERVED_QUANTITY = "reserved_q";
     public static final String QC_RESERVED_PRODUCT = "product";
     public static final String QC_ORIGINAL_QUANTITY = "original_quantity";
 
     public static final String SUCCESS = "success";
-    public static final String STATUS = "status";
     public static final String RESPONSE = "response";
 
     public static final String SHOPPING_LISTS = "shopping_lists";
@@ -61,9 +57,6 @@ public class Constants {
     public static final String SHOPPING_LIST_IS_SYSTEM = "is_system";
     public static final String SYSTEM = "system";
     public static final String SLUG = "slug";
-
-    public static String GET_WALLET_BALANCE_URL = "get-current-wallet-balance";
-    public static String GET_WALLET_ACTIVITY_URL = "get-wallet-activity";
 
     public static final String PRODUCT_SORT_OPTION = "sort_opts";
 
@@ -113,7 +106,6 @@ public class Constants {
 
     public static final String BROWSE_CAT = "browsecat";
     public static final String BROWSE_OFFERS = "browse_offers";
-    public static final String STORE_OFFERS = "storeoffers";
     public static final String PROMO = "promo";
     public static final String SHOP_LST = "shoplist";
     public static final String QUICK_SHOP = "quickshop";
@@ -157,11 +149,6 @@ public class Constants {
 
     public static final String OS_PREFERENCE_KEY = "os";
 
-    public static final int successRespCode = 200;
-    public static final int invalidInputRespCode = 119;
-    public static final int notMemberRespCode = 104;
-
-    public static final String FLURRY_AGENT_KEY = "MH9S229NFHTBCV9TVJVK";
     public static final String TOP_MENU_SLUG = "top-menu";
     public static final String TOP_CAT_SLUG = "top_category_slug";
     public static final String TOP_MENU = "Top Menu";
@@ -173,7 +160,6 @@ public class Constants {
     public static final String PROMO_APPLIED_TYPE = "p_applied_type";
     public static final String PROMO_INFO = "promo_info";
     public static final String REGULAR = "regular";
-    public static final String GET_PRODUCTS_FOR_ORDER = "get-products-for-order/";
 
     public static final String LINE_ITEMS = "line_items";
     public static final String TLC_NAME = "tlc_name";
@@ -187,7 +173,6 @@ public class Constants {
     public static final String GET_CART = "getcart";
     public static final String ERROR = "ERROR";
     public static final String ERROR_TYPE = "error_type";
-    public static final String CART = "cart";
     public static final String PROD_ID = "prod_id";
     public static final String PRODUCT = "product";
     public static final String ADDITIONAL_INFOS = "additional_infos";
@@ -212,8 +197,6 @@ public class Constants {
     public static final String SOURCE = "src";
     public static final String DOB = "dob";
     public static final String SOURCE_ID = "src_id";
-
-    public static final String CHANGE_PIN_URL = "change-pin/";
 
     public static final String PID = "pid";
     public static final String POTENTIAL_ORDER_ID = "potentialid";
@@ -277,8 +260,6 @@ public class Constants {
     public static final String KONOTOR_APP_ID = "d2c94ed6-1946-4d40-9d3f-affc719949a6";
     public static final String KONOTOR_APP_KEY = "97689aa4-af46-423d-9518-24828113d074";
 
-    public static final String ORDER_PRODUCTS = "add-order-products/";
-
     public static final String SLOT_ID = "slot_id";
     public static final String SLOT_DATE = "slot_date";
     public static final String AVAILABLE = "available";
@@ -290,14 +271,11 @@ public class Constants {
     public static final String SLOT_INFO = "slot_info";
     public static final String SLOTS_INFO = "slots_info";
     public static final String NEXT_AVAILABLE_SLOT = "next_available_slot";
-    public static final String DATE_SHOW = "date_show";
-    public static final String TIME_SHOW = "time_show";
 
     public static final String VIA_INVOICE = "viaInvoice";
 
     public static final String IS_NOT_SUPPORTED = "is_not_supported";
     //public static final String IS_FORCE_UPDATE = "is_force_update";
-    public static final String CLIENT = "client";
     public static final String BASE_PKG_NAME = "com.bigbasket.mobileapp";
     public static final String C_SUMMARY = "c-summary/";
     public static final String VERSION_NAME = "versionName";

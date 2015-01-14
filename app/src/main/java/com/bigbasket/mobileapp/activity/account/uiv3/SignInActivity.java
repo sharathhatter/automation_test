@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.activity.account.uiv3;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.InputType;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -30,6 +32,7 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.SocialAccount;
 import com.bigbasket.mobileapp.util.Constants;
@@ -47,6 +50,9 @@ import com.google.android.gms.plus.model.people.Person;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
 
 public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
 
@@ -130,6 +136,14 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
 
         mLoginFormView = mBaseView.findViewById(R.id.login_form);
         mProgressView = mBaseView.findViewById(R.id.login_progress);
+        TextView txtForgotPasswd = (TextView) mBaseView.findViewById(R.id.txtForgotPasswd);
+        txtForgotPasswd.setTypeface(faceRobotoRegular);
+        txtForgotPasswd.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showForgotPasswordDialog();
+            }
+        });
 
         TextView txtSignup = (TextView) mBaseView.findViewById(R.id.txtSignup);
         SpannableString spannableString = new SpannableString(getString(R.string.loginPageSignUpText));
@@ -523,6 +537,74 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
         } else {
             super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
         }
+    }
+
+    private void showForgotPasswordDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View base = getLayoutInflater().inflate(R.layout.uiv3_editable_dialog, null);
+
+        final EditText editTextDialog = (EditText) base.findViewById(R.id.editTextDialog);
+        editTextDialog.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        editTextDialog.setHint(getString(R.string.email));
+        builder.setTitle(getString(R.string.forgotPasswd))
+                .setView(base)
+                .setPositiveButton(getString(R.string.emailNewPassword), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String inputEmail = editTextDialog.getText().toString();
+                        if (TextUtils.isEmpty(inputEmail)) {
+                            showToast("Please enter an email address");
+                            return;
+                        }
+                        if (!UIUtil.isValidEmail(inputEmail)) {
+                            showToast(getString(R.string.error_invalid_email));
+                            return;
+                        }
+                        requestNewPassword(inputEmail);
+                    }
+                })
+                .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+        builder.create().show();
+    }
+
+    private void requestNewPassword(String email) {
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
+        showProgressDialog(getString(R.string.please_wait));
+        bigBasketApiService.forgotPassword(email, new Callback<OldBaseApiResponse>() {
+            @Override
+            public void success(OldBaseApiResponse forgotPasswordApiResponse, retrofit.client.Response response) {
+                if (isSuspended()) return;
+                try {
+                    hideProgressDialog();
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
+                switch (forgotPasswordApiResponse.status) {
+                    case Constants.OK:
+                        showToast(getString(R.string.newPasswordSent));
+                        break;
+                    default:
+                        handler.sendEmptyMessage(forgotPasswordApiResponse.getErrorTypeAsInt(), forgotPasswordApiResponse.message);
+                        break;
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                if (isSuspended()) return;
+                try {
+                    hideProgressDialog();
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
+                handler.handleRetrofitError(error);
+            }
+        });
     }
 }
 

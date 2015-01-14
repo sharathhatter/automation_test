@@ -2,7 +2,6 @@ package com.bigbasket.mobileapp.util;
 
 public class FragmentCodes {
     public static final int START_HOME = 1;
-    public static final int START_CHANGE_CITY = 5;
     public static final int START_ADDRESS_SELECTION = 6;
     public static final int START_SLOT_SELECTION = 7;
     public static final int START_ACCOUNT_SETTING = 8;

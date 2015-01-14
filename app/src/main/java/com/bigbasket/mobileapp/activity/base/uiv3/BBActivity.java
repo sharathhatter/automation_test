@@ -46,7 +46,7 @@ import com.bigbasket.mobileapp.adapter.product.CategoryAdapter;
 import com.bigbasket.mobileapp.adapter.product.ShopInShopAdapter;
 import com.bigbasket.mobileapp.fragment.HomeFragment;
 import com.bigbasket.mobileapp.fragment.account.AccountSettingFragment;
-import com.bigbasket.mobileapp.fragment.account.ChangeCityFragment;
+import com.bigbasket.mobileapp.fragment.account.ChangeCityDialogFragment;
 import com.bigbasket.mobileapp.fragment.account.ChangePasswordFragment;
 import com.bigbasket.mobileapp.fragment.account.DoWalletFragment;
 import com.bigbasket.mobileapp.fragment.account.UpdatePinFragment;
@@ -328,9 +328,6 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             case FragmentCodes.START_CHANGE_PIN:
                 addToMainLayout(new UpdatePinFragment());
                 break;
-            case FragmentCodes.START_CHANGE_CITY:
-                addToMainLayout(new ChangeCityFragment());
-                break;
             case FragmentCodes.START_ADDRESS_SELECTION:
                 addToMainLayout(new MemberAddressListFragment());
                 break;
@@ -405,11 +402,6 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mDrawerToggle != null && mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
@@ -475,9 +467,8 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 }
                 return true;
             case R.id.action_change_city:
-                intent = new Intent(this, BackButtonActivity.class);
-                intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_CHANGE_CITY);
-                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                ChangeCityDialogFragment changeCityDialog = ChangeCityDialogFragment.newInstance();
+                changeCityDialog.show(getSupportFragmentManager(), Constants.CITIES);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
