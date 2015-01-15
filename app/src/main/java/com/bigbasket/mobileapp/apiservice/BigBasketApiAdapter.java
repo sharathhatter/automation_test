@@ -48,7 +48,7 @@ public class BigBasketApiAdapter {
                     requestCookieVal = "_bb_vid=\"" + bbVisitorId + "\"";
                 }
                 if (!TextUtils.isEmpty(bbAuthToken)) {
-                    if (!TextUtils.isEmpty(bbAuthToken)) {
+                    if (!TextUtils.isEmpty(requestCookieVal)) {
                         requestCookieVal += ";";
                     } else {
                         requestCookieVal = "";
