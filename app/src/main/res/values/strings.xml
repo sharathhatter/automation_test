@@ -519,4 +519,6 @@
     <string name="smartBasket">Smart Basket</string>
     <string name="referFriends">Refer Friends</string>
     <string name="rateTheApp">Rate this app</string>
+    <string name="shopFromPreviousOrder">Shop from previous order</string>
+    <string name="orders">Orders</string>
 </resources>
