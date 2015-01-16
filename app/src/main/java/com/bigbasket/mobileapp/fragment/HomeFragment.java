@@ -26,6 +26,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateVersionInfoApiResponseContent;
 import com.bigbasket.mobileapp.fragment.base.BaseSectionFragment;
+import com.bigbasket.mobileapp.model.SectionManager;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.section.Renderer;
 import com.bigbasket.mobileapp.model.section.Section;
@@ -170,6 +171,13 @@ public class HomeFragment extends BaseSectionFragment {
     }
 
     private void getHomePage() {
+        if (getActivity() == null) return;
+        final SectionManager sectionManager = new SectionManager(getActivity(), SectionManager.HOME_PAGE_SECTION);
+        mSectionData = sectionManager.getStoredSectionData();
+        if (mSectionData != null) {
+            renderHomePage();
+            return;
+        }
         if (!checkInternetConnection()) {
             displayHomePageError(getString(R.string.deviceOfflineSmallTxt), R.drawable.ic_signal_wifi_off_grey600_48dp);
             return;
@@ -184,7 +192,7 @@ public class HomeFragment extends BaseSectionFragment {
                 switch (homePageApiResponse.status) {
                     case 0:
                         mSectionData = homePageApiResponse.apiResponseContent;
-                        parseRendererColors();
+                        sectionManager.storeSectionData(mSectionData);
                         renderHomePage();
                         break;
                     default:
@@ -227,9 +235,9 @@ public class HomeFragment extends BaseSectionFragment {
 
     private void renderHomePage() {
         LinearLayout contentView = getContentView();
+        parseRendererColors();
         if (contentView == null || mSectionData == null || mSectionData.getSections() == null
                 || mSectionData.getSections().size() == 0) return;
-
         // Filter sections
         Set<String> supportedSectionTypes = Section.getSupportedSectionTypes();
         for (Iterator<Section> iterator = mSectionData.getSections().iterator(); iterator.hasNext(); ) {

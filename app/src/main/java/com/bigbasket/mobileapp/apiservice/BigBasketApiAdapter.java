@@ -55,6 +55,15 @@ public class BigBasketApiAdapter {
                     }
                     requestCookieVal += "BBAUTHTOKEN=\"" + bbAuthToken + "\"";
                 }
+                boolean isFirstTimeVisitor = AuthParameters.isFirstTimeVisitor(context);
+                if (isFirstTimeVisitor) {
+                    if (!TextUtils.isEmpty(requestCookieVal)) {
+                        requestCookieVal += ";";
+                    } else {
+                        requestCookieVal = "";
+                    }
+                    requestCookieVal += "_bb_ftvid=\"true\"";
+                }
                 if (!TextUtils.isEmpty(requestCookieVal)) {
                     request.addHeader("Cookie", requestCookieVal);
                 }

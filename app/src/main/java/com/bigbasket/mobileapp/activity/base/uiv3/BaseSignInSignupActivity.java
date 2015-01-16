@@ -31,7 +31,6 @@ import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginConfirmActivity;
 import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginApiResponse;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
-import com.bigbasket.mobileapp.model.CitySpecificAppSettings;
 import com.bigbasket.mobileapp.model.account.SocialAccount;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
@@ -295,7 +294,6 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity {
 
         UIUtil.updateStoredUserDetails(getCurrentActivity(),
                 loginApiResponse.userDetails, email, loginApiResponse.mId);
-        CitySpecificAppSettings.clearInstance(getCurrentActivity());
         onLoginSuccess();
     }
 

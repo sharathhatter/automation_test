@@ -40,6 +40,8 @@ import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.model.CitySpecificAppSettings;
+import com.bigbasket.mobileapp.model.SectionManager;
 import com.bigbasket.mobileapp.model.account.SocialAccount;
 import com.bigbasket.mobileapp.model.order.COReserveQuantity;
 import com.bigbasket.mobileapp.model.order.MarketPlace;
@@ -566,6 +568,8 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
 
     public void onLoginSuccess() {
         AuthParameters.updateInstance(getCurrentActivity());
+        CitySpecificAppSettings.clearInstance(getCurrentActivity());
+        SectionManager.clearAllSectionData(getCurrentActivity());
         Intent data = new Intent();
         data.putExtra(Constants.LOGOUT, true);
         setResult(NavigationCodes.GO_TO_HOME, data);
