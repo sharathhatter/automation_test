@@ -630,7 +630,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 if (!TextUtils.isEmpty(categoryUrl) && categoryUrl.contains("/")) {
                     String[] categoryUrlElements = categoryUrl.split("/");
                     String slug = categoryUrlElements[categoryUrlElements.length - 1];
-                    launchCategoryProducts(query, slug);
+                    launchCategoryProducts(query, categoryUrl, slug);
                 } else {
                     doSearch(query);
                 }
@@ -644,9 +644,10 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         }
     }
 
-    private void launchCategoryProducts(String categoryName, String categorySlug) {
+    private void launchCategoryProducts(String categoryName, String categoryUrl,
+                                        String categorySlug) {
         MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(this);
-        mostSearchesAdapter.update(categoryName, categorySlug);
+        mostSearchesAdapter.update(categoryName, categoryUrl);
         Bundle bundle = new Bundle();
         bundle.putString("slug_name_category", categorySlug);
         CategoryProductsFragment categoryProductsFragment = new CategoryProductsFragment();

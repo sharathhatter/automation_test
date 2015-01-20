@@ -278,14 +278,14 @@ public abstract class BaseSliderView {
             if (v.findViewById(R.id.loading_bar) != null) {
                 v.findViewById(R.id.loading_bar).setVisibility(View.INVISIBLE);
             }
-            if (view != null && view instanceof ImageView) {
-                Integer bkgColor = swatchMap.get(imageUri);
-                if (bkgColor == null) {
-                    Palette.generateAsync(loadedImage, new PaletteAsyncListener((ImageView) view, imageUri));
-                } else {
-                    setImageBackgroundSwatch((ImageView) view, bkgColor);
-                }
-            }
+//            if (view != null && view instanceof ImageView) {
+//                Integer bkgColor = swatchMap.get(imageUri);
+//                if (bkgColor == null) {
+//                    Palette.generateAsync(loadedImage, new PaletteAsyncListener((ImageView) view, imageUri));
+//                } else {
+//                    setImageBackgroundSwatch((ImageView) view, bkgColor);
+//                }
+//            }
         }
 
         @Override
@@ -309,7 +309,7 @@ public abstract class BaseSliderView {
         @Override
         public void onGenerated(Palette palette) {
             if (imgView != null && imgView.get() != null) {
-                Palette.Swatch swatch = palette.getVibrantSwatch();
+                Palette.Swatch swatch = palette.getLightMutedSwatch();
                 int bkgColor = swatch != null ? swatch.getRgb() : Color.WHITE;
                 swatchMap.put(imageUri, bkgColor);
                 if (imgView.get() != null) {

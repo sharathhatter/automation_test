@@ -116,7 +116,7 @@ public abstract class BaseSectionFragment extends BaseFragment {
     private View getSalutationView(Section section, LayoutInflater inflater, ViewGroup parent) {
         View baseSalutation = inflater.inflate(R.layout.uiv3_salutation_box, parent, false);
         TextView txtSalutationTitle = (TextView) baseSalutation.findViewById(R.id.txtSalutationTitle);
-        if (!TextUtils.isEmpty(section.getTitle().getText())) {
+        if (section.getTitle() != null && !TextUtils.isEmpty(section.getTitle().getText())) {
             txtSalutationTitle.setTypeface(faceRobotoRegular);
             txtSalutationTitle.setText(section.getTitle().getText());
         } else {

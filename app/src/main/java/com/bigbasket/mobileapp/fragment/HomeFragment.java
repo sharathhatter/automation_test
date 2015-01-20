@@ -174,7 +174,8 @@ public class HomeFragment extends BaseSectionFragment {
         if (getActivity() == null) return;
         final SectionManager sectionManager = new SectionManager(getActivity(), SectionManager.HOME_PAGE_SECTION);
         mSectionData = sectionManager.getStoredSectionData();
-        if (mSectionData != null) {
+        if (mSectionData != null && mSectionData.getSections() != null
+                && mSectionData.getSections().size() > 0) {
             renderHomePage();
             return;
         }
@@ -192,7 +193,6 @@ public class HomeFragment extends BaseSectionFragment {
                 switch (homePageApiResponse.status) {
                     case 0:
                         mSectionData = homePageApiResponse.apiResponseContent;
-                        sectionManager.storeSectionData(mSectionData);
                         renderHomePage();
                         break;
                     default:
@@ -263,6 +263,11 @@ public class HomeFragment extends BaseSectionFragment {
 
         contentView.removeAllViews();
         contentView.addView(contentScrollView);
+        final SectionManager sectionManager = new SectionManager(getActivity(), SectionManager.HOME_PAGE_SECTION);
+        if (mSectionData != null && mSectionData.getSections() != null
+                && mSectionData.getSections().size() > 0) {
+            sectionManager.storeSectionData(mSectionData);
+        }
     }
 
     @Override
