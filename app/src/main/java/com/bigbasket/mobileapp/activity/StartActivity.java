@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.bigbasket.mobileapp.BuildConfig;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
@@ -36,6 +37,7 @@ import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.moe.pushlibrary.MoEHelper;
+import com.newrelic.agent.android.NewRelic;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -58,6 +60,10 @@ public class StartActivity extends BaseActivity {
             showAlertDialogFinish(getString(R.string.deviceOfflineSmallTxt),
                     getString(R.string.deviceOffline));
             return;
+        }
+
+        if (!BuildConfig.DEBUG) {
+            NewRelic.withApplicationToken(getString(R.string.new_relic_key)).start(this.getApplication());
         }
 
         MoEHelper moEHelper = new MoEHelper(this);
@@ -178,7 +184,7 @@ public class StartActivity extends BaseActivity {
         progressBarLoading.setVisibility(View.GONE);
 
         final ArrayList<String> citiesStr = new ArrayList<>();
-        for(int i=1; i<cities.size(); i++){
+        for (int i = 1; i < cities.size(); i++) {
             citiesStr.add(cities.get(i).getName());
         }
         TextView txtViewWhy = (TextView) findViewById(R.id.txtViewWhy);
@@ -186,7 +192,7 @@ public class StartActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 String cityString = UIUtil.sentenceJoin(citiesStr);
-                showAlertDialog(getString(R.string.PreWhyMsg)+ " "+ cityString +". "+getString(R.string.postWhyMsg));
+                showAlertDialog(getString(R.string.PreWhyMsg) + " " + cityString + ". " + getString(R.string.postWhyMsg));
             }
         });
         layoutSpinnerAndWhyLink.setVisibility(View.VISIBLE);
