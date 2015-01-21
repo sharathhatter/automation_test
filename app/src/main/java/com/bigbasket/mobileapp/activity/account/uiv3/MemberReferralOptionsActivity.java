@@ -1,14 +1,17 @@
 package com.bigbasket.mobileapp.activity.account.uiv3;
 
 import android.annotation.SuppressLint;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -22,60 +25,50 @@ import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
-import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.BaseReferralDialog;
+import com.facebook.FacebookException;
+import com.facebook.FacebookOperationCanceledException;
+import com.facebook.Session;
+import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
-import com.facebook.android.Facebook;
 import com.facebook.widget.FacebookDialog;
+import com.facebook.widget.WebDialog;
+import com.sunny.allphonebookcontactssdk.AllPhoneBookContactUtils;
+import com.sunny.allphonebookcontactssdk.ContactData;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-/**
- * Created by jugal on 23/12/14.
- */
 public class MemberReferralOptionsActivity extends BackButtonActivity {
 
-    private static final ArrayList<Integer> referralImageArrayList = new ArrayList<>();
-    private static final ArrayList<String> referralStringArrayList = new ArrayList<>();
+    private ArrayList<Integer> referralImageArrayList = null;
+    private ArrayList<String> referralStringArrayList = null;
     private String refLink, refLinkFB, referralMsg, productDesc, productRefImage;
-    private int maxMsgLength, maxEmailLength;
+    private int maxMsgCharLength, maxEmailLength, maxMsgLen;
     private UiLifecycleHelper uiHelper;
+    private FacebookDialog.MessageDialogBuilder builder = null;
+    private ReferralDialog memberRefDialog;
 
-    static {
-        referralImageArrayList.add(R.drawable.ic_action_chat);
-        referralImageArrayList.add(R.drawable.whatsapp_icon);
-        referralImageArrayList.add(R.drawable.com_facebook_inverse_icon);
-        referralImageArrayList.add(R.drawable.ic_action_email);
-        referralImageArrayList.add(R.drawable.btn_gplus_normal);
-        referralImageArrayList.add(R.drawable.main_nav_login_arrow);
-    }
-
-    static {
-        referralStringArrayList.add("Free SMS");
-        referralStringArrayList.add("WhatsApp");
-        referralStringArrayList.add("Facebook");
-        referralStringArrayList.add("BigBasket Email");
-        referralStringArrayList.add("Google+");
-        referralStringArrayList.add("Share via Other");
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Refer Friends"); //ContactsMultiPicker
-        Intent  intent = getIntent();
+        setTitle("Refer Friends");
+        populateReferralOptions();
+        Intent intent = getIntent();
         refLink = intent.getStringExtra(Constants.REF_LINK);
         refLinkFB = intent.getStringExtra(Constants.REF_LINK_FB);
-        maxMsgLength = intent.getIntExtra(Constants.MAX_MSG_LEN, 1000);
-        maxEmailLength = intent.getIntExtra(Constants.MAX_EMAIL_LEN, 100);
+        maxMsgCharLength = intent.getIntExtra(Constants.MAX_MSG_LEN, 100);
+        maxMsgLen = intent.getIntExtra(Constants.MAX_MSG_CHAR_LEN, 10);
+        maxEmailLength = intent.getIntExtra(Constants.MAX_EMAIL_LEN, 10);
         referralMsg = intent.getStringExtra(Constants.REFERRAL_MSG);
         productDesc = intent.getStringExtra(Constants.P_DESC);
         productRefImage = intent.getStringExtra(Constants.REF_IMAGE_URL);
@@ -83,6 +76,38 @@ public class MemberReferralOptionsActivity extends BackButtonActivity {
 
         uiHelper = new UiLifecycleHelper(getCurrentActivity(), null);
         uiHelper.onCreate(savedInstanceState);
+    }
+
+
+    public void addEmailsToAutoComplete(List<String> emailAddressCollection) {
+        int layout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2 ?
+                android.R.layout.simple_dropdown_item_1line : android.R.layout.simple_list_item_1;
+        ArrayAdapter<String> adapter =
+                new ArrayAdapter<>(getCurrentActivity(), layout, emailAddressCollection);
+
+        if (memberRefDialog != null)
+            memberRefDialog.getAutoCompleteEditTextView().setAdapter(adapter);
+    }
+
+
+    private static final String[] PROJECTION = new String[]{
+            ContactsContract.CommonDataKinds.Email.DATA
+    };
+
+    private void getEmailFromContacts(List<String> emailAddressCollection) {
+        ContentResolver cr = getContentResolver();
+        Cursor cursor = cr.query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, PROJECTION, null, null, null);
+        if (cursor != null) {
+            try {
+                final int emailIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA);
+                while (cursor.moveToNext()) {
+                    emailAddressCollection.add(cursor.getString(emailIndex));
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        addEmailsToAutoComplete(emailAddressCollection);
     }
 
     @Override
@@ -109,19 +134,52 @@ public class MemberReferralOptionsActivity extends BackButtonActivity {
         uiHelper.onDestroy();
     }
 
+    private void populateReferralOptions() {
+        referralImageArrayList = new ArrayList<>();
+        referralStringArrayList = new ArrayList<>();
+
+        referralImageArrayList.add(R.drawable.ref_msg);
+        referralStringArrayList.add(Constants.FREE_MSG);
+
+        if (isFacebookAvailable()) {
+            referralImageArrayList.add(R.drawable.fb_icon);
+            referralStringArrayList.add(Constants.FACEBOOK);
+
+        }
+
+        List<PackageInfo> matches = getPackageManager().getInstalledPackages(0);
+        for (final PackageInfo app : matches) {
+            if (app.applicationInfo.packageName.toLowerCase().startsWith(Constants.WHATS_APP_PACKAGE_NAME)) {
+                referralImageArrayList.add(R.drawable.whatsapp);
+                referralStringArrayList.add(Constants.WHATS_APP);
+            }
+            if (app.applicationInfo.packageName.toLowerCase().startsWith(Constants.GOOGLE_PLUS_APP_PACKAGE_NAME)) {
+                referralImageArrayList.add(R.drawable.g_plus);
+                referralStringArrayList.add(Constants.G_PLUS);
+            }
+        }
+
+        referralImageArrayList.add(R.drawable.ref_email);
+        referralStringArrayList.add(Constants.REF_EMAIL);
+
+        referralImageArrayList.add(R.drawable.ref_share);
+        referralStringArrayList.add(Constants.SHARE_VIA_OTHER);
+    }
+
 
     private void renderMemberReferralList() {
         FrameLayout base = (FrameLayout) findViewById(R.id.content_frame);
         LinearLayout contentView = new LinearLayout(this);
         contentView.setOrientation(LinearLayout.VERTICAL);
         base.addView(contentView);
+        contentView.removeAllViews();
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         for (int i = 0; i < referralImageArrayList.size(); i++) {
             View view = inflater.inflate(R.layout.uiv3_list_icon_and_text_row, null);
             final RelativeLayout layoutRow = (RelativeLayout) view.findViewById(R.id.layoutRow);
-            layoutRow.setId(i);
+            layoutRow.setTag(referralStringArrayList.get(i));
 
             ImageView itemImg = (ImageView) view.findViewById(R.id.itemImg);
             itemImg.setImageResource(referralImageArrayList.get(i));
@@ -138,24 +196,42 @@ public class MemberReferralOptionsActivity extends BackButtonActivity {
 
     }
 
+    private boolean isFacebookAvailable() {
+        builder = new FacebookDialog.MessageDialogBuilder(this)
+                .setLink("https://bigbasket.com/register/") //todo valid refLinkFB
+                .setName("Bigbasket referral")
+                        //.setCaption("Build great social apps that engage your friends.") //todo
+                .setDescription(referralMsg)
+                .setPicture(productRefImage)
+                .setDataErrorsFatal(true);
+        if (builder.canPresent()) {
+            return true;
+        } else if (FacebookDialog.canPresentShareDialog(getApplicationContext(),
+                FacebookDialog.ShareDialogFeature.SHARE_DIALOG)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     private void messageHandler(View view) {
-        switch (view.getId()) {
-            case 0:
+        switch ((String) view.getTag()) {
+            case Constants.FREE_MSG:
                 sendFreeSMS();
                 break;
-            case 1:
+            case Constants.WHATS_APP:
                 sendWhatsAppMsg(referralMsg + "\n" + refLink);
                 break;
-            case 2:
+            case Constants.FACEBOOK:
                 useFacebookReferral();
                 break;
-            case 3:
+            case Constants.REF_EMAIL:
                 useBBmail();
                 break;
-            case 4:
+            case Constants.G_PLUS:
                 useGplus(referralMsg);
                 break;
-            case 5:
+            case Constants.SHARE_VIA_OTHER:
                 useOther(referralMsg);
                 break;
         }
@@ -173,83 +249,84 @@ public class MemberReferralOptionsActivity extends BackButtonActivity {
 
     @Override
     public void onActivityResult(int reqCode, int resultCode, Intent data) {
-        super.onActivityResult(reqCode, resultCode, data);
+        isActivitySuspended = false;
         switch (resultCode) {
             case (NavigationCodes.CONTACT_NUMBER_SELECTED):
-                ArrayList<String> selectedContactIds = (ArrayList<String>) data.getSerializableExtra(Constants.CONTACT_SELECTED);
-                getMobileNumberFromIds(selectedContactIds);
-                break;
-            case 34:
-                //facebookCallBack();
+                ArrayList<String> selectedContactNumbers = (ArrayList<String>) data.getSerializableExtra(Constants.CONTACT_SELECTED);
+                getMobileNumberFromIds(selectedContactNumbers);
                 break;
             default:
-                super.onActivityResult(reqCode, resultCode, data);
+                facebookCallBack(reqCode, resultCode, data);
+                break;
         }
     }
 
-//    private void facebookCallBack(){
-//        uiHelper.onActivityResult(requestCode, resultCode, data,
-//                new FacebookDialog.Callback() {
-//
-//                    @Override
-//                    public void onError(FacebookDialog.PendingCall pendingCall,
-//                                        Exception error, Bundle data) {
-//                        Toast.makeText(
-//                                getApplicationContext(),
-//                                "Error Occured\nMost Common Errors:\n1. Device not connected to Internet\n2.Faceboook APP Id is not changed in Strings.xml",
-//                                Toast.LENGTH_LONG).show();
-//                    }
-//
-//                    @Override
-//                    public void onComplete(
-//                            FacebookDialog.PendingCall pendingCall, Bundle data) {
-//                        Toast.makeText(getApplicationContext(), "Done!!",
-//                                Toast.LENGTH_SHORT).show();
-//                    }
-//                });
-//    }
+    private void facebookCallBack(int requestCode, int resultCode, Intent data) {
+        uiHelper.onActivityResult(requestCode, resultCode, data,
+                new FacebookDialog.Callback() {
+
+                    @Override
+                    public void onError(FacebookDialog.PendingCall pendingCall,
+                                        Exception error, Bundle data) {
+                        Toast.makeText(
+                                getApplicationContext(),
+                                "Error Occured\nMost Common Errors:\n1. Device not connected to Internet\n2.Faceboook APP Id is not changed in Strings.xml",
+                                Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onComplete(
+                            FacebookDialog.PendingCall pendingCall, Bundle data) {
+                        Toast.makeText(getApplicationContext(), "Done!!",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
 
 
-    private void getMobileNumberFromIds(ArrayList<String> selectedContactIds){
-        int selectedContactIdsSize = selectedContactIds.size();
-        showToast("selectedContactIdsSize=> "+selectedContactIdsSize);
-        if(selectedContactIdsSize==0){
+    private void getMobileNumberFromIds(ArrayList<String> selectedContactNos) {
+        int selectedContactNumbersSize = selectedContactNos.size();
+        showToast("selectedContactIdsSize=> " + selectedContactNumbersSize);
+        if (selectedContactNumbersSize == 0) {
             showToast("No, mobile number selected");
             return;
-        }else if(selectedContactIdsSize>10){
-            showAlertDialog("More than 10 mobile numbers are not allowed.");
+        } else if (selectedContactNumbersSize > maxMsgLen) {
+            showAlertDialog("More than "+maxMsgLen+" mobile numbers are not allowed.");
         }
+        sendServerPhoneNumber(UIUtil.sentenceJoin(selectedContactNos, ","));
 
+        /*
         ArrayList<String> correctContactNumbers = new ArrayList<>();
         ArrayList<String> rejectedContactNumbers = new ArrayList<>();
-        for(String contactId:selectedContactIds){
+        for (String contactId : selectedContactIds) {
             Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
                     null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = " + contactId, null, null);
             while (phones.moveToNext()) {
                 String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
                 int numberType = phones.getInt(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE));
                 int numberLen = phoneNumber.length();
-                if(numberLen>=10 && numberLen<=13  &&
+                if (numberLen >= 10 && numberLen <= 13 &&
                         (numberType == ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE ||
-                        numberType == ContactsContract.CommonDataKinds.Phone.TYPE_WORK_MOBILE)){
+                                numberType == ContactsContract.CommonDataKinds.Phone.TYPE_WORK_MOBILE)) {
                     correctContactNumbers.add(phoneNumber);
-                }else {
+                } else {
                     rejectedContactNumbers.add(phoneNumber);
                 }
             }
             phones.close();
         }
-        if(correctContactNumbers.size()>0){
-                sendServerPhoneNumber(UIUtil.sentenceJoin(correctContactNumbers, ","), rejectedContactNumbers);
-        }else {
-            if(selectedContactIdsSize==1)
+        if (correctContactNumbers.size() > 0) {
+            sendServerPhoneNumber(UIUtil.sentenceJoin(correctContactNumbers, ","), rejectedContactNumbers);
+        } else {
+            if (selectedContactIdsSize == 1)
                 showAlertDialog("Selected mobile number is not valid");
             else
                 showAlertDialog("Selected mobile number are not valid");
         }
+        */
     }
 
-    private void sendServerPhoneNumber(String selectedContactNumbers, final ArrayList<String> rejectedContactNumbers) {
+    private void sendServerPhoneNumber(String selectedContactNumbers) {
         if (getCurrentActivity() == null) return;
         if (!DataUtil.isInternetAvailable(getCurrentActivity())) return;
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
@@ -266,13 +343,13 @@ public class MemberReferralOptionsActivity extends BackButtonActivity {
                         }
                         if (postReferralApiResponseCallback.status == 0) {
                             showToast(postReferralApiResponseCallback.message);
-                            if(rejectedContactNumbers.size()>0){
-                                String rejectedNumberString = UIUtil.sentenceJoin(rejectedContactNumbers);
-                                if(rejectedContactNumbers.size()==1)
-                                    showAlertDialog("This number is rejected "+rejectedNumberString);
-                                else
-                                    showAlertDialog("These number are rejected "+rejectedNumberString);
-                            }
+//                            if (rejectedContactNumbers.size() > 0) {
+//                                String rejectedNumberString = UIUtil.sentenceJoin(rejectedContactNumbers);
+//                                if (rejectedContactNumbers.size() == 1)
+//                                    showAlertDialog("This number is rejected " + rejectedNumberString);
+//                                else
+//                                    showAlertDialog("These number are rejected " + rejectedNumberString);
+//                            }
                         } else {
                             showAlertDialog(postReferralApiResponseCallback.message);
                         }
@@ -296,10 +373,10 @@ public class MemberReferralOptionsActivity extends BackButtonActivity {
     public void sendWhatsAppMsg(String message) {
         Intent waIntent = new Intent(Intent.ACTION_SEND);
         waIntent.setType("text/plain");
-        waIntent.setPackage("com.whatsapp");
+        waIntent.setPackage(Constants.WHATS_APP_PACKAGE_NAME);
         if (waIntent != null) {
-            waIntent.putExtra(Intent.EXTRA_TEXT, message);
-            startActivity(Intent.createChooser(waIntent, message));
+            waIntent.putExtra(Intent.EXTRA_TEXT, "https://bigbasket.com/register/"); // mes
+            startActivity(Intent.createChooser(waIntent, null)); //title
         } else {
             Toast.makeText(this, "WhatsApp not found", Toast.LENGTH_SHORT)
                     .show();
@@ -310,76 +387,100 @@ public class MemberReferralOptionsActivity extends BackButtonActivity {
         facebookDialogPresent();
     }
 
-    private void facebookDialogPresent(){
-        FacebookDialog.MessageDialogBuilder builder = new FacebookDialog.MessageDialogBuilder(this)
-                .setLink("https://bigbasket.com/register/") // valid refLinkFB
-                .setName("Bigbasket referral")
-                .setCaption("Build great social apps that engage your friends.")
-                .setDescription(referralMsg)
-                .setPicture(productRefImage)
-                .setDataErrorsFatal(true);
-        if (builder.canPresent()) {
-            Log.e("******************* facebook chat app available", "");
+    private void facebookDialogPresent() {
+        if (builder != null && builder.canPresent()) {
             FacebookDialog dialog = builder.build();
             uiHelper.trackPendingDialogCall(dialog.present());
-        }  else {
-            Intent fbIntent = new Intent(Intent.ACTION_SEND);
-            fbIntent.setType("text/plain");
-            fbIntent.setPackage("com.facebook.katana");
-            if (fbIntent != null) {
-                Log.e("******************* facebook app available", "");
-                fbIntent.putExtra(Intent.EXTRA_SUBJECT, "Bigbasket referral");
-                //intent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(resources.getString(R.string.share_email_gmail)));
-                fbIntent.putExtra(Intent.EXTRA_TEXT, referralMsg +"\n"+refLinkFB);
-                startActivity(Intent.createChooser(fbIntent, "Bigbasket referral"));
+        } else {
+            FacebookDialog shareDialog = new FacebookDialog.ShareDialogBuilder(this)
+                    .setLink("https://bigbasket.com/register/") // valid refLinkFB
+                    .setName("Bigbasket referral")
+                            //.setCaption("Build great social apps that engage your friends.") //todo
+                    .setDescription(referralMsg)
+                    .setPicture(productRefImage)
+                    .setDataErrorsFatal(true)
+                    .build();
+
+            uiHelper.trackPendingDialogCall(shareDialog.present());
+        }
+        /*
+        else {  //todo web login with dialog for facebook
+            if (Session.getActiveSession() == null || !Session.getActiveSession().isOpened()) {
+                Session.openActiveSession(getCurrentActivity(), true, callback);
             } else {
-                Log.e("******************* facebook app not available", "");
-                Toast.makeText(this, "Facebook not found", Toast.LENGTH_SHORT)
+                publishFeedDialog();
+            }
+        }
+        */
+    }
+
+    private Session.StatusCallback callback = new Session.StatusCallback() {
+
+        @Override
+        public void call(Session session, SessionState state, Exception exception) {
+
+            if (state.isOpened()) {
+                publishFeedDialog();
+            } else {
+                Toast.makeText(getCurrentActivity(), "Unable to open facebook session", Toast.LENGTH_SHORT)
                         .show();
             }
         }
+    };
+
+    private void publishFeedDialog() {
+        Bundle params = new Bundle();
+        params.putString("name", "Bigbasket referral");
+        //params.putString("caption", "Build great social apps and get more installs.");
+        params.putString("description", referralMsg);
+        params.putString("link", "https://bigbasket.com/register/"); //todo refLinkFB
+        params.putString("picture", productRefImage);
+
+        WebDialog feedDialog = (
+                new WebDialog.FeedDialogBuilder(getCurrentActivity(),
+                        Session.getActiveSession(),
+                        params))
+                .setOnCompleteListener(new WebDialog.OnCompleteListener() {
+
+                    @Override
+                    public void onComplete(Bundle values,
+                                           FacebookException error) {
+                        if (error == null) {
+                            // When the story is posted, echo the success
+                            // and the post Id.
+                            final String postId = values.getString("post_id");
+                            if (postId != null) {
+                                Toast.makeText(getCurrentActivity(),
+                                        "Posted story, id: " + postId,
+                                        Toast.LENGTH_SHORT).show();
+                            } else {
+                                // User clicked the Cancel button
+                                Toast.makeText(getCurrentActivity().getApplicationContext(),
+                                        "Publish cancelled",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        } else if (error instanceof FacebookOperationCanceledException) {
+                            // User clicked the "x" button
+                            Toast.makeText(getCurrentActivity().getApplicationContext(),
+                                    "Publish cancelled",
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            // Generic, ex: network error
+                            Toast.makeText(getCurrentActivity().getApplicationContext(),
+                                    "Error posting story",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                })
+                .build();
+        feedDialog.show();
     }
 
-    /*
-    OnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String urlToShare = "www.google.com";
-                Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.setType("text/plain");
-                // intent.putExtra(Intent.EXTRA_SUBJECT, "Foo bar"); // NB:
-                // has no effect!
-                intent.putExtra(Intent.EXTRA_TEXT, urlToShare);
-
-                // See if official Facebook app is found
-                boolean facebookAppFound = false;
-                List<ResolveInfo> matches = getPackageManager()
-                        .queryIntentActivities(intent, 0);
-                for (ResolveInfo info : matches) {
-                    if (info.activityInfo.packageName.toLowerCase()
-                            .startsWith("com.facebook.katana")) {
-                        intent.setPackage(info.activityInfo.packageName);
-                        facebookAppFound = true;
-                        break;
-                    }
-                }
-
-                // As fallback, launch sharer.php in a browser
-                if (!facebookAppFound) {
-                    String sharerUrl = "https://www.facebook.com/sharer/sharer.php?u="
-                            + urlToShare;
-                    intent = new Intent(Intent.ACTION_VIEW, Uri
-                            .parse(sharerUrl));
-                }
-
-                startActivity(intent);
-            }
-        });
-     */
 
     private void useBBmail() {
         // open email form dialog
-        ReferralDialog memberRefDialog = new ReferralDialog(getCurrentActivity(), this);
+        memberRefDialog = new ReferralDialog(getCurrentActivity(), this);
         memberRefDialog.show(getCurrentActivity().getSupportFragmentManager(),
                 Constants.REF_DIALOG_FLAG);
     }
@@ -398,12 +499,31 @@ public class MemberReferralOptionsActivity extends BackButtonActivity {
         }
 
         @Override
-        public void sendEmailList(String emailList, String message) {
-            memberReferralOptionsActivity.sendEmailMsgToServer(emailList, message, "email");
+        public void sendEmailList(String emailList, String message, int emailLen) {
+            if(memberReferralOptionsActivity.isMessageAndMailLenValid(emailLen, message.length()))
+                memberReferralOptionsActivity.sendEmailMsgToServer(emailList, message, "email");
+        }
+
+        @Override
+        public void populateAutoComplete() {
+            List<String> emailAddressCollection = new ArrayList<>();
+            memberReferralOptionsActivity.getEmailFromContacts(emailAddressCollection);
         }
     }
 
-    private void sendEmailMsgToServer(String emailList, String message, String refType){
+    private boolean isMessageAndMailLenValid(int emailLen, int messageLen){
+        if(emailLen>maxEmailLength){
+            showAlertDialog("More than "+maxEmailLength+" mobile numbers are not allowed.");
+            return false;
+        }
+        if(messageLen>maxMsgCharLength) {
+            showAlertDialog("Message length shouldn't be more than" + maxMsgCharLength);
+            return false;
+        }
+        return true;
+    }
+
+    private void sendEmailMsgToServer(String emailList, String message, String refType) {
         // call to server
         if (getCurrentActivity() == null) return;
         if (!DataUtil.isInternetAvailable(getCurrentActivity())) return;
@@ -443,7 +563,7 @@ public class MemberReferralOptionsActivity extends BackButtonActivity {
     private void useGplus(String message) {
         Intent gplusIntent = new Intent(Intent.ACTION_SEND);
         gplusIntent.setType("text/plain");
-        gplusIntent.setPackage("com.google.android.apps.plus");
+        gplusIntent.setPackage(Constants.GOOGLE_PLUS_APP_PACKAGE_NAME);
         if (gplusIntent != null) {
             gplusIntent.putExtra(Intent.EXTRA_TEXT, message);
             startActivity(Intent.createChooser(gplusIntent, message));

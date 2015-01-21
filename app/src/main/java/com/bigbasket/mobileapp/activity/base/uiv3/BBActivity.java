@@ -35,6 +35,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.account.uiv3.MemberReferralOptionsActivity;
+import com.bigbasket.mobileapp.activity.account.uiv3.MemberReferralTCActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.OrderListActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.ShopFromOrderFragment;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
@@ -50,7 +52,6 @@ import com.bigbasket.mobileapp.fragment.account.AccountSettingFragment;
 import com.bigbasket.mobileapp.fragment.account.ChangeCityFragment;
 import com.bigbasket.mobileapp.fragment.account.ChangePasswordFragment;
 import com.bigbasket.mobileapp.fragment.account.DoWalletFragment;
-import com.bigbasket.mobileapp.fragment.account.MemberReferralTCFragment;
 import com.bigbasket.mobileapp.fragment.account.UpdatePinFragment;
 import com.bigbasket.mobileapp.fragment.account.UpdateProfileFragment;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
@@ -87,6 +88,7 @@ import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.MultipleEmailAutoComplete;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
 
@@ -460,6 +462,10 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_CHANGE_PIN);
                 startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 return true;
+            case R.id.action_member_referral:
+                intent = new Intent(this, MemberReferralOptionsActivity.class);//MemberReferralOptionsActivity
+                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                return true;
             case R.id.action_spend_trends:
                 intent = new Intent(this, SpendTrendsActivity.class);
                 startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
@@ -778,7 +784,8 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             ArrayList<NavigationSubItem> browseByCatNavSubItem = new ArrayList<>();
             for (TopCategoryModel topCategoryModel : topCategoryModels) {
                 browseByCatNavSubItem.add(new NavigationSubItem(topCategoryModel.getName(),
-                        topCategoryModel.getImagePath(), Constants.BROWSE_CAT, false));
+                        topCategoryModel.getImagePath(), topCategoryModel.getSlug(), false,
+                        topCategoryModel.getVersion()));
             }
             NavigationItem browseByTopCatNavigationItem = new NavigationItem(getString(R.string.browseByCats),
                     R.drawable.main_nav_category, Constants.BROWSE_CAT, true, browseByCatNavSubItem);
@@ -882,10 +889,8 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                         break;
                     case Constants.CART:
                         Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
-                        addToMainLayout(new MemberReferralTCFragment());
-//                      Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
-//                        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_VIEW_BASKET);
-//                        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_VIEW_BASKET);
+                        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                         break;
                     case Constants.FROM_ACCOUNT_PAGE:
                         if (AuthParameters.getInstance(getCurrentActivity()).isAuthTokenEmpty()) {
@@ -939,7 +944,9 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 subCatBundle.putString(Constants.TOP_CATEGORY_SLUG,
                         navigationItems.get(groupPosition).getNavigationSubItems().get(childPosition).getTag());
                 subCatBundle.putString(Constants.TOP_CATEGORY_NAME,
-                        navigationItems.get(groupPosition).getNavigationSubItems().get(childPosition).getTag());
+                        navigationItems.get(groupPosition).getNavigationSubItems().get(childPosition).getItemName());
+                subCatBundle.putString(Constants.TOP_CATEGORY_VERSION,
+                        navigationItems.get(groupPosition).getNavigationSubItems().get(childPosition).getVersion());
                 subCategoryListFragment.setArguments(subCatBundle);
                 addToMainLayout(subCategoryListFragment);
 

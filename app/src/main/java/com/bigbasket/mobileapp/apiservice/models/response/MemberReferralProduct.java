@@ -49,6 +49,9 @@ public class MemberReferralProduct {
     @SerializedName(Constants.MAX_MSG_LEN)
     public int maxMsgLen;
 
+    @SerializedName(Constants.MAX_MSG_CHAR_LEN)
+    public int maxMsgCharLen;
+
     @SerializedName(Constants.REFERRAL_MSG)
     public String referralMsg;
 

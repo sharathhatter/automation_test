@@ -16,6 +16,12 @@ public class NavigationSubItem extends BaseNavigationItem {
         this.imageUrl = imageUrl;
     }
 
+    public NavigationSubItem(String itemName, String imageUrl, String tag, boolean isLoading, String version) {
+        super(itemName, tag, version);
+        this.isLoading = isLoading;
+        this.imageUrl = imageUrl;
+    }
+
     public boolean isLoading() {
         return isLoading;
     }

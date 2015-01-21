@@ -1,58 +1,54 @@
-package com.bigbasket.mobileapp.fragment.account;
+package com.bigbasket.mobileapp.activity.account.uiv3;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.account.uiv3.MemberReferralOptionsActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.MemberReferralProduct;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
-import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.fragment.product.ProductDetailFragment;
-import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.view.uiv3.ReferralTCDialog;
 import com.nostra13.universalimageloader.core.ImageLoader;
+
+import java.util.ArrayList;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class MemberReferralTCFragment extends BaseFragment {
+public class MemberReferralTCActivity extends BackButtonActivity {
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.uiv3_list_container, container, false);
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setTitle("Refer & Earn");
         callMemberReferralApi();
     }
 
     private void callMemberReferralApi() {
-        if (getActivity() == null) return;
-        if (!DataUtil.isInternetAvailable(getActivity())) return;
-        trackEvent(TrackingAware.BASKET_VIEW, null);
-        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+        if (!DataUtil.isInternetAvailable(getCurrentActivity())){ handler.sendOfflineError(); return;}
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressView();
         bigBasketApiService.getReferralProduct(new Callback<ApiResponse<MemberReferralProduct>>() {
             @Override
@@ -76,26 +72,32 @@ public class MemberReferralTCFragment extends BaseFragment {
     }
 
     private void loadMemberReferral(final MemberReferralProduct memberReferralProduct) {
-        if (getActivity() == null) return;
-        LinearLayout contentView = getContentView();
-        if (contentView == null) return;
+        FrameLayout base = (FrameLayout) findViewById(R.id.content_frame);
+        LinearLayout contentView = new LinearLayout(this);
+        contentView.setOrientation(LinearLayout.VERTICAL);
+        base.addView(contentView);
 
         contentView.removeAllViews();
         contentView.setBackgroundColor(getResources().getColor(R.color.uiv3_list_bkg_color));
 
-        final LayoutInflater inflater = getActivity().getLayoutInflater();
-        View referralView = inflater.inflate(R.layout.member_referral_tc, null);
-
         if(!TextUtils.isEmpty(memberReferralProduct.incentiveDesc)){
-            //todo need to refer Sid
+            LayoutInflater inflater = getCurrentActivity().getLayoutInflater();
+            View emptyView = inflater.inflate(R.layout.uiv3_empty_data_text, null);
+            TextView txtEmptyDataMsg = (TextView) emptyView.findViewById(R.id.txtEmptyDataMsg);
+            txtEmptyDataMsg.setText(memberReferralProduct.incentiveDesc);
+            contentView.removeAllViews();
+            contentView.addView(base);
+            contentView.addView(emptyView);
         }else {
-            TextView txtPara1 = (TextView) referralView.findViewById(R.id.txtPara1);
 
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            final LayoutInflater inflater = getCurrentActivity().getLayoutInflater();
+            View referralView = inflater.inflate(R.layout.member_referral_tc, null);
+            TextView txtRefEarn = (TextView) referralView.findViewById(R.id.txtRefEarn);
+
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
             String city = preferences.getString(Constants.CITY, null);
-            TextView txtPara5City = (TextView) referralView.findViewById(R.id.txtPara5);
-            TextView txtPara6 = (TextView) referralView.findViewById(R.id.txtPara6);
-            TextView txtPara7 = (TextView) referralView.findViewById(R.id.txtPara7);
+            TextView txtTermAndCondition = (TextView) referralView.findViewById(R.id.txtTermAndCondition);
+            TextView txtTermAndConditionLink = (TextView) referralView.findViewById(R.id.txtTermAndConditionLink);
 
 
             if(memberReferralProduct.incentiveType.equals("credit")){
@@ -105,32 +107,41 @@ public class MemberReferralTCFragment extends BaseFragment {
                 SpannableString spannableRefAmount1 = new SpannableString(prefix1 + refAmountStr1);
                 spannableRefAmount1.setSpan(new CustomTypefaceSpan("", faceRupee), prefixLen1 - 1,
                         prefixLen1, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-                txtPara1.setText(spannableRefAmount1);
+                txtRefEarn.setText(spannableRefAmount1);
 
-                txtPara5City.setText("Your friend needs to register with BigBasket "+ city + " using that link.");
+                txtTermAndCondition.setText(getString(R.string.HowItWorksStr)
+                        +" Your friend needs to register with BigBasket "+ city + " using that link.");
 
-
-                String prefix2 = "Your BigBasket Wallet will be credited with `";
-                String refAmountStr2 = memberReferralProduct.memberCreditAmount + " with each referral!";
+                String prefix2 = " Your BigBasket Wallet will be credited with `";
+                String refAmountStr2 = memberReferralProduct.memberCreditAmount + " with each referral,";
                 int prefixLen2 = prefix2.length();
                 SpannableString spannableRefAmount2 = new SpannableString(prefix2 + refAmountStr2);
                 spannableRefAmount2.setSpan(new CustomTypefaceSpan("", faceRupee), prefixLen2 - 1,
                         prefixLen2, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+
+                txtTermAndCondition.append(spannableRefAmount2);
 
                 String prefix3 = " within 2 days of delivery of their first order";
                 if(memberReferralProduct.minOrderVal>10){
                     prefix3 += " worth `";
                     String refAmountStr3 = memberReferralProduct.minOrderVal + "";
                     int prefixLen3 = prefix3.length();
-                    SpannableString spannableOrderWorth = new SpannableString(spannableRefAmount2
-                            +prefix3 + refAmountStr3);
+                    SpannableString spannableOrderWorth = new SpannableString(prefix3 + refAmountStr3);
                     spannableOrderWorth.setSpan(new CustomTypefaceSpan("", faceRupee), prefixLen3 - 1,
                             prefixLen3, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-                    txtPara6.setText(spannableOrderWorth);
+                    txtTermAndCondition.append(spannableOrderWorth);
                 }else {
-                    txtPara6.setText(spannableRefAmount2);
+                    txtTermAndCondition.append(spannableRefAmount2);
                 }
-                txtPara7.setText("Terms & Conditions apply (*)");
+                txtTermAndConditionLink.setText("Terms & Conditions apply (*)");
+                txtTermAndConditionLink.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        new TermAndConditionDialog(getCurrentActivity(),
+                                memberReferralProduct.termAndCondition).show(getCurrentActivity().getSupportFragmentManager(),
+                                Constants.OTP_REFERRAL_DIALOG);
+                    }
+                });
 
             }else {
                 String voucherMsg = "Refer you friends and get " +
@@ -138,9 +149,9 @@ public class MemberReferralTCFragment extends BaseFragment {
                 if(!TextUtils.isEmpty(memberReferralProduct.voucherCodeDesc)){
                     voucherMsg =  " which gives you" + memberReferralProduct.voucherCodeDesc;
                 }
-                txtPara1.setText(voucherMsg);
-                txtPara5City.setText("Your friend needs to register with BigBasket using that link.");
-                String giftMsgString = "You will be given "+ memberReferralProduct.voucherCode +
+                txtRefEarn.setText(voucherMsg);
+                txtTermAndCondition.setText("Your friend needs to register with BigBasket using that link.");
+                String giftMsgString = " You will be given "+ memberReferralProduct.voucherCode +
                         " voucher within 2 days of delivery of their first order ";
                 if(memberReferralProduct.minOrderVal>10){
                     giftMsgString += "worth `";
@@ -149,11 +160,11 @@ public class MemberReferralTCFragment extends BaseFragment {
                     SpannableString spannableVoucherGift = new SpannableString(giftMsgString + refMinOrderVal);
                     spannableVoucherGift.setSpan(new CustomTypefaceSpan("", faceRupee), giftMsgStringLen - 1,
                             giftMsgStringLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-                    txtPara6.setText(spannableVoucherGift);
+                    txtTermAndCondition.append(spannableVoucherGift);
                 }else {
-                    txtPara6.setText(giftMsgString);
+                    txtTermAndCondition.append(giftMsgString);
                 }
-                txtPara7.setVisibility(View.GONE);
+                txtTermAndConditionLink.setVisibility(View.GONE);
             }
 
             ImageView imgFreeProduct = (ImageView)referralView.findViewById(R.id.imgFreeProduct);
@@ -165,26 +176,18 @@ public class MemberReferralTCFragment extends BaseFragment {
             imgFreeProduct.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ProductDetailFragment productDetailFragment = new ProductDetailFragment();
-                    Bundle bundle = new Bundle();
-                    bundle.putString(Constants.SKU_ID, memberReferralProduct.skuId);
-                    productDetailFragment.setArguments(bundle);
-                    changeFragment(productDetailFragment);
+                    showProductDetail(memberReferralProduct.skuId);
                 }
             });
 
             TextView txtProductDesc = (TextView)referralView.findViewById(R.id.txtProductDesc);
             txtProductDesc.setText(memberReferralProduct.productDesc);
-
-            LinearLayout layoutInnerTC = (LinearLayout) referralView.findViewById(R.id.layoutInnerTC);
-            int i = 1;
-            for(String termAndCondition : memberReferralProduct.termAndCondition){
-                TextView txtTermCondition = new TextView(getActivity());
-                txtTermCondition.setTextSize(10);
-                txtTermCondition.setText(i+". "+termAndCondition);
-                layoutInnerTC.addView(txtTermCondition);
-                i++;
-            }
+            txtProductDesc.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showProductDetail(memberReferralProduct.skuId);
+                }
+            });
 
             contentView.addView(referralView);
 
@@ -197,6 +200,7 @@ public class MemberReferralTCFragment extends BaseFragment {
                     intent.putExtra(Constants.REF_LINK, memberReferralProduct.refLink);
                     intent.putExtra(Constants.REF_LINK_FB, memberReferralProduct.refLinkFb);
                     intent.putExtra(Constants.MAX_MSG_LEN, memberReferralProduct.maxMsgLen);
+                    intent.putExtra(Constants.MAX_MSG_CHAR_LEN, memberReferralProduct.maxMsgCharLen);
                     intent.putExtra(Constants.MAX_EMAIL_LEN, memberReferralProduct.maxEmailLen);
                     intent.putExtra(Constants.REFERRAL_MSG, memberReferralProduct.referralMsg);
                     intent.putExtra(Constants.P_DESC, memberReferralProduct.productDesc);
@@ -208,19 +212,22 @@ public class MemberReferralTCFragment extends BaseFragment {
 
     }
 
-    @Override
-    public String getTitle() {
-        return "Referral";
+    private void showProductDetail(String productId){
+        ProductDetailFragment productDetailFragment = new ProductDetailFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(Constants.SKU_ID, productId);
+        productDetailFragment.setArguments(bundle);
+        addToMainLayout(productDetailFragment);
     }
 
-    @NonNull
-    @Override
-    public String getFragmentTxnTag() {
-        return MemberReferralTCFragment.class.getName();
-    }
+    public static class TermAndConditionDialog extends ReferralTCDialog {
 
-    @Override
-    public LinearLayout getContentView() {
-        return getView() != null ? (LinearLayout) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
-    }
-}
+        public TermAndConditionDialog() {
+        }
+
+        @SuppressLint("ValidFragment")
+        public TermAndConditionDialog(Activity context, ArrayList<String> termAndCondition ) {
+            super(context, faceRobotoRegular, termAndCondition);
+        }
+
+    }}

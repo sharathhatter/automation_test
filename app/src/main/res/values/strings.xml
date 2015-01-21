@@ -290,6 +290,7 @@
     <string name="firstName">First Name</string>
     <string name="lastName">Last Name</string>
     <string name="mobileNumber">Mobile Number</string>
+    <string name="refCode">Referral Code (Optional)</string>
     <string name="acceptTermsMsg">Please accept the terms and conditions</string>
     <string name="addItemToShopList">Add item to shopping list</string>
     <string name="chooseShopList">Please select a shopping list to add</string>
@@ -474,13 +475,15 @@
     <string name="tcForFreeProduct">This product is subject to change depending on when your friend places his/her first order.</string>
     <string name="referralTC">Terms and Conditions:</string>
     <string name="howItWorks">How does it work?</string>
-    <string name="HowItWorksStr">When you refer your friends, a registration link gets included in the email that is sent to them.</string>
+    <string name="HowItWorksStr">A registration link will be sent to your friend.</string>
     <string name="spreadJoy">We will also send a complimentary gift to your friends along with their first BigBasket order. So, spread the joy.</string>
-    <string name="addMultipleEmail">Comma(,) separated Email-id\'s</string>
-    <string name="yourMsg">Your message (Optional)</string>
+    <string name="addMultipleEmail">To</string>
+    <string name="yourMsg">Message (Optional)</string>
     <string name="refDialogHeading">Refer Friends to BigBasket</string>
     <string name="invalid_email">Email address is invalid</string>
-    <string name="ref_submit">SUBMIT</string>
+    <string name="ref_submit">REFER</string>
+    <string name="referFriends">Refer Friends</string>
+    <!--<string name="refTC">Terms &#38 conditions</string>-->
 
 
     <!-- spendTrends -->
@@ -513,5 +516,4 @@
     <string name="noSortOptions">There are no sort options currently available</string>
     <string name="noFilterOptions">No products to filter</string>
     <string name="home">Home</string>
->>>>>>> 2c264b14f1d993ca06e550779947111062c3b9ff
 </resources>

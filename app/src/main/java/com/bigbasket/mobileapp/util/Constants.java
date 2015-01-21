@@ -191,6 +191,7 @@ public class Constants {
     public static final String PRODUCT = "product";
     public static final String ADDITIONAL_INFOS = "additional_infos";
     public static final String TOP_CATEGORY_NAME = "top_category_name";
+    public static final String TOP_CATEGORY_VERSION = "top_category_version";
 
     public static final String FORCE_REGISTER_DEVICE = "forceRegisterDevice";
     public static final int FORCE_REGISTER_CODE = 1001;
@@ -462,6 +463,7 @@ public class Constants {
     public static final String PASSWD_PREF = "PWD";
     public static final String USER_DETAILS = "user_details";
     public static final String MOBILE_NUMBER = "mobile_number";
+    public static final String REF_CODE = "ref_code";
     public static final String CITY_ID = "city_id";
     public static final String REGISTER_MEMBER = "register-member/";
     public static final String NEWSLETTER_SUBSCRIPTION = "newsletter_subscription";
@@ -592,6 +594,7 @@ public class Constants {
     public static final String REF_LINK = "referral_link";
     public static final String MAX_EMAIL_LEN = "max_email_len";
     public static final String MAX_MSG_LEN = "max_msg_len";
+    public static final String MAX_MSG_CHAR_LEN = "max_msg_char_len";
     public static final String INCENTIVE_DESC = "incentive_desc";
     public static final String REFERRAL_MSG = "referral_msg";
     public static final String INCENTIVE_TYPE = "incentive_type";
@@ -604,6 +607,15 @@ public class Constants {
     public static final String REF_TYPE = "type";
     public static final String REF_MOB_NUMBERS = "mob_numbers";
 
+    public static final String WHATS_APP_PACKAGE_NAME = "com.whatsapp";
+    public static final String GOOGLE_PLUS_APP_PACKAGE_NAME = "com.google.android.apps.plus";
+    public static final String FREE_MSG = "Free SMS";
+    public static final String FACEBOOK = "Facebook";
+    public static final String WHATS_APP = "WhatsApp";
+    public static final String G_PLUS = "Google+";
+    public static final String REF_EMAIL = "Email";
+    public static final String SHARE_VIA_OTHER = "Share via Other";
+    public static final String OTP_REFERRAL_DIALOG = "otp_tc_dailog";
     // Spend Trends
     public static final String RANGE_NAME = "range_name";
     public static final String RANGE_VAL = "range_value";

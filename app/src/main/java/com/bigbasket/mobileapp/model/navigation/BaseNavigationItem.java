@@ -4,6 +4,7 @@ public abstract class BaseNavigationItem {
     private String itemName;
     private int drawableId;
     private String tag;
+    private String version;
 
     public BaseNavigationItem(String itemName, String tag) {
         this.itemName = itemName;
@@ -17,6 +18,12 @@ public abstract class BaseNavigationItem {
         this.tag = tag;
     }
 
+    protected BaseNavigationItem(String itemName, String tag, String version) {
+        this.itemName = itemName;
+        this.tag = tag;
+        this.version = version;
+    }
+
     public String getItemName() {
         return itemName;
     }
@@ -27,5 +34,9 @@ public abstract class BaseNavigationItem {
 
     public String getTag() {
         return tag;
+    }
+
+    public String getVersion() {
+        return version;
     }
 }

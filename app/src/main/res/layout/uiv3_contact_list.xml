@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_marginTop="@dimen/margin_normal"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <ImageView
         android:layout_width="wrap_content"
         android:id="@+id/imgContact"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="@dimen/margin_mini"
         android:layout_marginLeft="@dimen/margin_normal"
         android:src="@drawable/ic_person_grey600_36dp"
         android:layout_height="wrap_content" />
@@ -14,6 +15,8 @@
     <CheckBox
         android:layout_width="wrap_content"
         android:id="@+id/checkbox"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="@dimen/margin_mini"
         android:layout_marginRight="@dimen/margin_normal"
         android:layout_marginLeft="@dimen/margin_normal"
         android:checked="false"
@@ -22,30 +25,26 @@
 
     <TextView
         android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/margin_mini"
         android:layout_toLeftOf="@id/checkbox"
         android:layout_marginLeft="@dimen/margin_normal"
         android:layout_toRightOf="@id/imgContact"
         android:id="@+id/txtContactName"
-        android:textSize="@dimen/primary_text_size"
+        android:textSize="@dimen/large_text_size"
         android:text="Jugal kishore Joshi"
         android:layout_height="wrap_content" />
 
 
-    <!--<TextView-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_marginLeft="20dp"-->
-        <!--android:layout_toLeftOf="@id/checkbox"-->
-        <!--android:layout_toRightOf="@id/imgContact"-->
-        <!--android:layout_below="@id/txtContactName"-->
-        <!--android:id="@+id/txtContactNumber"-->
-        <!--android:text="99999999999"-->
-        <!--android:layout_height="wrap_content" />-->
-
-    <!--<View-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:background="@color/strokeLine"-->
-        <!--android:layout_marginTop="10dp"-->
-        <!--android:layout_below="@id/txtContactNumber"-->
-        <!--android:layout_height="0.5dp" />-->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_toLeftOf="@id/checkbox"
+        android:layout_toRightOf="@id/imgContact"
+        android:layout_below="@id/txtContactName"
+        android:textSize="@dimen/secondary_text_size"
+        android:id="@+id/txtContactNumber"
+        android:text="99999999999"
+        android:paddingBottom="@dimen/padding_mini"
+        android:layout_height="wrap_content" />
 
 </RelativeLayout>

@@ -10,49 +10,25 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:orientation="vertical"
-        android:layout_marginLeft="@dimen/margin_medium_large"
-        android:layout_marginRight="@dimen/margin_medium_large"
         android:layout_height="wrap_content">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_marginTop="@dimen/margin_medium_large"
             android:layout_marginBottom="@dimen/margin_normal"
+            android:layout_marginLeft="@dimen/margin_normal"
+            android:layout_marginRight="@dimen/margin_medium_large"
             android:layout_height="wrap_content"
             android:textSize="@dimen/large_text_size"
             android:text="@string/refDialogHeading"
             android:id="@+id/txtDialogTitle" />
 
-        <LinearLayout
+        <View
             android:layout_width="match_parent"
-            android:orientation="horizontal"
-            android:layout_height="wrap_content">
+            android:layout_height="0.2dp"
+            android:background="@color/strokeLine"/>
 
-            <!--<ImageView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="top"-->
-                <!--android:layout_marginBottom="@dimen/margin_small"-->
-                <!--android:contentDescription="@string/email"-->
-                <!--android:src="@drawable/ic_mail_grey600_24dp" />-->
 
-            <EditText
-                android:id="@+id/editTextListEmailAddress"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textEmailAddress|textMultiLine"
-                android:textColor="@color/uiv3_primary_text_color"
-                android:textSize="@dimen/secondary_text_size"
-                android:imeOptions="actionNext"
-                android:hint="@string/addMultipleEmail"
-                android:ems="10"
-                android:gravity="top"
-                android:minLines="1"
-                android:scrollHorizontally="false"
-                android:scrollbars="vertical"
-                android:singleLine="false" />
-
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -60,34 +36,76 @@
             android:layout_marginTop="@dimen/margin_normal"
             android:layout_height="wrap_content">
 
-            <!--<ImageView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="top"-->
-                <!--android:layout_marginBottom="@dimen/margin_small"-->
-                <!--android:contentDescription="@string/message"-->
-                <!--android:src="@drawable/ic_mode_edit_grey600_24dp" />-->
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:layout_marginTop="@dimen/margin_mini"
+                android:layout_marginBottom="@dimen/margin_small"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:contentDescription="@string/email"
+                android:src="@drawable/ic_mail_grey600_24dp" />
+
+            <com.bigbasket.mobileapp.util.ChipAutoCompleteTextView
+                android:id="@+id/editTextListEmailAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:inputType="textEmailAddress|textMultiLine"
+                android:textColor="@color/uiv3_primary_text_color"
+                android:textSize="@dimen/primary_text_size"
+                android:imeOptions="actionNext"
+                android:hint="@string/addMultipleEmail"
+                android:ems="20"
+                android:gravity="top"
+                android:minLines="1"
+                android:maxLines="3"
+                android:scrollHorizontally="false"
+                android:scrollbars="vertical"
+                android:singleLine="false" />
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/margin_normal"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:layout_marginTop="@dimen/margin_mini"
+                android:layout_marginBottom="@dimen/margin_small"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:contentDescription="@string/message"
+                android:src="@drawable/ic_mode_edit_grey600_24dp" />
 
             <EditText
                 android:id="@+id/editTextMessage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textEmailAddress|textMultiLine"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:inputType="text"
                 android:textColor="@color/uiv3_primary_text_color"
-                android:textSize="@dimen/secondary_text_size"
+                android:textSize="@dimen/primary_text_size"
                 android:imeOptions="actionNext"
                 android:hint="@string/yourMsg"
                 android:gravity="top"
-                android:ems="10"
+                android:ems="20"
+                android:maxLines="3"
                 android:minLines="1"
                 android:scrollHorizontally="false"
                 android:scrollbars="vertical"
                 android:singleLine="false" />
 
-            <!-- android:layout_marginLeft="@dimen/margin_normal" -->
 
         </LinearLayout>
     </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"

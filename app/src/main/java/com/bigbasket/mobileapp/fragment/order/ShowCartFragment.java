@@ -88,7 +88,6 @@ public class ShowCartFragment extends BaseFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         //getCartItems();
-
     }
 
     @Override

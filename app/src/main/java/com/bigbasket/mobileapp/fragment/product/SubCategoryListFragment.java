@@ -44,6 +44,7 @@ public class SubCategoryListFragment extends BaseFragment {
     private SubCategoryModel subCategoryModel;
     private String topCatSlug;
     private String topCatName;
+    private String topCatVersion;
     private int imageCounter = 0;
     private int width, imageheight;
 
@@ -57,6 +58,7 @@ public class SubCategoryListFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
         topCatSlug = getArguments().getString(Constants.TOP_CATEGORY_SLUG);
         topCatName = getArguments().getString(Constants.TOP_CATEGORY_NAME);
+        topCatVersion = getArguments().getString(Constants.TOP_CATEGORY_VERSION); ///todo testing needs to be done
 
 
         final DisplayMetrics metrics = new DisplayMetrics();
@@ -70,8 +72,12 @@ public class SubCategoryListFragment extends BaseFragment {
         if (checkInternetConnection()) {
             SubCategoryAdapter subCategoryAdapter = new SubCategoryAdapter(getActivity());
             String version = subCategoryAdapter.getVersion(topCatSlug);
-            String slugAndVersion = topCatSlug;
-            getSubCategoryData(slugAndVersion, version);
+            if(topCatVersion!=null && topCatVersion.equals(version)){
+                renderSubCategory(null,  true,  null, null);
+            }else {
+                String categorySlug = topCatSlug;
+                getSubCategoryData(categorySlug, version);
+            }
         } else {
             String msg = "Cannot proceed with the operation. No network connection.";
             showErrorMsg(msg);

@@ -346,7 +346,7 @@ public interface BigBasketApiService {
     void getProductsForOrder(@Query(Constants.ORDER_ID) String orderId,
                              Callback<ApiResponse<GetProductsForOrderApiResponseContent>> getProductsForOrderApiResponseCallback);
 
-    @GET("/get-referral-product/")
+    @GET("/get-referral/")
     void getReferralProduct(Callback<ApiResponse<MemberReferralProduct>> getRefProductApiResponseCallback);
 
     @FormUrlEncoded

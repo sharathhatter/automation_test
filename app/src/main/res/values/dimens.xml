@@ -72,4 +72,6 @@
     <dimen name="carousel_width">160dp</dimen>
     <dimen name="carousel_img_height">120dp</dimen>
     <dimen name="carousel_img_width">120dp</dimen>
+    <dimen name="chip_padding">2dp</dimen>
+    <dimen name="chip_txt_size">20sp</dimen>
 </resources>

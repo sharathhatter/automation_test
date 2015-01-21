@@ -208,8 +208,11 @@
             android:name=".activity.account.uiv3.MemberReferralOptionsActivity"
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
-        <!--<activity android:name="com.facebook.katana.ShareLinkActivity" >-->
-        <!--</activity>-->
+
+        <activity
+            android:name=".activity.account.uiv3.MemberReferralTCActivity"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+
 
         <activity
             android:name=".activity.account.uiv3.ContactListActivity"

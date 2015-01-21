@@ -96,6 +96,13 @@
                 bb:showAsAction="never" />
 
             <item
+                android:id="@+id/action_member_referral"
+                android:icon="@drawable/ic_group_add_white_24dp"
+                android:orderInCategory="9999"
+                android:title="@string/referFriends"
+                bb:showAsAction="never" />
+
+            <item
                 android:id="@+id/action_spend_trends"
                 android:icon="@drawable/ic_trending_up_white_24dp"
                 android:orderInCategory="9999"

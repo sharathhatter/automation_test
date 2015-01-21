@@ -23,14 +23,24 @@
             android:id="@+id/btnListFooter"
             android:textColor="@color/uiv3_primary_text_color"
             android:drawablePadding="@dimen/padding_small"
+            android:text="@string/ref_submit"
             android:textSize="@dimen/large_text_size" />
     </RelativeLayout>
 
+    <EditText android:id="@+id/editTxtSearch"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_search_grey600_24dp"
+        android:paddingLeft="@dimen/padding_normal"
+        android:layout_alignParentTop="true"
+        android:inputType="textVisiblePassword"/>
+
     <ListView
         android:id="@+id/listWithFixedFooter"
+        android:layout_below="@+id/editTxtSearch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/layoutFooterButton"
-        android:layout_alignParentTop="true" />
+       />
 
 </RelativeLayout>
