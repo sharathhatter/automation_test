@@ -1,6 +1,5 @@
 include ':app', ':facebook', ':androidImageSlider'
 include ':konotorActivity'
-include ':androidHorizontalListView'
 include ':multipleImagePick'
 include ':androidViewPagerIndicator'
 include ':moEngageSDK'
