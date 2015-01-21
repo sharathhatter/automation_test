@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
+import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.google.gson.Gson;
 
@@ -68,7 +69,7 @@ public class SectionManager {
             Date now = new Date();
             long minutes = TimeUnit.MINUTES.convert(now.getTime() - createOnDate.getTime(),
                     TimeUnit.MILLISECONDS);
-            return minutes > 15;
+            return minutes > Section.SECTION_TIMEOUT_IN_MINUTES;
         } catch (ParseException e) {
             return true;
         }

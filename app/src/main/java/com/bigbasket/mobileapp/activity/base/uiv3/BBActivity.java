@@ -365,7 +365,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             case FragmentCodes.START_BROWSE_BY_OFFERS:
                 addToMainLayout(new BrowseByOffersFragment());
                 break;
-            case FragmentCodes.START_SUBCAT_FRAGMENT:
+            case FragmentCodes.START_CATEGORY_LANDING:
                 SubCategoryListFragment subCategoryListFragment = new SubCategoryListFragment();
                 Bundle cubCatBundle = new Bundle();
                 cubCatBundle.putString(Constants.TOP_CATEGORY_SLUG, getIntent().getStringExtra(Constants.TOP_CATEGORY_NAME));
@@ -397,6 +397,23 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 break;
             case FragmentCodes.START_BUNDLE_PACK:
                 addToMainLayout(new BundlePackFragment());
+                break;
+            case FragmentCodes.START_PRODUCT_CATEGORY:
+                launchProductCategoryFragment(getIntent().getStringExtra(Constants.CATEGORY_SLUG));
+                break;
+            case FragmentCodes.START_SHOPPING_LIST_SUMMARY:
+                bundle = new Bundle();
+                bundle.putParcelable(Constants.SHOPPING_LIST_NAME,
+                        getIntent().getParcelableExtra(Constants.SHOPPING_LIST_NAME));
+                ShoppingListSummaryFragment shoppingListSummaryFragment = new ShoppingListSummaryFragment();
+                shoppingListSummaryFragment.setArguments(bundle);
+                addToMainLayout(shoppingListSummaryFragment);
+                break;
+            case FragmentCodes.START_SHOPPING_LIST_LANDING:
+                addToMainLayout(new ShoppingListFragment());
+                break;
+            case FragmentCodes.START_SEARCH:
+                doSearch(getIntent().getStringExtra(Constants.SEARCH_QUERY));
                 break;
         }
     }
@@ -648,6 +665,10 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                                         String categorySlug) {
         MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(this);
         mostSearchesAdapter.update(categoryName, categoryUrl);
+        launchProductCategoryFragment(categorySlug);
+    }
+
+    private void launchProductCategoryFragment(String categorySlug) {
         Bundle bundle = new Bundle();
         bundle.putString("slug_name_category", categorySlug);
         CategoryProductsFragment categoryProductsFragment = new CategoryProductsFragment();

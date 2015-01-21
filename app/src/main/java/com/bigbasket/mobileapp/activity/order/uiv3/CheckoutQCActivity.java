@@ -347,7 +347,7 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
                                     switch (item.getItemId()) {
                                         case R.id.menuAddSimilarQCProduct:
                                             Intent data = new Intent(getCurrentActivity(), BBActivity.class);
-                                            data.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SUBCAT_FRAGMENT);
+                                            data.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_CATEGORY_LANDING);
                                             data.putExtra(Constants.TOP_CATEGORY_SLUG,
                                                     productWithSomeStockList.get(imgProductCheckOutQCAdditionalAction.getId()).getTopLevelCategorySlug());
                                             data.putExtra(Constants.TOP_CATEGORY_NAME,

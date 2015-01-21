@@ -533,6 +533,7 @@ public class Constants {
     public static final String SECTIONS = "sections";
     public static final String SECTION_TYPE = "section_type";
     public static final String DESTINATION_INFO_ID = "destination_info_id";
+    public static final String DESTINATION = "destination";
     public static final String MORE = "more";
     public static final String DESTINATIONS_INFO = "destinations_info";
     public static final String DESTINATION_TYPE = "dest_type";

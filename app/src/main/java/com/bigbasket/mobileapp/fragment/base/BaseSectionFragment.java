@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.CarouselAdapter;
+import com.bigbasket.mobileapp.handler.OnSectionItemClickListener;
 import com.bigbasket.mobileapp.model.section.Renderer;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
@@ -49,7 +50,7 @@ public abstract class BaseSectionFragment extends BaseFragment {
                     }
                     break;
                 case Section.TILE:
-                    View tileView = getTileView(section, inflater, mainLayout);
+                    View tileView = getTileView(section, inflater);
                     if (tileView != null) {
                         mainLayout.addView(tileView);
                     }
@@ -104,9 +105,11 @@ public abstract class BaseSectionFragment extends BaseFragment {
                 textSliderView.description(sectionItem.getTitle().getText())
                         .image(sectionItem.getImage());
                 bannerSlider.addSlider(textSliderView);
+                textSliderView.setOnSliderClickListener(new OnSectionItemClickListener<>(this, section, sectionItem));
             } else {
                 DefaultSliderView defaultSliderView = new DefaultSliderView(getActivity());
                 defaultSliderView.image(sectionItem.getImage());
+                defaultSliderView.setOnSliderClickListener(new OnSectionItemClickListener<>(this, section, sectionItem));
                 bannerSlider.addSlider(defaultSliderView);
             }
         }
@@ -157,11 +160,13 @@ public abstract class BaseSectionFragment extends BaseFragment {
             if (!TextUtils.isEmpty(sectionItem.getTitle().getText())) {
                 txtSalutationItem.setTypeface(faceRobotoRegular);
                 txtSalutationItem.setText(sectionItem.getTitle().getText());
+                txtSalutationItem.setOnClickListener(new OnSectionItemClickListener<>(this, section, sectionItem));
                 layoutSalutationItem.setVisibility(View.VISIBLE);
             }
             if (!TextUtils.isEmpty(sectionItem.getImage())) {
                 layoutSalutationItem.setVisibility(View.VISIBLE);
                 ImageLoader.getInstance().displayImage(sectionItem.getImage(), imgSalutationItem);
+                imgSalutationItem.setOnClickListener(new OnSectionItemClickListener<>(this, section, sectionItem));
             }
         }
         return baseSalutation;
@@ -241,6 +246,7 @@ public abstract class BaseSectionFragment extends BaseFragment {
                 layoutParams.setMargins(margin, margin, margin, margin);
             }
             imageView.setLayoutParams(layoutParams);
+            imageView.setOnClickListener(new OnSectionItemClickListener<>(this, section, sectionItem));
             ImageLoader.getInstance().displayImage(sectionItem.getImage(), imageView);
         }
         return linearLayout;
@@ -274,6 +280,7 @@ public abstract class BaseSectionFragment extends BaseFragment {
                 txtVw.setBackgroundColor(renderer.getNativeBkgColor());
             }
             txtVw.setText(sectionItem.getTitle().getText());
+            txtVw.setOnClickListener(new OnSectionItemClickListener<>(this, section, sectionItem));
             txtVw.setTypeface(faceRobotoRegular);
             linearLayout.addView(txtVw);
         }
@@ -331,6 +338,7 @@ public abstract class BaseSectionFragment extends BaseFragment {
             }
             txtListText.setTypeface(faceRobotoRegular);
             txtListText.setText(sectionItem.getTitle().getText());
+            txtListText.setOnClickListener(new OnSectionItemClickListener<>(this, section, sectionItem));
             View viewSeparator = base.findViewById(R.id.viewSeparator);
             viewSeparator.setVisibility(View.VISIBLE);
             menuContainer.addView(base);
@@ -338,7 +346,7 @@ public abstract class BaseSectionFragment extends BaseFragment {
         return menuContainer;
     }
 
-    private View getTileView(Section section, LayoutInflater inflater, ViewGroup parent) {
+    private View getTileView(Section section, LayoutInflater inflater) {
         LinearLayout tileContainer = new LinearLayout(getActivity());
         tileContainer.setOrientation(LinearLayout.HORIZONTAL);
         LinearLayout.LayoutParams tileContainerParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
@@ -361,6 +369,7 @@ public abstract class BaseSectionFragment extends BaseFragment {
             } else {
                 txtCaption.setVisibility(View.GONE);
             }
+            imgContent.setOnClickListener(new OnSectionItemClickListener<>(this, section, sectionItem));
             ImageLoader.getInstance().displayImage(sectionItem.getImage(), imgContent);
             tileContainer.addView(tileItemView);
         }
