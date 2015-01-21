@@ -2,9 +2,7 @@ package com.daimajia.slider.library.SliderTypes;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v7.graphics.Palette;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -14,7 +12,6 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import java.io.File;
-import java.lang.ref.WeakReference;
 import java.util.Hashtable;
 
 /**
@@ -292,29 +289,6 @@ public abstract class BaseSliderView {
         public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
             if (v.findViewById(R.id.loading_bar) != null) {
                 v.findViewById(R.id.loading_bar).setVisibility(View.INVISIBLE);
-            }
-        }
-    }
-
-    private class PaletteAsyncListener implements Palette.PaletteAsyncListener {
-
-        private WeakReference<ImageView> imgView;
-        private String imageUri;
-
-        private PaletteAsyncListener(ImageView imgView, String imageUri) {
-            this.imgView = new WeakReference<>(imgView);
-            this.imageUri = imageUri;
-        }
-
-        @Override
-        public void onGenerated(Palette palette) {
-            if (imgView != null && imgView.get() != null) {
-                Palette.Swatch swatch = palette.getLightMutedSwatch();
-                int bkgColor = swatch != null ? swatch.getRgb() : Color.WHITE;
-                swatchMap.put(imageUri, bkgColor);
-                if (imgView.get() != null) {
-                    setImageBackgroundSwatch(imgView.get(), bkgColor);
-                }
             }
         }
     }
