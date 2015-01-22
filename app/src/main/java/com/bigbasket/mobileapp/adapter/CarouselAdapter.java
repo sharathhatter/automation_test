@@ -12,8 +12,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.handler.OnSectionItemClickListener;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.model.section.Renderer;
+import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionItem;
 import com.bigbasket.mobileapp.model.section.SectionTextItem;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -21,19 +23,21 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class CarouselAdapter<T> extends RecyclerView.Adapter<CarouselAdapter.ViewHolder> {
+public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    private Section section;
     private ArrayList<SectionItem> sectionItems;
     private HashMap<Integer, Renderer> rendererHashMap;
     private Typeface typeface;
     private T context;
     private int layoutId;
 
-    public CarouselAdapter(T context, ArrayList<SectionItem> sectionItems,
+    public CarouselAdapter(T context, Section section,
                            HashMap<Integer, Renderer> rendererHashMap, int layoutId, Typeface typeface) {
+        this.section = section;
         this.context = context;
         this.layoutId = layoutId;
-        this.sectionItems = sectionItems;
+        this.sectionItems = section.getSectionItems();
         this.rendererHashMap = rendererHashMap;
         this.typeface = typeface;
     }
@@ -46,7 +50,8 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<CarouselAdapter.Vie
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+        ViewHolder holder = (ViewHolder) viewHolder;
         SectionItem sectionItem = sectionItems.get(position);
         TextView txtTitle = holder.getTxtTitle();
         TextView txtDescription = holder.getTxtDescription();
@@ -113,7 +118,7 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<CarouselAdapter.Vie
         return sectionItems.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    private class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private Typeface typeface;
         private ImageView imgInRow;
@@ -124,6 +129,7 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<CarouselAdapter.Vie
 
         public ViewHolder(View itemView, Typeface typeface) {
             super(itemView);
+            itemView.setOnClickListener(this);
             this.typeface = typeface;
         }
 
@@ -162,6 +168,13 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<CarouselAdapter.Vie
                 layoutCarouselContainer = (LinearLayout) itemView.findViewById(R.id.layoutCarouselContainer);
             }
             return layoutCarouselContainer;
+        }
+
+        @Override
+        public void onClick(View v) {
+            OnSectionItemClickListener sectionItemClickListener =
+                    new OnSectionItemClickListener<>(context, section, sectionItems.get(getPosition()));
+            sectionItemClickListener.onClick(v);
         }
     }
 }

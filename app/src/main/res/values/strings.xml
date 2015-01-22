@@ -319,6 +319,7 @@
     <string name="orderItems">Order Items</string>
     <string name="enterVoucher">Enter your eVoucher code</string>
     <string name="viewAvailableVouchers">You have an active eVoucher!\nClick here to view</string>
+    <string name="viewAllProducts">View all products</string>
     <string name="connectionOffline">Cannot proceed with the operation. No network connection.\n Please check your internet connected</string>
     <string name="info">Information</string>
     <string name="memberName">Member Name</string>

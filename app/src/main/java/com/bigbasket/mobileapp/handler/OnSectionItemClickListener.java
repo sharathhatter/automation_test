@@ -9,21 +9,43 @@ import com.bigbasket.mobileapp.activity.account.uiv3.OrderListActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.callbacks.ProductListApiResponseCallback;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListDetailsApiResponse;
+import com.bigbasket.mobileapp.fragment.product.ProductListDialogFragment;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.CancelableAware;
+import com.bigbasket.mobileapp.interfaces.HandlerAware;
+import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
+import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
+import com.bigbasket.mobileapp.model.product.Product;
+import com.bigbasket.mobileapp.model.product.ProductListData;
+import com.bigbasket.mobileapp.model.product.ProductQuery;
 import com.bigbasket.mobileapp.model.section.DestinationInfo;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionItem;
+import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListDetail;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 
-public class OnSectionItemClickListener<T> implements View.OnClickListener, BaseSliderView.OnSliderClickListener {
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+
+public class OnSectionItemClickListener<T> implements View.OnClickListener, BaseSliderView.OnSliderClickListener,
+        ProductListDataAware {
     private T context;
     private Section section;
     private SectionItem sectionItem;
+    private ProductListData productListData;
 
     public OnSectionItemClickListener(T context, Section section, SectionItem sectionItem) {
         this.context = context;
@@ -43,9 +65,67 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
 
     private void onSectionClick() {
         if (context == null || ((CancelableAware) context).isSuspended()) return;
+
         if (section.getSectionType() != null &&
                 section.getSectionType().equalsIgnoreCase(Section.PRODUCT_CAROUSEL)) {
+            DestinationInfo destinationInfo = sectionItem.getDestinationInfo();
+            if (destinationInfo != null) {
+                String destinationType = destinationInfo.getDestinationType();
+                String destinationSlug = destinationInfo.getDestinationSlug();
+                BigBasketApiService bigBasketApiService = BigBasketApiAdapter.
+                        getApiService(((ActivityAware) context).getCurrentActivity());
+                if (!TextUtils.isEmpty(destinationSlug) && !TextUtils.isEmpty(destinationType) &&
+                        destinationType.equals(DestinationInfo.SHOPPING_LIST)) {
+                    ((ProgressIndicationAware) context).showProgressDialog("Please wait...");
+                    bigBasketApiService.getShoppingListDetails(destinationSlug, null, new Callback<ApiResponse<GetShoppingListDetailsApiResponse>>() {
+                        @Override
+                        public void success(ApiResponse<GetShoppingListDetailsApiResponse> getShoppingListDetailsApiResponse, Response response) {
+                            if (((CancelableAware) context).isSuspended()) return;
+                            try {
+                                ((ProgressIndicationAware) context).hideProgressDialog();
+                            } catch (IllegalArgumentException e) {
+                                return;
+                            }
+                            switch (getShoppingListDetailsApiResponse.status) {
+                                case 0:
+                                    ShoppingListDetail shoppingListDetail = getShoppingListDetailsApiResponse.apiResponseContent.shoppingListDetail;
+                                    if (shoppingListDetail != null) {
+                                        ArrayList<Product> products = shoppingListDetail.getProducts();
+                                        ProductListDialogFragment productListDialogFragment = ProductListDialogFragment.
+                                                newInstance(products, products.size(), null);
+                                        productListDialogFragment.show(((ActivityAware) context).getCurrentActivity().getSupportFragmentManager(),
+                                                Constants.SHOPPING_LISTS);
 
+                                    }
+                                    break;
+                                default:
+                                    ((HandlerAware) context).getHandler().
+                                            sendEmptyMessage(getShoppingListDetailsApiResponse.status,
+                                                    getShoppingListDetailsApiResponse.message);
+                                    break;
+                            }
+                        }
+
+                        @Override
+                        public void failure(RetrofitError error) {
+                            if (((CancelableAware) context).isSuspended()) return;
+                            try {
+                                ((ProgressIndicationAware) context).hideProgressDialog();
+                            } catch (IllegalArgumentException e) {
+                                return;
+                            }
+                            ((HandlerAware) context).getHandler().handleRetrofitError(error);
+                        }
+                    });
+                } else if (!TextUtils.isEmpty(destinationType)) {
+                    String productListType = ProductQuery.convertDestinationTypeToProductQueryType(destinationType);
+                    if (!TextUtils.isEmpty(productListType)) {
+                        ProductQuery productQuery = new ProductQuery(destinationType, destinationSlug, 1);
+                        ((ProgressIndicationAware) context).showProgressDialog("Please wait...");
+                        bigBasketApiService.productListUrl(productQuery.getAsQueryMap(), new ProductListApiResponseCallback<>(1, this, false));
+                    }
+                }
+            }
         } else if (sectionItem.getDestinationInfo() != null &&
                 sectionItem.getDestinationInfo().getDestinationType() != null) {
             DestinationInfo destinationInfo = sectionItem.getDestinationInfo();
@@ -121,5 +201,43 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                     break;
             }
         }
+    }
+
+    @Override
+    public ProductListData getProductListData() {
+        return productListData;
+    }
+
+    @Override
+    public void setProductListData(ProductListData productListData) {
+        this.productListData = productListData;
+    }
+
+    @Override
+    public void updateData() {
+        ProductListDialogFragment productListDialogFragment = ProductListDialogFragment.
+                newInstance(productListData.getProducts(), productListData.getProductCount(), productListData.getBaseImgUrl());
+        productListDialogFragment.show(((ActivityAware) context).getCurrentActivity().getSupportFragmentManager(),
+                DestinationInfo.PRODUCT_LIST);
+    }
+
+    @Override
+    public void updateProductList(List<Product> nextPageProducts) {
+
+    }
+
+    @Override
+    public boolean isNextPageLoading() {
+        return false;
+    }
+
+    @Override
+    public void setNextPageLoading(boolean isNextPageLoading) {
+
+    }
+
+    @Override
+    public ProductQuery getProductQuery() {
+        return null;
     }
 }

@@ -3,7 +3,9 @@ package com.bigbasket.mobileapp.util;
 /**
  * Created by jugal on 16/12/14.
  */
-public class TrackEventkeys {
+public final class TrackEventkeys {
+
+    private TrackEventkeys() {}
 
     public static final String PRODUCT_ID = "skuId";
     public static final String PRODUCT_BRAND = "brand";
@@ -64,5 +66,6 @@ public class TrackEventkeys {
     public static final String PROMO_DETAIL = "promo detail";
     public static final String PAST_ORDER = "past order";
     public static final String SHOP_IN_SHOP = "shop in shop";
+    public static final String SECTION = "section";
 
 }

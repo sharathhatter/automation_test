@@ -122,7 +122,7 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
                 .build();
 
         ProductListRecyclerAdapter productListRecyclerAdapter = new ProductListRecyclerAdapter(mProducts, null,
-                getCurrentActivity(), productViewDisplayDataHolder, this, mProducts.size(),
+                productViewDisplayDataHolder, this, mProducts.size(),
                 TrackEventkeys.PAST_ORDER);
 
         productRecyclerView.setAdapter(productListRecyclerAdapter);

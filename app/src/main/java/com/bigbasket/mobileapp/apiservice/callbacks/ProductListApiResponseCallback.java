@@ -21,10 +21,16 @@ public class ProductListApiResponseCallback<T> implements Callback<ApiResponse<P
 
     private int page;
     private T ctx;
+    private boolean isInlineProgressBar;
 
     public ProductListApiResponseCallback(int page, T ctx) {
         this.page = page;
         this.ctx = ctx;
+    }
+
+    public ProductListApiResponseCallback(int page, T ctx, boolean isInlineProgressBar) {
+        this(page, ctx);
+        this.isInlineProgressBar = isInlineProgressBar;
     }
 
     @Override
@@ -32,7 +38,11 @@ public class ProductListApiResponseCallback<T> implements Callback<ApiResponse<P
         if (((CancelableAware) ctx).isSuspended()) return;
         if (page == 1) {
             try {
-                ((ProgressIndicationAware) ctx).hideProgressView();
+                if (isInlineProgressBar) {
+                    ((ProgressIndicationAware) ctx).hideProgressView();
+                } else {
+                    ((ProgressIndicationAware) ctx).hideProgressDialog();
+                }
             } catch (IllegalArgumentException e) {
                 return;
             }
@@ -75,7 +85,11 @@ public class ProductListApiResponseCallback<T> implements Callback<ApiResponse<P
         if (((CancelableAware) ctx).isSuspended()) return;
         if (page == 1) {
             try {
-                ((ProgressIndicationAware) ctx).hideProgressView();
+                if (isInlineProgressBar) {
+                    ((ProgressIndicationAware) ctx).hideProgressView();
+                } else {
+                    ((ProgressIndicationAware) ctx).hideProgressDialog();
+                }
             } catch (IllegalArgumentException e) {
                 return;
             }
