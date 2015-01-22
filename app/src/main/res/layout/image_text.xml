@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:id="@+id/layoutRow"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:paddingTop="@dimen/padding_normal"
+        android:paddingBottom="@dimen/padding_normal"
+        android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/itemImg"
+        android:layout_width="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/whatsapp"
+        android:contentDescription="@string/alt_placeholder" />
+
+    <TextView
+        android:id="@+id/itemTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/itemImg"
+        android:text="offers"
+        android:textColor="@color/uiv3_list_primary_text_color"
+        android:textSize="@dimen/secondary_text_size" />
+    </RelativeLayout>
+
+
+</RelativeLayout>

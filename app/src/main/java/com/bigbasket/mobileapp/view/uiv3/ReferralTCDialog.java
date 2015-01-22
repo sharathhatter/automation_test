@@ -68,13 +68,13 @@ public class ReferralTCDialog extends DialogFragment {
             for(String termAndCondition : termAndConditionArrayList){
                 View bulletView = inflater.inflate(R.layout.uiv3_bullet_txt, null);
                 TextView txtBullet = (TextView) bulletView.findViewById(R.id.txtBullet);
-                String prefix = ". ";
-                Spannable spannableBullet = new SpannableString(prefix + termAndCondition);
-                spannableBullet.setSpan(new StyleSpan(Typeface.BOLD), 0, prefix.length(),
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                txtBullet.setText(spannableBullet);
+                //String prefix = ". ";
+//                Spannable spannableBullet = new SpannableString(prefix + termAndCondition);
+//                spannableBullet.setSpan(new StyleSpan(Typeface.BOLD), 0, prefix.length(),
+//                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//                txtBullet.setText(spannableBullet);
 
-                //txtBullet.setText(". "+termAndCondition);
+                txtBullet.setText(termAndCondition);
                 layoutInnerTC.addView(bulletView);
             }
         }

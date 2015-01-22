@@ -51,7 +51,8 @@ public class MemberReferralOptionsActivity extends BackButtonActivity {
 
     private ArrayList<Integer> referralImageArrayList = null;
     private ArrayList<String> referralStringArrayList = null;
-    private String refLink, refLinkFB, referralMsg, productDesc, productRefImage;
+    //private String refLink, refLinkFB, referralMsg, productDesc, productRefImage;
+    private String referralMsg, playStoreLink, productRefImage;
     private int maxMsgCharLength, maxEmailLength, maxMsgLen;
     private UiLifecycleHelper uiHelper;
     private FacebookDialog.MessageDialogBuilder builder = null;
@@ -64,13 +65,14 @@ public class MemberReferralOptionsActivity extends BackButtonActivity {
         setTitle("Refer Friends");
         populateReferralOptions();
         Intent intent = getIntent();
-        refLink = intent.getStringExtra(Constants.REF_LINK);
-        refLinkFB = intent.getStringExtra(Constants.REF_LINK_FB);
+        //refLink = intent.getStringExtra(Constants.REF_LINK);
+        //refLinkFB = intent.getStringExtra(Constants.REF_LINK_FB);
         maxMsgCharLength = intent.getIntExtra(Constants.MAX_MSG_LEN, 100);
         maxMsgLen = intent.getIntExtra(Constants.MAX_MSG_CHAR_LEN, 10);
         maxEmailLength = intent.getIntExtra(Constants.MAX_EMAIL_LEN, 10);
         referralMsg = intent.getStringExtra(Constants.REFERRAL_MSG);
-        productDesc = intent.getStringExtra(Constants.P_DESC);
+        playStoreLink = intent.getStringExtra(Constants.PLAY_STORE_LINK);
+        //productDesc = intent.getStringExtra(Constants.P_DESC);
         productRefImage = intent.getStringExtra(Constants.REF_IMAGE_URL);
         renderMemberReferralList();
 
@@ -198,9 +200,9 @@ public class MemberReferralOptionsActivity extends BackButtonActivity {
 
     private boolean isFacebookAvailable() {
         builder = new FacebookDialog.MessageDialogBuilder(this)
-                .setLink("https://bigbasket.com/register/") //todo valid refLinkFB
+                .setLink(playStoreLink)
                 .setName("Bigbasket referral")
-                        //.setCaption("Build great social apps that engage your friends.") //todo
+                //.setCaption("Build great social apps that engage your friends.") //subheading
                 .setDescription(referralMsg)
                 .setPicture(productRefImage)
                 .setDataErrorsFatal(true);
@@ -220,7 +222,7 @@ public class MemberReferralOptionsActivity extends BackButtonActivity {
                 sendFreeSMS();
                 break;
             case Constants.WHATS_APP:
-                sendWhatsAppMsg(referralMsg + "\n" + refLink);
+                sendWhatsAppMsg(referralMsg + "\n" + playStoreLink);
                 break;
             case Constants.FACEBOOK:
                 useFacebookReferral();
@@ -229,10 +231,10 @@ public class MemberReferralOptionsActivity extends BackButtonActivity {
                 useBBmail();
                 break;
             case Constants.G_PLUS:
-                useGplus(referralMsg);
+                useGplus(referralMsg + "\n" + playStoreLink);
                 break;
             case Constants.SHARE_VIA_OTHER:
-                useOther(referralMsg);
+                useOther(referralMsg + "\n" + playStoreLink);
                 break;
         }
     }
@@ -375,8 +377,8 @@ public class MemberReferralOptionsActivity extends BackButtonActivity {
         waIntent.setType("text/plain");
         waIntent.setPackage(Constants.WHATS_APP_PACKAGE_NAME);
         if (waIntent != null) {
-            waIntent.putExtra(Intent.EXTRA_TEXT, "https://bigbasket.com/register/"); // mes
-            startActivity(Intent.createChooser(waIntent, null)); //title
+            waIntent.putExtra(Intent.EXTRA_TEXT, message);
+            startActivity(Intent.createChooser(waIntent, null));
         } else {
             Toast.makeText(this, "WhatsApp not found", Toast.LENGTH_SHORT)
                     .show();
@@ -393,9 +395,9 @@ public class MemberReferralOptionsActivity extends BackButtonActivity {
             uiHelper.trackPendingDialogCall(dialog.present());
         } else {
             FacebookDialog shareDialog = new FacebookDialog.ShareDialogBuilder(this)
-                    .setLink("https://bigbasket.com/register/") // valid refLinkFB
+                    .setLink(playStoreLink)
                     .setName("Bigbasket referral")
-                            //.setCaption("Build great social apps that engage your friends.") //todo
+                    //.setCaption("Build great social apps that engage your friends.")
                     .setDescription(referralMsg)
                     .setPicture(productRefImage)
                     .setDataErrorsFatal(true)
@@ -403,83 +405,9 @@ public class MemberReferralOptionsActivity extends BackButtonActivity {
 
             uiHelper.trackPendingDialogCall(shareDialog.present());
         }
-        /*
-        else {  //todo web login with dialog for facebook
-            if (Session.getActiveSession() == null || !Session.getActiveSession().isOpened()) {
-                Session.openActiveSession(getCurrentActivity(), true, callback);
-            } else {
-                publishFeedDialog();
-            }
-        }
-        */
     }
-
-    private Session.StatusCallback callback = new Session.StatusCallback() {
-
-        @Override
-        public void call(Session session, SessionState state, Exception exception) {
-
-            if (state.isOpened()) {
-                publishFeedDialog();
-            } else {
-                Toast.makeText(getCurrentActivity(), "Unable to open facebook session", Toast.LENGTH_SHORT)
-                        .show();
-            }
-        }
-    };
-
-    private void publishFeedDialog() {
-        Bundle params = new Bundle();
-        params.putString("name", "Bigbasket referral");
-        //params.putString("caption", "Build great social apps and get more installs.");
-        params.putString("description", referralMsg);
-        params.putString("link", "https://bigbasket.com/register/"); //todo refLinkFB
-        params.putString("picture", productRefImage);
-
-        WebDialog feedDialog = (
-                new WebDialog.FeedDialogBuilder(getCurrentActivity(),
-                        Session.getActiveSession(),
-                        params))
-                .setOnCompleteListener(new WebDialog.OnCompleteListener() {
-
-                    @Override
-                    public void onComplete(Bundle values,
-                                           FacebookException error) {
-                        if (error == null) {
-                            // When the story is posted, echo the success
-                            // and the post Id.
-                            final String postId = values.getString("post_id");
-                            if (postId != null) {
-                                Toast.makeText(getCurrentActivity(),
-                                        "Posted story, id: " + postId,
-                                        Toast.LENGTH_SHORT).show();
-                            } else {
-                                // User clicked the Cancel button
-                                Toast.makeText(getCurrentActivity().getApplicationContext(),
-                                        "Publish cancelled",
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                        } else if (error instanceof FacebookOperationCanceledException) {
-                            // User clicked the "x" button
-                            Toast.makeText(getCurrentActivity().getApplicationContext(),
-                                    "Publish cancelled",
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
-                            // Generic, ex: network error
-                            Toast.makeText(getCurrentActivity().getApplicationContext(),
-                                    "Error posting story",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                })
-                .build();
-        feedDialog.show();
-    }
-
 
     private void useBBmail() {
-        // open email form dialog
         memberRefDialog = new ReferralDialog(getCurrentActivity(), this);
         memberRefDialog.show(getCurrentActivity().getSupportFragmentManager(),
                 Constants.REF_DIALOG_FLAG);
@@ -566,7 +494,7 @@ public class MemberReferralOptionsActivity extends BackButtonActivity {
         gplusIntent.setPackage(Constants.GOOGLE_PLUS_APP_PACKAGE_NAME);
         if (gplusIntent != null) {
             gplusIntent.putExtra(Intent.EXTRA_TEXT, message);
-            startActivity(Intent.createChooser(gplusIntent, message));
+            startActivity(Intent.createChooser(gplusIntent, null));
         } else {
             Toast.makeText(this, "WhatsApp not found", Toast.LENGTH_SHORT)
                     .show();
@@ -594,4 +522,73 @@ intent.setPackage("com.linkedin.android");
 //GooglePlus
 intent.setPackage("com.google.android.apps.plus");
      */
+
+
+
+
+       /*
+    private Session.StatusCallback callback = new Session.StatusCallback() {
+
+        @Override
+        public void call(Session session, SessionState state, Exception exception) {
+
+            if (state.isOpened()) {
+                publishFeedDialog();
+            } else {
+                Toast.makeText(getCurrentActivity(), "Unable to open facebook session", Toast.LENGTH_SHORT)
+                        .show();
+            }
+        }
+    };
+
+    private void publishFeedDialog() {
+        Bundle params = new Bundle();
+        params.putString("name", "Bigbasket referral");
+        //params.putString("caption", "Build great social apps and get more installs.");
+        params.putString("description", referralMsg);
+        params.putString("link", "https://bigbasket.com/register/"); //todo refLinkFB
+        params.putString("picture", productRefImage);
+
+        WebDialog feedDialog = (
+                new WebDialog.FeedDialogBuilder(getCurrentActivity(),
+                        Session.getActiveSession(),
+                        params))
+                .setOnCompleteListener(new WebDialog.OnCompleteListener() {
+
+                    @Override
+                    public void onComplete(Bundle values,
+                                           FacebookException error) {
+                        if (error == null) {
+                            // When the story is posted, echo the success
+                            // and the post Id.
+                            final String postId = values.getString("post_id");
+                            if (postId != null) {
+                                Toast.makeText(getCurrentActivity(),
+                                        "Posted story, id: " + postId,
+                                        Toast.LENGTH_SHORT).show();
+                            } else {
+                                // User clicked the Cancel button
+                                Toast.makeText(getCurrentActivity().getApplicationContext(),
+                                        "Publish cancelled",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        } else if (error instanceof FacebookOperationCanceledException) {
+                            // User clicked the "x" button
+                            Toast.makeText(getCurrentActivity().getApplicationContext(),
+                                    "Publish cancelled",
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            // Generic, ex: network error
+                            Toast.makeText(getCurrentActivity().getApplicationContext(),
+                                    "Error posting story",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                })
+                .build();
+        feedDialog.show();
+    }
+    */
+
 }

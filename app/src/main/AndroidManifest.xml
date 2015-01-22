@@ -213,6 +213,10 @@
             android:name=".activity.account.uiv3.MemberReferralTCActivity"
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
+        <activity
+            android:name=".activity.account.uiv3.BBReferralMailActivity"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+
 
         <activity
             android:name=".activity.account.uiv3.ContactListActivity"

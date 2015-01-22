@@ -15,5 +15,6 @@ public interface NavigationCodes {
     public static final int DELETE_FROM_SHOPPING_LIST_OK = 200;
     public static final int PICK_CONTACT = 1331;
     public static final int CONTACT_NUMBER_SELECTED = 1332;
+    public static final int REF_EMAIL_LIST = 99;
 
 }

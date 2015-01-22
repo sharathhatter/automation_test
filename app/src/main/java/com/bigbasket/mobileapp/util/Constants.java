@@ -592,11 +592,14 @@ public class Constants {
     public static final String REF_IMAGE_URL = "ref_p_img_url";
     public static final String REF_LINK_FB = "referral_link_fb";
     public static final String REF_LINK = "referral_link";
+    public static final String PLAY_STORE_LINK = "play_store_link";
     public static final String MAX_EMAIL_LEN = "max_email_len";
+    public static final String REF_EMAIL_BODY = "email_body";
     public static final String MAX_MSG_LEN = "max_msg_len";
     public static final String MAX_MSG_CHAR_LEN = "max_msg_char_len";
     public static final String INCENTIVE_DESC = "incentive_desc";
     public static final String REFERRAL_MSG = "referral_msg";
+    public static final String REFERRAL_CLIENT_MSG = "ref_client_msg";
     public static final String INCENTIVE_TYPE = "incentive_type";
     public static final String MEMBER_CREDIT_AMOUNT = "member_credit_amount";
     public static final String VOUCHER_CODE = "voucher_code";
@@ -609,13 +612,20 @@ public class Constants {
 
     public static final String WHATS_APP_PACKAGE_NAME = "com.whatsapp";
     public static final String GOOGLE_PLUS_APP_PACKAGE_NAME = "com.google.android.apps.plus";
+    public static final String GMAIL_APP_PACKAGE_NAME = "com.google.android.gm";
+    public static final String GMAIL_APP_CLASS_NAME = "com.google.android.gm.ComposeActivityGmail";
+    public static final String HIKE_PACKAEG_NAME = "com.bsb.hike";
     public static final String FREE_MSG = "Free SMS";
     public static final String FACEBOOK = "Facebook";
     public static final String WHATS_APP = "WhatsApp";
+    public static final String GMAIL = "Gmail";
+    public static final String HIKE = "Hike";
     public static final String G_PLUS = "Google+";
     public static final String REF_EMAIL = "Email";
     public static final String SHARE_VIA_OTHER = "Share via Other";
     public static final String OTP_REFERRAL_DIALOG = "otp_tc_dailog";
+    public static final String REF_EMAIL_LIST = "ref_email_list";
+    public static final String REF_EMAIL_LEN = "ref_email_len";
     // Spend Trends
     public static final String RANGE_NAME = "range_name";
     public static final String RANGE_VAL = "range_value";

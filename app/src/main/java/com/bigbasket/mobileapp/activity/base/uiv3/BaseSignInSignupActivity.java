@@ -132,6 +132,9 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity implem
                             intent.putExtra(Constants.SOCIAL_LOGIN_TYPE, loginType);
                             startActivityForResult(intent, Constants.SOCIAL_ACCOUNT_NOT_LINKED);
                             break;
+                        case ApiErrorCodes.INVALID_REFERRAL_CODE:
+                            showAlertDialog(null, loginApiResponse.message);
+                            break;
                         default:
                             handler.sendEmptyMessage(loginApiResponse.getErrorTypeAsInt());
                             break;

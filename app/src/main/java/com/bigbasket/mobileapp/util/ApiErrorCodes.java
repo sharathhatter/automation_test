@@ -39,4 +39,5 @@ public interface ApiErrorCodes {
     public static final int NO_ACCOUNT = 183;
     public static final int PRODUCT_QTY_LIMIT = 184;
     public static final int ADDRESS_NOT_SERVED = 185;
+    public static final int INVALID_REFERRAL_CODE = 186;
 }

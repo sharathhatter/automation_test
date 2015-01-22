@@ -19,6 +19,8 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.MemberReferralOptionsActivity;
+import com.bigbasket.mobileapp.activity.account.uiv3.MemberReferralTCActivity;
+import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.adapter.product.CategoryAdapter;
@@ -122,11 +124,11 @@ public class StartActivity extends BaseActivity {
 
     private void loadHomePage() {
 
-//        Intent intent = new Intent(this, MemberReferralOptionsActivity.class);//MemberReferralOptionsActivity
-//        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-        Intent homePageIntent = new Intent(this, BBActivity.class);
-        homePageIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_HOME);
-        startActivityForResult(homePageIntent, Constants.FORCE_REGISTER_CODE);
+        Intent intent = new Intent(this, MemberReferralTCActivity.class);//MemberReferralOptionsActivity
+        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+//        Intent homePageIntent = new Intent(this, BBActivity.class);
+//        homePageIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_HOME);
+//        startActivityForResult(homePageIntent, Constants.FORCE_REGISTER_CODE);
     }
 
     private void loadCities() {

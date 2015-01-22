@@ -31,17 +31,11 @@ public class MemberReferralProduct {
     @SerializedName(Constants.INCENTIVE_DESC)
     public String incentiveDesc;
 
-    @SerializedName(Constants.MIN_ORDER_VAL)
+    @SerializedName(Constants.MIN_ORDER_VAL) //todo
     public int minOrderVal;
 
     @SerializedName(Constants.TC)
     public ArrayList<String> termAndCondition;
-
-    @SerializedName(Constants.REF_LINK_FB)
-    public String refLinkFb;
-
-    @SerializedName(Constants.REF_LINK)
-    public String refLink;
 
     @SerializedName(Constants.MAX_EMAIL_LEN)
     public int maxEmailLen;
@@ -55,6 +49,15 @@ public class MemberReferralProduct {
     @SerializedName(Constants.REFERRAL_MSG)
     public String referralMsg;
 
+    @SerializedName(Constants.REFERRAL_CLIENT_MSG)
+    public String referralClientMsg;
+
+    @SerializedName(Constants.PLAY_STORE_LINK)
+    public String playStoreLink;
+
     @SerializedName(Constants.P_DESC)
     public String productDesc;
+
+    @SerializedName(Constants.REF_EMAIL_BODY)
+    public String emailBody;
 }

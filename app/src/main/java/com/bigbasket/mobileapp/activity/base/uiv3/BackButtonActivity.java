@@ -22,11 +22,11 @@ public class BackButtonActivity extends BBActivity {
         handleIntent(intent, savedInstanceState);
     }
 
-    @Override
-    protected void setOptionsMenu(Menu menu) {
-        BBDrawerLayout drawerLayout = (BBDrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawerLayout != null) {
-            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-        }
-    }
+//    @Override
+//    protected void setOptionsMenu(Menu menu) {
+//        BBDrawerLayout drawerLayout = (BBDrawerLayout) findViewById(R.id.drawer_layout);
+//        if (drawerLayout != null) {
+//            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+//        }
+//    }
 }

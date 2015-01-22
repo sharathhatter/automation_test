@@ -483,6 +483,7 @@
     <string name="invalid_email">Email address is invalid</string>
     <string name="ref_submit">REFER</string>
     <string name="referFriends">Refer Friends</string>
+    <string name="bbMail">Send mail</string>
     <!--<string name="refTC">Terms &#38 conditions</string>-->
 
 
