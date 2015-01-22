@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.util;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -31,6 +32,9 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginUserDetails;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
+import com.bigbasket.mobileapp.handler.LocalyticsHandler;
+import com.google.gson.Gson;
+import com.localytics.android.LocalyticsAmpSession;
 import com.moe.pushlibrary.MoEHelper;
 import com.moe.pushlibrary.utils.MoEHelperConstants;
 
@@ -202,34 +206,65 @@ public class UIUtil {
         }
     }
 
-    public static void updateStoredUserDetails(Context ctx, LoginUserDetails userDetails, String email, String mId) {
+    public static void updateStoredUserDetails(Application application,
+                                               Context ctx, LoginUserDetails userDetails, String email, String mId) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ctx);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(Constants.FIRST_NAME_PREF, userDetails.firstName);
         editor.putString(Constants.MEMBER_FULL_NAME_KEY, userDetails.fullName);
         editor.putString(Constants.MID_KEY, mId);
 
-        MoEHelper moEHelper = new MoEHelper(ctx);
-        moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_UNIQUE_ID, mId);
-        moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_EMAIL, email);
-        moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_MOBILE, userDetails.mobileNumber);
-        moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_FIRST_NAME, userDetails.firstName);
-        moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_LAST_NAME, userDetails.lastName);
-        moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_NAME, userDetails.fullName);
-        moEHelper.setUserAttribute("Created On", userDetails.createdOn);
-        if (!TextUtils.isEmpty(userDetails.gender)) {
-            moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_GENDER, userDetails.gender);
-        }
-        if (!TextUtils.isEmpty(userDetails.hub)) {
-            moEHelper.setUserAttribute("Hub", userDetails.hub);
-        }
-        if (!TextUtils.isEmpty(userDetails.dateOfBirth)) {
-            moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_BDAY, userDetails.dateOfBirth);
-        }
+        if (userDetails.analytics != null) {
+            editor.putString(Constants.CITY, userDetails.analytics.city);
+            editor.putString(Constants.CITY_ID, String.valueOf(userDetails.analytics.cityId));
 
-        if (userDetails.additionalAttrs != null) {
-            for (Map.Entry<String, Object> additionalInfoObj : userDetails.additionalAttrs.entrySet()) {
-                moEHelper.setUserAttribute(additionalInfoObj.getKey(), additionalInfoObj.getValue().toString());
+            // Any key added here, must be cleared when user logs-out
+            LocalyticsAmpSession localyticsSession = LocalyticsHandler.getInstance(application).getSession();
+            if (localyticsSession != null) {
+                localyticsSession.setCustomerName(userDetails.fullName);
+                localyticsSession.setCustomerId(mId);
+                localyticsSession.setCustomerEmail(email);
+                localyticsSession.setCustomerData(LocalyticsHandler.CUSTOMER_REGISTERED_ON, userDetails.analytics.createdOn);
+                localyticsSession.setCustomerData(LocalyticsHandler.CUSTOMER_MOBILE, userDetails.analytics.mobileNumber);
+                localyticsSession.setCustomerData(LocalyticsHandler.CUSTOMER_CITY, userDetails.analytics.city);
+            }
+
+            MoEHelper moEHelper = new MoEHelper(ctx);
+            moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_UNIQUE_ID, mId);
+            moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_EMAIL, email);
+            moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_MOBILE, userDetails.analytics.mobileNumber);
+            moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_FIRST_NAME, userDetails.firstName);
+            moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_LAST_NAME, userDetails.lastName);
+            moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_NAME, userDetails.fullName);
+            moEHelper.setUserAttribute(LocalyticsHandler.CUSTOMER_REGISTERED_ON, userDetails.analytics.createdOn);
+            moEHelper.setUserAttribute(LocalyticsHandler.CUSTOMER_CITY, userDetails.analytics.city);
+            if (!TextUtils.isEmpty(userDetails.analytics.gender)) {
+                moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_GENDER, userDetails.analytics.gender);
+                if (localyticsSession != null) {
+                    localyticsSession.setCustomerData(LocalyticsHandler.CUSTOMER_GENDER, userDetails.analytics.gender);
+                }
+            }
+            if (!TextUtils.isEmpty(userDetails.analytics.hub)) {
+                moEHelper.setUserAttribute(LocalyticsHandler.CUSTOMER_HUB, userDetails.analytics.hub);
+                if (localyticsSession != null) {
+                    localyticsSession.setCustomerData(LocalyticsHandler.CUSTOMER_HUB, userDetails.analytics.hub);
+                }
+            }
+            if (!TextUtils.isEmpty(userDetails.analytics.dateOfBirth)) {
+                moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_BDAY, userDetails.analytics.dateOfBirth);
+                if (localyticsSession != null) {
+                    localyticsSession.setCustomerData(LocalyticsHandler.CUSTOMER_BDAY, userDetails.analytics.dateOfBirth);
+                }
+            }
+
+            if (userDetails.analytics.additionalAttrs != null) {
+                for (Map.Entry<String, Object> additionalInfoObj : userDetails.analytics.additionalAttrs.entrySet()) {
+                    moEHelper.setUserAttribute(additionalInfoObj.getKey(), additionalInfoObj.getValue().toString());
+                    if (localyticsSession != null) {
+                        localyticsSession.setCustomerData(additionalInfoObj.getKey(), additionalInfoObj.getValue().toString());
+                    }
+                }
+                editor.putString(Constants.ANALYTICS_ADDITIONAL_ATTRS, new Gson().toJson(userDetails.analytics.additionalAttrs));
             }
         }
         editor.commit();

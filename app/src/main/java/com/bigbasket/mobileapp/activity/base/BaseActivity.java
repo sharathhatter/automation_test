@@ -32,6 +32,7 @@ import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 import com.bigbasket.mobileapp.adapter.order.PrescriptionImageAdapter;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
+import com.bigbasket.mobileapp.handler.LocalyticsHandler;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
 import com.bigbasket.mobileapp.interfaces.COMarketPlaceAware;
@@ -54,6 +55,8 @@ import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.demach.konotor.Konotor;
+import com.google.gson.Gson;
+import com.localytics.android.LocalyticsAmpSession;
 import com.moe.pushlibrary.MoEHelper;
 
 import org.json.JSONException;
@@ -64,6 +67,7 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
@@ -564,6 +568,32 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         editor.remove(Constants.SOCIAL_ACCOUNT_TYPE);
         editor.commit();
         AuthParameters.updateInstance(getCurrentActivity());
+        LocalyticsAmpSession localyticsSession = LocalyticsHandler.getInstance(getApplication()).getSession();
+
+        String analyticsAdditionalAttrsJson = preferences.getString(Constants.ANALYTICS_ADDITIONAL_ATTRS, null);
+        editor.remove(Constants.ANALYTICS_ADDITIONAL_ATTRS);
+
+        if (localyticsSession != null) {
+            localyticsSession.setCustomerName(null);
+            localyticsSession.setCustomerEmail(null);
+            localyticsSession.setCustomerId(null);
+            localyticsSession.setCustomerData(LocalyticsHandler.CUSTOMER_MOBILE, null);
+            localyticsSession.setCustomerData(LocalyticsHandler.CUSTOMER_HUB, null);
+            localyticsSession.setCustomerData(LocalyticsHandler.CUSTOMER_MOBILE, null);
+            localyticsSession.setCustomerData(LocalyticsHandler.CUSTOMER_REGISTERED_ON, null);
+            localyticsSession.setCustomerData(LocalyticsHandler.CUSTOMER_BDAY, null);
+            localyticsSession.setCustomerData(LocalyticsHandler.CUSTOMER_GENDER, null);
+            if (!TextUtils.isEmpty(analyticsAdditionalAttrsJson)) {
+                Gson gson = new Gson();
+                HashMap<String, Object> additionalAttrMap = new HashMap<>();
+                additionalAttrMap = (HashMap<String, Object>) gson.fromJson(analyticsAdditionalAttrsJson, additionalAttrMap.getClass());
+                if (additionalAttrMap != null) {
+                    for (Map.Entry<String, Object> entry : additionalAttrMap.entrySet()) {
+                        localyticsSession.setCustomerData(entry.getKey(), null);
+                    }
+                }
+            }
+        }
     }
 
     public void onLoginSuccess() {
@@ -590,7 +620,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     public void trackEvent(String eventName, Map<String, String> eventAttribs) {
         // todo check if MoEngage enabled
         AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());
-        if (!authParameters.isMoEngaleEnabled()) return;
+        if (!authParameters.isMoEngageEnabled()) return;
         trackEvent(eventName, eventAttribs, null, null);
     }
 
@@ -598,24 +628,29 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs, String source, String sourceValue) {
         AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());
-        if (!authParameters.isMoEngaleEnabled()) return;
+        if (authParameters.isMoEngageEnabled()) {
 
-        JSONObject analyticsJsonObj = new JSONObject();
-        try {
-            if (eventAttribs != null) {
-                for (Map.Entry<String, String> entry : eventAttribs.entrySet()) {
-                    analyticsJsonObj.put(entry.getKey(), entry.getValue());
+            JSONObject analyticsJsonObj = new JSONObject();
+            try {
+                if (eventAttribs != null) {
+                    for (Map.Entry<String, String> entry : eventAttribs.entrySet()) {
+                        analyticsJsonObj.put(entry.getKey(), entry.getValue());
+                    }
                 }
+                if (!TextUtils.isEmpty(source)) {
+                    analyticsJsonObj.put(Constants.SOURCE, source);
+                }
+                if (!TextUtils.isEmpty(sourceValue)) {
+                    analyticsJsonObj.put(Constants.SOURCE_ID, sourceValue);
+                }
+                moEHelper.trackEvent(eventName, analyticsJsonObj);
+            } catch (JSONException e) {
+                Log.e("Analytics", "Failed to send event = " + eventName + " to analytics");
             }
-            if (!TextUtils.isEmpty(source)) {
-                analyticsJsonObj.put(Constants.SOURCE, source);
-            }
-            if (!TextUtils.isEmpty(sourceValue)) {
-                analyticsJsonObj.put(Constants.SOURCE_ID, sourceValue);
-            }
-            moEHelper.trackEvent(eventName, analyticsJsonObj);
-        } catch (JSONException e) {
-            Log.e("Analytics", "Failed to send event = " + eventName + " to analytics");
+        }
+        LocalyticsHandler localyticsHandler = LocalyticsHandler.getInstance(getApplication());
+        if (authParameters.isLocalyticsEnabled() && localyticsHandler != null && localyticsHandler.getSession() != null) {
+            localyticsHandler.getSession().tagEvent(eventName, eventAttribs);
         }
     }
 

@@ -109,7 +109,8 @@ public class HomeFragment extends BaseSectionFragment {
                                 editor.putString(Constants.VERSION_NAME, getAppVersion());
                                 editor.commit();
                                 if (updateVersionInfoApiResponse.apiResponseContent.userDetails != null) {
-                                    UIUtil.updateStoredUserDetails(getActivity(),
+                                    UIUtil.updateStoredUserDetails(getActivity().getApplication(),
+                                            getActivity(),
                                             updateVersionInfoApiResponse.apiResponseContent.userDetails,
                                             AuthParameters.getInstance(getActivity()).getMemberEmail(),
                                             updateVersionInfoApiResponse.apiResponseContent.mId);

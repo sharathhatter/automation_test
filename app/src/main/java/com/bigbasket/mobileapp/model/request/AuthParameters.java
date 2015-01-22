@@ -25,7 +25,7 @@ public class AuthParameters {
     private String memberEmail;
     private String memberFullName;
     private boolean isKonotorEnabled;
-    private boolean isMoEngaleEnabled;
+    private boolean isMoEngageEnabled;
     private boolean isLocalyticsEnabled;
 
     public static void updateInstance(Context context) {
@@ -72,8 +72,8 @@ public class AuthParameters {
         return isKonotorEnabled;
     }
 
-    public boolean isMoEngaleEnabled() {
-        return isMoEngaleEnabled;
+    public boolean isMoEngageEnabled() {
+        return isMoEngageEnabled;
     }
 
     public void setMoEngaleLocaliticsEnabled(boolean isMoEngaleEnabled,
@@ -83,7 +83,7 @@ public class AuthParameters {
         editor.putBoolean(Constants.ENABLE_MOENGAGE, isMoEngaleEnabled);
         editor.putBoolean(Constants.ENABLE_LOCALYTICS, isLocalyticsEnabled);
         editor.commit();
-        this.isMoEngaleEnabled = isMoEngaleEnabled;
+        this.isMoEngageEnabled = isMoEngaleEnabled;
         this.isLocalyticsEnabled = isLocalyticsEnabled;
     }
 
@@ -116,7 +116,7 @@ public class AuthParameters {
             memberFullName = prefer.getString(Constants.MEMBER_FULL_NAME_KEY, "");
             osVersion = prefer.getString(Constants.OS_PREFERENCE_KEY, "");
             isKonotorEnabled = prefer.getBoolean(Constants.ENABLE_KONOTOR, false);
-            isMoEngaleEnabled = prefer.getBoolean(Constants.ENABLE_MOENGAGE, false);
+            isMoEngageEnabled = prefer.getBoolean(Constants.ENABLE_MOENGAGE, false);
         }
     }
 

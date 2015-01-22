@@ -193,7 +193,7 @@ public class Constants {
     public static final String MEMBER_FULL_NAME_KEY = "memberName";
     public static final String HUB = "hub";
     public static final String CREATED_ON = "created_on";
-    public static final String ADDITIONAL_ATTRS = "additional_attrs";
+    public static final String ANALYTICS_ADDITIONAL_ATTRS = "additional_attrs";
     public static final String GENDER = "gender";
     public static final String SOURCE = "src";
     public static final String DOB = "dob";
@@ -285,6 +285,7 @@ public class Constants {
     public static final String ENABLE_MOENGAGE = "enable_moengage";
     public static final String FIRST_TIME_COOKIE_TIME_STAMP = "firstTimeCookieTimestamp";
     public static final String ENABLE_LOCALYTICS = "enable_localytics";
+    public static final String ANALYTICS = "analytics";
     public static final String ANALYTICS_ENGINE = "analytics_engine";
     public static final String APP_EXPIRE_BY = "app_expired_by";
     public static final String IS_UPDATE_REQUIRED = "is_update_required";
