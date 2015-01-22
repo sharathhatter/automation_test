@@ -22,7 +22,7 @@ public class BBTab<T extends Fragment> {
         return tabTitle;
     }
 
-    public Class<T> getmFragmentClass() {
+    public Class<T> getFragmentClass() {
         return mFragmentClass;
     }
 

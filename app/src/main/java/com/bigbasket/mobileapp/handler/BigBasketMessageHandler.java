@@ -111,6 +111,9 @@ public class BigBasketMessageHandler<T> {
             case ApiErrorCodes.ADDRESS_NOT_SERVED:
                 ((ApiErrorAware) ctx).showApiErrorDialog(message, true);
                 break;
+            case ApiErrorCodes.EMAIL_DOESNT_EXISTS:
+                ((ApiErrorAware) ctx).showApiErrorDialog(message, finish);
+                break;
             case NavigationCodes.ADD_TO_SHOPPINGLIST_OK:
                 if (((ActivityAware) ctx).getCurrentActivity() != null) {
                     Toast.makeText(((ActivityAware) ctx).getCurrentActivity(),

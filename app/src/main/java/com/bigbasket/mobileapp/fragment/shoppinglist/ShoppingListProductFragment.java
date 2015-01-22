@@ -145,15 +145,15 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
         HashMap<String, String> map = new HashMap<>();
         map.put(TrackEventkeys.SHOPPING_LIST_NAME, mShoppingListName.getName());
         map.put(TrackEventkeys.PRODUCT_TOP_CAT, topcatName);
-        if(mShoppingListName.isSystem()){
+        if (mShoppingListName.isSystem()) {
             trackEvent(TrackingAware.SHOP_LST_SYSTEM_LIST_CATEGORY_DETAIL, map);
-        }else {
+        } else {
             trackEvent(TrackingAware.SHOP_LST_CATEGORY_DETAIL, null);
         }
         contentView.removeAllViews();
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        View shopListHeaderLayout = inflater.inflate(R.layout.uiv3_shopping_list_products_header, null);
+        View shopListHeaderLayout = inflater.inflate(R.layout.uiv3_shopping_list_products_header, contentView, false);
         TextView brandNameTxt = (TextView) shopListHeaderLayout.findViewById(R.id.brandNameTxt);
         String topname = mShoppingListDetail.getTopCategoryName();
 
@@ -188,7 +188,7 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
         LinearLayout contentView = getContentView();
         if (contentView == null) return;
 
-        RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 2, 3);
+        RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 2, 3, contentView);
 
         ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
                 .setCommonTypeface(faceRobotoRegular)

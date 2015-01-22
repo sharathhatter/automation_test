@@ -132,7 +132,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
         if (obj instanceof CartItem) {
             if (row == null || row.getTag() == null ||
                     !row.getTag().toString().equalsIgnoreCase(Constants.IS_PRODUCT)) {
-                row = inflater.inflate(R.layout.uiv3_cart_item_row, null);
+                row = inflater.inflate(R.layout.uiv3_cart_item_row, parent, false);
                 row.setTag(Constants.IS_PRODUCT);
                 rowHolder = new RowHolder(row);
                 row.setTag(rowHolder);
@@ -163,7 +163,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
             return showAnnotationInfo(obj);
         } else {
             HeaderTitleHolder headerTitleHolder;
-            row = inflater.inflate(R.layout.uiv3_category_row, null);
+            row = inflater.inflate(R.layout.uiv3_category_row, parent, false);
             headerTitleHolder = new HeaderTitleHolder(row);
             renderHeaderView(headerTitleHolder, position, (CartItemHeader) obj);
         }

@@ -18,7 +18,7 @@ import android.widget.CursorAdapter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
-public class MultipleEmailAutoComplete extends AutoCompleteTextView implements AdapterView.OnItemClickListener{
+public class MultipleEmailAutoComplete extends AutoCompleteTextView implements AdapterView.OnItemClickListener {
 
     private String previous = "";
     private String separator = " ";

@@ -80,14 +80,12 @@ public class MessageFormatUtil {
                             intent.putExtra(Constants.FRAGMENT_CODE, fragmentCode);
                             intent.putExtra(Constants.INTERNAL_VALUE, messageParamInfoArrayList.getInternalValue());
                             currentActivity.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                            currentActivity.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
                         }
                     } else if (messageParamInfoArrayList.getType().equals(Constants.WEB_LINK)) {
                         if (messageParamInfoArrayList.getInternalValue() != null) {
                             Intent intent = new Intent(currentActivity, FlatPageWebViewActivity.class);
                             intent.putExtra(Constants.WEBVIEW_URL, messageParamInfoArrayList.getInternalValue());
                             currentActivity.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                            currentActivity.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
                         }
                     }
                 }
@@ -128,7 +126,6 @@ public class MessageFormatUtil {
                             Intent intent = new Intent(currentActivity, FlatPageWebViewActivity.class);
                             intent.putExtra(Constants.WEBVIEW_URL, messageParamInfoArrayList.getInternalValue());
                             currentActivity.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                            currentActivity.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
                         }
                     }
                 }

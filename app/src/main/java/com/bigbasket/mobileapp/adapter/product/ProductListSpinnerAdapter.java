@@ -48,24 +48,24 @@ public class ProductListSpinnerAdapter extends ArrayAdapter<Product> {
 
     @Override
     public View getDropDownView(int position, View convertView, ViewGroup parent) {
-        return getCustomView(position, convertView, true, null);
+        return getCustomView(position, convertView, parent, true, null);
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        return getCustomView(position, convertView, false, " (More sizes available)");
+        return getCustomView(position, convertView, parent, false, " (More sizes available)");
     }
 
-    private View getInflatedView() {
+    private View getInflatedView(ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        return inflater.inflate(R.layout.product_spinner_row, null);
+        return inflater.inflate(R.layout.product_spinner_row, parent, false);
     }
 
-    private View getCustomView(int position, View convertView, boolean showPrice, @Nullable String additionalTxt) {
+    private View getCustomView(int position, View convertView, ViewGroup parent, boolean showPrice, @Nullable String additionalTxt) {
         View row = convertView;
         Product product = productArrayList.get(position);
         if (row == null) {
-            row = getInflatedView();
+            row = getInflatedView(parent);
         }
         TextView txtProductPkgDesc = (TextView) row.findViewById(R.id.txtProductPkgDesc);
         TextView txtProductSellPrice = (TextView) row.findViewById(R.id.txtProductSellPrice);

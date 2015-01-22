@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.CarouselAdapter;
+import com.bigbasket.mobileapp.handler.OnSectionItemClickListener;
 import com.bigbasket.mobileapp.model.section.Renderer;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
@@ -37,13 +38,13 @@ public abstract class BaseSectionFragment extends BaseFragment {
         for (Section section : mSectionData.getSections()) {
             switch (section.getSectionType()) {
                 case Section.BANNER:
-                    View bannerView = getBannerView(section, inflater);
+                    View bannerView = getBannerView(section, inflater, mainLayout);
                     if (bannerView != null) {
                         mainLayout.addView(bannerView);
                     }
                     break;
                 case Section.SALUTATION:
-                    View salutationView = getSalutationView(section, inflater);
+                    View salutationView = getSalutationView(section, inflater, mainLayout);
                     if (salutationView != null) {
                         mainLayout.addView(salutationView);
                     }
@@ -56,14 +57,14 @@ public abstract class BaseSectionFragment extends BaseFragment {
                     break;
                 case Section.PRODUCT_CAROUSEL:
                     View productCarouselView = getCarouselView(section, inflater,
-                            R.layout.uiv3_product_carousel_row, R.layout.uiv3_horizontal_product_recyclerview);
+                            R.layout.uiv3_product_carousel_row, R.layout.uiv3_horizontal_product_recyclerview, mainLayout);
                     if (productCarouselView != null) {
                         mainLayout.addView(productCarouselView);
                     }
                     break;
                 case Section.NON_PRODUCT_CAROUSEL:
                     View carouselView = getCarouselView(section, inflater,
-                            R.layout.uiv3_carousel_row, R.layout.uiv3_horizontal_recycler_view);
+                            R.layout.uiv3_carousel_row, R.layout.uiv3_horizontal_recycler_view, mainLayout);
                     if (carouselView != null) {
                         mainLayout.addView(carouselView);
                     }
@@ -95,8 +96,8 @@ public abstract class BaseSectionFragment extends BaseFragment {
         }
     }
 
-    private View getBannerView(Section section, LayoutInflater inflater) {
-        View baseSlider = inflater.inflate(R.layout.uiv3_image_slider, null);
+    private View getBannerView(Section section, LayoutInflater inflater, ViewGroup parent) {
+        View baseSlider = inflater.inflate(R.layout.uiv3_image_slider, parent, false);
         SliderLayout bannerSlider = (SliderLayout) baseSlider.findViewById(R.id.imgSlider);
         for (SectionItem sectionItem : section.getSectionItems()) {
             if (!TextUtils.isEmpty(sectionItem.getTitle().getText())) {
@@ -104,19 +105,21 @@ public abstract class BaseSectionFragment extends BaseFragment {
                 textSliderView.description(sectionItem.getTitle().getText())
                         .image(sectionItem.getImage());
                 bannerSlider.addSlider(textSliderView);
+                textSliderView.setOnSliderClickListener(new OnSectionItemClickListener<>(this, section, sectionItem));
             } else {
                 DefaultSliderView defaultSliderView = new DefaultSliderView(getActivity());
                 defaultSliderView.image(sectionItem.getImage());
+                defaultSliderView.setOnSliderClickListener(new OnSectionItemClickListener<>(this, section, sectionItem));
                 bannerSlider.addSlider(defaultSliderView);
             }
         }
         return baseSlider;
     }
 
-    private View getSalutationView(Section section, LayoutInflater inflater) {
-        View baseSalutation = inflater.inflate(R.layout.uiv3_salutation_box, null);
+    private View getSalutationView(Section section, LayoutInflater inflater, ViewGroup parent) {
+        View baseSalutation = inflater.inflate(R.layout.uiv3_salutation_box, parent, false);
         TextView txtSalutationTitle = (TextView) baseSalutation.findViewById(R.id.txtSalutationTitle);
-        if (!TextUtils.isEmpty(section.getTitle().getText())) {
+        if (section.getTitle() != null && !TextUtils.isEmpty(section.getTitle().getText())) {
             txtSalutationTitle.setTypeface(faceRobotoRegular);
             txtSalutationTitle.setText(section.getTitle().getText());
         } else {
@@ -157,19 +160,21 @@ public abstract class BaseSectionFragment extends BaseFragment {
             if (!TextUtils.isEmpty(sectionItem.getTitle().getText())) {
                 txtSalutationItem.setTypeface(faceRobotoRegular);
                 txtSalutationItem.setText(sectionItem.getTitle().getText());
+                txtSalutationItem.setOnClickListener(new OnSectionItemClickListener<>(this, section, sectionItem));
                 layoutSalutationItem.setVisibility(View.VISIBLE);
             }
             if (!TextUtils.isEmpty(sectionItem.getImage())) {
                 layoutSalutationItem.setVisibility(View.VISIBLE);
                 ImageLoader.getInstance().displayImage(sectionItem.getImage(), imgSalutationItem);
+                imgSalutationItem.setOnClickListener(new OnSectionItemClickListener<>(this, section, sectionItem));
             }
         }
         return baseSalutation;
     }
 
     private View getCarouselView(Section section, LayoutInflater inflater, int layoutId,
-                                 int listLayoutId) {
-        View baseProductCarousel = inflater.inflate(listLayoutId, null);
+                                 int listLayoutId, ViewGroup parent) {
+        View baseProductCarousel = inflater.inflate(listLayoutId, parent, false);
         TextView txtListTitle = (TextView) baseProductCarousel.findViewById(R.id.txtListTitle);
         if (section.getTitle() == null || TextUtils.isEmpty(section.getTitle().getText())) {
             txtListTitle.setVisibility(View.GONE);
@@ -241,6 +246,7 @@ public abstract class BaseSectionFragment extends BaseFragment {
                 layoutParams.setMargins(margin, margin, margin, margin);
             }
             imageView.setLayoutParams(layoutParams);
+            imageView.setOnClickListener(new OnSectionItemClickListener<>(this, section, sectionItem));
             ImageLoader.getInstance().displayImage(sectionItem.getImage(), imageView);
         }
         return linearLayout;
@@ -255,7 +261,7 @@ public abstract class BaseSectionFragment extends BaseFragment {
         for (SectionItem sectionItem : section.getSectionItems()) {
             if (sectionItem.getTitle() == null || TextUtils.isEmpty(sectionItem.getTitle().getText()))
                 continue;
-            TextView txtVw = (TextView) inflater.inflate(R.layout.uiv3_msg_text, null);
+            TextView txtVw = (TextView) inflater.inflate(R.layout.uiv3_msg_text, linearLayout, false);
             Renderer renderer = mSectionData.getRenderersMap() != null ?
                     mSectionData.getRenderersMap().get(sectionItem.getRenderingId()) : null;
             if (renderer != null) {
@@ -274,6 +280,7 @@ public abstract class BaseSectionFragment extends BaseFragment {
                 txtVw.setBackgroundColor(renderer.getNativeBkgColor());
             }
             txtVw.setText(sectionItem.getTitle().getText());
+            txtVw.setOnClickListener(new OnSectionItemClickListener<>(this, section, sectionItem));
             txtVw.setTypeface(faceRobotoRegular);
             linearLayout.addView(txtVw);
         }
@@ -284,7 +291,7 @@ public abstract class BaseSectionFragment extends BaseFragment {
         LinearLayout menuContainer = new LinearLayout(getActivity());
         menuContainer.setOrientation(LinearLayout.VERTICAL);
         if (section.getTitle() != null && !TextUtils.isEmpty(section.getTitle().getText())) {
-            TextView txtVw = (TextView) inflater.inflate(R.layout.uiv3_msg_text, null);
+            TextView txtVw = (TextView) inflater.inflate(R.layout.uiv3_msg_text, menuContainer, false);
             Renderer renderer = mSectionData.getRenderersMap() != null ?
                     mSectionData.getRenderersMap().get(section.getTitle().getRenderingId()) : null;
             if (renderer != null) {
@@ -310,7 +317,7 @@ public abstract class BaseSectionFragment extends BaseFragment {
         for (SectionItem sectionItem : section.getSectionItems()) {
             if (sectionItem == null || sectionItem.getTitle() == null || TextUtils.isEmpty(sectionItem.getTitle().getText()))
                 continue;
-            View base = inflater.inflate(R.layout.uiv3_list_text, null);
+            View base = inflater.inflate(R.layout.uiv3_list_text, menuContainer, false);
             TextView txtListText = (TextView) base.findViewById(R.id.txtListText);
             Renderer renderer = mSectionData.getRenderersMap() != null ?
                     mSectionData.getRenderersMap().get(sectionItem.getRenderingId()) : null;
@@ -331,6 +338,7 @@ public abstract class BaseSectionFragment extends BaseFragment {
             }
             txtListText.setTypeface(faceRobotoRegular);
             txtListText.setText(sectionItem.getTitle().getText());
+            txtListText.setOnClickListener(new OnSectionItemClickListener<>(this, section, sectionItem));
             View viewSeparator = base.findViewById(R.id.viewSeparator);
             viewSeparator.setVisibility(View.VISIBLE);
             menuContainer.addView(base);
@@ -347,7 +355,7 @@ public abstract class BaseSectionFragment extends BaseFragment {
         tileContainer.setLayoutParams(tileContainerParams);
         double tileWidth = getTileImageWidth(section, 8);
         for (SectionItem sectionItem : section.getSectionItems()) {
-            View tileItemView = inflater.inflate(R.layout.uiv3_image_caption_layout, null);
+            View tileItemView = inflater.inflate(R.layout.uiv3_image_caption_layout, tileContainer, false);
             LinearLayout.LayoutParams tileItemLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
             tileItemLayoutParams.width = (int) tileWidth;
@@ -361,6 +369,7 @@ public abstract class BaseSectionFragment extends BaseFragment {
             } else {
                 txtCaption.setVisibility(View.GONE);
             }
+            imgContent.setOnClickListener(new OnSectionItemClickListener<>(this, section, sectionItem));
             ImageLoader.getInstance().displayImage(sectionItem.getImage(), imgContent);
             tileContainer.addView(tileItemView);
         }

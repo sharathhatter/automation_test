@@ -14,7 +14,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
 import com.bigbasket.mobileapp.model.cart.FulfillmentInfo;
 import com.bigbasket.mobileapp.util.Constants;
@@ -23,6 +22,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 
 public class ShowFulfillmentInfo<T> {
+    // TODO : Jugal fix this
     private FulfillmentInfo fulfillmentInfo;
     private Activity context;
     private Typeface faceRobotoSlabNrml;

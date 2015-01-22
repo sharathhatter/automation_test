@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 public class CategoryAdapter {
 
     private Context context;
-    public static final int CATEGORY_TIMEOUT_IN_MINS = 15;
+    public static final int CATEGORY_TIMEOUT_IN_MINS = 30;
     public static final String TOP_CATEGORY_TIMEOUT_PREF_KEY = "top_category_last_time";
 
     public CategoryAdapter(Context context) {
@@ -165,10 +165,10 @@ public class CategoryAdapter {
                         TimeUnit.MILLISECONDS);
                 return minutes > timeout;
             } catch (ParseException e) {
-                return false;
+                return true;
             }
         }
-        return false;
+        return true;
     }
 
     public void setLastFetchedTime(String preferenceKey) {

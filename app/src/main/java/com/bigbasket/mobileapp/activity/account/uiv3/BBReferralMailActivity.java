@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,11 +25,12 @@ import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
 /**
  * Created by jugal on 22/1/15.
  */
-public class BBReferralMailActivity  extends BackButtonActivity{
+public class BBReferralMailActivity extends BackButtonActivity {
 
 
     private EditText editTextListEmailAddress;
     private EditText editTextMessage;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,7 +38,7 @@ public class BBReferralMailActivity  extends BackButtonActivity{
         renderBBMailUI();
     }
 
-    private void renderBBMailUI(){
+    private void renderBBMailUI() {
         FrameLayout base = (FrameLayout) findViewById(R.id.content_frame);
         LinearLayout contentView = new LinearLayout(this);
         contentView.setOrientation(LinearLayout.VERTICAL);
@@ -63,6 +63,7 @@ public class BBReferralMailActivity  extends BackButtonActivity{
         editTextMessage = (EditText) bbMailView.findViewById(R.id.editTextMessage);
 
     }
+
     @Override
     protected void setOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();

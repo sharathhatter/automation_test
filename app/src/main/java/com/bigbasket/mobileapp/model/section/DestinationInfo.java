@@ -8,6 +8,16 @@ import com.google.gson.annotations.SerializedName;
 
 public class DestinationInfo implements Parcelable {
 
+    public static final String PRODUCT_CATEGORY = "product_category";
+    public static final String SEARCH = "search";
+    public static final String SHOPPING_LIST_LANDING = "shopping_list_landing";
+    public static final String SHOPPING_LIST_SUMMARY = "shopping_list_summary";
+    public static final String PROMO_DETAIL = "promo_detail";
+    public static final String CATEGORY_LANDING = "category_landing";
+    public static final String PREVIOUS_ORDERS = "previous_orders";
+    public static final String FLAT_PAGE = "flat_page";
+    public static final String PRODUCT_DETAIL = "product_detail";
+
     @SerializedName(Constants.DESTINATION_TYPE)
     private String destinationType;
 

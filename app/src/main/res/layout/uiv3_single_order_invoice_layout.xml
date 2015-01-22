@@ -59,7 +59,8 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/uiv3_list_separator_color" />
+            android:background="@color/uiv3_list_separator_color"
+            android:id="@+id/viewLocateOnMapSeparator" />
 
         <TextView
             android:layout_width="match_parent"

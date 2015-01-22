@@ -20,31 +20,24 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.order.uiv3.AvailableVoucherListActivity;
-import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
-import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
-import com.bigbasket.mobileapp.apiservice.models.response.PostVoucherApiResponse;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.interfaces.OnApplyVoucherListener;
 import com.bigbasket.mobileapp.interfaces.OnObservableScrollEvent;
 import com.bigbasket.mobileapp.interfaces.SelectedPaymentAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.order.ActiveVouchers;
 import com.bigbasket.mobileapp.model.order.PaymentType;
+import com.bigbasket.mobileapp.model.order.PayuResponse;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
-import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 
 public class PaymentSelectionFragment extends BaseFragment {
@@ -53,9 +46,10 @@ public class PaymentSelectionFragment extends BaseFragment {
     private ArrayList<ActiveVouchers> mActiveVouchersList;
     private LinkedHashMap<String, String> mPaymentTypeMap;
     private String mAmtPayable, mWalletUsed, mWalletRemaining;
-    private String mPotentialOrderId;
-    private SharedPreferences preferences;
-    private SharedPreferences.Editor editor;
+    private SharedPreferences.Editor mEditor;
+    private TextView mLblTransactionFailed;
+    private TextView mTxtTransactionFailureReason;
+    private TextView mLblSelectAnotherMethod;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -80,17 +74,42 @@ public class PaymentSelectionFragment extends BaseFragment {
             mWalletRemaining = "0";
         }
 
-        preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        editor = preferences.edit();
-        mPotentialOrderId = preferences.getString(Constants.POTENTIAL_ORDER_ID, null);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        mEditor = preferences.edit();
 
         ArrayList<PaymentType> paymentTypes = args.getParcelableArrayList(Constants.PAYMENT_TYPES);
         mPaymentTypeMap = new LinkedHashMap<>();
         for (PaymentType paymentType : paymentTypes) {
             mPaymentTypeMap.put(paymentType.getDisplayName(), paymentType.getValue());
         }
-        renderPaymentOptions();
-        trackEvent(TrackingAware.CHECKOUT_PAYMENT_SHOWN, null);
+
+        PayuResponse payuResponse = PayuResponse.getInstance(getActivity());
+        if (payuResponse != null && payuResponse.isSuccess()) {
+            renderPayuFailedToCreateOrderScenario();
+        } else {
+            renderPaymentOptions();
+            trackEvent(TrackingAware.CHECKOUT_PAYMENT_SHOWN, null);
+
+            String payuFailureReason = args.getString(Constants.PAYU_CANCELLED);
+            if (!TextUtils.isEmpty(payuFailureReason)) {
+                displayPayuFailure(payuFailureReason);
+            }
+        }
+    }
+
+    private void renderPayuFailedToCreateOrderScenario() {
+        if (getActivity() == null) return;
+
+        LinearLayout contentView = getContentView();
+        if (contentView == null) return;
+        contentView.removeAllViews();
+
+        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View base = inflater.inflate(R.layout.uiv3_payment_option, contentView, false);
+        View layoutPaymentContainer = base.findViewById(R.id.layoutPaymentContainer);
+        layoutPaymentContainer.setVisibility(View.GONE);
+
+        contentView.addView(base);
     }
 
     @Nullable
@@ -106,7 +125,10 @@ public class PaymentSelectionFragment extends BaseFragment {
         contentView.removeAllViews();
 
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View base = inflater.inflate(R.layout.uiv3_payment_option, null);
+        View base = inflater.inflate(R.layout.uiv3_payment_option, contentView, false);
+
+        View layoutPressOrderReview = base.findViewById(R.id.layoutPressOrderReviewContainer);
+        layoutPressOrderReview.setVisibility(View.GONE);
 
         TextView lblPaymentMethod = (TextView) base.findViewById(R.id.lblPaymentMethod);
         View layoutChoosePayment = base.findViewById(R.id.layoutChoosePayment);
@@ -157,16 +179,17 @@ public class PaymentSelectionFragment extends BaseFragment {
             RadioGroup layoutPaymentOptions = (RadioGroup) base.findViewById(R.id.layoutPaymentOptions);
             int i = 0;
             for (final Map.Entry<String, String> entrySet : mPaymentTypeMap.entrySet()) {
-                RadioButton rbtnPaymentType = getPaymentOptionRadioButton();
+                RadioButton rbtnPaymentType = getPaymentOptionRadioButton(layoutPaymentOptions);
                 rbtnPaymentType.setText(entrySet.getKey());
                 rbtnPaymentType.setId(i);
                 if (i == 0) {
                     if (getCurrentActivity() != null) {
                         rbtnPaymentType.setChecked(true);
                         ((SelectedPaymentAware) getCurrentActivity()).
-                                setPaymentMethod(entrySet.getValue(), entrySet.getKey());
-                        editor.putString(Constants.PAYMENT_METHOD, entrySet.getValue());
-                        editor.commit();
+                                setPaymentMethod(entrySet.getValue());
+                        // TODO : get rid of this!
+                        mEditor.putString(Constants.PAYMENT_METHOD, entrySet.getValue());
+                        mEditor.commit();
                     } else {
                         return;
                     }
@@ -176,9 +199,10 @@ public class PaymentSelectionFragment extends BaseFragment {
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked && getCurrentActivity() != null) {
                             ((SelectedPaymentAware) getCurrentActivity()).
-                                    setPaymentMethod(entrySet.getValue(), entrySet.getKey());
-                            editor.putString(Constants.PAYMENT_METHOD, entrySet.getValue());
-                            editor.commit();
+                                    setPaymentMethod(entrySet.getValue());
+                            // TODO : get rid of this!
+                            mEditor.putString(Constants.PAYMENT_METHOD, entrySet.getValue());
+                            mEditor.commit();
                         }
                     }
                 });
@@ -197,7 +221,7 @@ public class PaymentSelectionFragment extends BaseFragment {
         txtApplyVoucher.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                applyVoucher(editTextVoucherCode.getText().toString().trim());
+                ((OnApplyVoucherListener) getActivity()).applyVoucher(editTextVoucherCode.getText().toString().trim());
             }
         });
 
@@ -237,12 +261,23 @@ public class PaymentSelectionFragment extends BaseFragment {
                 }
             }
         });
+        mLblTransactionFailed = (TextView) base.findViewById(R.id.lblTransactionFailed);
+        mTxtTransactionFailureReason = (TextView) base.findViewById(R.id.txtTransactionFailedReason);
+        mLblSelectAnotherMethod = (TextView) base.findViewById(R.id.lblSelectAnotherMethod);
+
+        mLblTransactionFailed.setTypeface(faceRobotoRegular);
+        mTxtTransactionFailureReason.setTypeface(faceRobotoRegular);
+        mLblTransactionFailed.setVisibility(View.GONE);
+        mTxtTransactionFailureReason.setVisibility(View.GONE);
+        mLblSelectAnotherMethod.setVisibility(View.GONE);
+        mLblSelectAnotherMethod.setTypeface(faceRobotoRegular);
+
         contentView.addView(base);
     }
 
-    private RadioButton getPaymentOptionRadioButton() {
+    private RadioButton getPaymentOptionRadioButton(ViewGroup parent) {
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        RadioButton radioButton = (RadioButton) inflater.inflate(R.layout.uiv3_payment_option_rbtn, null);
+        RadioButton radioButton = (RadioButton) inflater.inflate(R.layout.uiv3_payment_option_rbtn, parent, false);
         RadioGroup.LayoutParams layoutParams = new RadioGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams.setMargins(0, 0, 0, (int) getResources().getDimension(R.dimen.margin_small));
@@ -251,75 +286,39 @@ public class PaymentSelectionFragment extends BaseFragment {
         return radioButton;
     }
 
-    private void applyVoucher(final String voucherCode) {
-        if (TextUtils.isEmpty(voucherCode)) {
-            return;
-        }
-        if (checkInternetConnection()) {
-            BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
-            showProgressDialog(getString(R.string.please_wait));
-            bigBasketApiService.postVoucher(mPotentialOrderId, voucherCode, new Callback<PostVoucherApiResponse>() {
-                @Override
-                public void success(PostVoucherApiResponse postVoucherApiResponse, Response response) {
-                    if (isSuspended()) return;
-                    try {
-                        hideProgressDialog();
-                    } catch (IllegalArgumentException e) {
-                        return;
-                    }
-                    editor.putString(Constants.EVOUCHER_NAME, voucherCode);
-                    editor.commit();
-                    HashMap<String, String> map = new HashMap<>();
-                    map.put(TrackEventkeys.POTENTIAL_ORDER, mPotentialOrderId);
-                    map.put(TrackEventkeys.VOUCHER_NAME, voucherCode);
-                    switch (postVoucherApiResponse.status) {
-                        case Constants.OK:
-                            // TODO : Add previous applied voucher handling logic for credit card
-                            String voucherMsg;
-                            if (!TextUtils.isEmpty(postVoucherApiResponse.evoucherMsg)) {
-                                voucherMsg = postVoucherApiResponse.evoucherMsg;
-                            } else {
-                                voucherMsg = "eVoucher has been successfully applied";
-                            }
-                            showErrorMsg(voucherMsg);
-                            trackEvent(TrackingAware.CHECKOUT_VOUCHER_APPLIED, map);
-                            break;
-                        default:
-                            handler.sendEmptyMessage(postVoucherApiResponse.getErrorTypeAsInt());
-                            map.put(TrackEventkeys.VOUCHER_FAILURE_REASON, postVoucherApiResponse.message);
-                            trackEvent(TrackingAware.CHECKOUT_VOUCHER_FAILED, null);
-                            break;
-                    }
-                }
-
-                @Override
-                public void failure(RetrofitError error) {
-                    if (isSuspended()) return;
-                    try {
-                        hideProgressDialog();
-                    } catch (IllegalArgumentException e) {
-                        return;
-                    }
-                    handler.handleRetrofitError(error);
-                    trackEvent(TrackingAware.CHECKOUT_VOUCHER_FAILED, null);
-                }
-            });
-        } else {
-            showErrorMsg(getString(R.string.connectionOffline));
-        }
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         setSuspended(false);
-        if (resultCode == NavigationCodes.VOUCHER_APPLIED && data != null) {
-            String voucherCode = data.getStringExtra(Constants.EVOUCHER_CODE);
-            if (!TextUtils.isEmpty(voucherCode)) {
-                applyVoucher(voucherCode);
-            }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
+        switch (resultCode) {
+            case NavigationCodes.VOUCHER_APPLIED:
+                if (data != null) {
+                    String voucherCode = data.getStringExtra(Constants.EVOUCHER_CODE);
+                    if (!TextUtils.isEmpty(voucherCode) && getActivity() != null) {
+                        ((OnApplyVoucherListener) getActivity()).applyVoucher(voucherCode);
+                    }
+                }
+                break;
+            case Constants.PAYU_ABORTED:
+                displayPayuFailure(getString(R.string.youAborted));
+                break;
+            case Constants.PAYU_FAILED:
+                displayPayuFailure(getString(R.string.failedToProcess));
+                break;
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
+                break;
+
         }
+    }
+
+    public void displayPayuFailure(String reason) {
+        if (mTxtTransactionFailureReason == null || mLblTransactionFailed == null
+                || mLblSelectAnotherMethod == null) return;
+        mTxtTransactionFailureReason.setVisibility(View.VISIBLE);
+        mLblTransactionFailed.setVisibility(View.VISIBLE);
+        mLblSelectAnotherMethod.setVisibility(View.GONE);
+
+        mTxtTransactionFailureReason.setText(reason);
     }
 
     @Override

@@ -10,12 +10,13 @@ import android.util.Log;
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 import com.bigbasket.mobileapp.adapter.order.PrescriptionImageAdapter;
 import com.bigbasket.mobileapp.adapter.product.CategoryAdapter;
+import com.bigbasket.mobileapp.adapter.product.ShopInShopAdapter;
 import com.bigbasket.mobileapp.adapter.product.SubCategoryAdapter;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "bigbasket.db";
-    protected static final int DATABASE_VERSION = 8;
+    protected static final int DATABASE_VERSION = 9;
     public static SQLiteDatabase db = null;
     private static DatabaseHelper dbAdapter = null;
     private static boolean isConnectionOpen = false;
@@ -83,5 +84,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(PrescriptionImageAdapter.createTable);
         db.execSQL(SearchSuggestionAdapter.createTable);
         db.execSQL(MostSearchesAdapter.createTable);
+        db.execSQL(ShopInShopAdapter.createTable);
     }
 }

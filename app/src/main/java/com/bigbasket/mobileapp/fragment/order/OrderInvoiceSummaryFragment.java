@@ -54,11 +54,11 @@ public class OrderInvoiceSummaryFragment extends AbstractOrderSummaryFragment {
 
         showProgressView();
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View base = inflater.inflate(R.layout.uiv3_order_invoice_summary, null);
+        View base = inflater.inflate(R.layout.uiv3_order_invoice_summary, contentView, false);
 
         // Render slots
         LinearLayout layoutDeliverySlot = (LinearLayout) base.findViewById(R.id.layoutDeliverySlot);
-        View slotInfoRow = inflater.inflate(R.layout.uiv3_slot_info_row, null);
+        View slotInfoRow = inflater.inflate(R.layout.uiv3_slot_info_row, layoutDeliverySlot, false);
         String[] slotDateAndTime = orderInvoice.getSlot().getDisplayName().split("between");
         renderSlotInfoRow(slotInfoRow, slotDateAndTime[0].trim(), slotDateAndTime[1].trim(),
                 orderInvoice.getFulfillmentInfo().getFulfilledBy(), false);

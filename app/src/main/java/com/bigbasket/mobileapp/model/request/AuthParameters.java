@@ -9,8 +9,14 @@ import android.text.TextUtils;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.util.Constants;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
 public class AuthParameters {
     private static AuthParameters authParameters;
+    public static final int FIRST_TIME_COOKIE_EXPIRY_IN_DAYS = 15;
 
     private String visitorId;
     private String bbAuthToken;
@@ -19,7 +25,7 @@ public class AuthParameters {
     private String memberEmail;
     private String memberFullName;
     private boolean isKonotorEnabled;
-    private boolean isMoEngaleEnabled;
+    private boolean isMoEngageEnabled;
     private boolean isLocalyticsEnabled;
 
     public static void updateInstance(Context context) {
@@ -66,8 +72,8 @@ public class AuthParameters {
         return isKonotorEnabled;
     }
 
-    public boolean isMoEngaleEnabled() {
-        return isMoEngaleEnabled;
+    public boolean isMoEngageEnabled() {
+        return isMoEngageEnabled;
     }
 
     public void setMoEngaleLocaliticsEnabled(boolean isMoEngaleEnabled,
@@ -77,7 +83,7 @@ public class AuthParameters {
         editor.putBoolean(Constants.ENABLE_MOENGAGE, isMoEngaleEnabled);
         editor.putBoolean(Constants.ENABLE_LOCALYTICS, isLocalyticsEnabled);
         editor.commit();
-        this.isMoEngaleEnabled = isMoEngaleEnabled;
+        this.isMoEngageEnabled = isMoEngaleEnabled;
         this.isLocalyticsEnabled = isLocalyticsEnabled;
     }
 
@@ -110,7 +116,36 @@ public class AuthParameters {
             memberFullName = prefer.getString(Constants.MEMBER_FULL_NAME_KEY, "");
             osVersion = prefer.getString(Constants.OS_PREFERENCE_KEY, "");
             isKonotorEnabled = prefer.getBoolean(Constants.ENABLE_KONOTOR, false);
-            isMoEngaleEnabled = prefer.getBoolean(Constants.ENABLE_MOENGAGE, false);
+            isMoEngageEnabled = prefer.getBoolean(Constants.ENABLE_MOENGAGE, false);
         }
+    }
+
+    public static boolean isFirstTimeVisitor(Context context) {
+        if (!AuthParameters.getInstance(context).isAuthTokenEmpty()) return false;
+        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(context);
+        String firstTimeCookieTimeStamp = prefer.getString(Constants.FIRST_TIME_COOKIE_TIME_STAMP, null);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        Date now = new Date();
+        if (TextUtils.isEmpty(firstTimeCookieTimeStamp)) {
+            setFirstTimeVisitor(context, now, simpleDateFormat);
+            return true;
+        }
+        try {
+            Date createdOnDate = simpleDateFormat.parse(firstTimeCookieTimeStamp);
+            long days = TimeUnit.DAYS.convert(now.getTime() - createdOnDate.getTime(),
+                    TimeUnit.MILLISECONDS);
+            return days <= FIRST_TIME_COOKIE_EXPIRY_IN_DAYS;
+        } catch (ParseException e) {
+            setFirstTimeVisitor(context, now, simpleDateFormat);
+            return true;
+        }
+    }
+
+    private static void setFirstTimeVisitor(Context context,
+                                            Date now, SimpleDateFormat simpleDateFormat) {
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
+        editor.putString(Constants.FIRST_TIME_COOKIE_TIME_STAMP,
+                simpleDateFormat.format(now));
+        editor.commit();
     }
 }

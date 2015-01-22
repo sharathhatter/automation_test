@@ -79,7 +79,7 @@ public class BasketValidationActivity extends BackButtonActivity {
             return;
         final LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         for (int i = 0; i < marketPlace.getMarketPlaceRuleValidators().size(); i++) {
-            final RelativeLayout marketPlaceBaseLayout = (RelativeLayout) inflater.inflate(R.layout.uiv3_basket_validation_error, null);
+            final RelativeLayout marketPlaceBaseLayout = (RelativeLayout) inflater.inflate(R.layout.uiv3_basket_validation_error, contentView, false);
             LinearLayout addRemoveItemsLinearLayout = (LinearLayout) marketPlaceBaseLayout.findViewById(R.id.addRemoveItemsLinearLayout);
             contentView.addView(marketPlaceBaseLayout);
             LinearLayout layoutRuleNameAndMsg = (LinearLayout) marketPlaceBaseLayout.findViewById(R.id.layoutRuleNameAndMsg);
@@ -118,7 +118,7 @@ public class BasketValidationActivity extends BackButtonActivity {
 
             for (int j = 0; j < marketPlace.getMarketPlaceRuleValidators().get(i).getItems().size(); j++) {
                 final MarketPlaceItems marketPlaceItems = marketPlace.getMarketPlaceRuleValidators().get(i).getItems().get(j);
-                RelativeLayout addRemoveLinearLayout = (RelativeLayout) inflater.inflate(R.layout.uiv3_basket_validation_error_products, null);
+                RelativeLayout addRemoveLinearLayout = (RelativeLayout) inflater.inflate(R.layout.uiv3_basket_validation_error_products, addRemoveItemsLinearLayout, false);
                 TextView txtIndex = (TextView) addRemoveLinearLayout.findViewById(R.id.txtIndex);
                 TextView txtItemInBasketAndProductDesc = (TextView) addRemoveLinearLayout.findViewById(R.id.txtItemInBasketAndProductDesc);
                 TextView txtTotalQty = (TextView) addRemoveLinearLayout.findViewById(R.id.txtTotalQty);

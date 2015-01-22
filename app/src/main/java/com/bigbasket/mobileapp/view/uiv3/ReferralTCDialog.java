@@ -2,25 +2,18 @@ package com.bigbasket.mobileapp.view.uiv3;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 
 import java.util.ArrayList;
 
@@ -65,7 +58,7 @@ public class ReferralTCDialog extends DialogFragment {
             txtDialogTitle.setTypeface(faceRobotoRegular);
             LayoutInflater inflater = context.getLayoutInflater();
             LinearLayout layoutInnerTC = (LinearLayout) view.findViewById(R.id.layoutInnerTC);
-            for(String termAndCondition : termAndConditionArrayList){
+            for (String termAndCondition : termAndConditionArrayList) {
                 View bulletView = inflater.inflate(R.layout.uiv3_bullet_txt, null);
                 TextView txtBullet = (TextView) bulletView.findViewById(R.id.txtBullet);
                 //String prefix = ". ";

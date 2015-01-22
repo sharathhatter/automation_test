@@ -11,7 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.account.uiv3.MemberReferralTCActivity;
+import com.bigbasket.mobileapp.activity.account.uiv3.MemberReferralActivity;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.widget.FacebookDialog;
 
@@ -58,18 +58,18 @@ public class MemberReferralUtil<T> {
 
         }
 
-        List<PackageInfo> matches = ((MemberReferralTCActivity) ctx).getPackageManager().getInstalledPackages(0);
+        List<PackageInfo> matches = ((MemberReferralActivity) ctx).getPackageManager().getInstalledPackages(0);
         for (final PackageInfo app : matches) {
             if (app.applicationInfo.packageName.toLowerCase().equals(Constants.WHATS_APP_PACKAGE_NAME)) {
                 referralImageArrayList.add(R.drawable.whatsapp);
                 referralStringArrayList.add(Constants.WHATS_APP);
-            }else if (app.applicationInfo.packageName.toLowerCase().equals(Constants.GOOGLE_PLUS_APP_PACKAGE_NAME)) {
+            } else if (app.applicationInfo.packageName.toLowerCase().equals(Constants.GOOGLE_PLUS_APP_PACKAGE_NAME)) {
                 referralImageArrayList.add(R.drawable.g_plus);
                 referralStringArrayList.add(Constants.G_PLUS);//done
-            }else if(app.applicationInfo.packageName.toLowerCase().equals(Constants.GMAIL_APP_PACKAGE_NAME)){
+            } else if (app.applicationInfo.packageName.toLowerCase().equals(Constants.GMAIL_APP_PACKAGE_NAME)) {
                 referralImageArrayList.add(R.drawable.android_gmail);
                 referralStringArrayList.add(Constants.GMAIL);//done
-            }else if(app.applicationInfo.packageName.toLowerCase().equals(Constants.HIKE_PACKAEG_NAME)){
+            } else if (app.applicationInfo.packageName.toLowerCase().equals(Constants.HIKE_PACKAEG_NAME)) {
                 referralImageArrayList.add(R.drawable.bread);
                 referralStringArrayList.add(Constants.HIKE);//done
             }
@@ -87,7 +87,7 @@ public class MemberReferralUtil<T> {
     }
 
     public boolean isFacebookAvailable() {
-        builder = new FacebookDialog.MessageDialogBuilder((MemberReferralTCActivity) ctx)
+        builder = new FacebookDialog.MessageDialogBuilder((MemberReferralActivity) ctx)
                 .setLink(playStoreLink)
                 .setName("Bigbasket referral")
                         //.setCaption("Build great social apps that engage your friends.") //subheading
@@ -96,7 +96,7 @@ public class MemberReferralUtil<T> {
                 .setDataErrorsFatal(true);
         if (builder.canPresent()) {
             return true;
-        } else if (FacebookDialog.canPresentShareDialog(((MemberReferralTCActivity) ctx).getApplicationContext(),
+        } else if (FacebookDialog.canPresentShareDialog(((MemberReferralActivity) ctx).getApplicationContext(),
                 FacebookDialog.ShareDialogFeature.SHARE_DIALOG)) {
             return true;
         } else {
@@ -106,12 +106,12 @@ public class MemberReferralUtil<T> {
 
     public String getMobileNumberFromIds(ArrayList<String> selectedContactNos) {
         int selectedContactNumbersSize = selectedContactNos.size();
-        ((MemberReferralTCActivity) ctx).showToast("selectedContactIdsSize=> " + selectedContactNumbersSize);
+        ((MemberReferralActivity) ctx).showToast("selectedContactIdsSize=> " + selectedContactNumbersSize);
         if (selectedContactNumbersSize == 0) {
-            ((MemberReferralTCActivity) ctx).showToast("No, mobile number selected");
+            ((MemberReferralActivity) ctx).showToast("No, mobile number selected");
             return null;
         } else if (selectedContactNumbersSize > maxMsgLen) {
-            ((MemberReferralTCActivity) ctx).showAlertDialog("More than " + maxMsgLen + " mobile numbers are not allowed.");
+            ((MemberReferralActivity) ctx).showAlertDialog("More than " + maxMsgLen + " mobile numbers are not allowed.");
         }
         return UIUtil.sentenceJoin(selectedContactNos, ",");
     }
@@ -123,9 +123,9 @@ public class MemberReferralUtil<T> {
         waIntent.setPackage(Constants.WHATS_APP_PACKAGE_NAME);
         if (waIntent != null) {
             waIntent.putExtra(Intent.EXTRA_TEXT, referralMsg + "\n" + playStoreLink);
-            ((MemberReferralTCActivity) ctx).startActivity(Intent.createChooser(waIntent, null));
+            ((MemberReferralActivity) ctx).startActivity(Intent.createChooser(waIntent, null));
         } else {
-            Toast.makeText(((MemberReferralTCActivity) ctx), "WhatsApp not found", Toast.LENGTH_SHORT)
+            Toast.makeText(((MemberReferralActivity) ctx), "WhatsApp not found", Toast.LENGTH_SHORT)
                     .show();
         }
     }
@@ -139,7 +139,7 @@ public class MemberReferralUtil<T> {
             FacebookDialog dialog = builder.build();
             uiHelper.trackPendingDialogCall(dialog.present());
         } else {
-            FacebookDialog shareDialog = new FacebookDialog.ShareDialogBuilder(((MemberReferralTCActivity) ctx))
+            FacebookDialog shareDialog = new FacebookDialog.ShareDialogBuilder(((MemberReferralActivity) ctx))
                     .setLink(playStoreLink)
                     .setName("Bigbasket referral")
                             //.setCaption("Build great social apps that engage your friends.")
@@ -159,7 +159,7 @@ public class MemberReferralUtil<T> {
                     public void onError(FacebookDialog.PendingCall pendingCall,
                                         Exception error, Bundle data) {
                         Toast.makeText(
-                                ((MemberReferralTCActivity) ctx).getApplicationContext(),
+                                ((MemberReferralActivity) ctx).getApplicationContext(),
                                 "Error Occured\nMost Common Errors:\n1. Device not connected to Internet\n2.Faceboook APP Id is not changed in Strings.xml",
                                 Toast.LENGTH_LONG).show();
                     }
@@ -167,7 +167,7 @@ public class MemberReferralUtil<T> {
                     @Override
                     public void onComplete(
                             FacebookDialog.PendingCall pendingCall, Bundle data) {
-                        Toast.makeText(((MemberReferralTCActivity) ctx).getApplicationContext(), "Done!!",
+                        Toast.makeText(((MemberReferralActivity) ctx).getApplicationContext(), "Done!!",
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -175,11 +175,11 @@ public class MemberReferralUtil<T> {
 
     public boolean isMessageAndMailLenValid(int emailLen, int messageLen) {
         if (emailLen > maxEmailLength) {
-            ((MemberReferralTCActivity) ctx).showAlertDialog("More than " + maxEmailLength + " mobile numbers are not allowed.");
+            ((MemberReferralActivity) ctx).showAlertDialog("More than " + maxEmailLength + " mobile numbers are not allowed.");
             return false;
         }
         if (messageLen > maxMsgCharLength) {
-            ((MemberReferralTCActivity) ctx).showAlertDialog("Message length shouldn't be more than" + maxMsgCharLength);
+            ((MemberReferralActivity) ctx).showAlertDialog("Message length shouldn't be more than" + maxMsgCharLength);
             return false;
         }
         return true;
@@ -187,11 +187,11 @@ public class MemberReferralUtil<T> {
 
 
     public void addEmailsToAutoComplete(List<String> emailAddressCollection,
-                                        MemberReferralTCActivity.ReferralDialog memberRefDialog) {
+                                        MemberReferralActivity.ReferralDialog memberRefDialog) {
         int layout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2 ?
                 android.R.layout.simple_dropdown_item_1line : android.R.layout.simple_list_item_1;
         ArrayAdapter<String> adapter =
-                new ArrayAdapter<>((MemberReferralTCActivity) ctx, layout, emailAddressCollection);
+                new ArrayAdapter<>((MemberReferralActivity) ctx, layout, emailAddressCollection);
 
         if (memberRefDialog != null)
             memberRefDialog.getAutoCompleteEditTextView().setAdapter(adapter);
@@ -202,8 +202,8 @@ public class MemberReferralUtil<T> {
     };
 
     public void getEmailFromContacts(List<String> emailAddressCollection,
-                                     MemberReferralTCActivity.ReferralDialog memberRefDialog) {
-        ContentResolver cr = ((MemberReferralTCActivity) ctx).getContentResolver();
+                                     MemberReferralActivity.ReferralDialog memberRefDialog) {
+        ContentResolver cr = ((MemberReferralActivity) ctx).getContentResolver();
         Cursor cursor = cr.query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, PROJECTION, null, null, null);
         if (cursor != null) {
             try {
@@ -224,32 +224,32 @@ public class MemberReferralUtil<T> {
         gplusIntent.setPackage(Constants.GOOGLE_PLUS_APP_PACKAGE_NAME);
         if (gplusIntent != null) {
             gplusIntent.putExtra(Intent.EXTRA_TEXT, referralMsg + "\n" + playStoreLink);
-            ((MemberReferralTCActivity) ctx).startActivity(Intent.createChooser(gplusIntent, null));
+            ((MemberReferralActivity) ctx).startActivity(Intent.createChooser(gplusIntent, null));
         } else {
-            Toast.makeText((MemberReferralTCActivity) ctx, "WhatsApp  messenger not found", Toast.LENGTH_SHORT)
+            Toast.makeText((MemberReferralActivity) ctx, "WhatsApp  messenger not found", Toast.LENGTH_SHORT)
                     .show();
         }
     }
 
 
-    public void useGmailApp(){
+    public void useGmailApp() {
         Intent sendIntent = new Intent(Intent.ACTION_VIEW);
         sendIntent.setType("plain/text");//email.setType("message/rfc822");
         sendIntent.setClassName(Constants.GMAIL_APP_PACKAGE_NAME, Constants.GMAIL_APP_CLASS_NAME);
-        sendIntent.putExtra(Intent.EXTRA_SUBJECT, "Your friend "++" has invited you to join BigBasket");
+        sendIntent.putExtra(Intent.EXTRA_SUBJECT, "Your friend " + " <Name of member> " + " has invited you to join BigBasket"); //todo name of member
         sendIntent.putExtra(Intent.EXTRA_TEXT, emailBody);//referralMsg + "\n" + playStoreLink
-        ((MemberReferralTCActivity) ctx).startActivity(sendIntent);
+        ((MemberReferralActivity) ctx).startActivity(sendIntent);
     }
 
-    public void useHikeApp(){
+    public void useHikeApp() {
         Intent hikeIntent = new Intent(Intent.ACTION_SEND);
         hikeIntent.setType("text/plain");
         hikeIntent.setPackage(Constants.HIKE_PACKAEG_NAME);
         if (hikeIntent != null) {
             hikeIntent.putExtra(Intent.EXTRA_TEXT, referralMsg + "\n" + playStoreLink);
-            ((MemberReferralTCActivity) ctx).startActivity(Intent.createChooser(hikeIntent, null));
+            ((MemberReferralActivity) ctx).startActivity(Intent.createChooser(hikeIntent, null));
         } else {
-            Toast.makeText((MemberReferralTCActivity) ctx, "Hike messenger not found", Toast.LENGTH_SHORT)
+            Toast.makeText((MemberReferralActivity) ctx, "Hike messenger not found", Toast.LENGTH_SHORT)
                     .show();
         }
     }
@@ -259,6 +259,6 @@ public class MemberReferralUtil<T> {
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.putExtra(Intent.EXTRA_TEXT, referralMsg + "\n" + playStoreLink);
         sendIntent.setType("text/plain");
-        ((MemberReferralTCActivity) ctx).startActivity(sendIntent);
+        ((MemberReferralActivity) ctx).startActivity(sendIntent);
     }
 }

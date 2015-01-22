@@ -76,7 +76,7 @@ public class PrescriptionListActivity extends BackButtonActivity {
         if (contentView == null) return;
         contentView.removeAllViews();
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View prescriptionView = layoutInflater.inflate(R.layout.uiv3_fab_recycler_view, null);
+        View prescriptionView = layoutInflater.inflate(R.layout.uiv3_fab_recycler_view, contentView, false);
         RecyclerView prescriptionRecyclerView = (RecyclerView) prescriptionView.findViewById(R.id.fabRecyclerView);
         UIUtil.configureRecyclerView(prescriptionRecyclerView, this, 1, 3);
         PrescriptionListAdapter prescriptionListAdapter = new PrescriptionListAdapter(getCurrentActivity(),

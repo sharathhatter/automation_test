@@ -80,7 +80,7 @@ public class PromoDetailFragment extends BaseFragment {
 
         int promoId = getArguments().getInt(Constants.PROMO_ID, -1);
         mPromoCategory = getArguments().getParcelable(Constants.PROMO_CATS);
-        HashMap<String, String> map =  new HashMap<>();
+        HashMap<String, String> map = new HashMap<>();
         map.put(TrackEventkeys.PROMO_NAME, mPromoCategory.getName());
         trackEvent(TrackingAware.PROMO_DETAIL, map);
         getPromoDetail(promoId);
@@ -141,7 +141,7 @@ public class PromoDetailFragment extends BaseFragment {
         LayoutInflater layoutInflater = (LayoutInflater)
                 getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        View base = layoutInflater.inflate(R.layout.uiv3_promo_detail, null);
+        View base = layoutInflater.inflate(R.layout.uiv3_promo_detail, contentView, false);
         renderPromoList(base);
 
         LinearLayout layoutMain = (LinearLayout) base.findViewById(R.id.layoutMain);
@@ -219,7 +219,7 @@ public class PromoDetailFragment extends BaseFragment {
         if (promoType.equalsIgnoreCase(Promo.PromoType.FREE)) {
             boolean isRedeemed = true;
             for (PromoSet promoSet : mPromoDetail.getPromoRedemptionInfo().getPromoSets()) {
-                View promoSetLayout = getPromoSetView(promoSet, mPromoDetail);
+                View promoSetLayout = getPromoSetView(promoSet, mPromoDetail, layoutMain);
                 layoutMain.addView(promoSetLayout);
                 if (!(promoSet.getPromoCriteriaVal() <= 0 ||
                         promoSet.getPromoCriteriaVal() <= promoSet.getValueInBasket())) {
@@ -234,14 +234,14 @@ public class PromoDetailFragment extends BaseFragment {
 
         } else if (promoType.equalsIgnoreCase(Promo.PromoType.FIXED_FREE_COMBO)) {
             View fixedFreeComboView = getPromoSetBar("View All Combo Products",
-                    mPromoDetail);
+                    mPromoDetail, layoutMain);
             layoutMain.addView(fixedFreeComboView);
             View freePromoView = getFreePromoMsgView(false);
             layoutMain.addView(freePromoView);
             addFreeProductToLayout(mPromoDetail, layoutMain, layoutInflater);
         } else if (promoType.equalsIgnoreCase(Promo.PromoType.FIXED_COMBO)) {
             View fixedComboView = getPromoSetBar("View All Combo Products",
-                    mPromoDetail);
+                    mPromoDetail, layoutMain);
             layoutMain.addView(fixedComboView);
         } else if (promoType.equalsIgnoreCase(Promo.PromoType.DISCOUNT_PRICE)
                 || promoType.equalsIgnoreCase(Promo.PromoType.MIN_ORDER_DISCOUNTED_PRODUCT)
@@ -250,7 +250,7 @@ public class PromoDetailFragment extends BaseFragment {
             if (mPromoDetail.getPromoRedemptionInfo() != null &&
                     mPromoDetail.getPromoRedemptionInfo().getPromoSets() != null) {
                 for (PromoSet promoSet : mPromoDetail.getPromoRedemptionInfo().getPromoSets()) {
-                    View promoSetLayout = getPromoSetView(promoSet, mPromoDetail);
+                    View promoSetLayout = getPromoSetView(promoSet, mPromoDetail, layoutMain);
                     layoutMain.addView(promoSetLayout);
                 }
             }
@@ -260,7 +260,7 @@ public class PromoDetailFragment extends BaseFragment {
             if (mPromoDetail.getPromoRedemptionInfo() != null &&
                     mPromoDetail.getPromoRedemptionInfo().getPromoSets() != null) {
                 for (PromoSet promoSet : mPromoDetail.getPromoRedemptionInfo().getPromoSets()) {
-                    View promoSetLayout = getPromoSetView(promoSet, mPromoDetail);
+                    View promoSetLayout = getPromoSetView(promoSet, mPromoDetail, layoutMain);
                     layoutMain.addView(promoSetLayout);
                     if (!(promoSet.getPromoCriteriaVal() <= 0 ||
                             promoSet.getPromoCriteriaVal() <= promoSet.getValueInBasket())) {
@@ -294,7 +294,7 @@ public class PromoDetailFragment extends BaseFragment {
                 .setShowShopListDeleteBtn(false)
                 .build();
         for (Product freeProduct : freeProducts) {
-            View base = layoutInflater.inflate(R.layout.uiv3_stretched_product_row, null);
+            View base = layoutInflater.inflate(R.layout.uiv3_stretched_product_row, view, false);
             LinearLayout.LayoutParams productRowParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
             productRowParams.setMargins(8, 8, 8, 0);
@@ -307,10 +307,10 @@ public class PromoDetailFragment extends BaseFragment {
         }
     }
 
-    private View getPromoSetBar(String text, PromoDetail promoDetail) {
+    private View getPromoSetBar(String text, PromoDetail promoDetail, ViewGroup parent) {
         LayoutInflater layoutInflater = (LayoutInflater) getActivity().getSystemService(
                 Context.LAYOUT_INFLATER_SERVICE);
-        View base = layoutInflater.inflate(R.layout.promo_set_row, null);
+        View base = layoutInflater.inflate(R.layout.promo_set_row, parent, false);
         TextView txtSetName = (TextView) base.findViewById(R.id.txtSetName);
         txtSetName.setTypeface(faceRobotoRegular);
         txtSetName.setText(text);
@@ -344,10 +344,10 @@ public class PromoDetailFragment extends BaseFragment {
         return txtDescription;
     }
 
-    private View getPromoSetView(PromoSet promoSet, PromoDetail promoDetail) {
+    private View getPromoSetView(PromoSet promoSet, PromoDetail promoDetail, ViewGroup parent) {
         LayoutInflater layoutInflater = (LayoutInflater) getActivity().getSystemService(
                 Context.LAYOUT_INFLATER_SERVICE);
-        View base = layoutInflater.inflate(R.layout.promo_set_row, null);
+        View base = layoutInflater.inflate(R.layout.promo_set_row, parent, false);
         base.setOnClickListener(new PromoSetActivityHandler(promoDetail, promoSet));
 
         TextView txtSetName = (TextView) base.findViewById(R.id.txtSetName);
@@ -517,7 +517,7 @@ public class PromoDetailFragment extends BaseFragment {
             Promo promo = (Promo) getItem(position);
             TextView txtPromoName = null;
             if (row == null) {
-                row = getActivity().getLayoutInflater().inflate(R.layout.uiv3_list_title, null);
+                row = getActivity().getLayoutInflater().inflate(R.layout.uiv3_list_title, parent, false);
                 txtPromoName = (TextView) row.findViewById(R.id.txtHeaderMsg);
                 txtPromoName.setTypeface(faceRobotoRegular);
                 txtPromoName.setTextSize(textSize);

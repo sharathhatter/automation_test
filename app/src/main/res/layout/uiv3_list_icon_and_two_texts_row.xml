@@ -53,7 +53,7 @@
         android:text="description of the image if image not available chech"
         android:textColor="@color/uiv3_list_secondary_text_color"
         android:textSize="@dimen/secondary_text_size"
-        android:layout_marginBottom="@dimen/margin_small"/>
+        android:layout_marginBottom="@dimen/margin_small" />
 
     <View
         android:id="@+id/listSeparator"

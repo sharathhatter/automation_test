@@ -74,7 +74,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
         if (contentLayout == null) return;
         contentLayout.removeAllViews();
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        base = inflater.inflate(R.layout.uiv3_member_address_form, null);
+        base = inflater.inflate(R.layout.uiv3_member_address_form, contentLayout, false);
         editTextArea = (AutoCompleteTextView) base.findViewById(R.id.editTextArea);
         editTextPincode = (EditText) base.findViewById(R.id.editTextPincode);
         if (base == null) {

@@ -72,7 +72,7 @@ public class FilterByAdapter extends BaseExpandableListAdapter {
         FilterbyHeaderViewHolder filterbyViewHolder;
         if (row == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            row = inflater.inflate(R.layout.uiv3_product_filterby_header, null);
+            row = inflater.inflate(R.layout.uiv3_product_filterby_header, parent, false);
             filterbyViewHolder = new FilterbyHeaderViewHolder(row);
             row.setTag(filterbyViewHolder);
         } else {
@@ -102,7 +102,7 @@ public class FilterByAdapter extends BaseExpandableListAdapter {
         FilterbyViewHolder filterbyViewHolder;
         if (row == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            row = inflater.inflate(R.layout.uiv3_product_filterby_list_row, null);
+            row = inflater.inflate(R.layout.uiv3_product_filterby_list_row, parent, false);
             filterbyViewHolder = new FilterbyViewHolder(row);
             row.setTag(filterbyViewHolder);
         } else {

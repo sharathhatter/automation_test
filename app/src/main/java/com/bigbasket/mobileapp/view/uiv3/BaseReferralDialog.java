@@ -1,9 +1,7 @@
 package com.bigbasket.mobileapp.view.uiv3;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -13,19 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
-import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
-import com.bigbasket.mobileapp.interfaces.EmailAddressAware;
-import com.bigbasket.mobileapp.task.uiv3.LoadEmailAddressTask;
-import com.bigbasket.mobileapp.util.UIUtil;
-
-import java.util.List;
 
 /**
  * Created by jugal on 6/1/15.

@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/uiv3_list_bkg_light_color"
-        android:paddingLeft="16dp">
+        android:paddingLeft="@dimen/padding_normal">
 
         <ImageView
             android:id="@+id/imgDeliveryVan"

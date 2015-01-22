@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -17,16 +16,6 @@
         android:paddingBottom="@dimen/padding_mini"
         android:layout_height="wrap_content">
 
-        <!--<TextView-->
-            <!--android:id="@+id/txtHeadingBenefitToYou"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginTop="@dimen/margin_small"-->
-            <!--android:layout_marginLeft="@dimen/margin_small"-->
-            <!--android:textColor="@color/uiv3_primary_text_color"-->
-            <!--android:text="@string/benefitToYou"-->
-            <!--android:textSize="@dimen/primary_text_size" />-->
-
         <android.support.v7.widget.CardView
         style="@style/CardViewStyle"
         android:layout_width="match_parent"
@@ -40,9 +29,6 @@
         android:id="@+id/layoutBenefitsToYou"
         app:contentPaddingTop="@dimen/padding_mini">
 
-            <!--android:layout_marginTop="@dimen/margin_normal"-->
-            <!--android:layout_marginLeft="@dimen/margin_small"-->
-            <!--android:layout_marginRight="@dimen/margin_small"-->
         <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -72,64 +58,6 @@
 
 
 
-        <!--<android.support.v7.widget.CardView-->
-            <!--style="@style/CardViewStyle"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="center"-->
-            <!--app:cardBackgroundColor="@color/white"-->
-            <!--app:cardCornerRadius="@dimen/card_corner_radius"-->
-            <!--app:contentPaddingBottom="@dimen/padding_small"-->
-            <!--app:contentPaddingLeft="@dimen/padding_small"-->
-            <!--app:contentPaddingRight="@dimen/padding_small"-->
-            <!--android:id="@+id/layoutBenefitsToYou"-->
-            <!--app:contentPaddingTop="@dimen/padding_mini">-->
-
-            <!--<RelativeLayout-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content">-->
-
-                <!--<TextView-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:id="@+id/txtRefClientMsg"-->
-                    <!--android:textSize="@dimen/secondary_text_size"-->
-                    <!--android:text="fsadsadf asdfasdfasdfasdf asdfasdf asdfasdfasdf asddfasdf"-->
-                    <!--android:layout_height="wrap_content" />-->
-
-                <!--<TextView-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:id="@+id/txtHowItWorkHeading"-->
-                    <!--android:layout_marginTop="@dimen/margin_small"-->
-                    <!--android:layout_below="@id/txtRefEarn"-->
-                    <!--android:textStyle="bold"-->
-                    <!--android:text="@string/howItWorks"-->
-                    <!--android:textSize="@dimen/secondary_text_size"-->
-                    <!--android:layout_height="wrap_content" />-->
-
-                <!--<TextView-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:id="@+id/txtTermAndCondition"-->
-                    <!--android:layout_marginTop="@dimen/margin_mini"-->
-                    <!--android:layout_below="@id/txtHowItWorkHeading"-->
-                    <!--android:textSize="@dimen/secondary_text_size"-->
-                    <!--android:text="@string/HowItWorksStr"-->
-                    <!--android:layout_height="wrap_content" />-->
-
-                <!--<TextView-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:id="@+id/txtTermAndConditionLink"-->
-                    <!--android:textStyle="italic"-->
-                    <!--android:textSize="@dimen/secondary_text_size"-->
-                    <!--android:textColor="@color/link_color"-->
-                    <!--android:text="sadfhasdfjaldkj aksdjfkaldj "-->
-                    <!--android:layout_below="@id/txtRefClientMsg"-->
-                    <!--android:layout_height="wrap_content" />-->
-
-            <!--</RelativeLayout>-->
-
-        <!--</android.support.v7.widget.CardView>-->
-
-
         <TextView
             android:id="@+id/txtHeadingBenefitToYourFriend"
             android:layout_width="wrap_content"
@@ -141,62 +69,9 @@
             android:layout_below="@id/layoutBenefitsToYou"
             android:textSize="@dimen/large_text_size" />
 
-        <!--<android.support.v7.widget.CardView-->
-            <!--style="@style/CardViewStyle"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="center"-->
-            <!--app:cardBackgroundColor="@color/white"-->
-            <!--app:cardCornerRadius="@dimen/card_corner_radius"-->
-            <!--app:contentPaddingBottom="@dimen/padding_small"-->
-            <!--app:contentPaddingLeft="@dimen/padding_small"-->
-            <!--app:contentPaddingRight="@dimen/padding_small"-->
-            <!--android:id="@+id/layoutToYourFriend"-->
-            <!--android:layout_below="@id/txtHeadingBenefitToYourFriend"-->
-            <!--app:contentPaddingTop="@dimen/padding_mini">-->
 
-            <!--<LinearLayout-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:orientation="vertical"-->
-                <!--android:layout_height="wrap_content">-->
-
-            <!--<TextView-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:id="@+id/txtFreeProduct"-->
-                <!--android:text="@string/freeProductRef"-->
-                <!--android:layout_height="wrap_content" />-->
-
-            <!--<ImageView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:id="@+id/imgFreeProduct"-->
-                <!--android:layout_gravity="center"-->
-                <!--android:src="@drawable/banner"-->
-                <!--android:layout_below="@id/txtFreeProduct"-->
-                <!--android:layout_height="wrap_content" />-->
-
-            <!--<TextView-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:gravity="center"-->
-                <!--android:layout_gravity="center"-->
-                <!--android:textColor="@color/link_color"-->
-                <!--android:id="@+id/txtProductDesc"/>-->
-
-            <!--<TextView-->
-                 <!--android:layout_width="match_parent"-->
-                 <!--android:textSize="@dimen/small_text_size"-->
-                 <!--android:layout_below="@+id/txtFreeProduct"-->
-                 <!--android:text="@string/tcForFreeProduct"-->
-                 <!--android:layout_height="wrap_content" />-->
-
-            <!--</LinearLayout>-->
-
-        <!--</android.support.v7.widget.CardView>-->
 
     </RelativeLayout>
-
-
-
         <GridView
             android:layout_width="match_parent"
             android:id="@+id/layoutGridView"
@@ -208,18 +83,4 @@
         </GridView>
 
     </ScrollView>
-
-
-
-
-<!--<Button-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--style="@style/FooterButtonStyle"-->
-    <!--android:id="@+id/btnRefFriend"-->
-    <!--android:text="@string/inviteFriend"-->
-    <!--android:onClick="onRefFriendClick"-->
-    <!--android:layout_margin="0dp"-->
-    <!--android:layout_alignParentBottom="true" />-->
-
 </RelativeLayout>

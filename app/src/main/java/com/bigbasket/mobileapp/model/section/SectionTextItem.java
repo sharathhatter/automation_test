@@ -20,7 +20,7 @@ public class SectionTextItem implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         boolean wasTextNull = text == null;
-        dest.writeByte(wasTextNull ? (byte) 1: (byte) 0);
+        dest.writeByte(wasTextNull ? (byte) 1 : (byte) 0);
         if (!wasTextNull) {
             dest.writeString(text);
         }

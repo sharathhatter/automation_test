@@ -24,8 +24,10 @@ import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PostDeliveryAddressApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostDeliveryAddressCartSummary;
+import com.bigbasket.mobileapp.apiservice.models.response.PostVoucherApiResponse;
 import com.bigbasket.mobileapp.fragment.order.PaymentSelectionFragment;
 import com.bigbasket.mobileapp.fragment.order.SlotSelectionFragment;
+import com.bigbasket.mobileapp.interfaces.OnApplyVoucherListener;
 import com.bigbasket.mobileapp.interfaces.OnObservableScrollEvent;
 import com.bigbasket.mobileapp.interfaces.SelectedPaymentAware;
 import com.bigbasket.mobileapp.interfaces.SelectedSlotAware;
@@ -34,6 +36,8 @@ import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.order.ActiveVouchers;
 import com.bigbasket.mobileapp.model.order.OrderSummary;
 import com.bigbasket.mobileapp.model.order.PaymentType;
+import com.bigbasket.mobileapp.model.order.PayuResponse;
+import com.bigbasket.mobileapp.model.order.VoucherApplied;
 import com.bigbasket.mobileapp.model.slot.SelectedSlotType;
 import com.bigbasket.mobileapp.model.slot.SlotGroup;
 import com.bigbasket.mobileapp.util.Constants;
@@ -44,19 +48,25 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class SlotPaymentSelectionActivity extends BackButtonActivity
-        implements SelectedSlotAware, SelectedPaymentAware, OnObservableScrollEvent {
+        implements SelectedSlotAware, SelectedPaymentAware, OnObservableScrollEvent,
+        OnApplyVoucherListener {
 
     private ArrayList<SelectedSlotType> mSelectedSlotType;
     private String mPaymentMethodSlug;
-    private String mPaymentMethodDisplay;
     private SharedPreferences preferences;
     private String potentialOrderId;
+    private ArrayList<VoucherApplied> mVoucherAppliedList;
+    private HashMap<String, Boolean> mPreviouslyAppliedVoucherMap;
+    private ViewPager mViewPager;
+    private String mPayuFailureReason;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -130,9 +140,9 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
                          ArrayList<PaymentType> paymentTypes) {
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View base = inflater.inflate(R.layout.uiv3_tab_with_footer_btn, null);
-
         FrameLayout contentView = (FrameLayout) findViewById(R.id.content_frame);
+        View base = inflater.inflate(R.layout.uiv3_tab_with_footer_btn, contentView, false);
+
         contentView.removeAllViews();
 
         final ArrayList<BBTab> bbTabs = new ArrayList<>();
@@ -148,16 +158,30 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
         paymentSelectionBundle.putString(Constants.WALLET_REMAINING, walletRemaining);
         paymentSelectionBundle.putParcelableArrayList(Constants.VOUCHERS, activeVouchersList);
         paymentSelectionBundle.putParcelableArrayList(Constants.PAYMENT_TYPES, paymentTypes);
+
+        boolean hasPayuFailed = !TextUtils.isEmpty(mPayuFailureReason);
+        if (hasPayuFailed) {
+            paymentSelectionBundle.putString(Constants.PAYU_CANCELLED, mPayuFailureReason);
+        }
         bbTabs.add(new BBTab<>("Payment Method", PaymentSelectionFragment.class, paymentSelectionBundle));
 
-        ViewPager viewPager = (ViewPager) base.findViewById(R.id.pager);
+        mViewPager = (ViewPager) base.findViewById(R.id.pager);
         FragmentStatePagerAdapter fragmentStatePagerAdapter = new
                 TabPagerAdapter(getCurrentActivity(), getSupportFragmentManager(), bbTabs);
-        viewPager.setAdapter(fragmentStatePagerAdapter);
+        mViewPager.setAdapter(fragmentStatePagerAdapter);
+
+        if (hasPayuFailed) {
+            mViewPager.setCurrentItem(1);
+        }
+
+        PayuResponse payuResponse = PayuResponse.getInstance(this);
+        if (payuResponse != null && payuResponse.isSuccess()) {
+            mPaymentMethodSlug = Constants.CREDIT_CARD;
+        }
 
         PagerSlidingTabStrip pagerSlidingTabStrip = (PagerSlidingTabStrip) base.findViewById(R.id.slidingTabs);
         contentView.addView(base);
-        pagerSlidingTabStrip.setViewPager(viewPager);
+        pagerSlidingTabStrip.setViewPager(mViewPager);
 
         Button btnFooter = (Button) base.findViewById(R.id.btnListFooter);
         btnFooter.setTypeface(faceRobotoRegular);
@@ -169,7 +193,18 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
                 map.put(TrackEventkeys.POTENTIAL_ORDER, potentialOrderId);
                 map.put(TrackEventkeys.PAYMENT_MODE, preferences.getString(Constants.PAYMENT_METHOD, ""));
                 trackEvent(TrackingAware.CHECKOUT_PAYMENT_CHOSEN, map);
-                launchOrderReview();
+                PayuResponse payuResponse = PayuResponse.getInstance(getCurrentActivity());
+                if (payuResponse != null && payuResponse.isSuccess()) {
+                    ArrayList<VoucherApplied> previouslyAppliedVoucherList = VoucherApplied.readFromPreference(getCurrentActivity());
+                    if (previouslyAppliedVoucherList == null || previouslyAppliedVoucherList.size() == 0) {
+                        launchOrderReview();
+                    } else {
+                        mPreviouslyAppliedVoucherMap = VoucherApplied.toMap(previouslyAppliedVoucherList);
+                        applyVoucher(previouslyAppliedVoucherList.get(0).getVoucherCode());
+                    }
+                } else {
+                    launchOrderReview();
+                }
             }
         });
     }
@@ -202,7 +237,6 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
                         switch (orderSummaryApiResponse.status) {
                             case 0:
                                 OrderSummary orderSummary = orderSummaryApiResponse.apiResponseContent;
-                                orderSummary.getOrderDetails().setPaymentMethodDisplay(mPaymentMethodDisplay);
                                 launchPlaceOrderActivity(orderSummary);
                                 break;
                             default:
@@ -230,16 +264,33 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
     }
 
     @Override
-    public void setPaymentMethod(String paymentMethodSlug, String paymentMethodDisplay) {
+    public void setPaymentMethod(String paymentMethodSlug) {
         this.mPaymentMethodSlug = paymentMethodSlug;
-        this.mPaymentMethodDisplay = paymentMethodDisplay;
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != NavigationCodes.GO_TO_SLOT_SELECTION) {
-            super.onActivityResult(requestCode, resultCode, data);
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        setSuspended(false);
+        switch (resultCode) {
+            case NavigationCodes.GO_TO_SLOT_SELECTION:
+                break;
+            case Constants.PAYU_ABORTED:
+                mPayuFailureReason = getString(R.string.youAborted);
+                break;
+            case Constants.PAYU_FAILED:
+                mPayuFailureReason = getString(R.string.failedToProcess);
+                break;
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
+                break;
+
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mPayuFailureReason = null;
     }
 
     @Override
@@ -255,6 +306,97 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
         ActionBar actionBar = getSupportActionBar();
         if (!actionBar.isShowing()) {
             actionBar.show();
+        }
+    }
+
+    @Override
+    public void applyVoucher(final String voucherCode) {
+        if (TextUtils.isEmpty(voucherCode)) {
+            return;
+        }
+        if (checkInternetConnection()) {
+            BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
+            showProgressDialog(getString(R.string.please_wait));
+            bigBasketApiService.postVoucher(potentialOrderId, voucherCode, new Callback<PostVoucherApiResponse>() {
+                @Override
+                public void success(PostVoucherApiResponse postVoucherApiResponse, Response response) {
+                    if (isSuspended()) return;
+                    try {
+                        hideProgressDialog();
+                    } catch (IllegalArgumentException e) {
+                        return;
+                    }
+                    SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
+                    editor.putString(Constants.EVOUCHER_NAME, voucherCode);
+                    editor.commit();
+                    HashMap<String, String> map = new HashMap<>();
+                    map.put(TrackEventkeys.POTENTIAL_ORDER, potentialOrderId);
+                    map.put(TrackEventkeys.VOUCHER_NAME, voucherCode);
+                    switch (postVoucherApiResponse.status) {
+                        case Constants.OK:
+                            // TODO : Add previous applied voucher handling logic for credit card
+
+                            if (mPreviouslyAppliedVoucherMap == null ||
+                                    mPreviouslyAppliedVoucherMap.size() == 0) {
+                                String voucherMsg;
+                                if (!TextUtils.isEmpty(postVoucherApiResponse.evoucherMsg)) {
+                                    voucherMsg = postVoucherApiResponse.evoucherMsg;
+                                } else {
+                                    voucherMsg = "eVoucher has been successfully applied";
+                                }
+                                showAlertDialog(voucherMsg);
+                            }
+                            onVoucherSuccessfullyApplied(voucherCode);
+                            trackEvent(TrackingAware.CHECKOUT_VOUCHER_APPLIED, map);
+                            break;
+                        default:
+                            handler.sendEmptyMessage(postVoucherApiResponse.getErrorTypeAsInt());
+                            map.put(TrackEventkeys.VOUCHER_FAILURE_REASON, postVoucherApiResponse.message);
+                            trackEvent(TrackingAware.CHECKOUT_VOUCHER_FAILED, null);
+                            break;
+                    }
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                    if (isSuspended()) return;
+                    try {
+                        hideProgressDialog();
+                    } catch (IllegalArgumentException e) {
+                        return;
+                    }
+                    handler.handleRetrofitError(error);
+                    trackEvent(TrackingAware.CHECKOUT_VOUCHER_FAILED, null);
+                }
+            });
+        } else {
+            handler.sendOfflineError();
+        }
+    }
+
+    /**
+     * Callback when the voucher has been successfully applied
+     */
+    private void onVoucherSuccessfullyApplied(String voucherCode) {
+        if (mPreviouslyAppliedVoucherMap != null) {
+            mPreviouslyAppliedVoucherMap.put(voucherCode, true);
+            boolean allApplied = true;
+            for (Map.Entry<String, Boolean> entry : mPreviouslyAppliedVoucherMap.entrySet()) {
+                if (!entry.getValue()) {
+                    allApplied = false;
+                    applyVoucher(entry.getKey());
+                    break;
+                }
+            }
+            if (allApplied) {
+                launchOrderReview();
+            }
+        } else {
+            if (mVoucherAppliedList == null) {
+                mVoucherAppliedList = new ArrayList<>();
+            }
+            mVoucherAppliedList.add(new VoucherApplied(voucherCode));
+            VoucherApplied.saveToPreference(mVoucherAppliedList, this);
         }
     }
 }

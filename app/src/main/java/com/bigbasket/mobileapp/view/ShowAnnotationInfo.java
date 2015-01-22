@@ -2,12 +2,8 @@ package com.bigbasket.mobileapp.view;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
-import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
-import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -15,19 +11,13 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
-import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
-import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
 import com.bigbasket.mobileapp.model.cart.AnnotationInfo;
-import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.MessageFormatUtil;
-import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.nostra13.universalimageloader.core.ImageLoader;
-
-import java.util.ArrayList;
 
 
 public class ShowAnnotationInfo<T> {
+    // TODO : Jugal fix this
 
     private Activity context;
     private AnnotationInfo annotationInfo;
@@ -54,7 +44,7 @@ public class ShowAnnotationInfo<T> {
 
         if (annotationInfo.getMsgInfo().getParams() != null && annotationInfo.getMsgInfo().getMessageStr() != null) {
             MessageFormatUtil messageFormatUtil = new MessageFormatUtil();
-            SpannableStringBuilder msgContent = messageFormatUtil.replaceStringArgWithDisplayNameAndLink(((BaseActivity)context),
+            SpannableStringBuilder msgContent = messageFormatUtil.replaceStringArgWithDisplayNameAndLink(((BaseActivity) context),
                     " " + annotationInfo.getMsgInfo().getMessageStr(),
                     annotationInfo.getMsgInfo().getParams(), null, null);
             txtFulfilledBy.setMovementMethod(LinkMovementMethod.getInstance());

@@ -22,14 +22,17 @@ public class OrderListAdapter extends BaseAdapter {
     private Typeface faceRupee;
     private ArrayList<Order> orders;
     private boolean showFulfillmentInfo;
+    private boolean isInShopFromPreviousOrderMode;
 
     public OrderListAdapter(Context context, Typeface typeface, Typeface faceRupee,
-                            ArrayList<Order> orders, boolean showFulfillmentInfo) {
+                            ArrayList<Order> orders, boolean showFulfillmentInfo,
+                            boolean isInShopFromPreviousOrderMode) {
         this.context = context;
         this.typeface = typeface;
         this.orders = orders;
         this.faceRupee = faceRupee;
         this.showFulfillmentInfo = showFulfillmentInfo;
+        this.isInShopFromPreviousOrderMode = isInShopFromPreviousOrderMode;
     }
 
     @Override
@@ -51,46 +54,47 @@ public class OrderListAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         OrderListRowHolder rowHolder;
         if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.uiv3_order_list_row, null);
+            int layoutId = isInShopFromPreviousOrderMode ? R.layout.uiv3_shop_from_order_list_row : R.layout.uiv3_order_list_row;
+            convertView = LayoutInflater.from(context).inflate(layoutId, parent, false);
             rowHolder = new OrderListRowHolder(convertView);
             convertView.setTag(rowHolder);
         } else {
             rowHolder = (OrderListRowHolder) convertView.getTag();
         }
 
-        TextView txtDisplayName = rowHolder.getTxtDisplayName();
-        TextView txtFulfilledBy = rowHolder.getTxtFulfilledBy();
-        TextView txtSlotDate = rowHolder.getTxtSlotDate();
-        TextView txtSlotTime = rowHolder.getTxtSlotTime();
-        TextView txtOrderStatus = rowHolder.getTxtOrderStatus();
         TextView txtOrderId = rowHolder.getTxtOrderId();
+        TextView txtSlotDate = rowHolder.getTxtSlotDate();
         TextView txtNumItems = rowHolder.getTxtNumItems();
-        TextView txtOrderTotal = rowHolder.getTxtOrderTotal();
 
         Order order = orders.get(position);
-        if (showFulfillmentInfo) {
-            txtDisplayName.setText(order.getFulfillmentInfo().getDisplayName());
-            txtFulfilledBy.setText(order.getFulfillmentInfo().getFulfilledBy());
-        } else {
-            txtDisplayName.setVisibility(View.GONE);
-            txtFulfilledBy.setVisibility(View.GONE);
-            txtSlotDate.setPadding(0, 6, 0, 0);
-        }
-
         String deliveryDate = order.getDeliveryDate().replace("between", "");
-        txtSlotDate.setText(deliveryDate.substring(0, 15).trim());
-        txtSlotTime.setText(deliveryDate.substring(15, deliveryDate.length()).trim());
-        txtOrderId.setText(order.getOrderNumber());
-
-        txtOrderTotal.setText(UIUtil.asRupeeSpannable(order.getOrderValue(), faceRupee));
-
-        String orderStatus = order.getOrderStatus();
-        txtOrderStatus.setText(orderStatus);
-        if (orderStatus.equalsIgnoreCase(Constants.CANCELLED)) {
-            txtOrderStatus.setBackgroundColor(context.getResources().getColor(R.color.dark_red));
-        } else {
-            txtOrderStatus.setBackgroundColor(context.getResources().getColor(R.color.dark_green));
+        if (!isInShopFromPreviousOrderMode) {
+            TextView txtDisplayName = rowHolder.getTxtDisplayName();
+            TextView txtFulfilledBy = rowHolder.getTxtFulfilledBy();
+            TextView txtSlotTime = rowHolder.getTxtSlotTime();
+            TextView txtOrderStatus = rowHolder.getTxtOrderStatus();
+            TextView txtOrderTotal = rowHolder.getTxtOrderTotal();
+            if (showFulfillmentInfo) {
+                txtDisplayName.setText(order.getFulfillmentInfo().getDisplayName());
+                txtFulfilledBy.setText(order.getFulfillmentInfo().getFulfilledBy());
+            } else {
+                txtDisplayName.setVisibility(View.GONE);
+                txtFulfilledBy.setVisibility(View.GONE);
+                txtSlotDate.setPadding(0, 6, 0, 0);
+            }
+            txtSlotTime.setText(deliveryDate.substring(15, deliveryDate.length()).trim());
+            txtOrderTotal.setText(UIUtil.asRupeeSpannable(order.getOrderValue(), faceRupee));
+            String orderStatus = order.getOrderStatus();
+            txtOrderStatus.setText(orderStatus);
+            if (orderStatus.equalsIgnoreCase(Constants.CANCELLED)) {
+                txtOrderStatus.setBackgroundColor(context.getResources().getColor(R.color.dark_red));
+            } else {
+                txtOrderStatus.setBackgroundColor(context.getResources().getColor(R.color.dark_green));
+            }
         }
+
+        txtSlotDate.setText(deliveryDate.substring(0, 15).trim());
+        txtOrderId.setText(order.getOrderNumber());
 
         int numItems = order.getItemsCount();
         String numItemsStr = numItems + " Item";

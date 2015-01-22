@@ -58,8 +58,8 @@ public class ContactListAdapter<T> extends CursorAdapter implements Filterable {
     }
 
 
-    private String getNumberType(int type){
-        switch (type){
+    private String getNumberType(int type) {
+        switch (type) {
             case ContactsContract.CommonDataKinds.Phone.TYPE_HOME:
                 return "Home";
             case ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE:

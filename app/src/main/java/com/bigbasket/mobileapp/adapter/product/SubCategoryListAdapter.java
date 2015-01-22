@@ -99,7 +99,7 @@ public class SubCategoryListAdapter extends BaseExpandableListAdapter {
         View row = convertView;
         SubCatHolder subCatHolder;
         if (row == null) {
-            row = layoutInflater.inflate(R.layout.uiv3_list_text, null);
+            row = layoutInflater.inflate(R.layout.uiv3_list_text, parent, false);
             subCatHolder = new SubCatHolder(row);
             row.setTag(subCatHolder);
         } else {
@@ -154,7 +154,7 @@ public class SubCategoryListAdapter extends BaseExpandableListAdapter {
         View row = convertView;
         SubCatHolder subCatHolder;
         if (row == null) {
-            row = layoutInflater.inflate(R.layout.uiv3_list_text, null);
+            row = layoutInflater.inflate(R.layout.uiv3_list_text, parent, false);
             subCatHolder = new SubCatHolder(row);
             row.setTag(subCatHolder);
         } else {

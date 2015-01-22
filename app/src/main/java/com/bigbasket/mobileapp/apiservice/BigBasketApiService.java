@@ -73,9 +73,9 @@ public interface BigBasketApiService {
                         @Field(Constants.PROPERTIES) String properties,
                         Callback<RegisterDeviceResponse> registerDeviceResponseCallback);
 
-    @GET("/browse-category/")
-    void browseCategory(@Query(Constants.VERSION) String version,
-                        Callback<ApiResponse<BrowseCategoryApiResponseContent>> browseCategoryApiResponseCallback);
+    @GET("/get-main-menu/")
+    void getMainMenu(@Query(Constants.VERSION) String version,
+                     Callback<ApiResponse<BrowseCategoryApiResponseContent>> browseCategoryApiResponseCallback);
 
     @GET("/get-home-page/")
     void loadHomePage(Callback<ApiResponse<SectionData>> homePageApiResponseCallback);
@@ -359,9 +359,13 @@ public interface BigBasketApiService {
     @FormUrlEncoded
     @POST("/post-referral/")
     void postReferralSms(@Field(Constants.REF_TYPE) String refType,
-                        @Field(Constants.REF_MOB_NUMBERS) String refMobNumbers,
-                        Callback<ApiResponse> postReferralApiResponseCallback);
+                         @Field(Constants.REF_MOB_NUMBERS) String refMobNumbers,
+                         Callback<ApiResponse> postReferralApiResponseCallback);
 
     @GET("/spend-trends/")
     void spendTrends(Callback<ApiResponse<SpendTrends>> spendTrendsApiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/forgot-password/")
+    void forgotPassword(@Field(Constants.EMAIL) String email, Callback<OldBaseApiResponse> forgotPasswordApiResponseCallback);
 }

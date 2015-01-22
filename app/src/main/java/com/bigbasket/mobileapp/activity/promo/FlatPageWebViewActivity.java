@@ -37,7 +37,7 @@ public class FlatPageWebViewActivity extends BackButtonActivity {
         WebView wevViewFulfillmentPage = (WebView) findViewById(R.id.webViewFulfillmentPage);
         wevViewFulfillmentPage.getSettings().setJavaScriptEnabled(true);
         if (webViewUrl != null) {
-            wevViewFulfillmentPage.loadUrl(webViewUrl + "?source=app"); // To get responsive templace
+            wevViewFulfillmentPage.loadUrl(webViewUrl + "?source=app"); // To get responsive template
             wevViewFulfillmentPage.setWebViewClient(new FulFillmentWebViewClient());
         }
 

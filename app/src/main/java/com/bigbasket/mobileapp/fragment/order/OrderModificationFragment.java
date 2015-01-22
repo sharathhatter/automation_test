@@ -50,7 +50,7 @@ public class OrderModificationFragment extends BaseFragment {
         ListView orderModListView = new ListView(getActivity());
         orderModListView.setDivider(null);
         orderModListView.setDividerHeight(0);
-        orderModListView.addHeaderView(inflater.inflate(R.layout.uiv3_order_modification_table_header, null));
+        orderModListView.addHeaderView(inflater.inflate(R.layout.uiv3_order_modification_table_header, orderModListView, false));
         OrderModListAdapter orderModListAdapter = new OrderModListAdapter(orderModifications);
         orderModListView.setAdapter(orderModListAdapter);
 
@@ -96,7 +96,7 @@ public class OrderModificationFragment extends BaseFragment {
             ViewHolder viewHolder;
             if (convertView == null) {
                 LayoutInflater inflater = getActivity().getLayoutInflater();
-                convertView = inflater.inflate(R.layout.uiv3_order_modification_table_row, null);
+                convertView = inflater.inflate(R.layout.uiv3_order_modification_table_row, parent, false);
                 viewHolder = new ViewHolder(convertView);
                 convertView.setTag(viewHolder);
             } else {

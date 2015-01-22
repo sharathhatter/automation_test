@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layoutChangeCity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/uiv3_list_bkg_light_color"
-    android:id="@+id/layoutChangeCity">
-
-    <TextView
-        android:id="@+id/lblChangeCity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_normal"
-        android:layout_marginLeft="@dimen/margin_small"
-        android:textColor="@color/uiv3_primary_text_color"
-        android:text="@string/changeCity"
-        android:textSize="@dimen/primary_text_size" />
+    android:orientation="vertical">
 
     <Spinner
         android:id="@+id/spinnerChooseCity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_normal"
+        android:layout_gravity="center_horizontal"
         android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_marginRight="@dimen/margin_normal"
+        android:layout_marginTop="@dimen/margin_normal"
         android:paddingLeft="@dimen/padding_normal"
-        android:layout_marginRight="@dimen/margin_normal" />
+        android:visibility="gone" />
+
+    <ProgressBar
+        android:id="@+id/progressBarChangeCity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_marginRight="@dimen/margin_normal"
+        android:layout_marginTop="@dimen/margin_normal" />
 </LinearLayout>

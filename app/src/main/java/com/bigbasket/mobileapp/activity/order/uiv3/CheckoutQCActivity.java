@@ -210,7 +210,7 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
             contentView.setBackgroundColor(getResources().getColor(R.color.uiv3_list_bkg_color));
             contentView.setPadding(0, 0, 0, 10);
 
-            RelativeLayout layoutRelativeMain = (RelativeLayout) inflater.inflate(R.layout.uiv3_checkout_qc_scroll, null);
+            RelativeLayout layoutRelativeMain = (RelativeLayout) inflater.inflate(R.layout.uiv3_checkout_qc_scroll, contentView, false);
             LinearLayout linearLayoutViewQC = (LinearLayout) layoutRelativeMain.findViewById(R.id.layoutMainCheckoutQc);
             LinearLayout layoutBtnContinue = (LinearLayout) layoutRelativeMain.findViewById(R.id.layoutBtnContinue);
             contentView.addView(layoutRelativeMain);
@@ -221,7 +221,7 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
                     // show product's top category
                     if (!categoryName.equalsIgnoreCase(productWithNoStockList.get(i).getCategoryName()) &&
                             !TextUtils.isEmpty(productWithNoStockList.get(i).getCategoryName())) {
-                        View categoryRow = inflater.inflate(R.layout.uiv3_category_row, null);
+                        View categoryRow = inflater.inflate(R.layout.uiv3_category_row, linearLayoutViewQC, false);
                         TextView txtTopCategory = (TextView) categoryRow.findViewById(R.id.txtTopCategory);
                         categoryName = productWithNoStockList.get(i).getCategoryName();
                         txtTopCategory.setText(productWithNoStockList.get(i).getCategoryName());
@@ -229,7 +229,7 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
                     }
 
                     // no stock product
-                    RelativeLayout layoutWithNoStockProducts = (RelativeLayout) inflater.inflate(R.layout.uiv3_out_of_stock_product_layout, null);
+                    RelativeLayout layoutWithNoStockProducts = (RelativeLayout) inflater.inflate(R.layout.uiv3_out_of_stock_product_layout, linearLayoutViewQC, false);
 
 //                    TextView txtIndex = (TextView) layoutWithNoStockProducts.findViewById(R.id.txtIndex);
 //                    txtIndex.setText(String.valueOf(i+1));
@@ -264,7 +264,7 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
                     // show product's top category
                     if (!categoryName.equalsIgnoreCase(productWithSomeStockList.get(i).getCategoryName()) &&
                             !TextUtils.isEmpty(productWithSomeStockList.get(i).getCategoryName())) {
-                        View categoryRow = inflater.inflate(R.layout.uiv3_category_row, null);
+                        View categoryRow = inflater.inflate(R.layout.uiv3_category_row, linearLayoutViewQC, false);
                         TextView txtTopCategory = (TextView) categoryRow.findViewById(R.id.txtTopCategory);
                         categoryName = productWithSomeStockList.get(i).getCategoryName();
                         txtTopCategory.setText(productWithSomeStockList.get(i).getCategoryName());
@@ -272,7 +272,7 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
                     }
 
                     // some stock product
-                    RelativeLayout layoutWithSomeStockProducts = (RelativeLayout) inflater.inflate(R.layout.uiv3_out_of_stock_product_layout, null);
+                    RelativeLayout layoutWithSomeStockProducts = (RelativeLayout) inflater.inflate(R.layout.uiv3_out_of_stock_product_layout, linearLayoutViewQC, false);
 
                     TextView txtOutOfStock = (TextView) layoutWithSomeStockProducts.findViewById(R.id.txtOutOfStock);
                     txtOutOfStock.setVisibility(View.GONE);
@@ -347,7 +347,7 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
                                     switch (item.getItemId()) {
                                         case R.id.menuAddSimilarQCProduct:
                                             Intent data = new Intent(getCurrentActivity(), BBActivity.class);
-                                            data.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SUBCAT_FRAGMENT);
+                                            data.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_CATEGORY_LANDING);
                                             data.putExtra(Constants.TOP_CATEGORY_SLUG,
                                                     productWithSomeStockList.get(imgProductCheckOutQCAdditionalAction.getId()).getTopLevelCategorySlug());
                                             data.putExtra(Constants.TOP_CATEGORY_NAME,
@@ -396,7 +396,7 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
 
     private void showQcMsg(LinearLayout linearLayoutViewQC, boolean forNoProductView) {
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.uiv3_checkout_msg, null);
+        View view = inflater.inflate(R.layout.uiv3_checkout_msg, linearLayoutViewQC, false);
         TextView txtOutOfStockMsg1 = (TextView) view.findViewById(R.id.txtOutOfStockMsg1);
         txtOutOfStockMsg1.setTypeface(faceRobotoRegular);
         TextView txtOutOfStockMsg2 = (TextView) view.findViewById(R.id.txtOutOfStockMsg2);

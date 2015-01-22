@@ -10,22 +10,22 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable {
 
     private String image;
 
-    @SerializedName(Constants.DESTINATION_INFO_ID)
-    private int destinationInfoId;
-
     @SerializedName(Constants.RENDERING_ID)
     private int renderingId;
+
+    @SerializedName(Constants.DESTINATION)
+    private DestinationInfo destinationInfo;
 
     public String getImage() {
         return image;
     }
 
-    public int getDestinationInfoId() {
-        return destinationInfoId;
-    }
-
     public int getRenderingId() {
         return renderingId;
+    }
+
+    public DestinationInfo getDestinationInfo() {
+        return destinationInfo;
     }
 
     @Override
@@ -41,8 +41,12 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable {
         if (!_wasImageNull) {
             dest.writeString(image);
         }
-        dest.writeInt(destinationInfoId);
         dest.writeInt(renderingId);
+        boolean wasDestNull = destinationInfo == null;
+        dest.writeByte(wasDestNull ? (byte) 1 : (byte) 0);
+        if (!wasDestNull) {
+            dest.writeParcelable(destinationInfo, flags);
+        }
     }
 
     public SectionItem(Parcel source) {
@@ -51,8 +55,11 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable {
         if (!_wasImageNull) {
             image = source.readString();
         }
-        destinationInfoId = source.readInt();
         renderingId = source.readInt();
+        boolean wasDestNull = source.readByte() == (byte) 1;
+        if (!wasDestNull) {
+            destinationInfo = source.readParcelable(SectionItem.class.getClassLoader());
+        }
     }
 
     public static final Parcelable.Creator<SectionItem> CREATOR = new Parcelable.Creator<SectionItem>() {

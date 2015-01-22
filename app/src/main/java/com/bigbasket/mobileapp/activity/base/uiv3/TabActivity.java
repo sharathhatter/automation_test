@@ -28,7 +28,7 @@ public abstract class TabActivity extends BackButtonActivity {
         FrameLayout contentLayout = (FrameLayout) findViewById(R.id.content_frame);
 
         LayoutInflater inflater = getLayoutInflater();
-        View base = inflater.inflate(R.layout.uiv3_swipe_tab_view, null);
+        View base = inflater.inflate(R.layout.uiv3_swipe_tab_view, contentLayout, false);
 
         setTabContent(base);
         contentLayout.addView(base);

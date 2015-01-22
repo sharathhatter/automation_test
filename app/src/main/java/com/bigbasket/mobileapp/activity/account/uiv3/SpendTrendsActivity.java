@@ -163,7 +163,7 @@ public class SpendTrendsActivity extends BaseActivity implements OnObservableScr
         FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
         contentFrame.removeAllViews();
         if (isSpendTrendsEmpty()) {
-            View spendTrendsEmptyView = getLayoutInflater().inflate(R.layout.uiv3_empty_spend_trends, null);
+            View spendTrendsEmptyView = getLayoutInflater().inflate(R.layout.uiv3_empty_spend_trends, contentFrame, false);
             contentFrame.addView(spendTrendsEmptyView);
             toggleFilterLayoutVisibility();
             return;
@@ -231,7 +231,8 @@ public class SpendTrendsActivity extends BaseActivity implements OnObservableScr
                                        ArrayList<SpendTrendsCategoryExpRangeData> filteredCategoryExpRangeData,
                                        String categoryName, SpendTrendSummary selectedSummary,
                                        int rangeVal) {
-        View base = getLayoutInflater().inflate(R.layout.uiv3_spend_trends_tab, null);
+        FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
+        View base = getLayoutInflater().inflate(R.layout.uiv3_spend_trends_tab, contentFrame, false);
 
         final ArrayList<BBTab> bbTabs = new ArrayList<>();
         Bundle spentSavedBundle = new Bundle();
@@ -261,7 +262,6 @@ public class SpendTrendsActivity extends BaseActivity implements OnObservableScr
         circlePageIndicator.setPageColor(Color.WHITE);
         circlePageIndicator.setRadius(6 * getResources().getDisplayMetrics().density);
 
-        FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
         contentFrame.removeAllViews();
         contentFrame.addView(base);
     }

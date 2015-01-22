@@ -45,7 +45,7 @@ public class LocateOnMapActivity extends BackButtonActivity implements OnMapRead
 
         FrameLayout contentView = (FrameLayout) findViewById(R.id.content_frame);
         LayoutInflater inflater = getLayoutInflater();
-        View base = inflater.inflate(R.layout.uiv3_locate_on_map, null);
+        View base = inflater.inflate(R.layout.uiv3_locate_on_map, contentView, false);
         contentView.addView(base);
 
         TextView txtMemberAddress = (TextView) base.findViewById(R.id.txtMemberAddress);

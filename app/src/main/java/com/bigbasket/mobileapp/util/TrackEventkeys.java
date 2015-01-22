@@ -40,7 +40,7 @@ public class TrackEventkeys {
     public static final String FB_LOGIN_FAILURE_REASON = "facebook login failure reason";
     public static final String PROMO_NAME = "promo_name";
     public static final String PROMO_SET_NAME = "promo_set_name";
-    public static final String SHOP_FROM_PAST_ORDER= "shop_from_past_order";
+    public static final String SHOP_FROM_PAST_ORDER = "shop_from_past_order";
     public static final String NEW_ACCOUNT = "new account created";
     public static final String EXISTING_ACCOUNT_EMAIL = "existing account email ";
 

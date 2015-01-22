@@ -21,9 +21,9 @@ public class ShopInShopFragment extends ProductListAwareFragment {
     @Nullable
     public String getProductListSlug() {
         Bundle bundle = getArguments();
-        String shopId = bundle != null ? bundle.getString(Constants.SHOP_ID) : null;
-        shopId = TextUtils.isEmpty(shopId) ? "express" : shopId;
-        return shopId;
+        String shopSlug = bundle != null ? bundle.getString(Constants.SLUG) : null;
+        shopSlug = TextUtils.isEmpty(shopSlug) ? "express" : shopSlug;
+        return shopSlug;
     }
 
     @Override

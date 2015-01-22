@@ -17,19 +17,19 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.bigbasket.mobileapp.BuildConfig;
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.account.uiv3.MemberReferralOptionsActivity;
-import com.bigbasket.mobileapp.activity.account.uiv3.MemberReferralTCActivity;
-import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.adapter.product.CategoryAdapter;
+import com.bigbasket.mobileapp.adapter.product.ShopInShopAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.BrowseCategoryApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
+import com.bigbasket.mobileapp.model.CitySpecificAppSettings;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.Constants;
@@ -37,6 +37,7 @@ import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.moe.pushlibrary.MoEHelper;
+import com.newrelic.agent.android.NewRelic;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -59,6 +60,10 @@ public class StartActivity extends BaseActivity {
             showAlertDialogFinish(getString(R.string.deviceOfflineSmallTxt),
                     getString(R.string.deviceOffline));
             return;
+        }
+
+        if (!BuildConfig.DEBUG) {
+            NewRelic.withApplicationToken(getString(R.string.new_relic_key)).start(this.getApplication());
         }
 
         MoEHelper moEHelper = new MoEHelper(this);
@@ -94,7 +99,7 @@ public class StartActivity extends BaseActivity {
                 BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
                 String version = categoryAdapter.getCategoriesVersion();
                 showProgressDialog(getString(R.string.please_wait));
-                bigBasketApiService.browseCategory(version, new Callback<ApiResponse<BrowseCategoryApiResponseContent>>() {
+                bigBasketApiService.getMainMenu(version, new Callback<ApiResponse<BrowseCategoryApiResponseContent>>() {
                     @Override
                     public void success(ApiResponse<BrowseCategoryApiResponseContent> browseCategoryApiResponse, Response response) {
                         hideProgressDialog();
@@ -105,6 +110,12 @@ public class StartActivity extends BaseActivity {
                             categoryAdapter.insert(browseCategoryApiResponseContent.topCategoryModels,
                                     browseCategoryApiResponseContent.version);
                         }
+                        if (browseCategoryApiResponse.apiResponseContent.shops != null) {
+                            ShopInShopAdapter shopInShopAdapter = new ShopInShopAdapter(getCurrentActivity());
+                            shopInShopAdapter.deleteAll();
+                            shopInShopAdapter.insertAll(browseCategoryApiResponse.apiResponseContent.shops);
+                        }
+                        CitySpecificAppSettings.setHasBundlePack(browseCategoryApiResponse.apiResponseContent.hasBundlePack, getCurrentActivity());
                         loadHomePage();
                     }
 
@@ -123,12 +134,9 @@ public class StartActivity extends BaseActivity {
     }
 
     private void loadHomePage() {
-
-        Intent intent = new Intent(this, MemberReferralTCActivity.class);//MemberReferralOptionsActivity
-        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-//        Intent homePageIntent = new Intent(this, BBActivity.class);
-//        homePageIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_HOME);
-//        startActivityForResult(homePageIntent, Constants.FORCE_REGISTER_CODE);
+        Intent homePageIntent = new Intent(this, BBActivity.class);
+        homePageIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_HOME);
+        startActivityForResult(homePageIntent, Constants.FORCE_REGISTER_CODE);
     }
 
     private void loadCities() {
@@ -176,7 +184,7 @@ public class StartActivity extends BaseActivity {
         progressBarLoading.setVisibility(View.GONE);
 
         final ArrayList<String> citiesStr = new ArrayList<>();
-        for(int i=1; i<cities.size(); i++){
+        for (int i = 1; i < cities.size(); i++) {
             citiesStr.add(cities.get(i).getName());
         }
         TextView txtViewWhy = (TextView) findViewById(R.id.txtViewWhy);
@@ -184,7 +192,7 @@ public class StartActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 String cityString = UIUtil.sentenceJoin(citiesStr);
-                showAlertDialog(getString(R.string.PreWhyMsg)+ " "+ cityString +". "+getString(R.string.postWhyMsg));
+                showAlertDialog(getString(R.string.PreWhyMsg) + " " + cityString + ". " + getString(R.string.postWhyMsg));
             }
         });
         layoutSpinnerAndWhyLink.setVisibility(View.VISIBLE);
@@ -269,7 +277,7 @@ public class StartActivity extends BaseActivity {
                 loadCities();
             }
         } else if (resultCode == NavigationCodes.GO_TO_HOME) {
-            loadHomePage();
+            loadNavigation();
         } else {
             finish();
         }

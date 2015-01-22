@@ -1,19 +1,9 @@
 package com.bigbasket.mobileapp.activity.base.uiv3;
 
-import android.annotation.TargetApi;
-import android.app.LoaderManager;
-import android.content.ContentResolver;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.Loader;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.provider.ContactsContract;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -41,14 +31,13 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
 
-public abstract class BaseSignInSignupActivity extends BackButtonActivity implements EmailAddressAware{
+public abstract class BaseSignInSignupActivity extends BackButtonActivity implements EmailAddressAware {
 
     protected AutoCompleteTextView mEmailView;
 
@@ -72,7 +61,6 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity implem
 
         mEmailView.setAdapter(adapter);
     }
-
 
 
     public class LoginApiResponseCallback implements Callback<LoginApiResponse> {
@@ -217,7 +205,7 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity implem
         }
         editor.commit();
 
-        UIUtil.updateStoredUserDetails(getCurrentActivity(),
+        UIUtil.updateStoredUserDetails(getApplication(), getCurrentActivity(),
                 loginApiResponse.userDetails, email, loginApiResponse.mId);
         onLoginSuccess();
     }

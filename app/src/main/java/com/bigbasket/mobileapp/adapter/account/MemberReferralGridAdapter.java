@@ -1,12 +1,7 @@
 package com.bigbasket.mobileapp.adapter.account;
 
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Typeface;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,15 +11,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.account.uiv3.MemberReferralTCActivity;
-import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
+import com.bigbasket.mobileapp.activity.account.uiv3.MemberReferralActivity;
 
 import java.util.ArrayList;
 
 /**
  * Created by jugal on 21/1/15.
  */
-public class MemberReferralGridAdapter<T> extends BaseAdapter{
+public class MemberReferralGridAdapter<T> extends BaseAdapter {
 
     private T context;
     private LayoutInflater layoutInflater;
@@ -35,7 +29,7 @@ public class MemberReferralGridAdapter<T> extends BaseAdapter{
     public MemberReferralGridAdapter(T context, ArrayList<Integer> referralImageArrayList,
                                      ArrayList<String> referralStringArrayList,
                                      Typeface faceRobotoRegular) {
-        layoutInflater = LayoutInflater.from((Activity)context);
+        layoutInflater = LayoutInflater.from((Activity) context);
         this.context = context;
         this.referralImageArrayList = referralImageArrayList;
         this.referralStringArrayList = referralStringArrayList;
@@ -71,7 +65,7 @@ public class MemberReferralGridAdapter<T> extends BaseAdapter{
         layoutRow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MemberReferralTCActivity)context).messageHandler(v);
+                ((MemberReferralActivity) context).messageHandler(v);
             }
         });
         return convertView;

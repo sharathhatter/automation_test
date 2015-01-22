@@ -39,7 +39,7 @@ public class SocialLoginConfirmActivity extends BaseSignInSignupActivity {
         FrameLayout contentView = (FrameLayout) findViewById(R.id.content_frame);
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View base = inflater.inflate(R.layout.uiv3_social_login_confirm, null);
+        View base = inflater.inflate(R.layout.uiv3_social_login_confirm, contentView, false);
 
         mEmailView = (AutoCompleteTextView) base.findViewById(R.id.emailInput);
 

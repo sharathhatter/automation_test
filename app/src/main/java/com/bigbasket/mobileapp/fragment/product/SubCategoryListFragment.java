@@ -72,9 +72,9 @@ public class SubCategoryListFragment extends BaseFragment {
         if (checkInternetConnection()) {
             SubCategoryAdapter subCategoryAdapter = new SubCategoryAdapter(getActivity());
             String version = subCategoryAdapter.getVersion(topCatSlug);
-            if(topCatVersion!=null && topCatVersion.equals(version)){
-                renderSubCategory(null,  true,  null, null);
-            }else {
+            if (topCatVersion != null && topCatVersion.equals(version)) {
+                renderSubCategory(null, true, null, null);
+            } else {
                 String categorySlug = topCatSlug;
                 getSubCategoryData(categorySlug, version);
             }

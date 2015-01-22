@@ -14,9 +14,6 @@ public class SectionData implements Parcelable {
 
     private ArrayList<Section> sections;
 
-    @SerializedName(Constants.DESTINATIONS_INFO)
-    private HashMap<Integer, DestinationInfo> destinationInfoMap;
-
     @SerializedName(Constants.RENDERERS)
     private HashMap<Integer, Renderer> renderersMap;
 
@@ -31,15 +28,6 @@ public class SectionData implements Parcelable {
         dest.writeByte(wasSectionsNull ? (byte) 1 : (byte) 0);
         if (!wasSectionsNull) {
             dest.writeTypedList(sections);
-        }
-        boolean wasDestMapNull = destinationInfoMap == null;
-        dest.writeByte(wasDestMapNull ? (byte) 1 : (byte) 0);
-        if (!wasDestMapNull) {
-            dest.writeInt(destinationInfoMap.size());
-            for (Map.Entry<Integer, DestinationInfo> destinationInfoEntry : destinationInfoMap.entrySet()) {
-                dest.writeInt(destinationInfoEntry.getKey());
-                dest.writeParcelable(destinationInfoEntry.getValue(), flags);
-            }
         }
         boolean wasRendererMapNull = renderersMap == null;
         dest.writeByte(wasRendererMapNull ? (byte) 1 : (byte) 0);
@@ -57,16 +45,6 @@ public class SectionData implements Parcelable {
         if (!wasSectionsNull) {
             sections = new ArrayList<>();
             source.readTypedList(sections, Section.CREATOR);
-        }
-        boolean wasDestMapNull = source.readByte() == (byte) 1;
-        if (!wasDestMapNull) {
-            destinationInfoMap = new HashMap<>();
-            int size = source.readInt();
-            for (int i = 0; i < size; i++) {
-                int destinationInfoId = source.readInt();
-                DestinationInfo destinationInfo = source.readParcelable(Section.class.getClassLoader());
-                destinationInfoMap.put(destinationInfoId, destinationInfo);
-            }
         }
         boolean wasRendererMapNull = source.readByte() == (byte) 1;
         if (!wasRendererMapNull) {
@@ -94,10 +72,6 @@ public class SectionData implements Parcelable {
 
     public ArrayList<Section> getSections() {
         return sections;
-    }
-
-    public HashMap<Integer, DestinationInfo> getDestinationInfoMap() {
-        return destinationInfoMap;
     }
 
     public HashMap<Integer, Renderer> getRenderersMap() {

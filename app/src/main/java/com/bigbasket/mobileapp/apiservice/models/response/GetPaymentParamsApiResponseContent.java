@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.apiservice.models.response;
 
 import com.bigbasket.mobileapp.util.Constants;
+import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
 
 public class GetPaymentParamsApiResponseContent {
@@ -9,7 +10,7 @@ public class GetPaymentParamsApiResponseContent {
     public String payuGatewayUrl;
 
     @SerializedName(Constants.PAYU_POST_PARAMS)
-    public String payuPostParamsJson;
+    public JsonObject payuPostParamsJson;
 
     @SerializedName(Constants.SUCCESS_CAPTURE_URL)
     public String successCaptureUrl;

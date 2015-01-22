@@ -46,7 +46,7 @@ public class SignupActivity extends BaseSignInSignupActivity {
         FrameLayout contentView = (FrameLayout) findViewById(R.id.content_frame);
         LayoutInflater inflater = getLayoutInflater();
 
-        View base = inflater.inflate(R.layout.uiv3_signup, null);
+        View base = inflater.inflate(R.layout.uiv3_signup, contentView, false);
         setTitle(getString(R.string.signUp));
         contentView.addView(base);
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(this);
@@ -175,7 +175,7 @@ public class SignupActivity extends BaseSignInSignupActivity {
         userDetailsJsonObj.addProperty(Constants.LASTNAME, lastName);
         userDetailsJsonObj.addProperty(Constants.PASSWORD, passwd);
         userDetailsJsonObj.addProperty(Constants.MOBILE_NUMBER, mobileNumber);
-        if(!TextUtils.isEmpty(refCode))
+        if (!TextUtils.isEmpty(refCode))
             userDetailsJsonObj.addProperty(Constants.REF_CODE, refCode);
         userDetailsJsonObj.addProperty(Constants.NEWSLETTER_SUBSCRIPTION, mChkReceivePromos.isChecked());
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
