@@ -60,6 +60,7 @@ import com.bigbasket.mobileapp.fragment.product.BrowseByOffersFragment;
 import com.bigbasket.mobileapp.fragment.product.CategoryProductsFragment;
 import com.bigbasket.mobileapp.fragment.product.GenericProductListFragment;
 import com.bigbasket.mobileapp.fragment.product.ProductDetailFragment;
+import com.bigbasket.mobileapp.fragment.product.ProductListDialogFragment;
 import com.bigbasket.mobileapp.fragment.product.SearchFragment;
 import com.bigbasket.mobileapp.fragment.product.ShopInShopFragment;
 import com.bigbasket.mobileapp.fragment.product.SubCategoryListFragment;
@@ -71,6 +72,7 @@ import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
+import com.bigbasket.mobileapp.interfaces.ProductListDialogAware;
 import com.bigbasket.mobileapp.model.CitySpecificAppSettings;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.cart.BasketOperationResponse;
@@ -95,7 +97,7 @@ import java.util.List;
 
 
 public class BBActivity extends BaseActivity implements BasketOperationAware,
-        CartInfoAware, HandlerAware {
+        CartInfoAware, HandlerAware, ProductListDialogAware {
 
     private ActionBarDrawerToggle mDrawerToggle;
     private String mDrawerTitle;
@@ -198,7 +200,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         String ftTag = TextUtils.isEmpty(tag) ? fragment.getFragmentTxnTag() : tag;
         this.currentFragmentTag = ftTag;
         ft.add(R.id.content_frame, fragment, ftTag);
-        ft.addToBackStack(tag);
+        ft.addToBackStack(ftTag);
         ft.commit();
         if (mDrawerLayout != null) {
             mDrawerLayout.closeDrawers();
@@ -861,6 +863,27 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
     public ArrayList<TopCategoryModel> getStoredTopCategories() {
         CategoryAdapter categoryAdapter = new CategoryAdapter(this);
         return categoryAdapter.getAllTopCategories();
+    }
+
+    @Override
+    public void showDialog(ArrayList<Product> products, int productCount, String baseImgUrl,
+                           boolean asDialog, String tagName) {
+        if (asDialog) {
+            ProductListDialogFragment productListDialogFragment = ProductListDialogFragment.
+                    newInstance(products, productCount, baseImgUrl, 10, 20);
+            productListDialogFragment.show(getSupportFragmentManager(),
+                    Constants.SHOPPING_LISTS);
+        } else {
+            ProductListDialogFragment productListDialogFragment = ProductListDialogFragment.
+                    newInstance(products, productCount, baseImgUrl, ProductListDialogFragment.SHOW_ALL,
+                            ProductListDialogFragment.SHOW_ALL);
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.add(R.id.content_frame, productListDialogFragment, tagName);
+            if (tagName != null) {
+                ft.addToBackStack(tagName);
+            }
+            ft.commit();
+        }
     }
 
     private class NavigationListGroupClickListener implements ExpandableListView.OnGroupClickListener {

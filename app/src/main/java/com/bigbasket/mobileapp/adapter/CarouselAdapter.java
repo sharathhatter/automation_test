@@ -173,7 +173,8 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
         @Override
         public void onClick(View v) {
             OnSectionItemClickListener sectionItemClickListener =
-                    new OnSectionItemClickListener<>(context, section, sectionItems.get(getPosition()));
+                    new OnSectionItemClickListener<>(((ActivityAware)context).getCurrentActivity(),
+                            section, sectionItems.get(getPosition()));
             sectionItemClickListener.onClick(v);
         }
     }

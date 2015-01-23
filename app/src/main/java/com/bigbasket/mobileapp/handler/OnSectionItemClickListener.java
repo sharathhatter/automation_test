@@ -14,11 +14,12 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.callbacks.ProductListApiResponseCallback;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListDetailsApiResponse;
-import com.bigbasket.mobileapp.fragment.product.ProductListDialogFragment;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.CancelableAware;
+import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
+import com.bigbasket.mobileapp.interfaces.ProductListDialogAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductListData;
@@ -76,6 +77,10 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                         getApiService(((ActivityAware) context).getCurrentActivity());
                 if (!TextUtils.isEmpty(destinationSlug) && !TextUtils.isEmpty(destinationType) &&
                         destinationType.equals(DestinationInfo.SHOPPING_LIST)) {
+                    if (!((ConnectivityAware) context).checkInternetConnection()) {
+                        ((HandlerAware) context).getHandler().sendOfflineError();
+                        return;
+                    }
                     ((ProgressIndicationAware) context).showProgressDialog("Please wait...");
                     bigBasketApiService.getShoppingListDetails(destinationSlug, null, new Callback<ApiResponse<GetShoppingListDetailsApiResponse>>() {
                         @Override
@@ -91,11 +96,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                                     ShoppingListDetail shoppingListDetail = getShoppingListDetailsApiResponse.apiResponseContent.shoppingListDetail;
                                     if (shoppingListDetail != null) {
                                         ArrayList<Product> products = shoppingListDetail.getProducts();
-                                        ProductListDialogFragment productListDialogFragment = ProductListDialogFragment.
-                                                newInstance(products, products.size(), null);
-                                        productListDialogFragment.show(((ActivityAware) context).getCurrentActivity().getSupportFragmentManager(),
-                                                Constants.SHOPPING_LISTS);
-
+                                        ((ProductListDialogAware) context).showDialog(products, products.size(), null, true, Constants.SHOPPING_LISTS);
                                     }
                                     break;
                                 default:
@@ -121,6 +122,10 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                     String productListType = ProductQuery.convertDestinationTypeToProductQueryType(destinationType);
                     if (!TextUtils.isEmpty(productListType)) {
                         ProductQuery productQuery = new ProductQuery(destinationType, destinationSlug, 1);
+                        if (!((ConnectivityAware) context).checkInternetConnection()) {
+                            ((HandlerAware) context).getHandler().sendOfflineError();
+                            return;
+                        }
                         ((ProgressIndicationAware) context).showProgressDialog("Please wait...");
                         bigBasketApiService.productListUrl(productQuery.getAsQueryMap(), new ProductListApiResponseCallback<>(1, this, false));
                     }
@@ -223,10 +228,8 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
 
     @Override
     public void updateData() {
-        ProductListDialogFragment productListDialogFragment = ProductListDialogFragment.
-                newInstance(productListData.getProducts(), productListData.getProductCount(), productListData.getBaseImgUrl());
-        productListDialogFragment.show(((ActivityAware) context).getCurrentActivity().getSupportFragmentManager(),
-                DestinationInfo.PRODUCT_LIST);
+        ((ProductListDialogAware) context).showDialog(productListData.getProducts(), productListData.getProductCount(),
+                productListData.getBaseImgUrl(), true, DestinationInfo.PRODUCT_LIST);
     }
 
     @Override

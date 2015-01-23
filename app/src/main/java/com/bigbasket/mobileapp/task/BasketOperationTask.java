@@ -12,7 +12,6 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.CartOperationApiResponse;
-import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
 import com.bigbasket.mobileapp.interfaces.CancelableAware;
@@ -20,6 +19,7 @@ import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
@@ -83,7 +83,8 @@ public class BasketOperationTask<T> {
         createEventTrackPayLoad(eventName, product, sourceName);
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.
                 getApiService(((ActivityAware) context).getCurrentActivity());
-        ((ProgressIndicationAware) context).showProgressDialog(((BaseFragment) context).getString(R.string.please_wait));
+        ((ProgressIndicationAware) context).showProgressDialog(((ActivityAware) context).getCurrentActivity()
+                .getString(R.string.please_wait));
         String reqProdId = product.getSku();
         switch (basketOperation) {
             case INC:
@@ -167,6 +168,6 @@ public class BasketOperationTask<T> {
         eventAttribs.put(TrackEventkeys.PRODUCT_DESC, desc);
         eventAttribs.put(TrackEventkeys.PRODUCT_TOP_CAT, product.getTopLevelCategoryName());
         eventAttribs.put(TrackEventkeys.PRODUCT_CAT, product.getProductCategoryName());
-        ((BaseFragment) context).trackEvent(eventName, eventAttribs, sourceName, null);
+        ((TrackingAware) context).trackEvent(eventName, eventAttribs, sourceName, null);
     }
 }
