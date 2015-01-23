@@ -193,9 +193,17 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                     break;
                 case DestinationInfo.SEARCH:
                     if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
-                        intent = new Intent(((ActivityAware) context).getCurrentActivity(), BackButtonActivity.class);
+                        intent = new Intent(((ActivityAware) context).getCurrentActivity(), ProductListActivity.class);
                         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SEARCH);
                         intent.putExtra(Constants.SEARCH_QUERY, destinationInfo.getDestinationSlug());
+                        ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                    }
+                    break;
+                case DestinationInfo.PRODUCT_LIST:
+                    if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
+                        intent = new Intent(((ActivityAware) context).getCurrentActivity(), ProductListActivity.class);
+                        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_GENERIC_PRODUCT_LIST);
+                        intent.putExtra(Constants.TYPE, destinationInfo.getDestinationSlug());
                         ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     }
                     break;

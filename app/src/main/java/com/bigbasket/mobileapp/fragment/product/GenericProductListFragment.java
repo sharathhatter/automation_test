@@ -5,13 +5,12 @@ import android.support.annotation.Nullable;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
-import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
-import com.bigbasket.mobileapp.util.TrackEventkeys;
+import com.bigbasket.mobileapp.util.Constants;
 
-public class NowAtBBFragment extends ProductListAwareFragment {
+public class GenericProductListFragment extends ProductListAwareFragment {
     @Override
     public String getSourceName() {
-        return TrackEventkeys.NOW_AT_BB;
+        return getArguments().getString(Constants.TYPE);
     }
 
     @Override
@@ -22,7 +21,7 @@ public class NowAtBBFragment extends ProductListAwareFragment {
 
     @Override
     public String getProductQueryType() {
-        return ProductListType.NOW_AT_BB.get();
+        return getArguments().getString(Constants.TYPE);
     }
 
     @Override
@@ -33,6 +32,6 @@ public class NowAtBBFragment extends ProductListAwareFragment {
     @NonNull
     @Override
     public String getFragmentTxnTag() {
-        return NowAtBBFragment.class.getName();
+        return GenericProductListFragment.class.getName();
     }
 }

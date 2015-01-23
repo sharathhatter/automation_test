@@ -57,10 +57,8 @@ import com.bigbasket.mobileapp.fragment.order.OrderThankYouFragment;
 import com.bigbasket.mobileapp.fragment.order.ShowCartFragment;
 import com.bigbasket.mobileapp.fragment.order.SlotSelectionFragment;
 import com.bigbasket.mobileapp.fragment.product.BrowseByOffersFragment;
-import com.bigbasket.mobileapp.fragment.product.BundlePackFragment;
 import com.bigbasket.mobileapp.fragment.product.CategoryProductsFragment;
-import com.bigbasket.mobileapp.fragment.product.NewAtBBFragment;
-import com.bigbasket.mobileapp.fragment.product.NowAtBBFragment;
+import com.bigbasket.mobileapp.fragment.product.GenericProductListFragment;
 import com.bigbasket.mobileapp.fragment.product.ProductDetailFragment;
 import com.bigbasket.mobileapp.fragment.product.SearchFragment;
 import com.bigbasket.mobileapp.fragment.product.ShopInShopFragment;
@@ -83,6 +81,7 @@ import com.bigbasket.mobileapp.model.navigation.NavigationSubItem;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.TopCategoryModel;
+import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.util.Constants;
@@ -390,13 +389,25 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 addToMainLayout(shopFromOrderFragment);
                 break;
             case FragmentCodes.START_NOW_AT_BB:
-                addToMainLayout(new NowAtBBFragment());
+                GenericProductListFragment productListFragment = new GenericProductListFragment();
+                Bundle productListArgs = new Bundle();
+                productListArgs.putString(Constants.TYPE, ProductListType.NOW_AT_BB.get());
+                productListFragment.setArguments(productListArgs);
+                addToMainLayout(productListFragment);
                 break;
             case FragmentCodes.START_NEW_AT_BB:
-                addToMainLayout(new NewAtBBFragment());
+                productListFragment = new GenericProductListFragment();
+                productListArgs = new Bundle();
+                productListArgs.putString(Constants.TYPE, ProductListType.NEW_AT_BB.get());
+                productListFragment.setArguments(productListArgs);
+                addToMainLayout(productListFragment);
                 break;
             case FragmentCodes.START_BUNDLE_PACK:
-                addToMainLayout(new BundlePackFragment());
+                productListFragment = new GenericProductListFragment();
+                productListArgs = new Bundle();
+                productListArgs.putString(Constants.TYPE, ProductListType.BUNDLE_PACK.get());
+                productListFragment.setArguments(productListArgs);
+                addToMainLayout(productListFragment);
                 break;
             case FragmentCodes.START_PRODUCT_CATEGORY:
                 launchProductCategoryFragment(getIntent().getStringExtra(Constants.CATEGORY_SLUG));
@@ -414,6 +425,16 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 break;
             case FragmentCodes.START_SEARCH:
                 doSearch(getIntent().getStringExtra(Constants.SEARCH_QUERY));
+                break;
+            case FragmentCodes.START_GENERIC_PRODUCT_LIST:
+                String type = getIntent().getStringExtra(Constants.TYPE);
+                if (!TextUtils.isEmpty(type)) {
+                    productListFragment = new GenericProductListFragment();
+                    productListArgs = new Bundle();
+                    productListArgs.putString(Constants.TYPE, type);
+                    productListFragment.setArguments(productListArgs);
+                    addToMainLayout(productListFragment);
+                }
                 break;
         }
     }

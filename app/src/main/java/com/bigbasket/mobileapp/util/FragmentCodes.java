@@ -25,4 +25,5 @@ public final class FragmentCodes {
     public static final int START_BUNDLE_PACK = 24;
     public static final int START_SHOPPING_LIST_LANDING = 25;
     public static final int START_SEARCH = 26;
+    public static final int START_GENERIC_PRODUCT_LIST = 27;
 }
