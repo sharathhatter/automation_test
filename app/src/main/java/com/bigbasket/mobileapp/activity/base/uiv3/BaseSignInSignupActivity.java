@@ -193,6 +193,7 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity {
                             trackEvent(TrackingAware.MY_ACCOUNT_LOGIN_SUCCESS, null);
                             break;
                         case Constants.REGISTER_ACCOUNT_TYPE:
+                            showToast(getString(R.string.thanksForRegistering));
                             trackEvent(TrackingAware.MY_ACCOUNT_REGISTRATION_SUCCESS, null);
                             break;
                         default:

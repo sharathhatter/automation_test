@@ -17,7 +17,6 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.bigbasket.mobileapp.BuildConfig;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
@@ -62,9 +61,7 @@ public class StartActivity extends BaseActivity {
             return;
         }
 
-        if (!BuildConfig.DEBUG) {
-            NewRelic.withApplicationToken(getString(R.string.new_relic_key)).start(this.getApplication());
-        }
+        NewRelic.withApplicationToken(getString(R.string.new_relic_key)).start(this.getApplication());
 
         MoEHelper moEHelper = new MoEHelper(this);
         moEHelper.initialize(Constants.MO_SENDER_ID, Constants.MO_APP_ID);
@@ -296,5 +293,10 @@ public class StartActivity extends BaseActivity {
     @Override
     public void onChangeTitle(String title) {
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 }

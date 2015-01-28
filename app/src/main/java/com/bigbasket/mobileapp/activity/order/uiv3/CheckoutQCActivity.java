@@ -89,6 +89,7 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
     private void renderQcPage() {
         if (coReserveQuantity.isStatus()) {
             if (!coReserveQuantity.isQcHasErrors()) {
+                // TODO : Jugal fix this
                 showAlertDialog(null, getString(R.string.checkinternet), Constants.GO_TO_HOME_STRING);
             } else {
                 createArrayListOfProducts();
@@ -106,7 +107,7 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
             String pharmaPrescriptionId = prefer.getString(Constants.PHARMA_PRESCRIPTION_ID, null);
             new COReserveQuantityCheckTask<>(this, pharmaPrescriptionId).startTask();
         } else {
-            showAlertDialog(null, getString(R.string.checkinternet), Constants.GO_TO_HOME_STRING);
+            handler.sendOfflineError(true);
         }
     }
 
@@ -181,7 +182,7 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
             map.put(TrackEventkeys.POTENTIAL_ORDER, String.valueOf(coReserveQuantity.getPotentialOrderId()));
             trackEvent(TrackingAware.CHECKOUT_QC_SHOWN, map);
         } else {
-            showAlertDialogFinish(null, getString(R.string.INTERNAL_SERVER_ERROR));
+            showAlertDialogFinish(null, getString(R.string.server_error));
         }
 
     }
@@ -389,7 +390,7 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
             });
             layoutBtnContinue.addView(btnContinue);
         } else {
-            showAlertDialogFinish(null, getString(R.string.INTERNAL_SERVER_ERROR));
+            showAlertDialogFinish(null, getString(R.string.server_error));
         }
 
     }

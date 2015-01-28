@@ -583,6 +583,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
             localyticsSession.setCustomerData(LocalyticsHandler.CUSTOMER_REGISTERED_ON, null);
             localyticsSession.setCustomerData(LocalyticsHandler.CUSTOMER_BDAY, null);
             localyticsSession.setCustomerData(LocalyticsHandler.CUSTOMER_GENDER, null);
+            localyticsSession.setCustomerData(LocalyticsHandler.CUSTOMER_CITY, null);
             if (!TextUtils.isEmpty(analyticsAdditionalAttrsJson)) {
                 Gson gson = new Gson();
                 HashMap<String, Object> additionalAttrMap = new HashMap<>();

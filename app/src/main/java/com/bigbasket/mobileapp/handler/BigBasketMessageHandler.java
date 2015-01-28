@@ -41,14 +41,14 @@ public class BigBasketMessageHandler<T> {
                         NavigationCodes.GO_TO_SLOT_SELECTION);
                 break;
             case ApiErrorCodes.POTENITAL_ORDER_EXPIRED:
-                ((ApiErrorAware) ctx).showApiErrorDialog(!TextUtils.isEmpty(message) ? message : getString(R.string.POTENTIAL_ORDER_ID_EXPERIED),
+                ((ApiErrorAware) ctx).showApiErrorDialog(!TextUtils.isEmpty(message) ? message : getString(R.string.potentialOrderIdExpired),
                         NavigationCodes.GO_TO_HOME);
                 break;
             case ApiErrorCodes.INTERNAL_SERVER_ERROR:
                 ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.server_error), finish);
                 break;
             case ApiErrorCodes.INVALID_USER:
-                ((ApiErrorAware) ctx).showApiErrorDialog(!TextUtils.isEmpty(message) ? message : getString(R.string.POTENTIAL_ORDER_ID_EXPERIED),
+                ((ApiErrorAware) ctx).showApiErrorDialog(!TextUtils.isEmpty(message) ? message : getString(R.string.potentialOrderIdExpired),
                         NavigationCodes.GO_TO_HOME);
                 break;
             case ApiErrorCodes.INVALID_FIELD:

@@ -1,41 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">BigBasket</string>
     <string name="fb_app_id">1406239262971187</string>
     <string name="FB_APP_SECRET">4dbc3a26d7a58f86a6c64a01f1abd34b</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="menu_settings">Settings</string>
-    <string name="title_activity_city_name">City_name</string>
-    <string name="title_activity_checkout">Checkout</string>
     <string name="title_activity_deliveryslots">Deliveryslots</string>
     <string name="search">Search</string>
     <string name="searchHint">Search Products</string>
     <string name="pharma_msg">Please choose/upload pharma prescription or remove pharma products</string>
     <string name="age_validation_required">Age check validation is required.</string>
     <string name="checkinternet">Cannot proceed with the operation. No network connection.</string>
-    <string name="clickToExit">Click yes to exit!</string>
-    <string name="servicenot">Please try again later</string>
-    <string name="signInForCheckOut">For Checkout, Please login to your account</string>
-    <string name="prescriptionSelected">Select this Pharma Prescription</string>
-    <string name="city_name_invalid">Entered city name is does not exists</string>
     <string name="product_id_invalid">Sorry, but this product does not exists</string>
     <string name="invalidBasketQty">You can not add any more quantities of this product</string>
-    <!-- <string name="internal_server_error">Internal Server Error</string> -->
     <string name="server_error">Oops an error occurred!\nPlease try again later</string>
-    <string name="member_shopping_list_not_exists_error">Member Shopping list does not exist</string>
-    <!-- <string name="missing_field">Invalid Field</string> -->
     <string name="login_required">Please login to your account to continue</string>
     <string name="login_to_place_order">Please login to place an order</string>
-    <string name="voucher">Provided eVoucher Invalid</string>
     <string name="voucherCode">eVoucher Code</string>
-    <!-- <string name="invalid_field">Invalid_field</string> -->
-    <string name="invalid_field">Internal_server_error</string>
-    <string name="invalid_user">Invalid_user</string>
-    <!-- <string name="INTERNAL_SERVER_ERROR">Internal_server_error</string> -->
-    <string name="INTERNAL_SERVER_ERROR">Some error occurred, please try again later</string>
-    <string name="POTENTIAL_ORDER_ID_EXPERIED">Previous checkout process timed out. Please start again</string>
-    <string name="ORDER_ID_EXPERIED">Order_not_exist</string>
+    <string name="potentialOrderIdExpired">Previous checkout process timed out. Please start again</string>
     <string name="list_exists">List with this name already exists</string>
     <string name="INVALID_USER_PASS">Username or password is incorrect.</string>
     <string name="OLD_PASS_NOT_CORRECT">Old password not correct</string>
@@ -104,7 +84,6 @@
     <string name="pin_text_para1">    Delivery Confirmation PIN is a 4 digit number and can be set to a number of your choice. Your 4 digit delivery confirmation PIN enables you to give us service ratings at the time of order delivery. At the time of delivery, we request you to enter the PIN yourself and not give it to the delivery person.</string>
     <string name="pin_text_para2">  The PIN will also be sent as part of the ready to ship email SMS for each order just in case you forget it.</string>
     <string name="new_pin_hint">Please enter 4-digit PIN</string>
-    <string name="get_payment_params">get-payment-params</string>
     <string name="placeorder">Place Order</string>
     <string name="modepayment">Mode of payment:</string>
     <string name="invoicenumber">Invoice No:</string>
@@ -146,6 +125,7 @@
     <string name="shoppingListNameDialogTextHint">Enter shopping list name</string>
     <string name="myList"> My List</string>
     <string name="thankYou">Thank you!</string>
+    <string name="thanksForRegistering">Thanks for registering on BigBasket.com. Happy Shopping!</string>
     <string name="mrp">MRP:</string>
     <string name="changeCity">Change Your Location:</string>
     <string name="changeCityMenuTxt">Change Your Location</string>
@@ -157,6 +137,7 @@
     <string name="checkState">checkState</string>
     <string name="registerHomepageTxt">Register</string>
     <string name="or">or</string>
+    <string name="OR">OR</string>
     <string name="myAccount">My Account</string>
     <string name="signOut">Logout</string>
     <string name="logOutSuccess">Logout successful</string>
@@ -330,7 +311,6 @@
     <string name="deliveryCharges">Delivery Charges</string>
     <string name="noOrders">You don\'t have any delivered or cancelled order in</string>
     <string name="noActiveOrders">You don\'t have any active order right now</string>
-    <string name="selectVoucher">Choose voucher</string>
 
     <!-- Shopping list -->
     <string name="changeShoppingListName">Change shopping list name</string>
@@ -522,4 +502,10 @@
     <string name="rateTheApp">Rate this app</string>
     <string name="shopFromPreviousOrder">Shop from previous order</string>
     <string name="orders">Orders</string>
+    <string name="applyVoucher">Apply Voucher</string>
+    <string name="removeVoucher">eVoucher: BBFNV Applied!</string>
+    <string name="voucherCannotBeApplied">eVoucher not applicable</string>
+    <string name="voucherWasRemoved">eVoucher was successfully removed</string>
+    <string name="removeVoucherHeading">Remove voucher</string>
+    <string name="removeVoucherDesc">Are you sure that you want to remove this voucher?</string>
 </resources>
