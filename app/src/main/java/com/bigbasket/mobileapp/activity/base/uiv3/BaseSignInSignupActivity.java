@@ -68,7 +68,7 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity implem
         private String loginType;
         private String email;
         private String password;
-        private boolean rememberMe;
+        private boolean rememberMe, isNewAccount;
         private SocialAccount socialAccount;
 
         public LoginApiResponseCallback(String email, String password, boolean rememberMe, String loginType) {
@@ -79,10 +79,11 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity implem
         }
 
         public LoginApiResponseCallback(String email, String password, boolean rememberMe, String loginType,
-                                        SocialAccount socialAccount) {
+                                        SocialAccount socialAccount, boolean isNewAccount) {
             this(email, password, rememberMe, loginType);
             this.loginType = loginType;
             this.socialAccount = socialAccount;
+            this.isNewAccount = isNewAccount;
         }
 
         @Override
@@ -93,11 +94,13 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity implem
                     saveLoginUserDetailInPreference(loginApiResponse, loginType,
                             email, password, rememberMe);
                     switch (loginType) {
-                        case SocialAccount.FB: //todo new account created (=yes/no), existing account email (if applicable)
-                            trackEvent(TrackingAware.MY_ACCOUNT_FACEBOOK_LOGIN_SUCCESS, null);
+                        case SocialAccount.FB:
+                            trackEventNewAccount(TrackingAware.MY_ACCOUNT_FACEBOOK_LOGIN_SUCCESS,
+                                    email, isNewAccount);
                             break;
                         case SocialAccount.GP:
-                            trackEvent(TrackingAware.MY_ACCOUNT_GOOGLE_LOGIN_SUCCESS, null);
+                            trackEventNewAccount(TrackingAware.MY_ACCOUNT_GOOGLE_LOGIN_SUCCESS,
+                                    email, isNewAccount);
                             break;
                         case Constants.SIGN_IN_ACCOUNT_TYPE:
                             trackEvent(TrackingAware.MY_ACCOUNT_LOGIN_SUCCESS, null);
@@ -179,6 +182,18 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity implem
                     throw new AssertionError("Login or register type error while success(status=ERROR)");
             }
         }
+    }
+
+    private void trackEventNewAccount(String eventKetName, String email, boolean isNewAccount) {
+        HashMap<String, String> map = new HashMap<>();
+        if (isNewAccount) {
+            map.put(TrackEventkeys.NEW_ACCOUNT, "Yes");
+        } else {
+            map.put(TrackEventkeys.NEW_ACCOUNT, "No");
+            map.put(TrackEventkeys.EXISTING_ACCOUNT_EMAIL, email);
+        }
+        trackEvent(TrackingAware.MY_ACCOUNT_FACEBOOK_LOGIN_SUCCESS, map);
+        trackEvent(eventKetName, null);
     }
 
     public abstract void showProgress(boolean show);

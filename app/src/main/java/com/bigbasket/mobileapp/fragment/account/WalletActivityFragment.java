@@ -79,7 +79,7 @@ public class WalletActivityFragment extends BaseFragment implements InvoiceDataA
                         if (DataUtil.isInternetAvailable(getActivity())) {
                             showInvoice(orderId);
                         } else {
-                            showErrorMsg(getString(R.string.checkinternet));
+                            handler.sendOfflineError(true);
                         }
                     }
                 } catch (Exception e) {

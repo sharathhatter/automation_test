@@ -37,7 +37,7 @@
                     android:layout_marginLeft="@dimen/margin_normal"
                     android:layout_marginRight="@dimen/margin_normal"
                     android:hint="@string/addressNick"
-                    android:inputType="text"
+                    android:inputType="textPersonName"
                     android:textColor="@color/uiv3_primary_text_color"
                     android:textSize="@dimen/secondary_text_size" />
             </TableRow>

@@ -27,6 +27,9 @@ public class SocialAccount implements Parcelable {
     private String photo;
     private boolean verified;
 
+    @SerializedName(Constants.REF_CODE)
+    private String refCode;
+
     @SerializedName(Constants.FIRSTNAME)
     private String firstName;
 
@@ -76,6 +79,10 @@ public class SocialAccount implements Parcelable {
 
     public String getLastName() {
         return lastName;
+    }
+
+    public void setRefCode(String refCode) {
+        this.refCode = refCode;
     }
 
     @Override

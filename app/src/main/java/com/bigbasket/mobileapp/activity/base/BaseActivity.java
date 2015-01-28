@@ -162,7 +162,6 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     public void onCOReserveQuantityCheck() {
         Intent intent = new Intent(getCurrentActivity(), CheckoutQCActivity.class);
         intent.putExtra(Constants.CO_RESERVE_QTY_DATA, coReserveQuantity);
-        //intent.putExtra(Constants.QC_LEN, coReserveQuantity.getQc_len());  //todo send complete coReserveQuantity
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
@@ -618,10 +617,9 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
 
     @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs) {
-        // todo check if MoEngage enabled
         AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());
-        if (!authParameters.isMoEngageEnabled()) return;
-        trackEvent(eventName, eventAttribs, null, null);
+        if (authParameters.isMoEngageEnabled())
+            trackEvent(eventName, eventAttribs, null, null);
     }
 
 
@@ -629,7 +627,6 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     public void trackEvent(String eventName, Map<String, String> eventAttribs, String source, String sourceValue) {
         AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());
         if (authParameters.isMoEngageEnabled()) {
-
             JSONObject analyticsJsonObj = new JSONObject();
             try {
                 if (eventAttribs != null) {

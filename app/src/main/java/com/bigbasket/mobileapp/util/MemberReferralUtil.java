@@ -1,17 +1,15 @@
 package com.bigbasket.mobileapp.util;
 
-import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
-import android.database.Cursor;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.widget.ArrayAdapter;
+import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.MemberReferralActivity;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.widget.FacebookDialog;
 
@@ -118,6 +116,7 @@ public class MemberReferralUtil<T> {
 
 
     public void sendWhatsAppMsg() {
+        ((TrackingAware) ctx).trackEvent(TrackingAware.MEMBER_REFERRAL_WHATS_APP_SHOWN, null);
         Intent waIntent = new Intent(Intent.ACTION_SEND);
         waIntent.setType("text/plain");
         waIntent.setPackage(Constants.WHATS_APP_PACKAGE_NAME);
@@ -131,6 +130,7 @@ public class MemberReferralUtil<T> {
     }
 
     public void useFacebookReferral() {
+        ((TrackingAware) ctx).trackEvent(TrackingAware.MEMBER_REFERRAL_BB_MAIL_SHOWN, null);
         facebookDialogPresent();
     }
 
@@ -186,6 +186,7 @@ public class MemberReferralUtil<T> {
     }
 
 
+    /*
     public void addEmailsToAutoComplete(List<String> emailAddressCollection,
                                         MemberReferralActivity.ReferralDialog memberRefDialog) {
         int layout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2 ?
@@ -218,7 +219,10 @@ public class MemberReferralUtil<T> {
         addEmailsToAutoComplete(emailAddressCollection, memberRefDialog);
     }
 
+    */
+
     public void useGplus() {
+        ((TrackingAware) ctx).trackEvent(TrackingAware.MEMBER_REFERRAL_GOOGLE_PLUS_SHOWN, null);
         Intent gplusIntent = new Intent(Intent.ACTION_SEND);
         gplusIntent.setType("text/plain");
         gplusIntent.setPackage(Constants.GOOGLE_PLUS_APP_PACKAGE_NAME);
@@ -233,15 +237,21 @@ public class MemberReferralUtil<T> {
 
 
     public void useGmailApp() {
+        ((TrackingAware) ctx).trackEvent(TrackingAware.MEMBER_REFERRAL_GOOGLE_APP_SHOWN, null);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(((MemberReferralActivity) ctx));
         Intent sendIntent = new Intent(Intent.ACTION_VIEW);
-        sendIntent.setType("plain/text");//email.setType("message/rfc822");
+        sendIntent.setType("text/html");
         sendIntent.setClassName(Constants.GMAIL_APP_PACKAGE_NAME, Constants.GMAIL_APP_CLASS_NAME);
-        sendIntent.putExtra(Intent.EXTRA_SUBJECT, "Your friend " + " <Name of member> " + " has invited you to join BigBasket"); //todo name of member
-        sendIntent.putExtra(Intent.EXTRA_TEXT, emailBody);//referralMsg + "\n" + playStoreLink
+        sendIntent.putExtra(Intent.EXTRA_SUBJECT,
+                preferences.getString(Constants.MEMBER_FULL_NAME_KEY, "Your friend") + " has invited you " +
+                        "to join BigBasket"
+        );
+        sendIntent.putExtra(Intent.EXTRA_TEXT, referralMsg + "\n" + playStoreLink);//Html.fromHtml(emailBody)
         ((MemberReferralActivity) ctx).startActivity(sendIntent);
     }
 
     public void useHikeApp() {
+        ((TrackingAware) ctx).trackEvent(TrackingAware.MEMBER_REFERRAL_HIKE_SHOWN, null);
         Intent hikeIntent = new Intent(Intent.ACTION_SEND);
         hikeIntent.setType("text/plain");
         hikeIntent.setPackage(Constants.HIKE_PACKAEG_NAME);
@@ -255,6 +265,7 @@ public class MemberReferralUtil<T> {
     }
 
     public void useOther() {
+        ((TrackingAware) ctx).trackEvent(TrackingAware.MEMBER_REFERRAL_OTHER_SHOWN, null);
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.putExtra(Intent.EXTRA_TEXT, referralMsg + "\n" + playStoreLink);

@@ -383,7 +383,7 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
         bigBasketApiService.socialLogin(loginType, gson.toJson(mSocialAccount, SocialAccount.class),
                 new LoginApiResponseCallback(mEmailView.getText().toString().trim(),
                         mPasswordView.getText().toString().trim(),
-                        mChkRememberMe.isChecked(), loginType, mSocialAccount));
+                        mChkRememberMe.isChecked(), loginType, mSocialAccount, false));
     }
 
     @Override

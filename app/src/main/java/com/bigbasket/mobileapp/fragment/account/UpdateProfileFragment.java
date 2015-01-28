@@ -1,7 +1,6 @@
 package com.bigbasket.mobileapp.fragment.account;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -142,118 +141,13 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware 
     }
 
     protected void getAreaInfo() {
-        if (!DataUtil.isInternetAvailable(getActivity())) {
-            return;
+        if (!checkInternetConnection()) {
+            handler.sendOfflineError(true);
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.getAreaInfo(new CallbackGetAreaInfo<>(this));
     }
-
-    @Override
-    protected void onPositiveButtonClicked(DialogInterface dialogInterface, int id, String sourceName, final Object valuePassed) {
-        if (sourceName != null) {
-            switch (sourceName) {
-                case Constants.ERROR_AREA_PIN_CODE:
-                    finish(); //todo check for fragment finish
-                default:
-                    super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
-                    break;
-            }
-        } else {
-            super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
-        }
-    }
-
-
-    /*
-    @Override
-    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-        if (httpOperationResult.getUrl().contains(Constants.UPDATE_PROFILE) && !httpOperationResult.isPost()) {
-            JsonObject responseJsonObj = new JsonParser().parse(httpOperationResult.getReponseString()).getAsJsonObject();
-            String status = responseJsonObj.get(Constants.STATUS).getAsString();
-            switch (status) {
-                case Constants.OK:
-                    JsonObject memberDetailJsonobj = responseJsonObj.get(Constants.MEMBER_DETAILS).getAsJsonObject();
-                    UpdateProfileModel updateProfileModel = ParserUtil.parseUpdateProfileData(memberDetailJsonobj);
-                    fillUpdateProfileData(updateProfileModel);
-                    break;
-                case Constants.ERROR:
-                    //TODO : Replace with handler
-                    String errorType = responseJsonObj.get(Constants.ERROR_TYPE).getAsString();
-                    switch (errorType) {
-                        case Constants.INVALID_USER_PASS:
-                            showErrorMsg(getString(R.string.OLD_PASS_NOT_CORRECT));
-                            break;
-                        default:
-                            showErrorMsg(getString(R.string.INTERNAL_SERVER_ERROR));
-                            break;
-                    }
-                    break;
-            }
-        } else if (httpOperationResult.getUrl().contains(Constants.UPDATE_PROFILE) && httpOperationResult.isPost()) {
-            JsonObject responseJsonObj = new JsonParser().parse(httpOperationResult.getReponseString()).getAsJsonObject();
-            String status = responseJsonObj.get(Constants.STATUS).getAsString();
-            switch (status) {
-                case Constants.OK:
-                    if (otpDialog != null && otpDialog.isVisible()) {
-                        otpDialog.dismiss();
-                        BaseActivity.hideKeyboard(((BaseActivity) getActivity()), otpDialog.getView());
-                    }
-                    resetUpdateButtonInProgress();
-                    updatePreferenceData();
-
-                    break;
-                case Constants.ERROR:
-                    int errorCode = responseJsonObj.get(Constants.ERROR_TYPE).getAsInt();
-                    if (errorCode == Constants.NUMBER_USED_BY_ANOTHER_MEMBER ||
-                            errorCode == Constants.OPT_NEEDED ||
-                            errorCode == Constants.INVALID_OTP) {
-                        String errorMsg = responseJsonObj.get(Constants.MESSAGE).getAsString();
-                        validateOtp(errorCode, errorMsg);
-                    } else {
-                        showErrorMsg(getString(R.string.INTERNAL_SERVER_ERROR)); //todo error handler
-                    }
-                    break;
-            }
-        } else if (httpOperationResult.getUrl().contains(Constants.GET_AREA_INFO)) {
-            int j = 0;
-            AreaPinInfoAdapter areaPinInfoAdapter = new AreaPinInfoAdapter(getActivity());
-            areaPinInfoAdapter.deleteTable();
-            int responseCode = httpOperationResult.getResponseCode();
-            if (responseCode == Constants.successRespCode) {
-                Log.d("Response Code", "" + responseCode);
-                try {
-                    if (httpOperationResult.getReponseString() != null) {
-                        JSONObject responseJSONObject = new JSONObject(httpOperationResult.getReponseString());
-
-                        JSONObject responseJSON = responseJSONObject.getJSONObject(Constants.RESPONSE);
-                        JSONObject pinCodeObj = responseJSON.getJSONObject(Constants.PIN_CODE_MAP);
-
-                        @SuppressWarnings("unchecked") Iterator<String> myIter = pinCodeObj.keys();
-                        String area1[] = new String[pinCodeObj.length()];
-                        while (myIter.hasNext()) {
-                            area1[j] = myIter.next();
-                            for (int i = 0; i < pinCodeObj.getJSONArray(area1[j]).length(); i++) {
-                                String areaName = String.valueOf(pinCodeObj.getJSONArray(area1[j]).get(i));
-                                areaPinInfoAdapter.insert(areaName.toLowerCase(), String.valueOf(pinCodeObj.names().get(j)));
-                            }
-                            j++;
-                        }
-                    }
-                    loadMemberDetails();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else {
-                showErrorMsg(getString(R.string.INTERNAL_SERVER_ERROR)); // todo  error handling
-            }
-        } else {
-            super.onAsyncTaskComplete(httpOperationResult);
-        }
-    }
-
-    */
 
     private void loadMemberDetails() {
         if (!DataUtil.isInternetAvailable(getActivity())) {
@@ -276,7 +170,7 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware 
                             showErrorMsg(getString(R.string.OLD_PASS_NOT_CORRECT));
                             break;
                         default:
-                            handler.sendEmptyMessage(errorType, memberProfileDataCallback.message);
+                            handler.sendEmptyMessage(errorType, memberProfileDataCallback.message, true);
                             break;
                     }
                 }
@@ -285,13 +179,9 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware 
             @Override
             public void failure(RetrofitError error) {
                 hideProgressDialog();
-                showErrorMsg(getString(R.string.server_error));
+                handler.handleRetrofitError(error, true);
             }
         });
-
-//
-//        startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.UPDATE_PROFILE,
-//                null, false, false, getString(R.string.please_wait), null);
     }
 
     public void showDatePickerDialog(View view) {

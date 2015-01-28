@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
@@ -61,7 +62,7 @@ public class BBReferralMailActivity extends BackButtonActivity {
         BaseActivity.showKeyboard(editTextListEmailAddress);
 
         editTextMessage = (EditText) bbMailView.findViewById(R.id.editTextMessage);
-
+        trackEvent(TrackingAware.MEMBER_REFERRAL_FACEBOOK_SHOWN, null);
     }
 
     @Override

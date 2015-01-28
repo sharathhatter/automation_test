@@ -95,63 +95,11 @@ public class DoWalletFragment extends BaseFragment {
                 } catch (IllegalArgumentException e) {
                     return;
                 }
-                handler.handleRetrofitError(error);
+                handler.handleRetrofitError(error, true);
                 trackEvent(TrackingAware.MY_ACCOUNT_CURRENT_WALLET_BALANCE_FAILED, null);
             }
         });
-
-
-        //startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.GET_CURRENT_WALLET_BALANCE, null, false, false, null);
     }
-
-    /*
-    @Override
-    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-        super.onAsyncTaskComplete(httpOperationResult);
-        String responseJson = httpOperationResult.getReponseString();
-        String responseUrl = httpOperationResult.getUrl();
-        int responseCode = httpOperationResult.getResponseCode();
-        if (responseCode == Constants.successRespCode) {
-            Log.d("Response Code", "" + responseCode);
-
-            if (responseJson != null) {
-                JsonObject jsonObject = new JsonParser().parse(responseJson).getAsJsonObject();
-                if (responseUrl.contains(Constants.GET_WALLET_BALANCE_URL)) {
-                    JsonObject responseJsonObject = jsonObject.get(Constants.RESPONSE).getAsJsonObject();
-                    currentBalance = responseJsonObject.get(Constants.CURRENT_BALANCE).getAsFloat();
-                    setCurrentBalance(currentBalance);
-                } else if (responseUrl.contains(Constants.GET_WALLET_ACTIVITY_URL)) {
-                    String responseJsonString = jsonObject.get(Constants.RESPONSE).toString();
-                    Log.d("URL: ", responseUrl);
-                    if (responseJsonString.equals("[]")) {
-                        showErrorMsg(getString(R.string.noActivityErrorMsg) + " " + monthClickText);
-                    } else {
-                        renderIntent(responseJsonString); // todo change fragment
-                    }
-                }
-            }
-        } else { // todo for error handler
-            switch (responseCode) {
-                case Constants.invalidInputRespCode:
-                    String msgInvalidInput = "Input is Invalid";
-                    //showAlertDialogFinish(this, null, msgInvalidInput);
-                    break;
-
-                case Constants.notMemberRespCode:
-                    String msgInvalidUser = "The logged in user is not a member";
-                    //showAlertDialogFinish(this, null, msgInvalidUser);
-                    break;
-
-                default:
-                    String defaultMsg = "Please try again later";
-                    //showAlertDialogFinish(this, null, defaultMsg);
-                    break;
-            }
-
-        }
-    }
-
-    */
 
     private void setCurrentBalance(float currentBalance) {
         txtCurrentBalance.append(!TextUtils.isEmpty(String.valueOf(currentBalance)) ?

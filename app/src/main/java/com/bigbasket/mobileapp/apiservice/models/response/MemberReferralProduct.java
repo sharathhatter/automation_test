@@ -31,7 +31,7 @@ public class MemberReferralProduct {
     @SerializedName(Constants.INCENTIVE_DESC)
     public String incentiveDesc;
 
-    @SerializedName(Constants.MIN_ORDER_VAL) //todo
+    @SerializedName(Constants.MIN_ORDER_VAL) //todo add to Member referral detail
     public int minOrderVal;
 
     @SerializedName(Constants.TC)
@@ -49,8 +49,8 @@ public class MemberReferralProduct {
     @SerializedName(Constants.REFERRAL_MSG)
     public String referralMsg;
 
-    @SerializedName(Constants.REFERRAL_CLIENT_MSG)
-    public String referralClientMsg;
+//    @SerializedName(Constants.REFERRAL_CLIENT_MSG)
+//    public String referralClientMsg;
 
     @SerializedName(Constants.PLAY_STORE_LINK)
     public String playStoreLink;

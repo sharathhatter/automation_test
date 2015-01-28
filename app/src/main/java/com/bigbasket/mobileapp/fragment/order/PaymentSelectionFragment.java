@@ -31,11 +31,13 @@ import com.bigbasket.mobileapp.model.order.PaymentType;
 import com.bigbasket.mobileapp.model.order.PayuResponse;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -45,7 +47,7 @@ public class PaymentSelectionFragment extends BaseFragment {
     private CartSummary mCartSummary;
     private ArrayList<ActiveVouchers> mActiveVouchersList;
     private LinkedHashMap<String, String> mPaymentTypeMap;
-    private String mAmtPayable, mWalletUsed, mWalletRemaining;
+    private String mAmtPayable, mWalletUsed, mWalletRemaining, mpaymentMethod, potentialOrderId;
     private SharedPreferences.Editor mEditor;
     private TextView mLblTransactionFailed;
     private TextView mTxtTransactionFailureReason;
@@ -65,6 +67,7 @@ public class PaymentSelectionFragment extends BaseFragment {
         mActiveVouchersList = args.getParcelableArrayList(Constants.VOUCHERS);
         mAmtPayable = args.getString(Constants.AMT_PAYABLE);
         mWalletUsed = args.getString(Constants.WALLET_USED);
+        potentialOrderId = args.getString(Constants.POTENTIAL_ORDER_ID);
 
         if (TextUtils.isEmpty(mWalletUsed)) {
             mWalletUsed = "0";
@@ -187,9 +190,7 @@ public class PaymentSelectionFragment extends BaseFragment {
                         rbtnPaymentType.setChecked(true);
                         ((SelectedPaymentAware) getCurrentActivity()).
                                 setPaymentMethod(entrySet.getValue());
-                        // TODO : get rid of this!
-                        mEditor.putString(Constants.PAYMENT_METHOD, entrySet.getValue());
-                        mEditor.commit();
+                        mpaymentMethod = entrySet.getValue();
                     } else {
                         return;
                     }
@@ -200,9 +201,7 @@ public class PaymentSelectionFragment extends BaseFragment {
                         if (isChecked && getCurrentActivity() != null) {
                             ((SelectedPaymentAware) getCurrentActivity()).
                                     setPaymentMethod(entrySet.getValue());
-                            // TODO : get rid of this!
-                            mEditor.putString(Constants.PAYMENT_METHOD, entrySet.getValue());
-                            mEditor.commit();
+                            mpaymentMethod = entrySet.getValue();
                         }
                     }
                 });
@@ -329,6 +328,16 @@ public class PaymentSelectionFragment extends BaseFragment {
     @Override
     public String getTitle() {
         return null;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.POTENTIAL_ORDER, potentialOrderId);
+        map.put(TrackEventkeys.PAYMENT_MODE, mpaymentMethod);
+        trackEvent(TrackingAware.CHECKOUT_PAYMENT_CHOSEN, map);
+
     }
 
     @NonNull

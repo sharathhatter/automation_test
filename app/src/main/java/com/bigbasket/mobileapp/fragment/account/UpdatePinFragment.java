@@ -130,46 +130,11 @@ public class UpdatePinFragment extends BaseFragment {
                 } catch (IllegalArgumentException e) {
                     return;
                 }
-                handler.handleRetrofitError(error);
+                handler.handleRetrofitError(error, true);
             }
         });
     }
 
-
-    /*
-    @Override
-    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-        super.onAsyncTaskComplete(httpOperationResult);
-        String responseJson = httpOperationResult.getReponseString();
-        int responseCode = httpOperationResult.getResponseCode();
-        if (responseJson != null) {
-            if (!httpOperationResult.isPost()) {
-                JsonObject jsonObject = new JsonParser().parse(responseJson).getAsJsonObject();
-                JsonObject responseJsonObject = jsonObject.get(Constants.RESPONSE).getAsJsonObject();
-                currentPin = responseJsonObject.get(Constants.CURRENT_PIN).getAsString();
-                setCurrentPin(currentPin);
-            } else {
-                switch (responseCode) {
-                    case Constants.successRespCode:
-                        AnimationFactory.flipTransition(viewAnimator, AnimationFactory.FlipDirection.LEFT_RIGHT);
-                        currentPin = editTextNewPin.getText().toString();
-                        setCurrentPin(editTextNewPin.getText().toString());
-                        BaseActivity.hideKeyboard((BaseActivity) getActivity(), editTextNewPin);
-                        break;
-                    case Constants.notMemberRespCode:
-                        String msgInvalidUser = getString(R.string.login_required);
-                        //showAlertDialog(this, null, msgInvalidUser); //todo handle for sign-in page
-                        break;
-                    default:
-                        showErrorMsg(getString(R.string.INTERNAL_SERVER_ERROR));
-                        break;
-                }
-
-            }
-        }
-    }
-
-    */
 
     public void onUpdatePinButtonClicked() {
         if (editTextNewPin != null) {

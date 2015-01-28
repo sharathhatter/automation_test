@@ -96,7 +96,7 @@ public class SignupActivity extends BaseSignInSignupActivity {
         String firstName = mFirstNameView.getText().toString();
         String lastName = mLastNameView.getText().toString();
         String mobileNumber = mMobileNumView.getText().toString();
-        String refCode = mRefCodeView.getText().toString();
+        String refCode = mRefCodeView.getText().toString().trim();
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
@@ -168,7 +168,7 @@ public class SignupActivity extends BaseSignInSignupActivity {
     }
 
     private void startMemberRegistration(String email, String passwd, String firstName,
-                                         String lastName, String mobileNumber, String refCode) { //todo server side change
+                                         String lastName, String mobileNumber, String refCode) {
         JsonObject userDetailsJsonObj = new JsonObject();
         userDetailsJsonObj.addProperty(Constants.EMAIL, email);
         userDetailsJsonObj.addProperty(Constants.FIRSTNAME, firstName);

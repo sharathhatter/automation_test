@@ -53,15 +53,23 @@ import retrofit.client.Response;
 
 public class AgeValidationActivity extends BackButtonActivity {
     private MarketPlace marketPlace;
-    private HashMap<String, Boolean> hashMapRadioBtnAgeCheckNo = new HashMap<>(); // todo need to save this to savedInstanceState
+    private HashMap<String, Boolean> hashMapRadioBtnAgeCheckNo = new HashMap<>();
     private boolean isPharmaRadioBtnNoSelected;
     private Button btnContinueOrUploadPrescription;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState); // todo back button override for GO_TO_HOME
+        super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
+            //TODO : check it while testing
+            /*
+            1: Rotate screen after age validation no checked
+            2: Rotate screen after 1st age validation yes checked and other one is No
+            3: Rotate screen pharma prescription no radio btn checked
+             */
             marketPlace = savedInstanceState.getParcelable(Constants.MARKET_PLACE_INTENT);
+            isPharmaRadioBtnNoSelected = savedInstanceState.getBoolean(Constants.IS_PHARMA_BTN_NO_SELECTED);
+            hashMapRadioBtnAgeCheckNo = (HashMap<String, Boolean>) savedInstanceState.getSerializable(Constants.HASH_MAP_RADIO_BTN_AGE_CHECK_NO);
             if (marketPlace != null) {
                 renderMarketPlaceValidationErrors();
                 return;
@@ -71,6 +79,16 @@ public class AgeValidationActivity extends BackButtonActivity {
         renderMarketPlaceValidationErrors();
 
         trackEvent(TrackingAware.PRE_CHECKOUT_AGE_LEGAL_SHOWN, null);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (marketPlace != null) {
+            outState.putParcelable(Constants.MARKET_PLACE_INTENT, marketPlace);
+            outState.putBoolean(Constants.IS_PHARMA_BTN_NO_SELECTED, isPharmaRadioBtnNoSelected);
+            outState.putSerializable(Constants.HASH_MAP_RADIO_BTN_AGE_CHECK_NO, hashMapRadioBtnAgeCheckNo);
+        }
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -98,13 +116,6 @@ public class AgeValidationActivity extends BackButtonActivity {
         }
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        if (marketPlace != null) {
-            outState.putParcelable(Constants.MARKET_PLACE_INTENT, marketPlace);
-        }
-        super.onSaveInstanceState(outState);
-    }
 
     //After bulk remove
     @Override
@@ -300,9 +311,12 @@ public class AgeValidationActivity extends BackButtonActivity {
         if (fulFillmentIds != null) {
             rbtnNo.setTag(fulFillmentIds);
         } else {
-            return; //todo check
+            assert false : "Fulfillment info ID(s) should not be Null";
+            return;
         }
 
+        if (isPharmaRadioBtnNoSelected)
+            rbtnNo.setChecked(true);
         rbtnYes.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

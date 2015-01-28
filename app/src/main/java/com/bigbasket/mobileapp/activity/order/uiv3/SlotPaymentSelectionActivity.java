@@ -158,6 +158,7 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
         paymentSelectionBundle.putString(Constants.WALLET_REMAINING, walletRemaining);
         paymentSelectionBundle.putParcelableArrayList(Constants.VOUCHERS, activeVouchersList);
         paymentSelectionBundle.putParcelableArrayList(Constants.PAYMENT_TYPES, paymentTypes);
+        paymentSelectionBundle.putString(Constants.POTENTIAL_ORDER_ID, potentialOrderId);
 
         boolean hasPayuFailed = !TextUtils.isEmpty(mPayuFailureReason);
         if (hasPayuFailed) {
@@ -189,10 +190,6 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
         btnFooter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                HashMap<String, String> map = new HashMap<>();
-                map.put(TrackEventkeys.POTENTIAL_ORDER, potentialOrderId);
-                map.put(TrackEventkeys.PAYMENT_MODE, preferences.getString(Constants.PAYMENT_METHOD, ""));
-                trackEvent(TrackingAware.CHECKOUT_PAYMENT_CHOSEN, map);
                 PayuResponse payuResponse = PayuResponse.getInstance(getCurrentActivity());
                 if (payuResponse != null && payuResponse.isSuccess()) {
                     ArrayList<VoucherApplied> previouslyAppliedVoucherList = VoucherApplied.readFromPreference(getCurrentActivity());

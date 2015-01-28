@@ -16,9 +16,7 @@ import com.bigbasket.mobileapp.util.MessageFormatUtil;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 
-public class ShowAnnotationInfo<T> {
-    // TODO : Jugal fix this
-
+public class ShowAnnotationInfo {
     private Activity context;
     private AnnotationInfo annotationInfo;
 

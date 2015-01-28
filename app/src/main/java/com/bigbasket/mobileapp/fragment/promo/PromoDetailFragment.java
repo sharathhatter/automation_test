@@ -110,11 +110,7 @@ public class PromoDetailFragment extends BaseFragment {
                         mPromoDetail = promoDetailApiResponseContentApiResponse.apiResponseContent.promoDetail;
                         if (mPromoDetail != null) {
                             renderPromoDetail();
-                            HashMap<String, String> map = new HashMap<>();
-                            map.put(TrackEventkeys.PROMO_NAME, mPromoDetail.getPromoName());
-                            //map.put(TrackEventkeys.PROMO_SET_NAME,
-                            //        mPromoDetail.getPromoRedemptionInfo().getPromoSets().ge); todo promo set_name
-                            trackEvent(TrackingAware.PROMO_SET_PRODUCTS_SHOWN, map);
+                            trackEvent(TrackingAware.PROMO_SET_PRODUCTS_SHOWN, null);
                             setCartInfo(promoDetailApiResponseContentApiResponse.cartSummary);
                             updateUIForCartInfo();
                         } else {

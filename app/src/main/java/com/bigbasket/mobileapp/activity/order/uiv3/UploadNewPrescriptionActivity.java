@@ -267,7 +267,6 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
         this.finish();
         Intent intent = new Intent(getCurrentActivity(), CheckoutQCActivity.class);
         intent.putExtra(Constants.CO_RESERVE_QTY_DATA, coReserveQuantity);
-        //intent.putExtra(Constants.QC_LEN, coReserveQuantity.getQc_len());
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 

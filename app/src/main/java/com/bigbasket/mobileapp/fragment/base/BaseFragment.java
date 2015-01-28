@@ -353,7 +353,6 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         if (coReserveQuantity.isStatus()) {
             Intent intent = new Intent(getActivity(), CheckoutQCActivity.class);
             intent.putExtra(Constants.CO_RESERVE_QTY_DATA, coReserveQuantity);
-            //intent.putExtra(Constants.QC_LEN, coReserveQuantity.getQc_len());
             startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         }
     }

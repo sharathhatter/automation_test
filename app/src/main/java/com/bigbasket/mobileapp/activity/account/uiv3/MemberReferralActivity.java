@@ -19,7 +19,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.adapter.account.MemberReferralGridAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
@@ -28,16 +27,15 @@ import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.MemberReferralProduct;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.product.ProductDetailFragment;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.MemberReferralUtil;
 import com.bigbasket.mobileapp.util.NavigationCodes;
-import com.bigbasket.mobileapp.view.uiv3.BaseReferralDialog;
 import com.bigbasket.mobileapp.view.uiv3.ReferralTCDialog;
 import com.facebook.UiLifecycleHelper;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -105,6 +103,7 @@ public class MemberReferralActivity extends BackButtonActivity {
                 hideProgressView();
                 if (getRefProductApiResponseCallback.status == 0) {
                     loadMemberReferral(getRefProductApiResponseCallback.apiResponseContent);
+                    trackEvent(TrackingAware.MEMBER_REFERRAL_SHOWN, null);
                 } else {
                     handler.sendEmptyMessage(getRefProductApiResponseCallback.status);
                 }
@@ -114,7 +113,7 @@ public class MemberReferralActivity extends BackButtonActivity {
             public void failure(RetrofitError error) {
                 if (isSuspended()) return;
                 hideProgressView();
-                handler.handleRetrofitError(error);
+                handler.handleRetrofitError(error, true);
             }
         });
     }
@@ -128,7 +127,7 @@ public class MemberReferralActivity extends BackButtonActivity {
         contentView.removeAllViews();
         contentView.setBackgroundColor(getResources().getColor(R.color.uiv3_list_bkg_color));
 
-        if (!TextUtils.isEmpty(memberReferralProduct.incentiveDesc)) {
+        if (!TextUtils.isEmpty(memberReferralProduct.incentiveDesc)) { //todo test this is not referral data, check will Sid
             LayoutInflater inflater = getCurrentActivity().getLayoutInflater();
             View emptyView = inflater.inflate(R.layout.uiv3_empty_data_text, null);
             TextView txtEmptyDataMsg = (TextView) emptyView.findViewById(R.id.txtEmptyDataMsg);
@@ -141,77 +140,93 @@ public class MemberReferralActivity extends BackButtonActivity {
             View referralView = inflater.inflate(R.layout.member_referral_tc, null);
             TextView txtRefClientMsg = (TextView) referralView.findViewById(R.id.txtRefClientMsg);
             TextView txtTermAndConditionLink = (TextView) referralView.findViewById(R.id.txtTermAndConditionLink);
-            txtRefClientMsg.setText(memberReferralProduct.referralClientMsg);
+            if (!TextUtils.isEmpty(memberReferralProduct.incentiveType) &&
+                    memberReferralProduct.incentiveType.equals("credit")) {
 
-            if (memberReferralProduct.incentiveType.equals("credit")) {
-
-                String prefix1 = "Invite and earn `";
-                String refAmountStr1 = memberReferralProduct.memberCreditAmount + " bigbasketCash " +
-                        "for every friend who installs app sign up using your referral code.";
-                int prefixLen1 = prefix1.length();
-                SpannableString spannableRefAmount1 = new SpannableString(prefix1 + refAmountStr1);
-                spannableRefAmount1.setSpan(new CustomTypefaceSpan("", faceRupee), prefixLen1 - 1,
-                        prefixLen1, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-                txtRefClientMsg.setText(spannableRefAmount1);
-
-                String prefix2 = " Your friend also gets " + memberReferralProduct.productDesc;
-                String refAmountStr2 = " as a complimentary gift along with their first BigBasket order!";
-                int lenProductDesc = memberReferralProduct.productDesc.length();
-                int prefixLen2 = prefix2.length();
-                SpannableStringBuilder spannableProductDesc = new SpannableStringBuilder(prefix2 + refAmountStr2);
-                txtRefClientMsg.setMovementMethod(LinkMovementMethod.getInstance());
-                spannableProductDesc.setSpan(new ClickableSpan() {
-                    @Override
-                    public void onClick(View widget) {
-                        showProductDetail(memberReferralProduct.skuId);
-                    }
-
-                    @Override
-                    public void updateDrawState(TextPaint textPaint) {
-                        textPaint.setColor(getResources().getColor(R.color.link_color));
-                        textPaint.setUnderlineText(false);
-                    }
-                }, prefixLen2 - lenProductDesc, prefixLen2, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-                txtRefClientMsg.append(spannableProductDesc);
-                txtTermAndConditionLink.setText("Terms & Conditions");
-                txtTermAndConditionLink.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        new TermAndConditionDialog(getCurrentActivity(),
-                                memberReferralProduct.termAndCondition).show(getCurrentActivity().getSupportFragmentManager(),
-                                Constants.OTP_REFERRAL_DIALOG);
-                    }
-                });
-            } else {
-                String voucherMsg = "Invite and earn " +
-                        memberReferralProduct.voucherCode;
-
-                if (!TextUtils.isEmpty(memberReferralProduct.voucherCodeDesc)) {
-                    voucherMsg = " which gives you" + memberReferralProduct.voucherCodeDesc;
+                if (!TextUtils.isEmpty(memberReferralProduct.memberCreditAmount)) {
+                    String prefix1 = "Invite and earn `";
+                    String refAmountStr1 = memberReferralProduct.memberCreditAmount + " bigbasketCash " +
+                            "for every friend who installs app sign up using your referral code.";
+                    int prefixLen1 = prefix1.length();
+                    SpannableString spannableRefAmount1 = new SpannableString(prefix1 + refAmountStr1);
+                    spannableRefAmount1.setSpan(new CustomTypefaceSpan("", faceRupee), prefixLen1 - 1,
+                            prefixLen1, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+                    txtRefClientMsg.setText(spannableRefAmount1);
                 }
 
-                voucherMsg += " for every friend who installs app sign up using your referral code.";
-                txtRefClientMsg.setText(voucherMsg);
+                if (!TextUtils.isEmpty(memberReferralProduct.productDesc) &&
+                        !TextUtils.isEmpty(memberReferralProduct.skuId)) {
+                    String prefix2 = " Your friend also gets " + memberReferralProduct.productDesc;
+                    String refAmountStr2 = " as a complimentary gift along with their first BigBasket order!";
+                    int lenProductDesc = memberReferralProduct.productDesc.length();
+                    int prefixLen2 = prefix2.length();
+                    SpannableStringBuilder spannableProductDesc = new SpannableStringBuilder(prefix2 + refAmountStr2);
+                    txtRefClientMsg.setMovementMethod(LinkMovementMethod.getInstance());
+                    spannableProductDesc.setSpan(new ClickableSpan() {
+                        @Override
+                        public void onClick(View widget) {
+                            showProductDetail(memberReferralProduct.skuId);
+                        }
 
-                String prefix2 = " Your friend also gets " + memberReferralProduct.productDesc;
-                String refAmountStr2 = "as a complimentary gift along with their first BigBasket order!";
-                int lenProductDesc = memberReferralProduct.productDesc.length();
-                int prefixLen2 = prefix2.length();
-                SpannableString spannableProductDesc = new SpannableString(prefix2 + refAmountStr2);
-                txtRefClientMsg.setMovementMethod(LinkMovementMethod.getInstance());
-                spannableProductDesc.setSpan(new ClickableSpan() {
-                    @Override
-                    public void onClick(View widget) {
-                        showProductDetail(memberReferralProduct.skuId);
+                        @Override
+                        public void updateDrawState(TextPaint textPaint) {
+                            textPaint.setColor(getResources().getColor(R.color.link_color));
+                            textPaint.setUnderlineText(false);
+                        }
+                    }, prefixLen2 - lenProductDesc, prefixLen2, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+                    txtRefClientMsg.append(spannableProductDesc);
+                }
+
+
+                if (memberReferralProduct.termAndCondition.size() > 0) {
+                    txtTermAndConditionLink.setText("Terms & Conditions");
+                    txtTermAndConditionLink.setVisibility(View.VISIBLE);
+                    txtTermAndConditionLink.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            new TermAndConditionDialog(getCurrentActivity(),
+                                    memberReferralProduct.termAndCondition).show(getCurrentActivity().getSupportFragmentManager(),
+                                    Constants.OTP_REFERRAL_DIALOG);
+                        }
+                    });
+                } else {
+                    txtTermAndConditionLink.setVisibility(View.GONE);
+                }
+
+            } else {
+                if (!TextUtils.isEmpty(memberReferralProduct.voucherCode)) {
+                    String voucherMsg = "Invite and earn " +
+                            memberReferralProduct.voucherCode;
+
+                    if (!TextUtils.isEmpty(memberReferralProduct.voucherCodeDesc)) {
+                        voucherMsg = " which gives you" + memberReferralProduct.voucherCodeDesc;
                     }
 
-                    @Override
-                    public void updateDrawState(TextPaint textPaint) {
-                        textPaint.setColor(getResources().getColor(R.color.link_color));
-                        textPaint.setUnderlineText(false);
-                    }
-                }, prefixLen2 - lenProductDesc, prefixLen2, 0);
+                    voucherMsg += " for every friend who installs app sign up using your referral code.";
+                    txtRefClientMsg.setText(voucherMsg);
+                }
 
+                if (!TextUtils.isEmpty(memberReferralProduct.productDesc) &&
+                        !TextUtils.isEmpty(memberReferralProduct.skuId)) {
+                    String prefix2 = " Your friend also gets " + memberReferralProduct.productDesc;
+                    String refAmountStr2 = "as a complimentary gift along with their first BigBasket order!";
+                    int lenProductDesc = memberReferralProduct.productDesc.length();
+                    int prefixLen2 = prefix2.length();
+                    SpannableString spannableProductDesc = new SpannableString(prefix2 + refAmountStr2);
+                    txtRefClientMsg.setMovementMethod(LinkMovementMethod.getInstance());
+                    spannableProductDesc.setSpan(new ClickableSpan() {
+                        @Override
+                        public void onClick(View widget) {
+                            showProductDetail(memberReferralProduct.skuId);
+                        }
+
+                        @Override
+                        public void updateDrawState(TextPaint textPaint) {
+                            textPaint.setColor(getResources().getColor(R.color.link_color));
+                            textPaint.setUnderlineText(false);
+                        }
+                    }, prefixLen2 - lenProductDesc, prefixLen2, 0);
+                }
                 txtTermAndConditionLink.setVisibility(View.GONE);
             }
 
@@ -268,6 +283,7 @@ public class MemberReferralActivity extends BackButtonActivity {
     }
 
     private void sendFreeSMS() {
+        trackEvent(TrackingAware.MEMBER_REFERRAL_FREE_SMS_SHOWN, null);
         createContactList();
     }
 
@@ -285,7 +301,7 @@ public class MemberReferralActivity extends BackButtonActivity {
                 String selectedContactNos = memberReferralUtil.getMobileNumberFromIds(selectedContactNumbers);
                 sendServerPhoneNumber(selectedContactNos);
                 break;
-            case NavigationCodes.REF_EMAIL_LIST: //todo why this triggering on back button press
+            case NavigationCodes.REF_EMAIL_LIST:
                 if (memberReferralUtil.isMessageAndMailLenValid(data.getIntExtra(Constants.REF_EMAIL_LEN, 0), 0))
                     sendEmailMsgToServer(data.getStringExtra(Constants.REF_EMAIL_LIST),
                             data.getStringExtra(Constants.MESSAGE), "email");
@@ -341,6 +357,7 @@ public class MemberReferralActivity extends BackButtonActivity {
 //                Constants.REF_DIALOG_FLAG);
     }
 
+    /*
     public static class ReferralDialog extends BaseReferralDialog {
         private MemberReferralActivity memberReferralActivity;
         private MemberReferralUtil memberReferralUtil;
@@ -369,6 +386,8 @@ public class MemberReferralActivity extends BackButtonActivity {
             memberReferralUtil.getEmailFromContacts(emailAddressCollection, this);
         }
     }
+
+    */
 
 
     private void sendEmailMsgToServer(String emailList, String message, String refType) {

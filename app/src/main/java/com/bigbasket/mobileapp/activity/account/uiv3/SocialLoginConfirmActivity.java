@@ -16,6 +16,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -91,6 +92,9 @@ public class SocialLoginConfirmActivity extends BaseSignInSignupActivity {
         setTermsAndCondition(txtViewTermsAndCond);
         mEmailView = (AutoCompleteTextView) base.findViewById(R.id.emailInput);
         populateAutoComplete();
+
+        final LinearLayout layoutRefRow = (LinearLayout) base.findViewById(R.id.layoutRefRow);
+        final EditText editTextRefCode = (EditText) base.findViewById(R.id.editTextRefCode);
         final EditText editTextPasswd = (EditText) base.findViewById(R.id.editTextPasswd);
         final Button btnLinkToExistingSocialAccount = (Button) base.findViewById(R.id.btnLinkToExistingSocialAccount);
         final Button btnCreateNewAccount = (Button) base.findViewById(R.id.btnCreateNewAccount);
@@ -118,7 +122,7 @@ public class SocialLoginConfirmActivity extends BaseSignInSignupActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     toggleViewState(true, layoutLoginInput, txtCreateNewAccount, btnCreateNewAccount,
-                            btnLinkToExistingSocialAccount, chkAcceptTerms, txtViewTermsAndCond);
+                            btnLinkToExistingSocialAccount, chkAcceptTerms, txtViewTermsAndCond, layoutRefRow);
                 }
             }
         });
@@ -128,13 +132,13 @@ public class SocialLoginConfirmActivity extends BaseSignInSignupActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     toggleViewState(false, layoutLoginInput, txtCreateNewAccount, btnCreateNewAccount,
-                            btnLinkToExistingSocialAccount, chkAcceptTerms, txtViewTermsAndCond);
+                            btnLinkToExistingSocialAccount, chkAcceptTerms, txtViewTermsAndCond, layoutRefRow);
                 }
             }
         });
         toggleViewState(rbtnLinkToExistingSocialAccount.isChecked(),
                 layoutLoginInput, txtCreateNewAccount, btnCreateNewAccount,
-                btnLinkToExistingSocialAccount, chkAcceptTerms, txtViewTermsAndCond);
+                btnLinkToExistingSocialAccount, chkAcceptTerms, txtViewTermsAndCond, layoutRefRow);
         btnLinkToExistingSocialAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -184,6 +188,8 @@ public class SocialLoginConfirmActivity extends BaseSignInSignupActivity {
                     showToast(getString(R.string.acceptTermsMsg));
                     return;
                 }
+                if (!TextUtils.isEmpty(editTextRefCode.getText().toString()))
+                    socialAccount.setRefCode(editTextRefCode.getText().toString());
                 onCreateNewAccount(socialAccount);
             }
         });
@@ -192,7 +198,8 @@ public class SocialLoginConfirmActivity extends BaseSignInSignupActivity {
     private void toggleViewState(boolean linkAccount,
                                  View layoutLoginInput, TextView txtCreateNewAccount,
                                  Button btnCreateNewAccount, Button btnLinkToExistingSocialAccount,
-                                 CheckBox chkAcceptTerms, TextView termsAndCondHeading) {
+                                 CheckBox chkAcceptTerms, TextView termsAndCondHeading,
+                                 LinearLayout layoutRefRow) {
         if (linkAccount) {
             layoutLoginInput.setVisibility(View.VISIBLE);
             txtCreateNewAccount.setVisibility(View.GONE);
@@ -200,6 +207,7 @@ public class SocialLoginConfirmActivity extends BaseSignInSignupActivity {
             btnLinkToExistingSocialAccount.setVisibility(View.VISIBLE);
             chkAcceptTerms.setVisibility(View.GONE);
             termsAndCondHeading.setVisibility(View.GONE);
+            layoutRefRow.setVisibility(View.GONE);
         } else {
             layoutLoginInput.setVisibility(View.GONE);
             txtCreateNewAccount.setVisibility(View.VISIBLE);
@@ -207,6 +215,7 @@ public class SocialLoginConfirmActivity extends BaseSignInSignupActivity {
             btnLinkToExistingSocialAccount.setVisibility(View.GONE);
             chkAcceptTerms.setVisibility(View.VISIBLE);
             termsAndCondHeading.setVisibility(View.VISIBLE);
+            layoutRefRow.setVisibility(View.VISIBLE);
         }
     }
 
@@ -215,14 +224,14 @@ public class SocialLoginConfirmActivity extends BaseSignInSignupActivity {
         showProgress(true);
         bigBasketApiService.socialLinkAccount(email, password, mLoginType,
                 new Gson().toJson(socialAccount, SocialAccount.class),
-                new LoginApiResponseCallback(email, password, false, mLoginType, socialAccount));
+                new LoginApiResponseCallback(email, password, false, mLoginType, socialAccount, false));
     }
 
     public void onCreateNewAccount(SocialAccount socialAccount) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgress(true);
         bigBasketApiService.socialRegisterMember(mLoginType, new Gson().toJson(socialAccount, SocialAccount.class),
-                new LoginApiResponseCallback(socialAccount.getEmail(), null, false, mLoginType, socialAccount));
+                new LoginApiResponseCallback(socialAccount.getEmail(), null, false, mLoginType, socialAccount, true));
     }
 
     @Override

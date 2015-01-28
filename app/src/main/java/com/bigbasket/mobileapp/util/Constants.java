@@ -363,7 +363,9 @@ public class Constants {
     public static final String REMOVE_ALL_MARKETPLACE_FROM_BASKET_VIA_AGE = "FromMarketPlaceAgeValidationAge";
     public static final String REMOVE_ALL_MARKETPLACE_FROM_BASKET_VIA_PHARMA = "FromMarketPlaceAgeValidationPharma";
     public static final String MARKET_PLACE_INTENT = "marketPlaceIntent";
+    public static final String HASH_MAP_RADIO_BTN_AGE_CHECK_NO = "hashMapRadioBtnAgeCheckNo";
     public static final String PRESCRIPTION_INTENT_DATA = "prescriptionIntentData";
+    public static final String IS_PHARMA_BTN_NO_SELECTED = "isPharmaRadioBtnNoSelected";
     public static final String UPLOAD_PRESCRIPTION = "upload-prescription/";
     public static final String CO_RESERVE_QTY = "co-reserve-quantity/";
     public static final String CO_RESERVE_QTY_DATA = "coReserveQuantityData";
@@ -517,7 +519,7 @@ public class Constants {
     public static final String NEWS_PREF = "news";
     public static final String DATE_PICKER = "datePicker";
     public static final String OTP_DIALOG_FLAG = "otp_dialog_flag";
-    public static final String ERROR_AREA_PIN_CODE = "errorAreaPinCode";
+    //public static final String ERROR_AREA_PIN_CODE = "errorAreaPinCode";
 
     public static final String PAYMENT_TYPES = "payment_types";
     public static final String PAYMENT_TYPE = "payment_type";

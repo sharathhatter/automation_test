@@ -58,7 +58,7 @@ public class SubCategoryListFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
         topCatSlug = getArguments().getString(Constants.TOP_CATEGORY_SLUG);
         topCatName = getArguments().getString(Constants.TOP_CATEGORY_NAME);
-        topCatVersion = getArguments().getString(Constants.TOP_CATEGORY_VERSION); ///todo testing needs to be done
+        topCatVersion = getArguments().getString(Constants.TOP_CATEGORY_VERSION);
 
 
         final DisplayMetrics metrics = new DisplayMetrics();
@@ -222,12 +222,14 @@ public class SubCategoryListFragment extends BaseFragment {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
                 if (childPosition == 1) {
+                    trackPCEvent(categoryArrayList.get(groupPosition).getCategory().get(childPosition));
                     Bundle bundle = new Bundle();
                     bundle.putString("slug_name_category", categoryArrayList.get(groupPosition).getSlug());
                     CategoryProductsFragment categoryProductsFragment = new CategoryProductsFragment();
                     categoryProductsFragment.setArguments(bundle);
                     changeFragment(categoryProductsFragment);
                 } else {
+                    trackPCEvent(categoryArrayList.get(groupPosition).getCategory().get(childPosition));
                     Bundle bundle = new Bundle();
                     bundle.putString("slug_name_category", categoryArrayList.get(groupPosition).getCategory().get(childPosition).getSlug());
                     CategoryProductsFragment categoryProductsFragment = new CategoryProductsFragment();
@@ -238,6 +240,12 @@ public class SubCategoryListFragment extends BaseFragment {
             }
         });
 
+    }
+
+    private void trackPCEvent(Category category) {
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.PRODUCT_CAT, category.getName());
+        trackEvent(TrackingAware.BROWSE_PRODUCT_CATEGORY, map);
     }
 
     private void renderBanner(final ArrayList<String> bannerArrList, LinearLayout contentView) {

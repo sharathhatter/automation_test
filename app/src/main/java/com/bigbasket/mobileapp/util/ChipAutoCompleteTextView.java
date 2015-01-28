@@ -85,8 +85,6 @@ public class ChipAutoCompleteTextView extends MultipleEmailAutoComplete {
                     UIUtil.reportFormInputFieldError(this, context.getString(R.string.invalid_email));
                     break;
                 }
-//                if(arrayListEmails.contains(chip)) //todo duplicate email if
-//                    continue;
                 arrayListEmails.add(chip);
                 LayoutInflater lf = (LayoutInflater) getContext().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
                 TextView txtChipView = (TextView) lf.inflate(R.layout.chip_txtview, null);

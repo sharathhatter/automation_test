@@ -21,8 +21,7 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 
-public class ShowFulfillmentInfo<T> {
-    // TODO : Jugal fix this
+public class ShowFulfillmentInfo {
     private FulfillmentInfo fulfillmentInfo;
     private Activity context;
     private Typeface faceRobotoSlabNrml;

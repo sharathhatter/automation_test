@@ -44,7 +44,7 @@ public class ContactListActivity extends BackButtonActivity implements ContactNu
                         ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
                         ContactsContract.CommonDataKinds.Phone.NUMBER,
                         ContactsContract.CommonDataKinds.Phone.TYPE,
-                        ContactsContract.CommonDataKinds.Photo.PHOTO //todo image draw
+                        //ContactsContract.CommonDataKinds.Photo.PHOTO
                 },
                 "LENGTH(" + ContactsContract.CommonDataKinds.Phone.NUMBER + ")>=10",
                 null,
@@ -69,7 +69,7 @@ public class ContactListActivity extends BackButtonActivity implements ContactNu
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 System.out.println("Text [" + s + "]");
                 contactListAdapter.getFilter().filter(s.toString());
-                contactListAdapter.notifyDataSetChanged(); //todo remove this
+                //contactListAdapter.notifyDataSetChanged();
             }
 
             @Override
