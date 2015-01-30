@@ -31,8 +31,8 @@ import com.bigbasket.mobileapp.activity.order.uiv3.CheckoutQCActivity;
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 import com.bigbasket.mobileapp.adapter.order.PrescriptionImageAdapter;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
+import com.bigbasket.mobileapp.handler.AnalyticsIdentifierKeys;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
-import com.bigbasket.mobileapp.handler.LocalyticsHandler;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
 import com.bigbasket.mobileapp.interfaces.COMarketPlaceAware;
@@ -56,7 +56,7 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.demach.konotor.Konotor;
 import com.google.gson.Gson;
-import com.localytics.android.LocalyticsAmpSession;
+import com.localytics.android.Localytics;
 import com.moe.pushlibrary.MoEHelper;
 
 import org.json.JSONException;
@@ -568,30 +568,26 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         editor.remove(Constants.SOCIAL_ACCOUNT_TYPE);
         editor.commit();
         AuthParameters.updateInstance(getCurrentActivity());
-        LocalyticsAmpSession localyticsSession = LocalyticsHandler.getInstance(getApplication()).getSession();
 
         String analyticsAdditionalAttrsJson = preferences.getString(Constants.ANALYTICS_ADDITIONAL_ATTRS, null);
         editor.remove(Constants.ANALYTICS_ADDITIONAL_ATTRS);
 
-        if (localyticsSession != null) {
-            localyticsSession.setCustomerName(null);
-            localyticsSession.setCustomerEmail(null);
-            localyticsSession.setCustomerId(null);
-            localyticsSession.setCustomerData(LocalyticsHandler.CUSTOMER_MOBILE, null);
-            localyticsSession.setCustomerData(LocalyticsHandler.CUSTOMER_HUB, null);
-            localyticsSession.setCustomerData(LocalyticsHandler.CUSTOMER_MOBILE, null);
-            localyticsSession.setCustomerData(LocalyticsHandler.CUSTOMER_REGISTERED_ON, null);
-            localyticsSession.setCustomerData(LocalyticsHandler.CUSTOMER_BDAY, null);
-            localyticsSession.setCustomerData(LocalyticsHandler.CUSTOMER_GENDER, null);
-            localyticsSession.setCustomerData(LocalyticsHandler.CUSTOMER_CITY, null);
-            if (!TextUtils.isEmpty(analyticsAdditionalAttrsJson)) {
-                Gson gson = new Gson();
-                HashMap<String, Object> additionalAttrMap = new HashMap<>();
-                additionalAttrMap = (HashMap<String, Object>) gson.fromJson(analyticsAdditionalAttrsJson, additionalAttrMap.getClass());
-                if (additionalAttrMap != null) {
-                    for (Map.Entry<String, Object> entry : additionalAttrMap.entrySet()) {
-                        localyticsSession.setCustomerData(entry.getKey(), null);
-                    }
+        Localytics.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_ID, null);
+        Localytics.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_EMAIL, null);
+        Localytics.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_NAME, null);
+        Localytics.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_MOBILE, null);
+        Localytics.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_HUB, null);
+        Localytics.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_REGISTERED_ON, null);
+        Localytics.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_BDAY, null);
+        Localytics.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_GENDER, null);
+        Localytics.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_CITY, null);
+        if (!TextUtils.isEmpty(analyticsAdditionalAttrsJson)) {
+            Gson gson = new Gson();
+            HashMap<String, Object> additionalAttrMap = new HashMap<>();
+            additionalAttrMap = (HashMap<String, Object>) gson.fromJson(analyticsAdditionalAttrsJson, additionalAttrMap.getClass());
+            if (additionalAttrMap != null) {
+                for (Map.Entry<String, Object> entry : additionalAttrMap.entrySet()) {
+                    Localytics.setIdentifier(entry.getKey(), null);
                 }
             }
         }
@@ -649,9 +645,8 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
                 Log.e("Analytics", "Failed to send event = " + eventName + " to analytics");
             }
         }
-        LocalyticsHandler localyticsHandler = LocalyticsHandler.getInstance(getApplication());
-        if (authParameters.isLocalyticsEnabled() && localyticsHandler != null && localyticsHandler.getSession() != null) {
-            localyticsHandler.getSession().tagEvent(eventName, eventAttribs);
+        if (authParameters.isLocalyticsEnabled()) {
+            Localytics.tagEvent(eventName, eventAttribs);
         }
     }
 

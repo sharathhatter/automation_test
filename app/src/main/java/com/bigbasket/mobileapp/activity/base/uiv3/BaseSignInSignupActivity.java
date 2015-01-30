@@ -293,7 +293,7 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity {
         }
         editor.commit();
 
-        UIUtil.updateStoredUserDetails(getApplication(), getCurrentActivity(),
+        UIUtil.updateStoredUserDetails(getCurrentActivity(),
                 loginApiResponse.userDetails, email, loginApiResponse.mId);
         onLoginSuccess();
     }
