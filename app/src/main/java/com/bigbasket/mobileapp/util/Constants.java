@@ -14,6 +14,8 @@ public class Constants {
 
     public static final String SEARCH_QUERY = "q";
     public static final String PRODUCT_COUNT = "p_count";
+    public static final String NORMAL_COUNT = "normal_count";
+    public static final String TABLET_COUNT = "tablet_count";
 
     public static final String PRODUCTS = "products";
     public static final String NO_ITEM_IN_CART = "no_items_in_cart";
@@ -351,6 +353,7 @@ public class Constants {
     public static final String NULL = "null";
     public static final String EVOUCHER_MSG = "evoucher_msg";
     public static final String EVOUCHER_CODE = "evoucher_code";
+    public static final String REMOVE_VOUCHER = "remove_voucher";
     public static final String EVOUCHER_NAME = "evoucher_name";
 
     public static final String ORDER = "order";

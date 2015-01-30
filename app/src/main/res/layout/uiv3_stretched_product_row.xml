@@ -129,7 +129,7 @@
                     android:layout_marginLeft="@dimen/margin_mini"
                     android:layout_marginTop="2dp"
                     android:layout_toRightOf="@id/imgProduct"
-                    android:text="Pcheck restige"
+                    android:text="Prestige"
                     android:textColor="@color/uiv3_product_brand_color"
                     android:textSize="@dimen/secondary_text_size" />
 

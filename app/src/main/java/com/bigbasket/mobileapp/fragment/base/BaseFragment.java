@@ -308,7 +308,8 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
                     }
                 });
             }
-            if (nxtDialogButton != null && nxtDialogButton.equals(DialogButton.NO))
+            if (nxtDialogButton != null && (nxtDialogButton.equals(DialogButton.NO)
+                    || nxtDialogButton.equals(DialogButton.CANCEL)))
                 builder.setNegativeButton(R.string.noTxt, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int id) {

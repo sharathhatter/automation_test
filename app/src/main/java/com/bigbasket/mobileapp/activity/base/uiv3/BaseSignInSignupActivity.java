@@ -106,6 +106,7 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity implem
                             trackEvent(TrackingAware.MY_ACCOUNT_LOGIN_SUCCESS, null);
                             break;
                         case Constants.REGISTER_ACCOUNT_TYPE:
+                            showToast(getString(R.string.thanksForRegistering));
                             trackEvent(TrackingAware.MY_ACCOUNT_REGISTRATION_SUCCESS, null);
                             break;
                         default:
@@ -220,7 +221,7 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity implem
         }
         editor.commit();
 
-        UIUtil.updateStoredUserDetails(getApplication(), getCurrentActivity(),
+        UIUtil.updateStoredUserDetails(getCurrentActivity(),
                 loginApiResponse.userDetails, email, loginApiResponse.mId);
         onLoginSuccess();
     }

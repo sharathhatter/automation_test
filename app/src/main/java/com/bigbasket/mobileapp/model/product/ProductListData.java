@@ -7,7 +7,6 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ProductListData implements Parcelable {
 
@@ -27,7 +26,7 @@ public class ProductListData implements Parcelable {
     private String query;
 
     @SerializedName(Constants.PRODUCTS)
-    private List<Product> products;
+    private ArrayList<Product> products;
 
     @SerializedName(Constants.FILTERED_ON)
     private ArrayList<FilteredOn> filteredOn;
@@ -189,11 +188,11 @@ public class ProductListData implements Parcelable {
         this.filterOptionItems = filterOptions;
     }
 
-    public List<Product> getProducts() {
+    public ArrayList<Product> getProducts() {
         return products;
     }
 
-    public void setProducts(List<Product> products) {
+    public void setProducts(ArrayList<Product> products) {
         this.products = products;
     }
 

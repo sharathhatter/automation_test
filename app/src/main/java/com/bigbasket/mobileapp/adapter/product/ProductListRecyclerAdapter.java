@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.common.FixedLayoutViewHolder;
 import com.bigbasket.mobileapp.common.ProductViewHolder;
 import com.bigbasket.mobileapp.handler.ProductDetailOnClickListener;
@@ -21,7 +20,6 @@ import java.util.List;
 
 public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    protected BaseActivity context;
     private String baseImgUrl;
     private ProductViewDisplayDataHolder productViewDisplayDataHolder;
     private ActivityAware activityAware;
@@ -34,10 +32,9 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
     public static final int VIEW_TYPE_DATA = 1;
     public static final int VIEW_TYPE_EMPTY = 2;
 
-    public ProductListRecyclerAdapter(List<Product> products, String baseImgUrl, BaseActivity context,
+    public ProductListRecyclerAdapter(List<Product> products, String baseImgUrl,
                                       ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                       ActivityAware activityAware, int productCount, String sourceName) {
-        this.context = context;
         this.baseImgUrl = baseImgUrl;
         this.productViewDisplayDataHolder = productViewDisplayDataHolder;
         this.activityAware = activityAware;
@@ -56,7 +53,7 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) activityAware.getCurrentActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         switch (viewType) {
             case VIEW_TYPE_DATA:
                 View row = inflater.inflate(R.layout.uiv3_product_row, viewGroup, false);
@@ -65,7 +62,7 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
                 row = inflater.inflate(R.layout.uiv3_list_loading_footer, viewGroup, false);
                 return new FixedLayoutViewHolder(row);
             case VIEW_TYPE_EMPTY:
-                row = new View(context);
+                row = new View(activityAware.getCurrentActivity());
                 return new FixedLayoutViewHolder(row);
         }
         return null;

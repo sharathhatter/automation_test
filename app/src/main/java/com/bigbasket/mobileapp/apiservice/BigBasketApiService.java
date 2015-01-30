@@ -368,4 +368,8 @@ public interface BigBasketApiService {
     @FormUrlEncoded
     @POST("/forgot-password/")
     void forgotPassword(@Field(Constants.EMAIL) String email, Callback<OldBaseApiResponse> forgotPasswordApiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/remove-voucher/")
+    void removeVoucher(@Field(Constants.P_ORDER_ID) String potentialOrderId, Callback<BaseApiResponse> removeVoucherApiResponseCallback);
 }

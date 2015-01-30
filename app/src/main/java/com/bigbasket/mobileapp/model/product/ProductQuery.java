@@ -2,8 +2,11 @@ package com.bigbasket.mobileapp.model.product;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
+import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
+import com.bigbasket.mobileapp.model.section.DestinationInfo;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -19,9 +22,7 @@ public class ProductQuery implements Parcelable {
     private String type;
     private String slug;
     private String sortedOn;
-    private boolean _wasSortedOnNull;
     private ArrayList<FilteredOn> filteredOn;
-    private boolean _wasFilteredOnNull;
     private int page;
 
 
@@ -44,12 +45,12 @@ public class ProductQuery implements Parcelable {
     public ProductQuery(Parcel source) {
         this.type = source.readString();
         this.slug = source.readString();
-        this._wasSortedOnNull = source.readByte() == (byte) 1;
-        if (!this._wasSortedOnNull) {
+        boolean _wasSortedOnNull = source.readByte() == (byte) 1;
+        if (!_wasSortedOnNull) {
             this.sortedOn = source.readString();
         }
-        this._wasFilteredOnNull = source.readByte() == (byte) 1;
-        if (!this._wasFilteredOnNull) {
+        boolean _wasFilteredOnNull = source.readByte() == (byte) 1;
+        if (!_wasFilteredOnNull) {
             String filteredOnStr = source.readString();
             Gson gson = new Gson();
             Type collectionType = new TypeToken<Map<String, Set<String>>>() {
@@ -126,14 +127,14 @@ public class ProductQuery implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.type);
         dest.writeString(this.slug);
-        this._wasSortedOnNull = this.sortedOn == null;
-        dest.writeByte(this._wasSortedOnNull ? (byte) 1 : (byte) 0);
-        if (!this._wasSortedOnNull) {
+        boolean _wasSortedOnNull = this.sortedOn == null;
+        dest.writeByte(_wasSortedOnNull ? (byte) 1 : (byte) 0);
+        if (!_wasSortedOnNull) {
             dest.writeString(this.sortedOn);
         }
-        this._wasFilteredOnNull = this.filteredOn == null;
-        dest.writeByte(this._wasFilteredOnNull ? (byte) 1 : (byte) 0);
-        if (!this._wasFilteredOnNull) {
+        boolean _wasFilteredOnNull = this.filteredOn == null;
+        dest.writeByte(_wasFilteredOnNull ? (byte) 1 : (byte) 0);
+        if (!_wasFilteredOnNull) {
             Gson gson = new Gson();
             Type collectionType = new TypeToken<Map<String, Set<String>>>() {
             }.getType();
@@ -155,4 +156,15 @@ public class ProductQuery implements Parcelable {
             return new ProductQuery[size];
         }
     };
+
+    @Nullable
+    public static String convertDestinationTypeToProductQueryType(String destinationType) {
+        switch (destinationType) {
+            case DestinationInfo.PRODUCT_CATEGORY:
+                return ProductListType.CATEGORY.get();
+            case DestinationInfo.SEARCH:
+                return ProductListType.SEARCH.get();
+        }
+        return null;
+    }
 }

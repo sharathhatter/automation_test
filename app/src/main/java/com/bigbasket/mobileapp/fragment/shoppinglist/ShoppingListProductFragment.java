@@ -202,7 +202,7 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
                 .build();
 
         ProductListRecyclerAdapter productListAdapter = new ProductListRecyclerAdapter(productList, mBaseImgUrl,
-                getCurrentActivity(), productViewDisplayDataHolder, this, productList.size(), getSourceName());
+                productViewDisplayDataHolder, this, productList.size(), getSourceName());
 
         productRecyclerView.setAdapter(productListAdapter);
         contentView.addView(productRecyclerView);

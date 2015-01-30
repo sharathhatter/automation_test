@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.fragment.order;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -23,6 +23,7 @@ import com.bigbasket.mobileapp.activity.order.uiv3.AvailableVoucherListActivity;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.OnApplyVoucherListener;
 import com.bigbasket.mobileapp.interfaces.OnObservableScrollEvent;
+import com.bigbasket.mobileapp.interfaces.PostVoucherAppliedListener;
 import com.bigbasket.mobileapp.interfaces.SelectedPaymentAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
@@ -30,6 +31,7 @@ import com.bigbasket.mobileapp.model.order.ActiveVouchers;
 import com.bigbasket.mobileapp.model.order.PaymentType;
 import com.bigbasket.mobileapp.model.order.PayuResponse;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
@@ -42,7 +44,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 
-public class PaymentSelectionFragment extends BaseFragment {
+
+public class PaymentSelectionFragment extends BaseFragment implements PostVoucherAppliedListener {
 
     private CartSummary mCartSummary;
     private ArrayList<ActiveVouchers> mActiveVouchersList;
@@ -52,10 +55,13 @@ public class PaymentSelectionFragment extends BaseFragment {
     private TextView mLblTransactionFailed;
     private TextView mTxtTransactionFailureReason;
     private TextView mLblSelectAnotherMethod;
+    private TextView mTxtApplyVoucher;
+    private TextView mTxtRemoveVoucher;
+    private String mAppliedVoucherCode;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.uiv3_list_container, null);
+        return inflater.inflate(R.layout.uiv3_list_container, container, false);
     }
 
     @Override
@@ -68,6 +74,7 @@ public class PaymentSelectionFragment extends BaseFragment {
         mAmtPayable = args.getString(Constants.AMT_PAYABLE);
         mWalletUsed = args.getString(Constants.WALLET_USED);
         potentialOrderId = args.getString(Constants.POTENTIAL_ORDER_ID);
+        mAppliedVoucherCode = args.getString(Constants.EVOUCHER_CODE);
 
         if (TextUtils.isEmpty(mWalletUsed)) {
             mWalletUsed = "0";
@@ -214,31 +221,33 @@ public class PaymentSelectionFragment extends BaseFragment {
             layoutChoosePayment.setVisibility(View.GONE);
         }
 
-        TextView txtApplyVoucher = (TextView) base.findViewById(R.id.txtApplyVoucher);
-        final EditText editTextVoucherCode = (EditText) base.findViewById(R.id.editTextVoucherCode);
-        txtApplyVoucher.setTypeface(faceRobotoRegular);
-        txtApplyVoucher.setOnClickListener(new View.OnClickListener() {
+        mTxtApplyVoucher = (TextView) base.findViewById(R.id.txtApplyVoucher);
+        mTxtApplyVoucher.setTypeface(faceRobotoRegular);
+        mTxtApplyVoucher.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((OnApplyVoucherListener) getActivity()).applyVoucher(editTextVoucherCode.getText().toString().trim());
+                Intent availableVoucherListActivity = new Intent(getActivity(), AvailableVoucherListActivity.class);
+                availableVoucherListActivity.putParcelableArrayListExtra(Constants.VOUCHERS, mActiveVouchersList);
+                startActivityForResult(availableVoucherListActivity, NavigationCodes.VOUCHER_APPLIED);
             }
         });
 
-        TextView txtViewAvailableVouchers = (TextView) base.findViewById(R.id.txtViewAvailableVouchers);
-        if (mActiveVouchersList != null && mActiveVouchersList.size() > 0) {
-            txtViewAvailableVouchers.setTypeface(faceRobotoRegular);
-            txtViewAvailableVouchers.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent availableVoucherListActivity = new Intent(getActivity(), AvailableVoucherListActivity.class);
-                    availableVoucherListActivity.putParcelableArrayListExtra(Constants.VOUCHERS, mActiveVouchersList);
-                    startActivityForResult(availableVoucherListActivity, NavigationCodes.VOUCHER_APPLIED);
-                }
-            });
-        } else {
-            txtViewAvailableVouchers.setVisibility(View.GONE);
-        }
+        mTxtRemoveVoucher = (TextView) base.findViewById(R.id.txtRemoveVoucher);
+        mTxtRemoveVoucher.setTypeface(faceRobotoRegular);
+        mTxtRemoveVoucher.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showAlertDialog(getString(R.string.removeVoucherHeading), getString(R.string.removeVoucherDesc),
+                        DialogButton.YES, DialogButton.CANCEL, Constants.REMOVE_VOUCHER, mAppliedVoucherCode,
+                        getString(R.string.remove));
+            }
+        });
 
+        if (!TextUtils.isEmpty(mAppliedVoucherCode)) {
+            onVoucherApplied(mAppliedVoucherCode);
+        } else {
+            onVoucherRemoved();
+        }
         ObservableScrollView scrollViewPaymentOption = (ObservableScrollView) base.findViewById(R.id.scrollViewPaymentOption);
         scrollViewPaymentOption.setScrollViewCallbacks(new ObservableScrollViewCallbacks() {
             @Override
@@ -344,5 +353,30 @@ public class PaymentSelectionFragment extends BaseFragment {
     @Override
     public String getFragmentTxnTag() {
         return PaymentSelectionFragment.class.getName();
+    }
+
+    @Override
+    public void onVoucherApplied(String voucher) {
+        if (!TextUtils.isEmpty(voucher)) {
+            mTxtApplyVoucher.setVisibility(View.GONE);
+            mTxtRemoveVoucher.setVisibility(View.VISIBLE);
+            mAppliedVoucherCode = voucher;
+        }
+    }
+
+    @Override
+    public void onVoucherRemoved() {
+        mTxtApplyVoucher.setVisibility(View.VISIBLE);
+        mTxtRemoveVoucher.setVisibility(View.GONE);
+    }
+
+    @Override
+    protected void onPositiveButtonClicked(DialogInterface dialogInterface, int id, @Nullable String sourceName, Object valuePassed) {
+        if (!TextUtils.isEmpty(sourceName) && sourceName.equals(Constants.REMOVE_VOUCHER)
+                && valuePassed != null) {
+            ((OnApplyVoucherListener) getActivity()).removeVoucher(valuePassed.toString());
+        } else {
+            super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
+        }
     }
 }

@@ -161,7 +161,7 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
                 .setShowShopListDeleteBtn(false)
                 .build();
         mProductListRecyclerAdapter = new ProductListRecyclerAdapter(productListData.getProducts(), productListData.getBaseImgUrl(),
-                getCurrentActivity(), productViewDisplayDataHolder, this, productListData.getProductCount(),
+                productViewDisplayDataHolder, this, productListData.getProductCount(),
                 getSourceName());
 
         productRecyclerView.setAdapter(mProductListRecyclerAdapter);

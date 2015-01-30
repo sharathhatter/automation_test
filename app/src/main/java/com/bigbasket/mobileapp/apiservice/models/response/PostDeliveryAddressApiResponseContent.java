@@ -21,4 +21,7 @@ public class PostDeliveryAddressApiResponseContent {
 
     @SerializedName(Constants.PAYMENT_TYPES)
     public ArrayList<PaymentType> paymentTypes;
+
+    @SerializedName(Constants.EVOUCHER_CODE)
+    public String evoucherCode;
 }

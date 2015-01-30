@@ -401,7 +401,7 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware 
             setUpdateButtonInProgress();
             postUserDetails(user_details.toString());
         } else {
-            ((BaseActivity) getActivity()).showAlertDialogFinish(null, getString(R.string.checkinternet));
+            handler.sendOfflineError();
         }
     }
 

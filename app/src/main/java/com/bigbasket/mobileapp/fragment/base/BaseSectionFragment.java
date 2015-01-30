@@ -204,7 +204,7 @@ public abstract class BaseSectionFragment extends BaseFragment {
         horizontalRecyclerView.setLayoutManager(linearLayoutManager);
         horizontalRecyclerView.setHasFixedSize(false);
 
-        CarouselAdapter carouselAdapter = new CarouselAdapter<>(this, section.getSectionItems(), mSectionData.getRenderersMap(),
+        CarouselAdapter carouselAdapter = new CarouselAdapter<>(this, section, mSectionData.getRenderersMap(),
                 layoutId, faceRobotoRegular);
         horizontalRecyclerView.setAdapter(carouselAdapter);
         return baseProductCarousel;

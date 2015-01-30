@@ -1,18 +1,19 @@
 package com.bigbasket.mobileapp.activity.order.uiv3;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
@@ -20,7 +21,6 @@ import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.model.order.ActiveVouchers;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 
 import java.util.ArrayList;
@@ -28,36 +28,69 @@ import java.util.ArrayList;
 
 public class AvailableVoucherListActivity extends BackButtonActivity {
 
+    private int mSelectedIndex = ListView.INVALID_POSITION;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setTitle(getString(R.string.selectVoucher));
+        setTitle(getString(R.string.applyVoucher));
         ArrayList<ActiveVouchers> activeVouchersList = getIntent().getParcelableArrayListExtra(Constants.VOUCHERS);
         renderVouchers(activeVouchersList);
     }
 
     private void renderVouchers(final ArrayList<ActiveVouchers> activeVouchersList) {
-        ListView listVoucher = new ListView(this);
 
-        ActiveVoucherListAdapter activeVoucherListAdapter = new ActiveVoucherListAdapter(activeVouchersList);
-        listVoucher.setAdapter(activeVoucherListAdapter);
-        listVoucher.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        FrameLayout contentLayout = (FrameLayout) findViewById(R.id.content_frame);
+        contentLayout.removeAllViews();
+
+        LayoutInflater inflater = getLayoutInflater();
+        View base = inflater.inflate(R.layout.uiv3_apply_voucher, contentLayout, false);
+
+        final EditText editTextVoucherCode = (EditText) base.findViewById(R.id.editTextVoucherCode);
+        TextView lblOr = (TextView) base.findViewById(R.id.lblOr);
+        Button btnApplyVoucher = (Button) base.findViewById(R.id.btnApplyVoucher);
+        final ListView listVoucher = (ListView) base.findViewById(R.id.lstAvailableVouchers);
+
+        editTextVoucherCode.setTypeface(faceRobotoRegular);
+        if (activeVouchersList == null || activeVouchersList.size() == 0) {
+            lblOr.setVisibility(View.GONE);
+            listVoucher.setVisibility(View.GONE);
+        } else {
+            lblOr.setTypeface(faceRobotoRegular);
+            ActiveVoucherListAdapter activeVoucherListAdapter = new ActiveVoucherListAdapter(activeVouchersList);
+            listVoucher.setAdapter(activeVoucherListAdapter);
+            listVoucher.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    mSelectedIndex = position;
+                }
+            });
+        }
+
+        btnApplyVoucher.setTypeface(faceRobotoRegular);
+        btnApplyVoucher.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ActiveVouchers activeVouchers = activeVouchersList.get(position);
-                if (activeVouchers.canApply()) {
-                    showAlertDialog("Apply " + activeVouchers.getCode() + "?",
-                            "Are you sure you want to apply \"" + activeVouchers.getCode() + "\"?",
-                            DialogButton.YES, DialogButton.NO, Constants.EVOUCHER_CODE, activeVouchers.getCode());
-                } else {
-                    Toast.makeText(getCurrentActivity(), "Sorry, but you can't apply this voucher", Toast.LENGTH_LONG).show();
+            public void onClick(View v) {
+                if (!TextUtils.isEmpty(editTextVoucherCode.getText().toString())) {
+                    String voucherCode = editTextVoucherCode.getText().toString();
+                    if (!TextUtils.isEmpty(voucherCode)) {
+                        applyVoucher(voucherCode);
+                    }
+                } else if (activeVouchersList != null && activeVouchersList.size() > 0
+                        && mSelectedIndex != ListView.INVALID_POSITION) {
+                    ActiveVouchers activeVouchers = activeVouchersList.get(mSelectedIndex);
+                    if (activeVouchers.canApply()) {
+                        applyVoucher(activeVouchers.getCode());
+                    } else {
+                        showAlertDialog(getString(R.string.voucherCannotBeApplied),
+                                activeVouchers.getMessage());
+                    }
                 }
             }
         });
 
-        FrameLayout contentLayout = (FrameLayout) findViewById(R.id.content_frame);
-        contentLayout.addView(listVoucher);
+        contentLayout.addView(base);
     }
 
     @Override
@@ -70,17 +103,11 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
 
     }
 
-    @Override
-    protected void onPositiveButtonClicked(DialogInterface dialogInterface, int id, String sourceName,
-                                           Object valuePassed) {
-        if (sourceName.equals(Constants.EVOUCHER_CODE)) {
-            Intent data = new Intent();
-            data.putExtra(Constants.EVOUCHER_CODE, valuePassed.toString());
-            setResult(NavigationCodes.VOUCHER_APPLIED, data);
-            finish();
-        } else {
-            super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
-        }
+    private void applyVoucher(String voucherCode) {
+        Intent data = new Intent();
+        data.putExtra(Constants.EVOUCHER_CODE, voucherCode);
+        setResult(NavigationCodes.VOUCHER_APPLIED, data);
+        finish();
     }
 
     private class ActiveVoucherListAdapter extends BaseAdapter {
