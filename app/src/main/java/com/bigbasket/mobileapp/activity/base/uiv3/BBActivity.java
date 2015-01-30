@@ -275,7 +275,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             basketCountView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    addToMainLayout(new ShowCartFragment());
+                    launchViewBasket();
                 }
             });
             mTextCartCount = (TextView) basketCountView.findViewById(R.id.txtNumItemsInBasket);
@@ -284,6 +284,12 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 updateCartCountHeaderTextView();
             }
         }
+    }
+
+    private void launchViewBasket() {
+        Intent intent = new Intent(this, BackButtonActivity.class);
+        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_VIEW_BASKET);
+        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
     @Override
@@ -494,9 +500,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 return true;
             case R.id.action_view_basket:
-                intent = new Intent(this, BackButtonActivity.class);
-                intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_VIEW_BASKET);
-                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                launchViewBasket();
                 return true;
             case R.id.action_logout:
                 if (isSocialLogin()) {
