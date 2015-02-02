@@ -189,9 +189,9 @@ public class SubCategoryListFragment extends BaseSectionFragment {
                     trackPCEvent(categoryArrayList.get(groupPosition));
                     Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
                     intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PRODUCT_CATEGORY);
-                    if (categoryArrayList.get(groupPosition).getFilter()!= null)
+                    if (categoryArrayList.get(groupPosition).getFilter() != null)
                         intent.putExtra(Constants.FILTER, categoryArrayList.get(groupPosition).getFilter());
-                    if (categoryArrayList.get(groupPosition).getSortBy()!= null)
+                    if (categoryArrayList.get(groupPosition).getSortBy() != null)
                         intent.putExtra(Constants.SORT_BY, categoryArrayList.get(groupPosition).getSortBy());
                     intent.putExtra(Constants.CATEGORY_SLUG, categoryArrayList.get(groupPosition).getSlug());
                     startActivityForResult(intent, NavigationCodes.GO_TO_HOME);

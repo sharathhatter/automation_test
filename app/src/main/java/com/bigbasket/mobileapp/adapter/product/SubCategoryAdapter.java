@@ -31,7 +31,7 @@ public class SubCategoryAdapter {
     public static final String tableName = "subcategory";
 
     public static String createTable = String.format("CREATE TABLE IF NOT EXISTS %1$s (%2$s INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            "%3$s TEXT , %4$s TEXT ,%5$s BLOB, %6$s BLOB );", tableName, COLUMN_ID, COLUMN_VERSION,
+                    "%3$s TEXT , %4$s TEXT ,%5$s BLOB, %6$s BLOB );", tableName, COLUMN_ID, COLUMN_VERSION,
             COLUMN_SLUG, COLUMN_BLOB, COLUMN_SECTION_DATA);
 
     public void open() {

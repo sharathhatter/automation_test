@@ -5,7 +5,8 @@ package com.bigbasket.mobileapp.util;
  */
 public final class TrackEventkeys {
 
-    private TrackEventkeys() {}
+    private TrackEventkeys() {
+    }
 
     public static final String PRODUCT_ID = "skuId";
     public static final String PRODUCT_BRAND = "brand";

@@ -1,6 +1,5 @@
 package com.bigbasket.mobileapp.fragment;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -40,10 +39,6 @@ import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.AppNotSupportedDialog;
 import com.bigbasket.mobileapp.view.uiv2.UpgradeAppDialog;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -327,8 +322,8 @@ public class HomeFragment extends BaseSectionFragment {
         return Constants.HOME;
     }
 
-    private void serverCallGetAppData(String client, String versionName){
-        if(!DataUtil.isInternetAvailable(getCurrentActivity())) handler.sendOfflineError();
+    private void serverCallGetAppData(String client, String versionName) {
+        if (!DataUtil.isInternetAvailable(getCurrentActivity())) handler.sendOfflineError();
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressView();
         bigBasketApiService.getAppInfo(client, versionName,
@@ -374,7 +369,7 @@ public class HomeFragment extends BaseSectionFragment {
     }
 
     private void showUpgradeAppDialog(String appExpiredBy) {
-        if(appExpiredBy==null) return;
+        if (appExpiredBy == null) return;
         UpgradeAppDialog upgradeAppDialog = new UpgradeAppDialog<>(getCurrentActivity());
         int updateValue = upgradeAppDialog.showUpdateMsgDialog(appExpiredBy.replace("-", "/"));
         switch (updateValue) {
@@ -389,10 +384,10 @@ public class HomeFragment extends BaseSectionFragment {
         }
     }
 
-    private void getAppInfo(){
+    private void getAppInfo() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         long lastAppDataCallTime = preferences.getLong(Constants.LAST_APP_DATA_CALL_TIME, 0);
-        if(lastAppDataCallTime == 0 || UIUtil.isMoreThanXHour(lastAppDataCallTime, Constants.SIX_HOUR)){
+        if (lastAppDataCallTime == 0 || UIUtil.isMoreThanXHour(lastAppDataCallTime, Constants.SIX_HOUR)) {
             try {
                 serverCallGetAppData(Constants.CLIENT_NAME, DataUtil.getAppVersionName(getCurrentActivity()));
             } catch (Exception e) {
@@ -401,12 +396,12 @@ public class HomeFragment extends BaseSectionFragment {
         }
     }
 
-    private void showAppNotSupportedDialog(){
+    private void showAppNotSupportedDialog() {
         AppNotSupportedDialog appNotSupportedDialog = new AppNotSupportedDialog<>(this);
         appNotSupportedDialog.show();
     }
 
-    private void updateLastAppDataCall(){
+    private void updateLastAppDataCall() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         SharedPreferences.Editor editor = preferences.edit();
         editor.putLong(Constants.LAST_APP_DATA_CALL_TIME, System.currentTimeMillis());

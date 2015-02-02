@@ -22,11 +22,11 @@ public class CategoryProductsFragment extends ProductListAwareFragment {
     }
 
     @Override
-    protected ArrayList<FilteredOn> getProductRefinedByFilter(){
+    protected ArrayList<FilteredOn> getProductRefinedByFilter() {
         Bundle bundle = getArguments();
-        if(bundle.getString(Constants.FILTER)!=null){
+        if (bundle.getString(Constants.FILTER) != null) {
             FilteredOn filteredOn = new FilteredOn((bundle.getString(Constants.FILTER)));
-            ArrayList<FilteredOn> filteredOnArrayList =  new ArrayList<>();
+            ArrayList<FilteredOn> filteredOnArrayList = new ArrayList<>();
             filteredOnArrayList.add(filteredOn);
             return filteredOnArrayList;
         }
@@ -34,9 +34,9 @@ public class CategoryProductsFragment extends ProductListAwareFragment {
     }
 
     @Override
-    protected String getProductRefinedBySortedOn(){
+    protected String getProductRefinedBySortedOn() {
         Bundle bundle = getArguments();
-        if(bundle.getString(Constants.SORT_BY)!=null)
+        if (bundle.getString(Constants.SORT_BY) != null)
             return bundle.getString(Constants.SORT_BY);
         return null;
     }

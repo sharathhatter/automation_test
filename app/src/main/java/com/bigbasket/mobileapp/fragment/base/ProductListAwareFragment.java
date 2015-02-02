@@ -185,11 +185,11 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
 
     public abstract String getProductQueryType();
 
-    protected ArrayList<FilteredOn> getProductRefinedByFilter(){
+    protected ArrayList<FilteredOn> getProductRefinedByFilter() {
         return null;
     }
 
-    protected String getProductRefinedBySortedOn(){
+    protected String getProductRefinedBySortedOn() {
         return null;
     }
 

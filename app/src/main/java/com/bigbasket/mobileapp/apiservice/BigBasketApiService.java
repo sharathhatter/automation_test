@@ -377,5 +377,5 @@ public interface BigBasketApiService {
     @GET("/get-app-info/")
     void getAppInfo(@Query(Constants.CLIENT) String orderType,
                     @Query(Constants.VERSION) String version,
-            Callback<ApiResponse<AppInfoResponse>> callbackAppData);
+                    Callback<ApiResponse<AppInfoResponse>> callbackAppData);
 }

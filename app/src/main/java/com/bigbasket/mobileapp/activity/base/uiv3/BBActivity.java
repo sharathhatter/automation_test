@@ -20,8 +20,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.text.InputFilter;
-import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.Menu;
@@ -701,9 +699,9 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
     private void launchProductCategoryFragment(String categorySlug, String filter, String sortOn) {
         Bundle bundle = new Bundle();
         bundle.putString(Constants.SLUG_NAME_CATEGORY, categorySlug);
-        if(filter!=null)
+        if (filter != null)
             bundle.putString(Constants.FILTER, filter);
-        if(sortOn!=null)
+        if (sortOn != null)
             bundle.putString(Constants.SORT_BY, sortOn);
         CategoryProductsFragment categoryProductsFragment = new CategoryProductsFragment();
         categoryProductsFragment.setArguments(bundle);

@@ -19,11 +19,9 @@ import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
-import android.text.format.Time;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.BulletSpan;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -42,13 +40,8 @@ import com.localytics.android.Localytics;
 import com.moe.pushlibrary.MoEHelper;
 import com.moe.pushlibrary.utils.MoEHelperConstants;
 
-import java.text.DateFormat;
 import java.text.NumberFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -315,10 +308,10 @@ public class UIUtil {
     }
 
 
-    public static boolean isMoreThanXHour(long timeInMiliSeconds, int hour){
-        long timerDiff =  System.currentTimeMillis() - timeInMiliSeconds;
-        int hourDiff = (int) timerDiff / (1000); //60 * 60 * 1000 todo change it to 6 hour
-        if(hourDiff>=hour)
+    public static boolean isMoreThanXHour(long timeInMiliSeconds, int hour) {
+        long timerDiff = System.currentTimeMillis() - timeInMiliSeconds;
+        int hourDiff = (int) timerDiff / (60 * 60 * 1000);
+        if (hourDiff >= hour)
             return true;
         return false;
     }

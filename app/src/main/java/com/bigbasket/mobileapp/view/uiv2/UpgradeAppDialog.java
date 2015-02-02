@@ -43,21 +43,21 @@ public class UpgradeAppDialog<T> {
             return Constants.DONT_SHOW_APP_UPDATE_POPUP;
         }
 
+        if (serverAppExpireTime == null) return Constants.DONT_SHOW_APP_UPDATE_POPUP;
         int popUpShownTimes = prefer.getInt(Constants.APP_EXPIRE_POPUP_SHOWN_TIMES, 0);
         int daysDiff = (int) (serverAppExpireTime.getTime() - lastPopUpShownTime) / (24 * 60 * 60 * 1000);
 
-        if (isMoreThanXDays(lastPopUpShownTime, Constants.ONE_DAY)) {
-            if (popUpShownTimes < 3 && daysDiff >= 0) {
-                return Constants.SHOW_APP_UPDATE_POPUP;
-            } else {
-                if (isMoreThanXDays(lastPopUpShownTime, Constants.SIX_DAYS)) {
+        if (daysDiff >= 0) {
+            if (isMoreThanXDays(lastPopUpShownTime, Constants.ONE_DAY)) {
+                if (popUpShownTimes < 3) {
                     return Constants.SHOW_APP_UPDATE_POPUP;
+                } else {
+                    if (isMoreThanXDays(lastPopUpShownTime, Constants.SIX_DAYS)) {
+                        return Constants.SHOW_APP_UPDATE_POPUP;
+                    } else return Constants.DONT_SHOW_APP_UPDATE_POPUP;
                 }
-                return Constants.DONT_SHOW_APP_UPDATE_POPUP;
-            }
-        } else {
-            return Constants.DONT_SHOW_APP_UPDATE_POPUP;
-        }
+            } else return Constants.DONT_SHOW_APP_UPDATE_POPUP;
+        } else return Constants.SHOW_APP_EXPIRE_POPUP;
     }
 
     private void updateLastPopShownDate(long lastPopShownTime) {
@@ -73,7 +73,7 @@ public class UpgradeAppDialog<T> {
     }
 
     private boolean isMoreThanXDays(long lastPopUpShownTime, int days) {
-        return (int) (System.currentTimeMillis() - lastPopUpShownTime) / (24 * 60 * 60 * 1000) >= days;
+        return (int) (System.currentTimeMillis() - lastPopUpShownTime) / (24 * 60 * 60 * 1000) > days;
     }
 
     public void showPopUp() {

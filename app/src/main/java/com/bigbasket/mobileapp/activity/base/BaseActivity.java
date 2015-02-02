@@ -181,6 +181,8 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
 
     @Override
     protected void onPause() {
+//        Localytics.closeSession();
+//        Localytics.upload();
         super.onPause();
         isActivitySuspended = true;
         moEHelper.onPause(this);
@@ -203,6 +205,9 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
 
         initializeKonotor();
         moEHelper.onResume(this);
+//        Localytics.openSession();
+//        Localytics.upload();
+//        Localytics.handleTestMode(getCurrentActivity().getIntent());
     }
 
     public void launchKonotor() {
