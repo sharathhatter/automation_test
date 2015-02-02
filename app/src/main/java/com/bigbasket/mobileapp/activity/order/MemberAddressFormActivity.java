@@ -118,7 +118,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
         editTextArea.setText(getValueOrBlank(address.getArea()));
         editTextCity.setText(getValueOrBlank(address.getCityName()));
         editTextPincode.setText(getValueOrBlank(address.getPincode()));
-        chkIsAddrDefault.setChecked(address.isDefault()); // Don't remove since during request, this is read
+        //chkIsAddrDefault.setChecked(address.isDefault()); // Don't remove since during request, this is read
         chkIsAddrDefault.setVisibility(address.isDefault() ? View.GONE : View.VISIBLE);
     }
 

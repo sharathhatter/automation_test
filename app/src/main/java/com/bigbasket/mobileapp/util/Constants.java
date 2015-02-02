@@ -96,6 +96,15 @@ public class Constants {
     public static final String APP_LINK = "app_link";
     public static final String WEB_LINK = "link";
     public static final String TOP_CATEGORY_SLUG = "top_category_slug";
+    public static final String SLUG_NAME = "slug_name";
+    public static final String SUB_CATS = "sub_cats";
+    public static final String NO_ITEMS = "no_items";
+    public static final String NUM_PRODUCTS = "num_products";
+    public static final String SLUG_NAME_CATEGORY = "slug_name_category";
+    public static final String SECTION = "section";
+    public static final String SECTION_DATA = "section_data";
+    public static final String FILTER = "filter";
+    public static final String SORT_BY = "sort_by";
 
 
     public static final String FILTER_OPTIONS = "filter_opts";
@@ -290,8 +299,6 @@ public class Constants {
     public static final String ENABLE_LOCALYTICS = "enable_localytics";
     public static final String ANALYTICS = "analytics";
     public static final String ANALYTICS_ENGINE = "analytics_engine";
-    public static final String APP_EXPIRE_BY = "app_expired_by";
-    public static final String IS_UPDATE_REQUIRED = "is_update_required";
     public static final String FULFILLED_BY = "fulfilled_by";
     public static final String TC2 = "tc2";
     public static final String FULFILLMENT_INFOS = "fulfillment_infos";
@@ -391,7 +398,7 @@ public class Constants {
     public static final int VALIDATE_MOBILE_NUMBER_POPUP_ERROR_MSG = 402;
     public static final int MOBILE_NUMBER_USED_BY_ANOTHER_MEMBER = 403;
     public static final String PRESCRIPTION_SELECTED = "prescriptionSelected";
-    public static final String LAST_POPUP_SHOWN_DATE = "lastPopUpShownDate";
+    public static final String LAST_POPUP_SHOWN_TIME = "lastPopUpShownTime";
     public static final String APP_EXPIRE_POPUP_SHOWN_TIMES = "popUpShownTimes";
     public static final String MESSAGE_OBJ = "message_obj";
 
@@ -420,8 +427,6 @@ public class Constants {
     public static final String ORDER_NUMBER = "order_number";
     public static final String ORDERS = "orders";
     public static final String HAS_EXPRESS = "has_express_shops";
-    public static final int UPDATE_MANDATORY = 2;
-    public static final int UPDATE_OPTIONAL = 1;
     public static final String SHOPPING_LIST_SUMMARY = "shoplist_summary";
     public static final String SHOPPING_LIST_ITEMS = "shoplist_items";
     public static final String SMART_BASKET_ADD_ALL = "sb-cat-items-to-cart/";
@@ -479,6 +484,19 @@ public class Constants {
     public static final String SCREEN_DPI = "screen_dpi";
     public static final String OS_NAME = "os_name";
     public static final String OS_VERSION = "os_version";
+    public static final String LAST_APP_DATA_CALL_TIME = "app_data_call_time";
+    public static final String IS_UPDATE_REQUIRED = "is_update_required";
+    public static final int UPDATE_MANDATORY = 2;
+    public static final int UPDATE_OPTIONAL = 1;
+    public static final String UPDATE_APP = "update_app";
+    public static final String CLIENT = "client";
+    public static final String CLIENT_NAME = "android";
+    public static final String UPDATE_INFO = "update_info";
+    public static final String APP_EXPIRE_BY = "app_expired_by";
+    public static final int SIX_HOUR = 6;
+    public static final int ONE_DAY = 1;
+    public static final int SIX_DAYS = 6;
+
 
     public static final String APP_VERSION = "app_version";
 
@@ -636,4 +654,6 @@ public class Constants {
     public static final String SPECIAL_SHOPS = "specialShops";
     public static final String IS_EXPRESS = "is_express";
     public static final String IS_DISCOUNT = "is_discount";
+
+
 }

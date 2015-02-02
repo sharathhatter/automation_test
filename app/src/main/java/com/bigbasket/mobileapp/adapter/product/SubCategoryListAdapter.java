@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.model.product.Category;
 
 import java.util.List;
@@ -18,13 +18,14 @@ import java.util.List;
 /**
  * Created by jugal on 12/11/14.
  */
-public class SubCategoryListAdapter extends BaseExpandableListAdapter {
-    private BaseFragment baseFragment;
+public class SubCategoryListAdapter<T> extends BaseExpandableListAdapter {
+
+    private T ctx;
     private List<Category> categoryList;
     private LayoutInflater layoutInflater;
 
-    public SubCategoryListAdapter(BaseFragment baseFragment1, List<Category> categoryList, FragmentActivity fragmentActivity) {
-        this.baseFragment = baseFragment1;
+    public SubCategoryListAdapter(T ctx, List<Category> categoryList, FragmentActivity fragmentActivity) {
+        this.ctx = ctx;
         this.categoryList = categoryList;
         layoutInflater = (LayoutInflater) fragmentActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -106,43 +107,14 @@ public class SubCategoryListAdapter extends BaseExpandableListAdapter {
             subCatHolder = (SubCatHolder) row.getTag();
         }
         TextView txtListItem = subCatHolder.getListText();
-        txtListItem.setText(bottomCategory.getName());
-
-        if (childPosition == 0 || childPosition == 1) {
-            txtListItem.setTextColor(baseFragment.getResources().getColor(R.color.active_order_red_color));
-        } else {
-            txtListItem.setTextColor(baseFragment.getResources().getColor(R.color.uiv3_list_primary_text_color));
+        txtListItem.setText("     " + bottomCategory.getName());
+        if (Integer.parseInt(bottomCategory.getNumProducts()) > 0) {
+            txtListItem.append(" (" + bottomCategory.getNumProducts() + ")");
         }
+        txtListItem.setTextColor(((ActivityAware) ctx).getCurrentActivity().getResources().getColor(R.color.uiv3_list_secondary_text_color));
 
         ImageView imgArrow = subCatHolder.getListArrow();
         imgArrow.setVisibility(View.GONE);
-
-        /*
-        if (childPosition == 1) {
-            row.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    //Intent for calling activity
-                    Bundle bundle = new Bundle();
-                    bundle.putString("slug_name_category", categoryList.get(groupPosition).getSlug());
-                    CategoryProductsFragment categoryProductsFragment = new CategoryProductsFragment();
-                    categoryProductsFragment.setArguments(bundle);
-                    baseFragment.changeFragment(categoryProductsFragment);
-                }
-            });
-        } else {
-            row.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    //Intent for calling activity
-                    Bundle bundle = new Bundle();
-                    bundle.putString("slug_name_category", bottomCategory.getSlug());
-                    CategoryProductsFragment categoryProductsFragment = new CategoryProductsFragment();
-                    categoryProductsFragment.setArguments(bundle);
-                    baseFragment.changeFragment(categoryProductsFragment);
-                }
-            });
-        }
-
-        */
 
         return row;
     }
@@ -162,12 +134,17 @@ public class SubCategoryListAdapter extends BaseExpandableListAdapter {
         }
         TextView txtListItem = subCatHolder.getListText();
         txtListItem.setText(subcategory.getName());
-        ImageView imgArrow = subCatHolder.getListArrow();
-        if (groupPosition == 0 || groupPosition == 1 || groupPosition == 2) {
-            txtListItem.setTextColor(baseFragment.getResources().getColor(R.color.active_order_red_color));
-        } else {
-            txtListItem.setTextColor(baseFragment.getResources().getColor(R.color.uiv3_list_primary_text_color));
+        if (Integer.parseInt(subcategory.getNumProducts()) > 0) {
+            txtListItem.append(" (" + subcategory.getNumProducts() + ")");
         }
+
+        if (Integer.parseInt(subcategory.getNumProducts()) == -1) {
+            txtListItem.setTextColor(((ActivityAware) ctx).getCurrentActivity().getResources().getColor(R.color.uiv3_action_bar_background_pressed));
+        } else {
+            txtListItem.setTextColor(((ActivityAware) ctx).getCurrentActivity().getResources().getColor(R.color.uiv3_list_primary_text_color));
+        }
+
+        ImageView imgArrow = subCatHolder.getListArrow();
 
         if (subcategory.getCategory() != null && subcategory.getCategory().size() > 0) {
             imgArrow.setVisibility(View.VISIBLE);
@@ -177,47 +154,6 @@ public class SubCategoryListAdapter extends BaseExpandableListAdapter {
 
         imgArrow.setImageResource(isExpanded ? R.drawable.ic_keyboard_arrow_down_grey600_24dp :
                 R.drawable.ic_keyboard_arrow_right_grey600_24dp);
-
-        /*
-        row.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (subcategory.getCategory() != null && subcategory.getCategory().size() > 0) {
-                    if (!isExpanded) {
-                        v.getParent().requestDisallowInterceptTouchEvent(true);
-                    } else {
-                        v.getParent().requestDisallowInterceptTouchEvent(false);
-                    }
-                } else {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("slug_name_category", subcategory.getSlug());
-                    CategoryProductsFragment categoryProductsFragment = new CategoryProductsFragment();
-                    categoryProductsFragment.setArguments(bundle);
-                    baseFragment.changeFragment(categoryProductsFragment);
-                }
-            }
-        });
-        /*
-        row.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (subcategory.getCategory() != null && subcategory.getCategory().size() > 0) {
-                    if (!isExpanded) {
-                        v.getParent().requestDisallowInterceptTouchEvent(true);
-                    } else {
-                        v.getParent().requestDisallowInterceptTouchEvent(false);
-                    }
-                } else {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("slug_name_category", subcategory.getSlug());
-                    CategoryProductsFragment categoryProductsFragment = new CategoryProductsFragment();
-                    categoryProductsFragment.setArguments(bundle);
-                    baseFragment.changeFragment(categoryProductsFragment);
-                }
-            }
-        });
-
-        */
         return row;
     }
 }

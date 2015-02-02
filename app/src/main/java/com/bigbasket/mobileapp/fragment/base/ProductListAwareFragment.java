@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.fragment.base;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,7 +41,7 @@ import java.util.List;
 public abstract class ProductListAwareFragment extends BaseFragment implements ProductListDataAware,
         ShoppingListNamesAware, SortAware, InfiniteProductListAware {
 
-    private ProductListData productListData;
+    protected ProductListData productListData;
     private String selectedProductId;
     private ProductListRecyclerAdapter mProductListRecyclerAdapter;
     private View mFooterView;
@@ -184,6 +185,14 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
 
     public abstract String getProductQueryType();
 
+    protected ArrayList<FilteredOn> getProductRefinedByFilter(){
+        return null;
+    }
+
+    protected String getProductRefinedBySortedOn(){
+        return null;
+    }
+
     public ProductQuery getProductQuery() {
         ArrayList<FilteredOn> filteredOnArrayList = null;
         String sortedOn = null;
@@ -192,8 +201,10 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
             filteredOnArrayList = productListData.getFilteredOn();
             sortedOn = productListData.getSortedOn();
         }
-        return new ProductQuery(getProductQueryType(),
-                getProductListSlug(), sortedOn, filteredOnArrayList, 1);
+        return new ProductQuery(getProductQueryType(), getProductListSlug(),
+                !TextUtils.isEmpty(sortedOn) ? sortedOn : getProductRefinedBySortedOn(),
+                filteredOnArrayList != null && filteredOnArrayList.size() > 0 ? filteredOnArrayList :
+                        getProductRefinedByFilter(), 1);
     }
 
     @Override

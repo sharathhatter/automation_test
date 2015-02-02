@@ -1,11 +1,14 @@
 package com.bigbasket.mobileapp.util;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,9 +19,11 @@ import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.format.Time;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.BulletSpan;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -37,8 +42,13 @@ import com.localytics.android.Localytics;
 import com.moe.pushlibrary.MoEHelper;
 import com.moe.pushlibrary.utils.MoEHelperConstants;
 
+import java.text.DateFormat;
 import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -301,6 +311,25 @@ public class UIUtil {
             return Color.parseColor(rgbColorCode);
         } catch (IllegalArgumentException e) {
             return defaultColor;
+        }
+    }
+
+
+    public static boolean isMoreThanXHour(long timeInMiliSeconds, int hour){
+        long timerDiff =  System.currentTimeMillis() - timeInMiliSeconds;
+        int hourDiff = (int) timerDiff / (1000); //60 * 60 * 1000 todo change it to 6 hour
+        if(hourDiff>=hour)
+            return true;
+        return false;
+    }
+
+    public static void openPlayStoreLink(Activity activity) {
+        final String appPackageName = Constants.BASE_PKG_NAME;
+        try {
+            activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+        } catch (android.content.ActivityNotFoundException anfe) {
+            activity.startActivity(new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("http://play.google.com/store/apps/details?id=" + appPackageName)));
         }
     }
 }

@@ -206,11 +206,6 @@
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
         <activity
-            android:name=".activity.account.uiv3.MemberReferralOptionsActivity"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
-
-
-        <activity
             android:name=".activity.account.uiv3.MemberReferralActivity"
             android:windowSoftInputMode="stateHidden|adjustPan" />
 

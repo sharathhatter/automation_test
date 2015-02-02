@@ -223,7 +223,7 @@
     <style name="placeOrder">Place Order</style>
 
     <string name="appOutDatedMsg">This version of BigBasket is now outdated.\nPlease update this app, in order to continue</string>
-    <string name="appUpdatedMsg">New version of BigBasket App is available. Please update this app</string>
+    <string name="appUpdatedMsg">New version of BigBasket App is available. \nPlease update this app.</string>
     <string name="confirmMobileNumber">Confirm your mobile number</string>
     <string name="txtConfirm">CONFIRM</string>
     <string name="txtResendCodeStr">RESEND</string>
@@ -394,7 +394,7 @@
     <string name="profileUpdated">Profile updated successfully</string>
 
     <!-- main nav -->
-    <string name="browseByCats">Shop by Categpry</string>
+    <string name="browseByCats">Shop by Category</string>
     <string name="browseByOffers">Offers</string>
     <string name="newArrivals">New Arrivals</string>
     <string name="nowAtBB">Now Available @ BigBasket</string>

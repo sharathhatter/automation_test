@@ -98,7 +98,7 @@ public class UpdatePinFragment extends BaseFragment {
 
     private void getCurrentMemberPin() {
         if (getActivity() == null) return;
-        if (!DataUtil.isInternetAvailable(getActivity())) return;
+        if (!DataUtil.isInternetAvailable(getActivity())) handler.sendOfflineError(true);
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.getCurrentMemberPin(new Callback<ApiResponse<UpdatePin>>() {

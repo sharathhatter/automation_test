@@ -64,7 +64,7 @@ public class DoWalletFragment extends BaseFragment {
 
     private void getCurrentMemberWalletBalance() {
         if (!DataUtil.isInternetAvailable(getActivity())) {
-            return;
+            handler.sendOfflineError(true);
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));

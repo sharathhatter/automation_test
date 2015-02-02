@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.fragment;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -24,8 +25,10 @@ import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.AppInfoResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateVersionInfoApiResponseContent;
 import com.bigbasket.mobileapp.fragment.base.BaseSectionFragment;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.SectionManager;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.section.Renderer;
@@ -33,7 +36,14 @@ import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.task.GetCartCountTask;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.bigbasket.mobileapp.view.AppNotSupportedDialog;
+import com.bigbasket.mobileapp.view.uiv2.UpgradeAppDialog;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -60,6 +70,7 @@ public class HomeFragment extends BaseSectionFragment {
             new GetCartCountTask<>(getCurrentActivity(), true).startTask();
             requestHomePage();
         }
+        getAppInfo();
     }
 
     @Override
@@ -315,4 +326,91 @@ public class HomeFragment extends BaseSectionFragment {
     public String getFragmentTxnTag() {
         return Constants.HOME;
     }
+
+    private void serverCallGetAppData(String client, String versionName){
+        if(!DataUtil.isInternetAvailable(getCurrentActivity())) handler.sendOfflineError();
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+        showProgressView();
+        bigBasketApiService.getAppInfo(client, versionName,
+                new Callback<ApiResponse<AppInfoResponse>>() {
+                    @Override
+                    public void success(ApiResponse<AppInfoResponse> callbackAppDataResponse, Response response) {
+                        if (isSuspended()) return;
+                        try {
+                            hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
+                        if (callbackAppDataResponse.status == 0) {
+                            updateLastAppDataCall();
+                            int updateRequired = callbackAppDataResponse.apiResponseContent.updateInfo.isUpdateRequired;
+                            String appExpiredBy = callbackAppDataResponse.apiResponseContent.updateInfo.appExpiredBy;
+                            switch (updateRequired) {
+                                case Constants.UPDATE_MANDATORY:
+                                    showAppNotSupportedDialog();
+                                    break;
+                                case Constants.UPDATE_OPTIONAL:
+                                    showUpgradeAppDialog(appExpiredBy);
+                                    break;
+                            }
+                        } else {
+                            handler.sendEmptyMessage(callbackAppDataResponse.status);
+                        }
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        trackEvent(TrackingAware.MY_ACCOUNT_CURRENT_PIN_FAILED, null);
+                        if (isSuspended()) return;
+                        try {
+                            hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
+                        handler.handleRetrofitError(error);
+                    }
+
+                });
+    }
+
+    private void showUpgradeAppDialog(String appExpiredBy) {
+        if(appExpiredBy==null) return;
+        UpgradeAppDialog upgradeAppDialog = new UpgradeAppDialog<>(getCurrentActivity());
+        int updateValue = upgradeAppDialog.showUpdateMsgDialog(appExpiredBy.replace("-", "/"));
+        switch (updateValue) {
+            case Constants.SHOW_APP_UPDATE_POPUP:
+                upgradeAppDialog.showPopUp();
+                break;
+            case Constants.SHOW_APP_EXPIRE_POPUP:
+                showAppNotSupportedDialog();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void getAppInfo(){
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        long lastAppDataCallTime = preferences.getLong(Constants.LAST_APP_DATA_CALL_TIME, 0);
+        if(lastAppDataCallTime == 0 || UIUtil.isMoreThanXHour(lastAppDataCallTime, Constants.SIX_HOUR)){
+            try {
+                serverCallGetAppData(Constants.CLIENT_NAME, DataUtil.getAppVersionName(getCurrentActivity()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void showAppNotSupportedDialog(){
+        AppNotSupportedDialog appNotSupportedDialog = new AppNotSupportedDialog<>(this);
+        appNotSupportedDialog.show();
+    }
+
+    private void updateLastAppDataCall(){
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putLong(Constants.LAST_APP_DATA_CALL_TIME, System.currentTimeMillis());
+        editor.commit();
+    }
+
 }

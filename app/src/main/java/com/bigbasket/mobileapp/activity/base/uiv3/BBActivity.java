@@ -20,6 +20,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.Menu;
@@ -413,7 +415,9 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 addToMainLayout(productListFragment);
                 break;
             case FragmentCodes.START_PRODUCT_CATEGORY:
-                launchProductCategoryFragment(getIntent().getStringExtra(Constants.CATEGORY_SLUG));
+                launchProductCategoryFragment(getIntent().getStringExtra(Constants.CATEGORY_SLUG),
+                        getIntent().getStringExtra(Constants.FILTER),
+                        getIntent().getStringExtra(Constants.SORT_BY));
                 break;
             case FragmentCodes.START_SHOPPING_LIST_SUMMARY:
                 bundle = new Bundle();
@@ -691,12 +695,16 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                                         String categorySlug) {
         MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(this);
         mostSearchesAdapter.update(categoryName, categoryUrl);
-        launchProductCategoryFragment(categorySlug);
+        launchProductCategoryFragment(categorySlug, null, null);
     }
 
-    private void launchProductCategoryFragment(String categorySlug) {
+    private void launchProductCategoryFragment(String categorySlug, String filter, String sortOn) {
         Bundle bundle = new Bundle();
-        bundle.putString("slug_name_category", categorySlug);
+        bundle.putString(Constants.SLUG_NAME_CATEGORY, categorySlug);
+        if(filter!=null)
+            bundle.putString(Constants.FILTER, filter);
+        if(sortOn!=null)
+            bundle.putString(Constants.SORT_BY, sortOn);
         CategoryProductsFragment categoryProductsFragment = new CategoryProductsFragment();
         categoryProductsFragment.setArguments(bundle);
         addToMainLayout(categoryProductsFragment);
