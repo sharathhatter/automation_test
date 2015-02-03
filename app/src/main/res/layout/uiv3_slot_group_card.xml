@@ -36,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_small"
                 android:layout_toLeftOf="@id/chkIsSlotSelected"
-                android:textColor="@color/uiv3_list_primary_text_color"
+                android:textColor="@color/uiv3_primary_text_color"
                 android:textSize="@dimen/primary_text_size" />
 
             <TextView
@@ -47,7 +47,7 @@
                 android:layout_marginBottom="@dimen/margin_small"
                 android:layout_marginLeft="@dimen/margin_small"
                 android:layout_toLeftOf="@id/chkIsSlotSelected"
-                android:textColor="@color/uiv3_list_secondary_text_color"
+                android:textColor="@color/uiv3_secondary_text_color"
                 android:textSize="@dimen/secondary_text_size" />
 
             <TextView

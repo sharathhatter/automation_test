@@ -27,15 +27,14 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
     private TextView txtPromoLabel;
     private TextView txtPromoDesc;
     private TextView txtPromoAddSavings;
-    private ImageView imgProductAdditionalAction;
     private ImageView imgShoppingListDel;
     private Button btnAddToBasket;
-    private ImageView imgDecBasketQty;
+    private TextView txtDecBasketQty;
     private TextView txtInBasket;
-    private ImageView imgIncBasketQty;
+    private TextView txtIncBasketQty;
     private EditText editTextQty;
-    private ImageView imgShoppingListAddToBasket;
     private TextView txtOutOfStockORNotForSale;
+    private ImageView imgAddToShoppingList;
 
     public ProductViewHolder(View itemView) {
         super(itemView);
@@ -146,13 +145,6 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
         return txtPromoAddSavings;
     }
 
-    public ImageView getImgProductAdditionalAction() {
-        if (imgProductAdditionalAction == null) {
-            imgProductAdditionalAction = (ImageView) itemView.findViewById(R.id.imgProductAdditionalAction);
-        }
-        return imgProductAdditionalAction;
-    }
-
     public ImageView getImgShoppingListDel() {
         if (imgShoppingListDel == null) {
             imgShoppingListDel = (ImageView) itemView.findViewById(R.id.imgShoppingListDel);
@@ -167,11 +159,11 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
         return btnAddToBasket;
     }
 
-    public ImageView getImgDecBasketQty() {
-        if (imgDecBasketQty == null) {
-            imgDecBasketQty = (ImageView) itemView.findViewById(R.id.imgDecBasketQty);
+    public TextView getTxtDecBasketQty() {
+        if (txtDecBasketQty == null) {
+            txtDecBasketQty = (TextView) itemView.findViewById(R.id.txtDecBasketQty);
         }
-        return imgDecBasketQty;
+        return txtDecBasketQty;
     }
 
     public TextView getTxtInBasket() {
@@ -181,11 +173,11 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
         return txtInBasket;
     }
 
-    public ImageView getImgIncBasketQty() {
-        if (imgIncBasketQty == null) {
-            imgIncBasketQty = (ImageView) itemView.findViewById(R.id.imgIncBasketQty);
+    public TextView getTxtIncBasketQty() {
+        if (txtIncBasketQty == null) {
+            txtIncBasketQty = (TextView) itemView.findViewById(R.id.txtIncBasketQty);
         }
-        return imgIncBasketQty;
+        return txtIncBasketQty;
     }
 
     public EditText getEditTextQty() {
@@ -195,17 +187,17 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
         return editTextQty;
     }
 
-    public ImageView getImgShoppingListAddToBasket() {
-        if (imgShoppingListAddToBasket == null) {
-            imgShoppingListAddToBasket = (ImageView) itemView.findViewById(R.id.imgProductAdditionalAction);
-        }
-        return imgShoppingListAddToBasket;
-    }
-
     public TextView getTxtOutOfStockORNotForSale() {
         if (txtOutOfStockORNotForSale == null) {
             txtOutOfStockORNotForSale = (TextView) itemView.findViewById(R.id.txtOutOfStockORNotForSale);
         }
         return txtOutOfStockORNotForSale;
+    }
+
+    public ImageView getImgAddToShoppingList() {
+        if (imgAddToShoppingList == null) {
+            imgAddToShoppingList = (ImageView) itemView.findViewById(R.id.imgAddToShoppingList);
+        }
+        return imgAddToShoppingList;
     }
 }

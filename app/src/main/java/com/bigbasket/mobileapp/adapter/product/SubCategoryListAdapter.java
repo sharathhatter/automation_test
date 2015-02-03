@@ -111,7 +111,7 @@ public class SubCategoryListAdapter extends BaseExpandableListAdapter {
         if (childPosition == 0 || childPosition == 1) {
             txtListItem.setTextColor(baseFragment.getResources().getColor(R.color.active_order_red_color));
         } else {
-            txtListItem.setTextColor(baseFragment.getResources().getColor(R.color.uiv3_list_primary_text_color));
+            txtListItem.setTextColor(baseFragment.getResources().getColor(R.color.uiv3_primary_text_color));
         }
 
         ImageView imgArrow = subCatHolder.getListArrow();
@@ -166,7 +166,7 @@ public class SubCategoryListAdapter extends BaseExpandableListAdapter {
         if (groupPosition == 0 || groupPosition == 1 || groupPosition == 2) {
             txtListItem.setTextColor(baseFragment.getResources().getColor(R.color.active_order_red_color));
         } else {
-            txtListItem.setTextColor(baseFragment.getResources().getColor(R.color.uiv3_list_primary_text_color));
+            txtListItem.setTextColor(baseFragment.getResources().getColor(R.color.uiv3_primary_text_color));
         }
 
         if (subcategory.getCategory() != null && subcategory.getCategory().size() > 0) {

@@ -22,7 +22,7 @@
         android:layout_marginLeft="@dimen/margin_small"
         android:layout_toRightOf="@+id/txtIndex"
         android:text="product description of a product asdasd asdfasdf asdfasdf"
-        android:textColor="@color/uiv3_list_primary_text_color"
+        android:textColor="@color/uiv3_primary_text_color"
         android:textSize="@dimen/secondary_text_size" />
 
     <ImageView
@@ -66,7 +66,7 @@
         android:layout_alignLeft="@id/txtItemInBasketAndProductDesc"
         android:layout_below="@id/txtItemInBasketAndProductDesc"
         android:text="0.6lt"
-        android:textColor="@color/uiv3_list_secondary_text_color"
+        android:textColor="@color/uiv3_secondary_text_color"
         android:layout_marginTop="@dimen/margin_small"
         android:textSize="@dimen/secondary_text_size" />
 
@@ -77,7 +77,7 @@
         android:layout_below="@id/txtItemInBasketAndProductDesc"
         android:layout_toRightOf="@id/txtTotalQty"
         android:text="25.00"
-        android:textColor="@color/uiv3_list_secondary_text_color"
+        android:textColor="@color/uiv3_secondary_text_color"
         android:layout_marginLeft="@dimen/margin_small"
         android:layout_marginTop="@dimen/margin_small"
         android:textSize="@dimen/secondary_text_size" />

@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_margin="0dp"
-        android:background="@color/uiv3_list_separator_color">
+        android:background="@color/uiv3_divider_color">
 
         <Button
             android:layout_width="wrap_content"

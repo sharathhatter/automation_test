@@ -3,9 +3,9 @@ package com.bigbasket.mobileapp.task;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -41,33 +41,33 @@ public class BasketOperationTask<T> {
     private BasketOperation basketOperation;
     private String qty;
     private TextView basketCountTextView;
-    private ImageView imgIncQty;
-    private ImageView imgDecQty;
+    private View viewIncQty;
+    private View viewDecQty;
     private Button btnAddToBasket;
     private EditText editTextQty;
     private String eventName;
     private String sourceName;
 
     public BasketOperationTask(T context, BasketOperation basketOperation, @NonNull Product product,
-                               TextView basketCountTextView, ImageView imgDecQty,
-                               ImageView imgIncQty, Button btnAddToBasket,
+                               TextView basketCountTextView, View viewDecQty,
+                               View viewIncQty, Button btnAddToBasket,
                                EditText editTextQty, String eventName,
                                String sourceName) {
-        this(context, basketOperation, product, basketCountTextView, imgDecQty, imgIncQty,
+        this(context, basketOperation, product, basketCountTextView, viewDecQty, viewIncQty,
                 btnAddToBasket, editTextQty, "1", eventName, sourceName);
     }
 
     public BasketOperationTask(T context, BasketOperation basketOperation, @NonNull Product product,
-                               TextView basketCountTextView, ImageView imgDecQty,
-                               ImageView imgIncQty, Button btnAddToBasket,
+                               TextView basketCountTextView, View viewDecQty,
+                               View viewIncQty, Button btnAddToBasket,
                                EditText editTextQty, String qty, String eventName,
                                String sourceName) {
         this.context = context;
         this.product = product;
         this.basketOperation = basketOperation;
         this.basketCountTextView = basketCountTextView;
-        this.imgDecQty = imgDecQty;
-        this.imgIncQty = imgIncQty;
+        this.viewDecQty = viewDecQty;
+        this.viewIncQty = viewIncQty;
         this.btnAddToBasket = btnAddToBasket;
         this.editTextQty = editTextQty;
         this.qty = qty;
@@ -121,7 +121,7 @@ public class BasketOperationTask<T> {
                     ((CartInfoAware) context).updateUIForCartInfo();
                     ((BasketOperationAware) context).setBasketOperationResponse(cartOperationApiResponse.basketOperationResponse);
                     ((BasketOperationAware) context).updateUIAfterBasketOperationSuccess(basketOperation,
-                            basketCountTextView, imgDecQty, imgIncQty, btnAddToBasket, editTextQty, product, qty);
+                            basketCountTextView, viewDecQty, viewIncQty, btnAddToBasket, editTextQty, product, qty);
                     break;
                 case Constants.ERROR:
                     switch (cartOperationApiResponse.errorType) {
@@ -137,7 +137,7 @@ public class BasketOperationTask<T> {
                             break;
                     }
                     ((BasketOperationAware) context).updateUIAfterBasketOperationFailed(basketOperation,
-                            basketCountTextView, imgDecQty, imgIncQty, btnAddToBasket, editTextQty, product, null,
+                            basketCountTextView, viewDecQty, viewIncQty, btnAddToBasket, editTextQty, product, null,
                             cartOperationApiResponse.errorType);
                     break;
             }

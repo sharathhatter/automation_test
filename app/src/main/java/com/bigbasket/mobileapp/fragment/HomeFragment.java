@@ -226,7 +226,7 @@ public class HomeFragment extends BaseSectionFragment {
 
     private void parseRendererColors() {
         if (mSectionData == null || mSectionData.getRenderersMap() == null) return;
-        int defaultTextColor = getResources().getColor(R.color.uiv3_list_secondary_text_color);
+        int defaultTextColor = getResources().getColor(R.color.uiv3_secondary_text_color);
         for (Renderer renderer : mSectionData.getRenderersMap().values()) {
             if (!TextUtils.isEmpty(renderer.getBackgroundColor())) {
                 renderer.setNativeBkgColor(UIUtil.parseAsNativeColor(renderer.getBackgroundColor(), Color.WHITE));

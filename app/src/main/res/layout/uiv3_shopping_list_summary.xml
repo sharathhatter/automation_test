@@ -24,7 +24,7 @@
         android:layout_toRightOf="@id/imgCategory"
         android:layout_marginTop="@dimen/margin_normal"
         android:layout_marginLeft="@dimen/margin_normal"
-        android:textColor="@color/uiv3_list_primary_text_color"
+        android:textColor="@color/uiv3_primary_text_color"
         android:gravity="left|center_vertical" />
 
     <EditText
@@ -32,7 +32,7 @@
         android:layout_height="20dp"
         android:paddingLeft="@dimen/padding_normal"
         android:paddingRight="@dimen/padding_normal"
-        android:textColor="@color/uiv3_list_primary_text_color"
+        android:textColor="@color/uiv3_primary_text_color"
         android:id="@+id/editTextNumItems"
         android:layout_alignParentRight="true"
         android:background="@drawable/shopping_list_boarder"

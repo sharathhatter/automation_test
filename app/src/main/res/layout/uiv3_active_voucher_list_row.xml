@@ -22,7 +22,7 @@
 
     <TextView
         android:layout_width="wrap_content"
-        android:textColor="@color/uiv3_list_primary_text_color"
+        android:textColor="@color/uiv3_primary_text_color"
         android:layout_height="wrap_content"
         android:textSize="@dimen/primary_text_size"
         android:layout_toRightOf="@id/txtVoucherCode"
@@ -35,7 +35,7 @@
         android:textSize="@dimen/primary_text_size"
         android:layout_toRightOf="@id/txtVoucherCode"
         android:layout_below="@id/txtVoucherDesc"
-        android:textColor="@color/uiv3_list_secondary_text_color"
+        android:textColor="@color/uiv3_secondary_text_color"
         android:id="@+id/txtVoucherMsg" />
 
     <TextView
@@ -44,7 +44,7 @@
         android:layout_marginTop="@dimen/margin_small"
         android:textSize="@dimen/primary_text_size"
         android:text="@string/pleaseNote"
-        android:textColor="@color/uiv3_list_secondary_text_color"
+        android:textColor="@color/uiv3_secondary_text_color"
         android:layout_toRightOf="@id/txtVoucherCode"
         android:layout_below="@id/txtVoucherMsg"
         android:id="@+id/txtVoucherValidity" />

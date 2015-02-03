@@ -48,7 +48,7 @@
             android:layout_marginTop="@dimen/margin_small"
             android:layout_toRightOf="@id/imgDeliveryVan"
             android:text="Display name"
-            android:textColor="@color/uiv3_list_primary_text_color"
+            android:textColor="@color/uiv3_primary_text_color"
             android:textSize="@dimen/primary_text_size" />
 
 
@@ -61,7 +61,7 @@
             android:layout_marginTop="2dp"
             android:layout_toRightOf="@id/imgDeliveryVan"
             android:text="sold and fulfilled by"
-            android:textColor="@color/uiv3_list_primary_text_color"
+            android:textColor="@color/uiv3_primary_text_color"
             android:textSize="@dimen/primary_text_size" />
 
         <TextView
@@ -73,7 +73,7 @@
             android:layout_marginTop="2dp"
             android:layout_toRightOf="@id/imgDeliveryVan"
             android:text="Tue 30 Sep 2014"
-            android:textColor="@color/uiv3_list_primary_text_color"
+            android:textColor="@color/uiv3_primary_text_color"
             android:textSize="@dimen/primary_text_size" />
 
         <TextView
@@ -85,7 +85,7 @@
             android:layout_marginTop="2dp"
             android:layout_toRightOf="@id/imgDeliveryVan"
             android:text="7:30 PM to 10:00PM"
-            android:textColor="@color/uiv3_list_primary_text_color"
+            android:textColor="@color/uiv3_primary_text_color"
             android:textSize="@dimen/secondary_text_size" />
 
         <TextView
@@ -97,7 +97,7 @@
             android:layout_marginTop="2dp"
             android:layout_toRightOf="@id/imgDeliveryVan"
             android:text="ID : BBO-130440-240914"
-            android:textColor="@color/uiv3_list_primary_text_color"
+            android:textColor="@color/uiv3_primary_text_color"
             android:textSize="@dimen/secondary_text_size" />
 
         <TextView
@@ -109,7 +109,7 @@
             android:layout_marginTop="2dp"
             android:layout_toRightOf="@id/imgDeliveryVan"
             android:text="2 Items"
-            android:textColor="@color/uiv3_list_secondary_text_color"
+            android:textColor="@color/uiv3_secondary_text_color"
             android:textSize="@dimen/secondary_text_size" />
 
         <TextView
@@ -122,7 +122,7 @@
             android:layout_marginTop="2dp"
             android:paddingRight="@dimen/margin_small"
             android:text="Rs. 200"
-            android:textColor="@color/uiv3_list_secondary_text_color"
+            android:textColor="@color/uiv3_secondary_text_color"
             android:textSize="@dimen/secondary_text_size" />
 
     </RelativeLayout>

@@ -31,7 +31,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -539,7 +538,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
 
     @Override
     public void updateUIAfterBasketOperationFailed(BasketOperation basketOperation, TextView basketCountTextView,
-                                                   ImageView imgDecQty, ImageView imgIncQty, Button btnAddToBasket,
+                                                   View viewDecQty, View viewIncQty, Button btnAddToBasket,
                                                    EditText editTextQty, Product product, String qty,
                                                    String errorType) {
         if (errorType.equals(Constants.PRODUCT_ID_NOT_FOUND)) {
@@ -549,7 +548,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
 
     @Override
     public void updateUIAfterBasketOperationSuccess(BasketOperation basketOperation, TextView basketCountTextView,
-                                                    ImageView imgDecQty, ImageView imgIncQty, Button btnAddToBasket,
+                                                    View viewDecQty, View viewIncQty, Button btnAddToBasket,
                                                     EditText editTextQty, Product product, String qty) {
 
         int productQtyInBasket = Integer.parseInt(basketOperationResponse.getBasketResponseProductInfo().getTotalQty());
@@ -570,11 +569,11 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         }
 
         if (productQtyInBasket == 0) {
-            if (imgDecQty != null) {
-                imgDecQty.setVisibility(View.GONE);
+            if (viewDecQty != null) {
+                viewDecQty.setVisibility(View.GONE);
             }
-            if (imgIncQty != null) {
-                imgIncQty.setVisibility(View.GONE);
+            if (viewIncQty != null) {
+                viewIncQty.setVisibility(View.GONE);
             }
             if (btnAddToBasket != null) {
                 btnAddToBasket.setVisibility(View.VISIBLE);
@@ -587,11 +586,11 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 basketCountTextView.setVisibility(View.GONE);
             }
         } else {
-            if (imgDecQty != null) {
-                imgDecQty.setVisibility(View.VISIBLE);
+            if (viewDecQty != null) {
+                viewDecQty.setVisibility(View.VISIBLE);
             }
-            if (imgIncQty != null) {
-                imgIncQty.setVisibility(View.VISIBLE);
+            if (viewIncQty != null) {
+                viewIncQty.setVisibility(View.VISIBLE);
             }
             if (btnAddToBasket != null) {
                 btnAddToBasket.setVisibility(View.GONE);
@@ -600,7 +599,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 editTextQty.setVisibility(View.GONE);
             }
             if (basketCountTextView != null) {
-                basketCountTextView.setText(productQtyInBasket + " in basket");
+                basketCountTextView.setText(productQtyInBasket + " in");
                 basketCountTextView.setVisibility(View.VISIBLE);
             }
         }
@@ -929,7 +928,9 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                             showAlertDialog(null,
                                     "Please sign-in to view your accounts page", NavigationCodes.GO_TO_LOGIN);
                         } else {
-                            addToMainLayout(new AccountSettingFragment());
+                            Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
+                            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ACCOUNT_SETTING);
+                            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                         }
                         break;
                     case Constants.LOGIN:

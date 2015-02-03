@@ -21,7 +21,7 @@
             android:layout_marginRight="10dp"
             android:text="20 items"
             android:textSize="@dimen/small_text_size"
-            android:textColor="@color/uiv3_list_secondary_text_color" />
+            android:textColor="@color/uiv3_secondary_text_color" />
 
         <TextView
             android:id="@+id/txtBasketVal"
@@ -29,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
-            android:textColor="@color/uiv3_list_secondary_text_color"
+            android:textColor="@color/uiv3_secondary_text_color"
             android:textSize="@dimen/small_text_size" />
     </LinearLayout>
 

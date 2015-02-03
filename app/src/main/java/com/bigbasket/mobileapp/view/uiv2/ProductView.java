@@ -5,14 +5,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.graphics.Typeface;
-import android.support.v7.widget.PopupMenu;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.StyleSpan;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -270,35 +267,20 @@ public final class ProductView {
     private static <T> void setProductAdditionalActionMenu(ProductViewHolder productViewHolder, final Product product,
                                                            final ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                                            final T shoppingListNamesAware) {
-        final ImageView imgProductAdditionalAction = productViewHolder.getImgProductAdditionalAction();
+        final ImageView imgAddToShoppingList = productViewHolder.getImgAddToShoppingList();
         setShoppingDeleteButton(productViewHolder, product, productViewDisplayDataHolder, shoppingListNamesAware);
         if (productViewDisplayDataHolder.isShowShoppingListBtn() && productViewDisplayDataHolder.isLoggedInMember()
                 && !product.getProductStatus().equalsIgnoreCase("N")) {
-            imgProductAdditionalAction.setOnClickListener(new View.OnClickListener() {
+            imgAddToShoppingList.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    PopupMenu popupMenu = new PopupMenu(((ActivityAware) shoppingListNamesAware).getCurrentActivity(), v);
-                    MenuInflater menuInflater = popupMenu.getMenuInflater();
-                    menuInflater.inflate(R.menu.product_menu, popupMenu.getMenu());
-                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            switch (item.getItemId()) {
-                                case R.id.menuAddToShoppingList:
-                                    ((TrackingAware) (shoppingListNamesAware)).trackEvent(TrackingAware.SHOP_LIST_PRODUCT_ADDED, null);
-                                    ((ShoppingListNamesAware) shoppingListNamesAware).setSelectedProductId(product.getSku());
-                                    new ShoppingListNamesTask<>(shoppingListNamesAware, false).startTask();
-                                    return true;
-                                default:
-                                    return false;
-                            }
-                        }
-                    });
-                    popupMenu.show();
+                    ((TrackingAware) (shoppingListNamesAware)).trackEvent(TrackingAware.SHOP_LIST_PRODUCT_ADDED, null);
+                    ((ShoppingListNamesAware) shoppingListNamesAware).setSelectedProductId(product.getSku());
+                    new ShoppingListNamesTask<>(shoppingListNamesAware, false).startTask();
                 }
             });
         } else {
-            imgProductAdditionalAction.setVisibility(View.GONE);
+            imgAddToShoppingList.setVisibility(View.GONE);
         }
     }
 
@@ -367,12 +349,11 @@ public final class ProductView {
                                                           final ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                                           final T basketOperationAware, final String sourceName) {
         final Button btnAddToBasket = productViewHolder.getBtnAddToBasket();
-        final ImageView imgDecBasketQty = productViewHolder.getImgDecBasketQty();
+        final TextView txtDecBasketQty = productViewHolder.getTxtDecBasketQty();
         final TextView txtInBasket = productViewHolder.getTxtInBasket();
-        final ImageView imgIncBasketQty = productViewHolder.getImgIncBasketQty();
+        final TextView txtIncBasketQty = productViewHolder.getTxtIncBasketQty();
 
         final EditText editTextQty = productViewHolder.getEditTextQty();
-        final ImageView imgShoppingListAddToBasket = productViewHolder.getImgShoppingListAddToBasket();
 
         TextView txtOutOfStockORNotForSale = productViewHolder.getTxtOutOfStockORNotForSale();
 
@@ -381,31 +362,31 @@ public final class ProductView {
                 int noOfItemsInCart = product.getNoOfItemsInCart();
 
                 if (noOfItemsInCart > 0) {
-                    txtInBasket.setText(noOfItemsInCart + " in basket");
+                    txtInBasket.setText(noOfItemsInCart + " in");
                     txtInBasket.setVisibility(View.VISIBLE);
-                    imgDecBasketQty.setVisibility(View.VISIBLE);
-                    imgIncBasketQty.setVisibility(View.VISIBLE);
+                    txtDecBasketQty.setVisibility(View.VISIBLE);
+                    txtIncBasketQty.setVisibility(View.VISIBLE);
 
                     btnAddToBasket.setVisibility(View.GONE);
                     editTextQty.setVisibility(View.GONE);
                 } else {
                     txtInBasket.setText("");
                     txtInBasket.setVisibility(View.GONE);
-                    imgDecBasketQty.setVisibility(View.GONE);
-                    imgIncBasketQty.setVisibility(View.GONE);
+                    txtDecBasketQty.setVisibility(View.GONE);
+                    txtIncBasketQty.setVisibility(View.GONE);
 
                     btnAddToBasket.setVisibility(View.VISIBLE);
                     editTextQty.setVisibility(View.VISIBLE);
                 }
 
-                imgIncBasketQty.setOnClickListener(new View.OnClickListener() {
+                txtIncBasketQty.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         if (((ConnectivityAware) basketOperationAware).checkInternetConnection() && !TextUtils.isEmpty(editTextQty.getText())) {
 
                             BasketOperationTask<T> basketOperationTask = new BasketOperationTask<>(basketOperationAware,
                                     BasketOperation.INC, product,
-                                    txtInBasket, imgDecBasketQty, imgIncBasketQty, btnAddToBasket,
+                                    txtInBasket, txtDecBasketQty, txtIncBasketQty, btnAddToBasket,
                                     editTextQty, TrackingAware.BASKET_INCREMENT, sourceName);
                             basketOperationTask.startTask();
 
@@ -415,13 +396,13 @@ public final class ProductView {
                     }
                 });
 
-                imgDecBasketQty.setOnClickListener(new View.OnClickListener() {
+                txtDecBasketQty.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         if (((ConnectivityAware) basketOperationAware).checkInternetConnection() && !TextUtils.isEmpty(editTextQty.getText())) {
                             BasketOperationTask<T> myTask = new BasketOperationTask<>(basketOperationAware,
                                     BasketOperation.DEC,
-                                    product, txtInBasket, imgDecBasketQty, imgIncBasketQty,
+                                    product, txtInBasket, txtDecBasketQty, txtIncBasketQty,
                                     btnAddToBasket, editTextQty, TrackingAware.BASKET_DECREMENT, sourceName);
                             myTask.startTask();
                         } else {
@@ -442,7 +423,7 @@ public final class ProductView {
                             String qty = editTextQty.getText() != null ? editTextQty.getText().toString() : "1";
                             BasketOperationTask<T> basketOperationTask = new BasketOperationTask<>(basketOperationAware,
                                     BasketOperation.INC, product,
-                                    txtInBasket, imgDecBasketQty, imgIncBasketQty, btnAddToBasket,
+                                    txtInBasket, txtDecBasketQty, txtIncBasketQty, btnAddToBasket,
                                     editTextQty, qty, TrackingAware.BASKET_INCREMENT, sourceName);
                             basketOperationTask.startTask();
                         } else {
@@ -450,22 +431,16 @@ public final class ProductView {
                         }
                     }
                 });
-                if (productViewDisplayDataHolder.isLoggedInMember()) {
-                    // Because for a out-of-stock, this button will be hidden, so during
-                    // list view recycling, making it visible.
-                    imgShoppingListAddToBasket.setVisibility(View.VISIBLE);
-                }
                 txtOutOfStockORNotForSale.setVisibility(View.GONE);
             } else {
                 txtInBasket.setVisibility(View.GONE);
-                imgDecBasketQty.setVisibility(View.GONE);
-                imgIncBasketQty.setVisibility(View.GONE);
+                txtDecBasketQty.setVisibility(View.GONE);
+                txtIncBasketQty.setVisibility(View.GONE);
                 editTextQty.setVisibility(View.GONE);
 
                 btnAddToBasket.setVisibility(View.GONE);
                 txtOutOfStockORNotForSale.setVisibility(View.VISIBLE);
                 txtOutOfStockORNotForSale.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
-                imgShoppingListAddToBasket.setVisibility(View.GONE);
                 if (product.getProductStatus().equalsIgnoreCase("0") || product.getProductStatus().equalsIgnoreCase("O")) {  // zero not O
                     txtOutOfStockORNotForSale.setText("Out of Stock");
                 } else {
@@ -474,8 +449,8 @@ public final class ProductView {
             }
         } else {
             txtInBasket.setVisibility(View.GONE);
-            imgDecBasketQty.setVisibility(View.GONE);
-            imgIncBasketQty.setVisibility(View.GONE);
+            txtDecBasketQty.setVisibility(View.GONE);
+            txtIncBasketQty.setVisibility(View.GONE);
             btnAddToBasket.setVisibility(View.GONE);
             editTextQty.setVisibility(View.GONE);
         }
