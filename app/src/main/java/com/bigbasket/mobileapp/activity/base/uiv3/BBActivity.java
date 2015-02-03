@@ -31,7 +31,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -276,7 +275,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             basketCountView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    addToMainLayout(new ShowCartFragment());
+                    launchViewBasket();
                 }
             });
             mTextCartCount = (TextView) basketCountView.findViewById(R.id.txtNumItemsInBasket);
@@ -285,6 +284,12 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 updateCartCountHeaderTextView();
             }
         }
+    }
+
+    private void launchViewBasket() {
+        Intent intent = new Intent(this, BackButtonActivity.class);
+        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_VIEW_BASKET);
+        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
     @Override
@@ -433,10 +438,18 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 break;
             case FragmentCodes.START_GENERIC_PRODUCT_LIST:
                 String type = getIntent().getStringExtra(Constants.TYPE);
+                String slug = getIntent().getStringExtra(Constants.SLUG);
+                String title = getIntent().getStringExtra(Constants.TITLE);
                 if (!TextUtils.isEmpty(type)) {
                     productListFragment = new GenericProductListFragment();
                     productListArgs = new Bundle();
                     productListArgs.putString(Constants.TYPE, type);
+                    if (!TextUtils.isEmpty(slug)) {
+                        productListArgs.putString(Constants.SLUG, slug);
+                    }
+                    if (!TextUtils.isEmpty(title)) {
+                        productListArgs.putString(Constants.TITLE, title);
+                    }
                     productListFragment.setArguments(productListArgs);
                     addToMainLayout(productListFragment);
                 }
@@ -495,13 +508,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 return true;
             case R.id.action_view_basket:
-                intent = new Intent(this, BackButtonActivity.class);
-                intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_CHANGE_PIN);
-                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                return true;
-            case R.id.action_member_referral:
-                intent = new Intent(this, MemberReferralActivity.class);
-                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                launchViewBasket();
                 return true;
             case R.id.action_logout:
                 if (isSocialLogin()) {
@@ -532,7 +539,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
 
     @Override
     public void updateUIAfterBasketOperationFailed(BasketOperation basketOperation, TextView basketCountTextView,
-                                                   ImageView imgDecQty, ImageView imgIncQty, Button btnAddToBasket,
+                                                   View viewDecQty, View viewIncQty, Button btnAddToBasket,
                                                    EditText editTextQty, Product product, String qty,
                                                    String errorType) {
         if (errorType.equals(Constants.PRODUCT_ID_NOT_FOUND)) {
@@ -542,7 +549,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
 
     @Override
     public void updateUIAfterBasketOperationSuccess(BasketOperation basketOperation, TextView basketCountTextView,
-                                                    ImageView imgDecQty, ImageView imgIncQty, Button btnAddToBasket,
+                                                    View viewDecQty, View viewIncQty, Button btnAddToBasket,
                                                     EditText editTextQty, Product product, String qty) {
 
         int productQtyInBasket = Integer.parseInt(basketOperationResponse.getBasketResponseProductInfo().getTotalQty());
@@ -563,11 +570,11 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         }
 
         if (productQtyInBasket == 0) {
-            if (imgDecQty != null) {
-                imgDecQty.setVisibility(View.GONE);
+            if (viewDecQty != null) {
+                viewDecQty.setVisibility(View.GONE);
             }
-            if (imgIncQty != null) {
-                imgIncQty.setVisibility(View.GONE);
+            if (viewIncQty != null) {
+                viewIncQty.setVisibility(View.GONE);
             }
             if (btnAddToBasket != null) {
                 btnAddToBasket.setVisibility(View.VISIBLE);
@@ -580,11 +587,11 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 basketCountTextView.setVisibility(View.GONE);
             }
         } else {
-            if (imgDecQty != null) {
-                imgDecQty.setVisibility(View.VISIBLE);
+            if (viewDecQty != null) {
+                viewDecQty.setVisibility(View.VISIBLE);
             }
-            if (imgIncQty != null) {
-                imgIncQty.setVisibility(View.VISIBLE);
+            if (viewIncQty != null) {
+                viewIncQty.setVisibility(View.VISIBLE);
             }
             if (btnAddToBasket != null) {
                 btnAddToBasket.setVisibility(View.GONE);
@@ -593,7 +600,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 editTextQty.setVisibility(View.GONE);
             }
             if (basketCountTextView != null) {
-                basketCountTextView.setText(productQtyInBasket + " in basket");
+                basketCountTextView.setText(productQtyInBasket + " in");
                 basketCountTextView.setVisibility(View.VISIBLE);
             }
         }
@@ -927,7 +934,9 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                             showAlertDialog(null,
                                     "Please sign-in to view your accounts page", NavigationCodes.GO_TO_LOGIN);
                         } else {
-                            addToMainLayout(new AccountSettingFragment());
+                            Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
+                            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ACCOUNT_SETTING);
+                            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                         }
                         break;
                     case Constants.LOGIN:

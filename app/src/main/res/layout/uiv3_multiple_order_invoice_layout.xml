@@ -25,7 +25,7 @@
             android:layout_below="@id/imageView"
             android:layout_height="1dp"
             android:id="@+id/viewSeparator1"
-            android:background="@color/uiv3_list_separator_color" />
+            android:background="@color/uiv3_divider_color" />
 
         <TextView
             android:layout_width="match_parent"
@@ -42,7 +42,7 @@
             android:layout_below="@id/lblLocateOnMap"
             android:layout_height="1dp"
             android:id="@+id/viewSeparator2"
-            android:background="@color/uiv3_list_separator_color" />
+            android:background="@color/uiv3_divider_color" />
 
 
         <ListView

@@ -24,7 +24,7 @@
         android:layout_toLeftOf="@id/imgShoppingListAdditionalAction"
         android:paddingLeft="@dimen/padding_normal"
         android:paddingRight="@dimen/padding_small"
-        android:textColor="@color/uiv3_list_primary_text_color"
+        android:textColor="@color/uiv3_primary_text_color"
         android:textSize="@dimen/primary_text_size" />
 
 </RelativeLayout>

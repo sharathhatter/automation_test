@@ -90,6 +90,7 @@ public class Constants {
     public static final String ORDER_TYPE = "order_type";
     public static final String SUB_CATEGORY_BANNER_IMAGE = "banner_images";
     public static final String VERSION = "version";
+    public static final String SCREEN = "screen";
     public static final String A_OK = "a_ok";
     public static final String EXTRA_ATTR = "extra_attr";
     public static final String INTERNAL_VALUE = "internal_value";
@@ -558,6 +559,7 @@ public class Constants {
     // sections
     public static final String SECTIONS = "sections";
     public static final String SECTION_TYPE = "section_type";
+    public static final String SECTION_INFO = "section_info";
     public static final String DESTINATION_INFO_ID = "destination_info_id";
     public static final String DESTINATION = "destination";
     public static final String MORE = "more";

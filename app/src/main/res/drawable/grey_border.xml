@@ -7,7 +7,7 @@
             <solid android:color="@android:color/white" />
             <stroke
                 android:width="0.5dp"
-                android:color="@color/uiv3_list_separator_color" />
+                android:color="@color/uiv3_divider_color" />
         </shape>
     </item>
     <item android:top="0dp">
@@ -16,7 +16,7 @@
             <solid android:color="@android:color/white" />
             <stroke
                 android:width="0.5dp"
-                android:color="@color/uiv3_list_separator_color" />
+                android:color="@color/uiv3_divider_color" />
         </shape>
     </item>
     <item android:bottom="0dp">
@@ -25,7 +25,7 @@
             <solid android:color="@android:color/white" />
             <stroke
                 android:width="0.5dp"
-                android:color="@color/uiv3_list_separator_color" />
+                android:color="@color/uiv3_divider_color" />
         </shape>
     </item>
 </layer-list>

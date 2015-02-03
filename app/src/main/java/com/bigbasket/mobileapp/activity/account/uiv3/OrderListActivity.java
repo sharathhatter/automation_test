@@ -185,7 +185,7 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
             if (orderAbsListView instanceof ListView) {
                 ((ListView) orderAbsListView).setAdapter(orderListAdapter);
                 if (mIsInShopFromPreviousOrderMode) {
-                    ((ListView) orderAbsListView).setDivider(new ColorDrawable(getResources().getColor(R.color.uiv3_list_separator_color)));
+                    ((ListView) orderAbsListView).setDivider(new ColorDrawable(getResources().getColor(R.color.uiv3_divider_color)));
                     ((ListView) orderAbsListView).setDividerHeight(1);
                 }
             } else if (orderAbsListView instanceof GridView) {

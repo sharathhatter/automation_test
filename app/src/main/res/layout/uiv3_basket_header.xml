@@ -74,7 +74,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_marginTop="@dimen/margin_mini"
-        android:background="@color/uiv3_list_separator_color"
+        android:background="@color/uiv3_divider_color"
         android:layout_below="@id/layoutSavings"
         android:layout_height="1dp"
         android:id="@+id/viewbasketHeaderSeperator" />

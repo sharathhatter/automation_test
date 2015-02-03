@@ -195,7 +195,7 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
             TextView txtVoucherMsg = activeVoucherViewHolder.getTxtVoucherMsg();
 
             if (activeVouchers.canApply()) {
-                txtVoucherMsg.setTextColor(getResources().getColor(R.color.uiv3_list_secondary_text_color));
+                txtVoucherMsg.setTextColor(getResources().getColor(R.color.uiv3_secondary_text_color));
             } else {
                 txtVoucherMsg.setTextColor(getResources().getColor(R.color.dark_red));
             }

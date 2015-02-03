@@ -91,6 +91,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         faceRupee = Typeface.createFromAsset(getAssets(), "Rupee.ttf");
         faceRobotoRegular = Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");
         moEHelper = new MoEHelper(getCurrentActivity());
+        Localytics.integrate(this);
     }
 
     @Override
@@ -181,11 +182,11 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
 
     @Override
     protected void onPause() {
-//        Localytics.closeSession();
-//        Localytics.upload();
         super.onPause();
         isActivitySuspended = true;
         moEHelper.onPause(this);
+        Localytics.closeSession();
+        Localytics.upload();
     }
 
     @Override
@@ -205,9 +206,8 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
 
         initializeKonotor();
         moEHelper.onResume(this);
-//        Localytics.openSession();
-//        Localytics.upload();
-//        Localytics.handleTestMode(getCurrentActivity().getIntent());
+        Localytics.openSession();
+        Localytics.upload();
     }
 
     public void launchKonotor() {

@@ -7,9 +7,12 @@
         android:id="@+id/txtListTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/padding_mini"
+        android:paddingBottom="@dimen/padding_small"
+        android:paddingLeft="@dimen/padding_normal"
+        android:paddingRight="@dimen/padding_normal"
+        android:paddingTop="@dimen/padding_small"
         android:textColor="@color/uiv3_primary_text_color"
-        android:textSize="@dimen/primary_text_size" />
+        android:textSize="@dimen/large_text_size" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/horizontalRecyclerView"

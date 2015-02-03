@@ -101,7 +101,7 @@ public class OrderSummaryFragment extends AbstractOrderSummaryFragment {
         }
 
         // Show invoice and other order details
-        int normalColor = getResources().getColor(R.color.uiv3_list_primary_text_color);
+        int normalColor = getResources().getColor(R.color.uiv3_primary_text_color);
         int orderTotalLabelColor = getResources().getColor(R.color.uiv3_primary_text_color);
         int orderTotalValueColor = getResources().getColor(R.color.uiv3_ok_label_color);
         LinearLayout layoutOrderSummaryInfo = (LinearLayout) base.findViewById(R.id.layoutOrderSummaryInfo);
@@ -178,7 +178,7 @@ public class OrderSummaryFragment extends AbstractOrderSummaryFragment {
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1);
                 layoutParams.setMargins(0, 0, 0, (int) getResources().getDimension(R.dimen.margin_mini));
                 separatorView.setLayoutParams(layoutParams);
-                separatorView.setBackgroundColor(getResources().getColor(R.color.uiv3_list_separator_color));
+                separatorView.setBackgroundColor(getResources().getColor(R.color.uiv3_divider_color));
                 layoutDeliverySlot.addView(separatorView);
             }
         }

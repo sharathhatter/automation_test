@@ -63,7 +63,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_mini"
-                    android:textColor="@color/uiv3_list_secondary_text_color"
+                    android:textColor="@color/uiv3_secondary_text_color"
                     android:textSize="@dimen/primary_text_size" />
 
                 <TextView
@@ -80,7 +80,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_mini"
-                    android:textColor="@color/uiv3_list_secondary_text_color"
+                    android:textColor="@color/uiv3_secondary_text_color"
                     android:textSize="@dimen/primary_text_size" />
 
                 <TextView
@@ -97,7 +97,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_mini"
-                    android:textColor="@color/uiv3_list_secondary_text_color"
+                    android:textColor="@color/uiv3_secondary_text_color"
                     android:textSize="@dimen/primary_text_size" />
 
                 <TextView
@@ -105,7 +105,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_normal"
-                    android:textColor="@color/uiv3_list_secondary_text_color"
+                    android:textColor="@color/uiv3_secondary_text_color"
                     android:textSize="@dimen/secondary_text_size"
                     android:textStyle="italic" />
 

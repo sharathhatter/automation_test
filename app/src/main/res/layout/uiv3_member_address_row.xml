@@ -38,7 +38,7 @@
             android:clickable="false"
             android:focusable="false"
             android:text="@string/defaultAddress"
-            android:textColor="@color/uiv3_list_primary_text_color" />
+            android:textColor="@color/uiv3_primary_text_color" />
 
         <TextView
             android:id="@+id/txtMemberName"
@@ -50,7 +50,7 @@
             android:layout_marginTop="@dimen/margin_mini"
             android:layout_toLeftOf="@id/imgAddressAdditionalAction"
             android:singleLine="false"
-            android:textColor="@color/uiv3_list_primary_text_color"
+            android:textColor="@color/uiv3_primary_text_color"
             android:textSize="@dimen/primary_text_size" />
 
         <TextView
@@ -63,7 +63,7 @@
             android:layout_marginTop="@dimen/margin_small"
             android:layout_toLeftOf="@id/imgAddressAdditionalAction"
             android:singleLine="false"
-            android:textColor="@color/uiv3_list_primary_text_color"
+            android:textColor="@color/uiv3_primary_text_color"
             android:textSize="@dimen/secondary_text_size" />
 
         <TextView
@@ -79,7 +79,7 @@
             android:drawableLeft="@drawable/ic_call_grey600_18dp"
             android:drawablePadding="@dimen/padding_mini"
             android:singleLine="false"
-            android:textColor="@color/uiv3_list_primary_text_color"
+            android:textColor="@color/uiv3_primary_text_color"
             android:textSize="@dimen/secondary_text_size" />
 
     </RelativeLayout>

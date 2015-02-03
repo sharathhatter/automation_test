@@ -15,7 +15,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -185,7 +184,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
 
     @Override
     public void updateUIAfterBasketOperationFailed(BasketOperation basketOperation, TextView basketCountTextView,
-                                                   ImageView imgDecQty, ImageView imgIncQty, Button btnAddToBasket,
+                                                   View viewDecQty, View viewIncQty, Button btnAddToBasket,
                                                    EditText editTextQty, Product product, String qty, String errorType) {
         if (errorType.equals(Constants.PRODUCT_ID_NOT_FOUND)) {
             Toast.makeText(getActivity(), "0 added to basket.", Toast.LENGTH_SHORT).show();
@@ -194,7 +193,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
 
     @Override
     public void updateUIAfterBasketOperationSuccess(BasketOperation basketOperation, TextView basketCountTextView,
-                                                    ImageView imgDecQty, ImageView imgIncQty, Button btnAddToBasket,
+                                                    View viewDecQty, View viewIncQty, Button btnAddToBasket,
                                                     EditText editTextQty, Product product, String qty) {
 
         int productQtyInBasket = 0;
@@ -218,11 +217,11 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         }
 
         if (productQtyInBasket == 0) {
-            if (imgDecQty != null) {
-                imgDecQty.setVisibility(View.GONE);
+            if (viewDecQty != null) {
+                viewDecQty.setVisibility(View.GONE);
             }
-            if (imgIncQty != null) {
-                imgIncQty.setVisibility(View.GONE);
+            if (viewIncQty != null) {
+                viewIncQty.setVisibility(View.GONE);
             }
             if (btnAddToBasket != null) {
                 btnAddToBasket.setVisibility(View.VISIBLE);
@@ -235,11 +234,11 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
                 basketCountTextView.setVisibility(View.GONE);
             }
         } else {
-            if (imgDecQty != null) {
-                imgDecQty.setVisibility(View.VISIBLE);
+            if (viewDecQty != null) {
+                viewDecQty.setVisibility(View.VISIBLE);
             }
-            if (imgIncQty != null) {
-                imgIncQty.setVisibility(View.VISIBLE);
+            if (viewIncQty != null) {
+                viewIncQty.setVisibility(View.VISIBLE);
             }
             if (btnAddToBasket != null) {
                 btnAddToBasket.setVisibility(View.GONE);
@@ -248,7 +247,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
                 editTextQty.setVisibility(View.GONE);
             }
             if (basketCountTextView != null) {
-                basketCountTextView.setText(productQtyInBasket + " in basket");
+                basketCountTextView.setText(productQtyInBasket + " in");
                 basketCountTextView.setVisibility(View.VISIBLE);
             }
         }

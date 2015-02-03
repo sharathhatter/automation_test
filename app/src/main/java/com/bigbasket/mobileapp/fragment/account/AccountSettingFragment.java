@@ -18,7 +18,6 @@ import com.bigbasket.mobileapp.activity.account.uiv3.OrderListActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SpendTrendsActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
-import com.bigbasket.mobileapp.fragment.order.MemberAddressListFragment;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
@@ -81,11 +80,9 @@ public class AccountSettingFragment extends BaseFragment {
                         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                         break;
                     case 5:
-                        MemberAddressListFragment memberAddressListFragment = new MemberAddressListFragment();
-                        Bundle addressbundle = new Bundle();
-                        addressbundle.putBoolean(Constants.FROM_ACCOUNT_PAGE, true);
-                        memberAddressListFragment.setArguments(addressbundle);
-                        changeFragment(memberAddressListFragment);
+                        intent = new Intent(getActivity(), BackButtonActivity.class);
+                        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_VIEW_DELIVERY_ADDRESS);
+                        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                         break;
                     case 6:
                         intent = new Intent(getActivity(), BackButtonActivity.class);

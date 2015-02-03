@@ -12,6 +12,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.CartOperationApiRespon
 import com.bigbasket.mobileapp.apiservice.models.response.CartSummaryApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.CreateUpdateAddressApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.GetDeliveryAddressApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.GetDynamicPageApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPaymentParamsApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.GetProductsForOrderApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListDetailsApiResponse;
@@ -78,8 +79,8 @@ public interface BigBasketApiService {
     void getMainMenu(@Query(Constants.VERSION) String version,
                      Callback<ApiResponse<BrowseCategoryApiResponseContent>> browseCategoryApiResponseCallback);
 
-    @GET("/get-home-page/")
-    void loadHomePage(Callback<ApiResponse<SectionData>> homePageApiResponseCallback);
+    @GET("/get-dynamic-page/")
+    void getDynamicPage(@Query(Constants.SCREEN) String screen, Callback<ApiResponse<GetDynamicPageApiResponse>> homePageApiResponseCallback);
 
     @GET("/c-get/")
     void cartGet(Callback<ApiResponse<CartGetApiResponseContent>> cartGetApiResponseCallback);

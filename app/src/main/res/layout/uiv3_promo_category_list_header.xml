@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/txtPromoCatDesc"
-        android:textColor="@color/uiv3_list_secondary_text_color"
+        android:textColor="@color/uiv3_secondary_text_color"
         android:layout_below="@id/txtPromoCatHeader"
         android:layout_marginTop="@dimen/margin_mini"
         android:textSize="@dimen/secondary_text_size" />

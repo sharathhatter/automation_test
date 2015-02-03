@@ -63,7 +63,7 @@
                     android:layout_marginTop="@dimen/margin_mini"
                     android:layout_toRightOf="@id/imgAlmostDone"
                     android:text="@string/orderYetNotplaced"
-                    android:textColor="@color/uiv3_list_secondary_text_color"
+                    android:textColor="@color/uiv3_secondary_text_color"
                     android:textSize="@dimen/secondary_text_size" />
             </RelativeLayout>
         </android.support.v7.widget.CardView>
@@ -164,7 +164,7 @@
                         android:drawableLeft="@drawable/ic_call_grey600_18dp"
                         android:drawablePadding="@dimen/padding_mini"
                         android:singleLine="false"
-                        android:textColor="@color/uiv3_list_primary_text_color"
+                        android:textColor="@color/uiv3_primary_text_color"
                         android:textSize="@dimen/secondary_text_size" />
                 </LinearLayout>
             </RelativeLayout>

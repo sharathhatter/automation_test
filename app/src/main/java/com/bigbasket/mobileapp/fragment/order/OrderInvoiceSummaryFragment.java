@@ -87,7 +87,7 @@ public class OrderInvoiceSummaryFragment extends AbstractOrderSummaryFragment {
         }
 
         // Show order & invoice details
-        int normalColor = getResources().getColor(R.color.uiv3_list_primary_text_color);
+        int normalColor = getResources().getColor(R.color.uiv3_primary_text_color);
         int orderTotalLabelColor = getResources().getColor(R.color.uiv3_primary_text_color);
         int orderTotalValueColor = getResources().getColor(R.color.uiv3_ok_label_color);
 

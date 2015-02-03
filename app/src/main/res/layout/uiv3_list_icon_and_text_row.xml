@@ -23,8 +23,8 @@
         android:layout_centerVertical="true"
         android:layout_toRightOf="@id/itemImg"
         android:text="offers"
-        android:textColor="@color/uiv3_list_primary_text_color"
-        android:textSize="@dimen/large_text_size" />
+        android:textColor="@color/uiv3_primary_text_color"
+        android:textSize="@dimen/primary_text_size" />
 
     <View
         android:id="@+id/dividerLine"

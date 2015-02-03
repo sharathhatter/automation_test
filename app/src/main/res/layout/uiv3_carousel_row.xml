@@ -11,8 +11,7 @@
         android:id="@+id/layoutCarouselSubContainer"
         android:layout_width="@dimen/carousel_width"
         android:layout_height="@dimen/carousel_height"
-        android:background="@color/white"
-        android:orientation="vertical">
+        android:background="@color/white">
 
         <TextView
             android:id="@+id/txtDescription"

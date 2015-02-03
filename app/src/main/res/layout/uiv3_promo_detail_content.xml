@@ -55,7 +55,7 @@
                     android:layout_weight="1"
                     android:paddingLeft="@dimen/padding_small"
                     android:layout_marginTop="@dimen/margin_mini"
-                    android:textColor="@color/uiv3_list_secondary_text_color"
+                    android:textColor="@color/uiv3_secondary_text_color"
                     android:text="Buy 2 get One free"
                     android:id="@+id/txtPromoDesc" />
             </LinearLayout>
@@ -74,7 +74,7 @@
             android:layout_marginTop="@dimen/margin_mini"
             android:layout_marginLeft="@dimen/margin_normal"
             android:layout_marginRight="@dimen/margin_normal"
-            android:textColor="@color/uiv3_list_secondary_text_color"
+            android:textColor="@color/uiv3_secondary_text_color"
             android:text="Buy 2 get One free"
             android:textSize="@dimen/secondary_text_size"
             android:layout_gravity="center_horizontal"

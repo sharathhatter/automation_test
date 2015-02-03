@@ -399,6 +399,7 @@
     <string name="newArrivals">New Arrivals</string>
     <string name="nowAtBB">Now Available @ BigBasket</string>
     <string name="newLaunches">New Launches</string>
+    <string name="viewProducts">View Products</string>
     <string name="specialShops">Special shops</string>
     <string name="shoppingList">Shopping Lists</string>
     <string name="bundlePack">Bundle Packs</string>
@@ -517,4 +518,6 @@
     <string name="voucherWasRemoved">eVoucher was successfully removed</string>
     <string name="removeVoucherHeading">Remove voucher</string>
     <string name="removeVoucherDesc">Are you sure that you want to remove this voucher?</string>
+    <string name="minus">&#45;</string>
+    <string name="plus">&#43;</string>
 </resources>

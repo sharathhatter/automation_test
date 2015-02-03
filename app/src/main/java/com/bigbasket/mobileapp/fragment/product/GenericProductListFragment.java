@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.fragment.product;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
@@ -16,7 +17,7 @@ public class GenericProductListFragment extends ProductListAwareFragment {
     @Override
     @Nullable
     public String getProductListSlug() {
-        return null;
+        return getArguments().getString(Constants.SLUG);
     }
 
     @Override
@@ -26,7 +27,11 @@ public class GenericProductListFragment extends ProductListAwareFragment {
 
     @Override
     public String getTitle() {
-        return getString(R.string.nowAtBB);
+        String title = getArguments().getString(Constants.TITLE);
+        if (TextUtils.isEmpty(title)) {
+            title = getString(R.string.viewProducts);
+        }
+        return title;
     }
 
     @NonNull

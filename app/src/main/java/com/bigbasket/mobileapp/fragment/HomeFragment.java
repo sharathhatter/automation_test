@@ -25,6 +25,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.AppInfoResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.GetDynamicPageApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateVersionInfoApiResponseContent;
 import com.bigbasket.mobileapp.fragment.base.BaseSectionFragment;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
@@ -32,7 +33,6 @@ import com.bigbasket.mobileapp.model.SectionManager;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.section.Renderer;
 import com.bigbasket.mobileapp.model.section.Section;
-import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.task.GetCartCountTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
@@ -191,14 +191,14 @@ public class HomeFragment extends BaseSectionFragment {
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressView();
-        bigBasketApiService.loadHomePage(new Callback<ApiResponse<SectionData>>() {
+        bigBasketApiService.getDynamicPage("home-page", new Callback<ApiResponse<GetDynamicPageApiResponse>>() {
             @Override
-            public void success(ApiResponse<SectionData> homePageApiResponse, Response response) {
+            public void success(ApiResponse<GetDynamicPageApiResponse> homePageApiResponse, Response response) {
                 if (isSuspended()) return;
                 hideProgressView();
                 switch (homePageApiResponse.status) {
                     case 0:
-                        mSectionData = homePageApiResponse.apiResponseContent;
+                        mSectionData = homePageApiResponse.apiResponseContent.sectionData;
                         renderHomePage();
                         break;
                     default:
@@ -232,10 +232,14 @@ public class HomeFragment extends BaseSectionFragment {
 
     private void parseRendererColors() {
         if (mSectionData == null || mSectionData.getRenderersMap() == null) return;
-        int defaultTextColor = getResources().getColor(R.color.uiv3_list_secondary_text_color);
+        int defaultTextColor = getResources().getColor(R.color.uiv3_secondary_text_color);
         for (Renderer renderer : mSectionData.getRenderersMap().values()) {
-            renderer.setNativeBkgColor(UIUtil.parseAsNativeColor(renderer.getBackgroundColor(), Color.WHITE));
-            renderer.setNativeTextColor(UIUtil.parseAsNativeColor(renderer.getTextColor(), defaultTextColor));
+            if (!TextUtils.isEmpty(renderer.getBackgroundColor())) {
+                renderer.setNativeBkgColor(UIUtil.parseAsNativeColor(renderer.getBackgroundColor(), Color.WHITE));
+            }
+            if (!TextUtils.isEmpty(renderer.getTextColor())) {
+                renderer.setNativeTextColor(UIUtil.parseAsNativeColor(renderer.getTextColor(), defaultTextColor));
+            }
         }
     }
 
