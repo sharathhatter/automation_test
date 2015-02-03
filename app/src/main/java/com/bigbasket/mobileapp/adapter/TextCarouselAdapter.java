@@ -2,7 +2,6 @@ package com.bigbasket.mobileapp.adapter;
 
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -35,7 +34,7 @@ public class TextCarouselAdapter<T> extends CarouselAdapter<T> {
                     layoutCarouselContainer.setPadding(margin, 0, 0, 0);
                 }
             }
-            if (!TextUtils.isEmpty(sectionRenderer.getBackgroundColor())) {
+            if (sectionRenderer.getNativeBkgColor() != 0) {
                 holder.getLayoutCarouselSubContainer().setBackgroundColor(sectionRenderer.getNativeBkgColor());
             }
         }

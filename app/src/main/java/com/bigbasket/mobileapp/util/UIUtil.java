@@ -301,6 +301,8 @@ public class UIUtil {
             return Color.parseColor(rgbColorCode);
         } catch (IllegalArgumentException e) {
             return defaultColor;
+        } catch (StringIndexOutOfBoundsException e) {
+            return defaultColor;
         }
     }
 }

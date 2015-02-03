@@ -228,8 +228,12 @@ public class HomeFragment extends BaseSectionFragment {
         if (mSectionData == null || mSectionData.getRenderersMap() == null) return;
         int defaultTextColor = getResources().getColor(R.color.uiv3_list_secondary_text_color);
         for (Renderer renderer : mSectionData.getRenderersMap().values()) {
-            renderer.setNativeBkgColor(UIUtil.parseAsNativeColor(renderer.getBackgroundColor(), Color.WHITE));
-            renderer.setNativeTextColor(UIUtil.parseAsNativeColor(renderer.getTextColor(), defaultTextColor));
+            if (!TextUtils.isEmpty(renderer.getBackgroundColor())) {
+                renderer.setNativeBkgColor(UIUtil.parseAsNativeColor(renderer.getBackgroundColor(), Color.WHITE));
+            }
+            if (!TextUtils.isEmpty(renderer.getTextColor())) {
+                renderer.setNativeTextColor(UIUtil.parseAsNativeColor(renderer.getTextColor(), defaultTextColor));
+            }
         }
     }
 

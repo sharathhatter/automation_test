@@ -21,7 +21,6 @@
             android:ellipsize="end"
             android:gravity="center"
             android:maxLines="2"
-            android:text="dasdasd"
             android:padding="@dimen/padding_mini"
             android:textColor="@color/white"
             android:textSize="@dimen/large_text_size" />
