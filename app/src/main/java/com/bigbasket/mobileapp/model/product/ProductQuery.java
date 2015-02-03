@@ -158,12 +158,23 @@ public class ProductQuery implements Parcelable {
     };
 
     @Nullable
-    public static String convertDestinationTypeToProductQueryType(String destinationType) {
+    public static ProductQuery convertDestinationTypeToProductQuery(String destinationType,
+                                                                    String destinationSlug) {
         switch (destinationType) {
             case DestinationInfo.PRODUCT_CATEGORY:
-                return ProductListType.CATEGORY.get();
+                return new ProductQuery(ProductListType.CATEGORY.get(), destinationSlug, 1);
             case DestinationInfo.SEARCH:
-                return ProductListType.SEARCH.get();
+                return new ProductQuery(ProductListType.SEARCH.get(), destinationSlug, 1);
+            case DestinationInfo.PRODUCT_LIST:
+                if (!TextUtils.isEmpty(destinationSlug)) {
+                    String[] destinationInfo = destinationSlug.split("&");
+                    if (destinationInfo.length == 1) {
+                        return new ProductQuery(destinationSlug, null, 1);
+                    } else if (destinationInfo.length == 2) {
+                        return new ProductQuery(destinationInfo[0], destinationInfo[1], 1);
+                    }
+                }
+                break;
         }
         return null;
     }

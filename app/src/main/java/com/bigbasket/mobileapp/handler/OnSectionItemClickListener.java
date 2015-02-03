@@ -1,6 +1,8 @@
 package com.bigbasket.mobileapp.handler;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.net.Uri;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -119,9 +121,8 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                         }
                     });
                 } else if (!TextUtils.isEmpty(destinationType)) {
-                    String productListType = ProductQuery.convertDestinationTypeToProductQueryType(destinationType);
-                    if (!TextUtils.isEmpty(productListType)) {
-                        ProductQuery productQuery = new ProductQuery(destinationType, destinationSlug, 1);
+                    ProductQuery productQuery = ProductQuery.convertDestinationTypeToProductQuery(destinationType, destinationSlug);
+                    if (productQuery != null) {
                         if (!((ConnectivityAware) context).checkInternetConnection()) {
                             ((HandlerAware) context).getHandler().sendOfflineError();
                             return;
@@ -205,11 +206,30 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                     }
                     break;
                 case DestinationInfo.PRODUCT_LIST:
-                    if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
+                    ProductQuery productQuery = ProductQuery.convertDestinationTypeToProductQuery(
+                            destinationInfo.getDestinationType(), destinationInfo.getDestinationSlug());
+                    if (productQuery != null) {
                         intent = new Intent(((ActivityAware) context).getCurrentActivity(), ProductListActivity.class);
                         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_GENERIC_PRODUCT_LIST);
-                        intent.putExtra(Constants.TYPE, destinationInfo.getDestinationSlug());
+                        intent.putExtra(Constants.TYPE, productQuery.getType());
+                        intent.putExtra(Constants.SLUG, productQuery.getSlug());
+                        String title = sectionItem.getTitle() != null ? sectionItem.getTitle().getText() : null;
+                        if (!TextUtils.isEmpty(title)) {
+                            intent.putExtra(Constants.TITLE, title);
+                        }
                         ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                    }
+                    break;
+                case DestinationInfo.DEEP_LINK:
+                    if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
+                        try {
+                            ((ActivityAware) context).getCurrentActivity().
+                                    startActivityForResult(new Intent(Intent.ACTION_VIEW,
+                                                    Uri.parse(destinationInfo.getDestinationSlug())),
+                                            NavigationCodes.GO_TO_HOME);
+                        } catch (ActivityNotFoundException e) {
+                            // Do nothing
+                        }
                     }
                     break;
             }

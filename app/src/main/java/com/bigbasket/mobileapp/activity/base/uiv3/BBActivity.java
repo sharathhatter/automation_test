@@ -436,10 +436,18 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 break;
             case FragmentCodes.START_GENERIC_PRODUCT_LIST:
                 String type = getIntent().getStringExtra(Constants.TYPE);
+                String slug = getIntent().getStringExtra(Constants.SLUG);
+                String title = getIntent().getStringExtra(Constants.TITLE);
                 if (!TextUtils.isEmpty(type)) {
                     productListFragment = new GenericProductListFragment();
                     productListArgs = new Bundle();
                     productListArgs.putString(Constants.TYPE, type);
+                    if (!TextUtils.isEmpty(slug)) {
+                        productListArgs.putString(Constants.SLUG, slug);
+                    }
+                    if (!TextUtils.isEmpty(title)) {
+                        productListArgs.putString(Constants.TITLE, title);
+                    }
                     productListFragment.setArguments(productListArgs);
                     addToMainLayout(productListFragment);
                 }

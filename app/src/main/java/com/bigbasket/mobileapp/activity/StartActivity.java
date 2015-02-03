@@ -35,7 +35,6 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.localytics.android.Localytics;
 import com.moe.pushlibrary.MoEHelper;
 import com.newrelic.agent.android.NewRelic;
 
@@ -63,7 +62,6 @@ public class StartActivity extends BaseActivity {
         }
 
         NewRelic.withApplicationToken(getString(R.string.new_relic_key)).start(this.getApplication());
-        Localytics.integrate(this);
 
         MoEHelper moEHelper = new MoEHelper(this);
         moEHelper.initialize(Constants.MO_SENDER_ID, Constants.MO_APP_ID);
@@ -83,8 +81,6 @@ public class StartActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         com.facebook.AppEventsLogger.activateApp(getCurrentActivity(), Constants.FB_APP_ID);
-        Localytics.openSession();
-        Localytics.upload();
     }
 
     private void loadNavigation() {
@@ -302,7 +298,5 @@ public class StartActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        Localytics.closeSession();
-        Localytics.upload();
     }
 }

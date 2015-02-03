@@ -25,12 +25,12 @@ import java.util.HashMap;
 
 public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private Section section;
-    private ArrayList<SectionItem> sectionItems;
-    private HashMap<Integer, Renderer> rendererHashMap;
-    private Typeface typeface;
-    private T context;
-    private int layoutId;
+    protected Section section;
+    protected ArrayList<SectionItem> sectionItems;
+    protected HashMap<Integer, Renderer> rendererHashMap;
+    protected Typeface typeface;
+    protected T context;
+    protected int layoutId;
 
     public CarouselAdapter(T context, Section section,
                            HashMap<Integer, Renderer> rendererHashMap, int layoutId, Typeface typeface) {
@@ -58,22 +58,19 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
         ImageView imgInRow = holder.getImgInRow();
         LinearLayout layoutCarouselContainer = holder.getLayoutCarouselContainer();
 
-        setSectionTextView(sectionItem.getTitle(), txtTitle, position);
-        setSectionTextView(sectionItem.getDescription(), txtDescription, position);
+        setSectionTextView(sectionItem.getTitle(), txtTitle);
+        setSectionTextView(sectionItem.getDescription(), txtDescription);
 
         Renderer sectionRenderer = rendererHashMap != null ?
                 rendererHashMap.get(sectionItem.getRenderingId()) : null;
         if (sectionRenderer != null) {
             int margin = sectionRenderer.getSafeMargin(0);
             if (margin > 0) {
-//                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-//                        ViewGroup.LayoutParams.WRAP_CONTENT);
                 if (position == getItemCount() - 1) {
                     layoutCarouselContainer.setPadding(margin, 0, margin, 0);
                 } else {
                     layoutCarouselContainer.setPadding(margin, 0, 0, 0);
                 }
-//                layoutCarouselSubContainer.setLayoutParams(layoutParams);
             }
         }
 
@@ -85,7 +82,7 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
     }
 
-    private void setSectionTextView(SectionTextItem sectionTextView, TextView txtVw, int position) {
+    protected void setSectionTextView(SectionTextItem sectionTextView, TextView txtVw) {
         if (sectionTextView == null || TextUtils.isEmpty(sectionTextView.getText())) {
             txtVw.setVisibility(View.GONE);
         } else {
@@ -94,21 +91,7 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
             txtVw.setVisibility(View.VISIBLE);
             txtVw.setText(sectionTextView.getText());
             if (renderer != null) {
-                txtVw.setBackgroundColor(renderer.getNativeBkgColor());
-                txtVw.setTextColor(renderer.getNativeTextColor());
-                int padding = renderer.getSafePadding(Renderer.PADDING);
-                int margin = renderer.getSafeMargin(0);
-                txtVw.setPadding(padding, padding, padding, padding);
-                if (margin > 0) {
-                    RelativeLayout.LayoutParams layoutParams =
-                            new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                    if (position == getItemCount() - 1) {
-                        layoutParams.setMargins(margin, margin, margin, margin);
-                    } else {
-                        layoutParams.setMargins(margin, margin, 0, margin);
-                    }
-                    txtVw.setLayoutParams(layoutParams);
-                }
+                renderer.setRendering(txtVw, 0, Renderer.PADDING);
             }
         }
     }
@@ -118,7 +101,7 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
         return sectionItems.size();
     }
 
-    private class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    protected class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private Typeface typeface;
         private ImageView imgInRow;
@@ -173,7 +156,7 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
         @Override
         public void onClick(View v) {
             OnSectionItemClickListener sectionItemClickListener =
-                    new OnSectionItemClickListener<>(((ActivityAware)context).getCurrentActivity(),
+                    new OnSectionItemClickListener<>(((ActivityAware) context).getCurrentActivity(),
                             section, sectionItems.get(getPosition()));
             sectionItemClickListener.onClick(v);
         }
