@@ -24,14 +24,17 @@ import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.GetDynamicPageApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateVersionInfoApiResponseContent;
 import com.bigbasket.mobileapp.fragment.base.BaseSectionFragment;
-import com.bigbasket.mobileapp.model.SectionManager;
+import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
+import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
+import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.section.Renderer;
 import com.bigbasket.mobileapp.model.section.Section;
+import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.task.GetCartCountTask;
+import com.bigbasket.mobileapp.task.GetDynamicPageTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.UIUtil;
 
@@ -42,7 +45,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class HomeFragment extends BaseSectionFragment {
+public class HomeFragment extends BaseSectionFragment implements DynamicScreenAware {
 
     @Nullable
     @Override
@@ -60,6 +63,7 @@ public class HomeFragment extends BaseSectionFragment {
             new GetCartCountTask<>(getCurrentActivity(), true).startTask();
             requestHomePage();
         }
+        handler = new HomePageHandler<>(this);
     }
 
     @Override
@@ -172,42 +176,7 @@ public class HomeFragment extends BaseSectionFragment {
 
     private void getHomePage() {
         if (getActivity() == null) return;
-        final SectionManager sectionManager = new SectionManager(getActivity(), SectionManager.HOME_PAGE_SECTION);
-        mSectionData = sectionManager.getStoredSectionData();
-        if (mSectionData != null && mSectionData.getSections() != null
-                && mSectionData.getSections().size() > 0) {
-            renderHomePage();
-            return;
-        }
-        if (!checkInternetConnection()) {
-            displayHomePageError(getString(R.string.deviceOfflineSmallTxt), R.drawable.ic_signal_wifi_off_grey600_48dp);
-            return;
-        }
-        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
-        showProgressView();
-        bigBasketApiService.getDynamicPage("home-page", new Callback<ApiResponse<GetDynamicPageApiResponse>>() {
-            @Override
-            public void success(ApiResponse<GetDynamicPageApiResponse> homePageApiResponse, Response response) {
-                if (isSuspended()) return;
-                hideProgressView();
-                switch (homePageApiResponse.status) {
-                    case 0:
-                        mSectionData = homePageApiResponse.apiResponseContent.sectionData;
-                        renderHomePage();
-                        break;
-                    default:
-                        displayHomePageError(getString(R.string.otherError), R.drawable.ic_report_problem_grey600_48dp);
-                        break;
-                }
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                if (isSuspended()) return;
-                hideProgressView();
-                handleHomePageRetrofitError(error);
-            }
-        });
+        new GetDynamicPageTask<>(this, "home-page", true, true).startTask();
     }
 
     private void handleHomePageRetrofitError(RetrofitError error) {
@@ -267,11 +236,6 @@ public class HomeFragment extends BaseSectionFragment {
 
         contentView.removeAllViews();
         contentView.addView(contentScrollView);
-        final SectionManager sectionManager = new SectionManager(getActivity(), SectionManager.HOME_PAGE_SECTION);
-        if (mSectionData != null && mSectionData.getSections() != null
-                && mSectionData.getSections().size() > 0) {
-            sectionManager.storeSectionData(mSectionData);
-        }
     }
 
     @Override
@@ -318,5 +282,42 @@ public class HomeFragment extends BaseSectionFragment {
     @Override
     public String getFragmentTxnTag() {
         return Constants.HOME;
+    }
+
+    @Override
+    public void onDynamicScreenSuccess(String screenName, SectionData sectionData) {
+        mSectionData = sectionData;
+        renderHomePage();
+    }
+
+    @Override
+    public void onDynamicScreenFailure(RetrofitError error) {
+        handleHomePageRetrofitError(error);
+    }
+
+    @Override
+    public void onDynamicScreenFailure(int error, String msg) {
+        displayHomePageError(getString(R.string.otherError), R.drawable.ic_report_problem_grey600_48dp);
+    }
+
+    public class HomePageHandler<T> extends BigBasketMessageHandler<T> {
+
+        public HomePageHandler(T ctx) {
+            super(ctx);
+        }
+
+        public HomePageHandler(T ctx, MarketPlace mMarketPlace) {
+            super(ctx, mMarketPlace);
+        }
+
+        @Override
+        public void sendOfflineError() {
+            displayHomePageError(getString(R.string.deviceOfflineSmallTxt), R.drawable.ic_signal_wifi_off_grey600_48dp);
+        }
+    }
+
+    @Override
+    public BigBasketMessageHandler getHandler() {
+        return handler;
     }
 }

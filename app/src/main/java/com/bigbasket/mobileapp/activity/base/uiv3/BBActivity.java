@@ -18,10 +18,11 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -29,7 +30,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ExpandableListView;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,11 +38,8 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.ShopFromOrderFragment;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
-import com.bigbasket.mobileapp.activity.product.ProductListActivity;
-import com.bigbasket.mobileapp.adapter.NavigationListAdapter;
+import com.bigbasket.mobileapp.adapter.NavigationAdapter;
 import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
-import com.bigbasket.mobileapp.adapter.product.CategoryAdapter;
-import com.bigbasket.mobileapp.adapter.product.ShopInShopAdapter;
 import com.bigbasket.mobileapp.fragment.HomeFragment;
 import com.bigbasket.mobileapp.fragment.account.AccountSettingFragment;
 import com.bigbasket.mobileapp.fragment.account.ChangeCityDialogFragment;
@@ -61,9 +58,7 @@ import com.bigbasket.mobileapp.fragment.product.GenericProductListFragment;
 import com.bigbasket.mobileapp.fragment.product.ProductDetailFragment;
 import com.bigbasket.mobileapp.fragment.product.ProductListDialogFragment;
 import com.bigbasket.mobileapp.fragment.product.SearchFragment;
-import com.bigbasket.mobileapp.fragment.product.ShopInShopFragment;
 import com.bigbasket.mobileapp.fragment.product.SubCategoryListFragment;
-import com.bigbasket.mobileapp.fragment.promo.PromoCategoryFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoDetailFragment;
 import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListFragment;
 import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListSummaryFragment;
@@ -72,18 +67,18 @@ import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDialogAware;
-import com.bigbasket.mobileapp.model.CitySpecificAppSettings;
+import com.bigbasket.mobileapp.model.SectionManager;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.cart.BasketOperationResponse;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
-import com.bigbasket.mobileapp.model.general.ShopInShop;
-import com.bigbasket.mobileapp.model.navigation.NavigationItem;
-import com.bigbasket.mobileapp.model.navigation.NavigationSubItem;
+import com.bigbasket.mobileapp.model.navigation.SectionNavigationItem;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.product.Product;
-import com.bigbasket.mobileapp.model.product.TopCategoryModel;
 import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
+import com.bigbasket.mobileapp.model.section.Section;
+import com.bigbasket.mobileapp.model.section.SectionData;
+import com.bigbasket.mobileapp.model.section.SectionItem;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
@@ -92,7 +87,6 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class BBActivity extends BaseActivity implements BasketOperationAware,
@@ -788,92 +782,40 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             txtNavSalutation.setText("Welcome Guest");
         }
 
-        ExpandableListView listNavigation = (ExpandableListView) findViewById(R.id.listNavigation);
-        listNavigation.setGroupIndicator(null);
-        listNavigation.setDivider(null);
-        listNavigation.setDividerHeight(0);
-        ArrayList<NavigationItem> navigationItems = getNavigationItems();
-        NavigationListAdapter navigationListAdapter = new NavigationListAdapter(this,
-                navigationItems, faceRobotoRegular);
-        listNavigation.setAdapter(navigationListAdapter);
-        listNavigation.setOnGroupClickListener(new NavigationListGroupClickListener(navigationItems));
-        listNavigation.setOnChildClickListener(new NavigationListChildClickListener(navigationItems));
-        navigationListAdapter.notifyDataSetChanged();
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.listNavigation);
+        recyclerView.setHasFixedSize(false);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        ArrayList<SectionNavigationItem> sectionNavigationItems = getSectionNavigationItems();
+
+        NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoRegular, sectionNavigationItems);
+        recyclerView.setAdapter(navigationAdapter);
+
     }
 
-    private ArrayList<NavigationItem> getNavigationItems() {
-        ArrayList<NavigationItem> navigationItems = new ArrayList<>();
-        boolean isLoggedIn = !AuthParameters.getInstance(this).isAuthTokenEmpty();
+    private ArrayList<SectionNavigationItem> getSectionNavigationItems() {
+        ArrayList<SectionNavigationItem> sectionNavigationItems = new ArrayList<>();
 
-        navigationItems.add(new NavigationItem(getString(R.string.home),
-                R.drawable.ic_home_grey600_24dp, Constants.HOME, false));
-
-        // Populate browse by offers
-        ArrayList<NavigationSubItem> browseByOffersSubNavItems = new ArrayList<>();
-        browseByOffersSubNavItems.add(new NavigationSubItem(getString(R.string.discount),
-                -1, Constants.DISCOUNT_TYPE, false));
-        browseByOffersSubNavItems.add(new NavigationSubItem(getString(R.string.promotions),
-                -1, Constants.PROMO, false));
-
-        if (CitySpecificAppSettings.getInstance(this).hasBundlePack()) {
-            browseByOffersSubNavItems.add(new NavigationSubItem(getString(R.string.bundlePack),
-                    -1, Constants.BUNDLE_PACK, false));
-        }
-        NavigationItem browseByOffersNavItem = new NavigationItem(getString(R.string.browseByOffers),
-                R.drawable.main_nav_discount, Constants.BROWSE_OFFERS, true, browseByOffersSubNavItems);
-        navigationItems.add(browseByOffersNavItem);
-
-        // Populate top-category list
-        ArrayList<TopCategoryModel> topCategoryModels = getStoredTopCategories();
-        if (topCategoryModels != null && topCategoryModels.size() > 0) {
-            ArrayList<NavigationSubItem> browseByCatNavSubItem = new ArrayList<>();
-            for (TopCategoryModel topCategoryModel : topCategoryModels) {
-                browseByCatNavSubItem.add(new NavigationSubItem(topCategoryModel.getName(),
-                        null, Constants.BROWSE_CAT, false));
+        SectionNavigationItem sniHome = new SectionNavigationItem(false, true, null, null);
+        sectionNavigationItems.add(sniHome);
+        SectionManager sectionManager = new SectionManager(this, SectionManager.MAIN_MENU);
+        SectionData sectionData = sectionManager.getStoredSectionData(true);
+        if (sectionData != null && sectionData.getSections() != null && sectionData.getSections().size() > 0) {
+            int numSections = sectionData.getSections().size();
+            for (int i = 0; i < numSections; i++) {
+                Section section = sectionData.getSections().get(i);
+                if (section.getSectionItems() == null || section.getSectionItems().size() == 0)
+                    continue;
+                for (SectionItem sectionItem : section.getSectionItems()) {
+                    SectionNavigationItem sni = new SectionNavigationItem(false, section, sectionItem);
+                    sectionNavigationItems.add(sni);
+                }
+                if (i != numSections - 1) {
+                    sectionNavigationItems.add(new SectionNavigationItem(true));
+                }
             }
-            NavigationItem browseByTopCatNavigationItem = new NavigationItem(getString(R.string.browseByCats),
-                    R.drawable.main_nav_category, Constants.BROWSE_CAT, true, browseByCatNavSubItem);
-            navigationItems.add(browseByTopCatNavigationItem);
         }
-
-        // Add special shops
-        ShopInShopAdapter shopInShopAdapter = new ShopInShopAdapter(this);
-        ArrayList<ShopInShop> shopInShops = shopInShopAdapter.getAllShopInShops();
-        if (shopInShops != null && shopInShops.size() > 0) {
-            ArrayList<NavigationSubItem> shopInShopSubNavItems = new ArrayList<>();
-            for (ShopInShop shopInShop : shopInShops) {
-                shopInShopSubNavItems.add(new NavigationSubItem(shopInShop.getName(), -1, shopInShop.getSlug(), false));
-            }
-            navigationItems.add(new NavigationItem(getString(R.string.specialShops),
-                    R.drawable.main_nav_discount, Constants.SPECIAL_SHOPS, true, shopInShopSubNavItems));
-        }
-
-        // Populate new arrivals
-        ArrayList<NavigationSubItem> newArrivalsSubNavItems = new ArrayList<>();
-        newArrivalsSubNavItems.add(new NavigationSubItem(getString(R.string.nowAtBB), -1,
-                Constants.NOW_AT_BB, false));
-        newArrivalsSubNavItems.add(new NavigationSubItem(getString(R.string.newLaunches), -1,
-                Constants.NEW_AT_BB, false));
-
-        NavigationItem newArrivalsNavItem = new NavigationItem(getString(R.string.newArrivals),
-                R.drawable.main_nav_discount, Constants.NEW_ARRIVALS, true, newArrivalsSubNavItems);
-        navigationItems.add(newArrivalsNavItem);
-
-        if (isLoggedIn) {
-            navigationItems.add(new NavigationItem(getString(R.string.myAccount), R.drawable.ic_account_circle_grey600_24dp,
-                    Constants.FROM_ACCOUNT_PAGE, false));
-            navigationItems.add(new NavigationItem(getString(R.string.signOut), R.drawable.main_nav_logout,
-                    Constants.LOGOUT, false));
-        } else {
-            navigationItems.add(new NavigationItem(getString(R.string.signIn), R.drawable.main_nav_login_arrow,
-                    Constants.LOGIN, false));
-        }
-        return navigationItems;
-    }
-
-    public ArrayList<TopCategoryModel> getStoredTopCategories() {
-        CategoryAdapter categoryAdapter = new CategoryAdapter(this);
-        return categoryAdapter.getAllTopCategories();
+        return sectionNavigationItems;
     }
 
     @Override
@@ -894,128 +836,6 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 ft.addToBackStack(tagName);
             }
             ft.commit();
-        }
-    }
-
-    private class NavigationListGroupClickListener implements ExpandableListView.OnGroupClickListener {
-
-        private ArrayList<NavigationItem> navigationItems;
-
-        private NavigationListGroupClickListener(ArrayList<NavigationItem> navigationItems) {
-            this.navigationItems = navigationItems;
-        }
-
-        @Override
-        public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-            NavigationItem navigationItem = navigationItems.get(groupPosition);
-            if (!navigationItem.isExpandable()) {
-                switch (navigationItem.getTag()) {
-                    case Constants.HOME:
-                        FragmentManager ft = getSupportFragmentManager();
-                        // If there are more than one fragment, then go to home, otherwise, already on home
-                        if (ft.getFragments() != null && ft.getFragments().size() > 1) {
-                            goToHome();
-                        } else {
-                            if (ft.getFragments() != null && !(ft.getFragments().get(0) instanceof HomeFragment)) {
-                                goToHome();
-                            } else if (mDrawerLayout != null) {
-                                mDrawerLayout.closeDrawer(Gravity.LEFT);
-                            }
-                        }
-                        break;
-                    case Constants.FROM_ACCOUNT_PAGE:
-                        if (AuthParameters.getInstance(getCurrentActivity()).isAuthTokenEmpty()) {
-                            showAlertDialog(null,
-                                    "Please sign-in to view your accounts page", NavigationCodes.GO_TO_LOGIN);
-                        } else {
-                            Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
-                            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ACCOUNT_SETTING);
-                            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                        }
-                        break;
-                    case Constants.LOGIN:
-                        Intent intent = new Intent(getCurrentActivity(), SignInActivity.class);
-                        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                        break;
-                    case Constants.FEEDBACK:
-                        launchKonotor();
-                        break;
-                    case Constants.LOGOUT:
-                        if (isSocialLogin()) {
-                            onLogoutRequested();
-                        } else {
-                            showAlertDialog(getString(R.string.signOut), getString(R.string.signoutConfirmation),
-                                    DialogButton.YES, DialogButton.NO, Constants.LOGOUT);
-                        }
-                        break;
-                }
-                return true;
-            }
-            return false;
-        }
-    }
-
-    private class NavigationListChildClickListener implements ExpandableListView.OnChildClickListener {
-
-        private ArrayList<NavigationItem> navigationItems;
-
-        private NavigationListChildClickListener(ArrayList<NavigationItem> navigationItems) {
-            this.navigationItems = navigationItems;
-        }
-
-        @Override
-        public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-            List<NavigationSubItem> navigationSubItems = navigationItems.get(groupPosition).getNavigationSubItems();
-            if (navigationItems.get(groupPosition).getTag() != null &&
-                    navigationItems.get(groupPosition).getTag().equals(Constants.BROWSE_CAT)) {
-                SubCategoryListFragment subCategoryListFragment = new SubCategoryListFragment();
-                Bundle subCatBundle = new Bundle();
-                subCatBundle.putString(Constants.TOP_CATEGORY_SLUG,
-                        navigationItems.get(groupPosition).getNavigationSubItems().get(childPosition).getTag());
-                subCatBundle.putString(Constants.TOP_CATEGORY_NAME,
-                        navigationItems.get(groupPosition).getNavigationSubItems().get(childPosition).getTag());
-                subCategoryListFragment.setArguments(subCatBundle);
-                addToMainLayout(subCategoryListFragment);
-
-            } else if (navigationSubItems != null) {
-                NavigationSubItem navigationSubItem = navigationSubItems.get(childPosition);
-                if (navigationSubItem.getTag() != null) {
-                    switch (navigationSubItem.getTag()) {
-                        case Constants.DISCOUNT_TYPE:
-                            Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
-                            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_BROWSE_BY_OFFERS);
-                            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                            return true;
-                        case Constants.PROMO:
-                            addToMainLayout(new PromoCategoryFragment());
-                            return true;
-                        case Constants.NOW_AT_BB:
-                            intent = new Intent(getCurrentActivity(), ProductListActivity.class);
-                            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_NOW_AT_BB);
-                            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                            break;
-                        case Constants.NEW_AT_BB:
-                            intent = new Intent(getCurrentActivity(), ProductListActivity.class);
-                            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_NEW_AT_BB);
-                            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                            break;
-                        case Constants.BUNDLE_PACK:
-                            intent = new Intent(getCurrentActivity(), ProductListActivity.class);
-                            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_BUNDLE_PACK);
-                            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                            break;
-                        default:
-                            // It is a shop-in-shop
-                            ShopInShopFragment shopInShopFragment = new ShopInShopFragment();
-                            Bundle args = new Bundle();
-                            args.putString(Constants.SLUG, navigationSubItem.getTag());
-                            shopInShopFragment.setArguments(args);
-                            addToMainLayout(shopInShopFragment);
-                            break;
-                    }
-                }
-            }
-            return false;
         }
     }
 

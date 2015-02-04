@@ -2,26 +2,29 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/uiv3_action_bar_background"
+    android:paddingBottom="@dimen/padding_small"
+    android:paddingLeft="@dimen/padding_small"
+    android:paddingTop="@dimen/padding_normal">
 
     <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scaleType="fitXY"
-        android:contentDescription="@string/app_name"
         android:id="@+id/imgNavMain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/margin_small"
-        android:src="@drawable/nav_main_cover" />
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/dash_logo" />
 
     <TextView
+        android:id="@+id/txtNavSalutation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/imgNavMain"
-        android:layout_marginBottom="@dimen/margin_normal"
-        android:layout_marginLeft="@dimen/margin_normal"
-        android:layout_marginRight="@dimen/margin_normal"
+        android:layout_below="@id/imgNavMain"
+        android:layout_marginTop="@dimen/margin_normal"
+        android:layout_marginRight="@dimen/margin_small"
+        android:drawableRight="@drawable/ic_keyboard_arrow_down_white_24dp"
         android:textColor="@color/white"
-        android:textSize="@dimen/primary_text_size"
-        android:id="@+id/txtNavSalutation" />
+        android:textSize="@dimen/primary_text_size" />
 
 </RelativeLayout>

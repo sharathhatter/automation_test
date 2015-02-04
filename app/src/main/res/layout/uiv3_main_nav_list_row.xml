@@ -2,32 +2,24 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/padding_small"
+    android:paddingBottom="@dimen/padding_small"
+    android:background="@color/white">
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/alt_placeholder"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/margin_small"
         android:id="@+id/imgNavItem" />
 
     <TextView
         style="@style/NavTxtStyle"
         android:layout_toRightOf="@id/imgNavItem"
         android:id="@+id/txtNavListRow"
-        android:paddingTop="@dimen/padding_small"
-        android:paddingBottom="@dimen/nav_padding_bottom"
-        android:layout_marginLeft="@dimen/margin_large" />
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/margin_normal" />
 
-    <ProgressBar
-        style="?android:attr/progressBarStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_small"
-        android:layout_marginBottom="@dimen/margin_small"
-        android:layout_marginLeft="@dimen/margin_normal"
-        android:layout_marginRight="@dimen/margin_normal"
-        android:layout_centerHorizontal="true"
-        android:visibility="gone"
-        android:layout_below="@id/txtNavListRow"
-        android:id="@+id/progressBarNavItem" />
 </RelativeLayout>

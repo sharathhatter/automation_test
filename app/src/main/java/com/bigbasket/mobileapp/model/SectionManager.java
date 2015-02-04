@@ -17,14 +17,16 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 public class SectionManager {
-    public static final String HOME_PAGE_SECTION = "homePageSection";
+    public static final String HOME_PAGE = "home-page";
+    public static final String MAIN_MENU = "main-menu";
 
     private Context context;
     private String preferenceKey;
 
     public static ArrayList<String> getAllSectionPreferenceKeys() {
         ArrayList<String> sectionPreferenceKeys = new ArrayList<>();
-        sectionPreferenceKeys.add(HOME_PAGE_SECTION);
+        sectionPreferenceKeys.add(HOME_PAGE);
+        sectionPreferenceKeys.add(MAIN_MENU);
         return sectionPreferenceKeys;
     }
 
@@ -34,12 +36,16 @@ public class SectionManager {
     }
 
     public SectionData getStoredSectionData() {
+        return getStoredSectionData(false);
+    }
+
+    public SectionData getStoredSectionData(boolean ignoreStale) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         String storedSectionJson = preferences.getString(preferenceKey, null);
         if (!TextUtils.isEmpty(storedSectionJson)) {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
             String createdOn = preferences.getString(preferenceKey + "_time", null);
-            if (!isStale(createdOn, dateFormat)) {
+            if (ignoreStale || !isStale(createdOn, dateFormat)) {
                 return new Gson().fromJson(storedSectionJson, SectionData.class);
             }
         }
