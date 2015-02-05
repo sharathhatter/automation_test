@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.common.FixedLayoutViewHolder;
+import com.bigbasket.mobileapp.handler.OnSectionItemClickListener;
+import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.model.navigation.SectionNavigationItem;
 
 import java.util.ArrayList;
@@ -58,13 +60,14 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
     }
 
-    private class NavViewHolder extends RecyclerView.ViewHolder {
+    private class NavViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private ImageView imgNavItem;
         private TextView txtNavListRow;
 
         public NavViewHolder(View itemView) {
             super(itemView);
+            itemView.setOnClickListener(this);
         }
 
         public ImageView getImgNavItem() {
@@ -80,6 +83,19 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 txtNavListRow.setTypeface(typeface);
             }
             return txtNavListRow;
+        }
+
+        @Override
+        public void onClick(View v) {
+            SectionNavigationItem sectionNavigationItem = sectionNavigationItems.get(getPosition());
+            if (!sectionNavigationItem.isSeparator()) {
+                if (sectionNavigationItem.isHome()) {
+                    ((ActivityAware) context).getCurrentActivity().goToHome();
+                } else {
+                    new OnSectionItemClickListener<>(context, sectionNavigationItem.getSection(),
+                            sectionNavigationItem.getSectionItem()).onClick(v);
+                }
+            }
         }
     }
 
