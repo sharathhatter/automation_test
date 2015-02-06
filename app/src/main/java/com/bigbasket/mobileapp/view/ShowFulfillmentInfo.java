@@ -1,6 +1,5 @@
 package com.bigbasket.mobileapp.view;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -15,26 +14,28 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
+import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.model.cart.FulfillmentInfo;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 
-public class ShowFulfillmentInfo {
+public class ShowFulfillmentInfo<T> {
+
     private FulfillmentInfo fulfillmentInfo;
-    private Activity context;
+    private T ctx;
     private Typeface faceRobotoSlabNrml;
 
-    public ShowFulfillmentInfo(FulfillmentInfo fulfillmentInfo, Activity context,
+    public ShowFulfillmentInfo(FulfillmentInfo fulfillmentInfo, T ctx,
                                Typeface faceRobotoSlabNrml) {
         this.fulfillmentInfo = fulfillmentInfo;
-        this.context = context;
+        this.ctx = ctx;
         this.faceRobotoSlabNrml = faceRobotoSlabNrml;
     }
 
     public View showFulfillmentInfo(boolean showImgLiquorIcon, boolean showTC) {
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) ((ActivityAware) ctx).getCurrentActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View base = inflater.inflate(R.layout.fulfillment_info, null);
         RelativeLayout layoutInfoMsg = (RelativeLayout) base.findViewById(R.id.layoutInfoMsg);
         layoutInfoMsg.setBackgroundResource(R.drawable.background);
@@ -57,7 +58,8 @@ public class ShowFulfillmentInfo {
                 if (!TextUtils.isEmpty(fulfillmentInfo.getFulfilledByInfoPage())) {
                     SpannableString content = new SpannableString(prefix + postFix);
                     int prefixLen = prefix.length();
-                    content.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.link_color)),
+                    content.setSpan(new ForegroundColorSpan(((ActivityAware) ctx).getCurrentActivity()
+                                    .getResources().getColor(R.color.link_color)),
                             prefixLen - 1, content.length(), 0);
                     txtFulfilledBy.setVisibility(View.VISIBLE);
                     txtFulfilledBy.setText(content);
@@ -113,8 +115,8 @@ public class ShowFulfillmentInfo {
     }
 
     public void showFulfillmentInfoPage(String fulfillmentInfoPageUrl) {
-        Intent intent = new Intent(context, FlatPageWebViewActivity.class);
+        Intent intent = new Intent(((ActivityAware) ctx).getCurrentActivity(), FlatPageWebViewActivity.class);
         intent.putExtra(Constants.WEBVIEW_URL, fulfillmentInfoPageUrl);
-        context.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+        ((ActivityAware) ctx).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 }
