@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/bg_light_blue"
+    android:background="@color/dark_black"
     android:orientation="vertical" >
 
     <include
@@ -25,10 +25,10 @@
             android:layout_marginLeft="-10dp"
             android:layout_marginRight="-10dp"
             android:layout_marginTop="-10dp"
-            android:horizontalSpacing="-15dp"
+            android:horizontalSpacing="1dp"
             android:numColumns="3"
             android:padding="0dp"
-            android:verticalSpacing="-15dp"
+            android:verticalSpacing="1dp"
             tools:listitem="@layout/gallery_item" >
         </GridView>
 
@@ -56,13 +56,16 @@
 
         <Button
             android:id="@+id/btnGalleryOk"
-            style="@style/Uiv2BigYellowButton"
-            android:layout_width="0dp"
-            android:layout_marginBottom="0dp"
-            android:layout_height="40dp"
-            android:layout_weight="1"
-            android:textSize="15sp"
-            android:text="@string/btn_ok" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@color/uiv3_action_bar_background"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp"
+            android:text="@string/btn_ok"
+            android:textColor="@android:color/white"
+            android:textSize="18sp" />
+
     </LinearLayout>
 
 </LinearLayout>

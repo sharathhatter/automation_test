@@ -1,34 +1,28 @@
 package com.bigbasket.mobileapp.activity.order.uiv3;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.ScrollView;
-import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
-import com.bigbasket.mobileapp.adapter.order.MultipleImagesPrescriptionAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
@@ -40,7 +34,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.ImageUtil;
 import com.bigbasket.mobileapp.util.NavigationCodes;
-import com.bigbasket.mobileapp.util.UIUtil;
+import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
 import com.luminous.pick.Action;
 
 import java.io.ByteArrayOutputStream;
@@ -51,11 +45,8 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class UploadNewPrescriptionActivity extends BackButtonActivity {
-    private static final String TAG = UploadNewPrescriptionActivity.class.getName();
-    private ArrayList<Object> uploadImageList = new ArrayList<>();
+
     private EditText editTextPatientName, editTextDoctorName, editTextPrescriptionName;
-    private TextView txtViewImages;
-    private View base;
     private ArrayList<byte[]> arrayListByteArray = new ArrayList<>();
     private String[] all_path;
 
@@ -67,28 +58,36 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
+    protected void setOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.prescription_upload_menu, menu);
+        final MenuItem choosePrescription = menu.findItem(R.id.action_choose_prescription);
+        choosePrescription.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                launchImageSelectActivity();
+                return true;
+            }
+        });
+
+        BBDrawerLayout drawerLayout = (BBDrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawerLayout != null) {
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        }
     }
 
     private void renderUploadNewPrescription() {
         FrameLayout contentView = (FrameLayout) findViewById(R.id.content_frame);
-        ScrollView scrollView = new ScrollView(this);
-        LinearLayout linearLayout = new LinearLayout(this);
-        linearLayout.setOrientation(LinearLayout.VERTICAL);
-        scrollView.addView(linearLayout);
-        contentView.addView(scrollView);
+        if (contentView == null) return;
+        contentView.removeAllViews();
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        base = inflater.inflate(R.layout.uiv3_upload_new_prescription_layout, linearLayout, false);
-        txtViewImages = (TextView) base.findViewById(R.id.txtViewImages);
-        txtViewImages.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showPrescriptionImageDialog(uploadImageList);
-            }
-        });
-        linearLayout.addView(base);
+        View base = inflater.inflate(R.layout.uiv3_upload_new_prescription_layout, contentView, false);
+        editTextPrescriptionName = (EditText) base.findViewById(R.id.editTextPrescriptionName);
+        editTextPatientName = (EditText) base.findViewById(R.id.editTextPatientName);
+        editTextDoctorName = (EditText) base.findViewById(R.id.editTextDoctorName);
+        contentView.addView(base);
+        BaseActivity.showKeyboard(editTextPrescriptionName);
     }
 
 
@@ -97,20 +96,15 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
         return this;
     }
 
-    public void onSelectImagesFromGallery(View view) {
-        uploadImageList.clear();
-        txtViewImages.setVisibility(View.GONE);
-        launchImageSelectActivity();
-    }
-
-
     private void launchImageSelectActivity() {
-        // For multiple images
         Intent i = new Intent(Action.ACTION_MULTIPLE_PICK);
         startActivityForResult(i, 200);
     }
 
     public void OnUploadButtonClicked(View view) {
+        editTextPatientName.setError(null);
+        editTextDoctorName.setError(null);
+        editTextPrescriptionName.setError(null);
         validateFormFields();
     }
 
@@ -118,77 +112,52 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
         return TextUtils.isEmpty(editText.getText().toString());
     }
 
-    private void validateFormFields() {
-        editTextPatientName = (EditText) base.findViewById(R.id.editTextPatientName);
-        editTextDoctorName = (EditText) base.findViewById(R.id.editTextDoctorName);
-        editTextPrescriptionName = (EditText) base.findViewById(R.id.editTextPrescriptionName);
 
-        ArrayList<String> missingFields = new ArrayList<>();
+    @Override
+    protected void onPositiveButtonClicked(DialogInterface dialogInterface, int id, String sourceName, Object valuePassed) {
+        if (!TextUtils.isEmpty(sourceName)) {
+            if (sourceName.equals(Constants.MORE_IMAGES)) {
+                arrayListByteArray.clear();
+                return;
+            } else if (sourceName.equals(Constants.LARGE_SIZE_IMAGE)) {
+                arrayListByteArray.clear();
+                return;
+            }
+        } else {
+            super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
+        }
+    }
+
+    private void validateFormFields() {
+        View focusView = null;
         if (isEditTextEmpty(editTextPatientName)) {
-            missingFields.add(editTextPatientName.getHint().toString());
-            editTextPatientName.setError(null);
+            reportFormInputFieldError(editTextPatientName, getString(R.string.error_field_required));
+            focusView = editTextPatientName;
         }
 
         if (isEditTextEmpty(editTextDoctorName)) {
-            missingFields.add(editTextDoctorName.getHint().toString());
-            editTextDoctorName.setError(null);
+            reportFormInputFieldError(editTextDoctorName, getString(R.string.error_field_required));
+            focusView = editTextDoctorName;
         }
 
         if (isEditTextEmpty(editTextPrescriptionName)) {
-            missingFields.add(editTextPrescriptionName.getHint().toString());
-            editTextPrescriptionName.setError(null);
+            reportFormInputFieldError(editTextPrescriptionName, getString(R.string.error_field_required));
+            focusView = editTextPrescriptionName;
         }
 
-        if (arrayListByteArray == null || arrayListByteArray.size() == 0) {
-            missingFields.add("Prescription Image");
-        }
-
-        int missingFieldsListSize = missingFields.size();
-        if (missingFieldsListSize > 0) {
-            String msg;
-            if (missingFieldsListSize == 1) {
-                msg = missingFields.get(0) + " is mandatory";
-            } else {
-                msg = "Following fields are mandatory: " + UIUtil.sentenceJoin(missingFields);
-            }
-            showAlertDialog(null, msg);
+        if (focusView != null) {
+            focusView.requestFocus();
             return;
+        } else if (arrayListByteArray == null || arrayListByteArray.size() == 0) {
+            showAlertDialog(null, getString(R.string.imageMandatoryError));
+            return;
+        } else {
+            serverCallForUploadPrescription();
         }
-
-        //sendPharmaUploadRequestToServer();
-
-        serverCallForUploadPrescription();
-
     }
-
-    /*
-
-    private void sendPharmaUploadRequestToServer() {
-
-            HashMap<String, String> payload = new HashMap<String, String>() {
-                {
-                    put(Constants.PATIENT_NAME, editTextPatientName.getText().toString());
-                }
-
-                {
-                    put(Constants.DOCTOR_NAME, editTextDoctorName.getText().toString());
-                }
-
-                {
-                    put(Constants.PRESCRIPTION_NAME, editTextPrescriptionName.getText().toString());
-                }
-            };
-
-            startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.UPLOAD_PRESCRIPTION, payload, true,
-                    AuthParameters.getInstance(this), new BasicCookieStore());
-
-    }
-    */
 
     private void serverCallForUploadPrescription() {
-        if (!DataUtil.isInternetAvailable(getCurrentActivity())) {
-            return;
-        }
+        if (!DataUtil.isInternetAvailable(getCurrentActivity())) handler.sendOfflineError();
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressDialog(getResources().getString(R.string.please_wait));
         bigBasketApiService.uploadPrescription(editTextPatientName.getText().toString(),
@@ -203,14 +172,14 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
                         } catch (IllegalArgumentException e) {
                             return;
                         }
-                        if (prescriptionIdApiResponse.status == 0 && prescriptionIdApiResponse.message.equals(Constants.SUCCESS)) {
+                        if (prescriptionIdApiResponse.status == 0) {
                             String prescriptionId = prescriptionIdApiResponse.apiResponseContent.pharmaPrescriptionId;
-                            ImageUtil.insertToDB(prescriptionId, arrayListByteArray);
+                            new ImageUtil<>(getCurrentActivity()).insertToDB(prescriptionId, arrayListByteArray);
                             startService(new Intent(getCurrentActivity(), UploadImageService.class));
                             gotoQCActivity(prescriptionId);
                             trackEvent(TrackingAware.PRE_CHECKOUT_PHARMA_PRESCRIPTION_CREATED, null);
                         } else {
-                            handler.sendEmptyMessage(prescriptionIdApiResponse.status);
+                            handler.sendEmptyMessage(prescriptionIdApiResponse.status, prescriptionIdApiResponse.message);
                         }
                     }
 
@@ -227,66 +196,24 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
                 });
     }
 
-    /*
-    @Override
-    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-        super.onAsyncTaskComplete(httpOperationResult);
-        String responseString = httpOperationResult.getReponseString();
-        JsonObject jsonObject = new JsonParser().parse(responseString).getAsJsonObject();
-        int status = jsonObject.get(Constants.STATUS).getAsInt();
-        String msg = jsonObject.get(Constants.MESSAGE).getAsString();
-        if (status == 0 && msg.equals(Constants.SUCCESS)) {
-            if(httpOperationResult.getUrl().contains(Constants.UPLOAD_PRESCRIPTION)){
-                JsonObject jsonResponseObject = jsonObject.get(Constants.RESPONSE).getAsJsonObject();
-                String prescriptionId = jsonResponseObject.get(Constants.PHARMA_PRESCRIPTION_ID).getAsString();
-                ImageUtil.insertToDB(prescriptionId, arrayListByteArray);
-                startService(new Intent(this, UploadImageService.class));
-                renderPrescriptionListActivity(prescriptionId);
-            }
-        } else {
-            String errorMsg = status == ExceptionUtil.INTERNAL_SERVER_ERROR ? getResources().getString(R.string.imageUploadFailed):msg;
-            showAlertDialogFinish(this, null, errorMsg);
-        }
-    }
-
-    */
-
-
     private void gotoQCActivity(String prescriptionId) {
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = prefer.edit();
         editor.putString(Constants.PHARMA_PRESCRIPTION_ID, prescriptionId);
         editor.commit();
         new COReserveQuantityCheckTask<>(getCurrentActivity(), prescriptionId).startTask();
-
     }
 
     @Override
     public void onCOReserveQuantityCheck() {
-        setResult(Constants.PRESCRIPTION_UPLOADED);
-        this.finish();
-        Intent intent = new Intent(getCurrentActivity(), CheckoutQCActivity.class);
-        intent.putExtra(Constants.CO_RESERVE_QTY_DATA, coReserveQuantity);
-        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+        Intent data = new Intent();
+        data.putExtra(Constants.CO_RESERVE_QTY_DATA, getCOReserveQuantity());
+        setResult(Constants.PRESCRIPTION_UPLOADED, data);
+        getCurrentActivity().finish();// fix for back button press
     }
 
     private void showDialogMoreThen5Images() {
-        showAlertDialog(null, "You can't upload more than 5 images", Constants.MORE_IMAGES);
-    }
-
-    protected void onPositiveButtonClicked(DialogInterface dialogInterface, int id, String sourceName) {
-        super.onPositiveButtonClicked(dialogInterface, id, sourceName, null);
-        if (sourceName != null) {
-            if (sourceName.equals(Constants.MORE_IMAGES)) {
-                uploadImageList.clear();
-                txtViewImages.setVisibility(View.GONE);
-                return;
-            } else if (sourceName.equals(Constants.LARGE_SIZE_IMAGE)) {
-                uploadImageList.clear();
-                txtViewImages.setVisibility(View.GONE);
-                return;
-            }
-        }
+        showAlertDialog(null, getString(R.string.maxImageError), Constants.MORE_IMAGES);
     }
 
     @Override
@@ -314,7 +241,7 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
             if (isActivitySuspended) {
                 cancel(true);
             } else {
-                progressDialog = ProgressDialog.show(getCurrentActivity(), "", "Please wait", true, false);
+                progressDialog = ProgressDialog.show(getCurrentActivity(), "", getString(R.string.please_wait), true, false);
             }
         }
 
@@ -333,77 +260,36 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
             if (isCancelled()) {
                 return null;
             }
-            hRefresh.sendEmptyMessage(1);
+            handler.sendEmptyMessage(NavigationCodes.PRESCRIPTION_IMAGE_SAMPLING);
             return null;
         }
 
     }
 
-    Handler hRefresh = new Handler() {
-        public void handleMessage(android.os.Message msg) {
-            switch (msg.what) {
-                case 1:
-                    doSampling();
-                    break;
-            }
-        }
-    };
-
-    private void doSampling() {
+    public void doSampling() {
         boolean notBreak = true;
         for (int i = 0; i < all_path.length; i++) {
             byte[] imageByte = sampleImage(all_path[i]);
             if (imageByte == null) {
-                uploadImageList.clear();
                 arrayListByteArray.clear();
                 notBreak = false;
                 break;
             }
             arrayListByteArray.add(imageByte);
         }
-        if (all_path.length > 1)
-            txtViewImages.setText(getResources().getString(R.string.viewPrescriptionImages));
-        if (notBreak)
-            txtViewImages.setVisibility(View.VISIBLE);
+        if (!notBreak)
+            showToast(getString(R.string.errorWhileSampling));
     }
 
     private byte[] sampleImage(String filePath) {
-        Bitmap bmpPic = ImageUtil.getBitmap(filePath, getCurrentActivity());
+        Bitmap bmpPic = new ImageUtil<>(getCurrentActivity()).getBitmap(filePath);
         int compressQuality = 100;
         ByteArrayOutputStream bmpStream = new ByteArrayOutputStream();
         if (bmpPic != null) {
             bmpPic.compress(Bitmap.CompressFormat.JPEG, compressQuality, bmpStream);
-            byte[] bmpPicByteArray = bmpStream.toByteArray();
-            int streamLength = bmpPicByteArray.length;
-            Log.d(TAG, "Size: " + streamLength);
-            uploadImageList.add(bmpPic);
-            return bmpPicByteArray;
+            return bmpStream.toByteArray();
         }
         return null;
     }
 
-//    public void onTxtViewImages(View view){
-//        showPrescriptionImageDialog(uploadImageList);
-//    }
-
-    private void showPrescriptionImageDialog(ArrayList<Object> uploadImageList) {
-        final Dialog prescriptionImageDialog = new Dialog(this);
-        prescriptionImageDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        prescriptionImageDialog.setCanceledOnTouchOutside(true);
-        ListView listView = new ListView(this);
-        listView.setDividerHeight(0);
-        listView.setDivider(null);
-        prescriptionImageDialog.setContentView(listView);
-
-        Rect displayRectangle = new Rect();
-        getWindow().getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
-        prescriptionImageDialog.getWindow().setLayout(displayRectangle.width() - 20,
-                (int) (displayRectangle.height() * 0.7f));
-
-        MultipleImagesPrescriptionAdapter multipleImagesPrescriptionAdapter = new MultipleImagesPrescriptionAdapter(this,
-                uploadImageList);
-        listView.setAdapter(multipleImagesPrescriptionAdapter);
-        prescriptionImageDialog.show();
-
-    }
 }

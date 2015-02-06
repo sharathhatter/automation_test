@@ -111,7 +111,7 @@ public class SubCategoryListAdapter<T> extends BaseExpandableListAdapter {
         if (Integer.parseInt(bottomCategory.getNumProducts()) > 0) {
             txtListItem.append(" (" + bottomCategory.getNumProducts() + ")");
         }
-        txtListItem.setTextColor(((ActivityAware) ctx).getCurrentActivity().getResources().getColor(R.color.uiv3_list_secondary_text_color));
+        txtListItem.setTextColor(((ActivityAware) ctx).getCurrentActivity().getResources().getColor(R.color.uiv3_secondary_text_color));
 
         ImageView imgArrow = subCatHolder.getListArrow();
         imgArrow.setVisibility(View.GONE);
@@ -139,9 +139,9 @@ public class SubCategoryListAdapter<T> extends BaseExpandableListAdapter {
         }
 
         if (Integer.parseInt(subcategory.getNumProducts()) == -1) {
-            txtListItem.setTextColor(((ActivityAware) ctx).getCurrentActivity().getResources().getColor(R.color.uiv3_action_bar_background_pressed));
+            txtListItem.setTextColor(((ActivityAware) ctx).getCurrentActivity().getResources().getColor(R.color.uiv3_action_bar_background));
         } else {
-            txtListItem.setTextColor(((ActivityAware) ctx).getCurrentActivity().getResources().getColor(R.color.uiv3_list_primary_text_color));
+            txtListItem.setTextColor(((ActivityAware) ctx).getCurrentActivity().getResources().getColor(R.color.uiv3_primary_text_color));
         }
 
         ImageView imgArrow = subCatHolder.getListArrow();

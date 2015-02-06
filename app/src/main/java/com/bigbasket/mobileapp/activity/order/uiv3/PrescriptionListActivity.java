@@ -15,6 +15,7 @@ import com.bigbasket.mobileapp.adapter.order.PrescriptionListAdapter;
 import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.order.SavedPrescription;
 import com.bigbasket.mobileapp.task.COMarketPlaceCheckTask;
+import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
@@ -24,50 +25,36 @@ import java.util.ArrayList;
 
 
 public class PrescriptionListActivity extends BackButtonActivity {
-    private ArrayList<SavedPrescription> savedPrescriptionArrayList;
-    private boolean fromOnCreate;
 
     @Override
     public void onCreate(Bundle saveInstanceState) {
         super.onCreate(saveInstanceState);
-        fromOnCreate = true;
-        if (saveInstanceState != null) {
-            savedPrescriptionArrayList = saveInstanceState.getParcelableArrayList(Constants.PRESCRIPTION_INTENT_DATA);
-            if (savedPrescriptionArrayList != null) {
-                renderPrescriptionList(savedPrescriptionArrayList);
-                return;
-            }
-        }
-        MarketPlace marketPlace = getIntent().getParcelableExtra(Constants.MARKET_PLACE_INTENT);
-        savedPrescriptionArrayList = marketPlace.getSavedPrescription();
-        renderPrescriptionList(savedPrescriptionArrayList);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        if (savedPrescriptionArrayList != null) {
-            outState.putParcelableArrayList(Constants.PRESCRIPTION_INTENT_DATA, savedPrescriptionArrayList);
-        }
-        super.onSaveInstanceState(outState);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (!fromOnCreate)
-            new COMarketPlaceCheckTask<>(getCurrentActivity()).startTask();
+        new COMarketPlaceCheckTask<>(getCurrentActivity()).startTask();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        fromOnCreate = false;
+    }
+
+    @Override
+    public void onCOReserveQuantityCheck() {
+        Intent data = new Intent();
+        data.putExtra(Constants.CO_RESERVE_QTY_DATA, getCOReserveQuantity());
+        setResult(Constants.PRESCRIPTION_CHOSEN, data);
+        getCurrentActivity().finish();// fix for back button press
     }
 
     @Override
     public void onCoMarketPlaceSuccess(MarketPlace marketPlace) {
-        savedPrescriptionArrayList = marketPlace.getSavedPrescription();
-        if (savedPrescriptionArrayList == null || savedPrescriptionArrayList.size() == 0) return;
+        ArrayList<SavedPrescription> savedPrescriptionArrayList = marketPlace.getSavedPrescription();
+        if (savedPrescriptionArrayList == null || savedPrescriptionArrayList.size() == 0)
+            handler.sendEmptyMessage(ApiErrorCodes.INTERNAL_SERVER_ERROR, getString(R.string.server_error), true);
         renderPrescriptionList(savedPrescriptionArrayList);
     }
 
@@ -79,7 +66,7 @@ public class PrescriptionListActivity extends BackButtonActivity {
         View prescriptionView = layoutInflater.inflate(R.layout.uiv3_fab_recycler_view, contentView, false);
         RecyclerView prescriptionRecyclerView = (RecyclerView) prescriptionView.findViewById(R.id.fabRecyclerView);
         UIUtil.configureRecyclerView(prescriptionRecyclerView, this, 1, 3);
-        PrescriptionListAdapter prescriptionListAdapter = new PrescriptionListAdapter(getCurrentActivity(),
+        PrescriptionListAdapter prescriptionListAdapter = new PrescriptionListAdapter<>(getCurrentActivity(),
                 savedPrescriptionArrayList, faceRobotoRegular);
         prescriptionRecyclerView.setAdapter(prescriptionListAdapter);
 
@@ -110,65 +97,11 @@ public class PrescriptionListActivity extends BackButtonActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         isActivitySuspended = false;
         if (resultCode == Constants.PRESCRIPTION_UPLOADED) {
-            //do nothing
+            setResult(Constants.PRESCRIPTION_UPLOADED, data);
+            getCurrentActivity().finish();// fix for back button press
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
-
-
-    /*
-    @Override
-    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-        String responseString = httpOperationResult.getReponseString();
-        JsonObject jsonObject = new JsonParser().parse(responseString).getAsJsonObject();
-        if (httpOperationResult.getUrl().contains(Constants.GET_PRSCRIPTION_IMAGES)) {
-            int status = jsonObject.get(Constants.STATUS).getAsInt();
-            if (status == 0) {
-                JsonObject responseJsonObject = jsonObject.get(Constants.RESPONSE).getAsJsonObject();
-                JsonArray jsonArrayImageUrls = responseJsonObject.get("image_urls").getAsJsonArray();
-                if(jsonArrayImageUrls.size()>0) {
-                    showPrescriptionImageDialog(jsonArrayImageUrls);
-                }else {
-                    showAlertDialog(getCurrentActivity(), null, "Images are uploading....");
-                }
-            }else {
-                String msgString = status == ExceptionUtil.INTERNAL_SERVER_ERROR ?
-                        getResources().getString(R.string.INTERNAL_SERVER_ERROR) :
-                        jsonObject.get(Constants.MESSAGE).getAsString();
-                showAlertDialog(getCurrentActivity(), null, msgString, Constants.GO_TO_HOME_STRING);
-            }
-        }
-    }
-
-
-
-    private void showPrescriptionImageDialog(JsonArray jsonArrayImageUrls){
-        final Dialog prescriptionImageDialog = new Dialog(getCurrentActivity());
-        prescriptionImageDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        prescriptionImageDialog.setCanceledOnTouchOutside(true);
-        ListView listView = new ListView(getCurrentActivity());
-        listView.setDividerHeight(0);
-        listView.setDivider(null);
-        prescriptionImageDialog.setContentView(listView);
-
-        Rect displayRectangle = new Rect();
-        getCurrentActivity().getWindow().getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
-        prescriptionImageDialog.getWindow().setLayout(displayRectangle.width() - 20,
-                (int) (displayRectangle.height() * 0.7f));
-
-        ArrayList<Object> arrayListImgUrls = new ArrayList<>();
-        for(int i=0; i<jsonArrayImageUrls.size(); i++){
-            arrayListImgUrls.add(jsonArrayImageUrls.get(i).getAsString());
-        }
-
-        MultipleImagesPrescriptionAdapter multipleImagesPrescriptionAdapter = new MultipleImagesPrescriptionAdapter(getCurrentActivity(),
-                arrayListImgUrls);
-        listView.setAdapter(multipleImagesPrescriptionAdapter);
-        prescriptionImageDialog.show();
-
-    }
-
-    */
 
 }

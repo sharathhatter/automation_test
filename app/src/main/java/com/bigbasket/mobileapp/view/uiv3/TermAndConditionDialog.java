@@ -20,17 +20,17 @@ import java.util.ArrayList;
 /**
  * Created by jugal on 12/1/15.
  */
-public class ReferralTCDialog extends DialogFragment {
+public class TermAndConditionDialog extends DialogFragment {
 
     private Activity context;
     private Typeface faceRobotoRegular;
     private ArrayList<String> termAndConditionArrayList;
 
-    public ReferralTCDialog() {
+    public TermAndConditionDialog() {
     }
 
-    public ReferralTCDialog(Activity context, Typeface faceRobotoRegular,
-                            ArrayList<String> termAndConditionArrayList) {
+    public TermAndConditionDialog(Activity context, Typeface faceRobotoRegular,
+                                  ArrayList<String> termAndConditionArrayList) {
         this.context = context;
         this.faceRobotoRegular = faceRobotoRegular;
         this.termAndConditionArrayList = termAndConditionArrayList;

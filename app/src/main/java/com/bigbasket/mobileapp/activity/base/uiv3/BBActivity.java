@@ -73,6 +73,7 @@ import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDialogAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.CitySpecificAppSettings;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.cart.BasketOperationResponse;
@@ -375,7 +376,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             case FragmentCodes.START_CATEGORY_LANDING:
                 SubCategoryListFragment subCategoryListFragment = new SubCategoryListFragment();
                 Bundle cubCatBundle = new Bundle();
-                cubCatBundle.putString(Constants.TOP_CATEGORY_SLUG, getIntent().getStringExtra(Constants.TOP_CATEGORY_NAME));
+                cubCatBundle.putString(Constants.TOP_CATEGORY_SLUG, getIntent().getStringExtra(Constants.TOP_CATEGORY_SLUG));
                 cubCatBundle.putString(Constants.TOP_CATEGORY_NAME, getIntent().getStringExtra(Constants.TOP_CATEGORY_NAME));
                 subCategoryListFragment.setArguments(cubCatBundle);
                 addToMainLayout(subCategoryListFragment);
@@ -400,13 +401,16 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 GenericProductListFragment productListFragment = new GenericProductListFragment();
                 Bundle productListArgs = new Bundle();
                 productListArgs.putString(Constants.TYPE, ProductListType.NOW_AT_BB.get());
+                productListArgs.putString(Constants.TRACK_EVENT_NAME, TrackingAware.NOW_AT_BB);
                 productListFragment.setArguments(productListArgs);
                 addToMainLayout(productListFragment);
                 break;
             case FragmentCodes.START_NEW_AT_BB:
+                trackEvent(TrackingAware.NEW_AT_BB, null);
                 productListFragment = new GenericProductListFragment();
                 productListArgs = new Bundle();
                 productListArgs.putString(Constants.TYPE, ProductListType.NEW_AT_BB.get());
+                productListArgs.putString(Constants.TRACK_EVENT_NAME, TrackingAware.NEW_AT_BB);
                 productListFragment.setArguments(productListArgs);
                 addToMainLayout(productListFragment);
                 break;
@@ -414,6 +418,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 productListFragment = new GenericProductListFragment();
                 productListArgs = new Bundle();
                 productListArgs.putString(Constants.TYPE, ProductListType.BUNDLE_PACK.get());
+                productListArgs.putString(Constants.TRACK_EVENT_NAME, TrackingAware.BUNDLE_PACK);
                 productListFragment.setArguments(productListArgs);
                 addToMainLayout(productListFragment);
                 break;
@@ -495,6 +500,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 }
                 return true;
             case R.id.action_rate_app:
+                trackEvent(TrackingAware.RATE_APP, null);
                 try {
                     startActivity(new Intent(Intent.ACTION_VIEW,
                             Uri.parse("market://details?id=" + Constants.BASE_PKG_NAME)));
@@ -519,6 +525,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 }
                 return true;
             case R.id.action_change_city:
+                trackEvent(TrackingAware.HOME_CHANGE_CITY, null);
                 ChangeCityDialogFragment changeCityDialog = ChangeCityDialogFragment.newInstance();
                 changeCityDialog.show(getSupportFragmentManager(), Constants.CITIES);
                 return true;
@@ -1016,6 +1023,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                             // It is a shop-in-shop
                             ShopInShopFragment shopInShopFragment = new ShopInShopFragment();
                             Bundle args = new Bundle();
+                            args.putString(Constants.TRACK_EVENT_NAME, navigationSubItem.getItemName());
                             args.putString(Constants.SLUG, navigationSubItem.getTag());
                             shopInShopFragment.setArguments(args);
                             addToMainLayout(shopInShopFragment);

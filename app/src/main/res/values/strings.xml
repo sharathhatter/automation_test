@@ -8,6 +8,7 @@
     <string name="searchHint">Search Products</string>
     <string name="pharma_msg">Please choose/upload pharma prescription or remove pharma products</string>
     <string name="age_validation_required">Age check validation is required.</string>
+    <string name="errorWhileSampling">Error while sampling, try again</string>
     <string name="checkinternet">Cannot proceed with the operation. No network connection.</string>
     <string name="product_id_invalid">Sorry, but this product does not exists</string>
     <string name="invalidBasketQty">You can not add any more quantities of this product</string>
@@ -31,7 +32,6 @@
     <string name="NO_PAST_ORDER">You do not have any past orders.</string>
     <string name="NO_ACT_ORDER">You do not have any active orders.</string>
     <string name="selectDateRange">Select a date range</string>
-    <string name="maxQtyReached">Quantity reached maximum limit, max 25 allowed per product</string>
     <string name="multipleDeliverySlotMsg1">This order will be fulfilled by more than one vendor and will be delivered separately.</string>
     <string name="multipleDeliverySlotMsg2">Please choose delivery slots for each of these deliveries.</string>
     <string name="txtViewProducts">View products</string>
@@ -175,7 +175,9 @@
     <string name="qty">Qty</string>
     <string name="one">1</string>
     <string name="ADD">ADD</string>
-    <string name="UploadPrescription">Upload Prescription</string>
+    <string name="UploadPrescription">UPLOAD PRESCRIPTION</string>
+    <string name="imageMandatoryError">Prescription Image is mandatory</string>
+    <string name="imageUploading">Images are uploading....</string>
     <string name="addNewPrescription">New Prescription</string>
     <string name="patientName">Patient Name</string>
     <string name="doctorName">Doctor Name</string>
@@ -302,7 +304,9 @@
     <string name="enterVoucher">Enter your eVoucher code</string>
     <string name="viewAvailableVouchers">You have an active eVoucher!\nClick here to view</string>
     <string name="viewAllProducts">VIEW ALL</string>
-    <string name="connectionOffline">Cannot proceed with the operation. No network connection.\n Please check your internet connected</string>
+    <string name="largeImageError">Please upload smaller size image</string>
+    <string name="maxImageError">Can not upload more than 5 images</string>
+    <string name="connectionOffline">Can not proceed with the operation. No network connection.\n Please check your internet connected</string>
     <string name="info">Information</string>
     <string name="memberName">Member Name</string>
     <string name="contactHeading">Member</string>
@@ -424,13 +428,11 @@
     <string name="out_of_stock">Out of stock</string>
     <string name="out_of_stock_msg1">We are sorry, but based on our current stock availability, the following products
         are currently out of stock.</string>
-    <string name="out_of_stock_msg2">Click on the Proceed button to accept the available quantities or click on the
-        (eye icon here) to see similar products.</string>
     <string name="check_out_selected">Selected:</string>
     <string name="check_out_available">Available:</string>
     <string name="similar_products">Add Similar products</string>
     <string name="addSomeAvailProducts">Please add some available products.</string>
-    <string name="out_of_stock_msg3">We are sorry, but based on our current stock availability, we don\'t have all the
+    <string name="out_of_stock_msg2">We are sorry, but based on our current stock availability, we don\'t have all the
         quantities of the following products that you have requested.</string>
     <string name="deleteQCProduct">Delete Product</string>
     <string name="deviceOffline">Cannot proceed with the operation. No network connection.</string>

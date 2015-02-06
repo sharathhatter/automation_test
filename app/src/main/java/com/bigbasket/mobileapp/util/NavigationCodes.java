@@ -16,5 +16,7 @@ public interface NavigationCodes {
     public static final int PICK_CONTACT = 1331;
     public static final int CONTACT_NUMBER_SELECTED = 1332;
     public static final int REF_EMAIL_LIST = 99;
+    public static final int PRESCRIPTION_IMAGE_SAMPLING = 1735;
+
 
 }

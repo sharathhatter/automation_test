@@ -18,6 +18,7 @@ import com.bigbasket.mobileapp.interfaces.InfiniteProductListAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.interfaces.SortAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.product.FilteredOn;
 import com.bigbasket.mobileapp.model.product.Option;
 import com.bigbasket.mobileapp.model.product.Product;
@@ -30,12 +31,15 @@ import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
 import com.bigbasket.mobileapp.task.uiv3.ProductListTask;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListDoAddDeleteTask;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.ShoppingListNamesDialog;
 import com.bigbasket.mobileapp.view.uiv3.SortProductDialog;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public abstract class ProductListAwareFragment extends BaseFragment implements ProductListDataAware,
@@ -301,6 +305,16 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
         if (productListData != null) {
             productListData.setFilteredOn(filteredOn);
             loadProducts();
+        }
+        trackFilterAppliedEvent(filteredOn);
+    }
+
+    private void trackFilterAppliedEvent(ArrayList<FilteredOn> filteredOnArrayList) {
+        Map<String, String> eventAttribs = new HashMap<>();
+        for(FilteredOn filteredOn: filteredOnArrayList) {
+            eventAttribs.put(TrackEventkeys.FILTER_NAME,filteredOn.getFilterSlug());
+            eventAttribs.put(TrackEventkeys.FILTER_TYPE,filteredOn.getFilterType());
+            trackEvent(TrackingAware.FILTER_APPLIED, eventAttribs, getSourceName(), null);
         }
     }
 

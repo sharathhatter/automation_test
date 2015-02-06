@@ -59,7 +59,7 @@ public class ContactListActivity extends BackButtonActivity implements ContactNu
         FrameLayout base = (FrameLayout) findViewById(R.id.content_frame);
 
         final LayoutInflater inflater = getLayoutInflater();
-        View view = inflater.inflate(R.layout.uiv3_list_with_action, null);
+        View view = inflater.inflate(R.layout.contact_search_list, null);
         final ContactListAdapter contactListAdapter = new ContactListAdapter<>(this, cursor);
         EditText editTxtSearch = (EditText) view.findViewById(R.id.editTxtSearch);
 

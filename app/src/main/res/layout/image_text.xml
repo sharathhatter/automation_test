@@ -29,7 +29,7 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/itemImg"
         android:text="offers"
-        android:textColor="@color/uiv3_list_primary_text_color"
+        android:textColor="@color/uiv3_primary_text_color"
         android:textSize="@dimen/secondary_text_size" />
     </RelativeLayout>
 

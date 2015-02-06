@@ -38,6 +38,7 @@ import com.bigbasket.mobileapp.model.account.SocialAccount;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.facebook.Request;
 import com.facebook.Response;
@@ -540,6 +541,7 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
     }
 
     private void showForgotPasswordDialog() {
+        trackEvent(TrackingAware.FORGOT_PASSWORD_PWD_SHOWN, null);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View base = getLayoutInflater().inflate(R.layout.uiv3_editable_dialog, null);
 
@@ -586,6 +588,7 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
                 }
                 switch (forgotPasswordApiResponse.status) {
                     case Constants.OK:
+                        trackEvent(TrackingAware.FORGOT_PASSWORD_PWD_SUCCESS, null);
                         showToast(getString(R.string.newPasswordSent));
                         break;
                     default:

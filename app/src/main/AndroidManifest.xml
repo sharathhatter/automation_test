@@ -258,8 +258,7 @@
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.order.uiv3.UploadNewPrescriptionActivity"
-            android:configChanges="orientation|screenSize"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
+            android:configChanges="orientation|screenSize" />
 
         <provider
             android:name=".contentProvider.SearchSuggestionProvider"

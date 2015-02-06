@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:background="@color/white"
     android:layout_height="match_parent">
 
     <LinearLayout
@@ -9,7 +10,7 @@
         android:orientation="vertical"
         android:paddingLeft="@dimen/padding_normal"
         android:paddingRight="@dimen/padding_normal"
-        android:paddingTop="@dimen/padding_normal">
+        android:paddingTop="@dimen/padding_large">
 
         <TableLayout
             android:layout_width="match_parent"
@@ -94,75 +95,22 @@
                     android:textSize="@dimen/secondary_text_size" />
             </TableRow>
 
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-
-                <ImageView
-                    android:id="@+id/imgPicture"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginTop="5dp"
-                    android:contentDescription="@string/prescriptionImageList"
-                    android:src="@drawable/ic_person_grey600_24dp" />
-
-                <TextView
-                    android:id="@+id/txtPinValue"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:layout_marginLeft="@dimen/margin_normal"
-                    android:layout_toRightOf="@id/imgPicture"
-                    android:text="@string/imageUpload"
-                    android:textColor="@color/uiv3_primary_text_color"
-                    android:textSize="@dimen/secondary_text_size" />
-
-                <ImageView
-                    android:id="@+id/imgAttachment"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerInParent="true"
-                    android:layout_marginRight="@dimen/margin_normal"
-                    android:clickable="true"
-                    android:contentDescription="@string/editPin"
-                    android:onClick="onSelectImagesFromGallery"
-                    android:padding="@dimen/padding_mini"
-                    android:src="@drawable/ic_attach_file_grey600_36dp" />
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="@dimen/vertical_separator_line"
-                    android:layout_centerInParent="true"
-                    android:layout_marginRight="10dp"
-                    android:layout_toLeftOf="@id/imgAttachment"
-                    android:background="@color/strokeLine" />
-            </RelativeLayout>
-
         </TableLayout>
 
-        <TextView
-            android:id="@+id/txtViewImages"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="5dp"
-            android:text="@string/viewPrescriptionImage"
-            android:textColor="@color/link_color"
-            android:textSize="@dimen/secondary_text_size"
-            android:visibility="gone" />
 
         <Button
-            android:id="@+id/btnAddress"
-            style="@style/Uiv3BigGreenButton"
+            android:id="@+id/btnUploadPrescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_large"
+            android:background="@color/uiv3_action_bar_background"
+            android:paddingBottom="@dimen/padding_small"
+            android:paddingTop="@dimen/padding_small"
+            android:textColor="@android:color/white"
             android:onClick="OnUploadButtonClicked"
-            android:text="@string/UploadPrescription" />
+            android:text="@string/UploadPrescription"
+            android:textSize="@dimen/secondary_text_size" />
+
     </LinearLayout>
 
 </ScrollView>

@@ -1,6 +1,8 @@
 package com.bigbasket.mobileapp.activity.base;
 
+import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.app.ApplicationErrorReport;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -197,22 +199,35 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
 
     protected void onResume() {
         super.onResume();
-
-        PrescriptionImageAdapter prescriptionImageAdapter = new PrescriptionImageAdapter(getCurrentActivity());
-        if (!prescriptionImageAdapter.exists()) {
-            stopService(new Intent(this, UploadImageService.class));
-        }
         isActivitySuspended = false;
-
         initializeKonotor();
         moEHelper.onResume(this);
         Localytics.openSession();
         Localytics.upload();
+        prescriptionImageUploadHandler();
+    }
+
+    private void prescriptionImageUploadHandler(){
+        PrescriptionImageAdapter prescriptionImageAdapter = new PrescriptionImageAdapter(getCurrentActivity());
+        if (!prescriptionImageAdapter.exists()) {
+            stopService(new Intent(this, UploadImageService.class));
+        }else if(prescriptionImageAdapter.hasData() && !isMyServiceRunning(UploadImageService.class)){
+            startService(new Intent(getCurrentActivity(), UploadImageService.class));
+        }
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) return true;
+        }
+        return false;
     }
 
     public void launchKonotor() {
         AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());
         if (!authParameters.isAuthTokenEmpty()) {
+            trackEvent(TrackingAware.COMMUICATION_HUB_CLICKED, null);
             Konotor.getInstance(getApplicationContext()).launchFeedbackScreen(this);
         } else {
             showAlertDialog(null, getString(R.string.login_required),
@@ -376,13 +391,6 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
 
     protected void onNegativeButtonClicked(DialogInterface dialogInterface, int id, String sourceName) {
 
-    }
-
-    protected void removeViaInvoiceFlag() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.remove(Constants.VIA_INVOICE);
-        editor.commit();
     }
 
     public void triggerActivityResult(int requestCode, int resultCode, Intent data) {
@@ -649,6 +657,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         }
         if (authParameters.isLocalyticsEnabled()) {
             Localytics.tagEvent(eventName, eventAttribs);
+            //Localytics.tagScreen(""); //todo tag screen
         }
     }
 

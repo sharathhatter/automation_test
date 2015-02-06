@@ -190,13 +190,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:background="@drawable/grey_border"
-                    android:drawableRight="@drawable/ic_shopping_cart_grey600_18dp"
                     android:gravity="center"
                     android:paddingLeft="@dimen/padding_normal"
                     android:paddingRight="@dimen/padding_normal"
                     android:text="10 in "
                     android:textColor="@color/uiv3_primary_text_color"
                     android:textSize="@dimen/primary_text_size" />
+                <!-- android:drawableRight="@drawable/ic_shopping_cart_grey600_18dp"-->
 
                 <TextView
                     android:id="@+id/txtIncBasketQty"
@@ -236,7 +236,6 @@
                     android:layout_marginBottom="@dimen/margin_small"
                     android:background="@color/uiv3_action_bar_background"
                     android:drawablePadding="@dimen/padding_small"
-                    android:drawableRight="@drawable/ic_add_shopping_cart_white_18dp"
                     android:minHeight="0dp"
                     android:minWidth="0dp"
                     android:paddingBottom="@dimen/padding_mini"
@@ -246,6 +245,8 @@
                     android:text="@string/ADD"
                     android:textColor="@color/white"
                     android:textSize="@dimen/primary_text_size" />
+
+                <!-- android:drawableRight="@drawable/ic_add_shopping_cart_white_18dp"-->
 
                 <TextView
                     android:id="@+id/txtOutOfStockORNotForSale"

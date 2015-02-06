@@ -51,6 +51,21 @@ public interface TrackingAware {
     public static final String ORDER_ACTIVE_ORDERS_SHOWN = "Order.Active Orders Shown";
     public static final String ORDER_PAST_ORDERS = "Order.Past Orders";
 
+    public static final String FORGOT_PASSWORD_PWD_SHOWN = "MyAccount.ForgotPassword Shown";
+    public static final String FORGOT_PASSWORD_PWD_SUCCESS = "MyAccount.ForgotPassword Success";
+
+    public static final String NOW_AT_BB = "Browse.NowAtBigBasketShown";
+    public static final String NEW_AT_BB = "Browse.NewAtBigBasketShown";
+    public static final String BUNDLE_PACK = "Browse.BundlePackShown";
+
+    public static final String FILTER_APPLIED = "Filter.Applied";
+
+    public static final String HOME_CITY_SELECTION ="HomePage.CitySelection";
+    public static final String HOME_CHANGE_CITY ="HomePage.ChangeCity";
+
+    public static final String RATE_APP = "MyAccount.RateThisApp";
+    public static final String COMMUICATION_HUB_CLICKED = "MyAccount.CommunicationHubClicked";
+
 
     public static final String MY_ACCOUNT_CHANGE_PASSWD_SELECTED = "MyAccount.Change Password Selected";
     public static final String MY_ACCOUNT_CHANGE_PASSWD_SUCCESS = "MyAccount.Change Password Success";

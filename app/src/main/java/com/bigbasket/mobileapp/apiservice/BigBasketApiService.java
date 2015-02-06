@@ -34,20 +34,22 @@ import com.bigbasket.mobileapp.apiservice.models.response.PromoSetProductsApiRes
 import com.bigbasket.mobileapp.apiservice.models.response.PromoSummaryApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.SubCategoryApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.UpdateProductQtyResponseModel;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateProfileOldApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.UpdateReservationResponseModel;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateVersionInfoApiResponseContent;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.account.CurrentWalletBalance;
 import com.bigbasket.mobileapp.model.account.UpdatePin;
 import com.bigbasket.mobileapp.model.account.WalletDataItem;
 import com.bigbasket.mobileapp.model.account.spendTrends.SpendTrends;
+import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.order.COReserveQuantity;
 import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.model.order.OrderSummary;
 import com.bigbasket.mobileapp.model.order.PrescriptionId;
 import com.bigbasket.mobileapp.model.product.ProductListData;
-import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.util.Constants;
 
 import java.util.ArrayList;
@@ -127,7 +129,7 @@ public interface BigBasketApiService {
                             Callback<ApiResponse<PrescriptionId>> prescriptionId);
 
     @FormUrlEncoded
-    @POST("/upload-prescription/")
+    @POST("/upload-prescription-image-chunk/")
     void uploadPrescriptionImages(@Field(Constants.PHARMA_PRESCRIPTION_ID) String prescriptionId,
                                   @Field(Constants.CHUNK_NUMBER) String chunkNumber,
                                   @Field(Constants.MAX_CHUNKS) String maxChunk,
@@ -332,7 +334,7 @@ public interface BigBasketApiService {
     @POST("/co-update-reservation/")
     void coUpdateReservation(@Field(Constants.P_ORDER_ID) String potentialOrderId,
                              @Field(Constants.ITEMS) String items,
-                             Callback<OldBaseApiResponse> coUpdateReservationApiResponseCallback);
+                             Callback<UpdateReservationResponseModel<UpdateProductQtyResponseModel>> coUpdateReservationApiResponseCallback);
 
     @FormUrlEncoded
     @POST("/co-reserve-quantity/")

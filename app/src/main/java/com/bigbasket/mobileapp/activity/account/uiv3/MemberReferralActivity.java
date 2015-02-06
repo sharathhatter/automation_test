@@ -32,7 +32,6 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.MemberReferralUtil;
 import com.bigbasket.mobileapp.util.NavigationCodes;
-import com.bigbasket.mobileapp.view.uiv3.ReferralTCDialog;
 import com.facebook.UiLifecycleHelper;
 
 import java.util.ArrayList;
@@ -71,8 +70,6 @@ public class MemberReferralActivity extends BackButtonActivity {
     @Override
     public void onStop() {
         super.onStop();
-//        mPackageMonitor.register(this, false);
-//        this.unregisterReceiver(getCurrentActivity());
         uiHelper.onStop();
     }
 
@@ -435,7 +432,7 @@ public class MemberReferralActivity extends BackButtonActivity {
         addToMainLayout(productDetailFragment);
     }
 
-    public static class TermAndConditionDialog extends ReferralTCDialog {
+    public static class TermAndConditionDialog extends com.bigbasket.mobileapp.view.uiv3.TermAndConditionDialog {
 
         public TermAndConditionDialog() {
         }

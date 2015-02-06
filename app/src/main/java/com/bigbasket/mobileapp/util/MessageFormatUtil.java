@@ -92,7 +92,7 @@ public class MessageFormatUtil {
 
                 @Override
                 public void updateDrawState(TextPaint textPaint) {
-                    textPaint.setColor(currentActivity.getResources().getColor(R.color.link_color));
+                    textPaint.setColor(textPaint.linkColor);
                     textPaint.setUnderlineText(false); // set to false to remove underline
                 }
             }, idx1, idx2, 0);
@@ -132,7 +132,7 @@ public class MessageFormatUtil {
 
                 @Override
                 public void updateDrawState(TextPaint textPaint) {
-                    textPaint.setColor(currentActivity.getResources().getColor(R.color.link_color));
+                    textPaint.setColor(textPaint.linkColor);
                     textPaint.setUnderlineText(false); // set to false to remove underline
                 }
             }, idx1, idx2, 0);

@@ -28,6 +28,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.BrowseCategoryApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.CitySpecificAppSettings;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -193,6 +194,7 @@ public class StartActivity extends BaseActivity {
             }
         });
         layoutSpinnerAndWhyLink.setVisibility(View.VISIBLE);
+        trackEvent(TrackingAware.HOME_CITY_SELECTION, null);
     }
 
     private void doRegisterDevice(final City city) {

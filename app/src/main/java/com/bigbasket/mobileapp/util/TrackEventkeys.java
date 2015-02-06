@@ -16,6 +16,16 @@ public final class TrackEventkeys {
     public static final String QUERY = "query";
     public static final String DATE_FROM = "date from";
     public static final String DATE_TO = "date to";
+    public static final String TOTAL_NO_ITEMS = "Total items";
+    public static final String TOTAL_VALUE = "Total value";
+
+    public static final String FILTER_NAME = "name";
+    public static final String FILTER_TYPE = "type";
+
+    public static final String TOTAL_ITEMS_IN_BASKET = "Total basket items";
+    public static final String TOTAL_BASKET_VALUE = "Total basket values";
+    public static final String TOTAL_BASKET_SAVING = "Total basket saving";
+    public static final String VIEW_BASKET_DATA = "Basket Data";
 
     public static final String SHOPPING_LIST_NAME = "shopping list name";
     public static final String ADD_ALL_PRODUCTS = "add_all";

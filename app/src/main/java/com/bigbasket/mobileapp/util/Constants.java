@@ -59,6 +59,7 @@ public class Constants {
     public static final String SHOPPING_LIST_IS_SYSTEM = "is_system";
     public static final String SYSTEM = "system";
     public static final String SLUG = "slug";
+    public static final String TRACK_EVENT_NAME = "name";
 
     public static final String PRODUCT_SORT_OPTION = "sort_opts";
 
@@ -385,6 +386,8 @@ public class Constants {
     public static final String RULE_VALIDATION_ERROR_NOT_PASSED = "ruleValidationErrorNotPassed";
     public static final String GO_TO_HOME_STRING = "gotoHome";
     public static final String RULE_MAX_WEIGHT_LIMIT = "rule_max_wt_limit";
+    public static final String TC_DIALOG = "tc_dailog";
+    public static final String PRESCRIPTION_BYTE_ARRAY = "prescription_byte_array";
 
 
     public static final String VALIDATE_NUMBER_NUMBER = "validateNumber";
