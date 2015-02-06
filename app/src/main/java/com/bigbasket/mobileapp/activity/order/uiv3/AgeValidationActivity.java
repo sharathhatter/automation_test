@@ -12,7 +12,6 @@ import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -73,14 +72,14 @@ public class AgeValidationActivity extends BackButtonActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         isActivitySuspended = false;
         if (resultCode == Constants.PRESCRIPTION_UPLOADED)
-            goToQCPage((COReserveQuantity)data.getParcelableExtra(Constants.CO_RESERVE_QTY_DATA));
-        else if(resultCode == Constants.PRESCRIPTION_CHOSEN)
-            goToQCPage((COReserveQuantity)data.getParcelableExtra(Constants.CO_RESERVE_QTY_DATA));
+            goToQCPage((COReserveQuantity) data.getParcelableExtra(Constants.CO_RESERVE_QTY_DATA));
+        else if (resultCode == Constants.PRESCRIPTION_CHOSEN)
+            goToQCPage((COReserveQuantity) data.getParcelableExtra(Constants.CO_RESERVE_QTY_DATA));
         else
             super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void goToQCPage(COReserveQuantity coReserveQuantity1){
+    private void goToQCPage(COReserveQuantity coReserveQuantity1) {
         Intent intent = new Intent(getCurrentActivity(), CheckoutQCActivity.class);
         intent.putExtra(Constants.CO_RESERVE_QTY_DATA, coReserveQuantity1);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);

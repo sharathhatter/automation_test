@@ -43,7 +43,6 @@ import com.bigbasket.mobileapp.model.account.CurrentWalletBalance;
 import com.bigbasket.mobileapp.model.account.UpdatePin;
 import com.bigbasket.mobileapp.model.account.WalletDataItem;
 import com.bigbasket.mobileapp.model.account.spendTrends.SpendTrends;
-import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.order.COReserveQuantity;
 import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;

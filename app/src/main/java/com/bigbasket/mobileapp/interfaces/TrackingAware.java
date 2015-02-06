@@ -60,8 +60,8 @@ public interface TrackingAware {
 
     public static final String FILTER_APPLIED = "Filter.Applied";
 
-    public static final String HOME_CITY_SELECTION ="HomePage.CitySelection";
-    public static final String HOME_CHANGE_CITY ="HomePage.ChangeCity";
+    public static final String HOME_CITY_SELECTION = "HomePage.CitySelection";
+    public static final String HOME_CHANGE_CITY = "HomePage.ChangeCity";
 
     public static final String RATE_APP = "MyAccount.RateThisApp";
     public static final String COMMUICATION_HUB_CLICKED = "MyAccount.CommunicationHubClicked";

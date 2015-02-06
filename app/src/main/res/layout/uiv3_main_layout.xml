@@ -19,19 +19,19 @@
          with the content view. -->
 
     <LinearLayout
-        android:orientation="vertical"
+        android:id="@+id/left_drawer"
         android:layout_width="@dimen/main_nav_width"
         android:layout_height="match_parent"
-        android:id="@+id/left_drawer"
-        android:clickable="true"
         android:layout_gravity="left"
-        android:background="@color/white">
+        android:background="@color/white"
+        android:clickable="true"
+        android:orientation="vertical">
 
         <include layout="@layout/uiv3_left_nav_header" />
 
-        <ExpandableListView
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/listNavigation"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/listNavigation" />
+            android:layout_height="wrap_content" />
     </LinearLayout>
 </com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout>

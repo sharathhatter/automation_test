@@ -32,7 +32,6 @@ import com.bigbasket.mobileapp.apiservice.models.response.CartGetApiResponseCont
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.AnnotationInfo;
@@ -52,7 +51,6 @@ import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -165,7 +163,7 @@ public class ShowCartFragment extends BaseFragment {
         }
     }
 
-    private void logViewBasketEvent(CartSummary cartSummary, Map<String, String> eventAttribs){// todo event log for view basket
+    private void logViewBasketEvent(CartSummary cartSummary, Map<String, String> eventAttribs) {// todo event log for view basket
         eventAttribs.put(TrackEventkeys.TOTAL_ITEMS_IN_BASKET, String.valueOf(cartSummary.getNoOfItems()));
         eventAttribs.put(TrackEventkeys.TOTAL_BASKET_VALUE, String.valueOf(cartSummary.getTotal()));
         eventAttribs.put(TrackEventkeys.TOTAL_BASKET_SAVING, String.valueOf(cartSummary.getSavings()));
@@ -195,8 +193,8 @@ public class ShowCartFragment extends BaseFragment {
         for (CartItemList cartItemInfoArray : cartItemLists) {
             CartItemHeader cartItemHeader = new CartItemHeader();
             cartItemHeaderList.add(cartItemHeader);
-            eventAttribs.put(cartItemInfoArray.getTopCatName()+" Items", String.valueOf(cartItemInfoArray.getTopCatItems()));
-            eventAttribs.put(cartItemInfoArray.getTopCatName()+ " Value", String.valueOf(cartItemInfoArray.getTopCatTotal()));
+            eventAttribs.put(cartItemInfoArray.getTopCatName() + " Items", String.valueOf(cartItemInfoArray.getTopCatItems()));
+            eventAttribs.put(cartItemInfoArray.getTopCatName() + " Value", String.valueOf(cartItemInfoArray.getTopCatTotal()));
             cartItemHeader.setTopCatName(cartItemInfoArray.getTopCatName());
             cartItemHeader.setTopCatItems(cartItemInfoArray.getTopCatItems());
             cartItemHeader.setTopCatTotal(cartItemInfoArray.getTopCatTotal());

@@ -38,7 +38,6 @@ import com.bigbasket.mobileapp.model.account.SocialAccount;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.NavigationCodes;
-import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.facebook.Request;
 import com.facebook.Response;

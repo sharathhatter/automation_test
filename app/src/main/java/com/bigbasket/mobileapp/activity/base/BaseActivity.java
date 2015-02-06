@@ -2,7 +2,6 @@ package com.bigbasket.mobileapp.activity.base;
 
 import android.app.ActivityManager;
 import android.app.AlertDialog;
-import android.app.ApplicationErrorReport;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -207,11 +206,11 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         prescriptionImageUploadHandler();
     }
 
-    private void prescriptionImageUploadHandler(){
+    private void prescriptionImageUploadHandler() {
         PrescriptionImageAdapter prescriptionImageAdapter = new PrescriptionImageAdapter(getCurrentActivity());
         if (!prescriptionImageAdapter.exists()) {
             stopService(new Intent(this, UploadImageService.class));
-        }else if(prescriptionImageAdapter.hasData() && !isMyServiceRunning(UploadImageService.class)){
+        } else if (prescriptionImageAdapter.hasData() && !isMyServiceRunning(UploadImageService.class)) {
             startService(new Intent(getCurrentActivity(), UploadImageService.class));
         }
     }

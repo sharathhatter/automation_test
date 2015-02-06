@@ -98,7 +98,9 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                                     ShoppingListDetail shoppingListDetail = getShoppingListDetailsApiResponse.apiResponseContent.shoppingListDetail;
                                     if (shoppingListDetail != null) {
                                         ArrayList<Product> products = shoppingListDetail.getProducts();
-                                        ((ProductListDialogAware) context).showDialog(products, products.size(), null, true, Constants.SHOPPING_LISTS);
+                                        String title = section.getTitle() != null ? section.getTitle().getText() : null;
+                                        ((ProductListDialogAware) context).showDialog(title, products, products.size(), getShoppingListDetailsApiResponse.apiResponseContent.baseImgUrl,
+                                                true, Constants.SHOPPING_LISTS);
                                     }
                                     break;
                                 default:
@@ -248,7 +250,9 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
 
     @Override
     public void updateData() {
-        ((ProductListDialogAware) context).showDialog(productListData.getProducts(), productListData.getProductCount(),
+        String title = section.getTitle() != null ? section.getTitle().getText() : null;
+        ((ProductListDialogAware) context).showDialog(title,
+                productListData.getProducts(), productListData.getProductCount(),
                 productListData.getBaseImgUrl(), true, DestinationInfo.PRODUCT_LIST);
     }
 

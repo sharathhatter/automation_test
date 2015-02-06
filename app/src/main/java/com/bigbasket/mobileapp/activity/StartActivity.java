@@ -20,18 +20,16 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
-import com.bigbasket.mobileapp.adapter.product.CategoryAdapter;
-import com.bigbasket.mobileapp.adapter.product.ShopInShopAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
-import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.BrowseCategoryApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
+import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
-import com.bigbasket.mobileapp.model.CitySpecificAppSettings;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
+import com.bigbasket.mobileapp.model.section.SectionData;
+import com.bigbasket.mobileapp.task.GetDynamicPageTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
@@ -49,7 +47,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class StartActivity extends BaseActivity {
+public class StartActivity extends BaseActivity implements DynamicScreenAware {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -85,50 +83,17 @@ public class StartActivity extends BaseActivity {
     }
 
     private void loadNavigation() {
-        requestTopCategories();
+        getMainMenu();
     }
 
-    private void requestTopCategories() {
-        if (checkInternetConnection()) {
-            final CategoryAdapter categoryAdapter = new CategoryAdapter(this);
+    private void getMainMenu() {
+        new GetDynamicPageTask<>(this, "main-menu", false, true).startTask();
 
-            if (categoryAdapter.isPossiblyStale(CategoryAdapter.TOP_CATEGORY_TIMEOUT_PREF_KEY,
-                    CategoryAdapter.CATEGORY_TIMEOUT_IN_MINS)) {
-                BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
-                String version = categoryAdapter.getCategoriesVersion();
-                showProgressDialog(getString(R.string.please_wait));
-                bigBasketApiService.getMainMenu(version, new Callback<ApiResponse<BrowseCategoryApiResponseContent>>() {
-                    @Override
-                    public void success(ApiResponse<BrowseCategoryApiResponseContent> browseCategoryApiResponse, Response response) {
-                        hideProgressDialog();
-                        categoryAdapter.setLastFetchedTime(CategoryAdapter.TOP_CATEGORY_TIMEOUT_PREF_KEY);
-                        BrowseCategoryApiResponseContent browseCategoryApiResponseContent =
-                                browseCategoryApiResponse.apiResponseContent;
-                        if (!browseCategoryApiResponseContent.aOk) {
-                            categoryAdapter.insert(browseCategoryApiResponseContent.topCategoryModels,
-                                    browseCategoryApiResponseContent.version);
-                        }
-                        if (browseCategoryApiResponse.apiResponseContent.shops != null) {
-                            ShopInShopAdapter shopInShopAdapter = new ShopInShopAdapter(getCurrentActivity());
-                            shopInShopAdapter.deleteAll();
-                            shopInShopAdapter.insertAll(browseCategoryApiResponse.apiResponseContent.shops);
-                        }
-                        CitySpecificAppSettings.setHasBundlePack(browseCategoryApiResponse.apiResponseContent.hasBundlePack, getCurrentActivity());
-                        loadHomePage();
-                    }
+    }
 
-                    @Override
-                    public void failure(RetrofitError error) {
-                        hideProgressDialog();
-                        handler.handleRetrofitError(error, true);
-                    }
-                });
-            } else {
-                loadHomePage();
-            }
-        } else {
-            handler.sendOfflineError();
-        }
+    @Override
+    public void onDynamicScreenSuccess(String screenName, SectionData sectionData) {
+        loadHomePage();
     }
 
     private void loadHomePage() {
@@ -276,7 +241,7 @@ public class StartActivity extends BaseActivity {
                 loadCities();
             }
         } else if (resultCode == NavigationCodes.GO_TO_HOME) {
-            loadNavigation();
+            loadHomePage();
         } else {
             finish();
         }
@@ -300,5 +265,15 @@ public class StartActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
+    }
+
+    @Override
+    public void onDynamicScreenFailure(RetrofitError error) {
+        handler.handleRetrofitError(error, true);
+    }
+
+    @Override
+    public void onDynamicScreenFailure(int error, String msg) {
+        handler.sendEmptyMessage(error, msg, true);
     }
 }

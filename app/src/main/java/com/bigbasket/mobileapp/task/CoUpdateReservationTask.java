@@ -7,11 +7,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
-import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateProductQtyResponseModel;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateReservationResponseModel;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;

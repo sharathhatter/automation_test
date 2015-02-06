@@ -66,9 +66,7 @@
     <dimen name="vertical_separator_line">25dp</dimen>
     <dimen name="bar_chart_height">350dp</dimen>
     <dimen name="fulfillment_image_size">12dp</dimen>
-    <dimen name="product_carousel_height">200dp</dimen>
-    <dimen name="product_carousel_width">160dp</dimen>
-    <dimen name="carousel_height">180dp</dimen>
+    <dimen name="carousel_height">200dp</dimen>
     <dimen name="carousel_width">160dp</dimen>
     <dimen name="carousel_img_height">120dp</dimen>
     <dimen name="carousel_img_width">120dp</dimen>

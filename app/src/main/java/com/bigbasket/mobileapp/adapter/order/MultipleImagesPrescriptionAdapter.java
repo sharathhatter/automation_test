@@ -28,7 +28,7 @@ public class MultipleImagesPrescriptionAdapter<T> extends BaseAdapter {
                                              ArrayList<Object> imageUploadModelArrayList) {
         this.ctx = ctx;
         this.imageUploadModelArrayList = imageUploadModelArrayList;
-        this.inflater = (LayoutInflater) ((ActivityAware)ctx).getCurrentActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.inflater = (LayoutInflater) ((ActivityAware) ctx).getCurrentActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     public int getCount() {

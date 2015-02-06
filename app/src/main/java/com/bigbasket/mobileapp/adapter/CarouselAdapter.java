@@ -30,13 +30,15 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
     protected HashMap<Integer, Renderer> rendererHashMap;
     protected Typeface typeface;
     protected T context;
-    protected int layoutId;
+
+    private static final int VIEW_TYPE_TEXT_IMG = 0;
+    private static final int VIEW_TYPE_TEXT_DESC = 1;
+    private static final int VIEW_TYPE_TEXT_ONLY = 2;
 
     public CarouselAdapter(T context, Section section,
-                           HashMap<Integer, Renderer> rendererHashMap, int layoutId, Typeface typeface) {
+                           HashMap<Integer, Renderer> rendererHashMap, Typeface typeface) {
         this.section = section;
         this.context = context;
-        this.layoutId = layoutId;
         this.sectionItems = section.getSectionItems();
         this.rendererHashMap = rendererHashMap;
         this.typeface = typeface;
@@ -45,21 +47,43 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = ((ActivityAware) context).getCurrentActivity().getLayoutInflater();
-        View row = inflater.inflate(layoutId, parent, false);
-        return new ViewHolder(row, typeface);
+        switch (viewType) {
+            case VIEW_TYPE_TEXT_IMG:
+                View row = inflater.inflate(R.layout.uiv3_carousel_row, parent, false);
+                return new ViewHolder(row, typeface);
+            case VIEW_TYPE_TEXT_DESC:
+                row = inflater.inflate(R.layout.uiv3_text_desc_carousel_row, parent, false);
+                return new ViewHolder(row, typeface);
+            default:
+                row = inflater.inflate(R.layout.uiv3_text_carousel_row, parent, false);
+                return new ViewHolder(row, typeface);
+        }
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         ViewHolder holder = (ViewHolder) viewHolder;
         SectionItem sectionItem = sectionItems.get(position);
-        TextView txtTitle = holder.getTxtTitle();
-        TextView txtDescription = holder.getTxtDescription();
-        ImageView imgInRow = holder.getImgInRow();
-        LinearLayout layoutCarouselContainer = holder.getLayoutCarouselContainer();
 
-        setSectionTextView(sectionItem.getTitle(), txtTitle);
-        setSectionTextView(sectionItem.getDescription(), txtDescription);
+        SectionTextItem titleTextItem = sectionItem.getTitle();
+        SectionTextItem descTextItem = sectionItem.getDescription();
+
+        if (titleTextItem != null && !TextUtils.isEmpty(titleTextItem.getText())) {
+            TextView txtTitle = holder.getTxtTitle();
+            setSectionTextView(sectionItem.getTitle(), txtTitle);
+        }
+
+        if (descTextItem != null && !TextUtils.isEmpty(descTextItem.getText())) {
+            TextView txtDescription = holder.getTxtDescription();
+            setSectionTextView(sectionItem.getDescription(), txtDescription);
+        }
+
+        if (!TextUtils.isEmpty(sectionItem.getImage())) {
+            ImageView imgInRow = holder.getImgInRow();
+            ImageLoader.getInstance().displayImage(sectionItem.getImage(), imgInRow);
+        }
+
+        LinearLayout layoutCarouselContainer = holder.getLayoutCarouselContainer();
 
         Renderer sectionRenderer = rendererHashMap != null ?
                 rendererHashMap.get(sectionItem.getRenderingId()) : null;
@@ -72,13 +96,6 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
                     layoutCarouselContainer.setPadding(margin, 0, 0, 0);
                 }
             }
-        }
-
-        if (!TextUtils.isEmpty(sectionItem.getImage())) {
-            imgInRow.setVisibility(View.VISIBLE);
-            ImageLoader.getInstance().displayImage(sectionItem.getImage(), imgInRow);
-        } else {
-            imgInRow.setVisibility(View.GONE);
         }
     }
 
@@ -93,6 +110,26 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
             if (renderer != null) {
                 renderer.setRendering(txtVw, 0, Renderer.PADDING);
             }
+        }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        SectionItem sectionItem = sectionItems.get(position);
+        SectionTextItem titleTextItem = sectionItem.getTitle();
+        SectionTextItem descTextItem = sectionItem.getDescription();
+
+        boolean isTitlePresent = titleTextItem != null && !TextUtils.isEmpty(titleTextItem.getText());
+        boolean isDescPresent = descTextItem != null && !TextUtils.isEmpty(descTextItem.getText());
+        boolean isImgPresent = !TextUtils.isEmpty(sectionItem.getImage());
+
+        if (isTitlePresent && isDescPresent) {
+            if (isImgPresent) {
+                return VIEW_TYPE_TEXT_IMG;
+            }
+            return VIEW_TYPE_TEXT_DESC;
+        } else {
+            return VIEW_TYPE_TEXT_ONLY;
         }
     }
 
