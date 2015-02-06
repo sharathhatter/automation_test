@@ -3,7 +3,6 @@ package com.bigbasket.mobileapp.fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -28,9 +27,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.UpdateVersionInfoApiRe
 import com.bigbasket.mobileapp.fragment.base.BaseSectionFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
-import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.model.section.Renderer;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.task.GetCartCountTask;
@@ -193,22 +190,8 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         }
     }
 
-    private void parseRendererColors() {
-        if (mSectionData == null || mSectionData.getRenderersMap() == null) return;
-        int defaultTextColor = getResources().getColor(R.color.uiv3_secondary_text_color);
-        for (Renderer renderer : mSectionData.getRenderersMap().values()) {
-            if (!TextUtils.isEmpty(renderer.getBackgroundColor())) {
-                renderer.setNativeBkgColor(UIUtil.parseAsNativeColor(renderer.getBackgroundColor(), Color.WHITE));
-            }
-            if (!TextUtils.isEmpty(renderer.getTextColor())) {
-                renderer.setNativeTextColor(UIUtil.parseAsNativeColor(renderer.getTextColor(), defaultTextColor));
-            }
-        }
-    }
-
     private void renderHomePage() {
         LinearLayout contentView = getContentView();
-        parseRendererColors();
         if (contentView == null || mSectionData == null || mSectionData.getSections() == null
                 || mSectionData.getSections().size() == 0) return;
         // Filter sections
@@ -231,8 +214,10 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         LinearLayout homePageLayout = new LinearLayout(getActivity());
         homePageLayout.setOrientation(LinearLayout.VERTICAL);
 
-        displaySections(homePageLayout);
-        contentScrollView.addView(homePageLayout);
+        View sectionView = getSectionView();
+        if (sectionView != null) {
+            contentScrollView.addView(sectionView);
+        }
 
         contentView.removeAllViews();
         contentView.addView(contentScrollView);
@@ -304,10 +289,6 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
 
         public HomePageHandler(T ctx) {
             super(ctx);
-        }
-
-        public HomePageHandler(T ctx, MarketPlace mMarketPlace) {
-            super(ctx, mMarketPlace);
         }
 
         @Override

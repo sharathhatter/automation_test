@@ -34,11 +34,13 @@ public class ProductListDialogFragment extends DialogFragment {
     private ArrayList<Product> products;
     private int totalProductCount;
     private String baseImgUrl;
+    private String title;
     private int normalListCount;
     private int tabletListCount;
 
-    public static ProductListDialogFragment newInstance(ArrayList<Product> products, int productCount,
-                                                        String baseImgUrl, int normalListCount,
+    public static ProductListDialogFragment newInstance(@Nullable String title,
+                                                        ArrayList<Product> products, int productCount,
+                                                        @Nullable String baseImgUrl, int normalListCount,
                                                         int tabletListCount) {
         ProductListDialogFragment productListDialogFragment = new ProductListDialogFragment();
         Bundle args = new Bundle();
@@ -46,6 +48,9 @@ public class ProductListDialogFragment extends DialogFragment {
         args.putInt(Constants.PRODUCT_COUNT, productCount);
         if (!TextUtils.isEmpty(baseImgUrl)) {
             args.putString(Constants.BASE_IMG_URL, baseImgUrl);
+        }
+        if (!TextUtils.isEmpty(title)) {
+            args.putString(Constants.TITLE, title);
         }
         args.putInt(Constants.NORMAL_COUNT, normalListCount);
         args.putInt(Constants.TABLET_COUNT, tabletListCount);
@@ -61,10 +66,14 @@ public class ProductListDialogFragment extends DialogFragment {
         baseImgUrl = getArguments().getString(Constants.BASE_IMG_URL);
         normalListCount = getArguments().getInt(Constants.NORMAL_COUNT);
         tabletListCount = getArguments().getInt(Constants.TABLET_COUNT);
+        title = getArguments().getString(Constants.TITLE);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        if (!TextUtils.isEmpty(title) && getDialog() != null) {
+            getDialog().setTitle(title);
+        }
         View view = inflater.inflate(R.layout.uiv3_product_list_dialog, container, false);
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         UIUtil.configureRecyclerView(recyclerView, getActivity(), 2, 2);
@@ -113,7 +122,7 @@ public class ProductListDialogFragment extends DialogFragment {
             txtViewAllProducts.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((ProductListDialogAware) getActivity()).showDialog(products,
+                    ((ProductListDialogAware) getActivity()).showDialog(title, products,
                             totalProductCount, baseImgUrl, false, getTag());
                     dismiss();
                 }

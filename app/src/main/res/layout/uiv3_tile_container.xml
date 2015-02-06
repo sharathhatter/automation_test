@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/txtListTitle"
@@ -14,11 +15,9 @@
         android:textColor="@color/uiv3_primary_text_color"
         android:textSize="@dimen/large_text_size" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/horizontalRecyclerView"
+    <LinearLayout
+        android:id="@+id/layoutTileContainer"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/product_carousel_height"
-        android:layout_below="@id/txtListTitle"
-        android:background="@android:color/transparent"
-        android:scrollbarStyle="insideOverlay" />
-</RelativeLayout>
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" />
+</LinearLayout>

@@ -1,7 +1,8 @@
 package com.bigbasket.mobileapp.fragment.base;
 
 import android.os.Bundle;
-import android.widget.LinearLayout;
+import android.support.annotation.Nullable;
+import android.view.View;
 
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.util.Constants;
@@ -11,9 +12,10 @@ public abstract class BaseSectionFragment extends BaseFragment {
 
     protected SectionData mSectionData;
 
-    public void displaySections(LinearLayout mainLayout) {
+    @Nullable
+    public View getSectionView() {
         SectionView sectionView = new SectionView(getActivity(), faceRobotoRegular, mSectionData);
-        sectionView.displaySections(mainLayout);
+        return sectionView.getView();
     }
 
     protected void retainSectionState(Bundle outState) {

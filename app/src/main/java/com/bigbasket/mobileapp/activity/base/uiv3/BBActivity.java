@@ -819,16 +819,16 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
     }
 
     @Override
-    public void showDialog(ArrayList<Product> products, int productCount, String baseImgUrl,
+    public void showDialog(String title, ArrayList<Product> products, int productCount, String baseImgUrl,
                            boolean asDialog, String tagName) {
         if (asDialog) {
             ProductListDialogFragment productListDialogFragment = ProductListDialogFragment.
-                    newInstance(products, productCount, baseImgUrl, 10, 20);
+                    newInstance(title, products, productCount, baseImgUrl, 10, 20);
             productListDialogFragment.show(getSupportFragmentManager(),
                     Constants.SHOPPING_LISTS);
         } else {
             ProductListDialogFragment productListDialogFragment = ProductListDialogFragment.
-                    newInstance(products, productCount, baseImgUrl, ProductListDialogFragment.SHOW_ALL,
+                    newInstance(title, products, productCount, baseImgUrl, ProductListDialogFragment.SHOW_ALL,
                             ProductListDialogFragment.SHOW_ALL);
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.add(R.id.content_frame, productListDialogFragment, tagName);
