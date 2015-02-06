@@ -101,11 +101,16 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
     private BBDrawerLayout mDrawerLayout;
     private String currentFragmentTag;
     private TextView mTextCartCount;
+    private RecyclerView mNavRecyclerView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getMainLayout());
+
+        mNavRecyclerView = (RecyclerView) findViewById(R.id.listNavigation);
+        mNavRecyclerView.setHasFixedSize(false);
+        mNavRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         handler = new BigBasketMessageHandler<>(this);
         mTitle = mDrawerTitle = getTitle().toString();
@@ -468,7 +473,9 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                     showAlertDialog(null,
                             "Please sign-in to view your shopping lists", NavigationCodes.GO_TO_LOGIN);
                 } else {
-                    addToMainLayout(new ShoppingListFragment());
+                    Intent intent = new Intent(this, BackButtonActivity.class);
+                    intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_LANDING);
+                    startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 }
                 return true;
             case R.id.action_smart_basket:
@@ -782,14 +789,10 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             txtNavSalutation.setText("Welcome Guest");
         }
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.listNavigation);
-        recyclerView.setHasFixedSize(false);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
         ArrayList<SectionNavigationItem> sectionNavigationItems = getSectionNavigationItems();
 
         NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoRegular, sectionNavigationItems);
-        recyclerView.setAdapter(navigationAdapter);
+        mNavRecyclerView.setAdapter(navigationAdapter);
 
     }
 

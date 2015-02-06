@@ -18,15 +18,6 @@
         android:paddingRight="@dimen/padding_small"
         android:paddingTop="@dimen/padding_small">
 
-        <ImageView
-            android:id="@+id/imgAddressAdditionalAction"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginTop="@dimen/margin_mini"
-            android:contentDescription="@string/more"
-            android:src="@drawable/ic_more_vert_grey600_36dp" />
-
         <CheckBox
             android:id="@+id/chkIsAddrSelected"
             android:layout_width="wrap_content"
@@ -34,7 +25,6 @@
             android:layout_alignParentLeft="true"
             android:layout_marginRight="@dimen/margin_small"
             android:layout_marginTop="@dimen/margin_mini"
-            android:layout_toLeftOf="@id/imgAddressAdditionalAction"
             android:clickable="false"
             android:focusable="false"
             android:text="@string/defaultAddress"
@@ -48,7 +38,6 @@
             android:layout_below="@+id/chkIsAddrSelected"
             android:layout_marginRight="@dimen/margin_mini"
             android:layout_marginTop="@dimen/margin_mini"
-            android:layout_toLeftOf="@id/imgAddressAdditionalAction"
             android:singleLine="false"
             android:textColor="@color/uiv3_primary_text_color"
             android:textSize="@dimen/primary_text_size" />
@@ -61,7 +50,6 @@
             android:layout_below="@id/txtMemberName"
             android:layout_marginRight="@dimen/margin_mini"
             android:layout_marginTop="@dimen/margin_small"
-            android:layout_toLeftOf="@id/imgAddressAdditionalAction"
             android:singleLine="false"
             android:textColor="@color/uiv3_primary_text_color"
             android:textSize="@dimen/secondary_text_size" />
@@ -75,7 +63,6 @@
             android:layout_marginBottom="@dimen/margin_mini"
             android:layout_marginRight="@dimen/margin_mini"
             android:layout_marginTop="@dimen/margin_small"
-            android:layout_toLeftOf="@id/imgAddressAdditionalAction"
             android:drawableLeft="@drawable/ic_call_grey600_18dp"
             android:drawablePadding="@dimen/padding_mini"
             android:singleLine="false"

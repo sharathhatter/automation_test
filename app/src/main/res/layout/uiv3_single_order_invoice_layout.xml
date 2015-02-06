@@ -56,20 +56,5 @@
             android:text="@string/viewInvoice"
             android:id="@+id/lblViewInvoice" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/uiv3_divider_color"
-            android:id="@+id/viewLocateOnMapSeparator" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/secondary_text_size"
-            android:padding="@dimen/padding_normal"
-            android:textColor="@color/uiv3_action_bar_background_pressed"
-            android:text="@string/locateOnMapViaInvoice"
-            android:id="@+id/lblLocateOnMap" />
-
     </LinearLayout>
 </ScrollView>

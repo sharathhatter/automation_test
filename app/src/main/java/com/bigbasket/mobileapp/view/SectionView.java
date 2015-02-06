@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.GridLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -361,22 +362,31 @@ public class SectionView {
             txtListTitle.setText(section.getTitle().getText());
             txtListTitle.setTypeface(faceRobotoRegular);
         }
-        LinearLayout tileContainer = (LinearLayout) base.findViewById(R.id.layoutTileContainer);
+        GridLayout tileContainer = (GridLayout) base.findViewById(R.id.layoutTileContainer);
         LinearLayout.LayoutParams tileContainerParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
+        tileContainerParams.setMargins(defaultMargin, 0, defaultMargin, 0);
         tileContainer.setLayoutParams(tileContainerParams);
-        double tileWidth = getTileImageWidth(section, 0, 0);
+        tileContainer.setRowCount(1);
+        tileContainer.setColumnCount(section.getSectionItems().size());
         for (SectionItem sectionItem : section.getSectionItems()) {
             if (section.getSectionType().equals(Section.TILE)) {
                 View tileItemView = inflater.inflate(R.layout.uiv3_image_caption_layout, tileContainer, false);
                 Renderer renderer = mSectionData.getRenderersMap() != null ?
                         mSectionData.getRenderersMap().get(sectionItem.getRenderingId()) : null;
-                setTileLayoutParams(tileWidth, ViewGroup.LayoutParams.WRAP_CONTENT, tileItemView, renderer);
+                if (renderer != null) {
+                    renderer.setRendering(tileItemView, 0, 0);
+                }
                 TextView txtCaption = (TextView) tileItemView.findViewById(R.id.txtCaption);
                 ImageView imgContent = (ImageView) tileItemView.findViewById(R.id.imgContent);
                 if (!TextUtils.isEmpty(sectionItem.getTitle().getText())) {
                     txtCaption.setTypeface(faceRobotoRegular);
                     txtCaption.setText(sectionItem.getTitle().getText());
+                    Renderer textRenderer = mSectionData.getRenderersMap() != null ?
+                            mSectionData.getRenderersMap().get(sectionItem.getTitle().getRenderingId()) : null;
+                    if (textRenderer != null) {
+                        textRenderer.setRendering(txtCaption, 0, 0);
+                    }
                 } else {
                     txtCaption.setVisibility(View.GONE);
                 }
@@ -396,41 +406,14 @@ public class SectionView {
 
                 Renderer renderer = mSectionData.getRenderersMap() != null ?
                         mSectionData.getRenderersMap().get(sectionItem.getRenderingId()) : null;
-                setTileLayoutParams(tileWidth, context.getResources().getDimension(R.dimen.carousel_img_height),
-                        tileItemView, renderer);
+                if (renderer != null) {
+                    renderer.setRendering(tileItemView, 0, 0);
+                }
                 txtTitle.setText(sectionItem.getTitle().getText());
                 tileItemView.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem));
                 tileContainer.addView(tileItemView);
             }
         }
         return base;
-    }
-
-    private void setTileLayoutParams(double tileWidth, double tileHeight, View tileItemView,
-                                     Renderer renderer) {
-        LinearLayout.LayoutParams tileItemLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        tileItemLayoutParams.width = (int) tileWidth;
-        if (tileHeight > 0) {
-            tileItemLayoutParams.height = (int) tileHeight;
-        }
-
-        if (renderer != null) {
-            renderer.setRendering(tileItemView, 0, 0);
-        } else {
-            tileItemLayoutParams.setMargins(0, 0, defaultMargin, 0);
-        }
-
-        tileItemView.setLayoutParams(tileItemLayoutParams);
-    }
-
-    private double getTileImageWidth(Section section, double extraSpace, int eachImageRightMargin) {
-        double width = 0;
-        if (section.getSectionItems() == null || section.getSectionItems().size() == 0) {
-            return width;
-        }
-        width = context.getResources().getDisplayMetrics().widthPixels;
-        int numImages = section.getSectionItems().size();
-        return (width - extraSpace - (eachImageRightMargin * numImages)) / numImages;
     }
 }
