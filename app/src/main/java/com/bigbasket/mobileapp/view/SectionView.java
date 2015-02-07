@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.GridLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -12,7 +11,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -236,11 +234,11 @@ public class SectionView {
             return null;
         LinearLayout base = new LinearLayout(context);
         base.setOrientation(LinearLayout.VERTICAL);
-        for (SectionItem sectionItem: section.getSectionItems()) {
+        for (SectionItem sectionItem : section.getSectionItems()) {
             if (sectionItem.getDescription() == null || TextUtils.isEmpty(sectionItem.getDescription().getText())) {
                 continue;
             }
-            WebView webView = new WebView(context);
+            BBWebView webView = new BBWebView(context);
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
             Renderer renderer = mSectionData.getRenderersMap() != null ?
@@ -362,13 +360,11 @@ public class SectionView {
             txtListTitle.setText(section.getTitle().getText());
             txtListTitle.setTypeface(faceRobotoRegular);
         }
-        GridLayout tileContainer = (GridLayout) base.findViewById(R.id.layoutTileContainer);
+        LinearLayout tileContainer = (LinearLayout) base.findViewById(R.id.layoutTileContainer);
         LinearLayout.LayoutParams tileContainerParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         tileContainerParams.setMargins(defaultMargin, 0, defaultMargin, 0);
         tileContainer.setLayoutParams(tileContainerParams);
-        tileContainer.setRowCount(1);
-        tileContainer.setColumnCount(section.getSectionItems().size());
         for (SectionItem sectionItem : section.getSectionItems()) {
             if (section.getSectionType().equals(Section.TILE)) {
                 View tileItemView = inflater.inflate(R.layout.uiv3_image_caption_layout, tileContainer, false);
@@ -399,7 +395,7 @@ public class SectionView {
                 }
                 boolean isDescPresent = sectionItem.getDescription() != null &&
                         !TextUtils.isEmpty(sectionItem.getDescription().getText());
-                int layoutId = isDescPresent ? R.layout.uiv3_text_desc_carousel_row : R.layout.uiv3_text_carousel_row;
+                int layoutId = isDescPresent ? R.layout.uiv3_text_desc_tile_row : R.layout.uiv3_text_tile_row;
                 View tileItemView = inflater.inflate(layoutId, tileContainer, false);
                 TextView txtTitle = (TextView) tileItemView.findViewById(R.id.txtTitle);
                 txtTitle.setTypeface(faceRobotoRegular);

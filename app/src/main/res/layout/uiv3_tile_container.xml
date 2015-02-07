@@ -15,9 +15,10 @@
         android:textColor="@color/uiv3_primary_text_color"
         android:textSize="@dimen/large_text_size" />
 
-    <android.support.v7.widget.GridLayout
+    <LinearLayout
         android:id="@+id/layoutTileContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
         />
 </LinearLayout>
