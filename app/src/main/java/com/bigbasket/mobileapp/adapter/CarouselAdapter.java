@@ -31,10 +31,6 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
     protected Typeface typeface;
     protected T context;
 
-    private static final int VIEW_TYPE_TEXT_IMG = 0;
-    private static final int VIEW_TYPE_TEXT_DESC = 1;
-    private static final int VIEW_TYPE_TEXT_ONLY = 2;
-
     public CarouselAdapter(T context, Section section,
                            HashMap<Integer, Renderer> rendererHashMap, Typeface typeface) {
         this.section = section;
@@ -48,10 +44,10 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = ((ActivityAware) context).getCurrentActivity().getLayoutInflater();
         switch (viewType) {
-            case VIEW_TYPE_TEXT_IMG:
+            case SectionItem.VIEW_TYPE_TEXT_IMG:
                 View row = inflater.inflate(R.layout.uiv3_carousel_row, parent, false);
                 return new ViewHolder(row, typeface);
-            case VIEW_TYPE_TEXT_DESC:
+            case SectionItem.VIEW_TYPE_TEXT_DESC:
                 row = inflater.inflate(R.layout.uiv3_text_desc_carousel_row, parent, false);
                 return new ViewHolder(row, typeface);
             default:
@@ -116,21 +112,7 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Override
     public int getItemViewType(int position) {
         SectionItem sectionItem = sectionItems.get(position);
-        SectionTextItem titleTextItem = sectionItem.getTitle();
-        SectionTextItem descTextItem = sectionItem.getDescription();
-
-        boolean isTitlePresent = titleTextItem != null && !TextUtils.isEmpty(titleTextItem.getText());
-        boolean isDescPresent = descTextItem != null && !TextUtils.isEmpty(descTextItem.getText());
-        boolean isImgPresent = !TextUtils.isEmpty(sectionItem.getImage());
-
-        if (isTitlePresent && isDescPresent) {
-            if (isImgPresent) {
-                return VIEW_TYPE_TEXT_IMG;
-            }
-            return VIEW_TYPE_TEXT_DESC;
-        } else {
-            return VIEW_TYPE_TEXT_ONLY;
-        }
+        return sectionItem.getViewType();
     }
 
     @Override

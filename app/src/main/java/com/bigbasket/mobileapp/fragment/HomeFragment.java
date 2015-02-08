@@ -28,15 +28,11 @@ import com.bigbasket.mobileapp.fragment.base.BaseSectionFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.task.GetCartCountTask;
 import com.bigbasket.mobileapp.task.GetDynamicPageTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.UIUtil;
-
-import java.util.Iterator;
-import java.util.Set;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -194,14 +190,6 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         LinearLayout contentView = getContentView();
         if (contentView == null || mSectionData == null || mSectionData.getSections() == null
                 || mSectionData.getSections().size() == 0) return;
-        // Filter sections
-        Set<String> supportedSectionTypes = Section.getSupportedSectionTypes();
-        for (Iterator<Section> iterator = mSectionData.getSections().iterator(); iterator.hasNext(); ) {
-            Section section = iterator.next();
-            if (!supportedSectionTypes.contains(section.getSectionType())) {
-                iterator.remove();
-            }
-        }
 
         // Render sections
         showProgressView();
@@ -210,9 +198,6 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
         contentScrollView.setLayoutParams(layoutParams);
-
-        LinearLayout homePageLayout = new LinearLayout(getActivity());
-        homePageLayout.setOrientation(LinearLayout.VERTICAL);
 
         View sectionView = getSectionView();
         if (sectionView != null) {

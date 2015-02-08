@@ -2,16 +2,19 @@ package com.bigbasket.mobileapp.model.section;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 
 public class BaseSectionTextItem implements Parcelable {
 
     private SectionTextItem title;
     private SectionTextItem description;
 
+    @Nullable
     public SectionTextItem getTitle() {
         return title;
     }
 
+    @Nullable
     public SectionTextItem getDescription() {
         return description;
     }

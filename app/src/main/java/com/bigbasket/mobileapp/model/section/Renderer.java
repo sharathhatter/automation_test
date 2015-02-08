@@ -154,16 +154,24 @@ public class Renderer implements Parcelable {
     }
 
     public void setRendering(View view, int defaultMargin, int defaultPadding) {
+        setRendering(view, defaultMargin, defaultPadding, true, true, true, true);
+    }
+
+    public void setRendering(View view, int defaultMargin, int defaultPadding,
+                             boolean applyLeft, boolean applyTop, boolean applyRight,
+                             boolean applyBottom) {
         int margin = this.getSafeMargin(defaultMargin);
         int padding = this.getSafePadding(defaultPadding);
         if (margin > 0) {
             LinearLayout.LayoutParams txtLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
-            txtLayoutParams.setMargins(margin, margin, margin, margin);
+            txtLayoutParams.setMargins(applyLeft ? margin : 0, applyTop ? margin : 0,
+                    applyRight ? margin : 0, applyBottom ? margin : 0);
             view.setLayoutParams(txtLayoutParams);
         }
         if (padding > 0 && !(view instanceof ImageView)) {
-            view.setPadding(padding, padding, padding, padding);
+            view.setPadding(applyLeft ? padding : 0, applyTop ? padding : 0, applyRight ? padding : 0,
+                    applyBottom ? padding : 0);
         }
         if (view instanceof TextView) {
             ((TextView) view).setTextColor(this.getNativeTextColor());

@@ -1,0 +1,2 @@
+configurations.create("default")
+artifacts.add("default", file('layouts-1.8.aar'))
