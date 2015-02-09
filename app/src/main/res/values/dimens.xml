@@ -70,4 +70,5 @@
     <dimen name="carousel_width">160dp</dimen>
     <dimen name="carousel_img_height">120dp</dimen>
     <dimen name="carousel_img_width">120dp</dimen>
+    <dimen name="grid_width">100dp</dimen>
 </resources>
