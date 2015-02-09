@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.fragment.promo;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.adapter.product.PromoCategoryAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
@@ -21,6 +23,8 @@ import com.bigbasket.mobileapp.model.promo.Promo;
 import com.bigbasket.mobileapp.model.promo.PromoCategory;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -148,12 +152,12 @@ public class PromoCategoryFragment extends BaseFragment {
     }
 
     private void loadPromoDetail(Promo promo) {
-        PromoDetailFragment promoDetailFragment = new PromoDetailFragment();
-        Bundle args = new Bundle();
-        args.putInt(Constants.PROMO_ID, promo.getId());
-        args.putParcelable(Constants.PROMO_CATS, promo.getPromoCategory());
-        promoDetailFragment.setArguments(args);
-        changeFragment(promoDetailFragment);
+        Intent intent = new Intent(getActivity(), BackButtonActivity.class);
+        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PROMO_DETAIL);
+        intent.putExtra(Constants.PROMO_ID, promo.getId());
+        intent.putExtra(Constants.PROMO_CATS, promo.getPromoCategory());
+        intent.putExtra(Constants.PROMO_NAME, promo.getPromoName());
+        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
     @Override

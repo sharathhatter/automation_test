@@ -181,7 +181,6 @@ public final class ProductView {
         }
         double actualDiscount = product.getActualDiscount();
         TextView txtSave = productViewHolder.getTxtSave();
-        ImageView valueStarForSaveTxt = productViewHolder.getValueStartForSaveTxt();
 
         if (hasSavings) {
             String prefix = "SAVE: `";
@@ -196,10 +195,8 @@ public final class ProductView {
             // for line over Mrp text
             txtMrp.setPaintFlags(txtMrp.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             txtSave.setVisibility(View.VISIBLE);
-            valueStarForSaveTxt.setVisibility(View.VISIBLE);
         } else {
             txtSave.setVisibility(View.GONE);
-            valueStarForSaveTxt.setVisibility(View.GONE);
         }
         txtSalePrice.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
         txtSalePrice.setText(UIUtil.asRupeeSpannable(product.getSellPrice(), productViewDisplayDataHolder.getRupeeTypeface()));

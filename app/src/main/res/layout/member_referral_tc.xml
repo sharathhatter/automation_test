@@ -189,13 +189,10 @@
     </ScrollView>
 
     <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         style="@style/FooterButtonStyle"
         android:id="@+id/btnRefFriend"
         android:text="@string/inviteFriend"
         android:onClick="onRefFriendClick"
-        android:layout_margin="0dp"
         android:layout_alignParentBottom="true" />
 
 </RelativeLayout>

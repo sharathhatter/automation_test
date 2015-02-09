@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="@dimen/basket_control_height"
+    android:layout_gravity="right"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/txtDecBasketQty"
+        style="@style/BasketOperationTxtStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="@string/minus" />
+
+    <TextView
+        android:id="@+id/txtInBasket"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@drawable/grey_border"
+        android:drawableRight="@drawable/ic_shopping_cart_grey600_18dp"
+        android:gravity="center"
+        android:paddingLeft="@dimen/padding_normal"
+        android:paddingRight="@dimen/padding_normal"
+        android:text="10 in "
+        android:textColor="@color/uiv3_primary_text_color"
+        android:textSize="@dimen/primary_text_size" />
+
+    <TextView
+        android:id="@+id/txtIncBasketQty"
+        style="@style/BasketOperationTxtStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="@string/plus" />
+</LinearLayout>

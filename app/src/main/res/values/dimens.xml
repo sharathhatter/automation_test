@@ -71,4 +71,5 @@
     <dimen name="carousel_img_height">120dp</dimen>
     <dimen name="carousel_img_width">120dp</dimen>
     <dimen name="grid_width">100dp</dimen>
+    <dimen name="basket_control_height">32dp</dimen>
 </resources>

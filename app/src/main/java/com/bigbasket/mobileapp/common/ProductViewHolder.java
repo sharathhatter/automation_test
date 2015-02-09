@@ -23,7 +23,6 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
     private TextView txtSalePrice;
     private TextView txtMrp;
     private TextView txtSave;
-    private ImageView valueStartForSaveTxt;
     private TextView txtPromoLabel;
     private TextView txtPromoDesc;
     private TextView txtPromoAddSavings;
@@ -115,13 +114,6 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
             txtSave = (TextView) itemView.findViewById(R.id.txtSave);
         }
         return txtSave;
-    }
-
-    public ImageView getValueStartForSaveTxt() {
-        if (valueStartForSaveTxt == null) {
-            valueStartForSaveTxt = (ImageView) itemView.findViewById(R.id.valueStarForSaveTxt);
-        }
-        return valueStartForSaveTxt;
     }
 
     public TextView getTxtPromoLabel() {

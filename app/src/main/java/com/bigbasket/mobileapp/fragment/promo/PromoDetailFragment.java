@@ -1,12 +1,14 @@
 package com.bigbasket.mobileapp.fragment.promo;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +22,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
@@ -38,6 +41,8 @@ import com.bigbasket.mobileapp.model.promo.PromoSet;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.ParserUtil;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
@@ -80,7 +85,7 @@ public class PromoDetailFragment extends BaseFragment {
 
         int promoId = getArguments().getInt(Constants.PROMO_ID, -1);
         mPromoCategory = getArguments().getParcelable(Constants.PROMO_CATS);
-        HashMap<String, String> map =  new HashMap<>();
+        HashMap<String, String> map = new HashMap<>();
         map.put(TrackEventkeys.PROMO_NAME, mPromoCategory.getName());
         trackEvent(TrackingAware.PROMO_DETAIL, map);
         getPromoDetail(promoId);
@@ -138,6 +143,7 @@ public class PromoDetailFragment extends BaseFragment {
         LinearLayout contentView = getContentView();
         if (contentView == null) return;
 
+        setTitle(mPromoDetail.getPromoName());
         LayoutInflater layoutInflater = (LayoutInflater)
                 getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -427,7 +433,6 @@ public class PromoDetailFragment extends BaseFragment {
         }
 
         public void onClick(View v) {
-            PromoSetProductsFragment promoSetProductsFragment = new PromoSetProductsFragment();
             Bundle bundle = new Bundle();
             bundle.putInt(Constants.PROMO_ID, promoDetail.getId());
             bundle.putString(Constants.PROMO_TYPE, promoDetail.getPromoType());
@@ -446,21 +451,25 @@ public class PromoDetailFragment extends BaseFragment {
                 }
             }
             bundle.putString(Constants.PRODUCT_LIST, productListStr);
-            bundle.putString(Constants.PROMO_NAME, promoDetail.getPromoName());
             bundle.putDouble(Constants.SAVING, promoDetail.getSaving());
             bundle.putString(Constants.INFO_MESSAGE, promoDetail.getPromoRedemptionInfo().getPromoMessage().getPromoMessage());
             bundle.putStringArrayList(Constants.CRITERIA_MSGS, promoDetail.getPromoRedemptionInfo().getPromoMessage().getCriteriaMessages());
             bundle.putInt(Constants.NUM_IN_BASKET, promoDetail.getNumPromoCompletedInBasket());
             if (promoSet != null) {
                 bundle.putInt(Constants.SET_ID, promoSet.getSetId());
+                bundle.putString(Constants.NAME, promoSet.getName());
             }
-            promoSetProductsFragment.setArguments(bundle);
-            changeFragment(promoSetProductsFragment);
+
+            Intent intent = new Intent(getActivity(), BackButtonActivity.class);
+            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PROMO_SET_PRODUCTS);
+            intent.putExtras(bundle);
+            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         }
     }
 
     private void renderPromoList(View base) {
-        if (mPromoCategory == null) return;
+        if (mPromoCategory == null || mPromoCategory.getPromos() == null ||
+                mPromoCategory.getPromos().size() == 0) return;
         ListView lstPromoNames = (ListView) base.findViewById(R.id.lstPromoNames);
         if (lstPromoNames == null) return;
         if (mPromoCategory.getPromos().size() <= 1) {
@@ -551,7 +560,8 @@ public class PromoDetailFragment extends BaseFragment {
 
     @Override
     public String getTitle() {
-        return "Promotion Detail";
+        String promoName = getArguments() != null ? getArguments().getString(Constants.PROMO_NAME) : null;
+        return TextUtils.isEmpty(promoName) ? "Promotion Detail" : promoName;
     }
 
     @NonNull

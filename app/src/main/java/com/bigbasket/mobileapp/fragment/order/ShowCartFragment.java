@@ -289,9 +289,9 @@ public class ShowCartFragment extends BaseFragment {
         txtTotalCartItems.setTypeface(faceRobotoRegular);
         if (cartSummary.getNoOfItems() != 0) {
             if (cartSummary.getNoOfItems() > 1) {
-                txtTotalCartItems.setText(cartSummary.getNoOfItems() + " Items/ ");
+                txtTotalCartItems.setText(cartSummary.getNoOfItems() + " Items | ");
             } else {
-                txtTotalCartItems.setText(cartSummary.getNoOfItems() + " Item/ ");
+                txtTotalCartItems.setText(cartSummary.getNoOfItems() + " Item | ");
             }
         } else {
             txtTotalCartItems.setVisibility(View.GONE);

@@ -59,7 +59,9 @@ import com.bigbasket.mobileapp.fragment.product.ProductDetailFragment;
 import com.bigbasket.mobileapp.fragment.product.ProductListDialogFragment;
 import com.bigbasket.mobileapp.fragment.product.SearchFragment;
 import com.bigbasket.mobileapp.fragment.product.SubCategoryListFragment;
+import com.bigbasket.mobileapp.fragment.promo.PromoCategoryFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoDetailFragment;
+import com.bigbasket.mobileapp.fragment.promo.PromoSetProductsFragment;
 import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListFragment;
 import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListSummaryFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
@@ -382,6 +384,10 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 int promoId = getIntent().getIntExtra(Constants.PROMO_ID, -1);
                 Bundle promoDetailBundle = new Bundle();
                 promoDetailBundle.putInt(Constants.PROMO_ID, promoId);
+                promoDetailBundle.putParcelable(Constants.PROMO_CATS,
+                        getIntent().getParcelableExtra(Constants.PROMO_CATS));
+                promoDetailBundle.putString(Constants.PROMO_NAME,
+                        getIntent().getStringExtra(Constants.PROMO_NAME));
                 PromoDetailFragment promoDetailFragment = new PromoDetailFragment();
                 promoDetailFragment.setArguments(promoDetailBundle);
                 addToMainLayout(promoDetailFragment);
@@ -449,6 +455,15 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                     productListFragment.setArguments(productListArgs);
                     addToMainLayout(productListFragment);
                 }
+                break;
+            case FragmentCodes.START_PROMO_CATEGORY:
+                addToMainLayout(new PromoCategoryFragment());
+                break;
+            case FragmentCodes.START_PROMO_SET_PRODUCTS:
+                bundle = getIntent().getExtras();
+                PromoSetProductsFragment promoSetProductsFragment = new PromoSetProductsFragment();
+                promoSetProductsFragment.setArguments(bundle);
+                addToMainLayout(promoSetProductsFragment);
                 break;
         }
     }
