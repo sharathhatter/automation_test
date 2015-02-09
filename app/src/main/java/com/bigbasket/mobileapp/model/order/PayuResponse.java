@@ -119,7 +119,7 @@ public class PayuResponse {
         }
     }
 
-    private Map<String, String> getQueryMap(String queryStr) {
+    public static Map<String, String> getQueryMap(String queryStr) {
         Map<String, String> queryMap = null;
         if (queryStr != null) {
             queryMap = new HashMap<>();

@@ -4,9 +4,7 @@
     android:id="@+id/txtMsg"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="@dimen/padding_normal"
-    android:paddingLeft="@dimen/padding_normal"
-    android:paddingRight="@dimen/padding_normal"
+    android:padding="@dimen/padding_mini"
     android:gravity="center_horizontal"
     android:textColor="@color/uiv3_primary_text_color"
     android:textSize="@dimen/primary_text_size" />

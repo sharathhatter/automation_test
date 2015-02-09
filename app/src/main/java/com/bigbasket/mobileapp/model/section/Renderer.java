@@ -168,15 +168,15 @@ public class Renderer implements Parcelable {
                              boolean applyBottom, int width) {
         int margin = this.getSafeMargin(defaultMargin);
         int padding = this.getSafePadding(defaultPadding);
-        if (margin > 0) {
-            int widthToUse = width >= 0 ? width: ViewGroup.LayoutParams.MATCH_PARENT;
+        if (margin >= 0) {
+            int widthToUse = width >= 0 ? width : ViewGroup.LayoutParams.MATCH_PARENT;
             LinearLayout.LayoutParams txtLayoutParams = new LinearLayout.LayoutParams(widthToUse,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
             txtLayoutParams.setMargins(applyLeft ? margin : 0, applyTop ? margin : 0,
                     applyRight ? margin : 0, applyBottom ? margin : 0);
             view.setLayoutParams(txtLayoutParams);
         }
-        if (padding > 0 && !(view instanceof ImageView)) {
+        if (padding >= 0 && !(view instanceof ImageView)) {
             view.setPadding(applyLeft ? padding : 0, applyTop ? padding : 0, applyRight ? padding : 0,
                     applyBottom ? padding : 0);
         }

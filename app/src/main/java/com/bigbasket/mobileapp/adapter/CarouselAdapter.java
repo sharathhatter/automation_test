@@ -18,7 +18,6 @@ import com.bigbasket.mobileapp.model.section.Renderer;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionItem;
 import com.bigbasket.mobileapp.model.section.SectionTextItem;
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,19 +63,35 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
         SectionTextItem titleTextItem = sectionItem.getTitle();
         SectionTextItem descTextItem = sectionItem.getDescription();
 
-        if (titleTextItem != null && !TextUtils.isEmpty(titleTextItem.getText())) {
+        boolean isTitlePresent = titleTextItem != null && !TextUtils.isEmpty(titleTextItem.getText());
+        boolean isDescPresent = descTextItem != null && !TextUtils.isEmpty(descTextItem.getText());
+
+        if (isTitlePresent) {
             TextView txtTitle = holder.getTxtTitle();
+            txtTitle.setVisibility(View.VISIBLE);
             setSectionTextView(sectionItem.getTitle(), txtTitle);
         }
 
-        if (descTextItem != null && !TextUtils.isEmpty(descTextItem.getText())) {
+        if (isDescPresent) {
             TextView txtDescription = holder.getTxtDescription();
+            txtDescription.setVisibility(View.VISIBLE);
             setSectionTextView(sectionItem.getDescription(), txtDescription);
         }
 
         if (!TextUtils.isEmpty(sectionItem.getImage())) {
             ImageView imgInRow = holder.getImgInRow();
-            ImageLoader.getInstance().displayImage(sectionItem.getImage(), imgInRow);
+            sectionItem.displayImage(imgInRow);
+
+            if (getItemViewType(position) == SectionItem.VIEW_TYPE_TEXT_IMG) {
+                if (!isTitlePresent) {
+                    TextView txtTitle = holder.getTxtTitle();
+                    txtTitle.setVisibility(View.GONE);
+                }
+                if (!isDescPresent) {
+                    TextView txtDescription = holder.getTxtDescription();
+                    txtDescription.setVisibility(View.GONE);
+                }
+            }
         }
 
         LinearLayout layoutCarouselContainer = holder.getLayoutCarouselContainer();
