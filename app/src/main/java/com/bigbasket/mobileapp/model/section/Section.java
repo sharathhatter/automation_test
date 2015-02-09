@@ -21,23 +21,9 @@ public class Section extends BaseSectionTextItem implements Parcelable {
     public static final String MENU = "menu";
     public static final String MSG = Constants.MSG;
     public static final String TEXT_TILE = "text_tile";
+    public static final String GRID = "grid";
 
     public static final int SECTION_TIMEOUT_IN_MINUTES = 15;
-
-    public static Set<String> getSupportedSectionTypes() {
-        Set<String> sectionTypeSets = new HashSet<>();
-        sectionTypeSets.add(BANNER);
-        sectionTypeSets.add(SALUTATION);
-        sectionTypeSets.add(PRODUCT_CAROUSEL);
-        sectionTypeSets.add(INFO_WIDGET);
-        sectionTypeSets.add(AD_IMAGE);
-        sectionTypeSets.add(TILE);
-        sectionTypeSets.add(NON_PRODUCT_CAROUSEL);
-        sectionTypeSets.add(MENU);
-        sectionTypeSets.add(MSG);
-        sectionTypeSets.add(TEXT_TILE);
-        return sectionTypeSets;
-    }
 
     @SerializedName(Constants.SECTION_TYPE)
     private String sectionType;

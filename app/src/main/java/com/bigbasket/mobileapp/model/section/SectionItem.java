@@ -2,11 +2,16 @@ package com.bigbasket.mobileapp.model.section;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
 public class SectionItem extends BaseSectionTextItem implements Parcelable {
+
+    public static final int VIEW_TYPE_TEXT_IMG = 0;
+    public static final int VIEW_TYPE_TEXT_DESC = 1;
+    public static final int VIEW_TYPE_TEXT_ONLY = 2;
 
     private String image;
 
@@ -73,4 +78,22 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable {
             return new SectionItem[size];
         }
     };
+
+    public int getViewType() {
+        SectionTextItem titleTextItem = getTitle();
+        SectionTextItem descTextItem = getDescription();
+
+        boolean isTitlePresent = titleTextItem != null && !TextUtils.isEmpty(titleTextItem.getText());
+        boolean isDescPresent = descTextItem != null && !TextUtils.isEmpty(descTextItem.getText());
+        boolean isImgPresent = !TextUtils.isEmpty(image);
+
+        if (isTitlePresent && isDescPresent) {
+            if (isImgPresent) {
+                return VIEW_TYPE_TEXT_IMG;
+            }
+            return VIEW_TYPE_TEXT_DESC;
+        } else {
+            return VIEW_TYPE_TEXT_ONLY;
+        }
+    }
 }

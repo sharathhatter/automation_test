@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.account.uiv3.LocateOnMapActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.order.MemberAddressFormActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.SlotPaymentSelectionActivity;
@@ -141,8 +140,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         RecyclerView addressRecyclerView = (RecyclerView) addressView.findViewById(R.id.fabRecyclerView);
         UIUtil.configureRecyclerView(addressRecyclerView, getActivity(), 1, 3);
         MemberAddressListAdapter memberAddressListAdapter =
-                new MemberAddressListAdapter<>(this, mAddressArrayList, faceRobotoRegular,
-                        mFromAccountPage);
+                new MemberAddressListAdapter<>(this, mAddressArrayList, faceRobotoRegular);
         addressRecyclerView.setAdapter(memberAddressListAdapter);
 
         FloatingActionButton floatingActionButton = (FloatingActionButton) addressView.findViewById(R.id.btnFab);
@@ -180,16 +178,6 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             launchSlotSelection(address.getId());
         } else {
             showAddressForm(address);
-        }
-    }
-
-    @Override
-    public void onLocateOnMapClicked(Address address) {
-        // Defensive check
-        if (mFromAccountPage) {
-            Intent intent = new Intent(getActivity(), LocateOnMapActivity.class);
-            intent.putExtra(Constants.UPDATE_ADDRESS, address);
-            startActivityForResult(intent, NavigationCodes.ADDRESS_CREATED_MODIFIED);
         }
     }
 

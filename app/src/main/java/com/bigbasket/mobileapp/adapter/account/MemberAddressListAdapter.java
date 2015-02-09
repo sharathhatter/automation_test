@@ -1,14 +1,11 @@
 package com.bigbasket.mobileapp.adapter.account;
 
 import android.graphics.Typeface;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -22,19 +19,12 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<MemberAddr
     private ArrayList<Address> addressArrayList;
     private T context;
     private Typeface robotoRegularTypeface;
-    private boolean showEditIcon;
 
     public MemberAddressListAdapter(T context, ArrayList<Address> addressArrayList,
                                     Typeface robotoRegularTypeface) {
         this.addressArrayList = addressArrayList;
         this.context = context;
         this.robotoRegularTypeface = robotoRegularTypeface;
-    }
-
-    public MemberAddressListAdapter(T context, ArrayList<Address> addressArrayList, Typeface robotoRegularTypeface,
-                                    boolean showEditIcon) {
-        this(context, addressArrayList, robotoRegularTypeface);
-        this.showEditIcon = showEditIcon;
     }
 
     @Override
@@ -51,7 +41,6 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<MemberAddr
         TextView txtMemberName = memberAddressViewHolder.getTxtMemberName();
         TextView txtMemberContactNum = memberAddressViewHolder.getTxtMemberContactNum();
         CheckBox chkIsAddrSelected = memberAddressViewHolder.getChkIsAddrSelected();
-        ImageView imgAddressAdditionalAction = memberAddressViewHolder.getImgAddressAdditionalAction();
 
         txtMemberAddress.setText(address.toString());
         txtMemberName.setText(address.getName());
@@ -61,41 +50,6 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<MemberAddr
             chkIsAddrSelected.setVisibility(View.VISIBLE);
         } else {
             chkIsAddrSelected.setVisibility(View.GONE);
-        }
-
-        if (showEditIcon) {
-            imgAddressAdditionalAction.setVisibility(View.VISIBLE);
-            imgAddressAdditionalAction.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    PopupMenu addressPopupMenu = new PopupMenu(((ActivityAware) context).getCurrentActivity(), v);
-                    addressPopupMenu.getMenuInflater().inflate(address.isMapped() ? R.menu.address_mapped_menu :
-                            R.menu.address_not_mapped_menu, addressPopupMenu.getMenu());
-
-                    addressPopupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem menuItem) {
-                            switch (menuItem.getItemId()) {
-                                case R.id.menuEditAddress:
-                                    ((AddressSelectionAware) context).onAddressSelected(address);
-                                    return true;
-                                case R.id.menuLocateOnMap:
-                                    // Defensive check
-                                    if (!address.isMapped()) {
-                                        ((AddressSelectionAware) context).onLocateOnMapClicked(address);
-                                    }
-                                    return true;
-                                default:
-                                    return false;
-                            }
-                        }
-                    });
-                    addressPopupMenu.show();
-                }
-            });
-
-        } else {
-            imgAddressAdditionalAction.setVisibility(View.GONE);
         }
     }
 
@@ -114,15 +68,12 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<MemberAddr
         private TextView txtMemberName;
         private TextView txtMemberContactNum;
         private CheckBox chkIsAddrSelected;
-        private ImageView imgAddressAdditionalAction;
         private AddressSelectionAware addressSelectionAware;
 
         public MemberAddressViewHolder(View itemView, AddressSelectionAware addressSelectionAware) {
             super(itemView);
             this.addressSelectionAware = addressSelectionAware;
-            if (!showEditIcon) {
-                itemView.setOnClickListener(this);
-            }
+            itemView.setOnClickListener(this);
         }
 
         public TextView getTxtMemberAddress() {
@@ -156,19 +107,10 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<MemberAddr
             return chkIsAddrSelected;
         }
 
-        public ImageView getImgAddressAdditionalAction() {
-            if (imgAddressAdditionalAction == null) {
-                imgAddressAdditionalAction = (ImageView) itemView.findViewById(R.id.imgAddressAdditionalAction);
-            }
-            return imgAddressAdditionalAction;
-        }
-
         @Override
         public void onClick(View v) {
-            if (!showEditIcon) {
-                Address address = addressArrayList.get(getPosition());
-                addressSelectionAware.onAddressSelected(address);
-            }
+            Address address = addressArrayList.get(getPosition());
+            addressSelectionAware.onAddressSelected(address);
         }
     }
 }

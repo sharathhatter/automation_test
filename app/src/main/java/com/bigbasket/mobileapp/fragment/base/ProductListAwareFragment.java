@@ -309,7 +309,7 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
         trackFilterAppliedEvent(filteredOn);
     }
 
-    private void trackFilterAppliedEvent(ArrayList<FilteredOn> filteredOnArrayList) {
+    private void trackFilterAppliedEvent(ArrayList<FilteredOn> filteredOnArrayList) { //todo only filter type
         Map<String, String> eventAttribs = new HashMap<>();
         for (FilteredOn filteredOn : filteredOnArrayList) {
             eventAttribs.put(TrackEventkeys.FILTER_NAME, filteredOn.getFilterSlug());
