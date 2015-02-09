@@ -65,7 +65,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
             new GetCartCountTask<>(getCurrentActivity(), true).startTask();
             requestHomePage();
         }
-        getAppInfo();
+        //getAppInfo();
         handler = new HomePageHandler<>(this);
     }
 
