@@ -164,11 +164,10 @@ public class ShowCartFragment extends BaseFragment {
     }
 
     private void logViewBasketEvent(CartSummary cartSummary, Map<String, String> eventAttribs) {// todo event log for view basket
+        if(cartSummary==null) return;
         eventAttribs.put(TrackEventkeys.TOTAL_ITEMS_IN_BASKET, String.valueOf(cartSummary.getNoOfItems()));
         eventAttribs.put(TrackEventkeys.TOTAL_BASKET_VALUE, String.valueOf(cartSummary.getTotal()));
         eventAttribs.put(TrackEventkeys.TOTAL_BASKET_SAVING, String.valueOf(cartSummary.getSavings()));
-        //String cartItemListsString = new Gson().toJson(cartItemLists);
-        //eventAttribs.put(TrackEventkeys.VIEW_BASKET_DATA, cartItemListsString);
         trackEvent(TrackingAware.BASKET_VIEW, eventAttribs);
     }
 

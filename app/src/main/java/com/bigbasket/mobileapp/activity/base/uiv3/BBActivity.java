@@ -713,9 +713,9 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
     private void launchProductCategoryFragment(String categorySlug, String filter, String sortOn) {
         Bundle bundle = new Bundle();
         bundle.putString(Constants.SLUG_NAME_CATEGORY, categorySlug);
-        if (filter != null)
+        if (!TextUtils.isEmpty(filter))
             bundle.putString(Constants.FILTER, filter);
-        if (sortOn != null)
+        if (!TextUtils.isEmpty(sortOn))
             bundle.putString(Constants.SORT_BY, sortOn);
         CategoryProductsFragment categoryProductsFragment = new CategoryProductsFragment();
         categoryProductsFragment.setArguments(bundle);

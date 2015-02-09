@@ -49,8 +49,7 @@ public class PaymentSelectionFragment extends BaseFragment implements PostVouche
     private CartSummary mCartSummary;
     private ArrayList<ActiveVouchers> mActiveVouchersList;
     private LinkedHashMap<String, String> mPaymentTypeMap;
-    private String mAmtPayable, mWalletUsed, mWalletRemaining, mpaymentMethod, potentialOrderId;
-    private SharedPreferences.Editor mEditor;
+    private String mAmtPayable, mWalletUsed, mWalletRemaining;//, mpaymentMethod, potentialOrderId;
     private TextView mLblTransactionFailed;
     private TextView mTxtTransactionFailureReason;
     private TextView mLblSelectAnotherMethod;
@@ -72,7 +71,6 @@ public class PaymentSelectionFragment extends BaseFragment implements PostVouche
         mActiveVouchersList = args.getParcelableArrayList(Constants.VOUCHERS);
         mAmtPayable = args.getString(Constants.AMT_PAYABLE);
         mWalletUsed = args.getString(Constants.WALLET_USED);
-        potentialOrderId = args.getString(Constants.POTENTIAL_ORDER_ID);
         mAppliedVoucherCode = args.getString(Constants.EVOUCHER_CODE);
 
         if (TextUtils.isEmpty(mWalletUsed)) {
@@ -84,7 +82,7 @@ public class PaymentSelectionFragment extends BaseFragment implements PostVouche
         }
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        mEditor = preferences.edit();
+        SharedPreferences.Editor mEditor = preferences.edit();
 
         ArrayList<PaymentType> paymentTypes = args.getParcelableArrayList(Constants.PAYMENT_TYPES);
         mPaymentTypeMap = new LinkedHashMap<>();
@@ -196,7 +194,6 @@ public class PaymentSelectionFragment extends BaseFragment implements PostVouche
                         rbtnPaymentType.setChecked(true);
                         ((SelectedPaymentAware) getCurrentActivity()).
                                 setPaymentMethod(entrySet.getValue());
-                        mpaymentMethod = entrySet.getValue();
                     } else {
                         return;
                     }
@@ -207,7 +204,6 @@ public class PaymentSelectionFragment extends BaseFragment implements PostVouche
                         if (isChecked && getCurrentActivity() != null) {
                             ((SelectedPaymentAware) getCurrentActivity()).
                                     setPaymentMethod(entrySet.getValue());
-                            mpaymentMethod = entrySet.getValue();
                         }
                     }
                 });
@@ -341,11 +337,6 @@ public class PaymentSelectionFragment extends BaseFragment implements PostVouche
     @Override
     public void onStop() {
         super.onStop();
-        HashMap<String, String> map = new HashMap<>();
-        map.put(TrackEventkeys.POTENTIAL_ORDER, potentialOrderId);
-        map.put(TrackEventkeys.PAYMENT_MODE, mpaymentMethod);
-        trackEvent(TrackingAware.CHECKOUT_PAYMENT_CHOSEN, map);
-
     }
 
     @NonNull

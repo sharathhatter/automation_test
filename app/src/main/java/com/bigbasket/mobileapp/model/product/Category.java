@@ -54,8 +54,15 @@ public class Category implements Parcelable, Serializable {
         this.numberItems = source.readInt();
         this.name = source.readString();
         this.numProducts = source.readString();
-        this.filter = source.readString();
-        this.sortBy = source.readString();
+        boolean _wasFilterNull = source.readByte() == (byte) 1;
+        if (!_wasFilterNull) {
+            filter = source.readString();
+        }
+
+        boolean _wasSortByrNull = source.readByte() == (byte) 1;
+        if (!_wasSortByrNull) {
+            sortBy = source.readString();
+        }
         boolean _wasCategoriesNull = source.readByte() == (byte) 1;
         if (!_wasCategoriesNull) {
             source.readTypedList(this.category, Category.CREATOR);
@@ -117,8 +124,16 @@ public class Category implements Parcelable, Serializable {
         dest.writeInt(this.numberItems);
         dest.writeString(this.name);
         dest.writeString(this.numProducts);
-        dest.writeString(this.filter);
-        dest.writeString(this.sortBy);
+        boolean _wasFilterNull = filter == null;
+        dest.writeByte(_wasFilterNull ? (byte) 1 : (byte) 0);
+        if (!_wasFilterNull) {
+            dest.writeString(filter);
+        }
+        boolean _wasSortByNull = filter == null;
+        dest.writeByte(_wasSortByNull ? (byte) 1 : (byte) 0);
+        if (!_wasSortByNull) {
+            dest.writeString(sortBy);
+        }
         boolean _wasCategoriesNull = category == null;
         dest.writeByte(_wasCategoriesNull ? (byte) 1 : (byte) 0);
         if (!_wasCategoriesNull) {

@@ -22,8 +22,9 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.AnalyticsEngine;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.AppInfoResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.AppDataResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateVersionInfoApiResponseContent;
 import com.bigbasket.mobileapp.fragment.base.BaseSectionFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
@@ -61,7 +62,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
             new GetCartCountTask<>(getCurrentActivity(), true).startTask();
             requestHomePage();
         }
-        //getAppInfo();
+        //getAppData(); //TODO: implement this
         handler = new HomePageHandler<>(this);
     }
 
@@ -260,14 +261,17 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         return Constants.HOME;
     }
 
-    private void serverCallGetAppData(String client, String versionName) {
+    private void setAnalyticalData(AnalyticsEngine analyticsEngine){
+
+    }
+    private void callGetAppData(String client, String versionName) {
         if (!DataUtil.isInternetAvailable(getCurrentActivity())) handler.sendOfflineError();
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressView();
-        bigBasketApiService.getAppInfo(client, versionName,
-                new Callback<ApiResponse<AppInfoResponse>>() {
+        bigBasketApiService.getAppData(client, versionName,
+                new Callback<ApiResponse<AppDataResponse>>() {
                     @Override
-                    public void success(ApiResponse<AppInfoResponse> callbackAppDataResponse, Response response) {
+                    public void success(ApiResponse<AppDataResponse> callbackAppDataResponse, Response response) {
                         if (isSuspended()) return;
                         try {
                             hideProgressDialog();
@@ -276,16 +280,12 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                         }
                         if (callbackAppDataResponse.status == 0) {
                             updateLastAppDataCall();
-                            int updateRequired = callbackAppDataResponse.apiResponseContent.updateInfo.isUpdateRequired;
-                            String appExpiredBy = callbackAppDataResponse.apiResponseContent.updateInfo.appExpiredBy;
-                            switch (updateRequired) {
-                                case Constants.UPDATE_MANDATORY:
-                                    showAppNotSupportedDialog();
-                                    break;
-                                case Constants.UPDATE_OPTIONAL:
-                                    showUpgradeAppDialog(appExpiredBy);
-                                    break;
-                            }
+                            String appExpiredBy = callbackAppDataResponse.apiResponseContent.appUpdate.expiryDate;
+                            AnalyticsEngine analyticsEngine = callbackAppDataResponse.apiResponseContent.capabilities;
+                            if(analyticsEngine!=null)
+                                setAnalyticalData(analyticsEngine);
+                            showUpgradeAppDialog(appExpiredBy);
+
                         } else {
                             handler.sendEmptyMessage(callbackAppDataResponse.status);
                         }
@@ -322,12 +322,12 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         }
     }
 
-    private void getAppInfo() {
+    private void getAppData() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         long lastAppDataCallTime = preferences.getLong(Constants.LAST_APP_DATA_CALL_TIME, 0);
         if (lastAppDataCallTime == 0 || UIUtil.isMoreThanXHour(lastAppDataCallTime, Constants.SIX_HOUR)) {
             try {
-                serverCallGetAppData(Constants.CLIENT_NAME, DataUtil.getAppVersionName(getCurrentActivity()));
+                callGetAppData(Constants.CLIENT_NAME, DataUtil.getAppVersionName(getCurrentActivity()));
             } catch (Exception e) {
                 e.printStackTrace();
             }

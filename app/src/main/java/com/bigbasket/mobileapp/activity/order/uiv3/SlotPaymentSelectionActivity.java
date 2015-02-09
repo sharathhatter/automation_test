@@ -64,7 +64,6 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
 
     private ArrayList<SelectedSlotType> mSelectedSlotType;
     private String mPaymentMethodSlug;
-    private SharedPreferences preferences;
     private String mPotentialOrderId;
     private ArrayList<VoucherApplied> mVoucherAppliedList;
     private HashMap<String, Boolean> mPreviouslyAppliedVoucherMap;
@@ -87,7 +86,7 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
 
     private void loadSlotsAndPayments() {
         String addressId = getIntent().getStringExtra(Constants.ADDRESS_ID);
-        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         mPotentialOrderId = preferences.getString(Constants.POTENTIAL_ORDER_ID, null);
 
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
@@ -166,7 +165,6 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
         paymentSelectionBundle.putString(Constants.WALLET_REMAINING, walletRemaining);
         paymentSelectionBundle.putParcelableArrayList(Constants.VOUCHERS, activeVouchersList);
         paymentSelectionBundle.putParcelableArrayList(Constants.PAYMENT_TYPES, paymentTypes);
-        paymentSelectionBundle.putString(Constants.POTENTIAL_ORDER_ID, mPotentialOrderId);
         if (!TextUtils.isEmpty(voucherCode)) {
             paymentSelectionBundle.putString(Constants.EVOUCHER_CODE, voucherCode);
         }
@@ -229,6 +227,10 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String potentialOrderId = preferences.getString(Constants.POTENTIAL_ORDER_ID, null);
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.POTENTIAL_ORDER, potentialOrderId);
+        map.put(TrackEventkeys.PAYMENT_MODE, mPaymentMethodSlug);
+        trackEvent(TrackingAware.CHECKOUT_PAYMENT_CHOSEN, map);
 
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));

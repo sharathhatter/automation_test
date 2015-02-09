@@ -1,8 +1,6 @@
 package com.bigbasket.mobileapp.view.uiv3;
 
-import android.app.Activity;
 import android.app.Dialog;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -14,6 +12,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.bigbasket.mobileapp.util.Constants;
 
 import java.util.ArrayList;
 
@@ -22,18 +22,23 @@ import java.util.ArrayList;
  */
 public class TermAndConditionDialog extends DialogFragment {
 
-    private Activity context;
-    private Typeface faceRobotoRegular;
     private ArrayList<String> termAndConditionArrayList;
 
     public TermAndConditionDialog() {
     }
 
-    public TermAndConditionDialog(Activity context, Typeface faceRobotoRegular,
-                                  ArrayList<String> termAndConditionArrayList) {
-        this.context = context;
-        this.faceRobotoRegular = faceRobotoRegular;
-        this.termAndConditionArrayList = termAndConditionArrayList;
+    public static TermAndConditionDialog newInstance(ArrayList<String> termAndConditionArrayList) {
+        TermAndConditionDialog termAndConditionDialog = new TermAndConditionDialog();
+        Bundle bundle = new Bundle();
+        bundle.putStringArrayList(Constants.TERMS_AND_COND, termAndConditionArrayList);
+        termAndConditionDialog.setArguments(bundle);
+        return termAndConditionDialog;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        this.termAndConditionArrayList = getArguments().getStringArrayList(Constants.TERMS_AND_COND);
     }
 
     @Nullable
@@ -55,18 +60,12 @@ public class TermAndConditionDialog extends DialogFragment {
         View view = getView();
         if (view != null) {
             TextView txtDialogTitle = (TextView) view.findViewById(R.id.txtDialogTitle);
-            txtDialogTitle.setTypeface(faceRobotoRegular);
-            LayoutInflater inflater = context.getLayoutInflater();
+            txtDialogTitle.setTypeface(BaseActivity.faceRobotoRegular);
+            LayoutInflater inflater = getActivity().getLayoutInflater();
             LinearLayout layoutInnerTC = (LinearLayout) view.findViewById(R.id.layoutInnerTC);
             for (String termAndCondition : termAndConditionArrayList) {
                 View bulletView = inflater.inflate(R.layout.uiv3_bullet_txt, null);
                 TextView txtBullet = (TextView) bulletView.findViewById(R.id.txtBullet);
-                //String prefix = ". ";
-//                Spannable spannableBullet = new SpannableString(prefix + termAndCondition);
-//                spannableBullet.setSpan(new StyleSpan(Typeface.BOLD), 0, prefix.length(),
-//                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                txtBullet.setText(spannableBullet);
-
                 txtBullet.setText(termAndCondition);
                 layoutInnerTC.addView(bulletView);
             }

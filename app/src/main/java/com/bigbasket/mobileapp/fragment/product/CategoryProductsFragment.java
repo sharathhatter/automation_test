@@ -3,6 +3,8 @@ package com.bigbasket.mobileapp.fragment.product;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
+import android.widget.TextView;
 
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.model.product.FilteredOn;
@@ -24,7 +26,7 @@ public class CategoryProductsFragment extends ProductListAwareFragment {
     @Override
     protected ArrayList<FilteredOn> getProductRefinedByFilter() {
         Bundle bundle = getArguments();
-        if (bundle.getString(Constants.FILTER) != null) {
+        if (!TextUtils.isEmpty(bundle.getString(Constants.FILTER))) {
             FilteredOn filteredOn = new FilteredOn((bundle.getString(Constants.FILTER)));
             ArrayList<FilteredOn> filteredOnArrayList = new ArrayList<>();
             filteredOnArrayList.add(filteredOn);
@@ -36,7 +38,7 @@ public class CategoryProductsFragment extends ProductListAwareFragment {
     @Override
     protected String getProductRefinedBySortedOn() {
         Bundle bundle = getArguments();
-        if (bundle.getString(Constants.SORT_BY) != null)
+        if (!TextUtils.isEmpty(bundle.getString(Constants.SORT_BY)))
             return bundle.getString(Constants.SORT_BY);
         return null;
     }

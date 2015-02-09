@@ -2,7 +2,7 @@ package com.bigbasket.mobileapp.apiservice;
 
 import com.bigbasket.mobileapp.apiservice.callbacks.CallbackGetAreaInfo;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.AppInfoResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.AppDataResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.AutoSearchApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.BaseApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.BrowseCategoryApiResponseContent;
@@ -376,8 +376,8 @@ public interface BigBasketApiService {
     @POST("/remove-voucher/")
     void removeVoucher(@Field(Constants.P_ORDER_ID) String potentialOrderId, Callback<BaseApiResponse> removeVoucherApiResponseCallback);
 
-    @GET("/get-app-info/")
-    void getAppInfo(@Query(Constants.CLIENT) String orderType,
+    @GET("/get-app-data/")
+    void getAppData(@Query(Constants.CLIENT) String client,
                     @Query(Constants.VERSION) String version,
-                    Callback<ApiResponse<AppInfoResponse>> callbackAppData);
+                    Callback<ApiResponse<AppDataResponse>> callbackAppData);
 }

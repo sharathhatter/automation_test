@@ -300,6 +300,10 @@ public class Constants {
     public static final String FIRST_TIME_COOKIE_TIME_STAMP = "firstTimeCookieTimestamp";
     public static final String ENABLE_LOCALYTICS = "enable_localytics";
     public static final String ANALYTICS = "analytics";
+    public static final String CAPABILITIES = "capabilities";
+    public static final String APP_UPDATE = "app_update";
+    public static final String V_EXPIRY_DATE = "v_expiry_date";
+    public static final String UPGRADE_MSG = "why_upgrade_to_v";
     public static final String ANALYTICS_ENGINE = "analytics_engine";
     public static final String FULFILLED_BY = "fulfilled_by";
     public static final String TC2 = "tc2";
@@ -397,6 +401,7 @@ public class Constants {
     public static final String FROM_SIGN_IN_FOR_CHECKOUT = "fromSignInForCheckout";
     public static final String TRANSACTION_ID = "txn_id";
     public static final String OTP_CODE = "otp";
+    public static final String ROBOTO_REGULAR = "otp";
     public static final String OTP_VALIDATION_NEEDED = "otp_validation_needed";
     public static final int VALIDATE_MOBILE_NUMBER_POPUP = 401;
     public static final int VALIDATE_MOBILE_NUMBER_POPUP_ERROR_MSG = 402;

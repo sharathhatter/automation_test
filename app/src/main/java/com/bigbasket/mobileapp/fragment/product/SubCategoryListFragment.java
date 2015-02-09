@@ -215,6 +215,7 @@ public class SubCategoryListFragment extends BaseSectionFragment {
     }
 
     private void trackPCEvent(Category category) {
+        if(category==null) return;
         HashMap<String, String> map = new HashMap<>();
         map.put(TrackEventkeys.PRODUCT_CAT, category.getName());
         trackEvent(TrackingAware.BROWSE_PRODUCT_CATEGORY, map);

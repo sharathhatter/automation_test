@@ -1,6 +1,5 @@
 package com.bigbasket.mobileapp.activity.order;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -50,7 +49,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
     private EditText editTextPincode;
     private AutoCompleteTextView editTextArea;
     private String mErrorMsg;
-    private OTPDialog otpDialog;
+    private OTPValidationDialogFragment otpValidationDialogFragment;
     private boolean mFromAccountPage = false;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -281,9 +280,9 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
                         Toast.makeText(getCurrentActivity(), "Address updated successfully", Toast.LENGTH_LONG).show();
                         addressCreatedModified();
                     }
-                    if (otpDialog != null && otpDialog.isVisible()) {
-                        otpDialog.dismiss();
-                        BaseActivity.hideKeyboard(getCurrentActivity(), otpDialog.getView());
+                    if (otpValidationDialogFragment != null && otpValidationDialogFragment.isVisible()) {
+                        otpValidationDialogFragment.dismiss();
+                        BaseActivity.hideKeyboard(getCurrentActivity(), otpValidationDialogFragment.getView());
                     }
                     if (mFromAccountPage) {
                         if (address == null)
@@ -362,113 +361,22 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
 
 
     private void validateMobileNumber(boolean txtErrorValidateNumberVisibility, String errorMsg) {
-        if (otpDialog == null)
-            otpDialog = new OTPDialog(getCurrentActivity(), this);
-        if (otpDialog.isVisible()) {
+        if (otpValidationDialogFragment == null) {
+            otpValidationDialogFragment = OTPValidationDialogFragment.newInstance();
+            otpValidationDialogFragment.show(getSupportFragmentManager(), Constants.OTP_DIALOG_FLAG);
+        }
+        if (otpValidationDialogFragment.isVisible()) {
             if (txtErrorValidateNumberVisibility) {
-                otpDialog.showErrorText(errorMsg);
+                otpValidationDialogFragment.showErrorText(errorMsg);
             }
             return;
         } else {
-            otpDialog.show(getCurrentActivity().getSupportFragmentManager(),
+            otpValidationDialogFragment.show(getCurrentActivity().getSupportFragmentManager(),
                     Constants.OTP_DIALOG_FLAG);
         }
 
     }
 
-
-    public static class OTPDialog extends OTPValidationDialogFragment {
-        private MemberAddressFormActivity memberAddressFormActivity;
-
-        public OTPDialog() {
-        }
-
-        @SuppressLint("ValidFragment")
-        public OTPDialog(BaseActivity baseActivity, MemberAddressFormActivity memberAddressFormActivity) {
-            super(baseActivity, faceRobotoRegular);
-            this.memberAddressFormActivity = memberAddressFormActivity;
-        }
-
-        @Override
-        public void resendOrConfirmOTP(String otp) {
-            memberAddressFormActivity.uploadAddress(otp);
-        }
-    }
-
-    /*
-    private void validateMobileNumber(boolean txtErrorValidateNumberVisibility, String errorMsg) {
-        if (numberValidateDialog != null && numberValidateDialog.isShowing()) {
-            if (txtErrorValidateNumberVisibility) {
-                txtErrorValidateNumber.setText(errorMsg != null ? errorMsg : getResources().getString(R.string.otpCodeErrorMsg));
-                txtErrorValidateNumber.setVisibility(View.VISIBLE);
-                txtResendNumber.setVisibility(View.GONE);
-            }
-            return;
-        }
-        numberValidateDialog = new Dialog(getCurrentActivity());
-        numberValidateDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        numberValidateDialog.setContentView(R.layout.confirm_mobile_number);
-        TextView txtDialogTitle = (TextView) numberValidateDialog.findViewById(R.id.txtDialogTitle);
-        TextView txtHeaderMsg = (TextView) numberValidateDialog.findViewById(R.id.txtHeaderMsg);
-        final TextView editTextMobileCode = (TextView) numberValidateDialog.findViewById(R.id.editTextMobileCode);
-        txtHeaderMsg.setTypeface(faceRobotoRegular);
-        txtResendNumber = (TextView) numberValidateDialog.findViewById(R.id.txtResendNumber);
-        txtErrorValidateNumber = (TextView) numberValidateDialog.findViewById(R.id.txtErrorValidateNumber);
-        TextView txtResendCode = (TextView) numberValidateDialog.findViewById(R.id.txtResendCode);
-        txtResendCode.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                txtErrorValidateNumber.setVisibility(View.GONE);
-                txtResendNumber.setVisibility(View.VISIBLE);
-                uploadAddress(null);
-            }
-        });
-        txtDialogTitle.setText(getResources().getString(R.string.confirmMobileNumber));
-        TextView txtConfirm = (TextView) numberValidateDialog.findViewById(R.id.txtConfirm);
-        txtConfirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (TextUtils.isEmpty(editTextMobileCode.getText().toString())) {
-                    txtErrorValidateNumber.setText(getResources().getString(R.string.pleaseEnterTxt));
-                    txtErrorValidateNumber.setVisibility(View.VISIBLE);
-                } else if (editTextMobileCode.getText() != null && editTextMobileCode.getText().toString().length() > 0) {
-                    uploadAddress(editTextMobileCode.getText().toString());
-                } else {
-                    txtErrorValidateNumber.setText(getResources().getString(R.string.otpCodeErrorMsg));
-                    txtErrorValidateNumber.setVisibility(View.VISIBLE);
-                }
-
-            }
-        });
-
-        TextView txtCancel = (TextView) numberValidateDialog.findViewById(R.id.txtCancel);
-        txtCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (numberValidateDialog.isShowing()) {
-                    numberValidateDialog.dismiss();
-                } else {
-                    return;
-                }
-            }
-        });
-
-
-        ImageView imgCloseBtn = (ImageView) numberValidateDialog.findViewById(R.id.imgCloseBtn);
-        imgCloseBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (numberValidateDialog.isShowing()) {
-                    numberValidateDialog.dismiss();
-                } else {
-                    return;
-                }
-            }
-        });
-        numberValidateDialog.show();
-    }
-
-    */
     @Override
     protected void onPositiveButtonClicked(DialogInterface dialogInterface, int id, String sourceName, Object valuePassed) {
         if (sourceName != null && sourceName.equalsIgnoreCase(Constants.ERROR)) {

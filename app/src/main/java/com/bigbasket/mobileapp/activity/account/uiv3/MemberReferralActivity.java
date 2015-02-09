@@ -26,12 +26,14 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.MemberReferralProduct;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
+import com.bigbasket.mobileapp.fragment.account.OTPValidationDialogFragment;
 import com.bigbasket.mobileapp.fragment.product.ProductDetailFragment;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.MemberReferralUtil;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.view.uiv3.TermAndConditionDialog;
 import com.facebook.UiLifecycleHelper;
 
 import java.util.ArrayList;
@@ -181,9 +183,9 @@ public class MemberReferralActivity extends BackButtonActivity {
                     txtTermAndConditionLink.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            new TermAndConditionDialog(getCurrentActivity(),
-                                    memberReferralProduct.termAndCondition).show(getCurrentActivity().getSupportFragmentManager(),
-                                    Constants.OTP_REFERRAL_DIALOG);
+                            TermAndConditionDialog termAndConditionDialog = TermAndConditionDialog.
+                                    newInstance(memberReferralProduct.termAndCondition);
+                            termAndConditionDialog.show(getSupportFragmentManager(), Constants.OTP_REFERRAL_DIALOG);
                         }
                     });
                 } else {
@@ -430,17 +432,5 @@ public class MemberReferralActivity extends BackButtonActivity {
         bundle.putString(Constants.SKU_ID, productId);
         productDetailFragment.setArguments(bundle);
         addToMainLayout(productDetailFragment);
-    }
-
-    public static class TermAndConditionDialog extends com.bigbasket.mobileapp.view.uiv3.TermAndConditionDialog {
-
-        public TermAndConditionDialog() {
-        }
-
-        @SuppressLint("ValidFragment")
-        public TermAndConditionDialog(Activity context, ArrayList<String> termAndCondition) {
-            super(context, faceRobotoRegular, termAndCondition);
-        }
-
     }
 }

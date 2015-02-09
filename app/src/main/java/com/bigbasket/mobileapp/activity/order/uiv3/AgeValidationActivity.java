@@ -1,7 +1,5 @@
 package com.bigbasket.mobileapp.activity.order.uiv3;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -313,26 +311,13 @@ public class AgeValidationActivity extends BackButtonActivity {
                 txtPharmaTcLink.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        new PharmaTermAndConditionDialog(getCurrentActivity(),
-                                termAndCondition).show(getCurrentActivity().getSupportFragmentManager(),
-                                Constants.TC_DIALOG);
+                        TermAndConditionDialog termAndConditionDialog = TermAndConditionDialog.
+                                newInstance(termAndCondition);
+                        termAndConditionDialog.show(getSupportFragmentManager(), Constants.OTP_REFERRAL_DIALOG);
                     }
                 });
             }
         }
-    }
-
-
-    public static class PharmaTermAndConditionDialog extends TermAndConditionDialog {
-
-        public PharmaTermAndConditionDialog() {
-        }
-
-        @SuppressLint("ValidFragment")
-        public PharmaTermAndConditionDialog(Activity context, ArrayList<String> termAndCondition) {
-            super(context, faceRobotoRegular, termAndCondition);
-        }
-
     }
 
     @Override

@@ -35,6 +35,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.bigbasket.mobileapp.view.uiv3.SortProductDialog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -55,7 +56,7 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware 
     private CheckBox chkReceivePromos;
     private ProgressBar progressBarUpdateProfile;
     private Button btnUpdate;
-    private OTPDialog otpDialog;
+    private OTPValidationDialogFragment otpValidationDialogFragment;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -217,34 +218,18 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware 
         //initiateUpdateProfileActivity();
     }
 
-    public static class OTPDialog extends OTPValidationDialogFragment {
-        private UpdateProfileFragment fragment;
-
-        public OTPDialog() {
-        }
-
-        @SuppressLint("ValidFragment")
-        public OTPDialog(BaseActivity baseActivity, UpdateProfileFragment fragment) {
-            super(baseActivity, faceRobotoRegular);
-            this.fragment = fragment;
-        }
-
-        @Override
-        public void resendOrConfirmOTP(String otp) {
-            fragment.btnUpdateAfterSuccessNumberValidation(otp);
-        }
-    }
-
     private void validateMobileNumber(boolean txtErrorValidateNumberVisibility, String errorMsg) {
-        if (otpDialog == null)
-            otpDialog = new OTPDialog((BaseActivity) getActivity(), this);
-        if (otpDialog.isVisible()) {
+        if (otpValidationDialogFragment == null){
+            otpValidationDialogFragment = OTPValidationDialogFragment.newInstance();
+            otpValidationDialogFragment.show(getFragmentManager(), Constants.OTP_DIALOG_FLAG);
+        }
+        if (otpValidationDialogFragment.isVisible()) {
             if (txtErrorValidateNumberVisibility) {
-                otpDialog.showErrorText(errorMsg);
+                otpValidationDialogFragment.showErrorText(errorMsg);
             }
             return;
         } else {
-            otpDialog.show(getFragmentManager(), Constants.OTP_DIALOG_FLAG);
+            otpValidationDialogFragment.show(getFragmentManager(), Constants.OTP_DIALOG_FLAG);
         }
 
     }
@@ -416,9 +401,9 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware 
             public void success(UpdateProfileOldApiResponse memberProfileDataCallback, Response response) {
                 hideProgressDialog();
                 if (memberProfileDataCallback.status.equals(Constants.OK)) {
-                    if (otpDialog != null && otpDialog.isVisible()) {
-                        otpDialog.dismiss();
-                        BaseActivity.hideKeyboard(((BaseActivity) getActivity()), otpDialog.getView());
+                    if (otpValidationDialogFragment != null && otpValidationDialogFragment.isVisible()) {
+                        otpValidationDialogFragment.dismiss();
+                        BaseActivity.hideKeyboard(((BaseActivity) getActivity()), otpValidationDialogFragment.getView());
                     }
                     resetUpdateButtonInProgress();
                     updatePreferenceData();
