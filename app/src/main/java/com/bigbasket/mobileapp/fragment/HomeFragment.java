@@ -25,6 +25,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.AnalyticsEngine;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.AppDataResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.LoginUserDetails;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateVersionInfoApiResponseContent;
 import com.bigbasket.mobileapp.fragment.base.BaseSectionFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
@@ -62,7 +63,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
             new GetCartCountTask<>(getCurrentActivity(), true).startTask();
             requestHomePage();
         }
-        //getAppData(); //TODO: implement this
+        getAppData();
         handler = new HomePageHandler<>(this);
     }
 
@@ -261,9 +262,13 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         return Constants.HOME;
     }
 
-    private void setAnalyticalData(AnalyticsEngine analyticsEngine){
-
+    private void setAnalyticalData(AnalyticsEngine analyticsEngine) {
+        if (analyticsEngine == null) return;
+        AuthParameters.getInstance(getCurrentActivity()).setMoEngaleLocaliticsEnabled(analyticsEngine.isMoEngageEnabled(),
+                analyticsEngine.isAnalyticsEnabled(), getCurrentActivity());
+        AuthParameters.updateInstance(getCurrentActivity());
     }
+
     private void callGetAppData(String client, String versionName) {
         if (!DataUtil.isInternetAvailable(getCurrentActivity())) handler.sendOfflineError();
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
@@ -279,13 +284,19 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                             return;
                         }
                         if (callbackAppDataResponse.status == 0) {
-                            updateLastAppDataCall();
+                            UIUtil.updateLastAppDataCall(getCurrentActivity());
                             String appExpiredBy = callbackAppDataResponse.apiResponseContent.appUpdate.expiryDate;
+                            String upgradeMsg = callbackAppDataResponse.apiResponseContent.appUpdate.upgradeMsg;
+                            showUpgradeAppDialog(appExpiredBy, upgradeMsg);
                             AnalyticsEngine analyticsEngine = callbackAppDataResponse.apiResponseContent.capabilities;
-                            if(analyticsEngine!=null)
-                                setAnalyticalData(analyticsEngine);
-                            showUpgradeAppDialog(appExpiredBy);
-
+                            setAnalyticalData(analyticsEngine);
+                            LoginUserDetails userDetails = callbackAppDataResponse.apiResponseContent.userDetails;
+                            if (userDetails != null) {
+                                SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                                UIUtil.updateStoredUserDetails(getCurrentActivity(), userDetails,
+                                        prefer.getString(Constants.MEMBER_EMAIL_KEY, ""),
+                                        prefer.getString(Constants.MID_KEY, ""));//TODO: check with sid
+                            }
                         } else {
                             handler.sendEmptyMessage(callbackAppDataResponse.status);
                         }
@@ -306,16 +317,19 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                 });
     }
 
-    private void showUpgradeAppDialog(String appExpiredBy) {
+
+    private void showUpgradeAppDialog(String appExpiredBy, String upgradeMsg) {
         if (appExpiredBy == null) return;
-        UpgradeAppDialog upgradeAppDialog = new UpgradeAppDialog<>(getCurrentActivity());
-        int updateValue = upgradeAppDialog.showUpdateMsgDialog(appExpiredBy.replace("-", "/"));
+        int updateValue = UIUtil.handleUpdateDialog(appExpiredBy.replace("-", "/"), getCurrentActivity());
         switch (updateValue) {
             case Constants.SHOW_APP_UPDATE_POPUP:
-                upgradeAppDialog.showPopUp();
+                UpgradeAppDialog upgradeAppDialog = UpgradeAppDialog.newInstance(upgradeMsg);
+                upgradeAppDialog.show(getFragmentManager(), Constants.APP_UPDATE_DIALOG_FLAG);
+                UIUtil.updateLastPopShownDate(System.currentTimeMillis(), getCurrentActivity());
                 break;
             case Constants.SHOW_APP_EXPIRE_POPUP:
-                showAppNotSupportedDialog();
+                AppNotSupportedDialog appNotSupportedDialog = AppNotSupportedDialog.newInstance();
+                appNotSupportedDialog.show(getFragmentManager(), Constants.APP_EXPIRED_DIALOG_FLAG);
                 break;
             default:
                 break;
@@ -334,17 +348,6 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         }
     }
 
-    private void showAppNotSupportedDialog() {
-        AppNotSupportedDialog appNotSupportedDialog = new AppNotSupportedDialog<>(this);
-        appNotSupportedDialog.show();
-    }
-
-    private void updateLastAppDataCall() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putLong(Constants.LAST_APP_DATA_CALL_TIME, System.currentTimeMillis());
-        editor.commit();
-    }
 
     @Override
     public void onDynamicScreenSuccess(String screenName, SectionData sectionData) {

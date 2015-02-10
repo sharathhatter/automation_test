@@ -123,7 +123,7 @@ public class Category implements Parcelable, Serializable {
         dest.writeString(this.slug);
         dest.writeInt(this.numberItems);
         dest.writeString(this.name);
-        dest.writeString(this.numProducts);
+        dest.writeString(this.numProducts); //todo check for null pointer
         boolean _wasFilterNull = filter == null;
         dest.writeByte(_wasFilterNull ? (byte) 1 : (byte) 0);
         if (!_wasFilterNull) {

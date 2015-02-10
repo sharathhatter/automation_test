@@ -9,7 +9,7 @@ import com.google.gson.annotations.SerializedName;
 public class AppDataResponse {
 
     @SerializedName(Constants.ANALYTICS)
-    public LoginAnalyticsDetails analyticsData;
+    public LoginUserDetails userDetails;
 
     @SerializedName(Constants.CAPABILITIES)
     public AnalyticsEngine capabilities;

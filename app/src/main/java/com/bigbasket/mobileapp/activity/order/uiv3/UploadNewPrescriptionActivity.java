@@ -176,7 +176,8 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
                             String prescriptionId = prescriptionIdApiResponse.apiResponseContent.pharmaPrescriptionId;
                             new ImageUtil<>(getCurrentActivity()).insertToDB(prescriptionId, arrayListByteArray);
                             startService(new Intent(getCurrentActivity(), UploadImageService.class));
-                            gotoQCActivity(prescriptionId);
+                            onParmaPrescriptionUploaded(prescriptionId);
+                            //gotoQCActivity(prescriptionId);
                             trackEvent(TrackingAware.PRE_CHECKOUT_PHARMA_PRESCRIPTION_CREATED, null);
                         } else {
                             handler.sendEmptyMessage(prescriptionIdApiResponse.status, prescriptionIdApiResponse.message);
@@ -196,6 +197,20 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
                 });
     }
 
+    private void onParmaPrescriptionUploaded(String prescriptionId) {
+        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = prefer.edit();
+        editor.putString(Constants.PHARMA_PRESCRIPTION_ID, prescriptionId);
+        editor.commit();
+        new COReserveQuantityCheckTask<>(getCurrentActivity(),prescriptionId).startTask();
+    }
+
+    @Override
+    public void onRestart(){
+        super.onRestart();
+        finish();
+    }
+    /*
     private void gotoQCActivity(String prescriptionId) {
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = prefer.edit();
@@ -211,6 +226,8 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
         setResult(Constants.PRESCRIPTION_UPLOADED, data);
         getCurrentActivity().finish();// fix for back button press
     }
+
+    */
 
     private void showDialogMoreThen5Images() {
         showAlertDialog(null, getString(R.string.maxImageError), Constants.MORE_IMAGES);

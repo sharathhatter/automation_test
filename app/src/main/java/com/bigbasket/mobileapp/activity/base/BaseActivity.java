@@ -202,6 +202,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         initializeKonotor();
         moEHelper.onResume(this);
         Localytics.openSession();
+        //Localytics.tagScreen();
         Localytics.upload();
         prescriptionImageUploadHandler();
     }
@@ -656,7 +657,6 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         }
         if (authParameters.isLocalyticsEnabled()) {
             Localytics.tagEvent(eventName, eventAttribs);
-            //Localytics.tagScreen(""); //todo tag screen
         }
     }
 

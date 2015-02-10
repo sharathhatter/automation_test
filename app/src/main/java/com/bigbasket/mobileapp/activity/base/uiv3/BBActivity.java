@@ -639,7 +639,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         editor.putString(Constants.GET_CART, String.valueOf(cartInfo.getNoOfItems()));
         editor.commit();
 
-        if (cartInfo.getAnalyticsEngine() != null) {
+        if (cartInfo.getAnalyticsEngine() != null) { //TODO: Remove
             AuthParameters.getInstance(getCurrentActivity()).setMoEngaleLocaliticsEnabled(cartInfo.getAnalyticsEngine().isMoEngageEnabled(),
                     cartInfo.getAnalyticsEngine().isAnalyticsEnabled(), getCurrentActivity());
         }

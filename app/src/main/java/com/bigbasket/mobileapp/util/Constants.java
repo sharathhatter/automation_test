@@ -392,6 +392,8 @@ public class Constants {
     public static final String RULE_MAX_WEIGHT_LIMIT = "rule_max_wt_limit";
     public static final String TC_DIALOG = "tc_dailog";
     public static final String PRESCRIPTION_BYTE_ARRAY = "prescription_byte_array";
+    public static final String APP_EXPIRED_DIALOG_FLAG = "app_expired";
+    public static final String APP_UPDATE_DIALOG_FLAG = "app_update";
 
 
     public static final String VALIDATE_NUMBER_NUMBER = "validateNumber";

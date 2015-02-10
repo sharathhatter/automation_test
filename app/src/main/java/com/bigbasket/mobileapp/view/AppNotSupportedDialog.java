@@ -1,35 +1,40 @@
 package com.bigbasket.mobileapp.view;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.view.KeyEvent;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.util.UIUtil;
 
-public class AppNotSupportedDialog<T> {
+public class AppNotSupportedDialog extends DialogFragment {
 
-    private T ctx;
-
-    public AppNotSupportedDialog(T ctx) {
-        this.ctx = ctx;
+    public AppNotSupportedDialog() {
     }
 
-    public void show() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(((ActivityAware) ctx).getCurrentActivity());
+    public static AppNotSupportedDialog newInstance() {
+        return new AppNotSupportedDialog();
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    @NonNull
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.update);
         builder.setMessage(R.string.appOutDatedMsg)
                 .setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        UIUtil.openPlayStoreLink(((ActivityAware) ctx).getCurrentActivity());
-                    }
-                })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        (((ActivityAware) ctx).getCurrentActivity()).finish();
+                        UIUtil.openPlayStoreLink(getActivity());
                     }
                 });
         AlertDialog alertDialog = builder.create();
@@ -38,11 +43,11 @@ public class AppNotSupportedDialog<T> {
             public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
                     dialog.dismiss();
-                    (((ActivityAware) ctx).getCurrentActivity()).finish();
+                    getActivity().finish();
                 }
                 return true;
             }
         });
-        alertDialog.show();
+        return alertDialog;
     }
 }
