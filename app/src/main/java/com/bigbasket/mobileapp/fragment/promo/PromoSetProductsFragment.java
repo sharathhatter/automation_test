@@ -356,6 +356,17 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
 
     @Override
     public String getTitle() {
+        if (getArguments() != null) {
+            String setName = getArguments().getString(Constants.NAME);
+            if (!TextUtils.isEmpty(setName)) {
+                return setName;
+            } else {
+                String promoName = getArguments().getString(Constants.PROMO_NAME);
+                if (!TextUtils.isEmpty(promoName)) {
+                    return promoName;
+                }
+            }
+        }
         return "Promotion";
     }
 

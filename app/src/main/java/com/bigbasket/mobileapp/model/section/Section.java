@@ -7,8 +7,6 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 public class Section extends BaseSectionTextItem implements Parcelable {
     public static final String BANNER = "banner";
@@ -20,7 +18,6 @@ public class Section extends BaseSectionTextItem implements Parcelable {
     public static final String TILE = "tile";
     public static final String MENU = "menu";
     public static final String MSG = Constants.MSG;
-    public static final String TEXT_TILE = "text_tile";
     public static final String GRID = "grid";
 
     public static final int SECTION_TIMEOUT_IN_MINUTES = 15;

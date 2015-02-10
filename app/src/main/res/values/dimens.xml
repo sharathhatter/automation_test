@@ -36,7 +36,7 @@
     <dimen name="dialog_btn_height">36dp</dimen>
     <dimen name="dialog_btn_layout_height">48dp</dimen>
     <dimen name="small_text_size">12sp</dimen>
-    <dimen name="banner_slider_height">180dp</dimen>
+    <dimen name="banner_slider_height">160dp</dimen>
     <dimen name="swipe_element_width">160dp</dimen>
     <dimen name="grid_col_width">160dp</dimen>
     <dimen name="grid_col_height">100dp</dimen>
@@ -73,4 +73,6 @@
     <dimen name="chip_padding">2dp</dimen>
     <dimen name="chip_txt_size">20sp</dimen>
     <dimen name="margin_ref_small">5dp</dimen>
+    <dimen name="grid_width">100dp</dimen>
+    <dimen name="basket_control_height">32dp</dimen>
 </resources>

@@ -89,18 +89,12 @@
             android:layout_marginTop="2dp"
             android:maxLines="1"
             android:singleLine="true"
+            android:drawableLeft="@drawable/valuestar"
             android:text="Rs 100.00"
+            android:paddingTop="2dp"
             android:textColor="@color/saveColor"
+            android:drawablePadding="@dimen/padding_mini"
             android:textSize="@dimen/small_text_size" />
-
-        <ImageView
-            android:id="@+id/valueStarForSaveTxt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:layout_toLeftOf="@id/txtSave"
-            android:contentDescription="@string/save"
-            android:src="@drawable/valuestar" />
 
         <TextView
             android:id="@+id/txtProductBrand"
@@ -108,7 +102,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/margin_mini"
             android:layout_marginTop="2dp"
-            android:layout_toLeftOf="@id/valueStarForSaveTxt"
+            android:layout_toLeftOf="@id/txtSave"
             android:layout_toRightOf="@id/imgProduct"
             android:text="Prestige"
             android:textColor="@color/uiv3_secondary_text_color"
@@ -172,39 +166,7 @@
             android:layout_below="@id/txtPackageDesc"
             android:orientation="vertical">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="32dp"
-                android:layout_gravity="right"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/txtDecBasketQty"
-                    style="@style/BasketOperationTxtStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="@string/minus" />
-
-                <TextView
-                    android:id="@+id/txtInBasket"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/grey_border"
-                    android:gravity="center"
-                    android:paddingLeft="@dimen/padding_normal"
-                    android:paddingRight="@dimen/padding_normal"
-                    android:text="10 in "
-                    android:textColor="@color/uiv3_primary_text_color"
-                    android:textSize="@dimen/primary_text_size" />
-                <!-- android:drawableRight="@drawable/ic_shopping_cart_grey600_18dp"-->
-
-                <TextView
-                    android:id="@+id/txtIncBasketQty"
-                    style="@style/BasketOperationTxtStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="@string/plus" />
-            </LinearLayout>
+            <include layout="@layout/uiv3_basket_operation_control" />
 
             <LinearLayout
                 android:layout_width="wrap_content"

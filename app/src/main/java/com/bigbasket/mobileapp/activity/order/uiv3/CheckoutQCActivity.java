@@ -46,7 +46,7 @@ import java.util.HashMap;
 public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateReserveQtyAware {
     private COReserveQuantity coReserveQuantity;
     private String categoryName = "";
-    private boolean mAlreadyRunning;
+    boolean mKeep = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -77,17 +77,11 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        if (mAlreadyRunning) {
+    protected void onRestart() {
+        super.onRestart();
+        if (!mKeep) {
             finish();
         }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mAlreadyRunning = true;
     }
 
     private void renderQcPage() {
@@ -390,7 +384,7 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == NavigationCodes.GO_TO_QC) {
-            mAlreadyRunning = false;
+            mKeep = true;
             doQc();
         } else {
             super.onActivityResult(requestCode, resultCode, data);

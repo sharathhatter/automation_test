@@ -275,6 +275,9 @@ public abstract class BaseSliderView {
             if (v.findViewById(R.id.loading_bar) != null) {
                 v.findViewById(R.id.loading_bar).setVisibility(View.INVISIBLE);
             }
+            if (v.findViewById(R.id.daimajia_slider_image) != null) {
+                v.findViewById(R.id.daimajia_slider_image).setVisibility(View.VISIBLE);
+            }
 //            if (view != null && view instanceof ImageView) {
 //                Integer bkgColor = swatchMap.get(imageUri);
 //                if (bkgColor == null) {
@@ -289,6 +292,9 @@ public abstract class BaseSliderView {
         public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
             if (v.findViewById(R.id.loading_bar) != null) {
                 v.findViewById(R.id.loading_bar).setVisibility(View.INVISIBLE);
+            }
+            if (v.findViewById(R.id.daimajia_slider_image) != null) {
+                v.findViewById(R.id.daimajia_slider_image).setVisibility(View.VISIBLE);
             }
         }
     }

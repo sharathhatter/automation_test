@@ -5,26 +5,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <RelativeLayout
-        android:id="@+id/layoutFooterButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+    <Button
+        android:id="@+id/btnListFooter"
+        style="@style/FooterButtonStyle"
         android:layout_alignParentBottom="true"
-        android:layout_margin="0dp"
-        android:background="@color/uiv3_divider_color">
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:background="@android:color/transparent"
-            android:drawableRight="@drawable/ic_keyboard_arrow_right_grey600_36dp"
-            android:padding="@dimen/padding_small"
-            android:id="@+id/btnListFooter"
-            android:textColor="@color/uiv3_primary_text_color"
-            android:drawablePadding="@dimen/padding_small"
-            android:textSize="@dimen/large_text_size" />
-    </RelativeLayout>
+        android:layout_alignParentRight="true"
+        android:textSize="@dimen/large_text_size" />
 
     <ListView
         android:id="@+id/listWithFixedFooter"

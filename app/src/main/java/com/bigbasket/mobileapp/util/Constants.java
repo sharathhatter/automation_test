@@ -668,4 +668,6 @@ public class Constants {
     public static final String IS_DISCOUNT = "is_discount";
 
 
+    public static final String LOCAL_RES_PREFIX = "app://";
+    public static final String NAME = "name";
 }

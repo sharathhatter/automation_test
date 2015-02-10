@@ -2,7 +2,9 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:paddingBottom="@dimen/padding_mini">
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -70,12 +72,4 @@
             android:id="@+id/txtSaving"
             android:layout_toRightOf="@id/lblSaving" />
     </RelativeLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_marginTop="@dimen/margin_mini"
-        android:background="@color/uiv3_divider_color"
-        android:layout_below="@id/layoutSavings"
-        android:layout_height="1dp"
-        android:id="@+id/viewbasketHeaderSeperator" />
 </RelativeLayout>

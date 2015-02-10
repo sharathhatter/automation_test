@@ -28,4 +28,6 @@ public final class FragmentCodes {
     public static final int START_SHOPPING_LIST_LANDING = 25;
     public static final int START_SEARCH = 26;
     public static final int START_GENERIC_PRODUCT_LIST = 27;
+    public static final int START_PROMO_CATEGORY = 28;
+    public static final int START_PROMO_SET_PRODUCTS = 29;
 }

@@ -25,7 +25,6 @@ import com.bigbasket.mobileapp.model.section.SectionItem;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.DefaultSliderView;
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.apmem.tools.layouts.FlowLayout;
 
@@ -82,12 +81,6 @@ public class SectionView {
                     break;
                 case Section.TILE:
                     View tileView = getTileView(section, inflater, mainLayout);
-                    if (tileView != null) {
-                        mainLayout.addView(tileView);
-                    }
-                    break;
-                case Section.TEXT_TILE:
-                    tileView = getTileView(section, inflater, mainLayout);
                     if (tileView != null) {
                         mainLayout.addView(tileView);
                     }
@@ -151,7 +144,6 @@ public class SectionView {
             }
 
         }
-        baseSlider.setBackgroundColor(Color.CYAN);
         return baseSlider;
     }
 
@@ -204,7 +196,7 @@ public class SectionView {
             }
             if (!TextUtils.isEmpty(sectionItem.getImage())) {
                 layoutSalutationItem.setVisibility(View.VISIBLE);
-                ImageLoader.getInstance().displayImage(sectionItem.getImage(), imgSalutationItem);
+                sectionItem.displayImage(imgSalutationItem);
                 imgSalutationItem.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem));
             }
         }
@@ -282,7 +274,7 @@ public class SectionView {
             }
             imageView.setLayoutParams(layoutParams);
             imageView.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem));
-            ImageLoader.getInstance().displayImage(sectionItem.getImage(), imageView);
+            sectionItem.displayImage(imageView);
         }
         return linearLayout;
     }
@@ -300,7 +292,7 @@ public class SectionView {
             Renderer renderer = mSectionData.getRenderersMap() != null ?
                     mSectionData.getRenderersMap().get(sectionItem.getTitle().getRenderingId()) : null;
             if (renderer != null) {
-                renderer.setRendering(txtVw, 0, 0);
+                renderer.setRendering(txtVw, 0, 0, true, true, true, false);
             }
             txtVw.setText(sectionItem.getTitle().getText());
             txtVw.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem));
@@ -383,7 +375,22 @@ public class SectionView {
                 Renderer renderer = mSectionData.getRenderersMap() != null ?
                         mSectionData.getRenderersMap().get(sectionItem.getRenderingId()) : null;
                 if (renderer != null) {
-                    renderer.setRendering(tileItemView, 0, 0, false, true, applyRight, true);
+                    int width = (int) context.getResources().getDimension(R.dimen.grid_width);
+                    renderer.setRendering(tileItemView, 0, 0, false, true, applyRight, true, width);
+                    int margin = renderer.getSafeMargin(defaultMargin);
+                    if (margin > 0) {
+                        FlowLayout.LayoutParams layoutParams = new FlowLayout.
+                                LayoutParams(width,
+                                ViewGroup.LayoutParams.WRAP_CONTENT);
+                        layoutParams.setMargins(0, margin, applyRight ? margin : 0, margin);
+                        tileItemView.setLayoutParams(layoutParams);
+                    }
+                } else {
+                    FlowLayout.LayoutParams layoutParams = new FlowLayout.
+                            LayoutParams((int) context.getResources().getDimension(R.dimen.grid_width),
+                            ViewGroup.LayoutParams.WRAP_CONTENT);
+                    layoutParams.setMargins(0, defaultMargin, applyRight ? defaultMargin : 0, defaultMargin);
+                    tileItemView.setLayoutParams(layoutParams);
                 }
                 TextView txtCaption = (TextView) tileItemView.findViewById(R.id.txtCaption);
                 ImageView imgContent = (ImageView) tileItemView.findViewById(R.id.imgContent);
@@ -400,7 +407,7 @@ public class SectionView {
                     txtCaption.setVisibility(View.GONE);
                 }
                 imgContent.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem));
-                ImageLoader.getInstance().displayImage(sectionItem.getImage(), imgContent);
+                sectionItem.displayImage(imgContent);
                 tileContainer.addView(tileItemView);
             } else {
                 if (sectionItem.getTitle() == null || TextUtils.isEmpty(sectionItem.getTitle().getText())) {
@@ -417,7 +424,22 @@ public class SectionView {
                 Renderer renderer = mSectionData.getRenderersMap() != null ?
                         mSectionData.getRenderersMap().get(sectionItem.getRenderingId()) : null;
                 if (renderer != null) {
-                    renderer.setRendering(tileItemView, 0, 0, false, true, applyRight, true);
+                    int width = (int) context.getResources().getDimension(R.dimen.grid_width);
+                    renderer.setRendering(tileItemView, defaultMargin, 0, false, true, applyRight, true, width);
+                    int margin = renderer.getSafeMargin(defaultMargin);
+                    if (margin > 0) {
+                        FlowLayout.LayoutParams layoutParams = new FlowLayout.
+                                LayoutParams(width,
+                                (int) context.getResources().getDimension(R.dimen.carousel_img_height));
+                        layoutParams.setMargins(0, margin, applyRight ? margin : 0, margin);
+                        tileItemView.setLayoutParams(layoutParams);
+                    }
+                } else {
+                    FlowLayout.LayoutParams layoutParams = new FlowLayout.
+                            LayoutParams((int) context.getResources().getDimension(R.dimen.grid_width),
+                            (int) context.getResources().getDimension(R.dimen.carousel_img_height));
+                    layoutParams.setMargins(0, defaultMargin, applyRight ? defaultMargin : 0, defaultMargin);
+                    tileItemView.setLayoutParams(layoutParams);
                 }
 
                 if (isDescPresent) {
@@ -443,6 +465,8 @@ public class SectionView {
             }
             txtListTitle.setText(section.getTitle().getText());
             txtListTitle.setTypeface(faceRobotoRegular);
+        } else {
+            txtListTitle.setVisibility(View.GONE);
         }
         LinearLayout tileContainer = (LinearLayout) base.findViewById(R.id.layoutTileContainer);
         LinearLayout.LayoutParams tileContainerParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
@@ -454,12 +478,17 @@ public class SectionView {
         for (int i = 0; i < numSectionItems; i++) {
             SectionItem sectionItem = sectionItems.get(i);
             boolean applyRight = i != numSectionItems - 1;
-            if (section.getSectionType().equals(Section.TILE)) {
+            if (sectionItem.getViewType() == SectionItem.VIEW_TYPE_TEXT_IMG) {
                 View tileItemView = inflater.inflate(R.layout.uiv3_image_caption_layout, tileContainer, false);
                 Renderer renderer = mSectionData.getRenderersMap() != null ?
                         mSectionData.getRenderersMap().get(sectionItem.getRenderingId()) : null;
                 if (renderer != null) {
-                    renderer.setRendering(tileItemView, 0, 0, false, true, applyRight, true);
+                    renderer.setRendering(tileItemView, 0, 0, false, true, applyRight, true, 0);
+                } else {
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.
+                            LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
+                    layoutParams.setMargins(0, defaultMargin, applyRight ? defaultMargin : 0, defaultMargin);
+                    tileItemView.setLayoutParams(layoutParams);
                 }
                 TextView txtCaption = (TextView) tileItemView.findViewById(R.id.txtCaption);
                 ImageView imgContent = (ImageView) tileItemView.findViewById(R.id.imgContent);
@@ -475,9 +504,9 @@ public class SectionView {
                     txtCaption.setVisibility(View.GONE);
                 }
                 imgContent.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem));
-                ImageLoader.getInstance().displayImage(sectionItem.getImage(), imgContent);
+                sectionItem.displayImage(imgContent);
                 tileContainer.addView(tileItemView);
-            } else if (section.getSectionType().equals(Section.TEXT_TILE)) {
+            } else {
                 if (sectionItem.getTitle() == null || TextUtils.isEmpty(sectionItem.getTitle().getText())) {
                     continue;
                 }
@@ -491,7 +520,12 @@ public class SectionView {
                 Renderer renderer = mSectionData.getRenderersMap() != null ?
                         mSectionData.getRenderersMap().get(sectionItem.getRenderingId()) : null;
                 if (renderer != null) {
-                    renderer.setRendering(tileItemView, 0, 0, false, true, applyRight, true);
+                    renderer.setRendering(tileItemView, 0, 0, false, true, applyRight, true, 0);
+                } else {
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.
+                            LayoutParams(0, (int) context.getResources().getDimension(R.dimen.carousel_img_height), 1);
+                    layoutParams.setMargins(0, defaultMargin, applyRight ? defaultMargin : 0, defaultMargin);
+                    tileItemView.setLayoutParams(layoutParams);
                 }
                 txtTitle.setText(sectionItem.getTitle().getText());
                 tileItemView.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem));

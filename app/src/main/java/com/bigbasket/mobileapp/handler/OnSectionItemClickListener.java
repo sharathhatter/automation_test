@@ -234,6 +234,11 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                         }
                     }
                     break;
+                case DestinationInfo.PROMO_LIST:
+                    intent = new Intent(((ActivityAware) context).getCurrentActivity(), BackButtonActivity.class);
+                    intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PROMO_CATEGORY);
+                    ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                    break;
             }
         }
     }

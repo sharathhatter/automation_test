@@ -3,9 +3,18 @@ package com.bigbasket.mobileapp.model.section;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
+import android.widget.ImageView;
 
+import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.model.order.PayuResponse;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
+import com.nostra13.universalimageloader.core.ImageLoader;
+
+import java.lang.reflect.Field;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Map;
 
 public class SectionItem extends BaseSectionTextItem implements Parcelable {
 
@@ -87,13 +96,32 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable {
         boolean isDescPresent = descTextItem != null && !TextUtils.isEmpty(descTextItem.getText());
         boolean isImgPresent = !TextUtils.isEmpty(image);
 
-        if (isTitlePresent && isDescPresent) {
-            if (isImgPresent) {
-                return VIEW_TYPE_TEXT_IMG;
-            }
+        if (isImgPresent) {
+            return VIEW_TYPE_TEXT_IMG;
+        } else if (isTitlePresent && isDescPresent) {
             return VIEW_TYPE_TEXT_DESC;
+        }
+        return VIEW_TYPE_TEXT_ONLY;
+    }
+
+    public void displayImage(ImageView imageView) {
+        if (TextUtils.isEmpty(image)) return;
+        if (image.startsWith(Constants.LOCAL_RES_PREFIX)) {
+            try {
+                URI uri = new URI(image);
+                Map<String, String> queryMap = PayuResponse.getQueryMap(uri.getQuery());
+                String name = queryMap.get(Constants.NAME);
+                if (!TextUtils.isEmpty(name)) {
+                    Class res = R.drawable.class;
+                    Field field = res.getField(name);
+                    int drawableId = field.getInt(null);
+                    imageView.setImageResource(drawableId);
+                }
+            } catch (URISyntaxException | NoSuchFieldException | IllegalAccessException e) {
+                imageView.setImageResource(R.drawable.image_404);
+            }
         } else {
-            return VIEW_TYPE_TEXT_ONLY;
+            ImageLoader.getInstance().displayImage(image, imageView);
         }
     }
 }
