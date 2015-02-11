@@ -350,43 +350,7 @@ public class MemberReferralActivity extends BackButtonActivity {
     private void useBBmail() {
         Intent intent = new Intent(getCurrentActivity(), BBReferralMailActivity.class);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-//        ReferralDialog memberRefDialog = new ReferralDialog(getCurrentActivity(), this, memberReferralUtil);
-//        memberRefDialog.show(getCurrentActivity().getSupportFragmentManager(),
-//                Constants.REF_DIALOG_FLAG);
     }
-
-    /*
-    public static class ReferralDialog extends BaseReferralDialog {
-        private MemberReferralActivity memberReferralActivity;
-        private MemberReferralUtil memberReferralUtil;
-
-        public ReferralDialog() {
-        }
-
-        @SuppressLint("ValidFragment")
-        public ReferralDialog(BaseActivity baseActivity,
-                              MemberReferralActivity memberReferralActivity,
-                              MemberReferralUtil memberReferralUtil) {
-            super(baseActivity, faceRobotoRegular);
-            this.memberReferralActivity = memberReferralActivity;
-            this.memberReferralUtil = memberReferralUtil;
-        }
-
-        @Override
-        public void sendEmailList(String emailList, String message, int emailLen) {
-            if (memberReferralUtil.isMessageAndMailLenValid(emailLen, message.length()))
-                memberReferralActivity.sendEmailMsgToServer(emailList, message, "email");
-        }
-
-        @Override
-        public void populateAutoComplete() {
-            List<String> emailAddressCollection = new ArrayList<>();
-            memberReferralUtil.getEmailFromContacts(emailAddressCollection, this);
-        }
-    }
-
-    */
-
 
     private void sendEmailMsgToServer(String emailList, String message, String refType) {
         // call to server

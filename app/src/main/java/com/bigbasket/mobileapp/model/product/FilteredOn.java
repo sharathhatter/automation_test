@@ -60,7 +60,10 @@ public class FilteredOn implements Parcelable {
         filterSlug = source.readString();
         filterValues = new ArrayList<>();
         source.readStringList(filterValues);
-        filterType = source.readString();
+        boolean _wasFilterTypeNull = source.readByte() == (byte) 1;
+        if (!_wasFilterTypeNull) {
+            filterType = source.readString();
+        }
     }
 
     @Override
@@ -72,7 +75,11 @@ public class FilteredOn implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(filterSlug);
         dest.writeStringList(filterValues);
-        dest.writeString(filterType);
+        boolean _wasFilterTypeNull = filterType == null;
+        dest.writeByte(_wasFilterTypeNull ? (byte) 1 : (byte) 0);
+        if (!_wasFilterTypeNull) {
+            dest.writeString(filterType);
+        }
     }
 
     public static final Parcelable.Creator<FilteredOn> CREATOR = new Parcelable.Creator<FilteredOn>() {
