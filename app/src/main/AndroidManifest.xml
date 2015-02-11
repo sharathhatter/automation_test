@@ -53,7 +53,6 @@
             android:name=".activity.StartActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
             android:theme="@style/BBAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan">
             <intent-filter>
@@ -88,6 +87,7 @@
 
         <activity
             android:name="com.demach.konotor.KonotorFeedbackActivity"
+            android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity

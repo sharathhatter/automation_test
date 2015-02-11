@@ -46,6 +46,8 @@ import retrofit.client.Response;
 
 public class StartActivity extends BaseActivity implements DynamicScreenAware {
 
+    boolean mShowCitySelectionDropDown;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +76,7 @@ public class StartActivity extends BaseActivity implements DynamicScreenAware {
         String savedCityName = preferences.getString(Constants.CITY, null);
         boolean forceRegisterDevice = getIntent().getBooleanExtra(Constants.FORCE_REGISTER_DEVICE, false);
         if (forceRegisterDevice || TextUtils.isEmpty(savedCityName)) {
+            mShowCitySelectionDropDown = true;
             loadCities();
         } else {
             loadNavigation();
@@ -149,6 +152,13 @@ public class StartActivity extends BaseActivity implements DynamicScreenAware {
     }
 
     private void doRegisterDevice(final City city) {
+        if (!checkInternetConnection()) {
+            handler.sendOfflineError(true);
+            return;
+        }
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
+        showProgressDialog(getString(R.string.please_wait));
+
         String deviceID = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
         // Get the screen width and height
@@ -172,8 +182,6 @@ public class StartActivity extends BaseActivity implements DynamicScreenAware {
             Log.e("StartActivity", "Error while creating device-properties json");
         }
 
-        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
-        showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.registerDevice(deviceID, String.valueOf(city.getId()), devicePropertiesJsonObj.toString(),
                 new Callback<RegisterDeviceResponse>() {
                     @Override
@@ -206,16 +214,18 @@ public class StartActivity extends BaseActivity implements DynamicScreenAware {
 
     @Override
     public void showProgressDialog(String msg) {
-        findViewById(R.id.progressBarLoading).setVisibility(View.VISIBLE);
-        findViewById(R.id.btnStartShopping).setVisibility(View.GONE);
-        findViewById(R.id.spinnerCity).setVisibility(View.GONE);
+        if (!mShowCitySelectionDropDown) return;
+        findViewById(R.id.layoutProgress).setVisibility(View.VISIBLE);
+        findViewById(R.id.layoutHomeHeader).setVisibility(View.GONE);
+        findViewById(R.id.layoutHomeFooter).setVisibility(View.GONE);
     }
 
     @Override
     public void hideProgressDialog() {
-        findViewById(R.id.progressBarLoading).setVisibility(View.GONE);
-        findViewById(R.id.btnStartShopping).setVisibility(View.VISIBLE);
-        findViewById(R.id.spinnerCity).setVisibility(View.VISIBLE);
+        if (!mShowCitySelectionDropDown) return;
+        findViewById(R.id.layoutProgress).setVisibility(View.GONE);
+        findViewById(R.id.layoutHomeHeader).setVisibility(View.VISIBLE);
+        findViewById(R.id.layoutHomeFooter).setVisibility(View.VISIBLE);
     }
 
     @Override

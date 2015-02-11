@@ -157,7 +157,6 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
 
         Bundle slotBundle = new Bundle();
         slotBundle.putParcelableArrayList(Constants.SLOTS_INFO, slotGroupList);
-        bbTabs.add(new BBTab<>(getString(R.string.slot), SlotSelectionFragment.class, slotBundle));
 
         Bundle paymentSelectionBundle = new Bundle();
         paymentSelectionBundle.putParcelable(Constants.C_SUMMARY, cartSummary);
@@ -175,6 +174,7 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
             paymentSelectionBundle.putString(Constants.PAYU_CANCELLED, mPayuFailureReason);
         }
         bbTabs.add(new BBTab<>(getString(R.string.paymentMethod), PaymentSelectionFragment.class, paymentSelectionBundle));
+        bbTabs.add(new BBTab<>(getString(R.string.slot), SlotSelectionFragment.class, slotBundle));
 
         ViewPager viewPager = (ViewPager) base.findViewById(R.id.pager);
         FragmentStatePagerAdapter fragmentStatePagerAdapter = new

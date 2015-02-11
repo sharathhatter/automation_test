@@ -1,19 +1,92 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
-    <RelativeLayout
+    <LinearLayout
+        android:id="@+id/layoutHomeFooter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
         android:paddingBottom="@dimen/padding_small"
-        android:paddingTop="@dimen/padding_small">
+        android:visibility="gone">
 
+        <View
+            android:id="@+id/viewSeparator"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="@dimen/margin_small"
+            android:layout_marginRight="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_small"
+            android:background="@color/uiv3_divider_color" />
 
         <LinearLayout
-            android:id="@+id/layoutHomeHeader"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_normal"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/padding_small"
+            android:paddingRight="@dimen/padding_small">
+
+
+            <TextView
+                android:id="@+id/lblSameDayDelivery"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/sameDayDelivery"
+                android:textColor="@color/uiv3_action_bar_background"
+                android:textSize="@dimen/secondary_text_size" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/margin_small"
+                android:layout_marginRight="@dimen/margin_small"
+                android:background="@color/uiv3_divider_color" />
+
+            <TextView
+                android:id="@+id/lblQualityToLove"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/qualityYouWillLove"
+                android:textColor="@color/uiv3_action_bar_background"
+                android:textSize="@dimen/secondary_text_size" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/margin_small"
+                android:layout_marginRight="@dimen/margin_small"
+                android:background="@color/uiv3_divider_color" />
+
+            <TextView
+                android:id="@+id/lblWideRange"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/wideRange"
+                android:textColor="@color/uiv3_action_bar_background"
+                android:textSize="@dimen/secondary_text_size" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/layoutHomeHeader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/layoutHomeFooter"
+        android:layout_alignParentTop="true"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/padding_small"
+            android:paddingTop="@dimen/padding_small">
 
             <ImageView
                 android:id="@+id/imgBBLogo"
@@ -62,90 +135,32 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="@dimen/margin_small" />
 
-            <ProgressBar
-                android:id="@+id/progressBarLoading"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/margin_small" />
-
             <Button
                 android:id="@+id/btnStartShopping"
                 style="@style/FormButtonStyle"
-                android:layout_height="36dp"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="@dimen/margin_normal"
                 android:text="@string/startShopping"
                 android:visibility="visible" />
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/layoutFooter"
-            android:layout_width="match_parent"
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/layoutProgress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@color/white"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_below="@id/layoutHomeHeader"
-            android:orientation="vertical">
+            android:layout_marginTop="@dimen/margin_small" />
 
-            <View
-                android:id="@+id/viewSeparator"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginLeft="@dimen/margin_small"
-                android:layout_marginRight="@dimen/margin_small"
-                android:layout_marginTop="@dimen/margin_small"
-                android:background="@color/uiv3_divider_color" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_normal"
-                android:orientation="horizontal"
-                android:paddingLeft="@dimen/padding_small"
-                android:paddingRight="@dimen/padding_small">
-
-
-                <TextView
-                    android:id="@+id/lblSameDayDelivery"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/sameDayDelivery"
-                    android:textColor="@color/uiv3_action_bar_background"
-                    android:textSize="@dimen/secondary_text_size" />
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="@dimen/margin_small"
-                    android:layout_marginRight="@dimen/margin_small"
-                    android:background="@color/uiv3_divider_color" />
-
-                <TextView
-                    android:id="@+id/lblQualityToLove"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/qualityYouWillLove"
-                    android:textColor="@color/uiv3_action_bar_background"
-                    android:textSize="@dimen/secondary_text_size" />
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="@dimen/margin_small"
-                    android:layout_marginRight="@dimen/margin_small"
-                    android:background="@color/uiv3_divider_color" />
-
-                <TextView
-                    android:id="@+id/lblWideRange"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/wideRange"
-                    android:textColor="@color/uiv3_action_bar_background"
-                    android:textSize="@dimen/secondary_text_size" />
-            </LinearLayout>
-        </LinearLayout>
-    </RelativeLayout>
-</ScrollView>
+    </LinearLayout>
+</RelativeLayout>
