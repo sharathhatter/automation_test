@@ -58,7 +58,7 @@ public class GetDynamicPageTask<T> {
                     if (inlineProgress) {
                         ((ProgressIndicationAware) context).hideProgressView();
                     } else {
-                        ((ProgressIndicationAware) context).hideProgressView();
+                        ((ProgressIndicationAware) context).hideProgressDialog();
                     }
                 } catch (IllegalArgumentException e) {
                     return;

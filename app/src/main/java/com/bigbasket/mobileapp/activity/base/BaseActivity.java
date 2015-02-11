@@ -53,6 +53,7 @@ import com.bigbasket.mobileapp.task.UploadImageService;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.DialogButton;
+import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.demach.konotor.Konotor;
@@ -89,8 +90,8 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         handler = new BigBasketMessageHandler<>(getCurrentActivity());
         isActivitySuspended = false;
 
-        faceRupee = Typeface.createFromAsset(getAssets(), "Rupee.ttf");
-        faceRobotoRegular = Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");
+        faceRupee = FontHolder.getInstance(this).getFaceRupee();
+        faceRobotoRegular = FontHolder.getInstance(this).getFaceRobotoRegular();
         moEHelper = new MoEHelper(getCurrentActivity());
         Localytics.integrate(this);
     }
@@ -302,6 +303,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         AlertDialog.Builder builder = new AlertDialog.Builder(getCurrentActivity());
         builder.setTitle(title == null ? "BigBasket" : title);
         builder.setMessage(msg);
+        builder.setCancelable(false);
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

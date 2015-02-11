@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-public class BrowsePromoCategoryApiResponseContent {
+public class BrowsePromoCategoryApiResponseContent extends GetDynamicPageApiResponse {
 
     @SerializedName(Constants.PROMO_CATS)
     public ArrayList<PromoCategory> promoCategories;

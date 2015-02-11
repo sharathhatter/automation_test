@@ -10,10 +10,8 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -60,6 +58,13 @@ public class StartActivity extends BaseActivity implements DynamicScreenAware {
             return;
         }
 
+        ((TextView) findViewById(R.id.lblAppSlogan)).setTypeface(faceRobotoRegular);
+        ((TextView) findViewById(R.id.lblSelectCity)).setTypeface(faceRobotoRegular);
+        ((TextView) findViewById(R.id.lblSameDayDelivery)).setTypeface(faceRobotoRegular);
+        ((TextView) findViewById(R.id.lblQualityToLove)).setTypeface(faceRobotoRegular);
+        ((TextView) findViewById(R.id.lblWideRange)).setTypeface(faceRobotoRegular);
+        ((Button) findViewById(R.id.btnStartShopping)).setTypeface(faceRobotoRegular);
+
         NewRelic.withApplicationToken(getString(R.string.new_relic_key)).start(this.getApplication());
 
         MoEHelper moEHelper = new MoEHelper(this);
@@ -103,6 +108,9 @@ public class StartActivity extends BaseActivity implements DynamicScreenAware {
     }
 
     private void loadCities() {
+        if (!checkInternetConnection()) {
+            handler.sendOfflineError(true);
+        }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.listCities(new Callback<ArrayList<City>>() {
@@ -121,44 +129,24 @@ public class StartActivity extends BaseActivity implements DynamicScreenAware {
     }
 
     private void renderCitySelectionDropDown(final ArrayList<City> cities) {
-        cities.add(0, new City(getString(R.string.chooseYourLocation), -1));
-        LinearLayout layoutSpinnerAndWhyLink = (LinearLayout) findViewById(R.id.layoutSpinnerAndWhyLink);
-
-        Spinner spinnerCity = (Spinner) findViewById(R.id.spinnerCity);
-        ProgressBar progressBarLoading = (ProgressBar) findViewById(R.id.progressBarLoading);
+        final Spinner spinnerCity = (Spinner) findViewById(R.id.spinnerCity);
         ArrayAdapter<City> citySpinnerAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, cities);
         citySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerCity.setAdapter(citySpinnerAdapter);
-        spinnerCity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                City city = cities.get(position);
-                if (city.getId() != -1) {
-                    doRegisterDevice(city);
-                }
-            }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-        progressBarLoading.setVisibility(View.GONE);
-
-        final ArrayList<String> citiesStr = new ArrayList<>();
-        for (int i = 1; i < cities.size(); i++) {
-            citiesStr.add(cities.get(i).getName());
-        }
-        TextView txtViewWhy = (TextView) findViewById(R.id.txtViewWhy);
-        txtViewWhy.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.btnStartShopping).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String cityString = UIUtil.sentenceJoin(citiesStr);
-                showAlertDialog(getString(R.string.PreWhyMsg) + " " + cityString + ". " + getString(R.string.postWhyMsg));
+                int selectedPosition = spinnerCity.getSelectedItemPosition();
+                if (selectedPosition != Spinner.INVALID_POSITION) {
+                    City city = cities.get(selectedPosition);
+                    if (city.getId() != -1) {
+                        doRegisterDevice(city);
+                    }
+                }
             }
         });
-        layoutSpinnerAndWhyLink.setVisibility(View.VISIBLE);
         trackEvent(TrackingAware.HOME_CITY_SELECTION, null);
     }
 
@@ -220,16 +208,16 @@ public class StartActivity extends BaseActivity implements DynamicScreenAware {
 
     @Override
     public void showProgressDialog(String msg) {
-        ProgressBar progressBarLoading = (ProgressBar) findViewById(R.id.progressBarLoading);
-        progressBarLoading.setVisibility(View.VISIBLE);
-        LinearLayout layoutSpinnerAndWhyLink = (LinearLayout) findViewById(R.id.layoutSpinnerAndWhyLink);
-        layoutSpinnerAndWhyLink.setVisibility(View.GONE);
+        findViewById(R.id.progressBarLoading).setVisibility(View.VISIBLE);
+        findViewById(R.id.btnStartShopping).setVisibility(View.GONE);
+        findViewById(R.id.spinnerCity).setVisibility(View.GONE);
     }
 
     @Override
     public void hideProgressDialog() {
-        ProgressBar progressBarLoading = (ProgressBar) findViewById(R.id.progressBarLoading);
-        progressBarLoading.setVisibility(View.GONE);
+        findViewById(R.id.progressBarLoading).setVisibility(View.GONE);
+        findViewById(R.id.btnStartShopping).setVisibility(View.VISIBLE);
+        findViewById(R.id.spinnerCity).setVisibility(View.VISIBLE);
     }
 
     @Override

@@ -49,39 +49,9 @@
             android:padding="@dimen/padding_normal">
 
             <RadioButton
-                android:id="@+id/rbtnLinkToExistingSocialAccount"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/margin_normal"
-                android:textColor="@color/uiv3_primary_text_color"
-                android:textSize="@dimen/primary_text_size" />
-
-            <include layout="@layout/uiv3_login_input_layout" />
-
-            <Button
-                android:id="@+id/btnLinkToExistingSocialAccount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginLeft="@dimen/margin_normal"
-                android:layout_marginRight="@dimen/margin_normal"
-                android:layout_marginTop="@dimen/margin_normal"
-                android:background="@color/uiv3_action_bar_background"
-                android:minHeight="0dp"
-                android:minWidth="0dp"
-                android:paddingBottom="@dimen/padding_small"
-                android:paddingLeft="@dimen/padding_normal"
-                android:paddingRight="@dimen/padding_normal"
-                android:paddingTop="@dimen/padding_small"
-                android:text="@string/txtLinkAccount"
-                android:textColor="@color/white"
-                android:textSize="@dimen/primary_text_size" />
-
-            <RadioButton
                 android:id="@+id/rbtnCreateAccount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_normal"
                 android:checked="true"
                 android:textColor="@color/uiv3_primary_text_color"
                 android:textSize="@dimen/primary_text_size" />
@@ -129,8 +99,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin_small"
-                android:textColor="@color/uiv3_primary_text_color"
                 android:text="@string/acceptTermsAndCond"
+                android:textColor="@color/uiv3_primary_text_color"
                 android:textSize="@dimen/secondary_text_size" />
 
             <TextView
@@ -145,23 +115,47 @@
 
             <Button
                 android:id="@+id/btnCreateNewAccount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/FormButtonStyle"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="@dimen/margin_small"
                 android:layout_marginLeft="@dimen/margin_normal"
                 android:layout_marginRight="@dimen/margin_normal"
                 android:layout_marginTop="@dimen/margin_normal"
-                android:background="@color/uiv3_action_bar_background"
                 android:minHeight="0dp"
                 android:minWidth="0dp"
                 android:paddingBottom="@dimen/padding_small"
                 android:paddingLeft="@dimen/padding_normal"
                 android:paddingRight="@dimen/padding_normal"
                 android:paddingTop="@dimen/padding_small"
-                android:text="@string/txtCreateAndLinkAccount"
-                android:textColor="@color/white"
+                android:text="@string/txtCreateAndLinkAccount" />
+
+            <RadioButton
+                android:id="@+id/rbtnLinkToExistingSocialAccount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin_normal"
+                android:layout_marginTop="@dimen/margin_normal"
+                android:textColor="@color/uiv3_primary_text_color"
                 android:textSize="@dimen/primary_text_size" />
+
+            <include layout="@layout/uiv3_login_input_layout" />
+
+            <Button
+                android:id="@+id/btnLinkToExistingSocialAccount"
+                style="@style/FormButtonStyle"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:layout_marginRight="@dimen/margin_normal"
+                android:layout_marginTop="@dimen/margin_normal"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:paddingBottom="@dimen/padding_small"
+                android:paddingLeft="@dimen/padding_normal"
+                android:paddingRight="@dimen/padding_normal"
+                android:paddingTop="@dimen/padding_small"
+                android:text="@string/txtLinkAccount" />
+
+
         </RadioGroup>
     </LinearLayout>
 </ScrollView>

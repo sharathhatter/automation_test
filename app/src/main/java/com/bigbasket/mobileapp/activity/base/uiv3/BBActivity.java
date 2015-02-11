@@ -487,6 +487,16 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             case android.R.id.home:
                 finish();
                 return true;
+            case R.id.action_account:
+                if (AuthParameters.getInstance(getCurrentActivity()).isAuthTokenEmpty()) {
+                    showAlertDialog(null, "Please sign in to view/edit your Account",
+                            NavigationCodes.GO_TO_LOGIN);
+                } else {
+                    Intent intent = new Intent(this, BackButtonActivity.class);
+                    intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ACCOUNT_SETTING);
+                    startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                }
+                return true;
             case R.id.action_communication_hub:
                 launchKonotor();
                 return true;

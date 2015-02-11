@@ -10,6 +10,7 @@ import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.FontHolder;
 
 
 public abstract class AbstractFragment extends Fragment implements CancelableAware, ActivityAware {
@@ -59,8 +60,8 @@ public abstract class AbstractFragment extends Fragment implements CancelableAwa
         super.onActivityCreated(savedInstanceState);
 
         isFragmentSuspended = false;
-        faceRupee = BaseActivity.faceRupee;
-        faceRobotoRegular = BaseActivity.faceRobotoRegular;
+        faceRupee = FontHolder.getInstance(getActivity()).getFaceRupee();
+        faceRobotoRegular = FontHolder.getInstance(getActivity()).getFaceRobotoRegular();
     }
 
     @Override

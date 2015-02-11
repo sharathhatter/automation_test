@@ -278,7 +278,7 @@
                 android:layout_marginLeft="@dimen/margin_large"
                 android:layout_marginTop="@dimen/margin_mini"
                 android:text="@string/viewTerms"
-                android:textColor="@color/uiv3_link_color"
+                android:textColor="@color/uiv3_ok_label_color"
                 android:textSize="@dimen/secondary_text_size" />
 
             <CheckBox
@@ -293,7 +293,7 @@
 
             <Button
                 android:id="@+id/btnRegister"
-                style="@style/Uiv3BigGreenButton"
+                style="@style/FormButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/margin_normal"

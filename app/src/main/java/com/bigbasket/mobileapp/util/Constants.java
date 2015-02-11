@@ -660,8 +660,8 @@ public class Constants {
 
     public static final String GOOGLE_PLAY_SERVICES = "googlePlayServices";
     public static final String BUNDLE_PACK = "bundle-pack";
-    public static final String NOW_AT_BB = "now-at-bb";
-    public static final String NEW_AT_BB = "new-at-bb";
+    public static final String NOW_AT_BB = "nowatbb";
+    public static final String NEW_AT_BB = "new_launches";
     public static final String NEW_ARRIVALS = "newArrivals";
     public static final String SPECIAL_SHOPS = "specialShops";
     public static final String IS_EXPRESS = "is_express";

@@ -369,7 +369,7 @@
 
                 <Button
                     android:id="@+id/btnUpdateProfile"
-                    style="@style/Uiv3BigGreenButton"
+                    style="@style/FormButtonStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/UPDATE" />
