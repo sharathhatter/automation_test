@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -144,6 +145,49 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
             return;
         }
 
+        // Set product-list header view
+        View headerView = getActivity().getLayoutInflater().inflate(R.layout.uiv3_product_list_header, contentView, false);
+        LinearLayout layoutFilterBy = (LinearLayout) headerView.findViewById(R.id.layoutFilterBy);
+        RelativeLayout layoutSortBy = (RelativeLayout) headerView.findViewById(R.id.layoutSortBy);
+        LinearLayout layoutFilterSort = (LinearLayout) headerView.findViewById(R.id.layoutFilterSort);
+
+        TextView txtFilterBy = (TextView) headerView.findViewById(R.id.txtFilterBy);
+        TextView txtSortBy = (TextView) headerView.findViewById(R.id.txtSortBy);
+        txtSortBy.setTypeface(faceRobotoRegular);
+        txtFilterBy.setTypeface(faceRobotoRegular);
+
+        if (productListData.getProductCount() > 0) {
+            if (productListData.getFilterOptions() != null && productListData.getFilterOptions().size() > 0) {
+                layoutFilterBy.setVisibility(View.VISIBLE);
+                layoutFilterBy.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ((FilterDisplayAware) getActivity()).showFilters();
+                    }
+                });
+//                int filterDrawableId = productListData.isFilterSelected() ? R.drawable.filter_applied : R.drawable.no_filter;
+//                txtFilterBy.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(filterDrawableId), null, null, null);
+            } else {
+                layoutFilterBy.setVisibility(View.GONE);
+            }
+
+            if (productListData.getSortOptions().size() > 0) {
+                layoutSortBy.setVisibility(View.VISIBLE);
+                layoutSortBy.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ((FilterDisplayAware) getActivity()).showSortOptions();
+                    }
+                });
+//                txtSortedOnValue.setText(productListData.getSortedOnDisplay());
+            } else {
+                layoutSortBy.setVisibility(View.GONE);
+            }
+        } else {
+            layoutFilterSort.setVisibility(View.GONE);
+        }
+
+        contentView.addView(headerView);
         ((FilterDisplayAware) getActivity()).setFilterView(productListData.getFilterOptions(),
                 productListData.getFilteredOn(), getFragmentTxnTag());
 

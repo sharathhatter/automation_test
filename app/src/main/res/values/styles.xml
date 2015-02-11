@@ -28,9 +28,16 @@
         <item name="android:textColor">@color/headerBtnTxtColor</item>
     </style>
 
-    <style name="Uiv3BigGreenButton" parent="@style/DefaultButtonStyle">
+    <style name="FormButtonStyle" parent="@style/DefaultButtonStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/bb_button_text_size</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@drawable/main_button_background</item>
         <item name="android:paddingTop">@dimen/padding_small</item>
         <item name="android:paddingBottom">@dimen/padding_small</item>
+        <item name="android:paddingLeft">@dimen/padding_normal</item>
+        <item name="android:paddingRight">@dimen/padding_normal</item>
         <item name="android:layout_gravity">center</item>
     </style>
 

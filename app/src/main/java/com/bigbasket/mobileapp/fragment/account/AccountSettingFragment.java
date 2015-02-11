@@ -116,7 +116,7 @@ public class AccountSettingFragment extends BaseFragment {
                 R.drawable.history_dark,
                 R.drawable.user_modify_dark,
                 R.drawable.ic_lock_grey600_36dp,
-                R.drawable.ic_account_balance_wallet_grey600_36dp,
+                R.drawable.wallet_grey_48dp,
                 R.drawable.ic_place_grey600_36dp,
                 R.drawable.ic_edit_grey600_36dp,
                 R.drawable.ic_trending_up_grey600_36dp};

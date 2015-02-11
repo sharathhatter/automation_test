@@ -1,19 +1,11 @@
 package com.bigbasket.mobileapp.activity.product;
 
-import android.app.SearchManager;
-import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.widget.SearchView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
@@ -49,58 +41,28 @@ public class ProductListActivity extends BBActivity implements FilterDisplayAwar
     }
 
     @Override
-    protected void setOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            menuInflater.inflate(R.menu.search_menu, menu);
-
-            MenuItem searchMenuItem = menu.findItem(R.id.action_search);
-            SearchView searchView = (SearchView) searchMenuItem.getActionView();
-
-            // Setting the search listener
-            SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-            searchView.setOnSearchClickListener(new View.OnClickListener() {
-                private boolean extended = false;
-
-                @Override
-                public void onClick(View v) {
-                    if (!extended) {
-                        extended = true;
-                        ViewGroup.LayoutParams lp = v.getLayoutParams();
-                        lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
-                    }
-                }
-            });
-        } else {
-            menuInflater.inflate(R.menu.search_menu_pre_honeycomb, menu);
+    public void showFilters() {
+        BBDrawerLayout drawerLayout = getDrawerLayout();
+        if (drawerLayout == null) return;
+        drawerLayout.closeDrawer(Gravity.LEFT);
+        ProductListAwareFragment productListAwareFragment = getProductListAwareFragment();
+        if (productListAwareFragment != null) {
+            if (productListAwareFragment.getProductListData() == null ||
+                    productListAwareFragment.getProductListData().areFiltersEmpty()) {
+                Toast.makeText(getCurrentActivity(), getString(R.string.noFilterOptions), Toast.LENGTH_SHORT).show();
+            } else {
+                drawerLayout.openDrawer(Gravity.RIGHT);
+            }
         }
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_apply_filter && getDrawerLayout() != null) {
-            BBDrawerLayout drawerLayout = getDrawerLayout();
-            drawerLayout.closeDrawer(Gravity.LEFT);
-            ProductListAwareFragment productListAwareFragment = getProductListAwareFragment();
-            if (productListAwareFragment != null) {
-                if (productListAwareFragment.getProductListData() == null ||
-                        productListAwareFragment.getProductListData().areFiltersEmpty()) {
-                    Toast.makeText(getCurrentActivity(), getString(R.string.noFilterOptions), Toast.LENGTH_SHORT).show();
-                    return true;
-                }
-                drawerLayout.openDrawer(Gravity.RIGHT);
-            }
-            return true;
-        } else if (item.getItemId() == R.id.action_sort_products) {
-            closeFilterDrawer();
-            ProductListAwareFragment productListAwareFragment = getProductListAwareFragment();
-            if (productListAwareFragment != null) {
-                productListAwareFragment.onSortViewRequested();
-            }
+    public void showSortOptions() {
+        closeFilterDrawer();
+        ProductListAwareFragment productListAwareFragment = getProductListAwareFragment();
+        if (productListAwareFragment != null) {
+            productListAwareFragment.onSortViewRequested();
         }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override

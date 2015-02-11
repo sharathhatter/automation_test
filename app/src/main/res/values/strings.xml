@@ -433,7 +433,7 @@
         quantities of the following products that you have requested.</string>
     <string name="deleteQCProduct">Delete Product</string>
     <string name="deviceOffline">Cannot proceed with the operation. No network connection.</string>
-    <string name="chooseYourLocation">Choose Your Location</string>
+    <string name="chooseYourLocation">Select your city</string>
 
     <integer name="grid_portrait_count">1</integer>
 
@@ -444,10 +444,6 @@
     <string name="msgNetworkError">A network error occurred while communicating with the server.\nPlease check your internet connection</string>
     <string name="serviceUnavailable">Service is temporarily unavailable due to an issue.\nPlease try later</string>
     <string name="weAreDown">We are down!</string>
-    <string name="why">Why?</string>
-    <string name="PreWhyMsg">Currently we serve in </string>
-    <string name="postWhyMsg">The promotions and pricing are specific to the city.</string>
-    <!--<string name="whyMsg">Currently we serve in Bangalore, Hyderabad, Mumbai, and Pune.\nThe promotions and pricing are specific to the city.</string>-->
 
     <!-- member referral -->
     <string name="benefitToYou">Benefit to you</string>
@@ -511,4 +507,9 @@
     <string name="removeVoucherDesc">Are you sure that you want to remove this voucher?</string>
     <string name="minus">&#45;</string>
     <string name="plus">&#43;</string>
+    <string name="app_slogan">India\'s largest Online Grocery Store</string>
+    <string name="startShopping">Start Shopping</string>
+    <string name="sameDayDelivery">SAME-DAY DELIVERY</string>
+    <string name="qualityYouWillLove">QUALITY YOU\'LL LOVE</string>
+    <string name="wideRange">WIDE RANGE OF PRODUCTS</string>
 </resources>

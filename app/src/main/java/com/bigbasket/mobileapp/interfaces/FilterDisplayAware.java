@@ -9,4 +9,8 @@ public interface FilterDisplayAware {
 
     public void setFilterView(ArrayList<FilterOptionCategory> filterOptionCategories,
                               ArrayList<FilteredOn> filteredOn, String fragmentTag);
+
+    public void showFilters();
+
+    public void showSortOptions();
 }

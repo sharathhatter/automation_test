@@ -44,7 +44,6 @@ public class SectionView {
         this.defaultMargin = (int) context.getResources().getDimension(R.dimen.margin_mini);
     }
 
-
     private void parseRendererColors() {
         if (mSectionData == null || mSectionData.getRenderersMap() == null) return;
         int defaultTextColor = context.getResources().getColor(R.color.uiv3_secondary_text_color);

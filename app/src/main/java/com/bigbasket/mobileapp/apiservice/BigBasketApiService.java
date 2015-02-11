@@ -74,10 +74,6 @@ public interface BigBasketApiService {
                         @Field(Constants.PROPERTIES) String properties,
                         Callback<RegisterDeviceResponse> registerDeviceResponseCallback);
 
-    @GET("/get-main-menu/")
-    void getMainMenu(@Query(Constants.VERSION) String version,
-                     Callback<ApiResponse<BrowseCategoryApiResponseContent>> browseCategoryApiResponseCallback);
-
     @GET("/get-dynamic-page/")
     void getDynamicPage(@Query(Constants.SCREEN) String screen, Callback<ApiResponse<GetDynamicPageApiResponse>> homePageApiResponseCallback);
 

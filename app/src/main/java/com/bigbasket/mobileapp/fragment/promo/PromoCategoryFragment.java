@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.fragment.promo;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -17,7 +18,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.BrowsePromoCategoryApiResponseContent;
-import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.fragment.base.BaseSectionFragment;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.promo.Promo;
 import com.bigbasket.mobileapp.model.promo.PromoCategory;
@@ -35,7 +36,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class PromoCategoryFragment extends BaseFragment {
+public class PromoCategoryFragment extends BaseSectionFragment {
 
     private ArrayList<PromoCategory> mPromoCategoryList;
 
@@ -72,6 +73,7 @@ public class PromoCategoryFragment extends BaseFragment {
                                 && browsePromoCategoryApiResponse.apiResponseContent.promoCategories.size() > 0) {
                             mPromoCategoryList = browsePromoCategoryApiResponse.apiResponseContent.promoCategories;
                             mPromoCategoryList = filterPromoCategories();
+                            mSectionData = browsePromoCategoryApiResponse.apiResponseContent.sectionData;
                             if (mPromoCategoryList.size() > 0) {
                                 renderPromoCategories();
                                 trackEvent(TrackingAware.PROMO_CATEGORY_LIST, null);
@@ -132,11 +134,16 @@ public class PromoCategoryFragment extends BaseFragment {
             }
         }
 
+        View sectionLayout = getSectionView();
+
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View base = inflater.inflate(R.layout.uiv3_promo_category, contentView, false);
         ListView promoCategoryList = (ListView) base.findViewById(R.id.lstPromoCategory);
         PromoCategoryAdapter promoCategoryAdapter = new PromoCategoryAdapter(getActivity(),
                 promoConsolidatedList, faceRobotoRegular);
+        if (sectionLayout != null) {
+            promoCategoryList.addHeaderView(sectionLayout);
+        }
         promoCategoryList.setAdapter(promoCategoryAdapter);
         promoCategoryList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

@@ -22,6 +22,7 @@ import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 
@@ -93,8 +94,8 @@ public class ProductListDialogFragment extends DialogFragment {
         }
         AuthParameters authParameters = AuthParameters.getInstance(getActivity());
         ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
-                .setCommonTypeface(BaseActivity.faceRobotoRegular)
-                .setRupeeTypeface(BaseActivity.faceRupee)
+                .setCommonTypeface(FontHolder.getInstance(getActivity()).getFaceRobotoRegular())
+                .setRupeeTypeface(FontHolder.getInstance(getActivity()).getFaceRupee())
                 .setHandler(((HandlerAware) getActivity()).getHandler())
                 .setLoggedInMember(!authParameters.isAuthTokenEmpty())
                 .setShowShoppingListBtn(false)
@@ -111,8 +112,8 @@ public class ProductListDialogFragment extends DialogFragment {
         TextView txtCancel = (TextView) view.findViewById(R.id.txtCancel);
         TextView txtViewAllProducts = (TextView) view.findViewById(R.id.txtViewAllProducts);
         if (getShowsDialog()) {
-            txtCancel.setTypeface(BaseActivity.faceRobotoRegular);
-            txtViewAllProducts.setTypeface(BaseActivity.faceRobotoRegular);
+            txtCancel.setTypeface(FontHolder.getInstance(getActivity()).getFaceRobotoRegular());
+            txtViewAllProducts.setTypeface(FontHolder.getInstance(getActivity()).getFaceRobotoRegular());
             txtCancel.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

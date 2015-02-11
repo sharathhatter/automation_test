@@ -38,14 +38,12 @@
 
     <Button
         android:id="@+id/btnSubmit"
-        style="@style/Uiv3BigGreenButton"
+        style="@style/FormButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_normal"
         android:onClick="OnSubmitButtonClicked"
-        android:text="@string/submit"
-        android:textColor="@color/uiv3_primary_text_color"
-        android:textSize="@dimen/primary_text_size" />
+        android:text="@string/submit"/>
 
     <Button
         android:id="@+id/btnCancel"

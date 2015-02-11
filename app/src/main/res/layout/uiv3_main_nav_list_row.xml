@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:paddingTop="@dimen/padding_small"
     android:paddingBottom="@dimen/padding_small"
-    android:background="@color/white">
+    android:background="@drawable/nav_item_background">
 
     <ImageView
         android:layout_width="wrap_content"

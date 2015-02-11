@@ -10,11 +10,12 @@
 
     <ImageView
         android:id="@+id/imgNavMain"
-        android:layout_width="wrap_content"
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
         android:layout_marginBottom="@dimen/margin_small"
         android:contentDescription="@string/app_name"
-        android:src="@drawable/dash_logo" />
+        android:src="@drawable/bb_logo_transparent_bkg" />
 
     <TextView
         android:id="@+id/txtNavSalutation"
