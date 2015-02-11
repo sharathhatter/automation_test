@@ -69,12 +69,12 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         //getCurrentActivity().finish(); // don't remove this, fix for back button press from address screen
     }
-
-    @Override
-    public void onRestart(){
-        super.onRestart();
-        finish();
-    }
+//
+//    @Override
+//    public void onRestart(){
+//        super.onRestart();
+//        finish();
+//    }
 
     @Override
     protected void onRestart() {

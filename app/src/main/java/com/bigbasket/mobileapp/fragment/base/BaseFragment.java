@@ -375,9 +375,10 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     }
 
     @Override
-    public void trackEvent(String eventName, Map<String, String> eventAttribs, String source, String sourceValue) {
+    public void trackEvent(String eventName, Map<String, String> eventAttribs, String source,
+                           String sourceValue, boolean isCustomerValueIncrease) {
         if (getCurrentActivity() == null) return;
-        getCurrentActivity().trackEvent(eventName, eventAttribs, source, sourceValue);
+        getCurrentActivity().trackEvent(eventName, eventAttribs, source, sourceValue, false);
     }
 
     @Override

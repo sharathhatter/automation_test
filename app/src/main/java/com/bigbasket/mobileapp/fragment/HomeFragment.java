@@ -56,6 +56,10 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        getAppData(savedInstanceState);
+    }
+
+    private void homePageGetter(Bundle savedInstanceState){
         boolean sectionStateRestored = tryRestoreSectionState(savedInstanceState);
         if (sectionStateRestored) {
             renderHomePage();
@@ -63,7 +67,6 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
             new GetCartCountTask<>(getCurrentActivity(), true).startTask();
             requestHomePage();
         }
-        getAppData();
         handler = new HomePageHandler<>(this);
     }
 
@@ -269,7 +272,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         AuthParameters.updateInstance(getCurrentActivity());
     }
 
-    private void callGetAppData(String client, String versionName) {
+    private void callGetAppData(String client, String versionName, final Bundle savedInstanceState) {
         if (!DataUtil.isInternetAvailable(getCurrentActivity())) handler.sendOfflineError();
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressView();
@@ -297,6 +300,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                                         prefer.getString(Constants.MEMBER_EMAIL_KEY, ""),
                                         prefer.getString(Constants.MID_KEY, ""));//TODO: check with sid
                             }
+                            homePageGetter(savedInstanceState);
                         } else {
                             handler.sendEmptyMessage(callbackAppDataResponse.status);
                         }
@@ -336,15 +340,18 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         }
     }
 
-    private void getAppData() {
+    private void getAppData(Bundle savedInstanceState) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         long lastAppDataCallTime = preferences.getLong(Constants.LAST_APP_DATA_CALL_TIME, 0);
         if (lastAppDataCallTime == 0 || UIUtil.isMoreThanXHour(lastAppDataCallTime, Constants.SIX_HOUR)) {
             try {
-                callGetAppData(Constants.CLIENT_NAME, DataUtil.getAppVersionName(getCurrentActivity()));
+                callGetAppData(Constants.CLIENT_NAME, DataUtil.getAppVersionName(getCurrentActivity()),
+                        savedInstanceState);
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }else {
+            homePageGetter(savedInstanceState);
         }
     }
 

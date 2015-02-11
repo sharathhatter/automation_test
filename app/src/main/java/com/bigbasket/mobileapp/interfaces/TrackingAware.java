@@ -142,7 +142,7 @@ public interface TrackingAware {
     public static final String SPENDTRENDS_SHOWN = "SpendTrends Shown";
 
     public void trackEvent(String eventName, Map<String, String> eventAttribs,
-                           String source, String sourceValue);
+                           String source, String sourceValue, boolean isCustomerValueIncrease);
 
     public void trackEvent(String eventName, Map<String, String> eventAttribs);
 }

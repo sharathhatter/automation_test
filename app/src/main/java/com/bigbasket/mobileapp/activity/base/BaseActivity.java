@@ -56,9 +56,10 @@ import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
+import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
 import com.demach.konotor.Konotor;
 import com.google.gson.Gson;
-import com.localytics.android.Localytics;
 import com.moe.pushlibrary.MoEHelper;
 
 import org.json.JSONException;
@@ -92,8 +93,9 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
 
         faceRupee = FontHolder.getInstance(this).getFaceRupee();
         faceRobotoRegular = FontHolder.getInstance(this).getFaceRobotoRegular();
-        moEHelper = new MoEHelper(getCurrentActivity());
-        Localytics.integrate(this);
+
+        moEHelper = MoEngageWrapper.getMoHelperObj(getCurrentActivity());
+        LocalyticsWrapper.integrate(this);
     }
 
     @Override
@@ -172,23 +174,22 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     protected void onStart() {
         super.onStart();
         isActivitySuspended = false;
-        moEHelper.onStart(this);
+        MoEngageWrapper.onStart(moEHelper, getCurrentActivity());
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         isActivitySuspended = true;
-        moEHelper.onStop(this);
+        MoEngageWrapper.onStop(moEHelper, getCurrentActivity());
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         isActivitySuspended = true;
-        moEHelper.onPause(this);
-        Localytics.closeSession();
-        Localytics.upload();
+        MoEngageWrapper.onPause(moEHelper, getCurrentActivity());
+        LocalyticsWrapper.onPause();
     }
 
     @Override
@@ -201,10 +202,8 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         super.onResume();
         isActivitySuspended = false;
         initializeKonotor();
-        moEHelper.onResume(this);
-        Localytics.openSession();
-        //Localytics.tagScreen();
-        Localytics.upload();
+        MoEngageWrapper.onResume(moEHelper, getCurrentActivity());
+        LocalyticsWrapper.onResume();
         prescriptionImageUploadHandler();
     }
 
@@ -586,22 +585,23 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         String analyticsAdditionalAttrsJson = preferences.getString(Constants.ANALYTICS_ADDITIONAL_ATTRS, null);
         editor.remove(Constants.ANALYTICS_ADDITIONAL_ATTRS);
 
-        Localytics.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_ID, null);
-        Localytics.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_EMAIL, null);
-        Localytics.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_NAME, null);
-        Localytics.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_MOBILE, null);
-        Localytics.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_HUB, null);
-        Localytics.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_REGISTERED_ON, null);
-        Localytics.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_BDAY, null);
-        Localytics.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_GENDER, null);
-        Localytics.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_CITY, null);
+        LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_ID, null);
+        LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_EMAIL, null);
+        LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_NAME, null);
+        LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_MOBILE, null);
+        LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_HUB, null);
+        LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_REGISTERED_ON, null);
+        LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_BDAY, null);
+        LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_GENDER, null);
+        LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_CITY, null);
+
         if (!TextUtils.isEmpty(analyticsAdditionalAttrsJson)) {
             Gson gson = new Gson();
             HashMap<String, Object> additionalAttrMap = new HashMap<>();
             additionalAttrMap = (HashMap<String, Object>) gson.fromJson(analyticsAdditionalAttrsJson, additionalAttrMap.getClass());
             if (additionalAttrMap != null) {
                 for (Map.Entry<String, Object> entry : additionalAttrMap.entrySet()) {
-                    Localytics.setIdentifier(entry.getKey(), null);
+                    LocalyticsWrapper.setIdentifier(entry.getKey(), null);
                 }
             }
         }
@@ -631,12 +631,13 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     public void trackEvent(String eventName, Map<String, String> eventAttribs) {
         AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());
         if (authParameters.isMoEngageEnabled())
-            trackEvent(eventName, eventAttribs, null, null);
+            trackEvent(eventName, eventAttribs, null, null, false);
     }
 
 
     @Override
-    public void trackEvent(String eventName, Map<String, String> eventAttribs, String source, String sourceValue) {
+    public void trackEvent(String eventName, Map<String, String> eventAttribs, String source, String sourceValue,
+                           boolean isCustomerValueIncrease) {
         AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());
         if (authParameters.isMoEngageEnabled()) {
             JSONObject analyticsJsonObj = new JSONObject();
@@ -652,13 +653,16 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
                 if (!TextUtils.isEmpty(sourceValue)) {
                     analyticsJsonObj.put(Constants.SOURCE_ID, sourceValue);
                 }
-                moEHelper.trackEvent(eventName, analyticsJsonObj);
+                MoEngageWrapper.trackEvent(moEHelper, eventName, analyticsJsonObj);
             } catch (JSONException e) {
                 Log.e("Analytics", "Failed to send event = " + eventName + " to analytics");
             }
         }
         if (authParameters.isLocalyticsEnabled()) {
-            Localytics.tagEvent(eventName, eventAttribs);
+            if (isCustomerValueIncrease)
+                LocalyticsWrapper.tagEvent(eventName, eventAttribs, Constants.CUSTOMER_VALUE_INCREASE);
+            else
+                LocalyticsWrapper.tagEvent(eventName, eventAttribs);
         }
     }
 

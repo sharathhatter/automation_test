@@ -290,7 +290,6 @@ public class Constants {
     public static final String VIA_INVOICE = "viaInvoice";
 
     public static final String IS_NOT_SUPPORTED = "is_not_supported";
-    //public static final String IS_FORCE_UPDATE = "is_force_update";
     public static final String BASE_PKG_NAME = "com.bigbasket.mobileapp";
     public static final String C_SUMMARY = "c-summary/";
     public static final String VERSION_NAME = "versionName";
@@ -299,6 +298,7 @@ public class Constants {
     public static final String ENABLE_MOENGAGE = "enable_moengage";
     public static final String FIRST_TIME_COOKIE_TIME_STAMP = "firstTimeCookieTimestamp";
     public static final String ENABLE_LOCALYTICS = "enable_localytics";
+    public static final int CUSTOMER_VALUE_INCREASE = 1;
     public static final String ANALYTICS = "analytics";
     public static final String CAPABILITIES = "capabilities";
     public static final String APP_UPDATE = "app_update";

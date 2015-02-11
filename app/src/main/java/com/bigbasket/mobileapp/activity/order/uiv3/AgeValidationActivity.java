@@ -238,7 +238,7 @@ public class AgeValidationActivity extends BackButtonActivity {
             }
 
             if (!TextUtils.isEmpty(msgInfo.getMessageStr())) {
-                MessageFormatUtil messageFormatUtil = new MessageFormatUtil();
+                MessageFormatUtil<AgeValidationActivity> messageFormatUtil = new MessageFormatUtil<>();
                 SpannableStringBuilder msgContent = messageFormatUtil.
                         replaceStringArgWithDisplayNameAndLink(this, msgInfo.getMessageStr(),
                                 msgInfo.getParams(), activitiesList, fragmentCodeArrayList);
