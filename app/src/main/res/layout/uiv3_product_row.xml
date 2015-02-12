@@ -130,7 +130,7 @@
             android:layout_marginRight="@dimen/margin_small"
             android:layout_marginTop="@dimen/margin_mini"
             android:contentDescription="@string/delete_from_shop_lst"
-            android:src="@drawable/shoplist_del_btn"
+            android:src="@drawable/ic_delete_grey600_24dp"
             android:visibility="gone" />
 
         <Spinner
@@ -141,6 +141,7 @@
             android:layout_marginLeft="@dimen/margin_mini"
             android:layout_marginRight="@dimen/margin_normal"
             android:layout_marginTop="@dimen/margin_mini"
+            android:layout_marginBottom="@dimen/margin_small"
             android:layout_toLeftOf="@id/imgShoppingListDel"
             android:layout_toRightOf="@id/imgProduct"
             android:paddingLeft="@dimen/padding_small" />
@@ -152,6 +153,7 @@
             android:layout_below="@id/spinnerPackageDesc"
             android:layout_marginLeft="@dimen/margin_mini"
             android:layout_marginTop="@dimen/margin_mini"
+            android:layout_marginBottom="@dimen/margin_small"
             android:layout_toRightOf="@id/imgProduct"
             android:text="5 lt"
             android:textColor="@color/uiv3_primary_text_color"
@@ -182,7 +184,7 @@
                     android:inputType="numberSigned"
                     android:maxLength="2"
                     android:minLines="1"
-                    android:paddingBottom="@dimen/padding_mini"
+                    android:paddingBottom="@dimen/padding_small"
                     android:paddingLeft="@dimen/padding_normal"
                     android:paddingRight="@dimen/padding_normal"
                     android:paddingTop="@dimen/padding_mini"
@@ -197,6 +199,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/margin_small"
                     android:background="@color/uiv3_action_bar_background"
+                    android:drawableRight="@drawable/ic_shopping_cart_white_18dp"
                     android:drawablePadding="@dimen/padding_small"
                     android:minHeight="0dp"
                     android:minWidth="0dp"

@@ -63,6 +63,7 @@ import com.bigbasket.mobileapp.fragment.promo.PromoCategoryFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoDetailFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoSetProductsFragment;
 import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListFragment;
+import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListProductFragment;
 import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListSummaryFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
@@ -472,6 +473,16 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 promoSetProductsFragment.setArguments(bundle);
                 addToMainLayout(promoSetProductsFragment);
                 break;
+            case FragmentCodes.START_SHOPPING_LIST_PRODUCTS:
+                ShoppingListProductFragment shoppingListProductFragment = new ShoppingListProductFragment();
+                bundle = new Bundle();
+                bundle.putParcelable(Constants.SHOPPING_LIST_NAME,
+                        getIntent().getParcelableExtra(Constants.SHOPPING_LIST_NAME));
+                bundle.putString(Constants.TOP_CAT_SLUG, getIntent().getStringExtra(Constants.TOP_CAT_SLUG));
+                bundle.putString(Constants.TOP_CATEGORY_NAME, getIntent().getStringExtra(Constants.TOP_CATEGORY_NAME));
+                shoppingListProductFragment.setArguments(bundle);
+                addToMainLayout(shoppingListProductFragment);
+                break;
         }
     }
 
@@ -487,7 +498,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             case android.R.id.home:
                 finish();
                 return true;
-            case R.id.action_account:
+            case R.id.action_user_info:
                 if (AuthParameters.getInstance(getCurrentActivity()).isAuthTokenEmpty()) {
                     showAlertDialog(null, "Please sign in to view/edit your Account",
                             NavigationCodes.GO_TO_LOGIN);
@@ -517,11 +528,10 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 } else {
                     ShoppingListName shoppingListName = new ShoppingListName(Constants.SMART_BASKET,
                             Constants.SMART_BASKET_SLUG, true);
-                    ShoppingListSummaryFragment shoppingListSummaryFragment = new ShoppingListSummaryFragment();
-                    Bundle bundle = new Bundle();
-                    bundle.putParcelable(Constants.SHOPPING_LIST_NAME, shoppingListName);
-                    shoppingListSummaryFragment.setArguments(bundle);
-                    addToMainLayout(shoppingListSummaryFragment);
+                    Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
+                    intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_SUMMARY);
+                    intent.putExtra(Constants.SHOPPING_LIST_NAME, shoppingListName);
+                    startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 }
                 return true;
             case R.id.action_rate_app:

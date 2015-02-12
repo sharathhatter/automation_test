@@ -77,7 +77,7 @@ public class ProductListDialogFragment extends DialogFragment {
         }
         View view = inflater.inflate(R.layout.uiv3_product_list_dialog, container, false);
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-        UIUtil.configureRecyclerView(recyclerView, getActivity(), 2, 2);
+        UIUtil.configureRecyclerView(recyclerView, getActivity(), 1, 1);
 
         List<Product> shortenedProductsList;
         int productCount;

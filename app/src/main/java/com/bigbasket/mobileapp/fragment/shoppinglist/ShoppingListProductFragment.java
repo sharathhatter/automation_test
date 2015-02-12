@@ -188,13 +188,13 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
         LinearLayout contentView = getContentView();
         if (contentView == null) return;
 
-        RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 2, 3, contentView);
+        RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, contentView);
 
         ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
                 .setCommonTypeface(faceRobotoRegular)
                 .setHandler(new BigBasketMessageHandler<>(getCurrentActivity()))
                 .setLoggedInMember(!AuthParameters.getInstance(getActivity()).isAuthTokenEmpty())
-                .setShowShoppingListBtn(true)
+                .setShowShoppingListBtn(false)
                 .setShowBasketBtn(true)
                 .setShowShopListDeleteBtn(!mShoppingListName.isSystem())
                 .setShoppingListName(mShoppingListName)

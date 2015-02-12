@@ -106,7 +106,7 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
         if (getActivity() == null) return;
         LinearLayout contentView = getContentView();
         if (contentView == null) return;
-        RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 2, 2, contentView);
+        RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, contentView);
 
         // Set product-list data
         AuthParameters authParameters = AuthParameters.getInstance(getActivity());

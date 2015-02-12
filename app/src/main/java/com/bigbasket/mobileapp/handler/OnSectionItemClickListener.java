@@ -43,7 +43,8 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class OnSectionItemClickListener<T> implements View.OnClickListener, BaseSliderView.OnSliderClickListener,
+public class
+        OnSectionItemClickListener<T> implements View.OnClickListener, BaseSliderView.OnSliderClickListener,
         ProductListDataAware {
     private T context;
     private Section section;

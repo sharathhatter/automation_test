@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.fragment.shoppinglist;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.PopupMenu;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
@@ -27,6 +29,7 @@ import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListNamesTask;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.view.uiv3.CreateShoppingListDialog;
 import com.bigbasket.mobileapp.view.uiv3.DeleteShoppingListDialog;
@@ -150,11 +153,10 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
     }
 
     private void launchShoppingListSummary(ShoppingListName shoppingListName) {
-        Bundle bundle = new Bundle();
-        bundle.putParcelable(Constants.SHOPPING_LIST_NAME, shoppingListName);
-        ShoppingListSummaryFragment shoppingListSummaryFragment = new ShoppingListSummaryFragment();
-        shoppingListSummaryFragment.setArguments(bundle);
-        changeFragment(shoppingListSummaryFragment);
+        Intent intent = new Intent(getActivity(), BackButtonActivity.class);
+        intent.putExtra(Constants.SHOPPING_LIST_NAME, shoppingListName);
+        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_SUMMARY);
+        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
     @Override

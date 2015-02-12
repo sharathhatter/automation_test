@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.fragment.shoppinglist;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListSummaryApiResponse;
@@ -23,6 +25,8 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListSummary;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.ArrayList;
@@ -130,7 +134,11 @@ public class ShoppingListSummaryFragment extends BaseFragment {
         contentView.removeAllViews();
         if (mShoppingListSummaries == null || mShoppingListSummaries.size() == 0) {
             if (mShoppingListName.getSlug().equalsIgnoreCase(Constants.SMART_BASKET_SLUG)) {
-                showErrorMsg(getString(R.string.smartBasketEmpty));
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                TextView txtMsg = (TextView) inflater.inflate(R.layout.uiv3_msg_text, contentView, false);
+                txtMsg.setTypeface(faceRobotoRegular);
+                txtMsg.setText(R.string.smartBasketEmpty);
+                contentView.addView(txtMsg);
             } else {
                 LayoutInflater inflater = getActivity().getLayoutInflater();
                 RelativeLayout relativeLayout = (RelativeLayout) inflater.inflate(R.layout.shopping_list_empty, contentView, false);
@@ -157,13 +165,12 @@ public class ShoppingListSummaryFragment extends BaseFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ShoppingListSummary shoppingListSummary = mShoppingListSummaries.get(position);
-                Bundle bundle = new Bundle();
-                bundle.putParcelable(Constants.SHOPPING_LIST_NAME, mShoppingListName);
-                bundle.putString(Constants.TOP_CAT_SLUG, shoppingListSummary.getTopCategorySlug());
-                bundle.putString(Constants.TOP_CATEGORY_NAME, shoppingListSummary.getTopCategoryName());
-                ShoppingListProductFragment shoppingListProductFragment = new ShoppingListProductFragment();
-                shoppingListProductFragment.setArguments(bundle);
-                changeFragment(shoppingListProductFragment);
+                Intent intent = new Intent(getActivity(), BackButtonActivity.class);
+                intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_PRODUCTS);
+                intent.putExtra(Constants.SHOPPING_LIST_NAME, mShoppingListName);
+                intent.putExtra(Constants.TOP_CAT_SLUG, shoppingListSummary.getTopCategorySlug());
+                intent.putExtra(Constants.TOP_CATEGORY_NAME, shoppingListSummary.getTopCategoryName());
+                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
             }
         });
         contentView.addView(shoppingListSummaryView);
