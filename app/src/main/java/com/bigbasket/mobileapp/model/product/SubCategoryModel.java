@@ -15,30 +15,17 @@ public class SubCategoryModel implements Parcelable, Serializable {
     @SerializedName(Constants.SLUG_NAME)
     private String slug;
 
-    @SerializedName(Constants.NO_ITEMS)
-    private int items;
-
     @SerializedName(Constants.DISPLAY_NAME)
     private String name;
 
     @SerializedName(Constants.SUB_CATS)
     private ArrayList<Category> category;
 
-    private boolean _wasCategoryNull;
-
-    public SubCategoryModel(String slug, int items, String name, ArrayList<Category> category) {
-        this.name = name;
-        this.items = items;
-        this.slug = slug;
-        this.category = category;
-    }
-
     public SubCategoryModel(Parcel source) {
         this.slug = source.readString();
-        this.items = source.readInt();
         this.name = source.readString();
-        this._wasCategoryNull = source.readByte() == (byte) 1;
-        if (!this._wasCategoryNull) {
+        boolean _wasCategoryNull = source.readByte() == (byte) 1;
+        if (!_wasCategoryNull) {
             source.readTypedList(category, Category.CREATOR);
         }
     }
@@ -51,11 +38,10 @@ public class SubCategoryModel implements Parcelable, Serializable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.slug);
-        dest.writeInt(this.items);
         dest.writeString(this.name);
-        this._wasCategoryNull = this.category == null;
-        dest.writeByte(this._wasCategoryNull ? (byte) 1 : (byte) 0);
-        if (!this._wasCategoryNull) {
+        boolean _wasCategoryNull = this.category == null;
+        dest.writeByte(_wasCategoryNull ? (byte) 1 : (byte) 0);
+        if (!_wasCategoryNull) {
             dest.writeTypedList(this.category);
         }
     }
@@ -66,14 +52,6 @@ public class SubCategoryModel implements Parcelable, Serializable {
 
     public void setSlug(String slug) {
         this.slug = slug;
-    }
-
-    public int getItems() {
-        return items;
-    }
-
-    public void setItems(int items) {
-        this.items = items;
     }
 
     public String getName() {

@@ -15,9 +15,6 @@ import com.bigbasket.mobileapp.model.product.Category;
 
 import java.util.List;
 
-/**
- * Created by jugal on 12/11/14.
- */
 public class SubCategoryListAdapter<T> extends BaseExpandableListAdapter {
 
     private T ctx;
@@ -108,9 +105,6 @@ public class SubCategoryListAdapter<T> extends BaseExpandableListAdapter {
         }
         TextView txtListItem = subCatHolder.getListText();
         txtListItem.setText("     " + bottomCategory.getName());
-        if (Integer.parseInt(bottomCategory.getNumProducts()) > 0) {
-            txtListItem.append(" (" + bottomCategory.getNumProducts() + ")");
-        }
         txtListItem.setTextColor(((ActivityAware) ctx).getCurrentActivity().getResources().getColor(R.color.uiv3_secondary_text_color));
 
         ImageView imgArrow = subCatHolder.getListArrow();
@@ -134,15 +128,7 @@ public class SubCategoryListAdapter<T> extends BaseExpandableListAdapter {
         }
         TextView txtListItem = subCatHolder.getListText();
         txtListItem.setText(subcategory.getName());
-        if (Integer.parseInt(subcategory.getNumProducts()) > 0) {
-            txtListItem.append(" (" + subcategory.getNumProducts() + ")");
-        }
-
-        if (Integer.parseInt(subcategory.getNumProducts()) == -1) {
-            txtListItem.setTextColor(((ActivityAware) ctx).getCurrentActivity().getResources().getColor(R.color.uiv3_action_bar_background));
-        } else {
-            txtListItem.setTextColor(((ActivityAware) ctx).getCurrentActivity().getResources().getColor(R.color.uiv3_primary_text_color));
-        }
+        txtListItem.setTextColor(((ActivityAware) ctx).getCurrentActivity().getResources().getColor(R.color.uiv3_primary_text_color));
 
         ImageView imgArrow = subCatHolder.getListArrow();
 

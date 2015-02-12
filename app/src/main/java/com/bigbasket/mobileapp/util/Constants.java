@@ -100,7 +100,6 @@ public class Constants {
     public static final String TOP_CATEGORY_SLUG = "top_category_slug";
     public static final String SLUG_NAME = "slug_name";
     public static final String SUB_CATS = "sub_cats";
-    public static final String NO_ITEMS = "no_items";
     public static final String NUM_PRODUCTS = "num_products";
     public static final String SLUG_NAME_CATEGORY = "slug_name_category";
     public static final String SECTION = "section";

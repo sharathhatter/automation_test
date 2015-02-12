@@ -239,7 +239,7 @@ public class StartActivity extends BaseActivity implements DynamicScreenAware {
                 loadCities();
             }
         } else if (resultCode == NavigationCodes.GO_TO_HOME) {
-            loadHomePage();
+            loadNavigation();
         } else {
             finish();
         }

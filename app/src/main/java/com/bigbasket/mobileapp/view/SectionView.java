@@ -59,7 +59,7 @@ public class SectionView {
 
     @Nullable
     public View getView() {
-        if (mSectionData == null || mSectionData.getRenderersMap() == null) return null;
+        if (mSectionData == null || mSectionData.getSections() == null || mSectionData.getSections().size() == 0) return null;
         parseRendererColors();
         LinearLayout mainLayout = new LinearLayout(context);
         mainLayout.setOrientation(LinearLayout.VERTICAL);

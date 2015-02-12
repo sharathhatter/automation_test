@@ -143,7 +143,9 @@ public class
                     if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
                         Intent intent = new Intent(((ActivityAware) context).getCurrentActivity(), BackButtonActivity.class);
                         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_CATEGORY_LANDING);
-                        intent.putExtra(Constants.CATEGORY_SLUG, destinationInfo.getDestinationSlug());
+                        intent.putExtra(Constants.TOP_CATEGORY_SLUG, destinationInfo.getDestinationSlug());
+                        String title = sectionItem.getTitle() != null ? sectionItem.getTitle().getText() : "";
+                        intent.putExtra(Constants.TOP_CATEGORY_NAME, title);
                         ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     }
                     break;

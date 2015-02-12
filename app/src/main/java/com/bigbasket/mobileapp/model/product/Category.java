@@ -21,28 +21,14 @@ public class Category implements Parcelable, Serializable {
     @SerializedName(Constants.SUB_CATS)
     private ArrayList<Category> category;
 
-    @SerializedName(Constants.NO_ITEMS)
-    private int numberItems;
-
     @SerializedName(Constants.DISPLAY_NAME)
     private String name;
-
-    @SerializedName(Constants.NUM_PRODUCTS)
-    private String numProducts;
 
     @SerializedName(Constants.FILTER)
     private String filter;
 
     @SerializedName(Constants.SORT_BY)
     private String sortBy;
-
-
-    public Category(String slug, ArrayList<Category> category, int numberItems, String name) {
-        this.slug = slug;
-        this.category = category;
-        this.numberItems = numberItems;
-        this.name = name;
-    }
 
     public Category(String name, String slug) {
         this.name = name;
@@ -51,9 +37,7 @@ public class Category implements Parcelable, Serializable {
 
     public Category(Parcel source) {
         this.slug = source.readString();
-        this.numberItems = source.readInt();
         this.name = source.readString();
-        this.numProducts = source.readString();
         boolean _wasFilterNull = source.readByte() == (byte) 1;
         if (!_wasFilterNull) {
             filter = source.readString();
@@ -79,10 +63,6 @@ public class Category implements Parcelable, Serializable {
 
     public String getSlug() {
         return slug;
-    }
-
-    public int getNumberItems() {
-        return numberItems;
     }
 
     public void setSlug(String slug) {
@@ -121,9 +101,7 @@ public class Category implements Parcelable, Serializable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.slug);
-        dest.writeInt(this.numberItems);
         dest.writeString(this.name);
-        dest.writeString(this.numProducts); //todo check for null pointer
         boolean _wasFilterNull = filter == null;
         dest.writeByte(_wasFilterNull ? (byte) 1 : (byte) 0);
         if (!_wasFilterNull) {
@@ -152,14 +130,6 @@ public class Category implements Parcelable, Serializable {
             return new Category[size];
         }
     };
-
-    public String getNumProducts() {
-        return numProducts;
-    }
-
-    public void setNumProducts(String numProducts) {
-        this.numProducts = numProducts;
-    }
 
     public String getFilter() {
         return filter;

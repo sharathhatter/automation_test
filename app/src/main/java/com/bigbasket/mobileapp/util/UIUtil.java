@@ -177,13 +177,6 @@ public class UIUtil {
         return (nf.format(amount).equals("0.00") || nf.format(amount).equals("0.0")) ? "0" : nf.format(amount);
     }
 
-    public static Button getPrimaryButton(Context ctx) {
-        Button btn = new Button(ctx);
-        btn.setTextSize(ctx.getResources().getDimension(R.dimen.bb_button_text_size));
-        btn.setTextColor(ctx.getResources().getColor(R.color.uiv3_primary_text_color));
-        return btn;
-    }
-
     public static RecyclerView getResponsiveRecyclerView(Context context, int portraitModeGridCount,
                                                          int landscapeModeGridCount, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -192,8 +185,8 @@ public class UIUtil {
         return recyclerView;
     }
 
-    public static ObservableRecyclerView getResponsiveObservaleRecyclerView(Context context, int portraitModeGridCount,
-                                                                            int landscapeModeGridCount, ViewGroup parent) {
+    public static ObservableRecyclerView getResponsiveObservableRecyclerView(Context context, int portraitModeGridCount,
+                                                                             int landscapeModeGridCount, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         ObservableRecyclerView recyclerView = (ObservableRecyclerView) inflater.inflate(R.layout.observable_recyclerview, parent, false);
         configureRecyclerView(recyclerView, context, portraitModeGridCount, landscapeModeGridCount);

@@ -139,7 +139,7 @@ public class PromoCategoryFragment extends BaseSectionFragment implements PromoD
         final View sectionLayout = getSectionView();
 
         ObservableRecyclerView promoCategoryListRecyclerView =
-                UIUtil.getResponsiveObservaleRecyclerView(getActivity(), 1, 1, contentView);
+                UIUtil.getResponsiveObservableRecyclerView(getActivity(), 1, 1, contentView);
         PromoCategoryAdapter promoCategoryAdapter = new PromoCategoryAdapter<>(this,
                 promoConsolidatedList, faceRobotoRegular);
         if (sectionLayout != null) {

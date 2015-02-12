@@ -31,7 +31,7 @@ public class SubCategoryAdapter {
     public static final String tableName = "subcategory";
 
     public static String createTable = String.format("CREATE TABLE IF NOT EXISTS %1$s (%2$s INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    "%3$s TEXT , %4$s TEXT ,%5$s BLOB, %6$s BLOB );", tableName, COLUMN_ID, COLUMN_VERSION,
+                    "%3$s TEXT , %4$s TEXT ,%5$s BLOB, %6$s BLOB NULL);", tableName, COLUMN_ID, COLUMN_VERSION,
             COLUMN_SLUG, COLUMN_BLOB, COLUMN_SECTION_DATA);
 
     public void open() {
@@ -42,21 +42,20 @@ public class SubCategoryAdapter {
         DatabaseHelper.getInstance(context).close();
     }
 
-    public void insert(SubCategoryModel subCategoryModel, String version, ArrayList<SectionData> sectionData, String slug) { //, ArrayList<String> bannerArrayList,
+    public void insert(SubCategoryModel subCategoryModel, String version, SectionData sectionData, String slug) { //, ArrayList<String> bannerArrayList,
         Log.d("Inserting sub_categories to database", "");
-        try {
-            ContentValues cv = new ContentValues();
+        ContentValues cv = new ContentValues();
 
-            cv.put(COLUMN_VERSION, version);
-            cv.put(COLUMN_SLUG, slug);
-            byte[] bytesCategories = ResponseSerializer.serializeObject(subCategoryModel);
-            cv.put(COLUMN_BLOB, bytesCategories);
+        cv.put(COLUMN_VERSION, version);
+        cv.put(COLUMN_SLUG, slug);
+        byte[] bytesCategories = ResponseSerializer.serializeObject(subCategoryModel);
+        cv.put(COLUMN_BLOB, bytesCategories);
+        if (sectionData != null) {
             byte[] bytesSection = ResponseSerializer.serializeObject(sectionData);
             cv.put(COLUMN_SECTION_DATA, bytesSection);
-            DatabaseHelper.db.insert(tableName, null, cv);
-        } catch (Exception e) {
-            e.getStackTrace();
         }
+        DatabaseHelper.db.insert(tableName, null, cv);
+
     }
 
     public static Cursor getCursorForAllRows() {
@@ -72,14 +71,12 @@ public class SubCategoryAdapter {
             subCategoryCursor = DatabaseHelper.db.query(tableName, new String[]{COLUMN_BLOB, COLUMN_SECTION_DATA}
                     , COLUMN_SLUG + " = " + "\"" + slug + "\"", null, null, null, null);
             if (subCategoryCursor.moveToFirst()) {
-
                 byte[] subCategoryCursorBlob = subCategoryCursor.getBlob(
                         subCategoryCursor.getColumnIndex(SubCategoryAdapter.COLUMN_BLOB));
                 result.add(ResponseSerializer.deserializeObject(subCategoryCursorBlob));
                 byte[] sectionDataCursorBlob = subCategoryCursor.getBlob(
                         subCategoryCursor.getColumnIndex(SubCategoryAdapter.COLUMN_SECTION_DATA));
                 result.add(ResponseSerializer.deserializeObject(sectionDataCursorBlob));
-
             }
         } catch (SQLiteException ex) {
 
@@ -96,10 +93,13 @@ public class SubCategoryAdapter {
         Cursor cursor = null;
         String version = null;
         try {
-            cursor = DatabaseHelper.db.query(tableName, new String[]{COLUMN_VERSION}
+            cursor = DatabaseHelper.db.query(tableName, new String[]{COLUMN_VERSION, COLUMN_BLOB}
                     , COLUMN_SLUG + " = " + "\"" + slug + "\"", null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
-                version = cursor.getString(cursor.getColumnIndex(SubCategoryAdapter.COLUMN_VERSION));
+                byte[] blob  = cursor.getBlob(cursor.getColumnIndex(COLUMN_BLOB));
+                if (blob != null && blob.length >= 0) {
+                    version = cursor.getString(cursor.getColumnIndex(COLUMN_VERSION));
+                }
             }
         } catch (SQLiteException ex) {
             ex.getStackTrace();

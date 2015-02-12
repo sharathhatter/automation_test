@@ -1,7 +1,6 @@
 package com.bigbasket.mobileapp.fragment.product;
 
 import android.content.Intent;
-import android.database.sqlite.SQLiteException;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -24,7 +23,6 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.product.Category;
 import com.bigbasket.mobileapp.model.product.SubCategoryModel;
 import com.bigbasket.mobileapp.model.section.SectionData;
-import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.FragmentCodes;
@@ -64,7 +62,7 @@ public class SubCategoryListFragment extends BaseSectionFragment {
             SubCategoryAdapter subCategoryAdapter = new SubCategoryAdapter(getActivity());
             String version = subCategoryAdapter.getVersion(topCatSlug);
             if (topCatVersion != null && topCatVersion.equals(version)) {
-                renderSubCategory(null, true, null, null);
+                renderSubCategory(null, true, null);
             } else {
                 String categorySlug = topCatSlug;
                 getSubCategoryData(categorySlug, version);
@@ -73,7 +71,6 @@ public class SubCategoryListFragment extends BaseSectionFragment {
             handler.sendOfflineError(true);
         }
     }
-
 
     private void getSubCategoryData(String categorySlug, String version) {
         if (!DataUtil.isInternetAvailable(getActivity())) {
@@ -90,11 +87,11 @@ public class SubCategoryListFragment extends BaseSectionFragment {
                 if (subCategoryCallback.status == 0) {
                     String responseVersion = subCategoryCallback.apiResponseContent.responseVersion;
                     boolean response_ok = subCategoryCallback.apiResponseContent.a_ok;
-                    ArrayList<SectionData> sectionArrayList = subCategoryCallback.apiResponseContent.categoryLandingApiCategoryKeyContent.sectionData;
+                    mSectionData = subCategoryCallback.apiResponseContent.categoryLandingApiCategoryKeyContent.sectionData;
                     if (!response_ok) {
                         subCategoryModel = subCategoryCallback.apiResponseContent.categoryLandingApiCategoryKeyContent.subCategoryModel;
                     }
-                    renderSubCategory(responseVersion, response_ok, subCategoryModel, sectionArrayList);
+                    renderSubCategory(responseVersion, response_ok, subCategoryModel);
                     HashMap<String, String> map = new HashMap<>();
                     map.put(TrackEventkeys.PRODUCT_TOP_CAT, topCatName);
                     trackEvent(TrackingAware.BROWSE_CATEGORY_LANDING, map);
@@ -114,7 +111,7 @@ public class SubCategoryListFragment extends BaseSectionFragment {
     }
 
     private void renderSubCategory(String responseVersion, boolean response_ok,
-                                   SubCategoryModel subCategoryModel, ArrayList<SectionData> sectionArrayList) {
+                                   SubCategoryModel subCategoryModel) {
 
         if (getActivity() == null) return;
 
@@ -125,60 +122,46 @@ public class SubCategoryListFragment extends BaseSectionFragment {
 
         ArrayList<Object> result;
         if (!response_ok) {
-            try {
-                subCategoryAdapter.insert(subCategoryModel, responseVersion, sectionArrayList, topCatSlug);
-            } catch (Exception e) {
-                e.printStackTrace();
-                handler.sendEmptyMessage(ApiErrorCodes.INTERNAL_SERVER_ERROR, null, true);
-            }
+            subCategoryAdapter.insert(subCategoryModel, responseVersion, mSectionData, topCatSlug);
         } else {
-            try {
-                result = subCategoryAdapter.getSubCategory(topCatSlug);
+            result = subCategoryAdapter.getSubCategory(topCatSlug);
+
+            if (result != null && result.size() == 2) {
                 subCategoryModel = (SubCategoryModel) result.get(0);
-                sectionArrayList = (ArrayList<SectionData>) result.get(1);
-            } catch (SQLiteException e) {
-                e.printStackTrace();
-                handler.sendEmptyMessage(ApiErrorCodes.INTERNAL_SERVER_ERROR, null, true);
+                mSectionData = (SectionData) result.get(1);
             }
         }
 
         //display section
         LinearLayout subCategoryPageLayout = new LinearLayout(getActivity());
         subCategoryPageLayout.setOrientation(LinearLayout.VERTICAL);
-        contentView.addView(subCategoryPageLayout);
-        if (sectionArrayList != null && sectionArrayList.size() > 0) {
-            //render section data
-        }
 
         final List<Category> categoryArrayList = new ArrayList<>();
-        List<Category> removeCat = new ArrayList<>();
-        for (int i = 0; i < subCategoryModel.getCategory().size(); i++) {
-            Category subCat = subCategoryModel.getCategory().get(i);
-            if (subCat.getNumProducts() != null && Integer.parseInt(subCat.getNumProducts()) != 0) {
-                if (subCat.getCategory() != null) {
-                    int subSubCatSize = subCat.getCategory().size();
-                    for (int j = 0; j < subSubCatSize; j++) {
-                        Category subSubCat = subCat.getCategory().get(j);
-                        if (subSubCat.getNumProducts() != null && Integer.parseInt(subSubCat.getNumProducts()) == 0)
-                            removeCat.add(subSubCat);
-                    }
-                    subCat.getCategory().removeAll(removeCat);
-                }
+
+        if (subCategoryModel != null && subCategoryModel.getCategory() != null) {
+            for (int i = 0; i < subCategoryModel.getCategory().size(); i++) {
+                Category subCat = subCategoryModel.getCategory().get(i);
                 categoryArrayList.add(subCat);
+            }
+        }
+
+        if (mSectionData != null) {
+            View sectionView = getSectionView();
+            if (sectionView != null) {
+                subCategoryPageLayout.addView(sectionView);
             }
         }
 
         final ExpandableListView subCategoryExpandableView = new ExpandableListView(getActivity());
         subCategoryExpandableView.setGroupIndicator(null);
-        subCategoryExpandableView.setDivider(new ColorDrawable(getResources().getColor(R.color.strokeLine)));
+        subCategoryExpandableView.setDivider(new ColorDrawable(getResources().getColor(R.color.uiv3_divider_color)));
         subCategoryExpandableView.setDividerHeight(1);
         subCategoryExpandableView.setLayoutParams(new
                 LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 
 
-        SubCategoryListAdapter subCategoryListAdapter = new SubCategoryListAdapter(this, categoryArrayList, getActivity());
+        SubCategoryListAdapter subCategoryListAdapter = new SubCategoryListAdapter<>(this, categoryArrayList, getActivity());
         subCategoryExpandableView.setAdapter(subCategoryListAdapter);
-        contentView.addView(subCategoryExpandableView);
 
         subCategoryExpandableView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
@@ -211,11 +194,12 @@ public class SubCategoryListFragment extends BaseSectionFragment {
                 return false;
             }
         });
-
+        subCategoryPageLayout.addView(subCategoryExpandableView);
+        contentView.addView(subCategoryPageLayout);
     }
 
     private void trackPCEvent(Category category) {
-        if(category==null) return;
+        if (category == null) return;
         HashMap<String, String> map = new HashMap<>();
         map.put(TrackEventkeys.PRODUCT_CAT, category.getName());
         trackEvent(TrackingAware.BROWSE_PRODUCT_CATEGORY, map);
