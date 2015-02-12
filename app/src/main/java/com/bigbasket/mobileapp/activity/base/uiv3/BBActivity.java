@@ -261,7 +261,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             MenuItem userInfoMenuItem = menu.findItem(R.id.action_user_info);
             String memberFullName = AuthParameters.getInstance(this).getMemberFullName();
             if (TextUtils.isEmpty(memberFullName)) {
-                userInfoMenuItem.setVisible(false);
+                userInfoMenuItem.setTitle(AuthParameters.getInstance(this).getMemberEmail());
             } else {
                 userInfoMenuItem.setTitle(memberFullName);
             }

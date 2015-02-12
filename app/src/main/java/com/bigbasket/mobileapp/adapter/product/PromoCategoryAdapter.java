@@ -1,24 +1,25 @@
 package com.bigbasket.mobileapp.adapter.product;
 
-import android.content.Context;
 import android.graphics.Typeface;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.PromoDetailNavigationAware;
 import com.bigbasket.mobileapp.model.promo.Promo;
 import com.bigbasket.mobileapp.model.promo.PromoCategory;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.List;
 
-public class PromoCategoryAdapter extends BaseAdapter {
+public class PromoCategoryAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private Context context;
+    private T context;
     private List<Object> promoConsolidatedList;
     private Typeface typeface;
     private ImageLoader imageLoader = ImageLoader.getInstance();
@@ -26,7 +27,7 @@ public class PromoCategoryAdapter extends BaseAdapter {
     public static final int VIEW_TYPE_PROMO = 0;
     public static final int VIEW_TYPE_CATEGORY = 1;
 
-    public PromoCategoryAdapter(Context context, List<Object> promoConsolidatedList, Typeface typeface) {
+    public PromoCategoryAdapter(T context, List<Object> promoConsolidatedList, Typeface typeface) {
         this.context = context;
         this.typeface = typeface;
         this.promoConsolidatedList = promoConsolidatedList;
@@ -34,24 +35,33 @@ public class PromoCategoryAdapter extends BaseAdapter {
     }
 
     @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        LayoutInflater inflater = ((ActivityAware) context).getCurrentActivity().getLayoutInflater();
+        switch (viewType) {
+            case VIEW_TYPE_CATEGORY:
+                View view = inflater.inflate(R.layout.uiv3_promo_category_list_header, parent, false);
+                return new PromoCatViewHolder(view);
+            case VIEW_TYPE_PROMO:
+                view = inflater.inflate(R.layout.uiv3_promo_category_list_item, parent, false);
+                return new PromoCatItemHolder(view);
+        }
+        return null;
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        if (getItemViewType(position) == VIEW_TYPE_PROMO) {
+            setPromoView(position, (PromoCatItemHolder) holder);
+        } else {
+            setPromoCategoryView(position, (PromoCatViewHolder) holder);
+        }
+    }
+
+    @Override
     public int getItemViewType(int position) {
         return promoConsolidatedList.get(position) instanceof Promo ? VIEW_TYPE_PROMO : VIEW_TYPE_CATEGORY;
     }
 
-    @Override
-    public int getViewTypeCount() {
-        return 2;
-    }
-
-    @Override
-    public int getCount() {
-        return promoConsolidatedList.size();
-    }
-
-    @Override
-    public Object getItem(int position) {
-        return promoConsolidatedList.get(position);
-    }
 
     @Override
     public long getItemId(int position) {
@@ -59,27 +69,12 @@ public class PromoCategoryAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        if (getItemViewType(position) == VIEW_TYPE_PROMO) {
-            return getPromoView(position, convertView, parent);
-        }
-        return getPromoCategoryView(position, convertView, parent);
+    public int getItemCount() {
+        return promoConsolidatedList.size();
     }
 
-    private View getPromoView(int position, View convertView, ViewGroup parent) {
-        final Promo promo = (Promo) getItem(position);
-        View row = convertView;
-        PromoCatItemHolder promoCatItemHolder;
-        if (row == null) {
-            LayoutInflater layoutInflater = (LayoutInflater)
-                    context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            row = layoutInflater.inflate(R.layout.uiv3_promo_category_list_item, parent, false);
-            promoCatItemHolder = new PromoCatItemHolder(row);
-            row.setTag(promoCatItemHolder);
-        } else {
-            promoCatItemHolder = (PromoCatItemHolder) row.getTag();
-        }
-
+    private void setPromoView(int position, PromoCatItemHolder promoCatItemHolder) {
+        final Promo promo = (Promo) promoConsolidatedList.get(position);
         ImageView imgPromoIcon = promoCatItemHolder.getImgPromoIcon();
         TextView txtPromoName = promoCatItemHolder.getTxtPromoName();
         TextView txtPromoDescLine1 = promoCatItemHolder.getTxtPromoDescLine1();
@@ -89,57 +84,44 @@ public class PromoCategoryAdapter extends BaseAdapter {
         txtPromoName.setText(promo.getPromoName());
         txtPromoDescLine1.setText(promo.getPromoDescLine1());
         txtPromoDescLine2.setText(promo.getPromoDescLine2());
-        return row;
     }
 
-    private View getPromoCategoryView(int position, View convertView, ViewGroup parent) {
-        final PromoCategory promoCategory = (PromoCategory) getItem(position);
-        View row = convertView;
-        PromoCatViewHolder promoCatViewWrapper;
-        if (row == null) {
-            LayoutInflater layoutInflater = (LayoutInflater)
-                    context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            row = layoutInflater.inflate(R.layout.uiv3_promo_category_list_header, parent, false);
-            promoCatViewWrapper = new PromoCatViewHolder(row);
-            row.setTag(promoCatViewWrapper);
-            row.setEnabled(false);
-        } else {
-            promoCatViewWrapper = (PromoCatViewHolder) row.getTag();
-        }
-        TextView txtPromoCatHeader = promoCatViewWrapper.getTxtPromoCatHeader();
+    private void setPromoCategoryView(int position, PromoCatViewHolder promoCatViewHolder) {
+        final PromoCategory promoCategory = (PromoCategory) promoConsolidatedList.get(position);
+        TextView txtPromoCatHeader = promoCatViewHolder.getTxtPromoCatHeader();
         txtPromoCatHeader.setTypeface(typeface);
         txtPromoCatHeader.setText(promoCategory.getName());
 
         if (promoCategory.getDescription() != null
                 && promoCategory.getDescription().length() > 0) {
-            TextView txtPromoCatDesc = promoCatViewWrapper.getTxtPromoCatDesc();
+            TextView txtPromoCatDesc = promoCatViewHolder.getTxtPromoCatDesc();
             txtPromoCatDesc.setTypeface(typeface);
             txtPromoCatDesc.setText(promoCategory.getDescription());
         }
-        return row;
     }
 
-    private class PromoCatItemHolder {
-        private View base;
+    private class PromoCatItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private ImageView imgPromoIcon;
         private TextView txtPromoName;
         private TextView txtPromoDescLine1;
         private TextView txtPromoDescLine2;
 
-        private PromoCatItemHolder(View base) {
-            this.base = base;
+        private PromoCatItemHolder(View itemView) {
+            super(itemView);
+            itemView.setOnClickListener(this);
+
         }
 
         public ImageView getImgPromoIcon() {
             if (imgPromoIcon == null) {
-                imgPromoIcon = (ImageView) base.findViewById(R.id.imgPromoIcon);
+                imgPromoIcon = (ImageView) itemView.findViewById(R.id.imgPromoIcon);
             }
             return imgPromoIcon;
         }
 
         public TextView getTxtPromoName() {
             if (txtPromoName == null) {
-                txtPromoName = (TextView) base.findViewById(R.id.txtPromoName);
+                txtPromoName = (TextView) itemView.findViewById(R.id.txtPromoName);
                 txtPromoName.setTypeface(typeface);
             }
             return txtPromoName;
@@ -147,37 +129,44 @@ public class PromoCategoryAdapter extends BaseAdapter {
 
         public TextView getTxtPromoDescLine1() {
             if (txtPromoDescLine1 == null) {
-                txtPromoDescLine1 = (TextView) base.findViewById(R.id.txtPromoDescLine1);
+                txtPromoDescLine1 = (TextView) itemView.findViewById(R.id.txtPromoDescLine1);
             }
             return txtPromoDescLine1;
         }
 
         public TextView getTxtPromoDescLine2() {
             if (txtPromoDescLine2 == null) {
-                txtPromoDescLine2 = (TextView) base.findViewById(R.id.txtPromoDescLine2);
+                txtPromoDescLine2 = (TextView) itemView.findViewById(R.id.txtPromoDescLine2);
             }
             return txtPromoDescLine2;
         }
+
+        @Override
+        public void onClick(View v) {
+            Object possiblePromoObj = promoConsolidatedList.get(getPosition());
+            if (possiblePromoObj instanceof Promo) {
+                ((PromoDetailNavigationAware) context).loadPromoDetail((Promo) possiblePromoObj);
+            }
+        }
     }
 
-    private class PromoCatViewHolder {
+    private class PromoCatViewHolder extends RecyclerView.ViewHolder {
         private TextView txtPromoCatHeader;
         private TextView txtPromoCatDesc;
-        private View base;
 
-        public PromoCatViewHolder(View base) {
-            this.base = base;
+        public PromoCatViewHolder(View itemView) {
+            super(itemView);
         }
 
         private TextView getTxtPromoCatDesc() {
             if (txtPromoCatDesc == null)
-                txtPromoCatDesc = (TextView) base.findViewById(R.id.txtPromoCatDesc);
+                txtPromoCatDesc = (TextView) itemView.findViewById(R.id.txtPromoCatDesc);
             return txtPromoCatDesc;
         }
 
         private TextView getTxtPromoCatHeader() {
             if (txtPromoCatHeader == null)
-                txtPromoCatHeader = (TextView) base.findViewById(R.id.txtPromoCatHeader);
+                txtPromoCatHeader = (TextView) itemView.findViewById(R.id.txtPromoCatHeader);
             return txtPromoCatHeader;
         }
     }

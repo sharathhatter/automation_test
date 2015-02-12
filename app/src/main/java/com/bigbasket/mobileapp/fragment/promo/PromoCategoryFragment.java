@@ -1,15 +1,12 @@
 package com.bigbasket.mobileapp.fragment.promo;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
@@ -19,6 +16,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.BrowsePromoCategoryApiResponseContent;
 import com.bigbasket.mobileapp.fragment.base.BaseSectionFragment;
+import com.bigbasket.mobileapp.interfaces.PromoDetailNavigationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.promo.Promo;
 import com.bigbasket.mobileapp.model.promo.PromoCategory;
@@ -26,6 +24,10 @@ import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.UIUtil;
+import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
+import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
+import com.github.ksoichiro.android.observablescrollview.ScrollState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +38,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class PromoCategoryFragment extends BaseSectionFragment {
+public class PromoCategoryFragment extends BaseSectionFragment implements PromoDetailNavigationAware {
 
     private ArrayList<PromoCategory> mPromoCategoryList;
 
@@ -134,31 +136,41 @@ public class PromoCategoryFragment extends BaseSectionFragment {
             }
         }
 
-        View sectionLayout = getSectionView();
+        final View sectionLayout = getSectionView();
 
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        View base = inflater.inflate(R.layout.uiv3_promo_category, contentView, false);
-        ListView promoCategoryList = (ListView) base.findViewById(R.id.lstPromoCategory);
-        PromoCategoryAdapter promoCategoryAdapter = new PromoCategoryAdapter(getActivity(),
+        ObservableRecyclerView promoCategoryListRecyclerView =
+                UIUtil.getResponsiveObservaleRecyclerView(getActivity(), 1, 1, contentView);
+        PromoCategoryAdapter promoCategoryAdapter = new PromoCategoryAdapter<>(this,
                 promoConsolidatedList, faceRobotoRegular);
         if (sectionLayout != null) {
-            promoCategoryList.addHeaderView(sectionLayout);
-        }
-        promoCategoryList.setAdapter(promoCategoryAdapter);
-        promoCategoryList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (getActivity() == null) return;
-                Object possiblePromoObj = promoConsolidatedList.get(position);
-                if (possiblePromoObj instanceof Promo) {
-                    loadPromoDetail((Promo) possiblePromoObj);
+            contentView.addView(sectionLayout);
+            promoCategoryListRecyclerView.setScrollViewCallbacks(new ObservableScrollViewCallbacks() {
+                @Override
+                public void onScrollChanged(int i, boolean b, boolean b2) {
+
                 }
-            }
-        });
-        contentView.addView(base);
+
+                @Override
+                public void onDownMotionEvent() {
+
+                }
+
+                @Override
+                public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+                    if (scrollState == ScrollState.UP) {
+                        sectionLayout.setVisibility(View.GONE);
+                    } else if (scrollState == ScrollState.DOWN) {
+                        sectionLayout.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
+        }
+        promoCategoryListRecyclerView.setAdapter(promoCategoryAdapter);
+        contentView.addView(promoCategoryListRecyclerView);
     }
 
-    private void loadPromoDetail(Promo promo) {
+    @Override
+    public void loadPromoDetail(Promo promo) {
         Intent intent = new Intent(getActivity(), BackButtonActivity.class);
         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PROMO_DETAIL);
         intent.putExtra(Constants.PROMO_ID, promo.getId());
