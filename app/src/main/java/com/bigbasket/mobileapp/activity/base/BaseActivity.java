@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.activity.base;
 
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -55,9 +56,10 @@ import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
+import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
 import com.demach.konotor.Konotor;
 import com.google.gson.Gson;
-import com.localytics.android.Localytics;
 import com.moe.pushlibrary.MoEHelper;
 
 import org.json.JSONException;
@@ -91,8 +93,9 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
 
         faceRupee = FontHolder.getInstance(this).getFaceRupee();
         faceRobotoRegular = FontHolder.getInstance(this).getFaceRobotoRegular();
-        moEHelper = new MoEHelper(getCurrentActivity());
-        Localytics.integrate(this);
+
+        moEHelper = MoEngageWrapper.getMoHelperObj(getCurrentActivity());
+        LocalyticsWrapper.integrate(this);
     }
 
     @Override
@@ -164,7 +167,6 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     public void onCOReserveQuantityCheck() {
         Intent intent = new Intent(getCurrentActivity(), CheckoutQCActivity.class);
         intent.putExtra(Constants.CO_RESERVE_QTY_DATA, coReserveQuantity);
-        //intent.putExtra(Constants.QC_LEN, coReserveQuantity.getQc_len());  //todo send complete coReserveQuantity
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
@@ -172,23 +174,22 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     protected void onStart() {
         super.onStart();
         isActivitySuspended = false;
-        moEHelper.onStart(this);
+        MoEngageWrapper.onStart(moEHelper, getCurrentActivity());
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         isActivitySuspended = true;
-        moEHelper.onStop(this);
+        MoEngageWrapper.onStop(moEHelper, getCurrentActivity());
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         isActivitySuspended = true;
-        moEHelper.onPause(this);
-        Localytics.closeSession();
-        Localytics.upload();
+        MoEngageWrapper.onPause(moEHelper, getCurrentActivity());
+        LocalyticsWrapper.onPause();
     }
 
     @Override
@@ -199,22 +200,34 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
 
     protected void onResume() {
         super.onResume();
+        isActivitySuspended = false;
+        initializeKonotor();
+        MoEngageWrapper.onResume(moEHelper, getCurrentActivity());
+        LocalyticsWrapper.onResume();
+        prescriptionImageUploadHandler();
+    }
 
+    private void prescriptionImageUploadHandler() {
         PrescriptionImageAdapter prescriptionImageAdapter = new PrescriptionImageAdapter(getCurrentActivity());
         if (!prescriptionImageAdapter.exists()) {
             stopService(new Intent(this, UploadImageService.class));
+        } else if (prescriptionImageAdapter.hasData() && !isMyServiceRunning(UploadImageService.class)) {
+            startService(new Intent(getCurrentActivity(), UploadImageService.class));
         }
-        isActivitySuspended = false;
+    }
 
-        initializeKonotor();
-        moEHelper.onResume(this);
-        Localytics.openSession();
-        Localytics.upload();
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) return true;
+        }
+        return false;
     }
 
     public void launchKonotor() {
         AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());
         if (!authParameters.isAuthTokenEmpty()) {
+            trackEvent(TrackingAware.COMMUICATION_HUB_CLICKED, null);
             Konotor.getInstance(getApplicationContext()).launchFeedbackScreen(this);
         } else {
             showAlertDialog(null, getString(R.string.login_required),
@@ -379,13 +392,6 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
 
     protected void onNegativeButtonClicked(DialogInterface dialogInterface, int id, String sourceName) {
 
-    }
-
-    protected void removeViaInvoiceFlag() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.remove(Constants.VIA_INVOICE);
-        editor.commit();
     }
 
     public void triggerActivityResult(int requestCode, int resultCode, Intent data) {
@@ -579,22 +585,23 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         String analyticsAdditionalAttrsJson = preferences.getString(Constants.ANALYTICS_ADDITIONAL_ATTRS, null);
         editor.remove(Constants.ANALYTICS_ADDITIONAL_ATTRS);
 
-        Localytics.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_ID, null);
-        Localytics.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_EMAIL, null);
-        Localytics.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_NAME, null);
-        Localytics.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_MOBILE, null);
-        Localytics.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_HUB, null);
-        Localytics.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_REGISTERED_ON, null);
-        Localytics.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_BDAY, null);
-        Localytics.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_GENDER, null);
-        Localytics.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_CITY, null);
+        LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_ID, null);
+        LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_EMAIL, null);
+        LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_NAME, null);
+        LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_MOBILE, null);
+        LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_HUB, null);
+        LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_REGISTERED_ON, null);
+        LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_BDAY, null);
+        LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_GENDER, null);
+        LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_CITY, null);
+
         if (!TextUtils.isEmpty(analyticsAdditionalAttrsJson)) {
             Gson gson = new Gson();
             HashMap<String, Object> additionalAttrMap = new HashMap<>();
             additionalAttrMap = (HashMap<String, Object>) gson.fromJson(analyticsAdditionalAttrsJson, additionalAttrMap.getClass());
             if (additionalAttrMap != null) {
                 for (Map.Entry<String, Object> entry : additionalAttrMap.entrySet()) {
-                    Localytics.setIdentifier(entry.getKey(), null);
+                    LocalyticsWrapper.setIdentifier(entry.getKey(), null);
                 }
             }
         }
@@ -612,7 +619,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
 
     public abstract void onChangeTitle(String title);
 
-    protected void reportFormInputFieldError(EditText editText, String errMsg) {
+    public void reportFormInputFieldError(EditText editText, String errMsg) {
         UIUtil.reportFormInputFieldError(editText, errMsg);
     }
 
@@ -622,18 +629,17 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
 
     @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs) {
-        // todo check if MoEngage enabled
         AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());
-        if (!authParameters.isMoEngageEnabled()) return;
-        trackEvent(eventName, eventAttribs, null, null);
+        if (authParameters.isMoEngageEnabled())
+            trackEvent(eventName, eventAttribs, null, null, false);
     }
 
 
     @Override
-    public void trackEvent(String eventName, Map<String, String> eventAttribs, String source, String sourceValue) {
+    public void trackEvent(String eventName, Map<String, String> eventAttribs, String source, String sourceValue,
+                           boolean isCustomerValueIncrease) {
         AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());
         if (authParameters.isMoEngageEnabled()) {
-
             JSONObject analyticsJsonObj = new JSONObject();
             try {
                 if (eventAttribs != null) {
@@ -647,13 +653,16 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
                 if (!TextUtils.isEmpty(sourceValue)) {
                     analyticsJsonObj.put(Constants.SOURCE_ID, sourceValue);
                 }
-                moEHelper.trackEvent(eventName, analyticsJsonObj);
+                MoEngageWrapper.trackEvent(moEHelper, eventName, analyticsJsonObj);
             } catch (JSONException e) {
                 Log.e("Analytics", "Failed to send event = " + eventName + " to analytics");
             }
         }
         if (authParameters.isLocalyticsEnabled()) {
-            Localytics.tagEvent(eventName, eventAttribs);
+            if (isCustomerValueIncrease)
+                LocalyticsWrapper.tagEvent(eventName, eventAttribs, Constants.CUSTOMER_VALUE_INCREASE);
+            else
+                LocalyticsWrapper.tagEvent(eventName, eventAttribs);
         }
     }
 

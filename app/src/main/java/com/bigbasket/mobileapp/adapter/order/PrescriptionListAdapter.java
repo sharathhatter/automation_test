@@ -19,11 +19,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PrescriptionImageUrls;
+import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.CancelableAware;
+import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
+import com.bigbasket.mobileapp.interfaces.HandlerAware;
+import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.order.SavedPrescription;
 import com.bigbasket.mobileapp.task.COReserveQuantityCheckTask;
@@ -37,29 +41,30 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class PrescriptionListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private BaseActivity context;
+public class PrescriptionListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    private T ctx;
     private LayoutInflater inflater;
     private ArrayList<SavedPrescription> savedPrescriptionArrayList;
     private Typeface faceRobotoRegular;
     private LinearLayout visibleChoosePrescriptionAndViewPrescriptionImages;
     private Animation bottomDown, bottomUp;
 
-    public PrescriptionListAdapter(BaseActivity context, ArrayList<SavedPrescription> savedPrescriptionArrayList,
+    public PrescriptionListAdapter(T ctx, ArrayList<SavedPrescription> savedPrescriptionArrayList,
                                    Typeface faceRobotoRegular) {
-        this.context = context;
+        this.ctx = ctx;
         this.savedPrescriptionArrayList = savedPrescriptionArrayList;
         this.faceRobotoRegular = faceRobotoRegular;
-        this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        bottomDown = AnimationUtils.loadAnimation(context, R.anim.bottom_down);
-        bottomUp = AnimationUtils.loadAnimation(context, R.anim.bottom_up);
+        this.inflater = (LayoutInflater) ((ActivityAware) ctx).getCurrentActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        bottomDown = AnimationUtils.loadAnimation(((ActivityAware) ctx).getCurrentActivity(), R.anim.bottom_down);
+        bottomUp = AnimationUtils.loadAnimation(((ActivityAware) ctx).getCurrentActivity(), R.anim.bottom_up);
 
     }
 
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) ((ActivityAware) ctx).getCurrentActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View base = inflater.inflate(R.layout.uiv3_prescription_list_row, viewGroup, false);
         return new ViewHolder(base);
     }
@@ -105,15 +110,17 @@ public class PrescriptionListAdapter extends RecyclerView.Adapter<RecyclerView.V
         txtChoosePrescription.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(context);
+                SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(((ActivityAware) ctx).getCurrentActivity());
                 SharedPreferences.Editor editor = prefer.edit();
                 editor.putString(Constants.PHARMA_PRESCRIPTION_ID,
                         String.valueOf(savedPrescription.getPharmaPrescriptionId()));
                 editor.commit();
-                Toast.makeText(context, context.getResources().getString(R.string.prescriptionIDSaved), Toast.LENGTH_SHORT).show();
-                context.trackEvent(TrackingAware.PRE_CHECKOUT_PHARMA_PRESCRIPTION_CHOSEN, null);
+                Toast.makeText(((ActivityAware) ctx).getCurrentActivity(),
+                        ((ActivityAware) ctx).getCurrentActivity().getResources().getString(R.string.prescriptionIDSaved), Toast.LENGTH_SHORT).show();
+                ((ActivityAware) ctx).getCurrentActivity().trackEvent(TrackingAware.PRE_CHECKOUT_PHARMA_PRESCRIPTION_CHOSEN, null);
                 hideFrameOnDialogClose();
-                new COReserveQuantityCheckTask<>(context, String.valueOf(savedPrescription.getPharmaPrescriptionId())).startTask();
+                new COReserveQuantityCheckTask<>(((ActivityAware) ctx).getCurrentActivity(),
+                        String.valueOf(savedPrescription.getPharmaPrescriptionId())).startTask();
             }
         });
         TextView prescriptionName = viewHolder.getPrescriptionName();
@@ -232,30 +239,17 @@ public class PrescriptionListAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
     }
 
-
-//    private void getPrescriptionImageUrls(final String pharmaPrescriptionId){
-//        AuthParameters authParameters = AuthParameters.getInstance(context);
-//        context.startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.GET_PRSCRIPTION_IMAGES, new HashMap<String, String>() {
-//                    {
-//                        put(Constants.PHARMA_PRESCRIPTION_ID, pharmaPrescriptionId);
-//                    }
-//                }, false,
-//                authParameters, new BasicCookieStore());
-//    }
-
-
     private void getImageUrls(final String pharmaPrescriptionId) {
-        if (!DataUtil.isInternetAvailable(context)) {
-            return;
-        }
-        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(context);
-        context.showProgressDialog(context.getString(R.string.please_wait));
+        if (!DataUtil.isInternetAvailable(((ActivityAware) ctx).getCurrentActivity()))
+            ((ActivityAware) ctx).getCurrentActivity().getHandler().sendOfflineError();
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(((ActivityAware) ctx).getCurrentActivity());
+        ((ActivityAware) ctx).getCurrentActivity().showProgressDialog(((ActivityAware) ctx).getCurrentActivity().getString(R.string.please_wait));
         bigBasketApiService.getPrescriptionImageUrls(pharmaPrescriptionId, new Callback<ApiResponse<PrescriptionImageUrls>>() {
             @Override
             public void success(ApiResponse<PrescriptionImageUrls> imageUrlsCallback, Response response) {
-                if (context.isSuspended()) return;
+                if (((CancelableAware) ctx).isSuspended()) return;
                 try {
-                    context.hideProgressDialog();
+                    ((ProgressIndicationAware) ctx).hideProgressDialog();
                 } catch (IllegalArgumentException e) {
                     return;
                 }
@@ -266,42 +260,43 @@ public class PrescriptionListAdapter extends RecyclerView.Adapter<RecyclerView.V
                         arrayListImgUrls.addAll(imageUrls);
                         showPrescriptionImageDialog(arrayListImgUrls);
                     } else {
-                        context.showAlertDialog(null, "Images are uploading....");
+                        (((ActivityAware) ctx)).getCurrentActivity().showAlertDialog(null, ((ActivityAware) ctx).getCurrentActivity().getString(R.string.imageUploading));
                     }
                 } else {
-                    context.getHandler().sendEmptyMessage(imageUrlsCallback.status);
+                    ((ActivityAware) ctx).getCurrentActivity().getHandler().sendEmptyMessage(imageUrlsCallback.status,
+                            imageUrlsCallback.message);
                 }
             }
 
             @Override
             public void failure(RetrofitError error) {
-                if (context.isSuspended()) return;
+                if (((CancelableAware) ctx).isSuspended()) return;
                 try {
-                    context.hideProgressDialog();
+                    ((ProgressIndicationAware) ctx).hideProgressDialog();
                 } catch (IllegalArgumentException e) {
                     return;
                 }
-                context.getHandler().handleRetrofitError(error);
+                ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
             }
         });
     }
 
 
     private void showPrescriptionImageDialog(ArrayList<Object> uploadImageList) {
-        final Dialog prescriptionImageDialog = new Dialog(context);
+        final Dialog prescriptionImageDialog = new Dialog(((ActivityAware) ctx).getCurrentActivity());
         prescriptionImageDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         prescriptionImageDialog.setCanceledOnTouchOutside(true);
-        ListView listView = new ListView(context);
+        ListView listView = new ListView(((ActivityAware) ctx).getCurrentActivity());
         listView.setDividerHeight(0);
         listView.setDivider(null);
         prescriptionImageDialog.setContentView(listView);
 
         Rect displayRectangle = new Rect();
-        context.getWindow().getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
+        ((ActivityAware) ctx).getCurrentActivity().getWindow().getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
         prescriptionImageDialog.getWindow().setLayout(displayRectangle.width() - 20,
                 (int) (displayRectangle.height() * 0.7f));
 
-        MultipleImagesPrescriptionAdapter multipleImagesPrescriptionAdapter = new MultipleImagesPrescriptionAdapter(context,
+        MultipleImagesPrescriptionAdapter multipleImagesPrescriptionAdapter = new MultipleImagesPrescriptionAdapter<>(((ActivityAware) ctx).getCurrentActivity(),
                 uploadImageList);
         listView.setAdapter(multipleImagesPrescriptionAdapter);
         prescriptionImageDialog.show();

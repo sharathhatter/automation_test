@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.fragment.base;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import com.bigbasket.mobileapp.interfaces.InfiniteProductListAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.interfaces.SortAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.product.FilteredOn;
 import com.bigbasket.mobileapp.model.product.Option;
 import com.bigbasket.mobileapp.model.product.Product;
@@ -30,18 +32,21 @@ import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
 import com.bigbasket.mobileapp.task.uiv3.ProductListTask;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListDoAddDeleteTask;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.ShoppingListNamesDialog;
 import com.bigbasket.mobileapp.view.uiv3.SortProductDialog;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public abstract class ProductListAwareFragment extends BaseFragment implements ProductListDataAware,
         ShoppingListNamesAware, SortAware, InfiniteProductListAware {
 
-    private ProductListData productListData;
+    protected ProductListData productListData;
     private String selectedProductId;
     private ProductListRecyclerAdapter mProductListRecyclerAdapter;
     private View mFooterView;
@@ -228,6 +233,14 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
 
     public abstract String getProductQueryType();
 
+    protected ArrayList<FilteredOn> getProductRefinedByFilter() {
+        return null;
+    }
+
+    protected String getProductRefinedBySortedOn() {
+        return null;
+    }
+
     public ProductQuery getProductQuery() {
         ArrayList<FilteredOn> filteredOnArrayList = null;
         String sortedOn = null;
@@ -236,8 +249,10 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
             filteredOnArrayList = productListData.getFilteredOn();
             sortedOn = productListData.getSortedOn();
         }
-        return new ProductQuery(getProductQueryType(),
-                getProductListSlug(), sortedOn, filteredOnArrayList, 1);
+        return new ProductQuery(getProductQueryType(), getProductListSlug(),
+                !TextUtils.isEmpty(sortedOn) ? sortedOn : getProductRefinedBySortedOn(),
+                filteredOnArrayList != null && filteredOnArrayList.size() > 0 ? filteredOnArrayList :
+                        getProductRefinedByFilter(), 1);
     }
 
     @Override
@@ -334,6 +349,16 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
         if (productListData != null) {
             productListData.setFilteredOn(filteredOn);
             loadProducts();
+        }
+        trackFilterAppliedEvent(filteredOn);
+    }
+
+    private void trackFilterAppliedEvent(ArrayList<FilteredOn> filteredOnArrayList) {
+        Map<String, String> eventAttribs = new HashMap<>();
+        for (FilteredOn filteredOn : filteredOnArrayList) {
+            eventAttribs.put(TrackEventkeys.FILTER_NAME, filteredOn.getFilterSlug());
+            eventAttribs.put(TrackEventkeys.FILTER_TYPE, filteredOn.getFilterType());
+            trackEvent(TrackingAware.FILTER_APPLIED, eventAttribs, getSourceName(), null, false);
         }
     }
 

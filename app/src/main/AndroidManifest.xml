@@ -206,8 +206,13 @@
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
         <activity
-            android:name=".activity.account.uiv3.MemberReferralOptions"
+            android:name=".activity.account.uiv3.MemberReferralActivity"
             android:windowSoftInputMode="stateHidden|adjustPan" />
+
+        <activity
+            android:name=".activity.account.uiv3.BBReferralMailActivity"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+
 
         <activity
             android:name=".activity.account.uiv3.ContactListActivity"
@@ -253,8 +258,7 @@
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.order.uiv3.UploadNewPrescriptionActivity"
-            android:configChanges="orientation|screenSize"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
+            android:configChanges="orientation|screenSize" />
 
         <provider
             android:name=".contentProvider.SearchSuggestionProvider"

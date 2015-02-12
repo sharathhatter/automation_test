@@ -68,7 +68,8 @@ public class WalletActivityFragment extends BaseFragment implements InvoiceDataA
         ListView walletActivityList = new ListView(getActivity());
         walletActivityList.setDivider(null);
         walletActivityList.setDividerHeight(0);
-        walletActivityList.setAdapter(new WalletActivityListAdapter(getActivity(), walletActivityData, faceRobotoRegular));
+        walletActivityList.setAdapter(new WalletActivityListAdapter<>(getActivity(),
+                walletActivityData, faceRobotoRegular, faceRupee));
         walletActivityList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -79,7 +80,7 @@ public class WalletActivityFragment extends BaseFragment implements InvoiceDataA
                         if (DataUtil.isInternetAvailable(getActivity())) {
                             showInvoice(orderId);
                         } else {
-                            handler.sendOfflineError();
+                            handler.sendOfflineError(true);
                         }
                     }
                 } catch (Exception e) {

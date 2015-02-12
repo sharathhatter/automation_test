@@ -27,12 +27,12 @@ public class BaseSectionTextItem implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         boolean wasTitleNull = title == null;
-        dest.writeByte(wasTitleNull ? (byte) 1: (byte) 0);
+        dest.writeByte(wasTitleNull ? (byte) 1 : (byte) 0);
         if (!wasTitleNull) {
             dest.writeParcelable(title, flags);
         }
         boolean wasDescNull = description == null;
-        dest.writeByte(wasDescNull ? (byte) 1: (byte) 0);
+        dest.writeByte(wasDescNull ? (byte) 1 : (byte) 0);
         if (!wasDescNull) {
             dest.writeParcelable(description, flags);
         }

@@ -5,6 +5,7 @@ import java.util.Map;
 public interface TrackingAware {
 
     public static final String BASKET_INCREMENT = "Basket.Increment";
+    public static final String BASKET_ADD = "Basket.Add";
     public static final String BASKET_DECREMENT = "Basket.Decrement";
     public static final String BASKET_REMOVE = "Basket.Remove";
     public static final String BASKET_ADD_PROMO_BUNDLE = "Basket.Add Promo Bundle"; //todo
@@ -12,7 +13,7 @@ public interface TrackingAware {
     public static final String BASKET_VIEW = "Basket.View";
 
     public static final String BROWSE_CATEGORY_LANDING = "Browse.Category Landing";
-    public static final String BROWSE_PRODUCT_CATEGORY = "Browse.Product Category";  // todo in BBActivity
+    public static final String BROWSE_PRODUCT_CATEGORY = "Browse.Product Category";
     public static final String BROWSE_DISCOUNTS = "Browse.Discounts";
     public static final String BROWSE_PRODUCT_DETAILS = "Browse.Product Details";
     public static final String SEARCH = "Search";
@@ -50,6 +51,21 @@ public interface TrackingAware {
     public static final String ORDER_ACTIVE_ORDERS_SHOWN = "Order.Active Orders Shown";
     public static final String ORDER_PAST_ORDERS = "Order.Past Orders";
 
+    public static final String FORGOT_PASSWORD_PWD_SHOWN = "MyAccount.ForgotPassword Shown";
+    public static final String FORGOT_PASSWORD_PWD_SUCCESS = "MyAccount.ForgotPassword Success";
+
+    public static final String NOW_AT_BB = "Browse.NowAtBigBasketShown";
+    public static final String NEW_AT_BB = "Browse.NewAtBigBasketShown";
+    public static final String BUNDLE_PACK = "Browse.BundlePackShown";
+
+    public static final String FILTER_APPLIED = "Filter.Applied";
+
+    public static final String HOME_CITY_SELECTION = "HomePage.CitySelection";
+    public static final String HOME_CHANGE_CITY = "HomePage.ChangeCity";
+
+    public static final String RATE_APP = "MyAccount.RateThisApp";
+    public static final String COMMUICATION_HUB_CLICKED = "MyAccount.CommunicationHubClicked";
+
 
     public static final String MY_ACCOUNT_CHANGE_PASSWD_SELECTED = "MyAccount.Change Password Selected";
     public static final String MY_ACCOUNT_CHANGE_PASSWD_SUCCESS = "MyAccount.Change Password Success";
@@ -58,7 +74,7 @@ public interface TrackingAware {
 
     public static final String MY_ACCOUNT_UPDATE_PROFILE_SELECTED = "MyAccount.Update Profile Selected";
     public static final String MY_ACCOUNT_UPDATE_PROFILE_SUCCESS = "MyAccount.Update Profile Success";
-    public static final String MY_ACCOUNT_UPDATE_PROFILE_FAILED = "MyAccount.Update Profile Failed"; //todo otp needed call
+    public static final String MY_ACCOUNT_UPDATE_PROFILE_FAILED = "MyAccount.Update Profile Failed";
 
 
     public static final String MY_ACCOUNT_CURRENT_PIN_SUCCESS = "MyAccount.Change Current Pin Success";
@@ -113,8 +129,20 @@ public interface TrackingAware {
 
     public static final String SHOP_FROM_PAST_ORDER_SHOWN = "Order.Shop from Past Order";
 
+    public static final String MEMBER_REFERRAL_SHOWN = "Member.Referral Shown";
+    public static final String MEMBER_REFERRAL_FREE_SMS_SHOWN = "Member.Referral free SMS Shown";
+    public static final String MEMBER_REFERRAL_WHATS_APP_SHOWN = "Member.Referral WhatsApp Shown";
+    public static final String MEMBER_REFERRAL_FACEBOOK_SHOWN = "Member.Referral Facebook Shown";
+    public static final String MEMBER_REFERRAL_BB_MAIL_SHOWN = "Member.Referral Mail Shown";
+    public static final String MEMBER_REFERRAL_GOOGLE_PLUS_SHOWN = "Member.Referral Google Plus Shown";
+    public static final String MEMBER_REFERRAL_GOOGLE_APP_SHOWN = "Member.Referral Google App Shown";
+    public static final String MEMBER_REFERRAL_HIKE_SHOWN = "Member.Referral Hike Shown";
+    public static final String MEMBER_REFERRAL_OTHER_SHOWN = "Member.Referral Shear via other Shown";
+
+    public static final String SPENDTRENDS_SHOWN = "SpendTrends Shown";
+
     public void trackEvent(String eventName, Map<String, String> eventAttribs,
-                           String source, String sourceValue);
+                           String source, String sourceValue, boolean isCustomerValueIncrease);
 
     public void trackEvent(String eventName, Map<String, String> eventAttribs);
 }

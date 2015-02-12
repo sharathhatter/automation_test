@@ -69,6 +69,7 @@ import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDialogAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.SectionManager;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.cart.BasketOperationResponse;
@@ -375,7 +376,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             case FragmentCodes.START_CATEGORY_LANDING:
                 SubCategoryListFragment subCategoryListFragment = new SubCategoryListFragment();
                 Bundle cubCatBundle = new Bundle();
-                cubCatBundle.putString(Constants.TOP_CATEGORY_SLUG, getIntent().getStringExtra(Constants.TOP_CATEGORY_NAME));
+                cubCatBundle.putString(Constants.TOP_CATEGORY_SLUG, getIntent().getStringExtra(Constants.TOP_CATEGORY_SLUG));
                 cubCatBundle.putString(Constants.TOP_CATEGORY_NAME, getIntent().getStringExtra(Constants.TOP_CATEGORY_NAME));
                 subCategoryListFragment.setArguments(cubCatBundle);
                 addToMainLayout(subCategoryListFragment);
@@ -404,13 +405,16 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 GenericProductListFragment productListFragment = new GenericProductListFragment();
                 Bundle productListArgs = new Bundle();
                 productListArgs.putString(Constants.TYPE, ProductListType.NOW_AT_BB.get());
+                productListArgs.putString(Constants.TRACK_EVENT_NAME, TrackingAware.NOW_AT_BB);
                 productListFragment.setArguments(productListArgs);
                 addToMainLayout(productListFragment);
                 break;
             case FragmentCodes.START_NEW_AT_BB:
+                trackEvent(TrackingAware.NEW_AT_BB, null);
                 productListFragment = new GenericProductListFragment();
                 productListArgs = new Bundle();
                 productListArgs.putString(Constants.TYPE, ProductListType.NEW_AT_BB.get());
+                productListArgs.putString(Constants.TRACK_EVENT_NAME, TrackingAware.NEW_AT_BB);
                 productListFragment.setArguments(productListArgs);
                 addToMainLayout(productListFragment);
                 break;
@@ -418,11 +422,14 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 productListFragment = new GenericProductListFragment();
                 productListArgs = new Bundle();
                 productListArgs.putString(Constants.TYPE, ProductListType.BUNDLE_PACK.get());
+                productListArgs.putString(Constants.TRACK_EVENT_NAME, TrackingAware.BUNDLE_PACK);
                 productListFragment.setArguments(productListArgs);
                 addToMainLayout(productListFragment);
                 break;
             case FragmentCodes.START_PRODUCT_CATEGORY:
-                launchProductCategoryFragment(getIntent().getStringExtra(Constants.CATEGORY_SLUG));
+                launchProductCategoryFragment(getIntent().getStringExtra(Constants.CATEGORY_SLUG),
+                        getIntent().getStringExtra(Constants.FILTER),
+                        getIntent().getStringExtra(Constants.SORT_BY));
                 break;
             case FragmentCodes.START_SHOPPING_LIST_SUMMARY:
                 bundle = new Bundle();
@@ -517,9 +524,8 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                     addToMainLayout(shoppingListSummaryFragment);
                 }
                 return true;
-            case R.id.action_refer_friend:
-                return true;
             case R.id.action_rate_app:
+                trackEvent(TrackingAware.RATE_APP, null);
                 try {
                     startActivity(new Intent(Intent.ACTION_VIEW,
                             Uri.parse("market://details?id=" + Constants.BASE_PKG_NAME)));
@@ -544,6 +550,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 }
                 return true;
             case R.id.action_change_city:
+                trackEvent(TrackingAware.HOME_CHANGE_CITY, null);
                 ChangeCityDialogFragment changeCityDialog = ChangeCityDialogFragment.newInstance();
                 changeCityDialog.show(getSupportFragmentManager(), Constants.CITIES);
                 return true;
@@ -657,7 +664,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         editor.putString(Constants.GET_CART, String.valueOf(cartInfo.getNoOfItems()));
         editor.commit();
 
-        if (cartInfo.getAnalyticsEngine() != null) {
+        if (cartInfo.getAnalyticsEngine() != null) { //TODO: Remove
             AuthParameters.getInstance(getCurrentActivity()).setMoEngaleLocaliticsEnabled(cartInfo.getAnalyticsEngine().isMoEngageEnabled(),
                     cartInfo.getAnalyticsEngine().isAnalyticsEnabled(), getCurrentActivity());
         }
@@ -725,12 +732,16 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                                         String categorySlug) {
         MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(this);
         mostSearchesAdapter.update(categoryName, categoryUrl);
-        launchProductCategoryFragment(categorySlug);
+        launchProductCategoryFragment(categorySlug, null, null);
     }
 
-    private void launchProductCategoryFragment(String categorySlug) {
+    private void launchProductCategoryFragment(String categorySlug, String filter, String sortOn) {
         Bundle bundle = new Bundle();
-        bundle.putString("slug_name_category", categorySlug);
+        bundle.putString(Constants.SLUG_NAME_CATEGORY, categorySlug);
+        if (!TextUtils.isEmpty(filter))
+            bundle.putString(Constants.FILTER, filter);
+        if (!TextUtils.isEmpty(sortOn))
+            bundle.putString(Constants.SORT_BY, sortOn);
         CategoryProductsFragment categoryProductsFragment = new CategoryProductsFragment();
         categoryProductsFragment.setArguments(bundle);
         addToMainLayout(categoryProductsFragment);
@@ -776,7 +787,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         MenuItem logoutMenuItem = menu.findItem(R.id.action_logout);
         MenuItem shoppingListMenuItem = menu.findItem(R.id.action_shopping_list);
         MenuItem smartBasketMenuItem = menu.findItem(R.id.action_smart_basket);
-        MenuItem referFriendsMenuItem = menu.findItem(R.id.action_refer_friend);
+        MenuItem referFriendsMenuItem = menu.findItem(R.id.action_member_referral);
 
         logoutMenuItem.setVisible(false);
         userInfoMenuItem.setVisible(false);

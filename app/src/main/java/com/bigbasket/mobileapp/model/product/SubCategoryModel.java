@@ -4,6 +4,7 @@ package com.bigbasket.mobileapp.model.product;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
@@ -11,16 +12,16 @@ import java.util.ArrayList;
 
 public class SubCategoryModel implements Parcelable, Serializable {
 
-    @SerializedName("slug_name")
+    @SerializedName(Constants.SLUG_NAME)
     private String slug;
 
-    @SerializedName("no_items")
+    @SerializedName(Constants.NO_ITEMS)
     private int items;
 
-    @SerializedName("display_name")
+    @SerializedName(Constants.DISPLAY_NAME)
     private String name;
 
-    @SerializedName("sub_cats")
+    @SerializedName(Constants.SUB_CATS)
     private ArrayList<Category> category;
 
     private boolean _wasCategoryNull;

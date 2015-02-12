@@ -35,6 +35,7 @@ public class SignupActivity extends BaseSignInSignupActivity {
     private EditText mPasswordView;
     private EditText mFirstNameView;
     private EditText mLastNameView;
+    private EditText mRefCodeView;
     private EditText mMobileNumView;
     private CheckBox mChkAcceptTerms;
     private CheckBox mChkReceivePromos;
@@ -57,6 +58,7 @@ public class SignupActivity extends BaseSignInSignupActivity {
         mFirstNameView = (EditText) base.findViewById(R.id.editTextFirstName);
         mLastNameView = (EditText) base.findViewById(R.id.editTextLastName);
         mMobileNumView = (EditText) base.findViewById(R.id.editTextMobileNumber);
+        mRefCodeView = (EditText) base.findViewById(R.id.editTextRefCode);
         mChkAcceptTerms = (CheckBox) base.findViewById(R.id.chkAcceptTerms);
         TextView txtViewTermsAndCond = (TextView) base.findViewById(R.id.txtViewTermsAndCond);
         setTermsAndCondition(txtViewTermsAndCond);
@@ -83,6 +85,7 @@ public class SignupActivity extends BaseSignInSignupActivity {
         mFirstNameView.setError(null);
         mLastNameView.setError(null);
         mMobileNumView.setError(null);
+        mRefCodeView.setError(null);
 
         boolean cancel = false;
         View focusView = null;
@@ -93,6 +96,7 @@ public class SignupActivity extends BaseSignInSignupActivity {
         String firstName = mFirstNameView.getText().toString();
         String lastName = mLastNameView.getText().toString();
         String mobileNumber = mMobileNumView.getText().toString();
+        String refCode = mRefCodeView.getText().toString().trim();
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
@@ -159,18 +163,20 @@ public class SignupActivity extends BaseSignInSignupActivity {
             focusView.requestFocus();
         } else {
             showProgress(true);
-            startMemberRegistration(email, password, firstName, lastName, mobileNumber);
+            startMemberRegistration(email, password, firstName, lastName, mobileNumber, refCode);
         }
     }
 
     private void startMemberRegistration(String email, String passwd, String firstName,
-                                         String lastName, String mobileNumber) {
+                                         String lastName, String mobileNumber, String refCode) {
         JsonObject userDetailsJsonObj = new JsonObject();
         userDetailsJsonObj.addProperty(Constants.EMAIL, email);
         userDetailsJsonObj.addProperty(Constants.FIRSTNAME, firstName);
         userDetailsJsonObj.addProperty(Constants.LASTNAME, lastName);
         userDetailsJsonObj.addProperty(Constants.PASSWORD, passwd);
         userDetailsJsonObj.addProperty(Constants.MOBILE_NUMBER, mobileNumber);
+        if (!TextUtils.isEmpty(refCode))
+            userDetailsJsonObj.addProperty(Constants.REF_CODE, refCode);
         userDetailsJsonObj.addProperty(Constants.NEWSLETTER_SUBSCRIPTION, mChkReceivePromos.isChecked());
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String cityId = preferences.getString(Constants.CITY_ID, "");

@@ -39,7 +39,6 @@ public class CartItem extends BaseCartItem {
     @SerializedName(Constants.ANNOTATION_ID)
     private String annotationId;
 
-
     @SerializedName(Constants.PRODUCT_TOP_LEVEL_CATEGORY_NAME)
     private String topCategoryName;
 

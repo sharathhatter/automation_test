@@ -20,18 +20,20 @@ import com.bigbasket.mobileapp.activity.base.BaseActivity;
 /**
  * Created by jugal on 24/9/14.
  */
-public abstract class OTPValidationDialogFragment extends DialogFragment {
+public class OTPValidationDialogFragment extends DialogFragment {
 
-    private BaseActivity baseActivity;
-    private Typeface faceRobotoRegular;
     private TextView txtErrorValidateNumber, txtResendNumber;
 
     public OTPValidationDialogFragment() {
     }
 
-    public OTPValidationDialogFragment(BaseActivity baseActivity, Typeface faceRobotoRegular) {
-        this.baseActivity = baseActivity;
-        this.faceRobotoRegular = faceRobotoRegular;
+    public static OTPValidationDialogFragment newInstance() {
+        return new OTPValidationDialogFragment();
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
     @Nullable
@@ -54,17 +56,17 @@ public abstract class OTPValidationDialogFragment extends DialogFragment {
         View view = getView();
         if (view != null) {
             TextView txtDialogTitle = (TextView) view.findViewById(R.id.txtDialogTitle);
-            txtDialogTitle.setTypeface(faceRobotoRegular, Typeface.BOLD);
+            txtDialogTitle.setTypeface(BaseActivity.faceRobotoRegular, Typeface.BOLD);
             TextView txtHeaderMsg = (TextView) view.findViewById(R.id.txtHeaderMsg);
             final EditText editTextMobileCode = (EditText) view.findViewById(R.id.editTextMobileCode);
-            editTextMobileCode.setTypeface(faceRobotoRegular);
+            editTextMobileCode.setTypeface(BaseActivity.faceRobotoRegular);
             editTextMobileCode.requestFocus();
-            txtHeaderMsg.setTypeface(faceRobotoRegular);
+            txtHeaderMsg.setTypeface(BaseActivity.faceRobotoRegular);
             BaseActivity.showKeyboard(editTextMobileCode);
             txtErrorValidateNumber = (TextView) view.findViewById(R.id.txtErrorValidateNumber);
-            txtErrorValidateNumber.setTypeface(faceRobotoRegular);
+            txtErrorValidateNumber.setTypeface(BaseActivity.faceRobotoRegular);
             txtResendNumber = (TextView) view.findViewById(R.id.txtResendNumber);
-            txtResendNumber.setTypeface(faceRobotoRegular);
+            txtResendNumber.setTypeface(BaseActivity.faceRobotoRegular);
             TextView txtResendCode = (TextView) view.findViewById(R.id.txtResendCode);
             txtResendCode.setOnClickListener(new View.OnClickListener() {
                 @Override

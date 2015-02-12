@@ -124,7 +124,7 @@ public class SlotSelectionFragment extends BaseFragment {
             });
             contentView.addView(slotGroupListView);
             trackSlotSelectionEvent(TrackEventkeys.POTENTIAL_ORDER, potentialOrderId);
-          }
+        }
     }
 
     public void showSlotListDialog(SlotGroup slotGroup) {
@@ -193,11 +193,12 @@ public class SlotSelectionFragment extends BaseFragment {
         }
     }
 
-    private void trackSlotSelectionEvent(String eventKeyName, String potentialOrderId){
+    private void trackSlotSelectionEvent(String eventKeyName, String potentialOrderId) {
         HashMap<String, String> map = new HashMap<>();
         map.put(eventKeyName, potentialOrderId);
         trackEvent(TrackingAware.CHECKOUT_SLOT_CHOOSEN, map);
     }
+
     private void setSelectedSlot() {
         if (getCurrentActivity() == null) return;
 

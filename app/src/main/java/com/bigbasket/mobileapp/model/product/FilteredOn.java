@@ -16,8 +16,14 @@ public class FilteredOn implements Parcelable {
     @SerializedName(Constants.FILTER_VALUES)
     private ArrayList<String> filterValues;
 
+    private String filterType;
+
     public String getFilterSlug() {
         return filterSlug;
+    }
+
+    public String getFilterType() {
+        return filterType;
     }
 
     public ArrayList<String> getFilterValues() {
@@ -45,10 +51,19 @@ public class FilteredOn implements Parcelable {
         this.filterSlug = filterSlug;
     }
 
+    public FilteredOn(String filterSlug, String filterType) {
+        this.filterSlug = filterSlug;
+        this.filterType = filterType;
+    }
+
     public FilteredOn(Parcel source) {
         filterSlug = source.readString();
         filterValues = new ArrayList<>();
         source.readStringList(filterValues);
+        boolean _wasFilterTypeNull = source.readByte() == (byte) 1;
+        if (!_wasFilterTypeNull) {
+            filterType = source.readString();
+        }
     }
 
     @Override
@@ -60,6 +75,11 @@ public class FilteredOn implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(filterSlug);
         dest.writeStringList(filterValues);
+        boolean _wasFilterTypeNull = filterType == null;
+        dest.writeByte(_wasFilterTypeNull ? (byte) 1 : (byte) 0);
+        if (!_wasFilterTypeNull) {
+            dest.writeString(filterType);
+        }
     }
 
     public static final Parcelable.Creator<FilteredOn> CREATOR = new Parcelable.Creator<FilteredOn>() {

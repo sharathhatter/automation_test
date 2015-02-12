@@ -1,36 +1,40 @@
 package com.bigbasket.mobileapp.view;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.Uri;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.view.KeyEvent;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.BaseActivity;
-import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.UIUtil;
 
-public class AppNotSupportedDialog {
-    private BaseActivity activity;
+public class AppNotSupportedDialog extends DialogFragment {
 
-    public AppNotSupportedDialog(BaseActivity activity) {
-        this.activity = activity;
+    public AppNotSupportedDialog() {
     }
 
-    public void show() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+    public static AppNotSupportedDialog newInstance() {
+        return new AppNotSupportedDialog();
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    @NonNull
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.update);
         builder.setMessage(R.string.appOutDatedMsg)
                 .setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        openPlayStoreLink();
-                    }
-                })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        activity.finish();
+                        UIUtil.openPlayStoreLink(getActivity());
                     }
                 });
         AlertDialog alertDialog = builder.create();
@@ -39,21 +43,11 @@ public class AppNotSupportedDialog {
             public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
                     dialog.dismiss();
-                    activity.finish();
+                    getActivity().finish();
                 }
                 return true;
             }
         });
-        alertDialog.show();
-    }
-
-    private void openPlayStoreLink() {
-        final String appPackageName = Constants.BASE_PKG_NAME;
-        try {
-            activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
-        } catch (android.content.ActivityNotFoundException anfe) {
-            activity.startActivity(new Intent(Intent.ACTION_VIEW,
-                    Uri.parse("http://play.google.com/store/apps/details?id=" + appPackageName)));
-        }
+        return alertDialog;
     }
 }

@@ -23,6 +23,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.section.SectionData;
@@ -149,6 +150,7 @@ public class StartActivity extends BaseActivity implements DynamicScreenAware {
                 }
             }
         });
+        trackEvent(TrackingAware.HOME_CITY_SELECTION, null);
     }
 
     private void doRegisterDevice(final City city) {

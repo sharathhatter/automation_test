@@ -120,7 +120,8 @@ public class FilterByAdapter extends BaseExpandableListAdapter {
                 filterOptionItem.setSelected(isChecked);
                 FilteredOn filteredOn = FilteredOn.getFilteredOn(filteredOnList, filterOptionCategory.getFilterSlug());
                 if (filteredOn == null) {
-                    filteredOn = new FilteredOn(filterOptionItem.getFilterValueSlug());
+                    filteredOn = new FilteredOn(filterOptionItem.getFilterValueSlug(),
+                            filterOptionCategory.getFilterName());
                     filteredOnList.add(filteredOn);
                 }
                 ArrayList<String> values = filteredOn.getFilterValues();

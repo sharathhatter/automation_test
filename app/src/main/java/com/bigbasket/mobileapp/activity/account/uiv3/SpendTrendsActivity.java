@@ -24,6 +24,7 @@ import com.bigbasket.mobileapp.fragment.account.spendTrends.SavedFragment;
 import com.bigbasket.mobileapp.fragment.account.spendTrends.SpentFragment;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.interfaces.OnObservableScrollEvent;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.spendTrends.SpendTrendSummary;
 import com.bigbasket.mobileapp.model.account.spendTrends.SpendTrends;
 import com.bigbasket.mobileapp.model.account.spendTrends.SpendTrendsCategoryExpRangeData;
@@ -66,6 +67,7 @@ public class SpendTrendsActivity extends BaseActivity implements OnObservableScr
         mLayoutSpendTrendsFilter = findViewById(R.id.layoutSpendTrendsFilter);
         mLayoutSpendTrendsFilterEmpty = findViewById(R.id.layoutSpendTrendsFilterEmpty);
         loadSpendTrends(savedInstanceState);
+        trackEvent(TrackingAware.SPENDTRENDS_SHOWN, null);
     }
 
     @Override

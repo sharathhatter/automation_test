@@ -4,6 +4,7 @@ package com.bigbasket.mobileapp.model.product;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -14,17 +15,26 @@ import java.util.ArrayList;
 
 public class Category implements Parcelable, Serializable {
 
-    @SerializedName("slug_name")
+    @SerializedName(Constants.SLUG_NAME)
     private String slug;
 
-    @SerializedName("sub_cats")
+    @SerializedName(Constants.SUB_CATS)
     private ArrayList<Category> category;
 
-    @SerializedName("no_items")
+    @SerializedName(Constants.NO_ITEMS)
     private int numberItems;
 
-    @SerializedName("display_name")
+    @SerializedName(Constants.DISPLAY_NAME)
     private String name;
+
+    @SerializedName(Constants.NUM_PRODUCTS)
+    private String numProducts;
+
+    @SerializedName(Constants.FILTER)
+    private String filter;
+
+    @SerializedName(Constants.SORT_BY)
+    private String sortBy;
 
 
     public Category(String slug, ArrayList<Category> category, int numberItems, String name) {
@@ -43,6 +53,16 @@ public class Category implements Parcelable, Serializable {
         this.slug = source.readString();
         this.numberItems = source.readInt();
         this.name = source.readString();
+        this.numProducts = source.readString();
+        boolean _wasFilterNull = source.readByte() == (byte) 1;
+        if (!_wasFilterNull) {
+            filter = source.readString();
+        }
+
+        boolean _wasSortByrNull = source.readByte() == (byte) 1;
+        if (!_wasSortByrNull) {
+            sortBy = source.readString();
+        }
         boolean _wasCategoriesNull = source.readByte() == (byte) 1;
         if (!_wasCategoriesNull) {
             source.readTypedList(this.category, Category.CREATOR);
@@ -103,6 +123,17 @@ public class Category implements Parcelable, Serializable {
         dest.writeString(this.slug);
         dest.writeInt(this.numberItems);
         dest.writeString(this.name);
+        dest.writeString(this.numProducts); //todo check for null pointer
+        boolean _wasFilterNull = filter == null;
+        dest.writeByte(_wasFilterNull ? (byte) 1 : (byte) 0);
+        if (!_wasFilterNull) {
+            dest.writeString(filter);
+        }
+        boolean _wasSortByNull = filter == null;
+        dest.writeByte(_wasSortByNull ? (byte) 1 : (byte) 0);
+        if (!_wasSortByNull) {
+            dest.writeString(sortBy);
+        }
         boolean _wasCategoriesNull = category == null;
         dest.writeByte(_wasCategoriesNull ? (byte) 1 : (byte) 0);
         if (!_wasCategoriesNull) {
@@ -121,4 +152,20 @@ public class Category implements Parcelable, Serializable {
             return new Category[size];
         }
     };
+
+    public String getNumProducts() {
+        return numProducts;
+    }
+
+    public void setNumProducts(String numProducts) {
+        this.numProducts = numProducts;
+    }
+
+    public String getFilter() {
+        return filter;
+    }
+
+    public String getSortBy() {
+        return sortBy;
+    }
 }

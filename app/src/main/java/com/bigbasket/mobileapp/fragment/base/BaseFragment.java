@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.text.Spannable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -353,7 +354,6 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         if (coReserveQuantity.isStatus()) {
             Intent intent = new Intent(getActivity(), CheckoutQCActivity.class);
             intent.putExtra(Constants.CO_RESERVE_QTY_DATA, coReserveQuantity);
-            //intent.putExtra(Constants.QC_LEN, coReserveQuantity.getQc_len());
             startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         }
     }
@@ -376,9 +376,10 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     }
 
     @Override
-    public void trackEvent(String eventName, Map<String, String> eventAttribs, String source, String sourceValue) {
+    public void trackEvent(String eventName, Map<String, String> eventAttribs, String source,
+                           String sourceValue, boolean isCustomerValueIncrease) {
         if (getCurrentActivity() == null) return;
-        getCurrentActivity().trackEvent(eventName, eventAttribs, source, sourceValue);
+        getCurrentActivity().trackEvent(eventName, eventAttribs, source, sourceValue, false);
     }
 
     @Override
@@ -428,4 +429,10 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         if (getCurrentActivity() == null) return;
         getCurrentActivity().showAlertDialogFinish(null, message, resultCode);
     }
+
+    private void ScreenFlowHandler(){
+        FragmentManager fm = getFragmentManager();
+        String FName = fm.getBackStackEntryAt(fm.getBackStackEntryCount()-1).getName();
+    }
+
 }

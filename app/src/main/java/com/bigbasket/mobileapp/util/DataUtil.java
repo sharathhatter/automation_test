@@ -1,24 +1,12 @@
 package com.bigbasket.mobileapp.util;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import java.util.HashMap;
-
 public class DataUtil {
-
-    private static HashMap<String, String> addBasketKeyHash = new HashMap<String, String>() {{
-//        put(Productdetail.class.getSimpleName(), "pd");
-//        put(SearchFragment.class.getSimpleName(), "ps");
-//        put(BrowseByOffersActivity.class.getSimpleName(), "of");
-//        put(ShoppingList.class.getSimpleName(), "sl");
-//        put(CategoryProductsActivity.class.getSimpleName(), "pc");
-//        put(ShowCartActivity.class.getSimpleName(), "vb");
-//        put(QuickShopActivity.class.getSimpleName(), "qs");
-//        put(PromoSetProductsActivity.class.getSimpleName(), "pp");
-        // TODO : Fix this functionality for add to basket
-    }};
 
     public static boolean isInternetAvailable(Context context) {
         return getConnectionStatus(context) == NetworkStatusCodes.NET_CONNECTED;
@@ -37,7 +25,13 @@ public class DataUtil {
         return NetworkStatusCodes.NET_DISCONNECTED;
     }
 
-    public static String getAddBasketNavigationActivity(String activityName) {
-        return addBasketKeyHash.get(activityName);
+    public static String getAppVersionName(Context context) {
+        try {
+            PackageInfo packageInfo = context.getPackageManager()
+                    .getPackageInfo(context.getPackageName(), 0);
+            return packageInfo.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            throw new RuntimeException("Could not get package name: " + e);
+        }
     }
 }

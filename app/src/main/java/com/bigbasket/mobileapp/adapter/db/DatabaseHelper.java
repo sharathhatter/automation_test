@@ -64,7 +64,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        /*
+        sqLiteDB.execSQL("DROP TABLE IF EXISTS DayTwentyFour");
+        onCreate(sqLiteDB);
+         */
         // TODO : Jugal, plug-in data upgrade functionality
+
+        /*
+        if(newVersion>oldVersion){
+            context.deleteDatabase(DATABASE_NAME);
+            try {
+                copyDataBase();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+         */
     }
 
     public static boolean isConnectionOpen() {

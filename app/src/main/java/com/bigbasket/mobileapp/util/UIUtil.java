@@ -1,11 +1,14 @@
 package com.bigbasket.mobileapp.util;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -32,13 +35,17 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginUserDetails;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.handler.AnalyticsIdentifierKeys;
+import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
+import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
 import com.google.gson.Gson;
-import com.localytics.android.Localytics;
 import com.moe.pushlibrary.MoEHelper;
 import com.moe.pushlibrary.utils.MoEHelperConstants;
 
 import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -217,41 +224,41 @@ public class UIUtil {
             editor.putString(Constants.CITY_ID, String.valueOf(userDetails.analytics.cityId));
 
             // Any key added here, must be cleared when user logs-out
-            Localytics.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_ID, mId);
-            Localytics.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_EMAIL, email);
-            Localytics.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_NAME, userDetails.fullName);
-            Localytics.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_MOBILE, userDetails.analytics.mobileNumber);
-            Localytics.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_HUB, userDetails.analytics.hub);
-            Localytics.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_REGISTERED_ON, userDetails.analytics.createdOn);
-            Localytics.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_BDAY, userDetails.analytics.dateOfBirth);
-            Localytics.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_CITY, userDetails.analytics.city);
+            LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_ID, mId);
+            LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_EMAIL, email);
+            LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_NAME, userDetails.fullName);
+            LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_MOBILE, userDetails.analytics.mobileNumber);
+            LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_REGISTERED_ON, userDetails.analytics.createdOn);
+            LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_CITY, userDetails.analytics.city);
 
-            MoEHelper moEHelper = new MoEHelper(ctx);
-            moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_UNIQUE_ID, mId);
-            moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_EMAIL, email);
-            moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_MOBILE, userDetails.analytics.mobileNumber);
-            moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_FIRST_NAME, userDetails.firstName);
-            moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_LAST_NAME, userDetails.lastName);
-            moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_NAME, userDetails.fullName);
-            moEHelper.setUserAttribute(AnalyticsIdentifierKeys.CUSTOMER_REGISTERED_ON, userDetails.analytics.createdOn);
-            moEHelper.setUserAttribute(AnalyticsIdentifierKeys.CUSTOMER_CITY, userDetails.analytics.city);
+
+            MoEHelper moEHelper = MoEngageWrapper.getMoHelperObj(ctx);
+            MoEngageWrapper.setUserAttribute(moEHelper, MoEHelperConstants.USER_ATTRIBUTE_UNIQUE_ID, mId);
+            MoEngageWrapper.setUserAttribute(moEHelper, MoEHelperConstants.USER_ATTRIBUTE_USER_EMAIL, email);
+            MoEngageWrapper.setUserAttribute(moEHelper, MoEHelperConstants.USER_ATTRIBUTE_USER_MOBILE, userDetails.analytics.mobileNumber);
+            MoEngageWrapper.setUserAttribute(moEHelper, MoEHelperConstants.USER_ATTRIBUTE_USER_FIRST_NAME, userDetails.firstName);
+            MoEngageWrapper.setUserAttribute(moEHelper, MoEHelperConstants.USER_ATTRIBUTE_USER_LAST_NAME, userDetails.lastName);
+            MoEngageWrapper.setUserAttribute(moEHelper, MoEHelperConstants.USER_ATTRIBUTE_USER_NAME, userDetails.fullName);
+            MoEngageWrapper.setUserAttribute(moEHelper, AnalyticsIdentifierKeys.CUSTOMER_REGISTERED_ON, userDetails.analytics.createdOn);
+            MoEngageWrapper.setUserAttribute(moEHelper, AnalyticsIdentifierKeys.CUSTOMER_CITY, userDetails.analytics.city);
+
             if (!TextUtils.isEmpty(userDetails.analytics.gender)) {
-                moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_GENDER, userDetails.analytics.gender);
-                Localytics.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_GENDER, userDetails.analytics.gender);
+                MoEngageWrapper.setUserAttribute(moEHelper, MoEHelperConstants.USER_ATTRIBUTE_USER_GENDER, userDetails.analytics.gender);
+                LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_GENDER, userDetails.analytics.gender);
             }
             if (!TextUtils.isEmpty(userDetails.analytics.hub)) {
-                moEHelper.setUserAttribute(AnalyticsIdentifierKeys.CUSTOMER_HUB, userDetails.analytics.hub);
-                Localytics.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_HUB, userDetails.analytics.hub);
+                MoEngageWrapper.setUserAttribute(moEHelper, AnalyticsIdentifierKeys.CUSTOMER_HUB, userDetails.analytics.hub);
+                LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_HUB, userDetails.analytics.hub);
             }
             if (!TextUtils.isEmpty(userDetails.analytics.dateOfBirth)) {
-                moEHelper.setUserAttribute(MoEHelperConstants.USER_ATTRIBUTE_USER_BDAY, userDetails.analytics.dateOfBirth);
-                Localytics.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_BDAY, userDetails.analytics.dateOfBirth);
+                MoEngageWrapper.setUserAttribute(moEHelper, MoEHelperConstants.USER_ATTRIBUTE_USER_BDAY, userDetails.analytics.dateOfBirth);
+                LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_BDAY, userDetails.analytics.dateOfBirth);
             }
 
             if (userDetails.analytics.additionalAttrs != null) {
                 for (Map.Entry<String, Object> additionalInfoObj : userDetails.analytics.additionalAttrs.entrySet()) {
-                    moEHelper.setUserAttribute(additionalInfoObj.getKey(), additionalInfoObj.getValue().toString());
-                    Localytics.setIdentifier(additionalInfoObj.getKey(), additionalInfoObj.getValue().toString());
+                    MoEngageWrapper.setUserAttribute(moEHelper, additionalInfoObj.getKey(), additionalInfoObj.getValue().toString());
+                    LocalyticsWrapper.setIdentifier(additionalInfoObj.getKey(), additionalInfoObj.getValue().toString());
                 }
                 editor.putString(Constants.ANALYTICS_ADDITIONAL_ATTRS, new Gson().toJson(userDetails.analytics.additionalAttrs));
             }
@@ -305,4 +312,85 @@ public class UIUtil {
             return defaultColor;
         }
     }
+
+
+    public static boolean isMoreThanXHour(long timeInMiliSeconds, int hour) {
+        long timerDiff = System.currentTimeMillis() - timeInMiliSeconds;
+        int hourDiff = (int) timerDiff / (60 * 60 * 1000);
+        if (hourDiff >= hour)
+            return true;
+        return false;
+    }
+
+    public static void openPlayStoreLink(Activity activity) {
+        final String appPackageName = Constants.BASE_PKG_NAME;
+        try {
+            activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+        } catch (android.content.ActivityNotFoundException anfe) {
+            activity.startActivity(new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("http://play.google.com/store/apps/details?id=" + appPackageName)));
+        }
+    }
+
+    public static boolean isMoreThanXDays(long lastPopUpShownTime, int days) {
+        return (int) (System.currentTimeMillis() - lastPopUpShownTime) / (24 * 60 * 60 * 1000) > days;
+    }
+
+    public static String getToday(String format) {
+        Date date = new Date();
+        return new SimpleDateFormat(format).format(date);
+    }
+
+    public static int handleUpdateDialog(String serverAppExpireDate, Activity activity) {
+        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(activity);
+        long lastPopUpShownTime = prefer.getLong(Constants.LAST_POPUP_SHOWN_TIME, 0);
+        SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_FOR_APP_UPGRADE_POPUP);
+        String today = getToday(Constants.DATE_FORMAT_FOR_APP_UPGRADE_POPUP);
+
+        Date serverAppExpireTime, toDaysData;
+        try {
+            serverAppExpireTime = sdf.parse(serverAppExpireDate);
+            toDaysData = sdf.parse(today);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return Constants.DONT_SHOW_APP_UPDATE_POPUP;
+        }
+
+        if (serverAppExpireTime.compareTo(toDaysData) < 0) {
+            prefer.edit().putLong(Constants.LAST_APP_DATA_CALL_TIME, 0).apply();
+            return Constants.SHOW_APP_EXPIRE_POPUP;
+        }
+        int popUpShownTimes = prefer.getInt(Constants.APP_EXPIRE_POPUP_SHOWN_TIMES, 0);
+        int daysDiff = (int) (serverAppExpireTime.getTime() - lastPopUpShownTime) / (24 * 60 * 60 * 1000);
+
+        if (daysDiff >= 0) {
+            if (UIUtil.isMoreThanXDays(lastPopUpShownTime, Constants.ONE_DAY)) {
+                if (popUpShownTimes < 3) {
+                    return Constants.SHOW_APP_UPDATE_POPUP;
+                } else {
+                    if (UIUtil.isMoreThanXDays(lastPopUpShownTime, Constants.SIX_DAYS)) {
+                        return Constants.SHOW_APP_UPDATE_POPUP;
+                    } else return Constants.DONT_SHOW_APP_UPDATE_POPUP;
+                }
+            } else return Constants.DONT_SHOW_APP_UPDATE_POPUP;
+        } else return Constants.SHOW_APP_EXPIRE_POPUP;
+    }
+
+    public static void updateLastPopShownDate(long lastPopShownTime, Activity activity) {
+        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(activity);
+        SharedPreferences.Editor editor = prefer.edit();
+        editor.putLong(Constants.LAST_POPUP_SHOWN_TIME, lastPopShownTime);
+        int popUpShownTimes = prefer.getInt(Constants.APP_EXPIRE_POPUP_SHOWN_TIMES, 0);
+        editor.putInt(Constants.APP_EXPIRE_POPUP_SHOWN_TIMES, popUpShownTimes + 1);
+        editor.apply();
+    }
+
+
+    public static void updateLastAppDataCall(Activity activity) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putLong(Constants.LAST_APP_DATA_CALL_TIME, System.currentTimeMillis());
+        editor.apply();
+    }
+
 }

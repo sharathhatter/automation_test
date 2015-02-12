@@ -8,6 +8,7 @@ import android.graphics.RectF;
 import android.util.Base64;
 import android.util.Log;
 
+import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.adapter.order.PrescriptionImageAdapter;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -17,15 +18,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-/**
- * Created by jugal on 1/9/14.
- */
-public class ImageUtil {
 
-    private static BaseActivity activity;
+public class ImageUtil<T> {
 
-    public static Bitmap getBitmap(String pathOfInputImage, BaseActivity baseActivity) {
-        activity = baseActivity;
+    private T ctx;
+
+    public ImageUtil(T ctx) {
+        this.ctx = ctx;
+    }
+
+    public Bitmap getBitmap(String pathOfInputImage) {
         try {
             int inWidth = 0;
             int inHeight = 0;
@@ -47,7 +49,7 @@ public class ImageUtil {
             int dstWidth = inHeight;
             int imageSizeInMB = (dstHeight * dstWidth) / (1024 * 1024);
             if (imageSizeInMB > 18) {
-                baseActivity.showAlertDialog(null, "Please upload image size less than 6MB", Constants.LARGE_SIZE_IMAGE);
+                ((BaseActivity) ctx).showAlertDialog(null, ((BaseActivity) ctx).getString(R.string.largeImageError), Constants.LARGE_SIZE_IMAGE);
                 return null;
             }
             while (imageSizeInMB > 1) { // previously 1
@@ -83,7 +85,6 @@ public class ImageUtil {
                 resizedBitmap = Bitmap.createScaledBitmap(roughBitmap, (int) (roughBitmap.getWidth() * values[0]),
                         (int) (roughBitmap.getHeight() * values[4]), true);
             } catch (OutOfMemoryError e) {
-                Log.d("*******************************", " Creating Bit map");
                 ImageLoader.getInstance().clearDiskCache();
                 ImageLoader.getInstance().clearMemoryCache();
                 resizedBitmap = Bitmap.createScaledBitmap(roughBitmap, (int) (roughBitmap.getWidth() * values[0]),
@@ -93,19 +94,16 @@ public class ImageUtil {
         } catch (IOException e) {
             Log.e("Image", e.getMessage(), e);
         } catch (OutOfMemoryError e) {
-            Log.d("*******************************", " Re-Creating Bit map");
             ImageLoader.getInstance().clearDiskCache();
             ImageLoader.getInstance().clearMemoryCache();
-            baseActivity.showAlertDialog(null, "Please upload image size less than 6MB", Constants.LARGE_SIZE_IMAGE);
+            ((BaseActivity) ctx).showAlertDialog(null, ((BaseActivity) ctx).getString(R.string.largeImageError), Constants.LARGE_SIZE_IMAGE);
             return null;
         }
 
         return null;
     }
 
-
-    public static Bitmap getImageBitmap(String pathOfInputImage, BaseActivity baseActivity) {
-        activity = baseActivity;
+    public Bitmap getImageBitmap(String pathOfInputImage) {
         InputStream in = null;
         try {
             final int IMAGE_MAX_SIZE = 1200000; // 1.2MP
@@ -163,19 +161,20 @@ public class ImageUtil {
         }
     }
 
-    public static void insertToDB(String prescriptionId, ArrayList<byte[]> arrayListByteArray) {
+    public void insertToDB(String prescriptionId, ArrayList<byte[]> arrayListByteArray) {
         for (int i = 0; i < arrayListByteArray.size(); i++) {
             byte[] imageBytes = arrayListByteArray.get(i);
             int chunkNumber = 0, startPointer = 0, offset = 500000;
             int maxChunks = (int) Math.ceil((float) imageBytes.length / (float) offset);
             int imageSequence = i + 1;
-            insertBase64StingToDataBase(imageBytes, offset, imageSequence, chunkNumber, startPointer, maxChunks == 0 ? 1 : maxChunks, prescriptionId);
+            insertBase64StingToDataBase(imageBytes, offset, imageSequence, chunkNumber,
+                    startPointer, maxChunks == 0 ? 1 : maxChunks, prescriptionId);
         }
     }
 
 
-    private static void insertBase64StingToDataBase(byte[] imageByte, int offset, int imageSequence, int chunkNumber,
-                                                    int startPointer, int maxChunks, String prescriptionId) {
+    private void insertBase64StingToDataBase(byte[] imageByte, int offset, int imageSequence, int chunkNumber,
+                                             int startPointer, int maxChunks, String prescriptionId) {
 
         byte[] outputBytes;
         if (imageByte.length - startPointer <= offset) {
@@ -194,20 +193,16 @@ public class ImageUtil {
 
     }
 
-    private static void insertToDataBase(byte[] outputBytes, int imageSequence, int maxChunkSize, int chunkNumber,
-                                         String prescriptionId) {
+    private void insertToDataBase(byte[] outputBytes, int imageSequence, int maxChunkSize, int chunkNumber,
+                                  String prescriptionId) {
         PrescriptionImageAdapter prescriptionImageAdapter = null;
         try {
             String base64EncodedChunkedImage = Base64.encodeToString(outputBytes, Base64.DEFAULT);
-            prescriptionImageAdapter = new PrescriptionImageAdapter(activity);
+            prescriptionImageAdapter = new PrescriptionImageAdapter(((BaseActivity) ctx));
             prescriptionImageAdapter.insert(prescriptionId, String.valueOf(chunkNumber), String.valueOf(maxChunkSize),
                     base64EncodedChunkedImage, String.valueOf(imageSequence));
         } catch (SQLException e) {
             e.printStackTrace();
         }
-//        finally {
-//            if (prescriptionImageAdapter != null)
-//                prescriptionImageAdapter.close();
-//        }
     }
 }

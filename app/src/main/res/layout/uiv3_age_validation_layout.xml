@@ -13,7 +13,6 @@
         android:id="@+id/layoutAgeValidation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_small"
         android:orientation="vertical"
         android:paddingBottom="@dimen/padding_normal">
 
@@ -24,9 +23,8 @@
             android:layout_marginLeft="@dimen/margin_small"
             android:layout_marginRight="@dimen/margin_small"
             android:layout_marginTop="@dimen/margin_small"
-            android:gravity="center"
-            android:text="Pharma message das fad fas f asd sadf adf adsf fadad adfasdf asdfasdf"
-            android:textColor="@color/dark_red"
+            android:gravity="left"
+            android:textColor="@color/uiv3_primary_text_color"
             android:textSize="@dimen/primary_text_size" />
 
         <RadioGroup
@@ -58,6 +56,18 @@
                 android:textSize="@dimen/primary_text_size" />
         </RadioGroup>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:id="@+id/txtPharmaTcLink"
+            android:layout_marginTop="@dimen/margin_normal"
+            android:layout_marginLeft="@dimen/margin_normal"
+            android:text="@string/viewTerms"
+            android:visibility="gone"
+            android:textColor="@color/link_color"
+            android:textStyle="italic"
+            android:layout_height="wrap_content" />
+
     </LinearLayout>
+
 
 </android.support.v7.widget.CardView>
