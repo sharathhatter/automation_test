@@ -29,6 +29,7 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.general.MessageInfo;
 import com.bigbasket.mobileapp.model.general.MessageParamInfo;
+import com.bigbasket.mobileapp.model.order.COReserveQuantity;
 import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.order.MarketPlaceAgeCheck;
 import com.bigbasket.mobileapp.model.order.PharmaPrescriptionInfo;
@@ -65,7 +66,7 @@ public class AgeValidationActivity extends BackButtonActivity {
         trackEvent(TrackingAware.PRE_CHECKOUT_AGE_LEGAL_SHOWN, null);
     }
 
-    /*
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         isActivitySuspended = false;
@@ -86,16 +87,7 @@ public class AgeValidationActivity extends BackButtonActivity {
 
     @Override
     public void onCOReserveQuantityCheck() {
-        getCurrentActivity().finish();// don't remove it, fix for back button
         goToQCPage(getCOReserveQuantity());
-    }
-
-    */
-
-    @Override
-    public void onRestart() {
-        super.onRestart();
-        finish();
     }
 
     //After bulk remove

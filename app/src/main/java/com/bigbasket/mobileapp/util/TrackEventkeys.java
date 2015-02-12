@@ -79,4 +79,9 @@ public final class TrackEventkeys {
     public static final String SHOP_IN_SHOP = "shop in shop";
     public static final String SECTION = "section";
 
+
+    public static final String HOME_SCREEN = "offer";
+    public static final String ACCOUNT_SCREEN = "offer";
+
+
 }

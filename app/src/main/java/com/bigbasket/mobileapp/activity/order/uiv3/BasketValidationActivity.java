@@ -72,20 +72,13 @@ public class BasketValidationActivity extends BackButtonActivity {
         }
     }
 
-    /*
+
     @Override
     public void onCOReserveQuantityCheck() {
-        getCurrentActivity().finish();// don't remove it, fix for back button
         Intent intent = new Intent(getCurrentActivity(), CheckoutQCActivity.class);
         intent.putExtra(Constants.CO_RESERVE_QTY_DATA, coReserveQuantity);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-    }
-    */
-
-    @Override
-    public void onRestart(){
-        super.onRestart();
-        finish();
+        getCurrentActivity().finish();// don't remove it, fix for back button
     }
 
     private void renderBasketValidationErrors() {

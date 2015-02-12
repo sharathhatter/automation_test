@@ -90,12 +90,6 @@ public class PrescriptionListActivity extends BackButtonActivity {
     }
 
     @Override
-    public void onRestart(){
-        super.onRestart();
-        finish();
-    }
-     /*
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         isActivitySuspended = false;
         if (resultCode == Constants.PRESCRIPTION_UPLOADED) {
@@ -115,6 +109,5 @@ public class PrescriptionListActivity extends BackButtonActivity {
         getCurrentActivity().finish();// fix for back button press
     }
 
-    */
 
 }
