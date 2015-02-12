@@ -271,9 +271,13 @@ public final class ProductView {
             imgAddToShoppingList.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((TrackingAware) (shoppingListNamesAware)).trackEvent(TrackingAware.SHOP_LIST_PRODUCT_ADDED, null);
-                    ((ShoppingListNamesAware) shoppingListNamesAware).setSelectedProductId(product.getSku());
-                    new ShoppingListNamesTask<>(shoppingListNamesAware, false).startTask();
+                    if (((ConnectivityAware) shoppingListNamesAware).checkInternetConnection()) {
+                        ((TrackingAware) (shoppingListNamesAware)).trackEvent(TrackingAware.SHOP_LIST_PRODUCT_ADDED, null);
+                        ((ShoppingListNamesAware) shoppingListNamesAware).setSelectedProductId(product.getSku());
+                        new ShoppingListNamesTask<>(shoppingListNamesAware, false).startTask();
+                    } else {
+                        productViewDisplayDataHolder.getHandler().sendOfflineError();
+                    }
                 }
             });
         } else {
@@ -316,7 +320,7 @@ public final class ProductView {
                                                 ((TrackingAware) (shoppingListNamesAware)).trackEvent(TrackingAware.SHOP_LIST_PRODUCT_DELETED, null);
                                                 shoppingListDoAddDeleteTask.startTask();
                                             } else {
-                                                ((ActivityAware) shoppingListNamesAware).getCurrentActivity().showToast("No internet connection found!");
+                                                productViewDisplayDataHolder.getHandler().sendOfflineError();
                                             }
                                         }
                                     }
@@ -379,8 +383,8 @@ public final class ProductView {
                 txtIncBasketQty.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if (((ConnectivityAware) basketOperationAware).checkInternetConnection() && !TextUtils.isEmpty(editTextQty.getText())) {
-
+                        if (TextUtils.isEmpty(editTextQty.getText())) return;
+                        if (((ConnectivityAware) basketOperationAware).checkInternetConnection()) {
                             BasketOperationTask<T> basketOperationTask = new BasketOperationTask<>(basketOperationAware,
                                     BasketOperation.INC, product,
                                     txtInBasket, txtDecBasketQty, txtIncBasketQty, btnAddToBasket,
@@ -396,7 +400,8 @@ public final class ProductView {
                 txtDecBasketQty.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if (((ConnectivityAware) basketOperationAware).checkInternetConnection() && !TextUtils.isEmpty(editTextQty.getText())) {
+                        if (TextUtils.isEmpty(editTextQty.getText())) return;
+                        if (((ConnectivityAware) basketOperationAware).checkInternetConnection()) {
                             BasketOperationTask<T> myTask = new BasketOperationTask<>(basketOperationAware,
                                     BasketOperation.DEC,
                                     product, txtInBasket, txtDecBasketQty, txtIncBasketQty,
@@ -412,11 +417,8 @@ public final class ProductView {
                 btnAddToBasket.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if (((ConnectivityAware) basketOperationAware).checkInternetConnection() && !TextUtils.isEmpty(editTextQty.getText())) {
-                            if (TextUtils.isEmpty(editTextQty.getText().toString())) {
-                                ((ActivityAware) basketOperationAware).getCurrentActivity().showToast("Please enter a valid quantity");
-                                return;
-                            }
+                        if (TextUtils.isEmpty(editTextQty.getText())) return;
+                        if (((ConnectivityAware) basketOperationAware).checkInternetConnection()) {
                             String qty = editTextQty.getText() != null ? editTextQty.getText().toString() : "1";
                             BasketOperationTask<T> basketOperationTask = new BasketOperationTask<>(basketOperationAware,
                                     BasketOperation.INC, product,

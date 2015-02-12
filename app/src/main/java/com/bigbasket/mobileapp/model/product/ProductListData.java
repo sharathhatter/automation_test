@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.model.product;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
@@ -40,12 +41,12 @@ public class ProductListData implements Parcelable {
     @SerializedName(Constants.BASE_IMG_URL)
     private String baseImgUrl;
 
+    @SerializedName(Constants.SECTION_INFO)
+    private SectionData sectionData;
+
     @Override
     public int describeContents() {
         return 0;
-    }
-
-    public ProductListData() {
     }
 
     @Override
@@ -88,6 +89,11 @@ public class ProductListData implements Parcelable {
         if (!isBaseImgUrlNull) {
             dest.writeString(baseImgUrl);
         }
+        boolean isSectionNull = sectionData == null;
+        dest.writeByte(isSectionNull ? (byte) 1 : (byte) 0);
+        if (!isSectionNull) {
+            dest.writeParcelable(sectionData, flags);
+        }
     }
 
     public ProductListData(Parcel source) {
@@ -125,6 +131,10 @@ public class ProductListData implements Parcelable {
         boolean isBaseImgUrlNull = source.readByte() == (byte) 1;
         if (!isBaseImgUrlNull) {
             baseImgUrl = source.readString();
+        }
+        boolean isSectionNull = source.readByte() == (byte) 1;
+        if (!isSectionNull) {
+            sectionData = source.readParcelable(ProductListData.class.getClassLoader());
         }
     }
 

@@ -2,7 +2,6 @@ package com.bigbasket.mobileapp.fragment.base;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,8 +33,12 @@ import com.bigbasket.mobileapp.task.uiv3.ShoppingListDoAddDeleteTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.bigbasket.mobileapp.view.SectionView;
 import com.bigbasket.mobileapp.view.uiv3.ShoppingListNamesDialog;
 import com.bigbasket.mobileapp.view.uiv3.SortProductDialog;
+import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
+import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
+import com.github.ksoichiro.android.observablescrollview.ScrollState;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,7 +46,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public abstract class ProductListAwareFragment extends BaseFragment implements ProductListDataAware,
+public abstract class ProductListAwareFragment extends BaseSectionFragment implements ProductListDataAware,
         ShoppingListNamesAware, SortAware, InfiniteProductListAware {
 
     protected ProductListData productListData;
@@ -77,6 +80,7 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
     public void restoreProductList(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             productListData = savedInstanceState.getParcelable(Constants.PRODUCTS);
+            tryRestoreSectionState(savedInstanceState);
             updateData();
         } else {
             loadProducts();
@@ -192,11 +196,12 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
             layoutFilterSort.setVisibility(View.GONE);
         }
 
-        contentView.addView(headerView);
         ((FilterDisplayAware) getActivity()).setFilterView(productListData.getFilterOptions(),
                 productListData.getFilteredOn(), getFragmentTxnTag());
 
-        RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, contentView);
+        final View sectionView = getSectionView();
+
+        ObservableRecyclerView productRecyclerView = UIUtil.getResponsiveObservableRecyclerView(getActivity(), 1, 1, contentView);
 
         // Set product-list data
         AuthParameters authParameters = AuthParameters.getInstance(getActivity());
@@ -214,6 +219,31 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
                 getSourceName());
 
         productRecyclerView.setAdapter(mProductListRecyclerAdapter);
+
+        if (sectionView != null) {
+            productRecyclerView.setScrollViewCallbacks(new ObservableScrollViewCallbacks() {
+                @Override
+                public void onScrollChanged(int i, boolean b, boolean b2) {
+
+                }
+
+                @Override
+                public void onDownMotionEvent() {
+
+                }
+
+                @Override
+                public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+                    if (scrollState == ScrollState.UP) {
+                        sectionView.setVisibility(View.GONE);
+                    } else {
+                        sectionView.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
+            contentView.addView(sectionView);
+        }
+        contentView.addView(headerView);
         contentView.addView(productRecyclerView);
     }
 
@@ -320,6 +350,7 @@ public abstract class ProductListAwareFragment extends BaseFragment implements P
     public void parcelProductList(Bundle outState) {
         if (productListData != null) {
             outState.putParcelable(Constants.PRODUCTS, productListData);
+            retainSectionState(outState);
         }
     }
 

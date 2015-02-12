@@ -74,5 +74,4 @@
     <dimen name="chip_txt_size">20sp</dimen>
     <dimen name="margin_ref_small">5dp</dimen>
     <dimen name="grid_width">100dp</dimen>
-    <dimen name="basket_control_height">32dp</dimen>
 </resources>

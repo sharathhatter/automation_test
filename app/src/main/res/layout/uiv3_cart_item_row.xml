@@ -103,7 +103,7 @@
             android:id="@+id/layoutBasketOperation"
             layout="@layout/uiv3_basket_operation_control"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/basket_control_height"
+            android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_below="@id/txtSalePrice"
             android:layout_marginTop="@dimen/margin_small" />

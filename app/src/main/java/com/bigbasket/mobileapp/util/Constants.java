@@ -89,7 +89,6 @@ public class Constants {
     public static final String MONTHS_DATA = "months_data";
     public static final String ORDER_RANGE = "order_range";
     public static final String ORDER_TYPE = "order_type";
-    public static final String SUB_CATEGORY_BANNER_IMAGE = "banner_images";
     public static final String VERSION = "version";
     public static final String SCREEN = "screen";
     public static final String A_OK = "a_ok";
@@ -100,10 +99,7 @@ public class Constants {
     public static final String TOP_CATEGORY_SLUG = "top_category_slug";
     public static final String SLUG_NAME = "slug_name";
     public static final String SUB_CATS = "sub_cats";
-    public static final String NUM_PRODUCTS = "num_products";
     public static final String SLUG_NAME_CATEGORY = "slug_name_category";
-    public static final String SECTION = "section";
-    public static final String SECTION_DATA = "section_data";
     public static final String FILTER = "filter";
     public static final String SORT_BY = "sort_by";
 
@@ -117,11 +113,8 @@ public class Constants {
     //Error codes
     public static final String PRODUCT_ID_NOT_FOUND = "101";
 
-    public static final String BROWSE_CAT = "browsecat";
-    public static final String BROWSE_OFFERS = "browse_offers";
     public static final String PROMO = "promo";
     public static final String SHOP_LST = "shoplist";
-    public static final String QUICK_SHOP = "quickshop";
     public static final String SMART_BASKET = "Smart Basket";
     public static final String SMART_BASKET_SLUG = "smart-basket";
 
