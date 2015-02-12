@@ -19,10 +19,12 @@
     <style name="Uiv2BigYellowButton">
         <item name="android:paddingTop">10dp</item>
         <item name="android:paddingBottom">10dp</item>
-        <item name="android:textColor">@color/light_grey_text</item>
-        <item name="android:background">@color/buttonYellowBkg</item>
+        <item name="android:textColor">@color/dialog_bg</item>
         <item name="android:minHeight">1dp</item>
+        <item name="android:background">@color/uiv3_action_bar_background</item>
         <item name="android:minWidth">1dp</item>
+
+
     </style>
 
 </resources>

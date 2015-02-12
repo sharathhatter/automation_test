@@ -8,6 +8,7 @@
     <string name="searchHint">Search Products</string>
     <string name="pharma_msg">Please choose/upload pharma prescription or remove pharma products</string>
     <string name="age_validation_required">Age check validation is required.</string>
+    <string name="errorWhileSampling">Error while sampling, try again</string>
     <string name="checkinternet">Cannot proceed with the operation. No network connection.</string>
     <string name="product_id_invalid">Sorry, but this product does not exists</string>
     <string name="invalidBasketQty">You can not add any more quantities of this product</string>
@@ -31,7 +32,6 @@
     <string name="NO_PAST_ORDER">You do not have any past orders.</string>
     <string name="NO_ACT_ORDER">You do not have any active orders.</string>
     <string name="selectDateRange">Select a date range</string>
-    <string name="maxQtyReached">Quantity reached maximum limit, max 25 allowed per product</string>
     <string name="multipleDeliverySlotMsg1">This order will be fulfilled by more than one vendor and will be delivered separately.</string>
     <string name="multipleDeliverySlotMsg2">Please choose delivery slots for each of these deliveries.</string>
     <string name="txtViewProducts">View products</string>
@@ -175,7 +175,9 @@
     <string name="qty">Qty</string>
     <string name="one">1</string>
     <string name="ADD">ADD</string>
-    <string name="UploadPrescription">Upload Prescription</string>
+    <string name="UploadPrescription">UPLOAD PRESCRIPTION</string>
+    <string name="imageMandatoryError">Prescription Image is mandatory</string>
+    <string name="imageUploading">Images are uploading....</string>
     <string name="addNewPrescription">New Prescription</string>
     <string name="patientName">Patient Name</string>
     <string name="doctorName">Doctor Name</string>
@@ -223,7 +225,7 @@
     <style name="placeOrder">Place Order</style>
 
     <string name="appOutDatedMsg">This version of BigBasket is now outdated.\nPlease update this app, in order to continue</string>
-    <string name="appUpdatedMsg">New version of BigBasket App is available. Please update this app</string>
+    <string name="appUpdatedMsg">New version of BigBasket App is available. \nPlease update this app.</string>
     <string name="confirmMobileNumber">Confirm your mobile number</string>
     <string name="txtConfirm">CONFIRM</string>
     <string name="txtResendCodeStr">RESEND</string>
@@ -272,6 +274,7 @@
     <string name="firstName">First Name</string>
     <string name="lastName">Last Name</string>
     <string name="mobileNumber">Mobile Number</string>
+    <string name="refCode">Referral Code (Optional)</string>
     <string name="acceptTermsMsg">Please accept the terms and conditions</string>
     <string name="addItemToShopList">Add item to shopping list</string>
     <string name="chooseShopList">Please select a shopping list to add</string>
@@ -301,7 +304,9 @@
     <string name="enterVoucher">Enter your eVoucher code</string>
     <string name="viewAvailableVouchers">You have an active eVoucher!\nClick here to view</string>
     <string name="viewAllProducts">VIEW ALL</string>
-    <string name="connectionOffline">Cannot proceed with the operation. No network connection.\n Please check your internet connected</string>
+    <string name="largeImageError">Please upload smaller size image</string>
+    <string name="maxImageError">Can not upload more than 5 images</string>
+    <string name="connectionOffline">Can not proceed with the operation. No network connection.\n Please check your internet connected</string>
     <string name="info">Information</string>
     <string name="memberName">Member Name</string>
     <string name="contactHeading">Member</string>
@@ -393,7 +398,7 @@
     <string name="profileUpdated">Profile updated successfully</string>
 
     <!-- main nav -->
-    <string name="browseByCats">Shop by Categpry</string>
+    <string name="browseByCats">Shop by Category</string>
     <string name="browseByOffers">Offers</string>
     <string name="newArrivals">New Arrivals</string>
     <string name="nowAtBB">Now Available @ BigBasket</string>
@@ -423,13 +428,11 @@
     <string name="out_of_stock">Out of stock</string>
     <string name="out_of_stock_msg1">We are sorry, but based on our current stock availability, the following products
         are currently out of stock.</string>
-    <string name="out_of_stock_msg2">Click on the Proceed button to accept the available quantities or click on the
-        (eye icon here) to see similar products.</string>
     <string name="check_out_selected">Selected:</string>
     <string name="check_out_available">Available:</string>
     <string name="similar_products">Add Similar products</string>
     <string name="addSomeAvailProducts">Please add some available products.</string>
-    <string name="out_of_stock_msg3">We are sorry, but based on our current stock availability, we don\'t have all the
+    <string name="out_of_stock_msg2">We are sorry, but based on our current stock availability, we don\'t have all the
         quantities of the following products that you have requested.</string>
     <string name="deleteQCProduct">Delete Product</string>
     <string name="deviceOffline">Cannot proceed with the operation. No network connection.</string>
@@ -453,8 +456,17 @@
     <string name="tcForFreeProduct">This product is subject to change depending on when your friend places his/her first order.</string>
     <string name="referralTC">Terms and Conditions:</string>
     <string name="howItWorks">How does it work?</string>
-    <string name="HowItWorksStr">When you refer your friends, a registration link gets included in the email that is sent to them.</string>
+    <string name="HowItWorksStr">A registration link will be sent to your friend.</string>
     <string name="spreadJoy">We will also send a complimentary gift to your friends along with their first BigBasket order. So, spread the joy.</string>
+    <string name="addMultipleEmail">To</string>
+    <string name="yourMsg">Message (Optional)</string>
+    <string name="refDialogHeading">Refer Friends to BigBasket</string>
+    <string name="invalid_email">Email address is invalid</string>
+    <string name="ref_submit">REFER</string>
+    <string name="referFriends">Refer Friends</string>
+    <string name="bbMail">Send mail</string>
+    <!--<string name="refTC">Terms &#38 conditions</string>-->
+
 
     <!-- spendTrends -->
     <string name="spendTrends">Spend Trends</string>
@@ -495,7 +507,6 @@
     <string name="paymentSelectionNotAvailable">Sorry, but you can\'t change the payment method.\nAfter you\'ve chosen the slot, click on \"Review order\" button, and your order will be automatically created</string>
     <string name="pressOrderReview">Press the \'Review Order\' button to place your order</string>
     <string name="smartBasket">Smart Basket</string>
-    <string name="referFriends">Refer Friends</string>
     <string name="rateTheApp">Rate this app</string>
     <string name="shopFromPreviousOrder">Shop from previous order</string>
     <string name="orders">Orders</string>

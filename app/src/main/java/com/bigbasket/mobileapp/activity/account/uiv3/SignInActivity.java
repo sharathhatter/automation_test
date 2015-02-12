@@ -383,7 +383,7 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
         bigBasketApiService.socialLogin(loginType, gson.toJson(mSocialAccount, SocialAccount.class),
                 new LoginApiResponseCallback(mEmailView.getText().toString().trim(),
                         mPasswordView.getText().toString().trim(),
-                        mChkRememberMe.isChecked(), loginType, mSocialAccount));
+                        mChkRememberMe.isChecked(), loginType, mSocialAccount, false));
     }
 
     @Override
@@ -540,6 +540,7 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
     }
 
     private void showForgotPasswordDialog() {
+        trackEvent(TrackingAware.FORGOT_PASSWORD_PWD_SHOWN, null);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View base = getLayoutInflater().inflate(R.layout.uiv3_editable_dialog, null);
 
@@ -586,6 +587,7 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
                 }
                 switch (forgotPasswordApiResponse.status) {
                     case Constants.OK:
+                        trackEvent(TrackingAware.FORGOT_PASSWORD_PWD_SUCCESS, null);
                         showToast(getString(R.string.newPasswordSent));
                         break;
                     default:

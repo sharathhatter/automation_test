@@ -10,15 +10,13 @@ import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
-import android.widget.ScrollView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -31,6 +29,7 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.general.MessageInfo;
 import com.bigbasket.mobileapp.model.general.MessageParamInfo;
+import com.bigbasket.mobileapp.model.order.COReserveQuantity;
 import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.order.MarketPlaceAgeCheck;
 import com.bigbasket.mobileapp.model.order.PharmaPrescriptionInfo;
@@ -39,10 +38,12 @@ import com.bigbasket.mobileapp.task.COMarketPlaceCheckTask;
 import com.bigbasket.mobileapp.task.COReserveQuantityCheckTask;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.MessageFormatUtil;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.view.uiv3.TermAndConditionDialog;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,57 +54,40 @@ import retrofit.client.Response;
 
 public class AgeValidationActivity extends BackButtonActivity {
     private MarketPlace marketPlace;
-    private HashMap<String, Boolean> hashMapRadioBtnAgeCheckNo = new HashMap<>(); // todo need to save this to savedInstanceState
+    private HashMap<String, Boolean> hashMapRadioBtnAgeCheckNo = new HashMap<>();
     private boolean isPharmaRadioBtnNoSelected;
-    private Button btnContinueOrUploadPrescription;
+    private Button btnListFooter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState); // todo back button override for GO_TO_HOME
-        if (savedInstanceState != null) {
-            marketPlace = savedInstanceState.getParcelable(Constants.MARKET_PLACE_INTENT);
-            if (marketPlace != null) {
-                renderMarketPlaceValidationErrors();
-                return;
-            }
-        }
+        super.onCreate(savedInstanceState);
         marketPlace = getIntent().getParcelableExtra(Constants.MARKET_PLACE_INTENT);
         renderMarketPlaceValidationErrors();
-
         trackEvent(TrackingAware.PRE_CHECKOUT_AGE_LEGAL_SHOWN, null);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            goToHome();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        goToHome();
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         isActivitySuspended = false;
-        if (resultCode == Constants.PRESCRIPTION_UPLOADED) {
-            //do nothing
-        } else {
+        if (resultCode == Constants.PRESCRIPTION_UPLOADED)
+            goToQCPage((COReserveQuantity) data.getParcelableExtra(Constants.CO_RESERVE_QTY_DATA));
+        else if (resultCode == Constants.PRESCRIPTION_CHOSEN)
+            goToQCPage((COReserveQuantity) data.getParcelableExtra(Constants.CO_RESERVE_QTY_DATA));
+        else
             super.onActivityResult(requestCode, resultCode, data);
-        }
+    }
+
+    private void goToQCPage(COReserveQuantity coReserveQuantity1) {
+        Intent intent = new Intent(getCurrentActivity(), CheckoutQCActivity.class);
+        intent.putExtra(Constants.CO_RESERVE_QTY_DATA, coReserveQuantity1);
+        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+        getCurrentActivity().finish();// don't remove it, fix for back button
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        if (marketPlace != null) {
-            outState.putParcelable(Constants.MARKET_PLACE_INTENT, marketPlace);
-        }
-        super.onSaveInstanceState(outState);
+    public void onCOReserveQuantityCheck() {
+        goToQCPage(getCOReserveQuantity());
     }
 
     //After bulk remove
@@ -130,31 +114,27 @@ public class AgeValidationActivity extends BackButtonActivity {
         FrameLayout contentView = (FrameLayout) findViewById(R.id.content_frame);
         if (contentView == null) return;
         contentView.removeAllViews();
-        ScrollView scrollView = new ScrollView(this);
-        LinearLayout base = new LinearLayout(this);
-        base.setOrientation(LinearLayout.VERTICAL);
-        scrollView.addView(base);
-        renderAgeValidations(base);
-        renderPharmaPrescriptionValidations(base);
 
-        btnContinueOrUploadPrescription = new Button(this);
-        btnContinueOrUploadPrescription.setTextColor(getResources().getColor(R.color.uiv3_primary_text_color));
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        int btnMargin = (int) getResources().getDimension(R.dimen.margin_large);
-        layoutParams.setMargins(btnMargin, btnMargin, btnMargin, btnMargin);
-        btnContinueOrUploadPrescription.setLayoutParams(layoutParams);
-        btnContinueOrUploadPrescription.setTypeface(faceRobotoRegular);
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        RelativeLayout layoutRelativeMain = (RelativeLayout) inflater.inflate(R.layout.uiv3_checkout_qc_scroll, contentView, false);
+        LinearLayout baseView = (LinearLayout) layoutRelativeMain.findViewById(R.id.layoutMainLayout);
+        contentView.addView(layoutRelativeMain);
+        btnListFooter = (Button) layoutRelativeMain.findViewById(R.id.btnListFooter);
+
+
+        renderAgeValidations(baseView, inflater);
+        renderPharmaPrescriptionValidations(baseView, inflater);
+
+
+        btnListFooter.setTypeface(faceRobotoRegular);
         if (marketPlace.isPharamaPrescriptionNeeded()) {
-            btnContinueOrUploadPrescription.setText(getString(R.string.uploadPrescription));
-            btnContinueOrUploadPrescription.setTextSize(getResources().getDimension(R.dimen.small_text_size));
-            btnContinueOrUploadPrescription.setTag(Constants.UPLOAD_PRESCRIPTION_BTN_TAG);
+            btnListFooter.setText(getString(R.string.uploadPrescription));
+            btnListFooter.setTag(Constants.UPLOAD_PRESCRIPTION_BTN_TAG);
         } else {
-            btnContinueOrUploadPrescription.setText("Continue");
-            btnContinueOrUploadPrescription.setTextSize(getResources().getDimension(R.dimen.secondary_text_size));
-            btnContinueOrUploadPrescription.setTag(Constants.CONTINUE_BTN_TAG);
+            btnListFooter.setText("CONTINUE");
+            btnListFooter.setTag(Constants.CONTINUE_BTN_TAG);
         }
-        btnContinueOrUploadPrescription.setOnClickListener(new View.OnClickListener() {
+        btnListFooter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (isPharmaRadioBtnNoSelected) { // check if pharma radio btn no selected
@@ -166,13 +146,12 @@ public class AgeValidationActivity extends BackButtonActivity {
                         trackEvent(TrackingAware.PRE_CHECKOUT_AGE_LEGAL_ACCEPTED, null);
                     }
 
-                    if (String.valueOf(btnContinueOrUploadPrescription.getTag()).equals(Constants.CONTINUE_BTN_TAG)) {
+                    if (String.valueOf(btnListFooter.getTag()).equals(Constants.CONTINUE_BTN_TAG)) {
                         proceedToQc();
                     } else {
                         ArrayList<SavedPrescription> savedPrescriptionArrayList = marketPlace.getSavedPrescription();
                         if (savedPrescriptionArrayList != null && savedPrescriptionArrayList.size() > 0) {
                             Intent intent = new Intent(getCurrentActivity(), PrescriptionListActivity.class);
-                            intent.putExtra(Constants.MARKET_PLACE_INTENT, marketPlace);
                             startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                         } else {
                             Intent intent = new Intent(getCurrentActivity(), UploadNewPrescriptionActivity.class);
@@ -184,16 +163,12 @@ public class AgeValidationActivity extends BackButtonActivity {
                 }
             }
         });
-        base.addView(btnContinueOrUploadPrescription);
-
-
-        contentView.addView(scrollView);
     }
 
-    private void renderAgeValidations(LinearLayout base) {
+    private void renderAgeValidations(LinearLayout base, LayoutInflater inflater) {
         if (!marketPlace.isAgeCheckRequired() || marketPlace.getAgeCheckRequiredDetail() == null)
             return;
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
         for (final MarketPlaceAgeCheck marketPlaceAgeCheck : marketPlace.getAgeCheckRequiredDetail()) {
             View ageLayout = inflater.inflate(R.layout.uiv3_age_validation_layout, base, false);
             TextView txtAgeMsg = (TextView) ageLayout.findViewById(R.id.txtAgeMsg);
@@ -235,27 +210,17 @@ public class AgeValidationActivity extends BackButtonActivity {
         }
     }
 
-    private void renderPharmaPrescriptionValidations(LinearLayout base) {
+    private void renderPharmaPrescriptionValidations(LinearLayout base, LayoutInflater inflater) {
         if (!marketPlace.isPharamaPrescriptionNeeded() || marketPlace.getPharmaPrescriptionInfo() == null)
             return;
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
         PharmaPrescriptionInfo pharmaPrescriptionInfo = marketPlace.getPharmaPrescriptionInfo();
         View ageLayout = inflater.inflate(R.layout.uiv3_age_validation_layout, base, false);
 
-        // pharma Prescription header
         TextView txtheaderMsg = (TextView) ageLayout.findViewById(R.id.txtAgeMsg);
         txtheaderMsg.setTypeface(faceRobotoRegular);
         txtheaderMsg.setTextColor(getResources().getColor(R.color.uiv3_primary_text_color));
-        //txtAgeMsg.setText(getString(R.string.pharmaPrescriptionHeading));
-
-
-        // Setting info-message
-        //TextView txtInfoMsg = (TextView) ageLayout.findViewById(R.id.txtInfoMsg);
-        //txtInfoMsg.setTypeface(faceRobotoRegular);
 
         MessageInfo msgInfo = pharmaPrescriptionInfo.getMsgInfo();
-
         if (msgInfo != null && msgInfo.getParams() != null) {
             ArrayList<Class<?>> activitiesList = new ArrayList<>();
             ArrayList<Integer> fragmentCodeArrayList = new ArrayList<>();
@@ -265,7 +230,7 @@ public class AgeValidationActivity extends BackButtonActivity {
             }
 
             if (!TextUtils.isEmpty(msgInfo.getMessageStr())) {
-                MessageFormatUtil messageFormatUtil = new MessageFormatUtil();
+                MessageFormatUtil<AgeValidationActivity> messageFormatUtil = new MessageFormatUtil<>();
                 SpannableStringBuilder msgContent = messageFormatUtil.
                         replaceStringArgWithDisplayNameAndLink(this, msgInfo.getMessageStr(),
                                 msgInfo.getParams(), activitiesList, fragmentCodeArrayList);
@@ -294,22 +259,24 @@ public class AgeValidationActivity extends BackButtonActivity {
         } else {
             fulFillmentIds = messageParamInfos.get(0).getInternalValue();
             for (int j = 1; j < pharmaInfoSize; j++) {
-                fulFillmentIds = "," + messageParamInfos.get(j).getInternalValue();
+                fulFillmentIds += "," + messageParamInfos.get(j).getInternalValue();
             }
         }
         if (fulFillmentIds != null) {
             rbtnNo.setTag(fulFillmentIds);
         } else {
-            return; //todo check
+            assert false : "Fulfillment info ID(s) should not be Null";
+            return;
         }
 
+        if (isPharmaRadioBtnNoSelected)
+            rbtnNo.setChecked(true);
         rbtnYes.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    btnContinueOrUploadPrescription.setText(getString(R.string.uploadPrescription));
-                    btnContinueOrUploadPrescription.setTextSize(getResources().getDimension(R.dimen.small_text_size));
-                    btnContinueOrUploadPrescription.setTag(Constants.UPLOAD_PRESCRIPTION_BTN_TAG);
+                    btnListFooter.setText(getString(R.string.uploadPrescription));
+                    btnListFooter.setTag(Constants.UPLOAD_PRESCRIPTION_BTN_TAG);
                     isPharmaRadioBtnNoSelected = false;
                 }
             }
@@ -318,9 +285,8 @@ public class AgeValidationActivity extends BackButtonActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    btnContinueOrUploadPrescription.setText("Continue");
-                    btnContinueOrUploadPrescription.setTextSize(getResources().getDimension(R.dimen.secondary_text_size));
-                    btnContinueOrUploadPrescription.setTag(Constants.CONTINUE_BTN_TAG);
+                    btnListFooter.setText("CONTINUE");
+                    btnListFooter.setTag(Constants.CONTINUE_BTN_TAG);
                     isPharmaRadioBtnNoSelected = true;
                     showAlertDialog(null,
                             "Remove all pharma products from basket", DialogButton.YES,
@@ -332,56 +298,24 @@ public class AgeValidationActivity extends BackButtonActivity {
 
         base.addView(ageLayout);
 
-        /*
-        // Add upload/choose prescription button
-        Button btnUploadPrescription = UIUtil.getPrimaryButton(this);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        int btnMargin = (int) getResources().getDimension(R.dimen.margin_large);
-        layoutParams.setMargins(btnMargin, btnMargin, btnMargin, btnMargin);
-        btnUploadPrescription.setTypeface(faceRobotoRegular);
-        btnUploadPrescription.setText(getString(R.string.uploadPrescription));
-        btnUploadPrescription.setLayoutParams(layoutParams);
-        btnUploadPrescription.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-        base.addView(btnUploadPrescription);
-        */
-
         // Display any additional terms and condition
         if (msgInfo != null && msgInfo.getParams() != null) {
-            int layoutPadding = (int) getResources().getDimension(R.dimen.padding_normal);
-            int miniPadding = (int) getResources().getDimension(R.dimen.padding_mini);
-            float textSize = this.getResources().getDimension(R.dimen.small_text_size);
+            final ArrayList<String> termAndCondition = new ArrayList<>();
             for (MessageParamInfo messageParamInfo : msgInfo.getParams()) {
-                if (!TextUtils.isEmpty(messageParamInfo.getExtraInfo())) {
-
-                    LinearLayout layoutTC = new LinearLayout(this);
-                    layoutTC.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                            LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
-                    layoutTC.setOrientation(LinearLayout.HORIZONTAL);
-                    layoutTC.setPadding(layoutPadding, layoutPadding, layoutPadding,
-                            layoutPadding);
-
-                    TextView startSign = new TextView(getCurrentActivity());
-                    startSign.setText(getResources().getString(R.string.asterisk));
-                    startSign.setTextColor(getResources().getColor(R.color.red));
-                    startSign.setTextSize(12);
-                    layoutTC.addView(startSign);
-
-
-                    TextView txtTCMsg = new TextView(getCurrentActivity());
-                    txtTCMsg.setPadding(miniPadding, 0, 0, 0);
-                    txtTCMsg.setTextColor(getResources().getColor(R.color.red));
-                    txtTCMsg.setTextSize(12);
-                    txtTCMsg.setTypeface(faceRobotoRegular);
-                    txtTCMsg.setText(messageParamInfo.getExtraInfo());
-                    layoutTC.addView(txtTCMsg);
-                    base.addView(layoutTC);
-                }
+                if (!TextUtils.isEmpty(messageParamInfo.getExtraInfo()))
+                    termAndCondition.add(messageParamInfo.getExtraInfo());
+            }
+            if (termAndCondition.size() > 0) {
+                TextView txtPharmaTcLink = (TextView) ageLayout.findViewById(R.id.txtPharmaTcLink);
+                txtPharmaTcLink.setVisibility(View.VISIBLE);
+                txtPharmaTcLink.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        TermAndConditionDialog termAndConditionDialog = TermAndConditionDialog.
+                                newInstance(termAndCondition);
+                        termAndConditionDialog.show(getSupportFragmentManager(), Constants.OTP_REFERRAL_DIALOG);
+                    }
+                });
             }
         }
     }
@@ -411,6 +345,7 @@ public class AgeValidationActivity extends BackButtonActivity {
     }
 
     private void bulkRemoveProducts(Object fulfillmentInfoIds) {
+        if (!DataUtil.isInternetAvailable(getCurrentActivity())) handler.sendOfflineError();
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.cartBulkRemove(fulfillmentInfoIds.toString(), new Callback<BaseApiResponse>() {
@@ -426,10 +361,6 @@ public class AgeValidationActivity extends BackButtonActivity {
                     CartSummary cartInfo = cartBulkRemoveApiResponseCallback.cartSummary;
                     ((CartInfoAware) getCurrentActivity()).setCartInfo(cartInfo);
                     ((CartInfoAware) getCurrentActivity()).updateUIForCartInfo();
-                    SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
-                    SharedPreferences.Editor editor = prefer.edit();
-                    editor.putString(Constants.GET_CART, String.valueOf(cartInfo.getNoOfItems()));
-                    editor.commit();
                     if (cartInfo.getNoOfItems() == 0) {
                         showAlertDialogFinish(null, getResources().getString(R.string.basketEmpty));
                     } else {

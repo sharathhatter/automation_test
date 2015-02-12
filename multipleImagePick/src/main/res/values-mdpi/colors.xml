@@ -12,10 +12,12 @@
     <color name="light_black_">#33000000</color>
     <color name="light_white_">#33FFFFFF</color>
     <color name="dialog_bg">#f0f0f0</color>
-    <color name="medium_dark_green">#98B04E</color>
     <color name="light_grey_text">#4D4D4D</color>
-    <color name="buttonYellowBkg">#F2D747</color>
 
+    <color name="uiv3_primary_text_color">#212121</color>
+    <color name="uiv3_action_bar_background">#4CAF50</color>
+    <color name="dark_black">#000000</color>
+    <color name="white">#ffffff</color>
     <drawable name="light_black_">#33000000</drawable>
 
 </resources>

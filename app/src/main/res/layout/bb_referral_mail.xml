@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:layout_height="match_parent">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:id="@+id/layoutFrom"
+        android:layout_marginTop="@dimen/margin_normal"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="50dp"
+            android:text="From"
+            android:layout_marginLeft="@dimen/margin_small"
+            android:id="@+id/txtFrom"
+            android:gravity="left"
+            android:textSize="@dimen/primary_text_size"
+            android:textColor="@color/light_grey"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:id="@+id/txtFromEmail"
+            android:text="jugal@gmail.com"
+            android:textSize="@dimen/primary_text_size"
+            android:layout_marginLeft="@dimen/margin_normal"
+            android:textColor="@color/dark_black"
+            android:layout_toRightOf="@id/txtFrom"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/margin_normal"
+        android:layout_height="0.5dp"
+        android:id="@+id/separatorLine1"
+        android:background="@color/strokeLine"
+        android:layout_below="@id/layoutFrom"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_below="@id/separatorLine1"
+        android:id="@+id/layoutTo"
+        android:layout_marginTop="@dimen/margin_normal"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="50dp"
+            android:text="@string/addMultipleEmail"
+            android:id="@+id/txtTo"
+            android:gravity="left"
+            android:textColor="@color/light_grey"
+            android:textSize="@dimen/primary_text_size"
+            android:layout_marginLeft="@dimen/margin_small"
+            android:layout_height="wrap_content" />
+
+        <com.bigbasket.mobileapp.util.ChipAutoCompleteTextView
+            android:id="@+id/editTextListEmailAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/txtTo"
+            android:layout_marginLeft="@dimen/margin_normal"
+            android:inputType="textEmailAddress|textMultiLine"
+            android:textColor="@color/dark_black"
+            android:textSize="@dimen/primary_text_size"
+            android:imeOptions="actionNext"
+            android:ems="20"
+            android:background="@color/white"
+            android:layout_centerVertical="true"
+            android:gravity="top"
+            android:minLines="1"
+            android:maxLines="3"
+            android:scrollHorizontally="false"
+            android:scrollbars="vertical"
+            android:singleLine="false" />
+
+    </RelativeLayout>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:id="@+id/separatorLine2"
+        android:layout_marginTop="@dimen/margin_normal"
+        android:background="@color/strokeLine"
+        android:layout_below="@id/layoutTo"/>
+
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/margin_normal"
+        android:gravity="top"
+        android:id="@+id/editTextMessage"
+        android:layout_marginLeft="@dimen/margin_small"
+        android:hint="@string/yourMsg"
+        android:textColorHint="@color/light_grey"
+        android:textSize="@dimen/primary_text_size"
+        android:layout_below="@id/separatorLine2"
+        android:textColor="@color/dark_black"
+        android:background="@color/white"
+        android:layout_height="match_parent" />
+
+</RelativeLayout>

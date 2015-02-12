@@ -8,6 +8,7 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.order.uiv3.AgeValidationActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.BasketValidationActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.CheckoutQCActivity;
+import com.bigbasket.mobileapp.activity.order.uiv3.UploadNewPrescriptionActivity;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
 import com.bigbasket.mobileapp.interfaces.COReserveQuantityCheckAware;
@@ -136,14 +137,16 @@ public class BigBasketMessageHandler<T> {
                 intent = new Intent(((ActivityAware) ctx).getCurrentActivity(), AgeValidationActivity.class);
                 intent.putExtra(Constants.MARKET_PLACE_INTENT, mMarketPlace);
                 ((ActivityAware) ctx).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                ((ActivityAware) ctx).getCurrentActivity().finish();// don't remove it, fix for back button
                 break;
 
             case NavigationCodes.CO_RESERVE_QUANTITY_CHECK_OK:
-                //int qc_len = ((COReserveQuantityCheckAware) ctx).getCOReserveQuantity().isQcHasErrors() ? 0 : 1;
                 intent = new Intent(((ActivityAware) ctx).getCurrentActivity(), CheckoutQCActivity.class);
                 intent.putExtra(Constants.CO_RESERVE_QTY_DATA, ((COReserveQuantityCheckAware) ctx).getCOReserveQuantity());
-                //intent.putExtra(Constants.QC_LEN, qc_len);
                 ((ActivityAware) ctx).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                break;
+            case NavigationCodes.PRESCRIPTION_IMAGE_SAMPLING:
+                ((UploadNewPrescriptionActivity) ctx).doSampling();
                 break;
             default:
                 ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.server_error), finish);

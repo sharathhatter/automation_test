@@ -9,7 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.util.TouchImageView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -18,17 +18,17 @@ import java.util.ArrayList;
 /**
  * Created by jugal on 28/8/14.
  */
-public class MultipleImagesPrescriptionAdapter extends BaseAdapter {
+public class MultipleImagesPrescriptionAdapter<T> extends BaseAdapter {
 
-    private BaseActivity activity;
+    private T ctx;
     private ArrayList<Object> imageUploadModelArrayList;
     private LayoutInflater inflater;
 
-    public MultipleImagesPrescriptionAdapter(BaseActivity activity,
+    public MultipleImagesPrescriptionAdapter(T ctx,
                                              ArrayList<Object> imageUploadModelArrayList) {
-        this.activity = activity;
+        this.ctx = ctx;
         this.imageUploadModelArrayList = imageUploadModelArrayList;
-        this.inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.inflater = (LayoutInflater) ((ActivityAware) ctx).getCurrentActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     public int getCount() {

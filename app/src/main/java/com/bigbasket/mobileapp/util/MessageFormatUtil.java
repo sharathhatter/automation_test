@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.util;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -11,14 +12,15 @@ import android.view.View;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
+import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.model.general.MessageParamInfo;
 
 import java.util.ArrayList;
 
 
-public class MessageFormatUtil {
+public class MessageFormatUtil<T> {
 
-    public SpannableStringBuilder replaceStringArgWithDisplayNameAndLink(final BaseActivity activity, String msgStr,
+    public SpannableStringBuilder replaceStringArgWithDisplayNameAndLink(final T ctx, String msgStr,
                                                                          final ArrayList<MessageParamInfo> messageParamInfoList,
                                                                          final ArrayList<Class<?>> activityArrayList,
                                                                          final ArrayList<Integer> fragmentCodeArrayList) {
@@ -40,20 +42,22 @@ public class MessageFormatUtil {
             // change str to link color
             int preIndex = preIndexOfFormatStr;
             int postIndex = preIndex + messageParamInfoList.get(replacedStringIndex).getDisplayName().length();
-            spannableString.setSpan(new ForegroundColorSpan(activity.getResources().getColor(R.color.link_color)),
+            spannableString.setSpan(new ForegroundColorSpan(((ActivityAware)ctx).getCurrentActivity().getResources().getColor(R.color.link_color)),
                     preIndex, postIndex, 0);
         }
         if (activityArrayList != null && activityArrayList.size() > 0) {
-            return addClickablePart(spannableString.toString().replaceAll("\\s*\\[\\s*", "["), activity, messageParamInfoList, activityArrayList,
+            return addClickablePart(spannableString.toString().replaceAll("\\s*\\[\\s*", "["),
+                    ((ActivityAware)ctx).getCurrentActivity(), messageParamInfoList, activityArrayList,
                     arrayListIndex, fragmentCodeArrayList);
         } else {
-            return addClickablePart(spannableString.toString().replaceAll("\\s*\\[\\s*", "["), activity, messageParamInfoList,
+            return addClickablePart(spannableString.toString().replaceAll("\\s*\\[\\s*", "["),
+                    ((ActivityAware)ctx).getCurrentActivity(), messageParamInfoList,
                     arrayListIndex);
         }
 
     }
 
-    private static SpannableStringBuilder addClickablePart(String str, final BaseActivity currentActivity,
+    private static SpannableStringBuilder addClickablePart(String str, final Activity activity,
                                                            final ArrayList<MessageParamInfo> messageParamInfoList,
                                                            final ArrayList<Class<?>> activityArrayList,
                                                            final ArrayList<Integer> arrayListIndex,
@@ -76,23 +80,23 @@ public class MessageFormatUtil {
                 public void onClick(View widget) {
                     if (messageParamInfoArrayList.getType().equals(Constants.APP_LINK)) {
                         if (callingActivity != null && messageParamInfoArrayList.getInternalValue() != null) {
-                            Intent intent = new Intent(currentActivity, callingActivity);
+                            Intent intent = new Intent(activity, callingActivity);
                             intent.putExtra(Constants.FRAGMENT_CODE, fragmentCode);
                             intent.putExtra(Constants.INTERNAL_VALUE, messageParamInfoArrayList.getInternalValue());
-                            currentActivity.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                            activity.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                         }
                     } else if (messageParamInfoArrayList.getType().equals(Constants.WEB_LINK)) {
                         if (messageParamInfoArrayList.getInternalValue() != null) {
-                            Intent intent = new Intent(currentActivity, FlatPageWebViewActivity.class);
+                            Intent intent = new Intent(activity, FlatPageWebViewActivity.class);
                             intent.putExtra(Constants.WEBVIEW_URL, messageParamInfoArrayList.getInternalValue());
-                            currentActivity.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                            activity.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                         }
                     }
                 }
 
                 @Override
                 public void updateDrawState(TextPaint textPaint) {
-                    textPaint.setColor(currentActivity.getResources().getColor(R.color.link_color));
+                    textPaint.setColor(textPaint.linkColor);
                     textPaint.setUnderlineText(false); // set to false to remove underline
                 }
             }, idx1, idx2, 0);
@@ -106,7 +110,7 @@ public class MessageFormatUtil {
     }
 
 
-    private static SpannableStringBuilder addClickablePart(String str, final BaseActivity currentActivity,
+    private static SpannableStringBuilder addClickablePart(String str, final Activity activity,
                                                            final ArrayList<MessageParamInfo> messageParamInfoList,
                                                            final ArrayList<Integer> arrayListIndex) {
         str = str.replaceAll("\\s*\\]\\s*", "]");
@@ -123,16 +127,16 @@ public class MessageFormatUtil {
                 public void onClick(View widget) {
                     if (messageParamInfoArrayList.getType().equals(Constants.WEB_LINK)) {
                         if (messageParamInfoArrayList.getInternalValue() != null) {
-                            Intent intent = new Intent(currentActivity, FlatPageWebViewActivity.class);
+                            Intent intent = new Intent(activity, FlatPageWebViewActivity.class);
                             intent.putExtra(Constants.WEBVIEW_URL, messageParamInfoArrayList.getInternalValue());
-                            currentActivity.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                            activity.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                         }
                     }
                 }
 
                 @Override
                 public void updateDrawState(TextPaint textPaint) {
-                    textPaint.setColor(currentActivity.getResources().getColor(R.color.link_color));
+                    textPaint.setColor(textPaint.linkColor);
                     textPaint.setUnderlineText(false); // set to false to remove underline
                 }
             }, idx1, idx2, 0);

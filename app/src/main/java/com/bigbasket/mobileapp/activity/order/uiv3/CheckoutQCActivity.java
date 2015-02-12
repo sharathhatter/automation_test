@@ -16,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -40,7 +39,6 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
-import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,7 +55,6 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
     }
 
     private void doQc() {
-        //int qcLen = getIntent().getIntExtra(Constants.QC_LEN, -100);
         coReserveQuantity = getIntent().getParcelableExtra(Constants.CO_RESERVE_QTY_DATA);
         if (coReserveQuantity.getQc_len() == 0) {
             launchAddressSelection();
@@ -70,6 +67,7 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
         Intent intent = new Intent(this, BackButtonActivity.class);
         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ADDRESS_SELECTION);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+        getCurrentActivity().finish(); // don't remove this, fix for back button press from address screen
     }
 
     @Override
@@ -83,8 +81,8 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
     private void renderQcPage() {
         if (coReserveQuantity.isStatus()) {
             if (!coReserveQuantity.isQcHasErrors()) {
-                // TODO : Jugal fix this
-                showAlertDialog(null, getString(R.string.checkinternet), Constants.GO_TO_HOME_STRING);
+                // defensive check
+                showAlertDialog(null, getString(R.string.server_error), Constants.GO_TO_HOME_STRING);
             } else {
                 createArrayListOfProducts();
             }
@@ -181,15 +179,6 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
 
     }
 
-    /*
-    private boolean isViaInvoice() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean viaInvoice = sharedPreferences.getBoolean(Constants.VIA_INVOICE, false);
-        removeViaInvoiceFlag();
-        return viaInvoice;
-    }
-    */
-
     private void renderCheckOut(final ArrayList<CheckoutProduct> productWithNoStockList,
                                 final ArrayList<CheckoutProduct> productWithSomeStockList) {
         FrameLayout base = (FrameLayout) findViewById(R.id.content_frame);
@@ -197,6 +186,8 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
         contentView.setOrientation(LinearLayout.VERTICAL);
         base.addView(contentView);
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+
         int productWithNoStockListSize = productWithNoStockList.size();
         int productWithSomeStockListSize = productWithSomeStockList.size();
         if (productWithNoStockListSize > 0 || productWithSomeStockListSize > 0) {
@@ -206,8 +197,8 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
             contentView.setPadding(0, 0, 0, 10);
 
             RelativeLayout layoutRelativeMain = (RelativeLayout) inflater.inflate(R.layout.uiv3_checkout_qc_scroll, contentView, false);
-            LinearLayout linearLayoutViewQC = (LinearLayout) layoutRelativeMain.findViewById(R.id.layoutMainCheckoutQc);
-            LinearLayout layoutBtnContinue = (LinearLayout) layoutRelativeMain.findViewById(R.id.layoutBtnContinue);
+            LinearLayout linearLayoutViewQC = (LinearLayout) layoutRelativeMain.findViewById(R.id.layoutMainLayout);
+            Button btnListFooter = (Button) layoutRelativeMain.findViewById(R.id.btnListFooter);
             contentView.addView(layoutRelativeMain);
 
             if (productWithNoStockListSize > 0) {
@@ -225,10 +216,6 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
 
                     // no stock product
                     RelativeLayout layoutWithNoStockProducts = (RelativeLayout) inflater.inflate(R.layout.uiv3_out_of_stock_product_layout, linearLayoutViewQC, false);
-
-//                    TextView txtIndex = (TextView) layoutWithNoStockProducts.findViewById(R.id.txtIndex);
-//                    txtIndex.setText(String.valueOf(i+1));
-
                     TextView txtProductBrand = (TextView) layoutWithNoStockProducts.findViewById(R.id.txtProductBrand);
                     txtProductBrand.setText(productWithNoStockList.get(i).getBrand());
 
@@ -240,12 +227,6 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
 
                     RelativeLayout layoutSomeStock = (RelativeLayout) layoutWithNoStockProducts.findViewById(R.id.layoutSomeStock);
                     layoutSomeStock.setVisibility(View.GONE);
-
-                    //ImageView imgRemove = (ImageView) layoutWithNoStockProducts.findViewById(R.id.imgRemove);
-                    //imgRemove.setVisibility(View.GONE);
-
-                    //Button btnSimilarProducts = (Button) layoutWithNoStockProducts.findViewById(R.id.btnSimilarProducts);
-                    //btnSimilarProducts.setVisibility(View.GONE);
 
                     linearLayoutViewQC.addView(layoutWithNoStockProducts);
                 }
@@ -288,7 +269,7 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
                     String prefixSelect = getString(R.string.check_out_selected);
                     String postfixSelect = productWithSomeStockList.get(i).getOriginalQuantity();
                     SpannableString spannableTxtSelected = new SpannableString(prefixSelect + " " + postfixSelect);
-                    spannableTxtSelected.setSpan(new ForegroundColorSpan(0xff709d03), 0, prefixSelect.length(), 0);
+                    spannableTxtSelected.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.promo_red_color)), 0, prefixSelect.length(), 0);
                     txtSelected.setText(spannableTxtSelected);
 
                     TextView txtAvailable = (TextView) layoutWithSomeStockProducts.findViewById(R.id.txtAvailable);
@@ -367,22 +348,14 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
                 }
             }
 
-            Button btnContinue = UIUtil.getPrimaryButton(this);
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT);
-            int btnMargin = (int) getResources().getDimension(R.dimen.margin_large);
-            layoutParams.setMargins(btnMargin, btnMargin, btnMargin, btnMargin);
-            btnContinue.setLayoutParams(layoutParams);
-            btnContinue.setTypeface(faceRobotoRegular);
-            btnContinue.setText("Continue");
-            btnContinue.setOnClickListener(new View.OnClickListener() {
+            btnListFooter.setText("CONTINUE");
+            btnListFooter.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     new CoUpdateReservationTask<>(getCurrentActivity(), false,
                             productWithNoStockList, productWithSomeStockList).startTask();
                 }
             });
-            layoutBtnContinue.addView(btnContinue);
         } else {
             showAlertDialogFinish(null, getString(R.string.server_error));
         }
@@ -392,13 +365,12 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
     private void showQcMsg(LinearLayout linearLayoutViewQC, boolean forNoProductView) {
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.uiv3_checkout_msg, linearLayoutViewQC, false);
-        TextView txtOutOfStockMsg1 = (TextView) view.findViewById(R.id.txtOutOfStockMsg1);
-        txtOutOfStockMsg1.setTypeface(faceRobotoRegular);
-        TextView txtOutOfStockMsg2 = (TextView) view.findViewById(R.id.txtOutOfStockMsg2);
-        txtOutOfStockMsg2.setTypeface(faceRobotoRegular);
+        TextView txtOutOfStockMsg = (TextView) view.findViewById(R.id.txtOutOfStockMsg);
+        txtOutOfStockMsg.setTypeface(faceRobotoRegular);
         if (forNoProductView) {
-            txtOutOfStockMsg1.setText(getString(R.string.out_of_stock_msg3));
-            txtOutOfStockMsg2.setVisibility(View.VISIBLE);
+            txtOutOfStockMsg.setText(getString(R.string.out_of_stock_msg2));
+        } else {
+            txtOutOfStockMsg.setText(getString(R.string.out_of_stock_msg1));
         }
         linearLayoutViewQC.addView(view);
     }

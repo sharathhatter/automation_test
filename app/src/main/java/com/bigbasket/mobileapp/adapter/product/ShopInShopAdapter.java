@@ -27,11 +27,11 @@ public class ShopInShopAdapter {
     public static final String tableName = "shopinshop";
 
     public static final String createTable = String.format("CREATE TABLE IF NOT EXISTS %1$s (%2$s INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            "%3$s TEXT NOT NULL, %4$s TEXT NOT NULL, %5$s INTEGER DEFAULT 0, %6$s INTEGER DEFAULT 0);",
+                    "%3$s TEXT NOT NULL, %4$s TEXT NOT NULL, %5$s INTEGER DEFAULT 0, %6$s INTEGER DEFAULT 0);",
             tableName, COLUMN_ID, COLUMN_NAME, COLUMN_SLUG, COLUMN_IS_EXPRESS, COLUMN_IS_DISCOUNT);
 
     public void insertAll(ArrayList<ShopInShop> shopInShops) {
-        for (ShopInShop shopInShop: shopInShops) {
+        for (ShopInShop shopInShop : shopInShops) {
             ContentValues contentValues = new ContentValues();
             contentValues.put(COLUMN_NAME, shopInShop.getName());
             contentValues.put(COLUMN_SLUG, shopInShop.getSlug());

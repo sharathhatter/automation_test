@@ -28,6 +28,8 @@ public class ShopInShopFragment extends ProductListAwareFragment {
 
     @Override
     public String getTitle() {
+        if(!TextUtils.isEmpty(getArguments().getString(Constants.TRACK_EVENT_NAME)))
+            trackEvent("Browse." + getArguments().getString(Constants.TRACK_EVENT_NAME), null);
         return "Shop Products";
     }
 

@@ -5,113 +5,76 @@ package com.bigbasket.mobileapp.adapter.account;
  */
 
 import android.content.Context;
+import android.database.Cursor;
+import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CursorAdapter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.account.uiv3.ContactListActivity;
+import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.ContactNumberAware;
 
-import java.util.ArrayList;
+public class ContactListAdapter<T> extends CursorAdapter implements Filterable {
 
-public class ContactListAdapter extends BaseAdapter{
+    private T ctx;
+    private LayoutInflater inflater;
 
-    private Context context;
-    ArrayList<String> arrayListContactNumber;
-    private ArrayList<String> arrayListContactName;
-    private ContactNumberAware contactNumberAware;
-
-    public ContactListAdapter(Context context, ArrayList<String> arrayListContactNumber,
-                              ArrayList<String> arrayListContactName, ContactNumberAware contactNumberAware) {
-        this.context = context;
-        this.arrayListContactNumber = arrayListContactNumber;
-        this.arrayListContactName = arrayListContactName;
-        this.contactNumberAware = contactNumberAware;
+    public ContactListAdapter(T context, Cursor contactCursor) {
+        super(((ActivityAware) context).getCurrentActivity(), contactCursor, false);
+        this.ctx = context;
+        inflater = LayoutInflater.from(((ActivityAware) context).getCurrentActivity());
     }
 
     @Override
-    public int getCount() {
-        return arrayListContactNumber.size();
-    }
-
-    @Override
-    public Object getItem(int position) {
-        return arrayListContactNumber.get(position);
-    }
-
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ContactRowHolder rowHolder;
-        if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.uiv3_contact_list, parent, false);
-            rowHolder = new ContactRowHolder(convertView);
-            convertView.setTag(rowHolder);
-        } else {
-            rowHolder = (ContactRowHolder) convertView.getTag();
-        }
-
-        TextView txtContactName = rowHolder.getTxtContactName();
-        txtContactName.setText(arrayListContactName.get(position));
-
-        TextView txtContactNumber = rowHolder.getTxtContactNumber();
-        txtContactNumber.setText(arrayListContactName.get(position));
-
-        CheckBox checkBox = rowHolder.getCheckbox();
-        if(checkBox.isChecked())
-            checkBox.setChecked(true);
-        else
-            checkBox.setChecked(false);
-
-        convertView.setId(position);
-
-        return convertView;
-    }
-
-
-    private class ContactRowHolder implements View.OnClickListener {
-        private View base;
-        private TextView txtContactName;
-        private TextView txtContactNumber;
-        private CheckBox checkbox;
-
-        private ContactRowHolder(View base) {
-            this.base = base;
-        }
-
-        public TextView getTxtContactName() {
-            if (txtContactName == null) {
-                txtContactName = (TextView) base.findViewById(R.id.txtContactName);
+    public void bindView(View view, Context context, Cursor cursor) {
+        String displayName = cursor.getString(1);
+        final String number = cursor.getString(2);
+        view.setVisibility(View.VISIBLE);
+        final CheckBox checkbox = (CheckBox) view.findViewById(R.id.checkbox);
+        checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    ((ContactListActivity) ctx).onContactNumberSelected(number);
+                } else {
+                    ((ContactListActivity) ctx).onContactNumberNotSelected(number);
+                }
             }
-            return txtContactName;
-        }
+        });
+        TextView txtContactName = (TextView) view.findViewById(R.id.txtContactName);
+        txtContactName.setText(displayName);
+        checkbox.setChecked(((ContactNumberAware) ctx).getSelectedContacts() != null &&
+                ((ContactNumberAware) ctx).getSelectedContacts().contains(number));
 
-        public TextView getTxtContactNumber() {
-            if (txtContactNumber == null) {
-                txtContactNumber = (TextView) base.findViewById(R.id.txtContactNumber);
-            }
-            return txtContactNumber;
-        }
+        TextView txtContactNumber = (TextView) view.findViewById(R.id.txtContactNumber);
+        txtContactNumber.setText(number + "(" + getNumberType(cursor.getInt(3)) + ")");
+    }
 
-        public CheckBox getCheckbox() {
-            if (checkbox == null) {
-                checkbox = (CheckBox) base.findViewById(R.id.checkbox);
-            }
-            return checkbox;
-        }
 
-        @Override
-        public void onClick(View view) {
-            String contactNumber = arrayListContactNumber.get(view.getId());
-            contactNumberAware.onContactNumberSelected(contactNumber);
+    private String getNumberType(int type) {
+        switch (type) {
+            case ContactsContract.CommonDataKinds.Phone.TYPE_HOME:
+                return "Home";
+            case ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE:
+                return "Mobile";
+            case ContactsContract.CommonDataKinds.Phone.TYPE_WORK:
+                return "Work";
+            case ContactsContract.CommonDataKinds.Phone.TYPE_WORK_MOBILE:
+                return "Mobile";
+            default:
+                return "Other";
         }
+    }
+
+    @Override
+    public View newView(Context context, Cursor cursor, ViewGroup parent) {
+        return inflater.inflate(R.layout.uiv3_contact_list, parent, false);
     }
 }

@@ -55,6 +55,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -87,7 +88,6 @@ public class ShowCartFragment extends BaseFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         //getCartItems();
-
     }
 
     @Override
@@ -163,7 +163,17 @@ public class ShowCartFragment extends BaseFragment {
         }
     }
 
+    private void logViewBasketEvent(CartSummary cartSummary, Map<String, String> eventAttribs) {// todo event log for view basket
+        if(cartSummary==null) return;
+        eventAttribs.put(TrackEventkeys.TOTAL_ITEMS_IN_BASKET, String.valueOf(cartSummary.getNoOfItems()));
+        eventAttribs.put(TrackEventkeys.TOTAL_BASKET_VALUE, String.valueOf(cartSummary.getTotal()));
+        eventAttribs.put(TrackEventkeys.TOTAL_BASKET_SAVING, String.valueOf(cartSummary.getSavings()));
+        trackEvent(TrackingAware.BASKET_VIEW, eventAttribs);
+    }
+
     private void renderCartItemList(CartSummary cartSummary, String baseImageUrl) {
+        Map<String, String> eventAttribs = new HashMap<>();
+
         if (getActivity() == null) return;
 
         LinearLayout contentView = getContentView();
@@ -180,10 +190,10 @@ public class ShowCartFragment extends BaseFragment {
 
         List<Object> cartItemHeaderList = new ArrayList<>();
         for (CartItemList cartItemInfoArray : cartItemLists) {
-
             CartItemHeader cartItemHeader = new CartItemHeader();
             cartItemHeaderList.add(cartItemHeader);
-
+            eventAttribs.put(cartItemInfoArray.getTopCatName() + " Items", String.valueOf(cartItemInfoArray.getTopCatItems()));
+            eventAttribs.put(cartItemInfoArray.getTopCatName() + " Value", String.valueOf(cartItemInfoArray.getTopCatTotal()));
             cartItemHeader.setTopCatName(cartItemInfoArray.getTopCatName());
             cartItemHeader.setTopCatItems(cartItemInfoArray.getTopCatItems());
             cartItemHeader.setTopCatTotal(cartItemInfoArray.getTopCatTotal());
@@ -245,6 +255,8 @@ public class ShowCartFragment extends BaseFragment {
         cartItemListView.setDividerHeight(0);
         cartItemListView.setAdapter(activeOrderRowAdapter);
         contentView.addView(basketView);
+
+        logViewBasketEvent(cartSummary, eventAttribs);
     }
 
     @Override
@@ -360,7 +372,6 @@ public class ShowCartFragment extends BaseFragment {
     private void getCartItems() {
         if (getActivity() == null) return;
         if (!DataUtil.isInternetAvailable(getActivity())) return;
-        trackEvent(TrackingAware.BASKET_VIEW, null);
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
         final SharedPreferences.Editor editor = prefer.edit();
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());

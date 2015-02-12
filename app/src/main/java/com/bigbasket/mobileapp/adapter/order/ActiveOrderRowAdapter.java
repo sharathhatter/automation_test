@@ -172,13 +172,13 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
     }
 
     private View getFulfillmentInfo(Object obj) {
-        ShowFulfillmentInfo showFulfillmentInfo = new ShowFulfillmentInfo((FulfillmentInfo) obj,
+        ShowFulfillmentInfo showFulfillmentInfo = new ShowFulfillmentInfo<>((FulfillmentInfo) obj,
                 ((ActivityAware) context).getCurrentActivity(), faceRobotoRegular);
         return showFulfillmentInfo.showFulfillmentInfo(true, true);
     }
 
     private View showAnnotationInfo(Object obj) {
-        ShowAnnotationInfo showAnnotationInfo = new ShowAnnotationInfo((AnnotationInfo) obj,
+        ShowAnnotationInfo showAnnotationInfo = new ShowAnnotationInfo<>((AnnotationInfo) obj,
                 ((ActivityAware) context).getCurrentActivity());
         View view = showAnnotationInfo.showAnnotationInfo();
         if (view != null)

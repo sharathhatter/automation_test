@@ -117,6 +117,7 @@ public class AuthParameters {
             osVersion = prefer.getString(Constants.OS_PREFERENCE_KEY, "");
             isKonotorEnabled = prefer.getBoolean(Constants.ENABLE_KONOTOR, false);
             isMoEngageEnabled = prefer.getBoolean(Constants.ENABLE_MOENGAGE, false);
+            isLocalyticsEnabled = prefer.getBoolean(Constants.ENABLE_LOCALYTICS, false);
         }
     }
 

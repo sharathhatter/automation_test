@@ -64,7 +64,6 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
 
     private ArrayList<SelectedSlotType> mSelectedSlotType;
     private String mPaymentMethodSlug;
-    private SharedPreferences preferences;
     private String mPotentialOrderId;
     private ArrayList<VoucherApplied> mVoucherAppliedList;
     private HashMap<String, Boolean> mPreviouslyAppliedVoucherMap;
@@ -87,7 +86,7 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
 
     private void loadSlotsAndPayments() {
         String addressId = getIntent().getStringExtra(Constants.ADDRESS_ID);
-        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         mPotentialOrderId = preferences.getString(Constants.POTENTIAL_ORDER_ID, null);
 
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
@@ -200,10 +199,6 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
         btnFooter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                HashMap<String, String> map = new HashMap<>();
-                map.put(TrackEventkeys.POTENTIAL_ORDER, mPotentialOrderId);
-                map.put(TrackEventkeys.PAYMENT_MODE, preferences.getString(Constants.PAYMENT_METHOD, ""));
-                trackEvent(TrackingAware.CHECKOUT_PAYMENT_CHOSEN, map);
                 PayuResponse payuResponse = PayuResponse.getInstance(getCurrentActivity());
                 if (payuResponse != null && payuResponse.isSuccess()) {
                     ArrayList<VoucherApplied> previouslyAppliedVoucherList = VoucherApplied.readFromPreference(getCurrentActivity());
@@ -232,6 +227,10 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String potentialOrderId = preferences.getString(Constants.POTENTIAL_ORDER_ID, null);
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.POTENTIAL_ORDER, potentialOrderId);
+        map.put(TrackEventkeys.PAYMENT_MODE, mPaymentMethodSlug);
+        trackEvent(TrackingAware.CHECKOUT_PAYMENT_CHOSEN, map);
 
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));

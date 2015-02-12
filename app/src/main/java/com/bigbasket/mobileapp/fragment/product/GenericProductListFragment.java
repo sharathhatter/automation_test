@@ -27,6 +27,7 @@ public class GenericProductListFragment extends ProductListAwareFragment {
 
     @Override
     public String getTitle() {
+        trackEvent(getArguments().getString(Constants.TRACK_EVENT_NAME), null);
         String title = getArguments().getString(Constants.TITLE);
         if (TextUtils.isEmpty(title)) {
             title = getString(R.string.viewProducts);

@@ -1,6 +1,5 @@
 package com.bigbasket.mobileapp.adapter.account;
 
-import android.content.Context;
 import android.graphics.Typeface;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -14,29 +13,28 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
+import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.model.account.WalletDataItem;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
 
 
-public class WalletActivityListAdapter extends BaseAdapter {
+public class WalletActivityListAdapter<T> extends BaseAdapter {
 
     private ArrayList<WalletDataItem> walletDataItems;
-    Context context;
+    private T ctx;
     private LayoutInflater layoutInflater;
     private Typeface faceRupee;
-    SpannableString spannableCredit;
-    SpannableString spannableEndingBal;
-    SpannableString spannableId;
-    Typeface faceRobotoRegular;
+    private Typeface faceRobotoRegular;
 
 
-    public WalletActivityListAdapter(Context context, ArrayList listData, Typeface faceRobotoRegular) {
+    public WalletActivityListAdapter(T ctx, ArrayList<WalletDataItem> listData, Typeface faceRobotoRegular,
+                                     Typeface faceRupee) {
         this.walletDataItems = listData;
-        layoutInflater = LayoutInflater.from(context);
-        this.context = context;
-        this.faceRupee = Typeface.createFromAsset(context.getAssets(), "Rupee.ttf");
+        layoutInflater = LayoutInflater.from(((ActivityAware)ctx).getCurrentActivity());
+        this.ctx = ctx;
+        this.faceRupee = faceRupee;
         this.faceRobotoRegular = faceRobotoRegular;
     }
 
@@ -80,29 +78,30 @@ public class WalletActivityListAdapter extends BaseAdapter {
         String secondaryReason = walletDataItems.get(position).getSecondary_reason();
         String primaryReason = walletDataItems.get(position).getPrimary_reason();
 
-        String prefixEndBal = context.getString(R.string.endingBal) + " `";
+        String prefixEndBal = (((ActivityAware)ctx)).getCurrentActivity().getString(R.string.endingBal) + " `";
         String mrpStrEndBal = getDecimalAmount(endingBal) + " ";
         int prefixEndBalLen = prefixEndBal.length();
-        spannableEndingBal = new SpannableString(prefixEndBal + mrpStrEndBal);
+        SpannableString spannableEndingBal = new SpannableString(prefixEndBal + mrpStrEndBal);
 
         spannableEndingBal.setSpan(new CustomTypefaceSpan("", faceRupee), prefixEndBalLen - 1,
                 prefixEndBalLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
 
 
+        SpannableString  spannableCredit;
         if (walletDataItems.get(position).getType().equals("credit")) {
-            String prefix = context.getString(R.string.credited) + " `";
+            String prefix = ((ActivityAware)ctx).getCurrentActivity().getString(R.string.credited) + " `";
             String mrpStr = getDecimalAmount(amount) + " ";
             int prefixLen = prefix.length();
             spannableCredit = new SpannableString(prefix + mrpStr);
-            holder.creditedHolder.setBackgroundColor(context.getResources().getColor(R.color.dark_green));
+            holder.creditedHolder.setBackgroundColor(((ActivityAware)ctx).getCurrentActivity().getResources().getColor(R.color.dark_green));
             spannableCredit.setSpan(new CustomTypefaceSpan("", faceRupee), prefixLen - 1,
                     prefixLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
         } else {
 
-            String prefix = context.getString(R.string.debited) + " `";
+            String prefix = ((ActivityAware)ctx).getCurrentActivity().getString(R.string.debited) + " `";
             String mrpStr = getDecimalAmount(amount) + " ";
             int prefixLen = prefix.length();
-            holder.creditedHolder.setBackgroundColor(context.getResources().getColor(R.color.promo_red_color));
+            holder.creditedHolder.setBackgroundColor(((ActivityAware)ctx).getCurrentActivity().getResources().getColor(R.color.promo_red_color));
             spannableCredit = new SpannableString(prefix + mrpStr);
             spannableCredit.setSpan(new CustomTypefaceSpan("", faceRupee), prefixLen - 1,
                     prefixLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
@@ -115,9 +114,9 @@ public class WalletActivityListAdapter extends BaseAdapter {
             String mrpStrId = orderId + " ";
             int prefixIdLen = prefixId.length();
             int mrpStrIdLen = mrpStrId.length();
-            spannableId = new SpannableString(prefixId + mrpStrId);
+            SpannableString spannableId = new SpannableString(prefixId + mrpStrId);
 
-            spannableId.setSpan(new ForegroundColorSpan(context.getResources().
+            spannableId.setSpan(new ForegroundColorSpan(((ActivityAware)ctx).getCurrentActivity().getResources().
                     getColor(R.color.dark_blue)), prefixIdLen - 1, prefixIdLen + mrpStrIdLen, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
             holder.orderIdHolder.setText(spannableId);
         } else {

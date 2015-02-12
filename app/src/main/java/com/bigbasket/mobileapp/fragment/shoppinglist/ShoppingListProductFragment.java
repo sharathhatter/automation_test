@@ -145,9 +145,9 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
         HashMap<String, String> map = new HashMap<>();
         map.put(TrackEventkeys.SHOPPING_LIST_NAME, mShoppingListName.getName());
         map.put(TrackEventkeys.PRODUCT_TOP_CAT, topcatName);
-        if(mShoppingListName.isSystem()){
+        if (mShoppingListName.isSystem()) {
             trackEvent(TrackingAware.SHOP_LST_SYSTEM_LIST_CATEGORY_DETAIL, map);
-        }else {
+        } else {
             trackEvent(TrackingAware.SHOP_LST_CATEGORY_DETAIL, null);
         }
         contentView.removeAllViews();

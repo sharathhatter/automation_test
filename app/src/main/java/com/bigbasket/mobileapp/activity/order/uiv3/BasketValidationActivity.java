@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.activity.order.uiv3;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -69,6 +70,15 @@ public class BasketValidationActivity extends BackButtonActivity {
             String pharmaPrescriptionId = prefer.getString(Constants.PHARMA_PRESCRIPTION_ID, null);
             new COReserveQuantityCheckTask<>(getCurrentActivity(), pharmaPrescriptionId).startTask();
         }
+    }
+
+
+    @Override
+    public void onCOReserveQuantityCheck() {
+        Intent intent = new Intent(getCurrentActivity(), CheckoutQCActivity.class);
+        intent.putExtra(Constants.CO_RESERVE_QTY_DATA, coReserveQuantity);
+        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+        getCurrentActivity().finish();// don't remove it, fix for back button
     }
 
     private void renderBasketValidationErrors() {

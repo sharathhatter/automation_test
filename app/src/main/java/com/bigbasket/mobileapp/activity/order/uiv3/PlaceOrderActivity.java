@@ -203,8 +203,8 @@ public class PlaceOrderActivity extends BackButtonActivity implements OnObservab
         map.put(TrackEventkeys.POTENTIAL_ORDER, mPotentialOrderId);
         switch (resultCode) {
             case Constants.PAYU_FAILED:
-                map.put(TrackEventkeys.PAYMENT_GATEWAY_FAILURE_REASON, ""); //todo failure reason
-                trackEvent(TrackingAware.CHECKOUT_PAYMENT_GATEWAY_FAILURE, map);
+                map.put(TrackEventkeys.PAYMENT_GATEWAY_FAILURE_REASON, "");
+                //TODO: Siddharth while fixing payu, track failure reason
                 setResult(resultCode);
                 finish();
                 break;
@@ -240,8 +240,8 @@ public class PlaceOrderActivity extends BackButtonActivity implements OnObservab
             switch (sourceName) {
                 case Constants.SOURCE_PLACE_ORDER:
                     PayuResponse.clearTxnDetail(this);
-                    map.put(TrackEventkeys.EXPECTED_AMOUNT, ""); //todo
-                    map.put(TrackEventkeys.ORDER_AMOUNT, ""); //todo
+                    map.put(TrackEventkeys.EXPECTED_AMOUNT, PayuResponse.getInstance(getCurrentActivity()).getAmount());
+                    map.put(TrackEventkeys.ORDER_AMOUNT, UIUtil.formatAsMoney(mOrderSummary.getOrderDetails().getFinalTotal()));
                     trackEvent(TrackingAware.CHECKOUT_PLACE_ORDER_AMOUNT_MISMATCH, null);
                     if (mOrderSummary.getOrderDetails().getPaymentMethod().equals(Constants.CREDIT_CARD)) {
                         startCreditCardTxnActivity(mOrderSummary.getOrderDetails().getFinalTotal());
@@ -271,7 +271,7 @@ public class PlaceOrderActivity extends BackButtonActivity implements OnObservab
             map.put(TrackEventkeys.VOUCHER_NAME, preferences.getString(Constants.EVOUCHER_NAME, ""));
             map.put(TrackEventkeys.PAYMENT_MODE, preferences.getString(Constants.PAYMENT_METHOD, ""));
             map.put(TrackEventkeys.POTENTIAL_ORDER, mPotentialOrderId);
-            trackEvent(TrackingAware.CHECKOUT_ORDER_COMPLETE, map);
+            trackEvent(TrackingAware.CHECKOUT_ORDER_COMPLETE, map, null, null, true);
         }
 
         PayuResponse.clearTxnDetail(this);

@@ -33,14 +33,15 @@ import com.bigbasket.mobileapp.model.order.PayuResponse;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
 
 
 public class PaymentSelectionFragment extends BaseFragment implements PostVoucherAppliedListener {
@@ -48,8 +49,7 @@ public class PaymentSelectionFragment extends BaseFragment implements PostVouche
     private CartSummary mCartSummary;
     private ArrayList<ActiveVouchers> mActiveVouchersList;
     private LinkedHashMap<String, String> mPaymentTypeMap;
-    private String mAmtPayable, mWalletUsed, mWalletRemaining;
-    private SharedPreferences.Editor mEditor;
+    private String mAmtPayable, mWalletUsed, mWalletRemaining;//, mpaymentMethod, potentialOrderId;
     private TextView mLblTransactionFailed;
     private TextView mTxtTransactionFailureReason;
     private TextView mLblSelectAnotherMethod;
@@ -82,7 +82,7 @@ public class PaymentSelectionFragment extends BaseFragment implements PostVouche
         }
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        mEditor = preferences.edit();
+        SharedPreferences.Editor mEditor = preferences.edit();
 
         ArrayList<PaymentType> paymentTypes = args.getParcelableArrayList(Constants.PAYMENT_TYPES);
         mPaymentTypeMap = new LinkedHashMap<>();
@@ -194,9 +194,6 @@ public class PaymentSelectionFragment extends BaseFragment implements PostVouche
                         rbtnPaymentType.setChecked(true);
                         ((SelectedPaymentAware) getCurrentActivity()).
                                 setPaymentMethod(entrySet.getValue());
-                        // TODO : get rid of this!
-                        mEditor.putString(Constants.PAYMENT_METHOD, entrySet.getValue());
-                        mEditor.commit();
                     } else {
                         return;
                     }
@@ -207,9 +204,6 @@ public class PaymentSelectionFragment extends BaseFragment implements PostVouche
                         if (isChecked && getCurrentActivity() != null) {
                             ((SelectedPaymentAware) getCurrentActivity()).
                                     setPaymentMethod(entrySet.getValue());
-                            // TODO : get rid of this!
-                            mEditor.putString(Constants.PAYMENT_METHOD, entrySet.getValue());
-                            mEditor.commit();
                         }
                     }
                 });
@@ -338,6 +332,11 @@ public class PaymentSelectionFragment extends BaseFragment implements PostVouche
     @Override
     public String getTitle() {
         return null;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
     }
 
     @NonNull

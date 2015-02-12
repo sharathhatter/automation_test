@@ -421,7 +421,7 @@ public final class ProductView {
                             BasketOperationTask<T> basketOperationTask = new BasketOperationTask<>(basketOperationAware,
                                     BasketOperation.INC, product,
                                     txtInBasket, txtDecBasketQty, txtIncBasketQty, btnAddToBasket,
-                                    editTextQty, qty, TrackingAware.BASKET_INCREMENT, sourceName);
+                                    editTextQty, qty, TrackingAware.BASKET_ADD, sourceName);
                             basketOperationTask.startTask();
                         } else {
                             productViewDisplayDataHolder.getHandler().sendOfflineError();

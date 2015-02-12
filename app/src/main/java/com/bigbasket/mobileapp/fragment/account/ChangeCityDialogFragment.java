@@ -199,7 +199,8 @@ public class ChangeCityDialogFragment extends DialogFragment
                 || mSelectedCity.getName().equalsIgnoreCase(mCurrentCityName)) {
             dismiss();
             return;
-        };
+        }
+        ;
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgress(true);
         bigBasketApiService.changeCity(String.valueOf(mSelectedCity.getId()), new Callback<OldBaseApiResponse>() {

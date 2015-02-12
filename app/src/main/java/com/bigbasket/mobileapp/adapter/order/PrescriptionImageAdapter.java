@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
-import android.util.Log;
 
 import com.bigbasket.mobileapp.adapter.db.DatabaseHelper;
 import com.bigbasket.mobileapp.model.order.PrescriptionImageModel;
@@ -48,9 +47,6 @@ public class PrescriptionImageAdapter {
     public void insert(String prescriptionId, String chunkNumber, String maxChunks,
                        String prescriptionImageChunk, String imageSequence) {//SQLException
         try {
-            Log.d("Inserting prescription data to database", "");
-            //BaseAdapter.db.execSQL("delete from " + tableName);
-
             ContentValues cv = new ContentValues();
             cv.put(COLUMN_PRESCRIPTION_ID, prescriptionId);
             cv.put(COLUMN_CHUNK_NUMBER, chunkNumber);
@@ -59,7 +55,6 @@ public class PrescriptionImageAdapter {
             cv.put(COLUMN_IMAGE_SEQUENCE, imageSequence);
             DatabaseHelper.db.insert(tableName, null, cv);
         } catch (Exception e) {
-            Log.e("*************************************************", "");
             e.printStackTrace();
         }
     }
@@ -71,7 +66,6 @@ public class PrescriptionImageAdapter {
     }
 
     public ArrayList<PrescriptionImageModel> getAllPrescriptionImages() {
-        Log.d("Inserting prescription image ", "");
         Cursor cursor = null;
         ArrayList<PrescriptionImageModel> prescriptionImageModelArrayList = null;
         try {
@@ -95,24 +89,11 @@ public class PrescriptionImageAdapter {
     }
 
     public void deleteUploadedRow(String chunkNumber) {
-        Log.d("deleting row ", "");
         try {
             DatabaseHelper.db.delete(tableName, COLUMN_CHUNK_NUMBER + "=" + chunkNumber, null);
         } catch (SQLiteException ex) {
-            Log.e("An Exception error when deleting row for chunkNumber = ", chunkNumber);
             ex.printStackTrace();
         }
-    }
-
-    public void deleteTable() {
-        Log.d("Inside dropTable Method ", "");
-        try {
-            DatabaseHelper.db.execSQL("DELETE FROM " + tableName);
-            Log.d(tableName, "Table deleted *************");
-        } catch (SQLiteException e) {
-            e.printStackTrace();
-        }
-
     }
 
     public boolean isTableExists() {
@@ -126,6 +107,12 @@ public class PrescriptionImageAdapter {
         return count > 0;
     }
 
+    public boolean hasData() {
+        Cursor cursor = getCursorForAllRows();
+        if (cursor != null && cursor.getCount() > 0) return true;
+        return false;
+    }
+
     public boolean exists() {
         Cursor cursor = getCursorForAllRows();
         boolean val = cursor.moveToFirst();
@@ -133,15 +120,4 @@ public class PrescriptionImageAdapter {
         return val;
     }
 
-    /*
-
-    public boolean exists(String table) {
-    try {
-         db.query("SELECT * FROM " + table);
-         return true;
-    } catch (SQLException e) {
-         return false;
-    }
-}
-     */
 }

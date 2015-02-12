@@ -22,17 +22,24 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.AnalyticsEngine;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.AppDataResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.LoginUserDetails;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateVersionInfoApiResponseContent;
 import com.bigbasket.mobileapp.fragment.base.BaseSectionFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.task.GetCartCountTask;
 import com.bigbasket.mobileapp.task.GetDynamicPageTask;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.bigbasket.mobileapp.view.AppNotSupportedDialog;
+import com.bigbasket.mobileapp.view.uiv2.UpgradeAppDialog;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -49,6 +56,10 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        getAppData(savedInstanceState);
+    }
+
+    private void homePageGetter(Bundle savedInstanceState){
         boolean sectionStateRestored = tryRestoreSectionState(savedInstanceState);
         if (sectionStateRestored) {
             renderHomePage();
@@ -253,6 +264,97 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
     public String getFragmentTxnTag() {
         return Constants.HOME;
     }
+
+    private void setAnalyticalData(AnalyticsEngine analyticsEngine) {
+        if (analyticsEngine == null) return;
+        AuthParameters.getInstance(getCurrentActivity()).setMoEngaleLocaliticsEnabled(analyticsEngine.isMoEngageEnabled(),
+                analyticsEngine.isAnalyticsEnabled(), getCurrentActivity());
+        AuthParameters.updateInstance(getCurrentActivity());
+    }
+
+    private void callGetAppData(String client, String versionName, final Bundle savedInstanceState) {
+        if (!DataUtil.isInternetAvailable(getCurrentActivity())) handler.sendOfflineError();
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+        showProgressView();
+        bigBasketApiService.getAppData(client, versionName,
+                new Callback<ApiResponse<AppDataResponse>>() {
+                    @Override
+                    public void success(ApiResponse<AppDataResponse> callbackAppDataResponse, Response response) {
+                        if (isSuspended()) return;
+                        try {
+                            hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
+                        if (callbackAppDataResponse.status == 0) {
+                            UIUtil.updateLastAppDataCall(getCurrentActivity());
+                            String appExpiredBy = callbackAppDataResponse.apiResponseContent.appUpdate.expiryDate;
+                            String upgradeMsg = callbackAppDataResponse.apiResponseContent.appUpdate.upgradeMsg;
+                            showUpgradeAppDialog(appExpiredBy, upgradeMsg);
+                            AnalyticsEngine analyticsEngine = callbackAppDataResponse.apiResponseContent.capabilities;
+                            setAnalyticalData(analyticsEngine);
+                            LoginUserDetails userDetails = callbackAppDataResponse.apiResponseContent.userDetails;
+                            if (userDetails != null) {
+                                SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                                UIUtil.updateStoredUserDetails(getCurrentActivity(), userDetails,
+                                        prefer.getString(Constants.MEMBER_EMAIL_KEY, ""),
+                                        prefer.getString(Constants.MID_KEY, ""));//TODO: check with sid
+                            }
+                            homePageGetter(savedInstanceState);
+                        } else {
+                            handler.sendEmptyMessage(callbackAppDataResponse.status);
+                        }
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        trackEvent(TrackingAware.MY_ACCOUNT_CURRENT_PIN_FAILED, null);
+                        if (isSuspended()) return;
+                        try {
+                            hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
+                        handler.handleRetrofitError(error);
+                    }
+
+                });
+    }
+
+
+    private void showUpgradeAppDialog(String appExpiredBy, String upgradeMsg) {
+        if (appExpiredBy == null) return;
+        int updateValue = UIUtil.handleUpdateDialog(appExpiredBy.replace("-", "/"), getCurrentActivity());
+        switch (updateValue) {
+            case Constants.SHOW_APP_UPDATE_POPUP:
+                UpgradeAppDialog upgradeAppDialog = UpgradeAppDialog.newInstance(upgradeMsg);
+                upgradeAppDialog.show(getFragmentManager(), Constants.APP_UPDATE_DIALOG_FLAG);
+                UIUtil.updateLastPopShownDate(System.currentTimeMillis(), getCurrentActivity());
+                break;
+            case Constants.SHOW_APP_EXPIRE_POPUP:
+                AppNotSupportedDialog appNotSupportedDialog = AppNotSupportedDialog.newInstance();
+                appNotSupportedDialog.show(getFragmentManager(), Constants.APP_EXPIRED_DIALOG_FLAG);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void getAppData(Bundle savedInstanceState) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        long lastAppDataCallTime = preferences.getLong(Constants.LAST_APP_DATA_CALL_TIME, 0);
+        if (lastAppDataCallTime == 0 || UIUtil.isMoreThanXHour(lastAppDataCallTime, Constants.SIX_HOUR)) {
+            try {
+                callGetAppData(Constants.CLIENT_NAME, DataUtil.getAppVersionName(getCurrentActivity()),
+                        savedInstanceState);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }else {
+            homePageGetter(savedInstanceState);
+        }
+    }
+
 
     @Override
     public void onDynamicScreenSuccess(String screenName, SectionData sectionData) {

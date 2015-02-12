@@ -5,7 +5,8 @@ package com.bigbasket.mobileapp.util;
  */
 public final class TrackEventkeys {
 
-    private TrackEventkeys() {}
+    private TrackEventkeys() {
+    }
 
     public static final String PRODUCT_ID = "skuId";
     public static final String PRODUCT_BRAND = "brand";
@@ -15,6 +16,16 @@ public final class TrackEventkeys {
     public static final String QUERY = "query";
     public static final String DATE_FROM = "date from";
     public static final String DATE_TO = "date to";
+    public static final String TOTAL_NO_ITEMS = "Total items";
+    public static final String TOTAL_VALUE = "Total value";
+
+    public static final String FILTER_NAME = "name";
+    public static final String FILTER_TYPE = "type";
+
+    public static final String TOTAL_ITEMS_IN_BASKET = "Total basket items";
+    public static final String TOTAL_BASKET_VALUE = "Total basket values";
+    public static final String TOTAL_BASKET_SAVING = "Total basket saving";
+    public static final String VIEW_BASKET_DATA = "Basket Data";
 
     public static final String SHOPPING_LIST_NAME = "shopping list name";
     public static final String ADD_ALL_PRODUCTS = "add_all";
@@ -41,8 +52,8 @@ public final class TrackEventkeys {
     public static final String GOOGLE_LOGIN_FAILURE_REASON = "google plus login failure reason";
     public static final String FB_LOGIN_FAILURE_REASON = "facebook login failure reason";
     public static final String PROMO_NAME = "promo_name";
-    public static final String PROMO_SET_NAME = "promo_set_name";
-    public static final String SHOP_FROM_PAST_ORDER= "shop_from_past_order";
+    //public static final String PROMO_SET_NAME = "promo set name";
+    public static final String SHOP_FROM_PAST_ORDER = "shop from past order";
     public static final String NEW_ACCOUNT = "new account created";
     public static final String EXISTING_ACCOUNT_EMAIL = "existing account email ";
 
@@ -67,5 +78,10 @@ public final class TrackEventkeys {
     public static final String PAST_ORDER = "past order";
     public static final String SHOP_IN_SHOP = "shop in shop";
     public static final String SECTION = "section";
+
+
+    public static final String HOME_SCREEN = "offer";
+    public static final String ACCOUNT_SCREEN = "offer";
+
 
 }
