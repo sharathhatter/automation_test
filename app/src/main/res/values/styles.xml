@@ -11,6 +11,10 @@
         <item name="colorAccent">@color/uiv3_action_bar_background</item>
     </style>
 
+    <style name="WindowStyle">
+        <item name="android:fitsSystemWindows">false</item>
+    </style>
+
     <style name="DefaultButtonStyle">
         <item name="android:textSize">@dimen/bb_button_text_size</item>
         <item name="android:textColor">@color/uiv3_primary_text_color</item>
