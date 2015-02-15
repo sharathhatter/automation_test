@@ -11,7 +11,7 @@
         android:id="@+id/layoutCarouselSubContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/uiv3_accent_color"
+        android:background="@color/uiv3_tile_bkg"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingLeft="2dp"

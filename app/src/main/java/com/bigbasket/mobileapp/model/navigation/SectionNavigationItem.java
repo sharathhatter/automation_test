@@ -4,30 +4,20 @@ import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionItem;
 
 public class SectionNavigationItem {
-    private boolean isSeparator;
-    private boolean isHome;
     private Section section;
     private SectionItem sectionItem;
 
-    public SectionNavigationItem(boolean isSeparator) {
-        this.isSeparator = isSeparator;
+    public SectionNavigationItem(Section section) {
+        this.section = section;
     }
 
-    public SectionNavigationItem(boolean isSeparator, boolean isHome, Section section, SectionItem sectionItem) {
-        this.isSeparator = isSeparator;
-        this.isHome = isHome;
+    public SectionNavigationItem(Section section, SectionItem sectionItem) {
         this.section = section;
         this.sectionItem = sectionItem;
     }
 
-    public SectionNavigationItem(boolean isSeparator, Section section, SectionItem sectionItem) {
-        this.isSeparator = isSeparator;
-        this.section = section;
-        this.sectionItem = sectionItem;
-    }
-
-    public boolean isSeparator() {
-        return isSeparator;
+    public boolean isHeader() {
+        return section != null && sectionItem == null;
     }
 
     public Section getSection() {
@@ -38,7 +28,4 @@ public class SectionNavigationItem {
         return sectionItem;
     }
 
-    public boolean isHome() {
-        return isHome;
-    }
 }

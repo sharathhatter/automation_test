@@ -8,6 +8,7 @@ import android.view.View;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.OrderListActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
@@ -147,6 +148,8 @@ public class
                         String title = sectionItem.getTitle() != null ? sectionItem.getTitle().getText() : "";
                         intent.putExtra(Constants.TOP_CATEGORY_NAME, title);
                         ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                    } else {
+                        showDefaultError();
                     }
                     break;
                 case DestinationInfo.FLAT_PAGE:
@@ -154,6 +157,8 @@ public class
                         Intent intent = new Intent(((ActivityAware) context).getCurrentActivity(), FlatPageWebViewActivity.class);
                         intent.putExtra(Constants.WEBVIEW_URL, destinationInfo.getDestinationSlug());
                         ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                    } else {
+                        showDefaultError();
                     }
                     break;
                 case DestinationInfo.PREVIOUS_ORDERS:
@@ -168,6 +173,8 @@ public class
                         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PRODUCT_CATEGORY);
                         intent.putExtra(Constants.CATEGORY_SLUG, destinationInfo.getDestinationSlug());
                         ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                    } else {
+                        showDefaultError();
                     }
                     break;
                 case DestinationInfo.PRODUCT_DETAIL:
@@ -176,15 +183,19 @@ public class
                         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PRODUCT_DETAIL);
                         intent.putExtra(Constants.SKU_ID, destinationInfo.getDestinationSlug());
                         ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                    } else {
+                        showDefaultError();
                     }
                     break;
                 case DestinationInfo.PROMO_DETAIL:
                     if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())
                             && TextUtils.isDigitsOnly(destinationInfo.getDestinationSlug())) {
-                        intent = new Intent(((ActivityAware) context).getCurrentActivity(), BackButtonActivity.class);
+                        intent = new Intent(((ActivityAware) context).getCurrentActivity(), BBActivity.class);
                         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PROMO_DETAIL);
                         intent.putExtra(Constants.PROMO_ID, Integer.parseInt(destinationInfo.getDestinationSlug()));
                         ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                    } else {
+                        showDefaultError();
                     }
                     break;
                 case DestinationInfo.SHOPPING_LIST_SUMMARY:
@@ -195,6 +206,8 @@ public class
                         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_SUMMARY);
                         intent.putExtra(Constants.SHOPPING_LIST_NAME, shoppingListName);
                         ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                    } else {
+                        showDefaultError();
                     }
                     break;
                 case DestinationInfo.SHOPPING_LIST_LANDING:
@@ -208,6 +221,8 @@ public class
                         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SEARCH);
                         intent.putExtra(Constants.SEARCH_QUERY, destinationInfo.getDestinationSlug());
                         ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                    } else {
+                        showDefaultError();
                     }
                     break;
                 case DestinationInfo.PRODUCT_LIST:
@@ -223,6 +238,8 @@ public class
                             intent.putExtra(Constants.TITLE, title);
                         }
                         ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                    } else {
+                        showDefaultError();
                     }
                     break;
                 case DestinationInfo.DEEP_LINK:
@@ -235,15 +252,28 @@ public class
                         } catch (ActivityNotFoundException e) {
                             // Do nothing
                         }
+                    } else {
+                        showDefaultError();
                     }
                     break;
                 case DestinationInfo.PROMO_LIST:
-                    intent = new Intent(((ActivityAware) context).getCurrentActivity(), BackButtonActivity.class);
+                    intent = new Intent(((ActivityAware) context).getCurrentActivity(), BBActivity.class);
                     intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PROMO_CATEGORY);
                     ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     break;
+                case DestinationInfo.HOME:
+                    ((ActivityAware) context).getCurrentActivity().goToHome();
+                default:
+                    showDefaultError();
+                    break;
             }
+        } else {
+            showDefaultError();
         }
+    }
+
+    private void showDefaultError() {
+        ((ActivityAware) context).getCurrentActivity().showToast("Page Not Found");
     }
 
     @Override

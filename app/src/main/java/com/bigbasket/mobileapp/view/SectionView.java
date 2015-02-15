@@ -59,10 +59,12 @@ public class SectionView {
 
     @Nullable
     public View getView() {
-        if (mSectionData == null || mSectionData.getSections() == null || mSectionData.getSections().size() == 0) return null;
+        if (mSectionData == null || mSectionData.getSections() == null || mSectionData.getSections().size() == 0)
+            return null;
         parseRendererColors();
         LinearLayout mainLayout = new LinearLayout(context);
         mainLayout.setOrientation(LinearLayout.VERTICAL);
+        mainLayout.setBackgroundColor(context.getResources().getColor(R.color.uiv3_list_bkg_color));
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         for (Section section : mSectionData.getSections()) {
             switch (section.getSectionType()) {
@@ -121,7 +123,7 @@ public class SectionView {
                     }
                     break;
                 case Section.MENU:
-                    View menuView = getMenuView(section, inflater);
+                    View menuView = getMenuView(section, inflater, mainLayout);
                     if (menuView != null) {
                         mainLayout.addView(menuView);
                     }
@@ -301,14 +303,15 @@ public class SectionView {
         return linearLayout;
     }
 
-    private View getMenuView(Section section, LayoutInflater inflater) {
-        LinearLayout menuContainer = new LinearLayout(context);
-        menuContainer.setOrientation(LinearLayout.VERTICAL);
+    private View getMenuView(Section section, LayoutInflater inflater, ViewGroup parent) {
+
+        View base = inflater.inflate(R.layout.card_view, parent, false);
+        LinearLayout menuContainer = (LinearLayout) base.findViewById(R.id.layoutCardContent);
 
         LinearLayout.LayoutParams menuContainerLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         menuContainerLayoutParams.setMargins(defaultMargin, defaultMargin, defaultMargin, 0);
-        menuContainer.setLayoutParams(menuContainerLayoutParams);
+        base.setLayoutParams(menuContainerLayoutParams);
 
         if (section.getTitle() != null && !TextUtils.isEmpty(section.getTitle().getText())) {
             View view = inflater.inflate(R.layout.uiv3_list_text, menuContainer, false);
@@ -319,32 +322,37 @@ public class SectionView {
             if (renderer != null) {
                 renderer.setRendering(txtVw, 0, 0);
             } else {
-                txtVw.setBackgroundColor(context.getResources().getColor(R.color.uiv3_accent_color));
-                txtVw.setTextColor(Color.WHITE);
+                txtVw.setBackgroundColor(context.getResources().getColor(R.color.uiv3_menu_header));
+                txtVw.setTextColor(context.getResources().getColor(R.color.uiv3_primary_text_color));
             }
             txtVw.setText(section.getTitle().getText());
             txtVw.setTypeface(faceRobotoRegular);
             txtVw.setGravity(Gravity.LEFT);
             menuContainer.addView(view);
         }
-        for (SectionItem sectionItem : section.getSectionItems()) {
+
+        int numItems = section.getSectionItems().size();
+        for (int i = 0; i < numItems; i++) {
+            SectionItem sectionItem = section.getSectionItems().get(i);
             if (sectionItem == null || sectionItem.getTitle() == null || TextUtils.isEmpty(sectionItem.getTitle().getText()))
                 continue;
-            View base = inflater.inflate(R.layout.uiv3_list_text, menuContainer, false);
-            TextView txtListText = (TextView) base.findViewById(R.id.txtListText);
+            View itemView = inflater.inflate(R.layout.uiv3_list_text, menuContainer, false);
+            TextView txtListText = (TextView) itemView.findViewById(R.id.txtListText);
             Renderer renderer = mSectionData.getRenderersMap() != null ?
                     mSectionData.getRenderersMap().get(sectionItem.getRenderingId()) : null;
             if (renderer != null) {
                 renderer.setRendering(txtListText, 0, 0);
+            } else {
+                itemView.setBackgroundColor(context.getResources().getColor(R.color.white));
             }
             txtListText.setTypeface(faceRobotoRegular);
             txtListText.setText(sectionItem.getTitle().getText());
             txtListText.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem));
-            View viewSeparator = base.findViewById(R.id.viewSeparator);
-            viewSeparator.setVisibility(View.VISIBLE);
-            menuContainer.addView(base);
+            View viewSeparator = itemView.findViewById(R.id.viewSeparator);
+            viewSeparator.setVisibility(i == numItems - 1 ? View.GONE : View.VISIBLE);
+            menuContainer.addView(itemView);
         }
-        return menuContainer;
+        return base;
     }
 
     private View getGridLayoutView(Section section, LayoutInflater inflater, ViewGroup parent) {

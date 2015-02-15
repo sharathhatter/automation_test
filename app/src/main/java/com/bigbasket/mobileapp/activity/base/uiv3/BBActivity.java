@@ -929,22 +929,17 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
     private ArrayList<SectionNavigationItem> getSectionNavigationItems() {
         ArrayList<SectionNavigationItem> sectionNavigationItems = new ArrayList<>();
 
-        SectionNavigationItem sniHome = new SectionNavigationItem(false, true, null, null);
-        sectionNavigationItems.add(sniHome);
         SectionManager sectionManager = new SectionManager(this, SectionManager.MAIN_MENU);
         SectionData sectionData = sectionManager.getStoredSectionData(true);
         if (sectionData != null && sectionData.getSections() != null && sectionData.getSections().size() > 0) {
-            int numSections = sectionData.getSections().size();
-            for (int i = 0; i < numSections; i++) {
-                Section section = sectionData.getSections().get(i);
-                if (section.getSectionItems() == null || section.getSectionItems().size() == 0)
+            for (Section section : sectionData.getSections()) {
+                if (section == null || section.getSectionItems() == null || section.getSectionItems().size() == 0)
                     continue;
+                sectionNavigationItems.add(new SectionNavigationItem(section));
                 for (SectionItem sectionItem : section.getSectionItems()) {
-                    SectionNavigationItem sni = new SectionNavigationItem(false, section, sectionItem);
-                    sectionNavigationItems.add(sni);
-                }
-                if (i != numSections - 1) {
-                    sectionNavigationItems.add(new SectionNavigationItem(true));
+                    if (sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
+                        sectionNavigationItems.add(new SectionNavigationItem(section, sectionItem));
+                    }
                 }
             }
         }

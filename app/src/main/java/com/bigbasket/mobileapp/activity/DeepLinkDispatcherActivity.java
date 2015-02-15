@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.activity;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -26,9 +27,12 @@ public class DeepLinkDispatcherActivity extends BaseActivity {
             finish();
             return;
         }
+
         switch (uri.getHost()) {
             case Constants.PROMO:
-                int promoId = Integer.parseInt(idStr);
+                String promoId = uri.getQueryParameter(Constants.ID);
+                //Intent intent = new
+                //int promoId = Integer.parseInt(idStr);
 //                Intent intent = new Intent(this, PromoDetailActivity.class);
 //                intent.putExtra(Constants.PROMO_ID, promoId);
 //                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
@@ -48,6 +52,20 @@ public class DeepLinkDispatcherActivity extends BaseActivity {
 //                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
 //                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
                 break;
+            case Constants.CATEGORY_LANDING:
+                break;
+            case Constants.PRODUCT_DETAIL:
+                break;
+            case Constants.ORDER_ITEMS:
+                break;
+            case Constants.ALL_SL:
+                break;
+            case Constants.SL_SUMMARY:
+                break;
+            case Constants.SL_PRODUCTS:
+                break;
+            case Constants.PROMO_LIST:
+                break;
             default:
                 finish();
                 break;
@@ -57,6 +75,10 @@ public class DeepLinkDispatcherActivity extends BaseActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
+        if (getParent() == null) {
+            Intent intent = new Intent(this, StartActivity.class);
+            startActivity(intent);
+        }
         finish();
     }
 

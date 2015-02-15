@@ -141,7 +141,7 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
         private ImageView imgInRow;
         private TextView txtTitle;
         private TextView txtDescription;
-        private RelativeLayout layoutCarouselSubContainer;
+//        private RelativeLayout layoutCarouselSubContainer;
         private LinearLayout layoutCarouselContainer;
 
         public ViewHolder(View itemView, Typeface typeface) {
@@ -172,13 +172,13 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
             return txtDescription;
         }
-
-        public RelativeLayout getLayoutCarouselSubContainer() {
-            if (layoutCarouselSubContainer == null) {
-                layoutCarouselSubContainer = (RelativeLayout) itemView.findViewById(R.id.layoutCarouselSubContainer);
-            }
-            return layoutCarouselSubContainer;
-        }
+//
+//        public RelativeLayout getLayoutCarouselSubContainer() {
+//            if (layoutCarouselSubContainer == null) {
+//                layoutCarouselSubContainer = (RelativeLayout) itemView.findViewById(R.id.layoutCarouselSubContainer);
+//            }
+//            return layoutCarouselSubContainer;
+//        }
 
         public LinearLayout getLayoutCarouselContainer() {
             if (layoutCarouselContainer == null) {

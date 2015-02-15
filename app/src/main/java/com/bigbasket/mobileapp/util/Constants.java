@@ -150,7 +150,6 @@ public class Constants {
     public static final String AMOUNT = "amount";
     public static final String QUANTITY = "quantity";
     public static final String PROMO_DETAIL = "promo-details";
-    public static final String PRODUCT_LIST = "p_list";
     public static final String TERM = "term";
 
     public static final String OS_PREFERENCE_KEY = "os";
@@ -662,4 +661,12 @@ public class Constants {
 
     public static final String LOCAL_RES_PREFIX = "app://";
     public static final String NAME = "name";
+    public static final String PRODUCT_LIST = "product_list";
+    public static final String CATEGORY_LANDING = "category_landing";
+    public static final String PRODUCT_DETAIL = "product_detail";
+    public static final String ORDER_ITEMS = "order_items";
+    public static final String ALL_SL = "sl";
+    public static final String SL_SUMMARY = "sl_summary";
+    public static final String SL_PRODUCTS = "sl_products";
+    public static final String PROMO_LIST = "promo_list";
 }

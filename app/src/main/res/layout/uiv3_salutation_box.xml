@@ -8,7 +8,8 @@
     android:paddingTop="@dimen/padding_small"
     android:paddingLeft="@dimen/padding_normal"
     android:paddingRight="@dimen/padding_small"
-    android:paddingBottom="@dimen/padding_small">
+    android:paddingBottom="@dimen/padding_small"
+    android:layout_margin="@dimen/margin_mini">
 
     <TextView
         android:layout_width="wrap_content"

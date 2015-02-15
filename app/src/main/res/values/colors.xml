@@ -73,7 +73,9 @@
     <!--<color name="uiv3_action_bar_background">#4AA02C</color>-->
     <color name="uiv3_action_bar_background">#4CAF50</color>
     <color name="uiv3_main_button_background">@color/uiv3_action_bar_background</color>
-    <color name="uiv3_accent_color">#FF5252</color>
+    <color name="uiv3_tile_bkg">#E79F30</color>
+    <color name="uiv3_accent_color">#FF9800</color>
+    <color name="uiv3_menu_header">@color/uiv3_accent_color</color>
     <color name="uiv3_status_bar_background">#388E3C</color>
     <color name="uiv3_action_bar_background_pressed">#C8E6C9</color>
     <color name="uiv3_category_header_background">#e79f30</color>
@@ -81,11 +83,12 @@
     <color name="uiv3_product_list_row_bkg">#FAFAFA</color>
     <color name="uiv3_primary_text_color">#212121</color>
     <color name="uiv3_content_area_bkg">#DDDDDD</color>
-    <color name="uiv3_list_bkg_color">#EEEEEE</color>
+    <color name="uiv3_divider_color">#B6B6B6</color>
+    <!--<color name="uiv3_list_bkg_color">#EEEEEE</color>-->
+    <color name="uiv3_list_bkg_color">#EDEDED</color>
     <color name="uiv3_list_bkg_light_color">#F9F9F9</color>
     <color name="uiv3_list_dark_bkg">#656565</color>
     <color name="uiv3_secondary_text_color">#727272</color>
-    <color name="uiv3_divider_color">#B6B6B6</color>
     <color name="uiv3_tab_selected_color">#FEFB7B</color>
     <color name="uiv3_pin_label_color_heading">#a3e9a4</color>
     <color name="uiv3_ok_label_color">#FF9100</color>
@@ -106,7 +109,7 @@
         <item>#547bca</item>
         <item>#aa66cc</item>
         <item>#9933cc</item>
-        <item>#669900</item>
+        <item>@color/uiv3_tile_bkg</item>
         <item>#aeb857</item>
         <item>#cc0000</item>
         <item>#df5948</item>

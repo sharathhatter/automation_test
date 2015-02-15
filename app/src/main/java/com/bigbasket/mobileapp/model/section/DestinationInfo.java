@@ -21,6 +21,7 @@ public class DestinationInfo implements Parcelable {
     public static final String PRODUCT_DETAIL = "product_detail";
     public static final String DEEP_LINK = "deep_link";
     public static final String PROMO_LIST = "promo_list";
+    public static final String HOME = "home";
 
     @SerializedName(Constants.DESTINATION_TYPE)
     private String destinationType;
