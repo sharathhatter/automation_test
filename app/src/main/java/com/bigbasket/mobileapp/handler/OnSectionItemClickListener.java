@@ -12,22 +12,12 @@ import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
-import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
-import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
-import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListDetailsApiResponse;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.CancelableAware;
-import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
-import com.bigbasket.mobileapp.interfaces.HandlerAware;
-import com.bigbasket.mobileapp.interfaces.ProductListDialogAware;
-import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
-import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.section.DestinationInfo;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionItem;
-import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListDetail;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
@@ -35,10 +25,6 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 
 import java.util.ArrayList;
-
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 public class OnSectionItemClickListener<T> implements View.OnClickListener, BaseSliderView.OnSliderClickListener {
     private T context;
@@ -64,72 +50,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
     private void onSectionClick() {
         if (context == null || ((CancelableAware) context).isSuspended()) return;
 
-        if (section.getSectionType() != null &&
-                section.getSectionType().equalsIgnoreCase(Section.PRODUCT_CAROUSEL)) {
-            DestinationInfo destinationInfo = sectionItem.getDestinationInfo();
-            if (destinationInfo != null) {
-                String destinationType = destinationInfo.getDestinationType();
-                String destinationSlug = destinationInfo.getDestinationSlug();
-                BigBasketApiService bigBasketApiService = BigBasketApiAdapter.
-                        getApiService(((ActivityAware) context).getCurrentActivity());
-                if (!TextUtils.isEmpty(destinationSlug) && !TextUtils.isEmpty(destinationType) &&
-                        destinationType.equals(DestinationInfo.SHOPPING_LIST)) {
-                    if (!((ConnectivityAware) context).checkInternetConnection()) {
-                        ((HandlerAware) context).getHandler().sendOfflineError();
-                        return;
-                    }
-                    ((ProgressIndicationAware) context).showProgressDialog("Please wait...");
-                    bigBasketApiService.getShoppingListDetails(destinationSlug, null, new Callback<ApiResponse<GetShoppingListDetailsApiResponse>>() {
-                        @Override
-                        public void success(ApiResponse<GetShoppingListDetailsApiResponse> getShoppingListDetailsApiResponse, Response response) {
-                            if (((CancelableAware) context).isSuspended()) return;
-                            try {
-                                ((ProgressIndicationAware) context).hideProgressDialog();
-                            } catch (IllegalArgumentException e) {
-                                return;
-                            }
-                            switch (getShoppingListDetailsApiResponse.status) {
-                                case 0:
-                                    ShoppingListDetail shoppingListDetail = getShoppingListDetailsApiResponse.apiResponseContent.shoppingListDetail;
-                                    if (shoppingListDetail != null) {
-                                        ArrayList<Product> products = shoppingListDetail.getProducts();
-                                        String title = section.getTitle() != null ? section.getTitle().getText() : null;
-                                        ((ProductListDialogAware) context).showDialog(title, products, products.size(), getShoppingListDetailsApiResponse.apiResponseContent.baseImgUrl,
-                                                true, Constants.SHOPPING_LISTS);
-                                    }
-                                    break;
-                                default:
-                                    ((HandlerAware) context).getHandler().
-                                            sendEmptyMessage(getShoppingListDetailsApiResponse.status,
-                                                    getShoppingListDetailsApiResponse.message);
-                                    break;
-                            }
-                        }
-
-                        @Override
-                        public void failure(RetrofitError error) {
-                            if (((CancelableAware) context).isSuspended()) return;
-                            try {
-                                ((ProgressIndicationAware) context).hideProgressDialog();
-                            } catch (IllegalArgumentException e) {
-                                return;
-                            }
-                            ((HandlerAware) context).getHandler().handleRetrofitError(error);
-                        }
-                    });
-                } else if (!TextUtils.isEmpty(destinationType)) {
-//                    ProductQuery productQuery = ProductQuery.convertDestinationTypeToProductQuery(destinationType, destinationSlug);
-//                    if (productQuery != null) {
-//                        if (!((ConnectivityAware) context).checkInternetConnection()) {
-//                            ((HandlerAware) context).getHandler().sendOfflineError();
-//                            return;
-//                        }
-//                        ((ProgressIndicationAware) context).showProgressDialog("Please wait...");
-//                        bigBasketApiService.productListUrl(productQuery.getAsQueryMap(), new ProductListApiResponseCallback<>(1, this, false));
-//                    }
-                }
-            }
-        } else if (sectionItem.getDestinationInfo() != null &&
+        if (sectionItem.getDestinationInfo() != null &&
                 sectionItem.getDestinationInfo().getDestinationType() != null) {
             DestinationInfo destinationInfo = sectionItem.getDestinationInfo();
             switch (destinationInfo.getDestinationType()) {
@@ -219,19 +140,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                     }
                     break;
                 case DestinationInfo.PRODUCT_LIST:
-                    ArrayList<NameValuePair> nameValuePairs = destinationInfo.getProductQueryParams();
-                    if (nameValuePairs != null && nameValuePairs.size() > 0) {
-                        intent = new Intent(((ActivityAware) context).getCurrentActivity(), ProductListActivity.class);
-                        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_GENERIC_PRODUCT_LIST);
-                        intent.putParcelableArrayListExtra(Constants.PRODUCT_QUERY, nameValuePairs);
-                        String title = sectionItem.getTitle() != null ? sectionItem.getTitle().getText() : null;
-                        if (!TextUtils.isEmpty(title)) {
-                            intent.putExtra(Constants.TITLE, title);
-                        }
-                        ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                    } else {
-                        showDefaultError();
-                    }
+                    launchProductList(destinationInfo);
                     break;
                 case DestinationInfo.DEEP_LINK:
                     if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
@@ -267,36 +176,20 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
         ((ActivityAware) context).getCurrentActivity().showToast("Page Not Found");
     }
 
-//    @Override
-//    public ProductListData getProductListData() {
-//        return productListData;
-//    }
-//
-//    @Override
-//    public void setProductListData(ProductListData productListData) {
-//        this.productListData = productListData;
-//    }
-//
-//    @Override
-//    public void updateData() {
-//        String title = section.getTitle() != null ? section.getTitle().getText() : null;
-//        ((ProductListDialogAware) context).showDialog(title,
-//                productListData.getProducts(), productListData.getProductCount(),
-//                productListData.getBaseImgUrl(), true, DestinationInfo.PRODUCT_LIST);
-//    }
-//
-//    @Override
-//    public void updateProductList(List<Product> nextPageProducts) {
-//
-//    }
-//
-//    @Override
-//    public boolean isNextPageLoading() {
-//        return false;
-//    }
-//
-//    @Override
-//    public void setNextPageLoading(boolean isNextPageLoading) {
-//
-//    }
+    private void launchProductList(DestinationInfo destinationInfo) {
+        ArrayList<NameValuePair> nameValuePairs = destinationInfo.getProductQueryParams();
+        if (nameValuePairs != null && nameValuePairs.size() > 0) {
+            Intent intent = new Intent(((ActivityAware) context).getCurrentActivity(), ProductListActivity.class);
+            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_GENERIC_PRODUCT_LIST);
+            intent.putParcelableArrayListExtra(Constants.PRODUCT_QUERY, nameValuePairs);
+            String title = sectionItem.getTitle() != null ? sectionItem.getTitle().getText() : null;
+            if (!TextUtils.isEmpty(title)) {
+                intent.putExtra(Constants.TITLE, title);
+            }
+            ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+        } else {
+            showDefaultError();
+        }
+    }
+
 }

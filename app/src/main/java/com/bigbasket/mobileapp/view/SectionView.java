@@ -150,13 +150,7 @@ public class SectionView {
 
     private View getSalutationView(Section section, LayoutInflater inflater, ViewGroup parent) {
         View baseSalutation = inflater.inflate(R.layout.uiv3_salutation_box, parent, false);
-        TextView txtSalutationTitle = (TextView) baseSalutation.findViewById(R.id.txtSalutationTitle);
-        if (section.getTitle() != null && !TextUtils.isEmpty(section.getTitle().getText())) {
-            txtSalutationTitle.setTypeface(faceRobotoRegular);
-            txtSalutationTitle.setText(section.getTitle().getText());
-        } else {
-            txtSalutationTitle.setVisibility(View.GONE);
-        }
+        formatSectionTitle(baseSalutation, R.id.txtSalutationTitle, section);
         ArrayList<SectionItem> sectionItems = section.getSectionItems();
         for (int i = 0; i < sectionItems.size(); i++) {
             if (i > 2) {
@@ -206,18 +200,7 @@ public class SectionView {
 
     private View getCarouselView(Section section, LayoutInflater inflater, ViewGroup parent) {
         View baseProductCarousel = inflater.inflate(R.layout.uiv3_horizontal_recycler_view, parent, false);
-        TextView txtListTitle = (TextView) baseProductCarousel.findViewById(R.id.txtListTitle);
-        if (section.getTitle() == null || TextUtils.isEmpty(section.getTitle().getText())) {
-            txtListTitle.setVisibility(View.GONE);
-        } else {
-            txtListTitle.setTypeface(faceRobotoRegular);
-            txtListTitle.setText(section.getTitle().getText());
-            Renderer renderer = mSectionData.getRenderersMap() != null ?
-                    mSectionData.getRenderersMap().get(section.getTitle().getRenderingId()) : null;
-            if (renderer != null) {
-                renderer.setRendering(txtListTitle, 0, 0);
-            }
-        }
+        formatSectionTitle(baseProductCarousel, R.id.txtListTitle, section);
 
         RecyclerView horizontalRecyclerView = (RecyclerView) baseProductCarousel.findViewById(R.id.horizontalRecyclerView);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
@@ -304,13 +287,13 @@ public class SectionView {
     }
 
     private View getMenuView(Section section, LayoutInflater inflater, ViewGroup parent) {
-
         View base = inflater.inflate(R.layout.card_view, parent, false);
         LinearLayout menuContainer = (LinearLayout) base.findViewById(R.id.layoutCardContent);
 
         LinearLayout.LayoutParams menuContainerLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
-        menuContainerLayoutParams.setMargins(defaultMargin, defaultMargin, defaultMargin, 0);
+        menuContainerLayoutParams.setMargins(defaultMargin,
+                (int) context.getResources().getDimension(R.dimen.padding_normal), defaultMargin, 0);
         base.setLayoutParams(menuContainerLayoutParams);
 
         if (section.getTitle() != null && !TextUtils.isEmpty(section.getTitle().getText())) {
@@ -357,16 +340,8 @@ public class SectionView {
 
     private View getGridLayoutView(Section section, LayoutInflater inflater, ViewGroup parent) {
         View base = inflater.inflate(R.layout.uiv3_grid_container, parent, false);
-        TextView txtListTitle = (TextView) base.findViewById(R.id.txtListTitle);
-        if (section.getTitle() != null && !TextUtils.isEmpty(section.getTitle().getText())) {
-            Renderer renderer = mSectionData.getRenderersMap() != null ?
-                    mSectionData.getRenderersMap().get(section.getTitle().getRenderingId()) : null;
-            if (renderer != null) {
-                renderer.setRendering(txtListTitle, 0, 0);
-            }
-            txtListTitle.setText(section.getTitle().getText());
-            txtListTitle.setTypeface(faceRobotoRegular);
-        }
+        formatSectionTitle(base, R.id.txtListTitle, section);
+
         FlowLayout tileContainer = (FlowLayout) base.findViewById(R.id.layoutGrid);
         LinearLayout.LayoutParams tileContainerParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -463,22 +438,13 @@ public class SectionView {
 
     private View getTileView(Section section, LayoutInflater inflater, ViewGroup parent) {
         View base = inflater.inflate(R.layout.uiv3_tile_container, parent, false);
-        TextView txtListTitle = (TextView) base.findViewById(R.id.txtListTitle);
-        if (section.getTitle() != null && !TextUtils.isEmpty(section.getTitle().getText())) {
-            Renderer renderer = mSectionData.getRenderersMap() != null ?
-                    mSectionData.getRenderersMap().get(section.getTitle().getRenderingId()) : null;
-            if (renderer != null) {
-                renderer.setRendering(txtListTitle, 0, 0);
-            }
-            txtListTitle.setText(section.getTitle().getText());
-            txtListTitle.setTypeface(faceRobotoRegular);
-        } else {
-            txtListTitle.setVisibility(View.GONE);
-        }
+        formatSectionTitle(base, R.id.txtListTitle, section);
+
         LinearLayout tileContainer = (LinearLayout) base.findViewById(R.id.layoutTileContainer);
         LinearLayout.LayoutParams tileContainerParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
-        tileContainerParams.setMargins(defaultMargin, 0, defaultMargin, 0);
+        tileContainerParams.setMargins(defaultMargin,
+                (int) context.getResources().getDimension(R.dimen.margin_normal), defaultMargin, 0);
         tileContainer.setLayoutParams(tileContainerParams);
         ArrayList<SectionItem> sectionItems = section.getSectionItems();
         int numSectionItems = sectionItems.size();
@@ -540,5 +506,21 @@ public class SectionView {
             }
         }
         return base;
+    }
+
+    private void formatSectionTitle(View parent, int txtViewId, Section section) {
+        TextView txtVw = (TextView) parent.findViewById(txtViewId);
+        if (section.getTitle() != null && !TextUtils.isEmpty(section.getTitle().getText())) {
+            txtVw.setTypeface(faceRobotoRegular);
+            txtVw.setText(section.getTitle().getText());
+            Renderer renderer = mSectionData.getRenderersMap() != null ?
+                    mSectionData.getRenderersMap().get(section.getTitle().getRenderingId()) : null;
+            if (renderer != null) {
+                renderer.setRendering(txtVw
+                        , 0, 0);
+            }
+        } else {
+            txtVw.setVisibility(View.GONE);
+        }
     }
 }
