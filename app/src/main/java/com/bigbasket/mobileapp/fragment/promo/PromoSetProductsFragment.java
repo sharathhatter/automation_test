@@ -28,6 +28,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.PromoSummaryApiRespons
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
+import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
@@ -92,14 +93,9 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
 
     }
 
-    @Override
     @Nullable
-    public String getProductListSlug() {
-        return null;
-    }
-
     @Override
-    public String getProductQueryType() {
+    public ArrayList<NameValuePair> getInputForApi() {
         return null;
     }
 

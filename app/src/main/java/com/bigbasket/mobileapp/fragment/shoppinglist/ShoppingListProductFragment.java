@@ -20,6 +20,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListDetails
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -86,14 +87,9 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
         loadProducts();
     }
 
-    @Override
     @Nullable
-    public String getProductListSlug() {
-        return null;
-    }
-
     @Override
-    public String getProductQueryType() {
+    public ArrayList<NameValuePair> getInputForApi() {
         return null;
     }
 

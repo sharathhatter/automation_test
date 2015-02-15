@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.fragment.base;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -19,11 +20,11 @@ import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.interfaces.SortAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.product.FilteredOn;
 import com.bigbasket.mobileapp.model.product.Option;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductListData;
-import com.bigbasket.mobileapp.model.product.ProductQuery;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
@@ -33,12 +34,12 @@ import com.bigbasket.mobileapp.task.uiv3.ShoppingListDoAddDeleteTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.bigbasket.mobileapp.view.SectionView;
 import com.bigbasket.mobileapp.view.uiv3.ShoppingListNamesDialog;
 import com.bigbasket.mobileapp.view.uiv3.SortProductDialog;
 import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -106,11 +107,15 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
     }
 
     public ProductListTask<ProductListAwareFragment> getProductListAsyncTask() {
-        return new ProductListTask<>(this);
+        ArrayList<NameValuePair> nameValuePairs = getProductQueryParams();
+        HashMap<String, String> paramMap = NameValuePair.toMap(nameValuePairs);
+        return new ProductListTask<>(this, paramMap);
     }
 
     public ProductListTask<ProductListAwareFragment> getProductListAsyncTask(int page) {
-        return new ProductListTask<>(page, this);
+        ArrayList<NameValuePair> nameValuePairs = getProductQueryParams();
+        HashMap<String, String> paramMap = NameValuePair.toMap(nameValuePairs);
+        return new ProductListTask<>(page, this, paramMap);
     }
 
     public ProductListData getProductListData() {
@@ -259,9 +264,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
     public abstract String getSourceName();
 
     @Nullable
-    public abstract String getProductListSlug();
-
-    public abstract String getProductQueryType();
+    public abstract ArrayList<NameValuePair> getInputForApi();
 
     protected ArrayList<FilteredOn> getProductRefinedByFilter() {
         return null;
@@ -271,7 +274,9 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         return null;
     }
 
-    public ProductQuery getProductQuery() {
+    @NonNull
+    @Override
+    public ArrayList<NameValuePair> getProductQueryParams() {
         ArrayList<FilteredOn> filteredOnArrayList = null;
         String sortedOn = null;
         ProductListData productListData = getProductListData();
@@ -279,10 +284,26 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
             filteredOnArrayList = productListData.getFilteredOn();
             sortedOn = productListData.getSortedOn();
         }
-        return new ProductQuery(getProductQueryType(), getProductListSlug(),
-                !TextUtils.isEmpty(sortedOn) ? sortedOn : getProductRefinedBySortedOn(),
-                filteredOnArrayList != null && filteredOnArrayList.size() > 0 ? filteredOnArrayList :
-                        getProductRefinedByFilter(), 1);
+        if (TextUtils.isEmpty(sortedOn)) {
+            sortedOn = getProductRefinedBySortedOn();
+        }
+        if (filteredOnArrayList == null || filteredOnArrayList.size() == 0) {
+            filteredOnArrayList = getProductRefinedByFilter();
+        }
+
+        ArrayList<NameValuePair> nameValuePairs = getInputForApi();
+        if (nameValuePairs == null) {
+            nameValuePairs = new ArrayList<>();
+        }
+        if (!TextUtils.isEmpty(sortedOn)) {
+            nameValuePairs.add(new NameValuePair(Constants.SORT_ON, sortedOn));
+        }
+        if (filteredOnArrayList != null && !filteredOnArrayList.isEmpty()) {
+            Gson gson = new Gson();
+            String filteredOn = gson.toJson(filteredOnArrayList);
+            nameValuePairs.add(new NameValuePair(Constants.FILTER_ON, filteredOn));
+        }
+        return nameValuePairs;
     }
 
     @Override
@@ -385,6 +406,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
     }
 
     private void trackFilterAppliedEvent(ArrayList<FilteredOn> filteredOnArrayList) {
+        if (filteredOnArrayList == null || filteredOnArrayList.size() == 0) return;
         Map<String, String> eventAttribs = new HashMap<>();
         for (FilteredOn filteredOn : filteredOnArrayList) {
             eventAttribs.put(TrackEventkeys.FILTER_NAME, filteredOn.getFilterSlug());

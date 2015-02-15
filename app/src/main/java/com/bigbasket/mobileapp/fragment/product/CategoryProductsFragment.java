@@ -4,9 +4,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.widget.TextView;
 
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
+import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.product.FilteredOn;
 import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
 import com.bigbasket.mobileapp.util.Constants;
@@ -16,11 +16,15 @@ import java.util.ArrayList;
 
 public class CategoryProductsFragment extends ProductListAwareFragment {
 
-    @Override
     @Nullable
-    public String getProductListSlug() {
+    @Override
+    public ArrayList<NameValuePair> getInputForApi() {
         Bundle bundle = getArguments();
-        return bundle.getString(Constants.SLUG_NAME_CATEGORY);
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
+        nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.CATEGORY.get()));
+        nameValuePairs.add(new NameValuePair(Constants.SLUG,
+                bundle.getString(Constants.SLUG_NAME_CATEGORY)));
+        return nameValuePairs;
     }
 
     @Override
@@ -41,11 +45,6 @@ public class CategoryProductsFragment extends ProductListAwareFragment {
         if (!TextUtils.isEmpty(bundle.getString(Constants.SORT_BY)))
             return bundle.getString(Constants.SORT_BY);
         return null;
-    }
-
-    @Override
-    public String getProductQueryType() {
-        return ProductListType.CATEGORY.get();
     }
 
     @Override

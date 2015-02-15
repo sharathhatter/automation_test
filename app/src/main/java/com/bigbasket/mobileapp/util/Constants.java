@@ -13,6 +13,7 @@ public class Constants {
     public static final String TOTAL_PAGES = "tot_pages";
 
     public static final String SEARCH_QUERY = "q";
+    public static final String PRODUCT_QUERY = "productQuery";
     public static final String PRODUCT_COUNT = "p_count";
     public static final String NORMAL_COUNT = "normal_count";
     public static final String TABLET_COUNT = "tablet_count";

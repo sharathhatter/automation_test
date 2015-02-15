@@ -5,24 +5,25 @@ import android.support.annotation.Nullable;
 
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class SearchFragment extends ProductListAwareFragment {
 
+    @Nullable
     @Override
-    public String getProductListSlug() {
+    public ArrayList<NameValuePair> getInputForApi() {
         String searchQuery = getArguments().getString(Constants.SEARCH_QUERY);
         setTitle(searchQuery);
-        return searchQuery;
-    }
-
-    @Override
-    public String getProductQueryType() {
-        return ProductListType.SEARCH.get();
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
+        nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.SEARCH.get()));
+        nameValuePairs.add(new NameValuePair(Constants.SLUG, searchQuery));
+        return nameValuePairs;
     }
 
     @Override
@@ -41,7 +42,7 @@ public class SearchFragment extends ProductListAwareFragment {
     public void updateData() {
         super.updateData();
         HashMap<String, String> map = new HashMap<>();
-        map.put(TrackEventkeys.QUERY, getProductListSlug());
+        map.put(TrackEventkeys.QUERY, getArguments().getString(Constants.SEARCH_QUERY));
         trackEvent(TrackingAware.SEARCH, map);
     }
 

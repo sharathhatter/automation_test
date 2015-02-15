@@ -73,6 +73,7 @@ import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDialogAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.SectionManager;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.cart.BasketOperationResponse;
@@ -409,7 +410,9 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             case FragmentCodes.START_NOW_AT_BB:
                 GenericProductListFragment productListFragment = new GenericProductListFragment();
                 Bundle productListArgs = new Bundle();
-                productListArgs.putString(Constants.TYPE, ProductListType.NOW_AT_BB.get());
+                ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
+                nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.NOW_AT_BB.get()));
+                productListArgs.putParcelableArrayList(Constants.PRODUCT_QUERY, nameValuePairs);
                 productListArgs.putString(Constants.TRACK_EVENT_NAME, TrackingAware.NOW_AT_BB);
                 productListFragment.setArguments(productListArgs);
                 addToMainLayout(productListFragment);
@@ -418,7 +421,9 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 trackEvent(TrackingAware.NEW_AT_BB, null);
                 productListFragment = new GenericProductListFragment();
                 productListArgs = new Bundle();
-                productListArgs.putString(Constants.TYPE, ProductListType.NEW_AT_BB.get());
+                nameValuePairs = new ArrayList<>();
+                nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.NEW_AT_BB.get()));
+                productListArgs.putParcelableArrayList(Constants.PRODUCT_QUERY, nameValuePairs);
                 productListArgs.putString(Constants.TRACK_EVENT_NAME, TrackingAware.NEW_AT_BB);
                 productListFragment.setArguments(productListArgs);
                 addToMainLayout(productListFragment);
@@ -426,7 +431,9 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             case FragmentCodes.START_BUNDLE_PACK:
                 productListFragment = new GenericProductListFragment();
                 productListArgs = new Bundle();
-                productListArgs.putString(Constants.TYPE, ProductListType.BUNDLE_PACK.get());
+                nameValuePairs = new ArrayList<>();
+                nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.BUNDLE_PACK.get()));
+                productListArgs.putParcelableArrayList(Constants.PRODUCT_QUERY, nameValuePairs);
                 productListArgs.putString(Constants.TRACK_EVENT_NAME, TrackingAware.BUNDLE_PACK);
                 productListFragment.setArguments(productListArgs);
                 addToMainLayout(productListFragment);
@@ -451,16 +458,12 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 doSearch(getIntent().getStringExtra(Constants.SEARCH_QUERY));
                 break;
             case FragmentCodes.START_GENERIC_PRODUCT_LIST:
-                String type = getIntent().getStringExtra(Constants.TYPE);
-                String slug = getIntent().getStringExtra(Constants.SLUG);
+                nameValuePairs = getIntent().getParcelableArrayListExtra(Constants.PRODUCT_QUERY);
                 String title = getIntent().getStringExtra(Constants.TITLE);
-                if (!TextUtils.isEmpty(type)) {
+                if (nameValuePairs != null && !nameValuePairs.isEmpty()) {
                     productListFragment = new GenericProductListFragment();
                     productListArgs = new Bundle();
-                    productListArgs.putString(Constants.TYPE, type);
-                    if (!TextUtils.isEmpty(slug)) {
-                        productListArgs.putString(Constants.SLUG, slug);
-                    }
+                    productListArgs.putParcelableArrayList(Constants.PRODUCT_QUERY, nameValuePairs);
                     if (!TextUtils.isEmpty(title)) {
                         productListArgs.putString(Constants.TITLE, title);
                     }

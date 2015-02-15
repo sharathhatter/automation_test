@@ -6,23 +6,22 @@ import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
+import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.util.Constants;
+
+import java.util.ArrayList;
 
 public class GenericProductListFragment extends ProductListAwareFragment {
     @Override
     public String getSourceName() {
+        // TODO : Jugal please check this, it won't be passed anymore
         return getArguments().getString(Constants.TYPE);
     }
 
-    @Override
     @Nullable
-    public String getProductListSlug() {
-        return getArguments().getString(Constants.SLUG);
-    }
-
     @Override
-    public String getProductQueryType() {
-        return getArguments().getString(Constants.TYPE);
+    public ArrayList<NameValuePair> getInputForApi() {
+        return getArguments().getParcelableArrayList(Constants.PRODUCT_QUERY);
     }
 
     @Override

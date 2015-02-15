@@ -14,19 +14,16 @@ import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
-import com.bigbasket.mobileapp.apiservice.callbacks.ProductListApiResponseCallback;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListDetailsApiResponse;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
-import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDialogAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
+import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.product.Product;
-import com.bigbasket.mobileapp.model.product.ProductListData;
-import com.bigbasket.mobileapp.model.product.ProductQuery;
 import com.bigbasket.mobileapp.model.section.DestinationInfo;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionItem;
@@ -38,19 +35,15 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class
-        OnSectionItemClickListener<T> implements View.OnClickListener, BaseSliderView.OnSliderClickListener,
-        ProductListDataAware {
+public class OnSectionItemClickListener<T> implements View.OnClickListener, BaseSliderView.OnSliderClickListener {
     private T context;
     private Section section;
     private SectionItem sectionItem;
-    private ProductListData productListData;
 
     public OnSectionItemClickListener(T context, Section section, SectionItem sectionItem) {
         this.context = context;
@@ -125,15 +118,15 @@ public class
                         }
                     });
                 } else if (!TextUtils.isEmpty(destinationType)) {
-                    ProductQuery productQuery = ProductQuery.convertDestinationTypeToProductQuery(destinationType, destinationSlug);
-                    if (productQuery != null) {
-                        if (!((ConnectivityAware) context).checkInternetConnection()) {
-                            ((HandlerAware) context).getHandler().sendOfflineError();
-                            return;
-                        }
-                        ((ProgressIndicationAware) context).showProgressDialog("Please wait...");
-                        bigBasketApiService.productListUrl(productQuery.getAsQueryMap(), new ProductListApiResponseCallback<>(1, this, false));
-                    }
+//                    ProductQuery productQuery = ProductQuery.convertDestinationTypeToProductQuery(destinationType, destinationSlug);
+//                    if (productQuery != null) {
+//                        if (!((ConnectivityAware) context).checkInternetConnection()) {
+//                            ((HandlerAware) context).getHandler().sendOfflineError();
+//                            return;
+//                        }
+//                        ((ProgressIndicationAware) context).showProgressDialog("Please wait...");
+//                        bigBasketApiService.productListUrl(productQuery.getAsQueryMap(), new ProductListApiResponseCallback<>(1, this, false));
+//                    }
                 }
             }
         } else if (sectionItem.getDestinationInfo() != null &&
@@ -226,13 +219,11 @@ public class
                     }
                     break;
                 case DestinationInfo.PRODUCT_LIST:
-                    ProductQuery productQuery = ProductQuery.convertDestinationTypeToProductQuery(
-                            destinationInfo.getDestinationType(), destinationInfo.getDestinationSlug());
-                    if (productQuery != null) {
+                    ArrayList<NameValuePair> nameValuePairs = destinationInfo.getProductQueryParams();
+                    if (nameValuePairs != null && nameValuePairs.size() > 0) {
                         intent = new Intent(((ActivityAware) context).getCurrentActivity(), ProductListActivity.class);
                         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_GENERIC_PRODUCT_LIST);
-                        intent.putExtra(Constants.TYPE, productQuery.getType());
-                        intent.putExtra(Constants.SLUG, productQuery.getSlug());
+                        intent.putParcelableArrayListExtra(Constants.PRODUCT_QUERY, nameValuePairs);
                         String title = sectionItem.getTitle() != null ? sectionItem.getTitle().getText() : null;
                         if (!TextUtils.isEmpty(title)) {
                             intent.putExtra(Constants.TITLE, title);
@@ -276,41 +267,36 @@ public class
         ((ActivityAware) context).getCurrentActivity().showToast("Page Not Found");
     }
 
-    @Override
-    public ProductListData getProductListData() {
-        return productListData;
-    }
-
-    @Override
-    public void setProductListData(ProductListData productListData) {
-        this.productListData = productListData;
-    }
-
-    @Override
-    public void updateData() {
-        String title = section.getTitle() != null ? section.getTitle().getText() : null;
-        ((ProductListDialogAware) context).showDialog(title,
-                productListData.getProducts(), productListData.getProductCount(),
-                productListData.getBaseImgUrl(), true, DestinationInfo.PRODUCT_LIST);
-    }
-
-    @Override
-    public void updateProductList(List<Product> nextPageProducts) {
-
-    }
-
-    @Override
-    public boolean isNextPageLoading() {
-        return false;
-    }
-
-    @Override
-    public void setNextPageLoading(boolean isNextPageLoading) {
-
-    }
-
-    @Override
-    public ProductQuery getProductQuery() {
-        return null;
-    }
+//    @Override
+//    public ProductListData getProductListData() {
+//        return productListData;
+//    }
+//
+//    @Override
+//    public void setProductListData(ProductListData productListData) {
+//        this.productListData = productListData;
+//    }
+//
+//    @Override
+//    public void updateData() {
+//        String title = section.getTitle() != null ? section.getTitle().getText() : null;
+//        ((ProductListDialogAware) context).showDialog(title,
+//                productListData.getProducts(), productListData.getProductCount(),
+//                productListData.getBaseImgUrl(), true, DestinationInfo.PRODUCT_LIST);
+//    }
+//
+//    @Override
+//    public void updateProductList(List<Product> nextPageProducts) {
+//
+//    }
+//
+//    @Override
+//    public boolean isNextPageLoading() {
+//        return false;
+//    }
+//
+//    @Override
+//    public void setNextPageLoading(boolean isNextPageLoading) {
+//
+//    }
 }
