@@ -28,7 +28,10 @@ public class ShoppingListName implements Parcelable {
     }
 
     public ShoppingListName(Parcel source) {
-        this.name = source.readString();
+        boolean wasNameNull = source.readByte() == (byte) 1;
+        if (!wasNameNull) {
+            this.name = source.readString();
+        }
         this.slug = source.readString();
         this.isSystem = source.readInt();
     }
@@ -69,7 +72,11 @@ public class ShoppingListName implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.name);
+        boolean wasNameNull = this.name == null;
+        dest.writeByte(wasNameNull ? (byte) 1: (byte) 0);
+        if (!wasNameNull) {
+            dest.writeString(this.name);
+        }
         dest.writeString(this.slug);
         dest.writeInt(this.isSystem);
     }

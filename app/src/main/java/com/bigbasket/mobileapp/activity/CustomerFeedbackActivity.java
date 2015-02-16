@@ -6,24 +6,27 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.RatingBar;
+import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PostFeedbackApiResponseContent;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.DataUtil;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class CustomerFeedbackActivity extends BaseActivity {
+public class CustomerFeedbackActivity extends BackButtonActivity {
 
     private View base;
     private String caseId;
@@ -39,25 +42,39 @@ public class CustomerFeedbackActivity extends BaseActivity {
     }
 
     private void showFeedbackLayout() {
+        FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        base = inflater.inflate(R.layout.customer_feedback, null);
+        base = inflater.inflate(R.layout.customer_feedback, contentFrame, false);
         if (base == null)
             return;
-//        View contentLayout =
-//        contentLayout.addView(base);
-//        TextView labelRating = (TextView) base.findViewById(R.id.labelRating);
-//        EditText editTextComments = (EditText) base.findViewById(R.id.editTextComments);
-//        Button btnSubmit = (Button) base.findViewById(R.id.btnSubmit);
-//        Button btnCancel = (Button) base.findViewById(R.id.btnCancel);
-//        labelRating.setTypeface(faceLatoNormal);
-//        editTextComments.setTypeface(faceLatoNormal);
-//        btnSubmit.setTypeface(faceLatoNormal);
-//        btnCancel.setTypeface(faceLatoNormal);
+        TextView labelRating = (TextView) base.findViewById(R.id.labelRating);
+        EditText editTextComments = (EditText) base.findViewById(R.id.editTextComments);
+        Button btnSubmit = (Button) base.findViewById(R.id.btnSubmit);
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                postFeedback();
+            }
+        });
+        Button btnCancel = (Button) base.findViewById(R.id.btnCancel);
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        labelRating.setTypeface(faceRobotoRegular);
+        editTextComments.setTypeface(faceRobotoRegular);
+        btnSubmit.setTypeface(faceRobotoRegular);
+        btnCancel.setTypeface(faceRobotoRegular);
+
+        contentFrame.removeAllViews();
+        contentFrame.addView(base);
     }
 
     private void postFeedback() {
-        if (!DataUtil.isInternetAvailable(this)) {
-            showAlertDialog(null, "No internet connection found. Please try later");
+        if (!checkInternetConnection()) {
+            handler.sendOfflineError();
             return;
         }
         EditText editTextComments = (EditText) base.findViewById(R.id.editTextComments);
@@ -87,7 +104,8 @@ public class CustomerFeedbackActivity extends BaseActivity {
                                 }
                                 break;
                             default:
-                                handler.sendEmptyMessage(postFeedbackApiResponse.status);
+                                handler.sendEmptyMessage(postFeedbackApiResponse.status,
+                                        postFeedbackApiResponse.message);
                                 break;
                         }
                     }
@@ -113,14 +131,6 @@ public class CustomerFeedbackActivity extends BaseActivity {
     @Override
     public void onChangeTitle(String title) {
 
-    }
-
-    public void OnSubmitButtonClicked(View v) {
-        postFeedback();
-    }
-
-    public void OnCancelButtonClicked(View v) {
-        finish();
     }
 
     @Override

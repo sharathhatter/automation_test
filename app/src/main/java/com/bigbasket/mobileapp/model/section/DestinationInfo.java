@@ -86,7 +86,7 @@ public class DestinationInfo implements Parcelable {
     public ArrayList<NameValuePair> getProductQueryParams() {
         if (TextUtils.isEmpty(destinationSlug)) return null;
 
-        if (destinationSlug.contains("&")) {
+        if (destinationSlug.contains("&") || destinationSlug.contains("=")) {
             return getAsNameValuePair();
         }
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();

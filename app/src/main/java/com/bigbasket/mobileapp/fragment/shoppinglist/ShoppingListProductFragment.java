@@ -43,7 +43,6 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
     private ShoppingListName mShoppingListName;
     private ShoppingListDetail mShoppingListDetail;
     private String mBaseImgUrl;
-    private String topcatName;
 
     @Override
     public void loadProducts() {
@@ -75,7 +74,6 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
     @Override
     public void restoreProductList(Bundle savedInstanceState) {
         mShoppingListName = getArguments().getParcelable(Constants.SHOPPING_LIST_NAME);
-        topcatName = getArguments().getString(Constants.TOP_CATEGORY_NAME);
         if (savedInstanceState != null) {
             mShoppingListDetail = savedInstanceState.getParcelable(Constants.SHOPPING_LIST_ITEMS);
             if (mShoppingListDetail != null) {
@@ -140,7 +138,7 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
 
         HashMap<String, String> map = new HashMap<>();
         map.put(TrackEventkeys.SHOPPING_LIST_NAME, mShoppingListName.getName());
-        map.put(TrackEventkeys.PRODUCT_TOP_CAT, topcatName);
+        map.put(TrackEventkeys.PRODUCT_TOP_CAT, mShoppingListDetail.getTopCategoryName());
         if (mShoppingListName.isSystem()) {
             trackEvent(TrackingAware.SHOP_LST_SYSTEM_LIST_CATEGORY_DETAIL, map);
         } else {
