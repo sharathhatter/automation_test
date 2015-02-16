@@ -410,7 +410,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         Map<String, String> eventAttribs = new HashMap<>();
         for (FilteredOn filteredOn : filteredOnArrayList) {
             eventAttribs.put(TrackEventkeys.FILTER_NAME, filteredOn.getFilterSlug());
-            eventAttribs.put(TrackEventkeys.FILTER_TYPE, filteredOn.getFilterType());
+            //eventAttribs.put(TrackEventkeys.FILTER_TYPE, filteredOn.getFilterType());
             trackEvent(TrackingAware.FILTER_APPLIED, eventAttribs, getSourceName(), null, false);
         }
     }

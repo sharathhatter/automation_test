@@ -81,9 +81,6 @@ public class PromoDetailFragment extends BaseFragment {
 
         int promoId = getArguments().getInt(Constants.PROMO_ID, -1);
         mPromoCategory = getArguments().getParcelable(Constants.PROMO_CATS);
-        HashMap<String, String> map = new HashMap<>();
-        map.put(TrackEventkeys.PROMO_NAME, mPromoCategory.getName());
-        trackEvent(TrackingAware.PROMO_DETAIL, map);
         getPromoDetail(promoId);
     }
 
@@ -92,6 +89,13 @@ public class PromoDetailFragment extends BaseFragment {
         super.onBackResume();
         int promoId = getArguments().getInt(Constants.PROMO_ID, -1);
         getPromoDetail(promoId);
+    }
+
+    private void trackPromo() {
+        if (mPromoDetail == null) return;
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.PROMO_NAME, mPromoDetail.getPromoName());
+        trackEvent(TrackingAware.PROMO_DETAIL, map);
     }
 
     private void getPromoDetail(int promoId) {
@@ -109,9 +113,9 @@ public class PromoDetailFragment extends BaseFragment {
                         showErrorMsg(promoDetailApiResponseContentApiResponse.message);
                     } else if (status == 0) {
                         mPromoDetail = promoDetailApiResponseContentApiResponse.apiResponseContent.promoDetail;
+                        trackPromo();
                         if (mPromoDetail != null) {
                             renderPromoDetail();
-                            trackEvent(TrackingAware.PROMO_SET_PRODUCTS_SHOWN, null);
                             setCartInfo(promoDetailApiResponseContentApiResponse.cartSummary);
                             updateUIForCartInfo();
                         } else {
@@ -303,6 +307,7 @@ public class PromoDetailFragment extends BaseFragment {
             base.setLayoutParams(productRowParams);
             view.addView(base);
         }
+        trackEvent(TrackingAware.PROMO_SET_PRODUCTS_SHOWN, null);
     }
 
     private View getPromoSetBar(String text, PromoDetail promoDetail, ViewGroup parent) {
