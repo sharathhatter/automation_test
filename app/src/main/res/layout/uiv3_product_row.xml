@@ -3,14 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingLeft="@dimen/padding_mini"
-    android:paddingRight="@dimen/padding_mini">
+    android:paddingLeft="@dimen/padding_small"
+    android:paddingRight="@dimen/padding_small">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        android:paddingTop="@dimen/padding_mini">
+        android:paddingTop="@dimen/padding_mini"
+        android:paddingRight="@dimen/padding_small">
 
         <ImageView
             android:id="@+id/imgProduct"
@@ -52,6 +53,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/imgProduct"
+            android:layout_marginLeft="@dimen/margin_normal"
             android:text="@string/mrp"
             android:textColor="@color/mrpColor"
             android:textSize="@dimen/small_text_size" />
@@ -72,7 +74,9 @@
             android:id="@+id/txtSalePrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/imgProduct"
             android:layout_below="@id/txtMrp"
+            android:layout_marginLeft="@dimen/margin_normal"
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
@@ -235,7 +239,7 @@
             android:layout_marginRight="@dimen/margin_small"
             android:layout_toLeftOf="@id/layoutBasketOperation"
             android:contentDescription="@string/shoppingList"
-            android:src="@drawable/ic_mode_edit_grey600_24dp" />
+            android:src="@drawable/add_to_shopping_list" />
     </RelativeLayout>
 
 
@@ -249,7 +253,8 @@
             android:id="@+id/promoLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/margin_small"
+            android:layout_marginTop="2dp"
+            android:layout_marginLeft="@dimen/margin_normal"
             android:background="@color/promo_label_backgroung_color"
             android:gravity="center"
             android:paddingBottom="@dimen/padding_mini"
@@ -268,7 +273,6 @@
             android:layout_marginLeft="@dimen/margin_small"
             android:layout_marginRight="@dimen/margin_mini"
             android:layout_toRightOf="@id/promoLabel"
-            android:layout_alignTop="@id/promoLabel"
             android:text="Save Rs. 22"
             android:textColor="@color/promoAdditionalSavingsColor"
             android:textSize="@dimen/secondary_text_size"
