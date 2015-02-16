@@ -122,7 +122,7 @@ public class ShoppingListSummaryFragment extends BaseFragment {
             public void failure(RetrofitError error) {
                 if (isSuspended()) return;
                 hideProgressView();
-                handler.handleRetrofitError(error);
+                handler.handleRetrofitError(error, true);
             }
         });
     }

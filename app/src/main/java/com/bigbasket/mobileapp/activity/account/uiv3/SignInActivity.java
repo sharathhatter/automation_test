@@ -497,6 +497,7 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
 
     public void OnRegistrationLinkClicked(View v) {
         Intent intent = new Intent(this, SignupActivity.class);
+        intent.putExtra(Constants.DEEP_LINK, getIntent().getStringExtra(Constants.DEEP_LINK));
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 

@@ -11,19 +11,27 @@ import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.OrderDetailActivity;
+import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.callbacks.CallbackOrderInvoice;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.interfaces.InvoiceDataAware;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
+import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.HashSet;
+import java.util.Set;
+
 public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceDataAware {
 
+    private boolean mIsNavigatingToHome;
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         launchCorrespondingActivity();
@@ -36,7 +44,15 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
             return;
         }
 
+        AuthParameters authParameters = AuthParameters.getInstance(this);
+        if (getLoginRequiredUrls().contains(uri.getHost()) && authParameters.isAuthTokenEmpty()) {
+            showAlertDialog(null, getString(R.string.login_required), NavigationCodes.GO_TO_LOGIN, uri);
+            return;
+        }
         switch (uri.getHost()) {
+            case Constants.HOME:
+                navigateToHome(true);
+                break;
             case Constants.PROMO:
                 String id = uri.getQueryParameter(Constants.ID);
                 if (!TextUtils.isEmpty(id) && TextUtils.isDigitsOnly(id)) {
@@ -190,20 +206,63 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
                 intent = new Intent(this, BackButtonActivity.class);
                 intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_VIEW_BASKET);
                 startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                break;
+            case Constants.FLAT_PAGE:
+                String url = uri.getQueryParameter("url");
+                try {
+                    if (!TextUtils.isEmpty(url)) {
+                        intent = new Intent(this, FlatPageWebViewActivity.class);
+                        intent.putExtra(Constants.WEBVIEW_URL, URLDecoder.decode(url, "UTF-8"));
+                        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                    } else {
+                        showDefaultError();
+                    }
+                } catch (UnsupportedEncodingException e) {
+                    showDefaultError();
+                }
+                break;
             default:
                 finish();
                 break;
         }
     }
 
+    private Set<String> getLoginRequiredUrls() {
+        Set<String> loginRequiredUrls = new HashSet<>();
+        loginRequiredUrls.add(Constants.PROMO);
+        loginRequiredUrls.add(Constants.FEEDBACK);
+        loginRequiredUrls.add(Constants.ORDER);
+        loginRequiredUrls.add(Constants.WALLET);
+        loginRequiredUrls.add(Constants.ORDER_ITEMS);
+        loginRequiredUrls.add(Constants.ALL_SL);
+        loginRequiredUrls.add(Constants.SL_SUMMARY);
+        loginRequiredUrls.add(Constants.SL_PRODUCTS);
+        loginRequiredUrls.add(Constants.SMART_BASKET_SLUG);
+        loginRequiredUrls.add(Constants.SMART_BASKET_PRODUCTS);
+        return loginRequiredUrls;
+    }
+
     @Override
     protected void onRestart() {
         super.onRestart();
+        navigateToHome(false);
+    }
+
+    private void navigateToHome(boolean setHomeNavCode) {
+        if (mIsNavigatingToHome) return;
         if (getParent() == null) {
             Intent intent = new Intent(this, StartActivity.class);
             startActivity(intent);
+        } else if (setHomeNavCode) {
+            setResult(NavigationCodes.GO_TO_HOME);
         }
         finish();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        mIsNavigatingToHome = resultCode == NavigationCodes.GO_TO_HOME;
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

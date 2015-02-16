@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -384,6 +385,9 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
             switch (sourceName) {
                 case NavigationCodes.GO_TO_LOGIN:
                     Intent loginIntent = new Intent(this, SignInActivity.class);
+                    if (valuePassed != null && valuePassed instanceof Uri) {
+                        loginIntent.putExtra(Constants.DEEP_LINK, valuePassed.toString());
+                    }
                     startActivityForResult(loginIntent, NavigationCodes.GO_TO_HOME);
                     break;
             }
@@ -611,6 +615,12 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         AuthParameters.updateInstance(getCurrentActivity());
         CitySpecificAppSettings.clearInstance(getCurrentActivity());
         SectionManager.clearAllSectionData(getCurrentActivity());
+        String deepLink = getIntent().getStringExtra(Constants.DEEP_LINK);
+        if (!TextUtils.isEmpty(deepLink)) {
+            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
+            editor.putString(Constants.DEEP_LINK, deepLink);
+            editor.commit();
+        }
         Intent data = new Intent();
         data.putExtra(Constants.LOGOUT, true);
         setResult(NavigationCodes.GO_TO_HOME, data);

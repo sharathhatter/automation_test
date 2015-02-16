@@ -1,8 +1,10 @@
 package com.bigbasket.mobileapp.fragment;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -217,6 +219,24 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
 
         contentView.removeAllViews();
         contentView.addView(contentScrollView);
+
+        // Check if any deep-link needs to be opened
+        processPendingDeepLink();
+    }
+
+    private void processPendingDeepLink() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String pendingDeepLink = preferences.getString(Constants.DEEP_LINK, null);
+        if (!TextUtils.isEmpty(pendingDeepLink)) {
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.remove(Constants.DEEP_LINK);
+            editor.commit();
+            try {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(pendingDeepLink)));
+            } catch (ActivityNotFoundException e) {
+                Log.e("HomeFragment", "No target found for the pending deep-link");
+            }
+        }
     }
 
     @Override
