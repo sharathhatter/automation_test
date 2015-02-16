@@ -200,14 +200,4 @@ public abstract class BaseSpendTrendsFragment extends AbstractFragment {
         }
         return colors;
     }
-
-    public String getScreenTag(){
-        return TrackEventkeys.VIEW_SPEND_TRENDS_SCREEN;
-    }
-
-    @Override
-    public void onResume(){
-        super.onResume();
-        LocalyticsWrapper.onResume(getScreenTag());
-    }
 }

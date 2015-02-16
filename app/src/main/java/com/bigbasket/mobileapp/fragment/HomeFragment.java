@@ -291,7 +291,8 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                             UIUtil.updateLastAppDataCall(getCurrentActivity());
                             String appExpiredBy = callbackAppDataResponse.apiResponseContent.appUpdate.expiryDate;
                             String upgradeMsg = callbackAppDataResponse.apiResponseContent.appUpdate.upgradeMsg;
-                            showUpgradeAppDialog(appExpiredBy, upgradeMsg);
+                            String latestAppVersion = callbackAppDataResponse.apiResponseContent.appUpdate.latestAppVersion;
+                            showUpgradeAppDialog(appExpiredBy, upgradeMsg, latestAppVersion);
                             AnalyticsEngine analyticsEngine = callbackAppDataResponse.apiResponseContent.capabilities;
                             setAnalyticalData(analyticsEngine);
                             LoginUserDetails userDetails = callbackAppDataResponse.apiResponseContent.userDetails;
@@ -323,7 +324,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
     }
 
 
-    private void showUpgradeAppDialog(String appExpiredBy, String upgradeMsg) {
+    private void showUpgradeAppDialog(String appExpiredBy, String upgradeMsg, String latestAppVersion) {
         if (appExpiredBy == null) return;
         int updateValue = UIUtil.handleUpdateDialog(appExpiredBy.replace("-", "/"), getCurrentActivity());
         switch (updateValue) {
@@ -333,7 +334,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                 UIUtil.updateLastPopShownDate(System.currentTimeMillis(), getCurrentActivity());
                 break;
             case Constants.SHOW_APP_EXPIRE_POPUP:
-                AppNotSupportedDialog appNotSupportedDialog = AppNotSupportedDialog.newInstance();
+                AppNotSupportedDialog appNotSupportedDialog = AppNotSupportedDialog.newInstance(upgradeMsg, latestAppVersion);
                 appNotSupportedDialog.show(getFragmentManager(), Constants.APP_EXPIRED_DIALOG_FLAG);
                 break;
             default:

@@ -49,15 +49,16 @@ public class UpgradeAppDialog extends DialogFragment {
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(R.string.update);
+        builder.setTitle(R.string.updateDialogTitle);
         builder.setMessage(!TextUtils.isEmpty(upgradeMsg)?upgradeMsg: getActivity().getString(R.string.appUpdatedMsg))
-                .setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.UPDATE, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         UIUtil.openPlayStoreLink(getActivity());
+                        getActivity().finish();
                     }
                 })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.CANCEL, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();

@@ -78,6 +78,7 @@
     <string name="new_pin">New Pin:</string>
     <string name="current_pin">Your current Pin</string>
     <string name="update">Update</string>
+    <string name="updateDialogTitle">Update BigBasket App</string>
     <string name="UPDATE">UPDATE</string>
     <string name="CANCEL">CANCEL</string>
     <string name="cancel">Cancel</string>
@@ -224,8 +225,10 @@
 
     <style name="placeOrder">Place Order</style>
 
-    <string name="appOutDatedMsg">This version of BigBasket is now outdated.\nPlease update this app, in order to continue</string>
-    <string name="appUpdatedMsg">New version of BigBasket App is available. \nPlease update this app.</string>
+    <string name="whyUpdate">Why Update? - </string>
+    <string name="appOutDatedMsg1">Please update BigBasket Mobile app to the latest version</string>
+    <string name="appOutDatedMsg2">To update, please touch on UPDATE button.</string>
+    <string name="appUpdatedMsg">A new version of App is available on Play Store, Please update to take advantage of latest features.</string>
     <string name="confirmMobileNumber">Confirm your mobile number</string>
     <string name="txtConfirm">CONFIRM</string>
     <string name="txtResendCodeStr">RESEND</string>

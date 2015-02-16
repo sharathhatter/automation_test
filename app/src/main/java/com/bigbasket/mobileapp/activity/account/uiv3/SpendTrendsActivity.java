@@ -33,6 +33,8 @@ import com.bigbasket.mobileapp.model.account.spendTrends.SpendTrendsDateRange;
 import com.bigbasket.mobileapp.model.account.spendTrends.SpendTrendsRangeData;
 import com.bigbasket.mobileapp.model.account.spendTrends.SpendTrendsSpentSavedRangeInfo;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
+import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.view.uiv3.BBArrayAdapter;
 import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
@@ -297,5 +299,10 @@ public class SpendTrendsActivity extends BaseActivity implements OnObservableScr
         if (!actionBar.isShowing()) {
             actionBar.show();
         }
+    }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.VIEW_SPEND_TRENDS_SCREEN;
     }
 }

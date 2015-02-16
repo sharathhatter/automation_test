@@ -212,7 +212,7 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
                                     break;
                                 case Constants.ERROR:
                                     handler.sendEmptyMessage(addAllToBasketSmartBasketCallBack.getErrorTypeAsInt(),
-                                            addAllToBasketSmartBasketCallBack.message);
+                                            addAllToBasketSmartBasketCallBack.message, true);
                                     break;
                             }
                         }
@@ -240,7 +240,7 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
                                     break;
                                 case Constants.ERROR:
                                     handler.sendEmptyMessage(addAllToBasketShoppingListCallBack.getErrorTypeAsInt(),
-                                            addAllToBasketShoppingListCallBack.message);
+                                            addAllToBasketShoppingListCallBack.message, true);
                                     break;
                             }
                         }

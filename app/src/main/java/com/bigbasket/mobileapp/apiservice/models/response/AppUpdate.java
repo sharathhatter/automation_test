@@ -12,4 +12,7 @@ public class AppUpdate {
 
     @SerializedName(Constants.UPGRADE_MSG)
     public String upgradeMsg;
+
+    @SerializedName(Constants.LATEST_APP_VERSION)
+    public String latestAppVersion;
 }
