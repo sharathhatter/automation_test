@@ -20,6 +20,7 @@ import com.bigbasket.mobileapp.model.order.OrderInvoiceDetails;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 
 public class OrderInvoiceSummaryFragment extends AbstractOrderSummaryFragment {
@@ -176,5 +177,10 @@ public class OrderInvoiceSummaryFragment extends AbstractOrderSummaryFragment {
         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_PRODUCT_LIST_FRAGMENT);
         intent.putExtra(Constants.ORDER_ID, orderNumber);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+    }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.ORDER_DETAILS_SUMMARY_SCREEN;
     }
 }

@@ -24,6 +24,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.google.gson.JsonObject;
 
@@ -220,5 +221,10 @@ public class SignupActivity extends BaseSignInSignupActivity {
             mSignUpProgressBar.setVisibility(show ? View.VISIBLE : View.GONE);
             mSignUpForm.setVisibility(show ? View.GONE : View.VISIBLE);
         }
+    }
+
+    @Override
+    public String getScreenTag(){
+        return TrackEventkeys.REGISTER_MEMBER_SCREEN;
     }
 }

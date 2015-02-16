@@ -230,4 +230,12 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
+
+    @Override
+    public String getScreenTag() {
+        if(mFromAccountPage)
+            return TrackEventkeys.ACCOUNT_VIEW_DELIVERY_ADDRESS_SCREEN;
+        else
+            return TrackEventkeys.CHECKOUT_DELIVERY_ADDRESS_SCREEN;
+    }
 }

@@ -369,4 +369,9 @@ public class PaymentSelectionFragment extends BaseFragment implements PostVouche
             super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
         }
     }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.PAYMENT_SELECTION_SCREEN;
+    }
 }

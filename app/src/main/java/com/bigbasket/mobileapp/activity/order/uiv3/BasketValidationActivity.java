@@ -232,4 +232,9 @@ public class BasketValidationActivity extends BackButtonActivity {
         }
         super.onSaveInstanceState(outState);
     }
+
+    @Override
+    public String getScreenTag(){
+        return TrackEventkeys.MARKET_PLACE_QTY_CHECK_SCREEN;
+    }
 }

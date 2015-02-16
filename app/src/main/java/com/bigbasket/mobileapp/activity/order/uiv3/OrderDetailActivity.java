@@ -9,6 +9,7 @@ import com.bigbasket.mobileapp.fragment.order.OrderInvoiceSummaryFragment;
 import com.bigbasket.mobileapp.fragment.order.OrderModificationFragment;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
 
 import java.util.ArrayList;
@@ -37,5 +38,10 @@ public class OrderDetailActivity extends TabActivity {
             bbTabs.add(new BBTab<>(getString(R.string.orderModification), OrderModificationFragment.class, bundle));
         }
         return bbTabs;
+    }
+
+    @Override
+    public String getScreenTag(){
+        return TrackEventkeys.ORDER_DETAILS_SUMMARY_SCREEN;
     }
 }

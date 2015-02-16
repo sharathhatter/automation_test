@@ -91,6 +91,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
 
 import java.util.ArrayList;
@@ -665,13 +666,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
         editor.putString(Constants.GET_CART, String.valueOf(cartInfo.getNoOfItems()));
         editor.commit();
-
-        if (cartInfo.getAnalyticsEngine() != null) { //TODO: Remove
-            AuthParameters.getInstance(getCurrentActivity()).setMoEngaleLocaliticsEnabled(cartInfo.getAnalyticsEngine().isMoEngageEnabled(),
-                    cartInfo.getAnalyticsEngine().isAnalyticsEnabled(), getCurrentActivity());
-        }
         updateCartCountHeaderTextView();
-        AuthParameters.updateInstance(getCurrentActivity());
     }
 
     private void updateCartCountHeaderTextView() {
@@ -980,6 +975,19 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
 
     protected FrameLayout getContentView() {
         return (FrameLayout) findViewById(R.id.content_frame);
+    }
+
+    public String getScreenTag(){
+        return null;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        FragmentManager sfm = getSupportFragmentManager();
+        if (sfm == null || sfm.getFragments() == null || sfm.getFragments().size() == 0) {
+            LocalyticsWrapper.onResume(getScreenTag());
+        }
     }
 
     protected BBDrawerLayout getDrawerLayout() {

@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.util.analytics;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.localytics.android.Localytics;
 
@@ -40,7 +41,7 @@ public class LocalyticsWrapper {
         }
     }
 
-    public static void onResume() {
+    public static void onResume(String screenName) {
         try {
             Localytics.openSession();
         } catch (Exception e) {
@@ -48,7 +49,8 @@ public class LocalyticsWrapper {
         }
 
         try{
-            //Localytics.tagScreen("");
+            if(!TextUtils.isEmpty(screenName))
+                Localytics.tagScreen(screenName);
         }catch (Exception e){
             e.printStackTrace();
         }

@@ -21,6 +21,7 @@ import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
 
 /**
@@ -97,5 +98,10 @@ public class BBReferralMailActivity extends BackButtonActivity {
         data.putExtra(Constants.MESSAGE, message);
         data.putExtra(Constants.REF_EMAIL_LEN, emailLen);
         setResult(NavigationCodes.REF_EMAIL_LIST, data);
+    }
+
+    @Override
+    public String getScreenTag(){
+        return TrackEventkeys.BB_REFERRAL_MAIL_SCREEN;
     }
 }

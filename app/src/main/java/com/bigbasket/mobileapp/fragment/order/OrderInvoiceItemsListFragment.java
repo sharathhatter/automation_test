@@ -17,6 +17,7 @@ import com.bigbasket.mobileapp.model.cart.CartItemList;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.model.order.OrderItemDisplaySource;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +70,7 @@ public class OrderInvoiceItemsListFragment extends BaseFragment {
         listView.setDividerHeight(0);
         ActiveOrderRowAdapter activeOrderRowAdapter = new ActiveOrderRowAdapter<>(cartItemConsolidatedList, this,
                 faceRupee, faceRobotoRegular, OrderItemDisplaySource.ORDER_DISPLAY, true,
-                null, null, null, null);
+                null, null, orderInvoice.getBaseImgUrl(), null);
         listView.setAdapter(activeOrderRowAdapter);
         hideProgressView();
         contentView.addView(listView);
@@ -89,5 +90,10 @@ public class OrderInvoiceItemsListFragment extends BaseFragment {
     @Override
     public String getFragmentTxnTag() {
         return OrderInvoiceItemsListFragment.class.getName();
+    }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.ORDER_DETAILS_ITEMS_SCREEN;
     }
 }

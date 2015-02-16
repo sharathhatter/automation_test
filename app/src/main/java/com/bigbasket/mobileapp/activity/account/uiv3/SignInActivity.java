@@ -38,6 +38,7 @@ import com.bigbasket.mobileapp.model.account.SocialAccount;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.facebook.Request;
 import com.facebook.Response;
@@ -607,6 +608,11 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
                 handler.handleRetrofitError(error);
             }
         });
+    }
+
+    @Override
+    public String getScreenTag(){
+        return TrackEventkeys.SIGN_IN_SCREEN;
     }
 }
 

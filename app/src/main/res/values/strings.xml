@@ -465,7 +465,6 @@
     <string name="ref_submit">REFER</string>
     <string name="referFriends">Refer Friends</string>
     <string name="bbMail">Send mail</string>
-    <!--<string name="refTC">Terms &#38 conditions</string>-->
 
 
     <!-- spendTrends -->
@@ -523,4 +522,5 @@
     <string name="sameDayDelivery">SAME-DAY DELIVERY</string>
     <string name="qualityYouWillLove">QUALITY YOU\'LL LOVE</string>
     <string name="wideRange">WIDE RANGE OF PRODUCTS</string>
+    <string name="addAllProducts">Are you sure you want to add all products to the basket?</string>
 </resources>

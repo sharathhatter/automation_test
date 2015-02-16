@@ -19,6 +19,7 @@ import com.bigbasket.mobileapp.interfaces.FilterDisplayAware;
 import com.bigbasket.mobileapp.model.product.FilterOptionCategory;
 import com.bigbasket.mobileapp.model.product.FilterOptionItem;
 import com.bigbasket.mobileapp.model.product.FilteredOn;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
 
 import java.util.ArrayList;
@@ -157,5 +158,10 @@ public class ProductListActivity extends BBActivity implements FilterDisplayAwar
         if (getDrawerLayout() != null) {
             getDrawerLayout().closeDrawer(Gravity.RIGHT);
         }
+    }
+
+    @Override
+    public String getScreenTag(){
+        return TrackEventkeys.PRESCRIPTION_LISTING_SCREEN;
     }
 }

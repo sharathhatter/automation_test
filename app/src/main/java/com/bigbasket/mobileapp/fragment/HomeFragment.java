@@ -37,6 +37,7 @@ import com.bigbasket.mobileapp.task.GetCartCountTask;
 import com.bigbasket.mobileapp.task.GetDynamicPageTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.AppNotSupportedDialog;
 import com.bigbasket.mobileapp.view.uiv2.UpgradeAppDialog;
@@ -267,8 +268,8 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
 
     private void setAnalyticalData(AnalyticsEngine analyticsEngine) {
         if (analyticsEngine == null) return;
-        AuthParameters.getInstance(getCurrentActivity()).setMoEngaleLocaliticsEnabled(analyticsEngine.isMoEngageEnabled(),
-                analyticsEngine.isAnalyticsEnabled(), getCurrentActivity());
+        AuthParameters.getInstance(getCurrentActivity()).setAnyLyticsEnabled(analyticsEngine.isMoEngageEnabled(),
+                analyticsEngine.isAnalyticsEnabled(), analyticsEngine.isKonotorEnabled(), getCurrentActivity());
         AuthParameters.updateInstance(getCurrentActivity());
     }
 
@@ -387,5 +388,10 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
     @Override
     public BigBasketMessageHandler getHandler() {
         return handler;
+    }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.HOME_SCREEN;
     }
 }

@@ -203,7 +203,6 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         isActivitySuspended = false;
         initializeKonotor();
         MoEngageWrapper.onResume(moEHelper, getCurrentActivity());
-        LocalyticsWrapper.onResume();
         prescriptionImageUploadHandler();
     }
 
@@ -689,4 +688,6 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     public void showApiErrorDialog(String message, int resultCode) {
         showAlertDialogFinish(null, message, resultCode);
     }
+
+    public abstract String getScreenTag();
 }

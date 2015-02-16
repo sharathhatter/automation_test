@@ -13,7 +13,9 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.interfaces.OnObservableScrollEvent;
 import com.bigbasket.mobileapp.model.account.spendTrends.SpendTrendSummary;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
@@ -197,5 +199,15 @@ public abstract class BaseSpendTrendsFragment extends AbstractFragment {
             }
         }
         return colors;
+    }
+
+    public String getScreenTag(){
+        return TrackEventkeys.VIEW_SPEND_TRENDS_SCREEN;
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        LocalyticsWrapper.onResume(getScreenTag());
     }
 }

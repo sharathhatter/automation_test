@@ -451,4 +451,9 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware 
     public String getFragmentTxnTag() {
         return UpdateProfileFragment.class.getName();
     }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.ACCOUNT_UPDATE_PROFILE_SCREEN;
+    }
 }

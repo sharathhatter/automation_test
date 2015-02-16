@@ -20,6 +20,7 @@ import com.bigbasket.mobileapp.model.order.OrderItemDisplaySource;
 import com.bigbasket.mobileapp.model.order.OrderSummary;
 import com.bigbasket.mobileapp.model.slot.SlotGroup;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.github.ksoichiro.android.observablescrollview.ObservableListView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
@@ -105,7 +106,7 @@ public class OrderItemListFragment extends BaseFragment {
         listView.setDivider(null);
         ActiveOrderRowAdapter activeOrderRowAdapter = new ActiveOrderRowAdapter<>(cartItemConsolidatedList,
                 this, faceRupee, faceRobotoRegular, OrderItemDisplaySource.ORDER_DISPLAY, true,
-                fulfillmentInfoIdAndIconHashMap, annotationHashMap, null, null);
+                fulfillmentInfoIdAndIconHashMap, annotationHashMap, orderSummary.getBaseImgUrl(), null);
         listView.setAdapter(activeOrderRowAdapter);
         listView.setScrollViewCallbacks(new ObservableScrollViewCallbacks() {
             @Override
@@ -150,5 +151,10 @@ public class OrderItemListFragment extends BaseFragment {
     @Override
     public String getFragmentTxnTag() {
         return OrderItemListFragment.class.getName();
+    }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.ORDER_REVIEW_ITEMS_SCREEN ;
     }
 }

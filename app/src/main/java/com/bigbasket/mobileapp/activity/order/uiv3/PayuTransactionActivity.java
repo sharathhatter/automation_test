@@ -17,10 +17,12 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPaymentParamsApiResponseContent;
 import com.bigbasket.mobileapp.handler.PayUWebViewClientHandler;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.order.PayuResponse;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -175,5 +177,10 @@ public class PayuTransactionActivity extends BackButtonActivity {
         } else {
             showAlertDialog(null, getString(R.string.abortPayu), Constants.PAYU_CANCELLED);
         }
+    }
+
+    @Override
+    public String getScreenTag(){
+        return TrackEventkeys.CREDIT_CARD_SCREEN;
     }
 }

@@ -13,7 +13,9 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 
 public class FlatPageWebViewActivity extends BackButtonActivity {
@@ -71,7 +73,6 @@ public class FlatPageWebViewActivity extends BackButtonActivity {
     private class FulFillmentWebViewClient extends WebViewClient {
 
         @Override
-        //show the web page in webview but not in web browser
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             view.loadUrl(url);
             return true;
@@ -86,5 +87,10 @@ public class FlatPageWebViewActivity extends BackButtonActivity {
     @Override
     public void onChangeTitle(String title) {
 
+    }
+
+    @Override
+    public String getScreenTag(){
+        return TrackEventkeys.FLAT_PAGE_SCREEN;
     }
 }

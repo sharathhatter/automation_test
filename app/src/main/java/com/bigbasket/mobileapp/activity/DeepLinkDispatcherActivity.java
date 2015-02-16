@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 public class DeepLinkDispatcherActivity extends BaseActivity {
 
@@ -95,5 +96,10 @@ public class DeepLinkDispatcherActivity extends BaseActivity {
     @Override
     public void onChangeTitle(String title) {
 
+    }
+
+    @Override
+    public String getScreenTag(){
+        return TrackEventkeys.DEEP_LINK_DISPATCHER_SCREEN;
     }
 }

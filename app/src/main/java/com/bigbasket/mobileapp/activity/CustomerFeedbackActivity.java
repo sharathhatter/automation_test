@@ -18,6 +18,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.PostFeedbackApiRespons
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -126,6 +127,10 @@ public class CustomerFeedbackActivity extends BaseActivity {
     @Override
     public BaseActivity getCurrentActivity() {
         return this;
+    }
+
+    public String getScreenTag(){
+        return TrackEventkeys.CUSTOMER_FEEDBACK_SCREEN;
     }
 
 }

@@ -24,6 +24,7 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.CheckoutQCActivity;
+import com.bigbasket.mobileapp.fragment.HomeFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
@@ -42,6 +43,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 
 import java.text.NumberFormat;
 import java.util.Map;
@@ -429,10 +431,10 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         if (getCurrentActivity() == null) return;
         getCurrentActivity().showAlertDialogFinish(null, message, resultCode);
     }
+    public abstract String getScreenTag();
 
-    private void ScreenFlowHandler(){
-        FragmentManager fm = getFragmentManager();
-        String FName = fm.getBackStackEntryAt(fm.getBackStackEntryCount()-1).getName();
+    public void onResume(){
+        super.onResume();
+        LocalyticsWrapper.onResume(getScreenTag());
     }
-
 }

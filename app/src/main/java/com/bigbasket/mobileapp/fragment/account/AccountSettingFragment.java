@@ -21,6 +21,7 @@ import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 public class AccountSettingFragment extends BaseFragment {
 
@@ -196,5 +197,10 @@ public class AccountSettingFragment extends BaseFragment {
     @Override
     public String getFragmentTxnTag() {
         return AccountSettingFragment.class.getName();
+    }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.ACCOUNT_SCREEN;
     }
 }

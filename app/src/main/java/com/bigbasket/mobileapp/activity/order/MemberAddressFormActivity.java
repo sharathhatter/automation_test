@@ -415,4 +415,16 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
             }
         }
     };
+
+    @Override
+    public String getScreenTag(){
+        if(mFromAccountPage)
+            if(address==null)
+                return TrackEventkeys.ACCOUNT_CREATE_DELIVERY_ADDRESS_SCREEN;
+            else
+                return TrackEventkeys.ACCOUNT_EDIT_DELIVERY_ADDRESS_SCREEN;
+        else
+            return TrackEventkeys.CHECKOUT_CREATE_NEW_DELIVERY_ADDRESS_SCREEN;
+
+    }
 }

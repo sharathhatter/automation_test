@@ -31,6 +31,7 @@ import com.bigbasket.mobileapp.task.GetDynamicPageTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.moe.pushlibrary.MoEHelper;
 import com.newrelic.agent.android.NewRelic;
@@ -273,5 +274,10 @@ public class StartActivity extends BaseActivity implements DynamicScreenAware {
     @Override
     public void onDynamicScreenFailure(int error, String msg) {
         handler.sendEmptyMessage(error, msg, true);
+    }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.START_SCREEN;
     }
 }

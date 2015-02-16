@@ -238,4 +238,9 @@ public class UpdatePinFragment extends BaseFragment {
     public String getFragmentTxnTag() {
         return UpdatePinFragment.class.getName();
     }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.ACCOUNT_EDIT_PIN_SCREEN;
+    }
 }

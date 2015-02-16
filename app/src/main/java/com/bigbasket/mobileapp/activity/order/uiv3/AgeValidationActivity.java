@@ -43,6 +43,7 @@ import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.MessageFormatUtil;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.uiv3.TermAndConditionDialog;
 
 import java.util.ArrayList;
@@ -383,4 +384,10 @@ public class AgeValidationActivity extends BackButtonActivity {
             }
         });
     }
+
+    @Override
+    public String getScreenTag(){
+        return TrackEventkeys.AGE_VALIDATION_SCREEN;
+    }
+
 }

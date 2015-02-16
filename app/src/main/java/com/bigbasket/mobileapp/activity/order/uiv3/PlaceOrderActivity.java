@@ -302,4 +302,9 @@ public class PlaceOrderActivity extends BackButtonActivity implements OnObservab
             actionBar.show();
         }
     }
+
+    @Override
+    public String getScreenTag(){
+        return TrackEventkeys.ORDER_REVIEW_SUMMARY_SCREEN;
+    }
 }

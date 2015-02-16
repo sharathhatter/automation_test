@@ -76,28 +76,22 @@ public class AuthParameters {
         return isMoEngageEnabled;
     }
 
-    public void setMoEngaleLocaliticsEnabled(boolean isMoEngaleEnabled,
-                                             boolean isLocalyticsEnabled, Context context) {
+    public void setAnyLyticsEnabled(boolean isMoEngaleEnabled,
+                                             boolean isLocalyticsEnabled, boolean isKonotorEnabled,
+                                             Context context) {
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefer.edit();
         editor.putBoolean(Constants.ENABLE_MOENGAGE, isMoEngaleEnabled);
         editor.putBoolean(Constants.ENABLE_LOCALYTICS, isLocalyticsEnabled);
+        editor.putBoolean(Constants.ENABLE_KONOTOR, isKonotorEnabled);
         editor.commit();
         this.isMoEngageEnabled = isMoEngaleEnabled;
         this.isLocalyticsEnabled = isLocalyticsEnabled;
+        this.isKonotorEnabled = isKonotorEnabled;
     }
 
     public boolean isLocalyticsEnabled() {
         return isLocalyticsEnabled;
-    }
-
-
-    public void setKonotorEnabled(boolean isKonotorEnabled, Context context) {
-        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = prefer.edit();
-        editor.putBoolean(Constants.ENABLE_KONOTOR, isKonotorEnabled);
-        editor.commit();
-        this.isKonotorEnabled = isKonotorEnabled;
     }
 
     private AuthParameters(Context context) {

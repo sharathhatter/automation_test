@@ -22,6 +22,7 @@ import com.bigbasket.mobileapp.task.COReserveQuantityCheckTask;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.melnykov.fab.FloatingActionButton;
 
@@ -109,5 +110,8 @@ public class PrescriptionListActivity extends BackButtonActivity {
         getCurrentActivity().finish();// fix for back button press
     }
 
-
+    @Override
+    public String getScreenTag(){
+        return TrackEventkeys.PRESCRIPTION_LISTING_SCREEN;
+    }
 }

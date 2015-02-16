@@ -410,4 +410,9 @@ public class DoWalletFragment extends BaseFragment {
     public String getFragmentTxnTag() {
         return DoWalletFragment.class.getName();
     }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.ACCOUNT_WALLET_SCREEN;
+    }
 }

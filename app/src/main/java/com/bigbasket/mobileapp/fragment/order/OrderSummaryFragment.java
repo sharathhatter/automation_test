@@ -23,6 +23,7 @@ import com.bigbasket.mobileapp.model.order.OrderDetails;
 import com.bigbasket.mobileapp.model.order.OrderSummary;
 import com.bigbasket.mobileapp.model.slot.SlotGroup;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
@@ -203,5 +204,10 @@ public class OrderSummaryFragment extends AbstractOrderSummaryFragment {
     @Override
     public String getFragmentTxnTag() {
         return OrderSummaryFragment.class.getName();
+    }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.ORDER_REVIEW_SUMMARY_SCREEN;
     }
 }

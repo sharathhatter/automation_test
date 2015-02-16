@@ -60,9 +60,6 @@ public final class TrackEventkeys {
 
     // source name
     public static final String BROWSE_BY_OFFERS = "offer";
-    public static final String NEW_AT_BB = Constants.NEW_AT_BB;
-    public static final String NOW_AT_BB = Constants.NOW_AT_BB;
-    public static final String BUNDLE_PACK = Constants.BUNDLE_PACK;
     public static final String SHOPPING_LIST = "shopping list";
     public static final String SYSTEM_SHOPPING_LIST = "system shopping list";
     public static final String PRODUCT_DETAIL = "product detail";
@@ -72,16 +69,84 @@ public final class TrackEventkeys {
     public static final String CATEGORY_LANDING = "category landing";
     public static final String PRODUCT_SEARCH = "search";
     public static final String SMART_BASKET = "smart basket";
-    public static final String SCRATCH_LIST = "scratch list";
-    public static final String SYSTEM_SCRATCH_LIST = "system scratch list";
     public static final String PROMO_DETAIL = "promo detail";
     public static final String PAST_ORDER = "past order";
     public static final String SHOP_IN_SHOP = "shop in shop";
     public static final String SECTION = "section";
 
 
+
+    public static final String START_SCREEN = "offer";
     public static final String HOME_SCREEN = "offer";
+
+    //REGISTER
+    public static final String REGISTER_MEMBER_SCREEN = "offer";
+    public static final String SIGN_IN_SCREEN = "offer";
+    public static final String SOCIAL_ACCOUNT_CONFIRMATION_SCREEN = "offer";
+
+    //Dialog box
+    public static final String FORGOT_PASSWORD_SCREEN = "offer";
+    public static final String CHANGE_CITY_SCREEN = "offer";
+    public static final String OTP_SCREEN = "offer";
+    public static final String SORT_PRODUCT_SCREEN = "offer";
+
+
+    //ACCOUNT
     public static final String ACCOUNT_SCREEN = "offer";
+    public static final String ACCOUNT_CHANGE_PASSWORD_SCREEN = "offer";
+    public static final String ACCOUNT_VIEW_ACTIVE_ORDER_SCREEN = "offer";
+    public static final String ACCOUNT_VIEW_PAST_ORDER_PAGE = "offer";
+    public static final String ACCOUNT_UPDATE_PROFILE_SCREEN = "offer";
+    public static final String ACCOUNT_WALLET_SCREEN = "offer";
+    public static final String ACCOUNT_WALLET_ACTIVITY_SCREEN = "offer";
+    public static final String ACCOUNT_VIEW_DELIVERY_ADDRESS_SCREEN = "offer";
+    public static final String ACCOUNT_EDIT_DELIVERY_ADDRESS_SCREEN = "offer";
+    public static final String ACCOUNT_CREATE_DELIVERY_ADDRESS_SCREEN = "offer";
+    public static final String ACCOUNT_EDIT_PIN_SCREEN = "offer";
+    public static final String VIEW_SPEND_TRENDS_SCREEN = "offer";
+    public static final String BB_REFERRAL_MAIL_SCREEN = "offer";
+    public static final String CONTACT_REFERRAL_SCREEN = "offer";
+    public static final String REFERRAL_SCREEN = "offer";
+
+    //ORDER AND PRODUCT OTHER PAGE
+    public static final String ORDER_DETAILS_SUMMARY_SCREEN = "offer";
+    public static final String ORDER_DETAILS_ITEMS_SCREEN = "offer";
+    public static final String ORDER_DETAILS_MODIFICATION_SCREEN = "offer";
+    public static final String PRODUCT_DETAIL_SCREEN = "offer";
+    public static final String FLAT_PAGE_SCREEN = "offer";
+    public static final String CUSTOMER_FEEDBACK_SCREEN = "offer";
+    public static final String DEEP_LINK_DISPATCHER_SCREEN = "offer";
+
+    //PROMO
+    public static final String PROMO_CATEGORY_SCREEN = "offer";
+    public static final String PROMO_DETAIL_SCREEN = "offer";
+
+    //SOPPING LIST
+    public static final String SHOPPING_LIST_SCREEN = "offer";
+    public static final String SHOPPING_LIST_CATEGORY_LISTING_SCREEN = "offer";
+
+    public static final String CATEGORY_LANDING_SCREEN = "offer";
+
+    //PRODUCT_LISTING_PAGE
+    public static final String PRODUCT_LISTING_SCREEN = "offer";
+
+    //CHECKOUT
+    public static final String VIEW_BASKET_SCREEN = "offer";
+    public static final String MARKET_PLACE_QTY_CHECK_SCREEN = "offer";
+    public static final String APPLY_EVOUCHER_SCREEN = "offer";
+    public static final String AGE_VALIDATION_SCREEN = "offer";
+    public static final String PRESCRIPTION_LISTING_SCREEN = "offer";
+    public static final String UPLOAD_NEW_PRESCRIPTION_SCREEN = "offer";
+    public static final String QC_SCREEN = "offer";
+    public static final String CHECKOUT_DELIVERY_ADDRESS_SCREEN = "offer";
+    public static final String CHECKOUT_CREATE_NEW_DELIVERY_ADDRESS_SCREEN = "offer";
+    public static final String PAYMENT_SELECTION_SCREEN = "offer";
+    public static final String SLOT_SELECTION_SCREEN = "offer";
+    public static final String ORDER_REVIEW_ITEMS_SCREEN = "offer";
+    public static final String ORDER_REVIEW_SUMMARY_SCREEN = "offer";
+    public static final String CREDIT_CARD_SCREEN = "offer";
+    public static final String THANK_YOU_SCREEN = "offer";
 
 
+    //Activity Name
 }

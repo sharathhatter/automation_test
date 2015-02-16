@@ -254,4 +254,11 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
         intent.putExtra(Constants.ORDER_ID, orderNumber);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
+    @Override
+    public String getScreenTag(){
+        if(mOrderType.equals(getString(R.string.active_label)))
+            return TrackEventkeys.ACCOUNT_VIEW_ACTIVE_ORDER_SCREEN;
+        else
+            return TrackEventkeys.ACCOUNT_VIEW_PAST_ORDER_PAGE;
+    }
 }

@@ -426,4 +426,9 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         sortProductDialog.setTargetFragment(getFragment(), 0);
         sortProductDialog.show(getFragmentManager(), Constants.SORT_ON);
     }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.PRODUCT_LISTING_SCREEN;
+    }
 }

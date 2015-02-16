@@ -436,6 +436,7 @@ public class Constants {
     public static final String SL_ADD_ALL = "sl-cat-items-to-cart/";
     public static final String SL_NAME = "name";
     public static final String IS_PUBLIC = "is_public";
+    public static final String ADD_ALL = "add_all";
 
     //otp
     public static final String OTP_VALIDATION_STATUS = "otp_validation_status";

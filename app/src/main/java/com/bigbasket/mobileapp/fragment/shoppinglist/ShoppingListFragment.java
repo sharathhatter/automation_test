@@ -31,6 +31,7 @@ import com.bigbasket.mobileapp.task.uiv3.ShoppingListNamesTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.uiv3.CreateShoppingListDialog;
 import com.bigbasket.mobileapp.view.uiv3.DeleteShoppingListDialog;
 import com.bigbasket.mobileapp.view.uiv3.EditShoppingDialog;
@@ -438,5 +439,10 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
     @Override
     public String getFragmentTxnTag() {
         return ShoppingListFragment.class.getName();
+    }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.SHOPPING_LIST_SCREEN;
     }
 }

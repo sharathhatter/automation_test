@@ -116,7 +116,8 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
                                         postDeliveryAddressApiResponse.apiResponseContent.evoucherCode);
                                 break;
                             case Constants.ERROR:
-                                handler.sendEmptyMessage(postDeliveryAddressApiResponse.getErrorTypeAsInt());
+                                handler.sendEmptyMessage(postDeliveryAddressApiResponse.getErrorTypeAsInt(),
+                                        postDeliveryAddressApiResponse.message);
                                 break;
                         }
                     }
@@ -471,5 +472,10 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
                 ((PostVoucherAppliedListener) fg).onVoucherRemoved();
             }
         }
+    }
+
+    @Override
+    public String getScreenTag(){
+        return TrackEventkeys.SLOT_SELECTION_SCREEN;
     }
 }
