@@ -82,6 +82,7 @@ public class AccountSettingFragment extends BaseFragment {
                     case 5:
                         intent = new Intent(getActivity(), BackButtonActivity.class);
                         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_VIEW_DELIVERY_ADDRESS);
+                        intent.putExtra(Constants.FROM_ACCOUNT_PAGE, true);
                         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                         break;
                     case 6:

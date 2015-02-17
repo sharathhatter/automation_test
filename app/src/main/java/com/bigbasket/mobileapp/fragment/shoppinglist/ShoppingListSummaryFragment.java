@@ -113,7 +113,8 @@ public class ShoppingListSummaryFragment extends BaseFragment {
                         renderShoppingListSummary();
                         break;
                     default:
-                        handler.sendEmptyMessage(getShoppingListSummaryApiResponse.getErrorTypeAsInt());
+                        handler.sendEmptyMessage(getShoppingListSummaryApiResponse.getErrorTypeAsInt(),
+                                getShoppingListSummaryApiResponse.message);
                         break;
                 }
             }

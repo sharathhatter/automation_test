@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -65,6 +66,17 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
             hRefresh.sendEmptyMessage(1);
         } else {
             showForm();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            setResult(NavigationCodes.ADDRESS_CREATED_MODIFIED);
+            finish();
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
         }
     }
 
@@ -310,7 +322,8 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
                     hRefresh.sendEmptyMessage(Constants.VALIDATE_MOBILE_NUMBER_POPUP_ERROR_MSG);
                     break;
                 default:
-                    handler.sendEmptyMessage(createUpdateAddressApiResponse.status);
+                    handler.sendEmptyMessage(createUpdateAddressApiResponse.status,
+                            createUpdateAddressApiResponse.message);
                     break;
             }
         }
@@ -415,4 +428,10 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
             }
         }
     };
+
+    @Override
+    public void onBackPressed() {
+        setResult(NavigationCodes.ADDRESS_CREATED_MODIFIED);
+        super.onBackPressed();
+    }
 }

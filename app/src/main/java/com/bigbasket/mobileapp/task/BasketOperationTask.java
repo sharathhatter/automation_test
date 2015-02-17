@@ -127,7 +127,7 @@ public class BasketOperationTask<T> {
                     switch (cartOperationApiResponse.errorType) {
                         case Constants.PRODUCT_ID_NOT_FOUND:
                             ((HandlerAware) context).getHandler().
-                                    sendEmptyMessage(ApiErrorCodes.BASKET_EMPTY);
+                                    sendEmptyMessage(ApiErrorCodes.BASKET_EMPTY, null);
                             Log.d(TAG, "Sending message: MessageCode.BASKET_EMPTY");
                             break;
                         default:

@@ -417,7 +417,7 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware 
                         String errorMsg = memberProfileDataCallback.message;
                         validateOtp(errorCode, errorMsg);
                     } else {
-                        handler.sendEmptyMessage(errorCode);
+                        handler.sendEmptyMessage(errorCode, memberProfileDataCallback.message);
                         HashMap<String, String> map = new HashMap<>();
                         map.put(TrackEventkeys.UPDATE_PROFILE_FAILURE_REASON, memberProfileDataCallback.message);
                         trackEvent(TrackingAware.MY_ACCOUNT_UPDATE_PROFILE_FAILED, map);

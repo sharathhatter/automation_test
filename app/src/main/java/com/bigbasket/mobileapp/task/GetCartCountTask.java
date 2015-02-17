@@ -49,7 +49,8 @@ public class GetCartCountTask<T> {
                             break;
                         default:
                             if (!failSilently) {
-                                ((HandlerAware) ctx).getHandler().sendEmptyMessage(cartSummaryApiResponse.getErrorTypeAsInt());
+                                ((HandlerAware) ctx).getHandler().sendEmptyMessage(cartSummaryApiResponse.getErrorTypeAsInt(),
+                                        cartSummaryApiResponse.message);
                             }
                             break;
                     }

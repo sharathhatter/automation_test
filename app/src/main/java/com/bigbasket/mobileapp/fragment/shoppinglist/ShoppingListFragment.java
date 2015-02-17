@@ -134,7 +134,8 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
                         loadShoppingLists();
                         break;
                     default:
-                        handler.sendEmptyMessage(oldBaseApiResponse.getErrorTypeAsInt());
+                        handler.sendEmptyMessage(oldBaseApiResponse.getErrorTypeAsInt(),
+                                oldBaseApiResponse.message);
                         break;
                 }
             }
@@ -365,7 +366,8 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
                         loadShoppingLists();
                         break;
                     default:
-                        handler.sendEmptyMessage(oldBaseApiResponse.getErrorTypeAsInt());
+                        handler.sendEmptyMessage(oldBaseApiResponse.getErrorTypeAsInt(),
+                                oldBaseApiResponse.message);
                         break;
                 }
             }
@@ -403,7 +405,8 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
                         loadShoppingLists();
                         break;
                     default:
-                        handler.sendEmptyMessage(oldBaseApiResponse.getErrorTypeAsInt());
+                        handler.sendEmptyMessage(oldBaseApiResponse.getErrorTypeAsInt(),
+                                oldBaseApiResponse.message);
                         break;
                 }
             }

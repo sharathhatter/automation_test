@@ -46,7 +46,8 @@ public class COMarketPlaceCheckTask<T> {
                         ((COMarketPlaceAware) ctx).onCoMarketPlaceSuccess(marketPlaceApiResponse.apiResponseContent);
                         break;
                     default:
-                        ((HandlerAware) ctx).getHandler().sendEmptyMessage(marketPlaceApiResponse.status);
+                        ((HandlerAware) ctx).getHandler().sendEmptyMessage(marketPlaceApiResponse.status,
+                                marketPlaceApiResponse.message);
                         break;
                 }
             }

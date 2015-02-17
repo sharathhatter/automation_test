@@ -81,7 +81,8 @@ public class ProductListApiResponseCallback<T> implements Callback<ApiResponse<P
                 ((ProductListDataAware) ctx).updateData();
             }
         } else {
-            ((HandlerAware) ctx).getHandler().sendEmptyMessage(ApiErrorCodes.SERVER_ERROR);
+            ((HandlerAware) ctx).getHandler().sendEmptyMessage(productListDataApiResponse.status,
+                    productListDataApiResponse.message);
         }
     }
 
@@ -99,6 +100,6 @@ public class ProductListApiResponseCallback<T> implements Callback<ApiResponse<P
                 return;
             }
         }
-        ((HandlerAware) ctx).getHandler().sendEmptyMessage(ApiErrorCodes.SERVER_ERROR);
+        ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
     }
 }

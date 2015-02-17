@@ -169,7 +169,7 @@ public class CoUpdateReservationTask<T> {
                 }
             });
         } catch (JSONException e) {
-            ((HandlerAware) ctx).getHandler().sendEmptyMessage(ApiErrorCodes.INVALID_FIELD);
+            ((HandlerAware) ctx).getHandler().sendEmptyMessage(ApiErrorCodes.INVALID_FIELD, null);
             Log.d(TAG, "Sending message: ApiErrorCodes.SERVER_ERROR");
         }
     }

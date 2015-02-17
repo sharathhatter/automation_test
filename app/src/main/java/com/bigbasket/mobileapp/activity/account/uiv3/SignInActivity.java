@@ -428,8 +428,6 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
     public void onFacebookSignOut() {
         trackEvent(TrackingAware.MY_ACCOUNT_FACEBOOK_LOGOUT, null);
         doLogout();
-        setResult(NavigationCodes.GO_TO_HOME);
-        finish();
     }
 
     @Override

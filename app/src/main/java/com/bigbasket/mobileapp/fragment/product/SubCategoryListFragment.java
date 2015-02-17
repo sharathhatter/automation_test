@@ -96,7 +96,8 @@ public class SubCategoryListFragment extends BaseSectionFragment {
                     map.put(TrackEventkeys.PRODUCT_TOP_CAT, topCatName);
                     trackEvent(TrackingAware.BROWSE_CATEGORY_LANDING, map);
                 } else {
-                    handler.sendEmptyMessage(subCategoryCallback.status);
+                    handler.sendEmptyMessage(subCategoryCallback.status,
+                            subCategoryCallback.message);
                 }
 
             }

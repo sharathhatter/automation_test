@@ -523,4 +523,5 @@
     <string name="sameDayDelivery">SAME-DAY DELIVERY</string>
     <string name="qualityYouWillLove">QUALITY YOU\'LL LOVE</string>
     <string name="wideRange">WIDE RANGE OF PRODUCTS</string>
+    <string name="noAddress">You haven\'t added any address yet. Click on the \'&#43;\' button to add a address.</string>
 </resources>

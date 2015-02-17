@@ -110,7 +110,8 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
                                 renderShoppingListItems();
                                 break;
                             default:
-                                handler.sendEmptyMessage(getShoppingListDetailsApiResponse.status);
+                                handler.sendEmptyMessage(getShoppingListDetailsApiResponse.status,
+                                        getShoppingListDetailsApiResponse.message);
                                 break;
                         }
                     }

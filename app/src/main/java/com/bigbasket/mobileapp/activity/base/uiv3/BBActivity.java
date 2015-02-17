@@ -233,18 +233,6 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             // Setting the search listener
             SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
             searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-            searchView.setOnSearchClickListener(new View.OnClickListener() {
-                private boolean extended = false;
-
-                @Override
-                public void onClick(View v) {
-                    if (!extended) {
-                        extended = true;
-                        ViewGroup.LayoutParams lp = v.getLayoutParams();
-                        lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
-                    }
-                }
-            });
             searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
@@ -335,7 +323,8 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             case FragmentCodes.START_VIEW_DELIVERY_ADDRESS:
                 MemberAddressListFragment memberAddressListFragment = new MemberAddressListFragment();
                 Bundle addressbundle = new Bundle();
-                addressbundle.putBoolean(Constants.FROM_ACCOUNT_PAGE, true);
+                addressbundle.putBoolean(Constants.FROM_ACCOUNT_PAGE,
+                        getIntent().getBooleanExtra(Constants.FROM_ACCOUNT_PAGE, false));
                 memberAddressListFragment.setArguments(addressbundle);
                 addToMainLayout(memberAddressListFragment);
                 break;

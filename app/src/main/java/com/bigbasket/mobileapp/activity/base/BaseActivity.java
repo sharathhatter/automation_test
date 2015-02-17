@@ -144,9 +144,9 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     public void onCoMarketPlaceSuccess(MarketPlace marketPlace) {
         BigBasketMessageHandler bigBasketMessageHandler = new BigBasketMessageHandler<>(getCurrentActivity(), marketPlace);
         if (marketPlace.isRuleValidationError()) {
-            bigBasketMessageHandler.sendEmptyMessage(NavigationCodes.GO_MARKET_PLACE);
+            bigBasketMessageHandler.sendEmptyMessage(NavigationCodes.GO_MARKET_PLACE, null);
         } else if (marketPlace.isAgeCheckRequired() || marketPlace.isPharamaPrescriptionNeeded()) {
-            bigBasketMessageHandler.sendEmptyMessage(NavigationCodes.GO_AGE_VALIDATION);
+            bigBasketMessageHandler.sendEmptyMessage(NavigationCodes.GO_AGE_VALIDATION, null);
         } else {
             SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
             String pharmaPrescriptionId = prefer.getString(Constants.PHARMA_PRESCRIPTION_ID, null);
@@ -610,6 +610,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
                 }
             }
         }
+        goToHome();
     }
 
     public void onLoginSuccess() {
@@ -622,10 +623,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
             editor.putString(Constants.DEEP_LINK, deepLink);
             editor.commit();
         }
-        Intent data = new Intent();
-        data.putExtra(Constants.LOGOUT, true);
-        setResult(NavigationCodes.GO_TO_HOME, data);
-        finish();
+        goToHome();
     }
 
     public abstract void onChangeTitle(String title);

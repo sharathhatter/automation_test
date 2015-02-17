@@ -317,7 +317,8 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                             }
                             homePageGetter(savedInstanceState);
                         } else {
-                            handler.sendEmptyMessage(callbackAppDataResponse.status);
+                            handler.sendEmptyMessage(callbackAppDataResponse.status,
+                                    callbackAppDataResponse.message);
                         }
                     }
 

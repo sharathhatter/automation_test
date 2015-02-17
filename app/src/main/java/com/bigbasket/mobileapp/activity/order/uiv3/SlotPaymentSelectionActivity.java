@@ -116,7 +116,8 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
                                         postDeliveryAddressApiResponse.apiResponseContent.evoucherCode);
                                 break;
                             case Constants.ERROR:
-                                handler.sendEmptyMessage(postDeliveryAddressApiResponse.getErrorTypeAsInt());
+                                handler.sendEmptyMessage(postDeliveryAddressApiResponse.getErrorTypeAsInt(),
+                                        postDeliveryAddressApiResponse.message);
                                 break;
                         }
                     }
@@ -250,7 +251,8 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
                                 launchPlaceOrderActivity(orderSummary);
                                 break;
                             default:
-                                handler.sendEmptyMessage(orderSummaryApiResponse.status);
+                                handler.sendEmptyMessage(orderSummaryApiResponse.status,
+                                        orderSummaryApiResponse.message);
                                 break;
                         }
                     }

@@ -367,7 +367,8 @@ public class AgeValidationActivity extends BackButtonActivity {
                         new COMarketPlaceCheckTask<>(getCurrentActivity()).startTask();
                     }
                 } else {
-                    handler.sendEmptyMessage(cartBulkRemoveApiResponseCallback.status);
+                    handler.sendEmptyMessage(cartBulkRemoveApiResponseCallback.status,
+                            cartBulkRemoveApiResponseCallback.message);
                 }
             }
 

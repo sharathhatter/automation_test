@@ -134,7 +134,8 @@ public class ShowCartFragment extends BaseFragment {
                         showBasketEmptyMessage();
                     }
                 } else {
-                    handler.sendEmptyMessage(cartGetApiResponseContentApiResponse.status);
+                    handler.sendEmptyMessage(cartGetApiResponseContentApiResponse.status,
+                            cartGetApiResponseContentApiResponse.message);
                 }
             }
 
@@ -353,7 +354,8 @@ public class ShowCartFragment extends BaseFragment {
                 } else if (cartEmptyApiResponseCallback.status == ApiErrorCodes.CART_NOT_EXISTS) {
                     showErrorMsg("Cart is already empty");
                 } else {
-                    handler.sendEmptyMessage(cartEmptyApiResponseCallback.status);
+                    handler.sendEmptyMessage(cartEmptyApiResponseCallback.status,
+                            cartEmptyApiResponseCallback.message);
                 }
                 editor.commit();
 
@@ -404,7 +406,8 @@ public class ShowCartFragment extends BaseFragment {
                         editor.putString(Constants.GET_CART, "0");
                     }
                 } else {
-                    handler.sendEmptyMessage(cartGetApiResponseContentApiResponse.status);
+                    handler.sendEmptyMessage(cartGetApiResponseContentApiResponse.status,
+                            cartGetApiResponseContentApiResponse.message);
                 }
                 editor.commit();
             }

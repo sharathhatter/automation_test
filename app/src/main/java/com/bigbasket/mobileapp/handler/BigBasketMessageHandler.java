@@ -158,10 +158,6 @@ public class BigBasketMessageHandler<T> {
         sendEmptyMessage(what, message, false);
     }
 
-    public void sendEmptyMessage(int what) {
-        sendEmptyMessage(what, null);
-    }
-
     private String getString(int resId) {
         return ((ActivityAware) ctx).getCurrentActivity().getString(resId);
     }
