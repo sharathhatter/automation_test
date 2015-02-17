@@ -7,6 +7,7 @@ public class Constants {
     public static final String MO_SENDER_ID = "551288451469";
     public static final String CITIES = "cities";
     public static final String DEEP_LINK = "deepLink";
+    public static final String HAS_PARENT = "hasParent";
 
     public static final String FB_APP_ID = "1406239262971187";
 

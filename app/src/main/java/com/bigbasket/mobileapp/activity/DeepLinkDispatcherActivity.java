@@ -31,7 +31,6 @@ import java.util.Set;
 
 public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceDataAware {
 
-    private boolean mIsNavigatingToHome;
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         launchCorrespondingActivity();
@@ -249,8 +248,7 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
     }
 
     private void navigateToHome(boolean setHomeNavCode) {
-        if (mIsNavigatingToHome) return;
-        if (getParent() == null) {
+        if (!getIntent().getBooleanExtra(Constants.HAS_PARENT, false)) {
             Intent intent = new Intent(this, StartActivity.class);
             startActivity(intent);
         } else if (setHomeNavCode) {
@@ -261,8 +259,11 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        mIsNavigatingToHome = resultCode == NavigationCodes.GO_TO_HOME;
-        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == NavigationCodes.GO_TO_HOME) {
+            navigateToHome(true);
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.activity.base;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -698,5 +699,15 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     @Override
     public void showApiErrorDialog(String message, int resultCode) {
         showAlertDialogFinish(null, message, resultCode);
+    }
+
+    public void launchAppDeepLink(String uri) {
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+            intent.putExtra(Constants.HAS_PARENT, true);
+            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+        } catch (ActivityNotFoundException e) {
+            Log.e("HomeFragment", "No target found for the pending deep-link");
+        }
     }
 }

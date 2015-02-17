@@ -1,10 +1,8 @@
 package com.bigbasket.mobileapp.fragment;
 
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -61,7 +59,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         getAppData(savedInstanceState);
     }
 
-    private void homePageGetter(Bundle savedInstanceState){
+    private void homePageGetter(Bundle savedInstanceState) {
         boolean sectionStateRestored = tryRestoreSectionState(savedInstanceState);
         if (sectionStateRestored) {
             renderHomePage();
@@ -225,17 +223,14 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
     }
 
     private void processPendingDeepLink() {
+        if (getCurrentActivity() == null) return;
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String pendingDeepLink = preferences.getString(Constants.DEEP_LINK, null);
         if (!TextUtils.isEmpty(pendingDeepLink)) {
             SharedPreferences.Editor editor = preferences.edit();
             editor.remove(Constants.DEEP_LINK);
             editor.commit();
-            try {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(pendingDeepLink)));
-            } catch (ActivityNotFoundException e) {
-                Log.e("HomeFragment", "No target found for the pending deep-link");
-            }
+            getCurrentActivity().launchAppDeepLink(pendingDeepLink);
         }
     }
 
@@ -370,7 +365,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }else {
+        } else {
             homePageGetter(savedInstanceState);
         }
     }
