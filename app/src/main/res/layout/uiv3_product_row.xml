@@ -11,7 +11,8 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:paddingRight="@dimen/padding_small"
-        android:paddingTop="@dimen/padding_mini">
+        android:paddingTop="@dimen/padding_mini"
+        android:paddingBottom="@dimen/padding_mini">
 
         <ImageView
             android:id="@+id/imgProduct"
