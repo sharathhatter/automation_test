@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.fragment.account;
 import android.app.Dialog;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
@@ -16,10 +17,8 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.bigbasket.mobileapp.interfaces.OtpDialogAware;
 
-/**
- * Created by jugal on 24/9/14.
- */
 public class OTPValidationDialogFragment extends DialogFragment {
 
     private TextView txtErrorValidateNumber, txtResendNumber;
@@ -43,9 +42,11 @@ public class OTPValidationDialogFragment extends DialogFragment {
     }
 
     @Override
+    @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
         dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
         return dialog;
     }
 
@@ -124,6 +125,11 @@ public class OTPValidationDialogFragment extends DialogFragment {
     }
 
     public void resendOrConfirmOTP(String otp) {
+        if (getTargetFragment() != null) {
+            ((OtpDialogAware) getTargetFragment()).validateOtp(otp);
+        } else if (getActivity() != null) {
+            ((OtpDialogAware) getActivity()).validateOtp(otp);
+        }
     }
 
 }

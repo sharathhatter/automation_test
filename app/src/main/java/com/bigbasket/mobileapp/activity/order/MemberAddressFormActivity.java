@@ -27,6 +27,7 @@ import com.bigbasket.mobileapp.apiservice.callbacks.CallbackGetAreaInfo;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.CreateUpdateAddressApiResponseContent;
 import com.bigbasket.mobileapp.fragment.account.OTPValidationDialogFragment;
+import com.bigbasket.mobileapp.interfaces.OtpDialogAware;
 import com.bigbasket.mobileapp.interfaces.PinCodeAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.Address;
@@ -42,7 +43,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class MemberAddressFormActivity extends BackButtonActivity implements PinCodeAware {
+public class MemberAddressFormActivity extends BackButtonActivity implements PinCodeAware, OtpDialogAware {
 
     private Address address;
     private View base;
@@ -133,7 +134,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
         chkIsAddrDefault.setVisibility(address.isDefault() ? View.GONE : View.VISIBLE);
     }
 
-    private void uploadAddress(String otp_code) {
+    private void uploadAddress(String otpCode) {
         final EditText editTextAddressNick = (EditText) base.findViewById(R.id.editTextAddressNick);
         final EditText editTextFirstName = (EditText) base.findViewById(R.id.editTextFirstName);
         final EditText editTextLastName = (EditText) base.findViewById(R.id.editTextLastName);
@@ -247,8 +248,8 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
             }
         };
 
-        if (otp_code != null) {
-            payload.put(Constants.OTP_CODE, otp_code);
+        if (otpCode != null) {
+            payload.put(Constants.OTP_CODE, otpCode);
         }
 
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
@@ -271,6 +272,11 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
     @Override
     public void onPinCodeFetchFailure() {
         showForm();
+    }
+
+    @Override
+    public void validateOtp(String otpCode) {
+        uploadAddress(otpCode);
     }
 
     class CreateUpdateAddressApiCallback implements Callback<ApiResponse<CreateUpdateAddressApiResponseContent>> {
@@ -363,7 +369,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
 
     public String getActivityTitle() {
         if (address == null) {
-            address = getIntent().getParcelableExtra(Constants.MEMBER_ADDRESS_ID);
+            address = getIntent().getParcelableExtra(Constants.UPDATE_ADDRESS);
         }
         return address == null ? "Create new address" : "Update address";
     }
@@ -376,18 +382,15 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
     private void validateMobileNumber(boolean txtErrorValidateNumberVisibility, String errorMsg) {
         if (otpValidationDialogFragment == null) {
             otpValidationDialogFragment = OTPValidationDialogFragment.newInstance();
-            otpValidationDialogFragment.show(getSupportFragmentManager(), Constants.OTP_DIALOG_FLAG);
         }
         if (otpValidationDialogFragment.isVisible()) {
             if (txtErrorValidateNumberVisibility) {
                 otpValidationDialogFragment.showErrorText(errorMsg);
             }
-            return;
         } else {
             otpValidationDialogFragment.show(getCurrentActivity().getSupportFragmentManager(),
                     Constants.OTP_DIALOG_FLAG);
         }
-
     }
 
     @Override

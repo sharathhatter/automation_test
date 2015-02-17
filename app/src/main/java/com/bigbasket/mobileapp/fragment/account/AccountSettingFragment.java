@@ -114,13 +114,13 @@ public class AccountSettingFragment extends BaseFragment {
                 getString(R.string.spendTrends)};
         int[] imageArray = {
                 R.drawable.ic_local_shipping_grey600_36dp,
-                R.drawable.history_dark,
-                R.drawable.user_modify_dark,
+                R.drawable.order_history_grey_list,
+                R.drawable.edit_profile_grey_list,
                 R.drawable.ic_lock_grey600_36dp,
-                R.drawable.wallet_grey_48dp,
-                R.drawable.ic_place_grey600_36dp,
-                R.drawable.ic_edit_grey600_36dp,
-                R.drawable.ic_trending_up_grey600_36dp};
+                R.drawable.wallet_grey_list,
+                R.drawable.delivery_grey_list,
+                R.drawable.dpin,
+                R.drawable.trends};
 
         @Override
         public int getCount() {
@@ -190,7 +190,7 @@ public class AccountSettingFragment extends BaseFragment {
 
     @Override
     public String getTitle() {
-        return "Account Settings";
+        return getString(R.string.myAccount);
     }
 
     @NonNull

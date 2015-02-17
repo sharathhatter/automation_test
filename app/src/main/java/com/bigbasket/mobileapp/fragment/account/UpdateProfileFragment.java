@@ -1,6 +1,5 @@
 package com.bigbasket.mobileapp.fragment.account;
 
-import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -17,7 +16,6 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
@@ -26,6 +24,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.callbacks.CallbackGetAreaInfo;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateProfileOldApiResponse;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.interfaces.OtpDialogAware;
 import com.bigbasket.mobileapp.interfaces.PinCodeAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.UpdateProfileModel;
@@ -35,7 +34,6 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.bigbasket.mobileapp.view.uiv3.SortProductDialog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -47,15 +45,13 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class UpdateProfileFragment extends BaseFragment implements PinCodeAware {
+public class UpdateProfileFragment extends BaseFragment implements PinCodeAware, OtpDialogAware {
 
     private EditText editTextEmail, editTextFirstName, editTextLastName, editTextDob,
             editTextHouseAndDetails, editTextStreetDetails, editTextCity, editTextMobileNumber,
             editTextTelNumber, editTextResAndComplex, editTextLandmark, editTextPinCode;
     private AutoCompleteTextView editTextArea;
     private CheckBox chkReceivePromos;
-    private ProgressBar progressBarUpdateProfile;
-    private Button btnUpdate;
     private OTPValidationDialogFragment otpValidationDialogFragment;
 
     @Override
@@ -116,13 +112,12 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware 
         editTextPinCode.setTypeface(faceRobotoRegular);
 
         chkReceivePromos = (CheckBox) view.findViewById(R.id.chkReceivePromos);
-        progressBarUpdateProfile = (ProgressBar) view.findViewById(R.id.progressBarUpdateProfile);
 
-        btnUpdate = (Button) view.findViewById(R.id.btnUpdateProfile);
+        Button btnUpdate = (Button) view.findViewById(R.id.btnUpdateProfile);
         btnUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                btnUpdateAfterSuccessNumberValidation(null);
+                validateOtp(null);
             }
         });
 
@@ -219,21 +214,19 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware 
     }
 
     private void validateMobileNumber(boolean txtErrorValidateNumberVisibility, String errorMsg) {
-        if (otpValidationDialogFragment == null){
+        if (otpValidationDialogFragment == null) {
             otpValidationDialogFragment = OTPValidationDialogFragment.newInstance();
-            otpValidationDialogFragment.show(getFragmentManager(), Constants.OTP_DIALOG_FLAG);
         }
         if (otpValidationDialogFragment.isVisible()) {
             if (txtErrorValidateNumberVisibility) {
                 otpValidationDialogFragment.showErrorText(errorMsg);
             }
-            return;
         } else {
+            otpValidationDialogFragment.setTargetFragment(this, 0);
             otpValidationDialogFragment.show(getFragmentManager(), Constants.OTP_DIALOG_FLAG);
         }
 
     }
-
 
     private void updatePreferenceData() {
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -274,19 +267,12 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware 
         ((BaseActivity) getActivity()).setAdapterArea(editTextArea, editTextPinCode);
     }
 
-    private void setUpdateButtonInProgress() {
-        btnUpdate.setText(getString(R.string.updating));
-        progressBarUpdateProfile.setVisibility(View.VISIBLE);
-        progressBarUpdateProfile.setOnClickListener(null);
+    @Override
+    public void validateOtp(String otpCode) {
+        btnUpdateAfterSuccessNumberValidation(otpCode);
     }
 
-    private void resetUpdateButtonInProgress() {
-        btnUpdate.setText(getString(R.string.UPDATE));
-        progressBarUpdateProfile.setVisibility(View.GONE);
-        progressBarUpdateProfile.setOnClickListener(null);
-    }
-
-    public void btnUpdateAfterSuccessNumberValidation(String otp_code) {
+    public void btnUpdateAfterSuccessNumberValidation(String otpCode) {
         editTextEmail.setError(null);
         editTextFirstName.setError(null);
         editTextLastName.setError(null);
@@ -377,13 +363,12 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware 
                 user_details.put(Constants.CITY, editTextCity.getText().toString());
                 user_details.put(Constants.PIN_CODE, editTextPinCode.getText().toString());
                 user_details.put(Constants.NEWSPAPER_SUBSCRIPTION, chkReceivePromos.isChecked());
-                if (otp_code != null) {
-                    user_details.put(Constants.OTP_CODE, otp_code);
+                if (otpCode != null) {
+                    user_details.put(Constants.OTP_CODE, otpCode);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            setUpdateButtonInProgress();
             postUserDetails(user_details.toString());
         } else {
             handler.sendOfflineError();
@@ -405,7 +390,6 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware 
                         otpValidationDialogFragment.dismiss();
                         BaseActivity.hideKeyboard(((BaseActivity) getActivity()), otpValidationDialogFragment.getView());
                     }
-                    resetUpdateButtonInProgress();
                     updatePreferenceData();
                     trackEvent(TrackingAware.MY_ACCOUNT_UPDATE_PROFILE_SUCCESS, null);
 

@@ -10,8 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        android:paddingTop="@dimen/padding_mini"
-        android:paddingRight="@dimen/padding_small">
+        android:paddingRight="@dimen/padding_small"
+        android:paddingTop="@dimen/padding_mini">
 
         <ImageView
             android:id="@+id/imgProduct"
@@ -171,14 +171,16 @@
             android:layout_alignParentRight="true"
             android:layout_below="@id/txtPackageDesc"
             android:layout_marginBottom="@dimen/margin_small"
+            android:minWidth="150dp"
             android:orientation="vertical">
 
             <include layout="@layout/uiv3_basket_operation_control" />
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
+                android:gravity="right"
                 android:orientation="horizontal">
 
                 <EditText
@@ -253,8 +255,8 @@
             android:id="@+id/promoLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
             android:layout_marginLeft="@dimen/margin_normal"
+            android:layout_marginTop="2dp"
             android:background="@color/promo_label_backgroung_color"
             android:gravity="center"
             android:paddingBottom="@dimen/padding_mini"
