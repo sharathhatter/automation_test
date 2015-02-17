@@ -28,12 +28,12 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:drawableLeft="@drawable/ic_filter_list_white_24dp"
+            android:drawableLeft="@drawable/filter"
             android:drawablePadding="@dimen/padding_small"
             android:padding="@dimen/padding_small"
             android:text="@string/filter"
             android:textColor="@color/uiv3_primary_text_color"
-            android:textSize="@dimen/heading_2_text_size" />
+            android:textSize="@dimen/heading_1_text_size" />
 
         <View
             android:layout_width="1dp"
@@ -45,12 +45,12 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:drawableLeft="@drawable/ic_sort_white_24dp"
+            android:drawableLeft="@drawable/sort"
             android:drawablePadding="@dimen/padding_small"
             android:padding="@dimen/padding_small"
             android:text="@string/sortBy"
             android:textColor="@color/uiv3_primary_text_color"
-            android:textSize="@dimen/large_text_size" />
+            android:textSize="@dimen/heading_1_text_size" />
 
     </LinearLayout>
 </LinearLayout>

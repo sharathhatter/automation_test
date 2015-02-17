@@ -181,8 +181,9 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                         ((FilterDisplayAware) getActivity()).showFilters();
                     }
                 });
-//                int filterDrawableId = productListData.isFilterSelected() ? R.drawable.filter_applied : R.drawable.no_filter;
-//                txtFilterBy.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(filterDrawableId), null, null, null);
+                int filterDrawableId = productListData.getFilteredOn() != null && productListData.getFilteredOn().size() > 0 ?
+                        R.drawable.filter_applied : R.drawable.filter;
+                txtFilterBy.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(filterDrawableId), null, null, null);
             } else {
                 txtFilterBy.setVisibility(View.GONE);
             }
