@@ -110,6 +110,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
     private TextView mTextCartCount;
     private RecyclerView mNavRecyclerView;
     private LinearLayout mLayoutUserControls;
+    private Menu mMenu;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -218,6 +219,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
     public boolean onCreateOptionsMenu(Menu menu) {
         setOptionsMenu(menu);
         initializeCartCountTextView(menu);
+        mMenu = menu;
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -973,5 +975,15 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
 
     protected BBDrawerLayout getDrawerLayout() {
         return mDrawerLayout;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mMenu != null && mMenu.findItem(R.id.action_logout) != null &&
+                mMenu.findItem(R.id.action_logout).isVisible() &&
+                AuthParameters.getInstance(this).isAuthTokenEmpty()) {
+            goToHome();
+        }
     }
 }
