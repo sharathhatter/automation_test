@@ -32,7 +32,6 @@ import com.bigbasket.mobileapp.apiservice.models.response.CartGetApiResponseCont
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
-import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.AnnotationInfo;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
@@ -156,8 +155,12 @@ public class ShowCartFragment extends BaseFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_empty_basket:
-                showAlertDialog(null, "Remove all the products from basket?", DialogButton.YES,
-                        DialogButton.NO, Constants.EMPTY_BASKET, null, "Empty Basket");
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                if (preferences.getString(Constants.GET_CART, "0") != null
+                        && !preferences.getString(Constants.GET_CART, "0").equals("0")) {
+                    showAlertDialog(null, "Remove all the products from basket?", DialogButton.YES,
+                            DialogButton.NO, Constants.EMPTY_BASKET, null, "Empty Basket");
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -165,7 +168,7 @@ public class ShowCartFragment extends BaseFragment {
     }
 
     private void logViewBasketEvent(CartSummary cartSummary, Map<String, String> eventAttribs) {// todo event log for view basket
-        if(cartSummary==null) return;
+        if (cartSummary == null) return;
         eventAttribs.put(TrackEventkeys.TOTAL_ITEMS_IN_BASKET, String.valueOf(cartSummary.getNoOfItems()));
         eventAttribs.put(TrackEventkeys.TOTAL_BASKET_VALUE, String.valueOf(cartSummary.getTotal()));
         eventAttribs.put(TrackEventkeys.TOTAL_BASKET_SAVING, String.valueOf(cartSummary.getSavings()));
@@ -327,9 +330,8 @@ public class ShowCartFragment extends BaseFragment {
 
     public final void setBasketNumItemsDisplay() {
         if (getActivity() == null || getCartInfo() == null) return;
-        if (getActivity() instanceof CartInfoAware) {
-            ((CartInfoAware) getActivity()).updateUIForCartInfo();
-        }
+        updateUIForCartInfo();
+        markBasketDirty();
     }
 
     private void emptyCart() {

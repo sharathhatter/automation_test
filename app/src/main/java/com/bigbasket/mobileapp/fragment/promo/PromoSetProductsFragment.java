@@ -169,6 +169,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
                     // Operation Successful, now do a get-promo-summary API call
                     setCartInfo(addBundleApiResponse.cartSummary);
                     updateUIForCartInfo();
+                    markBasketDirty();
                     getPromoSummary();
                 } else {
                     showErrorMsg("Server Error");

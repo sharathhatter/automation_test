@@ -429,4 +429,17 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         sortProductDialog.setTargetFragment(getFragment(), 0);
         sortProductDialog.show(getFragmentManager(), Constants.SORT_ON);
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getCurrentActivity() != null && getCurrentActivity().isBasketDirty()) {
+            syncBasket();
+        }
+    }
+
+    @Override
+    public void syncBasket() {
+        restoreProductList(null);
+    }
 }

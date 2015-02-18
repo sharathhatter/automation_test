@@ -17,7 +17,6 @@ import retrofit.client.Response;
 
 public class GetCartCountTask<T> {
 
-    private static final String TAG = GetCartCountTask.class.getName();
     private T ctx;
     boolean failSilently;
 

@@ -708,4 +708,9 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
             Log.e("HomeFragment", "No target found for the pending deep-link");
         }
     }
+
+    public boolean isBasketDirty() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
+        return preferences.getBoolean(Constants.IS_BASKET_COUNT_DIRTY, false);
+    }
 }

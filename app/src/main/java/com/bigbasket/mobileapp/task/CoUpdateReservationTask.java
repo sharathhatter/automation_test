@@ -115,6 +115,7 @@ public class CoUpdateReservationTask<T> {
                                         coUpdateReservationApiResponse.message, Toast.LENGTH_SHORT).show();
                                 ((CartInfoAware) ctx).setCartInfo(coUpdateReservationApiResponse.apiResponseContent.cartSummary);
                                 ((CartInfoAware) ctx).updateUIForCartInfo();
+                                ((CartInfoAware) ctx).markBasketDirty();
                                 CartSummary cartInfo = ((CartInfoAware) ctx).getCartInfo();
                                 if (cartInfo.getNoOfItems() > 0) {
                                     ((OnUpdateReserveQtyAware) ctx).onUpdateReserveSuccessResponse();
@@ -127,6 +128,7 @@ public class CoUpdateReservationTask<T> {
                             } else {
                                 ((CartInfoAware) ctx).setCartInfo(coUpdateReservationApiResponse.apiResponseContent.cartSummary);
                                 ((CartInfoAware) ctx).updateUIForCartInfo();
+                                ((CartInfoAware) ctx).markBasketDirty();
                                 CartSummary cartInfo = ((CartInfoAware) ctx).getCartInfo();
                                 if (cartInfo.getNoOfItems() > 0) {
                                     Intent intent = new Intent(((ActivityAware) ctx).getCurrentActivity(), BackButtonActivity.class);

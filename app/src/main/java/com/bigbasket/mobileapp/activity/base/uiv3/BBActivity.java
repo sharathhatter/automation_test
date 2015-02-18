@@ -87,6 +87,7 @@ import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.model.section.SectionItem;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
+import com.bigbasket.mobileapp.task.GetCartCountTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.FragmentCodes;
@@ -147,15 +148,6 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             }
         });
         setNavDrawer(toolbar, savedInstanceState);
-
-        if (cartInfo != null && cartInfo.getNoOfItems() == 0) {
-            // Update from preference
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
-            String cartCountStr = preferences.getString(Constants.GET_CART, null);
-            if (!TextUtils.isEmpty(cartCountStr) && TextUtils.isDigitsOnly(cartCountStr)) {
-                cartInfo.setNoOfItems(Integer.parseInt(cartCountStr));
-            }
-        }
     }
 
     public int getMainLayout() {
@@ -665,6 +657,21 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         AuthParameters.updateInstance(getCurrentActivity());
     }
 
+    @Override
+    public void markBasketDirty() {
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
+        editor.putBoolean(Constants.IS_BASKET_COUNT_DIRTY, true);
+        editor.commit();
+    }
+
+    @Override
+    public void syncBasket() {
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+        editor.remove(Constants.IS_BASKET_COUNT_DIRTY);
+        editor.commit();
+        new GetCartCountTask<>(this, true).startTask();
+    }
+
     private void updateCartCountHeaderTextView() {
         if (cartInfo != null && mTextCartCount != null) {
             if (cartInfo.getNoOfItems() <= 0) {
@@ -977,13 +984,24 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         return mDrawerLayout;
     }
 
+    public Menu getMenu() {
+        return mMenu;
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
-        if (mMenu != null && mMenu.findItem(R.id.action_logout) != null &&
-                mMenu.findItem(R.id.action_logout).isVisible() &&
-                AuthParameters.getInstance(this).isAuthTokenEmpty()) {
-            goToHome();
+        if (isBasketDirty()) {
+            syncBasket();
+        } else {
+            if (cartInfo != null && cartInfo.getNoOfItems() == 0) {
+                // Update from preference
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
+                String cartCountStr = preferences.getString(Constants.GET_CART, null);
+                if (!TextUtils.isEmpty(cartCountStr) && TextUtils.isDigitsOnly(cartCountStr)) {
+                    cartInfo.setNoOfItems(Integer.parseInt(cartCountStr));
+                }
+            }
         }
     }
 }

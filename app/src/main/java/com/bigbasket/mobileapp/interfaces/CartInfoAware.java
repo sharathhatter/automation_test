@@ -9,4 +9,8 @@ public interface CartInfoAware {
     CartSummary getCartInfo();
 
     void updateUIForCartInfo();
+
+    void markBasketDirty();
+
+    void syncBasket();
 }

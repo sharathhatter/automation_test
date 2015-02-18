@@ -76,6 +76,10 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     public void onBackResume() {
         super.onBackResume();
         setTitle();
+
+        if (getCurrentActivity() != null && getCurrentActivity().isBasketDirty()) {
+            syncBasket();
+        }
     }
 
     @Override
@@ -287,6 +291,20 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         }
     }
 
+    @Override
+    public void markBasketDirty() {
+        if (getCurrentActivity() != null && getCurrentActivity() instanceof CartInfoAware) {
+            ((CartInfoAware) getCurrentActivity()).markBasketDirty();
+        }
+    }
+
+    @Override
+    public void syncBasket() {
+        if (getCurrentActivity() != null && getCurrentActivity() instanceof CartInfoAware) {
+            ((CartInfoAware) getCurrentActivity()).syncBasket();
+        }
+    }
+
     public void showAlertDialog(String title,
                                 String msg, DialogButton dialogButton,
                                 DialogButton nxtDialogButton, final String sourceName,
@@ -428,11 +446,6 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     public void showApiErrorDialog(String message, int resultCode) {
         if (getCurrentActivity() == null) return;
         getCurrentActivity().showAlertDialogFinish(null, message, resultCode);
-    }
-
-    private void ScreenFlowHandler(){
-        FragmentManager fm = getFragmentManager();
-        String FName = fm.getBackStackEntryAt(fm.getBackStackEntryCount()-1).getName();
     }
 
 }

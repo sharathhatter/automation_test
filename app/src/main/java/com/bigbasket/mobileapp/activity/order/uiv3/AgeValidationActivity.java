@@ -361,6 +361,7 @@ public class AgeValidationActivity extends BackButtonActivity {
                     CartSummary cartInfo = cartBulkRemoveApiResponseCallback.cartSummary;
                     ((CartInfoAware) getCurrentActivity()).setCartInfo(cartInfo);
                     ((CartInfoAware) getCurrentActivity()).updateUIForCartInfo();
+                    ((CartInfoAware) getCurrentActivity()).markBasketDirty();
                     if (cartInfo.getNoOfItems() == 0) {
                         showAlertDialogFinish(null, getResources().getString(R.string.basketEmpty));
                     } else {

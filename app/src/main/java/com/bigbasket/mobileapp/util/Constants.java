@@ -181,6 +181,7 @@ public class Constants {
     public static final String PRODUCT_DETAILS = "product_details";
     public static final String ORDER_ID = "order_id";
     public static final String GET_CART = "getcart";
+    public static final String IS_BASKET_COUNT_DIRTY = "isBasketDirty";
     public static final String ERROR = "ERROR";
     public static final String ERROR_TYPE = "error_type";
     public static final String PROD_ID = "prod_id";

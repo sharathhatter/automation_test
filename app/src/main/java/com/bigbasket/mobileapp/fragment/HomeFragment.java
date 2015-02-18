@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -19,7 +20,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.AnalyticsEngine;
@@ -33,7 +34,6 @@ import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.section.SectionData;
-import com.bigbasket.mobileapp.task.GetCartCountTask;
 import com.bigbasket.mobileapp.task.GetDynamicPageTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
@@ -64,7 +64,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         if (sectionStateRestored) {
             renderHomePage();
         } else {
-            new GetCartCountTask<>(getCurrentActivity(), true).startTask();
+            syncBasket();
             requestHomePage();
         }
         handler = new HomePageHandler<>(this);
@@ -73,13 +73,29 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
     @Override
     public void onBackResume() {
         super.onBackResume();
-        new GetCartCountTask<>(getCurrentActivity(), true).startTask();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        ((BaseActivity) getActivity()).removePharmaPrescriptionId();
+        if (getCurrentActivity() == null) return;
+        getCurrentActivity().removePharmaPrescriptionId();
+
+        if (!(getCurrentActivity() instanceof BBActivity)) return;
+        Menu menu = ((BBActivity) getCurrentActivity()).getMenu();
+        if (menu != null) {
+            if (menu.findItem(R.id.action_logout) != null &&
+                    menu.findItem(R.id.action_logout).isVisible() &&
+                    AuthParameters.getInstance(getActivity()).isAuthTokenEmpty()) {
+                getCurrentActivity().goToHome();
+                return;
+            } else if (menu.findItem(R.id.action_login) != null &&
+                    menu.findItem(R.id.action_login).isVisible() &&
+                    !AuthParameters.getInstance(getActivity()).isAuthTokenEmpty()) {
+                getCurrentActivity().goToHome();
+                return;
+            }
+        }
     }
 
     private boolean isVisitorUpdateNeeded() {
