@@ -92,63 +92,11 @@ public class ShowCartFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        String fulfillmentIds = null;
         if (getArguments() != null) {
-            String fulfillmentIds = getArguments().getString(Constants.INTERNAL_VALUE);
-            if (fulfillmentIds != null) {
-                isReadOnly = true;
-                getItemForFulFillmentIds(fulfillmentIds);
-            } else {
-                getCartItems();
-            }
-        } else {
-            getCartItems();
+            fulfillmentIds = getArguments().getString(Constants.INTERNAL_VALUE);
+            getCartItems(fulfillmentIds);
         }
-    }
-
-    private void getItemForFulFillmentIds(String fulfillmentIds) {
-        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
-        showProgressView();
-        bigBasketApiService.cartGetForIds(fulfillmentIds, new Callback<ApiResponse<CartGetApiResponseContent>>() {
-            @Override
-            public void success(ApiResponse<CartGetApiResponseContent> cartGetApiResponseContentApiResponse, Response response) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
-                if (cartGetApiResponseContentApiResponse.status == 0) {
-                    CartSummary cartSummary = cartGetApiResponseContentApiResponse.apiResponseContent.cartSummary;
-                    fullfillmentInfos = cartGetApiResponseContentApiResponse.apiResponseContent.fulfillmentInfos;
-                    annotationInfoArrayList = cartGetApiResponseContentApiResponse.apiResponseContent.annotationInfos;
-                    if (cartGetApiResponseContentApiResponse.apiResponseContent.
-                            cartGetApiCartItemsContent != null
-                            && cartGetApiResponseContentApiResponse.apiResponseContent.cartGetApiCartItemsContent.cartItemLists != null
-                            && cartGetApiResponseContentApiResponse.apiResponseContent.cartGetApiCartItemsContent.cartItemLists.size() > 0) {
-                        cartItemLists = cartGetApiResponseContentApiResponse.apiResponseContent.
-                                cartGetApiCartItemsContent.cartItemLists;
-                        renderCartItemList(cartSummary, cartGetApiResponseContentApiResponse
-                                .apiResponseContent.cartGetApiCartItemsContent.baseImgUrl);
-                    } else {
-                        showBasketEmptyMessage();
-                    }
-                } else {
-                    handler.sendEmptyMessage(cartGetApiResponseContentApiResponse.status,
-                            cartGetApiResponseContentApiResponse.message);
-                }
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
-                handler.handleRetrofitError(error);
-            }
-        });
     }
 
     @Override
@@ -373,14 +321,14 @@ public class ShowCartFragment extends BaseFragment {
     }
 
 
-    private void getCartItems() {
+    private void getCartItems(String fulfillmentIds) {
         if (getActivity() == null) return;
         if (!DataUtil.isInternetAvailable(getActivity())) return;
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
         final SharedPreferences.Editor editor = prefer.edit();
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressView();
-        bigBasketApiService.cartGet(new Callback<ApiResponse<CartGetApiResponseContent>>() {
+        bigBasketApiService.cartGet(fulfillmentIds, new Callback<ApiResponse<CartGetApiResponseContent>>() {
             @Override
             public void success(ApiResponse<CartGetApiResponseContent> cartGetApiResponseContentApiResponse, Response response) {
                 if (isSuspended()) return;
@@ -470,7 +418,7 @@ public class ShowCartFragment extends BaseFragment {
                                                     EditText editTextQty, Product product, String qty) {
         super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextView, viewDecQty, viewIncQty,
                 btnAddToBasket, editTextQty, product, qty);
-        getCartItems();
+        getCartItems(null);
     }
 
     @NonNull
