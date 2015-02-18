@@ -5,11 +5,14 @@
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
     <!-- Application theme. -->
-    <style name="BBAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+
+    <style name="BaseAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/uiv3_action_bar_background</item>
         <item name="colorPrimaryDark">@color/uiv3_status_bar_background</item>
         <item name="colorAccent">@color/uiv3_action_bar_background</item>
     </style>
+
+    <style name="BBAppTheme" parent="BaseAppTheme" />
 
     <style name="WindowStyle">
         <item name="android:fitsSystemWindows">false</item>
