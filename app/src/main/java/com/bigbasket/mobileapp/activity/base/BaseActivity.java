@@ -145,7 +145,8 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         BigBasketMessageHandler bigBasketMessageHandler = new BigBasketMessageHandler<>(getCurrentActivity(), marketPlace);
         if (marketPlace.isRuleValidationError()) {
             bigBasketMessageHandler.sendEmptyMessage(NavigationCodes.GO_MARKET_PLACE, null);
-        } else if (marketPlace.isAgeCheckRequired() || marketPlace.isPharamaPrescriptionNeeded()) {
+        } else if (marketPlace.isAgeCheckRequired() || marketPlace.isPharamaPrescriptionNeeded()
+                || marketPlace.hasTermsAndCond()) {
             bigBasketMessageHandler.sendEmptyMessage(NavigationCodes.GO_AGE_VALIDATION, null);
         } else {
             SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());

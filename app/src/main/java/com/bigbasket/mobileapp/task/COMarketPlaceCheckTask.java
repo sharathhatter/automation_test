@@ -17,8 +17,6 @@ import retrofit.client.Response;
 
 public class COMarketPlaceCheckTask<T> {
 
-
-    private static final String TAG = COMarketPlaceCheckTask.class.getName();
     private T ctx;
 
     public COMarketPlaceCheckTask(T ctx) {

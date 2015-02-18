@@ -363,6 +363,7 @@ public class Constants {
     public static final String NULL = "null";
     public static final String EVOUCHER_MSG = "evoucher_msg";
     public static final String EVOUCHER_CODE = "evoucher_code";
+    public static final String SLOT_MESSAGE = "slot_message";
     public static final String REMOVE_VOUCHER = "remove_voucher";
     public static final String EVOUCHER_NAME = "evoucher_name";
 

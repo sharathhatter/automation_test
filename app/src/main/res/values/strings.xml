@@ -315,6 +315,7 @@
     <string name="finalTotal">Total</string>
     <string name="deliveryCharges">Delivery Charges</string>
     <string name="noOrders">You don\'t have any delivered or cancelled order in</string>
+    <string name="noOrdersPlaced">You haven\'t placed any orders yet</string>
     <string name="noActiveOrders">You don\'t have any active order right now</string>
 
     <!-- Shopping list -->
@@ -524,4 +525,5 @@
     <string name="qualityYouWillLove">QUALITY YOU\'LL LOVE</string>
     <string name="wideRange">WIDE RANGE OF PRODUCTS</string>
     <string name="noAddress">You haven\'t added any address yet. Click on the \'&#43;\' button to add a address.</string>
+    <string name="nowClickApplyVoucher">Now click on Apply Voucher to use this voucher</string>
 </resources>

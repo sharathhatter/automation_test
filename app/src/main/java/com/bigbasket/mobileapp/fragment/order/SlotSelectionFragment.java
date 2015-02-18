@@ -61,10 +61,11 @@ public class SlotSelectionFragment extends BaseFragment {
         mSlotGroupList = getArguments().getParcelableArrayList(Constants.SLOTS_INFO);
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
         potentialOrderId = prefer.getString(Constants.POTENTIAL_ORDER_ID, null);
-        displaySlotGroups();
+        String slotMsg = getArguments().getString(Constants.SLOT_MESSAGE);
+        displaySlotGroups(slotMsg);
     }
 
-    private void displaySlotGroups() {
+    private void displaySlotGroups(String slotMsg) {
         if (getActivity() == null) return;
 
         LinearLayout contentView = getContentView();
@@ -77,6 +78,16 @@ public class SlotSelectionFragment extends BaseFragment {
         }
 
         contentView.removeAllViews();
+
+        if (!TextUtils.isEmpty(slotMsg)) {
+            LayoutInflater inflater = getActivity().getLayoutInflater();
+            TextView txtMsg = (TextView) inflater.inflate(R.layout.uiv3_msg_text, contentView, false);
+            int padding = (int) getResources().getDimension(R.dimen.padding_small);
+            txtMsg.setPadding(padding, padding, padding, padding);
+            txtMsg.setTypeface(faceRobotoRegular);
+            txtMsg.setText(slotMsg);
+            contentView.addView(txtMsg);
+        }
         if (mSlotGroupList.size() == 1) {
             ObservableListView listViewSlots = new ObservableListView(getActivity());
             listViewSlots.setDividerHeight(0);

@@ -173,10 +173,12 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
             if (mOrderType.equals(getString(R.string.active_label))) {
                 txtNoOrdersMsg.setText(getString(R.string.noActiveOrders));
                 base.removeView(orderAbsListView);
-            } else if (mOrderMonthRanges != null) {
+            } else if (mOrderMonthRanges != null && mOrderMonthRanges.size() > 0) {
                 txtNoOrdersMsg.setText(getString(R.string.noOrders) + " " +
                         mOrderMonthRanges.get(spinnerSelectedIdx).getDisplayValue().toLowerCase());
                 base.removeView(orderAbsListView);
+            } else {
+                txtNoOrdersMsg.setText(getString(R.string.noOrdersPlaced));
             }
         } else {
             OrderListAdapter orderListAdapter = new OrderListAdapter(this, faceRobotoRegular,
