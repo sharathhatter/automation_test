@@ -32,6 +32,7 @@ public class ResponseSerializer {
 
 
     public static Object deserializeObject(byte[] b) {
+        if (b == null) return null;
         try {
             ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(b));
             Object object = in.readObject();

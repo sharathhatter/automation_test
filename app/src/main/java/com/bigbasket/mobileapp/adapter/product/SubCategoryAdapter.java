@@ -76,10 +76,11 @@ public class SubCategoryAdapter {
                 result.add(ResponseSerializer.deserializeObject(subCategoryCursorBlob));
                 byte[] sectionDataCursorBlob = subCategoryCursor.getBlob(
                         subCategoryCursor.getColumnIndex(SubCategoryAdapter.COLUMN_SECTION_DATA));
-                result.add(ResponseSerializer.deserializeObject(sectionDataCursorBlob));
+                result.add(sectionDataCursorBlob != null && sectionDataCursorBlob.length > 0 ?
+                        ResponseSerializer.deserializeObject(sectionDataCursorBlob) : null);
             }
         } catch (SQLiteException ex) {
-
+            ex.printStackTrace();
         } finally {
             if (subCategoryCursor != null && !subCategoryCursor.isClosed()) {
                 subCategoryCursor.close();
@@ -96,7 +97,7 @@ public class SubCategoryAdapter {
             cursor = DatabaseHelper.db.query(tableName, new String[]{COLUMN_VERSION, COLUMN_BLOB}
                     , COLUMN_SLUG + " = " + "\"" + slug + "\"", null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
-                byte[] blob  = cursor.getBlob(cursor.getColumnIndex(COLUMN_BLOB));
+                byte[] blob = cursor.getBlob(cursor.getColumnIndex(COLUMN_BLOB));
                 if (blob != null && blob.length >= 0) {
                     version = cursor.getString(cursor.getColumnIndex(COLUMN_VERSION));
                 }
