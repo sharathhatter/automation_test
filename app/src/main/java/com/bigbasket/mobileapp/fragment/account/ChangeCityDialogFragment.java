@@ -200,7 +200,6 @@ public class ChangeCityDialogFragment extends DialogFragment
             dismiss();
             return;
         }
-        ;
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgress(true);
         bigBasketApiService.changeCity(String.valueOf(mSelectedCity.getId()), new Callback<OldBaseApiResponse>() {
