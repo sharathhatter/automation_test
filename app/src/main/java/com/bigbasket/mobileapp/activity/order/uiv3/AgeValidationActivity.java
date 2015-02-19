@@ -44,6 +44,7 @@ import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.MessageFormatUtil;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
+import com.bigbasket.mobileapp.view.BBWebView;
 import com.bigbasket.mobileapp.view.uiv3.TermAndConditionDialog;
 
 import java.util.ArrayList;
@@ -66,7 +67,6 @@ public class AgeValidationActivity extends BackButtonActivity {
         renderMarketPlaceValidationErrors();
         trackEvent(TrackingAware.PRE_CHECKOUT_AGE_LEGAL_SHOWN, null);
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -97,7 +97,8 @@ public class AgeValidationActivity extends BackButtonActivity {
         this.marketPlace = marketPlace;
         isPharmaRadioBtnNoSelected = false;
         hashMapRadioBtnAgeCheckNo.clear();
-        if (!marketPlace.isPharamaPrescriptionNeeded() && !marketPlace.isAgeCheckRequired()) {
+        if (!marketPlace.isPharamaPrescriptionNeeded() && !marketPlace.isAgeCheckRequired()
+                && !marketPlace.hasTermsAndCond()) {
             proceedToQc();
         } else {
             renderMarketPlaceValidationErrors();
@@ -122,7 +123,7 @@ public class AgeValidationActivity extends BackButtonActivity {
         contentView.addView(layoutRelativeMain);
         btnListFooter = (Button) layoutRelativeMain.findViewById(R.id.btnListFooter);
 
-
+        renderTermsAndConditions(baseView);
         renderAgeValidations(baseView, inflater);
         renderPharmaPrescriptionValidations(baseView, inflater);
 
@@ -164,6 +165,14 @@ public class AgeValidationActivity extends BackButtonActivity {
                 }
             }
         });
+    }
+
+    private void renderTermsAndConditions(LinearLayout base) {
+        if (marketPlace.hasTermsAndCond()) {
+            BBWebView webView = new BBWebView(this);
+            webView.loadData(marketPlace.getTermsAndCond(), "text/html", "UTF-8");
+            base.addView(webView);
+        }
     }
 
     private void renderAgeValidations(LinearLayout base, LayoutInflater inflater) {
@@ -362,13 +371,15 @@ public class AgeValidationActivity extends BackButtonActivity {
                     CartSummary cartInfo = cartBulkRemoveApiResponseCallback.cartSummary;
                     ((CartInfoAware) getCurrentActivity()).setCartInfo(cartInfo);
                     ((CartInfoAware) getCurrentActivity()).updateUIForCartInfo();
+                    ((CartInfoAware) getCurrentActivity()).markBasketDirty();
                     if (cartInfo.getNoOfItems() == 0) {
                         showAlertDialogFinish(null, getResources().getString(R.string.basketEmpty));
                     } else {
                         new COMarketPlaceCheckTask<>(getCurrentActivity()).startTask();
                     }
                 } else {
-                    handler.sendEmptyMessage(cartBulkRemoveApiResponseCallback.status);
+                    handler.sendEmptyMessage(cartBulkRemoveApiResponseCallback.status,
+                            cartBulkRemoveApiResponseCallback.message);
                 }
             }
 

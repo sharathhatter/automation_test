@@ -119,6 +119,7 @@ public class BasketOperationTask<T> {
                 case Constants.OK:
                     ((CartInfoAware) context).setCartInfo(cartOperationApiResponse.basketOperationResponse.getCartSummary());
                     ((CartInfoAware) context).updateUIForCartInfo();
+                    ((CartInfoAware) context).markBasketDirty();
                     ((BasketOperationAware) context).setBasketOperationResponse(cartOperationApiResponse.basketOperationResponse);
                     ((BasketOperationAware) context).updateUIAfterBasketOperationSuccess(basketOperation,
                             basketCountTextView, viewDecQty, viewIncQty, btnAddToBasket, editTextQty, product, qty);
@@ -127,7 +128,7 @@ public class BasketOperationTask<T> {
                     switch (cartOperationApiResponse.errorType) {
                         case Constants.PRODUCT_ID_NOT_FOUND:
                             ((HandlerAware) context).getHandler().
-                                    sendEmptyMessage(ApiErrorCodes.BASKET_EMPTY);
+                                    sendEmptyMessage(ApiErrorCodes.BASKET_EMPTY, null);
                             Log.d(TAG, "Sending message: MessageCode.BASKET_EMPTY");
                             break;
                         default:

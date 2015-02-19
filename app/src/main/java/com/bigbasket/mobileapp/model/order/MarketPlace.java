@@ -2,15 +2,14 @@ package com.bigbasket.mobileapp.model.order;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-/**
- * Created by jugal on 16/7/14.
- */
+
 public class MarketPlace implements Parcelable {
 
     @SerializedName(Constants.RULE_VALIDATION_ERROR)
@@ -37,20 +36,8 @@ public class MarketPlace implements Parcelable {
     @SerializedName(Constants.SAVED_PRESCRIPTION)
     private ArrayList<SavedPrescription> savedPrescription;
 
-
-    public MarketPlace(boolean ruleValidationError, ArrayList<MarketPlaceRuleValidator> marketPlaceRuleValidators,
-                       boolean ageCheckRequired, ArrayList<MarketPlaceAgeCheck> ageCheckRequiredDetail,
-                       boolean pharamaPrescriptionNeeded, //PharmaPrescriptionInfo pharmaPrescriptionInfo,
-                       String ruleValidationTitle, ArrayList<SavedPrescription> savedPrescription) {
-        this.ruleValidationError = ruleValidationError;
-        this.marketPlaceRuleValidators = marketPlaceRuleValidators;
-        this.ageCheckRequired = ageCheckRequired;
-        this.ageCheckRequiredDetail = ageCheckRequiredDetail;
-        this.pharamaPrescriptionNeeded = pharamaPrescriptionNeeded;
-        //this.pharmaPrescriptionInfo = pharmaPrescriptionInfo;
-        this.ruleValidationTitle = ruleValidationTitle;
-        this.savedPrescription = savedPrescription;
-    }
+    @SerializedName(Constants.TERMS_AND_COND)
+    private String termsAndCond;
 
     @Override
     public int describeContents() {
@@ -81,6 +68,11 @@ public class MarketPlace implements Parcelable {
         if (!_wasSavedPrescriptionInfoNull) {
             savedPrescription = new ArrayList<>();
             source.readTypedList(savedPrescription, SavedPrescription.CREATOR);
+        }
+
+        boolean _wasTermsAndCondNull = source.readByte() == (byte) 1;
+        if (!_wasTermsAndCondNull) {
+            termsAndCond = source.readString();
         }
     }
 
@@ -120,6 +112,11 @@ public class MarketPlace implements Parcelable {
             dest.writeTypedList(savedPrescription);
         }
 
+        boolean _wasTermsAndCondNull = termsAndCond == null;
+        dest.writeByte(_wasTermsAndCondNull ? (byte) 1 : (byte) 0);
+        if (!_wasTermsAndCondNull) {
+            dest.writeString(termsAndCond);
+        }
     }
 
     public static final Parcelable.Creator<MarketPlace> CREATOR = new Parcelable.Creator<MarketPlace>() {
@@ -167,4 +164,11 @@ public class MarketPlace implements Parcelable {
         return pharmaPrescriptionInfo;
     }
 
+    public boolean hasTermsAndCond() {
+        return !TextUtils.isEmpty(termsAndCond);
+    }
+
+    public String getTermsAndCond() {
+        return termsAndCond;
+    }
 }

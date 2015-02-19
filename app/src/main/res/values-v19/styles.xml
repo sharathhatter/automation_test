@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="BBAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/uiv3_action_bar_background</item>
-        <item name="colorPrimaryDark">@color/uiv3_status_bar_background</item>
-        <item name="colorAccent">@color/uiv3_action_bar_background</item>
+    <style name="BBAppTheme" parent="BaseAppTheme">
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowBackground">@color/uiv3_status_bar_background</item>
     </style>

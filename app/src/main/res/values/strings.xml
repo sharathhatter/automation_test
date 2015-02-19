@@ -129,7 +129,7 @@
     <string name="thanksForRegistering">Thanks for registering on BigBasket.com. Happy Shopping!</string>
     <string name="mrp">MRP:</string>
     <string name="changeCity">Change Your Location:</string>
-    <string name="changeCityMenuTxt">Change Your Location</string>
+    <string name="changeCityMenuTxt">Change city</string>
     <string name="outOfStock">Out of stock</string>
     <string name="notForSale">Not for sale</string>
     <string name="chooseLocation">Choose your Location</string>
@@ -318,6 +318,7 @@
     <string name="finalTotal">Total</string>
     <string name="deliveryCharges">Delivery Charges</string>
     <string name="noOrders">You don\'t have any delivered or cancelled order in</string>
+    <string name="noOrdersPlaced">You haven\'t placed any orders yet</string>
     <string name="noActiveOrders">You don\'t have any active order right now</string>
 
     <!-- Shopping list -->
@@ -525,5 +526,10 @@
     <string name="sameDayDelivery">SAME-DAY DELIVERY</string>
     <string name="qualityYouWillLove">QUALITY YOU\'LL LOVE</string>
     <string name="wideRange">WIDE RANGE OF PRODUCTS</string>
+<<<<<<< HEAD
     <string name="addAllProducts">Are you sure you want to add all products to the basket?</string>
+=======
+    <string name="noAddress">You haven\'t added any address yet. Click on the \'&#43;\' button to add a address.</string>
+    <string name="nowClickApplyVoucher">Now click on Apply Voucher to use this voucher</string>
+>>>>>>> be3d3f6f6437d1f3ecb84c8a9d530f536ae86ec6
 </resources>

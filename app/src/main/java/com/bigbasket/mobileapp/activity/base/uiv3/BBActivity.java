@@ -87,6 +87,7 @@ import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.model.section.SectionItem;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
+import com.bigbasket.mobileapp.task.GetCartCountTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.FragmentCodes;
@@ -111,6 +112,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
     private TextView mTextCartCount;
     private RecyclerView mNavRecyclerView;
     private LinearLayout mLayoutUserControls;
+    private Menu mMenu;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -147,15 +149,6 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             }
         });
         setNavDrawer(toolbar, savedInstanceState);
-
-        if (cartInfo != null && cartInfo.getNoOfItems() == 0) {
-            // Update from preference
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
-            String cartCountStr = preferences.getString(Constants.GET_CART, null);
-            if (!TextUtils.isEmpty(cartCountStr) && TextUtils.isDigitsOnly(cartCountStr)) {
-                cartInfo.setNoOfItems(Integer.parseInt(cartCountStr));
-            }
-        }
     }
 
     public int getMainLayout() {
@@ -219,6 +212,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
     public boolean onCreateOptionsMenu(Menu menu) {
         setOptionsMenu(menu);
         initializeCartCountTextView(menu);
+        mMenu = menu;
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -234,18 +228,6 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             // Setting the search listener
             SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
             searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-            searchView.setOnSearchClickListener(new View.OnClickListener() {
-                private boolean extended = false;
-
-                @Override
-                public void onClick(View v) {
-                    if (!extended) {
-                        extended = true;
-                        ViewGroup.LayoutParams lp = v.getLayoutParams();
-                        lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
-                    }
-                }
-            });
             searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
@@ -336,7 +318,8 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             case FragmentCodes.START_VIEW_DELIVERY_ADDRESS:
                 MemberAddressListFragment memberAddressListFragment = new MemberAddressListFragment();
                 Bundle addressbundle = new Bundle();
-                addressbundle.putBoolean(Constants.FROM_ACCOUNT_PAGE, true);
+                addressbundle.putBoolean(Constants.FROM_ACCOUNT_PAGE,
+                        getIntent().getBooleanExtra(Constants.FROM_ACCOUNT_PAGE, false));
                 memberAddressListFragment.setArguments(addressbundle);
                 addToMainLayout(memberAddressListFragment);
                 break;
@@ -669,6 +652,21 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         updateCartCountHeaderTextView();
     }
 
+    @Override
+    public void markBasketDirty() {
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
+        editor.putBoolean(Constants.IS_BASKET_COUNT_DIRTY, true);
+        editor.commit();
+    }
+
+    @Override
+    public void syncBasket() {
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+        editor.remove(Constants.IS_BASKET_COUNT_DIRTY);
+        editor.commit();
+        new GetCartCountTask<>(this, true).startTask();
+    }
+
     private void updateCartCountHeaderTextView() {
         if (cartInfo != null && mTextCartCount != null) {
             if (cartInfo.getNoOfItems() <= 0) {
@@ -992,5 +990,26 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
 
     protected BBDrawerLayout getDrawerLayout() {
         return mDrawerLayout;
+    }
+
+    public Menu getMenu() {
+        return mMenu;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (isBasketDirty()) {
+            syncBasket();
+        } else {
+            if (cartInfo != null && cartInfo.getNoOfItems() == 0) {
+                // Update from preference
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
+                String cartCountStr = preferences.getString(Constants.GET_CART, null);
+                if (!TextUtils.isEmpty(cartCountStr) && TextUtils.isDigitsOnly(cartCountStr)) {
+                    cartInfo.setNoOfItems(Integer.parseInt(cartCountStr));
+                }
+            }
+        }
     }
 }

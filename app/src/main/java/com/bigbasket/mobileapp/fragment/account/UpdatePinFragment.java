@@ -115,7 +115,7 @@ public class UpdatePinFragment extends BaseFragment {
                     setCurrentPin(currentPin);
                     trackEvent(TrackingAware.MY_ACCOUNT_CURRENT_PIN_SUCCESS, null);
                 } else {
-                    handler.sendEmptyMessage(updatePinApiResponse.status);
+                    handler.sendEmptyMessage(updatePinApiResponse.status, updatePinApiResponse.message);
                     trackEvent(TrackingAware.MY_ACCOUNT_CURRENT_PIN_FAILED, null);
                 }
 

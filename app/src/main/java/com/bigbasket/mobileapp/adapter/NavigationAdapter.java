@@ -50,9 +50,16 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         SectionNavigationItem sectionNavigationItem = sectionNavigationItems.get(position);
         if (getItemViewType(position) == VIEW_TYPE_SECTION_ITEM) {
             TextView txtNavListRow = ((NavViewHolder) holder).getTxtNavListRow();
+            ImageView imgNavItem = ((NavViewHolder) holder).getImgNavItem();
             if (sectionNavigationItem.getSectionItem().getTitle() != null &&
                     !TextUtils.isEmpty(sectionNavigationItem.getSectionItem().getTitle().getText())) {
                 txtNavListRow.setText(sectionNavigationItem.getSectionItem().getTitle().getText());
+            }
+            if (!TextUtils.isEmpty(sectionNavigationItem.getSectionItem().getImage())) {
+                imgNavItem.setVisibility(View.VISIBLE);
+                sectionNavigationItem.getSectionItem().displayImage(imgNavItem);
+            } else {
+                imgNavItem.setVisibility(View.GONE);
             }
         } else {
             TextView txtNavListRowHeader = ((NavViewHeaderHolder) holder).getTxtNavListRowHeader();

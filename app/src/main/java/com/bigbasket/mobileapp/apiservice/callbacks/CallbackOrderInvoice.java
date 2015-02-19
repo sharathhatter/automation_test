@@ -35,7 +35,8 @@ public class CallbackOrderInvoice<T> implements Callback<ApiResponse<OrderInvoic
                 ((InvoiceDataAware) ctx).onDisplayOrderInvoice(orderInvoiceApiResponse.apiResponseContent);
                 break;
             default:
-                ((HandlerAware) ctx).getHandler().sendEmptyMessage(orderInvoiceApiResponse.status);
+                ((HandlerAware) ctx).getHandler().sendEmptyMessage(orderInvoiceApiResponse.status,
+                        orderInvoiceApiResponse.message);
                 break;
         }
     }

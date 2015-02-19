@@ -22,6 +22,7 @@ public class GetDynamicPageTask<T> {
     private String screenName;
     private boolean inlineProgress;
     private boolean finishOnError;
+    private boolean hideProgress;
 
     public GetDynamicPageTask(T context, String screenName, boolean inlineProgress,
                               boolean finishOnError) {
@@ -29,6 +30,11 @@ public class GetDynamicPageTask<T> {
         this.screenName = screenName;
         this.inlineProgress = inlineProgress;
         this.finishOnError = finishOnError;
+    }
+
+    public GetDynamicPageTask(T context, String screenName, boolean inlineProgress, boolean finishOnError, boolean hideProgress) {
+        this(context, screenName, inlineProgress, finishOnError);
+        this.hideProgress = hideProgress;
     }
 
     public void startTask() {
@@ -54,14 +60,16 @@ public class GetDynamicPageTask<T> {
                 if (((CancelableAware) context).isSuspended()) {
                     return;
                 }
-                try {
-                    if (inlineProgress) {
-                        ((ProgressIndicationAware) context).hideProgressView();
-                    } else {
-                        ((ProgressIndicationAware) context).hideProgressDialog();
+                if (!hideProgress) {
+                    try {
+                        if (inlineProgress) {
+                            ((ProgressIndicationAware) context).hideProgressView();
+                        } else {
+                            ((ProgressIndicationAware) context).hideProgressDialog();
+                        }
+                    } catch (IllegalArgumentException e) {
+                        return;
                     }
-                } catch (IllegalArgumentException e) {
-                    return;
                 }
                 switch (getDynamicPageApiResponse.status) {
                     case 0:

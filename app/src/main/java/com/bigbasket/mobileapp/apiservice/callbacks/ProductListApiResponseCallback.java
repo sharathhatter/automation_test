@@ -57,16 +57,21 @@ public class ProductListApiResponseCallback<T> implements Callback<ApiResponse<P
                 if (productListData.getFilteredOn() == null) {
                     productListData.setFilteredOn(new ArrayList<FilteredOn>());
                 }
+
                 ArrayList<FilterOptionCategory> filterOptionCategories = productListData.getFilterOptions();
                 ArrayList<FilteredOn> filteredOns = productListData.getFilteredOn();
-                if (filteredOns != null && filteredOns.size() > 0) {
-                    for (FilterOptionCategory filterOptionCategory : filterOptionCategories) {
-                        for (FilterOptionItem filterOptionItem : filterOptionCategory.getFilterOptionItems()) {
-                            for (FilteredOn filteredOn : filteredOns) {
-                                if (filteredOn.getFilterSlug().equalsIgnoreCase(filterOptionItem.getFilterValueSlug())
-                                        && filteredOn.getFilterValues() != null
-                                        && filteredOn.getFilterValues().size() > 0) {
-                                    filterOptionItem.setSelected(true);
+                if (filteredOns != null && filteredOns.size() > 0 && filterOptionCategories != null) {
+                    for (FilterOptionCategory filterOptionCategory: filterOptionCategories) {
+                        for (FilteredOn filteredOn: filteredOns) {
+                            if (filteredOn.getFilterSlug() != null &&
+                                    filteredOn.getFilterSlug().equals(filterOptionCategory.getFilterSlug())
+                                    && filterOptionCategory.getFilterOptionItems() != null) {
+                                for (FilterOptionItem filterOptionItem: filterOptionCategory.getFilterOptionItems()) {
+                                    if (filterOptionItem.getFilterValueSlug() != null &&
+                                            filteredOn.getFilterValues() != null &&
+                                            filteredOn.getFilterValues().contains(filterOptionItem.getFilterValueSlug())) {
+                                        filterOptionItem.setSelected(true);
+                                    }
                                 }
                             }
                         }
@@ -95,6 +100,6 @@ public class ProductListApiResponseCallback<T> implements Callback<ApiResponse<P
                 return;
             }
         }
-        ((HandlerAware) ctx).getHandler().sendEmptyMessage(ApiErrorCodes.SERVER_ERROR);
+        ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
     }
 }

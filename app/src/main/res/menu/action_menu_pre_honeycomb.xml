@@ -19,7 +19,7 @@
     <!-- More -->
     <item
         android:id="@+id/action_account"
-        android:icon="@drawable/ic_person_white_24dp"
+        android:icon="@drawable/user_white"
         android:orderInCategory="9999"
         android:title="@string/myAccount"
         bb:showAsAction="ifRoom">
@@ -27,14 +27,14 @@
 
             <item
                 android:id="@+id/action_user_info"
-                android:icon="@drawable/ic_account_circle_white_24dp"
+                android:icon="@drawable/user_white"
                 android:orderInCategory="9999"
                 android:title="@string/memberName"
                 bb:showAsAction="never" />
 
             <item
                 android:id="@+id/action_communication_hub"
-                android:icon="@drawable/b_logo_bubble"
+                android:icon="@drawable/communication_hub_white"
                 android:orderInCategory="9999"
                 android:title="@string/bbCommHub"
                 bb:showAsAction="never" />
@@ -48,28 +48,28 @@
 
             <item
                 android:id="@+id/action_change_city"
-                android:icon="@drawable/ic_place_white_24dp"
+                android:icon="@drawable/delivery_white"
                 android:orderInCategory="9999"
                 android:title="@string/changeCityMenuTxt"
                 bb:showAsAction="never" />
 
             <item
                 android:id="@+id/action_shopping_list"
-                android:icon="@drawable/ic_filter_list_white_24dp"
+                android:icon="@drawable/shopping_list_white"
                 android:orderInCategory="9999"
                 android:title="@string/shoppingList"
                 bb:showAsAction="never" />
 
             <item
                 android:id="@+id/action_smart_basket"
-                android:icon="@drawable/ic_filter_list_white_24dp"
+                android:icon="@drawable/smart_basket_white"
                 android:orderInCategory="9999"
                 android:title="@string/smartBasket"
                 bb:showAsAction="never" />
 
             <item
                 android:id="@+id/action_member_referral"
-                android:icon="@drawable/ic_group_add_white_24dp"
+                android:icon="@drawable/refer_frnds_white"
                 android:orderInCategory="9999"
                 android:title="@string/referFriends"
                 bb:showAsAction="never" />

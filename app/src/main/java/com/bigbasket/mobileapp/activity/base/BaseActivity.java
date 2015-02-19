@@ -3,12 +3,14 @@ package com.bigbasket.mobileapp.activity.base;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -142,9 +144,10 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     public void onCoMarketPlaceSuccess(MarketPlace marketPlace) {
         BigBasketMessageHandler bigBasketMessageHandler = new BigBasketMessageHandler<>(getCurrentActivity(), marketPlace);
         if (marketPlace.isRuleValidationError()) {
-            bigBasketMessageHandler.sendEmptyMessage(NavigationCodes.GO_MARKET_PLACE);
-        } else if (marketPlace.isAgeCheckRequired() || marketPlace.isPharamaPrescriptionNeeded()) {
-            bigBasketMessageHandler.sendEmptyMessage(NavigationCodes.GO_AGE_VALIDATION);
+            bigBasketMessageHandler.sendEmptyMessage(NavigationCodes.GO_MARKET_PLACE, null);
+        } else if (marketPlace.isAgeCheckRequired() || marketPlace.isPharamaPrescriptionNeeded()
+                || marketPlace.hasTermsAndCond()) {
+            bigBasketMessageHandler.sendEmptyMessage(NavigationCodes.GO_AGE_VALIDATION, null);
         } else {
             SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
             String pharmaPrescriptionId = prefer.getString(Constants.PHARMA_PRESCRIPTION_ID, null);
@@ -383,6 +386,9 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
             switch (sourceName) {
                 case NavigationCodes.GO_TO_LOGIN:
                     Intent loginIntent = new Intent(this, SignInActivity.class);
+                    if (valuePassed != null && valuePassed instanceof Uri) {
+                        loginIntent.putExtra(Constants.DEEP_LINK, valuePassed.toString());
+                    }
                     startActivityForResult(loginIntent, NavigationCodes.GO_TO_HOME);
                     break;
             }
@@ -604,16 +610,20 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
                 }
             }
         }
+        goToHome();
     }
 
     public void onLoginSuccess() {
         AuthParameters.updateInstance(getCurrentActivity());
         CitySpecificAppSettings.clearInstance(getCurrentActivity());
         SectionManager.clearAllSectionData(getCurrentActivity());
-        Intent data = new Intent();
-        data.putExtra(Constants.LOGOUT, true);
-        setResult(NavigationCodes.GO_TO_HOME, data);
-        finish();
+        String deepLink = getIntent().getStringExtra(Constants.DEEP_LINK);
+        if (!TextUtils.isEmpty(deepLink)) {
+            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
+            editor.putString(Constants.DEEP_LINK, deepLink);
+            editor.commit();
+        }
+        goToHome();
     }
 
     public abstract void onChangeTitle(String title);
@@ -690,4 +700,19 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     }
 
     public abstract String getScreenTag();
+
+    public void launchAppDeepLink(String uri) {
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+            intent.putExtra(Constants.HAS_PARENT, true);
+            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+        } catch (ActivityNotFoundException e) {
+            Log.e("HomeFragment", "No target found for the pending deep-link");
+        }
+    }
+
+    public boolean isBasketDirty() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
+        return preferences.getBoolean(Constants.IS_BASKET_COUNT_DIRTY, false);
+    }
 }

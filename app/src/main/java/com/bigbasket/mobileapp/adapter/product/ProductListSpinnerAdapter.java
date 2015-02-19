@@ -26,6 +26,8 @@ public class ProductListSpinnerAdapter extends ArrayAdapter<Product> {
     List<Product> productArrayList;
     private Typeface typeface;
     private Typeface faceRupee;
+    private int eightDp;
+    private int fourDp;
 
     public ProductListSpinnerAdapter(BaseActivity ctx, int resource, List<Product> productArrayList,
                                      Typeface typeface, Typeface faceRupee) {
@@ -34,6 +36,8 @@ public class ProductListSpinnerAdapter extends ArrayAdapter<Product> {
         this.productArrayList = productArrayList;
         this.typeface = typeface;
         this.faceRupee = faceRupee;
+        this.eightDp = (int) ctx.getResources().getDimension(R.dimen.padding_small);
+        this.fourDp = (int) ctx.getResources().getDimension(R.dimen.padding_mini);
     }
 
     @Override
@@ -53,7 +57,9 @@ public class ProductListSpinnerAdapter extends ArrayAdapter<Product> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        return getCustomView(position, convertView, parent, false, " (More sizes available)");
+        View view = getCustomView(position, convertView, parent, false, " (More sizes available)");
+        view.setBackgroundResource(R.drawable.bottom_grey_border);
+        return view;
     }
 
     private View getInflatedView(ViewGroup parent) {
@@ -75,7 +81,7 @@ public class ProductListSpinnerAdapter extends ArrayAdapter<Product> {
         txtProductPkgDesc.setTextColor(ctx.getResources().getColor(R.color.mrpColor));
 
         if (showPrice) {
-            //row.setPadding(fourDp, fiveDp, tenDp, fiveDp);
+            row.setPadding(fourDp, eightDp, eightDp, eightDp);
             String rupeeSymbol = "`";
             String sellPrice = product.getSellPrice();
             SpannableString spannableString = new SpannableString(rupeeSymbol + sellPrice);
@@ -89,7 +95,6 @@ public class ProductListSpinnerAdapter extends ArrayAdapter<Product> {
             txtProductSellPrice.setText(spannableString);
             txtProductSellPrice.setTextColor(ctx.getResources().getColor(R.color.mrpColor));
         } else {
-            //row.setPadding(0, 0, 0, 0);
             txtProductPkgDesc.setGravity(Gravity.LEFT);
             txtProductSellPrice.setVisibility(View.GONE);
         }

@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -26,6 +27,7 @@ import com.bigbasket.mobileapp.apiservice.callbacks.CallbackGetAreaInfo;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.CreateUpdateAddressApiResponseContent;
 import com.bigbasket.mobileapp.fragment.account.OTPValidationDialogFragment;
+import com.bigbasket.mobileapp.interfaces.OtpDialogAware;
 import com.bigbasket.mobileapp.interfaces.PinCodeAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.Address;
@@ -41,7 +43,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class MemberAddressFormActivity extends BackButtonActivity implements PinCodeAware {
+public class MemberAddressFormActivity extends BackButtonActivity implements PinCodeAware, OtpDialogAware {
 
     private Address address;
     private View base;
@@ -65,6 +67,17 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
             hRefresh.sendEmptyMessage(1);
         } else {
             showForm();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            setResult(NavigationCodes.ADDRESS_CREATED_MODIFIED);
+            finish();
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
         }
     }
 
@@ -121,7 +134,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
         chkIsAddrDefault.setVisibility(address.isDefault() ? View.GONE : View.VISIBLE);
     }
 
-    private void uploadAddress(String otp_code) {
+    private void uploadAddress(String otpCode) {
         final EditText editTextAddressNick = (EditText) base.findViewById(R.id.editTextAddressNick);
         final EditText editTextFirstName = (EditText) base.findViewById(R.id.editTextFirstName);
         final EditText editTextLastName = (EditText) base.findViewById(R.id.editTextLastName);
@@ -235,8 +248,8 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
             }
         };
 
-        if (otp_code != null) {
-            payload.put(Constants.OTP_CODE, otp_code);
+        if (otpCode != null) {
+            payload.put(Constants.OTP_CODE, otpCode);
         }
 
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
@@ -259,6 +272,11 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
     @Override
     public void onPinCodeFetchFailure() {
         showForm();
+    }
+
+    @Override
+    public void validateOtp(String otpCode) {
+        uploadAddress(otpCode);
     }
 
     class CreateUpdateAddressApiCallback implements Callback<ApiResponse<CreateUpdateAddressApiResponseContent>> {
@@ -310,7 +328,8 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
                     hRefresh.sendEmptyMessage(Constants.VALIDATE_MOBILE_NUMBER_POPUP_ERROR_MSG);
                     break;
                 default:
-                    handler.sendEmptyMessage(createUpdateAddressApiResponse.status);
+                    handler.sendEmptyMessage(createUpdateAddressApiResponse.status,
+                            createUpdateAddressApiResponse.message);
                     break;
             }
         }
@@ -350,7 +369,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
 
     public String getActivityTitle() {
         if (address == null) {
-            address = getIntent().getParcelableExtra(Constants.MEMBER_ADDRESS_ID);
+            address = getIntent().getParcelableExtra(Constants.UPDATE_ADDRESS);
         }
         return address == null ? "Create new address" : "Update address";
     }
@@ -363,18 +382,15 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
     private void validateMobileNumber(boolean txtErrorValidateNumberVisibility, String errorMsg) {
         if (otpValidationDialogFragment == null) {
             otpValidationDialogFragment = OTPValidationDialogFragment.newInstance();
-            otpValidationDialogFragment.show(getSupportFragmentManager(), Constants.OTP_DIALOG_FLAG);
         }
         if (otpValidationDialogFragment.isVisible()) {
             if (txtErrorValidateNumberVisibility) {
                 otpValidationDialogFragment.showErrorText(errorMsg);
             }
-            return;
         } else {
             otpValidationDialogFragment.show(getCurrentActivity().getSupportFragmentManager(),
                     Constants.OTP_DIALOG_FLAG);
         }
-
     }
 
     @Override
@@ -417,14 +433,18 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
     };
 
     @Override
-    public String getScreenTag(){
-        if(mFromAccountPage)
-            if(address==null)
+    public String getScreenTag() {
+        if (mFromAccountPage)
+            if (address == null)
                 return TrackEventkeys.ACCOUNT_CREATE_DELIVERY_ADDRESS_SCREEN;
             else
                 return TrackEventkeys.ACCOUNT_EDIT_DELIVERY_ADDRESS_SCREEN;
         else
             return TrackEventkeys.CHECKOUT_CREATE_NEW_DELIVERY_ADDRESS_SCREEN;
+    }
 
+    public void onBackPressed() {
+        setResult(NavigationCodes.ADDRESS_CREATED_MODIFIED);
+        super.onBackPressed();
     }
 }

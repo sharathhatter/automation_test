@@ -6,6 +6,8 @@ public class Constants {
     public static final String MO_APP_ID = "YSD6Y5AVT60X4AWNLL35EIDJ";
     public static final String MO_SENDER_ID = "551288451469";
     public static final String CITIES = "cities";
+    public static final String DEEP_LINK = "deepLink";
+    public static final String HAS_PARENT = "hasParent";
 
     public static final String FB_APP_ID = "1406239262971187";
 
@@ -118,6 +120,8 @@ public class Constants {
     public static final String SHOP_LST = "shoplist";
     public static final String SMART_BASKET = "Smart Basket";
     public static final String SMART_BASKET_SLUG = "smart-basket";
+    public static final String SMART_BASKET_PRODUCTS = "smart_basket_products";
+    public static final String BASKET = "basket";
 
     public static final String PROMO_CATS = "promo_categories";
     public static final String NUM_IN_BASKET = "num_completed_in_basket";
@@ -177,6 +181,7 @@ public class Constants {
     public static final String PRODUCT_DETAILS = "product_details";
     public static final String ORDER_ID = "order_id";
     public static final String GET_CART = "getcart";
+    public static final String IS_BASKET_COUNT_DIRTY = "isBasketDirty";
     public static final String ERROR = "ERROR";
     public static final String ERROR_TYPE = "error_type";
     public static final String PROD_ID = "prod_id";
@@ -359,6 +364,7 @@ public class Constants {
     public static final String NULL = "null";
     public static final String EVOUCHER_MSG = "evoucher_msg";
     public static final String EVOUCHER_CODE = "evoucher_code";
+    public static final String SLOT_MESSAGE = "slot_message";
     public static final String REMOVE_VOUCHER = "remove_voucher";
     public static final String EVOUCHER_NAME = "evoucher_name";
 

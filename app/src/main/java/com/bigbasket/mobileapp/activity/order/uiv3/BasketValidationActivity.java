@@ -62,9 +62,10 @@ public class BasketValidationActivity extends BackButtonActivity {
         this.marketPlace = marketPlace;
         if (marketPlace.isRuleValidationError()) {
             renderBasketValidationErrors();
-        } else if (marketPlace.isAgeCheckRequired() || marketPlace.isPharamaPrescriptionNeeded()) {
+        } else if (marketPlace.isAgeCheckRequired() || marketPlace.isPharamaPrescriptionNeeded()
+                || marketPlace.hasTermsAndCond()) {
             BigBasketMessageHandler handler = new BigBasketMessageHandler<>(this, marketPlace);
-            handler.sendEmptyMessage(NavigationCodes.GO_AGE_VALIDATION);
+            handler.sendEmptyMessage(NavigationCodes.GO_AGE_VALIDATION, null);
         } else {
             SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
             String pharmaPrescriptionId = prefer.getString(Constants.PHARMA_PRESCRIPTION_ID, null);

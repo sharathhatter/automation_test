@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_empty_basket"
         android:icon="@drawable/delete_white"
         android:title="@string/empty_basket"
         android:orderInCategory="1"
-        android:showAsAction="ifRoom"
+        app:showAsAction="always"
         />
 </menu>

@@ -24,4 +24,7 @@ public class PostDeliveryAddressApiResponseContent {
 
     @SerializedName(Constants.EVOUCHER_CODE)
     public String evoucherCode;
+
+    @SerializedName(Constants.SLOT_MESSAGE)
+    public String slotMessage;
 }

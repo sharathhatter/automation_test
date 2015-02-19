@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -161,33 +160,37 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
 
         // Set product-list header view
         View headerView = getActivity().getLayoutInflater().inflate(R.layout.uiv3_product_list_header, contentView, false);
-        LinearLayout layoutFilterBy = (LinearLayout) headerView.findViewById(R.id.layoutFilterBy);
-        RelativeLayout layoutSortBy = (RelativeLayout) headerView.findViewById(R.id.layoutSortBy);
         LinearLayout layoutFilterSort = (LinearLayout) headerView.findViewById(R.id.layoutFilterSort);
 
         TextView txtFilterBy = (TextView) headerView.findViewById(R.id.txtFilterBy);
+        TextView txtNumProducts = (TextView) headerView.findViewById(R.id.txtNumProducts);
         TextView txtSortBy = (TextView) headerView.findViewById(R.id.txtSortBy);
+
+        txtNumProducts.setTypeface(faceRobotoRegular);
         txtSortBy.setTypeface(faceRobotoRegular);
         txtFilterBy.setTypeface(faceRobotoRegular);
 
         if (productListData.getProductCount() > 0) {
+            String productsStr = productListData.getProductCount() > 1 ? "products" : "product";
+            txtNumProducts.setText(productListData.getProductCount() + " " + productsStr + " found");
             if (productListData.getFilterOptions() != null && productListData.getFilterOptions().size() > 0) {
-                layoutFilterBy.setVisibility(View.VISIBLE);
-                layoutFilterBy.setOnClickListener(new View.OnClickListener() {
+                txtFilterBy.setVisibility(View.VISIBLE);
+                txtFilterBy.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         ((FilterDisplayAware) getActivity()).showFilters();
                     }
                 });
-//                int filterDrawableId = productListData.isFilterSelected() ? R.drawable.filter_applied : R.drawable.no_filter;
-//                txtFilterBy.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(filterDrawableId), null, null, null);
+                int filterDrawableId = productListData.getFilteredOn() != null && productListData.getFilteredOn().size() > 0 ?
+                        R.drawable.filter_applied : R.drawable.filter;
+                txtFilterBy.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(filterDrawableId), null, null, null);
             } else {
-                layoutFilterBy.setVisibility(View.GONE);
+                txtFilterBy.setVisibility(View.GONE);
             }
 
             if (productListData.getSortOptions().size() > 0) {
-                layoutSortBy.setVisibility(View.VISIBLE);
-                layoutSortBy.setOnClickListener(new View.OnClickListener() {
+                txtSortBy.setVisibility(View.VISIBLE);
+                txtSortBy.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         ((FilterDisplayAware) getActivity()).showSortOptions();
@@ -195,7 +198,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                 });
 //                txtSortedOnValue.setText(productListData.getSortedOnDisplay());
             } else {
-                layoutSortBy.setVisibility(View.GONE);
+                txtSortBy.setVisibility(View.GONE);
             }
         } else {
             layoutFilterSort.setVisibility(View.GONE);
@@ -410,7 +413,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         Map<String, String> eventAttribs = new HashMap<>();
         for (FilteredOn filteredOn : filteredOnArrayList) {
             eventAttribs.put(TrackEventkeys.FILTER_NAME, filteredOn.getFilterSlug());
-            eventAttribs.put(TrackEventkeys.FILTER_TYPE, filteredOn.getFilterType());
+            //eventAttribs.put(TrackEventkeys.FILTER_TYPE, filteredOn.getFilterType());
             trackEvent(TrackingAware.FILTER_APPLIED, eventAttribs, getSourceName(), null, false);
         }
     }
@@ -430,5 +433,17 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
     @Override
     public String getScreenTag() {
         return TrackEventkeys.PRODUCT_LISTING_SCREEN;
+    }
+
+    public void onResume() {
+        super.onResume();
+        if (getCurrentActivity() != null && getCurrentActivity().isBasketDirty()) {
+            syncBasket();
+        }
+    }
+
+    @Override
+    public void syncBasket() {
+        restoreProductList(null);
     }
 }

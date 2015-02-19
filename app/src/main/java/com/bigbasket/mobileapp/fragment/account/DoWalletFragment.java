@@ -82,7 +82,7 @@ public class DoWalletFragment extends BaseFragment {
                     setCurrentBalance(currentBalance);
                     trackEvent(TrackingAware.MY_ACCOUNT_CURRENT_WALLET_BALANCE_SUCCESS, null);
                 } else {
-                    handler.sendEmptyMessage(currentWalletBalCallback.status);
+                    handler.sendEmptyMessage(currentWalletBalCallback.status, currentWalletBalCallback.message);
                     trackEvent(TrackingAware.MY_ACCOUNT_CURRENT_WALLET_BALANCE_FAILED, null);
                 }
             }
@@ -362,7 +362,7 @@ public class DoWalletFragment extends BaseFragment {
                             map.put(TrackEventkeys.DATE_TO, dateTo);
                             trackEvent(TrackingAware.MY_ACCOUNT_WALLET_ACTIVITY_SUCCESS, map);
                         } else {
-                            handler.sendEmptyMessage(walletActivityCallback.status);
+                            handler.sendEmptyMessage(walletActivityCallback.status, walletActivityCallback.message);
                             map.put(TrackEventkeys.DATE_FROM, dateFrom);
                             map.put(TrackEventkeys.DATE_TO, dateTo);
                             map.put(TrackEventkeys.WALLET_ACTIVITY_FAILURE_REASON, walletActivityCallback.message);

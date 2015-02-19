@@ -3,7 +3,8 @@
     android:id="@+id/layoutUpdateProfile"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/padding_small">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -362,29 +363,14 @@
                 android:textColor="@color/uiv3_primary_text_color"
                 android:textSize="@dimen/secondary_text_size" />
 
-            <RelativeLayout
+            <Button
+                android:id="@+id/btnUpdateProfile"
+                style="@style/FormButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_normal">
+                android:layout_marginTop="@dimen/margin_normal"
+                android:text="@string/UPDATE" />
 
-                <Button
-                    android:id="@+id/btnUpdateProfile"
-                    style="@style/FormButtonStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/UPDATE" />
-
-                <ProgressBar
-                    android:id="@+id/progressBarUpdateProfile"
-                    style="?android:attr/progressBarStyleSmall"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="8dp"
-                    android:visibility="gone" />
-
-            </RelativeLayout>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

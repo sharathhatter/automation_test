@@ -128,7 +128,8 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity implem
                             showAlertDialog(null, loginApiResponse.message);
                             break;
                         default:
-                            handler.sendEmptyMessage(loginApiResponse.getErrorTypeAsInt());
+                            handler.sendEmptyMessage(loginApiResponse.getErrorTypeAsInt(),
+                                    loginApiResponse.message);
                             break;
                     }
                     HashMap<String, String> map = new HashMap<>();

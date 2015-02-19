@@ -32,7 +32,6 @@ import com.bigbasket.mobileapp.apiservice.models.response.CartGetApiResponseCont
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
-import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.AnnotationInfo;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
@@ -93,70 +92,23 @@ public class ShowCartFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        String fulfillmentIds = null;
         if (getArguments() != null) {
-            String fulfillmentIds = getArguments().getString(Constants.INTERNAL_VALUE);
-            if (fulfillmentIds != null) {
-                isReadOnly = true;
-                getItemForFulFillmentIds(fulfillmentIds);
-            } else {
-                getCartItems();
-            }
-        } else {
-            getCartItems();
+            fulfillmentIds = getArguments().getString(Constants.INTERNAL_VALUE);
+            getCartItems(fulfillmentIds);
         }
-    }
-
-    private void getItemForFulFillmentIds(String fulfillmentIds) {
-        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
-        showProgressView();
-        bigBasketApiService.cartGetForIds(fulfillmentIds, new Callback<ApiResponse<CartGetApiResponseContent>>() {
-            @Override
-            public void success(ApiResponse<CartGetApiResponseContent> cartGetApiResponseContentApiResponse, Response response) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
-                if (cartGetApiResponseContentApiResponse.status == 0) {
-                    CartSummary cartSummary = cartGetApiResponseContentApiResponse.apiResponseContent.cartSummary;
-                    fullfillmentInfos = cartGetApiResponseContentApiResponse.apiResponseContent.fulfillmentInfos;
-                    annotationInfoArrayList = cartGetApiResponseContentApiResponse.apiResponseContent.annotationInfos;
-                    if (cartGetApiResponseContentApiResponse.apiResponseContent.
-                            cartGetApiCartItemsContent != null
-                            && cartGetApiResponseContentApiResponse.apiResponseContent.cartGetApiCartItemsContent.cartItemLists != null
-                            && cartGetApiResponseContentApiResponse.apiResponseContent.cartGetApiCartItemsContent.cartItemLists.size() > 0) {
-                        cartItemLists = cartGetApiResponseContentApiResponse.apiResponseContent.
-                                cartGetApiCartItemsContent.cartItemLists;
-                        renderCartItemList(cartSummary, cartGetApiResponseContentApiResponse
-                                .apiResponseContent.cartGetApiCartItemsContent.baseImgUrl);
-                    } else {
-                        showBasketEmptyMessage();
-                    }
-                } else {
-                    handler.sendEmptyMessage(cartGetApiResponseContentApiResponse.status);
-                }
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
-                handler.handleRetrofitError(error);
-            }
-        });
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_empty_basket:
-                showAlertDialog(null, "Remove all the products from basket?", DialogButton.YES,
-                        DialogButton.NO, Constants.EMPTY_BASKET, null, "Empty Basket");
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                if (preferences.getString(Constants.GET_CART, "0") != null
+                        && !preferences.getString(Constants.GET_CART, "0").equals("0")) {
+                    showAlertDialog(null, "Remove all the products from basket?", DialogButton.YES,
+                            DialogButton.NO, Constants.EMPTY_BASKET, null, "Empty Basket");
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -164,7 +116,7 @@ public class ShowCartFragment extends BaseFragment {
     }
 
     private void logViewBasketEvent(CartSummary cartSummary, Map<String, String> eventAttribs) {// todo event log for view basket
-        if(cartSummary==null) return;
+        if (cartSummary == null) return;
         eventAttribs.put(TrackEventkeys.TOTAL_ITEMS_IN_BASKET, String.valueOf(cartSummary.getNoOfItems()));
         eventAttribs.put(TrackEventkeys.TOTAL_BASKET_VALUE, String.valueOf(cartSummary.getTotal()));
         eventAttribs.put(TrackEventkeys.TOTAL_BASKET_SAVING, String.valueOf(cartSummary.getSavings()));
@@ -326,9 +278,8 @@ public class ShowCartFragment extends BaseFragment {
 
     public final void setBasketNumItemsDisplay() {
         if (getActivity() == null || getCartInfo() == null) return;
-        if (getActivity() instanceof CartInfoAware) {
-            ((CartInfoAware) getActivity()).updateUIForCartInfo();
-        }
+        updateUIForCartInfo();
+        markBasketDirty();
     }
 
     private void emptyCart() {
@@ -353,7 +304,8 @@ public class ShowCartFragment extends BaseFragment {
                 } else if (cartEmptyApiResponseCallback.status == ApiErrorCodes.CART_NOT_EXISTS) {
                     showErrorMsg("Cart is already empty");
                 } else {
-                    handler.sendEmptyMessage(cartEmptyApiResponseCallback.status);
+                    handler.sendEmptyMessage(cartEmptyApiResponseCallback.status,
+                            cartEmptyApiResponseCallback.message);
                 }
                 editor.commit();
 
@@ -369,14 +321,14 @@ public class ShowCartFragment extends BaseFragment {
     }
 
 
-    private void getCartItems() {
+    private void getCartItems(String fulfillmentIds) {
         if (getActivity() == null) return;
         if (!DataUtil.isInternetAvailable(getActivity())) return;
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
         final SharedPreferences.Editor editor = prefer.edit();
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressView();
-        bigBasketApiService.cartGet(new Callback<ApiResponse<CartGetApiResponseContent>>() {
+        bigBasketApiService.cartGet(fulfillmentIds, new Callback<ApiResponse<CartGetApiResponseContent>>() {
             @Override
             public void success(ApiResponse<CartGetApiResponseContent> cartGetApiResponseContentApiResponse, Response response) {
                 if (isSuspended()) return;
@@ -404,7 +356,8 @@ public class ShowCartFragment extends BaseFragment {
                         editor.putString(Constants.GET_CART, "0");
                     }
                 } else {
-                    handler.sendEmptyMessage(cartGetApiResponseContentApiResponse.status);
+                    handler.sendEmptyMessage(cartGetApiResponseContentApiResponse.status,
+                            cartGetApiResponseContentApiResponse.message);
                 }
                 editor.commit();
             }
@@ -465,7 +418,7 @@ public class ShowCartFragment extends BaseFragment {
                                                     EditText editTextQty, Product product, String qty) {
         super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextView, viewDecQty, viewIncQty,
                 btnAddToBasket, editTextQty, product, qty);
-        getCartItems();
+        getCartItems(null);
     }
 
     @NonNull

@@ -78,6 +78,10 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     public void onBackResume() {
         super.onBackResume();
         setTitle();
+
+        if (getCurrentActivity() != null && getCurrentActivity().isBasketDirty()) {
+            syncBasket();
+        }
     }
 
     @Override
@@ -286,6 +290,20 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     public void updateUIForCartInfo() {
         if (getCurrentActivity() != null && getCurrentActivity() instanceof CartInfoAware) {
             ((CartInfoAware) getCurrentActivity()).updateUIForCartInfo();
+        }
+    }
+
+    @Override
+    public void markBasketDirty() {
+        if (getCurrentActivity() != null && getCurrentActivity() instanceof CartInfoAware) {
+            ((CartInfoAware) getCurrentActivity()).markBasketDirty();
+        }
+    }
+
+    @Override
+    public void syncBasket() {
+        if (getCurrentActivity() != null && getCurrentActivity() instanceof CartInfoAware) {
+            ((CartInfoAware) getCurrentActivity()).syncBasket();
         }
     }
 

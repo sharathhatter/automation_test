@@ -104,7 +104,8 @@ public class MemberReferralActivity extends BackButtonActivity {
                     loadMemberReferral(getRefProductApiResponseCallback.apiResponseContent);
                     trackEvent(TrackingAware.MEMBER_REFERRAL_SHOWN, null);
                 } else {
-                    handler.sendEmptyMessage(getRefProductApiResponseCallback.status);
+                    handler.sendEmptyMessage(getRefProductApiResponseCallback.status,
+                            getRefProductApiResponseCallback.message);
                 }
             }
 

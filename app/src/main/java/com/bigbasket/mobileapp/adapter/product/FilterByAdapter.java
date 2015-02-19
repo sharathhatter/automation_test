@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -111,39 +110,50 @@ public class FilterByAdapter extends BaseExpandableListAdapter {
         final FilterOptionCategory filterOptionCategory = filterOptionCategories.get(groupPosition);
         final FilterOptionItem filterOptionItem = filterOptionCategory.getFilterOptionItems().get(childPosition);
         TextView txtListRow = filterbyViewHolder.getTxtListRow();
-        CheckBox chkFilter = filterbyViewHolder.getChkFilter();
+        final CheckBox chkFilter = filterbyViewHolder.getChkFilter();
         chkFilter.setChecked(filterOptionItem.isSelected());
         txtListRow.setText(filterOptionItem.getDisplayName());
-        chkFilter.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        txtListRow.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                filterOptionItem.setSelected(isChecked);
-                FilteredOn filteredOn = FilteredOn.getFilteredOn(filteredOnList, filterOptionCategory.getFilterSlug());
-                if (filteredOn == null) {
-                    filteredOn = new FilteredOn(filterOptionItem.getFilterValueSlug(),
-                            filterOptionCategory.getFilterName());
-                    filteredOnList.add(filteredOn);
-                }
-                ArrayList<String> values = filteredOn.getFilterValues();
-                if (values == null) {
-                    values = new ArrayList<>();
-                }
-                if (values.size() == 0) {
-                    filteredOn.setFilterValues(values);
-                }
-                boolean hasFilterOption = values.contains(filterOptionItem.getFilterValueSlug());
-                if (!isChecked) {
-                    if (hasFilterOption) {
-                        values.remove(filterOptionItem.getFilterValueSlug());
-                    }
-                } else {
-                    if (!hasFilterOption) {
-                        values.add(filterOptionItem.getFilterValueSlug());
-                    }
-                }
+            public void onClick(View v) {
+                chkFilter.toggle();
+                onFilterOptionClick(filterOptionCategory, filterOptionItem, chkFilter);
+            }
+        });
+        chkFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onFilterOptionClick(filterOptionCategory, filterOptionItem, chkFilter);
             }
         });
         return row;
+    }
+
+    private void onFilterOptionClick(FilterOptionCategory filterOptionCategory,
+                                     FilterOptionItem filterOptionItem, CheckBox chkFilter) {
+        boolean isChecked = chkFilter.isChecked();
+        filterOptionItem.setSelected(isChecked);
+        FilteredOn filteredOn = FilteredOn.getFilteredOn(filteredOnList,
+                filterOptionCategory.getFilterSlug());
+        if (filteredOn == null) {
+            filteredOn = new FilteredOn(filterOptionCategory.getFilterSlug());
+            filteredOnList.add(filteredOn);
+        }
+        ArrayList<String> filterValues = filteredOn.getFilterValues();
+        if (filterValues == null) {
+            filterValues = new ArrayList<>();
+            filteredOn.setFilterValues(filterValues);
+        }
+
+        if (isChecked) {
+            if (!filterValues.contains(filterOptionItem.getFilterValueSlug())) {
+                filterValues.add(filterOptionItem.getFilterValueSlug());
+            }
+        } else {
+            if (filterValues.contains(filterOptionItem.getFilterValueSlug())) {
+                filterValues.remove(filterOptionItem.getFilterValueSlug());
+            }
+        }
     }
 
     @Override

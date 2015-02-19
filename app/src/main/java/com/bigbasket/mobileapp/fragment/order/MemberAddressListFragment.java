@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
@@ -81,7 +82,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             public void success(ApiResponse<GetDeliveryAddressApiResponseContent> getDeliveryAddressApiResponse, Response response) {
                 if (isSuspended()) return;
                 try {
-                    hideProgressDialog();
+                    hideProgressView();
                 } catch (IllegalArgumentException e) {
                     return;
                 }
@@ -91,10 +92,11 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
                         showAddresses();
                         break;
                     case ApiErrorCodes.EMPTY_ADDRESS:
-                        showCreateAddressForm();
+                        handleEmptyAddresses();
                         break;
                     default:
-                        handler.sendEmptyMessage(getDeliveryAddressApiResponse.status);
+                        handler.sendEmptyMessage(getDeliveryAddressApiResponse.status,
+                                getDeliveryAddressApiResponse.message);
                         break;
                 }
             }
@@ -103,7 +105,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             public void failure(RetrofitError error) {
                 if (isSuspended()) return;
                 try {
-                    hideProgressDialog();
+                    hideProgressView();
                 } catch (IllegalArgumentException e) {
                     return;
                 }
@@ -124,8 +126,20 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             }
             renderAddressList();
         } else {
+            handleEmptyAddresses();
+        }
+    }
+
+    private void handleEmptyAddresses() {
+        if (mFromAccountPage) {
+            showAddAddressText();
+        } else {
             showCreateAddressForm();
         }
+    }
+
+    private void showAddAddressText() {
+        renderAddressList();
     }
 
     private void renderAddressList() {
@@ -139,12 +153,24 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
 
         RecyclerView addressRecyclerView = (RecyclerView) addressView.findViewById(R.id.fabRecyclerView);
         UIUtil.configureRecyclerView(addressRecyclerView, getActivity(), 1, 3);
-        MemberAddressListAdapter memberAddressListAdapter =
-                new MemberAddressListAdapter<>(this, mAddressArrayList, faceRobotoRegular);
-        addressRecyclerView.setAdapter(memberAddressListAdapter);
+        TextView txtMsg = (TextView) addressView.findViewById(R.id.txtMsg);
+        txtMsg.setTypeface(faceRobotoRegular);
+
+        if (mAddressArrayList != null && mAddressArrayList.size() > 0) {
+            addressRecyclerView.setVisibility(View.VISIBLE);
+            txtMsg.setVisibility(View.GONE);
+            MemberAddressListAdapter memberAddressListAdapter =
+                    new MemberAddressListAdapter<>(this, mAddressArrayList, faceRobotoRegular);
+            addressRecyclerView.setAdapter(memberAddressListAdapter);
+        } else {
+            txtMsg.setVisibility(View.VISIBLE);
+            txtMsg.setText(getString(R.string.noAddress));
+            addressRecyclerView.setVisibility(View.GONE);
+        }
 
         FloatingActionButton floatingActionButton = (FloatingActionButton) addressView.findViewById(R.id.btnFab);
-        if (addressRecyclerView.getLayoutManager() instanceof LinearLayoutManager) {
+        if (addressRecyclerView.getVisibility() == View.VISIBLE &&
+                addressRecyclerView.getLayoutManager() instanceof LinearLayoutManager) {
             floatingActionButton.attachToRecyclerView(addressRecyclerView);
         }
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
@@ -224,7 +250,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
                     loadAddresses();
                 }
             } else {
-                loadAddresses();
+                showAddAddressText();
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);

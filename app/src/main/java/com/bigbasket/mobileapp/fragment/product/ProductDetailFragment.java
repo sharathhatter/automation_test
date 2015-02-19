@@ -96,7 +96,8 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
                         renderProductDetail();
                         break;
                     default:
-                        handler.sendEmptyMessage(productDetailApiResponse.getErrorTypeAsInt());
+                        handler.sendEmptyMessage(productDetailApiResponse.getErrorTypeAsInt(),
+                                productDetailApiResponse.message);
                         break;
                 }
             }

@@ -28,9 +28,9 @@
         android:smallScreens="true"
         android:xlargeScreens="true" />
 
-    <permission
-        android:name="com.bigbasket.mobileapp.permission.C2D_MESSAGE"
-        android:protectionLevel="signature" />
+    <!--<permission-->
+        <!--android:name="com.bigbasket.mobileapp.permission.C2D_MESSAGE"-->
+        <!--android:protectionLevel="signature" />-->
 
     <uses-permission android:name="com.bigbasket.mobileapp.permission.C2D_MESSAGE" />
     <!-- To auto-complete the email text field in the login form with the user's emails -->
@@ -90,6 +90,7 @@
             android:name="com.demach.konotor.KonotorFeedbackActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.CustomerFeedbackActivity"
@@ -234,6 +235,36 @@
 
                 <data
                     android:host="promo_list"
+                    android:scheme="bigbasket" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="smart-basket"
+                    android:scheme="bigbasket" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="smart_basket_products"
+                    android:scheme="bigbasket" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="basket"
                     android:scheme="bigbasket" />
             </intent-filter>
         </activity>

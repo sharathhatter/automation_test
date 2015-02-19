@@ -261,7 +261,7 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
             if (isCancelled()) {
                 return null;
             }
-            handler.sendEmptyMessage(NavigationCodes.PRESCRIPTION_IMAGE_SAMPLING);
+            handler.sendEmptyMessage(NavigationCodes.PRESCRIPTION_IMAGE_SAMPLING, null);
             return null;
         }
 

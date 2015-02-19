@@ -175,7 +175,8 @@ public class ChangePasswordFragment extends BaseFragment {
                                     showErrorMsg(getString(R.string.OLD_PASS_NOT_CORRECT));
                                     break;
                                 default:
-                                    handler.sendEmptyMessage(changePasswordCallback.getErrorTypeAsInt());
+                                    handler.sendEmptyMessage(changePasswordCallback.getErrorTypeAsInt(),
+                                            changePasswordCallback.message);
                                     break;
                             }
                             HashMap<String, String> map = new HashMap<>();

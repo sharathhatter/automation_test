@@ -158,10 +158,6 @@ public class BigBasketMessageHandler<T> {
         sendEmptyMessage(what, message, false);
     }
 
-    public void sendEmptyMessage(int what) {
-        sendEmptyMessage(what, null);
-    }
-
     private String getString(int resId) {
         return ((ActivityAware) ctx).getCurrentActivity().getString(resId);
     }
@@ -208,7 +204,7 @@ public class BigBasketMessageHandler<T> {
                 }
                 break;
             case HttpStatus.SC_UNAUTHORIZED:
-                ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.login_required), NavigationCodes.GO_TO_LOGIN, null);
+                showUnauthorised();
                 break;
             default:
                 String msg = "HTTP " + errorCode + " : " + reasonPhrase;
@@ -219,6 +215,10 @@ public class BigBasketMessageHandler<T> {
                 }
                 break;
         }
+    }
+
+    private void showUnauthorised() {
+        ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.login_required), NavigationCodes.GO_TO_LOGIN, null);
     }
 
     public void sendOfflineError() {

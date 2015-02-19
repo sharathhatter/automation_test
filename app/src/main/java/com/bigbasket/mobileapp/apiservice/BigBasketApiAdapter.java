@@ -7,14 +7,13 @@ import android.text.TextUtils;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.squareup.okhttp.OkHttpClient;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
+import java.util.concurrent.TimeUnit;
 
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
-import retrofit.client.Request;
-import retrofit.client.UrlConnectionClient;
+import retrofit.client.OkClient;
 
 public class BigBasketApiAdapter {
 
@@ -70,22 +69,27 @@ public class BigBasketApiAdapter {
             }
         };
 
+        OkHttpClient okHttpClient = new OkHttpClient();
+        okHttpClient.setReadTimeout(45, TimeUnit.SECONDS);
+        okHttpClient.setConnectTimeout(20, TimeUnit.SECONDS);
+
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint(MobileApiUrl.URL)
                 .setRequestInterceptor(requestInterceptor)
-                .setClient(new BigBasketHttpClient())
+                .setClient(new OkClient(okHttpClient))
                 .build();
 
+        //.setClient(new BigBasketHttpClient())
         bigBasketApiService = restAdapter.create(BigBasketApiService.class);
     }
 
-    public static final class BigBasketHttpClient extends UrlConnectionClient {
-        @Override
-        protected HttpURLConnection openConnection(Request request) throws IOException {
-            HttpURLConnection httpURLConnection = super.openConnection(request);
-            httpURLConnection.setConnectTimeout(20 * 1000);
-            httpURLConnection.setReadTimeout(45 * 1000);
-            return httpURLConnection;
-        }
-    }
+//    public static final class BigBasketHttpClient extends UrlConnectionClient {
+//        @Override
+//        protected HttpURLConnection openConnection(Request request) throws IOException {
+//            HttpURLConnection httpURLConnection = super.openConnection(request);
+//            httpURLConnection.setConnectTimeout(20 * 1000);
+//            httpURLConnection.setReadTimeout(45 * 1000);
+//            return httpURLConnection;
+//        }
+//    }
 }

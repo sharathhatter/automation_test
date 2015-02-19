@@ -96,7 +96,7 @@ public class StartActivity extends BaseActivity implements DynamicScreenAware {
     }
 
     private void getMainMenu() {
-        new GetDynamicPageTask<>(this, "main-menu", false, true).startTask();
+        new GetDynamicPageTask<>(this, "main-menu", false, true, true).startTask();
 
     }
 
@@ -189,7 +189,7 @@ public class StartActivity extends BaseActivity implements DynamicScreenAware {
                 new Callback<RegisterDeviceResponse>() {
                     @Override
                     public void success(RegisterDeviceResponse registerDeviceResponse, Response response) {
-                        hideProgressDialog();
+                        //hideProgressDialog(); Let it be visible all the time
                         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
                         SharedPreferences.Editor editor = preferences.edit();
 

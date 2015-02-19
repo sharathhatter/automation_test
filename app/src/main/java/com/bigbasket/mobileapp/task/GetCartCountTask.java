@@ -17,7 +17,6 @@ import retrofit.client.Response;
 
 public class GetCartCountTask<T> {
 
-    private static final String TAG = GetCartCountTask.class.getName();
     private T ctx;
     boolean failSilently;
 
@@ -49,7 +48,8 @@ public class GetCartCountTask<T> {
                             break;
                         default:
                             if (!failSilently) {
-                                ((HandlerAware) ctx).getHandler().sendEmptyMessage(cartSummaryApiResponse.getErrorTypeAsInt());
+                                ((HandlerAware) ctx).getHandler().sendEmptyMessage(cartSummaryApiResponse.getErrorTypeAsInt(),
+                                        cartSummaryApiResponse.message);
                             }
                             break;
                     }

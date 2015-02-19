@@ -50,7 +50,8 @@ public class ShoppingListNamesTask<T> {
                         ((ShoppingListNamesAware) ctx).onShoppingListFetched(getShoppingListsApiResponse.shoppingListNames);
                         break;
                     default:
-                        ((HandlerAware) ctx).getHandler().sendEmptyMessage(getShoppingListsApiResponse.getErrorTypeAsInt());
+                        ((HandlerAware) ctx).getHandler().sendEmptyMessage(getShoppingListsApiResponse.getErrorTypeAsInt(),
+                                getShoppingListsApiResponse.message);
                         break;
                 }
             }

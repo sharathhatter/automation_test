@@ -17,8 +17,6 @@ import retrofit.client.Response;
 
 public class COMarketPlaceCheckTask<T> {
 
-
-    private static final String TAG = COMarketPlaceCheckTask.class.getName();
     private T ctx;
 
     public COMarketPlaceCheckTask(T ctx) {
@@ -46,7 +44,8 @@ public class COMarketPlaceCheckTask<T> {
                         ((COMarketPlaceAware) ctx).onCoMarketPlaceSuccess(marketPlaceApiResponse.apiResponseContent);
                         break;
                     default:
-                        ((HandlerAware) ctx).getHandler().sendEmptyMessage(marketPlaceApiResponse.status);
+                        ((HandlerAware) ctx).getHandler().sendEmptyMessage(marketPlaceApiResponse.status,
+                                marketPlaceApiResponse.message);
                         break;
                 }
             }

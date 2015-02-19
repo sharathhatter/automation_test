@@ -113,7 +113,8 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
                                         postDeliveryAddressCartSummary.walletRemaining,
                                         postDeliveryAddressApiResponse.apiResponseContent.activeVouchersArrayList,
                                         postDeliveryAddressApiResponse.apiResponseContent.paymentTypes,
-                                        postDeliveryAddressApiResponse.apiResponseContent.evoucherCode);
+                                        postDeliveryAddressApiResponse.apiResponseContent.evoucherCode,
+                                        postDeliveryAddressApiResponse.apiResponseContent.slotMessage);
                                 break;
                             case Constants.ERROR:
                                 handler.sendEmptyMessage(postDeliveryAddressApiResponse.getErrorTypeAsInt(),
@@ -145,7 +146,7 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
                          String amtPayable, String walletUsed, String walletRemaining,
                          ArrayList<ActiveVouchers> activeVouchersList,
                          ArrayList<PaymentType> paymentTypes,
-                         String voucherCode) {
+                         String voucherCode, String slotMsg) {
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         FrameLayout contentView = (FrameLayout) findViewById(R.id.content_frame);
@@ -157,6 +158,9 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
 
         Bundle slotBundle = new Bundle();
         slotBundle.putParcelableArrayList(Constants.SLOTS_INFO, slotGroupList);
+        if (!TextUtils.isEmpty(slotMsg)) {
+            slotBundle.putString(Constants.SLOT_MESSAGE, slotMsg);
+        }
 
         Bundle paymentSelectionBundle = new Bundle();
         paymentSelectionBundle.putParcelable(Constants.C_SUMMARY, cartSummary);
@@ -251,7 +255,8 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
                                 launchPlaceOrderActivity(orderSummary);
                                 break;
                             default:
-                                handler.sendEmptyMessage(orderSummaryApiResponse.status);
+                                handler.sendEmptyMessage(orderSummaryApiResponse.status,
+                                        orderSummaryApiResponse.message);
                                 break;
                         }
                     }

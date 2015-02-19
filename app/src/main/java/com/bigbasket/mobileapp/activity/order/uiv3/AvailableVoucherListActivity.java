@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
@@ -65,6 +66,8 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     mSelectedIndex = position;
+                    Toast.makeText(getCurrentActivity(), getString(R.string.nowClickApplyVoucher),
+                            Toast.LENGTH_LONG).show();
                 }
             });
         }

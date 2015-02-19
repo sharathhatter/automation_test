@@ -81,11 +81,8 @@ public interface BigBasketApiService {
     void getDynamicPage(@Query(Constants.SCREEN) String screen, Callback<ApiResponse<GetDynamicPageApiResponse>> homePageApiResponseCallback);
 
     @GET("/c-get/")
-    void cartGet(Callback<ApiResponse<CartGetApiResponseContent>> cartGetApiResponseCallback);
-
-    @GET("/c-get/")
-    void cartGetForIds(@Query(Constants.FULFILLMENT_ID) String fulfillmentId,
-                       Callback<ApiResponse<CartGetApiResponseContent>> cartGetApiResponseCallback);
+    void cartGet(@Query(Constants.FULFILLMENT_ID) String fulfillmentId,
+                 Callback<ApiResponse<CartGetApiResponseContent>> cartGetApiResponseCallback);
 
     @POST("/c-empty/")
     void emptyCart(Callback<BaseApiResponse> cartEmptyApiResponseCallback);

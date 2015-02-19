@@ -429,8 +429,6 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
     public void onFacebookSignOut() {
         trackEvent(TrackingAware.MY_ACCOUNT_FACEBOOK_LOGOUT, null);
         doLogout();
-        setResult(NavigationCodes.GO_TO_HOME);
-        finish();
     }
 
     @Override
@@ -498,6 +496,7 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
 
     public void OnRegistrationLinkClicked(View v) {
         Intent intent = new Intent(this, SignupActivity.class);
+        intent.putExtra(Constants.DEEP_LINK, getIntent().getStringExtra(Constants.DEEP_LINK));
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 

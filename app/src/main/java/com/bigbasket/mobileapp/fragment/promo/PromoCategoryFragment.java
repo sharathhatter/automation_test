@@ -73,21 +73,16 @@ public class PromoCategoryFragment extends BaseSectionFragment implements PromoD
                             mPromoCategoryList = browsePromoCategoryApiResponse.apiResponseContent.promoCategories;
                             mPromoCategoryList = filterPromoCategories();
                             mSectionData = browsePromoCategoryApiResponse.apiResponseContent.sectionData;
-                            if (mPromoCategoryList.size() > 0) {
-                                renderPromoCategories();
-                                trackEvent(TrackingAware.PROMO_CATEGORY_LIST, null);
-                            } else {
-                                handler.sendEmptyMessage(browsePromoCategoryApiResponse.status);
-                            }
-                        } else {
-                            handler.sendEmptyMessage(browsePromoCategoryApiResponse.status);
+                            renderPromoCategories();
+                            trackEvent(TrackingAware.PROMO_CATEGORY_LIST, null);
                         }
                         break;
                     case ApiErrorCodes.PROMO_CATEGORY_NOT_EXIST:
                         showErrorMsg(getResources().getString(R.string.no_promo_cat));
                         break;
                     default:
-                        handler.sendEmptyMessage(browsePromoCategoryApiResponse.status);
+                        handler.sendEmptyMessage(browsePromoCategoryApiResponse.status,
+                                browsePromoCategoryApiResponse.message);
                         break;
                 }
             }

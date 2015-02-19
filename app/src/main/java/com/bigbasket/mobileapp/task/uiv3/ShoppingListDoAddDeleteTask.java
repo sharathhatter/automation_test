@@ -79,18 +79,19 @@ public class ShoppingListDoAddDeleteTask<T> {
                 case Constants.OK:
                     switch (shoppingListOption) {
                         case ADD_TO_LIST:
-                            ((HandlerAware) ctx).getHandler().sendEmptyMessage(NavigationCodes.ADD_TO_SHOPPINGLIST_OK);
+                            ((HandlerAware) ctx).getHandler().sendEmptyMessage(NavigationCodes.ADD_TO_SHOPPINGLIST_OK, null);
                             Log.d(TAG, "Sending message: MessageCode.ADD_TO_SHOPPINGLIST_OK");
                             break;
                         case DELETE_ITEM:
-                            ((HandlerAware) ctx).getHandler().sendEmptyMessage(NavigationCodes.DELETE_FROM_SHOPPING_LIST_OK);
+                            ((HandlerAware) ctx).getHandler().sendEmptyMessage(NavigationCodes.DELETE_FROM_SHOPPING_LIST_OK, null);
                             ((ShoppingListNamesAware) ctx).postShoppingListItemDeleteOperation();
                             Log.d(TAG, "Sending message: MessageCode.DELETE_FROM_SHOPPING_LIST_OK");
                             break;
                     }
                     break;
                 default:
-                    ((HandlerAware) ctx).getHandler().sendEmptyMessage(oldBaseApiResponse.getErrorTypeAsInt());
+                    ((HandlerAware) ctx).getHandler().sendEmptyMessage(oldBaseApiResponse.getErrorTypeAsInt(),
+                            oldBaseApiResponse.message);
                     break;
             }
         }
