@@ -8,8 +8,9 @@
     android:background="@drawable/nav_item_background">
 
     <ImageView
-        android:layout_width="wrap_content"
+        android:layout_width="24dp"
         android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
         android:contentDescription="@string/alt_placeholder"
         android:layout_centerVertical="true"
         android:layout_marginLeft="@dimen/margin_small"

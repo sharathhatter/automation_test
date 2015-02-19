@@ -1,58 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/uiv3_list_bkg_light_color">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/category_tile_width"
+    android:layout_height="@dimen/category_tile_height"
+    android:layout_marginTop="@dimen/margin_small"
+    android:background="@drawable/thin_grey_border"
+    android:orientation="vertical">
 
     <ImageView
-        android:layout_width="30dp"
-        android:minWidth="30dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
-        android:contentDescription="@string/topCategory"
         android:id="@+id/imgCategory"
-        android:layout_marginLeft="@dimen/margin_normal" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/topCategory"
-        android:id="@+id/txtCategoryName"
-        android:textSize="@dimen/secondary_text_size"
-        android:layout_toRightOf="@id/imgCategory"
-        android:layout_marginTop="@dimen/margin_normal"
-        android:layout_marginLeft="@dimen/margin_normal"
-        android:textColor="@color/uiv3_primary_text_color"
-        android:gravity="left|center_vertical" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="20dp"
-        android:paddingLeft="@dimen/padding_normal"
-        android:paddingRight="@dimen/padding_normal"
-        android:textColor="@color/uiv3_primary_text_color"
-        android:id="@+id/editTextNumItems"
-        android:layout_alignParentRight="true"
-        android:background="@drawable/shopping_list_boarder"
-        android:layout_marginRight="@dimen/margin_normal"
-        android:gravity="center"
-        android:textSize="@dimen/secondary_text_size"
-        android:clickable="false"
-        android:cursorVisible="false"
-        android:focusable="false"
-        android:inputType="text"
-        android:layout_centerVertical="true" />
-
-    <View
         android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:layout_below="@id/txtCategoryName"
-        android:background="@color/strokeLine"
-        android:layout_marginTop="@dimen/margin_normal"
-        android:layout_marginLeft="@dimen/margin_normal"
-        android:id="@+id/viewSeparator"
-        android:layout_toRightOf="@id/imgCategory" />
+        android:layout_height="@dimen/category_tile_img_height"
+        android:contentDescription="@string/topCategory"
+        android:src="@drawable/bb_logo_transparent_bkg" />
 
-</RelativeLayout>
+    <LinearLayout
+        android:id="@+id/layoutSmartBasketCategory"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txtCategoryName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_mini"
+            android:layout_marginRight="@dimen/margin_mini"
+            android:layout_marginTop="@dimen/margin_mini"
+            android:ellipsize="end"
+            android:gravity="center_horizontal"
+            android:lines="2"
+            android:maxLines="2"
+            android:textColor="@color/uiv3_primary_text_color"
+            android:textSize="@dimen/primary_text_size" />
+
+        <TextView
+            android:id="@+id/txtNumItems"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:focusable="false"
+            android:gravity="center_horizontal"
+            android:paddingBottom="2dp"
+            android:paddingLeft="@dimen/padding_mini"
+            android:paddingRight="@dimen/padding_mini"
+            android:textColor="@color/uiv3_secondary_text_color"
+            android:textSize="@dimen/secondary_text_size" />
+    </LinearLayout>
+
+</LinearLayout>

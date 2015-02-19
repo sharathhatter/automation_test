@@ -3,15 +3,15 @@ package com.bigbasket.mobileapp.fragment.shoppinglist;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -45,16 +45,16 @@ public class ShoppingListSummaryFragment extends BaseFragment {
     private static final HashMap<String, Integer> categoryImageMap = new HashMap<>();
 
     static {
-        categoryImageMap.put("fruits-vegetables", R.drawable.fruit_and_veg);
-        categoryImageMap.put("grocery-staples", R.drawable.cereal);
-        categoryImageMap.put("bread-dairy-eggs", R.drawable.bread);
-        categoryImageMap.put("beverages", R.drawable.beverage_tea);
-        categoryImageMap.put("branded-foods", R.drawable.brandedfoods);
-        categoryImageMap.put("personal-care", R.drawable.personalcare);
-        categoryImageMap.put("household", R.drawable.household);
-        categoryImageMap.put("confectionery", R.drawable.cake_slice);
-        categoryImageMap.put("imported-gourmet", R.drawable.imported_goumet);
-        categoryImageMap.put("meat", R.drawable.chicken);
+//        categoryImageMap.put("fruits-vegetables", R.drawable.fruit_and_veg);
+//        categoryImageMap.put("grocery-staples", R.drawable.cereal);
+//        categoryImageMap.put("bread-dairy-eggs", R.drawable.bread);
+//        categoryImageMap.put("beverages", R.drawable.beverage_tea);
+//        categoryImageMap.put("branded-foods", R.drawable.brandedfoods);
+//        categoryImageMap.put("personal-care", R.drawable.personalcare);
+//        categoryImageMap.put("household", R.drawable.household);
+//        categoryImageMap.put("confectionery", R.drawable.cake_slice);
+//        categoryImageMap.put("imported-gourmet", R.drawable.imported_goumet);
+//        categoryImageMap.put("meat", R.drawable.chicken);
     }
 
     @Override
@@ -157,9 +157,12 @@ public class ShoppingListSummaryFragment extends BaseFragment {
             }
             return;
         }
-        ListView shoppingListSummaryView = new ListView(getActivity());
-        shoppingListSummaryView.setDividerHeight(0);
-        shoppingListSummaryView.setDivider(null);
+        GridView shoppingListSummaryView = new GridView(getActivity());
+        shoppingListSummaryView.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
+        shoppingListSummaryView.setNumColumns(GridView.AUTO_FIT);
+        shoppingListSummaryView.setGravity(Gravity.CENTER);
+        shoppingListSummaryView.setHorizontalSpacing((int) getResources().getDimension(R.dimen.padding_small));
+        shoppingListSummaryView.setColumnWidth((int) getResources().getDimension(R.dimen.category_tile_width));
         ShoppingListSummaryAdapter shoppingListSummaryAdapter = new ShoppingListSummaryAdapter(mShoppingListSummaries);
         shoppingListSummaryView.setAdapter(shoppingListSummaryAdapter);
         shoppingListSummaryView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -219,21 +222,14 @@ public class ShoppingListSummaryFragment extends BaseFragment {
 
             TextView txtCategoryName = shoppingListSummaryHolder.getTxtCategoryName();
             ImageView imgCategory = shoppingListSummaryHolder.getImgCategory();
-            EditText editTextNumItems = shoppingListSummaryHolder.getEditTextNumItems();
+            TextView txtNumItems = shoppingListSummaryHolder.getTxtNumItems();
 
             txtCategoryName.setText(shoppingListSummary.getTopCategoryName());
-            int imageResId = categoryImageMap.containsKey(shoppingListSummary.getTopCategorySlug()) ?
-                    categoryImageMap.get(shoppingListSummary.getTopCategorySlug()) : R.drawable.image_404;
-            imgCategory.setImageResource(imageResId);
+//            int imageResId = categoryImageMap.containsKey(shoppingListSummary.getTopCategorySlug()) ?
+//                    categoryImageMap.get(shoppingListSummary.getTopCategorySlug()) : R.drawable.image_404;
+//            imgCategory.setImageResource(imageResId);
 
-            editTextNumItems.setText(shoppingListSummary.getNumItems());
-
-            View viewSeparator = shoppingListSummaryHolder.getViewSeparator();
-            if (position == size - 1) {
-                viewSeparator.setVisibility(View.GONE);
-            } else {
-                viewSeparator.setVisibility(View.VISIBLE);
-            }
+            txtNumItems.setText(shoppingListSummary.getNumItemsDisplay());
             return row;
         }
 
@@ -241,8 +237,7 @@ public class ShoppingListSummaryFragment extends BaseFragment {
             private View base;
             private ImageView imgCategory;
             private TextView txtCategoryName;
-            private EditText editTextNumItems;
-            private View viewSeparator;
+            private TextView txtNumItems;
 
             private ShoppingListSummaryHolder(View base) {
                 this.base = base;
@@ -263,19 +258,12 @@ public class ShoppingListSummaryFragment extends BaseFragment {
                 return txtCategoryName;
             }
 
-            public View getViewSeparator() {
-                if (viewSeparator == null) {
-                    viewSeparator = base.findViewById(R.id.viewSeparator);
+            public TextView getTxtNumItems() {
+                if (txtNumItems == null) {
+                    txtNumItems = (TextView) base.findViewById(R.id.txtNumItems);
+                    txtNumItems.setTypeface(faceRobotoRegular);
                 }
-                return viewSeparator;
-            }
-
-            public EditText getEditTextNumItems() {
-                if (editTextNumItems == null) {
-                    editTextNumItems = (EditText) base.findViewById(R.id.editTextNumItems);
-                    editTextNumItems.setTypeface(faceRobotoRegular);
-                }
-                return editTextNumItems;
+                return txtNumItems;
             }
         }
     }

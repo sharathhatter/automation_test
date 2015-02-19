@@ -113,7 +113,7 @@ public class AccountSettingFragment extends BaseFragment {
                 getResources().getString(R.string.view_edit_pin_label),
                 getString(R.string.spendTrends)};
         int[] imageArray = {
-                R.drawable.ic_local_shipping_grey600_36dp,
+                R.drawable.delivery_van,
                 R.drawable.order_history_grey_list,
                 R.drawable.edit_profile_grey_list,
                 R.drawable.ic_lock_grey600_36dp,

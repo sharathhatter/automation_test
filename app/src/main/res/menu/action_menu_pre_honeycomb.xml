@@ -33,17 +33,17 @@
                 bb:showAsAction="never" />
 
             <item
+                android:id="@+id/action_login"
+                android:icon="@drawable/user_white"
+                android:orderInCategory="9999"
+                android:title="@string/action_sign_in"
+                bb:showAsAction="never" />
+
+            <item
                 android:id="@+id/action_communication_hub"
                 android:icon="@drawable/communication_hub_white"
                 android:orderInCategory="9999"
                 android:title="@string/bbCommHub"
-                bb:showAsAction="never" />
-
-            <item
-                android:id="@+id/action_login"
-                android:icon="@drawable/login_arrow"
-                android:orderInCategory="9999"
-                android:title="@string/action_sign_in"
                 bb:showAsAction="never" />
 
             <item
