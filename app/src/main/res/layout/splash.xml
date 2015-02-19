@@ -90,8 +90,9 @@
 
             <ImageView
                 android:id="@+id/imgBBLogo"
-                android:layout_width="160dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_small"
                 android:layout_gravity="center_horizontal"
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/app_name"
@@ -110,6 +111,7 @@
 
             <ImageView
                 android:id="@+id/imgHomeLarge"
+                android:layout_marginTop="@dimen/margin_normal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
@@ -122,7 +124,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/margin_normal"
                 android:layout_marginRight="@dimen/margin_normal"
-                android:layout_marginTop="@dimen/margin_small"
+                android:layout_marginTop="@dimen/margin_large"
                 android:gravity="center_horizontal"
                 android:text="@string/chooseLocation"
                 android:textColor="@color/uiv3_primary_text_color"

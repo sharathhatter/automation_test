@@ -32,6 +32,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.facebook.AppEventsLogger;
 import com.moe.pushlibrary.MoEHelper;
 import com.newrelic.agent.android.NewRelic;
 
@@ -45,7 +46,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class StartActivity extends BaseActivity implements DynamicScreenAware {
+public class SplashActivity extends BaseActivity implements DynamicScreenAware {
 
     boolean mShowCitySelectionDropDown;
 
@@ -87,7 +88,7 @@ public class StartActivity extends BaseActivity implements DynamicScreenAware {
     @Override
     protected void onResume() {
         super.onResume();
-        com.facebook.AppEventsLogger.activateApp(getCurrentActivity(), Constants.FB_APP_ID);
+        AppEventsLogger.activateApp(this);
     }
 
     private void loadNavigation() {
@@ -263,6 +264,7 @@ public class StartActivity extends BaseActivity implements DynamicScreenAware {
     @Override
     protected void onPause() {
         super.onPause();
+        AppEventsLogger.deactivateApp(this);
     }
 
     @Override

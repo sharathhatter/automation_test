@@ -50,7 +50,7 @@
             android:value=".activity.product.ProductListActivity" />
 
         <activity
-            android:name=".activity.StartActivity"
+            android:name=".activity.SplashActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
@@ -436,11 +436,11 @@
         <!-- push notification landing page -->
         <activity
             android:name="com.moe.pushlibrary.activities.MoEActivity"
-            android:parentActivityName=".activity.StartActivity"
+            android:parentActivityName=".activity.SplashActivity"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.StartActivity" />
+                android:value=".activity.SplashActivity" />
         </activity>
 
         <meta-data

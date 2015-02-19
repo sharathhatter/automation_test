@@ -9,8 +9,6 @@ public class Constants {
     public static final String DEEP_LINK = "deepLink";
     public static final String HAS_PARENT = "hasParent";
 
-    public static final String FB_APP_ID = "1406239262971187";
-
     public static final String CURRENT_PAGE = "page";
     public static final String TOTAL_PAGES = "tot_pages";
 
