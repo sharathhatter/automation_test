@@ -526,10 +526,7 @@
     <string name="sameDayDelivery">SAME-DAY DELIVERY</string>
     <string name="qualityYouWillLove">QUALITY YOU\'LL LOVE</string>
     <string name="wideRange">WIDE RANGE OF PRODUCTS</string>
-<<<<<<< HEAD
     <string name="addAllProducts">Are you sure you want to add all products to the basket?</string>
-=======
     <string name="noAddress">You haven\'t added any address yet. Click on the \'&#43;\' button to add a address.</string>
     <string name="nowClickApplyVoucher">Now click on Apply Voucher to use this voucher</string>
->>>>>>> be3d3f6f6437d1f3ecb84c8a9d530f536ae86ec6
 </resources>

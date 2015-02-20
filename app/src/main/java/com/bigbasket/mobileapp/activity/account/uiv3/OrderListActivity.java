@@ -39,6 +39,7 @@ import com.bigbasket.mobileapp.view.uiv3.BBArrayAdapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -74,7 +75,6 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
     }
 
     private void loadOrders() {
-        traceOrderEvent(mOrderType, -1);
         loadOrders(-1);
     }
 
@@ -153,7 +153,6 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     OrderMonthRange orderMonthRange = mOrderMonthRanges.get(position);
                     if (orderMonthRange.getValue() != mSelectedMonth) {
-                        traceOrderEvent(mOrderType, orderMonthRange.getValue());
                         loadOrders(orderMonthRange.getValue());
                     }
                 }
@@ -208,6 +207,10 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
 
         contentLayout.removeAllViews();
         contentLayout.addView(base);
+        logOrderEvent(mOrderType.equals(getString(R.string.active_label)) ?
+                        TrackingAware.ORDER_ACTIVE_ORDERS_SHOWN : TrackingAware.ORDER_PAST_ORDERS_SHOWN,
+                TrackEventkeys.NAVIGATION_CTX,
+                TrackEventkeys.NAVIGATION_CTX_MY_ACCOUNT);
     }
 
     private void showInvoice(Order order) {
@@ -232,35 +235,29 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
     public void onDisplayOrderInvoice(OrderInvoice orderInvoice) {
         Intent orderDetailIntent = new Intent(getCurrentActivity(), OrderDetailActivity.class);
         orderDetailIntent.putExtra(Constants.ORDER_REVIEW_SUMMARY, orderInvoice);
+        orderDetailIntent.putExtra(TrackEventkeys.NAVIGATION_CTX, mOrderType.equals(getString(R.string.active_label)) ?
+                TrackEventkeys.NAVIGATION_CTX_ACTIVE_ORDER : TrackEventkeys.NAVIGATION_CTX_PAST_ORDER);
         startActivityForResult(orderDetailIntent, NavigationCodes.GO_TO_HOME);
     }
 
-    private void traceOrderEvent(String orderType, int monthVal) {
-        if (orderType.equals(getString(R.string.active_label))) {
-            trackEvent(TrackingAware.ORDER_ACTIVE_ORDERS_SHOWN, null);
-        } else {
-            if (monthVal != -1) {
-                HashMap<String, String> map = new HashMap<>();
-                map.put(TrackEventkeys.MONTH_RANGE, String.valueOf(monthVal));
-                trackEvent(TrackingAware.ORDER_PAST_ORDERS, map);
-            } else {
-                trackEvent(TrackingAware.ORDER_PAST_ORDERS, null);
-            }
-
-        }
+    private void logOrderEvent(String trackAwareName, String eventKeyName,
+                               String navigationCtx){
+        Map<String, String> eventAttribs = new HashMap<>();
+        eventAttribs.put(eventKeyName, navigationCtx);
+        trackEvent(trackAwareName, eventAttribs);
     }
 
     public void onShopFromThisOrder(String orderNumber) {
         Intent intent = new Intent(this, BackButtonActivity.class);
-        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_PRODUCT_LIST_FRAGMENT);
+        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_PRODUCT_LIST_FRAGMENT); //todo comming from home page
+        intent.putExtra(TrackEventkeys.NAVIGATION_CTX, mOrderType.equals(getString(R.string.active_label)) ?
+                TrackEventkeys.NAVIGATION_CTX_ACTIVE_ORDER : TrackEventkeys.NAVIGATION_CTX_PAST_ORDER);
         intent.putExtra(Constants.ORDER_ID, orderNumber);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
     @Override
     public String getScreenTag(){
-        if(mOrderType.equals(getString(R.string.active_label)))
-            return TrackEventkeys.ACCOUNT_VIEW_ACTIVE_ORDER_SCREEN;
-        else
-            return TrackEventkeys.ACCOUNT_VIEW_PAST_ORDER_PAGE;
+        return  mOrderType.equals(getString(R.string.active_label)) ?
+                TrackEventkeys.ACCOUNT_VIEW_ACTIVE_ORDER_SCREEN : TrackEventkeys.ACCOUNT_VIEW_PAST_ORDER_PAGE;
     }
 }

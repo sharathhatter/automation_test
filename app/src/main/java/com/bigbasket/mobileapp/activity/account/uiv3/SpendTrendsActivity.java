@@ -69,7 +69,7 @@ public class SpendTrendsActivity extends BaseActivity implements OnObservableScr
         mLayoutSpendTrendsFilter = findViewById(R.id.layoutSpendTrendsFilter);
         mLayoutSpendTrendsFilterEmpty = findViewById(R.id.layoutSpendTrendsFilterEmpty);
         loadSpendTrends(savedInstanceState);
-        trackEvent(TrackingAware.SPENDTRENDS_SHOWN, null);
+        trackEvent(TrackingAware.SPEND_TRENDS_SHOWN, null);
     }
 
     @Override

@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.fragment.base.AbstractOrderSummaryFragment;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.order.CreditDetails;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.model.order.OrderInvoiceDetails;
@@ -21,6 +22,9 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class OrderInvoiceSummaryFragment extends AbstractOrderSummaryFragment {
@@ -154,6 +158,17 @@ public class OrderInvoiceSummaryFragment extends AbstractOrderSummaryFragment {
                 onShopFromThisOrder(orderInvoice.getOrderNumber());
             }
         });
+
+
+        logOrderDetailSummaryEvent(orderInvoice.getOrderNumber());
+    }
+
+    private void logOrderDetailSummaryEvent(String orderNumber){
+        if(getArguments() == null) return;
+        Map<String, String> eventAttribs = new HashMap<>();
+        eventAttribs.put(TrackEventkeys.ORDER_ID, orderNumber);
+        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX,getArguments().getString(TrackEventkeys.NAVIGATION_CTX));
+        trackEvent(TrackingAware.ORDER_SUMMARY_SHOWN, eventAttribs);
     }
 
     @Override
@@ -175,6 +190,7 @@ public class OrderInvoiceSummaryFragment extends AbstractOrderSummaryFragment {
     public void onShopFromThisOrder(String orderNumber) {
         Intent intent = new Intent(getActivity(), BackButtonActivity.class);
         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_PRODUCT_LIST_FRAGMENT);
+        intent.putExtra(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_THANK_YOU_PAGE);
         intent.putExtra(Constants.ORDER_ID, orderNumber);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }

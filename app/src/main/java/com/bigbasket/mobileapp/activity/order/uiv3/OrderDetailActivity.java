@@ -7,6 +7,7 @@ import com.bigbasket.mobileapp.activity.base.uiv3.TabActivity;
 import com.bigbasket.mobileapp.fragment.order.OrderInvoiceItemsListFragment;
 import com.bigbasket.mobileapp.fragment.order.OrderInvoiceSummaryFragment;
 import com.bigbasket.mobileapp.fragment.order.OrderModificationFragment;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
@@ -31,6 +32,7 @@ public class OrderDetailActivity extends TabActivity {
 
         Bundle bundle = new Bundle();
         bundle.putParcelable(Constants.ACTION_TAB_TAG, orderInvoice);
+        bundle.putString(TrackEventkeys.NAVIGATION_CTX, getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX));
         bbTabs.add(new BBTab<>(getString(R.string.summary), OrderInvoiceSummaryFragment.class, bundle));
         bbTabs.add(new BBTab<>(getString(R.string.items), OrderInvoiceItemsListFragment.class, bundle));
 

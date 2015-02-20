@@ -92,10 +92,13 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class BBActivity extends BaseActivity implements BasketOperationAware,
@@ -174,6 +177,8 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
+                logHomeScreenEvent(TrackingAware.MENU_CLICKED, TrackEventkeys.NAVIGATION_CTX,
+                        TrackEventkeys.NAVIGATION_CTX_TOPNAV);
                 toolbar.setTitle("  " + mDrawerTitle);
                 invalidateOptionsMenu();
             }
@@ -387,6 +392,8 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 String orderId = getIntent().getStringExtra(Constants.ORDER_ID);
                 Bundle orderProductListBundle = new Bundle();
                 orderProductListBundle.putString(Constants.ORDER_ID, orderId);
+                orderProductListBundle.putString(TrackEventkeys.NAVIGATION_CTX,
+                        getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX));
                 ShopFromOrderFragment shopFromOrderFragment = new ShopFromOrderFragment();
                 shopFromOrderFragment.setArguments(orderProductListBundle);
                 addToMainLayout(shopFromOrderFragment);
@@ -504,6 +511,8 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                     intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_LANDING);
                     startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 }
+                logHomeScreenEvent(TrackingAware.SHOPPING_LIST_ICON_CLICKED, TrackEventkeys.NAVIGATION_CTX,
+                        TrackEventkeys.NAVIGATION_CTX_TOPNAV);
                 return true;
             case R.id.action_smart_basket:
                 if (AuthParameters.getInstance(getCurrentActivity()).isAuthTokenEmpty()) {
@@ -517,9 +526,12 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                     intent.putExtra(Constants.SHOPPING_LIST_NAME, shoppingListName);
                     startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 }
+                logHomeScreenEvent(TrackingAware.SMART_BASKET_ICON_CLICKED, TrackEventkeys.NAVIGATION_CTX,
+                        TrackEventkeys.NAVIGATION_CTX_TOPNAV);
                 return true;
             case R.id.action_rate_app:
-                trackEvent(TrackingAware.RATE_APP, null);
+                logHomeScreenEvent(TrackingAware.RATE_APP_CLICKED, TrackEventkeys.NAVIGATION_CTX,
+                       TrackEventkeys.NAVIGATION_CTX_TOPNAV);
                 try {
                     startActivity(new Intent(Intent.ACTION_VIEW,
                             Uri.parse("market://details?id=" + Constants.BASE_PKG_NAME)));
@@ -529,16 +541,16 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 }
                 return true;
             case R.id.action_login:
-                launchLogin();
+                launchLogin(TrackEventkeys.NAVIGATION_CTX_TOPNAV);
                 return true;
             case R.id.action_view_basket:
                 launchViewBasket();
                 return true;
             case R.id.action_logout:
-                launchLogout();
+                launchLogout(TrackEventkeys.NAVIGATION_CTX_TOPNAV);
                 return true;
             case R.id.action_change_city:
-                launchChangeCity();
+                launchChangeCity(TrackEventkeys.NAVIGATION_CTX_TOPNAV);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -751,26 +763,41 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ACCOUNT_SETTING);
             startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         }
+        trackEvent(TrackingAware.MYACCOUNT_CLICKED, null);
     }
 
-    private void launchLogin() {
+    private void launchLogin(String navigationCtx) {
+        logHomeScreenEvent(TrackingAware.LOGIN_OR_REGISTRATION_CLICKED, TrackEventkeys.NAVIGATION_CTX,
+                navigationCtx);
         Intent intent = new Intent(this, SignInActivity.class);
+        intent.putExtra(TrackEventkeys.NAVIGATION_CTX, navigationCtx);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
-    private void launchChangeCity() {
-        trackEvent(TrackingAware.HOME_CHANGE_CITY, null);
+
+    private void logHomeScreenEvent(String trackAwareName, String eventKeyName,
+                                    String navigationCtx) {
+        Map<String, String> eventAttribs = new HashMap<>();
+        eventAttribs.put(eventKeyName, navigationCtx);
+        trackEvent(trackAwareName, eventAttribs);
+    }
+
+    private void launchChangeCity(String navigationCtx) {
+        logHomeScreenEvent(TrackingAware.HOME_CHANGE_CITY, TrackEventkeys.NAVIGATION_CTX,
+                navigationCtx);
         ChangeCityDialogFragment changeCityDialog = ChangeCityDialogFragment.newInstance();
         changeCityDialog.show(getSupportFragmentManager(), Constants.CITIES);
     }
 
-    private void launchLogout() {
+    private void launchLogout(String navigationCtx) {
         if (isSocialLogin()) {
             onLogoutRequested();
         } else {
             showAlertDialog(getString(R.string.signOut), getString(R.string.signoutConfirmation),
                     DialogButton.YES, DialogButton.NO, Constants.LOGOUT);
         }
+        logHomeScreenEvent(TrackingAware.LOG_OUT_ICON_CLICKED, TrackEventkeys.NAVIGATION_CTX,
+                navigationCtx);
     }
 
     private void doSearch(String searchQuery) {
@@ -813,13 +840,13 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         MenuItem logoutMenuItem = menu.findItem(R.id.action_logout);
         MenuItem shoppingListMenuItem = menu.findItem(R.id.action_shopping_list);
         MenuItem smartBasketMenuItem = menu.findItem(R.id.action_smart_basket);
-        MenuItem referFriendsMenuItem = menu.findItem(R.id.action_member_referral);
+        //MenuItem referFriendsMenuItem = menu.findItem(R.id.action_member_referral);
 
         logoutMenuItem.setVisible(false);
         userInfoMenuItem.setVisible(false);
         shoppingListMenuItem.setVisible(false);
         smartBasketMenuItem.setVisible(false);
-        referFriendsMenuItem.setVisible(false);
+        //referFriendsMenuItem.setVisible(false);
     }
 
     @Override
@@ -861,7 +888,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             logoutRow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    launchLogout();
+                    launchLogout(TrackEventkeys.NAVIGATION_CTX_MENU);
                 }
             });
 
@@ -874,7 +901,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             loginRow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    launchLogin();
+                    launchLogin(TrackEventkeys.NAVIGATION_CTX_MENU);
                 }
             });
 
@@ -882,7 +909,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             changeCityRow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    launchChangeCity();
+                    launchChangeCity(TrackEventkeys.NAVIGATION_CTX_MENU);
                 }
             });
 
@@ -979,15 +1006,6 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         return null;
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        FragmentManager sfm = getSupportFragmentManager();
-        if (sfm == null || sfm.getFragments() == null || sfm.getFragments().size() == 0) {
-            LocalyticsWrapper.onResume(getScreenTag());
-        }
-    }
-
     protected BBDrawerLayout getDrawerLayout() {
         return mDrawerLayout;
     }
@@ -999,6 +1017,11 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
     @Override
     protected void onResume() {
         super.onResume();
+        FragmentManager sfm = getSupportFragmentManager();
+        if (sfm == null || sfm.getFragments() == null || sfm.getFragments().size() == 0) {
+            LocalyticsWrapper.onResume(getScreenTag());
+        }
+
         if (isBasketDirty()) {
             syncBasket();
         } else {

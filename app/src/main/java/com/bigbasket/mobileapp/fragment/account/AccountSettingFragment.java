@@ -18,6 +18,7 @@ import com.bigbasket.mobileapp.activity.account.uiv3.OrderListActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SpendTrendsActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
@@ -59,47 +60,56 @@ public class AccountSettingFragment extends BaseFragment {
                         Intent orderListIntent = new Intent(getActivity(), OrderListActivity.class);
                         orderListIntent.putExtra(Constants.ORDER, getString(R.string.active_label));
                         startActivityForResult(orderListIntent, NavigationCodes.GO_TO_HOME);
+                        trackEvent(TrackingAware.MY_ACCOUNT_ACTIVE_ORDER_CLICKED, null);
                         break;
                     case 1:
                         orderListIntent = new Intent(getActivity(), OrderListActivity.class);
                         orderListIntent.putExtra(Constants.ORDER, getString(R.string.past_label));
                         startActivityForResult(orderListIntent, NavigationCodes.GO_TO_HOME);
+                        trackEvent(TrackingAware.MY_ACCOUNT_PAST_ORDER_CLICKED, null);
                         break;
                     case 2:
                         Intent intent = new Intent(getActivity(), BackButtonActivity.class);
                         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_UPDATE_PROFILE);
                         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                        trackEvent(TrackingAware.MY_ACCOUNT_UPDATE_PROFILE_CLICKED, null);
                         break;
                     case 3:
                         intent = new Intent(getActivity(), BackButtonActivity.class);
                         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_CHANGE_PASSWD);
                         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                        trackEvent(TrackingAware.CHANGE_PASSWORD_CLICKED, null);
                         break;
                     case 4:
                         intent = new Intent(getActivity(), BackButtonActivity.class);
                         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WALLET_FRAGMENT);
                         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                        trackEvent(TrackingAware.MY_ACCOUNT_WALLET_CLICKED, null);
                         break;
                     case 5:
                         intent = new Intent(getActivity(), BackButtonActivity.class);
                         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_VIEW_DELIVERY_ADDRESS);
                         intent.putExtra(Constants.FROM_ACCOUNT_PAGE, true);
                         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                        trackEvent(TrackingAware.DELIVERY_ADDRESS_CLICKED, null);
                         break;
                     case 6:
                         intent = new Intent(getActivity(), BackButtonActivity.class);
                         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_CHANGE_PIN);
                         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                        trackEvent(TrackingAware.CHANGE_PIN_CLICKED, null);
                         break;
                     case 7:
                         intent = new Intent(getActivity(), SpendTrendsActivity.class);
                         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                        trackEvent(TrackingAware.SPEND_TRENDS_CLICKED, null);
                         break;
                 }
             }
         });
 
         contentView.addView(lstMyAccount);
+        trackEvent(TrackingAware.MY_ACCOUNT_SHOWN, null);
     }
 
     private class MyAccountListAdapter extends BaseAdapter {

@@ -37,6 +37,7 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -253,6 +254,9 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
         }
 
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
+        Map<String, String> eventAttribs = new HashMap<>();
+        eventAttribs.put(TrackEventkeys.ENABLED, chkIsAddrDefault.isChecked() ? TrackEventkeys.YES : TrackEventkeys.NO);
+        trackEvent(TrackingAware.ENABLE_DEFAULT_ADDRESS, eventAttribs);
         if (address != null) {
             payload.put(Constants.ID, address.getId());
             showProgressDialog(getString(R.string.please_wait));
@@ -302,17 +306,18 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
                         otpValidationDialogFragment.dismiss();
                         BaseActivity.hideKeyboard(getCurrentActivity(), otpValidationDialogFragment.getView());
                     }
-                    if (mFromAccountPage) {
-                        if (address == null)
-                            trackEvent(TrackingAware.MY_ACCOUNT_ADDRESS_CREATED, null);
-                        else
-                            trackEvent(TrackingAware.MY_ACCOUNT_ADDRESS_EDITED, null);
-                    } else {
-                        HashMap<String, String> map = new HashMap<>();
-                        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
-                        map.put(TrackEventkeys.POTENTIAL_ORDER, prefer.getString(Constants.POTENTIAL_ORDER_ID, null));
-                        trackEvent(TrackingAware.CHECKOUT_ADDRESS_CREATED, map);
-                    }
+
+//                    if (mFromAccountPage) {
+//                        if (address == null)
+//                            trackEvent(TrackingAware.MY_ACCOUNT_ADDRESS_CREATED, null);
+//                        else
+//                            trackEvent(TrackingAware.MY_ACCOUNT_ADDRESS_EDITED, null);
+//                    } else {
+//                        HashMap<String, String> map = new HashMap<>();
+//                        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
+//                        map.put(TrackEventkeys.POTENTIAL_ORDER, prefer.getString(Constants.POTENTIAL_ORDER_ID, null));
+//                        trackEvent(TrackingAware.CHECKOUT_ADDRESS_CREATED, map);
+//                    }
 
                     break;
                 case ApiErrorCodes.NUMBER_IN_USE:
@@ -328,6 +333,12 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
                     hRefresh.sendEmptyMessage(Constants.VALIDATE_MOBILE_NUMBER_POPUP_ERROR_MSG);
                     break;
                 default:
+                    HashMap<String, String> map = new HashMap<>();
+                    map.put(TrackEventkeys.FAILURE_REASON, createUpdateAddressApiResponse.message);
+                    map.put(TrackEventkeys.NAVIGATION_CTX, mFromAccountPage ? TrackEventkeys.NAVIGATION_CTX_MY_ACCOUNT :
+                    TrackEventkeys.NAVIGATION_CTX_MY_ACCOUNT);
+                    trackEvent( address== null ? TrackingAware.NEW_ADDRESS_FAILED :
+                            TrackingAware.UPDATE_ADDRESS_FAILED, map);
                     handler.sendEmptyMessage(createUpdateAddressApiResponse.status,
                             createUpdateAddressApiResponse.message);
                     break;
@@ -434,13 +445,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
 
     @Override
     public String getScreenTag() {
-        if (mFromAccountPage)
-            if (address == null)
-                return TrackEventkeys.ACCOUNT_CREATE_DELIVERY_ADDRESS_SCREEN;
-            else
-                return TrackEventkeys.ACCOUNT_EDIT_DELIVERY_ADDRESS_SCREEN;
-        else
-            return TrackEventkeys.CHECKOUT_CREATE_NEW_DELIVERY_ADDRESS_SCREEN;
+        return TrackEventkeys.CREATE_OR_EDIT_DELIVERY_ADDRESS_SCREEN;
     }
 
     public void onBackPressed() {

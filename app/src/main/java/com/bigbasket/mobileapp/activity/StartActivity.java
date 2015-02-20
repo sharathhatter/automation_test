@@ -40,6 +40,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -83,6 +85,7 @@ public class StartActivity extends BaseActivity implements DynamicScreenAware {
         } else {
             loadNavigation();
         }
+        trackEvent(TrackingAware.ENTRY_PAGE_SHOWN, null);
     }
 
     @Override
@@ -148,6 +151,10 @@ public class StartActivity extends BaseActivity implements DynamicScreenAware {
                     if (city.getId() != -1) {
                         doRegisterDevice(city);
                     }
+                    Map<String, String> eventAttribs = new HashMap<>();
+                    eventAttribs.put(TrackEventkeys.CITY, city.getName());
+                    trackEvent(TrackingAware.ENTRY_PAGE_START_SHOPPING_BTN_CLICKED, eventAttribs);
+
                 }
             }
         });

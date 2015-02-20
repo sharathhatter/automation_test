@@ -102,6 +102,7 @@ public class WalletActivityFragment extends BaseFragment implements InvoiceDataA
     public void onDisplayOrderInvoice(OrderInvoice orderInvoice) {
         Intent orderDetailIntent = new Intent(getCurrentActivity(), OrderDetailActivity.class);
         orderDetailIntent.putExtra(Constants.ORDER_REVIEW_SUMMARY, orderInvoice);
+        orderDetailIntent.putExtra(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_WALLET_ACTIVITIES);
         startActivityForResult(orderDetailIntent, NavigationCodes.GO_TO_HOME);
     }
 

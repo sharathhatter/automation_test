@@ -113,17 +113,15 @@ public class UpdatePinFragment extends BaseFragment {
                 if (updatePinApiResponse.status == 0) {
                     currentPin = updatePinApiResponse.apiResponseContent.currentPin;
                     setCurrentPin(currentPin);
-                    trackEvent(TrackingAware.MY_ACCOUNT_CURRENT_PIN_SUCCESS, null);
+                    trackEvent(TrackingAware.CHANGE_PIN_SHOWN, null);
                 } else {
                     handler.sendEmptyMessage(updatePinApiResponse.status, updatePinApiResponse.message);
-                    trackEvent(TrackingAware.MY_ACCOUNT_CURRENT_PIN_FAILED, null);
                 }
 
             }
 
             @Override
             public void failure(RetrofitError error) {
-                trackEvent(TrackingAware.MY_ACCOUNT_CURRENT_PIN_FAILED, null);
                 if (isSuspended()) return;
                 try {
                     hideProgressDialog();
@@ -175,12 +173,11 @@ public class UpdatePinFragment extends BaseFragment {
                     setCurrentPin(editTextNewPin.getText().toString());
                     BaseActivity.hideKeyboard((BaseActivity) getActivity(), editTextNewPin);
 
-                    trackEvent(TrackingAware.MY_ACCOUNT_CHANGE_PIN_SUCCESS, null);
                 } else {
                     showErrorMsg(msg);
                     HashMap<String, String> map = new HashMap<String, String>();
-                    map.put(TrackEventkeys.UPDATE_PIN_FAILURE_REASON, msg);
-                    trackEvent(TrackingAware.MY_ACCOUNT_CHANGE_PIN_FAILED, map);
+                    map.put(TrackEventkeys.FAILURE_REASON, ApiResponse.message);
+                    trackEvent(TrackingAware.UPDATE_PIN_CLICKED, map);
                 }
             }
 
@@ -188,8 +185,8 @@ public class UpdatePinFragment extends BaseFragment {
             public void failure(RetrofitError error) {
                 hideProgressDialog();
                 HashMap<String, String> map = new HashMap<String, String>();
-                map.put(TrackEventkeys.UPDATE_PIN_FAILURE_REASON, error.toString());
-                trackEvent(TrackingAware.MY_ACCOUNT_CHANGE_PIN_FAILED, null);
+                map.put(TrackEventkeys.FAILURE_REASON, error.toString());
+                trackEvent(TrackingAware.UPDATE_PIN_CLICKED, map);
             }
         });
     }

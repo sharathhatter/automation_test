@@ -39,6 +39,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -134,6 +135,7 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware,
         } else {
             loadMemberDetails();
         }
+        trackEvent(TrackingAware.UPDATE_PROFILE_SHOWN, null);
     }
 
     protected void getAreaInfo() {
@@ -167,6 +169,9 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware,
                             break;
                         default:
                             handler.sendEmptyMessage(errorType, memberProfileDataCallback.message, true);
+                            Map<String, String> eventAttribs = new HashMap<>();
+                            eventAttribs.put(TrackEventkeys.FAILURE_REASON, memberProfileDataCallback.message);
+                            trackEvent(TrackingAware.UPDATE_PROFILE_GET_FAILED, eventAttribs);
                             break;
                     }
                 }
@@ -176,6 +181,9 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware,
             public void failure(RetrofitError error) {
                 hideProgressDialog();
                 handler.handleRetrofitError(error, true);
+                Map<String, String> eventAttribs = new HashMap<>();
+                eventAttribs.put(TrackEventkeys.FAILURE_REASON, error.toString());
+                trackEvent(TrackingAware.UPDATE_PROFILE_GET_FAILED, eventAttribs);
             }
         });
     }
@@ -369,13 +377,13 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware,
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            postUserDetails(user_details.toString());
+            postUserDetails(user_details.toString(), otpCode!=null);
         } else {
             handler.sendOfflineError();
         }
     }
 
-    private void postUserDetails(String userDetails) {
+    private void postUserDetails(String userDetails, final boolean hasOTP) {
         if (!DataUtil.isInternetAvailable(getActivity())) {
             return;
         }
@@ -398,13 +406,14 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware,
                     if (errorCode == ApiErrorCodes.NUMBER_IN_USE ||
                             errorCode == ApiErrorCodes.OTP_NEEDED ||
                             errorCode == ApiErrorCodes.OTP_INVALID) {
-                        String errorMsg = memberProfileDataCallback.message;
-                        validateOtp(errorCode, errorMsg);
+                        if (hasOTP)
+                            logUpdateProfileEvent(memberProfileDataCallback.message,
+                                    TrackingAware.OTP_SUBMIT_BTN_CLICKED);
+                        validateOtp(errorCode, memberProfileDataCallback.message);
                     } else {
                         handler.sendEmptyMessage(errorCode, memberProfileDataCallback.message);
-                        HashMap<String, String> map = new HashMap<>();
-                        map.put(TrackEventkeys.UPDATE_PROFILE_FAILURE_REASON, memberProfileDataCallback.message);
-                        trackEvent(TrackingAware.MY_ACCOUNT_UPDATE_PROFILE_FAILED, map);
+                        logUpdateProfileEvent(memberProfileDataCallback.message,
+                                TrackingAware.UPDATE_PROFILE_SUBMIT_BTN_CLICKED);
                     }
                 }
             }
@@ -412,12 +421,16 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware,
             @Override
             public void failure(RetrofitError error) {
                 hideProgressDialog();
-                showErrorMsg(getString(R.string.server_error));
-                HashMap<String, String> map = new HashMap<>();
-                map.put(TrackEventkeys.UPDATE_PROFILE_FAILURE_REASON, error.toString());
-                trackEvent(TrackingAware.MY_ACCOUNT_UPDATE_PROFILE_FAILED, map);
+                handler.handleRetrofitError(error);
+                logUpdateProfileEvent(error.toString(), TrackingAware.UPDATE_PROFILE_SUBMIT_BTN_CLICKED);
             }
         });
+    }
+
+    private void logUpdateProfileEvent(String message, String eventName){
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.FAILURE_REASON, message);
+        trackEvent(eventName, map);
     }
 
 

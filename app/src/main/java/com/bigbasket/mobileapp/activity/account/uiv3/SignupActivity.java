@@ -28,6 +28,9 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.google.gson.JsonObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class SignupActivity extends BaseSignInSignupActivity {
 
     // UI References
@@ -61,9 +64,22 @@ public class SignupActivity extends BaseSignInSignupActivity {
         mMobileNumView = (EditText) base.findViewById(R.id.editTextMobileNumber);
         mRefCodeView = (EditText) base.findViewById(R.id.editTextRefCode);
         mChkAcceptTerms = (CheckBox) base.findViewById(R.id.chkAcceptTerms);
+        mChkAcceptTerms.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                logTermAndConditionClicked(TrackingAware.REGISTRATION_PAGE_TC_CLICKED, null, isChecked);
+            }
+        });
         TextView txtViewTermsAndCond = (TextView) base.findViewById(R.id.txtViewTermsAndCond);
         setTermsAndCondition(txtViewTermsAndCond);
         mChkReceivePromos = (CheckBox) base.findViewById(R.id.chkReceivePromos);
+        mChkReceivePromos.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                logTermAndConditionClicked(TrackingAware.PROMO_MAILER_ENABLED,
+                        TrackEventkeys.NAVIGATION_CTX_REGISTRAtION_PAGE, isChecked);
+            }
+        });
         mEmailView = (AutoCompleteTextView) base.findViewById(R.id.editTextEmailSignup);
 
         ((EditText) base.findViewById(R.id.editTextCity)).setText(currentCityName);
@@ -77,10 +93,20 @@ public class SignupActivity extends BaseSignInSignupActivity {
         });
 
         populateAutoComplete();
-        trackEvent(TrackingAware.MY_ACCOUNT_REGISTRATION_SHOWN, null);
+        trackEvent(TrackingAware.REGISTRATION_PAGE_SHOWN, null);
+    }
+
+    private void logTermAndConditionClicked(String eventName, String navigationCtx , boolean isChecked){
+        Map<String, String> eventAttribs = new HashMap<>();
+        if(navigationCtx!=null)
+            eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, navigationCtx);
+        eventAttribs.put(TrackEventkeys.ENABLED, isChecked ? TrackEventkeys.YES : TrackEventkeys.NO);
+        trackEvent(eventName, eventAttribs);
     }
 
     public void OnRegisterButtonClicked(View v) {
+        trackEvent(TrackingAware.REGISTER_BTN_CLICK, null);
+
         mEmailView.setError(null);
         mPasswordView.setError(null);
         mFirstNameView.setError(null);

@@ -31,7 +31,6 @@ import com.bigbasket.mobileapp.apiservice.models.response.UpdateVersionInfoApiRe
 import com.bigbasket.mobileapp.fragment.base.BaseSectionFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
-import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.task.GetDynamicPageTask;
@@ -342,7 +341,6 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
 
                     @Override
                     public void failure(RetrofitError error) {
-                        trackEvent(TrackingAware.MY_ACCOUNT_CURRENT_PIN_FAILED, null);
                         if (isSuspended()) return;
                         try {
                             hideProgressDialog();

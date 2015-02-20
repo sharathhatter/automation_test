@@ -25,6 +25,7 @@ import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -127,6 +128,15 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
 
         productRecyclerView.setAdapter(productListRecyclerAdapter);
         contentView.addView(productRecyclerView);
+        logShopFromOrderEvent();
+    }
+
+    private void logShopFromOrderEvent(){
+        if(getArguments() == null || mOrderId ==null) return;
+        Map<String, String> eventAttribs = new HashMap<>();
+        eventAttribs.put(TrackEventkeys.ORDER_ID, mOrderId);
+        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getArguments().getString(TrackEventkeys.NAVIGATION_CTX));
+        trackEvent(TrackingAware.ORDER_ITEMS_TAB_CLICKED, eventAttribs);
     }
 
     @Override

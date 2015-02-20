@@ -33,6 +33,7 @@ import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -93,6 +94,7 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity implem
                 case Constants.OK:
                     saveLoginUserDetailInPreference(loginApiResponse, loginType,
                             email, password, rememberMe);
+                    /*
                     switch (loginType) {
                         case SocialAccount.FB:
                             trackEventNewAccount(TrackingAware.MY_ACCOUNT_FACEBOOK_LOGIN_SUCCESS,
@@ -112,6 +114,7 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity implem
                         default:
                             throw new AssertionError("Login or register type error while success(status=OK)");
                     }
+                    */
                     break;
                 case Constants.ERROR:
                     switch (loginApiResponse.getErrorTypeAsInt()) {
@@ -132,24 +135,21 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity implem
                                     loginApiResponse.message);
                             break;
                     }
-                    HashMap<String, String> map = new HashMap<>();
 
                     switch (loginType) {
                         case SocialAccount.FB:
-                            map.put(TrackEventkeys.FB_LOGIN_FAILURE_REASON, loginApiResponse.message);
-                            trackEvent(TrackingAware.MY_ACCOUNT_FACEBOOK_LOGIN_FAILED, map);
+                            logSingInFailureEvent(TrackEventkeys.LOGIN_TYPE_FACEBOOK, loginApiResponse.message);
                             break;
                         case SocialAccount.GP:
-                            map.put(TrackEventkeys.GOOGLE_LOGIN_FAILURE_REASON, loginApiResponse.message);
-                            trackEvent(TrackingAware.MY_ACCOUNT_GOOGLE_LOGIN_FAILED, map);
+                            logSingInFailureEvent(TrackEventkeys.LOGIN_TYPE_GOOGLE, loginApiResponse.message);
                             break;
                         case Constants.SIGN_IN_ACCOUNT_TYPE:
-                            map.put(TrackEventkeys.LOGIN_FAILURE_REASON, loginApiResponse.message);
-                            trackEvent(TrackingAware.MY_ACCOUNT_LOGIN_FAILED, map);
+                            logSingInFailureEvent(TrackEventkeys.LOGIN_TYPE_GOOGLE, loginApiResponse.message);
                             break;
                         case Constants.REGISTER_ACCOUNT_TYPE:
-                            map.put(TrackEventkeys.REGISTRATION_FAILURE_REASON, loginApiResponse.message);
-                            trackEvent(TrackingAware.MY_ACCOUNT_REGISTRATION_FAILED, map);
+                            HashMap<String, String> map = new HashMap<>();
+                            map.put(TrackEventkeys.FAILURE_REASON, loginApiResponse.message);
+                            trackEvent(TrackingAware.REGISTRATION_FAILED, map);
                             break;
                         default:
                             throw new AssertionError("Login or register type error while success(status=ERROR)");
@@ -161,24 +161,21 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity implem
         @Override
         public void failure(RetrofitError error) {
             showProgress(false);
-            HashMap<String, String> map = new HashMap<>();
             handler.handleRetrofitError(error);
             switch (loginType) {
                 case SocialAccount.FB:
-                    map.put(TrackEventkeys.FB_LOGIN_FAILURE_REASON, error.toString());
-                    trackEvent(TrackingAware.MY_ACCOUNT_FACEBOOK_LOGIN_FAILED, map);
+                    logSingInFailureEvent(TrackEventkeys.LOGIN_TYPE_FACEBOOK, error.toString());
                     break;
                 case SocialAccount.GP:
-                    map.put(TrackEventkeys.GOOGLE_LOGIN_FAILURE_REASON, error.toString());
-                    trackEvent(TrackingAware.MY_ACCOUNT_GOOGLE_LOGIN_FAILED, map);
+                    logSingInFailureEvent(TrackEventkeys.LOGIN_TYPE_GOOGLE, error.toString());
                     break;
                 case Constants.SIGN_IN_ACCOUNT_TYPE:
-                    map.put(TrackEventkeys.LOGIN_FAILURE_REASON, error.toString());
-                    trackEvent(TrackingAware.MY_ACCOUNT_LOGIN_FAILED, map);
+                    logSingInFailureEvent(TrackEventkeys.LOGIN_TYPE_NORMAL, error.toString());
                     break;
                 case Constants.REGISTER_ACCOUNT_TYPE:
-                    map.put(TrackEventkeys.REGISTRATION_FAILURE_REASON, error.toString());
-                    trackEvent(TrackingAware.MY_ACCOUNT_REGISTRATION_FAILED, map);
+                    HashMap<String, String> map = new HashMap<>();
+                    map.put(TrackEventkeys.FAILURE_REASON, error.toString());
+                    trackEvent(TrackingAware.REGISTRATION_FAILED, map);
                     break;
                 default:
                     throw new AssertionError("Login or register type error while success(status=ERROR)");
@@ -186,6 +183,15 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity implem
         }
     }
 
+
+    private void logSingInFailureEvent(String type, String reason){
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.FAILURE_REASON, reason);
+        map.put(TrackEventkeys.TYPE, type);
+        trackEvent(TrackingAware.LOGIN_FAILED, map);
+    }
+
+    /*
     private void trackEventNewAccount(String eventKetName, String email, boolean isNewAccount) {
         HashMap<String, String> map = new HashMap<>();
         if (isNewAccount) {
@@ -197,6 +203,7 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity implem
         trackEvent(TrackingAware.MY_ACCOUNT_FACEBOOK_LOGIN_SUCCESS, map);
         trackEvent(eventKetName, null);
     }
+    */
 
     public abstract void showProgress(boolean show);
 
@@ -230,9 +237,18 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity implem
     public void togglePasswordView(EditText passwordEditText, boolean isChecked) {
         if (!isChecked) {
             passwordEditText.setTransformationMethod(PasswordTransformationMethod.getInstance());
+            logShowPasswordEnabled(TrackEventkeys.YES, TrackEventkeys.NAVIGATION_CTX_LOGIN_PAGE);
         } else {
             passwordEditText.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+            logShowPasswordEnabled(TrackEventkeys.NO, TrackEventkeys.NAVIGATION_CTX_LOGIN_PAGE);
         }
+    }
+
+    private void logShowPasswordEnabled(String enabled, String navigationCtx){
+        Map<String, String> eventAttribs = new HashMap<>();
+        eventAttribs.put(TrackEventkeys.ENABLED, enabled);
+        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, navigationCtx);
+        trackEvent(TrackingAware.SHOW_PASSWORD_ENABLED, eventAttribs);
     }
 
     public void setTermsAndCondition(TextView txtVw) {

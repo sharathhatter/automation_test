@@ -28,16 +28,21 @@ import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.PinCodeAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
+import com.bigbasket.mobileapp.view.uiv3.AbstractDialogFragment;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class ChangeCityDialogFragment extends DialogFragment
+public class ChangeCityDialogFragment extends AbstractDialogFragment
         implements ProgressIndicationAware, CancelableAware, PinCodeAware, ActivityAware,
         HandlerAware {
 
@@ -98,7 +103,7 @@ public class ChangeCityDialogFragment extends DialogFragment
                 .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        ((TrackingAware)getActivity()).trackEvent(TrackingAware.CHANGE_CITY_CANCEL_BTN_CLICKED, null);
                     }
                 });
 
@@ -200,7 +205,10 @@ public class ChangeCityDialogFragment extends DialogFragment
             dismiss();
             return;
         }
-        ;
+
+        Map<String, String> eventAttribs = new HashMap<>();
+        eventAttribs.put(TrackEventkeys.CITY, mSelectedCity.getName());
+        ((TrackingAware)getActivity()).trackEvent(TrackingAware.CHANGE_CITY_POSSITIVE_BTN_CLICKED, eventAttribs);
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgress(true);
         bigBasketApiService.changeCity(String.valueOf(mSelectedCity.getId()), new Callback<OldBaseApiResponse>() {
@@ -283,5 +291,10 @@ public class ChangeCityDialogFragment extends DialogFragment
             outState.putParcelableArrayList(Constants.CITIES, mCities);
         }
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.CHANGE_CITY_SCREEN;
     }
 }

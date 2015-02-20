@@ -118,6 +118,7 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
                 if (!TextUtils.isEmpty(id)) {
                     intent = new Intent(this, BackButtonActivity.class);
                     intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_PRODUCT_LIST_FRAGMENT);
+                    intent.putExtra(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_DEEP_LINK);
                     intent.putExtra(Constants.ORDER_ID, id);
                     startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 } else {
@@ -128,7 +129,7 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
                 id = uri.getQueryParameter(Constants.ID);
                 if (!TextUtils.isEmpty(id)) {
                     intent = new Intent(this, BackButtonActivity.class);
-                    intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_PRODUCT_LIST_FRAGMENT);
+                    intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_LANDING);
                     startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 } else {
                     showDefaultError();

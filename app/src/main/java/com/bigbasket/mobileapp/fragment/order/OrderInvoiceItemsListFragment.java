@@ -11,6 +11,7 @@ import android.widget.ListView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.order.ActiveOrderRowAdapter;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.CartItem;
 import com.bigbasket.mobileapp.model.cart.CartItemHeader;
 import com.bigbasket.mobileapp.model.cart.CartItemList;
@@ -20,7 +21,9 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class OrderInvoiceItemsListFragment extends BaseFragment {
@@ -34,7 +37,16 @@ public class OrderInvoiceItemsListFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
         OrderInvoice orderInvoice = getArguments().getParcelable(Constants.ACTION_TAB_TAG);
         setTitle("Order Details");
+        logOrderItemTabClicked(orderInvoice);
         renderCartItems(orderInvoice);
+    }
+
+    private void logOrderItemTabClicked(OrderInvoice orderInvoice){
+        if(getArguments() == null || orderInvoice ==null) return;
+        Map<String, String> eventAttribs = new HashMap<>();
+        eventAttribs.put(TrackEventkeys.ORDER_ID, orderInvoice.getOrderNumber());
+        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX,getArguments().getString(TrackEventkeys.NAVIGATION_CTX));
+        trackEvent(TrackingAware.ORDER_ITEMS_TAB_CLICKED, eventAttribs);
     }
 
     private void renderCartItems(OrderInvoice orderInvoice) {
