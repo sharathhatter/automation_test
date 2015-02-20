@@ -224,7 +224,7 @@
                 android:orientation="horizontal">
 
                 <EditText
-                    style="@android:style/Widget.EditText"
+                    style="@style/BBEditTextStyle"
                     android:id="@+id/editTextQty"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

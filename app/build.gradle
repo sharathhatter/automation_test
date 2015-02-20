@@ -1,8 +1,19 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
 repositories {
     mavenCentral()
+    maven { url 'https://maven.fabric.io/public' }
 }
 
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
 apply plugin: 'newrelic'
 
 android {
@@ -56,4 +67,7 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.0.0'
     compile project(':moEngageSDK')
     compile 'com.facebook.android:facebook-android-sdk:3.23.0'
+    compile('com.crashlytics.sdk.android:crashlytics:2.2.1@aar') {
+        transitive = true;
+    }
 }

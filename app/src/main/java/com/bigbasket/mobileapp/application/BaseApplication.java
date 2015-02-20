@@ -4,17 +4,20 @@ import android.app.Application;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
+import com.crashlytics.android.Crashlytics;
 import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
+import io.fabric.sdk.android.Fabric;
 
 public class BaseApplication extends Application {
 
     @Override
     public void onCreate() {
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
         AuthParameters.updateInstance(this);
         //Configure ImageLoader
         DisplayImageOptions displayImageOptions = new DisplayImageOptions.Builder()
