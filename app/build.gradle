@@ -1,13 +1,24 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
 repositories {
     mavenCentral()
+    maven { url 'https://maven.fabric.io/public' }
 }
 
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
 apply plugin: 'newrelic'
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "21.1.2"
+    compileSdkVersion Integer.parseInt(project.ANDROID_BUILD_SDK_VERSION)
+    buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
 
     defaultConfig {
         applicationId "com.bigbasket.mobileapp"
@@ -37,7 +48,6 @@ dependencies {
     compile files('libs/achartengine-1.1.0.jar')
     compile files('libs/localytics.jar')
     compile project(':konotorActivity')
-    compile project(':facebook')
     compile project(':multipleImagePick')
     compile project(':androidImageSlider')
     compile project(':layouts-1.8')
@@ -56,4 +66,8 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
     compile 'com.squareup.okhttp:okhttp:2.0.0'
     compile project(':moEngageSDK')
+    compile 'com.facebook.android:facebook-android-sdk:3.23.0'
+    compile('com.crashlytics.sdk.android:crashlytics:2.2.1@aar') {
+        transitive = true;
+    }
 }

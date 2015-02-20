@@ -372,15 +372,13 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
         }
 
         if (TextUtils.isEmpty(email)) {
-            signOutFromGplus();
             showAlertDialog(null, "Unable to get your email-address\n" +
-                    "Please check your privacy settings.");
+                    "Please check your privacy settings.", Constants.SOCIAL_LOGOUT, SocialAccount.GP);
             return;
         }
         if (person == null) {
-            signOutFromGplus();
             showAlertDialog(null, "Unable to read your profile information\n" +
-                    "Please check your privacy settings.");
+                    "Please check your privacy settings.", Constants.SOCIAL_LOGOUT, SocialAccount.GP);
             return;
         }
 
@@ -427,6 +425,11 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
                 showProgress(false);
                 if (user != null) {
                     String email = response.getGraphObject().getProperty(Constants.EMAIL).toString();
+                    if (TextUtils.isEmpty(email)) {
+                        showAlertDialog(null, "Unable to get your email-address\n" +
+                                "Please check your privacy settings.", Constants.SOCIAL_LOGOUT, SocialAccount.FB);
+                        return;
+                    }
                     String firstName = user.getFirstName();
                     String lastName = user.getLastName();
                     String gender = null;
@@ -559,11 +562,25 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
 
     @Override
     protected void onPositiveButtonClicked(DialogInterface dialogInterface, int id, String sourceName, Object valuePassed) {
-        if (sourceName != null && sourceName.equals(Constants.GOOGLE_PLAY_SERVICES)) {
-            try {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.google.android.gms")));
-            } catch (ActivityNotFoundException e) {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.google.android.gms")));
+        if (sourceName != null) {
+            switch (sourceName) {
+                case Constants.GOOGLE_PLAY_SERVICES:
+                    try {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.google.android.gms")));
+                    } catch (ActivityNotFoundException e) {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.google.android.gms")));
+                    }
+                    break;
+                case Constants.SOCIAL_LOGOUT:
+                    if (valuePassed != null) {
+                        if (valuePassed.equals(SocialAccount.GP)) {
+                            signOutFromGplus();
+                        }
+                    }
+                    break;
+                default:
+                    super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
+                    break;
             }
         } else {
             super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);

@@ -1,4 +1,4 @@
-include ':app', ':facebook', ':androidImageSlider', ':layouts-1.8'
+include ':app', ':androidImageSlider', ':layouts-1.8', ':facebook'
 include ':konotorActivity'
 include ':multipleImagePick'
 include ':moEngageSDK'

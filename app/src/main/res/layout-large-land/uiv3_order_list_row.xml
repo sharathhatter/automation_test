@@ -22,7 +22,7 @@
             android:layout_alignParentTop="true"
             android:contentDescription="@string/delivery_van"
             android:paddingTop="@dimen/padding_normal"
-            android:src="@drawable/ic_local_shipping_grey600_36dp" />
+            android:src="@drawable/delivery_van" />
 
         <TextView
             android:id="@+id/txtOrderStatus"

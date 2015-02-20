@@ -5,7 +5,7 @@
     <!-- Search / will display always -->
     <item
         android:id="@+id/action_search"
-        android:icon="@drawable/ic_search_white_24dp"
+        android:icon="@drawable/search_white"
         android:orderInCategory="9999"
         android:title="@string/search"
         bb:actionLayout="@layout/uiv3_search_view"
@@ -34,6 +34,13 @@
                 bb:showAsAction="never" />
 
             <item
+                android:id="@+id/action_login"
+                android:icon="@drawable/user_white"
+                android:orderInCategory="9999"
+                android:title="@string/action_sign_in"
+                bb:showAsAction="never" />
+
+            <item
                 android:id="@+id/action_communication_hub"
                 android:icon="@drawable/communication_hub_white"
                 android:orderInCategory="9999"
@@ -41,15 +48,8 @@
                 bb:showAsAction="never" />
 
             <item
-                android:id="@+id/action_login"
-                android:icon="@drawable/ic_person_outline_white_24dp"
-                android:orderInCategory="9999"
-                android:title="@string/action_sign_in"
-                bb:showAsAction="never" />
-
-            <item
                 android:id="@+id/action_change_city"
-                android:icon="@drawable/login_arrow"
+                android:icon="@drawable/delivery_white"
                 android:orderInCategory="9999"
                 android:title="@string/changeCityMenuTxt"
                 bb:showAsAction="never" />

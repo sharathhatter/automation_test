@@ -2,6 +2,8 @@ package com.bigbasket.mobileapp.model.shoppinglist;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
@@ -63,5 +65,16 @@ public class ShoppingListSummary implements Parcelable {
 
     public String getNumItems() {
         return numItems;
+    }
+
+    @Nullable
+    public String getNumItemsDisplay() {
+        if (!TextUtils.isEmpty(numItems) && TextUtils.isDigitsOnly(numItems)) {
+            if (Integer.parseInt(numItems) > 1) {
+                return numItems + " ITEMS";
+            }
+            return numItems + " ITEM";
+        }
+        return null;
     }
 }

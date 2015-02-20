@@ -132,7 +132,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_mini"
                     android:contentDescription="@string/delivery_van"
-                    android:src="@drawable/ic_local_shipping_grey600_36dp" />
+                    android:src="@drawable/delivery_van" />
 
                 <LinearLayout
                     android:id="@+id/layoutDeliverySlot"

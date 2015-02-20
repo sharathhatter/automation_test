@@ -9,7 +9,6 @@ import com.bigbasket.mobileapp.model.product.FilterOptionCategory;
 import com.bigbasket.mobileapp.model.product.FilterOptionItem;
 import com.bigbasket.mobileapp.model.product.FilteredOn;
 import com.bigbasket.mobileapp.model.product.ProductListData;
-import com.bigbasket.mobileapp.util.ApiErrorCodes;
 
 import java.util.ArrayList;
 
@@ -61,12 +60,12 @@ public class ProductListApiResponseCallback<T> implements Callback<ApiResponse<P
                 ArrayList<FilterOptionCategory> filterOptionCategories = productListData.getFilterOptions();
                 ArrayList<FilteredOn> filteredOns = productListData.getFilteredOn();
                 if (filteredOns != null && filteredOns.size() > 0 && filterOptionCategories != null) {
-                    for (FilterOptionCategory filterOptionCategory: filterOptionCategories) {
-                        for (FilteredOn filteredOn: filteredOns) {
+                    for (FilterOptionCategory filterOptionCategory : filterOptionCategories) {
+                        for (FilteredOn filteredOn : filteredOns) {
                             if (filteredOn.getFilterSlug() != null &&
                                     filteredOn.getFilterSlug().equals(filterOptionCategory.getFilterSlug())
                                     && filterOptionCategory.getFilterOptionItems() != null) {
-                                for (FilterOptionItem filterOptionItem: filterOptionCategory.getFilterOptionItems()) {
+                                for (FilterOptionItem filterOptionItem : filterOptionCategory.getFilterOptionItems()) {
                                     if (filterOptionItem.getFilterValueSlug() != null &&
                                             filteredOn.getFilterValues() != null &&
                                             filteredOn.getFilterValues().contains(filterOptionItem.getFilterValueSlug())) {
@@ -100,6 +99,6 @@ public class ProductListApiResponseCallback<T> implements Callback<ApiResponse<P
                 return;
             }
         }
-        ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
+        ((HandlerAware) ctx).getHandler().handleRetrofitError(error, true);
     }
 }

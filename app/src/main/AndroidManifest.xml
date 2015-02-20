@@ -50,7 +50,7 @@
             android:value=".activity.product.ProductListActivity" />
 
         <activity
-            android:name=".activity.StartActivity"
+            android:name=".activity.SplashActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
@@ -436,11 +436,11 @@
         <!-- push notification landing page -->
         <activity
             android:name="com.moe.pushlibrary.activities.MoEActivity"
-            android:parentActivityName=".activity.StartActivity"
+            android:parentActivityName=".activity.SplashActivity"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.StartActivity" />
+                android:value=".activity.SplashActivity" />
         </activity>
 
         <meta-data
@@ -451,6 +451,9 @@
             android:name=".activity.account.uiv3.SpendTrendsActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" />
+        <meta-data
+            android:name="com.crashlytics.ApiKey"
+            android:value="d2ddc47cb01fb54a209f0ff02a2aecfec7b4d827" />
     </application>
 
 </manifest>

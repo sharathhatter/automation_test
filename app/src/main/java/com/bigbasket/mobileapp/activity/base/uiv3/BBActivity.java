@@ -32,6 +32,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -876,7 +877,8 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         if (!authParameters.isAuthTokenEmpty()) {
             txtNavSalutation.setText("Welcome " + authParameters.getMemberFullName().split(" ")[0]);
 
-            View myAccountRow = getNavItemView(getString(R.string.myAccount), mLayoutUserControls, inflater);
+            View myAccountRow = getNavItemView(getString(R.string.myAccount), mLayoutUserControls, inflater,
+                    R.drawable.user_grey_list);
             myAccountRow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -884,7 +886,8 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 }
             });
 
-            View logoutRow = getNavItemView(getString(R.string.signOut), mLayoutUserControls, inflater);
+            View logoutRow = getNavItemView(getString(R.string.signOut), mLayoutUserControls, inflater,
+                    R.drawable.user_grey_list);
             logoutRow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -897,7 +900,8 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         } else {
             txtNavSalutation.setText("Welcome Guest");
 
-            View loginRow = getNavItemView(getString(R.string.signIn), mLayoutUserControls, inflater);
+            View loginRow = getNavItemView(getString(R.string.signIn), mLayoutUserControls, inflater,
+                    R.drawable.user_grey_list);
             loginRow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -905,7 +909,8 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 }
             });
 
-            View changeCityRow = getNavItemView(getString(R.string.changeCity), mLayoutUserControls, inflater);
+            View changeCityRow = getNavItemView(getString(R.string.changeCityMenuTxt),
+                    mLayoutUserControls, inflater, R.drawable.delivery_grey_list);
             changeCityRow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -930,11 +935,15 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         mNavRecyclerView.setAdapter(navigationAdapter);
     }
 
-    private View getNavItemView(String msg, ViewGroup parent, LayoutInflater inflater) {
+    private View getNavItemView(String msg, ViewGroup parent, LayoutInflater inflater,
+                                int imageResId) {
         View base = inflater.inflate(R.layout.uiv3_main_nav_list_row, parent, false);
         TextView txtNavListRow = (TextView) base.findViewById(R.id.txtNavListRow);
         txtNavListRow.setTypeface(faceRobotoRegular);
         txtNavListRow.setText(msg);
+
+        ImageView imgNavItem = (ImageView) base.findViewById(R.id.imgNavItem);
+        imgNavItem.setImageResource(imageResId);
         return base;
     }
 

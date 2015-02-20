@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.model.section;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.bigbasket.mobileapp.R;
@@ -118,7 +119,8 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable {
                     imageView.setImageResource(drawableId);
                 }
             } catch (URISyntaxException | NoSuchFieldException | IllegalAccessException e) {
-                imageView.setImageResource(R.drawable.image_404);
+                imageView.setImageDrawable(null);
+                imageView.setVisibility(View.GONE);
             }
         } else {
             ImageLoader.getInstance().displayImage(image, imageView);

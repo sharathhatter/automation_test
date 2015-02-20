@@ -68,7 +68,7 @@ public class MemberReferralUtil<T> {
                 referralImageArrayList.add(R.drawable.android_gmail);
                 referralStringArrayList.add(Constants.GMAIL);//done
             } else if (app.applicationInfo.packageName.toLowerCase().equals(Constants.HIKE_PACKAEG_NAME)) {
-                referralImageArrayList.add(R.drawable.bread);
+                referralImageArrayList.add(R.drawable.ref_share);
                 referralStringArrayList.add(Constants.HIKE);//done
             }
         }

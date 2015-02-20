@@ -325,9 +325,9 @@ public class SlotSelectionFragment extends BaseFragment {
             txtSubTitle.setText(slot.getFormattedDisplayName());
 
             if (slot.isAvailable()) {
-                imgRow.setImageResource(R.drawable.ic_local_shipping_grey600_36dp);
+                imgRow.setImageResource(R.drawable.delivery_van);
             } else {
-                imgRow.setImageResource(R.drawable.deliveryslot_deactive);
+                imgRow.setImageResource(R.drawable.delivery_van);
             }
 
             CheckBox itemTick = slotViewHolder.getItemTick();
