@@ -361,12 +361,12 @@ public class PaymentSelectionFragment extends BaseFragment implements PostVouche
     }
 
     @Override
-    protected void onPositiveButtonClicked(DialogInterface dialogInterface, int id, @Nullable String sourceName, Object valuePassed) {
+    protected void onPositiveButtonClicked(DialogInterface dialogInterface, @Nullable String sourceName, Object valuePassed) {
         if (!TextUtils.isEmpty(sourceName) && sourceName.equals(Constants.REMOVE_VOUCHER)
                 && valuePassed != null) {
             ((OnApplyVoucherListener) getActivity()).removeVoucher(valuePassed.toString());
         } else {
-            super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
+            super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
         }
     }
 }

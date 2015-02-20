@@ -2,7 +2,6 @@ package com.bigbasket.mobileapp.fragment.account;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -17,6 +16,7 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
@@ -30,6 +30,7 @@ import com.bigbasket.mobileapp.interfaces.PinCodeAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
 
@@ -84,7 +85,6 @@ public class ChangeCityDialogFragment extends DialogFragment
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         View base = getActivity().getLayoutInflater().inflate(R.layout.uiv3_change_city, null);
 
         mSpinnerChangeCity = (Spinner) base.findViewById(R.id.spinnerChooseCity);
@@ -92,17 +92,18 @@ public class ChangeCityDialogFragment extends DialogFragment
         mSpinnerChangeCity.setVisibility(View.GONE);
         mProgressBarChangeCity.setVisibility(View.VISIBLE);
 
-        builder.setTitle(getString(R.string.changeCityHome))
-                .setView(base)
-                .setPositiveButton(getString(R.string.changeCityHome), null)
-                .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+        return UIUtil.getMaterialDialogBuilder(getActivity())
+                .title(R.string.changeCityHome)
+                .positiveText(R.string.changeCityHome)
+                .negativeText(R.string.cancel)
+                .customView(base, false)
+                .callback(new MaterialDialog.ButtonCallback() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
+                    public void onPositive(MaterialDialog dialog) {
+                        super.onPositive(dialog);
                     }
-                });
-
-        return builder.create();
+                })
+                .build();
     }
 
     @Override

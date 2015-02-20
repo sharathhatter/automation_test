@@ -1,33 +1,20 @@
 package com.bigbasket.mobileapp.view.uiv2;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
-import com.bigbasket.mobileapp.model.product.Option;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.UIUtil;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-
-/**
- * Created by jugal on 6/8/14.
- */
 public class UpgradeAppDialog extends DialogFragment {
 
     private String upgradeMsg;
+
     public UpgradeAppDialog() {
     }
 
@@ -48,32 +35,18 @@ public class UpgradeAppDialog extends DialogFragment {
     @Override
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(R.string.update);
-        builder.setMessage(!TextUtils.isEmpty(upgradeMsg)?upgradeMsg: getActivity().getString(R.string.appUpdatedMsg))
-                .setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
+        return UIUtil.getMaterialDialogBuilder(getActivity())
+                .title(R.string.update)
+                .content(!TextUtils.isEmpty(upgradeMsg) ? upgradeMsg : getActivity().getString(R.string.appUpdatedMsg))
+                .positiveText(R.string.update)
+                .negativeText(R.string.cancel)
+                .cancelable(false)
+                .callback(new MaterialDialog.ButtonCallback() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onPositive(MaterialDialog dialog) {
                         UIUtil.openPlayStoreLink(getActivity());
                     }
                 })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-        AlertDialog alertDialog = builder.create();
-        alertDialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
-            @Override
-            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    dialog.dismiss();
-                    (getActivity()).finish();
-                }
-                return true;
-            }
-        });
-        return alertDialog;
+                .build();
     }
 }

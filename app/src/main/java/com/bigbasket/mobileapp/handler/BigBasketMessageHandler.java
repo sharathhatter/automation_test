@@ -38,82 +38,85 @@ public class BigBasketMessageHandler<T> {
     public void sendEmptyMessage(int what, String message, boolean finish) {
         switch (what) {
             case ApiErrorCodes.POTENTIAL_ORDER_SLOT_EXPIRED:
-                ((ApiErrorAware) ctx).showApiErrorDialog(!TextUtils.isEmpty(message) ? message : getString(R.string.slotNotAvailable),
+                ((ApiErrorAware) ctx).showApiErrorDialog(null, !TextUtils.isEmpty(message) ? message : getString(R.string.slotNotAvailable),
                         NavigationCodes.GO_TO_SLOT_SELECTION);
                 break;
             case ApiErrorCodes.POTENITAL_ORDER_EXPIRED:
-                ((ApiErrorAware) ctx).showApiErrorDialog(!TextUtils.isEmpty(message) ? message : getString(R.string.potentialOrderIdExpired),
+                ((ApiErrorAware) ctx).showApiErrorDialog(null, !TextUtils.isEmpty(message) ? message : getString(R.string.potentialOrderIdExpired),
                         NavigationCodes.GO_TO_HOME);
                 break;
             case ApiErrorCodes.INTERNAL_SERVER_ERROR:
-                ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.server_error), finish);
+                ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.headingServerError),
+                        getString(R.string.server_error), finish);
                 break;
             case ApiErrorCodes.INVALID_USER:
-                ((ApiErrorAware) ctx).showApiErrorDialog(!TextUtils.isEmpty(message) ? message : getString(R.string.potentialOrderIdExpired),
+                ((ApiErrorAware) ctx).showApiErrorDialog(null, !TextUtils.isEmpty(message) ? message : getString(R.string.potentialOrderIdExpired),
                         NavigationCodes.GO_TO_HOME);
                 break;
             case ApiErrorCodes.INVALID_FIELD:
-                ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.server_error), true);
+                ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.headingServerError),
+                        getString(R.string.server_error), true);
                 break;
             case ApiErrorCodes.EMAIL_ALREADY_EXISTS:
-                ((ApiErrorAware) ctx).showApiErrorDialog(!TextUtils.isEmpty(message) ? message : getString(R.string.REGISTERED_EMAIL));
+                ((ApiErrorAware) ctx).showApiErrorDialog(null, !TextUtils.isEmpty(message) ? message : getString(R.string.REGISTERED_EMAIL));
                 break;
             case ApiErrorCodes.CART_NOT_EXISTS:
-                ((ApiErrorAware) ctx).showApiErrorDialog(!TextUtils.isEmpty(message) ? message : getString(R.string.cartNotExistsError));
+                ((ApiErrorAware) ctx).showApiErrorDialog(null, !TextUtils.isEmpty(message) ? message : getString(R.string.cartNotExistsError));
                 break;
             case ApiErrorCodes.INVALID_USER_PASSED:
-                ((ApiErrorAware) ctx).showApiErrorDialog(!TextUtils.isEmpty(message) ? message : getString(R.string.INVALID_USER_PASS));
+                ((ApiErrorAware) ctx).showApiErrorDialog(null, !TextUtils.isEmpty(message) ? message : getString(R.string.INVALID_USER_PASS));
                 break;
             case ApiErrorCodes.INVALID_EVOUCHER:
-                ((ApiErrorAware) ctx).showApiErrorDialog(message);
+                ((ApiErrorAware) ctx).showApiErrorDialog(null, message);
                 break;
             case ApiErrorCodes.LOGIN_REQUIRED:
-                ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.login_required), NavigationCodes.GO_TO_LOGIN, null);
+                ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.signIn), getString(R.string.login_required), NavigationCodes.GO_TO_LOGIN, null);
                 break;
             case ApiErrorCodes.BASKET_EMPTY:
-                ((ApiErrorAware) ctx).showApiErrorDialog(!TextUtils.isEmpty(message) ? message : getString(R.string.basketEmpty), true);
+                ((ApiErrorAware) ctx).showApiErrorDialog(null, !TextUtils.isEmpty(message) ? message : getString(R.string.basketEmpty), true);
                 break;
             case ApiErrorCodes.NO_ITEMS_IN_CART:
-                ((ApiErrorAware) ctx).showApiErrorDialog(!TextUtils.isEmpty(message) ? message : getString(R.string.basketEmpty));
+                ((ApiErrorAware) ctx).showApiErrorDialog(null, !TextUtils.isEmpty(message) ? message : getString(R.string.basketEmpty));
                 break;
             case ApiErrorCodes.LIST_SLUG_MISSING:
-                ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.server_error), true);
+                ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.headingServerError),
+                        getString(R.string.server_error), true);
                 break;
             case ApiErrorCodes.PRODUCT_DOES_NOT_EXISTS:
-                ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.product_id_invalid), true);
+                ((ApiErrorAware) ctx).showApiErrorDialog(null, getString(R.string.product_id_invalid), true);
                 break;
             case ApiErrorCodes.LIST_WITH_NAME_ALREADY_EXISTS:
-                ((ApiErrorAware) ctx).showApiErrorDialog(!TextUtils.isEmpty(message) ? message : getString(R.string.list_exists));
+                ((ApiErrorAware) ctx).showApiErrorDialog(null, !TextUtils.isEmpty(message) ? message : getString(R.string.list_exists));
                 break;
             case ApiErrorCodes.MEMBER_SHOPPING_LIST_DOESNT_EXISTS:
-                ((ApiErrorAware) ctx).showApiErrorDialog(!TextUtils.isEmpty(message) ? message : getString(R.string.list_exists), true);
+                ((ApiErrorAware) ctx).showApiErrorDialog(null, !TextUtils.isEmpty(message) ? message : getString(R.string.list_exists), true);
                 break;
             case ApiErrorCodes.PROMO_NOT_EXIST:
-                ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.invalid_promo), true);
+                ((ApiErrorAware) ctx).showApiErrorDialog(null, getString(R.string.invalid_promo), true);
                 break;
             case ApiErrorCodes.PROMO_CATEGORY_NOT_EXIST:
-                ((ApiErrorAware) ctx).showApiErrorDialog(!TextUtils.isEmpty(message) ? message : getString(R.string.no_promo_cat), true);
+                ((ApiErrorAware) ctx).showApiErrorDialog(null, !TextUtils.isEmpty(message) ? message : getString(R.string.no_promo_cat), true);
                 break;
             case ApiErrorCodes.PROMO_CRITERIA_SET_NOT_EXISTS:
-                ((ApiErrorAware) ctx).showApiErrorDialog(!TextUtils.isEmpty(message) ? message : getString(R.string.invalid_promo), true);
+                ((ApiErrorAware) ctx).showApiErrorDialog(null, !TextUtils.isEmpty(message) ? message : getString(R.string.invalid_promo), true);
                 break;
             case ApiErrorCodes.PROMO_NOT_ACTIVE:
-                ((ApiErrorAware) ctx).showApiErrorDialog(!TextUtils.isEmpty(message) ? message : getString(R.string.invalid_promo), true);
+                ((ApiErrorAware) ctx).showApiErrorDialog(null, !TextUtils.isEmpty(message) ? message : getString(R.string.invalid_promo), true);
                 break;
             case ApiErrorCodes.INVALID_PROMO:
-                ((ApiErrorAware) ctx).showApiErrorDialog(!TextUtils.isEmpty(message) ? message : getString(R.string.server_error), true);
+                ((ApiErrorAware) ctx).showApiErrorDialog(null, !TextUtils.isEmpty(message) ? message : getString(R.string.server_error), true);
                 break;
             case ApiErrorCodes.ORDER_IN_PROGRESS:
-                ((ApiErrorAware) ctx).showApiErrorDialog(message);
+                ((ApiErrorAware) ctx).showApiErrorDialog(null, message);
                 break;
             case ApiErrorCodes.PRODUCT_QTY_LIMIT:
-                ((ApiErrorAware) ctx).showApiErrorDialog(!TextUtils.isEmpty(message) ? message : getString(R.string.invalidBasketQty));
+                ((ApiErrorAware) ctx).showApiErrorDialog(null, !TextUtils.isEmpty(message) ? message : getString(R.string.invalidBasketQty));
                 break;
             case ApiErrorCodes.ADDRESS_NOT_SERVED:
-                ((ApiErrorAware) ctx).showApiErrorDialog(message, true);
+                ((ApiErrorAware) ctx).showApiErrorDialog(null, message, true);
                 break;
             case ApiErrorCodes.EMAIL_DOESNT_EXISTS:
-                ((ApiErrorAware) ctx).showApiErrorDialog(message, finish);
+                ((ApiErrorAware) ctx).showApiErrorDialog(null, message, finish);
                 break;
             case NavigationCodes.ADD_TO_SHOPPINGLIST_OK:
                 if (((ActivityAware) ctx).getCurrentActivity() != null) {
@@ -149,7 +152,8 @@ public class BigBasketMessageHandler<T> {
                 ((UploadNewPrescriptionActivity) ctx).doSampling();
                 break;
             default:
-                ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.server_error), finish);
+                ((ApiErrorAware) ctx).showApiErrorDialog(null,
+                        !TextUtils.isEmpty(message) ? message : getString(R.string.server_error), finish);
                 break;
         }
     }
@@ -173,17 +177,20 @@ public class BigBasketMessageHandler<T> {
     public void handleRetrofitError(RetrofitError error, String sourceName, boolean finish) {
         switch (error.getKind()) {
             case NETWORK:
-                ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.msgNetworkError), finish);
+                ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.headingNetworkError),
+                        getString(R.string.msgNetworkError), finish);
                 break;
             case HTTP:
                 if (error.getResponse() == null) {
-                    ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.msgNetworkError), finish);
+                    ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.headingNetworkError),
+                            getString(R.string.msgNetworkError), finish);
                 } else {
                     handleHttpError(error.getResponse().getStatus(), error.getResponse().getReason(), sourceName, finish);
                 }
                 break;
             case CONVERSION:
-                ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.server_error), true);
+                ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.headingServerError),
+                        getString(R.string.server_error), true);
                 break;
             case UNEXPECTED:
                 throw error;
@@ -195,30 +202,28 @@ public class BigBasketMessageHandler<T> {
     }
 
     public void handleHttpError(int errorCode, String reasonPhrase, String sourceName, boolean finish) {
-        switch (errorCode) {
-            case HttpStatus.SC_BAD_GATEWAY:
-                if (!finish) {
-                    ((ActivityAware) ctx).getCurrentActivity().showAlertDialog(getString(R.string.weAreDown), getString(R.string.serviceUnavailable), sourceName);
-                } else {
-                    ((ActivityAware) ctx).getCurrentActivity().showAlertDialogFinish(getString(R.string.weAreDown), getString(R.string.serviceUnavailable));
-                }
-                break;
-            case HttpStatus.SC_UNAUTHORIZED:
-                showUnauthorised();
-                break;
-            default:
-                String msg = "HTTP " + errorCode + " : " + reasonPhrase;
-                if (!finish) {
-                    ((ApiErrorAware) ctx).showApiErrorDialog(msg, sourceName, null);
-                } else {
-                    ((ApiErrorAware) ctx).showApiErrorDialog(msg, true);
-                }
-                break;
+        if (errorCode == HttpStatus.SC_BAD_GATEWAY || errorCode == HttpStatus.SC_SERVICE_UNAVAILABLE
+                || errorCode == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
+            if (!finish) {
+                ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.weAreDown), getString(R.string.serviceUnavailable), sourceName, null);
+            } else {
+                ((ActivityAware) ctx).getCurrentActivity().showAlertDialogFinish(getString(R.string.weAreDown), getString(R.string.serviceUnavailable));
+            }
+        } else if (errorCode == HttpStatus.SC_UNAUTHORIZED) {
+            showUnauthorised();
+        } else {
+            String msg = "HTTP " + errorCode + " : " + reasonPhrase;
+            if (!finish) {
+                ((ApiErrorAware) ctx).showApiErrorDialog(null, msg, sourceName, null);
+            } else {
+                ((ApiErrorAware) ctx).showApiErrorDialog(null, msg, true);
+            }
         }
     }
 
     private void showUnauthorised() {
-        ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.login_required), NavigationCodes.GO_TO_LOGIN, null);
+        ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.signIn),
+                getString(R.string.login_required), NavigationCodes.GO_TO_LOGIN, null);
     }
 
     public void sendOfflineError() {
@@ -226,6 +231,7 @@ public class BigBasketMessageHandler<T> {
     }
 
     public void sendOfflineError(boolean finish) {
-        ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.connectionOffline), finish);
+        ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.headingConnectionOffline),
+                getString(R.string.connectionOffline), finish);
     }
 }

@@ -127,18 +127,18 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
     }
 
     @Override
-    protected void onPositiveButtonClicked(DialogInterface dialogInterface, int id, String sourceName, final Object valuePassed) {
+    protected void onPositiveButtonClicked(DialogInterface dialogInterface, String sourceName, final Object valuePassed) {
         if (sourceName != null) {
             switch (sourceName) {
                 case Constants.GO_TO_HOME_STRING:
                     goToHome();
                     break;
                 default:
-                    super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
+                    super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
                     break;
             }
         } else {
-            super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
+            super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
         }
     }
 

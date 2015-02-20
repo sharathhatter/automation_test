@@ -232,7 +232,7 @@ public class PlaceOrderActivity extends BackButtonActivity implements OnObservab
         }
     }
 
-    protected void onPositiveButtonClicked(DialogInterface dialogInterface, int id, String sourceName, Object valuePassed) {
+    protected void onPositiveButtonClicked(DialogInterface dialogInterface, String sourceName, Object valuePassed) {
         if (sourceName != null) {
             HashMap<String, String> map = new HashMap<>();
             map.put(TrackEventkeys.POTENTIAL_ORDER, mPotentialOrderId);
@@ -258,7 +258,7 @@ public class PlaceOrderActivity extends BackButtonActivity implements OnObservab
                     break;
             }
         }
-        super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
+        super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
     }
 
     private void postOrderCreation(ArrayList<Order> orders) {

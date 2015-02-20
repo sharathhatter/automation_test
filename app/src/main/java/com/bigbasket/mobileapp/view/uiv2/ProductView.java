@@ -1,7 +1,5 @@
 package com.bigbasket.mobileapp.view.uiv2;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.graphics.Typeface;
@@ -18,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.adapter.product.ProductListSpinnerAdapter;
@@ -297,48 +296,29 @@ public final class ProductView {
             imgShoppingListDel.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(((ActivityAware) shoppingListNamesAware).getCurrentActivity());
-
-                    // set title
-                    alertDialogBuilder.setTitle("BigBasket");
-
-                    // set dialog message
-                    alertDialogBuilder
-                            .setMessage(
-                                    "Are you sure you want to delete this product from the shopping list?")
-                            .setCancelable(false)
-                            .setPositiveButton("Yes",
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(
-                                                DialogInterface dialog, int id) {
-                                            if (((ConnectivityAware) shoppingListNamesAware).checkInternetConnection()) {
-                                                List<ShoppingListName> shoppingListNames = new ArrayList<>();
-                                                shoppingListNames.add(productViewDisplayDataHolder.getShoppingListName());
-                                                ShoppingListDoAddDeleteTask shoppingListDoAddDeleteTask =
-                                                        new ShoppingListDoAddDeleteTask<>(shoppingListNamesAware, shoppingListNames, ShoppingListOption.DELETE_ITEM);
-                                                ((ShoppingListNamesAware) shoppingListNamesAware).setSelectedProductId(product.getSku());
-                                                ((TrackingAware) (shoppingListNamesAware)).trackEvent(TrackingAware.SHOP_LIST_PRODUCT_DELETED, null);
-                                                shoppingListDoAddDeleteTask.startTask();
-                                            } else {
-                                                productViewDisplayDataHolder.getHandler().sendOfflineError();
-                                            }
-                                        }
+                    UIUtil.getMaterialDialogBuilder(((ActivityAware) shoppingListNamesAware).getCurrentActivity())
+                            .title(R.string.app_name)
+                            .content("Are you sure you want to delete this product from the shopping list?")
+                            .cancelable(false)
+                            .positiveText(R.string.yesTxt)
+                            .negativeText(R.string.noTxt)
+                            .callback(new MaterialDialog.ButtonCallback() {
+                                @Override
+                                public void onPositive(MaterialDialog dialog) {
+                                    if (((ConnectivityAware) shoppingListNamesAware).checkInternetConnection()) {
+                                        List<ShoppingListName> shoppingListNames = new ArrayList<>();
+                                        shoppingListNames.add(productViewDisplayDataHolder.getShoppingListName());
+                                        ShoppingListDoAddDeleteTask shoppingListDoAddDeleteTask =
+                                                new ShoppingListDoAddDeleteTask<>(shoppingListNamesAware, shoppingListNames, ShoppingListOption.DELETE_ITEM);
+                                        ((ShoppingListNamesAware) shoppingListNamesAware).setSelectedProductId(product.getSku());
+                                        ((TrackingAware) (shoppingListNamesAware)).trackEvent(TrackingAware.SHOP_LIST_PRODUCT_DELETED, null);
+                                        shoppingListDoAddDeleteTask.startTask();
+                                    } else {
+                                        productViewDisplayDataHolder.getHandler().sendOfflineError();
                                     }
-                            )
-                            .setNegativeButton("No",
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(
-                                                DialogInterface dialog, int id) {
-                                        }
-                                    }
-                            );
-
-
-                    // create alert dialog
-                    AlertDialog alertDialog = alertDialogBuilder.create();
-
-                    // show it
-                    alertDialog.show();
+                                }
+                            })
+                            .show();
                 }
             });
         } else {

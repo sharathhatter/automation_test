@@ -140,7 +140,7 @@ public class PayuTransactionActivity extends BackButtonActivity {
     }
 
     @Override
-    protected void onPositiveButtonClicked(DialogInterface dialogInterface, int id, String sourceName, Object valuePassed) {
+    protected void onPositiveButtonClicked(DialogInterface dialogInterface, String sourceName, Object valuePassed) {
         if (sourceName != null) {
             switch (sourceName) {
                 case Constants.PAYU_CANCELLED:
@@ -149,11 +149,11 @@ public class PayuTransactionActivity extends BackButtonActivity {
                     finish();
                     break;
                 default:
-                    super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
+                    super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
                     break;
             }
         } else {
-            super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
+            super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
         }
     }
 

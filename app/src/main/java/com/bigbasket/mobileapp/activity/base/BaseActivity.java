@@ -1,7 +1,6 @@
 package com.bigbasket.mobileapp.activity.base;
 
 import android.app.ActivityManager;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -15,6 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -28,6 +28,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.CheckoutQCActivity;
@@ -282,19 +283,20 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     }
 
     public void showAlertDialog(String title, String msg, final String sourceName, final Object valuePassed) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getCurrentActivity());
-        builder.setTitle(title == null ? "BigBasket" : title);
-        builder.setMessage(msg);
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                onPositiveButtonClicked(dialog, which, sourceName, valuePassed);
-            }
-        });
-        AlertDialog alertDialog = builder.create();
+        MaterialDialog.Builder builder = UIUtil.getMaterialDialogBuilder(getCurrentActivity())
+                .title(title == null ? "BigBasket" : title)
+                .content(msg)
+                .positiveText(R.string.ok)
+                .cancelable(false)
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        onPositiveButtonClicked(dialog, sourceName, valuePassed);
+                    }
+                });
         if (isSuspended())
             return;
-        alertDialog.show();
+        builder.show();
     }
 
     public void showAlertDialogFinish(String title, String msg) {
@@ -302,25 +304,23 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     }
 
     public void showAlertDialogFinish(String title, String msg, final int resultCode) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getCurrentActivity());
-        builder.setTitle(title == null ? "BigBasket" : title);
-        builder.setMessage(msg);
-        builder.setCancelable(false);
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (getCurrentActivity() != null) {
-                    if (resultCode > -1) {
-                        getCurrentActivity().setResult(resultCode);
+        MaterialDialog.Builder builder = UIUtil.getMaterialDialogBuilder(getCurrentActivity())
+                .title(title == null ? "BigBasket" : title)
+                .content(msg)
+                .cancelable(false)
+                .positiveText(R.string.ok)
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        if (resultCode > -1) {
+                            getCurrentActivity().setResult(resultCode);
+                        }
+                        getCurrentActivity().finish();
                     }
-                    getCurrentActivity().finish();
-                }
-            }
-        });
-        AlertDialog alertDialog = builder.create();
+                });
         if (isSuspended())
             return;
-        alertDialog.show();
+        builder.show();
     }
 
     public void showAlertDialog(String msg) {
@@ -344,36 +344,36 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
                                 String msg, DialogButton dialogButton,
                                 DialogButton nxtDialogButton, final String sourceName,
                                 final Object passedValue, String positiveBtnText) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getCurrentActivity());
-        builder.setTitle(title);
-        builder.setMessage(msg);
+        MaterialDialog.Builder builder = UIUtil.getMaterialDialogBuilder(getCurrentActivity())
+                .title(title)
+                .content(msg);
         if (dialogButton != null && nxtDialogButton != null) {
             if (dialogButton.equals(DialogButton.YES) || dialogButton.equals(DialogButton.OK)) {
                 if (TextUtils.isEmpty(positiveBtnText)) {
                     int textId = dialogButton.equals(DialogButton.YES) ? R.string.yesTxt : R.string.ok;
                     positiveBtnText = getString(textId);
                 }
-                builder.setPositiveButton(positiveBtnText, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int id) {
-                        onPositiveButtonClicked(dialogInterface, id, sourceName, passedValue);
-                    }
-                });
+                builder.positiveText(positiveBtnText);
             }
             if (nxtDialogButton.equals(DialogButton.NO) || nxtDialogButton.equals(DialogButton.CANCEL)) {
                 int textId = nxtDialogButton.equals(DialogButton.NO) ? R.string.noTxt : R.string.cancel;
-                builder.setNegativeButton(textId, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int id) {
-                        onNegativeButtonClicked(dialogInterface, id, sourceName);
-                    }
-                });
+                builder.negativeText(textId);
             }
+            builder.callback(new MaterialDialog.ButtonCallback() {
+                @Override
+                public void onPositive(MaterialDialog dialog) {
+                    onPositiveButtonClicked(dialog, sourceName, passedValue);
+                }
+
+                @Override
+                public void onNegative(MaterialDialog dialog) {
+                    onNegativeButtonClicked(dialog, sourceName);
+                }
+            });
         }
-        AlertDialog alertDialog = builder.create();
         if (isSuspended())
             return;
-        alertDialog.show();
+        builder.show();
     }
 
     public void showAlertDialog(String title,
@@ -382,7 +382,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         showAlertDialog(title, msg, dialogButton, nxtDialogButton, null);
     }
 
-    protected void onPositiveButtonClicked(DialogInterface dialogInterface, int id, String sourceName, Object valuePassed) {
+    protected void onPositiveButtonClicked(DialogInterface dialogInterface, String sourceName, Object valuePassed) {
         if (sourceName != null) {
             switch (sourceName) {
                 case NavigationCodes.GO_TO_LOGIN:
@@ -396,7 +396,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         }
     }
 
-    protected void onNegativeButtonClicked(DialogInterface dialogInterface, int id, String sourceName) {
+    protected void onNegativeButtonClicked(DialogInterface dialogInterface, String sourceName) {
 
     }
 
@@ -677,27 +677,27 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     }
 
     @Override
-    public void showApiErrorDialog(String message) {
-        showAlertDialog(message);
+    public void showApiErrorDialog(@Nullable String title, String message) {
+        showAlertDialog(title, message);
     }
 
     @Override
-    public void showApiErrorDialog(String message, boolean finish) {
+    public void showApiErrorDialog(@Nullable String title, String message, boolean finish) {
         if (finish) {
-            showAlertDialogFinish(null, message);
+            showAlertDialogFinish(title, message);
         } else {
-            showAlertDialog(message);
+            showAlertDialog(title, message);
         }
     }
 
     @Override
-    public void showApiErrorDialog(String message, String sourceName, Object valuePassed) {
-        showAlertDialog(null, message, sourceName, valuePassed);
+    public void showApiErrorDialog(@Nullable String title, String message, String sourceName, Object valuePassed) {
+        showAlertDialog(title, message, sourceName, valuePassed);
     }
 
     @Override
-    public void showApiErrorDialog(String message, int resultCode) {
-        showAlertDialogFinish(null, message, resultCode);
+    public void showApiErrorDialog(@Nullable String title, String message, int resultCode) {
+        showAlertDialogFinish(title, message, resultCode);
     }
 
     public void launchAppDeepLink(String uri) {

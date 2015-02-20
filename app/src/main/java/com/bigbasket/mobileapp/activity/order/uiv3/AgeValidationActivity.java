@@ -330,7 +330,7 @@ public class AgeValidationActivity extends BackButtonActivity {
     }
 
     @Override
-    protected void onPositiveButtonClicked(DialogInterface dialogInterface, int id, String sourceName, final Object valuePassed) {
+    protected void onPositiveButtonClicked(DialogInterface dialogInterface, String sourceName, final Object valuePassed) {
         if (sourceName != null) {
             switch (sourceName) {
                 case Constants.REMOVE_ALL_MARKETPLACE_FROM_BASKET_VIA_AGE:
@@ -345,11 +345,11 @@ public class AgeValidationActivity extends BackButtonActivity {
                     goToHome();
                     break;
                 default:
-                    super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
+                    super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
                     break;
             }
         } else {
-            super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
+            super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
         }
     }
 

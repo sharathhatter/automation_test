@@ -1,17 +1,18 @@
 package com.bigbasket.mobileapp.view.uiv3;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.view.View;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.interfaces.InfiniteProductListAware;
 import com.bigbasket.mobileapp.interfaces.SortAware;
 import com.bigbasket.mobileapp.model.product.Option;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
 
@@ -41,7 +42,6 @@ public class SortProductDialog extends DialogFragment {
     @Override
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         String[] sortOptionsArray = new String[sortOptions.size()];
         int checkedIdx = 0;
         for (int i = 0; i < sortOptions.size(); i++) {
@@ -51,24 +51,22 @@ public class SortProductDialog extends DialogFragment {
                 checkedIdx = i;
             }
         }
-        builder.setTitle(R.string.sortBy)
-                .setSingleChoiceItems(sortOptionsArray, checkedIdx, new DialogInterface.OnClickListener() {
+
+        return UIUtil.getMaterialDialogBuilder(getActivity())
+                .title(R.string.sortBy)
+                .positiveText(R.string.sort)
+                .negativeText(R.string.cancel)
+                .items(sortOptionsArray)
+                .itemsCallbackSingleChoice(checkedIdx, new MaterialDialog.ListCallback() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onSelection(MaterialDialog materialDialog, View view, int which, CharSequence text) {
                         Option option = sortOptions.get(which);
                         if (!option.getSortName().equals(sortedOn)) {
                             ((SortAware) getTargetFragment()).setSortedOn(option.getSortSlug());
                             ((InfiniteProductListAware) getTargetFragment()).loadProducts();
-                            dialog.dismiss();
                         }
                     }
                 })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-        return builder.create();
+                .build();
     }
 }

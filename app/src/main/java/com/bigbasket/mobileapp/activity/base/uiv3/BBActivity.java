@@ -829,7 +829,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
     }
 
     @Override
-    protected void onPositiveButtonClicked(DialogInterface dialogInterface, int id, String sourceName, Object valuePassed) {
+    protected void onPositiveButtonClicked(DialogInterface dialogInterface, String sourceName, Object valuePassed) {
         if (!TextUtils.isEmpty(sourceName)) {
             switch (sourceName) {
                 case Constants.LOGOUT:
@@ -838,11 +838,11 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                     addToMainLayout(new HomeFragment(), Constants.HOME);
                     break;
                 default:
-                    super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
+                    super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
                     break;
             }
         } else {
-            super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
+            super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
         }
     }
 

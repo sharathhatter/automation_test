@@ -100,7 +100,7 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
                                 break;
                             default:
                                 if (orderListApiResponse.errorType.equals(String.valueOf(ApiErrorCodes.INVALID_FIELD))) {
-                                    showApiErrorDialog("This is not a valid order number");
+                                    showApiErrorDialog(null, "This is not a valid order number");
                                 } else {
                                     handler.sendEmptyMessage(Integer.parseInt(orderListApiResponse.errorType),
                                             orderListApiResponse.message);

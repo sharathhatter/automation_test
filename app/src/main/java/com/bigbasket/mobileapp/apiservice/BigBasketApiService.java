@@ -5,7 +5,6 @@ import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.AppDataResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.AutoSearchApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.BaseApiResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.BrowseCategoryApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.BrowsePromoCategoryApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.CartGetApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.CartOperationApiResponse;

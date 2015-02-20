@@ -1,7 +1,6 @@
 package com.bigbasket.mobileapp.fragment.base;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -9,7 +8,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
 import android.text.Spannable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -20,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
@@ -158,8 +157,9 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     public abstract String getTitle();
 
     public void showErrorMsg(String msg) {
-        // Change it later on
-        ((BaseActivity) getActivity()).showAlertDialog(msg);
+        if (getCurrentActivity() != null) {
+            getCurrentActivity().showAlertDialog(msg);
+        }
     }
 
     @Nullable
@@ -310,38 +310,40 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
                                 DialogButton nxtDialogButton, final String sourceName,
                                 final Object passedValue, String positiveBtnText) {
         if (getActivity() == null) return;
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(!TextUtils.isEmpty(title) ? title : "BigBasket");
-        builder.setMessage(msg);
+        MaterialDialog.Builder builder = UIUtil.getMaterialDialogBuilder(getActivity())
+                .title(!TextUtils.isEmpty(title) ? title : "BigBasket")
+                .content(msg);
         if (dialogButton != null) {
             if (dialogButton.equals(DialogButton.YES) || dialogButton.equals(DialogButton.OK)) {
                 if (TextUtils.isEmpty(positiveBtnText)) {
                     int textId = dialogButton.equals(DialogButton.YES) ? R.string.yesTxt : R.string.ok;
                     positiveBtnText = getString(textId);
                 }
-                builder.setPositiveButton(positiveBtnText, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int id) {
-                        onPositiveButtonClicked(dialogInterface, id, sourceName, passedValue);
-                    }
-                });
+                builder.positiveText(positiveBtnText);
             }
             if (nxtDialogButton != null && (nxtDialogButton.equals(DialogButton.NO)
-                    || nxtDialogButton.equals(DialogButton.CANCEL)))
-                builder.setNegativeButton(R.string.noTxt, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int id) {
-                        onNegativeButtonClicked(dialogInterface, id, sourceName);
-                    }
-                });
+                    || nxtDialogButton.equals(DialogButton.CANCEL))) {
+                int textId = nxtDialogButton.equals(DialogButton.NO) ? R.string.noTxt : R.string.cancel;
+                builder.negativeText(textId);
+            }
+            builder.callback(new MaterialDialog.ButtonCallback() {
+                @Override
+                public void onPositive(MaterialDialog dialog) {
+                    onPositiveButtonClicked(dialog, sourceName, passedValue);
+                }
+
+                @Override
+                public void onNegative(MaterialDialog dialog) {
+                    onNegativeButtonClicked(dialog, sourceName);
+                }
+            });
         }
-        AlertDialog alertDialog = builder.create();
-        //if (isSuspended())
-        //    return;
-        alertDialog.show();
+        if (isSuspended())
+            return;
+        builder.show();
     }
 
-    protected void onPositiveButtonClicked(DialogInterface dialogInterface, int id, @Nullable String sourceName, Object valuePassed) {
+    protected void onPositiveButtonClicked(DialogInterface dialogInterface, @Nullable String sourceName, Object valuePassed) {
         if (sourceName != null && getActivity() != null) {
             switch (sourceName) {
                 case NavigationCodes.GO_TO_LOGIN:
@@ -352,7 +354,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         }
     }
 
-    protected void onNegativeButtonClicked(DialogInterface dialogInterface, int id, String sourceName) {
+    protected void onNegativeButtonClicked(DialogInterface dialogInterface, String sourceName) {
 
     }
 
@@ -401,51 +403,53 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     }
 
     @Override
-    public void showApiErrorDialog(String message) {
+    public void showApiErrorDialog(@Nullable String title, String message) {
         if (getCurrentActivity() == null) return;
-        showErrorMsg(message);
+        getCurrentActivity().showAlertDialog(title, message);
     }
 
     @Override
-    public void showApiErrorDialog(String message, boolean finish) {
+    public void showApiErrorDialog(@Nullable String title, String message, boolean finish) {
         // Fix this implementation as fragment shouldn't finish activity
         if (getCurrentActivity() == null) return;
         if (finish) {
-            showAlertDialogFinish(null, message);
+            showAlertDialogFinish(title, message);
         } else {
-            getCurrentActivity().showAlertDialog(message);
+            getCurrentActivity().showAlertDialog(title, message);
         }
     }
 
     public void showAlertDialogFinish(String title, String msg) {
         if (getCurrentActivity() == null || isSuspended()) return;
-        AlertDialog.Builder builder = new AlertDialog.Builder(getCurrentActivity());
-        builder.setTitle(title == null ? "BigBasket" : title);
-        builder.setMessage(msg);
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (getCurrentActivity() != null) {
-                    finish();
-                }
-            }
-        });
-        AlertDialog alertDialog = builder.create();
+
+        MaterialDialog.Builder builder = UIUtil.getMaterialDialogBuilder(getCurrentActivity())
+                .title(title == null ? "BigBasket" : title)
+                .content(msg)
+                .positiveText(R.string.ok)
+                .cancelable(false)
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        if (getCurrentActivity() != null) {
+                            finish();
+                        }
+                    }
+                });
         if (isSuspended())
             return;
-        alertDialog.show();
+        builder.show();
     }
 
     @Override
-    public void showApiErrorDialog(String message, String sourceName, Object valuePassed) {
+    public void showApiErrorDialog(@Nullable String title, String message, String sourceName, Object valuePassed) {
         if (getCurrentActivity() == null) return;
-        showAlertDialog(null, message, DialogButton.OK, null, sourceName, valuePassed, null);
+        showAlertDialog(title, message, DialogButton.OK, null, sourceName, valuePassed, null);
     }
 
     @Override
-    public void showApiErrorDialog(String message, int resultCode) {
+    public void showApiErrorDialog(@Nullable String title, String message, int resultCode) {
         if (getCurrentActivity() == null) return;
-        getCurrentActivity().showAlertDialogFinish(null, message, resultCode);
+        getCurrentActivity().showAlertDialogFinish(title, message, resultCode);
     }
 
 }

@@ -313,16 +313,14 @@
 
                     <EditText
                         android:id="@+id/editTextCity"
+                        style="@style/ReadOnlyEditText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_column="1"
                         android:layout_marginLeft="@dimen/margin_normal"
                         android:layout_marginRight="@dimen/margin_normal"
                         android:ems="10"
-                        android:enabled="false"
-                        android:focusableInTouchMode="false"
                         android:hint="@string/city"
-                        android:imeOptions="actionNext"
                         android:inputType="text"
                         android:singleLine="true"
                         android:textColor="@color/uiv3_primary_text_color"

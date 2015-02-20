@@ -114,7 +114,7 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
 
 
     @Override
-    protected void onPositiveButtonClicked(DialogInterface dialogInterface, int id, String sourceName, Object valuePassed) {
+    protected void onPositiveButtonClicked(DialogInterface dialogInterface, String sourceName, Object valuePassed) {
         if (!TextUtils.isEmpty(sourceName)) {
             if (sourceName.equals(Constants.MORE_IMAGES)) {
                 arrayListByteArray.clear();
@@ -124,7 +124,7 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
                 return;
             }
         } else {
-            super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
+            super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
         }
     }
 

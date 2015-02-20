@@ -212,7 +212,7 @@ public class ShowCartFragment extends BaseFragment {
     }
 
     @Override
-    public void onPositiveButtonClicked(DialogInterface dialogInterface, int id, String sourceName, Object valuePassed) {
+    public void onPositiveButtonClicked(DialogInterface dialogInterface, String sourceName, Object valuePassed) {
         if (sourceName != null) {
             switch (sourceName) {
                 case Constants.EMPTY_BASKET:
@@ -220,11 +220,11 @@ public class ShowCartFragment extends BaseFragment {
                         emptyCart();
                     break;
                 default:
-                    super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
+                    super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
                     break;
             }
         } else {
-            super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
+            super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
         }
     }
 

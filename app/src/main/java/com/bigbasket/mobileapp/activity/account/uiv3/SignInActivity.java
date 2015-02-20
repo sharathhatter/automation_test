@@ -2,7 +2,6 @@ package com.bigbasket.mobileapp.activity.account.uiv3;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -29,6 +28,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
@@ -529,7 +529,7 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
     }
 
     @Override
-    protected void onPositiveButtonClicked(DialogInterface dialogInterface, int id, String sourceName, Object valuePassed) {
+    protected void onPositiveButtonClicked(DialogInterface dialogInterface, String sourceName, Object valuePassed) {
         if (sourceName != null) {
             switch (sourceName) {
                 case Constants.GOOGLE_PLAY_SERVICES:
@@ -547,27 +547,30 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
                     }
                     break;
                 default:
-                    super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
+                    super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
                     break;
             }
         } else {
-            super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
+            super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
         }
     }
 
     private void showForgotPasswordDialog() {
         trackEvent(TrackingAware.FORGOT_PASSWORD_PWD_SHOWN, null);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View base = getLayoutInflater().inflate(R.layout.uiv3_editable_dialog, null);
 
         final EditText editTextDialog = (EditText) base.findViewById(R.id.editTextDialog);
         editTextDialog.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
         editTextDialog.setHint(getString(R.string.email));
-        builder.setTitle(getString(R.string.forgotPasswd))
-                .setView(base)
-                .setPositiveButton(getString(R.string.emailNewPassword), new DialogInterface.OnClickListener() {
+
+        UIUtil.getMaterialDialogBuilder(this)
+                .title(R.string.forgotPasswd)
+                .positiveText(R.string.emailNewPassword)
+                .negativeText(R.string.cancel)
+                .customView(base, false)
+                .callback(new MaterialDialog.ButtonCallback() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onPositive(MaterialDialog dialog) {
                         String inputEmail = editTextDialog.getText().toString();
                         if (TextUtils.isEmpty(inputEmail)) {
                             showToast("Please enter an email address");
@@ -579,14 +582,7 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
                         }
                         requestNewPassword(inputEmail);
                     }
-                })
-                .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-        builder.create().show();
+                }).show();
     }
 
     private void requestNewPassword(String email) {

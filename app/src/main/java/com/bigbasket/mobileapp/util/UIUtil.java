@@ -26,11 +26,11 @@ import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginUserDetails;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
@@ -395,4 +395,9 @@ public class UIUtil {
         editor.apply();
     }
 
+    public static MaterialDialog.Builder getMaterialDialogBuilder(Context context) {
+        return new MaterialDialog.Builder(context)
+                .positiveColorRes(R.color.uiv3_accept_label_color)
+                .negativeColorRes(R.color.dark_black);
+    }
 }

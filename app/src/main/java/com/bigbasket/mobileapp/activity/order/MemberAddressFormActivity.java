@@ -394,11 +394,11 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
     }
 
     @Override
-    protected void onPositiveButtonClicked(DialogInterface dialogInterface, int id, String sourceName, Object valuePassed) {
+    protected void onPositiveButtonClicked(DialogInterface dialogInterface, String sourceName, Object valuePassed) {
         if (sourceName != null && sourceName.equalsIgnoreCase(Constants.ERROR)) {
             finish();
         }
-        super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
+        super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
     }
 
     @Override
@@ -411,6 +411,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
         hideProgressDialog();
     }
 
+    // TODO : Jugal fix this
     Handler hRefresh = new Handler() {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
