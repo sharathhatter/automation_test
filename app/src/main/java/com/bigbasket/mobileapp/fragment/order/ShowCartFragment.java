@@ -426,4 +426,9 @@ public class ShowCartFragment extends BaseFragment {
     public String getFragmentTxnTag() {
         return ShowCartFragment.class.getName();
     }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.VIEW_BASKET_SCREEN;
+    }
 }

@@ -23,6 +23,7 @@ import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.ArrayList;
 
@@ -101,6 +102,7 @@ public class WalletActivityFragment extends BaseFragment implements InvoiceDataA
     public void onDisplayOrderInvoice(OrderInvoice orderInvoice) {
         Intent orderDetailIntent = new Intent(getCurrentActivity(), OrderDetailActivity.class);
         orderDetailIntent.putExtra(Constants.ORDER_REVIEW_SUMMARY, orderInvoice);
+        orderDetailIntent.putExtra(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_WALLET_ACTIVITIES);
         startActivityForResult(orderDetailIntent, NavigationCodes.GO_TO_HOME);
     }
 
@@ -119,5 +121,10 @@ public class WalletActivityFragment extends BaseFragment implements InvoiceDataA
     @Override
     public String getFragmentTxnTag() {
         return WalletActivityFragment.class.getName();
+    }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.ACCOUNT_WALLET_ACTIVITY_SCREEN;
     }
 }

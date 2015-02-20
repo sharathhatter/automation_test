@@ -20,6 +20,7 @@ import com.bigbasket.mobileapp.model.product.FilterOptionCategory;
 import com.bigbasket.mobileapp.model.product.FilterOptionItem;
 import com.bigbasket.mobileapp.model.product.FilteredOn;
 import com.bigbasket.mobileapp.task.GetCartCountTask;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
 
 import java.util.ArrayList;
@@ -161,6 +162,10 @@ public class ProductListActivity extends BBActivity implements FilterDisplayAwar
     }
 
     @Override
+    public String getScreenTag() {
+        return TrackEventkeys.PRESCRIPTION_LISTING_SCREEN;
+    }
+
     public void syncBasket() {
         // Don't remove the IS_BASKET_DIRTY flag, as Fragment also needs to refresh, only update count
         new GetCartCountTask<>(this, true).startTask();

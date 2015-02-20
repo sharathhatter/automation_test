@@ -57,6 +57,7 @@ import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
@@ -206,7 +207,6 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         isActivitySuspended = false;
         initializeKonotor();
         MoEngageWrapper.onResume(moEHelper, getCurrentActivity());
-        LocalyticsWrapper.onResume();
         prescriptionImageUploadHandler();
     }
 
@@ -230,12 +230,15 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     public void launchKonotor() {
         AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());
         if (!authParameters.isAuthTokenEmpty()) {
-            trackEvent(TrackingAware.COMMUICATION_HUB_CLICKED, null);
             Konotor.getInstance(getApplicationContext()).launchFeedbackScreen(this);
         } else {
             showAlertDialog(null, getString(R.string.login_required),
                     NavigationCodes.GO_TO_LOGIN);
         }
+
+        Map<String, String> eventAttribs = new HashMap<>();
+        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_TOPNAV);
+        trackEvent(TrackingAware.COMMUNICATION_HUB_CLICKED, eventAttribs);
     }
 
     protected void initializeKonotor() {
@@ -699,6 +702,8 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     public void showApiErrorDialog(String message, int resultCode) {
         showAlertDialogFinish(null, message, resultCode);
     }
+
+    public abstract String getScreenTag();
 
     public void launchAppDeepLink(String uri) {
         try {

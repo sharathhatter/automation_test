@@ -20,6 +20,7 @@ import com.bigbasket.mobileapp.adapter.account.ContactListAdapter;
 import com.bigbasket.mobileapp.interfaces.ContactNumberAware;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.ArrayList;
 
@@ -145,5 +146,10 @@ public class ContactListActivity extends BackButtonActivity implements ContactNu
 
     public ArrayList<String> getSelectedContacts() {
         return selectedContactNo;
+    }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.CONTACT_REFERRAL_SCREEN;
     }
 }

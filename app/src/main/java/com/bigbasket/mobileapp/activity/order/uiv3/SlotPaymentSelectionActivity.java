@@ -478,4 +478,9 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
             }
         }
     }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.SLOT_SELECTION_SCREEN;
+    }
 }

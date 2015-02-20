@@ -29,6 +29,7 @@ import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.ArrayList;
 
@@ -136,5 +137,10 @@ public class OrderThankYouFragment extends BaseFragment implements InvoiceDataAw
         Intent orderDetailIntent = new Intent(getActivity(), OrderDetailActivity.class);
         orderDetailIntent.putExtra(Constants.ORDER_REVIEW_SUMMARY, orderInvoice);
         startActivityForResult(orderDetailIntent, NavigationCodes.GO_TO_HOME);
+    }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.THANK_YOU_SCREEN;
     }
 }

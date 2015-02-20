@@ -31,12 +31,12 @@ import com.bigbasket.mobileapp.apiservice.models.response.UpdateVersionInfoApiRe
 import com.bigbasket.mobileapp.fragment.base.BaseSectionFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
-import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.task.GetDynamicPageTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.AppNotSupportedDialog;
 import com.bigbasket.mobileapp.view.uiv2.UpgradeAppDialog;
@@ -298,8 +298,8 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
 
     private void setAnalyticalData(AnalyticsEngine analyticsEngine) {
         if (analyticsEngine == null) return;
-        AuthParameters.getInstance(getCurrentActivity()).setMoEngaleLocaliticsEnabled(analyticsEngine.isMoEngageEnabled(),
-                analyticsEngine.isAnalyticsEnabled(), getCurrentActivity());
+        AuthParameters.getInstance(getCurrentActivity()).setAnyLyticsEnabled(analyticsEngine.isMoEngageEnabled(),
+                analyticsEngine.isAnalyticsEnabled(), analyticsEngine.isKonotorEnabled(), getCurrentActivity());
         AuthParameters.updateInstance(getCurrentActivity());
     }
 
@@ -321,7 +321,8 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                             UIUtil.updateLastAppDataCall(getCurrentActivity());
                             String appExpiredBy = callbackAppDataResponse.apiResponseContent.appUpdate.expiryDate;
                             String upgradeMsg = callbackAppDataResponse.apiResponseContent.appUpdate.upgradeMsg;
-                            showUpgradeAppDialog(appExpiredBy, upgradeMsg);
+                            String latestAppVersion = callbackAppDataResponse.apiResponseContent.appUpdate.latestAppVersion;
+                            showUpgradeAppDialog(appExpiredBy, upgradeMsg, latestAppVersion);
                             AnalyticsEngine analyticsEngine = callbackAppDataResponse.apiResponseContent.capabilities;
                             setAnalyticalData(analyticsEngine);
                             LoginUserDetails userDetails = callbackAppDataResponse.apiResponseContent.userDetails;
@@ -340,7 +341,6 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
 
                     @Override
                     public void failure(RetrofitError error) {
-                        trackEvent(TrackingAware.MY_ACCOUNT_CURRENT_PIN_FAILED, null);
                         if (isSuspended()) return;
                         try {
                             hideProgressDialog();
@@ -354,7 +354,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
     }
 
 
-    private void showUpgradeAppDialog(String appExpiredBy, String upgradeMsg) {
+    private void showUpgradeAppDialog(String appExpiredBy, String upgradeMsg, String latestAppVersion) {
         if (appExpiredBy == null) return;
         int updateValue = UIUtil.handleUpdateDialog(appExpiredBy.replace("-", "/"), getCurrentActivity());
         switch (updateValue) {
@@ -364,7 +364,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                 UIUtil.updateLastPopShownDate(System.currentTimeMillis(), getCurrentActivity());
                 break;
             case Constants.SHOW_APP_EXPIRE_POPUP:
-                AppNotSupportedDialog appNotSupportedDialog = AppNotSupportedDialog.newInstance();
+                AppNotSupportedDialog appNotSupportedDialog = AppNotSupportedDialog.newInstance(upgradeMsg, latestAppVersion);
                 appNotSupportedDialog.show(getFragmentManager(), Constants.APP_EXPIRED_DIALOG_FLAG);
                 break;
             default:
@@ -419,5 +419,10 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
     @Override
     public BigBasketMessageHandler getHandler() {
         return handler;
+    }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.HOME_SCREEN;
     }
 }

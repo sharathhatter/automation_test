@@ -1,9 +1,11 @@
 package com.bigbasket.mobileapp.fragment.shoppinglist;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -17,16 +19,19 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListDetailsApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
+import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListDetail;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 
@@ -164,18 +169,89 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
             btnAddAllToBasket.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (checkInternetConnection()) {
-                        //todo add all product event
-//                            showAlertDialog(getCurrentActivity(), null, "Are you sure you want to add all products to the basket?",
-//                                    "addall");
-                    } else {
-                        Toast.makeText(getActivity(), "No network connection", Toast.LENGTH_LONG).show();
-                    }
+                    showAlertDialog(null, getString(R.string.addAllProducts),
+                            DialogButton.YES, DialogButton.CANCEL, Constants.ADD_ALL, null, getString(R.string.yesTxt));
                 }
             });
         }
         contentView.addView(shopListHeaderLayout);
         renderProducts(productList);
+    }
+
+
+    @Override
+    protected void onPositiveButtonClicked(DialogInterface dialogInterface, int id, String sourceName, Object valuePassed) {
+        if (!TextUtils.isEmpty(sourceName) && sourceName.equalsIgnoreCase(Constants.ADD_ALL)) {
+            if (!checkInternetConnection()) {
+                handler.sendOfflineError();
+                return;
+            }
+            addAllItemsToBasket();
+        } else {
+            super.onPositiveButtonClicked(dialogInterface, id, sourceName, valuePassed);
+        }
+    }
+
+    private void addAllItemsToBasket() {
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+        showProgressView();
+        if (mShoppingListName.getSlug().equals(Constants.SMART_BASKET_SLUG)) {
+            bigBasketApiService.addAllToBasketSmartBasket(mShoppingListName.getSlug(),
+                    mShoppingListDetail.getTopCategorySlug(),
+                    new Callback<OldApiResponse<CartSummary>>() {
+                        @Override
+                        public void success(OldApiResponse<CartSummary> addAllToBasketSmartBasketCallBack, Response response) {
+                            if (isSuspended()) return;
+                            hideProgressView();
+                            switch (addAllToBasketSmartBasketCallBack.status) {
+                                case Constants.OK:
+                                    setCartInfo(addAllToBasketSmartBasketCallBack.apiResponseContent);
+                                    updateUIForCartInfo();
+                                    loadShoppingListProducts();
+                                    break;
+                                case Constants.ERROR:
+                                    handler.sendEmptyMessage(addAllToBasketSmartBasketCallBack.getErrorTypeAsInt(),
+                                            addAllToBasketSmartBasketCallBack.message, true);
+                                    break;
+                            }
+                        }
+
+                        @Override
+                        public void failure(RetrofitError error) {
+                            if (isSuspended()) return;
+                            hideProgressView();
+                            handler.handleRetrofitError(error);
+                        }
+                    });
+        } else {
+            bigBasketApiService.addAllToBasketShoppingList(mShoppingListName.getSlug(),
+                    mShoppingListDetail.getTopCategorySlug(),
+                    new Callback<OldApiResponse<CartSummary>>() {
+                        @Override
+                        public void success(OldApiResponse<CartSummary> addAllToBasketShoppingListCallBack, Response response) {
+                            if (isSuspended()) return;
+                            hideProgressView();
+                            switch (addAllToBasketShoppingListCallBack.status) {
+                                case Constants.OK:
+                                    setCartInfo(addAllToBasketShoppingListCallBack.apiResponseContent);
+                                    updateUIForCartInfo();
+                                    loadShoppingListProducts();
+                                    break;
+                                case Constants.ERROR:
+                                    handler.sendEmptyMessage(addAllToBasketShoppingListCallBack.getErrorTypeAsInt(),
+                                            addAllToBasketShoppingListCallBack.message, true);
+                                    break;
+                            }
+                        }
+
+                        @Override
+                        public void failure(RetrofitError error) {
+                            if (isSuspended()) return;
+                            hideProgressView();
+                            handler.handleRetrofitError(error);
+                        }
+                    });
+        }
     }
 
     private void renderProducts(ArrayList<Product> productList) {

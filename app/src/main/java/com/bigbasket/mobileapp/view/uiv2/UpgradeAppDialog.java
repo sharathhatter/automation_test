@@ -3,24 +3,15 @@ package com.bigbasket.mobileapp.view.uiv2;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
-import com.bigbasket.mobileapp.model.product.Option;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.UIUtil;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Created by jugal on 6/8/14.
@@ -28,6 +19,7 @@ import java.util.Date;
 public class UpgradeAppDialog extends DialogFragment {
 
     private String upgradeMsg;
+
     public UpgradeAppDialog() {
     }
 
@@ -49,15 +41,16 @@ public class UpgradeAppDialog extends DialogFragment {
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(R.string.update);
-        builder.setMessage(!TextUtils.isEmpty(upgradeMsg)?upgradeMsg: getActivity().getString(R.string.appUpdatedMsg))
-                .setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
+        builder.setTitle(R.string.updateDialogTitle);
+        builder.setMessage(!TextUtils.isEmpty(upgradeMsg) ? upgradeMsg : getActivity().getString(R.string.appUpdatedMsg))
+                .setPositiveButton(R.string.UPDATE, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         UIUtil.openPlayStoreLink(getActivity());
+                        getActivity().finish();
                     }
                 })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.CANCEL, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();

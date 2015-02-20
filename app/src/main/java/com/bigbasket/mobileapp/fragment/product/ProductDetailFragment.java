@@ -216,4 +216,9 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
     public String getFragmentTxnTag() {
         return ProductDetailFragment.class.getName();
     }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.PRODUCT_DETAIL_SCREEN;
+    }
 }

@@ -31,6 +31,7 @@ import com.bigbasket.mobileapp.task.GetDynamicPageTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.facebook.AppEventsLogger;
 import com.moe.pushlibrary.MoEHelper;
@@ -40,6 +41,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -83,6 +86,7 @@ public class SplashActivity extends BaseActivity implements DynamicScreenAware {
         } else {
             loadNavigation();
         }
+        trackEvent(TrackingAware.ENTRY_PAGE_SHOWN, null);
     }
 
     @Override
@@ -148,6 +152,10 @@ public class SplashActivity extends BaseActivity implements DynamicScreenAware {
                     if (city.getId() != -1) {
                         doRegisterDevice(city);
                     }
+                    Map<String, String> eventAttribs = new HashMap<>();
+                    eventAttribs.put(TrackEventkeys.CITY, city.getName());
+                    trackEvent(TrackingAware.ENTRY_PAGE_START_SHOPPING_BTN_CLICKED, eventAttribs);
+
                 }
             }
         });
@@ -275,5 +283,10 @@ public class SplashActivity extends BaseActivity implements DynamicScreenAware {
     @Override
     public void onDynamicScreenFailure(int error, String msg) {
         handler.sendEmptyMessage(error, msg, true);
+    }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.START_SCREEN;
     }
 }

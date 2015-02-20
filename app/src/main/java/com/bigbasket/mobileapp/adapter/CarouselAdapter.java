@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -141,7 +140,7 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
         private ImageView imgInRow;
         private TextView txtTitle;
         private TextView txtDescription;
-//        private RelativeLayout layoutCarouselSubContainer;
+        //        private RelativeLayout layoutCarouselSubContainer;
         private LinearLayout layoutCarouselContainer;
 
         public ViewHolder(View itemView, Typeface typeface) {

@@ -291,4 +291,9 @@ public class ShoppingListSummaryFragment extends BaseFragment {
     public String getFragmentTxnTag() {
         return ShoppingListSummaryFragment.class.getName();
     }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.SHOPPING_LIST_CATEGORY_LISTING_SCREEN;
+    }
 }

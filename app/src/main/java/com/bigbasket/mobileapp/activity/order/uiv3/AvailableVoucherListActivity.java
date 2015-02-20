@@ -23,6 +23,7 @@ import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.model.order.ActiveVouchers;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.ArrayList;
 
@@ -211,5 +212,10 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
                     activeVouchers.getValidity());
             return row;
         }
+    }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.APPLY_EVOUCHER_SCREEN;
     }
 }

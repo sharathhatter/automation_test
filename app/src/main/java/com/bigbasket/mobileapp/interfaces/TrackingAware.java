@@ -4,6 +4,100 @@ import java.util.Map;
 
 public interface TrackingAware {
 
+
+    //Start Activity
+    public static final String ENTRY_PAGE_SHOWN = "EntryPage.Shown";
+    public static final String ENTRY_PAGE_SPINNER_CLICKED = "EntryPage.City Selection Clicked";
+    public static final String ENTRY_PAGE_START_SHOPPING_BTN_CLICKED = "EntryPage.Start Shopping Clicked";
+
+    //Home Screen
+    public static final String COMMUNICATION_HUB_CLICKED = "MyAccount.CommunicationHubClicked";
+    public static final String LOGIN_OR_REGISTRATION_CLICKED = "Login or Register Clicked";
+    public static final String HOME_CHANGE_CITY = "Change Your Location Clicked";
+    public static final String RATE_APP_CLICKED = "Rate This App Clicked";
+    public static final String MENU_CLICKED = "Menu.Clicked";
+
+    //change city dialog
+    public static final String CHANGE_CITY_DIALOG_SHOWN = "Change Your City. Dialog Shown";
+    public static final String CHANGE_CITY_POSSITIVE_BTN_CLICKED = "Change Your City. Change City Clicked";
+    public static final String CHANGE_CITY_CANCEL_BTN_CLICKED = "Change Your City.Cancel Clicked";
+
+    //login and register
+    public static final String LOGIN_SHOWN = "Login.Login Page Shown";
+    public static final String LOGIN_BTN_CLICKED = "Login.Login Button Clicked";
+    public static final String LOGIN_FAILED = "Login.Login Failed";
+    public static final String SHOW_PASSWORD_ENABLED = "Show Password Enabled";
+    public static final String FORGOT_PASSWORD_CLICKED = "Login.Forgot PassWord Clicked";
+    public static final String NEW_USER_REGISTER_CLICKED = "Login.New User Register Clicked";
+    public static final String FORGOT_PASSWORD_DIALOG_SHOWN = "Forgot Password.Dialog Shown";
+    public static final String FORGOT_PASSWORD_EMAIL_CLICKED = "Forgot Password.Email New Password Clicked";
+    public static final String REGISTRATION_PAGE_SHOWN = "Registration Page.Shown";
+    public static final String REGISTRATION_PAGE_TC_CLICKED = "Registration Page.Terms And Conditions Clicked";
+    public static final String PROMO_MAILER_ENABLED = "Promotional Mailer Enabled";
+    public static final String REGISTER_BTN_CLICK = "Registration Page.Register Clicked";
+    public static final String REGISTRATION_FAILED = "Registration Page. Failed";
+
+
+    //Account
+    public static final String MYACCOUNT_CLICKED = "My Account.My Account Clicked";
+    public static final String MY_ACCOUNT_SHOWN = "MyAccount.My Account Shown";
+    public static final String MY_ACCOUNT_ACTIVE_ORDER_CLICKED = "MyAccount.Active Orders Clicked";
+    public static final String MY_ACCOUNT_PAST_ORDER_CLICKED = "MyAccount.View Order History Clicked";
+    public static final String MY_ACCOUNT_UPDATE_PROFILE_CLICKED = "MyAccount.Update Profile Clicked";
+
+
+    //update_profile
+    public static final String UPDATE_PROFILE_CLICKED = "MyAccount.Profile Update Clicked";
+    public static final String UPDATE_PROFILE_SHOWN = "MyAccount.Profile Shown";
+    public static final String UPDATE_PROFILE_GET_FAILED = "MyAccount.Update Profile Failed";
+    public static final String UPDATE_PROFILE_SUBMIT_BTN_CLICKED = "MyAccount.Profile Update Clicked";
+    //otp dialog
+    public static final String OTP_DIALOG_SHOWN = "MyAccount.OTPDialog Shown";
+    public static final String OTP_SUBMIT_BTN_CLICKED = "MyAccount.OTP Submit Clicked";
+
+    //change password
+    public static final String CHANGE_PASSWORD_CLICKED = "MyAccount.Change Password Clicked";
+    public static final String CHANGE_PASSWORD_SHOWN = "MyAccount.Change Password Screen Shown";
+    public static final String CHANGE_PASSWORD_FAILED = "MyAccount.Change Password Update Clicked";
+
+    //wallet
+    public static final String MY_ACCOUNT_WALLET_CLICKED = "MyAccount.Wallet Activity Clicked";
+    public static final String WALLET_SUMMARY_SHOWN = "MyAccount.Wallet Summary Shown";
+    public static final String WALLET_ACTIVITY_FOR_MONTH_CLICKED = "MyAccount.Wallet Activity For Month Clicked";
+
+    //Address
+    public static final String DELIVERY_ADDRESS_CLICKED = "Delivery Addresses Clicked";
+    public static final String DELIVERY_ADDRESS_SHOWN = "Delivery Addresses Shown";
+    public static final String ADDRESS_CLICKED = "Address Clicked";
+    public static final String NEW_ADDRESS_CLICKED = "Address New Clicked";
+    public static final String ENABLE_DEFAULT_ADDRESS = "Make This Default Address Enabled";
+    public static final String NEW_ADDRESS_FAILED = "New Address Add Failed";
+    public static final String UPDATE_ADDRESS_FAILED = "Update Address Failed";
+
+    //delivery pin
+    public static final String CHANGE_PIN_CLICKED = "MyAccount.Change Pin Clicked";
+    public static final String CHANGE_PIN_SHOWN = "MyAccount.Change Pin Page Shown";
+    public static final String UPDATE_PIN_CLICKED = "MyAccount.Change Pin Update Clicked";
+
+    //
+    public static final String SPEND_TRENDS_CLICKED = "MyAccount.Spend Trends Clicked";
+    public static final String SPEND_TRENDS_SHOWN = "MyAccount.Spend Trends Shown";
+
+
+    //topnav and home page
+    public static final String SHOPPING_LIST_ICON_CLICKED = "Shopping Lists Icon Clicked";
+    public static final String SMART_BASKET_ICON_CLICKED = "Smart Basket Icon Clicked";
+
+    //logout
+    public static final String LOG_OUT_ICON_CLICKED = "Logout Icon Clicked";
+
+    //active and past order
+    public static final String ORDER_ACTIVE_ORDERS_SHOWN = "Active Orders Shown";
+    public static final String ORDER_PAST_ORDERS_SHOWN = "Order History List Shown";
+    public static final String ORDER_SUMMARY_SHOWN = "Order.Order Details Shown";
+    public static final String ORDER_ITEMS_TAB_CLICKED = "Order.View Items Clicked";
+
+
     public static final String BASKET_INCREMENT = "Basket.Increment";
     public static final String BASKET_ADD = "Basket.Add";
     public static final String BASKET_DECREMENT = "Basket.Decrement";
@@ -48,10 +142,7 @@ public interface TrackingAware {
     public static final String ORDER_VIEW_INVOICE = "Order.View Invoice";
     public static final String CHECKOUT_ORDER_COMPLETE = "Checkout.Order Complete";
 
-    public static final String ORDER_ACTIVE_ORDERS_SHOWN = "Order.Active Orders Shown";
-    public static final String ORDER_PAST_ORDERS = "Order.Past Orders";
 
-    public static final String FORGOT_PASSWORD_PWD_SHOWN = "MyAccount.ForgotPassword Shown";
     public static final String FORGOT_PASSWORD_PWD_SUCCESS = "MyAccount.ForgotPassword Success";
 
     public static final String NOW_AT_BB = "Browse.NowAtBigBasketShown";
@@ -61,10 +152,6 @@ public interface TrackingAware {
     public static final String FILTER_APPLIED = "Filter.Applied";
 
     public static final String HOME_CITY_SELECTION = "HomePage.CitySelection";
-    public static final String HOME_CHANGE_CITY = "HomePage.ChangeCity";
-
-    public static final String RATE_APP = "MyAccount.RateThisApp";
-    public static final String COMMUICATION_HUB_CLICKED = "MyAccount.CommunicationHubClicked";
 
 
     public static final String MY_ACCOUNT_CHANGE_PASSWD_SELECTED = "MyAccount.Change Password Selected";
@@ -91,12 +178,10 @@ public interface TrackingAware {
     public static final String MY_ACCOUNT_ADDRESS_EDITED = "MyAccount.Address Edited";
     public static final String MY_ACCOUNT_ADDRESS_CREATED = "MyAccount.Address Created";
 
-    public static final String MY_ACCOUNT_LOGIN_SHOWN = "MyAccount.Login Shown";
     public static final String MY_ACCOUNT_LOGIN_SUCCESS = "MyAccount.Login Success";
     public static final String MY_ACCOUNT_LOGIN_FAILED = "MyAccount.Login Failed";
 
     public static final String MY_ACCOUNT_FACEBOOK_LOGIN = "MyAccount.Facebook Login"; //onFacebookSignIn()
-    public static final String MY_ACCOUNT_GOOGLE_LOGIN = "MyAccount.Google Login";      // on G-btn clicked
     public static final String MY_ACCOUNT_FACEBOOK_LOGIN_SUCCESS = "MyAccount.Facebook Login Success"; //on api call retrofit BaseSignInSignupActivity
     public static final String MY_ACCOUNT_GOOGLE_LOGIN_SUCCESS = "MyAccount.Google Login Success";      //on api call retrofit
     public static final String MY_ACCOUNT_FACEBOOK_LOGIN_FAILED = "MyAccount.Facebook Login Failed";    //on api call retrofit

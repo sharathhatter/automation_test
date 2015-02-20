@@ -299,6 +299,7 @@ public class Constants {
     public static final String APP_UPDATE = "app_update";
     public static final String V_EXPIRY_DATE = "v_expiry_date";
     public static final String UPGRADE_MSG = "why_upgrade_to_v";
+    public static final String LATEST_APP_VERSION = "latest_app_v";
     public static final String ANALYTICS_ENGINE = "analytics_engine";
     public static final String FULFILLED_BY = "fulfilled_by";
     public static final String TC2 = "tc2";
@@ -440,6 +441,7 @@ public class Constants {
     public static final String SL_ADD_ALL = "sl-cat-items-to-cart/";
     public static final String SL_NAME = "name";
     public static final String IS_PUBLIC = "is_public";
+    public static final String ADD_ALL = "add_all";
 
     //otp
     public static final String OTP_VALIDATION_STATUS = "otp_validation_status";

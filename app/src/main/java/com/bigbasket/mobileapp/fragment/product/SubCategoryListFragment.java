@@ -221,4 +221,8 @@ public class SubCategoryListFragment extends BaseSectionFragment {
         return SubCategoryListFragment.class.getName();
     }
 
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.CATEGORY_LANDING_SCREEN;
+    }
 }

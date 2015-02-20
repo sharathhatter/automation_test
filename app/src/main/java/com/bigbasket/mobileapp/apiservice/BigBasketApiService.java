@@ -5,7 +5,6 @@ import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.AppDataResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.AutoSearchApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.BaseApiResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.BrowseCategoryApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.BrowsePromoCategoryApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.CartGetApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.CartOperationApiResponse;
@@ -43,6 +42,7 @@ import com.bigbasket.mobileapp.model.account.CurrentWalletBalance;
 import com.bigbasket.mobileapp.model.account.UpdatePin;
 import com.bigbasket.mobileapp.model.account.WalletDataItem;
 import com.bigbasket.mobileapp.model.account.spendTrends.SpendTrends;
+import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.order.COReserveQuantity;
 import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
@@ -169,7 +169,22 @@ public interface BigBasketApiService {
     void getShoppingListDetails(@Field(Constants.SLUG) String shoppingListSlug, @Field(Constants.TOP_CAT_SLUG) String topCategorySlug,
                                 Callback<ApiResponse<GetShoppingListDetailsApiResponse>> getShoppingListDetailsApiResponseCallback);
 
+
     @FormUrlEncoded
+    @POST("/sl-cat-items-to-cart/")
+    void addAllToBasketShoppingList(@Field(Constants.SHOPPING_LIST_SLUG) String shoppingListSlug,
+                                    @Field(Constants.CATEGORY_SLUG) String topCategorySlug,
+                                    Callback<OldApiResponse<CartSummary>> addAllToBasketShoppingListCallBack);
+
+    @FormUrlEncoded
+    @POST("/sb-cat-items-to-cart/")
+    void addAllToBasketSmartBasket(@Field(Constants.SHOPPING_LIST_SLUG) String shoppingListSlug,
+                                   @Field(Constants.CATEGORY_SLUG) String topCategorySlug,
+                                   Callback<OldApiResponse<CartSummary>> addAllToBasketSmartBasketCallBack);
+
+
+    @FormUrlEncoded
+
     @POST("/c-incr-i/")
     void incrementCartItem(@Field(Constants.PROD_ID) String productId, @Field(Constants.QTY) String qty,
                            Callback<CartOperationApiResponse> cartOperationApiResponseCallback);

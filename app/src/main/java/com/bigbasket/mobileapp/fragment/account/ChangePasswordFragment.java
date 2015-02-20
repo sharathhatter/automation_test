@@ -27,6 +27,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -78,7 +79,7 @@ public class ChangePasswordFragment extends BaseFragment {
             }
         });
 
-        trackEvent(TrackingAware.MY_ACCOUNT_CHANGE_PASSWD_SELECTED, null);
+        trackEvent(TrackingAware.CHANGE_PASSWORD_SHOWN, null);
     }
 
 
@@ -167,9 +168,8 @@ public class ChangePasswordFragment extends BaseFragment {
                         }
                         if (changePasswordCallback.status.equals(Constants.OK)) {
                             onChangePasswordSuccessResponse();
-                            trackEvent(TrackingAware.MY_ACCOUNT_CHANGE_PASSWD_SUCCESS, null);
                         } else {
-                            onChangePasswordErrorResponse();
+                            onChangePasswordErrorResponse(changePasswordCallback.message);
                             switch (changePasswordCallback.getErrorTypeAsInt()) {
                                 case ApiErrorCodes.INVALID_USER_PASSED:
                                     showErrorMsg(getString(R.string.OLD_PASS_NOT_CORRECT));
@@ -179,9 +179,6 @@ public class ChangePasswordFragment extends BaseFragment {
                                             changePasswordCallback.message);
                                     break;
                             }
-                            HashMap<String, String> map = new HashMap<>();
-                            map.put(TrackEventkeys.CHANGE_PASSWORD_FAILURE_REASON, changePasswordCallback.message);
-                            trackEvent(TrackingAware.MY_ACCOUNT_CHANGE_PASSWD_FAILED, map);
                         }
 
                     }
@@ -195,9 +192,7 @@ public class ChangePasswordFragment extends BaseFragment {
                             return;
                         }
                         handler.handleRetrofitError(error);
-                        HashMap<String, String> map = new HashMap<>();
-                        map.put(TrackEventkeys.CHANGE_PASSWORD_FAILURE_REASON, error.toString());
-                        trackEvent(TrackingAware.MY_ACCOUNT_CHANGE_PASSWD_FAILED, null);
+                        logChangePasswordErrorEvent(error.toString(), TrackingAware.CHANGE_PASSWORD_FAILED);
                     }
                 });
     }
@@ -213,38 +208,6 @@ public class ChangePasswordFragment extends BaseFragment {
         });
     }
 
-
-    /*
-    @Override
-    public void onAsyncTaskComplete(HttpOperationResult httpOperationResult) {
-        if (httpOperationResult.getUrl().contains(Constants.CHANGE_PASSWORD)) {
-            JsonObject responseJsonObj = new JsonParser().parse(httpOperationResult.getReponseString()).getAsJsonObject();
-            String status = responseJsonObj.get(Constants.STATUS).getAsString();
-            resetUpdateButton();
-            switch (status) {
-                case Constants.OK:
-                    onChangePasswordSuccessResponse();
-                    break;
-                case Constants.ERROR:
-                    String errorType = responseJsonObj.get(Constants.ERROR_TYPE).getAsString();
-                    onChangePasswordErrorResponse();
-                    switch (errorType) {
-                        case Constants.INVALID_USER_PASS:
-                            showErrorMsg(getString(R.string.OLD_PASS_NOT_CORRECT));
-                            break;
-                        default:
-                            showErrorMsg(getString(R.string.INTERNAL_SERVER_ERROR));
-                            break;
-                    }
-                    break;
-            }
-        } else {
-            super.onAsyncTaskComplete(httpOperationResult);
-        }
-    }
-
-    */
-
     private void onChangePasswordSuccessResponse() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         if (preferences.contains(Constants.PASSWD_PREF)) {
@@ -257,7 +220,14 @@ public class ChangePasswordFragment extends BaseFragment {
 
     }
 
-    private void onChangePasswordErrorResponse() {
+    private void logChangePasswordErrorEvent(String errorMsg, String eventName) {
+        Map<String, String> eventAttribs = new HashMap<>();
+        eventAttribs.put(TrackEventkeys.FAILURE_REASON, errorMsg);
+        trackEvent(eventName, eventAttribs);
+    }
+
+    private void onChangePasswordErrorResponse(String errorMsg) {
+        logChangePasswordErrorEvent(errorMsg, TrackingAware.CHANGE_PASSWORD_FAILED);
         oldEditText.setText("");
         newPwdText.setText("");
         confirmPwdEditText.setText("");
@@ -277,5 +247,10 @@ public class ChangePasswordFragment extends BaseFragment {
     @Override
     public String getFragmentTxnTag() {
         return ChangePasswordFragment.class.getName();
+    }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.ACCOUNT_CHANGE_PASSWORD_SCREEN;
     }
 }

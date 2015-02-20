@@ -15,6 +15,7 @@ import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.model.order.OrderModification;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.ArrayList;
 
@@ -141,5 +142,10 @@ public class OrderModificationFragment extends BaseFragment {
     @Override
     public String getFragmentTxnTag() {
         return OrderModificationFragment.class.getName();
+    }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.ORDER_DETAILS_MODIFICATION_SCREEN;
     }
 }

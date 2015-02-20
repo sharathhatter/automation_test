@@ -2,9 +2,7 @@ package com.bigbasket.mobileapp.fragment.order;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -116,14 +114,12 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
 
     private void showAddresses() {
         if (mAddressArrayList != null && mAddressArrayList.size() > 0) {
-            if (mFromAccountPage) {
-                trackEvent(TrackingAware.MY_ACCOUNT_DELIVERY_ADDRESS_SHOWN, null);
-            } else {
-                HashMap<String, String> map = new HashMap<>();
-                SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
-                map.put(TrackEventkeys.POTENTIAL_ORDER, prefer.getString(Constants.POTENTIAL_ORDER_ID, null));
-                trackEvent(TrackingAware.CHECKOUT_ADDRESS_SHOWN, map);
-            }
+            HashMap<String, String> map = new HashMap<>();
+            //SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            //map.put(TrackEventkeys.POTENTIAL_ORDER, prefer.getString(Constants.POTENTIAL_ORDER_ID, null));
+            map.put(TrackEventkeys.NAVIGATION_CTX, mFromAccountPage ? TrackEventkeys.NAVIGATION_CTX_MY_ACCOUNT :
+                    TrackEventkeys.NAVIGATION_CTX_CHECKOUT_DELIVERY_ADDRESS);
+            trackEvent(TrackingAware.DELIVERY_ADDRESS_SHOWN, map);
             renderAddressList();
         } else {
             handleEmptyAddresses();
@@ -183,6 +179,10 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
     }
 
     protected void showCreateAddressForm() {
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.NAVIGATION_CTX, mFromAccountPage ? TrackEventkeys.NAVIGATION_CTX_MY_ACCOUNT :
+                TrackEventkeys.NAVIGATION_CTX_CHECKOUT_DELIVERY_ADDRESS);
+        trackEvent(TrackingAware.NEW_ADDRESS_CLICKED, map);
         showAddressForm(null);
     }
 
@@ -198,9 +198,11 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
     public void onAddressSelected(Address address) {
         if (!mFromAccountPage) {
             HashMap<String, String> map = new HashMap<>();
-            SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            map.put(TrackEventkeys.POTENTIAL_ORDER, prefer.getString(Constants.POTENTIAL_ORDER_ID, null));
-            trackEvent(TrackingAware.CHECKOUT_ADDRESS_CHOSEN, map);
+            //SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            //map.put(TrackEventkeys.POTENTIAL_ORDER, prefer.getString(Constants.POTENTIAL_ORDER_ID, null));
+            map.put(TrackEventkeys.NAVIGATION_CTX, mFromAccountPage ? TrackEventkeys.NAVIGATION_CTX_MY_ACCOUNT :
+                    TrackEventkeys.NAVIGATION_CTX_CHECKOUT_DELIVERY_ADDRESS);
+            trackEvent(TrackingAware.ADDRESS_CLICKED, map);
             launchSlotSelection(address.getId());
         } else {
             showAddressForm(address);
@@ -255,5 +257,10 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.VIEW_DELIVERY_ADDRESS_SCREEN;
     }
 }

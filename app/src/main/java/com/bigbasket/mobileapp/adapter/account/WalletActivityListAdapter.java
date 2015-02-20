@@ -32,7 +32,7 @@ public class WalletActivityListAdapter<T> extends BaseAdapter {
     public WalletActivityListAdapter(T ctx, ArrayList<WalletDataItem> listData, Typeface faceRobotoRegular,
                                      Typeface faceRupee) {
         this.walletDataItems = listData;
-        layoutInflater = LayoutInflater.from(((ActivityAware)ctx).getCurrentActivity());
+        layoutInflater = LayoutInflater.from(((ActivityAware) ctx).getCurrentActivity());
         this.ctx = ctx;
         this.faceRupee = faceRupee;
         this.faceRobotoRegular = faceRobotoRegular;
@@ -78,7 +78,7 @@ public class WalletActivityListAdapter<T> extends BaseAdapter {
         String secondaryReason = walletDataItems.get(position).getSecondary_reason();
         String primaryReason = walletDataItems.get(position).getPrimary_reason();
 
-        String prefixEndBal = (((ActivityAware)ctx)).getCurrentActivity().getString(R.string.endingBal) + " `";
+        String prefixEndBal = (((ActivityAware) ctx)).getCurrentActivity().getString(R.string.endingBal) + " `";
         String mrpStrEndBal = getDecimalAmount(endingBal) + " ";
         int prefixEndBalLen = prefixEndBal.length();
         SpannableString spannableEndingBal = new SpannableString(prefixEndBal + mrpStrEndBal);
@@ -87,21 +87,21 @@ public class WalletActivityListAdapter<T> extends BaseAdapter {
                 prefixEndBalLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
 
 
-        SpannableString  spannableCredit;
+        SpannableString spannableCredit;
         if (walletDataItems.get(position).getType().equals("credit")) {
-            String prefix = ((ActivityAware)ctx).getCurrentActivity().getString(R.string.credited) + " `";
+            String prefix = ((ActivityAware) ctx).getCurrentActivity().getString(R.string.credited) + " `";
             String mrpStr = getDecimalAmount(amount) + " ";
             int prefixLen = prefix.length();
             spannableCredit = new SpannableString(prefix + mrpStr);
-            holder.creditedHolder.setBackgroundColor(((ActivityAware)ctx).getCurrentActivity().getResources().getColor(R.color.dark_green));
+            holder.creditedHolder.setBackgroundColor(((ActivityAware) ctx).getCurrentActivity().getResources().getColor(R.color.dark_green));
             spannableCredit.setSpan(new CustomTypefaceSpan("", faceRupee), prefixLen - 1,
                     prefixLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
         } else {
 
-            String prefix = ((ActivityAware)ctx).getCurrentActivity().getString(R.string.debited) + " `";
+            String prefix = ((ActivityAware) ctx).getCurrentActivity().getString(R.string.debited) + " `";
             String mrpStr = getDecimalAmount(amount) + " ";
             int prefixLen = prefix.length();
-            holder.creditedHolder.setBackgroundColor(((ActivityAware)ctx).getCurrentActivity().getResources().getColor(R.color.promo_red_color));
+            holder.creditedHolder.setBackgroundColor(((ActivityAware) ctx).getCurrentActivity().getResources().getColor(R.color.promo_red_color));
             spannableCredit = new SpannableString(prefix + mrpStr);
             spannableCredit.setSpan(new CustomTypefaceSpan("", faceRupee), prefixLen - 1,
                     prefixLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
@@ -116,7 +116,7 @@ public class WalletActivityListAdapter<T> extends BaseAdapter {
             int mrpStrIdLen = mrpStrId.length();
             SpannableString spannableId = new SpannableString(prefixId + mrpStrId);
 
-            spannableId.setSpan(new ForegroundColorSpan(((ActivityAware)ctx).getCurrentActivity().getResources().
+            spannableId.setSpan(new ForegroundColorSpan(((ActivityAware) ctx).getCurrentActivity().getResources().
                     getColor(R.color.dark_blue)), prefixIdLen - 1, prefixIdLen + mrpStrIdLen, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
             holder.orderIdHolder.setText(spannableId);
         } else {

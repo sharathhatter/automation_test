@@ -26,7 +26,6 @@ import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -335,7 +334,7 @@ public class UIUtil {
     }
 
     public static boolean isMoreThanXDays(long lastPopUpShownTime, int days) {
-        return (int) (System.currentTimeMillis() - lastPopUpShownTime) / (24 * 60 * 60 * 1000) > days;
+        return (System.currentTimeMillis() - lastPopUpShownTime) / (24 * 60 * 60 * 1000) > days;
     }
 
     public static String getToday(String format) {
@@ -343,29 +342,29 @@ public class UIUtil {
         return new SimpleDateFormat(format).format(date);
     }
 
-    public static int handleUpdateDialog(String serverAppExpireDate, Activity activity) {
+    public static int handleUpdateDialog(String serverAppExpireDateString, Activity activity) {
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(activity);
         long lastPopUpShownTime = prefer.getLong(Constants.LAST_POPUP_SHOWN_TIME, 0);
         SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_FOR_APP_UPGRADE_POPUP);
         String today = getToday(Constants.DATE_FORMAT_FOR_APP_UPGRADE_POPUP);
 
-        Date serverAppExpireTime, toDaysData;
+        Date serverAppExpireDate, toDaysData;
         try {
-            serverAppExpireTime = sdf.parse(serverAppExpireDate);
+            serverAppExpireDate = sdf.parse(serverAppExpireDateString);
             toDaysData = sdf.parse(today);
         } catch (ParseException e) {
             e.printStackTrace();
             return Constants.DONT_SHOW_APP_UPDATE_POPUP;
         }
 
-        if (serverAppExpireTime.compareTo(toDaysData) < 0) {
+        if (serverAppExpireDate.compareTo(toDaysData) < 0) {
             prefer.edit().putLong(Constants.LAST_APP_DATA_CALL_TIME, 0).apply();
             return Constants.SHOW_APP_EXPIRE_POPUP;
         }
         int popUpShownTimes = prefer.getInt(Constants.APP_EXPIRE_POPUP_SHOWN_TIMES, 0);
-        int daysDiff = (int) (serverAppExpireTime.getTime() - lastPopUpShownTime) / (24 * 60 * 60 * 1000);
+        long TimeDiff = (serverAppExpireDate.getTime() - lastPopUpShownTime) / (24 * 60 * 60 * 1000);
 
-        if (daysDiff >= 0) {
+        if (TimeDiff >= 0) {
             if (UIUtil.isMoreThanXDays(lastPopUpShownTime, Constants.ONE_DAY)) {
                 if (popUpShownTimes < 3) {
                     return Constants.SHOW_APP_UPDATE_POPUP;
@@ -375,7 +374,10 @@ public class UIUtil {
                     } else return Constants.DONT_SHOW_APP_UPDATE_POPUP;
                 }
             } else return Constants.DONT_SHOW_APP_UPDATE_POPUP;
-        } else return Constants.SHOW_APP_EXPIRE_POPUP;
+        } else {
+            prefer.edit().putLong(Constants.LAST_APP_DATA_CALL_TIME, 0).apply();
+            return Constants.SHOW_APP_EXPIRE_POPUP;
+        }
     }
 
     public static void updateLastPopShownDate(long lastPopShownTime, Activity activity) {

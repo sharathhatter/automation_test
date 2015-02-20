@@ -431,6 +431,10 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
     }
 
     @Override
+    public String getScreenTag() {
+        return TrackEventkeys.PRODUCT_LISTING_SCREEN;
+    }
+
     public void onResume() {
         super.onResume();
         if (getCurrentActivity() != null && getCurrentActivity().isBasketDirty()) {
