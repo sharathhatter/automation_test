@@ -220,7 +220,7 @@ public class ChangePasswordFragment extends BaseFragment {
 
     }
 
-    private void logChangePasswordErrorEvent(String errorMsg, String eventName){
+    private void logChangePasswordErrorEvent(String errorMsg, String eventName) {
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.FAILURE_REASON, errorMsg);
         trackEvent(eventName, eventAttribs);

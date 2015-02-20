@@ -241,7 +241,7 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
     }
 
     private void logOrderEvent(String trackAwareName, String eventKeyName,
-                               String navigationCtx){
+                               String navigationCtx) {
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(eventKeyName, navigationCtx);
         trackEvent(trackAwareName, eventAttribs);
@@ -255,9 +255,10 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
         intent.putExtra(Constants.ORDER_ID, orderNumber);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
+
     @Override
-    public String getScreenTag(){
-        return  mOrderType.equals(getString(R.string.active_label)) ?
+    public String getScreenTag() {
+        return mOrderType.equals(getString(R.string.active_label)) ?
                 TrackEventkeys.ACCOUNT_VIEW_ACTIVE_ORDER_SCREEN : TrackEventkeys.ACCOUNT_VIEW_PAST_ORDER_PAGE;
     }
 }

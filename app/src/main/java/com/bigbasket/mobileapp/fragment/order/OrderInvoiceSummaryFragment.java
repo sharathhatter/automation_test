@@ -163,11 +163,11 @@ public class OrderInvoiceSummaryFragment extends AbstractOrderSummaryFragment {
         logOrderDetailSummaryEvent(orderInvoice.getOrderNumber());
     }
 
-    private void logOrderDetailSummaryEvent(String orderNumber){
-        if(getArguments() == null) return;
+    private void logOrderDetailSummaryEvent(String orderNumber) {
+        if (getArguments() == null) return;
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.ORDER_ID, orderNumber);
-        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX,getArguments().getString(TrackEventkeys.NAVIGATION_CTX));
+        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getArguments().getString(TrackEventkeys.NAVIGATION_CTX));
         trackEvent(TrackingAware.ORDER_SUMMARY_SHOWN, eventAttribs);
     }
 

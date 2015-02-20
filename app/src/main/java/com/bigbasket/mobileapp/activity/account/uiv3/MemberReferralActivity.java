@@ -1,7 +1,5 @@
 package com.bigbasket.mobileapp.activity.account.uiv3;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.SpannableString;
@@ -400,7 +398,7 @@ public class MemberReferralActivity extends BackButtonActivity {
     }
 
     @Override
-    public String getScreenTag(){
+    public String getScreenTag() {
         return TrackEventkeys.REFERRAL_SCREEN;
     }
 }

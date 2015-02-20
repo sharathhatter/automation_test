@@ -34,7 +34,6 @@ import com.bigbasket.mobileapp.model.account.spendTrends.SpendTrendsRangeData;
 import com.bigbasket.mobileapp.model.account.spendTrends.SpendTrendsSpentSavedRangeInfo;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
-import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.view.uiv3.BBArrayAdapter;
 import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;

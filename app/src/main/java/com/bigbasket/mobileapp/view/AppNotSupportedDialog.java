@@ -17,6 +17,7 @@ public class AppNotSupportedDialog extends DialogFragment {
 
     private String upgradeMsg;
     private String latestAppVersion;
+
     public AppNotSupportedDialog() {
     }
 
@@ -42,14 +43,14 @@ public class AppNotSupportedDialog extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.updateDialogTitle);
         String forceUpdateMsg = getString(R.string.appOutDatedMsg1);
-        if(!TextUtils.isEmpty(latestAppVersion)){
-            forceUpdateMsg += " ("+latestAppVersion+"). ";
-        }else {
-            forceUpdateMsg +=". ";
+        if (!TextUtils.isEmpty(latestAppVersion)) {
+            forceUpdateMsg += " (" + latestAppVersion + "). ";
+        } else {
+            forceUpdateMsg += ". ";
         }
-        forceUpdateMsg += getString(R.string.appOutDatedMsg2) +" ";
-        if(!TextUtils.isEmpty(upgradeMsg)){
-            forceUpdateMsg += getString(R.string.whyUpdate) + " "+upgradeMsg;
+        forceUpdateMsg += getString(R.string.appOutDatedMsg2) + " ";
+        if (!TextUtils.isEmpty(upgradeMsg)) {
+            forceUpdateMsg += getString(R.string.whyUpdate) + " " + upgradeMsg;
         }
 
         builder.setMessage(forceUpdateMsg)

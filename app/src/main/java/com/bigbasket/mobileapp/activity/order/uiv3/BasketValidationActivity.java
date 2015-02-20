@@ -235,7 +235,7 @@ public class BasketValidationActivity extends BackButtonActivity {
     }
 
     @Override
-    public String getScreenTag(){
+    public String getScreenTag() {
         return TrackEventkeys.MARKET_PLACE_QTY_CHECK_SCREEN;
     }
 }

@@ -304,7 +304,7 @@ public class PlaceOrderActivity extends BackButtonActivity implements OnObservab
     }
 
     @Override
-    public String getScreenTag(){
+    public String getScreenTag() {
         return TrackEventkeys.ORDER_REVIEW_SUMMARY_SCREEN;
     }
 }

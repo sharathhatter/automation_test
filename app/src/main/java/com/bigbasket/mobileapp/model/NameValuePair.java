@@ -22,7 +22,7 @@ public class NameValuePair implements Parcelable {
 
     public static HashMap<String, String> toMap(ArrayList<NameValuePair> nameValuePairs) {
         HashMap<String, String> map = new HashMap<>();
-        for (NameValuePair nameValuePair: nameValuePairs) {
+        for (NameValuePair nameValuePair : nameValuePairs) {
             map.put(nameValuePair.getName(), nameValuePair.getValue());
         }
         return map;

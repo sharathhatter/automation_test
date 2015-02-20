@@ -48,10 +48,10 @@ public class LocalyticsWrapper {
             e.printStackTrace();
         }
 
-        try{
-            if(!TextUtils.isEmpty(screenName))
+        try {
+            if (!TextUtils.isEmpty(screenName))
                 Localytics.tagScreen(screenName);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         try {
@@ -61,18 +61,18 @@ public class LocalyticsWrapper {
         }
     }
 
-    public static void tagEvent(String eventName, Map<String, String> eventAttribs){
-        try{
+    public static void tagEvent(String eventName, Map<String, String> eventAttribs) {
+        try {
             Localytics.tagEvent(eventName, eventAttribs);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static void tagEvent(String eventName, Map<String, String> eventAttribs, long customerValueIncrease){
-        try{
+    public static void tagEvent(String eventName, Map<String, String> eventAttribs, long customerValueIncrease) {
+        try {
             Localytics.tagEvent(eventName, eventAttribs, customerValueIncrease);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

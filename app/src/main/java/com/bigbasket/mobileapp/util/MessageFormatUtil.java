@@ -10,7 +10,6 @@ import android.text.style.ForegroundColorSpan;
 import android.view.View;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.model.general.MessageParamInfo;
@@ -42,16 +41,16 @@ public class MessageFormatUtil<T> {
             // change str to link color
             int preIndex = preIndexOfFormatStr;
             int postIndex = preIndex + messageParamInfoList.get(replacedStringIndex).getDisplayName().length();
-            spannableString.setSpan(new ForegroundColorSpan(((ActivityAware)ctx).getCurrentActivity().getResources().getColor(R.color.link_color)),
+            spannableString.setSpan(new ForegroundColorSpan(((ActivityAware) ctx).getCurrentActivity().getResources().getColor(R.color.link_color)),
                     preIndex, postIndex, 0);
         }
         if (activityArrayList != null && activityArrayList.size() > 0) {
             return addClickablePart(spannableString.toString().replaceAll("\\s*\\[\\s*", "["),
-                    ((ActivityAware)ctx).getCurrentActivity(), messageParamInfoList, activityArrayList,
+                    ((ActivityAware) ctx).getCurrentActivity(), messageParamInfoList, activityArrayList,
                     arrayListIndex, fragmentCodeArrayList);
         } else {
             return addClickablePart(spannableString.toString().replaceAll("\\s*\\[\\s*", "["),
-                    ((ActivityAware)ctx).getCurrentActivity(), messageParamInfoList,
+                    ((ActivityAware) ctx).getCurrentActivity(), messageParamInfoList,
                     arrayListIndex);
         }
 

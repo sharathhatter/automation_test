@@ -101,7 +101,7 @@ public class BBReferralMailActivity extends BackButtonActivity {
     }
 
     @Override
-    public String getScreenTag(){
+    public String getScreenTag() {
         return TrackEventkeys.BB_REFERRAL_MAIL_SCREEN;
     }
 }

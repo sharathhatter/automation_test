@@ -22,7 +22,7 @@ public class OrderInvoiceActivity extends BackButtonActivity {
     }
 
     @Override
-    public String getScreenTag(){
+    public String getScreenTag() {
         return TrackEventkeys.THANK_YOU_SCREEN;
     }
 }

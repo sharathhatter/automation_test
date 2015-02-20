@@ -26,7 +26,6 @@ import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;

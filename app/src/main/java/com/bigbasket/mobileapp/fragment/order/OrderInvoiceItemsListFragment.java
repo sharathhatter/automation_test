@@ -41,11 +41,11 @@ public class OrderInvoiceItemsListFragment extends BaseFragment {
         renderCartItems(orderInvoice);
     }
 
-    private void logOrderItemTabClicked(OrderInvoice orderInvoice){
-        if(getArguments() == null || orderInvoice ==null) return;
+    private void logOrderItemTabClicked(OrderInvoice orderInvoice) {
+        if (getArguments() == null || orderInvoice == null) return;
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.ORDER_ID, orderInvoice.getOrderNumber());
-        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX,getArguments().getString(TrackEventkeys.NAVIGATION_CTX));
+        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getArguments().getString(TrackEventkeys.NAVIGATION_CTX));
         trackEvent(TrackingAware.ORDER_ITEMS_TAB_CLICKED, eventAttribs);
     }
 

@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
@@ -103,7 +102,7 @@ public class ChangeCityDialogFragment extends AbstractDialogFragment
                 .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        ((TrackingAware)getActivity()).trackEvent(TrackingAware.CHANGE_CITY_CANCEL_BTN_CLICKED, null);
+                        ((TrackingAware) getActivity()).trackEvent(TrackingAware.CHANGE_CITY_CANCEL_BTN_CLICKED, null);
                     }
                 });
 
@@ -208,7 +207,7 @@ public class ChangeCityDialogFragment extends AbstractDialogFragment
 
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.CITY, mSelectedCity.getName());
-        ((TrackingAware)getActivity()).trackEvent(TrackingAware.CHANGE_CITY_POSSITIVE_BTN_CLICKED, eventAttribs);
+        ((TrackingAware) getActivity()).trackEvent(TrackingAware.CHANGE_CITY_POSSITIVE_BTN_CLICKED, eventAttribs);
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgress(true);
         bigBasketApiService.changeCity(String.valueOf(mSelectedCity.getId()), new Callback<OldBaseApiResponse>() {

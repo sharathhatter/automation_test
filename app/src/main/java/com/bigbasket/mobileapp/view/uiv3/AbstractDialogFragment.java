@@ -9,9 +9,10 @@ import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
  */
 public abstract class AbstractDialogFragment extends DialogFragment {
 
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         LocalyticsWrapper.onResume(getScreenTag());
     }
+
     public abstract String getScreenTag();
 }

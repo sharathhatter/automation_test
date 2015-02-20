@@ -215,7 +215,7 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
     }
 
     @Override
-    public String getScreenTag(){
+    public String getScreenTag() {
         return TrackEventkeys.APPLY_EVOUCHER_SCREEN;
     }
 }

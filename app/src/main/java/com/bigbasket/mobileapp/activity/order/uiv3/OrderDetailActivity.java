@@ -7,7 +7,6 @@ import com.bigbasket.mobileapp.activity.base.uiv3.TabActivity;
 import com.bigbasket.mobileapp.fragment.order.OrderInvoiceItemsListFragment;
 import com.bigbasket.mobileapp.fragment.order.OrderInvoiceSummaryFragment;
 import com.bigbasket.mobileapp.fragment.order.OrderModificationFragment;
-import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
@@ -43,7 +42,7 @@ public class OrderDetailActivity extends TabActivity {
     }
 
     @Override
-    public String getScreenTag(){
+    public String getScreenTag() {
         return TrackEventkeys.ORDER_DETAILS_SUMMARY_SCREEN;
     }
 }

@@ -77,8 +77,8 @@ public class AuthParameters {
     }
 
     public void setAnyLyticsEnabled(boolean isMoEngaleEnabled,
-                                             boolean isLocalyticsEnabled, boolean isKonotorEnabled,
-                                             Context context) {
+                                    boolean isLocalyticsEnabled, boolean isKonotorEnabled,
+                                    Context context) {
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefer.edit();
         editor.putBoolean(Constants.ENABLE_MOENGAGE, isMoEngaleEnabled);

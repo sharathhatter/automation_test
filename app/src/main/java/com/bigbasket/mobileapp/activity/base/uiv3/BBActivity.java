@@ -532,7 +532,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 return true;
             case R.id.action_rate_app:
                 logHomeScreenEvent(TrackingAware.RATE_APP_CLICKED, TrackEventkeys.NAVIGATION_CTX,
-                       TrackEventkeys.NAVIGATION_CTX_TOPNAV);
+                        TrackEventkeys.NAVIGATION_CTX_TOPNAV);
                 try {
                     startActivity(new Intent(Intent.ACTION_VIEW,
                             Uri.parse("market://details?id=" + Constants.BASE_PKG_NAME)));
@@ -1011,7 +1011,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         return (FrameLayout) findViewById(R.id.content_frame);
     }
 
-    public String getScreenTag(){
+    public String getScreenTag() {
         return null;
     }
 

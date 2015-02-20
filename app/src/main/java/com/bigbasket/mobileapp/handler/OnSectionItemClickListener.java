@@ -127,7 +127,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                         intent.putExtra(Constants.SHOPPING_LIST_NAME, shoppingListName);
                         ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
 
-                        if(isSmartBasket) logMainMenuEvent(TrackingAware.SMART_BASKET_ICON_CLICKED,
+                        if (isSmartBasket) logMainMenuEvent(TrackingAware.SMART_BASKET_ICON_CLICKED,
                                 TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_HOME_PAGE);
                         else logMainMenuEvent(TrackingAware.SHOPPING_LIST_ICON_CLICKED,
                                 TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_HOME_PAGE);
@@ -204,7 +204,8 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
     }
 
     private void logAnalytics() {
-        if (section == null || sectionItem == null || TextUtils.isEmpty(section.getSectionType())) return;
+        if (section == null || sectionItem == null || TextUtils.isEmpty(section.getSectionType()))
+            return;
         // nc
         // section.getSectionType() + (section.getTitle() != null ? section.getTitle().getText() : "")
 
@@ -213,9 +214,9 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
     }
 
     private void logMainMenuEvent(String trackAwareName, String eventKeyName,
-                                  String navigationCtx){
+                                  String navigationCtx) {
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(eventKeyName, navigationCtx);
-        ((TrackingAware)context).trackEvent(trackAwareName, eventAttribs);
+        ((TrackingAware) context).trackEvent(trackAwareName, eventAttribs);
     }
 }

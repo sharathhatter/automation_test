@@ -8,7 +8,7 @@ public interface TrackingAware {
     //Start Activity
     public static final String ENTRY_PAGE_SHOWN = "EntryPage.Shown";
     public static final String ENTRY_PAGE_SPINNER_CLICKED = "EntryPage.City Selection Clicked";
-    public static final String ENTRY_PAGE_START_SHOPPING_BTN_CLICKED ="EntryPage.Start Shopping Clicked";
+    public static final String ENTRY_PAGE_START_SHOPPING_BTN_CLICKED = "EntryPage.Start Shopping Clicked";
 
     //Home Screen
     public static final String COMMUNICATION_HUB_CLICKED = "MyAccount.CommunicationHubClicked";
@@ -25,7 +25,7 @@ public interface TrackingAware {
     //login and register
     public static final String LOGIN_SHOWN = "Login.Login Page Shown";
     public static final String LOGIN_BTN_CLICKED = "Login.Login Button Clicked";
-    public static final String LOGIN_FAILED ="Login.Login Failed";
+    public static final String LOGIN_FAILED = "Login.Login Failed";
     public static final String SHOW_PASSWORD_ENABLED = "Show Password Enabled";
     public static final String FORGOT_PASSWORD_CLICKED = "Login.Forgot PassWord Clicked";
     public static final String NEW_USER_REGISTER_CLICKED = "Login.New User Register Clicked";
@@ -84,7 +84,6 @@ public interface TrackingAware {
     public static final String SPEND_TRENDS_SHOWN = "MyAccount.Spend Trends Shown";
 
 
-
     //topnav and home page
     public static final String SHOPPING_LIST_ICON_CLICKED = "Shopping Lists Icon Clicked";
     public static final String SMART_BASKET_ICON_CLICKED = "Smart Basket Icon Clicked";
@@ -97,15 +96,6 @@ public interface TrackingAware {
     public static final String ORDER_PAST_ORDERS_SHOWN = "Order History List Shown";
     public static final String ORDER_SUMMARY_SHOWN = "Order.Order Details Shown";
     public static final String ORDER_ITEMS_TAB_CLICKED = "Order.View Items Clicked";
-
-
-
-
-
-
-
-
-
 
 
     public static final String BASKET_INCREMENT = "Basket.Increment";
@@ -162,7 +152,6 @@ public interface TrackingAware {
     public static final String FILTER_APPLIED = "Filter.Applied";
 
     public static final String HOME_CITY_SELECTION = "HomePage.CitySelection";
-
 
 
     public static final String MY_ACCOUNT_CHANGE_PASSWD_SELECTED = "MyAccount.Change Password Selected";

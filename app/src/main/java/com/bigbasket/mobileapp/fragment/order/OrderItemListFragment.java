@@ -155,6 +155,6 @@ public class OrderItemListFragment extends BaseFragment {
 
     @Override
     public String getScreenTag() {
-        return TrackEventkeys.ORDER_REVIEW_ITEMS_SCREEN ;
+        return TrackEventkeys.ORDER_REVIEW_ITEMS_SCREEN;
     }
 }

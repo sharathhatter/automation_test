@@ -9,7 +9,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
 import android.text.Spannable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -24,7 +23,6 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.CheckoutQCActivity;
-import com.bigbasket.mobileapp.fragment.HomeFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
@@ -449,9 +447,10 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         if (getCurrentActivity() == null) return;
         getCurrentActivity().showAlertDialogFinish(null, message, resultCode);
     }
+
     public abstract String getScreenTag();
 
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         LocalyticsWrapper.onResume(getScreenTag());
     }

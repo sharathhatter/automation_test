@@ -386,7 +386,7 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
     }
 
     @Override
-    public String getScreenTag(){
+    public String getScreenTag() {
         return TrackEventkeys.QC_SCREEN;
     }
 }

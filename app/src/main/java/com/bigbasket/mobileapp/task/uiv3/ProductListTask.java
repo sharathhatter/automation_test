@@ -6,12 +6,9 @@ import com.bigbasket.mobileapp.apiservice.callbacks.ProductListApiResponseCallba
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
-import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
-import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.util.Constants;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ProductListTask<T> {

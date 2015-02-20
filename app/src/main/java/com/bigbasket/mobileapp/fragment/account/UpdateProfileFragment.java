@@ -377,7 +377,7 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware,
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            postUserDetails(user_details.toString(), otpCode!=null);
+            postUserDetails(user_details.toString(), otpCode != null);
         } else {
             handler.sendOfflineError();
         }
@@ -427,7 +427,7 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware,
         });
     }
 
-    private void logUpdateProfileEvent(String message, String eventName){
+    private void logUpdateProfileEvent(String message, String eventName) {
         HashMap<String, String> map = new HashMap<>();
         map.put(TrackEventkeys.FAILURE_REASON, message);
         trackEvent(eventName, map);

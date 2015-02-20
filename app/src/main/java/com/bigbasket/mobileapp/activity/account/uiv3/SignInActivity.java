@@ -197,7 +197,7 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
             }
         });
 
-        if(!TextUtils.isEmpty(getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX))){
+        if (!TextUtils.isEmpty(getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX))) {
             Map<String, String> eventAttribs = new HashMap<>();
             eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX));
             trackEvent(TrackingAware.LOGIN_SHOWN, eventAttribs);
@@ -205,13 +205,13 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
 
     }
 
-    private void logRememberMeEnabled(String enabled){
+    private void logRememberMeEnabled(String enabled) {
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.ENABLED, enabled);
         trackEvent(TrackingAware.SHOW_PASSWORD_ENABLED, eventAttribs);
     }
 
-    private void logSignInBtnClickEvent(String type){
+    private void logSignInBtnClickEvent(String type) {
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.TYPE, type);
         trackEvent(TrackingAware.LOGIN_BTN_CLICKED, eventAttribs);
@@ -661,14 +661,14 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
         });
     }
 
-    private void logForgotPasswordFailure(String reason){
+    private void logForgotPasswordFailure(String reason) {
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.FAILURE_REASON, reason);
         trackEvent(TrackingAware.FORGOT_PASSWORD_EMAIL_CLICKED, eventAttribs);
     }
 
     @Override
-    public String getScreenTag(){
+    public String getScreenTag() {
         return TrackEventkeys.SIGN_IN_SCREEN;
     }
 }

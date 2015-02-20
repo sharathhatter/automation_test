@@ -118,7 +118,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             //SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
             //map.put(TrackEventkeys.POTENTIAL_ORDER, prefer.getString(Constants.POTENTIAL_ORDER_ID, null));
             map.put(TrackEventkeys.NAVIGATION_CTX, mFromAccountPage ? TrackEventkeys.NAVIGATION_CTX_MY_ACCOUNT :
-            TrackEventkeys.NAVIGATION_CTX_CHECKOUT_DELIVERY_ADDRESS);
+                    TrackEventkeys.NAVIGATION_CTX_CHECKOUT_DELIVERY_ADDRESS);
             trackEvent(TrackingAware.DELIVERY_ADDRESS_SHOWN, map);
             renderAddressList();
         } else {
@@ -201,7 +201,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             //SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
             //map.put(TrackEventkeys.POTENTIAL_ORDER, prefer.getString(Constants.POTENTIAL_ORDER_ID, null));
             map.put(TrackEventkeys.NAVIGATION_CTX, mFromAccountPage ? TrackEventkeys.NAVIGATION_CTX_MY_ACCOUNT :
-            TrackEventkeys.NAVIGATION_CTX_CHECKOUT_DELIVERY_ADDRESS);
+                    TrackEventkeys.NAVIGATION_CTX_CHECKOUT_DELIVERY_ADDRESS);
             trackEvent(TrackingAware.ADDRESS_CLICKED, map);
             launchSlotSelection(address.getId());
         } else {

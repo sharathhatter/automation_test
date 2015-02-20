@@ -37,19 +37,6 @@ public final class TrackEventkeys {
     public static final String NAVIGATION_CTX_DEEP_LINK = "deep_link";
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
     public static final String PRODUCT_ID = "skuId";
     public static final String PRODUCT_BRAND = "brand";
     public static final String PRODUCT_DESC = "description";
@@ -116,13 +103,12 @@ public final class TrackEventkeys {
     public static final String SECTION = "section";
 
 
-
     public static final String START_SCREEN = "entry_page"; //Done
     public static final String HOME_SCREEN = "home_page"; //Done
 
     //Dialog
     public static final String CHANGE_CITY_SCREEN = "change_your_city"; //Done
-    public static final String FORGOT_PASSWORD_SCREEN ="forgot_password"; //Done
+    public static final String FORGOT_PASSWORD_SCREEN = "forgot_password"; //Done
     public static final String OTP_SCREEN = "OPT Dialog";
     public static final String SORT_PRODUCT_SCREEN = "offer";
 

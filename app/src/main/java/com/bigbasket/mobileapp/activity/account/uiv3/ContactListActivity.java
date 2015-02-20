@@ -149,7 +149,7 @@ public class ContactListActivity extends BackButtonActivity implements ContactNu
     }
 
     @Override
-    public String getScreenTag(){
+    public String getScreenTag() {
         return TrackEventkeys.CONTACT_REFERRAL_SCREEN;
     }
 }

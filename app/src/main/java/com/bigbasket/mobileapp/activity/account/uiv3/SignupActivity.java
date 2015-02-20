@@ -96,9 +96,9 @@ public class SignupActivity extends BaseSignInSignupActivity {
         trackEvent(TrackingAware.REGISTRATION_PAGE_SHOWN, null);
     }
 
-    private void logTermAndConditionClicked(String eventName, String navigationCtx , boolean isChecked){
+    private void logTermAndConditionClicked(String eventName, String navigationCtx, boolean isChecked) {
         Map<String, String> eventAttribs = new HashMap<>();
-        if(navigationCtx!=null)
+        if (navigationCtx != null)
             eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, navigationCtx);
         eventAttribs.put(TrackEventkeys.ENABLED, isChecked ? TrackEventkeys.YES : TrackEventkeys.NO);
         trackEvent(eventName, eventAttribs);
@@ -250,7 +250,7 @@ public class SignupActivity extends BaseSignInSignupActivity {
     }
 
     @Override
-    public String getScreenTag(){
+    public String getScreenTag() {
         return TrackEventkeys.REGISTER_MEMBER_SCREEN;
     }
 }

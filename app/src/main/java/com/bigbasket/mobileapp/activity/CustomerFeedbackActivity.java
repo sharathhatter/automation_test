@@ -139,7 +139,7 @@ public class CustomerFeedbackActivity extends BackButtonActivity {
         return this;
     }
 
-    public String getScreenTag(){
+    public String getScreenTag() {
         return TrackEventkeys.CUSTOMER_FEEDBACK_SCREEN;
     }
 

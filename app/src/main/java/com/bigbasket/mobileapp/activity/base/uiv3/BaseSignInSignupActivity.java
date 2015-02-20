@@ -184,7 +184,7 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity implem
     }
 
 
-    private void logSingInFailureEvent(String type, String reason){
+    private void logSingInFailureEvent(String type, String reason) {
         HashMap<String, String> map = new HashMap<>();
         map.put(TrackEventkeys.FAILURE_REASON, reason);
         map.put(TrackEventkeys.TYPE, type);
@@ -244,7 +244,7 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity implem
         }
     }
 
-    private void logShowPasswordEnabled(String enabled, String navigationCtx){
+    private void logShowPasswordEnabled(String enabled, String navigationCtx) {
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.ENABLED, enabled);
         eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, navigationCtx);

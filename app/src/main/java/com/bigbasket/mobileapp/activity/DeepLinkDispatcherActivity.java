@@ -21,9 +21,9 @@ import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -289,8 +289,8 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
     }
 
     private void showDefaultError() {
-    showToast("Page Not Found");
-    finish();
+        showToast("Page Not Found");
+        finish();
     }
 
     @Override

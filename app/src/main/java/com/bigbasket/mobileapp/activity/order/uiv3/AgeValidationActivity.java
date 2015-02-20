@@ -397,7 +397,7 @@ public class AgeValidationActivity extends BackButtonActivity {
     }
 
     @Override
-    public String getScreenTag(){
+    public String getScreenTag() {
         return TrackEventkeys.AGE_VALIDATION_SCREEN;
     }
 

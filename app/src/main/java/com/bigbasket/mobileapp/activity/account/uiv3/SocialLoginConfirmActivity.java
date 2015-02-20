@@ -257,7 +257,7 @@ public class SocialLoginConfirmActivity extends BaseSignInSignupActivity {
     }
 
     @Override
-    public String getScreenTag(){
+    public String getScreenTag() {
         return TrackEventkeys.SOCIAL_ACCOUNT_CONFIRMATION_SCREEN;
     }
 }

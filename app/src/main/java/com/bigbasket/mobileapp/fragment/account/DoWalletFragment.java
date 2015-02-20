@@ -295,7 +295,7 @@ public class DoWalletFragment extends BaseFragment {
         });
     }
 
-    private void logWalletActivityClickEvent(int month, int year){
+    private void logWalletActivityClickEvent(int month, int year) {
         final HashMap<String, String> map = new HashMap<>();
         map.put(TrackEventkeys.MONTH, String.valueOf(month));
         map.put(TrackEventkeys.YEAR, String.valueOf(year));
