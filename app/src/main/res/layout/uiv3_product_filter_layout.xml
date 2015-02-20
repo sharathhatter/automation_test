@@ -23,8 +23,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="@dimen/margin_mini"
-        android:layout_marginLeft="@dimen/margin_normal"
-        android:layout_marginRight="@dimen/margin_small"
+        android:layout_marginLeft="@dimen/margin_mini"
+        android:layout_marginRight="@dimen/margin_mini"
         android:orientation="horizontal">
 
         <Button
@@ -34,7 +34,7 @@
             android:background="@color/uiv3_action_bar_background"
             android:text="@string/apply"
             android:textColor="@color/white"
-            android:textSize="@dimen/secondary_text_size"
+            android:textSize="@dimen/primary_text_size"
             android:paddingTop="@dimen/padding_small"
             android:paddingBottom="@dimen/padding_small"
             android:id="@+id/btnApplyFilter"
@@ -49,7 +49,7 @@
             android:background="@color/material_blue_grey_800"
             android:text="@string/clear"
             android:textColor="@color/white"
-            android:textSize="@dimen/secondary_text_size"
+            android:textSize="@dimen/primary_text_size"
             android:paddingTop="@dimen/padding_small"
             android:paddingBottom="@dimen/padding_small"
             android:id="@+id/btnClearFilters"
