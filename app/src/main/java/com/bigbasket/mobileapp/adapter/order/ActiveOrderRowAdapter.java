@@ -54,6 +54,28 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
     private String sourceName;
     private T context;
 
+    private static final int VIEW_TYPE_CART_ITEM = 0;
+    private static final int VIEW_TYPE_CART_HEADER = 1;
+    private static final int VIEW_TYPE_CART_ANNOTATION = 2;
+    private static final int VIEW_TYPE_FULFILLMENT_INFO = 3;
+
+    @Override
+    public int getViewTypeCount() {
+        return 4;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        Object obj = orderList.get(position);
+        if (obj instanceof CartItem) {
+            return VIEW_TYPE_CART_ITEM;
+        } else if (obj instanceof FulfillmentInfo) {
+            return VIEW_TYPE_FULFILLMENT_INFO;
+        } else if (obj instanceof AnnotationInfo) {
+            return VIEW_TYPE_CART_ANNOTATION;
+        }
+        return VIEW_TYPE_CART_HEADER;
+    }
 
     public ActiveOrderRowAdapter(List<Object> orderList, T context, Typeface faceRupee,
                                  Typeface faceRobotoRegular, OrderItemDisplaySource orderItemDisplaySource,
@@ -128,13 +150,13 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         final Object obj = orderList.get(position);
+
+        int viewType = getItemViewType(position);
         View row = convertView;
         RowHolder rowHolder;
-        if (obj instanceof CartItem) {
-            if (row == null || row.getTag() == null ||
-                    !row.getTag().toString().equalsIgnoreCase(Constants.IS_PRODUCT)) {
+        if (viewType == VIEW_TYPE_CART_ITEM) {
+            if (row == null || row.getTag() == null) {
                 row = inflater.inflate(R.layout.uiv3_cart_item_row, parent, false);
-                row.setTag(Constants.IS_PRODUCT);
                 rowHolder = new RowHolder(row);
                 row.setTag(rowHolder);
             } else {
@@ -158,9 +180,9 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
                     break;
 
             }
-        } else if (obj instanceof FulfillmentInfo) {
+        } else if (viewType == VIEW_TYPE_FULFILLMENT_INFO) {
             return getFulfillmentInfo(obj);
-        } else if (obj instanceof AnnotationInfo) {
+        } else if (viewType == VIEW_TYPE_CART_ANNOTATION) {
             return showAnnotationInfo(obj);
         } else {
             HeaderTitleHolder headerTitleHolder;

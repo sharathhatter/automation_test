@@ -251,7 +251,6 @@ public class Constants {
     public static final String FIRSTNAME = "first_name";
     public static final String LASTNAME = "last_name";
     public static final String ADDR_NICK = "nick";
-    public static final String IS_PRODUCT = "isProduct";
     public static final String UPDATE_ADDRESS = "update-address";
     public static final String FROM_ACCOUNT_PAGE = "from_account_page";
     public static final String RATING = "rating";
