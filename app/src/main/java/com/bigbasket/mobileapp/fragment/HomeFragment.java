@@ -88,12 +88,10 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                     menu.findItem(R.id.action_logout).isVisible() &&
                     AuthParameters.getInstance(getActivity()).isAuthTokenEmpty()) {
                 getCurrentActivity().goToHome();
-                return;
             } else if (menu.findItem(R.id.action_login) != null &&
                     menu.findItem(R.id.action_login).isVisible() &&
                     !AuthParameters.getInstance(getActivity()).isAuthTokenEmpty()) {
                 getCurrentActivity().goToHome();
-                return;
             }
         }
     }
@@ -377,7 +375,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         long lastAppDataCallTime = preferences.getLong(Constants.LAST_APP_DATA_CALL_TIME, 0);
         if (lastAppDataCallTime == 0 || UIUtil.isMoreThanXHour(lastAppDataCallTime, Constants.SIX_HOUR)) {
             try {
-                callGetAppData(Constants.CLIENT_NAME, DataUtil.getAppVersionName(getCurrentActivity()),
+                callGetAppData(Constants.CLIENT_NAME, DataUtil.getAppVersion(getCurrentActivity()),
                         savedInstanceState);
             } catch (Exception e) {
                 e.printStackTrace();

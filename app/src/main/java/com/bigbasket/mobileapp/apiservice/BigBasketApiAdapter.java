@@ -5,8 +5,8 @@ import android.os.Build;
 import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.model.request.AuthParameters;
+import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
-import com.bigbasket.mobileapp.util.UIUtil;
 import com.squareup.okhttp.OkHttpClient;
 
 import java.util.concurrent.TimeUnit;
@@ -36,7 +36,7 @@ public class BigBasketApiAdapter {
             @Override
             public void intercept(RequestFacade request) {
 
-                String appVersion = UIUtil.getAppVersion(context);
+                String appVersion = DataUtil.getAppVersion(context);
                 String userAgentPrefix = "BB Android/" + "v" + appVersion + "/os ";
                 request.addHeader("User-Agent", userAgentPrefix + Build.VERSION.RELEASE);
 

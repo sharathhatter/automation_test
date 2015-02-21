@@ -268,17 +268,6 @@ public class UIUtil {
         editor.commit();
     }
 
-    public static String getAppVersion(Context context) {
-        String appVersionName;
-        try {
-            appVersionName = context.getPackageManager().
-                    getPackageInfo(context.getPackageName(), 0).versionName;
-        } catch (PackageManager.NameNotFoundException e) {
-            appVersionName = null;
-        }
-        return appVersionName;
-    }
-
     public static void reportFormInputFieldError(EditText editText, String errMsg) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             editText.setError(errMsg);

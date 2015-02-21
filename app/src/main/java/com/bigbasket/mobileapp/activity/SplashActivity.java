@@ -29,9 +29,9 @@ import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.task.GetDynamicPageTask;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
-import com.bigbasket.mobileapp.util.UIUtil;
 import com.facebook.AppEventsLogger;
 import com.moe.pushlibrary.MoEHelper;
 import com.newrelic.agent.android.NewRelic;
@@ -175,7 +175,7 @@ public class SplashActivity extends BaseActivity implements DynamicScreenAware {
             devicePropertiesJsonObj.put(Constants.PLATFORM, "java");
             devicePropertiesJsonObj.put(Constants.OS_NAME, "android");
             devicePropertiesJsonObj.put(Constants.OS_VERSION, Build.VERSION.RELEASE);
-            devicePropertiesJsonObj.put(Constants.APP_VERSION, UIUtil.getAppVersion(this));
+            devicePropertiesJsonObj.put(Constants.APP_VERSION, DataUtil.getAppVersion(this));
             devicePropertiesJsonObj.put(Constants.DEVICE_MAKE, Build.MANUFACTURER);
             devicePropertiesJsonObj.put(Constants.DEVICE_MODEL, Build.MODEL);
             devicePropertiesJsonObj.put(Constants.SCREEN_RESOLUTION,

@@ -25,13 +25,14 @@ public class DataUtil {
         return NetworkStatusCodes.NET_DISCONNECTED;
     }
 
-    public static String getAppVersionName(Context context) {
+    public static String getAppVersion(Context context) {
+        String appVersionName;
         try {
-            PackageInfo packageInfo = context.getPackageManager()
-                    .getPackageInfo(context.getPackageName(), 0);
-            return packageInfo.versionName;
+            appVersionName = context.getPackageManager().
+                    getPackageInfo(context.getPackageName(), 0).versionName;
         } catch (PackageManager.NameNotFoundException e) {
-            throw new RuntimeException("Could not get package name: " + e);
+            appVersionName = null;
         }
+        return appVersionName;
     }
 }
