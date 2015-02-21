@@ -23,7 +23,7 @@
         android:icon="@drawable/user_white"
         android:orderInCategory="9999"
         android:title="@string/myAccount"
-        bb:showAsAction="ifRoom">
+        bb:showAsAction="always">
         <menu>
 
             <item
