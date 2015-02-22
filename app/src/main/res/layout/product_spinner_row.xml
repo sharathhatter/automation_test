@@ -1,33 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:layout_width="match_parent"
-    android:paddingTop="@dimen/padding_mini"
     android:paddingBottom="@dimen/padding_mini"
-    android:layout_height="wrap_content">
+    android:paddingTop="@dimen/padding_mini">
 
     <TextView
-        android:layout_width="0dip"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:id="@+id/txtProductPkgDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_vertical"
+        android:paddingRight="@dimen/padding_small"
         android:textColor="@color/uiv3_primary_text_color"
-        android:textSize="@dimen/primary_text_size"
-        android:paddingBottom="@dimen/padding_small"
-        android:paddingTop="@dimen/padding_small"
-        android:paddingRight="@dimen/padding_small" />
+        android:textSize="@dimen/primary_text_size" />
 
     <TextView
-        android:layout_width="0dip"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:paddingBottom="@dimen/padding_small"
+        android:background="@color/uiv3_action_bar_background"
         android:paddingLeft="@dimen/padding_mini"
-        android:paddingTop="@dimen/padding_small"
-        android:id="@+id/txtProductSellPrice"
-        android:gravity="left"
-        android:textColor="@color/uiv3_primary_text_color"
-        android:textSize="@dimen/primary_text_size"
-        android:paddingRight="@dimen/padding_small" />
+        android:paddingRight="@dimen/padding_mini"
+        android:text="@string/plusMore"
+        android:textColor="@color/white"
+        android:textSize="@dimen/primary_text_size" />
+
 </LinearLayout>

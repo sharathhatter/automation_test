@@ -2,11 +2,8 @@ package com.bigbasket.mobileapp.adapter.product;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.support.annotation.Nullable;
 import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,53 +49,95 @@ public class ProductListSpinnerAdapter extends ArrayAdapter<Product> {
 
     @Override
     public View getDropDownView(int position, View convertView, ViewGroup parent) {
-        return getCustomView(position, convertView, parent, true, null);
+        View row = convertView;
+        Product product = productArrayList.get(position);
+        SpinnerDropDownViewHolder spinnerDropDownViewHolder;
+        if (row == null) {
+            LayoutInflater inflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            row = inflater.inflate(R.layout.product_spinner_dropdown_row, parent, false);
+            spinnerDropDownViewHolder = new SpinnerDropDownViewHolder(row);
+            row.setTag(spinnerDropDownViewHolder);
+        } else {
+            spinnerDropDownViewHolder = (SpinnerDropDownViewHolder) row.getTag();
+        }
+        TextView txtProductPkgDesc = spinnerDropDownViewHolder.getTxtProductPkgDesc();
+        TextView txtProductSellPrice = spinnerDropDownViewHolder.getTxtProductSellPrice();
+        txtProductPkgDesc.setText(product.getWeightAndPackDesc());
+
+        row.setPadding(fourDp, eightDp, eightDp, eightDp);
+        String rupeeSymbol = "`";
+        String sellPrice = product.getSellPrice();
+        SpannableString spannableString = new SpannableString(rupeeSymbol + sellPrice);
+        spannableString.setSpan(new CustomTypefaceSpan("", faceRupee), 0,
+                rupeeSymbol.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+        spannableString.setSpan(new CustomTypefaceSpan("", typeface),
+                rupeeSymbol.length(),
+                spannableString.length(),
+                Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+        txtProductSellPrice.setVisibility(View.VISIBLE);
+        txtProductSellPrice.setText(spannableString);
+        return row;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View view = getCustomView(position, convertView, parent, false, " (More sizes available)");
-        view.setBackgroundResource(R.drawable.bottom_grey_border);
-        return view;
-    }
-
-    private View getInflatedView(ViewGroup parent) {
-        LayoutInflater inflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        return inflater.inflate(R.layout.product_spinner_row, parent, false);
-    }
-
-    private View getCustomView(int position, View convertView, ViewGroup parent, boolean showPrice, @Nullable String additionalTxt) {
         View row = convertView;
+        SpinnerViewHolder spinnerViewHolder;
         Product product = productArrayList.get(position);
         if (row == null) {
-            row = getInflatedView(parent);
-        }
-        TextView txtProductPkgDesc = (TextView) row.findViewById(R.id.txtProductPkgDesc);
-        TextView txtProductSellPrice = (TextView) row.findViewById(R.id.txtProductSellPrice);
-        txtProductPkgDesc.setTypeface(typeface);
-        txtProductPkgDesc.setText(product.getWeightAndPackDesc() +
-                (TextUtils.isEmpty(additionalTxt) ? "" : additionalTxt));
-        txtProductPkgDesc.setTextColor(ctx.getResources().getColor(R.color.mrpColor));
-
-        if (showPrice) {
-            row.setPadding(fourDp, eightDp, eightDp, eightDp);
-            String rupeeSymbol = "`";
-            String sellPrice = product.getSellPrice();
-            SpannableString spannableString = new SpannableString(rupeeSymbol + sellPrice);
-            spannableString.setSpan(new CustomTypefaceSpan("", faceRupee), 0,
-                    rupeeSymbol.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
-            spannableString.setSpan(new CustomTypefaceSpan("", typeface),
-                    rupeeSymbol.length(),
-                    spannableString.length(),
-                    Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
-            txtProductSellPrice.setVisibility(View.VISIBLE);
-            txtProductSellPrice.setText(spannableString);
-            txtProductSellPrice.setTextColor(ctx.getResources().getColor(R.color.mrpColor));
+            LayoutInflater inflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            row = inflater.inflate(R.layout.product_spinner_row, parent, false);
+            spinnerViewHolder = new SpinnerViewHolder(row);
+            row.setTag(spinnerViewHolder);
         } else {
-            txtProductPkgDesc.setGravity(Gravity.LEFT);
-            txtProductSellPrice.setVisibility(View.GONE);
+            spinnerViewHolder = (SpinnerViewHolder) row.getTag();
         }
+        TextView txtProductPkgDesc = spinnerViewHolder.getTxtProductPkgDesc();
+        txtProductPkgDesc.setText(product.getWeightAndPackDesc());
         return row;
+    }
+
+    private class SpinnerDropDownViewHolder {
+        private TextView txtProductPkgDesc;
+        private TextView txtProductSellPrice;
+        private View itemView;
+
+        private SpinnerDropDownViewHolder(View itemView) {
+            this.itemView = itemView;
+        }
+
+        public TextView getTxtProductPkgDesc() {
+            if (txtProductPkgDesc == null) {
+                txtProductPkgDesc = (TextView) itemView.findViewById(R.id.txtProductPkgDesc);
+                txtProductPkgDesc.setTypeface(typeface);
+            }
+            return txtProductPkgDesc;
+        }
+
+        public TextView getTxtProductSellPrice() {
+            if (txtProductSellPrice == null) {
+                txtProductSellPrice = (TextView) itemView.findViewById(R.id.txtProductSellPrice);
+                txtProductSellPrice.setTypeface(typeface);
+            }
+            return txtProductSellPrice;
+        }
+    }
+
+    private class SpinnerViewHolder {
+        private TextView txtProductPkgDesc;
+        private View itemView;
+
+        private SpinnerViewHolder(View itemView) {
+            this.itemView = itemView;
+        }
+
+        public TextView getTxtProductPkgDesc() {
+            if (txtProductPkgDesc == null) {
+                txtProductPkgDesc = (TextView) itemView.findViewById(R.id.txtProductPkgDesc);
+                txtProductPkgDesc.setTypeface(typeface);
+            }
+            return txtProductPkgDesc;
+        }
     }
 }
 

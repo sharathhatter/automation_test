@@ -113,7 +113,7 @@
             android:layout_marginTop="@dimen/margin_mini"
             android:layout_toLeftOf="@id/imgShoppingListDel"
             android:layout_toRightOf="@id/imgProduct"
-            android:paddingLeft="@dimen/padding_small" />
+            android:background="@android:color/transparent" />
 
         <TextView
             android:id="@+id/txtPackageDesc"
@@ -224,18 +224,18 @@
                 android:orientation="horizontal">
 
                 <EditText
-                    style="@style/BBEditTextStyle"
                     android:id="@+id/editTextQty"
+                    style="@style/BBEditTextStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="@dimen/margin_mini"
                     android:inputType="numberSigned"
+                    android:maxLength="2"
+                    android:minLines="1"
+                    android:paddingBottom="2dp"
                     android:paddingLeft="@dimen/padding_small"
                     android:paddingRight="@dimen/padding_small"
                     android:paddingTop="0dp"
-                    android:paddingBottom="2dp"
-                    android:maxLength="2"
-                    android:minLines="1"
                     android:selectAllOnFocus="true"
                     android:text="@string/one"
                     android:textColor="@color/uiv3_primary_text_color"

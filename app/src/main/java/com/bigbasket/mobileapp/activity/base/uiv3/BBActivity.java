@@ -586,20 +586,6 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         int productQtyInBasket = Integer.parseInt(basketOperationResponse.getBasketResponseProductInfo().getTotalQty());
         int totalProductsInBasket = basketOperationResponse.getCartSummary().getNoOfItems();
 
-        if (basketOperation == BasketOperation.INC) {
-            if (productQtyInBasket == 1) {
-                Toast.makeText(this, "Product added to basket.", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "Product quantity increased in the basket.", Toast.LENGTH_SHORT).show();
-            }
-        } else {
-            if (basketOperation == BasketOperation.EMPTY || productQtyInBasket == 0) {
-                Toast.makeText(this, "Product removed from basket.", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "Product quantity reduced from basket.", Toast.LENGTH_SHORT).show();
-            }
-        }
-
         if (productQtyInBasket == 0) {
             if (viewDecQty != null) {
                 viewDecQty.setVisibility(View.GONE);

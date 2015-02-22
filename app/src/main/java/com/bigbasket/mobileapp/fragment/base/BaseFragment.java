@@ -208,20 +208,6 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         }
         int totalProductsInBasket = basketOperationResponse.getCartSummary().getNoOfItems();
 
-        if (basketOperation == BasketOperation.INC) {
-            if (productQtyInBasket == 1) {
-                Toast.makeText(getActivity(), "Product added to basket.", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(getActivity(), "Product quantity increased in the basket.", Toast.LENGTH_SHORT).show();
-            }
-        } else {
-            if (basketOperation == BasketOperation.EMPTY || productQtyInBasket == 0) {
-                Toast.makeText(getActivity(), "Product removed from basket.", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(getActivity(), "Product quantity reduced from basket.", Toast.LENGTH_SHORT).show();
-            }
-        }
-
         if (productQtyInBasket == 0) {
             if (viewDecQty != null) {
                 viewDecQty.setVisibility(View.GONE);
