@@ -7,10 +7,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -572,7 +574,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
     public void updateUIAfterBasketOperationFailed(BasketOperation basketOperation, TextView basketCountTextView,
                                                    View viewDecQty, View viewIncQty, Button btnAddToBasket,
                                                    EditText editTextQty, Product product, String qty,
-                                                   String errorType) {
+                                                   String errorType, @Nullable View productView) {
         if (errorType.equals(Constants.PRODUCT_ID_NOT_FOUND)) {
             Toast.makeText(this, "0 added to basket.", Toast.LENGTH_SHORT).show();
         }
@@ -581,7 +583,8 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
     @Override
     public void updateUIAfterBasketOperationSuccess(BasketOperation basketOperation, TextView basketCountTextView,
                                                     View viewDecQty, View viewIncQty, Button btnAddToBasket,
-                                                    EditText editTextQty, Product product, String qty) {
+                                                    EditText editTextQty, Product product, String qty,
+                                                    @Nullable View productView) {
 
         int productQtyInBasket = Integer.parseInt(basketOperationResponse.getBasketResponseProductInfo().getTotalQty());
         int totalProductsInBasket = basketOperationResponse.getCartSummary().getNoOfItems();
@@ -603,6 +606,9 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             if (basketCountTextView != null) {
                 basketCountTextView.setVisibility(View.GONE);
             }
+            if (productView != null) {
+                productView.setBackgroundColor(Color.WHITE);
+            }
         } else {
             if (viewDecQty != null) {
                 viewDecQty.setVisibility(View.VISIBLE);
@@ -619,6 +625,9 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             if (basketCountTextView != null) {
                 basketCountTextView.setText(productQtyInBasket + " in");
                 basketCountTextView.setVisibility(View.VISIBLE);
+            }
+            if (productView != null) {
+                productView.setBackgroundColor(Constants.IN_BASKET_COLOR);
             }
         }
 

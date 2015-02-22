@@ -336,8 +336,10 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
 
     @Override
     public void updateUIAfterBasketOperationSuccess(BasketOperation basketOperation, TextView basketCountTextView, View viewDecQty,
-                                                    View viewIncQty, Button btnAddToBasket, EditText editTextQty, Product product, String qty) {
-        super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextView, viewDecQty, viewIncQty, btnAddToBasket, editTextQty, product, qty);
+                                                    View viewIncQty, Button btnAddToBasket, EditText editTextQty, Product product, String qty,
+                                                    @Nullable View productView) {
+        super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextView, viewDecQty,
+                viewIncQty, btnAddToBasket, editTextQty, product, qty, productView);
         getPromoSummary();
     }
 

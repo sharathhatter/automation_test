@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.interfaces;
 
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,9 +15,9 @@ public interface BasketOperationAware {
 
     void updateUIAfterBasketOperationSuccess(BasketOperation basketOperation, TextView basketCountTextView, View viewDecQty,
                                              View viewIncQty, Button btnAddToBasket, EditText editTextQty,
-                                             Product product, String qty);
+                                             Product product, String qty, @Nullable View productView);
 
     void updateUIAfterBasketOperationFailed(BasketOperation basketOperation, TextView basketCountTextView, View viewDecQty,
                                             View viewIncQty, Button btnAddToBasket, EditText editTextQty,
-                                            Product product, String qty, String errorType);
+                                            Product product, String qty, String errorType, @Nullable View productView);
 }

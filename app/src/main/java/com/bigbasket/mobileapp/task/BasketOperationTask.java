@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.task;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -47,21 +48,22 @@ public class BasketOperationTask<T> {
     private EditText editTextQty;
     private String eventName;
     private String sourceName;
+    private View productView;
 
     public BasketOperationTask(T context, BasketOperation basketOperation, @NonNull Product product,
                                TextView basketCountTextView, View viewDecQty,
                                View viewIncQty, Button btnAddToBasket,
                                EditText editTextQty, String eventName,
-                               String sourceName) {
+                               String sourceName, @Nullable View productView) {
         this(context, basketOperation, product, basketCountTextView, viewDecQty, viewIncQty,
-                btnAddToBasket, editTextQty, "1", eventName, sourceName);
+                btnAddToBasket, editTextQty, "1", eventName, sourceName, productView);
     }
 
     public BasketOperationTask(T context, BasketOperation basketOperation, @NonNull Product product,
                                TextView basketCountTextView, View viewDecQty,
                                View viewIncQty, Button btnAddToBasket,
                                EditText editTextQty, String qty, String eventName,
-                               String sourceName) {
+                               String sourceName, @Nullable View productView) {
         this.context = context;
         this.product = product;
         this.basketOperation = basketOperation;
@@ -73,6 +75,7 @@ public class BasketOperationTask<T> {
         this.qty = qty;
         this.eventName = eventName;
         this.sourceName = sourceName;
+        this.productView = productView;
     }
 
     public void startTask() {
@@ -122,7 +125,8 @@ public class BasketOperationTask<T> {
                     ((CartInfoAware) context).markBasketDirty();
                     ((BasketOperationAware) context).setBasketOperationResponse(cartOperationApiResponse.basketOperationResponse);
                     ((BasketOperationAware) context).updateUIAfterBasketOperationSuccess(basketOperation,
-                            basketCountTextView, viewDecQty, viewIncQty, btnAddToBasket, editTextQty, product, qty);
+                            basketCountTextView, viewDecQty, viewIncQty, btnAddToBasket, editTextQty, product, qty,
+                            productView);
                     break;
                 case Constants.ERROR:
                     switch (cartOperationApiResponse.errorType) {
@@ -139,7 +143,7 @@ public class BasketOperationTask<T> {
                     }
                     ((BasketOperationAware) context).updateUIAfterBasketOperationFailed(basketOperation,
                             basketCountTextView, viewDecQty, viewIncQty, btnAddToBasket, editTextQty, product, null,
-                            cartOperationApiResponse.errorType);
+                            cartOperationApiResponse.errorType, productView);
                     break;
             }
         }

@@ -303,7 +303,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
                                     cartItem.getTopCategoryName(), cartItem.getProductCategoryName());
                             BasketOperationTask basketOperationTask = new BasketOperationTask<>(context,
                                     BasketOperation.DEC, product,
-                                    null, null, null, null, null, TrackingAware.BASKET_DECREMENT, sourceName
+                                    null, null, null, null, null, TrackingAware.BASKET_DECREMENT, sourceName, null
                             );
                             basketOperationTask.startTask();
                         } else {
@@ -322,7 +322,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
                                     cartItem.getTopCategoryName(), cartItem.getProductCategoryName());
                             BasketOperationTask basketOperationTask = new BasketOperationTask<>(context,
                                     BasketOperation.INC, product,
-                                    null, null, null, null, null, TrackingAware.BASKET_INCREMENT, sourceName
+                                    null, null, null, null, null, TrackingAware.BASKET_INCREMENT, sourceName, null
                             );
                             basketOperationTask.startTask();
 
@@ -343,7 +343,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
                             BasketOperationTask basketOperationTask = new BasketOperationTask<>(context,
                                     BasketOperation.EMPTY,
                                     product, txtInBasket, null, null, null, null, "0",
-                                    TrackingAware.BASKET_REMOVE, sourceName
+                                    TrackingAware.BASKET_REMOVE, sourceName, null
                             );
                             basketOperationTask.startTask();
                         } else {

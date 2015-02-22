@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -191,7 +192,8 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     @Override
     public void updateUIAfterBasketOperationFailed(BasketOperation basketOperation, TextView basketCountTextView,
                                                    View viewDecQty, View viewIncQty, Button btnAddToBasket,
-                                                   EditText editTextQty, Product product, String qty, String errorType) {
+                                                   EditText editTextQty, Product product, String qty, String errorType,
+                                                   @Nullable View productView) {
         if (errorType.equals(Constants.PRODUCT_ID_NOT_FOUND)) {
             Toast.makeText(getActivity(), "0 added to basket.", Toast.LENGTH_SHORT).show();
         }
@@ -200,7 +202,8 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     @Override
     public void updateUIAfterBasketOperationSuccess(BasketOperation basketOperation, TextView basketCountTextView,
                                                     View viewDecQty, View viewIncQty, Button btnAddToBasket,
-                                                    EditText editTextQty, Product product, String qty) {
+                                                    EditText editTextQty, Product product, String qty,
+                                                    @Nullable View productView) {
 
         int productQtyInBasket = 0;
         if (basketOperationResponse.getBasketResponseProductInfo() != null) {
@@ -225,6 +228,9 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
             if (basketCountTextView != null) {
                 basketCountTextView.setVisibility(View.GONE);
             }
+            if (productView != null) {
+                productView.setBackgroundColor(Color.WHITE);
+            }
         } else {
             if (viewDecQty != null) {
                 viewDecQty.setVisibility(View.VISIBLE);
@@ -241,6 +247,9 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
             if (basketCountTextView != null) {
                 basketCountTextView.setText(productQtyInBasket + " in");
                 basketCountTextView.setVisibility(View.VISIBLE);
+            }
+            if (productView != null) {
+                productView.setBackgroundColor(Constants.IN_BASKET_COLOR);
             }
         }
 

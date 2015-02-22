@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.view.uiv2;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.text.Spannable;
@@ -326,14 +327,13 @@ public final class ProductView {
         }
     }
 
-    private static <T> void setBasketAndAvailabilityViews(ProductViewHolder productViewHolder, final Product product,
+    private static <T> void setBasketAndAvailabilityViews(final ProductViewHolder productViewHolder, final Product product,
                                                           final ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                                           final T basketOperationAware, final String sourceName) {
         final Button btnAddToBasket = productViewHolder.getBtnAddToBasket();
         final TextView txtDecBasketQty = productViewHolder.getTxtDecBasketQty();
         final TextView txtInBasket = productViewHolder.getTxtInBasket();
         final TextView txtIncBasketQty = productViewHolder.getTxtIncBasketQty();
-
         final EditText editTextQty = productViewHolder.getEditTextQty();
 
         TextView txtOutOfStockORNotForSale = productViewHolder.getTxtOutOfStockORNotForSale();
@@ -347,6 +347,7 @@ public final class ProductView {
                     txtInBasket.setVisibility(View.VISIBLE);
                     txtDecBasketQty.setVisibility(View.VISIBLE);
                     txtIncBasketQty.setVisibility(View.VISIBLE);
+                    productViewHolder.itemView.setBackgroundColor(Constants.IN_BASKET_COLOR);
 
                     btnAddToBasket.setVisibility(View.GONE);
                     editTextQty.setVisibility(View.GONE);
@@ -358,6 +359,7 @@ public final class ProductView {
 
                     btnAddToBasket.setVisibility(View.VISIBLE);
                     editTextQty.setVisibility(View.VISIBLE);
+                    productViewHolder.itemView.setBackgroundColor(Color.WHITE);
                 }
 
                 txtIncBasketQty.setOnClickListener(new View.OnClickListener() {
@@ -368,7 +370,7 @@ public final class ProductView {
                             BasketOperationTask<T> basketOperationTask = new BasketOperationTask<>(basketOperationAware,
                                     BasketOperation.INC, product,
                                     txtInBasket, txtDecBasketQty, txtIncBasketQty, btnAddToBasket,
-                                    editTextQty, TrackingAware.BASKET_INCREMENT, sourceName);
+                                    editTextQty, TrackingAware.BASKET_INCREMENT, sourceName, productViewHolder.itemView);
                             basketOperationTask.startTask();
 
                         } else {
@@ -385,7 +387,8 @@ public final class ProductView {
                             BasketOperationTask<T> myTask = new BasketOperationTask<>(basketOperationAware,
                                     BasketOperation.DEC,
                                     product, txtInBasket, txtDecBasketQty, txtIncBasketQty,
-                                    btnAddToBasket, editTextQty, TrackingAware.BASKET_DECREMENT, sourceName);
+                                    btnAddToBasket, editTextQty, TrackingAware.BASKET_DECREMENT, sourceName,
+                                    productViewHolder.itemView);
                             myTask.startTask();
                         } else {
                             productViewDisplayDataHolder.getHandler().sendOfflineError();
@@ -403,7 +406,7 @@ public final class ProductView {
                             BasketOperationTask<T> basketOperationTask = new BasketOperationTask<>(basketOperationAware,
                                     BasketOperation.INC, product,
                                     txtInBasket, txtDecBasketQty, txtIncBasketQty, btnAddToBasket,
-                                    editTextQty, qty, TrackingAware.BASKET_ADD, sourceName);
+                                    editTextQty, qty, TrackingAware.BASKET_ADD, sourceName, productViewHolder.itemView);
                             basketOperationTask.startTask();
                         } else {
                             productViewDisplayDataHolder.getHandler().sendOfflineError();
@@ -425,6 +428,7 @@ public final class ProductView {
                 } else {
                     txtOutOfStockORNotForSale.setText("Not for sale");
                 }
+                productViewHolder.itemView.setBackgroundColor(Color.WHITE);
             }
         } else {
             txtInBasket.setVisibility(View.GONE);
@@ -432,6 +436,7 @@ public final class ProductView {
             txtIncBasketQty.setVisibility(View.GONE);
             btnAddToBasket.setVisibility(View.GONE);
             editTextQty.setVisibility(View.GONE);
+            productViewHolder.itemView.setBackgroundColor(Color.WHITE);
         }
     }
 }
