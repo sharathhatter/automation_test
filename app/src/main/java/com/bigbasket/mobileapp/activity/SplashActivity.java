@@ -24,6 +24,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.model.SectionManager;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.section.SectionData;
@@ -96,7 +97,7 @@ public class SplashActivity extends BaseActivity implements DynamicScreenAware {
     }
 
     private void getMainMenu() {
-        new GetDynamicPageTask<>(this, "main-menu", false, true, true).startTask();
+        new GetDynamicPageTask<>(this, SectionManager.MAIN_MENU, false, true, true).startTask();
 
     }
 
