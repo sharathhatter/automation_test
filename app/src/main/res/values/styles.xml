@@ -6,6 +6,10 @@
     -->
     <!-- Application theme. -->
 
+    <style name="BaseAppTheme.SpinnerStyle" parent="Widget.AppCompat.Spinner">
+        <item name="android:background">@drawable/apptheme_spinner_background_holo_light</item>
+    </style>
+
     <style name="BaseAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/uiv3_action_bar_background</item>
         <item name="colorPrimaryDark">@color/uiv3_status_bar_background</item>

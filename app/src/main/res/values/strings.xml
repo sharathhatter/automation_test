@@ -131,7 +131,7 @@
     <string name="changeCityMenuTxt">Change city</string>
     <string name="outOfStock">Out of stock</string>
     <string name="notForSale">Not for sale</string>
-    <string name="chooseLocation">Choose your Location</string>
+    <string name="chooseLocation">Select your city</string>
     <string name="hiGuest">Hi Guest</string>
     <string name="hi">Hi</string>
     <string name="checkState">checkState</string>
