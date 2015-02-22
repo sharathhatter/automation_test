@@ -39,7 +39,6 @@ import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCal
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -368,5 +367,10 @@ public class PaymentSelectionFragment extends BaseFragment implements PostVouche
         } else {
             super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
         }
+    }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.PAYMENT_SELECTION_SCREEN;
     }
 }

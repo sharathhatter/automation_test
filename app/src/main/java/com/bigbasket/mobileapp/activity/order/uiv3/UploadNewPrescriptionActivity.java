@@ -34,6 +34,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.ImageUtil;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
 import com.luminous.pick.Action;
 
@@ -201,7 +202,7 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
         SharedPreferences.Editor editor = prefer.edit();
         editor.putString(Constants.PHARMA_PRESCRIPTION_ID, prescriptionId);
         editor.commit();
-        new COReserveQuantityCheckTask<>(getCurrentActivity(),prescriptionId).startTask();
+        new COReserveQuantityCheckTask<>(getCurrentActivity(), prescriptionId).startTask();
     }
 
     @Override
@@ -290,6 +291,11 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
             return bmpStream.toByteArray();
         }
         return null;
+    }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.UPLOAD_NEW_PRESCRIPTION_SCREEN;
     }
 
 }

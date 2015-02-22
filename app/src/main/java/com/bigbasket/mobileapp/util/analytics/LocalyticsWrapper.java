@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.util.analytics;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.localytics.android.Localytics;
 
@@ -40,16 +41,17 @@ public class LocalyticsWrapper {
         }
     }
 
-    public static void onResume() {
+    public static void onResume(String screenName) {
         try {
             Localytics.openSession();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        try{
-            //Localytics.tagScreen("");
-        }catch (Exception e){
+        try {
+            if (!TextUtils.isEmpty(screenName))
+                Localytics.tagScreen(screenName);
+        } catch (Exception e) {
             e.printStackTrace();
         }
         try {
@@ -59,18 +61,18 @@ public class LocalyticsWrapper {
         }
     }
 
-    public static void tagEvent(String eventName, Map<String, String> eventAttribs){
-        try{
+    public static void tagEvent(String eventName, Map<String, String> eventAttribs) {
+        try {
             Localytics.tagEvent(eventName, eventAttribs);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static void tagEvent(String eventName, Map<String, String> eventAttribs, long customerValueIncrease){
-        try{
+    public static void tagEvent(String eventName, Map<String, String> eventAttribs, long customerValueIncrease) {
+        try {
             Localytics.tagEvent(eventName, eventAttribs, customerValueIncrease);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

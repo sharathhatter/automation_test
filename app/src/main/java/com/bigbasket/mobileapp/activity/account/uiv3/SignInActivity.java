@@ -38,7 +38,9 @@ import com.bigbasket.mobileapp.model.account.SocialAccount;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
@@ -50,6 +52,9 @@ import com.google.android.gms.plus.model.people.Person;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -84,7 +89,7 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
             mPlusSignInButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    trackEvent(TrackingAware.MY_ACCOUNT_GOOGLE_LOGIN, null);
+                    logSignInBtnClickEvent(TrackEventkeys.LOGIN_TYPE_GOOGLE);
                     signInViaGPlus();
                 }
             });
@@ -97,7 +102,7 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
                     // Suppose the user updated the Google Play Services, and now tries to click on Google button
                     if (supportsGooglePlayServices()) {
                         initializeGooglePlusSignIn();
-                        trackEvent(TrackingAware.MY_ACCOUNT_GOOGLE_LOGIN, null);
+                        logSignInBtnClickEvent(TrackEventkeys.LOGIN_TYPE_GOOGLE);
                         signInViaGPlus();
                     } else {
                         // Show update dialog
@@ -130,6 +135,7 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                logSignInBtnClickEvent(TrackEventkeys.LOGIN_TYPE_NORMAL);
                 attemptLogin();
             }
         });
@@ -141,6 +147,7 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
         txtForgotPasswd.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                trackEvent(TrackingAware.FORGOT_PASSWORD_CLICKED, null);
                 showForgotPasswordDialog();
             }
         });
@@ -183,7 +190,31 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
             }
         });
 
-        trackEvent(TrackingAware.MY_ACCOUNT_LOGIN_SHOWN, null);
+        mChkRememberMe.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                logRememberMeEnabled(isChecked ? TrackEventkeys.YES : TrackEventkeys.NO);
+            }
+        });
+
+        if (!TextUtils.isEmpty(getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX))) {
+            Map<String, String> eventAttribs = new HashMap<>();
+            eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX));
+            trackEvent(TrackingAware.LOGIN_SHOWN, eventAttribs);
+        }
+
+    }
+
+    private void logRememberMeEnabled(String enabled) {
+        Map<String, String> eventAttribs = new HashMap<>();
+        eventAttribs.put(TrackEventkeys.ENABLED, enabled);
+        trackEvent(TrackingAware.SHOW_PASSWORD_ENABLED, eventAttribs);
+    }
+
+    private void logSignInBtnClickEvent(String type) {
+        Map<String, String> eventAttribs = new HashMap<>();
+        eventAttribs.put(TrackEventkeys.TYPE, type);
+        trackEvent(TrackingAware.LOGIN_BTN_CLICKED, eventAttribs);
     }
 
     private void initializeRememberedDataForLoginInput() {
@@ -497,6 +528,7 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
     }
 
     public void OnRegistrationLinkClicked(View v) {
+        trackEvent(TrackingAware.NEW_USER_REGISTER_CLICKED, null);
         Intent intent = new Intent(this, SignupActivity.class);
         intent.putExtra(Constants.DEEP_LINK, getIntent().getStringExtra(Constants.DEEP_LINK));
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
@@ -556,7 +588,6 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
     }
 
     private void showForgotPasswordDialog() {
-        trackEvent(TrackingAware.FORGOT_PASSWORD_PWD_SHOWN, null);
         View base = getLayoutInflater().inflate(R.layout.uiv3_editable_dialog, null);
 
         final EditText editTextDialog = (EditText) base.findViewById(R.id.editTextDialog);
@@ -583,6 +614,10 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
                         requestNewPassword(inputEmail);
                     }
                 }).show();
+        Map<String, String> eventAttribs = new HashMap<>();
+        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_LOGIN_PAGE);
+        trackEvent(TrackingAware.FORGOT_PASSWORD_DIALOG_SHOWN, eventAttribs);
+        LocalyticsWrapper.onResume(TrackEventkeys.FORGOT_PASSWORD_SCREEN);
     }
 
     private void requestNewPassword(String email) {
@@ -599,10 +634,10 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
                 }
                 switch (forgotPasswordApiResponse.status) {
                     case Constants.OK:
-                        trackEvent(TrackingAware.FORGOT_PASSWORD_PWD_SUCCESS, null);
                         showToast(getString(R.string.newPasswordSent));
                         break;
                     default:
+                        logForgotPasswordFailure(forgotPasswordApiResponse.message);
                         handler.sendEmptyMessage(forgotPasswordApiResponse.getErrorTypeAsInt(), forgotPasswordApiResponse.message);
                         break;
                 }
@@ -617,8 +652,20 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
                     return;
                 }
                 handler.handleRetrofitError(error);
+                logForgotPasswordFailure(error.toString());
             }
         });
+    }
+
+    private void logForgotPasswordFailure(String reason) {
+        Map<String, String> eventAttribs = new HashMap<>();
+        eventAttribs.put(TrackEventkeys.FAILURE_REASON, reason);
+        trackEvent(TrackingAware.FORGOT_PASSWORD_EMAIL_CLICKED, eventAttribs);
+    }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.SIGN_IN_SCREEN;
     }
 }
 

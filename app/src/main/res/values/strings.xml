@@ -77,6 +77,7 @@
     <string name="new_pin">New Pin:</string>
     <string name="current_pin">Your current Pin</string>
     <string name="update">Update</string>
+    <string name="updateDialogTitle">Update BigBasket App</string>
     <string name="UPDATE">UPDATE</string>
     <string name="CANCEL">CANCEL</string>
     <string name="cancel">Cancel</string>
@@ -223,8 +224,10 @@
 
     <style name="placeOrder">Place Order</style>
 
-    <string name="appOutDatedMsg">This version of BigBasket is now outdated.\nPlease update this app, in order to continue</string>
-    <string name="appUpdatedMsg">New version of BigBasket App is available. \nPlease update this app.</string>
+    <string name="whyUpdate">Why Update? - </string>
+    <string name="appOutDatedMsg1">Please update BigBasket Mobile app to the latest version</string>
+    <string name="appOutDatedMsg2">To update, please touch on UPDATE button.</string>
+    <string name="appUpdatedMsg">A new version of App is available on Play Store, Please update to take advantage of latest features.</string>
     <string name="confirmMobileNumber">Confirm your mobile number</string>
     <string name="txtConfirm">CONFIRM</string>
     <string name="txtResendCodeStr">RESEND</string>
@@ -468,7 +471,6 @@
     <string name="ref_submit">REFER</string>
     <string name="referFriends">Refer Friends</string>
     <string name="bbMail">Send mail</string>
-    <!--<string name="refTC">Terms &#38 conditions</string>-->
 
 
     <!-- spendTrends -->
@@ -526,6 +528,7 @@
     <string name="sameDayDelivery">SAME-DAY DELIVERY</string>
     <string name="qualityYouWillLove">QUALITY YOU\'LL LOVE</string>
     <string name="wideRange">WIDE RANGE OF PRODUCTS</string>
+    <string name="addAllProducts">Are you sure you want to add all products to the basket?</string>
     <string name="noAddress">You haven\'t added any address yet. Click on the \'&#43;\' button to add a address.</string>
     <string name="nowClickApplyVoucher">Now click on Apply Voucher to use this voucher</string>
 </resources>

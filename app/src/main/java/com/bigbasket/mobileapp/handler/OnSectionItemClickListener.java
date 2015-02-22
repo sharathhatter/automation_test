@@ -14,6 +14,7 @@ import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.CancelableAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.section.DestinationInfo;
 import com.bigbasket.mobileapp.model.section.Section;
@@ -22,9 +23,12 @@ import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class OnSectionItemClickListener<T> implements View.OnClickListener, BaseSliderView.OnSliderClickListener {
     private T context;
@@ -49,6 +53,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
 
     private void onSectionClick() {
         if (context == null || ((CancelableAware) context).isSuspended()) return;
+
 
         if (sectionItem.getDestinationInfo() != null &&
                 sectionItem.getDestinationInfo().getDestinationType() != null) {
@@ -114,12 +119,18 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                     break;
                 case DestinationInfo.SHOPPING_LIST_SUMMARY:
                     if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
+                        boolean isSmartBasket = destinationInfo.getDestinationSlug().equalsIgnoreCase(Constants.SMART_BASKET_SLUG);
                         intent = new Intent(((ActivityAware) context).getCurrentActivity(), BackButtonActivity.class);
                         ShoppingListName shoppingListName = new ShoppingListName(destinationInfo.getDestinationSlug(), destinationInfo.getDestinationSlug(),
-                                destinationInfo.getDestinationSlug().equalsIgnoreCase(Constants.SMART_BASKET_SLUG));
+                                isSmartBasket);
                         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_SUMMARY);
                         intent.putExtra(Constants.SHOPPING_LIST_NAME, shoppingListName);
                         ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+
+                        if (isSmartBasket) logMainMenuEvent(TrackingAware.SMART_BASKET_ICON_CLICKED,
+                                TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_HOME_PAGE);
+                        else logMainMenuEvent(TrackingAware.SHOPPING_LIST_ICON_CLICKED,
+                                TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_HOME_PAGE);
                     } else {
                         showDefaultError();
                     }
@@ -192,4 +203,20 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
         }
     }
 
+    private void logAnalytics() {
+        if (section == null || sectionItem == null || TextUtils.isEmpty(section.getSectionType()))
+            return;
+        // nc
+        // section.getSectionType() + (section.getTitle() != null ? section.getTitle().getText() : "")
+
+        // item
+        // (sectionItem.getTitle() != null ? sectionItem.getTile().getText() : "")
+    }
+
+    private void logMainMenuEvent(String trackAwareName, String eventKeyName,
+                                  String navigationCtx) {
+        Map<String, String> eventAttribs = new HashMap<>();
+        eventAttribs.put(eventKeyName, navigationCtx);
+        ((TrackingAware) context).trackEvent(trackAwareName, eventAttribs);
+    }
 }

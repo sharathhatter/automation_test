@@ -67,12 +67,13 @@
                 android:title="@string/smartBasket"
                 bb:showAsAction="never" />
 
-            <item
-                android:id="@+id/action_member_referral"
-                android:icon="@drawable/refer_frnds_white"
-                android:orderInCategory="9999"
-                android:title="@string/referFriends"
-                bb:showAsAction="never" />
+            <!--<item-->
+                <!--android:id="@+id/action_member_referral"-->
+                <!--android:icon="@drawable/refer_frnds_white"-->
+                <!--android:orderInCategory="9999"-->
+                <!--android:title="@string/referFriends"-->
+                <!--bb:showAsAction="never" />-->
+
 
             <item
                 android:id="@+id/action_rate_app"

@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
@@ -15,10 +14,14 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.interfaces.OtpDialogAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.FontHolder;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.bigbasket.mobileapp.view.uiv3.AbstractDialogFragment;
 
-public class OTPValidationDialogFragment extends DialogFragment {
+
+public class OTPValidationDialogFragment extends AbstractDialogFragment {
 
     private TextView txtErrorValidateNumber, txtResendNumber;
 
@@ -83,6 +86,7 @@ public class OTPValidationDialogFragment extends DialogFragment {
                     }
                 });
         Dialog dialog = builder.build();
+        ((TrackingAware) getActivity()).trackEvent(TrackingAware.OTP_DIALOG_SHOWN, null);
         dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         return dialog;
     }
@@ -101,4 +105,8 @@ public class OTPValidationDialogFragment extends DialogFragment {
         }
     }
 
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.OTP_SCREEN;
+    }
 }

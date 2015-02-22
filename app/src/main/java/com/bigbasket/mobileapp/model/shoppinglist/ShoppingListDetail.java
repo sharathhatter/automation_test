@@ -31,6 +31,10 @@ public class ShoppingListDetail implements Parcelable {
         return topCategoryName;
     }
 
+    public String getTopCategorySlug() {
+        return topCategorySlug;
+    }
+
     public static final Parcelable.Creator<ShoppingListDetail> CREATOR = new Parcelable.Creator<ShoppingListDetail>() {
         @Override
         public ShoppingListDetail createFromParcel(Parcel source) {

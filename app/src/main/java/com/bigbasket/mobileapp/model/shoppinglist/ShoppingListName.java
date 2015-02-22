@@ -73,7 +73,7 @@ public class ShoppingListName implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         boolean wasNameNull = this.name == null;
-        dest.writeByte(wasNameNull ? (byte) 1: (byte) 0);
+        dest.writeByte(wasNameNull ? (byte) 1 : (byte) 0);
         if (!wasNameNull) {
             dest.writeString(this.name);
         }

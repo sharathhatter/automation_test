@@ -26,6 +26,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.model.account.SocialAccount;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.google.gson.Gson;
 
@@ -253,5 +254,10 @@ public class SocialLoginConfirmActivity extends BaseSignInSignupActivity {
         data.putExtra(Constants.SOCIAL_LOGIN_TYPE, mLoginType);
         setResult(Constants.SOCIAL_ACCOUNT_NOT_LINKED, data);
         finish();
+    }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.SOCIAL_ACCOUNT_CONFIRMATION_SCREEN;
     }
 }

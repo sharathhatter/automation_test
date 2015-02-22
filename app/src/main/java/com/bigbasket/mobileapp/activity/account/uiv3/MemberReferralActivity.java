@@ -1,7 +1,5 @@
 package com.bigbasket.mobileapp.activity.account.uiv3;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.SpannableString;
@@ -32,6 +30,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.MemberReferralUtil;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.uiv3.TermAndConditionDialog;
 import com.facebook.UiLifecycleHelper;
 
@@ -396,5 +395,10 @@ public class MemberReferralActivity extends BackButtonActivity {
         bundle.putString(Constants.SKU_ID, productId);
         productDetailFragment.setArguments(bundle);
         addToMainLayout(productDetailFragment);
+    }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.REFERRAL_SCREEN;
     }
 }

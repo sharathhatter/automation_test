@@ -522,4 +522,9 @@ public class SlotSelectionFragment extends BaseFragment {
     public String getFragmentTxnTag() {
         return SlotSelectionFragment.class.getName();
     }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.SLOT_SELECTION_SCREEN;
+    }
 }

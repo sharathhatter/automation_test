@@ -23,6 +23,7 @@ import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -117,6 +118,7 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
                 if (!TextUtils.isEmpty(id)) {
                     intent = new Intent(this, BackButtonActivity.class);
                     intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_PRODUCT_LIST_FRAGMENT);
+                    intent.putExtra(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_DEEP_LINK);
                     intent.putExtra(Constants.ORDER_ID, id);
                     startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 } else {
@@ -127,7 +129,7 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
                 id = uri.getQueryParameter(Constants.ID);
                 if (!TextUtils.isEmpty(id)) {
                     intent = new Intent(this, BackButtonActivity.class);
-                    intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_PRODUCT_LIST_FRAGMENT);
+                    intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_LANDING);
                     startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 } else {
                     showDefaultError();
@@ -279,6 +281,11 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
     @Override
     public void onChangeTitle(String title) {
 
+    }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.DEEP_LINK_DISPATCHER_SCREEN;
     }
 
     private void showDefaultError() {

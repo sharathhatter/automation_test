@@ -41,6 +41,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 
 import java.text.NumberFormat;
 import java.util.Map;
@@ -452,4 +453,10 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         getCurrentActivity().showAlertDialogFinish(title, message, resultCode);
     }
 
+    public abstract String getScreenTag();
+
+    public void onResume() {
+        super.onResume();
+        LocalyticsWrapper.onResume(getScreenTag());
+    }
 }

@@ -20,6 +20,7 @@ import com.bigbasket.mobileapp.model.promo.Promo;
 import com.bigbasket.mobileapp.model.promo.PromoCategory;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
@@ -192,5 +193,10 @@ public class PromoCategoryFragment extends BaseSectionFragment implements PromoD
             outState.putParcelableArrayList(Constants.PROMO_CATS, mPromoCategoryList);
         }
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.PROMO_CATEGORY_SCREEN;
     }
 }

@@ -565,4 +565,9 @@ public class PromoDetailFragment extends BaseFragment {
     public String getFragmentTxnTag() {
         return PromoDetailFragment.class.getName();
     }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.PROMO_DETAIL_SCREEN;
+    }
 }

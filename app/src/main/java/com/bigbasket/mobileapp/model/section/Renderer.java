@@ -5,8 +5,10 @@ import android.os.Parcelable;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.util.Constants;
@@ -170,11 +172,22 @@ public class Renderer implements Parcelable {
         int padding = this.getSafePadding(defaultPadding);
         if (margin >= 0) {
             int widthToUse = width >= 0 ? width : ViewGroup.LayoutParams.MATCH_PARENT;
-            LinearLayout.LayoutParams txtLayoutParams = new LinearLayout.LayoutParams(widthToUse,
-                    ViewGroup.LayoutParams.WRAP_CONTENT);
-            txtLayoutParams.setMargins(applyLeft ? margin : 0, applyTop ? margin : 0,
-                    applyRight ? margin : 0, applyBottom ? margin : 0);
-            view.setLayoutParams(txtLayoutParams);
+            ViewParent viewParent = view.getParent();
+            if (viewParent != null) {
+                if (viewParent instanceof LinearLayout) {
+                    LinearLayout.LayoutParams txtLayoutParams = new LinearLayout.LayoutParams(widthToUse,
+                            ViewGroup.LayoutParams.WRAP_CONTENT);
+                    txtLayoutParams.setMargins(applyLeft ? margin : 0, applyTop ? margin : 0,
+                            applyRight ? margin : 0, applyBottom ? margin : 0);
+                    view.setLayoutParams(txtLayoutParams);
+                } else if (viewParent instanceof RelativeLayout) {
+                    RelativeLayout.LayoutParams txtLayoutParams = new RelativeLayout.LayoutParams(widthToUse,
+                            ViewGroup.LayoutParams.WRAP_CONTENT);
+                    txtLayoutParams.setMargins(applyLeft ? margin : 0, applyTop ? margin : 0,
+                            applyRight ? margin : 0, applyBottom ? margin : 0);
+                    view.setLayoutParams(txtLayoutParams);
+                }
+            }
         }
         if (padding >= 0 && !(view instanceof ImageView)) {
             view.setPadding(applyLeft ? padding : 0, applyTop ? padding : 0, applyRight ? padding : 0,

@@ -80,10 +80,9 @@ public class DoWalletFragment extends BaseFragment {
                 if (currentWalletBalCallback.status == 0) {
                     currentBalance = currentWalletBalCallback.apiResponseContent.getCurrentBalance();
                     setCurrentBalance(currentBalance);
-                    trackEvent(TrackingAware.MY_ACCOUNT_CURRENT_WALLET_BALANCE_SUCCESS, null);
+                    trackEvent(TrackingAware.WALLET_SUMMARY_SHOWN, null);
                 } else {
                     handler.sendEmptyMessage(currentWalletBalCallback.status, currentWalletBalCallback.message);
-                    trackEvent(TrackingAware.MY_ACCOUNT_CURRENT_WALLET_BALANCE_FAILED, null);
                 }
             }
 
@@ -96,7 +95,6 @@ public class DoWalletFragment extends BaseFragment {
                     return;
                 }
                 handler.handleRetrofitError(error, true);
-                trackEvent(TrackingAware.MY_ACCOUNT_CURRENT_WALLET_BALANCE_FAILED, null);
             }
         });
     }
@@ -229,21 +227,8 @@ public class DoWalletFragment extends BaseFragment {
                     Log.d("Date from::::::::::", dateFrom);
 
                     monthClickText = month1;
+                    logWalletActivityClickEvent(numMonth1, year);
                     getWalletActivityForMonth(dateFrom, dateTo);
-
-                    /*
-                    startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + Constants.GET_WALLET_ACTIVITY,
-                            new HashMap<String, String>() {
-                                {
-                                    put("date_from", dateFrom);
-                                }
-
-                                {
-                                    put("date_to", dateTo);
-                                }
-                            }, false, false, null);
-
-                    */
                 } else {
                     String msg = "Cannot proceed with the operation. No network connection.";
                     showErrorMsg(msg);
@@ -272,21 +257,8 @@ public class DoWalletFragment extends BaseFragment {
                     Log.d("Date to::::::::::::", dateTo);
                     Log.d("Date from::::::::::", dateFrom);
                     monthClickText = month2;
-
+                    logWalletActivityClickEvent(numMonth2, year);
                     getWalletActivityForMonth(dateFrom, dateTo);
-                    /*
-                    startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + "get-wallet-activity/",
-                            new HashMap<String, String>() {
-                                {
-                                    put("date_from", dateFrom);
-                                }
-
-                                {
-                                    put("date_to", dateTo);
-                                }
-                            }, false, false, null);
-                    */
-
                 } else {
                     String msg = "Cannot proceed with the operation. No network connection.";
                     showErrorMsg(msg);
@@ -312,19 +284,9 @@ public class DoWalletFragment extends BaseFragment {
                     Log.d("Date to::::::::::::", dateTo);
                     Log.d("Date from::::::::::", dateFrom);
                     monthClickText = month1;
+                    logWalletActivityClickEvent(numMonth3, year);
                     getWalletActivityForMonth(dateFrom, dateTo);
-                    /*
-                    startAsyncActivity(MobileApiUrl.getBaseAPIUrl() + "get-wallet-activity/",
-                            new HashMap<String, String>() {
-                                {
-                                    put("date_from", dateFrom);
-                                }
 
-                                {
-                                    put("date_to", dateTo);
-                                }
-                            }, false, false, null);
-                    */
                 } else {
                     String msg = "Cannot proceed with the operation. No network connection.";
                     showErrorMsg(msg);
@@ -333,12 +295,18 @@ public class DoWalletFragment extends BaseFragment {
         });
     }
 
+    private void logWalletActivityClickEvent(int month, int year) {
+        final HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.MONTH, String.valueOf(month));
+        map.put(TrackEventkeys.YEAR, String.valueOf(year));
+        trackEvent(TrackingAware.WALLET_ACTIVITY_FOR_MONTH_CLICKED, map);
+    }
+
 
     private void getWalletActivityForMonth(final String dateFrom, final String dateTo) {
         if (!DataUtil.isInternetAvailable(getActivity())) {
             return;
         }
-        final HashMap<String, String> map = new HashMap<>();
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.getWalletActivity(dateFrom, dateTo,
@@ -358,15 +326,8 @@ public class DoWalletFragment extends BaseFragment {
                             } else {
                                 showErrorMsg(getString(R.string.noActivityErrorMsg) + " " + monthClickText);
                             }
-                            map.put(TrackEventkeys.DATE_FROM, dateFrom);
-                            map.put(TrackEventkeys.DATE_TO, dateTo);
-                            trackEvent(TrackingAware.MY_ACCOUNT_WALLET_ACTIVITY_SUCCESS, map);
                         } else {
                             handler.sendEmptyMessage(walletActivityCallback.status, walletActivityCallback.message);
-                            map.put(TrackEventkeys.DATE_FROM, dateFrom);
-                            map.put(TrackEventkeys.DATE_TO, dateTo);
-                            map.put(TrackEventkeys.WALLET_ACTIVITY_FAILURE_REASON, walletActivityCallback.message);
-                            trackEvent(TrackingAware.MY_ACCOUNT_WALLET_ACTIVITY_FAILED, map);
                         }
                     }
 
@@ -379,10 +340,6 @@ public class DoWalletFragment extends BaseFragment {
                             return;
                         }
                         handler.handleRetrofitError(error);
-                        map.put(TrackEventkeys.DATE_FROM, dateFrom);
-                        map.put(TrackEventkeys.DATE_TO, dateTo);
-                        map.put(TrackEventkeys.WALLET_ACTIVITY_FAILURE_REASON, error.toString());
-                        trackEvent(TrackingAware.MY_ACCOUNT_WALLET_ACTIVITY_FAILED, map);
                     }
                 });
 
@@ -409,5 +366,10 @@ public class DoWalletFragment extends BaseFragment {
     @Override
     public String getFragmentTxnTag() {
         return DoWalletFragment.class.getName();
+    }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.ACCOUNT_WALLET_SCREEN;
     }
 }

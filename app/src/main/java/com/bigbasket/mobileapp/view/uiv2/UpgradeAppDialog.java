@@ -36,7 +36,7 @@ public class UpgradeAppDialog extends DialogFragment {
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         return UIUtil.getMaterialDialogBuilder(getActivity())
-                .title(R.string.update)
+                .title(R.string.updateDialogTitle)
                 .content(!TextUtils.isEmpty(upgradeMsg) ? upgradeMsg : getActivity().getString(R.string.appUpdatedMsg))
                 .positiveText(R.string.update)
                 .negativeText(R.string.cancel)
@@ -45,6 +45,7 @@ public class UpgradeAppDialog extends DialogFragment {
                     @Override
                     public void onPositive(MaterialDialog dialog) {
                         UIUtil.openPlayStoreLink(getActivity());
+                        getActivity().finish();
                     }
                 })
                 .build();
