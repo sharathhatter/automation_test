@@ -13,18 +13,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:gravity="center_vertical"
-        android:paddingRight="@dimen/padding_small"
+        android:paddingRight="@dimen/padding_normal"
         android:textColor="@color/uiv3_primary_text_color"
-        android:textSize="@dimen/primary_text_size" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/uiv3_action_bar_background"
-        android:paddingLeft="@dimen/padding_mini"
-        android:paddingRight="@dimen/padding_mini"
-        android:text="@string/plusMore"
-        android:textColor="@color/white"
         android:textSize="@dimen/primary_text_size" />
 
 </LinearLayout>

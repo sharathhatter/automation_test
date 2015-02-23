@@ -25,8 +25,8 @@
         <include layout="@layout/uiv3_left_nav_layout" />
 
         <LinearLayout
+            style="@style/RightNavDrawer"
             android:id="@+id/right_drawer"
-            android:layout_width="@dimen/main_nav_width"
             android:layout_height="match_parent"
             android:layout_gravity="right"
             android:background="@color/white"

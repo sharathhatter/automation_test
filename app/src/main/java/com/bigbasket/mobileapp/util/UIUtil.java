@@ -35,6 +35,7 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginUserDetails;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.handler.AnalyticsIdentifierKeys;
+import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
 import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
@@ -266,6 +267,7 @@ public class UIUtil {
             }
         }
         editor.commit();
+        AuthParameters.updateInstance(ctx);
     }
 
     public static void reportFormInputFieldError(EditText editText, String errMsg) {

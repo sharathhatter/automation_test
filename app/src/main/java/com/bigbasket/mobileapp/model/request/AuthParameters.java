@@ -24,6 +24,7 @@ public class AuthParameters {
     private String mid;
     private String memberEmail;
     private String memberFullName;
+    private String firstName;
     private boolean isKonotorEnabled;
     private boolean isMoEngageEnabled;
     private boolean isLocalyticsEnabled;
@@ -58,6 +59,15 @@ public class AuthParameters {
 
     public String getMemberEmail() {
         return memberEmail != null ? memberEmail : "";
+    }
+
+    public String getFirstName() {
+        if (firstName != null) {
+            return firstName;
+        } else if (memberFullName != null) {
+            return memberFullName.split(" ")[0];
+        }
+        return "";
     }
 
     public String getMemberFullName() {
@@ -112,6 +122,7 @@ public class AuthParameters {
             isKonotorEnabled = prefer.getBoolean(Constants.ENABLE_KONOTOR, false);
             isMoEngageEnabled = prefer.getBoolean(Constants.ENABLE_MOENGAGE, false);
             isLocalyticsEnabled = prefer.getBoolean(Constants.ENABLE_LOCALYTICS, false);
+            firstName = prefer.getString(Constants.FIRST_NAME_PREF, "");
         }
     }
 

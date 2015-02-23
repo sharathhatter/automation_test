@@ -135,7 +135,6 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                                             updateVersionInfoApiResponse.apiResponseContent.userDetails,
                                             AuthParameters.getInstance(getActivity()).getMemberEmail(),
                                             updateVersionInfoApiResponse.apiResponseContent.mId);
-                                    AuthParameters.updateInstance(getActivity());
                                     if (getCurrentActivity() != null &&
                                             !AuthParameters.getInstance(getActivity()).isAuthTokenEmpty()) {
                                         getCurrentActivity().updateKonotor();

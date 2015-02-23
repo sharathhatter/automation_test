@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/layoutSpendTrendsFilter"
-    android:layout_width="@dimen/main_nav_width"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_material_light">
 
@@ -18,20 +18,17 @@
         android:textSize="@dimen/heading_2_text_size" />
 
     <Button
+        style="@style/FormButtonStyle"
         android:id="@+id/btnApplyFilter"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="@dimen/margin_mini"
         android:layout_marginLeft="@dimen/margin_normal"
         android:layout_marginRight="@dimen/margin_normal"
-        android:background="@color/uiv3_action_bar_background"
         android:onClick="onApplyFilterButtonClicked"
         android:paddingBottom="@dimen/padding_small"
         android:paddingTop="@dimen/padding_small"
-        android:text="@string/apply"
-        android:textColor="@color/white"
-        android:textSize="@dimen/secondary_text_size" />
+        android:text="@string/apply" />
 
 
     <LinearLayout

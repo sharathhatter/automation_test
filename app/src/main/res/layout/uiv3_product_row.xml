@@ -104,6 +104,7 @@
 
         <Spinner
             android:id="@+id/spinnerPackageDesc"
+            style="@style/BaseAppTheme.SpinnerStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/txtProductDesc"
@@ -112,8 +113,7 @@
             android:layout_marginRight="@dimen/margin_normal"
             android:layout_marginTop="@dimen/margin_mini"
             android:layout_toLeftOf="@id/imgShoppingListDel"
-            android:layout_toRightOf="@id/imgProduct"
-            android:background="@android:color/transparent" />
+            android:layout_toRightOf="@id/imgProduct" />
 
         <TextView
             android:id="@+id/txtPackageDesc"

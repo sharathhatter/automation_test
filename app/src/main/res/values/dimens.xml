@@ -15,7 +15,6 @@
     <dimen name="fab_shadow_size">8dp</dimen>
     <dimen name="fab_mini_shadow_size">6dp</dimen>
     <dimen name="large_gap">32dp</dimen>
-    <dimen name="main_nav_width">240dp</dimen>
     <dimen name="padding_small">8dp</dimen>
     <dimen name="padding_mini">4dp</dimen>
     <dimen name="padding_normal">16dp</dimen>
@@ -77,4 +76,6 @@
     <dimen name="category_tile_width">160dp</dimen>
     <dimen name="category_tile_height">210dp</dimen>
     <dimen name="category_tile_img_height">140dp</dimen>
+    <!-- Match 56dp default ActionBar height on portrait orientation -->
+    <dimen name="nav_drawer_margin_offset">-8dp</dimen>
 </resources>

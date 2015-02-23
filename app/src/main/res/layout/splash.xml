@@ -148,7 +148,7 @@
 
             <Button
                 android:id="@+id/btnStartShopping"
-                style="@style/FormButtonStyle"
+                style="@style/GreenFormButtonStyle"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="@dimen/margin_normal"

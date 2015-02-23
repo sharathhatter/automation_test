@@ -618,7 +618,6 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     }
 
     public void onLoginSuccess() {
-        AuthParameters.updateInstance(getCurrentActivity());
         CitySpecificAppSettings.clearInstance(getCurrentActivity());
         SectionManager.clearAllSectionData(getCurrentActivity());
         String deepLink = getIntent().getStringExtra(Constants.DEEP_LINK);
