@@ -11,10 +11,11 @@ import com.bigbasket.mobileapp.view.SectionView;
 public abstract class BaseSectionFragment extends BaseFragment {
 
     protected SectionData mSectionData;
+    protected String mscreenName;
 
     @Nullable
     public View getSectionView() {
-        SectionView sectionView = new SectionView(getActivity(), faceRobotoRegular, mSectionData);
+        SectionView sectionView = new SectionView(getActivity(), faceRobotoRegular, mSectionData, mscreenName);
         return sectionView.getView();
     }
 

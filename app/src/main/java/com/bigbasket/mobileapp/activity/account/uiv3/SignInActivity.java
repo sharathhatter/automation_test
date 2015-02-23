@@ -417,7 +417,6 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
 
     @Override
     public void onFacebookSignIn(Session facebookSession) {
-        trackEvent(TrackingAware.MY_ACCOUNT_FACEBOOK_LOGIN, null);
         showProgress(true);
         Request facebookUserDetailRequest = Request.newMeRequest(facebookSession, new Request.GraphUserCallback() {
             @Override
@@ -460,7 +459,6 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
 
     @Override
     public void onFacebookSignOut() {
-        trackEvent(TrackingAware.MY_ACCOUNT_FACEBOOK_LOGOUT, null);
         doLogout();
     }
 
@@ -497,7 +495,6 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
 
     @Override
     protected void onPlusClientSignOut() {
-        trackEvent(TrackingAware.MY_ACCOUNT_GOOGLE_LOGOUT, null);
         Button signOutButton = (Button) mBaseView.findViewById(R.id.plus_sign_out_button);
         signOutButton.setVisibility(View.GONE);
 

@@ -63,6 +63,9 @@ public class SlotSelectionFragment extends BaseFragment {
         potentialOrderId = prefer.getString(Constants.POTENTIAL_ORDER_ID, null);
         String slotMsg = getArguments().getString(Constants.SLOT_MESSAGE);
         displaySlotGroups(slotMsg);
+
+        logSlotSelectionEvent(TrackingAware.CHECKOUT_SLOT_SHOWN,
+                TrackEventkeys.POTENTIAL_ORDER, potentialOrderId);
     }
 
     private void displaySlotGroups(String slotMsg) {
@@ -134,7 +137,8 @@ public class SlotSelectionFragment extends BaseFragment {
                 }
             });
             contentView.addView(slotGroupListView);
-            trackSlotSelectionEvent(TrackEventkeys.POTENTIAL_ORDER, potentialOrderId);
+            logSlotSelectionEvent(TrackingAware.CHECKOUT_SLOT_CLICKED,
+                    TrackEventkeys.POTENTIAL_ORDER, potentialOrderId);
         }
     }
 
@@ -194,20 +198,22 @@ public class SlotSelectionFragment extends BaseFragment {
             if (mSlotGroupListAdapter == null) return;
             mSlotGroupListAdapter.notifyDataSetChanged();
             if (areAllSlotGroupsSelected()) {
-                trackSlotSelectionEvent(TrackingAware.CHECKOUT_SLOT_CHOOSEN, potentialOrderId);
+                logSlotSelectionEvent(TrackingAware.CHECKOUT_SLOT_CLICKED,
+                        TrackingAware.CHECKOUT_SLOT_CLICKED, potentialOrderId);
                 setSelectedSlot();
             }
         } else {
             if (mSlotListAdapter == null) return;
-            trackSlotSelectionEvent(TrackEventkeys.POTENTIAL_ORDER, potentialOrderId);
+            logSlotSelectionEvent(TrackingAware.CHECKOUT_SLOT_CLICKED,
+                    TrackEventkeys.POTENTIAL_ORDER, potentialOrderId);
             mSlotListAdapter.notifyDataSetChanged();
         }
     }
 
-    private void trackSlotSelectionEvent(String eventKeyName, String potentialOrderId) {
+    private void logSlotSelectionEvent(String eventName, String eventKeyName, String potentialOrderId) {
         HashMap<String, String> map = new HashMap<>();
         map.put(eventKeyName, potentialOrderId);
-        trackEvent(TrackingAware.CHECKOUT_SLOT_CHOOSEN, map);
+        trackEvent(eventName, map);
     }
 
     private void setSelectedSlot() {

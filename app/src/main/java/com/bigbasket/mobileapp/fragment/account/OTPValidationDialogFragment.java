@@ -16,20 +16,33 @@ import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.interfaces.OtpDialogAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.FontHolder;
+import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.AbstractDialogFragment;
 
+import java.util.HashMap;
 
 public class OTPValidationDialogFragment extends AbstractDialogFragment {
 
     private TextView txtErrorValidateNumber, txtResendNumber;
+    private boolean isUpdateProfile;
 
     public OTPValidationDialogFragment() {
     }
 
-    public static OTPValidationDialogFragment newInstance() {
-        return new OTPValidationDialogFragment();
+    public static OTPValidationDialogFragment newInstance(boolean isUpdateProfile) {
+        OTPValidationDialogFragment otpValidationDialogFragment = new OTPValidationDialogFragment();
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(Constants.IS_UPDATE_PROFILE, isUpdateProfile);
+        otpValidationDialogFragment.setArguments(bundle);
+        return otpValidationDialogFragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        this.isUpdateProfile = getArguments().getBoolean(Constants.IS_UPDATE_PROFILE);
     }
 
     @Override
@@ -86,9 +99,16 @@ public class OTPValidationDialogFragment extends AbstractDialogFragment {
                     }
                 });
         Dialog dialog = builder.build();
-        ((TrackingAware) getActivity()).trackEvent(TrackingAware.OTP_DIALOG_SHOWN, null);
+        logOtpDialogEvent();
         dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         return dialog;
+    }
+
+    private void logOtpDialogEvent() {
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.NAVIGATION_CTX, isUpdateProfile ? TrackEventkeys.NAVIGATION_CTX_UPDATE_PROFILE :
+                TrackEventkeys.NAVIGATION_CTX_DELIVERY_ADDRESS);
+        ((TrackingAware) getActivity()).trackEvent(TrackingAware.OTP_DIALOG_SHOWN, map);
     }
 
     public void showErrorText(String errorMsg) {

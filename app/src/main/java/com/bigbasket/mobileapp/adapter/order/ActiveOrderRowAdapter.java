@@ -51,7 +51,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
     private HashMap<String, AnnotationInfo> annotationHashMap;
     private String baseImgUrl;
     private Typeface faceRobotoRegular, faceRupee;
-    private String sourceName;
+    private String navigationCtx;
     private T context;
 
     private static final int VIEW_TYPE_CART_ITEM = 0;
@@ -82,7 +82,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
                                  boolean isReadOnly,
                                  HashMap<String, String> fulfillmentInfoIdAndIconHashMap,
                                  HashMap<String, AnnotationInfo> annotationHashMap,
-                                 String baseImageUrl, String sourceName) {
+                                 String baseImageUrl, String navigationCtx) {
         this.context = context;
         this.orderList = orderList;
         this.faceRupee = faceRupee;
@@ -92,7 +92,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
         this.annotationHashMap = annotationHashMap;
         this.isReadOnlyBasket = isReadOnly;
         this.baseImgUrl = baseImageUrl;
-        this.sourceName = sourceName;
+        this.navigationCtx = navigationCtx;
         this.inflater = (LayoutInflater) ((ActivityAware) context).getCurrentActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -303,8 +303,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
                                     cartItem.getTopCategoryName(), cartItem.getProductCategoryName());
                             BasketOperationTask basketOperationTask = new BasketOperationTask<>(context,
                                     BasketOperation.DEC, product,
-                                    null, null, null, null, null, TrackingAware.BASKET_DECREMENT, sourceName, null
-                            );
+                                    null, null, null, null, null, TrackingAware.BASKET_DECREMENT, navigationCtx, null);
                             basketOperationTask.startTask();
                         } else {
                             Toast toast = Toast.makeText(((ActivityAware) context).getCurrentActivity(), "Unable to connect to Internet", Toast.LENGTH_LONG);
@@ -322,8 +321,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
                                     cartItem.getTopCategoryName(), cartItem.getProductCategoryName());
                             BasketOperationTask basketOperationTask = new BasketOperationTask<>(context,
                                     BasketOperation.INC, product,
-                                    null, null, null, null, null, TrackingAware.BASKET_INCREMENT, sourceName, null
-                            );
+                                    null, null, null, null, null, TrackingAware.BASKET_INCREMENT, navigationCtx, null);
                             basketOperationTask.startTask();
 
                         } else {
@@ -343,8 +341,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
                             BasketOperationTask basketOperationTask = new BasketOperationTask<>(context,
                                     BasketOperation.EMPTY,
                                     product, txtInBasket, null, null, null, null, "0",
-                                    TrackingAware.BASKET_REMOVE, sourceName, null
-                            );
+                                    TrackingAware.BASKET_REMOVE, navigationCtx, null);
                             basketOperationTask.startTask();
                         } else {
                             Toast toast = Toast.makeText(((ActivityAware) context).getCurrentActivity(), "Unable to connect to Internet", Toast.LENGTH_LONG);

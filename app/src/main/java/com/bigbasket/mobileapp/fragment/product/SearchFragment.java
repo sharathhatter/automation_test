@@ -4,14 +4,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
-import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class SearchFragment extends ProductListAwareFragment {
 
@@ -41,13 +39,10 @@ public class SearchFragment extends ProductListAwareFragment {
     @Override
     public void updateData() {
         super.updateData();
-        HashMap<String, String> map = new HashMap<>();
-        map.put(TrackEventkeys.QUERY, getArguments().getString(Constants.SEARCH_QUERY));
-        trackEvent(TrackingAware.SEARCH, map);
     }
 
     @Override
-    public String getSourceName() {
-        return TrackEventkeys.PRODUCT_SEARCH;
+    public String getNavigationCtx() {
+        return TrackEventkeys.NAVIGATION_CTX_PRODUCT_SEARCH;
     }
 }

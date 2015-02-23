@@ -354,9 +354,9 @@ public class UIUtil {
             return Constants.SHOW_APP_EXPIRE_POPUP;
         }
         int popUpShownTimes = prefer.getInt(Constants.APP_EXPIRE_POPUP_SHOWN_TIMES, 0);
-        long TimeDiff = (serverAppExpireDate.getTime() - lastPopUpShownTime) / (24 * 60 * 60 * 1000);
+        long timeDiff = (serverAppExpireDate.getTime() - lastPopUpShownTime) / (24 * 60 * 60 * 1000);
 
-        if (TimeDiff >= 0) {
+        if (timeDiff >= 0) {
             if (UIUtil.isMoreThanXDays(lastPopUpShownTime, Constants.ONE_DAY)) {
                 if (popUpShownTimes < 3) {
                     return Constants.SHOW_APP_UPDATE_POPUP;

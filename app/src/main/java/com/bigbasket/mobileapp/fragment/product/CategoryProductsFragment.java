@@ -59,7 +59,7 @@ public class CategoryProductsFragment extends ProductListAwareFragment {
     }
 
     @Override
-    public String getSourceName() {
-        return TrackEventkeys.CATEGORY_LANDING;
+    public String getNavigationCtx() {
+        return TrackEventkeys.NAVIGATION_CTX_CL_PAGE;
     }
 }

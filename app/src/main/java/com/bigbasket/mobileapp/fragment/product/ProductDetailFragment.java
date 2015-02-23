@@ -61,6 +61,24 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
             }
         }
         loadProductDetail();
+        logProductDetailEvent();
+
+    }
+
+    private void logProductDetailEvent() {
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.PRODUCT_TOP_CAT, mProduct.getTopLevelCategoryName());
+        map.put(TrackEventkeys.PRODUCT_CAT, mProduct.getProductCategoryName());
+        map.put(TrackEventkeys.PRODUCT_BRAND, mProduct.getBrand());
+        String desc = mProduct.getDescription();
+        if (!TextUtils.isEmpty(mProduct.getPackageDescription()))
+            desc = " " + mProduct.getWeightAndPackDesc();
+        map.put(TrackEventkeys.PRODUCT_DESC, desc);
+        trackEvent(TrackingAware.PRODUCT_DETAIL_SHOWN, map);
+    }
+
+    public String getNavigationCtx() {
+        return TrackEventkeys.NAVIGATION_CTX_PRODUCT_DETAIL;
     }
 
     private void loadProductDetail() {
@@ -82,18 +100,8 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
                 switch (productDetailApiResponse.status) {
                     case Constants.OK:
                         mProduct = productDetailApiResponse.product;
-
-                        HashMap<String, String> map = new HashMap<>();
-                        map.put(TrackEventkeys.PRODUCT_TOP_CAT, mProduct.getTopLevelCategoryName());
-                        map.put(TrackEventkeys.PRODUCT_CAT, mProduct.getProductCategoryName());
-                        map.put(TrackEventkeys.PRODUCT_BRAND, mProduct.getBrand());
-                        String desc = mProduct.getDescription();
-                        if (!TextUtils.isEmpty(mProduct.getPackageDescription()))
-                            desc = " " + mProduct.getWeightAndPackDesc();
-                        map.put(TrackEventkeys.PRODUCT_DESC, desc);
-                        trackEvent(TrackingAware.BROWSE_PRODUCT_DETAILS, map);
-
                         renderProductDetail();
+                        logProductDetailEvent();
                         break;
                     default:
                         handler.sendEmptyMessage(productDetailApiResponse.getErrorTypeAsInt(),
@@ -133,7 +141,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View productRow = inflater.inflate(R.layout.uiv3_product_row, layoutProductDetail, false);
         ProductView.setProductView(new ProductViewHolder(productRow), mProduct, null, null, productViewDisplayDataHolder,
-                false, this, TrackEventkeys.PRODUCT_DETAIL);
+                false, this, getNavigationCtx());
         layoutProductDetail.addView(productRow);
 
         ArrayList<ProductAdditionalInfo> productAdditionalInfos = mProduct.getProductAdditionalInfos();
@@ -149,6 +157,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
                 layoutProductDetail.addView(additionalInfoView);
             }
         }
+        logProductDetailEvent();
     }
 
     @Override

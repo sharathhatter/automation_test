@@ -36,11 +36,13 @@ public class SectionView {
     private Typeface faceRobotoRegular;
     private SectionData mSectionData;
     private int defaultMargin;
+    private String screenName;
 
-    public SectionView(Context context, Typeface faceRobotoRegular, SectionData mSectionData) {
+    public SectionView(Context context, Typeface faceRobotoRegular, SectionData mSectionData, String screenName) {
         this.context = context;
         this.faceRobotoRegular = faceRobotoRegular;
         this.mSectionData = mSectionData;
+        this.screenName = screenName;
         this.defaultMargin = (int) context.getResources().getDimension(R.dimen.margin_mini);
     }
 
@@ -140,7 +142,7 @@ public class SectionView {
             if (!TextUtils.isEmpty(sectionItem.getImage())) {
                 DefaultSliderView defaultSliderView = new DefaultSliderView(context);
                 defaultSliderView.image(sectionItem.getImage());
-                defaultSliderView.setOnSliderClickListener(new OnSectionItemClickListener<>(context, section, sectionItem));
+                defaultSliderView.setOnSliderClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
                 bannerSlider.addSlider(defaultSliderView);
             }
 
@@ -186,13 +188,13 @@ public class SectionView {
             if (sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
                 txtSalutationItem.setTypeface(faceRobotoRegular);
                 txtSalutationItem.setText(sectionItem.getTitle().getText());
-                txtSalutationItem.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem));
+                txtSalutationItem.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
                 layoutSalutationItem.setVisibility(View.VISIBLE);
             }
             if (!TextUtils.isEmpty(sectionItem.getImage())) {
                 layoutSalutationItem.setVisibility(View.VISIBLE);
                 sectionItem.displayImage(imgSalutationItem);
-                imgSalutationItem.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem));
+                imgSalutationItem.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
             }
         }
         return baseSalutation;
@@ -208,7 +210,7 @@ public class SectionView {
         horizontalRecyclerView.setHasFixedSize(false);
 
         CarouselAdapter carouselAdapter = new CarouselAdapter<>(context, section, mSectionData.getRenderersMap(),
-                faceRobotoRegular);
+                faceRobotoRegular, screenName);
         horizontalRecyclerView.setAdapter(carouselAdapter);
         return baseProductCarousel;
     }
@@ -257,7 +259,7 @@ public class SectionView {
                 renderer.setRendering(imageView, 0, 0);
             }
             imageView.setLayoutParams(layoutParams);
-            imageView.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem));
+            imageView.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
             sectionItem.displayImage(imageView);
         }
         return linearLayout;
@@ -279,7 +281,7 @@ public class SectionView {
                 renderer.setRendering(txtVw, 0, 0, true, true, true, false);
             }
             txtVw.setText(sectionItem.getTitle().getText());
-            txtVw.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem));
+            txtVw.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
             txtVw.setTypeface(faceRobotoRegular);
             linearLayout.addView(txtVw);
         }
@@ -330,7 +332,7 @@ public class SectionView {
             }
             txtListText.setTypeface(faceRobotoRegular);
             txtListText.setText(sectionItem.getTitle().getText());
-            txtListText.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem));
+            txtListText.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
             View viewSeparator = itemView.findViewById(R.id.viewSeparator);
             viewSeparator.setVisibility(i == numItems - 1 ? View.GONE : View.VISIBLE);
             menuContainer.addView(itemView);
@@ -388,7 +390,7 @@ public class SectionView {
                 } else {
                     txtCaption.setVisibility(View.GONE);
                 }
-                imgContent.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem));
+                imgContent.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
                 sectionItem.displayImage(imgContent);
                 tileContainer.addView(tileItemView);
             } else {
@@ -429,7 +431,7 @@ public class SectionView {
                     txtDescription.setTypeface(faceRobotoRegular);
                     txtDescription.setText(sectionItem.getDescription().getText());
                 }
-                tileItemView.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem));
+                tileItemView.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
                 tileContainer.addView(tileItemView);
             }
         }
@@ -476,7 +478,7 @@ public class SectionView {
                 } else {
                     txtCaption.setVisibility(View.GONE);
                 }
-                imgContent.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem));
+                imgContent.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
                 sectionItem.displayImage(imgContent);
                 tileContainer.addView(tileItemView);
             } else {
@@ -501,7 +503,7 @@ public class SectionView {
                     tileItemView.setLayoutParams(layoutParams);
                 }
                 txtTitle.setText(sectionItem.getTitle().getText());
-                tileItemView.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem));
+                tileItemView.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
                 tileContainer.addView(tileItemView);
             }
         }

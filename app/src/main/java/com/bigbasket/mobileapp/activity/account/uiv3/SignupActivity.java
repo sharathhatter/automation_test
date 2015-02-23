@@ -77,7 +77,7 @@ public class SignupActivity extends BaseSignInSignupActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 logTermAndConditionClicked(TrackingAware.PROMO_MAILER_ENABLED,
-                        TrackEventkeys.NAVIGATION_CTX_REGISTRAtION_PAGE, isChecked);
+                        TrackEventkeys.NAVIGATION_CTX_REGISTRATION_PAGE, isChecked);
             }
         });
         mEmailView = (AutoCompleteTextView) base.findViewById(R.id.editTextEmailSignup);

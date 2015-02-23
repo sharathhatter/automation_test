@@ -352,6 +352,7 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
             btnListFooter.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    trackEvent(TrackingAware.CHECK_OUT_QC_PROCEED_BTN, null);
                     new CoUpdateReservationTask<>(getCurrentActivity(), false,
                             productWithNoStockList, productWithSomeStockList).startTask();
                 }

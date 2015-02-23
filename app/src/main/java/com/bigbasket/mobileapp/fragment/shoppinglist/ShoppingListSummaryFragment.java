@@ -30,7 +30,6 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import retrofit.Callback;
@@ -42,20 +41,6 @@ public class ShoppingListSummaryFragment extends BaseFragment {
 
     private ShoppingListName mShoppingListName;
     private ArrayList<ShoppingListSummary> mShoppingListSummaries;
-    private static final HashMap<String, Integer> categoryImageMap = new HashMap<>();
-
-    static {
-//        categoryImageMap.put("fruits-vegetables", R.drawable.fruit_and_veg);
-//        categoryImageMap.put("grocery-staples", R.drawable.cereal);
-//        categoryImageMap.put("bread-dairy-eggs", R.drawable.bread);
-//        categoryImageMap.put("beverages", R.drawable.beverage_tea);
-//        categoryImageMap.put("branded-foods", R.drawable.brandedfoods);
-//        categoryImageMap.put("personal-care", R.drawable.personalcare);
-//        categoryImageMap.put("household", R.drawable.household);
-//        categoryImageMap.put("confectionery", R.drawable.cake_slice);
-//        categoryImageMap.put("imported-gourmet", R.drawable.imported_goumet);
-//        categoryImageMap.put("meat", R.drawable.chicken);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -83,13 +68,6 @@ public class ShoppingListSummaryFragment extends BaseFragment {
             }
         }
 
-        HashMap<String, String> map = new HashMap<>();
-        map.put(TrackEventkeys.SHOPPING_LIST_NAME, mShoppingListName.getName());
-        if (mShoppingListName.isSystem()) {
-            trackEvent(TrackingAware.SHOP_LST_SYSTEM_LST_SHOWN, map);
-        } else {
-            trackEvent(TrackingAware.SHOP_LST_SUMMARY_SHOWN, map);
-        }
         loadShoppingListCategories();
     }
 
@@ -168,6 +146,7 @@ public class ShoppingListSummaryFragment extends BaseFragment {
         shoppingListSummaryView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                trackEvent(TrackEventkeys.SMART_BASKET + "." + mShoppingListSummaries.get(position).getTopCategoryName() + "View", null);
                 ShoppingListSummary shoppingListSummary = mShoppingListSummaries.get(position);
                 Intent intent = new Intent(getActivity(), BackButtonActivity.class);
                 intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_PRODUCTS);
@@ -178,6 +157,12 @@ public class ShoppingListSummaryFragment extends BaseFragment {
             }
         });
         contentView.addView(shoppingListSummaryView);
+        if (mShoppingListName.getSlug().equalsIgnoreCase(Constants.SMART_BASKET_SLUG)) {
+            trackEvent(TrackingAware.SMART_BASKET_SUMMARY_SHOWN, null);
+        } else {
+            trackEvent(TrackingAware.SHOP_LST_SUMMARY_SHOWN, null);
+        }
+
     }
 
     private class ShoppingListSummaryAdapter extends BaseAdapter {

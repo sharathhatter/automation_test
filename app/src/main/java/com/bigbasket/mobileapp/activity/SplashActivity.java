@@ -160,7 +160,6 @@ public class SplashActivity extends BaseActivity implements DynamicScreenAware {
                 }
             }
         });
-        trackEvent(TrackingAware.HOME_CITY_SELECTION, null);
     }
 
     private void doRegisterDevice(final City city) {

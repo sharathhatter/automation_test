@@ -16,6 +16,7 @@ import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
+import com.bigbasket.mobileapp.model.SectionManager;
 import com.bigbasket.mobileapp.model.section.DestinationInfo;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionItem;
@@ -28,17 +29,19 @@ import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 public class OnSectionItemClickListener<T> implements View.OnClickListener, BaseSliderView.OnSliderClickListener {
     private T context;
     private Section section;
     private SectionItem sectionItem;
+    private String screenName;
 
-    public OnSectionItemClickListener(T context, Section section, SectionItem sectionItem) {
+    public OnSectionItemClickListener(T context, Section section, SectionItem sectionItem,
+                                      String screenName) {
         this.context = context;
         this.section = section;
         this.sectionItem = sectionItem;
+        this.screenName = screenName;
     }
 
     @Override
@@ -54,7 +57,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
     private void onSectionClick() {
         if (context == null || ((CancelableAware) context).isSuspended()) return;
 
-
+        logClickEvent();
         if (sectionItem.getDestinationInfo() != null &&
                 sectionItem.getDestinationInfo().getDestinationType() != null) {
             DestinationInfo destinationInfo = sectionItem.getDestinationInfo();
@@ -139,6 +142,8 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                     intent = new Intent(((ActivityAware) context).getCurrentActivity(), BackButtonActivity.class);
                     intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_LANDING);
                     ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                    logMainMenuEvent(TrackingAware.SHOPPING_LIST_ICON_CLICKED, TrackEventkeys.NAVIGATION_CTX,
+                            TrackEventkeys.NAVIGATION_CTX_HOME_PAGE);
                     break;
                 case DestinationInfo.SEARCH:
                     if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
@@ -193,6 +198,8 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
             Intent intent = new Intent(((ActivityAware) context).getCurrentActivity(), ProductListActivity.class);
             intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_GENERIC_PRODUCT_LIST);
             intent.putParcelableArrayListExtra(Constants.PRODUCT_QUERY, nameValuePairs);
+            if (!TextUtils.isEmpty(getSectionName()) || !TextUtils.isEmpty(getSectionItemName()))
+                intent.putExtra(TrackEventkeys.NAVIGATION_CTX, getSectionName() + "." + getSectionItemName());
             String title = sectionItem.getTitle() != null ? sectionItem.getTitle().getText() : null;
             if (!TextUtils.isEmpty(title)) {
                 intent.putExtra(Constants.TITLE, title);
@@ -203,19 +210,71 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
         }
     }
 
-    private void logAnalytics() {
-        if (section == null || sectionItem == null || TextUtils.isEmpty(section.getSectionType()))
-            return;
-        // nc
-        // section.getSectionType() + (section.getTitle() != null ? section.getTitle().getText() : "")
+    private void logClickEvent() {
+        if (section == null) return;
+        if (section.getSectionType().equals(Section.BANNER)) {
+            logBannerEvent();
+        } else if (screenName.equals(SectionManager.HOME_PAGE)) {
+            logItemClickEvent(TrackingAware.HOME_PAGE_ITEM_CLICKED, true);
+        } else if (screenName.equals(SectionManager.MAIN_MENU)) {
+            logItemClickEvent(TrackingAware.MENU_ITEM_CLICKED, false);
+        }
+        logSectionItemEvent();
+    }
 
-        // item
-        // (sectionItem.getTitle() != null ? sectionItem.getTile().getText() : "")
+    private void logSectionItemEvent() {
+        HashMap<String, String> eventAttribs = new HashMap<>();
+        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_HOME_PAGE);
+        ((TrackingAware) context).trackEvent(getSectionItemName() + "Clicked", eventAttribs);
+    }
+
+    private String getSectionName() {
+        if (section == null || TextUtils.isEmpty(section.getSectionType()))
+            return "";
+
+        return section.getTitle() != null ? section.getTitle().getText() : section.getSectionType();
+    }
+
+    private void logBannerEvent() {
+        if (sectionItem == null || sectionItem.getTitle() == null) return;
+        int index = 0;
+        for (int i = 0; i < section.getSectionItems().size(); i++) {
+            if (section.getSectionItems().get(i) == sectionItem)
+                index = i;
+        }
+
+        HashMap<String, String> eventAttribs = new HashMap<>();
+        eventAttribs.put(TrackEventkeys.BANNER_ID, String.valueOf(index));
+        eventAttribs.put(TrackEventkeys.BANNER_SLUG, sectionItem.getTitle().getText());
+        ((TrackingAware) context).trackEvent(TrackingAware.HOME_PAGE_BANNER_CLICKED, eventAttribs);
+    }
+
+    private String getSectionItemName() {
+        if (sectionItem == null || TextUtils.isEmpty(section.getSectionType()))
+            return "";
+        return sectionItem.getTitle() != null ? sectionItem.getTitle().getText() :
+                sectionItem.getDescription() != null ?
+                        !TextUtils.isEmpty(sectionItem.getDescription().getText()) ?
+                                sectionItem.getDescription().getText() : "" : "";
+    }
+
+    private String getSectionType() {
+        if (section == null || TextUtils.isEmpty(section.getSectionType()))
+            return "";
+        return section.getSectionType();
+    }
+
+    private void logItemClickEvent(String trackAwareName, boolean isSectionType) {
+        HashMap<String, String> eventAttribs = new HashMap<>();
+        if (isSectionType) eventAttribs.put(TrackEventkeys.SECTION_TYPE, getSectionType());
+        else eventAttribs.put(TrackEventkeys.SECTION_NAME, getSectionName());
+        eventAttribs.put(TrackEventkeys.SECTION_ITEM, getSectionItemName());
+        ((TrackingAware) context).trackEvent(trackAwareName, eventAttribs);
     }
 
     private void logMainMenuEvent(String trackAwareName, String eventKeyName,
                                   String navigationCtx) {
-        Map<String, String> eventAttribs = new HashMap<>();
+        HashMap<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(eventKeyName, navigationCtx);
         ((TrackingAware) context).trackEvent(trackAwareName, eventAttribs);
     }

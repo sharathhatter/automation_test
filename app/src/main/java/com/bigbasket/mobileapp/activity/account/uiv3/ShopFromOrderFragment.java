@@ -78,9 +78,6 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
                 switch (getProductsForOrderApiResponse.status) {
                     case 0:
                         mProducts = getProductsForOrderApiResponse.apiResponseContent.products;
-                        HashMap<String, String> map = new HashMap<String, String>();
-                        map.put(TrackEventkeys.ORDER_ID, mOrderId);
-                        trackEvent(TrackingAware.SHOP_FROM_PAST_ORDER_SHOWN, map);
                         loadProducts();
                         break;
                     default:
@@ -124,7 +121,7 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
 
         ProductListRecyclerAdapter productListRecyclerAdapter = new ProductListRecyclerAdapter(mProducts, null,
                 productViewDisplayDataHolder, this, mProducts.size(),
-                TrackEventkeys.PAST_ORDER);
+                getNavigationCtx());
 
         productRecyclerView.setAdapter(productListRecyclerAdapter);
         contentView.addView(productRecyclerView);
@@ -145,8 +142,8 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
     }
 
     @Override
-    public String getSourceName() {
-        return TrackEventkeys.SHOP_FROM_PAST_ORDER;
+    public String getNavigationCtx() {
+        return TrackEventkeys.NAVIGATION_CTX_SHOP_FROM_ORDER;
     }
 
     @Nullable

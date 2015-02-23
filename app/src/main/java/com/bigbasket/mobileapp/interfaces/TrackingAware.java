@@ -7,10 +7,9 @@ public interface TrackingAware {
 
     //Start Activity
     public static final String ENTRY_PAGE_SHOWN = "EntryPage.Shown";
-    public static final String ENTRY_PAGE_SPINNER_CLICKED = "EntryPage.City Selection Clicked";
     public static final String ENTRY_PAGE_START_SHOPPING_BTN_CLICKED = "EntryPage.Start Shopping Clicked";
 
-    //Home Screen
+    //Home Screen topnav
     public static final String COMMUNICATION_HUB_CLICKED = "MyAccount.CommunicationHubClicked";
     public static final String LOGIN_OR_REGISTRATION_CLICKED = "Login or Register Clicked";
     public static final String HOME_CHANGE_CITY = "Change Your Location Clicked";
@@ -18,7 +17,6 @@ public interface TrackingAware {
     public static final String MENU_CLICKED = "Menu.Clicked";
 
     //change city dialog
-    public static final String CHANGE_CITY_DIALOG_SHOWN = "Change Your City. Dialog Shown";
     public static final String CHANGE_CITY_POSSITIVE_BTN_CLICKED = "Change Your City. Change City Clicked";
     public static final String CHANGE_CITY_CANCEL_BTN_CLICKED = "Change Your City.Cancel Clicked";
 
@@ -39,7 +37,7 @@ public interface TrackingAware {
 
 
     //Account
-    public static final String MYACCOUNT_CLICKED = "My Account.My Account Clicked";
+    public static final String MY_ACCOUNT_CLICKED = "My Account.My Account Clicked";
     public static final String MY_ACCOUNT_SHOWN = "MyAccount.My Account Shown";
     public static final String MY_ACCOUNT_ACTIVE_ORDER_CLICKED = "MyAccount.Active Orders Clicked";
     public static final String MY_ACCOUNT_PAST_ORDER_CLICKED = "MyAccount.View Order History Clicked";
@@ -47,7 +45,6 @@ public interface TrackingAware {
 
 
     //update_profile
-    public static final String UPDATE_PROFILE_CLICKED = "MyAccount.Profile Update Clicked";
     public static final String UPDATE_PROFILE_SHOWN = "MyAccount.Profile Shown";
     public static final String UPDATE_PROFILE_GET_FAILED = "MyAccount.Update Profile Failed";
     public static final String UPDATE_PROFILE_SUBMIT_BTN_CLICKED = "MyAccount.Profile Update Clicked";
@@ -97,21 +94,57 @@ public interface TrackingAware {
     public static final String ORDER_SUMMARY_SHOWN = "Order.Order Details Shown";
     public static final String ORDER_ITEMS_TAB_CLICKED = "Order.View Items Clicked";
 
+    //shopping list
+    public static final String SHOP_LST_SHOWN = "ShoppingList.All Lists Shown";
+    public static final String SHOP_LST_CREATED = "ShoppingList.Created";
+    public static final String SHOP_LST_NAME_CHANGED = "ShoppingList.Name Changed";
+    public static final String SHOP_LST_DELETED = "ShoppingList.Deleted";
+    public static final String SHOP_LST_SUMMARY_SHOWN = "ShoppingList.Summary Shown";
 
-    public static final String BASKET_INCREMENT = "Basket.Increment";
-    public static final String BASKET_ADD = "Basket.Add";
-    public static final String BASKET_DECREMENT = "Basket.Decrement";
-    public static final String BASKET_REMOVE = "Basket.Remove";
-    public static final String BASKET_ADD_PROMO_BUNDLE = "Basket.Add Promo Bundle"; //todo
-    public static final String BASKET_EMPTY = "Basket.Empty";
-    public static final String BASKET_VIEW = "Basket.View";
 
-    public static final String BROWSE_CATEGORY_LANDING = "Browse.Category Landing";
-    public static final String BROWSE_PRODUCT_CATEGORY = "Browse.Product Category";
-    public static final String BROWSE_DISCOUNTS = "Browse.Discounts";
-    public static final String BROWSE_PRODUCT_DETAILS = "Browse.Product Details";
+    //main menu
+    public static final String MENU_SHOWN = "Menu.Shown";
+    public static final String MENU_ITEM_CLICKED = "Menu.Item Clicked";
+
+    //Home Page
+    public static final String HOME_PAGE_SHOWN = "HomePage.Shown";
+    public static final String HOME_PAGE_ITEM_CLICKED = "HomePage.Item Clicked";
+    public static final String HOME_PAGE_BANNER_CLICKED = "HomePage.Banner Clicked";
     public static final String SEARCH = "Search";
 
+    //product listing page
+    public static final String PRODUCT_LIST_SHOWN = "ProductListing Shown";
+    public static final String PRODUCT_DETAIL_SHOWN = "ProductDetail Shown";
+
+    //promo
+    public static final String PROMO_DETAIL_SHOWN = "Promo.Promo Detail Shown";
+    public static final String PROMO_SET_PRODUCTS_SHOWN = "Promo.Promo Set Products Shown";
+    public static final String PROMO_CATEGORY_LIST = "Promo.Category List";
+    public static final String PROMO_REDEEMED = "Promo.Promo Redeemed";
+
+
+    //basket
+    public static final String BASKET_INCREMENT = "Basket.Increment Clicked";
+    public static final String BASKET_ADD = "Basket.add Clicked";
+    public static final String BASKET_DECREMENT = "Basket.Decrement Clicked";
+    public static final String BASKET_REMOVE = "Basket.Remove Clicked";
+    public static final String BASKET_EMPTY_CLICKED = "Basket.Empty Clicked";
+    public static final String BASKET_VIEW_CLICKED = "Basket.View";
+
+    //subCat
+    public static final String CATEGORY_LANDING_SHOWN = "Category.Landing Shown";
+
+    //smart and shopping list Basket
+    public static final String SMART_BASKET = "SmartBasket";
+    public static final String SHOPPING_LIST = "ShoppingList";
+    public static final String SMART_BASKET_SUMMARY_SHOWN = "SmartBasket.Summary Shown";
+    public static final String ADD_TO_SHOPPING_LIST = "Add To ShoppingList";
+
+    //product page dialog
+    public static final String FILTER_APPLIED = "Filter.Applied";
+    public static final String SORT_BY = "SortBy.Selected";
+
+    //precheckout
     public static final String PRE_CHECKOUT_AGE_LEGAL_SHOWN = "Precheckout.Age Legal Shown";
     public static final String PRE_CHECKOUT_AGE_LEGAL_ACCEPTED = "Precheckout.Age Legal Accepted";
     public static final String PRE_CHECKOUT_AGE_LEGAL_REJECTED = "Precheckout.Age Legal Rejected";
@@ -120,100 +153,32 @@ public interface TrackingAware {
     public static final String PRE_CHECKOUT_PHARMA_PRESCRIPTION_NOT_PROVIDED = "Precheckout.Pharma Prescription Not Provided";
     public static final String PRE_CHECKOUT_CWR_APPICABLE = "Precheckout.Category Weight Restriction Applicable";
 
+    //check out
     public static final String CHECKOUT_QC_SHOWN = "Checkout.Order QC Shown";
-
-    public static final String CHECKOUT_ADDRESS_SHOWN = "Checkout.Address Shown";
-    public static final String CHECKOUT_ADDRESS_CHOSEN = "Checkout.Address Choosen";
+    public static final String CHECK_OUT_QC_PROCEED_BTN = "Checkout.QC Proceed Clicked";
+    public static final String CHECK_CREATE_ADDRESS_SHOWN = "Checkout.Address Shown";
     public static final String CHECKOUT_ADDRESS_CREATED = "Checkout.Address Created";
-
     public static final String CHECKOUT_SLOT_SHOWN = "Checkout.Slot Shown";
-    public static final String CHECKOUT_SLOT_CHOOSEN = "Checkout.Slot Choosen";
-
+    public static final String CHECKOUT_SLOT_CLICKED = "Checkout.Slot Clicked";
     public static final String CHECKOUT_PAYMENT_SHOWN = "Checkout.Payment Shown";
-    public static final String CHECKOUT_PAYMENT_CHOSEN = "Checkout.Payment Chosen";
+    public static final String CHECKOUT_ORDER_REVIEW_CLICKED = "Checkout.Order Review Clicked";
     public static final String CHECKOUT_VOUCHER_APPLIED = "Checkout.Voucher Applied";
     public static final String CHECKOUT_VOUCHER_FAILED = "Checkout.Voucher Failed";
-
     public static final String CHECKOUT_ORDER_REVIEW_SHOWN = "Checkout.Order Review Shown";
     public static final String CHECKOUT_PAYMENT_GATEWAY_SUCCESS = "Checkout.Payment Gateway Success";
-    public static final String CHECKOUT_PAYMENT_GATEWAY_FAILURE = "Checkout.Payment Gateway Failure";
+    public static final String CHECKOUT_PAYMENT_GATEWAY_FAILURE = "Checkout.Payment Gateway Failure";// todo failure reason
     public static final String CHECKOUT_PLACE_ORDER_CLICKED = "Checkout.Place Order Clicked";
     public static final String CHECKOUT_PLACE_ORDER_AMOUNT_MISMATCH = "Checkout.Place Order Amount Mismatch";
-    public static final String ORDER_VIEW_INVOICE = "Order.View Invoice";
     public static final String CHECKOUT_ORDER_COMPLETE = "Checkout.Order Complete";
 
+    //thank you
+    public static final String THANK_YOU_PAGE_SHOWN = "Checkout.Thank You Page Shown";
+    public static final String THANK_YOU_VIEW_INVOICE_CLICKED = "Checkout.View Invoice Clicked";
 
-    public static final String FORGOT_PASSWORD_PWD_SUCCESS = "MyAccount.ForgotPassword Success";
-
-    public static final String NOW_AT_BB = "Browse.NowAtBigBasketShown";
-    public static final String NEW_AT_BB = "Browse.NewAtBigBasketShown";
-    public static final String BUNDLE_PACK = "Browse.BundlePackShown";
-
-    public static final String FILTER_APPLIED = "Filter.Applied";
-
-    public static final String HOME_CITY_SELECTION = "HomePage.CitySelection";
+    public static final String BASKET_ADD_PROMO_BUNDLE = "Basket.Add Promo Bundle"; //todo
 
 
-    public static final String MY_ACCOUNT_CHANGE_PASSWD_SELECTED = "MyAccount.Change Password Selected";
-    public static final String MY_ACCOUNT_CHANGE_PASSWD_SUCCESS = "MyAccount.Change Password Success";
-    public static final String MY_ACCOUNT_CHANGE_PASSWD_FAILED = "MyAccount.Change Password Failed";
-
-
-    public static final String MY_ACCOUNT_UPDATE_PROFILE_SELECTED = "MyAccount.Update Profile Selected";
-    public static final String MY_ACCOUNT_UPDATE_PROFILE_SUCCESS = "MyAccount.Update Profile Success";
-    public static final String MY_ACCOUNT_UPDATE_PROFILE_FAILED = "MyAccount.Update Profile Failed";
-
-
-    public static final String MY_ACCOUNT_CURRENT_PIN_SUCCESS = "MyAccount.Change Current Pin Success";
-    public static final String MY_ACCOUNT_CURRENT_PIN_FAILED = "MyAccount.Change Current Pin Failed";
-    public static final String MY_ACCOUNT_CHANGE_PIN_SUCCESS = "MyAccount.Change Update Pin Success";
-    public static final String MY_ACCOUNT_CHANGE_PIN_FAILED = "MyAccount.Change Update Pin Failed";
-
-    public static final String MY_ACCOUNT_CURRENT_WALLET_BALANCE_SUCCESS = "MyAccount.Wallet Current Wallet Success";
-    public static final String MY_ACCOUNT_CURRENT_WALLET_BALANCE_FAILED = "MyAccount.Wallet Current Wallet Failed";
-    public static final String MY_ACCOUNT_WALLET_ACTIVITY_SUCCESS = "MyAccount.Wallet Activity Success";
-    public static final String MY_ACCOUNT_WALLET_ACTIVITY_FAILED = "MyAccount.Wallet Activity  Failed";
-
-    public static final String MY_ACCOUNT_DELIVERY_ADDRESS_SHOWN = "MyAccount.Delivery Addresses Shown";
-    public static final String MY_ACCOUNT_ADDRESS_EDITED = "MyAccount.Address Edited";
-    public static final String MY_ACCOUNT_ADDRESS_CREATED = "MyAccount.Address Created";
-
-    public static final String MY_ACCOUNT_LOGIN_SUCCESS = "MyAccount.Login Success";
-    public static final String MY_ACCOUNT_LOGIN_FAILED = "MyAccount.Login Failed";
-
-    public static final String MY_ACCOUNT_FACEBOOK_LOGIN = "MyAccount.Facebook Login"; //onFacebookSignIn()
-    public static final String MY_ACCOUNT_FACEBOOK_LOGIN_SUCCESS = "MyAccount.Facebook Login Success"; //on api call retrofit BaseSignInSignupActivity
-    public static final String MY_ACCOUNT_GOOGLE_LOGIN_SUCCESS = "MyAccount.Google Login Success";      //on api call retrofit
-    public static final String MY_ACCOUNT_FACEBOOK_LOGIN_FAILED = "MyAccount.Facebook Login Failed";    //on api call retrofit
-    public static final String MY_ACCOUNT_GOOGLE_LOGIN_FAILED = "MyAccount.Google Login Failed";        //on api call retrofit
-
-    public static final String MY_ACCOUNT_LOGOUT = "MyAccount.Logout";                                  //BaseActivity onLogoutRequested()
-    public static final String MY_ACCOUNT_FACEBOOK_LOGOUT = "MyAccount.Facebook Account Logout";        // onFacebookSignOut()
-    public static final String MY_ACCOUNT_GOOGLE_LOGOUT = "MyAccount.Google Account Logout";            //onPlusClientSignOut()
-
-    public static final String MY_ACCOUNT_REGISTRATION_SHOWN = "MyAccount.Registration Shown";
-    public static final String MY_ACCOUNT_REGISTRATION_SUCCESS = "MyAccount.Registration Success";
-    public static final String MY_ACCOUNT_REGISTRATION_FAILED = "MyAccount.Registration Failed";
-
-
-    public static final String PROMO_CATEGORY_LIST = "Promo.Category List";
-    public static final String PROMO_DETAIL = "Promo.Promo Detail";
-    public static final String PROMO_SET_PRODUCTS_SHOWN = "Promo.Promo Set Products Shown";
-    public static final String PROMO_REDEEMED = "Promo.Promo Redeemed";
-
-    public static final String SHOP_LST_SHOWN = "ShoppingList.All Lists Shown";
-    public static final String SHOP_LST_SUMMARY_SHOWN = "ShoppingList.Summary Shown";
-    public static final String SHOP_LST_SYSTEM_LST_SHOWN = "ShoppingList.System ShoppingList.Summary Shown";
-    public static final String SHOP_LST_CATEGORY_DETAIL = "ShoppingList.Category Details";
-    public static final String SHOP_LST_SYSTEM_LIST_CATEGORY_DETAIL = "ShoppingList.System ShoppingList.Category Details";
-    public static final String SHOP_LST_NAME_CHANGED = "ShoppingList.Name Changed";
-    public static final String SHOP_LST_DELETED = "ShoppingList.List Deleted";
-    public static final String SHOP_LST_CREATED = "ShoppingList.List Created";
-    public static final String SHOP_LIST_PRODUCT_ADDED = "ShoppingList.Product Added";
-    public static final String SHOP_LIST_PRODUCT_DELETED = "ShoppingList.Product Deleted";
-
-    public static final String SHOP_FROM_PAST_ORDER_SHOWN = "Order.Shop from Past Order";
-
+    //member referral
     public static final String MEMBER_REFERRAL_SHOWN = "Member.Referral Shown";
     public static final String MEMBER_REFERRAL_FREE_SMS_SHOWN = "Member.Referral free SMS Shown";
     public static final String MEMBER_REFERRAL_WHATS_APP_SHOWN = "Member.Referral WhatsApp Shown";
@@ -224,7 +189,6 @@ public interface TrackingAware {
     public static final String MEMBER_REFERRAL_HIKE_SHOWN = "Member.Referral Hike Shown";
     public static final String MEMBER_REFERRAL_OTHER_SHOWN = "Member.Referral Shear via other Shown";
 
-    public static final String SPENDTRENDS_SHOWN = "SpendTrends Shown";
 
     public void trackEvent(String eventName, Map<String, String> eventAttribs,
                            String source, String sourceValue, boolean isCustomerValueIncrease);
