@@ -74,17 +74,16 @@
                 <!--android:title="@string/referFriends"-->
                 <!--bb:showAsAction="never" />-->
 
-
             <item
                 android:id="@+id/action_rate_app"
-                android:icon="@drawable/ic_star_rate_white_36dp"
+                android:icon="@drawable/menu_ratethisapp"
                 android:orderInCategory="9999"
                 android:title="@string/rateTheApp"
                 bb:showAsAction="never" />
 
             <item
                 android:id="@+id/action_logout"
-                android:icon="@drawable/logout"
+                android:icon="@drawable/menu_logout"
                 android:orderInCategory="9999"
                 android:title="@string/signOut"
                 bb:showAsAction="never" />
