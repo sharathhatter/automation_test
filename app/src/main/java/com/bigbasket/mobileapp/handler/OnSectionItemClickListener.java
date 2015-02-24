@@ -243,10 +243,17 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                 index = i;
         }
 
+        String bannerName = "";
+        if(!TextUtils.isEmpty(sectionItem.getDestinationInfo().getDestinationType())){
+            bannerName = sectionItem.getDestinationInfo().getDestinationType();
+        }
+        if(!TextUtils.isEmpty(sectionItem.getDestinationInfo().getDestinationSlug())){
+            bannerName += ", "+sectionItem.getDestinationInfo().getDestinationSlug();
+        }
+
         HashMap<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.BANNER_ID, String.valueOf(index));
-        eventAttribs.put(TrackEventkeys.BANNER_SLUG, sectionItem.getDestinationInfo().getDestinationSlug()+", "
-                +sectionItem.getDestinationInfo().getDestinationType());
+        eventAttribs.put(TrackEventkeys.BANNER_SLUG, bannerName);
         ((TrackingAware) context).trackEvent(TrackingAware.HOME_PAGE_BANNER_CLICKED, eventAttribs);
     }
 

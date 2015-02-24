@@ -99,7 +99,6 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
                     case Constants.OK:
                         mProduct = productDetailApiResponse.product;
                         renderProductDetail();
-                        logProductDetailEvent();
                         break;
                     default:
                         handler.sendEmptyMessage(productDetailApiResponse.getErrorTypeAsInt(),

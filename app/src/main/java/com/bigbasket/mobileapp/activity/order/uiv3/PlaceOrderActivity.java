@@ -274,7 +274,7 @@ public class PlaceOrderActivity extends BackButtonActivity implements OnObservab
             map.put(TrackEventkeys.ORDER_TYPE, order.getOrderType());
             if (!TextUtils.isEmpty(order.getVoucher()))
                 map.put(TrackEventkeys.VOUCHER_NAME, order.getVoucher());
-            map.put(TrackEventkeys.PAYMENT_MODE, mPaymentMethod);
+            map.put(TrackEventkeys.PAYMENT_MODE, mPaymentMethod); //TODO: paymethod should come from server
             map.put(TrackEventkeys.POTENTIAL_ORDER, mPotentialOrderId);
             trackEvent(TrackingAware.CHECKOUT_ORDER_COMPLETE, map, null, null, true);
         }
