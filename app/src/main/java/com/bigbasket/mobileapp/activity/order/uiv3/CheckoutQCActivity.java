@@ -67,7 +67,6 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
         Intent intent = new Intent(this, BackButtonActivity.class);
         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ADDRESS_SELECTION);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-        getCurrentActivity().finish(); // don't remove this, fix for back button press from address screen
     }
 
     @Override
