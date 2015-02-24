@@ -567,7 +567,6 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
             intent.putExtra(Constants.SOCIAL_LOGOUT, true);
             startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         } else {
-            trackEvent(TrackingAware.MY_ACCOUNT_LOGOUT, null);
             doLogout();
         }
     }

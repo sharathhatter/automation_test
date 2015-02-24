@@ -47,23 +47,23 @@ public class BasketOperationTask<T> {
     private Button btnAddToBasket;
     private EditText editTextQty;
     private String eventName;
-    private String sourceName;
     private View productView;
+    private String navigationCtx;
 
     public BasketOperationTask(T context, BasketOperation basketOperation, @NonNull Product product,
                                TextView basketCountTextView, View viewDecQty,
                                View viewIncQty, Button btnAddToBasket,
                                EditText editTextQty, String eventName,
-                               String sourceName, @Nullable View productView) {
+                               String navigationCtx, @Nullable View productView) {
         this(context, basketOperation, product, basketCountTextView, viewDecQty, viewIncQty,
-                btnAddToBasket, editTextQty, "1", eventName, sourceName, productView);
+                btnAddToBasket, editTextQty, "1", eventName, navigationCtx, productView);
     }
 
     public BasketOperationTask(T context, BasketOperation basketOperation, @NonNull Product product,
                                TextView basketCountTextView, View viewDecQty,
                                View viewIncQty, Button btnAddToBasket,
                                EditText editTextQty, String qty, String eventName,
-                               String sourceName, @Nullable View productView) {
+                               String navigationCtx, @Nullable View productView) {
         this.context = context;
         this.product = product;
         this.basketOperation = basketOperation;
@@ -74,8 +74,8 @@ public class BasketOperationTask<T> {
         this.editTextQty = editTextQty;
         this.qty = qty;
         this.eventName = eventName;
-        this.sourceName = sourceName;
         this.productView = productView;
+        this.navigationCtx = navigationCtx;
     }
 
     public void startTask() {
@@ -83,7 +83,7 @@ public class BasketOperationTask<T> {
             ((HandlerAware) context).getHandler().sendOfflineError();
             return;
         }
-        createEventTrackPayLoad(eventName, product, sourceName);
+        logBasketEvent(eventName, product, navigationCtx);
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.
                 getApiService(((ActivityAware) context).getCurrentActivity());
         ((ProgressIndicationAware) context).showProgressDialog(((ActivityAware) context).getCurrentActivity()
@@ -163,7 +163,7 @@ public class BasketOperationTask<T> {
         }
     }
 
-    private void createEventTrackPayLoad(String eventName, Product product, String sourceName) {
+    private void logBasketEvent(String eventName, Product product, String navigationCtx) {
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.PRODUCT_ID, product.getSku());
         eventAttribs.put(TrackEventkeys.PRODUCT_BRAND, product.getBrand());
@@ -173,6 +173,7 @@ public class BasketOperationTask<T> {
         eventAttribs.put(TrackEventkeys.PRODUCT_DESC, desc);
         eventAttribs.put(TrackEventkeys.PRODUCT_TOP_CAT, product.getTopLevelCategoryName());
         eventAttribs.put(TrackEventkeys.PRODUCT_CAT, product.getProductCategoryName());
-        ((TrackingAware) context).trackEvent(eventName, eventAttribs, sourceName, null, false);
+        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, navigationCtx);
+        ((TrackingAware) context).trackEvent(eventName, eventAttribs, navigationCtx, null, false);
     }
 }

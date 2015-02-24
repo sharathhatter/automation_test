@@ -94,7 +94,7 @@ public class SubCategoryListFragment extends BaseSectionFragment {
                     renderSubCategory(responseVersion, response_ok, subCategoryModel);
                     HashMap<String, String> map = new HashMap<>();
                     map.put(TrackEventkeys.PRODUCT_TOP_CAT, topCatName);
-                    trackEvent(TrackingAware.BROWSE_CATEGORY_LANDING, map);
+                    trackEvent(TrackingAware.CATEGORY_LANDING_SHOWN, map);
                 } else {
                     handler.sendEmptyMessage(subCategoryCallback.status,
                             subCategoryCallback.message);
@@ -139,6 +139,9 @@ public class SubCategoryListFragment extends BaseSectionFragment {
 
         final List<Category> categoryArrayList = new ArrayList<>();
 
+        Category allCategories = new Category("All " + topCatName.trim(), topCatSlug);
+        categoryArrayList.add(allCategories);
+
         if (subCategoryModel != null && subCategoryModel.getCategory() != null) {
             for (int i = 0; i < subCategoryModel.getCategory().size(); i++) {
                 Category subCat = subCategoryModel.getCategory().get(i);
@@ -170,7 +173,6 @@ public class SubCategoryListFragment extends BaseSectionFragment {
                 if (categoryArrayList.get(groupPosition).getCategory() != null &&
                         categoryArrayList.get(groupPosition).getCategory().size() > 0) {
                 } else {
-                    trackPCEvent(categoryArrayList.get(groupPosition));
                     Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
                     intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PRODUCT_CATEGORY);
                     if (categoryArrayList.get(groupPosition).getFilter() != null)
@@ -187,7 +189,6 @@ public class SubCategoryListFragment extends BaseSectionFragment {
         subCategoryExpandableView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                trackPCEvent(categoryArrayList.get(groupPosition).getCategory().get(childPosition));
                 Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
                 intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PRODUCT_CATEGORY);
                 intent.putExtra(Constants.CATEGORY_SLUG, categoryArrayList.get(groupPosition).getCategory().get(childPosition).getSlug());
@@ -197,13 +198,6 @@ public class SubCategoryListFragment extends BaseSectionFragment {
         });
         subCategoryPageLayout.addView(subCategoryExpandableView);
         contentView.addView(subCategoryPageLayout);
-    }
-
-    private void trackPCEvent(Category category) {
-        if (category == null) return;
-        HashMap<String, String> map = new HashMap<>();
-        map.put(TrackEventkeys.PRODUCT_CAT, category.getName());
-        trackEvent(TrackingAware.BROWSE_PRODUCT_CATEGORY, map);
     }
 
     public LinearLayout getContentView() {

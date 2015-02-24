@@ -46,7 +46,6 @@ import com.bigbasket.mobileapp.view.uiv2.ProductView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import retrofit.Callback;
@@ -91,11 +90,8 @@ public class PromoDetailFragment extends BaseFragment {
         getPromoDetail(promoId);
     }
 
-    private void trackPromo() {
-        if (mPromoDetail == null) return;
-        HashMap<String, String> map = new HashMap<>();
-        map.put(TrackEventkeys.PROMO_NAME, mPromoDetail.getPromoName());
-        trackEvent(TrackingAware.PROMO_DETAIL, map);
+    private void logPromoDetailEvent() {
+
     }
 
     private void getPromoDetail(int promoId) {
@@ -113,15 +109,15 @@ public class PromoDetailFragment extends BaseFragment {
                         showErrorMsg(promoDetailApiResponseContentApiResponse.message);
                     } else if (status == 0) {
                         mPromoDetail = promoDetailApiResponseContentApiResponse.apiResponseContent.promoDetail;
-                        trackPromo();
                         if (mPromoDetail != null) {
                             renderPromoDetail();
                             setCartInfo(promoDetailApiResponseContentApiResponse.cartSummary);
                             updateUIForCartInfo();
+                            trackEvent(TrackingAware.PROMO_DETAIL_SHOWN, null);
                         } else {
                             showErrorMsg(getString(R.string.server_error));
                         }
-                    }
+                    } //TODO Sid check if error handling needed.
                 }
 
                 @Override
@@ -303,7 +299,7 @@ public class PromoDetailFragment extends BaseFragment {
 
             ProductView.setProductView(new ProductViewHolder(base), freeProduct, promoDetail.getBaseImgUrl(),
                     new ProductDetailOnClickListener(freeProduct.getSku(), this), productViewDisplayDataHolder,
-                    false, null, TrackEventkeys.PROMO_DETAIL);
+                    false, null, getNavigationCtx());
             base.setLayoutParams(productRowParams);
             view.addView(base);
         }
@@ -558,6 +554,10 @@ public class PromoDetailFragment extends BaseFragment {
     public String getTitle() {
         String promoName = getArguments() != null ? getArguments().getString(Constants.PROMO_NAME) : null;
         return TextUtils.isEmpty(promoName) ? "Promotion Detail" : promoName;
+    }
+
+    public String getNavigationCtx() {
+        return TrackEventkeys.NAVIGATION_CTX_PROMO_DETAIL;
     }
 
     @NonNull

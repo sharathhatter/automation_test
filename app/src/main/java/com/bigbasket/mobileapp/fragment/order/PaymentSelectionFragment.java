@@ -35,6 +35,7 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -44,7 +45,7 @@ public class PaymentSelectionFragment extends BaseFragment implements PostVouche
     private CartSummary mCartSummary;
     private ArrayList<ActiveVouchers> mActiveVouchersList;
     private LinkedHashMap<String, String> mPaymentTypeMap;
-    private String mAmtPayable, mWalletUsed, mWalletRemaining;//, mpaymentMethod, potentialOrderId;
+    private String mAmtPayable, mWalletUsed, mWalletRemaining;
     private TextView mLblTransactionFailed;
     private TextView mTxtTransactionFailureReason;
     private TextView mLblSelectAnotherMethod;
@@ -76,8 +77,6 @@ public class PaymentSelectionFragment extends BaseFragment implements PostVouche
             mWalletRemaining = "0";
         }
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        SharedPreferences.Editor mEditor = preferences.edit();
 
         ArrayList<PaymentType> paymentTypes = args.getParcelableArrayList(Constants.PAYMENT_TYPES);
         mPaymentTypeMap = new LinkedHashMap<>();
@@ -90,13 +89,20 @@ public class PaymentSelectionFragment extends BaseFragment implements PostVouche
             renderPayuFailedToCreateOrderScenario();
         } else {
             renderPaymentOptions();
-            trackEvent(TrackingAware.CHECKOUT_PAYMENT_SHOWN, null);
-
+            logPaymentOptionEvent();
             String payuFailureReason = args.getString(Constants.PAYU_CANCELLED);
             if (!TextUtils.isEmpty(payuFailureReason)) {
                 displayPayuFailure(payuFailureReason);
             }
         }
+    }
+
+
+    private void logPaymentOptionEvent() {
+        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.POTENTIAL_ORDER, prefer.getString(Constants.POTENTIAL_ORDER_ID, null));
+        trackEvent(TrackingAware.CHECKOUT_PAYMENT_SHOWN, map);
     }
 
     private void renderPayuFailedToCreateOrderScenario() {

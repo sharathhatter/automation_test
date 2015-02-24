@@ -52,12 +52,12 @@ public final class ProductView {
                                           ProductDetailOnClickListener productDetailOnClickListener,
                                           ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                           final boolean skipChildDropDownRendering,
-                                          final T productDataAware, String sourceName) {
+                                          final T productDataAware, String navigationCtx) {
         setProductImage(productViewHolder, product, baseImgUrl, productDetailOnClickListener);
         setIsNewAndBby(productViewHolder, product);
         if (!skipChildDropDownRendering) {
             setChildProducts(productViewHolder, product, baseImgUrl, productViewDisplayDataHolder,
-                    productDataAware, sourceName);
+                    productDataAware, navigationCtx);
         }
         setProductBrand(productViewHolder, product, productViewDisplayDataHolder, productDetailOnClickListener);
         setProductDesc(productViewHolder, product, productViewDisplayDataHolder, productDetailOnClickListener);
@@ -65,7 +65,7 @@ public final class ProductView {
         setPromo(productViewHolder, product, productViewDisplayDataHolder, productDataAware);
         setProductAdditionalActionMenu(productViewHolder, product, productViewDisplayDataHolder, productDataAware);
         setBasketAndAvailabilityViews(productViewHolder, product, productViewDisplayDataHolder,
-                productDataAware, sourceName);
+                productDataAware, navigationCtx);
     }
 
     private static void setProductImage(ProductViewHolder productViewHolder, Product product, String baseImgUrl,
@@ -94,7 +94,7 @@ public final class ProductView {
     private static <T> void setChildProducts(final ProductViewHolder productViewHolder, Product product,
                                              final String baseImgUrl,
                                              final ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                             final T productDataAware, final String sourceName) {
+                                             final T productDataAware, final String navigationCtx) {
         final List<Product> childProducts = product.getAllProducts();
         boolean hasChildren = childProducts != null && childProducts.size() > 0;
         Spinner spinnerPackageDesc = productViewHolder.getSpinnerPackageDesc();
@@ -111,7 +111,7 @@ public final class ProductView {
                     Product childProduct = childProducts.get(position);
                     setProductView(productViewHolder, childProduct, baseImgUrl,
                             new ProductDetailOnClickListener(childProduct.getSku(), (ActivityAware) productDataAware),
-                            productViewDisplayDataHolder, true, productDataAware, sourceName);
+                            productViewDisplayDataHolder, true, productDataAware, navigationCtx);
                 }
 
                 @Override
@@ -272,7 +272,7 @@ public final class ProductView {
                 @Override
                 public void onClick(View v) {
                     if (((ConnectivityAware) shoppingListNamesAware).checkInternetConnection()) {
-                        ((TrackingAware) (shoppingListNamesAware)).trackEvent(TrackingAware.SHOP_LIST_PRODUCT_ADDED, null);
+                        ((TrackingAware) (shoppingListNamesAware)).trackEvent(TrackingAware.ADD_TO_SHOPPING_LIST, null);
                         ((ShoppingListNamesAware) shoppingListNamesAware).setSelectedProductId(product.getSku());
                         new ShoppingListNamesTask<>(shoppingListNamesAware, false).startTask();
                     } else {
@@ -312,7 +312,6 @@ public final class ProductView {
                                         ShoppingListDoAddDeleteTask shoppingListDoAddDeleteTask =
                                                 new ShoppingListDoAddDeleteTask<>(shoppingListNamesAware, shoppingListNames, ShoppingListOption.DELETE_ITEM);
                                         ((ShoppingListNamesAware) shoppingListNamesAware).setSelectedProductId(product.getSku());
-                                        ((TrackingAware) (shoppingListNamesAware)).trackEvent(TrackingAware.SHOP_LIST_PRODUCT_DELETED, null);
                                         shoppingListDoAddDeleteTask.startTask();
                                     } else {
                                         productViewDisplayDataHolder.getHandler().sendOfflineError();
@@ -329,7 +328,7 @@ public final class ProductView {
 
     private static <T> void setBasketAndAvailabilityViews(final ProductViewHolder productViewHolder, final Product product,
                                                           final ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                                          final T basketOperationAware, final String sourceName) {
+                                                          final T basketOperationAware, final String navigationCtx) {
         final Button btnAddToBasket = productViewHolder.getBtnAddToBasket();
         final TextView txtDecBasketQty = productViewHolder.getTxtDecBasketQty();
         final TextView txtInBasket = productViewHolder.getTxtInBasket();
@@ -370,7 +369,7 @@ public final class ProductView {
                             BasketOperationTask<T> basketOperationTask = new BasketOperationTask<>(basketOperationAware,
                                     BasketOperation.INC, product,
                                     txtInBasket, txtDecBasketQty, txtIncBasketQty, btnAddToBasket,
-                                    editTextQty, TrackingAware.BASKET_INCREMENT, sourceName, productViewHolder.itemView);
+                                    editTextQty, TrackingAware.BASKET_INCREMENT, navigationCtx, productViewHolder.itemView);
                             basketOperationTask.startTask();
 
                         } else {
@@ -387,8 +386,8 @@ public final class ProductView {
                             BasketOperationTask<T> myTask = new BasketOperationTask<>(basketOperationAware,
                                     BasketOperation.DEC,
                                     product, txtInBasket, txtDecBasketQty, txtIncBasketQty,
-                                    btnAddToBasket, editTextQty, TrackingAware.BASKET_DECREMENT, sourceName,
-                                    productViewHolder.itemView);
+                                    btnAddToBasket, editTextQty, TrackingAware.BASKET_DECREMENT,
+                                    navigationCtx, productViewHolder.itemView);
                             myTask.startTask();
                         } else {
                             productViewDisplayDataHolder.getHandler().sendOfflineError();
@@ -406,7 +405,7 @@ public final class ProductView {
                             BasketOperationTask<T> basketOperationTask = new BasketOperationTask<>(basketOperationAware,
                                     BasketOperation.INC, product,
                                     txtInBasket, txtDecBasketQty, txtIncBasketQty, btnAddToBasket,
-                                    editTextQty, qty, TrackingAware.BASKET_ADD, sourceName, productViewHolder.itemView);
+                                    editTextQty, qty, TrackingAware.BASKET_ADD, navigationCtx, productViewHolder.itemView);
                             basketOperationTask.startTask();
                         } else {
                             productViewDisplayDataHolder.getHandler().sendOfflineError();

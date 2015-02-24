@@ -68,6 +68,13 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         restoreProductList(savedInstanceState);
+        logProductListingEvent();
+    }
+
+    private void logProductListingEvent() {
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.NAVIGATION_CTX, getNavigationCtx());
+        trackEvent(TrackingAware.PRODUCT_LIST_SHOWN, map);
     }
 
     /**
@@ -223,7 +230,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                 .build();
         mProductListRecyclerAdapter = new ProductListRecyclerAdapter(productListData.getProducts(), productListData.getBaseImgUrl(),
                 productViewDisplayDataHolder, this, productListData.getProductCount(),
-                getSourceName());
+                getNavigationCtx());
 
         productRecyclerView.setAdapter(mProductListRecyclerAdapter);
 
@@ -260,7 +267,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         mProductListRecyclerAdapter.notifyDataSetChanged();
     }
 
-    public abstract String getSourceName();
+    public abstract String getNavigationCtx();
 
     @Nullable
     public abstract ArrayList<NameValuePair> getInputForApi();
@@ -353,6 +360,14 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
     @Override
     public void setSortedOn(String sortedOn) {
         this.productListData.setSortedOn(sortedOn);
+        logSortByEvent(sortedOn);
+    }
+
+    private void logSortByEvent(String sortedOn) {
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.TYPE, sortedOn);
+        map.put(TrackEventkeys.NAVIGATION_CTX, getNavigationCtx());
+        trackEvent(TrackingAware.SORT_BY, map);
     }
 
     @Override
@@ -409,8 +424,8 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         Map<String, String> eventAttribs = new HashMap<>();
         for (FilteredOn filteredOn : filteredOnArrayList) {
             eventAttribs.put(TrackEventkeys.FILTER_NAME, filteredOn.getFilterSlug());
-            //eventAttribs.put(TrackEventkeys.FILTER_TYPE, filteredOn.getFilterType());
-            trackEvent(TrackingAware.FILTER_APPLIED, eventAttribs, getSourceName(), null, false);
+            eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNavigationCtx());
+            trackEvent(TrackingAware.FILTER_APPLIED, eventAttribs, getNavigationCtx(), null, false);
         }
     }
 

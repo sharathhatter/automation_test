@@ -297,6 +297,7 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
     public void onDisplayOrderInvoice(OrderInvoice orderInvoice) {
         Intent orderDetailIntent = new Intent(getCurrentActivity(), OrderDetailActivity.class);
         orderDetailIntent.putExtra(Constants.ORDER_REVIEW_SUMMARY, orderInvoice);
+        orderDetailIntent.putExtra(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_DEEP_LINK);
         startActivityForResult(orderDetailIntent, NavigationCodes.GO_TO_HOME);
     }
 }

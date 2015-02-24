@@ -163,7 +163,7 @@ public class ProductListActivity extends BBActivity implements FilterDisplayAwar
 
     @Override
     public String getScreenTag() {
-        return TrackEventkeys.PRESCRIPTION_LISTING_SCREEN;
+        return TrackEventkeys.PRODUCT_LISTING_SCREEN;
     }
 
     public void syncBasket() {

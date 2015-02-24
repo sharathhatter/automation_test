@@ -87,7 +87,6 @@ public class ShowCartFragment extends BaseFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        //getCartItems();
     }
 
     @Override
@@ -116,12 +115,13 @@ public class ShowCartFragment extends BaseFragment {
         }
     }
 
-    private void logViewBasketEvent(CartSummary cartSummary, Map<String, String> eventAttribs) {// todo event log for view basket
+    private void logViewBasketEvent(CartSummary cartSummary, Map<String, String> eventAttribs) {
         if (cartSummary == null) return;
         eventAttribs.put(TrackEventkeys.TOTAL_ITEMS_IN_BASKET, String.valueOf(cartSummary.getNoOfItems()));
         eventAttribs.put(TrackEventkeys.TOTAL_BASKET_VALUE, String.valueOf(cartSummary.getTotal()));
         eventAttribs.put(TrackEventkeys.TOTAL_BASKET_SAVING, String.valueOf(cartSummary.getSavings()));
-        trackEvent(TrackingAware.BASKET_VIEW, eventAttribs);
+        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_TOPNAV);
+        trackEvent(TrackingAware.BASKET_VIEW_CLICKED, eventAttribs);
     }
 
     private void renderCartItemList(CartSummary cartSummary, String baseImageUrl) {
@@ -158,9 +158,7 @@ public class ShowCartFragment extends BaseFragment {
                 cartItemHeaderList.add(cartItems.get(i));
                 if (cartItems.get(i).getPromoAppliedType() == 2 ||
                         cartItems.get(i).getPromoAppliedType() == 3) {
-                    HashMap<String, String> map = new HashMap<>();
-                    map.put(TrackEventkeys.PROMO_NAME, cartItems.get(i).getCartItemPromoInfo().getPromoInfo().getPromoName());
-                    trackEvent(TrackingAware.PROMO_REDEEMED, map);
+                    trackEvent(TrackingAware.PROMO_REDEEMED, null);
                 }
             }
         }
@@ -203,7 +201,7 @@ public class ShowCartFragment extends BaseFragment {
         });
         ActiveOrderRowAdapter activeOrderRowAdapter = new ActiveOrderRowAdapter<>(cartItemHeaderList, this,
                 faceRupee, faceRobotoRegular, OrderItemDisplaySource.BASKET, isReadOnly,
-                fulfillmentInfoIdAndIconHashMap, annotationHashMap, baseImageUrl, TrackEventkeys.VIEW_BASKET);
+                fulfillmentInfoIdAndIconHashMap, annotationHashMap, baseImageUrl, getNavigationCtx());
         cartItemListView.setDivider(null);
         cartItemListView.setDividerHeight(0);
         cartItemListView.setAdapter(activeOrderRowAdapter);
@@ -286,7 +284,7 @@ public class ShowCartFragment extends BaseFragment {
     private void emptyCart() {
         if (getActivity() == null) return;
         if (!DataUtil.isInternetAvailable(getActivity())) return;
-        trackEvent(TrackingAware.BASKET_EMPTY, null);
+        trackEvent(TrackingAware.BASKET_EMPTY_CLICKED, null);
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
         final SharedPreferences.Editor editor = prefer.edit();
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
@@ -306,7 +304,7 @@ public class ShowCartFragment extends BaseFragment {
                     showErrorMsg("Cart is already empty");
                 } else {
                     handler.sendEmptyMessage(cartEmptyApiResponseCallback.status,
-                            cartEmptyApiResponseCallback.message);
+                            cartEmptyApiResponseCallback.message, true);
                 }
                 editor.commit();
 
@@ -324,7 +322,7 @@ public class ShowCartFragment extends BaseFragment {
 
     private void getCartItems(String fulfillmentIds) {
         if (getActivity() == null) return;
-        if (!DataUtil.isInternetAvailable(getActivity())) return;
+        if (!DataUtil.isInternetAvailable(getActivity())) handler.sendOfflineError(true);
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
         final SharedPreferences.Editor editor = prefer.edit();
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
@@ -367,7 +365,7 @@ public class ShowCartFragment extends BaseFragment {
             public void failure(RetrofitError error) {
                 if (isSuspended()) return;
                 hideProgressView();
-                handler.handleRetrofitError(error);
+                handler.handleRetrofitError(error, true);
             }
         });
     }
@@ -427,6 +425,10 @@ public class ShowCartFragment extends BaseFragment {
     @Override
     public String getFragmentTxnTag() {
         return ShowCartFragment.class.getName();
+    }
+
+    public String getNavigationCtx() {
+        return TrackEventkeys.NAVIGATION_CTX_SHOW_BASKET;
     }
 
     @Override

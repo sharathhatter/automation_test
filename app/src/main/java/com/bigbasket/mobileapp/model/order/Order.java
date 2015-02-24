@@ -34,6 +34,12 @@ public class Order implements Parcelable {
     @SerializedName(Constants.ORDER_TYPE)
     private String orderType;
 
+    @SerializedName(Constants.VOUCHER)
+    private String voucher;
+
+    @SerializedName(Constants.PAYMENT_METHOD)
+    private String paymentMethod;
+
     private Address address;
 
     public Order(Parcel parcel) {
@@ -45,6 +51,10 @@ public class Order implements Parcelable {
         this.orderValue = parcel.readString();
         this.fulfillmentInfo = parcel.readParcelable(Order.class.getClassLoader());
         this.orderType = parcel.readString();
+        boolean _wasVoucherNull = parcel.readByte() == (byte) 1;
+        if (!_wasVoucherNull)
+            this.voucher = parcel.readString();
+        this.paymentMethod = parcel.readString();
         boolean _wasAddressNull = parcel.readByte() == (byte) 1;
         if (!_wasAddressNull) {
             address = parcel.readParcelable(Order.class.getClassLoader());
@@ -61,6 +71,11 @@ public class Order implements Parcelable {
         dest.writeString(this.orderValue != null ? this.orderValue : "0");
         dest.writeParcelable(this.fulfillmentInfo, flags);
         dest.writeString(this.orderType);
+        boolean _wasVoucherNull = voucher == null;
+        dest.writeByte(_wasVoucherNull ? (byte) 1 : (byte) 0);
+        if (!_wasVoucherNull)
+            dest.writeString(this.voucher);
+        dest.writeString(this.paymentMethod);
         boolean _wasAddressNull = address == null;
         dest.writeByte(_wasAddressNull ? (byte) 1 : (byte) 0);
         if (!_wasAddressNull) {
@@ -119,5 +134,13 @@ public class Order implements Parcelable {
 
     public String getOrderType() {
         return orderType;
+    }
+
+    public String getVoucher() {
+        return voucher;
+    }
+
+    public String getPaymentMethod() {
+        return paymentMethod;
     }
 }
