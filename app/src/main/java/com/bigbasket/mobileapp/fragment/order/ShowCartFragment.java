@@ -323,7 +323,7 @@ public class ShowCartFragment extends BaseFragment {
 
     private void getCartItems(String fulfillmentIds) {
         if (getActivity() == null) return;
-        if (!DataUtil.isInternetAvailable(getActivity())) return;
+        if (!DataUtil.isInternetAvailable(getActivity())) handler.sendOfflineError(true);
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
         final SharedPreferences.Editor editor = prefer.edit();
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
