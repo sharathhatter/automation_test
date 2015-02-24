@@ -61,8 +61,6 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
             }
         }
         loadProductDetail();
-        logProductDetailEvent();
-
     }
 
     private void logProductDetailEvent() {

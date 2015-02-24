@@ -236,7 +236,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
     }
 
     private void logBannerEvent() {
-        if (sectionItem == null || sectionItem.getTitle() == null) return;
+        if (sectionItem == null || sectionItem.getDestinationInfo()!=null) return;
         int index = 0;
         for (int i = 0; i < section.getSectionItems().size(); i++) {
             if (section.getSectionItems().get(i) == sectionItem)
@@ -245,7 +245,8 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
 
         HashMap<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.BANNER_ID, String.valueOf(index));
-        eventAttribs.put(TrackEventkeys.BANNER_SLUG, sectionItem.getTitle().getText());
+        eventAttribs.put(TrackEventkeys.BANNER_SLUG, sectionItem.getDestinationInfo().getDestinationSlug()+", "
+                +sectionItem.getDestinationInfo().getDestinationType());
         ((TrackingAware) context).trackEvent(TrackingAware.HOME_PAGE_BANNER_CLICKED, eventAttribs);
     }
 
