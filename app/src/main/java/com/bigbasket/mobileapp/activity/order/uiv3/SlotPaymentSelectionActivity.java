@@ -139,7 +139,6 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
     private void launchPlaceOrderActivity(OrderSummary orderSummary) {
         Intent intent = new Intent(this, PlaceOrderActivity.class);
         intent.putExtra(Constants.ORDER_REVIEW_SUMMARY, orderSummary);
-        intent.putExtra(Constants.PAYMENT_METHOD, mPaymentMethodSlug);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 

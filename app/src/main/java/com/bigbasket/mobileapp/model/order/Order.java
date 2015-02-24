@@ -37,6 +37,9 @@ public class Order implements Parcelable {
     @SerializedName(Constants.VOUCHER)
     private String voucher;
 
+    @SerializedName(Constants.PAYMENT_METHOD)
+    private String paymentMethod;
+
     private Address address;
 
     public Order(Parcel parcel) {
@@ -51,6 +54,7 @@ public class Order implements Parcelable {
         boolean _wasVoucherNull = parcel.readByte() == (byte) 1;
         if (!_wasVoucherNull)
             this.voucher = parcel.readString();
+        this.paymentMethod = parcel.readString();
         boolean _wasAddressNull = parcel.readByte() == (byte) 1;
         if (!_wasAddressNull) {
             address = parcel.readParcelable(Order.class.getClassLoader());
@@ -71,6 +75,7 @@ public class Order implements Parcelable {
         dest.writeByte(_wasVoucherNull ? (byte) 1 : (byte) 0);
         if (!_wasVoucherNull)
             dest.writeString(this.voucher);
+        dest.writeString(this.paymentMethod);
         boolean _wasAddressNull = address == null;
         dest.writeByte(_wasAddressNull ? (byte) 1 : (byte) 0);
         if (!_wasAddressNull) {
@@ -133,5 +138,9 @@ public class Order implements Parcelable {
 
     public String getVoucher() {
         return voucher;
+    }
+
+    public String getPaymentMethod() {
+        return paymentMethod;
     }
 }

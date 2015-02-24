@@ -199,7 +199,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
             intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_GENERIC_PRODUCT_LIST);
             intent.putParcelableArrayListExtra(Constants.PRODUCT_QUERY, nameValuePairs);
             if (!TextUtils.isEmpty(getSectionName()) || !TextUtils.isEmpty(getSectionItemName()))
-                intent.putExtra(TrackEventkeys.NAVIGATION_CTX, getSectionName() + "." + getSectionItemName());
+                intent.putExtra(TrackEventkeys.NAVIGATION_CTX, getSectionName() + "." + getSectionItemName());//todo Check with sid
             String title = sectionItem.getTitle() != null ? sectionItem.getTitle().getText() : null;
             if (!TextUtils.isEmpty(title)) {
                 intent.putExtra(Constants.TITLE, title);
@@ -215,17 +215,10 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
         if (section.getSectionType().equals(Section.BANNER)) {
             logBannerEvent();
         } else if (screenName.equals(SectionManager.HOME_PAGE)) {
-            logItemClickEvent(TrackingAware.HOME_PAGE_ITEM_CLICKED, true);
+            logItemClickEvent(TrackingAware.HOME_PAGE_ITEM_CLICKED);
         } else if (screenName.equals(SectionManager.MAIN_MENU)) {
-            logItemClickEvent(TrackingAware.MENU_ITEM_CLICKED, false);
+            logItemClickEvent(TrackingAware.MENU_ITEM_CLICKED);
         }
-        logSectionItemEvent();
-    }
-
-    private void logSectionItemEvent() {
-        HashMap<String, String> eventAttribs = new HashMap<>();
-        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_HOME_PAGE);
-        ((TrackingAware) context).trackEvent(getSectionItemName() + "Clicked", eventAttribs);
     }
 
     private String getSectionName() {
@@ -266,16 +259,9 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                                 sectionItem.getDescription().getText() : "" : "";
     }
 
-    private String getSectionType() {
-        if (section == null || TextUtils.isEmpty(section.getSectionType()))
-            return "";
-        return section.getSectionType();
-    }
-
-    private void logItemClickEvent(String trackAwareName, boolean isSectionType) {
+    private void logItemClickEvent(String trackAwareName) {
         HashMap<String, String> eventAttribs = new HashMap<>();
-        if (isSectionType) eventAttribs.put(TrackEventkeys.SECTION_TYPE, getSectionType());
-        else eventAttribs.put(TrackEventkeys.SECTION_NAME, getSectionName());
+        eventAttribs.put(TrackEventkeys.SECTION_TYPE, getSectionName());
         eventAttribs.put(TrackEventkeys.SECTION_ITEM, getSectionItemName());
         ((TrackingAware) context).trackEvent(trackAwareName, eventAttribs);
     }

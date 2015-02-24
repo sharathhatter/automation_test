@@ -129,7 +129,7 @@ public interface TrackingAware {
     public static final String BASKET_DECREMENT = "Basket.Decrement Clicked";
     public static final String BASKET_REMOVE = "Basket.Remove Clicked";
     public static final String BASKET_EMPTY_CLICKED = "Basket.Empty Clicked";
-    public static final String BASKET_VIEW_CLICKED = "Basket.View";
+    public static final String BASKET_VIEW_CLICKED = "Basket.View Clicked";
 
     //subCat
     public static final String CATEGORY_LANDING_SHOWN = "Category.Landing Shown";

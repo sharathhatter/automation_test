@@ -25,6 +25,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseContent;
 import com.bigbasket.mobileapp.fragment.order.OrderItemListFragment;
 import com.bigbasket.mobileapp.fragment.order.OrderSummaryFragment;
+import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.OnObservableScrollEvent;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.order.Order;
@@ -51,8 +52,7 @@ import retrofit.client.Response;
 
 public class PlaceOrderActivity extends BackButtonActivity implements OnObservableScrollEvent {
 
-    private String mPotentialOrderId, mPaymentMethod;
-    private SharedPreferences preferences;
+    private String mPotentialOrderId;
     private OrderSummary mOrderSummary;
 
     @Override
@@ -61,8 +61,7 @@ public class PlaceOrderActivity extends BackButtonActivity implements OnObservab
         setTitle(getString(R.string.placeorder));
 
         mOrderSummary = getIntent().getParcelableExtra(Constants.ORDER_REVIEW_SUMMARY);
-        mPaymentMethod = getIntent().getStringExtra(Constants.PAYMENT_METHOD);
-        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         mPotentialOrderId = preferences.getString(Constants.POTENTIAL_ORDER_ID, "");
         renderOrderSummary();
 
@@ -274,7 +273,7 @@ public class PlaceOrderActivity extends BackButtonActivity implements OnObservab
             map.put(TrackEventkeys.ORDER_TYPE, order.getOrderType());
             if (!TextUtils.isEmpty(order.getVoucher()))
                 map.put(TrackEventkeys.VOUCHER_NAME, order.getVoucher());
-            map.put(TrackEventkeys.PAYMENT_MODE, mPaymentMethod); //TODO: paymethod should come from server
+            map.put(TrackEventkeys.PAYMENT_MODE, order.getPaymentMethod());
             map.put(TrackEventkeys.POTENTIAL_ORDER, mPotentialOrderId);
             trackEvent(TrackingAware.CHECKOUT_ORDER_COMPLETE, map, null, null, true);
         }
@@ -282,6 +281,7 @@ public class PlaceOrderActivity extends BackButtonActivity implements OnObservab
         PayuResponse.clearTxnDetail(this);
         VoucherApplied.clearFromPreference(this);
         removePharmaPrescriptionId();
+        ((CartInfoAware)getCurrentActivity()).markBasketDirty();
         showOrderThankyou(orders);
     }
 

@@ -870,7 +870,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         ArrayList<SectionNavigationItem> sectionNavigationItems = getSectionNavigationItems();
 
         NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoRegular, sectionNavigationItems,
-                TrackEventkeys.NAVIGATION_CTX_MENU);
+                SectionManager.MAIN_MENU);
         mNavRecyclerView.setAdapter(navigationAdapter);
     }
 

@@ -121,7 +121,7 @@ public class ShowCartFragment extends BaseFragment {
         eventAttribs.put(TrackEventkeys.TOTAL_ITEMS_IN_BASKET, String.valueOf(cartSummary.getNoOfItems()));
         eventAttribs.put(TrackEventkeys.TOTAL_BASKET_VALUE, String.valueOf(cartSummary.getTotal()));
         eventAttribs.put(TrackEventkeys.TOTAL_BASKET_SAVING, String.valueOf(cartSummary.getSavings()));
-        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX);
+        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_TOPNAV);
         trackEvent(TrackingAware.BASKET_VIEW_CLICKED, eventAttribs);
     }
 
@@ -305,7 +305,7 @@ public class ShowCartFragment extends BaseFragment {
                     showErrorMsg("Cart is already empty");
                 } else {
                     handler.sendEmptyMessage(cartEmptyApiResponseCallback.status,
-                            cartEmptyApiResponseCallback.message);
+                            cartEmptyApiResponseCallback.message, true);
                 }
                 editor.commit();
 
@@ -366,7 +366,7 @@ public class ShowCartFragment extends BaseFragment {
             public void failure(RetrofitError error) {
                 if (isSuspended()) return;
                 hideProgressView();
-                handler.handleRetrofitError(error);
+                handler.handleRetrofitError(error, true);
             }
         });
     }
