@@ -276,7 +276,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
                 .build();
 
         ProductListRecyclerAdapter productListAdapter = new ProductListRecyclerAdapter(products, baseImgUrl,
-                productViewDisplayDataHolder, this, products.size(), getSourceName());
+                productViewDisplayDataHolder, this, products.size(), getNavigationCtx());
 
         productRecyclerView.setAdapter(productListAdapter);
 
@@ -377,7 +377,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
 
 
     @Override
-    public String getSourceName() {
-        return TrackEventkeys.PROMO_CAT;
+    public String getNavigationCtx() {
+        return TrackEventkeys.NAVIGATION_CTX_PROMO;
     }
 }

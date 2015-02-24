@@ -167,6 +167,8 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
+                logHomeScreenEvent(TrackingAware.MENU_CLICKED, TrackEventkeys.NAVIGATION_CTX,
+                        TrackEventkeys.NAVIGATION_CTX_TOPNAV); //todo check with sid
                 toolbar.setTitle("  " + mTitle);
                 invalidateOptionsMenu();
             }
@@ -175,7 +177,8 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
                 logHomeScreenEvent(TrackingAware.MENU_CLICKED, TrackEventkeys.NAVIGATION_CTX,
-                        TrackEventkeys.NAVIGATION_CTX_TOPNAV);
+                        TrackEventkeys.NAVIGATION_CTX_TOPNAV); //todo check with sid
+                trackEvent(TrackingAware.MENU_SHOWN, null);
                 toolbar.setTitle("  " + mDrawerTitle);
                 invalidateOptionsMenu();
             }
@@ -230,17 +233,6 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             // Setting the search listener
             SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
             searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-            searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
-                @Override
-                public void onFocusChange(View v, boolean hasFocus) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-                        if (!hasFocus) {
-                            searchMenuItem.collapseActionView();
-                            searchView.setQuery("", false);
-                        }
-                    }
-                }
-            });
         } else {
             menuInflater.inflate(R.menu.action_menu_pre_honeycomb, menu);
         }
@@ -401,18 +393,15 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
                 nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.NOW_AT_BB.get()));
                 productListArgs.putParcelableArrayList(Constants.PRODUCT_QUERY, nameValuePairs);
-                productListArgs.putString(Constants.TRACK_EVENT_NAME, TrackingAware.NOW_AT_BB);
                 productListFragment.setArguments(productListArgs);
                 addToMainLayout(productListFragment);
                 break;
-            case FragmentCodes.START_NEW_AT_BB:
-                trackEvent(TrackingAware.NEW_AT_BB, null);
+            case FragmentCodes.START_NEW_AT_BB: //todo check with sid from where this will be called
                 productListFragment = new GenericProductListFragment();
                 productListArgs = new Bundle();
                 nameValuePairs = new ArrayList<>();
                 nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.NEW_AT_BB.get()));
                 productListArgs.putParcelableArrayList(Constants.PRODUCT_QUERY, nameValuePairs);
-                productListArgs.putString(Constants.TRACK_EVENT_NAME, TrackingAware.NEW_AT_BB);
                 productListFragment.setArguments(productListArgs);
                 addToMainLayout(productListFragment);
                 break;
@@ -422,7 +411,6 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 nameValuePairs = new ArrayList<>();
                 nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.BUNDLE_PACK.get()));
                 productListArgs.putParcelableArrayList(Constants.PRODUCT_QUERY, nameValuePairs);
-                productListArgs.putString(Constants.TRACK_EVENT_NAME, TrackingAware.BUNDLE_PACK);
                 productListFragment.setArguments(productListArgs);
                 addToMainLayout(productListFragment);
                 break;
@@ -451,6 +439,8 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 if (nameValuePairs != null && !nameValuePairs.isEmpty()) {
                     productListFragment = new GenericProductListFragment();
                     productListArgs = new Bundle();
+                    productListArgs.putString(TrackEventkeys.NAVIGATION_CTX,
+                            getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX));
                     productListArgs.putParcelableArrayList(Constants.PRODUCT_QUERY, nameValuePairs);
                     if (!TextUtils.isEmpty(title)) {
                         productListArgs.putString(Constants.TITLE, title);
@@ -701,6 +691,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             String query = intent.getStringExtra(SearchManager.QUERY);
             if (!TextUtils.isEmpty(query)) {
                 doSearch(query);
+                logSearchEvent(query);
             }
         } else if (Intent.ACTION_VIEW.equals(intent.getAction()) && savedInstanceState == null) {
             // User has selected a suggestion and this is not due to a screen rotation
@@ -723,6 +714,13 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 startFragment();
             }
         }
+    }
+
+    private void logSearchEvent(String query) {
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.QUERY, query);
+        map.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_TOPNAV);
+        trackEvent(TrackingAware.SEARCH, map);
     }
 
     private void launchCategoryProducts(String categoryName, String categoryUrl,
@@ -753,7 +751,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ACCOUNT_SETTING);
             startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         }
-        trackEvent(TrackingAware.MYACCOUNT_CLICKED, null);
+        trackEvent(TrackingAware.MY_ACCOUNT_CLICKED, null);
     }
 
     private void launchLogin(String navigationCtx) {
@@ -871,7 +869,8 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
 
         ArrayList<SectionNavigationItem> sectionNavigationItems = getSectionNavigationItems();
 
-        NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoRegular, sectionNavigationItems);
+        NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoRegular, sectionNavigationItems,
+                SectionManager.MAIN_MENU);
         mNavRecyclerView.setAdapter(navigationAdapter);
     }
 

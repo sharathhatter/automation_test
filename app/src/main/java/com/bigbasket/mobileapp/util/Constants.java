@@ -262,6 +262,7 @@ public class Constants {
     public static final String VALIDITY = "validity";
     public static final String CAN_APPLY = "can_apply";
     public static final String VOUCHERS = "vouchers";
+    public static final String VOUCHER = "voucher";
     public static final String IS_MAPPED = "is_mapped";
     public static final String LAT = "lat";
     public static final String LNG = "lng";
@@ -548,6 +549,7 @@ public class Constants {
     public static final String NEWS_PREF = "news";
     public static final String DATE_PICKER = "datePicker";
     public static final String OTP_DIALOG_FLAG = "otp_dialog_flag";
+    public static final String IS_UPDATE_PROFILE = "isUpdateFrom";
     //public static final String ERROR_AREA_PIN_CODE = "errorAreaPinCode";
 
     public static final String PAYMENT_TYPES = "payment_types";

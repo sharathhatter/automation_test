@@ -28,14 +28,16 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
     protected HashMap<Integer, Renderer> rendererHashMap;
     protected Typeface typeface;
     protected T context;
+    protected String screenName;
 
     public CarouselAdapter(T context, Section section,
-                           HashMap<Integer, Renderer> rendererHashMap, Typeface typeface) {
+                           HashMap<Integer, Renderer> rendererHashMap, Typeface typeface, String screenName) {
         this.section = section;
         this.context = context;
         this.sectionItems = section.getSectionItems();
         this.rendererHashMap = rendererHashMap;
         this.typeface = typeface;
+        this.screenName = screenName;
     }
 
     @Override
@@ -188,9 +190,10 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         @Override
         public void onClick(View v) {
+
             OnSectionItemClickListener sectionItemClickListener =
                     new OnSectionItemClickListener<>(((ActivityAware) context).getCurrentActivity(),
-                            section, sectionItems.get(getPosition()));
+                            section, sectionItems.get(getPosition()), screenName);
             sectionItemClickListener.onClick(v);
         }
     }

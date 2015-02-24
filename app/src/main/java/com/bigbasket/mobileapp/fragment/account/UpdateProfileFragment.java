@@ -151,7 +151,6 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware,
         if (!DataUtil.isInternetAvailable(getActivity())) {
             return;
         }
-        trackEvent(TrackingAware.MY_ACCOUNT_UPDATE_PROFILE_SELECTED, null);
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.getMemberProfileData(new Callback<UpdateProfileOldApiResponse>() {
@@ -223,7 +222,7 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware,
 
     private void validateMobileNumber(boolean txtErrorValidateNumberVisibility, String errorMsg) {
         if (otpValidationDialogFragment == null) {
-            otpValidationDialogFragment = OTPValidationDialogFragment.newInstance();
+            otpValidationDialogFragment = OTPValidationDialogFragment.newInstance(true);
         }
         if (otpValidationDialogFragment.isVisible()) {
             if (txtErrorValidateNumberVisibility) {
@@ -399,8 +398,6 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware,
                         BaseActivity.hideKeyboard(((BaseActivity) getActivity()), otpValidationDialogFragment.getView());
                     }
                     updatePreferenceData();
-                    trackEvent(TrackingAware.MY_ACCOUNT_UPDATE_PROFILE_SUCCESS, null);
-
                 } else {
                     int errorCode = memberProfileDataCallback.getErrorTypeAsInt();
                     if (errorCode == ApiErrorCodes.NUMBER_IN_USE ||

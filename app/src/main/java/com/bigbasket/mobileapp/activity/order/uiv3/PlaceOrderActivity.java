@@ -9,6 +9,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -24,6 +25,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseContent;
 import com.bigbasket.mobileapp.fragment.order.OrderItemListFragment;
 import com.bigbasket.mobileapp.fragment.order.OrderSummaryFragment;
+import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.OnObservableScrollEvent;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.order.Order;
@@ -51,7 +53,6 @@ import retrofit.client.Response;
 public class PlaceOrderActivity extends BackButtonActivity implements OnObservableScrollEvent {
 
     private String mPotentialOrderId;
-    private SharedPreferences preferences;
     private OrderSummary mOrderSummary;
 
     @Override
@@ -60,7 +61,7 @@ public class PlaceOrderActivity extends BackButtonActivity implements OnObservab
         setTitle(getString(R.string.placeorder));
 
         mOrderSummary = getIntent().getParcelableExtra(Constants.ORDER_REVIEW_SUMMARY);
-        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         mPotentialOrderId = preferences.getString(Constants.POTENTIAL_ORDER_ID, "");
         renderOrderSummary();
 
@@ -203,7 +204,8 @@ public class PlaceOrderActivity extends BackButtonActivity implements OnObservab
         map.put(TrackEventkeys.POTENTIAL_ORDER, mPotentialOrderId);
         switch (resultCode) {
             case Constants.PAYU_FAILED:
-                map.put(TrackEventkeys.PAYMENT_GATEWAY_FAILURE_REASON, "");
+                map.put(TrackEventkeys.FAILURE_REASON, "");
+                trackEvent(TrackingAware.CHECKOUT_PAYMENT_GATEWAY_FAILURE, map);
                 //TODO: Siddharth while fixing payu, track failure reason
                 setResult(resultCode);
                 finish();
@@ -242,7 +244,7 @@ public class PlaceOrderActivity extends BackButtonActivity implements OnObservab
                     PayuResponse.clearTxnDetail(this);
                     map.put(TrackEventkeys.EXPECTED_AMOUNT, PayuResponse.getInstance(getCurrentActivity()).getAmount());
                     map.put(TrackEventkeys.ORDER_AMOUNT, UIUtil.formatAsMoney(mOrderSummary.getOrderDetails().getFinalTotal()));
-                    trackEvent(TrackingAware.CHECKOUT_PLACE_ORDER_AMOUNT_MISMATCH, null);
+                    trackEvent(TrackingAware.CHECKOUT_PLACE_ORDER_AMOUNT_MISMATCH, map);
                     if (mOrderSummary.getOrderDetails().getPaymentMethod().equals(Constants.CREDIT_CARD)) {
                         startCreditCardTxnActivity(mOrderSummary.getOrderDetails().getFinalTotal());
                     } else {
@@ -262,14 +264,16 @@ public class PlaceOrderActivity extends BackButtonActivity implements OnObservab
     }
 
     private void postOrderCreation(ArrayList<Order> orders) {
+        if (orders == null || orders.size() == 0) return;
         for (Order order : orders) {
             HashMap<String, String> map = new HashMap<>();
             map.put(TrackEventkeys.ORDER_ID, order.getOrderId());
             map.put(TrackEventkeys.ORDER_AMOUNT, order.getOrderValue());
             map.put(TrackEventkeys.ORDER_NUMBER, order.getOrderNumber());
             map.put(TrackEventkeys.ORDER_TYPE, order.getOrderType());
-            map.put(TrackEventkeys.VOUCHER_NAME, preferences.getString(Constants.EVOUCHER_NAME, ""));
-            map.put(TrackEventkeys.PAYMENT_MODE, preferences.getString(Constants.PAYMENT_METHOD, ""));
+            if (!TextUtils.isEmpty(order.getVoucher()))
+                map.put(TrackEventkeys.VOUCHER_NAME, order.getVoucher());
+            map.put(TrackEventkeys.PAYMENT_MODE, order.getPaymentMethod());
             map.put(TrackEventkeys.POTENTIAL_ORDER, mPotentialOrderId);
             trackEvent(TrackingAware.CHECKOUT_ORDER_COMPLETE, map, null, null, true);
         }
@@ -277,6 +281,7 @@ public class PlaceOrderActivity extends BackButtonActivity implements OnObservab
         PayuResponse.clearTxnDetail(this);
         VoucherApplied.clearFromPreference(this);
         removePharmaPrescriptionId();
+        ((CartInfoAware)getCurrentActivity()).markBasketDirty();
         showOrderThankyou(orders);
     }
 
@@ -305,6 +310,6 @@ public class PlaceOrderActivity extends BackButtonActivity implements OnObservab
 
     @Override
     public String getScreenTag() {
-        return TrackEventkeys.ORDER_REVIEW_SUMMARY_SCREEN;
+        return null;
     }
 }

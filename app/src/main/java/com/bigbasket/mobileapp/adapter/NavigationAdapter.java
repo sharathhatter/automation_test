@@ -24,11 +24,14 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private Context context;
     private Typeface typeface;
     private ArrayList<SectionNavigationItem> sectionNavigationItems;
+    private String screenName;
 
-    public NavigationAdapter(Context context, Typeface typeface, ArrayList<SectionNavigationItem> sectionNavigationItems) {
+    public NavigationAdapter(Context context, Typeface typeface, ArrayList<SectionNavigationItem>
+            sectionNavigationItems, String screenName) {
         this.context = context;
         this.typeface = typeface;
         this.sectionNavigationItems = sectionNavigationItems;
+        this.screenName = screenName;
     }
 
     @Override
@@ -119,7 +122,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             SectionNavigationItem sectionNavigationItem = sectionNavigationItems.get(getPosition());
             if (!sectionNavigationItem.isHeader()) {
                 new OnSectionItemClickListener<>(context, sectionNavigationItem.getSection(),
-                        sectionNavigationItem.getSectionItem()).onClick(v);
+                        sectionNavigationItem.getSectionItem(), screenName).onClick(v);
             }
         }
     }

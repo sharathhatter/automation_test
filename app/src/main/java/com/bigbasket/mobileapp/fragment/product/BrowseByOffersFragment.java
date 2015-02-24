@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
-import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
 import com.bigbasket.mobileapp.util.Constants;
@@ -39,11 +38,10 @@ public class BrowseByOffersFragment extends ProductListAwareFragment {
     @Override
     public void updateData() {
         super.updateData();
-        trackEvent(TrackingAware.BROWSE_DISCOUNTS, null);
     }
 
     @Override
-    public String getSourceName() {
-        return TrackEventkeys.BROWSE_BY_OFFERS;
+    public String getNavigationCtx() {
+        return TrackEventkeys.NAVIGATION_CTX_DISCOUNT;
     }
 }

@@ -307,17 +307,12 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
                         BaseActivity.hideKeyboard(getCurrentActivity(), otpValidationDialogFragment.getView());
                     }
 
-//                    if (mFromAccountPage) {
-//                        if (address == null)
-//                            trackEvent(TrackingAware.MY_ACCOUNT_ADDRESS_CREATED, null);
-//                        else
-//                            trackEvent(TrackingAware.MY_ACCOUNT_ADDRESS_EDITED, null);
-//                    } else {
-//                        HashMap<String, String> map = new HashMap<>();
-//                        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
-//                        map.put(TrackEventkeys.POTENTIAL_ORDER, prefer.getString(Constants.POTENTIAL_ORDER_ID, null));
-//                        trackEvent(TrackingAware.CHECKOUT_ADDRESS_CREATED, map);
-//                    }
+                    if (!mFromAccountPage) {
+                        HashMap<String, String> map = new HashMap<>();
+                        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
+                        map.put(TrackEventkeys.POTENTIAL_ORDER, prefer.getString(Constants.POTENTIAL_ORDER_ID, null));
+                        trackEvent(TrackingAware.CHECKOUT_ADDRESS_CREATED, map);
+                    }
 
                     break;
                 case ApiErrorCodes.NUMBER_IN_USE:
@@ -392,7 +387,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
 
     private void validateMobileNumber(boolean txtErrorValidateNumberVisibility, String errorMsg) {
         if (otpValidationDialogFragment == null) {
-            otpValidationDialogFragment = OTPValidationDialogFragment.newInstance();
+            otpValidationDialogFragment = OTPValidationDialogFragment.newInstance(false);
         }
         if (otpValidationDialogFragment.isVisible()) {
             if (txtErrorValidateNumberVisibility) {

@@ -46,6 +46,7 @@ public class OrderThankYouFragment extends BaseFragment implements InvoiceDataAw
         super.onActivityCreated(savedInstanceState);
         ArrayList<Order> orders = getArguments().getParcelableArrayList(Constants.ORDERS);
         showThankyou(orders);
+        trackEvent(TrackingAware.THANK_YOU_PAGE_SHOWN, null);
     }
 
     private void showThankyou(ArrayList<Order> orders) {
@@ -102,7 +103,7 @@ public class OrderThankYouFragment extends BaseFragment implements InvoiceDataAw
         lblViewInvoice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                trackEvent(TrackingAware.ORDER_VIEW_INVOICE, null);
+                trackEvent(TrackingAware.THANK_YOU_VIEW_INVOICE_CLICKED, null);
                 showInvoice(order);
             }
         });
@@ -136,6 +137,7 @@ public class OrderThankYouFragment extends BaseFragment implements InvoiceDataAw
     public void onDisplayOrderInvoice(OrderInvoice orderInvoice) {
         Intent orderDetailIntent = new Intent(getActivity(), OrderDetailActivity.class);
         orderDetailIntent.putExtra(Constants.ORDER_REVIEW_SUMMARY, orderInvoice);
+        orderDetailIntent.putExtra(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_THANK_YOU_PAGE);
         startActivityForResult(orderDetailIntent, NavigationCodes.GO_TO_HOME);
     }
 

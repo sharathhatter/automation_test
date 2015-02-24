@@ -249,9 +249,8 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
 
     public void onShopFromThisOrder(String orderNumber) {
         Intent intent = new Intent(this, BackButtonActivity.class);
-        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_PRODUCT_LIST_FRAGMENT); //todo comming from home page
-        intent.putExtra(TrackEventkeys.NAVIGATION_CTX, mOrderType.equals(getString(R.string.active_label)) ?
-                TrackEventkeys.NAVIGATION_CTX_ACTIVE_ORDER : TrackEventkeys.NAVIGATION_CTX_PAST_ORDER);
+        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_PRODUCT_LIST_FRAGMENT);
+        intent.putExtra(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_HOME_PAGE);
         intent.putExtra(Constants.ORDER_ID, orderNumber);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }

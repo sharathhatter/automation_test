@@ -220,6 +220,15 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
         });
     }
 
+    private void logSlotPaymentEvent(String potentialOrderId) {
+
+
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.POTENTIAL_ORDER, potentialOrderId);
+        map.put(TrackEventkeys.PAYMENT_MODE, mPaymentMethodSlug);
+        trackEvent(TrackingAware.CHECKOUT_ORDER_REVIEW_CLICKED, map);
+    }
+
     private void launchOrderReview() {
         if (mSelectedSlotType == null || mSelectedSlotType.size() == 0) {
             showAlertDialog(null, getString(R.string.selectAllSlotsErrMsg));
@@ -229,13 +238,9 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
             showAlertDialog(null, getString(R.string.pleaseChoosePaymentMethod));
             return;
         }
-
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String potentialOrderId = preferences.getString(Constants.POTENTIAL_ORDER_ID, null);
-        HashMap<String, String> map = new HashMap<>();
-        map.put(TrackEventkeys.POTENTIAL_ORDER, potentialOrderId);
-        map.put(TrackEventkeys.PAYMENT_MODE, mPaymentMethodSlug);
-        trackEvent(TrackingAware.CHECKOUT_PAYMENT_CHOSEN, map);
+        logSlotPaymentEvent(potentialOrderId);
 
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
@@ -344,9 +349,6 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
                     } catch (IllegalArgumentException e) {
                         return;
                     }
-                    SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
-                    editor.putString(Constants.EVOUCHER_NAME, voucherCode);
-                    editor.commit();
                     HashMap<String, String> map = new HashMap<>();
                     map.put(TrackEventkeys.POTENTIAL_ORDER, mPotentialOrderId);
                     map.put(TrackEventkeys.VOUCHER_NAME, voucherCode);
@@ -361,16 +363,16 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
                                     voucherMsg = postVoucherApiResponse.evoucherMsg;
                                 } else {
                                     voucherMsg = "eVoucher has been successfully applied";
+                                    trackEvent(TrackingAware.CHECKOUT_VOUCHER_APPLIED, map);
                                 }
                                 showAlertDialog(voucherMsg);
                             }
                             onVoucherSuccessfullyApplied(voucherCode);
-                            trackEvent(TrackingAware.CHECKOUT_VOUCHER_APPLIED, map);
                             break;
                         default:
                             handler.sendEmptyMessage(postVoucherApiResponse.getErrorTypeAsInt(), postVoucherApiResponse.message);
-                            map.put(TrackEventkeys.VOUCHER_FAILURE_REASON, postVoucherApiResponse.message);
-                            trackEvent(TrackingAware.CHECKOUT_VOUCHER_FAILED, null);
+                            map.put(TrackEventkeys.FAILURE_REASON, postVoucherApiResponse.message);
+                            trackEvent(TrackingAware.CHECKOUT_VOUCHER_FAILED, map);
                             break;
                     }
                 }
@@ -481,6 +483,6 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
 
     @Override
     public String getScreenTag() {
-        return TrackEventkeys.SLOT_SELECTION_SCREEN;
+        return null;
     }
 }
