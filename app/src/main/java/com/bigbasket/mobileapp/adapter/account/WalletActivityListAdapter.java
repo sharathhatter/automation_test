@@ -79,7 +79,7 @@ public class WalletActivityListAdapter<T> extends BaseAdapter {
         String primaryReason = walletDataItems.get(position).getPrimary_reason();
 
         String prefixEndBal = (((ActivityAware) ctx)).getCurrentActivity().getString(R.string.endingBal) + " `";
-        String mrpStrEndBal = getDecimalAmount(endingBal) + " ";
+        String mrpStrEndBal = getDecimalAmount(endingBal) + "";
         int prefixEndBalLen = prefixEndBal.length();
         SpannableString spannableEndingBal = new SpannableString(prefixEndBal + mrpStrEndBal);
 
