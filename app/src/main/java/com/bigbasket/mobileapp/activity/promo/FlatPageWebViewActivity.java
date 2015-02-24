@@ -15,6 +15,7 @@ import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
+import com.bigbasket.mobileapp.view.BBWebView;
 
 
 public class FlatPageWebViewActivity extends BackButtonActivity {
@@ -35,10 +36,11 @@ public class FlatPageWebViewActivity extends BackButtonActivity {
         }
         progressBar = (ProgressBar) findViewById(R.id.progressbar_Horizontal);
 
-        WebView wevViewFulfillmentPage = (WebView) findViewById(R.id.webViewFulfillmentPage);
+        BBWebView wevViewFulfillmentPage = (BBWebView) findViewById(R.id.webViewFulfillmentPage);
         wevViewFulfillmentPage.getSettings().setJavaScriptEnabled(true);
+        wevViewFulfillmentPage.getSettings().setDomStorageEnabled(true);
         if (webViewUrl != null) {
-            wevViewFulfillmentPage.loadUrl(webViewUrl + "?source=app"); // To get responsive template
+            wevViewFulfillmentPage.loadUrl(webViewUrl); // To get responsive template
             wevViewFulfillmentPage.setWebViewClient(new FulFillmentWebViewClient());
         }
 
