@@ -22,7 +22,6 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.order.uiv3.AvailableVoucherListActivity;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.OnApplyVoucherListener;
-import com.bigbasket.mobileapp.interfaces.OnObservableScrollEvent;
 import com.bigbasket.mobileapp.interfaces.PostVoucherAppliedListener;
 import com.bigbasket.mobileapp.interfaces.SelectedPaymentAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
@@ -34,9 +33,6 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
-import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
-import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
-import com.github.ksoichiro.android.observablescrollview.ScrollState;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -242,27 +238,6 @@ public class PaymentSelectionFragment extends BaseFragment implements PostVouche
         } else {
             onVoucherRemoved();
         }
-        ObservableScrollView scrollViewPaymentOption = (ObservableScrollView) base.findViewById(R.id.scrollViewPaymentOption);
-        scrollViewPaymentOption.setScrollViewCallbacks(new ObservableScrollViewCallbacks() {
-            @Override
-            public void onScrollChanged(int i, boolean b, boolean b2) {
-
-            }
-
-            @Override
-            public void onDownMotionEvent() {
-
-            }
-
-            @Override
-            public void onUpOrCancelMotionEvent(ScrollState scrollState) {
-                if (scrollState == ScrollState.UP) {
-                    ((OnObservableScrollEvent) getActivity()).onScrollUp();
-                } else if (scrollState == ScrollState.DOWN) {
-                    ((OnObservableScrollEvent) getActivity()).onScrollDown();
-                }
-            }
-        });
         mLblTransactionFailed = (TextView) base.findViewById(R.id.lblTransactionFailed);
         mTxtTransactionFailureReason = (TextView) base.findViewById(R.id.txtTransactionFailedReason);
         mLblSelectAnotherMethod = (TextView) base.findViewById(R.id.lblSelectAnotherMethod);

@@ -30,14 +30,13 @@ import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
 import com.bigbasket.mobileapp.task.uiv3.ProductListTask;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListDoAddDeleteTask;
+import com.bigbasket.mobileapp.util.BBObservableScrollViewCallbacks;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.ShoppingListNamesDialog;
 import com.bigbasket.mobileapp.view.uiv3.SortProductDialog;
 import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
-import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
-import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -159,7 +158,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         }
 
         // Set product-list header view
-        View headerView = getActivity().getLayoutInflater().inflate(R.layout.uiv3_product_list_header, contentView, false);
+        final View headerView = getActivity().getLayoutInflater().inflate(R.layout.uiv3_product_list_header, contentView, false);
         LinearLayout layoutFilterSort = (LinearLayout) headerView.findViewById(R.id.layoutFilterSort);
 
         TextView txtFilterBy = (TextView) headerView.findViewById(R.id.txtFilterBy);
@@ -228,27 +227,24 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
 
         productRecyclerView.setAdapter(mProductListRecyclerAdapter);
 
+        productRecyclerView.setScrollViewCallbacks(new BBObservableScrollViewCallbacks(productRecyclerView) {
+            @Override
+            public void showItem() {
+                if (sectionView != null) {
+                    sectionView.setVisibility(View.VISIBLE);
+                }
+                headerView.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void hideItem() {
+                if (sectionView != null) {
+                    sectionView.setVisibility(View.GONE);
+                }
+                headerView.setVisibility(View.GONE);
+            }
+        });
         if (sectionView != null) {
-            productRecyclerView.setScrollViewCallbacks(new ObservableScrollViewCallbacks() {
-                @Override
-                public void onScrollChanged(int i, boolean b, boolean b2) {
-
-                }
-
-                @Override
-                public void onDownMotionEvent() {
-
-                }
-
-                @Override
-                public void onUpOrCancelMotionEvent(ScrollState scrollState) {
-                    if (scrollState == ScrollState.UP) {
-                        sectionView.setVisibility(View.GONE);
-                    } else {
-                        sectionView.setVisibility(View.VISIBLE);
-                    }
-                }
-            });
             contentView.addView(sectionView);
         }
         contentView.addView(headerView);

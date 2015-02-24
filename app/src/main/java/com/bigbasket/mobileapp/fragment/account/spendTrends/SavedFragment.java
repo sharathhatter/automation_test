@@ -20,7 +20,6 @@ public class SavedFragment extends BaseSpendTrendsFragment {
                 getParcelableArrayList(Constants.RANGE_DATA);
         String categoryName = getArguments().getString(Constants.TOP_CATEGORY_NAME);
         SpendTrendSummary summary = getArguments().getParcelable(Constants.SUMMARY);
-        initializeScroll();
         displayBarChart(filteredSpentSavedRangeData, categoryName, summary);
     }
 

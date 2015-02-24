@@ -8,7 +8,6 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,7 +30,6 @@ import com.bigbasket.mobileapp.apiservice.models.response.PostVoucherApiResponse
 import com.bigbasket.mobileapp.fragment.order.PaymentSelectionFragment;
 import com.bigbasket.mobileapp.fragment.order.SlotSelectionFragment;
 import com.bigbasket.mobileapp.interfaces.OnApplyVoucherListener;
-import com.bigbasket.mobileapp.interfaces.OnObservableScrollEvent;
 import com.bigbasket.mobileapp.interfaces.PostVoucherAppliedListener;
 import com.bigbasket.mobileapp.interfaces.SelectedPaymentAware;
 import com.bigbasket.mobileapp.interfaces.SelectedSlotAware;
@@ -59,7 +57,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class SlotPaymentSelectionActivity extends BackButtonActivity
-        implements SelectedSlotAware, SelectedPaymentAware, OnObservableScrollEvent,
+        implements SelectedSlotAware, SelectedPaymentAware,
         OnApplyVoucherListener {
 
     private ArrayList<SelectedSlotType> mSelectedSlotType;
@@ -307,22 +305,6 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
     protected void onPause() {
         super.onPause();
         mPayuFailureReason = null;
-    }
-
-    @Override
-    public void onScrollUp() {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar.isShowing()) {
-            actionBar.hide();
-        }
-    }
-
-    @Override
-    public void onScrollDown() {
-        ActionBar actionBar = getSupportActionBar();
-        if (!actionBar.isShowing()) {
-            actionBar.show();
-        }
     }
 
     @Override

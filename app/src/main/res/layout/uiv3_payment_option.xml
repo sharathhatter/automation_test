@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<com.github.ksoichiro.android.observablescrollview.ObservableScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/scrollViewPaymentOption"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -239,4 +239,4 @@
 
         </LinearLayout>
     </FrameLayout>
-</com.github.ksoichiro.android.observablescrollview.ObservableScrollView>
+</ScrollView>

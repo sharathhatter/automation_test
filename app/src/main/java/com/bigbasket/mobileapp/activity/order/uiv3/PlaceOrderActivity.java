@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -24,7 +23,6 @@ import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseContent;
 import com.bigbasket.mobileapp.fragment.order.OrderItemListFragment;
 import com.bigbasket.mobileapp.fragment.order.OrderSummaryFragment;
-import com.bigbasket.mobileapp.interfaces.OnObservableScrollEvent;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.OrderSummary;
@@ -48,7 +46,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class PlaceOrderActivity extends BackButtonActivity implements OnObservableScrollEvent {
+public class PlaceOrderActivity extends BackButtonActivity {
 
     private String mPotentialOrderId;
     private SharedPreferences preferences;
@@ -285,22 +283,6 @@ public class PlaceOrderActivity extends BackButtonActivity implements OnObservab
         invoiceIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_THANKYOU);
         invoiceIntent.putExtra(Constants.ORDERS, orders);
         startActivityForResult(invoiceIntent, NavigationCodes.GO_TO_HOME);
-    }
-
-    @Override
-    public void onScrollUp() {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar.isShowing()) {
-            actionBar.hide();
-        }
-    }
-
-    @Override
-    public void onScrollDown() {
-        ActionBar actionBar = getSupportActionBar();
-        if (!actionBar.isShowing()) {
-            actionBar.show();
-        }
     }
 
     @Override

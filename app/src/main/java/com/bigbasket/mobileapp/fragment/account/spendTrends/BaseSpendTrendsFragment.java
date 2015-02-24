@@ -11,12 +11,8 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
-import com.bigbasket.mobileapp.interfaces.OnObservableScrollEvent;
 import com.bigbasket.mobileapp.model.account.spendTrends.SpendTrendSummary;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
-import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
-import com.github.ksoichiro.android.observablescrollview.ScrollState;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -35,38 +31,6 @@ public abstract class BaseSpendTrendsFragment extends AbstractFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.uiv3_spend_trends_chart, container, false);
-    }
-
-    public ObservableScrollView getObservableScrollView() {
-        assert getView() != null;
-        return (ObservableScrollView) getView().findViewById(R.id.scrollViewSpendTrends);
-    }
-
-    public void initializeScroll() {
-        if (getActivity() == null || getView() == null) return;
-
-        final ObservableScrollView scrollViewSpendTrends = getObservableScrollView();
-
-        scrollViewSpendTrends.setScrollViewCallbacks(new ObservableScrollViewCallbacks() {
-            @Override
-            public void onScrollChanged(int i, boolean b, boolean b2) {
-
-            }
-
-            @Override
-            public void onDownMotionEvent() {
-
-            }
-
-            @Override
-            public void onUpOrCancelMotionEvent(ScrollState scrollState) {
-                if (scrollState == ScrollState.UP) {
-                    ((OnObservableScrollEvent) getActivity()).onScrollUp();
-                } else if (scrollState == ScrollState.DOWN) {
-                    ((OnObservableScrollEvent) getActivity()).onScrollDown();
-                }
-            }
-        });
     }
 
     public void displayBarChart(String[] xAxisLabels, int[] yAxisValue,

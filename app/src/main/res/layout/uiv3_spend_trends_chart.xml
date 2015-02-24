@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<com.github.ksoichiro.android.observablescrollview.ObservableScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/scrollViewSpendTrends"
     android:layout_width="match_parent"
@@ -113,4 +113,4 @@
 
         </LinearLayout>
     </android.support.v7.widget.CardView>
-</com.github.ksoichiro.android.observablescrollview.ObservableScrollView>
+</ScrollView>

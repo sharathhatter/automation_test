@@ -17,16 +17,12 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.fragment.base.AbstractOrderSummaryFragment;
-import com.bigbasket.mobileapp.interfaces.OnObservableScrollEvent;
 import com.bigbasket.mobileapp.model.order.CreditDetails;
 import com.bigbasket.mobileapp.model.order.OrderDetails;
 import com.bigbasket.mobileapp.model.order.OrderSummary;
 import com.bigbasket.mobileapp.model.slot.SlotGroup;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
-import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
-import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
-import com.github.ksoichiro.android.observablescrollview.ScrollState;
 
 
 public class OrderSummaryFragment extends AbstractOrderSummaryFragment {
@@ -137,27 +133,6 @@ public class OrderSummaryFragment extends AbstractOrderSummaryFragment {
                 asRupeeSpannable(orderDetails.getFinalTotal()), orderTotalLabelColor, orderTotalValueColor);
         layoutOrderSummaryInfo.addView(finalTotalRow);
 
-        ObservableScrollView scrollViewOrderReview = (ObservableScrollView) base.findViewById(R.id.scrollViewOrderReview);
-        scrollViewOrderReview.setScrollViewCallbacks(new ObservableScrollViewCallbacks() {
-            @Override
-            public void onScrollChanged(int i, boolean b, boolean b2) {
-
-            }
-
-            @Override
-            public void onDownMotionEvent() {
-
-            }
-
-            @Override
-            public void onUpOrCancelMotionEvent(ScrollState scrollState) {
-                if (scrollState == ScrollState.UP) {
-                    ((OnObservableScrollEvent) getActivity()).onScrollUp();
-                } else if (scrollState == ScrollState.DOWN) {
-                    ((OnObservableScrollEvent) getActivity()).onScrollDown();
-                }
-            }
-        });
         hideProgressView();
         contentView.addView(base);
     }

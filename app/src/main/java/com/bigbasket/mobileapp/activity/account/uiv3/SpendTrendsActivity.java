@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.Menu;
@@ -23,7 +22,6 @@ import com.bigbasket.mobileapp.fragment.account.spendTrends.CategorySpentFragmen
 import com.bigbasket.mobileapp.fragment.account.spendTrends.SavedFragment;
 import com.bigbasket.mobileapp.fragment.account.spendTrends.SpentFragment;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
-import com.bigbasket.mobileapp.interfaces.OnObservableScrollEvent;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.spendTrends.SpendTrendSummary;
 import com.bigbasket.mobileapp.model.account.spendTrends.SpendTrends;
@@ -46,7 +44,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class SpendTrendsActivity extends BaseActivity implements OnObservableScrollEvent {
+public class SpendTrendsActivity extends BaseActivity {
 
     private BBDrawerLayout mDrawerLayout;
     private SpendTrends mSpendTrends;
@@ -282,22 +280,6 @@ public class SpendTrendsActivity extends BaseActivity implements OnObservableScr
             outState.putParcelable(Constants.SPENT_SAVED, mSpendTrends);
         }
         super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onScrollUp() {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar.isShowing()) {
-            actionBar.hide();
-        }
-    }
-
-    @Override
-    public void onScrollDown() {
-        ActionBar actionBar = getSupportActionBar();
-        if (!actionBar.isShowing()) {
-            actionBar.show();
-        }
     }
 
     @Override

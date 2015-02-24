@@ -19,12 +19,11 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.promo.Promo;
 import com.bigbasket.mobileapp.model.promo.PromoCategory;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
+import com.bigbasket.mobileapp.util.BBObservableScrollViewCallbacks;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
-import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
-import com.github.ksoichiro.android.observablescrollview.ScrollState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -130,30 +129,21 @@ public class PromoCategoryFragment extends BaseSectionFragment implements PromoD
 
         final View sectionLayout = getSectionView();
 
-        ObservableRecyclerView promoCategoryListRecyclerView =
+        final ObservableRecyclerView promoCategoryListRecyclerView =
                 UIUtil.getResponsiveObservableRecyclerView(getActivity(), 1, 1, contentView);
-        PromoCategoryAdapter promoCategoryAdapter = new PromoCategoryAdapter<>(this,
+        final PromoCategoryAdapter promoCategoryAdapter = new PromoCategoryAdapter<>(this,
                 promoConsolidatedList, faceRobotoRegular);
         if (sectionLayout != null) {
             contentView.addView(sectionLayout);
-            promoCategoryListRecyclerView.setScrollViewCallbacks(new ObservableScrollViewCallbacks() {
+            promoCategoryListRecyclerView.setScrollViewCallbacks(new BBObservableScrollViewCallbacks(promoCategoryListRecyclerView) {
                 @Override
-                public void onScrollChanged(int i, boolean b, boolean b2) {
-
+                public void showItem() {
+                    sectionLayout.setVisibility(View.VISIBLE);
                 }
 
                 @Override
-                public void onDownMotionEvent() {
-
-                }
-
-                @Override
-                public void onUpOrCancelMotionEvent(ScrollState scrollState) {
-                    if (scrollState == ScrollState.UP) {
-                        sectionLayout.setVisibility(View.GONE);
-                    } else if (scrollState == ScrollState.DOWN) {
-                        sectionLayout.setVisibility(View.VISIBLE);
-                    }
+                public void hideItem() {
+                    sectionLayout.setVisibility(View.GONE);
                 }
             });
         }
