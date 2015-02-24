@@ -10,7 +10,7 @@ public class OrderInvoiceActivity extends BackButtonActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            goToHome();
+            goToHome(false);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -18,7 +18,7 @@ public class OrderInvoiceActivity extends BackButtonActivity {
 
     @Override
     public void onBackPressed() {
-        goToHome();
+        goToHome(false);
     }
 
     @Override

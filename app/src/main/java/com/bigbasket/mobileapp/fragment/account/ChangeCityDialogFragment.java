@@ -161,7 +161,7 @@ public class ChangeCityDialogFragment extends AbstractDialogFragment
         editor.putString(Constants.CITY_ID, String.valueOf(mSelectedCity.getId()));
         editor.commit();
         dismiss();
-        getCurrentActivity().goToHome();
+        getCurrentActivity().goToHome(true);
     }
 
     private void showProgress(boolean visible) {

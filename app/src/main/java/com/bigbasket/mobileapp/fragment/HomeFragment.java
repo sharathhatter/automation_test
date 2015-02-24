@@ -88,11 +88,11 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
             if (menu.findItem(R.id.action_logout) != null &&
                     menu.findItem(R.id.action_logout).isVisible() &&
                     AuthParameters.getInstance(getActivity()).isAuthTokenEmpty()) {
-                getCurrentActivity().goToHome();
+                getCurrentActivity().goToHome(true);
             } else if (menu.findItem(R.id.action_login) != null &&
                     menu.findItem(R.id.action_login).isVisible() &&
                     !AuthParameters.getInstance(getActivity()).isAuthTokenEmpty()) {
-                getCurrentActivity().goToHome();
+                getCurrentActivity().goToHome(true);
             }
         }
     }

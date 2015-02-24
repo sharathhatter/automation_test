@@ -178,7 +178,13 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                     ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     break;
                 case DestinationInfo.HOME:
-                    ((ActivityAware) context).getCurrentActivity().goToHome();
+                    ((ActivityAware) context).getCurrentActivity().goToHome(false);
+                    break;
+                case DestinationInfo.SHOPPING_LIST:
+                    intent = new Intent(((ActivityAware) context).getCurrentActivity(), BBActivity.class);
+                    intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_LANDING);
+                    ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                    break;
                 default:
                     showDefaultError();
                     break;

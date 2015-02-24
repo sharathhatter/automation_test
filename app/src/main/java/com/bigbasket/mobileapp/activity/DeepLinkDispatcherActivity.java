@@ -253,10 +253,10 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
         if (!getIntent().getBooleanExtra(Constants.HAS_PARENT, false)) {
             Intent intent = new Intent(this, SplashActivity.class);
             startActivity(intent);
+            finish();
         } else if (setHomeNavCode) {
-            setResult(NavigationCodes.GO_TO_HOME);
+            goToHome(false);
         }
-        finish();
     }
 
     @Override

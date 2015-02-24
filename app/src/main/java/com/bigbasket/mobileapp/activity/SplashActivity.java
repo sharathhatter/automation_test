@@ -248,7 +248,12 @@ public class SplashActivity extends BaseActivity implements DynamicScreenAware {
                 loadCities();
             }
         } else if (resultCode == NavigationCodes.GO_TO_HOME) {
-            loadNavigation();
+            removePendingGoToHome();
+            if (data != null && data.getBooleanExtra(Constants.RELOAD_APP, false)) {
+                loadNavigation();
+            } else {
+                loadHomePage();
+            }
         } else {
             finish();
         }

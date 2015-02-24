@@ -130,7 +130,7 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
         if (sourceName != null) {
             switch (sourceName) {
                 case Constants.GO_TO_HOME_STRING:
-                    goToHome();
+                    goToHome(false);
                     break;
                 default:
                     super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);

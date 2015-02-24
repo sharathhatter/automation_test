@@ -883,7 +883,9 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             for (Section section : sectionData.getSections()) {
                 if (section == null || section.getSectionItems() == null || section.getSectionItems().size() == 0)
                     continue;
-                sectionNavigationItems.add(new SectionNavigationItem(section));
+                if (section.getTitle() != null && !TextUtils.isEmpty(section.getTitle().getText())) {
+                    sectionNavigationItems.add(new SectionNavigationItem(section));
+                }
                 for (SectionItem sectionItem : section.getSectionItems()) {
                     if (sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
                         sectionNavigationItems.add(new SectionNavigationItem(section, sectionItem));

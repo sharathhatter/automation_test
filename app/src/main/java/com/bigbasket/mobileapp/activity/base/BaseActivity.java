@@ -206,6 +206,10 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     protected void onResume() {
         super.onResume();
         isActivitySuspended = false;
+        if (isPendingGoToHome()) {
+            goToHome(isPendingReloadApp());
+            return;
+        }
         initializeKonotor();
         MoEngageWrapper.onResume(moEHelper, getCurrentActivity());
         prescriptionImageUploadHandler();
@@ -411,8 +415,8 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         isActivitySuspended = false;
         if (resultCode == NavigationCodes.GO_TO_HOME) {
-            setResult(NavigationCodes.GO_TO_HOME);
-            finish();
+            boolean reloadApp = data != null && data.getBooleanExtra(Constants.RELOAD_APP, false);
+            goToHome(reloadApp);
         } else if (resultCode == NavigationCodes.GO_TO_SLOT_SELECTION) {
             setResult(NavigationCodes.GO_TO_SLOT_SELECTION);
             finish();
@@ -435,8 +439,15 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     }
 
 
-    public void goToHome() {
-        setResult(NavigationCodes.GO_TO_HOME);
+    public void goToHome(boolean reloadApp) {
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
+        editor.putBoolean(Constants.IS_PENDING_GO_TO_HOME, true);
+        editor.putBoolean(Constants.RELOAD_APP, reloadApp);
+        editor.commit();
+
+        Intent data = new Intent();
+        data.putExtra(Constants.RELOAD_APP, reloadApp);
+        setResult(NavigationCodes.GO_TO_HOME, data);
         getCurrentActivity().finish();
     }
 
@@ -613,7 +624,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
                 }
             }
         }
-        goToHome();
+        goToHome(true);
     }
 
     public void onLoginSuccess() {
@@ -625,7 +636,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
             editor.putString(Constants.DEEP_LINK, deepLink);
             editor.commit();
         }
-        goToHome();
+        goToHome(true);
     }
 
     public abstract void onChangeTitle(String title);
@@ -716,5 +727,22 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     public boolean isBasketDirty() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
         return preferences.getBoolean(Constants.IS_BASKET_COUNT_DIRTY, false);
+    }
+
+    public boolean isPendingGoToHome() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
+        return preferences.getBoolean(Constants.IS_PENDING_GO_TO_HOME, false);
+    }
+
+    public void removePendingGoToHome() {
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
+        editor.remove(Constants.IS_PENDING_GO_TO_HOME);
+        editor.remove(Constants.RELOAD_APP);
+        editor.commit();
+    }
+
+    public boolean isPendingReloadApp() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
+        return preferences.getBoolean(Constants.RELOAD_APP, false);
     }
 }

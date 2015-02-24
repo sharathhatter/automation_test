@@ -499,8 +499,6 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
         signOutButton.setVisibility(View.GONE);
 
         doLogout();
-        setResult(NavigationCodes.GO_TO_HOME);
-        finish();
     }
 
     /**

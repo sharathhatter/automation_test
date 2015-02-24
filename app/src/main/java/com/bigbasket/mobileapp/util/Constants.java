@@ -678,4 +678,6 @@ public class Constants {
     public static final String SL_PRODUCTS = "sl_products";
     public static final String PROMO_LIST = "promo_list";
     public static final int IN_BASKET_COLOR = 0xFFF9EDDD; // #F9EDDD
+    public static final String IS_PENDING_GO_TO_HOME = "isPendingGoToHome";
+    public static final String RELOAD_APP = "reloadApp";
 }

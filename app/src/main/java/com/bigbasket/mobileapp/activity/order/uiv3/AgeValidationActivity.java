@@ -343,7 +343,7 @@ public class AgeValidationActivity extends BackButtonActivity {
                     bulkRemoveProducts(valuePassed);
                     break;
                 case ApiErrorCodes.BASKET_EMPTY_STR:
-                    goToHome();
+                    goToHome(false);
                     break;
                 default:
                     super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
