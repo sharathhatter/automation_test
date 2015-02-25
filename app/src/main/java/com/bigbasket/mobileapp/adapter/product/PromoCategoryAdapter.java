@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.common.FixedLayoutViewHolder;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.PromoDetailNavigationAware;
 import com.bigbasket.mobileapp.model.promo.Promo;
@@ -23,15 +24,18 @@ public class PromoCategoryAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
     private List<Object> promoConsolidatedList;
     private Typeface typeface;
     private ImageLoader imageLoader = ImageLoader.getInstance();
+    private View mSectionView;
 
     public static final int VIEW_TYPE_PROMO = 0;
     public static final int VIEW_TYPE_CATEGORY = 1;
+    public static final int VIEW_TYPE_SECTION = 2;
 
-    public PromoCategoryAdapter(T context, List<Object> promoConsolidatedList, Typeface typeface) {
+    public PromoCategoryAdapter(T context, List<Object> promoConsolidatedList, Typeface typeface,
+                                View sectionView) {
         this.context = context;
         this.typeface = typeface;
         this.promoConsolidatedList = promoConsolidatedList;
-
+        this.mSectionView = sectionView;
     }
 
     @Override
@@ -44,24 +48,39 @@ public class PromoCategoryAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
             case VIEW_TYPE_PROMO:
                 view = inflater.inflate(R.layout.uiv3_promo_category_list_item, parent, false);
                 return new PromoCatItemHolder(view);
+            case VIEW_TYPE_SECTION:
+                return new FixedLayoutViewHolder(mSectionView);
         }
         return null;
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if (getItemViewType(position) == VIEW_TYPE_PROMO) {
-            setPromoView(position, (PromoCatItemHolder) holder);
-        } else {
-            setPromoCategoryView(position, (PromoCatViewHolder) holder);
+        int viewType = getItemViewType(position);
+        if (viewType == VIEW_TYPE_PROMO) {
+            setPromoView(getActualPosition(position), (PromoCatItemHolder) holder);
+        } else if (viewType == VIEW_TYPE_CATEGORY) {
+            setPromoCategoryView(getActualPosition(position), (PromoCatViewHolder) holder);
         }
     }
 
     @Override
     public int getItemViewType(int position) {
+        if (mSectionView != null) {
+            if (position == 0) {
+                return VIEW_TYPE_SECTION;
+            }
+            return promoConsolidatedList.get(position - 1) instanceof Promo ? VIEW_TYPE_PROMO : VIEW_TYPE_CATEGORY;
+        }
         return promoConsolidatedList.get(position) instanceof Promo ? VIEW_TYPE_PROMO : VIEW_TYPE_CATEGORY;
     }
 
+    public int getActualPosition(int position) {
+        if (mSectionView != null) {
+            return position - 1;
+        }
+        return position;
+    }
 
     @Override
     public long getItemId(int position) {
@@ -70,7 +89,7 @@ public class PromoCategoryAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
 
     @Override
     public int getItemCount() {
-        return promoConsolidatedList.size();
+        return promoConsolidatedList.size() + (mSectionView != null ? 1 : 0);
     }
 
     private void setPromoView(int position, PromoCatItemHolder promoCatItemHolder) {

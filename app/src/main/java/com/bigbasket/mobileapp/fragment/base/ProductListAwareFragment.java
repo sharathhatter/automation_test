@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.fragment.base;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,13 +31,11 @@ import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
 import com.bigbasket.mobileapp.task.uiv3.ProductListTask;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListDoAddDeleteTask;
-import com.bigbasket.mobileapp.util.BBObservableScrollViewCallbacks;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.ShoppingListNamesDialog;
 import com.bigbasket.mobileapp.view.uiv3.SortProductDialog;
-import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -215,7 +214,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
 
         final View sectionView = getSectionView();
 
-        ObservableRecyclerView productRecyclerView = UIUtil.getResponsiveObservableRecyclerView(getActivity(), 1, 1, contentView);
+        RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, contentView);
 
         // Set product-list data
         AuthParameters authParameters = AuthParameters.getInstance(getActivity());
@@ -233,24 +232,6 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                 getNavigationCtx());
 
         productRecyclerView.setAdapter(mProductListRecyclerAdapter);
-
-        productRecyclerView.setScrollViewCallbacks(new BBObservableScrollViewCallbacks(productRecyclerView) {
-            @Override
-            public void showItem() {
-                if (sectionView != null) {
-                    sectionView.setVisibility(View.VISIBLE);
-                }
-                headerView.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void hideItem() {
-                if (sectionView != null) {
-                    sectionView.setVisibility(View.GONE);
-                }
-                headerView.setVisibility(View.GONE);
-            }
-        });
         if (sectionView != null) {
             contentView.addView(sectionView);
         }

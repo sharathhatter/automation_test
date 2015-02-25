@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -38,7 +37,6 @@ import com.bigbasket.mobileapp.handler.AnalyticsIdentifierKeys;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
-import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
 import com.google.gson.Gson;
 import com.moe.pushlibrary.MoEHelper;
 import com.moe.pushlibrary.utils.MoEHelperConstants;
@@ -182,14 +180,6 @@ public class UIUtil {
                                                          int landscapeModeGridCount, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         RecyclerView recyclerView = (RecyclerView) inflater.inflate(R.layout.recyclerview_layout, parent, false);
-        configureRecyclerView(recyclerView, context, portraitModeGridCount, landscapeModeGridCount);
-        return recyclerView;
-    }
-
-    public static ObservableRecyclerView getResponsiveObservableRecyclerView(Context context, int portraitModeGridCount,
-                                                                             int landscapeModeGridCount, ViewGroup parent) {
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        ObservableRecyclerView recyclerView = (ObservableRecyclerView) inflater.inflate(R.layout.observable_recyclerview, parent, false);
         configureRecyclerView(recyclerView, context, portraitModeGridCount, landscapeModeGridCount);
         return recyclerView;
     }

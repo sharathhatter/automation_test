@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.fragment.promo;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,11 +20,9 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.promo.Promo;
 import com.bigbasket.mobileapp.model.promo.PromoCategory;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
-import com.bigbasket.mobileapp.util.BBObservableScrollViewCallbacks;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -129,24 +128,10 @@ public class PromoCategoryFragment extends BaseSectionFragment implements PromoD
 
         final View sectionLayout = getSectionView();
 
-        final ObservableRecyclerView promoCategoryListRecyclerView =
-                UIUtil.getResponsiveObservableRecyclerView(getActivity(), 1, 1, contentView);
+        final RecyclerView promoCategoryListRecyclerView =
+                UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, contentView);
         final PromoCategoryAdapter promoCategoryAdapter = new PromoCategoryAdapter<>(this,
-                promoConsolidatedList, faceRobotoRegular);
-        if (sectionLayout != null) {
-            contentView.addView(sectionLayout);
-            promoCategoryListRecyclerView.setScrollViewCallbacks(new BBObservableScrollViewCallbacks(promoCategoryListRecyclerView) {
-                @Override
-                public void showItem() {
-                    sectionLayout.setVisibility(View.VISIBLE);
-                }
-
-                @Override
-                public void hideItem() {
-                    sectionLayout.setVisibility(View.GONE);
-                }
-            });
-        }
+                promoConsolidatedList, faceRobotoRegular, sectionLayout);
         promoCategoryListRecyclerView.setAdapter(promoCategoryAdapter);
         contentView.addView(promoCategoryListRecyclerView);
     }
