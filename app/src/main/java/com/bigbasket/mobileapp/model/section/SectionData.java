@@ -6,11 +6,12 @@ import android.os.Parcelable;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SectionData implements Parcelable {
+public class SectionData implements Parcelable, Serializable {
 
     private ArrayList<Section> sections;
 

@@ -6,16 +6,16 @@
         android:left="0dp"
         android:top="0dp">
         <shape>
-            <corners android:radius="2dp"/>
-            <solid android:color="#AAAFAFAF"/>
+            <corners android:radius="2dp" />
+            <solid android:color="#AAAFAFAF" />
         </shape>
     </item>
     <item
         android:bottom="2dp"
         android:right="2dp">
         <shape>
-            <solid android:color="@color/uiv3_product_list_row_bkg"/>
-            <corners android:radius="2dp"/>
+            <solid android:color="@color/uiv3_product_list_row_bkg" />
+            <corners android:radius="2dp" />
         </shape>
     </item>
 </layer-list>

@@ -29,8 +29,8 @@
         android:xlargeScreens="true" />
 
     <!--<permission-->
-        <!--android:name="com.bigbasket.mobileapp.permission.C2D_MESSAGE"-->
-        <!--android:protectionLevel="signature" />-->
+    <!--android:name="com.bigbasket.mobileapp.permission.C2D_MESSAGE"-->
+    <!--android:protectionLevel="signature" />-->
 
     <uses-permission android:name="com.bigbasket.mobileapp.permission.C2D_MESSAGE" />
     <!-- To auto-complete the email text field in the login form with the user's emails -->

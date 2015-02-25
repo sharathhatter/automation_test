@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item name="uiv3_shopping_list_name_row" type="layout">@layout/uiv3_shopping_list_row_large</item>
+    <item name="uiv3_shopping_list_name_row" type="layout">@layout/uiv3_shopping_list_row_large
+    </item>
 </resources>

@@ -97,7 +97,7 @@ public class SubCategoryListFragment extends BaseSectionFragment {
                     trackEvent(TrackingAware.CATEGORY_LANDING_SHOWN, map);
                 } else {
                     handler.sendEmptyMessage(subCategoryCallback.status,
-                            subCategoryCallback.message);
+                            subCategoryCallback.message, true);
                 }
 
             }
