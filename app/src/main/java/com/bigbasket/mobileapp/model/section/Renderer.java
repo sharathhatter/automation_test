@@ -7,8 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.util.Constants;
@@ -26,6 +24,13 @@ public class Renderer implements Parcelable {
     public static final int CENTER = 3;
     public static final int CENTER_HORIZONTAL = 4;
     public static final int CENTER_VERTICAL = 5;
+
+    public static final int VERTICAL = 0;
+    public static final int HORIZONTAL = 1;
+
+    public static final String TITLE_IMG_DESC = "t,i,d";
+    public static final String TITLE_DESC_IMG = "t,d,i";
+    public static final String IMG_TITLE_DESC = "i,t,d";
 
     @SerializedName(Constants.TEXT_COLOR)
     private String textColor;
@@ -45,6 +50,10 @@ public class Renderer implements Parcelable {
 
     @SerializedName(Constants.ALIGNMENT)
     private int alignment;
+
+    private int orientation;
+
+    private String ordering;
 
     public String getTextColor() {
         return textColor;
@@ -70,8 +79,12 @@ public class Renderer implements Parcelable {
         this.nativeBkgColor = nativeBkgColor;
     }
 
-    public int getAlignment() {
-        return alignment;
+    public int getOrientation() {
+        return orientation;
+    }
+
+    public String getOrdering() {
+        return ordering;
     }
 
     @Override
@@ -94,6 +107,13 @@ public class Renderer implements Parcelable {
         dest.writeInt(padding);
         dest.writeInt(margin);
         dest.writeInt(alignment);
+        dest.writeInt(orientation);
+
+        boolean wasOrderingNull = ordering == null;
+        dest.writeByte(wasOrderingNull ? (byte) 1 : (byte) 0);
+        if (!wasOrderingNull) {
+            dest.writeString(ordering);
+        }
     }
 
     public Renderer(Parcel source) {
@@ -110,6 +130,10 @@ public class Renderer implements Parcelable {
         padding = source.readInt();
         margin = source.readInt();
         alignment = source.readInt();
+        boolean wasOrderingNull = source.readByte() == (byte) 1;
+        if (!wasOrderingNull) {
+            ordering = source.readString();
+        }
     }
 
     public static final Parcelable.Creator<Renderer> CREATOR = new Parcelable.Creator<Renderer>() {
@@ -162,30 +186,17 @@ public class Renderer implements Parcelable {
     public void setRendering(View view, int defaultMargin, int defaultPadding,
                              boolean applyLeft, boolean applyTop, boolean applyRight,
                              boolean applyBottom) {
-        setRendering(view, defaultMargin, defaultPadding, applyLeft, applyTop, applyRight, applyBottom, -1);
-    }
-
-    public void setRendering(View view, int defaultMargin, int defaultPadding,
-                             boolean applyLeft, boolean applyTop, boolean applyRight,
-                             boolean applyBottom, int width) {
         int margin = this.getSafeMargin(defaultMargin);
         int padding = this.getSafePadding(defaultPadding);
         if (margin >= 0) {
-            int widthToUse = width >= 0 ? width : ViewGroup.LayoutParams.MATCH_PARENT;
             ViewParent viewParent = view.getParent();
-            if (viewParent != null) {
-                if (viewParent instanceof LinearLayout) {
-                    LinearLayout.LayoutParams txtLayoutParams = new LinearLayout.LayoutParams(widthToUse,
-                            ViewGroup.LayoutParams.WRAP_CONTENT);
-                    txtLayoutParams.setMargins(applyLeft ? margin : 0, applyTop ? margin : 0,
-                            applyRight ? margin : 0, applyBottom ? margin : 0);
-                    view.setLayoutParams(txtLayoutParams);
-                } else if (viewParent instanceof RelativeLayout) {
-                    RelativeLayout.LayoutParams txtLayoutParams = new RelativeLayout.LayoutParams(widthToUse,
-                            ViewGroup.LayoutParams.WRAP_CONTENT);
-                    txtLayoutParams.setMargins(applyLeft ? margin : 0, applyTop ? margin : 0,
-                            applyRight ? margin : 0, applyBottom ? margin : 0);
-                    view.setLayoutParams(txtLayoutParams);
+            if (viewParent instanceof ViewGroup) {
+                ViewGroup viewGroup = (ViewGroup) viewParent;
+                ViewGroup.LayoutParams layoutParams = viewGroup.getLayoutParams();
+                if (layoutParams instanceof ViewGroup.MarginLayoutParams) {
+                    ((ViewGroup.MarginLayoutParams) layoutParams).
+                            setMargins(applyLeft ? margin : 0, applyTop ? margin : 0,
+                                    applyRight ? margin : 0, applyBottom ? margin : 0);
                 }
             }
         }

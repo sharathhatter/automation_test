@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.model.section;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.LayoutRes;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -22,6 +23,17 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable {
     public static final int VIEW_TYPE_TEXT_IMG = 0;
     public static final int VIEW_TYPE_TEXT_DESC = 1;
     public static final int VIEW_TYPE_TEXT_ONLY = 2;
+
+    public static final int VIEW_TITLE_DESC_IMG_VERTICAL = 0;
+    public static final int VIEW_TITLE_IMG_DESC_VERTICAL = 1;
+    public static final int VIEW_IMG_TITLE_DESC_VERTICAL = 2;
+    public static final int VIEW_TITLE_DESC_VERTICAL = 3;
+    public static final int VIEW_TITLE_DESC_IMG_HORIZONTAL = 4;
+    public static final int VIEW_TITLE_IMG_DESC_HORIZONTAL = 5;
+    public static final int VIEW_IMG_TITLE_DESC_HORIZONTAL = 6;
+    public static final int VIEW_TITLE_DESC_HORIZONTAL = 7;
+    public static final int VIEW_IMG = 8;
+    public static final int VIEW_UNKNOWN = 9;
 
     private String image;
 
@@ -124,6 +136,83 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable {
             }
         } else {
             ImageLoader.getInstance().displayImage(image, imageView);
+        }
+    }
+
+    public int getItemViewType(Renderer renderer) {
+        if (renderer != null) {
+            if (renderer.getOrientation() == Renderer.VERTICAL) {
+                if (TextUtils.isEmpty(image)) {
+                    return VIEW_TITLE_DESC_VERTICAL;
+                } else if ((getTitle() == null || TextUtils.isEmpty(getTitle().getText())) &&
+                        (getDescription() == null || TextUtils.isEmpty(getDescription().getText()))) {
+                    return VIEW_IMG;
+                }
+                if (TextUtils.isEmpty(renderer.getOrdering())) {
+                    return VIEW_TITLE_IMG_DESC_VERTICAL;
+                }
+                switch (renderer.getOrdering()) {
+                    case Renderer.IMG_TITLE_DESC:
+                        return VIEW_IMG_TITLE_DESC_VERTICAL;
+                    case Renderer.TITLE_DESC_IMG:
+                        return VIEW_TITLE_DESC_IMG_VERTICAL;
+                    case Renderer.TITLE_IMG_DESC:
+                        return VIEW_TITLE_IMG_DESC_VERTICAL;
+                }
+            } else if (renderer.getOrientation() == Renderer.HORIZONTAL) {
+                if (TextUtils.isEmpty(image)) {
+                    return VIEW_TITLE_DESC_HORIZONTAL;
+                } else if ((getTitle() == null || TextUtils.isEmpty(getTitle().getText())) &&
+                        (getDescription() == null || TextUtils.isEmpty(getDescription().getText()))) {
+                    return VIEW_IMG;
+                }
+                if (TextUtils.isEmpty(renderer.getOrdering())) {
+                    return VIEW_TITLE_IMG_DESC_HORIZONTAL;
+                }
+                switch (renderer.getOrdering()) {
+                    case Renderer.IMG_TITLE_DESC:
+                        return VIEW_IMG_TITLE_DESC_HORIZONTAL;
+                    case Renderer.TITLE_DESC_IMG:
+                        return VIEW_TITLE_DESC_IMG_HORIZONTAL;
+                    case Renderer.TITLE_IMG_DESC:
+                        return VIEW_TITLE_IMG_DESC_HORIZONTAL;
+                }
+            }
+        } else {
+            if (TextUtils.isEmpty(image)) {
+                return VIEW_TITLE_DESC_VERTICAL;
+            } else if ((getTitle() == null || TextUtils.isEmpty(getTitle().getText())) &&
+                    (getDescription() == null || TextUtils.isEmpty(getDescription().getText()))) {
+                return VIEW_IMG;
+            }
+            return VIEW_TITLE_IMG_DESC_VERTICAL;
+        }
+        return VIEW_UNKNOWN;
+    }
+
+    @LayoutRes
+    public int getDrawableId(int viewType) {
+        switch (viewType) {
+            case VIEW_TITLE_DESC_VERTICAL:
+                return R.layout.section_text_desc;
+            case VIEW_TITLE_DESC_IMG_VERTICAL:
+                return R.layout.section_text_desc_img;
+            case VIEW_TITLE_IMG_DESC_VERTICAL:
+                return R.layout.section_text_img_desc;
+            case VIEW_IMG_TITLE_DESC_VERTICAL:
+                return R.layout.section_img_title_desc;
+            case VIEW_TITLE_DESC_HORIZONTAL:
+                return R.layout.section_text_desc_horizontal;
+            case VIEW_TITLE_DESC_IMG_HORIZONTAL:
+                return R.layout.section_text_desc_img_horizontal;
+            case VIEW_TITLE_IMG_DESC_HORIZONTAL:
+                return R.layout.section_text_img_desc_horizontal;
+            case VIEW_IMG_TITLE_DESC_HORIZONTAL:
+                return R.layout.section_img_text_desc_horizontal;
+            case VIEW_IMG:
+                return R.layout.section_img;
+            default:
+                return 0;
         }
     }
 }
