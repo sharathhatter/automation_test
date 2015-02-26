@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.model.section;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -8,6 +9,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Section extends BaseSectionTextItem implements Parcelable, Serializable {
     public static final String BANNER = "banner";
@@ -79,6 +81,17 @@ public class Section extends BaseSectionTextItem implements Parcelable, Serializ
         if (!_wasMoreSectionItemNull) {
             moreSectionItem = source.readParcelable(Section.class.getClassLoader());
         }
+    }
+
+    public int getCarouselHeight(Context context, HashMap<Integer, Renderer> rendererHashMap) {
+        if (sectionItems == null) return 0;
+        int maxHeight = 0;
+        for (SectionItem sectionItem: sectionItems) {
+            Renderer renderer = rendererHashMap != null ? rendererHashMap.get(sectionItem.getRenderingId()): null;
+            int sectionItemHeight = sectionItem.getHeight(context, renderer);
+            maxHeight = Math.max(maxHeight, sectionItemHeight);
+        }
+        return maxHeight;
     }
 
 

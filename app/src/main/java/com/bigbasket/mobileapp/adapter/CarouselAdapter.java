@@ -35,7 +35,6 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
     private int primaryTxtColor;
     private int primaryBkgColor;
     private int columnWidth;
-    private int columnHeight;
 
     public CarouselAdapter(T context, Section section,
                            HashMap<Integer, Renderer> rendererHashMap, Typeface typeface, String screenName) {
@@ -50,7 +49,6 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
         this.defaultMargin = (int) ctx.getResources().getDimension(R.dimen.margin_mini);
         this.defaultTxtPadding = (int) ctx.getResources().getDimension(R.dimen.padding_small);
         this.columnWidth = (int) ctx.getResources().getDimension(R.dimen.grid_width);
-        this.columnHeight = (int) ctx.getResources().getDimension(R.dimen.carousel_height);
         this.primaryTxtColor = ctx.getResources().getColor(R.color.uiv3_primary_text_color);
         this.primaryBkgColor = ctx.getResources().getColor(R.color.white);
     }
@@ -66,13 +64,6 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
             ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
             layoutParams.width = columnWidth;
             view.setLayoutParams(layoutParams);
-
-            ViewGroup layoutSection = (ViewGroup) view.findViewById(R.id.layoutSection);
-            if (layoutSection != null) {
-                ViewGroup.LayoutParams layoutSectionLayoutParams = layoutSection.getLayoutParams();
-                layoutSectionLayoutParams.height = columnHeight;
-                layoutSection.setLayoutParams(layoutSectionLayoutParams);
-            }
             return new ViewHolder(view);
         }
     }
@@ -91,6 +82,13 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
         TextView txtTitle = holder.getTxtTitle();
         TextView txtDescription = holder.getTxtDescription();
         ImageView imgInRow = holder.getImgInRow();
+
+        ViewGroup layoutSection = holder.getLayoutSection();
+        if (layoutSection != null) {
+            ViewGroup.LayoutParams layoutSectionLayoutParams = layoutSection.getLayoutParams();
+            layoutSectionLayoutParams.height = sectionItem.getHeight(((ActivityAware) context).getCurrentActivity(), renderer);
+            layoutSection.setLayoutParams(layoutSectionLayoutParams);
+        }
 
         if (txtTitle != null) {
             if (sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
@@ -170,6 +168,14 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
         private TextView txtTitle;
         private TextView txtDescription;
         private ViewGroup sectionLayoutContainer;
+        private ViewGroup layoutSection;
+
+        public ViewGroup getLayoutSection() {
+            if (layoutSection == null) {
+                layoutSection = (ViewGroup) itemView.findViewById(R.id.layoutSection);
+            }
+            return layoutSection;
+        }
 
         public ViewHolder(View itemView) {
             super(itemView);

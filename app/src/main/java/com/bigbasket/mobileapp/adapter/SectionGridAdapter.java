@@ -1,7 +1,6 @@
 package com.bigbasket.mobileapp.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -33,8 +32,6 @@ public class SectionGridAdapter<T> extends BaseAdapter {
     private int defaultTxtPadding;
     private int primaryTxtColor;
     private int primaryBkgColor;
-    private int columnWidth;
-    private int columnHeight;
 
     public SectionGridAdapter(T context, Section section,
                               HashMap<Integer, Renderer> rendererHashMap, Typeface typeface, String screenName) {
@@ -48,8 +45,6 @@ public class SectionGridAdapter<T> extends BaseAdapter {
         Context ctx = ((ActivityAware) context).getCurrentActivity();
         this.defaultMargin = (int) ctx.getResources().getDimension(R.dimen.margin_mini);
         this.defaultTxtPadding = (int) ctx.getResources().getDimension(R.dimen.padding_small);
-        this.columnWidth = (int) ctx.getResources().getDimension(R.dimen.grid_width);
-        this.columnHeight = (int) ctx.getResources().getDimension(R.dimen.vertical_tile_min_height);
         this.primaryTxtColor = ctx.getResources().getColor(R.color.uiv3_primary_text_color);
         this.primaryBkgColor = ctx.getResources().getColor(R.color.white);
     }
@@ -90,12 +85,6 @@ public class SectionGridAdapter<T> extends BaseAdapter {
                 layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
                 view.setLayoutParams(layoutParams);
 
-                ViewGroup layoutSection = (ViewGroup) view.findViewById(R.id.layoutSection);
-                if (layoutSection != null) {
-                    ViewGroup.LayoutParams layoutSectionLayoutParams = layoutSection.getLayoutParams();
-                    layoutSectionLayoutParams.height = columnHeight;
-                    layoutSection.setLayoutParams(layoutSectionLayoutParams);
-                }
                 viewHolder = new ViewHolder(view);
                 view.setTag(viewHolder);
             } else {
@@ -103,6 +92,15 @@ public class SectionGridAdapter<T> extends BaseAdapter {
             }
             SectionItem sectionItem = sectionItems.get(position);
             boolean applyRight = position != numItems - 1;
+
+            Renderer renderer = rendererHashMap != null ?
+                    rendererHashMap.get(sectionItem.getRenderingId()) : null;
+            ViewGroup layoutSection = viewHolder.getLayoutSection();
+            if (layoutSection != null) {
+                ViewGroup.LayoutParams layoutSectionLayoutParams = layoutSection.getLayoutParams();
+                layoutSectionLayoutParams.height = sectionItem.getHeight(((ActivityAware) context).getCurrentActivity(), renderer);
+                layoutSection.setLayoutParams(layoutSectionLayoutParams);
+            }
 
             TextView txtTitle = viewHolder.getTxtTitle();
             TextView txtDescription = viewHolder.getTxtDescription();
@@ -155,8 +153,6 @@ public class SectionGridAdapter<T> extends BaseAdapter {
                 }
             }
 
-            Renderer renderer = rendererHashMap != null ?
-                    rendererHashMap.get(sectionItem.getRenderingId()) : null;
             if (renderer != null) {
                 ViewGroup sectionLayoutContainer = viewHolder.getSectionLayoutContainer();
                 if (sectionLayoutContainer != null) {
@@ -188,6 +184,15 @@ public class SectionGridAdapter<T> extends BaseAdapter {
         private TextView txtTitle;
         private TextView txtDescription;
         private ViewGroup sectionLayoutContainer;
+
+        private ViewGroup layoutSection;
+
+        public ViewGroup getLayoutSection() {
+            if (layoutSection == null) {
+                layoutSection = (ViewGroup) itemView.findViewById(R.id.layoutSection);
+            }
+            return layoutSection;
+        }
 
         public ViewHolder(View itemView) {
             this.itemView = itemView;

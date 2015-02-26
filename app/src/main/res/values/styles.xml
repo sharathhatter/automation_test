@@ -153,7 +153,6 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/uiv3_primary_text_color</item>
         <item name="android:textSize">@dimen/heading_2_text_size</item>
-        <item name="android:paddingBottom">@dimen/padding_small</item>
         <item name="android:paddingTop">@dimen/padding_small</item>
         <item name="android:paddingLeft">@dimen/padding_normal</item>
         <item name="android:paddingRight">@dimen/padding_normal</item>

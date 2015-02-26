@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.model.section;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.LayoutRes;
@@ -195,5 +196,30 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
             default:
                 return 0;
         }
+    }
+
+    public int getHeight(Context context, Renderer renderer) {
+        if (renderer != null) {
+            if (renderer.getOrientation() == Renderer.VERTICAL) {
+                if (TextUtils.isEmpty(image)) {
+                    return (int) context.getResources().getDimension(R.dimen.vertical_tile_min_height);
+                } else {
+                    return (int) context.getResources().getDimension(R.dimen.vertical_tile_with_img_min_height);
+                }
+            } else if (renderer.getOrientation() == Renderer.HORIZONTAL) {
+                if (TextUtils.isEmpty(image)) {
+                    return (int) context.getResources().getDimension(R.dimen.horizontal_tile_min_height);
+                } else {
+                    return (int) context.getResources().getDimension(R.dimen.horizontal_tile_min_height);
+                }
+            }
+        } else {
+            if (TextUtils.isEmpty(image)) {
+                return (int) context.getResources().getDimension(R.dimen.vertical_tile_min_height);
+            } else {
+                return (int) context.getResources().getDimension(R.dimen.vertical_tile_with_img_min_height);
+            }
+        }
+        return 0;
     }
 }

@@ -157,7 +157,7 @@ public class SectionView {
         for (int i = 0; i < sectionItems.size(); i++) {
             if (i > 2) {
                 // This widget at max can only support up to 3 items
-                continue;
+                break;
             }
             SectionItem sectionItem = sectionItems.get(i);
             TextView txtSalutationItem;
@@ -205,6 +205,11 @@ public class SectionView {
         formatSectionTitle(baseProductCarousel, R.id.txtListTitle, section);
 
         RecyclerView horizontalRecyclerView = (RecyclerView) baseProductCarousel.findViewById(R.id.horizontalRecyclerView);
+        int carouselHeight = section.getCarouselHeight(context, mSectionData.getRenderersMap());
+        ViewGroup.LayoutParams layoutParams = horizontalRecyclerView.getLayoutParams();
+        layoutParams.height = carouselHeight;
+        horizontalRecyclerView.setLayoutParams(layoutParams);
+
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         horizontalRecyclerView.setLayoutManager(linearLayoutManager);
         horizontalRecyclerView.setHasFixedSize(false);
@@ -353,92 +358,6 @@ public class SectionView {
         SectionGridAdapter sectionGridAdapter = new SectionGridAdapter<>(context, section, mSectionData.getRenderersMap(),
                 faceRobotoRegular, screenName);
         tileContainer.setAdapter(sectionGridAdapter);
-
-//        int numSectionItems = sectionItems.size();
-//        int gridWidth = (int) context.getResources().getDimension(R.dimen.grid_width);
-//        int verticalViewMinHeight = (int) context.getResources().getDimension(R.dimen.vertical_tile_min_height);
-//        int horizontalViewMinHeight = (int) context.getResources().getDimension(R.dimen.horizontal_tile_min_height);
-//        for (int i = 0; i < numSectionItems; i++) {
-//            SectionItem sectionItem = sectionItems.get(i);
-//            boolean applyRight = i != numSectionItems - 1;
-//            Renderer renderer = mSectionData.getRenderersMap() != null ?
-//                    mSectionData.getRenderersMap().get(sectionItem.getRenderingId()) : null;
-//
-//            int viewType = sectionItem.getItemViewType(renderer);
-//            if (viewType == SectionItem.VIEW_UNKNOWN) {
-//                continue;
-//            }
-//            int layoutId = SectionItem.getLayoutResId(viewType);
-//            if (layoutId == 0) {
-//                continue;
-//            }
-//
-//            View view = inflater.inflate(layoutId, tileContainer, false);
-//
-//            TextView txtTitle = (TextView) view.findViewById(R.id.txtTitle);
-//            TextView txtDescription = (TextView) view.findViewById(R.id.txtDescription);
-//            ImageView imgInRow = (ImageView) view.findViewById(R.id.imgInRow);
-//
-//            if (txtTitle != null) {
-//                if (sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
-//                    txtTitle.setTypeface(faceRobotoRegular);
-//                    txtTitle.setText(sectionItem.getTitle().getText());
-//                    Renderer itemRenderer = mSectionData.getRenderersMap() != null ?
-//                            mSectionData.getRenderersMap().get(sectionItem.getTitle().getRenderingId()) : null;
-//                    if (itemRenderer != null) {
-//                        itemRenderer.setRendering(txtTitle, defaultMargin, defaultMargin, true, true, true, true);
-//                    }
-//                } else {
-//                    txtTitle.setVisibility(View.GONE);
-//                }
-//            }
-//
-//            if (txtDescription != null) {
-//                if (sectionItem.getDescription() != null && !TextUtils.isEmpty(sectionItem.getDescription().getText())) {
-//                    txtDescription.setTypeface(faceRobotoRegular);
-//                    txtDescription.setText(sectionItem.getDescription().getText());
-//                    Renderer itemRenderer = mSectionData.getRenderersMap() != null ?
-//                            mSectionData.getRenderersMap().get(sectionItem.getDescription().getRenderingId()) : null;
-//                    if (itemRenderer != null) {
-//                        itemRenderer.setRendering(txtTitle, defaultMargin, defaultMargin, true, true, true, true);
-//                    }
-//                } else {
-//                    txtDescription.setVisibility(View.GONE);
-//                }
-//            }
-//
-//            if (imgInRow != null) {
-//                if (!TextUtils.isEmpty(sectionItem.getImage())) {
-//                    sectionItem.displayImage(imgInRow);
-//                } else {
-//                    imgInRow.setVisibility(View.GONE);
-//                }
-//            }
-//
-//            ViewGroup layoutSection = (ViewGroup) view.findViewById(R.id.layoutSection);
-//            if (layoutSection != null) {
-//                if (renderer == null || renderer.getOrientation() == Renderer.VERTICAL) {
-//                    layoutSection.setMinimumHeight(verticalViewMinHeight);
-//                } else {
-//                    layoutSection.setMinimumHeight(horizontalViewMinHeight);
-//                }
-//            }
-//
-//            ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
-//            layoutParams.width = gridWidth;
-//
-//            if (layoutParams instanceof ViewGroup.MarginLayoutParams) {
-//                ((ViewGroup.MarginLayoutParams) layoutParams).setMargins(0, defaultMargin, applyRight ? defaultMargin : 0, 0);
-//            }
-//            view.setLayoutParams(layoutParams);
-//
-//            if (renderer != null) {
-//                renderer.setRendering(view, 0, 0, false, true, applyRight, false);
-//            }
-//
-//            view.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
-//            tileContainer.addView(view);
-//        }
         return base;
     }
 
@@ -454,8 +373,6 @@ public class SectionView {
         tileContainer.setLayoutParams(tileContainerParams);
         ArrayList<SectionItem> sectionItems = section.getSectionItems();
         int numSectionItems = sectionItems.size();
-        int verticalViewMinHeight = (int) context.getResources().getDimension(R.dimen.vertical_tile_min_height);
-        int horizontalViewMinHeight = (int) context.getResources().getDimension(R.dimen.horizontal_tile_min_height);
         for (int i = 0; i < numSectionItems; i++) {
             SectionItem sectionItem = sectionItems.get(i);
             boolean applyRight = i != numSectionItems - 1;
@@ -516,11 +433,8 @@ public class SectionView {
 
             ViewGroup layoutSection = (ViewGroup) view.findViewById(R.id.layoutSection);
             if (layoutSection != null) {
-                if (renderer == null || renderer.getOrientation() == Renderer.VERTICAL) {
-                    layoutSection.setMinimumHeight(verticalViewMinHeight);
-                } else {
-                    layoutSection.setMinimumHeight(horizontalViewMinHeight);
-                }
+                int minHeight = sectionItem.getHeight(context, renderer);
+                layoutSection.setMinimumHeight(minHeight);
             }
 
             ViewGroup.LayoutParams layoutParams = view.getLayoutParams();

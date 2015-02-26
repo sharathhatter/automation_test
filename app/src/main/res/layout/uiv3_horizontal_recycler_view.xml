@@ -11,7 +11,7 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/horizontalRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/carousel_height"
+        android:layout_height="@dimen/vertical_tile_with_img_min_height"
         android:layout_below="@id/txtListTitle"
         android:background="@android:color/transparent"
         android:scrollbarStyle="insideOverlay" />
