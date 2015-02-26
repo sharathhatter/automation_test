@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.adapter;
 
+import android.content.Context;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -7,16 +8,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.common.FixedLayoutViewHolder;
 import com.bigbasket.mobileapp.handler.OnSectionItemClickListener;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.model.section.Renderer;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionItem;
-import com.bigbasket.mobileapp.model.section.SectionTextItem;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,6 +29,13 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
     protected Typeface typeface;
     protected T context;
     protected String screenName;
+    private int numItems;
+    private int defaultMargin;
+    private int defaultTxtPadding;
+    private int primaryTxtColor;
+    private int primaryBkgColor;
+    private int columnWidth;
+    private int columnHeight;
 
     public CarouselAdapter(T context, Section section,
                            HashMap<Integer, Renderer> rendererHashMap, Typeface typeface, String screenName) {
@@ -38,117 +45,135 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
         this.rendererHashMap = rendererHashMap;
         this.typeface = typeface;
         this.screenName = screenName;
+        this.numItems = sectionItems.size();
+        Context ctx = ((ActivityAware) context).getCurrentActivity();
+        this.defaultMargin = (int) ctx.getResources().getDimension(R.dimen.margin_mini);
+        this.defaultTxtPadding = (int) ctx.getResources().getDimension(R.dimen.padding_small);
+        this.columnWidth = (int) ctx.getResources().getDimension(R.dimen.grid_width);
+        this.columnHeight = (int) ctx.getResources().getDimension(R.dimen.carousel_height);
+        this.primaryTxtColor = ctx.getResources().getColor(R.color.uiv3_primary_text_color);
+        this.primaryBkgColor = ctx.getResources().getColor(R.color.white);
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = ((ActivityAware) context).getCurrentActivity().getLayoutInflater();
-        switch (viewType) {
-            case SectionItem.VIEW_TYPE_TEXT_IMG:
-                View row = inflater.inflate(R.layout.uiv3_carousel_row, parent, false);
-                return new ViewHolder(row, typeface);
-            case SectionItem.VIEW_TYPE_TEXT_DESC:
-                row = inflater.inflate(R.layout.uiv3_text_desc_carousel_row, parent, false);
-                return new ViewHolder(row, typeface);
-            default:
-                row = inflater.inflate(R.layout.uiv3_text_carousel_row, parent, false);
-                return new ViewHolder(row, typeface);
+        if (viewType == SectionItem.VIEW_UNKNOWN) {
+            return new FixedLayoutViewHolder(new View(((ActivityAware) context).getCurrentActivity()));
+        } else {
+            int layoutId = SectionItem.getLayoutResId(viewType);
+            View view = inflater.inflate(layoutId, parent, false);
+            ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+            layoutParams.width = columnWidth;
+            view.setLayoutParams(layoutParams);
+
+            ViewGroup layoutSection = (ViewGroup) view.findViewById(R.id.layoutSection);
+            if (layoutSection != null) {
+                ViewGroup.LayoutParams layoutSectionLayoutParams = layoutSection.getLayoutParams();
+                layoutSectionLayoutParams.height = columnHeight;
+                layoutSection.setLayoutParams(layoutSectionLayoutParams);
+            }
+            return new ViewHolder(view);
         }
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+        if (getItemViewType(position) == SectionItem.VIEW_UNKNOWN) {
+            return;
+        }
         ViewHolder holder = (ViewHolder) viewHolder;
         SectionItem sectionItem = sectionItems.get(position);
-
-        SectionTextItem titleTextItem = sectionItem.getTitle();
-        SectionTextItem descTextItem = sectionItem.getDescription();
-
-        boolean isTitlePresent = titleTextItem != null && !TextUtils.isEmpty(titleTextItem.getText());
-        boolean isDescPresent = descTextItem != null && !TextUtils.isEmpty(descTextItem.getText());
-
-        if (isTitlePresent) {
-            TextView txtTitle = holder.getTxtTitle();
-            txtTitle.setVisibility(View.VISIBLE);
-            setSectionTextView(sectionItem.getTitle(), txtTitle);
-        }
-
-        if (isDescPresent) {
-            TextView txtDescription = holder.getTxtDescription();
-            txtDescription.setVisibility(View.VISIBLE);
-            setSectionTextView(sectionItem.getDescription(), txtDescription);
-        }
-
-        if (!TextUtils.isEmpty(sectionItem.getImage())) {
-            ImageView imgInRow = holder.getImgInRow();
-            sectionItem.displayImage(imgInRow);
-
-            if (getItemViewType(position) == SectionItem.VIEW_TYPE_TEXT_IMG) {
-                if (!isTitlePresent) {
-                    TextView txtTitle = holder.getTxtTitle();
-                    txtTitle.setVisibility(View.GONE);
-                }
-                if (!isDescPresent) {
-                    TextView txtDescription = holder.getTxtDescription();
-                    txtDescription.setVisibility(View.GONE);
-                }
-            }
-        }
-
-        LinearLayout layoutCarouselContainer = holder.getLayoutCarouselContainer();
-
-        Renderer sectionRenderer = rendererHashMap != null ?
+        boolean applyRight = position != numItems - 1;
+        Renderer renderer = rendererHashMap != null ?
                 rendererHashMap.get(sectionItem.getRenderingId()) : null;
-        if (sectionRenderer != null) {
-            int margin = sectionRenderer.getSafeMargin(0);
-            if (margin > 0) {
-                if (position == getItemCount() - 1) {
-                    layoutCarouselContainer.setPadding(margin, 0, margin, 0);
+
+        TextView txtTitle = holder.getTxtTitle();
+        TextView txtDescription = holder.getTxtDescription();
+        ImageView imgInRow = holder.getImgInRow();
+
+        if (txtTitle != null) {
+            if (sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
+                txtTitle.setVisibility(View.VISIBLE);
+                txtTitle.setTypeface(typeface);
+                txtTitle.setText(sectionItem.getTitle().getText());
+                Renderer itemRenderer = rendererHashMap != null ?
+                        rendererHashMap.get(sectionItem.getTitle().getRenderingId()) : null;
+                if (itemRenderer != null) {
+                    itemRenderer.setRendering(txtTitle, defaultMargin, defaultMargin, true, true, true, true);
                 } else {
-                    layoutCarouselContainer.setPadding(margin, 0, 0, 0);
+                    txtTitle.setTextColor(primaryTxtColor);
+                    txtTitle.setBackgroundColor(primaryBkgColor);
+                    txtTitle.setPadding(defaultTxtPadding, defaultTxtPadding, defaultTxtPadding, defaultTxtPadding);
                 }
+            } else {
+                txtTitle.setVisibility(View.GONE);
             }
         }
-    }
 
-    protected void setSectionTextView(SectionTextItem sectionTextView, TextView txtVw) {
-        if (sectionTextView == null || TextUtils.isEmpty(sectionTextView.getText())) {
-            txtVw.setVisibility(View.GONE);
-        } else {
-            Renderer renderer = rendererHashMap != null ?
-                    rendererHashMap.get(sectionTextView.getRenderingId()) : null;
-            txtVw.setVisibility(View.VISIBLE);
-            txtVw.setText(sectionTextView.getText());
-            if (renderer != null) {
-                renderer.setRendering(txtVw, 0, Renderer.PADDING);
+        if (txtDescription != null) {
+            if (sectionItem.getDescription() != null && !TextUtils.isEmpty(sectionItem.getDescription().getText())) {
+                txtDescription.setVisibility(View.VISIBLE);
+                txtDescription.setTypeface(typeface);
+                txtDescription.setText(sectionItem.getDescription().getText());
+                Renderer itemRenderer = rendererHashMap != null ?
+                        rendererHashMap.get(sectionItem.getDescription().getRenderingId()) : null;
+                if (itemRenderer != null) {
+                    itemRenderer.setRendering(txtTitle, defaultMargin, defaultMargin, true, true, true, true);
+                } else {
+                    txtDescription.setTextColor(primaryTxtColor);
+                    txtDescription.setBackgroundColor(primaryBkgColor);
+                    txtDescription.setPadding(defaultTxtPadding, defaultTxtPadding, defaultTxtPadding, defaultTxtPadding);
+                }
+            } else {
+                txtDescription.setVisibility(View.GONE);
             }
+        }
+
+        if (imgInRow != null) {
+            if (!TextUtils.isEmpty(sectionItem.getImage())) {
+                imgInRow.setVisibility(View.VISIBLE);
+                sectionItem.displayImage(imgInRow);
+            } else {
+                imgInRow.setVisibility(View.GONE);
+            }
+        }
+
+        if (renderer != null) {
+            ViewGroup sectionLayoutContainer = holder.getSectionLayoutContainer();
+            if (sectionLayoutContainer != null) {
+                int margin = renderer.getSafeMargin(0);
+                if (margin > 0) {
+                    sectionLayoutContainer.setPadding(margin, 0, applyRight ? margin : 0, 0);
+                }
+            }
+
         }
     }
 
     @Override
     public int getItemViewType(int position) {
         SectionItem sectionItem = sectionItems.get(position);
-        return sectionItem.getViewType();
+        Renderer renderer = rendererHashMap != null ?
+                rendererHashMap.get(sectionItem.getRenderingId()) : null;
+        return sectionItem.getItemViewType(renderer);
     }
 
     @Override
     public int getItemCount() {
-        return sectionItems.size();
+        return numItems;
     }
 
     protected class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private Typeface typeface;
         private ImageView imgInRow;
         private TextView txtTitle;
         private TextView txtDescription;
-        //        private RelativeLayout layoutCarouselSubContainer;
-        private LinearLayout layoutCarouselContainer;
+        private ViewGroup sectionLayoutContainer;
 
-        public ViewHolder(View itemView, Typeface typeface) {
+        public ViewHolder(View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
-            this.typeface = typeface;
         }
 
         public ImageView getImgInRow() {
@@ -161,7 +186,6 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
         public TextView getTxtTitle() {
             if (txtTitle == null) {
                 txtTitle = (TextView) itemView.findViewById(R.id.txtTitle);
-                txtTitle.setTypeface(typeface);
             }
             return txtTitle;
         }
@@ -169,28 +193,19 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
         public TextView getTxtDescription() {
             if (txtDescription == null) {
                 txtDescription = (TextView) itemView.findViewById(R.id.txtDescription);
-                txtDescription.setTypeface(typeface);
             }
             return txtDescription;
         }
-//
-//        public RelativeLayout getLayoutCarouselSubContainer() {
-//            if (layoutCarouselSubContainer == null) {
-//                layoutCarouselSubContainer = (RelativeLayout) itemView.findViewById(R.id.layoutCarouselSubContainer);
-//            }
-//            return layoutCarouselSubContainer;
-//        }
 
-        public LinearLayout getLayoutCarouselContainer() {
-            if (layoutCarouselContainer == null) {
-                layoutCarouselContainer = (LinearLayout) itemView.findViewById(R.id.layoutCarouselContainer);
+        public ViewGroup getSectionLayoutContainer() {
+            if (sectionLayoutContainer == null) {
+                sectionLayoutContainer = (ViewGroup) itemView.findViewById(R.id.layoutCarouselContainer);
             }
-            return layoutCarouselContainer;
+            return sectionLayoutContainer;
         }
 
         @Override
         public void onClick(View v) {
-
             OnSectionItemClickListener sectionItemClickListener =
                     new OnSectionItemClickListener<>(((ActivityAware) context).getCurrentActivity(),
                             section, sectionItems.get(getPosition()), screenName);

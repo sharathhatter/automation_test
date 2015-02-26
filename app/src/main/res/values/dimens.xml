@@ -74,7 +74,7 @@
     <dimen name="chip_padding">2dp</dimen>
     <dimen name="chip_txt_size">20sp</dimen>
     <dimen name="margin_ref_small">5dp</dimen>
-    <dimen name="grid_width">120dp</dimen>
+    <dimen name="grid_width">140dp</dimen>
     <dimen name="category_tile_width">160dp</dimen>
     <dimen name="category_tile_height">210dp</dimen>
     <dimen name="category_tile_img_height">140dp</dimen>

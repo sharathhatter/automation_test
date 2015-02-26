@@ -94,18 +94,18 @@ public class SectionView {
                         mainLayout.addView(grid);
                     }
                     break;
-//                case Section.PRODUCT_CAROUSEL:
-//                    View productCarouselView = getCarouselView(section, inflater, mainLayout);
-//                    if (productCarouselView != null) {
-//                        mainLayout.addView(productCarouselView);
-//                    }
-//                    break;
-//                case Section.NON_PRODUCT_CAROUSEL:
-//                    View carouselView = getCarouselView(section, inflater, mainLayout);
-//                    if (carouselView != null) {
-//                        mainLayout.addView(carouselView);
-//                    }
-//                    break;
+                case Section.PRODUCT_CAROUSEL:
+                    View productCarouselView = getCarouselView(section, inflater, mainLayout);
+                    if (productCarouselView != null) {
+                        mainLayout.addView(productCarouselView);
+                    }
+                    break;
+                case Section.NON_PRODUCT_CAROUSEL:
+                    View carouselView = getCarouselView(section, inflater, mainLayout);
+                    if (carouselView != null) {
+                        mainLayout.addView(carouselView);
+                    }
+                    break;
                 case Section.INFO_WIDGET:
                     View infoWidgetView = getInfoWidgetView(section);
                     if (infoWidgetView != null) {
@@ -364,7 +364,7 @@ public class SectionView {
             if (viewType == SectionItem.VIEW_UNKNOWN) {
                 continue;
             }
-            int layoutId = sectionItem.getDrawableId(viewType);
+            int layoutId = SectionItem.getLayoutResId(viewType);
             if (layoutId == 0) {
                 continue;
             }
@@ -379,6 +379,11 @@ public class SectionView {
                 if (sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
                     txtTitle.setTypeface(faceRobotoRegular);
                     txtTitle.setText(sectionItem.getTitle().getText());
+                    Renderer itemRenderer = mSectionData.getRenderersMap() != null ?
+                            mSectionData.getRenderersMap().get(sectionItem.getTitle().getRenderingId()) : null;
+                    if (itemRenderer != null) {
+                        itemRenderer.setRendering(txtTitle, defaultMargin, defaultMargin, true, true, true, true);
+                    }
                 } else {
                     txtTitle.setVisibility(View.GONE);
                 }
@@ -388,6 +393,11 @@ public class SectionView {
                 if (sectionItem.getDescription() != null && !TextUtils.isEmpty(sectionItem.getDescription().getText())) {
                     txtDescription.setTypeface(faceRobotoRegular);
                     txtDescription.setText(sectionItem.getDescription().getText());
+                    Renderer itemRenderer = mSectionData.getRenderersMap() != null ?
+                            mSectionData.getRenderersMap().get(sectionItem.getDescription().getRenderingId()) : null;
+                    if (itemRenderer != null) {
+                        itemRenderer.setRendering(txtTitle, defaultMargin, defaultMargin, true, true, true, true);
+                    }
                 } else {
                     txtDescription.setVisibility(View.GONE);
                 }
@@ -453,7 +463,7 @@ public class SectionView {
             if (viewType == SectionItem.VIEW_UNKNOWN) {
                 continue;
             }
-            int layoutId = sectionItem.getDrawableId(viewType);
+            int layoutId = SectionItem.getLayoutResId(viewType);
             if (layoutId == 0) {
                 continue;
             }
@@ -468,6 +478,11 @@ public class SectionView {
                 if (sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
                     txtTitle.setTypeface(faceRobotoRegular);
                     txtTitle.setText(sectionItem.getTitle().getText());
+                    Renderer itemRenderer = mSectionData.getRenderersMap() != null ?
+                            mSectionData.getRenderersMap().get(sectionItem.getTitle().getRenderingId()) : null;
+                    if (itemRenderer != null) {
+                        itemRenderer.setRendering(txtTitle, defaultMargin, defaultMargin, true, true, true, true);
+                    }
                 } else {
                     txtTitle.setVisibility(View.GONE);
                 }
@@ -477,6 +492,11 @@ public class SectionView {
                 if (sectionItem.getDescription() != null && !TextUtils.isEmpty(sectionItem.getDescription().getText())) {
                     txtDescription.setTypeface(faceRobotoRegular);
                     txtDescription.setText(sectionItem.getDescription().getText());
+                    Renderer itemRenderer = mSectionData.getRenderersMap() != null ?
+                            mSectionData.getRenderersMap().get(sectionItem.getDescription().getRenderingId()) : null;
+                    if (itemRenderer != null) {
+                        itemRenderer.setRendering(txtTitle, defaultMargin, defaultMargin, true, true, true, true);
+                    }
                 } else {
                     txtDescription.setVisibility(View.GONE);
                 }

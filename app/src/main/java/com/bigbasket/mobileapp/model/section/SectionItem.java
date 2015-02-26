@@ -21,10 +21,6 @@ import java.util.Map;
 
 public class SectionItem extends BaseSectionTextItem implements Parcelable, Serializable {
 
-    public static final int VIEW_TYPE_TEXT_IMG = 0;
-    public static final int VIEW_TYPE_TEXT_DESC = 1;
-    public static final int VIEW_TYPE_TEXT_ONLY = 2;
-
     public static final int VIEW_TITLE_DESC_IMG_VERTICAL = 0;
     public static final int VIEW_TITLE_IMG_DESC_VERTICAL = 1;
     public static final int VIEW_IMG_TITLE_DESC_VERTICAL = 2;
@@ -102,22 +98,6 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
         }
     };
 
-    public int getViewType() {
-        SectionTextItem titleTextItem = getTitle();
-        SectionTextItem descTextItem = getDescription();
-
-        boolean isTitlePresent = titleTextItem != null && !TextUtils.isEmpty(titleTextItem.getText());
-        boolean isDescPresent = descTextItem != null && !TextUtils.isEmpty(descTextItem.getText());
-        boolean isImgPresent = !TextUtils.isEmpty(image);
-
-        if (isImgPresent) {
-            return VIEW_TYPE_TEXT_IMG;
-        } else if (isTitlePresent && isDescPresent) {
-            return VIEW_TYPE_TEXT_DESC;
-        }
-        return VIEW_TYPE_TEXT_ONLY;
-    }
-
     public void displayImage(ImageView imageView) {
         if (TextUtils.isEmpty(image)) return;
         if (image.startsWith(Constants.LOCAL_RES_PREFIX)) {
@@ -192,7 +172,7 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
     }
 
     @LayoutRes
-    public int getDrawableId(int viewType) {
+    public static int getLayoutResId(int viewType) {
         switch (viewType) {
             case VIEW_TITLE_DESC_VERTICAL:
                 return R.layout.section_text_desc;
