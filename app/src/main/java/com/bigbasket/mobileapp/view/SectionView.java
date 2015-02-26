@@ -88,12 +88,12 @@ public class SectionView {
                         mainLayout.addView(tileView);
                     }
                     break;
-//                case Section.GRID:
-//                    View grid = getGridLayoutView(section, inflater, mainLayout);
-//                    if (grid != null) {
-//                        mainLayout.addView(grid);
-//                    }
-//                    break;
+                case Section.GRID:
+                    View grid = getGridLayoutView(section, inflater, mainLayout);
+                    if (grid != null) {
+                        mainLayout.addView(grid);
+                    }
+                    break;
 //                case Section.PRODUCT_CAROUSEL:
 //                    View productCarouselView = getCarouselView(section, inflater, mainLayout);
 //                    if (productCarouselView != null) {
@@ -351,89 +351,79 @@ public class SectionView {
         tileContainer.setLayoutParams(tileContainerParams);
         ArrayList<SectionItem> sectionItems = section.getSectionItems();
         int numSectionItems = sectionItems.size();
+        int gridWidth = (int) context.getResources().getDimension(R.dimen.grid_width);
+        int verticalViewMinHeight = (int) context.getResources().getDimension(R.dimen.vertical_tile_min_height);
+        int horizontalViewMinHeight = (int) context.getResources().getDimension(R.dimen.horizontal_tile_min_height);
         for (int i = 0; i < numSectionItems; i++) {
             SectionItem sectionItem = sectionItems.get(i);
             boolean applyRight = i != numSectionItems - 1;
-            if (sectionItem.getViewType() == SectionItem.VIEW_TYPE_TEXT_IMG) {
-                View tileItemView = inflater.inflate(R.layout.uiv3_grid_image_caption_layout, tileContainer, false);
-                Renderer renderer = mSectionData.getRenderersMap() != null ?
-                        mSectionData.getRenderersMap().get(sectionItem.getRenderingId()) : null;
-                if (renderer != null) {
-                    int width = (int) context.getResources().getDimension(R.dimen.grid_width);
-                    renderer.setRendering(tileItemView, 0, 0, false, true, applyRight, true);
-                    int margin = renderer.getSafeMargin(defaultMargin);
-                    if (margin > 0) {
-                        FlowLayout.LayoutParams layoutParams = new FlowLayout.
-                                LayoutParams(width,
-                                ViewGroup.LayoutParams.WRAP_CONTENT);
-                        layoutParams.setMargins(0, margin, applyRight ? margin : 0, margin);
-                        tileItemView.setLayoutParams(layoutParams);
-                    }
-                } else {
-                    FlowLayout.LayoutParams layoutParams = new FlowLayout.
-                            LayoutParams((int) context.getResources().getDimension(R.dimen.grid_width),
-                            ViewGroup.LayoutParams.WRAP_CONTENT);
-                    layoutParams.setMargins(0, defaultMargin, applyRight ? defaultMargin : 0, defaultMargin);
-                    tileItemView.setLayoutParams(layoutParams);
-                }
-                TextView txtCaption = (TextView) tileItemView.findViewById(R.id.txtCaption);
-                ImageView imgContent = (ImageView) tileItemView.findViewById(R.id.imgContent);
-                if (sectionItem.getTitle() != null &&
-                        !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
-                    txtCaption.setTypeface(faceRobotoRegular);
-                    txtCaption.setText(sectionItem.getTitle().getText());
-                    Renderer textRenderer = mSectionData.getRenderersMap() != null ?
-                            mSectionData.getRenderersMap().get(sectionItem.getTitle().getRenderingId()) : null;
-                    if (textRenderer != null) {
-                        textRenderer.setRendering(txtCaption, 0, 0);
-                    }
-                } else {
-                    txtCaption.setVisibility(View.GONE);
-                }
-                imgContent.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
-                sectionItem.displayImage(imgContent);
-                tileContainer.addView(tileItemView);
-            } else {
-                if (sectionItem.getTitle() == null || TextUtils.isEmpty(sectionItem.getTitle().getText())) {
-                    continue;
-                }
-                boolean isDescPresent = sectionItem.getDescription() != null &&
-                        !TextUtils.isEmpty(sectionItem.getDescription().getText());
-                int layoutId = isDescPresent ? R.layout.uiv3_text_desc_carousel_row : R.layout.uiv3_text_carousel_row;
-                View tileItemView = inflater.inflate(layoutId, tileContainer, false);
-                TextView txtTitle = (TextView) tileItemView.findViewById(R.id.txtTitle);
-                txtTitle.setTypeface(faceRobotoRegular);
-                txtTitle.setText(sectionItem.getTitle().getText());
+            Renderer renderer = mSectionData.getRenderersMap() != null ?
+                    mSectionData.getRenderersMap().get(sectionItem.getRenderingId()) : null;
 
-                Renderer renderer = mSectionData.getRenderersMap() != null ?
-                        mSectionData.getRenderersMap().get(sectionItem.getRenderingId()) : null;
-                if (renderer != null) {
-                    int width = (int) context.getResources().getDimension(R.dimen.grid_width);
-                    renderer.setRendering(tileItemView, defaultMargin, 0, false, true, applyRight, true);
-                    int margin = renderer.getSafeMargin(defaultMargin);
-                    if (margin > 0) {
-                        FlowLayout.LayoutParams layoutParams = new FlowLayout.
-                                LayoutParams(width,
-                                (int) context.getResources().getDimension(R.dimen.carousel_img_height));
-                        layoutParams.setMargins(0, margin, applyRight ? margin : 0, margin);
-                        tileItemView.setLayoutParams(layoutParams);
-                    }
-                } else {
-                    FlowLayout.LayoutParams layoutParams = new FlowLayout.
-                            LayoutParams((int) context.getResources().getDimension(R.dimen.grid_width),
-                            (int) context.getResources().getDimension(R.dimen.carousel_img_height));
-                    layoutParams.setMargins(0, defaultMargin, applyRight ? defaultMargin : 0, defaultMargin);
-                    tileItemView.setLayoutParams(layoutParams);
-                }
+            int viewType = sectionItem.getItemViewType(renderer);
+            if (viewType == SectionItem.VIEW_UNKNOWN) {
+                continue;
+            }
+            int layoutId = sectionItem.getDrawableId(viewType);
+            if (layoutId == 0) {
+                continue;
+            }
 
-                if (isDescPresent) {
-                    TextView txtDescription = (TextView) tileItemView.findViewById(R.id.txtDescription);
+            View view = inflater.inflate(layoutId, tileContainer, false);
+
+            TextView txtTitle = (TextView) view.findViewById(R.id.txtTitle);
+            TextView txtDescription = (TextView) view.findViewById(R.id.txtDescription);
+            ImageView imgInRow = (ImageView) view.findViewById(R.id.imgInRow);
+
+            if (txtTitle != null) {
+                if (sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
+                    txtTitle.setTypeface(faceRobotoRegular);
+                    txtTitle.setText(sectionItem.getTitle().getText());
+                } else {
+                    txtTitle.setVisibility(View.GONE);
+                }
+            }
+
+            if (txtDescription != null) {
+                if (sectionItem.getDescription() != null && !TextUtils.isEmpty(sectionItem.getDescription().getText())) {
                     txtDescription.setTypeface(faceRobotoRegular);
                     txtDescription.setText(sectionItem.getDescription().getText());
+                } else {
+                    txtDescription.setVisibility(View.GONE);
                 }
-                tileItemView.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
-                tileContainer.addView(tileItemView);
             }
+
+            if (imgInRow != null) {
+                if (!TextUtils.isEmpty(sectionItem.getImage())) {
+                    sectionItem.displayImage(imgInRow);
+                } else {
+                    imgInRow.setVisibility(View.GONE);
+                }
+            }
+
+            ViewGroup layoutSection = (ViewGroup) view.findViewById(R.id.layoutSection);
+            if (layoutSection != null) {
+                if (renderer == null || renderer.getOrientation() == Renderer.VERTICAL) {
+                    layoutSection.setMinimumHeight(verticalViewMinHeight);
+                } else {
+                    layoutSection.setMinimumHeight(horizontalViewMinHeight);
+                }
+            }
+
+            ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+            layoutParams.width = gridWidth;
+
+            if (layoutParams instanceof ViewGroup.MarginLayoutParams) {
+                ((ViewGroup.MarginLayoutParams) layoutParams).setMargins(0, defaultMargin, applyRight ? defaultMargin : 0, 0);
+            }
+            view.setLayoutParams(layoutParams);
+
+            if (renderer != null) {
+                renderer.setRendering(view, 0, 0, false, true, applyRight, false);
+            }
+
+            view.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
+            tileContainer.addView(view);
         }
         return base;
     }
@@ -501,7 +491,6 @@ public class SectionView {
             }
 
             ViewGroup layoutSection = (ViewGroup) view.findViewById(R.id.layoutSection);
-
             if (layoutSection != null) {
                 if (renderer == null || renderer.getOrientation() == Renderer.VERTICAL) {
                     layoutSection.setMinimumHeight(verticalViewMinHeight);

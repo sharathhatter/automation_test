@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:gravity="center_horizontal"
-            android:maxLines="1"
+            android:maxLines="2"
             android:paddingBottom="@dimen/padding_small"
             android:paddingLeft="@dimen/padding_small"
             android:paddingRight="@dimen/padding_small"

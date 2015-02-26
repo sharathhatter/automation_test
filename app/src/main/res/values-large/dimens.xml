@@ -9,6 +9,7 @@
     <dimen name="footer_button_vertical_padding">16dp</dimen>
     <dimen name="card_img_content_margin">16dp</dimen>
     <dimen name="bar_chart_height">500dp</dimen>
+    <dimen name="grid_width">140dp</dimen>
     <!--<dimen name="carousel_height">250dp</dimen>-->
     <!--<dimen name="carousel_width">170dp</dimen>-->
     <!--<dimen name="carousel_img_height">160dp</dimen>-->
