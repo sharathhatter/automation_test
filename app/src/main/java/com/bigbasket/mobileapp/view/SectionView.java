@@ -17,16 +17,16 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.CarouselAdapter;
+import com.bigbasket.mobileapp.adapter.SectionGridAdapter;
 import com.bigbasket.mobileapp.handler.OnSectionItemClickListener;
 import com.bigbasket.mobileapp.model.section.Renderer;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.model.section.SectionItem;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.bigbasket.mobileapp.view.uiv3.ExpandableHeightGridView;
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.DefaultSliderView;
-
-import org.apmem.tools.layouts.FlowLayout;
 
 import java.util.ArrayList;
 
@@ -344,97 +344,101 @@ public class SectionView {
         View base = inflater.inflate(R.layout.uiv3_grid_container, parent, false);
         formatSectionTitle(base, R.id.txtListTitle, section);
 
-        FlowLayout tileContainer = (FlowLayout) base.findViewById(R.id.layoutGrid);
+        ExpandableHeightGridView tileContainer = (ExpandableHeightGridView) base.findViewById(R.id.layoutGrid);
         LinearLayout.LayoutParams tileContainerParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         tileContainerParams.setMargins(defaultMargin, 0, defaultMargin, 0);
         tileContainer.setLayoutParams(tileContainerParams);
-        ArrayList<SectionItem> sectionItems = section.getSectionItems();
-        int numSectionItems = sectionItems.size();
-        int gridWidth = (int) context.getResources().getDimension(R.dimen.grid_width);
-        int verticalViewMinHeight = (int) context.getResources().getDimension(R.dimen.vertical_tile_min_height);
-        int horizontalViewMinHeight = (int) context.getResources().getDimension(R.dimen.horizontal_tile_min_height);
-        for (int i = 0; i < numSectionItems; i++) {
-            SectionItem sectionItem = sectionItems.get(i);
-            boolean applyRight = i != numSectionItems - 1;
-            Renderer renderer = mSectionData.getRenderersMap() != null ?
-                    mSectionData.getRenderersMap().get(sectionItem.getRenderingId()) : null;
+        tileContainer.setExpanded(true);
+        SectionGridAdapter sectionGridAdapter = new SectionGridAdapter<>(context, section, mSectionData.getRenderersMap(),
+                faceRobotoRegular, screenName);
+        tileContainer.setAdapter(sectionGridAdapter);
 
-            int viewType = sectionItem.getItemViewType(renderer);
-            if (viewType == SectionItem.VIEW_UNKNOWN) {
-                continue;
-            }
-            int layoutId = SectionItem.getLayoutResId(viewType);
-            if (layoutId == 0) {
-                continue;
-            }
-
-            View view = inflater.inflate(layoutId, tileContainer, false);
-
-            TextView txtTitle = (TextView) view.findViewById(R.id.txtTitle);
-            TextView txtDescription = (TextView) view.findViewById(R.id.txtDescription);
-            ImageView imgInRow = (ImageView) view.findViewById(R.id.imgInRow);
-
-            if (txtTitle != null) {
-                if (sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
-                    txtTitle.setTypeface(faceRobotoRegular);
-                    txtTitle.setText(sectionItem.getTitle().getText());
-                    Renderer itemRenderer = mSectionData.getRenderersMap() != null ?
-                            mSectionData.getRenderersMap().get(sectionItem.getTitle().getRenderingId()) : null;
-                    if (itemRenderer != null) {
-                        itemRenderer.setRendering(txtTitle, defaultMargin, defaultMargin, true, true, true, true);
-                    }
-                } else {
-                    txtTitle.setVisibility(View.GONE);
-                }
-            }
-
-            if (txtDescription != null) {
-                if (sectionItem.getDescription() != null && !TextUtils.isEmpty(sectionItem.getDescription().getText())) {
-                    txtDescription.setTypeface(faceRobotoRegular);
-                    txtDescription.setText(sectionItem.getDescription().getText());
-                    Renderer itemRenderer = mSectionData.getRenderersMap() != null ?
-                            mSectionData.getRenderersMap().get(sectionItem.getDescription().getRenderingId()) : null;
-                    if (itemRenderer != null) {
-                        itemRenderer.setRendering(txtTitle, defaultMargin, defaultMargin, true, true, true, true);
-                    }
-                } else {
-                    txtDescription.setVisibility(View.GONE);
-                }
-            }
-
-            if (imgInRow != null) {
-                if (!TextUtils.isEmpty(sectionItem.getImage())) {
-                    sectionItem.displayImage(imgInRow);
-                } else {
-                    imgInRow.setVisibility(View.GONE);
-                }
-            }
-
-            ViewGroup layoutSection = (ViewGroup) view.findViewById(R.id.layoutSection);
-            if (layoutSection != null) {
-                if (renderer == null || renderer.getOrientation() == Renderer.VERTICAL) {
-                    layoutSection.setMinimumHeight(verticalViewMinHeight);
-                } else {
-                    layoutSection.setMinimumHeight(horizontalViewMinHeight);
-                }
-            }
-
-            ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
-            layoutParams.width = gridWidth;
-
-            if (layoutParams instanceof ViewGroup.MarginLayoutParams) {
-                ((ViewGroup.MarginLayoutParams) layoutParams).setMargins(0, defaultMargin, applyRight ? defaultMargin : 0, 0);
-            }
-            view.setLayoutParams(layoutParams);
-
-            if (renderer != null) {
-                renderer.setRendering(view, 0, 0, false, true, applyRight, false);
-            }
-
-            view.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
-            tileContainer.addView(view);
-        }
+//        int numSectionItems = sectionItems.size();
+//        int gridWidth = (int) context.getResources().getDimension(R.dimen.grid_width);
+//        int verticalViewMinHeight = (int) context.getResources().getDimension(R.dimen.vertical_tile_min_height);
+//        int horizontalViewMinHeight = (int) context.getResources().getDimension(R.dimen.horizontal_tile_min_height);
+//        for (int i = 0; i < numSectionItems; i++) {
+//            SectionItem sectionItem = sectionItems.get(i);
+//            boolean applyRight = i != numSectionItems - 1;
+//            Renderer renderer = mSectionData.getRenderersMap() != null ?
+//                    mSectionData.getRenderersMap().get(sectionItem.getRenderingId()) : null;
+//
+//            int viewType = sectionItem.getItemViewType(renderer);
+//            if (viewType == SectionItem.VIEW_UNKNOWN) {
+//                continue;
+//            }
+//            int layoutId = SectionItem.getLayoutResId(viewType);
+//            if (layoutId == 0) {
+//                continue;
+//            }
+//
+//            View view = inflater.inflate(layoutId, tileContainer, false);
+//
+//            TextView txtTitle = (TextView) view.findViewById(R.id.txtTitle);
+//            TextView txtDescription = (TextView) view.findViewById(R.id.txtDescription);
+//            ImageView imgInRow = (ImageView) view.findViewById(R.id.imgInRow);
+//
+//            if (txtTitle != null) {
+//                if (sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
+//                    txtTitle.setTypeface(faceRobotoRegular);
+//                    txtTitle.setText(sectionItem.getTitle().getText());
+//                    Renderer itemRenderer = mSectionData.getRenderersMap() != null ?
+//                            mSectionData.getRenderersMap().get(sectionItem.getTitle().getRenderingId()) : null;
+//                    if (itemRenderer != null) {
+//                        itemRenderer.setRendering(txtTitle, defaultMargin, defaultMargin, true, true, true, true);
+//                    }
+//                } else {
+//                    txtTitle.setVisibility(View.GONE);
+//                }
+//            }
+//
+//            if (txtDescription != null) {
+//                if (sectionItem.getDescription() != null && !TextUtils.isEmpty(sectionItem.getDescription().getText())) {
+//                    txtDescription.setTypeface(faceRobotoRegular);
+//                    txtDescription.setText(sectionItem.getDescription().getText());
+//                    Renderer itemRenderer = mSectionData.getRenderersMap() != null ?
+//                            mSectionData.getRenderersMap().get(sectionItem.getDescription().getRenderingId()) : null;
+//                    if (itemRenderer != null) {
+//                        itemRenderer.setRendering(txtTitle, defaultMargin, defaultMargin, true, true, true, true);
+//                    }
+//                } else {
+//                    txtDescription.setVisibility(View.GONE);
+//                }
+//            }
+//
+//            if (imgInRow != null) {
+//                if (!TextUtils.isEmpty(sectionItem.getImage())) {
+//                    sectionItem.displayImage(imgInRow);
+//                } else {
+//                    imgInRow.setVisibility(View.GONE);
+//                }
+//            }
+//
+//            ViewGroup layoutSection = (ViewGroup) view.findViewById(R.id.layoutSection);
+//            if (layoutSection != null) {
+//                if (renderer == null || renderer.getOrientation() == Renderer.VERTICAL) {
+//                    layoutSection.setMinimumHeight(verticalViewMinHeight);
+//                } else {
+//                    layoutSection.setMinimumHeight(horizontalViewMinHeight);
+//                }
+//            }
+//
+//            ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+//            layoutParams.width = gridWidth;
+//
+//            if (layoutParams instanceof ViewGroup.MarginLayoutParams) {
+//                ((ViewGroup.MarginLayoutParams) layoutParams).setMargins(0, defaultMargin, applyRight ? defaultMargin : 0, 0);
+//            }
+//            view.setLayoutParams(layoutParams);
+//
+//            if (renderer != null) {
+//                renderer.setRendering(view, 0, 0, false, true, applyRight, false);
+//            }
+//
+//            view.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
+//            tileContainer.addView(view);
+//        }
         return base;
     }
 

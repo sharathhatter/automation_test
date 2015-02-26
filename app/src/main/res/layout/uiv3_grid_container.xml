@@ -9,9 +9,14 @@
         android:id="@+id/txtListTitle"
         style="@style/SectionHeaderTextStyle" />
 
-    <org.apmem.tools.layouts.FlowLayout
+    <com.bigbasket.mobileapp.view.uiv3.ExpandableHeightGridView
         android:id="@+id/layoutGrid"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal" />
+        android:verticalSpacing="@dimen/margin_mini"
+        android:horizontalSpacing="@dimen/margin_mini"
+        android:isScrollContainer="false"
+        android:numColumns="3"
+        android:gravity="center_horizontal"
+        android:stretchMode="columnWidth" />
 </LinearLayout>
