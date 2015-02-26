@@ -7,6 +7,5 @@
         android:icon="@drawable/delete_white"
         android:title="@string/empty_basket"
         android:orderInCategory="1"
-        app:showAsAction="always"
-        />
+        app:showAsAction="always" />
 </menu>

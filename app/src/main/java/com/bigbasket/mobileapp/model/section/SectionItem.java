@@ -13,12 +13,13 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 
-public class SectionItem extends BaseSectionTextItem implements Parcelable {
+public class SectionItem extends BaseSectionTextItem implements Parcelable, Serializable {
 
     public static final int VIEW_TYPE_TEXT_IMG = 0;
     public static final int VIEW_TYPE_TEXT_DESC = 1;

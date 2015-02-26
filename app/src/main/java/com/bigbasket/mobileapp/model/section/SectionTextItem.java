@@ -6,7 +6,9 @@ import android.os.Parcelable;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
-public class SectionTextItem implements Parcelable {
+import java.io.Serializable;
+
+public class SectionTextItem implements Parcelable, Serializable {
     private String text;
 
     @SerializedName(Constants.RENDERING_ID)

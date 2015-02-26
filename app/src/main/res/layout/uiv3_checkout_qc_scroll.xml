@@ -9,7 +9,7 @@
         style="@style/FooterButtonStyle"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:id="@+id/btnListFooter"/>
+        android:id="@+id/btnListFooter" />
 
     <ScrollView
         android:layout_width="match_parent"

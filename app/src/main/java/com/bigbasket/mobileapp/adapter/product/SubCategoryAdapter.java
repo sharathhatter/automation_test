@@ -42,8 +42,7 @@ public class SubCategoryAdapter {
         DatabaseHelper.getInstance(context).close();
     }
 
-    public void insert(SubCategoryModel subCategoryModel, String version, SectionData sectionData, String slug) { //, ArrayList<String> bannerArrayList,
-        Log.d("Inserting sub_categories to database", "");
+    public void insert(SubCategoryModel subCategoryModel, String version, SectionData sectionData, String slug) {
         ContentValues cv = new ContentValues();
 
         cv.put(COLUMN_VERSION, version);
@@ -64,7 +63,6 @@ public class SubCategoryAdapter {
     }
 
     public ArrayList<Object> getSubCategory(String slug) {
-        Log.d("Inserting getAllSubCategories Method ", "");
         Cursor subCategoryCursor = null;
         ArrayList<Object> result = new ArrayList<>();
         try {
@@ -90,7 +88,6 @@ public class SubCategoryAdapter {
     }
 
     public String getVersion(String slug) {
-        Log.d("Inside getVersion Method ", "");
         Cursor cursor = null;
         String version = null;
         try {

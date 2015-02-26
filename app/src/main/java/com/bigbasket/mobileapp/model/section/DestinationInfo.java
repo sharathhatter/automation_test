@@ -9,9 +9,10 @@ import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class DestinationInfo implements Parcelable {
+public class DestinationInfo implements Parcelable, Serializable {
 
     public static final String PRODUCT_CATEGORY = "product_category";
     public static final String PRODUCT_LIST = "product_list";

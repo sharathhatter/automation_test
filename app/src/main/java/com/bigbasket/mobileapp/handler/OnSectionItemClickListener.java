@@ -235,7 +235,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
     }
 
     private void logBannerEvent() {
-        if (sectionItem == null || sectionItem.getDestinationInfo()!=null) return;
+        if (sectionItem == null || sectionItem.getDestinationInfo() != null) return;
         int index = 0;
         for (int i = 0; i < section.getSectionItems().size(); i++) {
             if (section.getSectionItems().get(i) == sectionItem)
@@ -243,11 +243,11 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
         }
 
         String bannerName = "";
-        if(!TextUtils.isEmpty(sectionItem.getDestinationInfo().getDestinationType())){
+        if (!TextUtils.isEmpty(sectionItem.getDestinationInfo().getDestinationType())) {
             bannerName = sectionItem.getDestinationInfo().getDestinationType();
         }
-        if(!TextUtils.isEmpty(sectionItem.getDestinationInfo().getDestinationSlug())){
-            bannerName += ", "+sectionItem.getDestinationInfo().getDestinationSlug();
+        if (!TextUtils.isEmpty(sectionItem.getDestinationInfo().getDestinationSlug())) {
+            bannerName += ", " + sectionItem.getDestinationInfo().getDestinationSlug();
         }
 
         HashMap<String, String> eventAttribs = new HashMap<>();
