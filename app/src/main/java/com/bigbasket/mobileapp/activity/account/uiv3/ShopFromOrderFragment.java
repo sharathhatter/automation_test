@@ -1,11 +1,16 @@
 package com.bigbasket.mobileapp.activity.account.uiv3;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.product.ProductListRecyclerAdapter;
@@ -13,13 +18,16 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetProductsForOrderApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
+import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 
@@ -105,6 +113,31 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
         if (getActivity() == null) return;
         LinearLayout contentView = getContentView();
         if (contentView == null) return;
+        contentView.removeAllViews();
+
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+
+        View shopListHeaderLayout = inflater.inflate(R.layout.uiv3_shopping_list_products_header, contentView, false);
+        TextView brandNameTxt = (TextView) shopListHeaderLayout.findViewById(R.id.brandNameTxt);
+        View txtSeparator = shopListHeaderLayout.findViewById(R.id.txtSeparator);
+        brandNameTxt.setVisibility(View.INVISIBLE);
+
+        Button btnAddAllToBasket = (Button) shopListHeaderLayout.findViewById(R.id.btnAddAllToBasket);
+        if (Product.areAllProductsOutOfStock(mProducts)) {
+            btnAddAllToBasket.setVisibility(View.GONE);
+            txtSeparator.setVisibility(View.GONE);
+        } else {
+            btnAddAllToBasket.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showAlertDialog(null, getString(R.string.addAllProducts),
+                            DialogButton.YES, DialogButton.CANCEL, Constants.ADD_ALL, null, getString(R.string.yesTxt));
+                }
+            });
+        }
+        contentView.addView(shopListHeaderLayout);
+
+
         RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, contentView);
 
         // Set product-list data
@@ -126,6 +159,51 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
         productRecyclerView.setAdapter(productListRecyclerAdapter);
         contentView.addView(productRecyclerView);
         logShopFromOrderEvent();
+    }
+
+
+    @Override
+    protected void onPositiveButtonClicked(DialogInterface dialogInterface, String sourceName, Object valuePassed) {
+        if (!TextUtils.isEmpty(sourceName) && sourceName.equalsIgnoreCase(Constants.ADD_ALL)) {
+            if (!checkInternetConnection()) {
+                handler.sendOfflineError();
+                return;
+            }
+            addAllItemsToBasket();
+        } else {
+            super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
+        }
+    }
+
+    private void addAllItemsToBasket() {
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+        showProgressView();
+        bigBasketApiService.addAllToBasketPastOrders(mOrderId,
+                new Callback<OldApiResponse<CartSummary>>() {
+                    @Override
+                    public void success(OldApiResponse<CartSummary> addAllToBasketPastOrdersCallBack, Response response) {
+                        if (isSuspended()) return;
+                        hideProgressView();
+                        switch (addAllToBasketPastOrdersCallBack.status) {
+                            case Constants.OK:
+                                setCartInfo(addAllToBasketPastOrdersCallBack.apiResponseContent);
+                                updateUIForCartInfo();
+                                restoreProductList(null);
+                                break;
+                            case Constants.ERROR:
+                                handler.sendEmptyMessage(addAllToBasketPastOrdersCallBack.getErrorTypeAsInt(),
+                                        addAllToBasketPastOrdersCallBack.message);
+                                break;
+                        }
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        if (isSuspended()) return;
+                        hideProgressView();
+                        handler.handleRetrofitError(error);
+                    }
+                });
     }
 
     private void logShopFromOrderEvent() {

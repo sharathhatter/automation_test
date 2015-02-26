@@ -6,9 +6,10 @@ import android.os.Parcelable;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Section extends BaseSectionTextItem implements Parcelable {
+public class Section extends BaseSectionTextItem implements Parcelable, Serializable {
     public static final String BANNER = "banner";
     public static final String SALUTATION = "salutation";
     public static final String PRODUCT_CAROUSEL = "product_carousel";

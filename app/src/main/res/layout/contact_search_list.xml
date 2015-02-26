@@ -10,23 +10,23 @@
         style="@style/FooterButtonStyle"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:id="@+id/btnListFooter"/>
+        android:id="@+id/btnListFooter" />
 
 
-    <EditText android:id="@+id/editTxtSearch"
+    <EditText
+        android:id="@+id/editTxtSearch"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:drawableLeft="@drawable/ic_search_grey600_24dp"
         android:paddingLeft="@dimen/padding_normal"
         android:layout_alignParentTop="true"
-        android:inputType="textVisiblePassword"/>
+        android:inputType="textVisiblePassword" />
 
     <ListView
         android:id="@+id/listWithFixedFooter"
         android:layout_below="@+id/editTxtSearch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/btnListFooter"
-        />
+        android:layout_above="@id/btnListFooter" />
 
 </RelativeLayout>

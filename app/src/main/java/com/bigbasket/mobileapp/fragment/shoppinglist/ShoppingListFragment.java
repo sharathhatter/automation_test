@@ -136,7 +136,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
                         break;
                     default:
                         handler.sendEmptyMessage(oldBaseApiResponse.getErrorTypeAsInt(),
-                                oldBaseApiResponse.message);
+                                oldBaseApiResponse.message, true);
                         break;
                 }
             }
@@ -149,7 +149,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
                 } catch (IllegalArgumentException e) {
                     return;
                 }
-                handler.handleRetrofitError(error);
+                handler.handleRetrofitError(error, true);
             }
         });
     }

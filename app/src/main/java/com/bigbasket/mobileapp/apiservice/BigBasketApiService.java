@@ -388,4 +388,10 @@ public interface BigBasketApiService {
     void getAppData(@Query(Constants.CLIENT) String client,
                     @Query(Constants.VERSION) String version,
                     Callback<ApiResponse<AppDataResponse>> callbackAppData);
+
+    @FormUrlEncoded
+    @POST("/add-order-products/")
+    void addAllToBasketPastOrders(@Field(Constants.ORDER_ID) String orderId,
+                                  Callback<OldApiResponse<CartSummary>> addAllToBasketSmartBasketCallBack);
+
 }

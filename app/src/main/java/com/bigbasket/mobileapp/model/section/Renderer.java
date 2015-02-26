@@ -15,7 +15,9 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.google.gson.annotations.SerializedName;
 
-public class Renderer implements Parcelable {
+import java.io.Serializable;
+
+public class Renderer implements Parcelable, Serializable {
 
     public static final int PADDING = 4;
     public static final int MARGIN = 4;
