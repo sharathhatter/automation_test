@@ -222,6 +222,13 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
                     showDefaultError();
                 }
                 break;
+            case Constants.DYNAMIC_PAGE:
+                String screenName = uri.getQueryParameter(Constants.SCREEN);
+                intent = new Intent(this, BBActivity.class);
+                intent.putExtra(Constants.SCREEN, screenName);
+                intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_DYNAMIC_SCREEN);
+                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                break;
             default:
                 finish();
                 break;

@@ -41,6 +41,7 @@ import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.adapter.NavigationAdapter;
 import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
+import com.bigbasket.mobileapp.fragment.DynamicScreenFragment;
 import com.bigbasket.mobileapp.fragment.HomeFragment;
 import com.bigbasket.mobileapp.fragment.account.AccountSettingFragment;
 import com.bigbasket.mobileapp.fragment.account.ChangeCityDialogFragment;
@@ -467,6 +468,13 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 bundle.putString(Constants.TOP_CATEGORY_NAME, getIntent().getStringExtra(Constants.TOP_CATEGORY_NAME));
                 shoppingListProductFragment.setArguments(bundle);
                 addToMainLayout(shoppingListProductFragment);
+                break;
+            case FragmentCodes.START_DYNAMIC_SCREEN:
+                DynamicScreenFragment dynamicScreenFragment = new DynamicScreenFragment();
+                bundle = new Bundle();
+                bundle.putString(Constants.SCREEN, getIntent().getStringExtra(Constants.SCREEN));
+                dynamicScreenFragment.setArguments(bundle);
+                addToMainLayout(dynamicScreenFragment);
                 break;
         }
     }

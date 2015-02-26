@@ -291,7 +291,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
     @NonNull
     @Override
     public String getFragmentTxnTag() {
-        return Constants.HOME;
+        return HomeFragment.class.getName();
     }
 
     private void setAnalyticalData(AnalyticsEngine analyticsEngine) {
@@ -389,7 +389,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
     @Override
     public void onDynamicScreenSuccess(String screenName, SectionData sectionData) {
         mSectionData = sectionData;
-        mscreenName = screenName;
+        mScreenName = screenName;
         renderHomePage();
         trackEvent(TrackingAware.HOME_PAGE_SHOWN, null);
         //screen name pass to OnSectionItemClickListener

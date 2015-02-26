@@ -80,6 +80,7 @@ public final class TrackEventkeys {
 
     public static final String START_SCREEN = "Entry Page"; //Done
     public static final String HOME_SCREEN = "Home Page"; //Done
+    public static final String DYNAMIC_SCREEN = "Dynamic Screen"; //Done
     //Dialog
     public static final String CHANGE_CITY_SCREEN = "Change Your City"; //Done
     public static final String FORGOT_PASSWORD_SCREEN = "Forgot Password"; //Done

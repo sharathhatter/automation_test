@@ -108,6 +108,7 @@ public interface TrackingAware {
 
     //Home Page
     public static final String HOME_PAGE_SHOWN = "HomePage.Shown";
+    public static final String DYNAMIC_SCREEN_SHOWN = "Dynamic Screen.Shown";
     public static final String HOME_PAGE_ITEM_CLICKED = "HomePage.Item Clicked";
     public static final String HOME_PAGE_BANNER_CLICKED = "HomePage.Banner Clicked";
     public static final String SEARCH = "Search";
