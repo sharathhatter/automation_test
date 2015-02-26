@@ -19,31 +19,6 @@ public class MarketPlaceAgeCheck extends FulfillmentInfo implements Parcelable {
     @SerializedName(Constants.AGE_MESSAGE)
     private String ageMessage;
 
-    public MarketPlaceAgeCheck(String displayName, String tc2, String fulfilledBy,
-                               String fulfillmentId, String fulfilledByInfoPage, String tc1,
-                               String icon, int ageLimit, String ageMessage) {
-        super(displayName, tc2, fulfilledBy, fulfillmentId, fulfilledByInfoPage, tc1, icon);
-        this.ageLimit = ageLimit;
-        this.ageMessage = ageMessage;
-    }
-
-    public MarketPlaceAgeCheck(int ageLimit, String ageMessage) {
-        this.ageLimit = ageLimit;
-        this.ageMessage = ageMessage;
-    }
-
-    public MarketPlaceAgeCheck(JSONObject jsonObject, int ageLimit, String ageMessage) throws JSONException {
-        super(jsonObject);
-        this.ageLimit = ageLimit;
-        this.ageMessage = ageMessage;
-    }
-
-    public MarketPlaceAgeCheck(Parcel parcel, int ageLimit, String ageMessage) {
-        super(parcel);
-        this.ageLimit = ageLimit;
-        this.ageMessage = ageMessage;
-    }
-
     @Override
     public int describeContents() {
         return 0;
@@ -52,14 +27,23 @@ public class MarketPlaceAgeCheck extends FulfillmentInfo implements Parcelable {
     public MarketPlaceAgeCheck(Parcel source) {
         super(source);
         ageLimit = source.readInt();
-        ageMessage = source.readString();
+
+        boolean wasAgeMsgNull = source.readByte() == (byte) 1;
+        if (!wasAgeMsgNull) {
+            ageMessage = source.readString();
+        }
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
         dest.writeInt(ageLimit);
-        dest.writeString(ageMessage);
+
+        boolean wasAgeMsgNull = ageMessage == null;
+        dest.writeByte(wasAgeMsgNull ? (byte) 1 : (byte) 0);
+        if (!wasAgeMsgNull) {
+            dest.writeString(ageMessage);
+        }
     }
 
     public static final Parcelable.Creator<MarketPlaceAgeCheck> CREATOR = new Parcelable.Creator<MarketPlaceAgeCheck>() {

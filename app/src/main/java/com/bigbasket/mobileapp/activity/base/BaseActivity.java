@@ -144,12 +144,12 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
 
     @Override
     public void onCoMarketPlaceSuccess(MarketPlace marketPlace) {
-        BigBasketMessageHandler bigBasketMessageHandler = new BigBasketMessageHandler<>(getCurrentActivity(), marketPlace);
+        BigBasketMessageHandler bigBasketMessageHandler = new BigBasketMessageHandler<>(getCurrentActivity());
         if (marketPlace.isRuleValidationError()) {
-            bigBasketMessageHandler.sendEmptyMessage(NavigationCodes.GO_MARKET_PLACE, null);
+            bigBasketMessageHandler.sendEmptyMessage(NavigationCodes.GO_MARKET_PLACE, null, false, marketPlace);
         } else if (marketPlace.isAgeCheckRequired() || marketPlace.isPharamaPrescriptionNeeded()
                 || marketPlace.hasTermsAndCond()) {
-            bigBasketMessageHandler.sendEmptyMessage(NavigationCodes.GO_AGE_VALIDATION, null);
+            bigBasketMessageHandler.sendEmptyMessage(NavigationCodes.GO_AGE_VALIDATION, null, false, marketPlace);
         } else {
             SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
             String pharmaPrescriptionId = prefer.getString(Constants.PHARMA_PRESCRIPTION_ID, null);

@@ -24,18 +24,16 @@ import retrofit.RetrofitError;
 public class BigBasketMessageHandler<T> {
 
     private T ctx;
-    private MarketPlace mMarketPlace;
 
     public BigBasketMessageHandler(T ctx) {
         this.ctx = ctx;
     }
 
-    public BigBasketMessageHandler(T ctx, MarketPlace mMarketPlace) {
-        this.ctx = ctx;
-        this.mMarketPlace = mMarketPlace;
+    public void sendEmptyMessage(int what, String message, boolean finish) {
+        sendEmptyMessage(what, message, finish, null);
     }
 
-    public void sendEmptyMessage(int what, String message, boolean finish) {
+    public void sendEmptyMessage(int what, String message, boolean finish, MarketPlace marketPlace) {
         switch (what) {
             case ApiErrorCodes.POTENTIAL_ORDER_SLOT_EXPIRED:
                 ((ApiErrorAware) ctx).showApiErrorDialog(null, !TextUtils.isEmpty(message) ? message : getString(R.string.slotNotAvailable),
@@ -132,13 +130,13 @@ public class BigBasketMessageHandler<T> {
                 break;
             case NavigationCodes.GO_MARKET_PLACE:
                 Intent intent = new Intent(((ActivityAware) ctx).getCurrentActivity(), BasketValidationActivity.class);
-                intent.putExtra(Constants.MARKET_PLACE_INTENT, mMarketPlace);
+                intent.putExtra(Constants.MARKET_PLACE_INTENT, marketPlace);
                 ((ActivityAware) ctx).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 break;
 
             case NavigationCodes.GO_AGE_VALIDATION:
                 intent = new Intent(((ActivityAware) ctx).getCurrentActivity(), AgeValidationActivity.class);
-                intent.putExtra(Constants.MARKET_PLACE_INTENT, mMarketPlace);
+                intent.putExtra(Constants.MARKET_PLACE_INTENT, marketPlace);
                 ((ActivityAware) ctx).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 ((ActivityAware) ctx).getCurrentActivity().finish();// don't remove it, fix for back button
                 break;

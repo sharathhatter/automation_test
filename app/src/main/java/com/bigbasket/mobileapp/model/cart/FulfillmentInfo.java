@@ -60,24 +60,85 @@ public class FulfillmentInfo implements Parcelable {
     }
 
     public FulfillmentInfo(Parcel parcel) {
-        this.displayName = parcel.readString();
-        this.tc1 = parcel.readString();
-        this.tc2 = parcel.readString();
-        this.fulfilledBy = parcel.readString();
-        this.fulfillmentId = parcel.readString();
-        this.fulfilledByInfoPage = parcel.readString();
-        this.icon = parcel.readString();
+
+        boolean wasDisplayNull = parcel.readByte() == (byte) 1;
+        if (!wasDisplayNull) {
+            displayName = parcel.readString();
+        }
+        boolean wasTc1Null = parcel.readByte() == (byte) 1;
+        if (!wasTc1Null) {
+            this.tc1 = parcel.readString();
+        }
+
+        boolean wasTc2 = parcel.readByte() == (byte) 1;
+        if (!wasTc2) {
+            this.tc2 = parcel.readString();
+        }
+
+        boolean wasfulfilledBy = parcel.readByte() == (byte) 1;
+        if (!wasfulfilledBy) {
+            this.fulfilledBy = parcel.readString();
+        }
+
+        boolean wasfulfillmentId = parcel.readByte() == (byte) 1;
+        if (!wasfulfillmentId) {
+            this.fulfillmentId = parcel.readString();
+        }
+
+        boolean wasfulfilledByInfoPage = parcel.readByte() == (byte) 1;
+        if (!wasfulfilledByInfoPage) {
+            this.fulfilledByInfoPage = parcel.readString();
+        }
+
+        boolean wasIconNull = parcel.readByte() == (byte) 1;
+        if (!wasIconNull) {
+            this.icon = parcel.readString();
+        }
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(displayName);
-        dest.writeString(tc1);
-        dest.writeString(tc2);
-        dest.writeString(fulfilledBy);
-        dest.writeString(fulfillmentId);
-        dest.writeString(fulfilledByInfoPage);
-        dest.writeString(icon);
+        boolean wasDisplayNull = displayName == null;
+        dest.writeByte(wasDisplayNull ? (byte) 1 : (byte) 0);
+        if (!wasDisplayNull) {
+            dest.writeString(displayName);
+        }
+
+        boolean wasTc1Null = tc1 == null;
+        dest.writeByte(wasTc1Null ? (byte) 1 : (byte) 0);
+        if (!wasTc1Null) {
+            dest.writeString(tc1);
+        }
+
+        boolean wasTc2 = tc2 == null;
+        dest.writeByte(wasTc2 ? (byte) 1 : (byte) 0);
+        if (!wasTc2) {
+            dest.writeString(tc2);
+        }
+
+        boolean wasfulfilledBy = fulfilledBy == null;
+        dest.writeByte(wasfulfilledBy ? (byte) 1 : (byte) 0);
+        if (!wasfulfilledBy) {
+            dest.writeString(fulfilledBy);
+        }
+
+        boolean wasfulfillmentId = fulfillmentId == null;
+        dest.writeByte(wasfulfillmentId ? (byte) 1 : (byte) 0);
+        if (!wasfulfillmentId) {
+            dest.writeString(fulfillmentId);
+        }
+
+        boolean wasfulfilledByInfoPage = fulfilledByInfoPage == null;
+        dest.writeByte(wasfulfilledByInfoPage ? (byte) 1 : (byte) 0);
+        if (!wasfulfilledByInfoPage) {
+            dest.writeString(fulfilledByInfoPage);
+        }
+
+        boolean wasIconNull = icon == null;
+        dest.writeByte(wasIconNull ? (byte) 1 : (byte) 0);
+        if (!wasIconNull) {
+            dest.writeString(icon);
+        }
     }
 
     @Override
@@ -123,10 +184,6 @@ public class FulfillmentInfo implements Parcelable {
 
     public String getTc1() {
         return tc1;
-    }
-
-    public void setTc1(String tc1) {
-        this.tc1 = tc1;
     }
 
     public String getIcon() {

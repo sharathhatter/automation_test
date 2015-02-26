@@ -60,9 +60,16 @@ public class MarketPlace implements Parcelable {
         }
 
         this.pharamaPrescriptionNeeded = source.readByte() == (byte) 1;
-        pharmaPrescriptionInfo = source.readParcelable(MarketPlace.class.getClassLoader());
 
-        this.ruleValidationTitle = source.readString();
+        boolean wasPharmaPrescNull = source.readByte() == (byte) 1;
+        if (!wasPharmaPrescNull) {
+            pharmaPrescriptionInfo = source.readParcelable(MarketPlace.class.getClassLoader());
+        }
+
+        boolean wasRuleValidationTitleNull = source.readByte() == (byte) 1;
+        if (!wasRuleValidationTitleNull) {
+            this.ruleValidationTitle = source.readString();
+        }
 
         boolean _wasSavedPrescriptionInfoNull = source.readByte() == (byte) 1;
         if (!_wasSavedPrescriptionInfoNull) {
@@ -89,19 +96,25 @@ public class MarketPlace implements Parcelable {
         }
 
         dest.writeByte(this.ageCheckRequired ? (byte) 1 : (byte) 0);
-        boolean _wasAgeCheckRequiredDetailNull = false;
-        if (ageCheckRequiredDetail == null) {
-            _wasAgeCheckRequiredDetailNull = true;
-        }
+        boolean _wasAgeCheckRequiredDetailNull = ageCheckRequiredDetail == null;
         dest.writeByte(_wasAgeCheckRequiredDetailNull ? (byte) 1 : (byte) 0);
-        if (ageCheckRequiredDetail != null) {
+        if (!_wasAgeCheckRequiredDetailNull) {
             dest.writeTypedList(ageCheckRequiredDetail);
         }
 
         dest.writeByte(this.pharamaPrescriptionNeeded ? (byte) 1 : (byte) 0);
-        dest.writeParcelable(pharmaPrescriptionInfo, flags);
 
-        dest.writeString(ruleValidationTitle);
+        boolean wasPharmaPrescInfoNull = pharmaPrescriptionInfo == null;
+        dest.writeByte(wasPharmaPrescInfoNull ? (byte) 1 : (byte) 0);
+        if (!wasPharmaPrescInfoNull) {
+            dest.writeParcelable(pharmaPrescriptionInfo, flags);
+        }
+
+        boolean wasRuleValidationTitleNull = ruleValidationTitle == null;
+        dest.writeByte(wasRuleValidationTitleNull ? (byte) 1 : (byte) 0);
+        if (!wasRuleValidationTitleNull) {
+            dest.writeString(ruleValidationTitle);
+        }
 
         boolean _wasSavedPrescriptionInfoNull = false;
         if (savedPrescription == null) {

@@ -55,7 +55,6 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class AgeValidationActivity extends BackButtonActivity {
-    private MarketPlace marketPlace;
     private HashMap<String, Boolean> hashMapRadioBtnAgeCheckNo = new HashMap<>();
     private boolean isPharmaRadioBtnNoSelected;
     private Button btnListFooter;
@@ -63,8 +62,8 @@ public class AgeValidationActivity extends BackButtonActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        marketPlace = getIntent().getParcelableExtra(Constants.MARKET_PLACE_INTENT);
-        renderMarketPlaceValidationErrors();
+        MarketPlace marketPlace = getIntent().getParcelableExtra(Constants.MARKET_PLACE_INTENT);
+        renderMarketPlaceValidationErrors(marketPlace);
         trackEvent(TrackingAware.PRE_CHECKOUT_AGE_LEGAL_SHOWN, null);
     }
 
@@ -94,14 +93,13 @@ public class AgeValidationActivity extends BackButtonActivity {
     //After bulk remove
     @Override
     public void onCoMarketPlaceSuccess(MarketPlace marketPlace) {
-        this.marketPlace = marketPlace;
         isPharmaRadioBtnNoSelected = false;
         hashMapRadioBtnAgeCheckNo.clear();
         if (!marketPlace.isPharamaPrescriptionNeeded() && !marketPlace.isAgeCheckRequired()
                 && !marketPlace.hasTermsAndCond()) {
             proceedToQc();
         } else {
-            renderMarketPlaceValidationErrors();
+            renderMarketPlaceValidationErrors(marketPlace);
         }
     }
 
@@ -111,7 +109,7 @@ public class AgeValidationActivity extends BackButtonActivity {
         new COReserveQuantityCheckTask<>(getCurrentActivity(), pharmaPrescriptionId).startTask();
     }
 
-    private void renderMarketPlaceValidationErrors() {
+    private void renderMarketPlaceValidationErrors(final MarketPlace marketPlace) {
         if (marketPlace == null) return;
         FrameLayout contentView = (FrameLayout) findViewById(R.id.content_frame);
         if (contentView == null) return;
@@ -123,9 +121,9 @@ public class AgeValidationActivity extends BackButtonActivity {
         contentView.addView(layoutRelativeMain);
         btnListFooter = (Button) layoutRelativeMain.findViewById(R.id.btnListFooter);
 
-        renderTermsAndConditions(baseView);
-        renderAgeValidations(baseView, inflater);
-        renderPharmaPrescriptionValidations(baseView, inflater);
+        renderTermsAndConditions(baseView, marketPlace);
+        renderAgeValidations(baseView, inflater, marketPlace);
+        renderPharmaPrescriptionValidations(baseView, inflater, marketPlace);
 
 
         btnListFooter.setTypeface(faceRobotoRegular);
@@ -167,7 +165,7 @@ public class AgeValidationActivity extends BackButtonActivity {
         });
     }
 
-    private void renderTermsAndConditions(LinearLayout base) {
+    private void renderTermsAndConditions(LinearLayout base, MarketPlace marketPlace) {
         if (marketPlace.hasTermsAndCond()) {
             BBWebView webView = new BBWebView(this);
             webView.loadData(marketPlace.getTermsAndCond(), "text/html", "UTF-8");
@@ -175,7 +173,7 @@ public class AgeValidationActivity extends BackButtonActivity {
         }
     }
 
-    private void renderAgeValidations(LinearLayout base, LayoutInflater inflater) {
+    private void renderAgeValidations(LinearLayout base, LayoutInflater inflater, MarketPlace marketPlace) {
         if (!marketPlace.isAgeCheckRequired() || marketPlace.getAgeCheckRequiredDetail() == null)
             return;
 
@@ -220,7 +218,7 @@ public class AgeValidationActivity extends BackButtonActivity {
         }
     }
 
-    private void renderPharmaPrescriptionValidations(LinearLayout base, LayoutInflater inflater) {
+    private void renderPharmaPrescriptionValidations(LinearLayout base, LayoutInflater inflater, MarketPlace marketPlace) {
         if (!marketPlace.isPharamaPrescriptionNeeded() || marketPlace.getPharmaPrescriptionInfo() == null)
             return;
         PharmaPrescriptionInfo pharmaPrescriptionInfo = marketPlace.getPharmaPrescriptionInfo();

@@ -37,35 +37,37 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 public class BasketValidationActivity extends BackButtonActivity {
 
-    private MarketPlace marketPlace;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            marketPlace = savedInstanceState.getParcelable(Constants.MARKET_PLACE_INTENT); // File IO, so not putting it inside above If as AND
-            if (marketPlace != null) {
-                renderBasketValidationErrors();
-                return;
-            }
-        }
-        marketPlace = getIntent().getParcelableExtra(Constants.MARKET_PLACE_INTENT);
+//        if (savedInstanceState != null) {
+//            marketPlace = savedInstanceState.getParcelable(Constants.MARKET_PLACE_INTENT); // File IO, so not putting it inside above If as AND
+//            if (marketPlace != null) {
+//                renderBasketValidationErrors();
+//                return;
+//            }
+//        }
+        MarketPlace marketPlace = getIntent().getParcelableExtra(Constants.MARKET_PLACE_INTENT);
         if (marketPlace == null) {
             return;
         }
-        renderBasketValidationErrors();
+        renderBasketValidationErrors(marketPlace);
         trackEvent(TrackingAware.PRE_CHECKOUT_CWR_APPICABLE, null);
     }
 
     @Override
+    public void startFragment() {
+
+    }
+
+    @Override
     public void onCoMarketPlaceSuccess(MarketPlace marketPlace) {
-        this.marketPlace = marketPlace;
         if (marketPlace.isRuleValidationError()) {
-            renderBasketValidationErrors();
+            renderBasketValidationErrors(marketPlace);
         } else if (marketPlace.isAgeCheckRequired() || marketPlace.isPharamaPrescriptionNeeded()
                 || marketPlace.hasTermsAndCond()) {
-            BigBasketMessageHandler handler = new BigBasketMessageHandler<>(this, marketPlace);
-            handler.sendEmptyMessage(NavigationCodes.GO_AGE_VALIDATION, null);
+            BigBasketMessageHandler handler = new BigBasketMessageHandler<>(this);
+            handler.sendEmptyMessage(NavigationCodes.GO_AGE_VALIDATION, null, false, marketPlace);
         } else {
             SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
             String pharmaPrescriptionId = prefer.getString(Constants.PHARMA_PRESCRIPTION_ID, null);
@@ -82,7 +84,7 @@ public class BasketValidationActivity extends BackButtonActivity {
         getCurrentActivity().finish();// don't remove it, fix for back button
     }
 
-    private void renderBasketValidationErrors() {
+    private void renderBasketValidationErrors(MarketPlace marketPlace) {
         FrameLayout base = (FrameLayout) findViewById(R.id.content_frame);
         LinearLayout contentView = new LinearLayout(this);
         contentView.setOrientation(LinearLayout.VERTICAL);
@@ -225,14 +227,14 @@ public class BasketValidationActivity extends BackButtonActivity {
         }
         base.addView(contentView);
     }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        if (marketPlace != null) {
-            outState.putParcelable(Constants.MARKET_PLACE_INTENT, marketPlace);
-        }
-        super.onSaveInstanceState(outState);
-    }
+//
+//    @Override
+//    public void onSaveInstanceState(Bundle outState) {
+//        if (marketPlace != null) {
+//            outState.putParcelable(Constants.MARKET_PLACE_INTENT, marketPlace);
+//        }
+//        super.onSaveInstanceState(outState);
+//    }
 
     public String getNavigationCtx() {
         return TrackEventkeys.NAVIGATION_CTX_MARKET_PLACE_QC;
