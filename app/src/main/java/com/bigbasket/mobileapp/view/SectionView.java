@@ -450,7 +450,8 @@ public class SectionView {
         tileContainer.setLayoutParams(tileContainerParams);
         ArrayList<SectionItem> sectionItems = section.getSectionItems();
         int numSectionItems = sectionItems.size();
-        int viewMinHeight = (int) context.getResources().getDimension(R.dimen.carousel_img_height);
+        int verticalViewMinHeight = (int) context.getResources().getDimension(R.dimen.vertical_tile_min_height);
+        int horizontalViewMinHeight = (int) context.getResources().getDimension(R.dimen.horizontal_tile_min_height);
         for (int i = 0; i < numSectionItems; i++) {
             SectionItem sectionItem = sectionItems.get(i);
             boolean applyRight = i != numSectionItems - 1;
@@ -501,8 +502,12 @@ public class SectionView {
 
             ViewGroup layoutSection = (ViewGroup) view.findViewById(R.id.layoutSection);
 
-            if (layoutSection != null && (renderer == null || renderer.getOrientation() == Renderer.VERTICAL)) {
-                layoutSection.setMinimumHeight(viewMinHeight);
+            if (layoutSection != null) {
+                if (renderer == null || renderer.getOrientation() == Renderer.VERTICAL) {
+                    layoutSection.setMinimumHeight(verticalViewMinHeight);
+                } else {
+                    layoutSection.setMinimumHeight(horizontalViewMinHeight);
+                }
             }
 
             ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
