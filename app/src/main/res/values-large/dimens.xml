@@ -12,10 +12,6 @@
     <dimen name="grid_width">160dp</dimen>
     <dimen name="carousel_height">220dp</dimen>
     <dimen name="vertical_tile_with_img_min_height">220dp</dimen>
-    <!--<dimen name="carousel_height">250dp</dimen>-->
-    <!--<dimen name="carousel_width">170dp</dimen>-->
-    <!--<dimen name="carousel_img_height">160dp</dimen>-->
-    <!--<dimen name="carousel_img_width">160dp</dimen>-->
-    <!--<dimen name="grid_height">140dp</dimen>-->
+    <integer name="numGridCols">3</integer>
     <dimen name="banner_slider_height">180dp</dimen>
 </resources>

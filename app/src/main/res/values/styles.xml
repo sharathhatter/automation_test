@@ -77,6 +77,21 @@
     <style name="GreenFormButtonStyle" parent="@style/FormButtonStyle">
         <item name="android:background">@drawable/green_button_rounded_bkg</item>
     </style>
+    
+    <style name="MoreButtonStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingLeft">@dimen/padding_small</item>
+        <item name="android:paddingRight">@dimen/padding_small</item>
+        <item name="android:paddingTop">@dimen/padding_mini</item>
+        <item name="android:paddingBottom">@dimen/padding_mini</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/secondary_text_size</item>
+        <item name="android:background">@color/uiv3_action_bar_background</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:text">@string/moreAllCaps</item>
+    </style>
 
     <style name="FooterButtonStyle" parent="@style/DefaultButtonStyle">
         <item name="android:layout_width">match_parent</item>
@@ -153,7 +168,6 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/uiv3_primary_text_color</item>
         <item name="android:textSize">@dimen/heading_2_text_size</item>
-        <item name="android:paddingTop">@dimen/padding_small</item>
         <item name="android:paddingLeft">@dimen/padding_normal</item>
         <item name="android:paddingRight">@dimen/padding_normal</item>
     </style>

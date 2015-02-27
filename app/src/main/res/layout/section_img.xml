@@ -16,7 +16,7 @@
             android:id="@+id/imgInRow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/product_image"
-            android:src="@drawable/landing_page_image" />
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/product_image" />
     </LinearLayout>
 </LinearLayout>

@@ -205,7 +205,7 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         public ViewGroup getSectionLayoutContainer() {
             if (sectionLayoutContainer == null) {
-                sectionLayoutContainer = (ViewGroup) itemView.findViewById(R.id.layoutCarouselContainer);
+                sectionLayoutContainer = (ViewGroup) itemView.findViewById(R.id.sectionLayoutContainer);
             }
             return sectionLayoutContainer;
         }

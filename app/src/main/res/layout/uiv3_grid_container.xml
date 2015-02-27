@@ -2,21 +2,36 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingTop="@dimen/padding_normal">
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/txtListTitle"
-        style="@style/SectionHeaderTextStyle" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_mini">
+
+        <Button
+            android:id="@+id/btnMore"
+            style="@style/MoreButtonStyle"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/margin_mini" />
+
+        <TextView
+            android:id="@+id/txtListTitle"
+            style="@style/SectionHeaderTextStyle"
+            android:layout_toLeftOf="@id/btnMore" />
+    </RelativeLayout>
+
 
     <com.bigbasket.mobileapp.view.uiv3.ExpandableHeightGridView
         android:id="@+id/layoutGrid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:verticalSpacing="@dimen/margin_mini"
+        android:layout_marginLeft="@dimen/margin_mini"
+        android:layout_marginRight="@dimen/margin_mini"
+        android:gravity="center_horizontal"
         android:horizontalSpacing="@dimen/margin_mini"
         android:isScrollContainer="false"
-        android:numColumns="3"
-        android:gravity="center_horizontal"
-        android:stretchMode="columnWidth" />
+        android:numColumns="@integer/numGridCols"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="@dimen/margin_mini" />
 </LinearLayout>

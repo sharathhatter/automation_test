@@ -221,17 +221,9 @@ public class SectionGridAdapter<T> extends BaseAdapter {
 
         public ViewGroup getSectionLayoutContainer() {
             if (sectionLayoutContainer == null) {
-                sectionLayoutContainer = (ViewGroup) itemView.findViewById(R.id.layoutCarouselContainer);
+                sectionLayoutContainer = (ViewGroup) itemView.findViewById(R.id.sectionLayoutContainer);
             }
             return sectionLayoutContainer;
         }
-
-//        @Override
-//        public void onClick(View v) {
-//            OnSectionItemClickListener sectionItemClickListener =
-//                    new OnSectionItemClickListener<>(((ActivityAware) context).getCurrentActivity(),
-//                            section, sectionItems.get(getPosition()), screenName);
-//            sectionItemClickListener.onClick(v);
-//        }
     }
 }

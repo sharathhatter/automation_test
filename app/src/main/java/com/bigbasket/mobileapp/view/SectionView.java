@@ -11,6 +11,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -68,71 +69,55 @@ public class SectionView {
         mainLayout.setOrientation(LinearLayout.VERTICAL);
         mainLayout.setBackgroundColor(context.getResources().getColor(R.color.uiv3_list_bkg_color));
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        for (Section section : mSectionData.getSections()) {
-            switch (section.getSectionType()) {
-                case Section.BANNER:
-                    View bannerView = getBannerView(section, inflater, mainLayout);
-                    if (bannerView != null) {
-                        mainLayout.addView(bannerView);
-                    }
-                    break;
-                case Section.SALUTATION:
-                    View salutationView = getSalutationView(section, inflater, mainLayout);
-                    if (salutationView != null) {
-                        mainLayout.addView(salutationView);
-                    }
-                    break;
-                case Section.TILE:
-                    View tileView = getTileView(section, inflater, mainLayout);
-                    if (tileView != null) {
-                        mainLayout.addView(tileView);
-                    }
-                    break;
-                case Section.GRID:
-                    View grid = getGridLayoutView(section, inflater, mainLayout);
-                    if (grid != null) {
-                        mainLayout.addView(grid);
-                    }
-                    break;
-                case Section.PRODUCT_CAROUSEL:
-                    View productCarouselView = getCarouselView(section, inflater, mainLayout);
-                    if (productCarouselView != null) {
-                        mainLayout.addView(productCarouselView);
-                    }
-                    break;
-                case Section.NON_PRODUCT_CAROUSEL:
-                    View carouselView = getCarouselView(section, inflater, mainLayout);
-                    if (carouselView != null) {
-                        mainLayout.addView(carouselView);
-                    }
-                    break;
-                case Section.INFO_WIDGET:
-                    View infoWidgetView = getInfoWidgetView(section);
-                    if (infoWidgetView != null) {
-                        mainLayout.addView(infoWidgetView);
-                    }
-                    break;
-                case Section.AD_IMAGE:
-                    View imageView = getImageView(section);
-                    if (imageView != null) {
-                        mainLayout.addView(imageView);
-                    }
-                    break;
-                case Section.MSG:
-                    View msgView = getMsgView(section, inflater);
-                    if (msgView != null) {
-                        mainLayout.addView(msgView);
-                    }
-                    break;
-                case Section.MENU:
-                    View menuView = getMenuView(section, inflater, mainLayout);
-                    if (menuView != null) {
-                        mainLayout.addView(menuView);
-                    }
-                    break;
+        ArrayList<Section> sections = mSectionData.getSections();
+        int marginLarge = (int) context.getResources().getDimension(R.dimen.margin_large);
+        for (int i = 0; i < sections.size(); i++) {
+            Section section = sections.get(i);
+            View sectionView = getViewToRender(section, inflater, mainLayout);
+            if (sectionView == null) {
+                continue;
+            }
+            mainLayout.addView(sectionView);
+            ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams)
+                    sectionView.getLayoutParams();
+            if (i == 0) {
+                if (!section.getSectionType().equals(Section.BANNER)) {
+                    layoutParams.topMargin = defaultMargin;
+                    sectionView.setLayoutParams(layoutParams);
+                }
+            } else {
+                layoutParams.topMargin = marginLarge;
+                sectionView.setLayoutParams(layoutParams);
             }
         }
         return mainLayout;
+    }
+
+    @Nullable
+    private View getViewToRender(Section section, LayoutInflater inflater, LinearLayout mainLayout) {
+        switch (section.getSectionType()) {
+            case Section.BANNER:
+                return getBannerView(section, inflater, mainLayout);
+            case Section.SALUTATION:
+                return getSalutationView(section, inflater, mainLayout);
+            case Section.TILE:
+                return getTileView(section, inflater, mainLayout);
+            case Section.GRID:
+                return getGridLayoutView(section, inflater, mainLayout);
+            case Section.PRODUCT_CAROUSEL:
+                return getCarouselView(section, inflater, mainLayout);
+            case Section.NON_PRODUCT_CAROUSEL:
+                return getCarouselView(section, inflater, mainLayout);
+            case Section.INFO_WIDGET:
+                return getInfoWidgetView(section);
+            case Section.AD_IMAGE:
+                return getImageView(section);
+            case Section.MSG:
+                return getMsgView(section, inflater);
+            case Section.MENU:
+                return getMenuView(section, inflater);
+        }
+        return null;
     }
 
     private View getBannerView(Section section, LayoutInflater inflater, ViewGroup parent) {
@@ -203,6 +188,7 @@ public class SectionView {
     private View getCarouselView(Section section, LayoutInflater inflater, ViewGroup parent) {
         View baseProductCarousel = inflater.inflate(R.layout.uiv3_horizontal_recycler_view, parent, false);
         formatSectionTitle(baseProductCarousel, R.id.txtListTitle, section);
+        setViewMoreBehaviour(baseProductCarousel.findViewById(R.id.btnMore), section, section.getMoreSectionItem());
 
         RecyclerView horizontalRecyclerView = (RecyclerView) baseProductCarousel.findViewById(R.id.horizontalRecyclerView);
         int carouselHeight = section.getCarouselHeight(context, mSectionData.getRenderersMap());
@@ -293,15 +279,14 @@ public class SectionView {
         return linearLayout;
     }
 
-    private View getMenuView(Section section, LayoutInflater inflater, ViewGroup parent) {
-        View base = inflater.inflate(R.layout.card_view, parent, false);
-        LinearLayout menuContainer = (LinearLayout) base.findViewById(R.id.layoutCardContent);
+    private View getMenuView(Section section, LayoutInflater inflater) {
+        LinearLayout menuContainer = new LinearLayout(context);
+        menuContainer.setOrientation(LinearLayout.VERTICAL);
 
         LinearLayout.LayoutParams menuContainerLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
-        menuContainerLayoutParams.setMargins(defaultMargin,
-                (int) context.getResources().getDimension(R.dimen.padding_normal), defaultMargin, 0);
-        base.setLayoutParams(menuContainerLayoutParams);
+        menuContainerLayoutParams.setMargins(defaultMargin, 0, defaultMargin, 0);
+        menuContainer.setLayoutParams(menuContainerLayoutParams);
 
         if (section.getTitle() != null && !TextUtils.isEmpty(section.getTitle().getText())) {
             View view = inflater.inflate(R.layout.uiv3_list_text, menuContainer, false);
@@ -313,7 +298,7 @@ public class SectionView {
                 renderer.setRendering(txtVw, 0, 0);
             } else {
                 txtVw.setBackgroundColor(context.getResources().getColor(R.color.uiv3_menu_header));
-                txtVw.setTextColor(context.getResources().getColor(R.color.uiv3_primary_text_color));
+                txtVw.setTextColor(Color.WHITE);
             }
             txtVw.setText(section.getTitle().getText());
             txtVw.setTypeface(faceRobotoRegular);
@@ -342,35 +327,36 @@ public class SectionView {
             viewSeparator.setVisibility(i == numItems - 1 ? View.GONE : View.VISIBLE);
             menuContainer.addView(itemView);
         }
-        return base;
+        return menuContainer;
     }
 
-    private View getGridLayoutView(Section section, LayoutInflater inflater, ViewGroup parent) {
+    private View getGridLayoutView(final Section section, LayoutInflater inflater, ViewGroup parent) {
         View base = inflater.inflate(R.layout.uiv3_grid_container, parent, false);
         formatSectionTitle(base, R.id.txtListTitle, section);
+        setViewMoreBehaviour(base.findViewById(R.id.btnMore), section, section.getMoreSectionItem());
 
-        ExpandableHeightGridView tileContainer = (ExpandableHeightGridView) base.findViewById(R.id.layoutGrid);
-        LinearLayout.LayoutParams tileContainerParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        tileContainerParams.setMargins(defaultMargin, 0, defaultMargin, 0);
-        tileContainer.setLayoutParams(tileContainerParams);
-        tileContainer.setExpanded(true);
+        ExpandableHeightGridView layoutGrid = (ExpandableHeightGridView) base.findViewById(R.id.layoutGrid);
+        layoutGrid.setExpanded(true);
         SectionGridAdapter sectionGridAdapter = new SectionGridAdapter<>(context, section, mSectionData.getRenderersMap(),
                 faceRobotoRegular, screenName);
-        tileContainer.setAdapter(sectionGridAdapter);
+        layoutGrid.setAdapter(sectionGridAdapter);
+        layoutGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                SectionItem sectionItem = section.getSectionItems().get(position);
+                new OnSectionItemClickListener<>(context, section, sectionItem, screenName).
+                        onClick(view);
+            }
+        });
         return base;
     }
 
     private View getTileView(Section section, LayoutInflater inflater, ViewGroup parent) {
         View base = inflater.inflate(R.layout.uiv3_tile_container, parent, false);
         formatSectionTitle(base, R.id.txtListTitle, section);
+        setViewMoreBehaviour(base.findViewById(R.id.btnMore), section, section.getMoreSectionItem());
 
         LinearLayout tileContainer = (LinearLayout) base.findViewById(R.id.layoutTileContainer);
-        LinearLayout.LayoutParams tileContainerParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        tileContainerParams.setMargins(defaultMargin,
-                (int) context.getResources().getDimension(R.dimen.margin_normal), defaultMargin, 0);
-        tileContainer.setLayoutParams(tileContainerParams);
         ArrayList<SectionItem> sectionItems = section.getSectionItems();
         int numSectionItems = sectionItems.size();
         for (int i = 0; i < numSectionItems; i++) {
@@ -470,5 +456,23 @@ public class SectionView {
         } else {
             txtVw.setVisibility(View.GONE);
         }
+    }
+
+    private void setViewMoreBehaviour(View view, Section section, SectionItem moreSectionItem) {
+        if (view == null) {
+            return;
+        }
+        if (moreSectionItem == null || moreSectionItem.getDestinationInfo() == null ||
+                TextUtils.isEmpty(moreSectionItem.getDestinationInfo().getDestinationType())) {
+            view.setVisibility(View.GONE);
+            return;
+        }
+        if (view instanceof TextView) {  // Will work for Button as well, since it extends TextView
+            ((TextView) view).setTypeface(faceRobotoRegular);
+            if (moreSectionItem.getTitle() != null && !TextUtils.isEmpty(moreSectionItem.getTitle().getText())) {
+                ((TextView) view).setText(moreSectionItem.getTitle().getText());
+            }
+        }
+        view.setOnClickListener(new OnSectionItemClickListener<>(context, section, moreSectionItem, screenName));
     }
 }

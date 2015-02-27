@@ -248,6 +248,7 @@
     <string name="uploadServiceForPrescriptionImage">Prescription Image Upload Service</string>
     <string name="viewBasket">View Basket</string>
     <string name="more">More</string>
+    <string name="moreAllCaps">MORE</string>
     <string name="plusMore">&#43; More</string>
     <string name="done">DONE</string>
     <string name="callUs">Call Us</string>
