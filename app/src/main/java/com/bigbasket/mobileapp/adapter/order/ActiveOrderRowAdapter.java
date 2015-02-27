@@ -217,7 +217,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
         }
 
         ImageView imgMarketPlaceIcon = rowHolder.getImgLiquorIcon();
-        if (cartItem.getFulfillmentId() != null && !cartItem.getFulfillmentId().equals("")) {
+        if (!TextUtils.isEmpty(cartItem.getFulfillmentId())) {
             String fulfillmentId = cartItem.getFulfillmentId();
             if (!TextUtils.isEmpty(fulfillmentId) && fulfillmentInfoIdAndIconHashMap != null &&
                     fulfillmentInfoIdAndIconHashMap.containsKey(fulfillmentId)) {

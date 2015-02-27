@@ -31,6 +31,8 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
+import com.bigbasket.mobileapp.activity.order.uiv3.AgeValidationActivity;
+import com.bigbasket.mobileapp.activity.order.uiv3.BasketValidationActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.CheckoutQCActivity;
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 import com.bigbasket.mobileapp.adapter.order.PrescriptionImageAdapter;
@@ -144,12 +146,13 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
 
     @Override
     public void onCoMarketPlaceSuccess(MarketPlace marketPlace) {
-        BigBasketMessageHandler bigBasketMessageHandler = new BigBasketMessageHandler<>(getCurrentActivity());
         if (marketPlace.isRuleValidationError()) {
-            bigBasketMessageHandler.sendEmptyMessage(NavigationCodes.GO_MARKET_PLACE, null, false, marketPlace);
+            Intent intent = new Intent(getCurrentActivity(), BasketValidationActivity.class);
+            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         } else if (marketPlace.isAgeCheckRequired() || marketPlace.isPharamaPrescriptionNeeded()
                 || marketPlace.hasTermsAndCond()) {
-            bigBasketMessageHandler.sendEmptyMessage(NavigationCodes.GO_AGE_VALIDATION, null, false, marketPlace);
+            Intent intent = new Intent(getCurrentActivity(), AgeValidationActivity.class);
+            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         } else {
             SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
             String pharmaPrescriptionId = prefer.getString(Constants.PHARMA_PRESCRIPTION_ID, null);

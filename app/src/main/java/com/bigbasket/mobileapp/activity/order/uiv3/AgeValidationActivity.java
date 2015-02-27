@@ -62,9 +62,7 @@ public class AgeValidationActivity extends BackButtonActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        MarketPlace marketPlace = getIntent().getParcelableExtra(Constants.MARKET_PLACE_INTENT);
-        renderMarketPlaceValidationErrors(marketPlace);
-        trackEvent(TrackingAware.PRE_CHECKOUT_AGE_LEGAL_SHOWN, null);
+        new COMarketPlaceCheckTask<>(getCurrentActivity()).startTask();
     }
 
     @Override
@@ -163,6 +161,8 @@ public class AgeValidationActivity extends BackButtonActivity {
                 }
             }
         });
+
+        trackEvent(TrackingAware.PRE_CHECKOUT_AGE_LEGAL_SHOWN, null);
     }
 
     private void renderTermsAndConditions(LinearLayout base, MarketPlace marketPlace) {
@@ -218,7 +218,8 @@ public class AgeValidationActivity extends BackButtonActivity {
         }
     }
 
-    private void renderPharmaPrescriptionValidations(LinearLayout base, LayoutInflater inflater, MarketPlace marketPlace) {
+    private void renderPharmaPrescriptionValidations(LinearLayout base, LayoutInflater inflater,
+                                                     MarketPlace marketPlace) {
         if (!marketPlace.isPharamaPrescriptionNeeded() || marketPlace.getPharmaPrescriptionInfo() == null)
             return;
         PharmaPrescriptionInfo pharmaPrescriptionInfo = marketPlace.getPharmaPrescriptionInfo();

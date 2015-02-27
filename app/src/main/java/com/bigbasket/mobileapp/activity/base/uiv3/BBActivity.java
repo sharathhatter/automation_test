@@ -578,7 +578,11 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                                                     EditText editTextQty, Product product, String qty,
                                                     @Nullable View productView) {
 
-        int productQtyInBasket = Integer.parseInt(basketOperationResponse.getBasketResponseProductInfo().getTotalQty());
+
+        int productQtyInBasket = 0;
+        if (basketOperationResponse.getBasketResponseProductInfo() != null) {
+            productQtyInBasket = Integer.parseInt(basketOperationResponse.getBasketResponseProductInfo().getTotalQty());
+        }
         int totalProductsInBasket = basketOperationResponse.getCartSummary().getNoOfItems();
 
         if (productQtyInBasket == 0) {

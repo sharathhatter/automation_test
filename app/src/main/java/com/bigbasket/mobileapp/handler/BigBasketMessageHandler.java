@@ -30,10 +30,7 @@ public class BigBasketMessageHandler<T> {
     }
 
     public void sendEmptyMessage(int what, String message, boolean finish) {
-        sendEmptyMessage(what, message, finish, null);
-    }
 
-    public void sendEmptyMessage(int what, String message, boolean finish, MarketPlace marketPlace) {
         switch (what) {
             case ApiErrorCodes.POTENTIAL_ORDER_SLOT_EXPIRED:
                 ((ApiErrorAware) ctx).showApiErrorDialog(null, !TextUtils.isEmpty(message) ? message : getString(R.string.slotNotAvailable),
@@ -128,21 +125,8 @@ public class BigBasketMessageHandler<T> {
                             "Product successfully deleted from list", Toast.LENGTH_SHORT).show();
                 }
                 break;
-            case NavigationCodes.GO_MARKET_PLACE:
-                Intent intent = new Intent(((ActivityAware) ctx).getCurrentActivity(), BasketValidationActivity.class);
-                intent.putExtra(Constants.MARKET_PLACE_INTENT, marketPlace);
-                ((ActivityAware) ctx).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                break;
-
-            case NavigationCodes.GO_AGE_VALIDATION:
-                intent = new Intent(((ActivityAware) ctx).getCurrentActivity(), AgeValidationActivity.class);
-                intent.putExtra(Constants.MARKET_PLACE_INTENT, marketPlace);
-                ((ActivityAware) ctx).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                ((ActivityAware) ctx).getCurrentActivity().finish();// don't remove it, fix for back button
-                break;
-
             case NavigationCodes.CO_RESERVE_QUANTITY_CHECK_OK:
-                intent = new Intent(((ActivityAware) ctx).getCurrentActivity(), CheckoutQCActivity.class);
+                Intent intent = new Intent(((ActivityAware) ctx).getCurrentActivity(), CheckoutQCActivity.class);
                 intent.putExtra(Constants.CO_RESERVE_QTY_DATA, ((COReserveQuantityCheckAware) ctx).getCOReserveQuantity());
                 ((ActivityAware) ctx).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 break;
