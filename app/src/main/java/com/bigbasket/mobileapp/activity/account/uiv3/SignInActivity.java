@@ -372,7 +372,7 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
         }
 
         if (TextUtils.isEmpty(email)) {
-            showAlertDialog(null, "Unable to get your email-address\n" +
+            showAlertDialog("Email required", "Unable to get your email-address\n" +
                     "Please check your privacy settings.", Constants.SOCIAL_LOGOUT, SocialAccount.GP);
             return;
         }
@@ -423,9 +423,10 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
             public void onCompleted(GraphUser user, Response response) {
                 showProgress(false);
                 if (user != null) {
-                    String email = response.getGraphObject().getProperty(Constants.EMAIL).toString();
+                    Object emailObj = response.getGraphObject().getProperty(Constants.EMAIL);
+                    String email = emailObj != null ? emailObj.toString() : null;
                     if (TextUtils.isEmpty(email)) {
-                        showAlertDialog(null, "Unable to get your email-address\n" +
+                        showAlertDialog("Email required", "Unable to get your email-address\n" +
                                 "Please check your privacy settings.", Constants.SOCIAL_LOGOUT, SocialAccount.FB);
                         return;
                     }
@@ -570,6 +571,8 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
                     if (valuePassed != null) {
                         if (valuePassed.equals(SocialAccount.GP)) {
                             signOutFromGplus();
+                        } else if (valuePassed.equals(SocialAccount.FB)) {
+                            revokeFbAccess();
                         }
                     }
                     break;
