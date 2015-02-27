@@ -77,6 +77,8 @@ public class OTPValidationDialogFragment extends AbstractDialogFragment {
                 .autoDismiss(false)
                 .cancelable(false)
                 .customView(view, false)
+                .positiveText(R.string.txtConfirm)
+                .negativeText(R.string.CANCEL)
                 .callback(new MaterialDialog.ButtonCallback() {
                     @Override
                     public void onPositive(MaterialDialog dialog) {

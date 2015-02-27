@@ -1,10 +1,12 @@
 package com.bigbasket.mobileapp.apiservice.callbacks;
 
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.ProductListApiResponse;
 import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
+import com.bigbasket.mobileapp.interfaces.SectionAware;
 import com.bigbasket.mobileapp.model.product.FilterOptionCategory;
 import com.bigbasket.mobileapp.model.product.FilterOptionItem;
 import com.bigbasket.mobileapp.model.product.FilteredOn;
@@ -16,7 +18,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class ProductListApiResponseCallback<T> implements Callback<ApiResponse<ProductListData>> {
+public class ProductListApiResponseCallback<T> implements Callback<ApiResponse<ProductListApiResponse>> {
 
     private int page;
     private T ctx;
@@ -33,7 +35,7 @@ public class ProductListApiResponseCallback<T> implements Callback<ApiResponse<P
     }
 
     @Override
-    public void success(ApiResponse<ProductListData> productListDataApiResponse, Response response) {
+    public void success(ApiResponse<ProductListApiResponse> productListDataApiResponse, Response response) {
         if (((CancelableAware) ctx).isSuspended()) return;
         if (page == 1) {
             try {
@@ -47,11 +49,14 @@ public class ProductListApiResponseCallback<T> implements Callback<ApiResponse<P
             }
         }
         if (productListDataApiResponse.status == 0) {
-            ProductListData productListData = productListDataApiResponse.apiResponseContent;
+            ProductListData productListData = productListDataApiResponse.apiResponseContent.productListData;
             if (page > 1) {
                 ProductListData existingProductListData = ((ProductListDataAware) ctx).getProductListData();
                 existingProductListData.setCurrentPage(productListData.getCurrentPage());
                 ((ProductListDataAware) ctx).updateProductList(productListData.getProducts());
+                if (ctx instanceof SectionAware) {
+                    ((SectionAware) ctx).setSectionData(productListDataApiResponse.apiResponseContent.sectionData);
+                }
             } else {
                 if (productListData.getFilteredOn() == null) {
                     productListData.setFilteredOn(new ArrayList<FilteredOn>());

@@ -105,7 +105,6 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                 LayoutInflater inflater = getActivity().getLayoutInflater();
                 mFooterView = inflater.inflate(R.layout.uiv3_list_loading_footer, null);
             }
-            //mProductRecyclerView.addFooterView(mFooterView, null, false);
             getProductListAsyncTask(nextPage).startTask();
         }
     }
@@ -151,92 +150,94 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         if (getActivity() == null) return;
         LinearLayout contentView = getContentView();
         if (contentView == null) return;
-        if (productListData == null) return;
         contentView.removeAllViews();
-        if (productListData.getProductCount() == 0) {
+
+        final View sectionView = getSectionView();
+        if (sectionView != null) {
+            contentView.addView(sectionView);
+        }
+
+        if (productListData != null) {
+
+            // Set product-list header view
+            final View headerView = getActivity().getLayoutInflater().inflate(R.layout.uiv3_product_list_header, contentView, false);
+            LinearLayout layoutFilterSort = (LinearLayout) headerView.findViewById(R.id.layoutFilterSort);
+
+            TextView txtFilterBy = (TextView) headerView.findViewById(R.id.txtFilterBy);
+            TextView txtNumProducts = (TextView) headerView.findViewById(R.id.txtNumProducts);
+            TextView txtSortBy = (TextView) headerView.findViewById(R.id.txtSortBy);
+
+            txtNumProducts.setTypeface(faceRobotoRegular);
+            txtSortBy.setTypeface(faceRobotoRegular);
+            txtFilterBy.setTypeface(faceRobotoRegular);
+
+            if (productListData.getProductCount() > 0) {
+                String productsStr = productListData.getProductCount() > 1 ? "products" : "product";
+                txtNumProducts.setText(productListData.getProductCount() + " " + productsStr + " found");
+                if (productListData.getFilterOptions() != null && productListData.getFilterOptions().size() > 0) {
+                    txtFilterBy.setVisibility(View.VISIBLE);
+                    txtFilterBy.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            ((FilterDisplayAware) getActivity()).showFilters();
+                        }
+                    });
+                    int filterDrawableId = productListData.getFilteredOn() != null && productListData.getFilteredOn().size() > 0 ?
+                            R.drawable.filter_applied : R.drawable.filter;
+                    txtFilterBy.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(filterDrawableId), null, null, null);
+                } else {
+                    txtFilterBy.setVisibility(View.GONE);
+                }
+
+                if (productListData.getSortOptions().size() > 0) {
+                    txtSortBy.setVisibility(View.VISIBLE);
+                    txtSortBy.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            ((FilterDisplayAware) getActivity()).showSortOptions();
+                        }
+                    });
+                } else {
+                    txtSortBy.setVisibility(View.GONE);
+                }
+            } else {
+                layoutFilterSort.setVisibility(View.GONE);
+            }
+
+            ((FilterDisplayAware) getActivity()).setFilterView(productListData.getFilterOptions(),
+                    productListData.getFilteredOn(), getFragmentTxnTag());
+
+            RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, contentView);
+
+            // Set product-list data
+            AuthParameters authParameters = AuthParameters.getInstance(getActivity());
+            ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
+                    .setCommonTypeface(faceRobotoRegular)
+                    .setRupeeTypeface(faceRupee)
+                    .setHandler(handler)
+                    .setLoggedInMember(!authParameters.isAuthTokenEmpty())
+                    .setShowShoppingListBtn(true)
+                    .setShowBasketBtn(true)
+                    .setShowShopListDeleteBtn(false)
+                    .build();
+            mProductListRecyclerAdapter = new ProductListRecyclerAdapter(productListData.getProducts(), productListData.getBaseImgUrl(),
+                    productViewDisplayDataHolder, this, productListData.getProductCount(),
+                    getNavigationCtx());
+
+            productRecyclerView.setAdapter(mProductListRecyclerAdapter);
+
+            contentView.addView(headerView);
+            contentView.addView(productRecyclerView);
+        }
+
+        if (sectionView == null && productListData == null) {
             LayoutInflater inflater = getActivity().getLayoutInflater();
             View emptyView = inflater.inflate(R.layout.uiv3_empty_data_text, contentView, false);
             TextView txtEmptyDataMsg = (TextView) emptyView.findViewById(R.id.txtEmptyDataMsg);
             txtEmptyDataMsg.setTypeface(faceRobotoRegular);
             txtEmptyDataMsg.setText(getString(R.string.noProducts));
             contentView.addView(emptyView);
-            return;
         }
-
-        // Set product-list header view
-        final View headerView = getActivity().getLayoutInflater().inflate(R.layout.uiv3_product_list_header, contentView, false);
-        LinearLayout layoutFilterSort = (LinearLayout) headerView.findViewById(R.id.layoutFilterSort);
-
-        TextView txtFilterBy = (TextView) headerView.findViewById(R.id.txtFilterBy);
-        TextView txtNumProducts = (TextView) headerView.findViewById(R.id.txtNumProducts);
-        TextView txtSortBy = (TextView) headerView.findViewById(R.id.txtSortBy);
-
-        txtNumProducts.setTypeface(faceRobotoRegular);
-        txtSortBy.setTypeface(faceRobotoRegular);
-        txtFilterBy.setTypeface(faceRobotoRegular);
-
-        if (productListData.getProductCount() > 0) {
-            String productsStr = productListData.getProductCount() > 1 ? "products" : "product";
-            txtNumProducts.setText(productListData.getProductCount() + " " + productsStr + " found");
-            if (productListData.getFilterOptions() != null && productListData.getFilterOptions().size() > 0) {
-                txtFilterBy.setVisibility(View.VISIBLE);
-                txtFilterBy.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ((FilterDisplayAware) getActivity()).showFilters();
-                    }
-                });
-                int filterDrawableId = productListData.getFilteredOn() != null && productListData.getFilteredOn().size() > 0 ?
-                        R.drawable.filter_applied : R.drawable.filter;
-                txtFilterBy.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(filterDrawableId), null, null, null);
-            } else {
-                txtFilterBy.setVisibility(View.GONE);
-            }
-
-            if (productListData.getSortOptions().size() > 0) {
-                txtSortBy.setVisibility(View.VISIBLE);
-                txtSortBy.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ((FilterDisplayAware) getActivity()).showSortOptions();
-                    }
-                });
-//                txtSortedOnValue.setText(productListData.getSortedOnDisplay());
-            } else {
-                txtSortBy.setVisibility(View.GONE);
-            }
-        } else {
-            layoutFilterSort.setVisibility(View.GONE);
-        }
-
-        ((FilterDisplayAware) getActivity()).setFilterView(productListData.getFilterOptions(),
-                productListData.getFilteredOn(), getFragmentTxnTag());
-
-        final View sectionView = getSectionView();
-
-        RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, contentView);
-
-        // Set product-list data
-        AuthParameters authParameters = AuthParameters.getInstance(getActivity());
-        ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
-                .setCommonTypeface(faceRobotoRegular)
-                .setRupeeTypeface(faceRupee)
-                .setHandler(handler)
-                .setLoggedInMember(!authParameters.isAuthTokenEmpty())
-                .setShowShoppingListBtn(true)
-                .setShowBasketBtn(true)
-                .setShowShopListDeleteBtn(false)
-                .build();
-        mProductListRecyclerAdapter = new ProductListRecyclerAdapter(productListData.getProducts(), productListData.getBaseImgUrl(),
-                productViewDisplayDataHolder, this, productListData.getProductCount(),
-                getNavigationCtx());
-
-        productRecyclerView.setAdapter(mProductListRecyclerAdapter);
-        if (sectionView != null) {
-            contentView.addView(sectionView);
-        }
-        contentView.addView(headerView);
-        contentView.addView(productRecyclerView);
     }
 
     @Override

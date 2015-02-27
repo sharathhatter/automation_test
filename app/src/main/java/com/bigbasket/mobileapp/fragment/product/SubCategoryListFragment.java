@@ -87,7 +87,7 @@ public class SubCategoryListFragment extends BaseSectionFragment {
                 if (subCategoryCallback.status == 0) {
                     String responseVersion = subCategoryCallback.apiResponseContent.responseVersion;
                     boolean response_ok = subCategoryCallback.apiResponseContent.a_ok;
-                    mSectionData = subCategoryCallback.apiResponseContent.categoryLandingApiCategoryKeyContent.sectionData;
+                    setSectionData(subCategoryCallback.apiResponseContent.categoryLandingApiCategoryKeyContent.sectionData);
                     if (!response_ok) {
                         subCategoryModel = subCategoryCallback.apiResponseContent.categoryLandingApiCategoryKeyContent.subCategoryModel;
                     }
@@ -123,13 +123,13 @@ public class SubCategoryListFragment extends BaseSectionFragment {
 
         ArrayList<Object> result;
         if (!response_ok) {
-            subCategoryAdapter.insert(subCategoryModel, responseVersion, mSectionData, topCatSlug);
+            subCategoryAdapter.insert(subCategoryModel, responseVersion, getSectionData(), topCatSlug);
         } else {
             result = subCategoryAdapter.getSubCategory(topCatSlug);
 
             if (result != null && result.size() == 2) {
                 subCategoryModel = (SubCategoryModel) result.get(0);
-                mSectionData = (SectionData) result.get(1);
+                setSectionData((SectionData) result.get(1));
             }
         }
 
@@ -149,7 +149,7 @@ public class SubCategoryListFragment extends BaseSectionFragment {
             }
         }
 
-        if (mSectionData != null) {
+        if (getSectionData() != null) {
             View sectionView = getSectionView();
             if (sectionView != null) {
                 subCategoryPageLayout.addView(sectionView);

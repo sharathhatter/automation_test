@@ -213,8 +213,9 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
 
     private void renderHomePage() {
         LinearLayout contentView = getContentView();
-        if (contentView == null || mSectionData == null || mSectionData.getSections() == null
-                || mSectionData.getSections().size() == 0) return;
+        SectionData sectionData = getSectionData();
+        if (contentView == null || sectionData == null || sectionData.getSections() == null
+                || sectionData.getSections().size() == 0) return;
 
         // Render sections
         showProgressView();
@@ -388,8 +389,8 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
 
     @Override
     public void onDynamicScreenSuccess(String screenName, SectionData sectionData) {
-        mSectionData = sectionData;
-        mScreenName = screenName;
+        setSectionData(sectionData);
+        setScreenName(screenName);
         renderHomePage();
         trackEvent(TrackingAware.HOME_PAGE_SHOWN, null);
         //screen name pass to OnSectionItemClickListener

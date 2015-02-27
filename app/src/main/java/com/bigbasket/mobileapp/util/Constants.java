@@ -113,6 +113,7 @@ public class Constants {
 
     //Error codes
     public static final String PRODUCT_ID_NOT_FOUND = "101";
+    public static final String PRODUCT_INFO = "product_info";
 
     public static final String PROMO = "promo";
     public static final String SHOP_LST = "shoplist";

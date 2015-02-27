@@ -43,8 +43,9 @@ public class DynamicScreenFragment extends BaseSectionFragment implements Dynami
 
     private void loadDynamicScreen() {
         LinearLayout contentView = getContentView();
-        if (contentView == null || mSectionData == null || mSectionData.getSections() == null
-                || mSectionData.getSections().size() == 0) return;
+        SectionData sectionData = getSectionData();
+        if (contentView == null || sectionData == null || sectionData.getSections() == null
+                || sectionData.getSections().size() == 0) return;
 
         // Render sections
         showProgressView();
@@ -87,8 +88,8 @@ public class DynamicScreenFragment extends BaseSectionFragment implements Dynami
 
     @Override
     public void onDynamicScreenSuccess(String screenName, SectionData sectionData) {
-        mSectionData = sectionData;
-        mScreenName = screenName;
+        setSectionData(sectionData);
+        setScreenName(screenName);
         loadDynamicScreen();
         HashMap<String, String> screenNameMap = null;
         if (!TextUtils.isEmpty(screenName)) {

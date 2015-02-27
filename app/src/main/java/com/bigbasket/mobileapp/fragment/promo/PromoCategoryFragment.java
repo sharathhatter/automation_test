@@ -70,7 +70,7 @@ public class PromoCategoryFragment extends BaseSectionFragment implements PromoD
                                 && browsePromoCategoryApiResponse.apiResponseContent.promoCategories.size() > 0) {
                             mPromoCategoryList = browsePromoCategoryApiResponse.apiResponseContent.promoCategories;
                             mPromoCategoryList = filterPromoCategories();
-                            mSectionData = browsePromoCategoryApiResponse.apiResponseContent.sectionData;
+                            setSectionData(browsePromoCategoryApiResponse.apiResponseContent.sectionData);
                             renderPromoCategories();
                             trackEvent(TrackingAware.PROMO_CATEGORY_LIST, null);
                         }

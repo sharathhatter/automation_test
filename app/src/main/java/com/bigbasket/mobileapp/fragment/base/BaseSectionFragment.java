@@ -4,14 +4,15 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
+import com.bigbasket.mobileapp.interfaces.SectionAware;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.view.SectionView;
 
-public abstract class BaseSectionFragment extends BaseFragment {
+public abstract class BaseSectionFragment extends BaseFragment implements SectionAware {
 
-    protected SectionData mSectionData;
-    protected String mScreenName;
+    private SectionData mSectionData;
+    private String mScreenName;
 
     @Nullable
     public View getSectionView() {
@@ -32,5 +33,20 @@ public abstract class BaseSectionFragment extends BaseFragment {
                     mSectionData.getSections().size() > 0;
         }
         return false;
+    }
+
+    @Override
+    public void setSectionData(SectionData sectionData) {
+        mSectionData = sectionData;
+    }
+
+    @Override
+    public void setScreenName(String screenName) {
+        mScreenName = screenName;
+    }
+
+    @Override
+    public SectionData getSectionData() {
+        return mSectionData;
     }
 }
