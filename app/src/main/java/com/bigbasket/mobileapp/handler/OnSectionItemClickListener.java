@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.handler;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -12,6 +13,9 @@ import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
+import com.bigbasket.mobileapp.fragment.product.SubCategoryListFragment;
+import com.bigbasket.mobileapp.fragment.promo.PromoCategoryFragment;
+import com.bigbasket.mobileapp.fragment.promo.PromoDetailFragment;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
@@ -58,18 +62,87 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
         if (context == null || ((CancelableAware) context).isSuspended()) return;
 
         logClickEvent();
+        /*
+          if (section.getSectionType() != null &&
+                section.getSectionType().equalsIgnoreCase(Section.PRODUCT_CAROUSEL)) {
+            DestinationInfo destinationInfo = sectionItem.getDestinationInfo();
+            if (destinationInfo != null) {
+                String destinationType = destinationInfo.getDestinationType();
+                String destinationSlug = destinationInfo.getDestinationSlug();
+                BigBasketApiService bigBasketApiService = BigBasketApiAdapter.
+                        getApiService(((ActivityAware) context).getCurrentActivity());
+                if (!TextUtils.isEmpty(destinationSlug) && !TextUtils.isEmpty(destinationType) &&
+                        destinationType.equals(DestinationInfo.SHOPPING_LIST)) {
+                    if (!((ConnectivityAware) context).checkInternetConnection()) {
+                        ((HandlerAware) context).getHandler().sendOfflineError();
+                        return;
+                    }
+                    ((ProgressIndicationAware) context).showProgressDialog("Please wait...");
+                    bigBasketApiService.getShoppingListDetails(destinationSlug, null, new Callback<ApiResponse<GetShoppingListDetailsApiResponse>>() {
+                        @Override
+                        public void success(ApiResponse<GetShoppingListDetailsApiResponse> getShoppingListDetailsApiResponse, Response response) {
+                            if (((CancelableAware) context).isSuspended()) return;
+                            try {
+                                ((ProgressIndicationAware) context).hideProgressDialog();
+                            } catch (IllegalArgumentException e) {
+                                return;
+                            }
+                            switch (getShoppingListDetailsApiResponse.status) {
+                                case 0:
+                                    ShoppingListDetail shoppingListDetail = getShoppingListDetailsApiResponse.apiResponseContent.shoppingListDetail;
+                                    if (shoppingListDetail != null) {
+                                        ArrayList<Product> products = shoppingListDetail.getProducts();
+                                        String title = section.getTitle() != null ? section.getTitle().getText() : null;
+                                        ((ProductListDialogAware) context).showDialog(title, products, products.size(), getShoppingListDetailsApiResponse.apiResponseContent.baseImgUrl,
+                                                true, Constants.SHOPPING_LISTS);
+                                    }
+                                    break;
+                                default:
+                                    ((HandlerAware) context).getHandler().
+                                            sendEmptyMessage(getShoppingListDetailsApiResponse.status,
+                                                    getShoppingListDetailsApiResponse.message);
+                                    break;
+                            }
+                        }
+
+                        @Override
+                        public void failure(RetrofitError error) {
+                            if (((CancelableAware) context).isSuspended()) return;
+                            try {
+                                ((ProgressIndicationAware) context).hideProgressDialog();
+                            } catch (IllegalArgumentException e) {
+                                return;
+                            }
+                            ((HandlerAware) context).getHandler().handleRetrofitError(error);
+                        }
+                    });
+                } else if (!TextUtils.isEmpty(destinationType)) {
+//                    launchProductList() // Add count
+                }
+            }
+        } else
+         */
         if (sectionItem.getDestinationInfo() != null &&
                 sectionItem.getDestinationInfo().getDestinationType() != null) {
             DestinationInfo destinationInfo = sectionItem.getDestinationInfo();
             switch (destinationInfo.getDestinationType()) {
                 case DestinationInfo.CATEGORY_LANDING:
                     if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
-                        Intent intent = new Intent(((ActivityAware) context).getCurrentActivity(), BackButtonActivity.class);
-                        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_CATEGORY_LANDING);
-                        intent.putExtra(Constants.TOP_CATEGORY_SLUG, destinationInfo.getDestinationSlug());
                         String title = sectionItem.getTitle() != null ? sectionItem.getTitle().getText() : "";
-                        intent.putExtra(Constants.TOP_CATEGORY_NAME, title);
-                        ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                        if (hasMainMenu()) {
+                            SubCategoryListFragment subCategoryListFragment = new SubCategoryListFragment();
+                            Bundle subCatBundle = new Bundle();
+                            subCatBundle.putString(Constants.TOP_CATEGORY_SLUG, destinationInfo.getDestinationSlug());
+                            subCatBundle.putString(Constants.TOP_CATEGORY_NAME, title);
+                            subCategoryListFragment.setArguments(subCatBundle);
+                            ((BBActivity) context).onChangeFragment(subCategoryListFragment);
+                        } else {
+                            Intent intent = new Intent(((ActivityAware) context).getCurrentActivity(), BBActivity.class);
+                            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_CATEGORY_LANDING);
+                            intent.putExtra(Constants.TOP_CATEGORY_SLUG, destinationInfo.getDestinationSlug());
+                            intent.putExtra(Constants.TOP_CATEGORY_NAME, title);
+                            ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                        }
                     } else {
                         showDefaultError();
                     }
@@ -112,10 +185,18 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                 case DestinationInfo.PROMO_DETAIL:
                     if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())
                             && TextUtils.isDigitsOnly(destinationInfo.getDestinationSlug())) {
-                        intent = new Intent(((ActivityAware) context).getCurrentActivity(), BBActivity.class);
-                        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PROMO_DETAIL);
-                        intent.putExtra(Constants.PROMO_ID, Integer.parseInt(destinationInfo.getDestinationSlug()));
-                        ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                        if (hasMainMenu()) {
+                            Bundle promoDetailBundle = new Bundle();
+                            promoDetailBundle.putInt(Constants.PROMO_ID, Integer.parseInt(destinationInfo.getDestinationSlug()));
+                            PromoDetailFragment promoDetailFragment = new PromoDetailFragment();
+                            promoDetailFragment.setArguments(promoDetailBundle);
+                            ((BBActivity) context).onChangeFragment(promoDetailFragment);
+                        } else {
+                            intent = new Intent(((ActivityAware) context).getCurrentActivity(), BBActivity.class);
+                            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PROMO_DETAIL);
+                            intent.putExtra(Constants.PROMO_ID, Integer.parseInt(destinationInfo.getDestinationSlug()));
+                            ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                        }
                     } else {
                         showDefaultError();
                     }
@@ -173,15 +254,19 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                     }
                     break;
                 case DestinationInfo.PROMO_LIST:
-                    intent = new Intent(((ActivityAware) context).getCurrentActivity(), BBActivity.class);
-                    intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PROMO_CATEGORY);
-                    ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                    if (hasMainMenu()) {
+                        ((BBActivity) context).onChangeFragment(new PromoCategoryFragment());
+                    } else {
+                        intent = new Intent(((ActivityAware) context).getCurrentActivity(), BBActivity.class);
+                        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PROMO_CATEGORY);
+                        ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                    }
                     break;
                 case DestinationInfo.HOME:
                     ((ActivityAware) context).getCurrentActivity().goToHome(false);
                     break;
                 case DestinationInfo.SHOPPING_LIST:
-                    intent = new Intent(((ActivityAware) context).getCurrentActivity(), BBActivity.class);
+                    intent = new Intent(((ActivityAware) context).getCurrentActivity(), BackButtonActivity.class);
                     intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_LANDING);
                     ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     break;
@@ -277,5 +362,9 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
         HashMap<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(eventKeyName, navigationCtx);
         ((TrackingAware) context).trackEvent(trackAwareName, eventAttribs);
+    }
+
+    private boolean hasMainMenu() {
+        return context instanceof BBActivity && !(context instanceof BackButtonActivity);
     }
 }

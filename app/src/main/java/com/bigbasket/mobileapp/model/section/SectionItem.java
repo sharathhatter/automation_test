@@ -100,7 +100,12 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
     };
 
     public void displayImage(ImageView imageView) {
-        if (TextUtils.isEmpty(image)) return;
+        imageView.setVisibility(View.VISIBLE);
+        if (TextUtils.isEmpty(image)) {
+            imageView.setImageDrawable(null);
+            imageView.setVisibility(View.GONE);
+            return;
+        }
         if (image.startsWith(Constants.LOCAL_RES_PREFIX)) {
             try {
                 URI uri = new URI(image);
@@ -182,7 +187,7 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
             case VIEW_TITLE_IMG_DESC_VERTICAL:
                 return R.layout.section_text_img_desc;
             case VIEW_IMG_TITLE_DESC_VERTICAL:
-                return R.layout.section_img_title_desc;
+                return R.layout.section_img_text_desc;
             case VIEW_TITLE_DESC_HORIZONTAL:
                 return R.layout.section_text_desc_horizontal;
             case VIEW_TITLE_DESC_IMG_HORIZONTAL:

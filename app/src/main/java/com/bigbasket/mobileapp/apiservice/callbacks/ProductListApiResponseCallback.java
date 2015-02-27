@@ -54,9 +54,6 @@ public class ProductListApiResponseCallback<T> implements Callback<ApiResponse<P
                 ProductListData existingProductListData = ((ProductListDataAware) ctx).getProductListData();
                 existingProductListData.setCurrentPage(productListData.getCurrentPage());
                 ((ProductListDataAware) ctx).updateProductList(productListData.getProducts());
-                if (ctx instanceof SectionAware) {
-                    ((SectionAware) ctx).setSectionData(productListDataApiResponse.apiResponseContent.sectionData);
-                }
             } else {
                 if (productListData.getFilteredOn() == null) {
                     productListData.setFilteredOn(new ArrayList<FilteredOn>());
@@ -82,6 +79,9 @@ public class ProductListApiResponseCallback<T> implements Callback<ApiResponse<P
                     }
                 }
                 ((ProductListDataAware) ctx).setProductListData(productListData);
+                if (ctx instanceof SectionAware) {
+                    ((SectionAware) ctx).setSectionData(productListDataApiResponse.apiResponseContent.sectionData);
+                }
                 ((ProductListDataAware) ctx).updateData();
             }
         } else {

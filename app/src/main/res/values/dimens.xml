@@ -81,4 +81,5 @@
     <dimen name="category_tile_img_height">140dp</dimen>
     <!-- Match 56dp default ActionBar height on portrait orientation -->
     <dimen name="nav_drawer_margin_offset">-8dp</dimen>
+    <dimen name="shopping_list_col_width">108dp</dimen>
 </resources>
