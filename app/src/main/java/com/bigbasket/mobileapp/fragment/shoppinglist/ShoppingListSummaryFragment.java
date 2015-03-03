@@ -30,6 +30,7 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import retrofit.Callback;
@@ -41,6 +42,19 @@ public class ShoppingListSummaryFragment extends BaseFragment {
 
     private ShoppingListName mShoppingListName;
     private ArrayList<ShoppingListSummary> mShoppingListSummaries;
+    private static final HashMap<String, Integer> categoryImageMap = new HashMap<>();
+
+    static {
+        categoryImageMap.put("fruits-vegetables", R.drawable.f_v);
+        categoryImageMap.put("grocery-staples", R.drawable.grocery);
+        categoryImageMap.put("bread-dairy-eggs", R.drawable.bd_e);
+        categoryImageMap.put("beverages", R.drawable.beverages);
+        categoryImageMap.put("branded-foods", R.drawable.brandedfoods);
+        categoryImageMap.put("personal-care", R.drawable.personalcare);
+        categoryImageMap.put("household", R.drawable.household);
+        categoryImageMap.put("imported-gourmet", R.drawable.imported_gourmet);
+        categoryImageMap.put("meat", R.drawable.meat);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -137,7 +151,8 @@ public class ShoppingListSummaryFragment extends BaseFragment {
         }
         GridView shoppingListSummaryView = new GridView(getActivity());
         shoppingListSummaryView.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
-        shoppingListSummaryView.setNumColumns(GridView.AUTO_FIT);
+        shoppingListSummaryView.setNumColumns(3);
+        shoppingListSummaryView.setColumnWidth((int) getResources().getDimension(R.dimen.shopping_list_col_width));
         shoppingListSummaryView.setGravity(Gravity.CENTER);
         shoppingListSummaryView.setHorizontalSpacing((int) getResources().getDimension(R.dimen.padding_small));
         shoppingListSummaryView.setColumnWidth((int) getResources().getDimension(R.dimen.category_tile_width));
@@ -207,13 +222,15 @@ public class ShoppingListSummaryFragment extends BaseFragment {
 
             TextView txtCategoryName = shoppingListSummaryHolder.getTxtCategoryName();
             ImageView imgCategory = shoppingListSummaryHolder.getImgCategory();
+            if (categoryImageMap.containsKey(shoppingListSummary.getTopCategorySlug())) {
+                int drawableId = categoryImageMap.get(shoppingListSummary.getTopCategorySlug());
+                imgCategory.setImageResource(drawableId);
+            } else {
+                imgCategory.setImageResource(R.drawable.bb_logo_transparent_bkg);
+            }
             TextView txtNumItems = shoppingListSummaryHolder.getTxtNumItems();
 
             txtCategoryName.setText(shoppingListSummary.getTopCategoryName());
-//            int imageResId = categoryImageMap.containsKey(shoppingListSummary.getTopCategorySlug()) ?
-//                    categoryImageMap.get(shoppingListSummary.getTopCategorySlug()) : R.drawable.image_404;
-//            imgCategory.setImageResource(imageResId);
-
             txtNumItems.setText(shoppingListSummary.getNumItemsDisplay());
             return row;
         }

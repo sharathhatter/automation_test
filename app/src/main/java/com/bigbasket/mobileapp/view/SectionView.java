@@ -425,7 +425,7 @@ public class SectionView {
 
             ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
             if (layoutParams instanceof LinearLayout.LayoutParams) {
-                ((LinearLayout.LayoutParams) layoutParams).weight = 1;
+                layoutParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
             }
             if (layoutParams instanceof ViewGroup.MarginLayoutParams) {
                 ((ViewGroup.MarginLayoutParams) layoutParams).setMargins(0, defaultMargin, applyRight ? defaultMargin : 0, defaultMargin);

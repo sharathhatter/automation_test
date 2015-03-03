@@ -4,9 +4,11 @@
     android:id="@+id/layoutChangeCity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginBottom="@dimen/margin_small"
     android:orientation="vertical">
 
     <Spinner
+        style="@style/BaseAppTheme.SpinnerStyle"
         android:id="@+id/spinnerChooseCity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -81,7 +81,6 @@ import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.navigation.SectionNavigationItem;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.product.Product;
-import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
@@ -360,10 +359,10 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 break;
             case FragmentCodes.START_CATEGORY_LANDING:
                 SubCategoryListFragment subCategoryListFragment = new SubCategoryListFragment();
-                Bundle cubCatBundle = new Bundle();
-                cubCatBundle.putString(Constants.TOP_CATEGORY_SLUG, getIntent().getStringExtra(Constants.TOP_CATEGORY_SLUG));
-                cubCatBundle.putString(Constants.TOP_CATEGORY_NAME, getIntent().getStringExtra(Constants.TOP_CATEGORY_NAME));
-                subCategoryListFragment.setArguments(cubCatBundle);
+                Bundle subCatBundle = new Bundle();
+                subCatBundle.putString(Constants.TOP_CATEGORY_SLUG, getIntent().getStringExtra(Constants.TOP_CATEGORY_SLUG));
+                subCatBundle.putString(Constants.TOP_CATEGORY_NAME, getIntent().getStringExtra(Constants.TOP_CATEGORY_NAME));
+                subCategoryListFragment.setArguments(subCatBundle);
                 addToMainLayout(subCategoryListFragment);
                 break;
             case FragmentCodes.START_PROMO_DETAIL:
@@ -388,33 +387,6 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 shopFromOrderFragment.setArguments(orderProductListBundle);
                 addToMainLayout(shopFromOrderFragment);
                 break;
-            case FragmentCodes.START_NOW_AT_BB:
-                GenericProductListFragment productListFragment = new GenericProductListFragment();
-                Bundle productListArgs = new Bundle();
-                ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-                nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.NOW_AT_BB.get()));
-                productListArgs.putParcelableArrayList(Constants.PRODUCT_QUERY, nameValuePairs);
-                productListFragment.setArguments(productListArgs);
-                addToMainLayout(productListFragment);
-                break;
-            case FragmentCodes.START_NEW_AT_BB: //todo check with sid from where this will be called
-                productListFragment = new GenericProductListFragment();
-                productListArgs = new Bundle();
-                nameValuePairs = new ArrayList<>();
-                nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.NEW_AT_BB.get()));
-                productListArgs.putParcelableArrayList(Constants.PRODUCT_QUERY, nameValuePairs);
-                productListFragment.setArguments(productListArgs);
-                addToMainLayout(productListFragment);
-                break;
-            case FragmentCodes.START_BUNDLE_PACK:
-                productListFragment = new GenericProductListFragment();
-                productListArgs = new Bundle();
-                nameValuePairs = new ArrayList<>();
-                nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.BUNDLE_PACK.get()));
-                productListArgs.putParcelableArrayList(Constants.PRODUCT_QUERY, nameValuePairs);
-                productListFragment.setArguments(productListArgs);
-                addToMainLayout(productListFragment);
-                break;
             case FragmentCodes.START_PRODUCT_CATEGORY:
                 launchProductCategoryFragment(getIntent().getStringExtra(Constants.CATEGORY_SLUG),
                         getIntent().getStringExtra(Constants.FILTER),
@@ -435,11 +407,11 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 doSearch(getIntent().getStringExtra(Constants.SEARCH_QUERY));
                 break;
             case FragmentCodes.START_GENERIC_PRODUCT_LIST:
-                nameValuePairs = getIntent().getParcelableArrayListExtra(Constants.PRODUCT_QUERY);
+                ArrayList<NameValuePair> nameValuePairs = getIntent().getParcelableArrayListExtra(Constants.PRODUCT_QUERY);
                 String title = getIntent().getStringExtra(Constants.TITLE);
                 if (nameValuePairs != null && !nameValuePairs.isEmpty()) {
-                    productListFragment = new GenericProductListFragment();
-                    productListArgs = new Bundle();
+                    GenericProductListFragment productListFragment = new GenericProductListFragment();
+                    Bundle productListArgs = new Bundle();
                     productListArgs.putString(TrackEventkeys.NAVIGATION_CTX,
                             getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX));
                     productListArgs.putParcelableArrayList(Constants.PRODUCT_QUERY, nameValuePairs);
@@ -945,7 +917,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         return null;
     }
 
-    protected BBDrawerLayout getDrawerLayout() {
+    public BBDrawerLayout getDrawerLayout() {
         return mDrawerLayout;
     }
 
