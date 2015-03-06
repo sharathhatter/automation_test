@@ -105,7 +105,7 @@
         <Spinner
             android:id="@+id/spinnerPackageDesc"
             style="@style/BaseAppTheme.SpinnerStyle"
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/spinner_width"
             android:layout_height="wrap_content"
             android:layout_below="@id/txtProductDesc"
             android:layout_marginBottom="@dimen/margin_small"

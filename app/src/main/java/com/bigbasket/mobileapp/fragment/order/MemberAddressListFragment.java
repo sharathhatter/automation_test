@@ -12,7 +12,10 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -154,19 +157,24 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
 
         RecyclerView addressRecyclerView = (RecyclerView) addressView.findViewById(R.id.fabRecyclerView);
         UIUtil.configureRecyclerView(addressRecyclerView, getActivity(), 1, 3);
-        TextView txtMsg = (TextView) addressView.findViewById(R.id.txtMsg);
-        txtMsg.setTypeface(faceRobotoRegular);
-
+        RelativeLayout noDeliveryAddLayout = (RelativeLayout) addressView.findViewById(R.id.noDeliveryAddLayout);
         if (mAddressArrayList != null && mAddressArrayList.size() > 0) {
             addressRecyclerView.setVisibility(View.VISIBLE);
-            txtMsg.setVisibility(View.GONE);
+            noDeliveryAddLayout.setVisibility(View.GONE);
             MemberAddressListAdapter memberAddressListAdapter =
                     new MemberAddressListAdapter<>(this, mAddressArrayList, faceRobotoRegular);
             addressRecyclerView.setAdapter(memberAddressListAdapter);
         } else {
-            txtMsg.setVisibility(View.VISIBLE);
-            txtMsg.setText(getString(R.string.noAddress));
+            noDeliveryAddLayout.setVisibility(View.VISIBLE);
             addressRecyclerView.setVisibility(View.GONE);
+            ImageView imgEmptyPage = (ImageView) addressView.findViewById(R.id.imgEmptyPage);
+            imgEmptyPage.setImageResource(R.drawable.empty_delivery_address);
+            TextView txtEmptyMsg1 = (TextView) addressView.findViewById(R.id.txtEmptyMsg1);
+            txtEmptyMsg1.setText(R.string.noAddressMsg1);
+            TextView txtEmptyMsg2 = (TextView) addressView.findViewById(R.id.txtEmptyMsg2);
+            txtEmptyMsg2.setText(R.string.noAddressMsg2);
+            Button btnBlankPage = (Button) addressView.findViewById(R.id.btnBlankPage);
+            btnBlankPage.setVisibility(View.GONE);
         }
 
         FloatingActionButton floatingActionButton = (FloatingActionButton) addressView.findViewById(R.id.btnFab);

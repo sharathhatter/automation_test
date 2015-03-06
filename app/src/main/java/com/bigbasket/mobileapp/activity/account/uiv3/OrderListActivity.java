@@ -10,14 +10,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.OrderDetailActivity;
 import com.bigbasket.mobileapp.adapter.order.OrderListAdapter;
@@ -61,7 +64,9 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
 
         mOrderType = getIntent().getStringExtra(Constants.ORDER);
         mIsInShopFromPreviousOrderMode = getIntent().getBooleanExtra(Constants.SHOP_FROM_PREVIOUS_ORDER, false);
-        setTitle(mIsInShopFromPreviousOrderMode ? getString(R.string.shopFromPreviousOrder) : getString(R.string.orders));
+        setTitle(mIsInShopFromPreviousOrderMode ? getString(R.string.shopFromPreviousOrder) :
+                mOrderType.equals(getString(R.string.active_label)) ?  getString(R.string.active_order_label) :
+        getString(R.string.past_order_title));
         if (savedInstanceState != null) {
             mOrders = savedInstanceState.getParcelableArrayList(Constants.ORDERS);
             if (mOrders != null) {
@@ -166,19 +171,34 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
         }
 
         if (mOrders == null || mOrders.size() == 0) {
-            TextView txtNoOrdersMsg = (TextView) base.findViewById(R.id.txtNoOrdersMsg);
-            txtNoOrdersMsg.setTypeface(faceRobotoRegular);
-            txtNoOrdersMsg.setVisibility(View.VISIBLE);
+            View emptyPageView = inflater.inflate(R.layout.uiv3_empty_data_text, contentLayout, false);
+            ImageView imgEmptyPage = (ImageView) emptyPageView.findViewById(R.id.imgEmptyPage);
+            TextView txtEmptyMsg1 = (TextView) emptyPageView.findViewById(R.id.txtEmptyMsg1);
+            TextView txtEmptyMsg2 = (TextView) emptyPageView.findViewById(R.id.txtEmptyMsg2);
+            txtEmptyMsg2.setVisibility(View.GONE);
+
+            Button btnBlankPage = (Button) emptyPageView.findViewById(R.id.btnBlankPage);
+            btnBlankPage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    goToHome(false);
+                }
+            });
             if (mOrderType.equals(getString(R.string.active_label))) {
-                txtNoOrdersMsg.setText(getString(R.string.noActiveOrders));
+                imgEmptyPage.setImageResource(R.drawable.empty_active_orders);
+                txtEmptyMsg1.setText(getString(R.string.noActiveOrders));
                 base.removeView(orderAbsListView);
             } else if (mOrderMonthRanges != null && mOrderMonthRanges.size() > 0) {
-                txtNoOrdersMsg.setText(getString(R.string.noOrders) + " " +
+                txtEmptyMsg1.setText(getString(R.string.noOrders) + " " +
                         mOrderMonthRanges.get(spinnerSelectedIdx).getDisplayValue().toLowerCase());
                 base.removeView(orderAbsListView);
             } else {
-                txtNoOrdersMsg.setText(getString(R.string.noOrdersPlaced));
+                imgEmptyPage.setImageResource(R.drawable.empty_order_history);
+                txtEmptyMsg1.setText(getString(R.string.noOrdersPlaced));
             }
+            contentLayout.removeAllViews();
+            contentLayout.addView(emptyPageView);
+
         } else {
             OrderListAdapter orderListAdapter = new OrderListAdapter(this, faceRobotoRegular,
                     faceRupee, mOrders, false, mIsInShopFromPreviousOrderMode);
@@ -203,10 +223,10 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
                     }
                 }
             });
+            contentLayout.removeAllViews();
+            contentLayout.addView(base);
         }
 
-        contentLayout.removeAllViews();
-        contentLayout.addView(base);
         logOrderEvent(mOrderType.equals(getString(R.string.active_label)) ?
                         TrackingAware.ORDER_ACTIVE_ORDERS_SHOWN : TrackingAware.ORDER_PAST_ORDERS_SHOWN,
                 TrackEventkeys.NAVIGATION_CTX,

@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.fragment.order;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -18,12 +19,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.bigbasket.mobileapp.activity.order.uiv3.BasketValidationActivity;
+import com.bigbasket.mobileapp.activity.order.uiv3.PlaceOrderActivity;
 import com.bigbasket.mobileapp.adapter.order.ActiveOrderRowAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
@@ -399,8 +403,19 @@ public class ShowCartFragment extends BaseFragment {
         if (contentView == null) return;
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View base = inflater.inflate(R.layout.uiv3_empty_data_text, contentView, false);
-        TextView txtEmptyDataMsg = (TextView) base.findViewById(R.id.txtEmptyDataMsg);
-        txtEmptyDataMsg.setText(getString(R.string.BASKET_EMPTY));
+        ImageView imgEmptyPage = (ImageView) base.findViewById(R.id.imgEmptyPage);
+        imgEmptyPage.setImageResource(R.drawable.empty_basket);
+        TextView txtEmptyMsg1 = (TextView) base.findViewById(R.id.txtEmptyMsg1);
+        txtEmptyMsg1.setText(R.string.empty_basket_txt1);
+        TextView txtEmptyMsg2 = (TextView) base.findViewById(R.id.txtEmptyMsg2);
+        txtEmptyMsg2.setText(R.string.empty_basket_txt2);
+        Button btnBlankPage = (Button) base.findViewById(R.id.btnBlankPage);
+        btnBlankPage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((BaseActivity)getActivity()).goToHome(false);
+            }
+        });
         contentView.removeAllViews();
         contentView.addView(base);
     }

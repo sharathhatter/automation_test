@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -167,7 +168,7 @@ public class SubCategoryListFragment extends BaseSectionFragment {
         SubCategoryListAdapter subCategoryListAdapter = new SubCategoryListAdapter<>(this, categoryArrayList, getActivity());
         subCategoryExpandableView.setAdapter(subCategoryListAdapter);
 
-        subCategoryExpandableView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+        subCategoryExpandableView.setOnGroupClickListener(  new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
                 if (categoryArrayList.get(groupPosition).getCategory() != null &&
@@ -180,6 +181,7 @@ public class SubCategoryListFragment extends BaseSectionFragment {
                     if (categoryArrayList.get(groupPosition).getSortBy() != null)
                         intent.putExtra(Constants.SORT_BY, categoryArrayList.get(groupPosition).getSortBy());
                     intent.putExtra(Constants.CATEGORY_SLUG, categoryArrayList.get(groupPosition).getSlug());
+                    intent.putExtra(Constants.CATEGORY_TITLE, categoryArrayList.get(groupPosition).getName());
                     startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 }
                 return false;
@@ -191,6 +193,7 @@ public class SubCategoryListFragment extends BaseSectionFragment {
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
                 Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
                 intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PRODUCT_CATEGORY);
+                intent.putExtra(Constants.CATEGORY_TITLE, categoryArrayList.get(groupPosition).getCategory().get(childPosition).getName());
                 intent.putExtra(Constants.CATEGORY_SLUG, categoryArrayList.get(groupPosition).getCategory().get(childPosition).getSlug());
                 startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 return false;
@@ -206,7 +209,7 @@ public class SubCategoryListFragment extends BaseSectionFragment {
 
     @Override
     public String getTitle() {
-        return "Browse by Category";
+        return  !TextUtils.isEmpty(topCatName) ? topCatName : "Browse by Category";
     }
 
     @NonNull

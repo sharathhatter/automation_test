@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -16,6 +17,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
@@ -45,15 +47,15 @@ public class ShoppingListSummaryFragment extends BaseFragment {
     private static final HashMap<String, Integer> categoryImageMap = new HashMap<>();
 
     static {
-        categoryImageMap.put("fruits-vegetables", R.drawable.f_v);
-        categoryImageMap.put("grocery-staples", R.drawable.grocery);
-        categoryImageMap.put("bread-dairy-eggs", R.drawable.bd_e);
-        categoryImageMap.put("beverages", R.drawable.beverages);
-        categoryImageMap.put("branded-foods", R.drawable.brandedfoods);
-        categoryImageMap.put("personal-care", R.drawable.personalcare);
-        categoryImageMap.put("household", R.drawable.household);
-        categoryImageMap.put("imported-gourmet", R.drawable.imported_gourmet);
-        categoryImageMap.put("meat", R.drawable.meat);
+        categoryImageMap.put("fruits-vegetables", R.drawable.nav_f_v);
+        categoryImageMap.put("grocery-staples", R.drawable.nav_g_s);
+        categoryImageMap.put("bread-dairy-eggs", R.drawable.nav_bd_e);
+        categoryImageMap.put("beverages", R.drawable.nav_beverages);
+        categoryImageMap.put("branded-foods", R.drawable.nav_brandedfoods);
+        categoryImageMap.put("personal-care", R.drawable.nav_personalcare);
+        categoryImageMap.put("household", R.drawable.nav_household);
+        categoryImageMap.put("imported-gourmet", R.drawable.nav_i_g);
+        categoryImageMap.put("meat", R.drawable.nav_meat);
     }
 
     @Override
@@ -120,6 +122,27 @@ public class ShoppingListSummaryFragment extends BaseFragment {
         });
     }
 
+    private void showNoShoppingListView(LinearLayout contentView){
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View base = inflater.inflate(R.layout.uiv3_empty_data_text, contentView, false);
+        ImageView imgEmptyPage = (ImageView) base.findViewById(R.id.imgEmptyPage);
+        imgEmptyPage.setImageResource(R.drawable.empty_smart_basket);
+
+        TextView txtEmptyMsg1 = (TextView) base.findViewById(R.id.txtEmptyMsg1);
+        txtEmptyMsg1.setText(R.string.noSmartBasketProducts);
+        TextView txtEmptyMsg2 = (TextView) base.findViewById(R.id.txtEmptyMsg2);
+        txtEmptyMsg2.setVisibility(View.GONE);
+        Button btnBlankPage = (Button) base.findViewById(R.id.btnBlankPage);
+        btnBlankPage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((BaseActivity)getActivity()).goToHome(false);
+            }
+        });
+        contentView.addView(base);
+    }
+
+
     private void renderShoppingListSummary() {
         if (getActivity() == null) return;
         LinearLayout contentView = getContentView();
@@ -127,11 +150,13 @@ public class ShoppingListSummaryFragment extends BaseFragment {
         contentView.removeAllViews();
         if (mShoppingListSummaries == null || mShoppingListSummaries.size() == 0) {
             if (mShoppingListName.getSlug().equalsIgnoreCase(Constants.SMART_BASKET_SLUG)) {
-                LayoutInflater inflater = getActivity().getLayoutInflater();
-                TextView txtMsg = (TextView) inflater.inflate(R.layout.uiv3_msg_text, contentView, false);
-                txtMsg.setTypeface(faceRobotoRegular);
-                txtMsg.setText(R.string.smartBasketEmpty);
-                contentView.addView(txtMsg);
+//                LayoutInflater inflater = getActivity().getLayoutInflater();
+//                TextView txtMsg = (TextView) inflater.inflate(R.layout.uiv3_msg_text, contentView, false);
+//                txtMsg.setTypeface(faceRobotoRegular);
+//                txtMsg.setText(R.string.smartBasketEmpty);
+//                contentView.addView(txtMsg);
+
+                showNoShoppingListView(contentView);
             } else {
                 LayoutInflater inflater = getActivity().getLayoutInflater();
                 RelativeLayout relativeLayout = (RelativeLayout) inflater.inflate(R.layout.shopping_list_empty, contentView, false);

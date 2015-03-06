@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.model.account;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.bigbasket.mobileapp.apiservice.models.response.WalletRule;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
@@ -12,22 +13,12 @@ import com.google.gson.annotations.SerializedName;
 public class CurrentWalletBalance implements Parcelable {
 
     @SerializedName(Constants.CURRENT_BALANCE)
-    private float currentBalance;
+    public float currentBalance;
 
-    private String responseJsonStringWalletActivity;
+    @SerializedName(Constants.WALLET_RULE)
+    public WalletRule walletRule;
 
-    public float getCurrentBalance() {
-        return currentBalance;
-    }
-
-    public void setResponseJsonStringWalletActivity(String responseJsonStringWalletActivity) {
-        this.responseJsonStringWalletActivity = responseJsonStringWalletActivity;
-    }
-
-    public CurrentWalletBalance(float currentBalance, String responseJsonStringWalletActivity) {
-        this.currentBalance = currentBalance;
-        this.responseJsonStringWalletActivity = responseJsonStringWalletActivity;
-    }
+    public String responseJsonStringWalletActivity;
 
     @Override
     public int describeContents() {
@@ -38,11 +29,13 @@ public class CurrentWalletBalance implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeFloat(currentBalance);
         dest.writeString(responseJsonStringWalletActivity);
+        dest.writeParcelable(walletRule, flags);
     }
 
     public CurrentWalletBalance(Parcel source) {
         currentBalance = source.readFloat();
-        responseJsonStringWalletActivity = source.readString();
+        responseJsonStringWalletActivity = source.readString(); //todo
+        walletRule = source.readParcelable(CurrentWalletBalance.class.getClassLoader());
     }
 
     public static final Parcelable.Creator<CurrentWalletBalance> CREATOR = new Parcelable.Creator<CurrentWalletBalance>() {

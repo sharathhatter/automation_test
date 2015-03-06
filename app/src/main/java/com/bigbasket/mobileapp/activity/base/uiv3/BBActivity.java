@@ -390,7 +390,8 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             case FragmentCodes.START_PRODUCT_CATEGORY:
                 launchProductCategoryFragment(getIntent().getStringExtra(Constants.CATEGORY_SLUG),
                         getIntent().getStringExtra(Constants.FILTER),
-                        getIntent().getStringExtra(Constants.SORT_BY));
+                        getIntent().getStringExtra(Constants.SORT_BY),
+                        getIntent().getStringExtra(Constants.CATEGORY_TITLE));
                 break;
             case FragmentCodes.START_SHOPPING_LIST_SUMMARY:
                 bundle = new Bundle();
@@ -550,7 +551,11 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                                                     EditText editTextQty, Product product, String qty,
                                                     @Nullable View productView) {
 
-        int productQtyInBasket = Integer.parseInt(basketOperationResponse.getBasketResponseProductInfo().getTotalQty());
+
+        int productQtyInBasket = 0;
+        if (basketOperationResponse.getBasketResponseProductInfo() != null) {
+            productQtyInBasket = Integer.parseInt(basketOperationResponse.getBasketResponseProductInfo().getTotalQty());
+        }
         int totalProductsInBasket = basketOperationResponse.getCartSummary().getNoOfItems();
 
         if (productQtyInBasket == 0) {
@@ -707,16 +712,18 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                                         String categorySlug) {
         MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(this);
         mostSearchesAdapter.update(categoryName, categoryUrl);
-        launchProductCategoryFragment(categorySlug, null, null);
+        launchProductCategoryFragment(categorySlug, null, null, categoryName);
     }
 
-    private void launchProductCategoryFragment(String categorySlug, String filter, String sortOn) {
+    private void launchProductCategoryFragment(String categorySlug, String filter,
+                                               String sortOn, String title) {
         Bundle bundle = new Bundle();
         bundle.putString(Constants.SLUG_NAME_CATEGORY, categorySlug);
         if (!TextUtils.isEmpty(filter))
             bundle.putString(Constants.FILTER, filter);
         if (!TextUtils.isEmpty(sortOn))
             bundle.putString(Constants.SORT_BY, sortOn);
+        bundle.putString(Constants.CATEGORY_TITLE, title);
         CategoryProductsFragment categoryProductsFragment = new CategoryProductsFragment();
         categoryProductsFragment.setArguments(bundle);
         addToMainLayout(categoryProductsFragment);
@@ -791,7 +798,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 mTitle = mTitle.substring(0, 22);
                 mTitle += "...";
             }
-            actionBar.setTitle(mTitle);
+            actionBar.setTitle(mTitle.toUpperCase());
         }
     }
 

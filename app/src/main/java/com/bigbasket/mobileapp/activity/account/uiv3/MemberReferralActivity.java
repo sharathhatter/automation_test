@@ -126,13 +126,13 @@ public class MemberReferralActivity extends BackButtonActivity {
         contentView.setBackgroundColor(getResources().getColor(R.color.uiv3_list_bkg_color));
 
         if (!TextUtils.isEmpty(memberReferralProduct.incentiveDesc)) { //todo test this is not referral data, check will Sid
-            LayoutInflater inflater = getCurrentActivity().getLayoutInflater();
-            View emptyView = inflater.inflate(R.layout.uiv3_empty_data_text, null);
-            TextView txtEmptyDataMsg = (TextView) emptyView.findViewById(R.id.txtEmptyDataMsg);
-            txtEmptyDataMsg.setText(memberReferralProduct.incentiveDesc);
-            contentView.removeAllViews();
-            contentView.addView(base);
-            contentView.addView(emptyView);
+//            LayoutInflater inflater = getCurrentActivity().getLayoutInflater();
+//            View emptyView = inflater.inflate(R.layout.uiv3_empty_data_text, null);
+//            TextView txtEmptyDataMsg = (TextView) emptyView.findViewById(R.id.txtEmptyDataMsg);
+//            txtEmptyDataMsg.setText(memberReferralProduct.incentiveDesc);
+//            contentView.removeAllViews();
+//            contentView.addView(base);
+//            contentView.addView(emptyView);
         } else {
             final LayoutInflater inflater = getCurrentActivity().getLayoutInflater();
             View referralView = inflater.inflate(R.layout.member_referral_tc, null);

@@ -49,7 +49,9 @@ public class CategoryProductsFragment extends ProductListAwareFragment {
 
     @Override
     public String getTitle() {
-        return "Browse by Category";
+        Bundle bundle = getArguments();
+        return !TextUtils.isEmpty(bundle.getString(Constants.CATEGORY_TITLE)) ? bundle.getString(Constants.CATEGORY_TITLE) :
+                "Browse by Category";
     }
 
     @NonNull

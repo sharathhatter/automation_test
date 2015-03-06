@@ -191,4 +191,20 @@
         <item name="android:background">@color/uiv3_divider_color</item>
         <item name="android:textColor">@color/uiv3_secondary_text_color</item>
     </style>
+
+
+    <style name="EmptyPageButtonStyle" parent="@style/DefaultButtonStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/bb_button_text_size</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@drawable/main_button_rounded_background</item>
+        <item name="android:paddingTop">@dimen/padding_small</item>
+        <item name="android:paddingBottom">@dimen/padding_small</item>
+        <item name="android:layout_marginLeft">@dimen/margin_normal</item>
+        <item name="android:layout_marginRight">@dimen/margin_normal</item>
+        <item name="android:paddingLeft">@dimen/padding_normal</item>
+        <item name="android:paddingRight">@dimen/padding_normal</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
 </resources>
