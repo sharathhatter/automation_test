@@ -13,11 +13,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.WalletRule;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.CurrentWalletBalance;
 import com.bigbasket.mobileapp.model.account.WalletDataItem;
@@ -40,26 +43,18 @@ public class DoWalletFragment extends BaseFragment {
     private int[] maxDayOfMonth = {
             31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
     };
-    private TextView txtCurrentBalance;
     boolean oneYearBack1 = false, oneYearBack2 = false, oneYearBack3 = false;
     private String month1 = "", month2 = "", month3 = "", monthClickText;
-    private float currentBalance;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.uiv3_dowallet, container, false);
+        return inflater.inflate(R.layout.uiv3_list_container, container, false);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        renderWalletMonthActivity();
-        if (savedInstanceState != null) {
-            currentBalance = savedInstanceState.getFloat(Constants.CURRENT_BALANCE);
-            setCurrentBalance(currentBalance);
-        } else {
-            getCurrentMemberWalletBalance();
-        }
+        getCurrentMemberWalletBalance();
     }
 
     private void getCurrentMemberWalletBalance() {
@@ -67,19 +62,19 @@ public class DoWalletFragment extends BaseFragment {
             handler.sendOfflineError(true);
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
-        showProgressDialog(getString(R.string.please_wait));
+        showProgressView();
         bigBasketApiService.getCurrentWalletBalance(new Callback<ApiResponse<CurrentWalletBalance>>() {
             @Override
             public void success(ApiResponse<CurrentWalletBalance> currentWalletBalCallback, Response response) {
                 if (isSuspended()) return;
                 try {
-                    hideProgressDialog();
+                    hideProgressView();
                 } catch (IllegalArgumentException e) {
                     return;
                 }
                 if (currentWalletBalCallback.status == 0) {
-                    currentBalance = currentWalletBalCallback.apiResponseContent.getCurrentBalance();
-                    setCurrentBalance(currentBalance);
+                    renderWalletMonthActivity(currentWalletBalCallback.apiResponseContent.currentBalance,
+                            currentWalletBalCallback.apiResponseContent.walletRule);
                     trackEvent(TrackingAware.WALLET_SUMMARY_SHOWN, null);
                 } else {
                     handler.sendEmptyMessage(currentWalletBalCallback.status, currentWalletBalCallback.message);
@@ -90,7 +85,7 @@ public class DoWalletFragment extends BaseFragment {
             public void failure(RetrofitError error) {
                 if (isSuspended()) return;
                 try {
-                    hideProgressDialog();
+                    hideProgressView();
                 } catch (IllegalArgumentException e) {
                     return;
                 }
@@ -99,10 +94,33 @@ public class DoWalletFragment extends BaseFragment {
         });
     }
 
-    private void setCurrentBalance(float currentBalance) {
-        txtCurrentBalance.append(!TextUtils.isEmpty(String.valueOf(currentBalance)) ?
-                String.valueOf(currentBalance) :
-                "****");
+    private void renderDeliveryTokenData(WalletRule walletRule, View view){
+        if(walletRule ==null)return;
+        LinearLayout layoutDeliveryToken = (LinearLayout) view.findViewById(R.id.layoutDeliveryToken);
+        layoutDeliveryToken.setVisibility(View.VISIBLE);
+
+        TextView txtTokenMsg = (TextView) view.findViewById(R.id.txtTokenMsg);
+
+        String prefixTokenAmt = walletRule.voucherPerRule>1 ?  walletRule.voucherPerRule +" Free delivery tokens for every"
+                : walletRule.voucherPerRule +" Free delivery token for every";
+        prefixTokenAmt += " `";
+        String mrpStrTokenAmt = ((BaseActivity)getActivity()).getDecimalAmount(
+                Double.parseDouble(walletRule.amountPerVoucher+"")) + "/- added to wallet*";
+        int prefixEndBalLen = prefixTokenAmt.length();
+        SpannableString spannableEndingBal = new SpannableString(prefixTokenAmt + mrpStrTokenAmt);
+
+        spannableEndingBal.setSpan(new CustomTypefaceSpan("", faceRupee), prefixEndBalLen - 1,
+                prefixEndBalLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+        txtTokenMsg.setText(spannableEndingBal);
+
+        TextView txtAvailableToken = (TextView) view.findViewById(R.id.txtAvailableToken);
+        txtAvailableToken.setText("Available Delivery Token: " +walletRule.availableDeliveryToken);
+
+        TextView txtVoucherTc = (TextView) view.findViewById(R.id.txtVoucherTc);
+        if(!TextUtils.isEmpty(walletRule.termAndCondition)) {
+            txtVoucherTc.setText(walletRule.termAndCondition);
+            txtVoucherTc.setVisibility(View.VISIBLE);
+        }
     }
 
 
@@ -116,18 +134,23 @@ public class DoWalletFragment extends BaseFragment {
     }
 
 
-    private void renderWalletMonthActivity() {
+    private void renderWalletMonthActivity(float currentBalance, WalletRule walletRule) {
         if (getActivity() == null) return;
-        LinearLayout view = getContentView();
-        if (view == null) return;
+        LinearLayout contentView = getContentView();
+        if (contentView == null) return;
+
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.uiv3_dowallet, contentView, false);
+        contentView.addView(view);
+
         String prefixBal = "Current Balance `";
-        String mrpStrBal = "";
+        String mrpStrBal = currentBalance+"";
         int prefixBalLen = prefixBal.length();
         SpannableString spannableBal = new SpannableString(prefixBal + " " + mrpStrBal);
         spannableBal.setSpan(new CustomTypefaceSpan("", faceRupee), prefixBalLen - 1,
                 prefixBalLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
 
-        txtCurrentBalance = (TextView) view.findViewById(R.id.txtcurrentBalance);
+        TextView txtCurrentBalance = (TextView) view.findViewById(R.id.txtcurrentBalance);
         txtCurrentBalance.setText(spannableBal);
         txtCurrentBalance.setTypeface(faceRobotoRegular);
 
@@ -293,6 +316,8 @@ public class DoWalletFragment extends BaseFragment {
                 }
             }
         });
+
+        renderDeliveryTokenData(walletRule, view);
     }
 
     private void logWalletActivityClickEvent(int month, int year) {
@@ -347,19 +372,17 @@ public class DoWalletFragment extends BaseFragment {
 
     @Override
     public LinearLayout getContentView() {
-        return getView() != null ? (LinearLayout) getView().findViewById(R.id.layoutDoWallet) : null;
+        return getView() != null ? (LinearLayout) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putFloat(Constants.CURRENT_BALANCE, currentBalance);
-        super.onSaveInstanceState(outState);
-    }
-
+//    @Override
+//    public LinearLayout getContentView() {
+//        return getView() != null ? (LinearLayout) getView().findViewById(R.id.layoutDoWallet) : null;
+//    }
 
     @Override
     public String getTitle() {
-        return "Wallet";
+        return "My Wallet";
     }
 
     @NonNull

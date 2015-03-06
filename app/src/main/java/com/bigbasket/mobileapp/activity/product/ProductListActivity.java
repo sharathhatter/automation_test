@@ -88,13 +88,13 @@ public class ProductListActivity extends BBActivity implements FilterDisplayAwar
         }
 
         if (mFilterOptionItems == null || mFilterOptionItems.size() == 0) {
-            LayoutInflater inflater = getLayoutInflater();
-            View emptyView = inflater.inflate(R.layout.uiv3_empty_data_text, listFilter, false);
-            TextView txtEmptyDataMsg = (TextView) emptyView.findViewById(R.id.txtEmptyDataMsg);
-            txtEmptyDataMsg.setText("Nothing to filter!");
-            txtEmptyDataMsg.setTextColor(getResources().getColor(R.color.white));
-            listFilter.setEmptyView(emptyView);
-            btnApplyFilter.setVisibility(View.GONE);
+//            LayoutInflater inflater = getLayoutInflater();
+//            View emptyView = inflater.inflate(R.layout.uiv3_empty_data_text, listFilter, false);
+//            TextView txtEmptyDataMsg = (TextView) emptyView.findViewById(R.id.txtEmptyDataMsg);
+//            txtEmptyDataMsg.setText("Nothing to filter!");
+//            txtEmptyDataMsg.setTextColor(getResources().getColor(R.color.white));
+//            listFilter.setEmptyView(emptyView);
+//            btnApplyFilter.setVisibility(View.GONE);
         } else {
             btnApplyFilter.setVisibility(View.VISIBLE);
             FilterByAdapter filterByAdapter = new FilterByAdapter(mFilterOptionItems, mFilteredOn,
@@ -158,6 +158,16 @@ public class ProductListActivity extends BBActivity implements FilterDisplayAwar
     private void closeFilterDrawer() {
         if (getDrawerLayout() != null) {
             getDrawerLayout().closeDrawer(Gravity.RIGHT);
+        }
+    }
+
+
+    @Override
+    public void onBackPressed(){
+        if(getDrawerLayout().isDrawerOpen(Gravity.RIGHT)){
+            getDrawerLayout().closeDrawer(Gravity.RIGHT);
+        }else {
+            super.onBackPressed();
         }
     }
 

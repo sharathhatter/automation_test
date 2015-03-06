@@ -30,7 +30,7 @@ public class ProductListTask<T> {
 
     public void startTask() {
         if (!((ConnectivityAware) ctx).checkInternetConnection()) {
-            ((HandlerAware) ctx).getHandler().sendOfflineError();
+            ((HandlerAware) ctx).getHandler().sendOfflineError(true);
             return;
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.

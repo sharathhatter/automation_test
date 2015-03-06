@@ -12,6 +12,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -57,14 +59,16 @@ public class SplashActivity extends BaseActivity implements DynamicScreenAware {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.splash);
-
-        if (!checkInternetConnection()) {
-            showAlertDialogFinish(getString(R.string.deviceOfflineSmallTxt),
-                    getString(R.string.deviceOffline));
+        if (checkInternetConnection()) {
+            startSplashScreen();
+        }else {
+            showNoInternetConnectionView();
             return;
         }
+    }
 
+    private void startSplashScreen(){
+        setContentView(R.layout.splash);
         ((TextView) findViewById(R.id.lblAppSlogan)).setTypeface(faceRobotoRegular);
         ((TextView) findViewById(R.id.lblSelectCity)).setTypeface(faceRobotoRegular);
         ((TextView) findViewById(R.id.lblSameDayDelivery)).setTypeface(faceRobotoRegular);
@@ -88,6 +92,31 @@ public class SplashActivity extends BaseActivity implements DynamicScreenAware {
             loadNavigation();
         }
         trackEvent(TrackingAware.ENTRY_PAGE_SHOWN, null);
+    }
+
+    private void showNoInternetConnectionView(){
+        setContentView(R.layout.layout_no_internet);
+
+        TextView txtHeader = (TextView) findViewById(R.id.txtHeader);
+        txtHeader.setVisibility(View.VISIBLE);
+
+        ImageView imgEmptyPage = (ImageView) findViewById(R.id.imgEmptyPage);
+        imgEmptyPage.setImageResource(R.drawable.empty_no_internet);
+
+        TextView txtEmptyMsg1 = (TextView) findViewById(R.id.txtEmptyMsg1);
+        txtEmptyMsg1.setText(R.string.lostInternetConnection);
+
+        ImageView imgViewRetry = (ImageView) findViewById(R.id.imgViewRetry);
+        imgViewRetry.setImageResource(R.drawable.empty_retry);
+
+        imgViewRetry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (checkInternetConnection()) {
+                    startSplashScreen();
+                }
+            }
+        });
     }
 
     @Override
@@ -118,7 +147,8 @@ public class SplashActivity extends BaseActivity implements DynamicScreenAware {
 
     private void loadCities() {
         if (!checkInternetConnection()) {
-            handler.sendOfflineError(true);
+            showNoInternetConnectionView();
+            return;
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
@@ -164,7 +194,7 @@ public class SplashActivity extends BaseActivity implements DynamicScreenAware {
 
     private void doRegisterDevice(final City city) {
         if (!checkInternetConnection()) {
-            handler.sendOfflineError(true);
+            showNoInternetConnectionView();
             return;
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);

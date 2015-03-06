@@ -121,7 +121,17 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                 }
             }
         } else
-         */
+
+        */
+//      if (section.getSectionType() != null &&
+//              section.getSectionType().equalsIgnoreCase(Section.PRODUCT_CAROUSEL)) {
+//          DestinationInfo destinationInfo = sectionItem.getDestinationInfo();
+//          if (destinationInfo != null) {
+//              launchProductList(destinationInfo);
+//          }else {
+//              // handle this case
+//          }
+//      }else
         if (sectionItem.getDestinationInfo() != null &&
                 sectionItem.getDestinationInfo().getDestinationType() != null) {
             DestinationInfo destinationInfo = sectionItem.getDestinationInfo();
@@ -167,6 +177,8 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                         intent = new Intent(((ActivityAware) context).getCurrentActivity(), ProductListActivity.class);
                         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PRODUCT_CATEGORY);
                         intent.putExtra(Constants.CATEGORY_SLUG, destinationInfo.getDestinationSlug());
+                        intent.putExtra(Constants.CATEGORY_TITLE, sectionItem.getTitle() !=null ? sectionItem.getTitle().getText():
+                                section.getTitle() != null ? section.getTitle().getText() : "");
                         ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     } else {
                         showDefaultError();

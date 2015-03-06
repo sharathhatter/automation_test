@@ -3,21 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/txtMsg"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:padding="@dimen/padding_small"
-        android:textColor="@color/uiv3_primary_text_color"
-        android:textSize="@dimen/primary_text_size"
-        android:visibility="gone" />
+    <include layout="@layout/uiv3_empty_data_text"
+        android:id="@+id/noDeliveryAddLayout"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/fabRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/txtMsg" />
+        android:layout_height="match_parent"/>
 
     <com.melnykov.fab.FloatingActionButton
         android:id="@+id/btnFab"

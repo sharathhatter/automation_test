@@ -35,19 +35,21 @@ public class UpgradeAppDialog extends DialogFragment {
     @Override
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        return UIUtil.getMaterialDialogBuilder(getActivity())
+        MaterialDialog.Builder  builder = UIUtil.getMaterialDialogBuilder(getActivity())
                 .title(R.string.updateDialogTitle)
                 .content(!TextUtils.isEmpty(upgradeMsg) ? upgradeMsg : getActivity().getString(R.string.appUpdatedMsg))
                 .positiveText(R.string.update)
                 .negativeText(R.string.cancel)
-                .cancelable(false)
                 .callback(new MaterialDialog.ButtonCallback() {
                     @Override
                     public void onPositive(MaterialDialog dialog) {
                         UIUtil.openPlayStoreLink(getActivity());
                         getActivity().finish();
                     }
-                })
-                .build();
+                });
+        MaterialDialog alertDialog = builder.build();
+        alertDialog.setCancelable(false);
+        alertDialog.setCanceledOnTouchOutside(false);
+        return alertDialog;
     }
 }

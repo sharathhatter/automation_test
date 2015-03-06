@@ -11,13 +11,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
@@ -85,16 +88,27 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View base = inflater.inflate(R.layout.uiv3_fab_list_view, contentView, false);
         ListView shoppingNameListView = (ListView) base.findViewById(R.id.fabListView);
-        ShoppingListAdapter shoppingListAdapter = new ShoppingListAdapter(mShoppingListNames);
-        shoppingNameListView.setAdapter(shoppingListAdapter);
+        RelativeLayout noDeliveryAddLayout = (RelativeLayout) base.findViewById(R.id.noDeliveryAddLayout);
 
-        shoppingNameListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ShoppingListName shoppingListName = mShoppingListNames.get(position);
-                launchShoppingListSummary(shoppingListName);
-            }
-        });
+        if(mShoppingListNames !=null && mShoppingListNames.size()>0){
+            noDeliveryAddLayout.setVisibility(View.GONE);
+            shoppingNameListView.setVisibility(View.VISIBLE);
+            ShoppingListAdapter shoppingListAdapter = new ShoppingListAdapter(mShoppingListNames);
+            shoppingNameListView.setAdapter(shoppingListAdapter);
+
+            shoppingNameListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    ShoppingListName shoppingListName = mShoppingListNames.get(position);
+                    launchShoppingListSummary(shoppingListName);
+                }
+            });
+
+        }else {
+            noDeliveryAddLayout.setVisibility(View.VISIBLE);
+            shoppingNameListView.setVisibility(View.GONE);
+            showNoShoppingListView(base);
+        }
 
         FloatingActionButton fabCreateShoppingList = (FloatingActionButton) base.findViewById(R.id.btnFab);
         fabCreateShoppingList.attachToListView(shoppingNameListView);
@@ -108,6 +122,18 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
         });
         contentView.removeAllViews();
         contentView.addView(base);
+    }
+
+    private void showNoShoppingListView(View base){
+        ImageView imgEmptyPage = (ImageView) base.findViewById(R.id.imgEmptyPage);
+        imgEmptyPage.setImageResource(R.drawable.empty_shopping_list);
+
+        TextView txtEmptyMsg1 = (TextView) base.findViewById(R.id.txtEmptyMsg1);
+        txtEmptyMsg1.setText(R.string.nowShoppingListMsg1);
+        TextView txtEmptyMsg2 = (TextView) base.findViewById(R.id.txtEmptyMsg2);
+        txtEmptyMsg2.setText(R.string.nowShoppingListMsg2);
+        Button btnBlankPage = (Button) base.findViewById(R.id.btnBlankPage);
+        btnBlankPage.setVisibility(View.GONE);
     }
 
     public void createShoppingList(final String shoppingListName) {

@@ -21,7 +21,7 @@
     <string name="OLD_PASS_NOT_CORRECT">Old password not correct</string>
     <string name="CAPTCHA_ERROR">Enter the words correctly</string>
     <string name="SLOT_EXPIRED">Slot selected by you has passed cutoff time, please select a new slot.</string>
-    <string name="BASKET_EMPTY">Your Basket is empty.</string>
+    <string name="BASKET_EMPTY">Choose from great set of Fresh Fruits &amp; Vegetables, Household goods, Great Discounts &amp; Offers! We Guarantee ON TIME, HIGH QUALITY AND SAME DAY DELIVERY!</string>
     <string name="PotentialOrder">PotentialOrder does not  have any order items, please add items to cart</string>
     <string name="slotNotAvailable">Chosen delivery slot is no longer available. Please choose a new delivery slot</string>
     <string name="EMAIL_DOESNOT">Email does not exists</string>
@@ -81,8 +81,8 @@
     <string name="UPDATE">UPDATE</string>
     <string name="CANCEL">CANCEL</string>
     <string name="cancel">Cancel</string>
-    <string name="pin_text_para1">    Delivery Confirmation PIN is a 4 digit number and can be set to a number of your choice. Your 4 digit delivery confirmation PIN enables you to give us service ratings at the time of order delivery. At the time of delivery, we request you to enter the PIN yourself and not give it to the delivery person.</string>
-    <string name="pin_text_para2">  The PIN will also be sent as part of the ready to ship email SMS for each order just in case you forget it.</string>
+    <string name="pin_text_para1">Delivery Confirmation PIN is a 4 digit number and can be set to a number of your choice. Your 4 digit delivery confirmation PIN enables you to give us service ratings at the time of order delivery. At the time of delivery, we request you to enter the PIN yourself and not give it to the delivery person.</string>
+    <string name="pin_text_para2">The PIN will also be sent as part of the ready to ship email SMS for each order just in case you forget it.</string>
     <string name="new_pin_hint">Please enter 4-digit PIN</string>
     <string name="placeorder">Place Order</string>
     <string name="modepayment">Mode of payment:</string>
@@ -320,7 +320,7 @@
     <string name="deliveryCharges">Delivery Charges</string>
     <string name="noOrders">You don\'t have any delivered or cancelled order in</string>
     <string name="noOrdersPlaced">You haven\'t placed any orders yet</string>
-    <string name="noActiveOrders">You don\'t have any active order right now</string>
+    <string name="noActiveOrders">Sorry! There are no active orders.</string>
 
     <!-- Shopping list -->
     <string name="changeShoppingListName">Change shopping list name</string>
@@ -335,22 +335,22 @@
     <string name="searchForProducts">Search for products</string>
     <string name="fromSearchResults">From search result use</string>
     <string name="toAddToList">to add to the list</string>
-    <string name="smartBasketEmpty">Currently your Smart Basket is empty. It will be updated 3 days after your first order is delivered!\n Enjoy awesome grocery shopping experience using BigBasket Mobile apps!</string>
 
     <!-- account -->
     <string name="active_order_label">Active Orders</string>
     <string name="past_order_label">View Order History</string>
     <string name="update_my_profile">Update My Profile</string>
     <string name="change_password">Change Password</string>
-    <string name="wallet_activity">Wallet Activity</string>
+    <string name="wallet_activity">My Wallet</string>
     <string name="delivery_address">Delivery Addresses</string>
     <string name="delivery_van">Delivery Van</string>
-    <string name="view_edit_pin_label">View/Edit Delivery Pin</string>
+    <string name="view_edit_pin_label">Delivery Pin</string>
     <string name="active_label">active</string>
     <string name="past_label">past</string>
     <string name="account_page_title">MY ACCOUNT</string>
     <string name="editShoppingList">Edit Shopping List</string>
     <string name="deleteShoppingList">Delete Shopping List</string>
+    <string name="past_order_title">Past Orders</string>
 
     <!-- singin -->
     <string name="enter_password">Enter password</string>
@@ -417,7 +417,8 @@
     <string name="filter">Filter</string>
     <string name="filterOn">Filter On</string>
     <string name="clear">Clear all</string>
-    <string name="noProducts">At present we do not have any products for this offering, please visit back to see offers at a later stage</string>
+    <string name="noProducts">Sorry! There are no products to display.</string>
+    <string name="noProductsSearchMsg">Sorry! There are no products found related to your search.</string>
 
     <!-- Invoice -->
     <string name="orderThankyouText">Thank you! Your order is placed\n Order #</string>
@@ -429,6 +430,16 @@
     <!-- cart page -->
     <string name="empty_basket">Empty the basket</string>
     <string name="check_out">Checkout</string>
+    <string name="empty_basket_txt1">There are no items in your basket.</string>
+    <string name="empty_basket_txt2">Enjoy great shopping experience with us!</string>
+
+
+
+    <string name="start_shopping_txt">START SHOPPING</string>
+    <string name="continue_shopping_txt">CONTINUE SHOPPING</string>
+    <string name="spend_trends_msg">You haven\'t placed any order  to view  your spends.</string>
+    <string name="lostInternetConnection">Lost internet connection?</string>
+    <string name="tapRetry">Tap to Retry</string>
 
     <!-- checkOut QC -->
     <string name="out_of_stock">Out of stock</string>
@@ -531,6 +542,11 @@
     <string name="qualityYouWillLove">QUALITY YOU\'LL LOVE</string>
     <string name="wideRange">WIDE RANGE OF PRODUCTS</string>
     <string name="addAllProducts">Are you sure you want to add all products to the basket?</string>
-    <string name="noAddress">You haven\'t added any address yet. Click on the \'&#43;\' button to add a address.</string>
+    <string name="noAddressMsg1">You have not told us your delivery address.</string>
+    <string name="noAddressMsg2">Add one now to shop easy.</string>
     <string name="nowClickApplyVoucher">Now click on Apply Voucher to use this voucher</string>
+    <string name="nowShoppingListMsg1">You have not created any shopping list yet.</string>
+    <string name="nowShoppingListMsg2">Start creating now for easy shopping.</string>
+    <string name="noSmartBasketProducts">Currently your Smart Basket is empty. It will be updated 3 days after your first order is delivered! Enjoy awesome grocery shopping experience with BigBasket Mobile apps!</string>
+
 </resources>

@@ -1,16 +1,21 @@
 package com.bigbasket.mobileapp.activity.account.uiv3;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
@@ -66,7 +71,6 @@ public class SpendTrendsActivity extends BaseActivity {
         mLayoutSpendTrendsFilter = findViewById(R.id.layoutSpendTrendsFilter);
         mLayoutSpendTrendsFilterEmpty = findViewById(R.id.layoutSpendTrendsFilterEmpty);
         loadSpendTrends(savedInstanceState);
-        trackEvent(TrackingAware.SPEND_TRENDS_SHOWN, null);
     }
 
     @Override
@@ -164,8 +168,26 @@ public class SpendTrendsActivity extends BaseActivity {
         FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
         contentFrame.removeAllViews();
         if (isSpendTrendsEmpty()) {
-            View spendTrendsEmptyView = getLayoutInflater().inflate(R.layout.uiv3_empty_spend_trends, contentFrame, false);
-            contentFrame.addView(spendTrendsEmptyView);
+            LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View emptyPageView = inflater.inflate(R.layout.uiv3_empty_data_text, contentFrame, false);
+            ImageView imgEmptyPage = (ImageView) emptyPageView.findViewById(R.id.imgEmptyPage);
+            imgEmptyPage.setImageResource(R.drawable.empty_spend_trends);
+            TextView txtEmptyMsg1 = (TextView) emptyPageView.findViewById(R.id.txtEmptyMsg1);
+            txtEmptyMsg1.setText(R.string.spend_trends_msg);
+            TextView txtEmptyMsg2 = (TextView) emptyPageView.findViewById(R.id.txtEmptyMsg2);
+            txtEmptyMsg2.setVisibility(View.GONE);
+
+            Button btnBlankPage = (Button) emptyPageView.findViewById(R.id.btnBlankPage);
+            btnBlankPage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    goToHome(false);
+                }
+            });
+            contentFrame.addView(emptyPageView);
+
+//            View spendTrendsEmptyView = getLayoutInflater().inflate(R.layout.uiv3_empty_spend_trends, contentFrame, false);
+//            contentFrame.addView(spendTrendsEmptyView);
             toggleFilterLayoutVisibility();
             return;
         }
@@ -199,6 +221,7 @@ public class SpendTrendsActivity extends BaseActivity {
         mSpinnerMonthRange.setSelection(defaultMonthIndx);
         renderCharts(mSpinnerMonthRange.getSelectedItemPosition(),
                 mSpinnerCategories.getSelectedItemPosition());
+        trackEvent(TrackingAware.SPEND_TRENDS_SHOWN, null);
     }
 
     private void renderCharts(int selectedMonthPosition, int selectedCategoryPosition) {

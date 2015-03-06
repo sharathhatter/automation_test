@@ -70,14 +70,13 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         if (getView() != null) {
             getView().setClickable(true);
         }
-        setTitle();
+        //setTitle();
     }
 
     @Override
     public void onBackResume() {
         super.onBackResume();
         setTitle();
-
         if (getCurrentActivity() != null && getCurrentActivity().isBasketDirty()) {
             syncBasket();
         }
@@ -148,7 +147,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     }
 
     public void setTitle() {
-        String title = getTitle();
+        String title = getTitle().toUpperCase();
         changeTitle(title);
     }
 
@@ -452,6 +451,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
 
     public void onResume() {
         super.onResume();
+        setTitle();
         LocalyticsWrapper.onResume(getScreenTag());
     }
 }
