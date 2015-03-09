@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.bigbasket.mobileapp.activity.base.SearchableActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
@@ -37,6 +38,7 @@ import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.facebook.AppEventsLogger;
+import com.google.zxing.integration.android.IntentIntegrator;
 import com.moe.pushlibrary.MoEHelper;
 import com.newrelic.agent.android.NewRelic;
 
@@ -59,12 +61,14 @@ public class SplashActivity extends BaseActivity implements DynamicScreenAware {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (checkInternetConnection()) {
-            startSplashScreen();
-        }else {
-            showNoInternetConnectionView();
-            return;
-        }
+        Intent searchIntent = new Intent(this, SearchableActivity.class);
+        startActivityForResult(searchIntent, NavigationCodes.GO_TO_HOME);
+//        if (checkInternetConnection()) {
+//            startSplashScreen();
+//        }else {
+//            showNoInternetConnectionView();
+//            return;
+//        }
     }
 
     private void startSplashScreen(){
@@ -76,7 +80,7 @@ public class SplashActivity extends BaseActivity implements DynamicScreenAware {
         ((TextView) findViewById(R.id.lblWideRange)).setTypeface(faceRobotoRegular);
         ((Button) findViewById(R.id.btnStartShopping)).setTypeface(faceRobotoRegular);
 
-        NewRelic.withApplicationToken(getString(R.string.new_relic_key)).start(this.getApplication());
+        //NewRelic.withApplicationToken(getString(R.string.new_relic_key)).start(this.getApplication());
 
         MoEHelper moEHelper = new MoEHelper(this);
         moEHelper.initialize(Constants.MO_SENDER_ID, Constants.MO_APP_ID);
