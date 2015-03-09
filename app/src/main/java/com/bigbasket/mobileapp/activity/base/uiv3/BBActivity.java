@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.activity.base.uiv3;
 
 import android.app.SearchManager;
+import android.app.SearchableInfo;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -39,6 +40,7 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.ShopFromOrderFragment;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.bigbasket.mobileapp.activity.base.SearchableActivity;
 import com.bigbasket.mobileapp.adapter.NavigationAdapter;
 import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
 import com.bigbasket.mobileapp.fragment.DynamicScreenFragment;
@@ -94,6 +96,7 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
+import com.google.zxing.integration.android.IntentIntegrator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -224,18 +227,30 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
     protected void setOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
 
+        //search code
+
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             menuInflater.inflate(R.menu.action_menu, menu);
 
             final MenuItem searchMenuItem = menu.findItem(R.id.action_search);
             final SearchView searchView = (SearchView) searchMenuItem.getActionView();
 
-            // Setting the search listener
+            //new search
             SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+            SearchableInfo searchableInfo = searchManager.getSearchableInfo(getComponentName());
+            searchView.setSearchableInfo(searchableInfo);
+
+            // Setting the search listener
+//            SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+//            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         } else {
             menuInflater.inflate(R.menu.action_menu_pre_honeycomb, menu);
         }
+
+
+
+
         if (AuthParameters.getInstance(this).isAuthTokenEmpty()) {
             hideMemberMenuItems(menu);
         } else {
@@ -459,7 +474,9 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         }
         switch (item.getItemId()) {
             case R.id.action_search_icon:
-                onSearchRequested();
+                Intent searchIntent = new Intent(this, SearchableActivity.class);
+                startActivityForResult(searchIntent, NavigationCodes.GO_TO_HOME);
+                //onSearchRequested();x
                 return false;
             case android.R.id.home:
                 finish();
@@ -468,7 +485,8 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 launchMyAccount();
                 return true;
             case R.id.action_communication_hub:
-                launchKonotor();
+                launchScanner();
+                //launchKonotor();
                 return true;
             case R.id.action_shopping_list:
                 if (AuthParameters.getInstance(getCurrentActivity()).isAuthTokenEmpty()) {
@@ -523,6 +541,10 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void launchScanner(){
+        new IntentIntegrator(this).initiateScan();
     }
 
     @Override
@@ -775,7 +797,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 navigationCtx);
     }
 
-    private void doSearch(String searchQuery) {
+    protected void doSearch(String searchQuery) {
         searchQuery = searchQuery.trim();
         MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(this);
         mostSearchesAdapter.update(searchQuery);

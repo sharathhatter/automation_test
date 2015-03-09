@@ -88,7 +88,7 @@ public class ProductListActivity extends BBActivity implements FilterDisplayAwar
         }
 
         if (mFilterOptionItems == null || mFilterOptionItems.size() == 0) {
-//            LayoutInflater inflater = getLayoutInflater();
+//            LayoutInflater inflater = getLayoutInflater(); //todo fix this
 //            View emptyView = inflater.inflate(R.layout.uiv3_empty_data_text, listFilter, false);
 //            TextView txtEmptyDataMsg = (TextView) emptyView.findViewById(R.id.txtEmptyDataMsg);
 //            txtEmptyDataMsg.setText("Nothing to filter!");
@@ -166,6 +166,8 @@ public class ProductListActivity extends BBActivity implements FilterDisplayAwar
     public void onBackPressed(){
         if(getDrawerLayout().isDrawerOpen(Gravity.RIGHT)){
             getDrawerLayout().closeDrawer(Gravity.RIGHT);
+        } else if(getDrawerLayout().isDrawerOpen(Gravity.LEFT)){
+            getDrawerLayout().closeDrawer(Gravity.LEFT);
         }else {
             super.onBackPressed();
         }
