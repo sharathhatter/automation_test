@@ -354,7 +354,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
                 txtInBasket.setVisibility(View.GONE);
                 txtIncBasketQty.setVisibility(View.GONE);
                 txtDecBasketQty.setVisibility(View.GONE);
-                imgRemove.setVisibility(View.GONE);
+                imgRemove.setVisibility(View.INVISIBLE);
                 basketOperationSeparatorLine.setVisibility(View.GONE);
             }
         }

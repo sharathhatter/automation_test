@@ -292,7 +292,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
 
     @Override
     public void setTitle(CharSequence title) {
-        setTitle(title.toString().toUpperCase());
+        setTitle(title.toString());
     }
 
     @Override
@@ -820,7 +820,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 mTitle = mTitle.substring(0, 22);
                 mTitle += "...";
             }
-            actionBar.setTitle(mTitle);
+            actionBar.setTitle(mTitle.toUpperCase());
         }
     }
 

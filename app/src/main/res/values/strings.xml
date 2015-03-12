@@ -463,7 +463,7 @@
     <string name="headingNetworkError">Network Error</string>
     <string name="headingConnectionOffline">Connection Offline</string>
     <string name="msgNetworkError">A network error occurred while communicating with the server.\nPlease check your internet connection!</string>
-    <string name="serviceUnavailable">Service is temporarily unavailable.\nPlease come back after sometime!</string>
+    <string name="serviceUnavailable">Service is temporarily unavailable. Please come back after sometime!</string>
     <string name="weAreDown">We are down for maintenance!</string>
 
     <!-- member referral -->

@@ -116,8 +116,8 @@ public class SignInActivity extends FacebookAndGPlusSigninBaseActivity {
         }
 
         // Set up the login form.
-        mEmailView = (AutoCompleteTextView) mBaseView.findViewById(R.id.emailInput);
-        populateAutoComplete();
+        mEmailView = (EditText) mBaseView.findViewById(R.id.emailInput);
+        //populateAutoComplete();
 
         mPasswordView = (EditText) mBaseView.findViewById(R.id.editTextPasswd);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
