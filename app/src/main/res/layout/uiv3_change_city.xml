@@ -4,6 +4,7 @@
     android:id="@+id/layoutChangeCity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingBottom="@dimen/padding_small"
     android:layout_marginBottom="@dimen/margin_small"
     android:orientation="vertical">
 
@@ -11,8 +12,10 @@
         style="@style/BaseAppTheme.SpinnerStyle"
         android:id="@+id/spinnerChooseCity"
         android:layout_width="wrap_content"
+        android:minWidth="@dimen/spinner_width"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
+        android:layout_gravity="center"
         android:layout_marginLeft="@dimen/margin_normal"
         android:layout_marginRight="@dimen/margin_normal"
         android:layout_marginTop="@dimen/margin_normal"

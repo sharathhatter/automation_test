@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -71,6 +72,7 @@ public class ShowCartFragment extends BaseFragment {
     private ArrayList<CartItemList> cartItemLists;
     private ArrayList<FulfillmentInfo> fullfillmentInfos;
     private ArrayList<AnnotationInfo> annotationInfoArrayList;
+    private Menu menu;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -86,6 +88,8 @@ public class ShowCartFragment extends BaseFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.basket_page_menu, menu);
+        this.menu = menu;
+        menu.findItem(R.id.action_empty_basket).setVisible(false);
     }
 
     @Override
@@ -255,6 +259,7 @@ public class ShowCartFragment extends BaseFragment {
         TextView txtTotalCartItems = (TextView) base.findViewById(R.id.txtTotalCartItems);
         txtTotalCartItems.setTypeface(faceRobotoRegular);
         if (cartSummary.getNoOfItems() != 0) {
+            menu.findItem(R.id.action_empty_basket).setVisible(true);
             if (cartSummary.getNoOfItems() > 1) {
                 txtTotalCartItems.setText(cartSummary.getNoOfItems() + " Items | ");
             } else {
@@ -289,6 +294,7 @@ public class ShowCartFragment extends BaseFragment {
         if (getActivity() == null) return;
         if (!DataUtil.isInternetAvailable(getActivity())) return;
         trackEvent(TrackingAware.BASKET_EMPTY_CLICKED, null);
+        menu.findItem(R.id.action_empty_basket).setVisible(false);
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
         final SharedPreferences.Editor editor = prefer.edit();
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
@@ -422,7 +428,7 @@ public class ShowCartFragment extends BaseFragment {
 
     @Override
     public String getTitle() {
-        return "Your Basket";
+        return "My Basket";
     }
 
 

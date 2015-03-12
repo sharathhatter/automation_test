@@ -25,7 +25,6 @@ public class SearchFragment extends ProductListAwareFragment {
     @Override
     public ArrayList<NameValuePair> getInputForApi() {
         String searchQuery = getArguments().getString(Constants.SEARCH_QUERY);
-        setTitle(searchQuery);
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.SEARCH.get()));
         nameValuePairs.add(new NameValuePair(Constants.SLUG, searchQuery));
@@ -35,7 +34,8 @@ public class SearchFragment extends ProductListAwareFragment {
     @Override
     @Nullable
     public String getTitle() {
-        return "Search Products";
+        return getArguments() != null ? getArguments().getString(Constants.SEARCH_QUERY):
+                "Search Products";
     }
 
     @NonNull

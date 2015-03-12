@@ -71,7 +71,7 @@
     <string name="regular_price">Regular Price</string>
     <string name="change_view">Change View</string>
     <string name="shop">SHOP</string>
-    <string name="totalMrp">Grand Total: </string>
+    <string name="totalMrp">Total: </string>
     <string name="Rs">\u20B9</string>
     <string name="search_icon">Search Image</string>
     <string name="new_pin">New Pin:</string>

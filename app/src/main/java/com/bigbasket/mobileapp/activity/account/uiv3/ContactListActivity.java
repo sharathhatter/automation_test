@@ -109,9 +109,6 @@ public class ContactListActivity extends BackButtonActivity implements ContactNu
                         args,
                         ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC"
                 );
-                //ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " LIKE '*" + constraint.toString() + "*'" + " AND " +
-                //String selection       = ContactsContract.Contacts.HAS_PHONE_NUMBER + " = '1'";
-
             }
         });
 

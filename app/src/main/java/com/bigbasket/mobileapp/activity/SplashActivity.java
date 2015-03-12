@@ -78,6 +78,7 @@ public class SplashActivity extends BaseActivity implements DynamicScreenAware {
         ((TextView) findViewById(R.id.lblWideRange)).setTypeface(faceRobotoRegular);
         ((Button) findViewById(R.id.btnStartShopping)).setTypeface(faceRobotoRegular);
 
+        //todo un-comment it
         //NewRelic.withApplicationToken(getString(R.string.new_relic_key)).start(this.getApplication());
 
         MoEHelper moEHelper = new MoEHelper(this);
@@ -314,7 +315,8 @@ public class SplashActivity extends BaseActivity implements DynamicScreenAware {
 
     @Override
     public void onDynamicScreenFailure(RetrofitError error) {
-        handler.handleRetrofitError(error, true);
+        showNoInternetConnectionView();
+        //handler.handleRetrofitError(error, true);
     }
 
     @Override

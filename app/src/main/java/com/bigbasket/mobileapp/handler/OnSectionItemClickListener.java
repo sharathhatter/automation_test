@@ -167,18 +167,20 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                             intent.putExtra(Constants.TOP_CATEGORY_NAME, title);
                             ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                         }
-                    } else {
-                        showDefaultError();
                     }
+//                    else {
+//                        showDefaultError();
+//                    }
                     break;
                 case DestinationInfo.FLAT_PAGE:
                     if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
                         Intent intent = new Intent(((ActivityAware) context).getCurrentActivity(), FlatPageWebViewActivity.class);
                         intent.putExtra(Constants.WEBVIEW_URL, destinationInfo.getDestinationSlug());
                         ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                    } else {
-                        showDefaultError();
                     }
+//                    else {
+//                        showDefaultError();
+//                    }
                     break;
                 case DestinationInfo.PREVIOUS_ORDERS:
                     Intent intent = new Intent(((ActivityAware) context).getCurrentActivity(), OrderListActivity.class);
@@ -194,9 +196,10 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                         intent.putExtra(Constants.CATEGORY_TITLE, sectionItem.getTitle() !=null ? sectionItem.getTitle().getText():
                                 section.getTitle() != null ? section.getTitle().getText() : "");
                         ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                    } else {
-                        showDefaultError();
                     }
+//                    else {
+//                        showDefaultError();
+//                    }
                     break;
                 case DestinationInfo.PRODUCT_DETAIL:
                     if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
@@ -204,9 +207,10 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PRODUCT_DETAIL);
                         intent.putExtra(Constants.SKU_ID, destinationInfo.getDestinationSlug());
                         ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                    } else {
-                        showDefaultError();
                     }
+//                    else {
+//                        showDefaultError();
+//                    }
                     break;
                 case DestinationInfo.PROMO_DETAIL:
                     if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())
@@ -223,9 +227,10 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                             intent.putExtra(Constants.PROMO_ID, Integer.parseInt(destinationInfo.getDestinationSlug()));
                             ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                         }
-                    } else {
-                        showDefaultError();
                     }
+//                    else {
+//                        showDefaultError();
+//                    }
                     break;
                 case DestinationInfo.SHOPPING_LIST_SUMMARY:
                     if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
@@ -241,9 +246,10 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                                 TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_HOME_PAGE);
                         else logMainMenuEvent(TrackingAware.SHOPPING_LIST_ICON_CLICKED,
                                 TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_HOME_PAGE);
-                    } else {
-                        showDefaultError();
                     }
+//                    else {
+//                        showDefaultError();
+//                    }
                     break;
                 case DestinationInfo.SHOPPING_LIST_LANDING:
                     intent = new Intent(((ActivityAware) context).getCurrentActivity(), BackButtonActivity.class);
@@ -258,9 +264,10 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SEARCH);
                         intent.putExtra(Constants.SEARCH_QUERY, destinationInfo.getDestinationSlug());
                         ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                    } else {
-                        showDefaultError();
                     }
+//                    else {
+//                        showDefaultError();
+//                    }
                     break;
                 case DestinationInfo.PRODUCT_LIST:
                     launchProductList(destinationInfo);
@@ -275,9 +282,10 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                         } catch (ActivityNotFoundException e) {
                             // Do nothing
                         }
-                    } else {
-                        showDefaultError();
                     }
+//                    else {
+//                        showDefaultError();
+//                    }
                     break;
                 case DestinationInfo.PROMO_LIST:
                     if (hasMainMenu()) {
@@ -296,18 +304,19 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                     intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_LANDING);
                     ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     break;
-                default:
-                    showDefaultError();
-                    break;
+//                default:
+//                    showDefaultError();
+//                    break;
             }
-        } else {
-            showDefaultError();
         }
+//        else {
+//            showDefaultError();
+//        }
     }
-
-    private void showDefaultError() {
-        ((ActivityAware) context).getCurrentActivity().showToast("Page Not Found");
-    }
+//
+//    private void showDefaultError() {
+//        ((ActivityAware) context).getCurrentActivity().showToast("Page Not Found");
+//    }
 
     private void launchProductList(DestinationInfo destinationInfo) {
         ArrayList<NameValuePair> nameValuePairs = destinationInfo.getProductQueryParams();
@@ -322,9 +331,10 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                 intent.putExtra(Constants.TITLE, title);
             }
             ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-        } else {
-            showDefaultError();
         }
+//        else {
+//            showDefaultError();
+//        }
     }
 
     private void logClickEvent() {
