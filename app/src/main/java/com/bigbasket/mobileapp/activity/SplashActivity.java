@@ -61,14 +61,14 @@ public class SplashActivity extends BaseActivity implements DynamicScreenAware {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Intent searchIntent = new Intent(this, SearchableActivity.class);
-        startActivityForResult(searchIntent, NavigationCodes.GO_TO_HOME);
-//        if (checkInternetConnection()) {
-//            startSplashScreen();
-//        }else {
-//            showNoInternetConnectionView();
-//            return;
-//        }
+//        Intent searchIntent = new Intent(this, SearchableActivity.class);
+//        startActivityForResult(searchIntent, NavigationCodes.GO_TO_HOME);
+        if (checkInternetConnection()) {
+            startSplashScreen();
+        }else {
+            showNoInternetConnectionView();
+            return;
+        }
     }
 
     private void startSplashScreen(){
