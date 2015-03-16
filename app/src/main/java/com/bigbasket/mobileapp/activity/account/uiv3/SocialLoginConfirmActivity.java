@@ -43,7 +43,7 @@ public class SocialLoginConfirmActivity extends BaseSignInSignupActivity {
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View base = inflater.inflate(R.layout.uiv3_social_login_confirm, contentView, false);
 
-        mEmailView = (EditText) base.findViewById(R.id.emailInput);
+        mEmailView = (AutoCompleteTextView) base.findViewById(R.id.emailInput);
 
         contentView.addView(base);
 
@@ -91,8 +91,8 @@ public class SocialLoginConfirmActivity extends BaseSignInSignupActivity {
         chkAcceptTerms.setTypeface(faceRobotoRegular);
         final TextView txtViewTermsAndCond = (TextView) base.findViewById(R.id.txtViewTermsAndCond);
         setTermsAndCondition(txtViewTermsAndCond);
-        mEmailView = (EditText) base.findViewById(R.id.emailInput);
-        //populateAutoComplete();
+        mEmailView = (AutoCompleteTextView) base.findViewById(R.id.emailInput);
+        populateAutoComplete();
 
         final LinearLayout layoutRefRow = (LinearLayout) base.findViewById(R.id.layoutRefRow);
         final EditText editTextRefCode = (EditText) base.findViewById(R.id.editTextRefCode);

@@ -17,7 +17,7 @@
             android:contentDescription="@string/email"
             android:src="@drawable/ic_mail_grey600_24dp" />
 
-        <EditText
+        <AutoCompleteTextView
             android:id="@+id/emailInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
