@@ -25,6 +25,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
+import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
 import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.SectionManager;
@@ -42,6 +43,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.moe.pushlibrary.MoEHelper;
 import com.newrelic.agent.android.NewRelic;
 
+import org.apache.http.HttpStatus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -61,8 +63,6 @@ public class SplashActivity extends BaseActivity implements DynamicScreenAware {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        Intent searchIntent = new Intent(this, SearchableActivity.class);
-//        startActivityForResult(searchIntent, NavigationCodes.GO_TO_HOME);
         if (checkInternetConnection()) {
             startSplashScreen();
         }else {
@@ -80,6 +80,7 @@ public class SplashActivity extends BaseActivity implements DynamicScreenAware {
         ((TextView) findViewById(R.id.lblWideRange)).setTypeface(faceRobotoRegular);
         ((Button) findViewById(R.id.btnStartShopping)).setTypeface(faceRobotoRegular);
 
+                    //todo un-comment it
         //NewRelic.withApplicationToken(getString(R.string.new_relic_key)).start(this.getApplication());
 
         MoEHelper moEHelper = new MoEHelper(this);
@@ -316,6 +317,7 @@ public class SplashActivity extends BaseActivity implements DynamicScreenAware {
 
     @Override
     public void onDynamicScreenFailure(RetrofitError error) {
+        //showNoInternetConnectionView(); todo check with sid
         handler.handleRetrofitError(error, true);
     }
 

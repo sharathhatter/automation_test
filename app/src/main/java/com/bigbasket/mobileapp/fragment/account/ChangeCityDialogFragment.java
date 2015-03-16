@@ -100,13 +100,19 @@ public class ChangeCityDialogFragment extends AbstractDialogFragment
                 .title(R.string.changeCityHome)
                 .positiveText(R.string.changeCityHome)
                 .negativeText(R.string.cancel)
-                .customView(base, false)
+                .customView(base, false).autoDismiss(false)
                 .callback(new MaterialDialog.ButtonCallback() {
                     @Override
                     public void onNegative(MaterialDialog dialog) {
                         ((TrackingAware) getActivity()).trackEvent(TrackingAware.CHANGE_CITY_CANCEL_BTN_CLICKED, null);
                         super.onNegative(dialog);
+                        dismiss();
                     }
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        changeCity();
+                    }
+
                 })
                 .build();
     }
@@ -120,16 +126,6 @@ public class ChangeCityDialogFragment extends AbstractDialogFragment
         } else {
             getCities();
         }
-
-        AlertDialog dialog = (AlertDialog) getDialog();
-        if (dialog == null) return;
-        Button btnPositive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-        btnPositive.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                changeCity();
-            }
-        });
     }
 
     private void getCities() {

@@ -76,7 +76,7 @@ public class PromoCategoryFragment extends BaseSectionFragment implements PromoD
                         }
                         break;
                     case ApiErrorCodes.PROMO_CATEGORY_NOT_EXIST:
-                        showErrorMsg(getResources().getString(R.string.no_promo_cat));
+                        showAlertDialogFinish(null, getResources().getString(R.string.no_promo_cat));
                         break;
                     default:
                         handler.sendEmptyMessage(browsePromoCategoryApiResponse.status,

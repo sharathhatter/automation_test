@@ -60,7 +60,7 @@ public abstract class BaseSignInSignupActivity extends BackButtonActivity implem
         ArrayAdapter<String> adapter =
                 new ArrayAdapter<>(getCurrentActivity(), layout, emailAddressCollection);
 
-        mEmailView.setAdapter(adapter);
+        //mEmailView.setAdapter(adapter);
     }
 
 

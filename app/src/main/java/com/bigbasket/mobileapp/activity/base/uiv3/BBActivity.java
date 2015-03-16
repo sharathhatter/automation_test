@@ -128,7 +128,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         mNavRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         handler = new BigBasketMessageHandler<>(this);
-        mTitle = mDrawerTitle = getTitle().toString();
+        mTitle = mDrawerTitle = getTitle().toString().toUpperCase();
 
         Toolbar toolbar = getToolbar();
         setSupportActionBar(toolbar);
@@ -158,6 +158,10 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         return R.layout.uiv3_main_layout;
     }
 
+    protected View getToolbarLayout(){
+        return findViewById(R.id.toolbarMain);
+    }
+
     public Toolbar getToolbar() {
         return (Toolbar) findViewById(R.id.toolbarMain);
     }
@@ -172,7 +176,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 super.onDrawerClosed(drawerView);
                 logHomeScreenEvent(TrackingAware.MENU_CLICKED, TrackEventkeys.NAVIGATION_CTX,
                         TrackEventkeys.NAVIGATION_CTX_TOPNAV); //todo check with sid
-                toolbar.setTitle("  " + mTitle);
+                toolbar.setTitle(mTitle);
                 invalidateOptionsMenu();
             }
 
@@ -182,7 +186,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 logHomeScreenEvent(TrackingAware.MENU_CLICKED, TrackEventkeys.NAVIGATION_CTX,
                         TrackEventkeys.NAVIGATION_CTX_TOPNAV); //todo check with sid
                 trackEvent(TrackingAware.MENU_SHOWN, null);
-                toolbar.setTitle("  " + mDrawerTitle);
+                toolbar.setTitle(mDrawerTitle);
                 invalidateOptionsMenu();
             }
         };
@@ -236,14 +240,9 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             final MenuItem searchMenuItem = menu.findItem(R.id.action_search);
             final SearchView searchView = (SearchView) searchMenuItem.getActionView();
 
-            //new search
-            SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-            SearchableInfo searchableInfo = searchManager.getSearchableInfo(getComponentName());
-            searchView.setSearchableInfo(searchableInfo);
-
             // Setting the search listener
-//            SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-//            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+            SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         } else {
             menuInflater.inflate(R.menu.action_menu_pre_honeycomb, menu);
         }
@@ -474,9 +473,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         }
         switch (item.getItemId()) {
             case R.id.action_search_icon:
-                Intent searchIntent = new Intent(this, SearchableActivity.class);
-                startActivityForResult(searchIntent, NavigationCodes.GO_TO_HOME);
-                //onSearchRequested();x
+                onSearchRequested();
                 return false;
             case android.R.id.home:
                 finish();
@@ -485,7 +482,10 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 launchMyAccount();
                 return true;
             case R.id.action_communication_hub:
-                launchScanner();
+                Intent searchIntent = new Intent(this, SearchableActivity.class);
+                startActivityForResult(searchIntent, NavigationCodes.GO_TO_HOME);
+//                doSearch("apple");
+                //launchScanner();
                 //launchKonotor();
                 return true;
             case R.id.action_shopping_list:
