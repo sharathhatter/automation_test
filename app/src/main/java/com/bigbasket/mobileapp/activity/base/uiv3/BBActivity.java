@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.activity.base.uiv3;
 
 import android.app.SearchManager;
+import android.app.SearchableInfo;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -39,6 +40,7 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.ShopFromOrderFragment;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.bigbasket.mobileapp.activity.base.SearchableActivity;
 import com.bigbasket.mobileapp.adapter.NavigationAdapter;
 import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
 import com.bigbasket.mobileapp.fragment.DynamicScreenFragment;
@@ -94,6 +96,7 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
+import com.google.zxing.integration.android.IntentIntegrator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -125,7 +128,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         mNavRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         handler = new BigBasketMessageHandler<>(this);
-        mTitle = mDrawerTitle = getTitle().toString();
+        mTitle = mDrawerTitle = getTitle().toString().toUpperCase();
 
         Toolbar toolbar = getToolbar();
         setSupportActionBar(toolbar);
@@ -155,6 +158,10 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         return R.layout.uiv3_main_layout;
     }
 
+    protected View getToolbarLayout(){
+        return findViewById(R.id.toolbarMain);
+    }
+
     public Toolbar getToolbar() {
         return (Toolbar) findViewById(R.id.toolbarMain);
     }
@@ -169,7 +176,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 super.onDrawerClosed(drawerView);
                 logHomeScreenEvent(TrackingAware.MENU_CLICKED, TrackEventkeys.NAVIGATION_CTX,
                         TrackEventkeys.NAVIGATION_CTX_TOPNAV); //todo check with sid
-                toolbar.setTitle("  " + mTitle);
+                toolbar.setTitle(mTitle);
                 invalidateOptionsMenu();
             }
 
@@ -179,7 +186,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 logHomeScreenEvent(TrackingAware.MENU_CLICKED, TrackEventkeys.NAVIGATION_CTX,
                         TrackEventkeys.NAVIGATION_CTX_TOPNAV); //todo check with sid
                 trackEvent(TrackingAware.MENU_SHOWN, null);
-                toolbar.setTitle("  " + mDrawerTitle);
+                toolbar.setTitle(mDrawerTitle);
                 invalidateOptionsMenu();
             }
         };
@@ -224,6 +231,9 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
     protected void setOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
 
+        //search code
+
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             menuInflater.inflate(R.menu.action_menu, menu);
 
@@ -236,6 +246,10 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         } else {
             menuInflater.inflate(R.menu.action_menu_pre_honeycomb, menu);
         }
+
+
+
+
         if (AuthParameters.getInstance(this).isAuthTokenEmpty()) {
             hideMemberMenuItems(menu);
         } else {
@@ -390,7 +404,8 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             case FragmentCodes.START_PRODUCT_CATEGORY:
                 launchProductCategoryFragment(getIntent().getStringExtra(Constants.CATEGORY_SLUG),
                         getIntent().getStringExtra(Constants.FILTER),
-                        getIntent().getStringExtra(Constants.SORT_BY));
+                        getIntent().getStringExtra(Constants.SORT_BY),
+                        getIntent().getStringExtra(Constants.CATEGORY_TITLE));
                 break;
             case FragmentCodes.START_SHOPPING_LIST_SUMMARY:
                 bundle = new Bundle();
@@ -467,7 +482,11 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 launchMyAccount();
                 return true;
             case R.id.action_communication_hub:
-                launchKonotor();
+                Intent searchIntent = new Intent(this, SearchableActivity.class);
+                startActivityForResult(searchIntent, NavigationCodes.GO_TO_HOME);
+//                doSearch("apple");
+                //launchScanner();
+                //launchKonotor();
                 return true;
             case R.id.action_shopping_list:
                 if (AuthParameters.getInstance(getCurrentActivity()).isAuthTokenEmpty()) {
@@ -524,6 +543,10 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         }
     }
 
+    private void launchScanner(){
+        new IntentIntegrator(this).initiateScan();
+    }
+
     @Override
     public void onChangeFragment(AbstractFragment newFragment) {
         addToMainLayout(newFragment);
@@ -550,7 +573,11 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                                                     EditText editTextQty, Product product, String qty,
                                                     @Nullable View productView) {
 
-        int productQtyInBasket = Integer.parseInt(basketOperationResponse.getBasketResponseProductInfo().getTotalQty());
+
+        int productQtyInBasket = 0;
+        if (basketOperationResponse.getBasketResponseProductInfo() != null) {
+            productQtyInBasket = Integer.parseInt(basketOperationResponse.getBasketResponseProductInfo().getTotalQty());
+        }
         int totalProductsInBasket = basketOperationResponse.getCartSummary().getNoOfItems();
 
         if (productQtyInBasket == 0) {
@@ -707,16 +734,18 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                                         String categorySlug) {
         MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(this);
         mostSearchesAdapter.update(categoryName, categoryUrl);
-        launchProductCategoryFragment(categorySlug, null, null);
+        launchProductCategoryFragment(categorySlug, null, null, categoryName);
     }
 
-    private void launchProductCategoryFragment(String categorySlug, String filter, String sortOn) {
+    private void launchProductCategoryFragment(String categorySlug, String filter,
+                                               String sortOn, String title) {
         Bundle bundle = new Bundle();
         bundle.putString(Constants.SLUG_NAME_CATEGORY, categorySlug);
         if (!TextUtils.isEmpty(filter))
             bundle.putString(Constants.FILTER, filter);
         if (!TextUtils.isEmpty(sortOn))
             bundle.putString(Constants.SORT_BY, sortOn);
+        bundle.putString(Constants.CATEGORY_TITLE, title);
         CategoryProductsFragment categoryProductsFragment = new CategoryProductsFragment();
         categoryProductsFragment.setArguments(bundle);
         addToMainLayout(categoryProductsFragment);
@@ -768,7 +797,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 navigationCtx);
     }
 
-    private void doSearch(String searchQuery) {
+    protected void doSearch(String searchQuery) {
         searchQuery = searchQuery.trim();
         MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(this);
         mostSearchesAdapter.update(searchQuery);
@@ -791,7 +820,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 mTitle = mTitle.substring(0, 22);
                 mTitle += "...";
             }
-            actionBar.setTitle(mTitle);
+            actionBar.setTitle(mTitle.toUpperCase());
         }
     }
 

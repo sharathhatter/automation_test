@@ -31,6 +31,9 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
+import com.bigbasket.mobileapp.activity.order.uiv3.AgeValidationActivity;
+import com.bigbasket.mobileapp.activity.order.uiv3.BasketValidationActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.CheckoutQCActivity;
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 import com.bigbasket.mobileapp.adapter.order.PrescriptionImageAdapter;
@@ -57,6 +60,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.FontHolder;
+import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
@@ -64,6 +68,8 @@ import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
 import com.demach.konotor.Konotor;
 import com.google.gson.Gson;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 import com.moe.pushlibrary.MoEHelper;
 
 import org.json.JSONException;
@@ -144,12 +150,13 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
 
     @Override
     public void onCoMarketPlaceSuccess(MarketPlace marketPlace) {
-        BigBasketMessageHandler bigBasketMessageHandler = new BigBasketMessageHandler<>(getCurrentActivity());
         if (marketPlace.isRuleValidationError()) {
-            bigBasketMessageHandler.sendEmptyMessage(NavigationCodes.GO_MARKET_PLACE, null, false, marketPlace);
+            Intent intent = new Intent(getCurrentActivity(), BasketValidationActivity.class);
+            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         } else if (marketPlace.isAgeCheckRequired() || marketPlace.isPharamaPrescriptionNeeded()
                 || marketPlace.hasTermsAndCond()) {
-            bigBasketMessageHandler.sendEmptyMessage(NavigationCodes.GO_AGE_VALIDATION, null, false, marketPlace);
+            Intent intent = new Intent(getCurrentActivity(), AgeValidationActivity.class);
+            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         } else {
             SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
             String pharmaPrescriptionId = prefer.getString(Constants.PHARMA_PRESCRIPTION_ID, null);
@@ -414,6 +421,13 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         isActivitySuspended = false;
+        IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if (scanResult != null) {
+            Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
+            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PRODUCT_DETAIL);
+            intent.putExtra(Constants.SKU_ID, scanResult.getContents());
+            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+        }
         if (resultCode == NavigationCodes.GO_TO_HOME) {
             boolean reloadApp = data != null && data.getBooleanExtra(Constants.RELOAD_APP, false);
             goToHome(reloadApp);

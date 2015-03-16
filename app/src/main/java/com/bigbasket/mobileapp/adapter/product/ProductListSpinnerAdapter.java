@@ -66,7 +66,7 @@ public class ProductListSpinnerAdapter extends ArrayAdapter<Product> {
 
         row.setPadding(fourDp, eightDp, eightDp, eightDp);
         String rupeeSymbol = "`";
-        String sellPrice = product.getSellPrice();
+        String sellPrice = (ctx).getDecimalAmount(Double.parseDouble(product.getSellPrice()))+"";
         SpannableString spannableString = new SpannableString(rupeeSymbol + sellPrice);
         spannableString.setSpan(new CustomTypefaceSpan("", faceRupee), 0,
                 rupeeSymbol.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);

@@ -7,16 +7,6 @@
     android:background="@color/uiv3_list_bkg_color"
     android:id="@+id/layoutOrderList">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:layout_centerInParent="true"
-        android:layout_marginTop="@dimen/margin_normal"
-        android:textSize="@dimen/primary_text_size"
-        android:id="@+id/txtNoOrdersMsg"
-        android:textColor="@color/dark_red" />
-
     <GridView
         android:id="@+id/listOrders"
         android:columnWidth="360dp"

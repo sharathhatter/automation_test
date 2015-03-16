@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-public class MarketPlaceRuleValidator implements Parcelable { //implements Parcelable
+public class MarketPlaceRuleValidator implements Parcelable {
 
     @SerializedName(Constants.RULE_NAME)
     private String ruleName;

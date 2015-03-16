@@ -36,7 +36,7 @@ public class MostSearchesAdapter {
         List<MostSearchedItem> mostSearchedItems = null;
         try {
             cursor = DatabaseHelper.db.query(tableName, new String[]{COLUMN_QUERY, COLUMN_URL, COLUMN_COUNT},
-                    null, null, null, null, COLUMN_COUNT + " DESC", String.valueOf(limit));
+                    null, null, null, null, COLUMN_COUNT + " ASC", String.valueOf(limit));
             if (cursor.moveToFirst()) {
                 mostSearchedItems = new ArrayList<>();
                 do {
@@ -52,6 +52,36 @@ public class MostSearchesAdapter {
         }
         return mostSearchedItems;
     }
+
+    public List<MostSearchedItem> getRecentSearchedItems(int limit) {
+        Cursor cursor = null;
+        List<MostSearchedItem> mostSearchedItems = null;
+        try {
+            cursor = DatabaseHelper.db.rawQuery("SELECT * FROM "+ tableName+ " ORDER BY id DESC LIMIT "+ limit, null);
+            if (cursor.moveToFirst()) {
+                mostSearchedItems = new ArrayList<>();
+                do {
+                    mostSearchedItems.add(new MostSearchedItem(cursor));
+                } while (cursor.moveToNext());
+            }
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return mostSearchedItems;
+    }
+
+    /*
+    SELECT * FROM (
+    SELECT * FROM table ORDER BY id DESC LIMIT 50
+) sub
+ORDER BY id ASC
+
+This will select the last 50 rows from table, and then order them in ascending order.
+     */
 
     public int getCountForQuery(String query) {
         int count = 0;
@@ -71,6 +101,10 @@ public class MostSearchesAdapter {
             }
         }
         return count;
+    }
+
+    public int getRowCount(){
+        return DatabaseHelper.db.rawQuery("select * from "+tableName,null).getCount();
     }
 
     public void update(String query) {

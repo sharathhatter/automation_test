@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -108,7 +109,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
     private void updateMobileVisitorInfo() {
         // Update app-version number in Mobile Visitor
         if (!checkInternetConnection()) {
-            displayHomePageError(getString(R.string.deviceOfflineSmallTxt), R.drawable.ic_signal_wifi_off_grey600_48dp);
+            displayHomePageError(getString(R.string.lostInternetConnection), R.drawable.empty_no_internet);
             return;
         }
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -165,7 +166,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                             return;
                         }
                         if (error.getKind() == RetrofitError.Kind.NETWORK) {
-                            displayHomePageError(getString(R.string.networkError), R.drawable.ic_signal_wifi_off_grey600_48dp);
+                            displayHomePageError(getString(R.string.networkError), R.drawable.empty_no_internet);
                         } else {
                             handler.handleRetrofitError(error);
                         }
@@ -200,13 +201,13 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
     private void handleHomePageRetrofitError(RetrofitError error) {
         switch (error.getKind()) {
             case NETWORK:
-                displayHomePageError(getString(R.string.networkError), R.drawable.ic_signal_wifi_off_grey600_48dp);
+                displayHomePageError(getString(R.string.networkError), R.drawable.empty_no_internet);
                 break;
             case HTTP:
-                displayHomePageError(getString(R.string.communicationError), R.drawable.ic_signal_wifi_off_grey600_48dp);
+                displayHomePageError(getString(R.string.communicationError), R.drawable.empty_no_internet);
                 break;
             default:
-                displayHomePageError(getString(R.string.otherError), R.drawable.ic_report_problem_grey600_48dp);
+                displayHomePageError(getString(R.string.otherError), R.drawable.ic_report_problem_grey600_48dp); //todo image change
                 break;
         }
     }
@@ -270,23 +271,48 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         LinearLayout contentView = getContentView();
         if (contentView == null) return;
         contentView.removeAllViews();
-        View base = getActivity().getLayoutInflater().inflate(R.layout.uiv3_inline_error_page, contentView, false);
-        TextView txtInlineErrMsg = (TextView) base.findViewById(R.id.txtInlineErrorMsg);
-        ImageView imgInlineError = (ImageView) base.findViewById(R.id.imgInlineError);
-        Button btnRetry = (Button) base.findViewById(R.id.btnRetry);
 
-        txtInlineErrMsg.setTypeface(faceRobotoRegular);
-        btnRetry.setTypeface(faceRobotoRegular);
+        View errorView = getActivity().getLayoutInflater().inflate(R.layout.layout_no_internet, contentView, false);
+        TextView txtHeader = (TextView) errorView.findViewById(R.id.txtHeader);
+        txtHeader.setVisibility(View.GONE);
 
-        txtInlineErrMsg.setText(msg);
-        imgInlineError.setImageResource(errorDrawableId);
-        btnRetry.setOnClickListener(new View.OnClickListener() {
+        ImageView imgEmptyPage = (ImageView) errorView.findViewById(R.id.imgEmptyPage);
+        imgEmptyPage.setImageResource(errorDrawableId);
+
+        TextView txtEmptyMsg1 = (TextView) errorView.findViewById(R.id.txtEmptyMsg1);
+        txtEmptyMsg1.setText(msg);
+
+        ImageView imgViewRetry = (ImageView) errorView.findViewById(R.id.imgViewRetry);
+        imgViewRetry.setImageResource(R.drawable.empty_retry);
+
+        imgViewRetry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 requestHomePage();
             }
         });
-        contentView.addView(base);
+        contentView.addView(errorView);
+
+//
+//
+//
+//        View base = getActivity().getLayoutInflater().inflate(R.layout.uiv3_inline_error_page, contentView, false);
+//        TextView txtInlineErrMsg = (TextView) base.findViewById(R.id.txtInlineErrorMsg);
+//        ImageView imgInlineError = (ImageView) base.findViewById(R.id.imgInlineError);
+//        Button btnRetry = (Button) base.findViewById(R.id.btnRetry);
+//
+//        txtInlineErrMsg.setTypeface(faceRobotoRegular);
+//        btnRetry.setTypeface(faceRobotoRegular);
+//
+//        txtInlineErrMsg.setText(msg);
+//        imgInlineError.setImageResource(errorDrawableId);
+//        btnRetry.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                requestHomePage();
+//            }
+//        });
+//        contentView.addView(base);
     }
 
     @NonNull
@@ -414,7 +440,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
 
         @Override
         public void sendOfflineError() {
-            displayHomePageError(getString(R.string.deviceOfflineSmallTxt), R.drawable.ic_signal_wifi_off_grey600_48dp);
+            displayHomePageError(getString(R.string.lostInternetConnection), R.drawable.empty_no_internet);
         }
     }
 

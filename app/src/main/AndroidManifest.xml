@@ -412,6 +412,17 @@
             android:exported="false"
             android:multiprocess="true" />
 
+        <!--android:launchMode="singleTask"  -->
+        <activity android:name=".activity.base.SearchableActivity"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data android:name="android.app.searchable"
+                android:resource="@xml/searchable"/>
+
+        </activity>
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />

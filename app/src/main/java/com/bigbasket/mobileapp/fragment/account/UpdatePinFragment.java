@@ -227,7 +227,7 @@ public class UpdatePinFragment extends BaseFragment {
 
     @Override
     public String getTitle() {
-        return "Update Pin";
+        return "Delivery Pin";
     }
 
     @NonNull

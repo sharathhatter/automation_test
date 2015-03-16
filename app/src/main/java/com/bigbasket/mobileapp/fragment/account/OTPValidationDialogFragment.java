@@ -75,10 +75,10 @@ public class OTPValidationDialogFragment extends AbstractDialogFragment {
 
         MaterialDialog.Builder builder = UIUtil.getMaterialDialogBuilder(getActivity())
                 .autoDismiss(false)
-                .cancelable(false)
                 .customView(view, false)
                 .positiveText(R.string.txtConfirm)
                 .negativeText(R.string.CANCEL)
+                .backgroundColorRes(R.color.white)
                 .callback(new MaterialDialog.ButtonCallback() {
                     @Override
                     public void onPositive(MaterialDialog dialog) {
@@ -101,6 +101,8 @@ public class OTPValidationDialogFragment extends AbstractDialogFragment {
                     }
                 });
         Dialog dialog = builder.build();
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
         logOtpDialogEvent();
         dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         return dialog;

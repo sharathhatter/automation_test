@@ -162,6 +162,7 @@ public class Constants {
     public static final String TOP_CAT_SLUG = "top_category_slug";
     public static final String TOP_MENU = "Top Menu";
     public static final String CATEGORY_SLUG = "category_slug";
+    public static final String CATEGORY_TITLE = "title";
 
 
     public static final String PROMO_SET_PRODUCTS = "promo_set_products";
@@ -523,6 +524,10 @@ public class Constants {
     // wallet
     public static final String GET_CURRENT_WALLET_BALANCE = "get-current-wallet-balance/";
     public static final String CURRENT_BALANCE = "current_balance";
+    public static final String WALLET_RULE = "wallet_rule";
+    public static final String VOUCHER_PER_RULE = "voucher_per_rule";
+    public static final String AVAILABLE_DELIVERY_TOKEN = "available_delivery_tokens";
+    public static final String AMOUNT_PER_VOUCHER = "amount_per_voucher";
     public static final String GET_WALLET_ACTIVITY = "get-wallet-activity/";
     public static final String WALLET_ACTIVITY_DATA = "wallet_activity_data";
     public static final String WALLET_DATA = "wallet_data";

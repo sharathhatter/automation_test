@@ -11,7 +11,6 @@
         android:layout_margin="@dimen/margin_small"
         android:orientation="vertical"
         android:visibility="gone">
-        <!-- gone -->
 
         <TextView
             android:id="@+id/txtRuleName"
@@ -30,66 +29,73 @@
             android:textSize="@dimen/secondary_text_size" />
     </LinearLayout>
 
-    <RelativeLayout
+    <include
+        layout="@layout/uiv3_category_row"
         android:id="@+id/layoutRuleTotalPriceAndWeight"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:layout_below="@id/layoutRuleNameAndMsg"
-        android:background="@color/heading"
-        android:visibility="gone">
+        android:layout_height="wrap_content"/>
 
-        <View
-            android:id="@+id/strokeLine1"
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:layout_alignParentTop="true"
-            android:background="@color/strokeLine" />
+    <!--<RelativeLayout-->
+        <!--android:id="@+id/layoutRuleTotalPriceAndWeight"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:background="@color/uiv3_action_bar_background_pressed"-->
+        <!--android:layout_below="@id/layoutRuleNameAndMsg"-->
+        <!-->-->
 
-        <TextView
-            android:id="@+id/txtRuleTotalPriceValue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:gravity="center"
-            android:paddingRight="@dimen/padding_small"
-            android:text="hello"
-            android:textColor="@color/dark_red"
-            android:textSize="@dimen/secondary_text_size" />
+        <!--<View-->
+            <!--android:id="@+id/strokeLine1"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="0.5dp"-->
+            <!--android:layout_alignParentTop="true"-->
+            <!--android:background="@color/strokeLine" />-->
 
-        <TextView
-            android:id="@+id/txtTotalPriceValue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@id/txtRuleTotalPriceValue"
-            android:text="@string/ruleTotalPrice"
-            android:textColor="@color/uiv3_primary_text_color"
-            android:textSize="@dimen/secondary_text_size" />
+        <!--<TextView-->
+            <!--android:id="@+id/txtRuleTotalPriceValue"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:gravity="center"-->
+            <!--android:paddingRight="@dimen/padding_small"-->
+            <!--android:text="hello"-->
+            <!--android:textColor="@color/dark_red"-->
+            <!--android:textSize="@dimen/secondary_text_size" />-->
 
-        <TextView
-            android:id="@+id/txtRuleTotalWeight"
-            android:layout_width="wrap_content"
-            android:layout_height="20dp"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@id/txtTotalPriceValue"
-            android:gravity="center_vertical"
-            android:paddingLeft="7dp"
-            android:text="Rule weight: 100kg"
-            android:textColor="@color/uiv3_primary_text_color"
-            android:textSize="@dimen/secondary_text_size"
+        <!--<TextView-->
+            <!--android:id="@+id/txtTotalPriceValue"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_toLeftOf="@id/txtRuleTotalPriceValue"-->
+            <!--android:text="@string/ruleTotalPrice"-->
+            <!--android:textColor="@color/uiv3_primary_text_color"-->
+            <!--android:textSize="@dimen/secondary_text_size" />-->
 
-            />
+        <!--<TextView-->
+            <!--android:id="@+id/txtRuleTotalWeight"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="20dp"-->
+            <!--android:layout_alignParentLeft="true"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_toLeftOf="@id/txtTotalPriceValue"-->
+            <!--android:gravity="center_vertical"-->
+            <!--android:paddingLeft="7dp"-->
+            <!--android:text="Rule weight: 100kg"-->
+            <!--android:textColor="@color/uiv3_primary_text_color"-->
+            <!--android:textSize="@dimen/secondary_text_size"-->
+
+            <!--/>-->
 
 
-        <View
-            android:id="@+id/strokeLine2"
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:layout_below="@id/txtRuleTotalWeight"
-            android:background="@color/strokeLine" />
-    </RelativeLayout>
+        <!--<View-->
+            <!--android:id="@+id/strokeLine2"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="0.5dp"-->
+            <!--android:layout_below="@id/txtRuleTotalWeight"-->
+            <!--android:background="@color/strokeLine" />-->
+    <!--</RelativeLayout>-->
 
     <LinearLayout
         android:id="@+id/addRemoveItemsLinearLayout"

@@ -26,7 +26,7 @@ public class COMarketPlaceCheckTask<T> {
     public void startTask() {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.
                 getApiService(((ActivityAware) ctx).getCurrentActivity());
-        ((ProgressIndicationAware) ctx).showProgressDialog("Please wait...");
+        //((ProgressIndicationAware) ctx).showProgressDialog("Please wait...");
         bigBasketApiService.basketCheck(new Callback<ApiResponse<MarketPlace>>() {
             @Override
             public void success(ApiResponse<MarketPlace> marketPlaceApiResponse, Response response) {
@@ -45,7 +45,7 @@ public class COMarketPlaceCheckTask<T> {
                         break;
                     default:
                         ((HandlerAware) ctx).getHandler().sendEmptyMessage(marketPlaceApiResponse.status,
-                                marketPlaceApiResponse.message);
+                                marketPlaceApiResponse.message, true);
                         break;
                 }
             }
@@ -61,7 +61,7 @@ public class COMarketPlaceCheckTask<T> {
                         return;
                     }
                 }
-                ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
+                ((HandlerAware) ctx).getHandler().handleRetrofitError(error, true);
             }
         });
     }

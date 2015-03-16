@@ -8,11 +8,14 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.adapter.product.ProductListRecyclerAdapter;
 import com.bigbasket.mobileapp.interfaces.FilterDisplayAware;
 import com.bigbasket.mobileapp.interfaces.InfiniteProductListAware;
@@ -231,14 +234,30 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         }
 
         if (sectionView == null && productListData == null) {
-            LayoutInflater inflater = getActivity().getLayoutInflater();
-            View emptyView = inflater.inflate(R.layout.uiv3_empty_data_text, contentView, false);
-            TextView txtEmptyDataMsg = (TextView) emptyView.findViewById(R.id.txtEmptyDataMsg);
-            txtEmptyDataMsg.setTypeface(faceRobotoRegular);
-            txtEmptyDataMsg.setText(getString(R.string.noProducts));
-            contentView.addView(emptyView);
+            showNoProductsFoundView(contentView);
         }
     }
+
+    protected void showNoProductsFoundView(LinearLayout contentView){
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View emptyPageView = inflater.inflate(R.layout.uiv3_empty_data_text, contentView, false);
+        ImageView imgEmptyPage = (ImageView) emptyPageView.findViewById(R.id.imgEmptyPage);
+        imgEmptyPage.setVisibility(View.INVISIBLE);
+        TextView txtEmptyMsg1 = (TextView) emptyPageView.findViewById(R.id.txtEmptyMsg1);
+        txtEmptyMsg1.setText(R.string.noProducts);
+        TextView txtEmptyMsg2 = (TextView) emptyPageView.findViewById(R.id.txtEmptyMsg2);
+        txtEmptyMsg2.setVisibility(View.GONE);
+        Button btnBlankPage = (Button) emptyPageView.findViewById(R.id.btnBlankPage);
+        btnBlankPage.setText(R.string.continue_shopping_txt);
+        btnBlankPage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((BaseActivity)getActivity()).goToHome(false);
+            }
+        });
+        contentView.addView(emptyPageView);
+    }
+
 
     @Override
     public void updateProductList(List<Product> nextPageProducts) {

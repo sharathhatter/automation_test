@@ -5,12 +5,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -25,10 +28,12 @@ import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
+import com.bigbasket.mobileapp.model.order.COReserveQuantity;
 import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.order.MarketPlaceItems;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.task.BasketOperationTask;
+import com.bigbasket.mobileapp.task.COMarketPlaceCheckTask;
 import com.bigbasket.mobileapp.task.COReserveQuantityCheckTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
@@ -40,34 +45,19 @@ public class BasketValidationActivity extends BackButtonActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        if (savedInstanceState != null) {
-//            marketPlace = savedInstanceState.getParcelable(Constants.MARKET_PLACE_INTENT); // File IO, so not putting it inside above If as AND
-//            if (marketPlace != null) {
-//                renderBasketValidationErrors();
-//                return;
-//            }
-//        }
-        MarketPlace marketPlace = getIntent().getParcelableExtra(Constants.MARKET_PLACE_INTENT);
-        if (marketPlace == null) {
-            return;
-        }
-        renderBasketValidationErrors(marketPlace);
-        trackEvent(TrackingAware.PRE_CHECKOUT_CWR_APPICABLE, null);
-    }
-
-    @Override
-    public void startFragment() {
-
+        new COMarketPlaceCheckTask<>(getCurrentActivity()).startTask();
     }
 
     @Override
     public void onCoMarketPlaceSuccess(MarketPlace marketPlace) {
+        if(marketPlace ==null) return;
         if (marketPlace.isRuleValidationError()) {
             renderBasketValidationErrors(marketPlace);
         } else if (marketPlace.isAgeCheckRequired() || marketPlace.isPharamaPrescriptionNeeded()
                 || marketPlace.hasTermsAndCond()) {
-            BigBasketMessageHandler handler = new BigBasketMessageHandler<>(this);
-            handler.sendEmptyMessage(NavigationCodes.GO_AGE_VALIDATION, null, false, marketPlace);
+            Intent intent = new Intent(getCurrentActivity(), AgeValidationActivity.class);
+            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+            getCurrentActivity().finish();// don't remove it, fix for back button
         } else {
             SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
             String pharmaPrescriptionId = prefer.getString(Constants.PHARMA_PRESCRIPTION_ID, null);
@@ -86,13 +76,18 @@ public class BasketValidationActivity extends BackButtonActivity {
 
     private void renderBasketValidationErrors(MarketPlace marketPlace) {
         FrameLayout base = (FrameLayout) findViewById(R.id.content_frame);
+        base.removeAllViews();
         LinearLayout contentView = new LinearLayout(this);
+        contentView.removeAllViews();
         contentView.setOrientation(LinearLayout.VERTICAL);
-        if (!marketPlace.isRuleValidationError() || marketPlace.getMarketPlaceRuleValidators().size() == 0)
+        if (!marketPlace.isRuleValidationError() || marketPlace.getMarketPlaceRuleValidators() == null ||
+                marketPlace.getMarketPlaceRuleValidators().size() == 0)
             return;
         final LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         for (int i = 0; i < marketPlace.getMarketPlaceRuleValidators().size(); i++) {
-            final RelativeLayout marketPlaceBaseLayout = (RelativeLayout) inflater.inflate(R.layout.uiv3_basket_validation_error, contentView, false);
+            final RelativeLayout marketPlaceBaseLayout = (RelativeLayout) inflater.inflate(R.layout.uiv3_basket_validation_error,
+                    contentView, false);
+
             LinearLayout addRemoveItemsLinearLayout = (LinearLayout) marketPlaceBaseLayout.findViewById(R.id.addRemoveItemsLinearLayout);
             contentView.addView(marketPlaceBaseLayout);
             LinearLayout layoutRuleNameAndMsg = (LinearLayout) marketPlaceBaseLayout.findViewById(R.id.layoutRuleNameAndMsg);
@@ -112,13 +107,16 @@ public class BasketValidationActivity extends BackButtonActivity {
             } else if (marketPlace.getMarketPlaceRuleValidators().get(i).getWeightLabel().equalsIgnoreCase("weight")) {
                 label = label + "Kg";
             }
-            TextView txtRuleTotalWeight = (TextView) marketPlaceBaseLayout.findViewById(R.id.txtRuleTotalWeight);
+            TextView txtRuleTotalWeight = (TextView) marketPlaceBaseLayout.findViewById(R.id.txtTopCategory);
             txtRuleTotalWeight.setText(getString(R.string.ruleTotal) + " " +
                     marketPlace.getMarketPlaceRuleValidators().get(i).getWeightLabel() + ": " +
                     getDecimalAmount(marketPlace.getMarketPlaceRuleValidators().get(i).getRuleTotalQty()) + " " + label);
 
 
-            TextView txtRuleTotalPriceValue = (TextView) marketPlaceBaseLayout.findViewById(R.id.txtRuleTotalPriceValue);
+            TextView txtRuleTotalPriceValue = (TextView) marketPlaceBaseLayout.findViewById(R.id.topCatTotal);
+            TextView txtTotalPriceValue = (TextView) marketPlaceBaseLayout.findViewById(R.id.topCatTotalItems);
+            txtTotalPriceValue.setText(getString(R.string.ruleTotalPrice));
+
             if (!TextUtils.isEmpty(String.valueOf(marketPlace.getMarketPlaceRuleValidators().get(i).getRuleTotalPrice()))) {
                 String prefix = " `";
                 String mrpStr = getDecimalAmount(marketPlace.getMarketPlaceRuleValidators().get(i).getRuleTotalPrice()) + " ";
@@ -131,16 +129,17 @@ public class BasketValidationActivity extends BackButtonActivity {
 
             for (int j = 0; j < marketPlace.getMarketPlaceRuleValidators().get(i).getItems().size(); j++) {
                 final MarketPlaceItems marketPlaceItems = marketPlace.getMarketPlaceRuleValidators().get(i).getItems().get(j);
-                RelativeLayout addRemoveLinearLayout = (RelativeLayout) inflater.inflate(R.layout.uiv3_basket_validation_error_products, addRemoveItemsLinearLayout, false);
+                RelativeLayout addRemoveLinearLayout = (RelativeLayout) inflater.inflate(R.layout.uiv3_basket_validation_error_products,
+                        addRemoveItemsLinearLayout, false);
                 TextView txtIndex = (TextView) addRemoveLinearLayout.findViewById(R.id.txtIndex);
                 TextView txtItemInBasketAndProductDesc = (TextView) addRemoveLinearLayout.findViewById(R.id.txtItemInBasketAndProductDesc);
-                TextView txtTotalQty = (TextView) addRemoveLinearLayout.findViewById(R.id.txtTotalQty);
+                final TextView txtInBasket = (TextView) addRemoveLinearLayout.findViewById(R.id.txtInBasket);
                 TextView txtTotalPrice = (TextView) addRemoveLinearLayout.findViewById(R.id.txtTotalPrice);
                 final ImageView imgRemove = (ImageView) addRemoveLinearLayout.findViewById(R.id.imgRemove);
                 marketPlaceItems.setRuleValidationArrayIndex(i);
                 marketPlaceItems.setItemIndex(j);
-                final ImageView imgAdd = (ImageView) addRemoveLinearLayout.findViewById(R.id.imgAdd);
-                final ImageView imgDec = (ImageView) addRemoveLinearLayout.findViewById(R.id.imgDec);
+                final TextView txtIncBasketQty = (TextView) addRemoveLinearLayout.findViewById(R.id.txtIncBasketQty);
+                final TextView txtDecBasketQty = (TextView) addRemoveLinearLayout.findViewById(R.id.txtDecBasketQty);
 
                 double itemTotalVolume = marketPlaceItems.getTotalQty();
                 txtIndex.setText(String.valueOf(j + 1) + ".");
@@ -148,9 +147,10 @@ public class BasketValidationActivity extends BackButtonActivity {
 
                 txtItemInBasketAndProductDesc.setText(marketPlaceItems.getItemInCart() + " quantity of " + marketPlaceItems.getDesc());
                 txtItemInBasketAndProductDesc.setTypeface(faceRobotoRegular);
-                txtTotalQty.setText(getString(R.string.ruleTotal) + " " +
-                        marketPlace.getMarketPlaceRuleValidators().get(i).getWeightLabel() + ": " +
-                        getDecimalAmount(itemTotalVolume) + " " + label);
+                txtInBasket.setText(getDecimalAmount(itemTotalVolume) + " " + label +" in ");
+//                txtInBasket.setText(getString(R.string.ruleTotal) + " " +
+//                        marketPlace.getMarketPlaceRuleValidators().get(i).getWeightLabel() + ": " +
+//                        getDecimalAmount(itemTotalVolume) + " " + label);
 
                 if (!TextUtils.isEmpty(String.valueOf(marketPlaceItems.getSalePrice()))) {
                     String prefix = "Total Price: `";
@@ -166,8 +166,8 @@ public class BasketValidationActivity extends BackButtonActivity {
                 addRemoveItemsLinearLayout.addView(addRemoveLinearLayout);
 
 
-                if (imgRemove != null && imgAdd != null && imgDec != null) {
-                    imgDec.setOnClickListener(new View.OnClickListener() {
+                if (imgRemove != null && txtIncBasketQty != null && txtDecBasketQty != null) {
+                    txtDecBasketQty.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             if (DataUtil.isInternetAvailable(getCurrentActivity())) {
@@ -186,7 +186,7 @@ public class BasketValidationActivity extends BackButtonActivity {
                         }
                     });
 
-                    imgAdd.setOnClickListener(new View.OnClickListener() {
+                    txtIncBasketQty.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             if (DataUtil.isInternetAvailable(getCurrentActivity())) {
@@ -211,9 +211,10 @@ public class BasketValidationActivity extends BackButtonActivity {
                                 Product product = new Product(marketPlaceItems.getProductBrand(),
                                         marketPlaceItems.getDesc(), marketPlaceItems.getSku(),
                                         marketPlaceItems.getTopLevelCategoryName(), marketPlaceItems.getProductCategoryName());
-                                BasketOperationTask<BaseActivity> basketOperationTask = new BasketOperationTask<>(getCurrentActivity(),
-                                        BasketOperation.EMPTY, product,
-                                        null, null, null, null, null, "0", TrackingAware.BASKET_REMOVE, getNavigationCtx(), null);
+                                BasketOperationTask basketOperationTask = new BasketOperationTask<>(getCurrentActivity(),
+                                        BasketOperation.EMPTY,
+                                        product, txtInBasket, null, null, null, null, "0",
+                                        TrackingAware.BASKET_REMOVE, getNavigationCtx(), null);
                                 basketOperationTask.startTask();
                             } else {
                                 Toast toast = Toast.makeText(getCurrentActivity(), "Unable to connect to Internet", Toast.LENGTH_LONG);
@@ -226,15 +227,19 @@ public class BasketValidationActivity extends BackButtonActivity {
             }
         }
         base.addView(contentView);
+
+        trackEvent(TrackingAware.PRE_CHECKOUT_CWR_APPICABLE, null);
     }
-//
-//    @Override
-//    public void onSaveInstanceState(Bundle outState) {
-//        if (marketPlace != null) {
-//            outState.putParcelable(Constants.MARKET_PLACE_INTENT, marketPlace);
-//        }
-//        super.onSaveInstanceState(outState);
-//    }
+
+    @Override
+    public void updateUIAfterBasketOperationSuccess(BasketOperation basketOperation, TextView basketCountTextView, View viewDecQty,
+                                                    View viewIncQty, Button btnAddToBasket, EditText editTextQty,
+                                                    Product product, String qty, @Nullable View productView) {
+        super.updateUIAfterBasketOperationSuccess(basketOperation,
+                basketCountTextView, viewDecQty, viewIncQty, btnAddToBasket, editTextQty, product, qty,
+                productView);
+        new COMarketPlaceCheckTask<>(getCurrentActivity()).startTask();
+    }
 
     public String getNavigationCtx() {
         return TrackEventkeys.NAVIGATION_CTX_MARKET_PLACE_QC;
