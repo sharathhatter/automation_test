@@ -36,9 +36,6 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 
 import java.util.List;
 
-/**
- * Created by jugal on 9/3/15.
- */
 public class SearchableActivity extends BackButtonActivity implements SearchView.OnQueryTextListener {
 
     private ListView searchList;
@@ -85,7 +82,7 @@ public class SearchableActivity extends BackButtonActivity implements SearchView
         searchList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (view.getTag() == null) return;
+                if(view.getTag()==null) return;
                 doSearch(String.valueOf(view.getTag()));
             }
         });
@@ -106,18 +103,18 @@ public class SearchableActivity extends BackButtonActivity implements SearchView
                 SearchManager.SUGGEST_COLUMN_TEXT_2, SearchManager.SUGGEST_COLUMN_INTENT_EXTRA_DATA,
                 SearchManager.SUGGEST_COLUMN_INTENT_DATA_ID});
         MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(this);
-        int mostSearchTermsCount = mostSearchesAdapter.getRowCount();
-        if (mostSearchTermsCount > 0) {
-            if (mostSearchTermsCount >= 5) {
+        int mostSearchTermsCount =mostSearchesAdapter.getRowCount();
+        if(mostSearchTermsCount>0){
+            if(mostSearchTermsCount>=5){
                 List<MostSearchedItem> mostSearchedItemList = mostSearchesAdapter.getRecentSearchedItems(5);
-                int i = 0;
-                for (MostSearchedItem mostSearchedItem : mostSearchedItemList)
+                int i=0;
+                for(MostSearchedItem mostSearchedItem : mostSearchedItemList)
                     matrixCursor.addRow(new String[]{String.valueOf(i++), mostSearchedItem.getQuery(),
                             mostSearchedItem.getUrl(), null, "SUGGESTION"});
-            } else {
+            }else {
                 List<MostSearchedItem> mostSearchedItemList = mostSearchesAdapter.getRecentSearchedItems(mostSearchTermsCount);
-                int i = 0;
-                for (MostSearchedItem mostSearchedItem : mostSearchedItemList)
+                int i=0;
+                for(MostSearchedItem mostSearchedItem : mostSearchedItemList)
                     matrixCursor.addRow(new String[]{String.valueOf(i++), mostSearchedItem.getQuery(),
                             mostSearchedItem.getUrl(), null, "SUGGESTION"});
             }
@@ -133,7 +130,7 @@ public class SearchableActivity extends BackButtonActivity implements SearchView
         mSearchView.setOnSearchClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mSearchView.getQuery() == null) return;
+                if(mSearchView.getQuery()==null) return;
                 doSearch(String.valueOf(mSearchView.getQuery()));
             }
         });
@@ -221,10 +218,10 @@ public class SearchableActivity extends BackButtonActivity implements SearchView
         MatrixCursor matrixCursor = new MatrixCursor(new String[]{BaseColumns._ID,
                 SearchManager.SUGGEST_COLUMN_TEXT_1, SearchManager.SUGGEST_COLUMN_TEXT_2,
                 SearchManager.SUGGEST_COLUMN_INTENT_EXTRA_DATA, SearchManager.SUGGEST_COLUMN_INTENT_DATA_ID});
-        int startVal = 0;
-        if (isPopularSearcher)
+        int startVal= 0;
+        if(isPopularSearcher)
             matrixCursor.addRow(new String[]{String.valueOf(startVal++), heading, null, null, null});
-        for (int i = startVal; i < array.length; i++) {
+        for (int i=startVal; i < array.length; i++) {
             matrixCursor.addRow(new String[]{String.valueOf(i), array[i], heading, array[i], array[i]});
         }
         return matrixCursor;
