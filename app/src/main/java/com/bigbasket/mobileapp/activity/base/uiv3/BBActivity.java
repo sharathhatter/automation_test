@@ -1,16 +1,13 @@
 package com.bigbasket.mobileapp.activity.base.uiv3;
 
 import android.app.SearchManager;
-import android.app.SearchableInfo;
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -23,7 +20,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -41,6 +37,7 @@ import com.bigbasket.mobileapp.activity.account.uiv3.ShopFromOrderFragment;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.SearchableActivity;
+import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.adapter.NavigationAdapter;
 import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
 import com.bigbasket.mobileapp.fragment.DynamicScreenFragment;
@@ -61,7 +58,6 @@ import com.bigbasket.mobileapp.fragment.product.CategoryProductsFragment;
 import com.bigbasket.mobileapp.fragment.product.GenericProductListFragment;
 import com.bigbasket.mobileapp.fragment.product.ProductDetailFragment;
 import com.bigbasket.mobileapp.fragment.product.ProductListDialogFragment;
-import com.bigbasket.mobileapp.fragment.product.SearchFragment;
 import com.bigbasket.mobileapp.fragment.product.SubCategoryListFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoCategoryFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoDetailFragment;
@@ -158,7 +154,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         return R.layout.uiv3_main_layout;
     }
 
-    protected View getToolbarLayout(){
+    protected View getToolbarLayout() {
         return findViewById(R.id.toolbarMain);
     }
 
@@ -230,25 +226,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
 
     protected void setOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
-
-        //search code
-
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            menuInflater.inflate(R.menu.action_menu, menu);
-
-            final MenuItem searchMenuItem = menu.findItem(R.id.action_search);
-            final SearchView searchView = (SearchView) searchMenuItem.getActionView();
-
-            // Setting the search listener
-            SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        } else {
-            menuInflater.inflate(R.menu.action_menu_pre_honeycomb, menu);
-        }
-
-
-
+        menuInflater.inflate(R.menu.action_menu, menu);
 
         if (AuthParameters.getInstance(this).isAuthTokenEmpty()) {
             hideMemberMenuItems(menu);
@@ -472,8 +450,9 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             return true;
         }
         switch (item.getItemId()) {
-            case R.id.action_search_icon:
-                onSearchRequested();
+            case R.id.action_search:
+                Intent searchIntent = new Intent(this, SearchableActivity.class);
+                startActivityForResult(searchIntent, FragmentCodes.START_SEARCH);
                 return false;
             case android.R.id.home:
                 finish();
@@ -482,11 +461,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 launchMyAccount();
                 return true;
             case R.id.action_communication_hub:
-                Intent searchIntent = new Intent(this, SearchableActivity.class);
-                startActivityForResult(searchIntent, NavigationCodes.GO_TO_HOME);
-//                doSearch("apple");
-                //launchScanner();
-                //launchKonotor();
+                launchKonotor();
                 return true;
             case R.id.action_shopping_list:
                 if (AuthParameters.getInstance(getCurrentActivity()).isAuthTokenEmpty()) {
@@ -543,7 +518,21 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         }
     }
 
-    private void launchScanner(){
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == FragmentCodes.START_SEARCH) {
+            if (data != null) {
+                String searchQuery = data.getStringExtra(Constants.SEARCH_QUERY);
+                if (!TextUtils.isEmpty(searchQuery)) {
+                    doSearch(searchQuery);
+                    return;
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void launchScanner() {
         new IntentIntegrator(this).initiateScan();
     }
 
@@ -797,15 +786,11 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 navigationCtx);
     }
 
-    protected void doSearch(String searchQuery) {
-        searchQuery = searchQuery.trim();
-        MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(this);
-        mostSearchesAdapter.update(searchQuery);
-        SearchFragment searchFragment = new SearchFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(Constants.SEARCH_QUERY, searchQuery);
-        searchFragment.setArguments(bundle);
-        addToMainLayout(searchFragment);
+    public void doSearch(String searchQuery) {
+        Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
+        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SEARCH);
+        intent.putExtra(Constants.SEARCH_QUERY, searchQuery);
+        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
     public void onChangeTitle(String title) {

@@ -13,13 +13,16 @@ import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
+import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
 import com.bigbasket.mobileapp.adapter.product.FilterByAdapter;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
+import com.bigbasket.mobileapp.fragment.product.SearchFragment;
 import com.bigbasket.mobileapp.interfaces.FilterDisplayAware;
 import com.bigbasket.mobileapp.model.product.FilterOptionCategory;
 import com.bigbasket.mobileapp.model.product.FilterOptionItem;
 import com.bigbasket.mobileapp.model.product.FilteredOn;
 import com.bigbasket.mobileapp.task.GetCartCountTask;
+import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
 
@@ -161,6 +164,17 @@ public class ProductListActivity extends BBActivity implements FilterDisplayAwar
         }
     }
 
+    @Override
+    public void doSearch(String searchQuery) {
+        searchQuery = searchQuery.trim();
+        MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(this);
+        mostSearchesAdapter.update(searchQuery);
+        SearchFragment searchFragment = new SearchFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(Constants.SEARCH_QUERY, searchQuery);
+        searchFragment.setArguments(bundle);
+        addToMainLayout(searchFragment);
+    }
 
     @Override
     public void onBackPressed(){

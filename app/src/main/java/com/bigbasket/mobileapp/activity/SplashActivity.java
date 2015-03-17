@@ -13,19 +13,16 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
-import com.bigbasket.mobileapp.activity.base.SearchableActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
-import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
 import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.SectionManager;
@@ -39,11 +36,8 @@ import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.facebook.AppEventsLogger;
-import com.google.zxing.integration.android.IntentIntegrator;
 import com.moe.pushlibrary.MoEHelper;
-import com.newrelic.agent.android.NewRelic;
 
-import org.apache.http.HttpStatus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -65,13 +59,13 @@ public class SplashActivity extends BaseActivity implements DynamicScreenAware {
         super.onCreate(savedInstanceState);
         if (checkInternetConnection()) {
             startSplashScreen();
-        }else {
+        } else {
             showNoInternetConnectionView();
             return;
         }
     }
 
-    private void startSplashScreen(){
+    private void startSplashScreen() {
         setContentView(R.layout.splash);
         ((TextView) findViewById(R.id.lblAppSlogan)).setTypeface(faceRobotoRegular);
         ((TextView) findViewById(R.id.lblSelectCity)).setTypeface(faceRobotoRegular);
@@ -80,7 +74,7 @@ public class SplashActivity extends BaseActivity implements DynamicScreenAware {
         ((TextView) findViewById(R.id.lblWideRange)).setTypeface(faceRobotoRegular);
         ((Button) findViewById(R.id.btnStartShopping)).setTypeface(faceRobotoRegular);
 
-                    //todo un-comment it
+        //todo un-comment it
         //NewRelic.withApplicationToken(getString(R.string.new_relic_key)).start(this.getApplication());
 
         MoEHelper moEHelper = new MoEHelper(this);
@@ -99,7 +93,7 @@ public class SplashActivity extends BaseActivity implements DynamicScreenAware {
         trackEvent(TrackingAware.ENTRY_PAGE_SHOWN, null);
     }
 
-    private void showNoInternetConnectionView(){
+    private void showNoInternetConnectionView() {
         setContentView(R.layout.layout_no_internet);
 
         TextView txtHeader = (TextView) findViewById(R.id.txtHeader);

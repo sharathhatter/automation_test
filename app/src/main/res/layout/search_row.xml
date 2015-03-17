@@ -1,27 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
 
     <ImageView
-        android:layout_width="wrap_content"
         android:id="@+id/imgSearchListIcon"
-        android:src="@drawable/ic_send_black_18dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginLeft="@dimen/margin_small"
-        android:layout_height="wrap_content" />
+        android:contentDescription="@string/search"
+        android:src="@drawable/ic_search_grey600_24dp" />
 
     <TextView
+        android:id="@+id/txtTerm"
         android:layout_width="match_parent"
-        android:paddingTop="@dimen/padding_small"
-        android:layout_toRightOf="@id/imgSearchListIcon"
-        android:paddingBottom="@dimen/padding_small"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="@dimen/margin_normal"
-        android:text="Rice"
-        android:id="@+id/txtTerm"
-        android:textSize="@dimen/primary_text_size"
-        android:layout_height="wrap_content" />
+        android:layout_marginRight="@dimen/margin_small"
+        android:layout_toRightOf="@id/imgSearchListIcon"
+        android:paddingBottom="@dimen/padding_normal"
+        android:paddingTop="@dimen/padding_normal"
+        android:textColor="@color/uiv3_primary_text_color"
+        android:textSize="@dimen/primary_text_size" />
 
+    <View
+        android:id="@+id/viewTermSeparator"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/txtTerm"
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_toRightOf="@id/imgSearchListIcon"
+        android:background="@color/uiv3_divider_color" />
 </RelativeLayout>

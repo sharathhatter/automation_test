@@ -30,17 +30,6 @@
             android:paddingRight="@dimen/padding_large"
             android:paddingTop="@dimen/padding_normal">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="@dimen/margin_normal"
-                android:layout_marginLeft="@dimen/margin_normal"
-                android:layout_marginRight="@dimen/margin_normal"
-                android:layout_marginTop="@dimen/margin_normal"
-                android:contentDescription="@string/app_name"
-                android:src="@drawable/dash_logo" />
-
             <TableLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
