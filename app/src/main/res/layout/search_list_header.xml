@@ -9,14 +9,14 @@
     android:orientation="horizontal">
 
     <TextView
-        android:id="@+id/txtFilterBy"
+        android:id="@+id/txtVoice"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:drawableLeft="@drawable/filter"
+        android:drawableLeft="@drawable/ic_keyboard_voice_grey600_24dp"
         android:drawablePadding="@dimen/padding_small"
         android:padding="@dimen/padding_small"
-        android:text="@string/filter"
+        android:text="@string/voice"
         android:textColor="@color/uiv3_primary_text_color"
         android:textSize="@dimen/heading_1_text_size" />
 
@@ -28,14 +28,14 @@
         android:background="@color/uiv3_divider_color" />
 
     <TextView
-        android:id="@+id/txtSortBy"
+        android:id="@+id/txtScan"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:drawableLeft="@drawable/sort"
+        android:drawableLeft="@drawable/ic_keyboard_voice_grey600_24dp"
         android:drawablePadding="@dimen/padding_small"
         android:padding="@dimen/padding_small"
-        android:text="@string/sortBy"
+        android:text="@string/scan"
         android:textColor="@color/uiv3_primary_text_color"
         android:textSize="@dimen/heading_1_text_size" />
 

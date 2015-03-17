@@ -520,6 +520,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        setSuspended(false);
         if (resultCode == FragmentCodes.START_SEARCH) {
             if (data != null) {
                 String searchQuery = data.getStringExtra(Constants.SEARCH_QUERY);
@@ -530,10 +531,6 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    private void launchScanner() {
-        new IntentIntegrator(this).initiateScan();
     }
 
     @Override

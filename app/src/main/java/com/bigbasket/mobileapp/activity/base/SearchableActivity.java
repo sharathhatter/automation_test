@@ -1,12 +1,14 @@
 package com.bigbasket.mobileapp.activity.base;
 
 import android.app.SearchManager;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.os.Bundle;
 import android.provider.BaseColumns;
+import android.speech.RecognizerIntent;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -16,6 +18,7 @@ import android.widget.FilterQueryProvider;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
@@ -24,16 +27,21 @@ import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
 import com.bigbasket.mobileapp.model.search.MostSearchedItem;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.SearchUtil;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class SearchableActivity extends BackButtonActivity implements SearchView.OnQueryTextListener {
 
     private ListView searchList;
     private SearchView mSearchView;
     private SearchViewAdapter mSearchListAdapter;
-
+    private final int REQ_CODE_SPEECH_INPUT = 100;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +66,26 @@ public class SearchableActivity extends BackButtonActivity implements SearchView
                 getCurrentActivity().finish();
             }
         });
+
+        View searchListHeaderView = getLayoutInflater().inflate(R.layout.search_list_header, searchList, false);
+        TextView txtVoice = (TextView) searchListHeaderView.findViewById(R.id.txtVoice);
+        TextView txtScan = (TextView) searchListHeaderView.findViewById(R.id.txtScan);
+        txtVoice.setTypeface(faceRobotoRegular);
+        txtScan.setTypeface(faceRobotoRegular);
+        txtVoice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launchVoiceSearch();
+            }
+        });
+        txtScan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launchScanner();
+            }
+        });
+        searchList.addHeaderView(searchListHeaderView);
+
         mSearchListAdapter = new SearchViewAdapter<>(getCurrentActivity(), populateCursorList());
         searchList.setAdapter(mSearchListAdapter);
         setupSearchView();
@@ -80,6 +108,23 @@ public class SearchableActivity extends BackButtonActivity implements SearchView
                 }
             }
         });
+    }
+
+    private void launchVoiceSearch() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.voicePrompt));
+        try {
+            startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
+        } catch (ActivityNotFoundException e) {
+            showToast(getString(R.string.speechNotSupported));
+        }
+    }
+
+    private void launchScanner() {
+        new IntentIntegrator(this).initiateScan();
     }
 
     @Override
@@ -144,6 +189,30 @@ public class SearchableActivity extends BackButtonActivity implements SearchView
             //mSearchListAdapter.notifyDataSetChanged();
         }
         return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        setSuspended(false);
+        if (requestCode == REQ_CODE_SPEECH_INPUT && resultCode == RESULT_OK && data != null) {
+            ArrayList<String> items = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            if (items != null && items.size() > 0) {
+                doSearch(items.get(0));
+                return;
+            }
+        }
+        IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if (scanResult != null) {
+            String skuId = scanResult.getContents();
+            if (!TextUtils.isEmpty(skuId)) {
+                Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
+                intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PRODUCT_DETAIL);
+                intent.putExtra(Constants.SKU_ID, skuId);
+                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                return;
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

@@ -167,16 +167,16 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
             LinearLayout layoutFilterSort = (LinearLayout) headerView.findViewById(R.id.layoutFilterSort);
 
             TextView txtFilterBy = (TextView) headerView.findViewById(R.id.txtFilterBy);
-            TextView txtNumProducts = (TextView) headerView.findViewById(R.id.txtNumProducts);
             TextView txtSortBy = (TextView) headerView.findViewById(R.id.txtSortBy);
 
-            txtNumProducts.setTypeface(faceRobotoRegular);
             txtSortBy.setTypeface(faceRobotoRegular);
             txtFilterBy.setTypeface(faceRobotoRegular);
 
             if (productListData.getProductCount() > 0) {
-                String productsStr = productListData.getProductCount() > 1 ? "products" : "product";
-                txtNumProducts.setText(productListData.getProductCount() + " " + productsStr + " found");
+                String productsStr = productListData.getProductCount() > 1 ? " products" : " product";
+                if (getCurrentActivity() instanceof FilterDisplayAware) {
+                    getCurrentActivity().getSupportActionBar().setSubtitle(productListData.getProductCount() + productsStr);
+                }
                 if (productListData.getFilterOptions() != null && productListData.getFilterOptions().size() > 0) {
                     txtFilterBy.setVisibility(View.VISIBLE);
                     txtFilterBy.setOnClickListener(new View.OnClickListener() {
@@ -205,6 +205,9 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                 }
             } else {
                 layoutFilterSort.setVisibility(View.GONE);
+                if (getCurrentActivity() instanceof FilterDisplayAware) {
+                    getCurrentActivity().getSupportActionBar().setSubtitle(null);
+                }
             }
 
             ((FilterDisplayAware) getActivity()).setFilterView(productListData.getFilterOptions(),

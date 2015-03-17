@@ -147,7 +147,10 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     }
 
     public void setTitle() {
-        String title = getTitle().toUpperCase();
+        String title = getTitle();
+        if (!TextUtils.isEmpty(title)) {
+            title = title.toUpperCase();
+        }
         changeTitle(title);
     }
 
