@@ -41,6 +41,13 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
     @SerializedName(Constants.DESTINATION)
     private DestinationInfo destinationInfo;
 
+    public SectionItem(SectionTextItem title, SectionTextItem description, String image, int renderingId, DestinationInfo destinationInfo) {
+        super(title, description);
+        this.image = image;
+        this.renderingId = renderingId;
+        this.destinationInfo = destinationInfo;
+    }
+
     public String getImage() {
         return image;
     }

@@ -38,6 +38,11 @@ public class DestinationInfo implements Parcelable, Serializable {
     @SerializedName(Constants.VERSION)
     private String cacheVersion;
 
+    public DestinationInfo(String destinationType, String destinationSlug) {
+        this.destinationType = destinationType;
+        this.destinationSlug = destinationSlug;
+    }
+
     public String getDestinationType() {
         return destinationType;
     }

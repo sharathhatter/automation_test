@@ -11,6 +11,11 @@ public class BaseSectionTextItem implements Parcelable, Serializable {
     private SectionTextItem title;
     private SectionTextItem description;
 
+    public BaseSectionTextItem(SectionTextItem title, SectionTextItem description) {
+        this.title = title;
+        this.description = description;
+    }
+
     @Nullable
     public SectionTextItem getTitle() {
         return title;

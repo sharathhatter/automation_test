@@ -34,6 +34,13 @@ public class Section extends BaseSectionTextItem implements Parcelable, Serializ
     @SerializedName(Constants.MORE)
     private SectionItem moreSectionItem;
 
+    public Section(SectionTextItem title, SectionTextItem description,
+                   String sectionType, ArrayList<SectionItem> sectionItems, SectionItem moreSectionItem) {
+        super(title, description);
+        this.sectionType = sectionType;
+        this.sectionItems = sectionItems;
+        this.moreSectionItem = moreSectionItem;
+    }
 
     public String getSectionType() {
         return sectionType;

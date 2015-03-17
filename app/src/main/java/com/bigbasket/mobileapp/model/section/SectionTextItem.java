@@ -14,6 +14,11 @@ public class SectionTextItem implements Parcelable, Serializable {
     @SerializedName(Constants.RENDERING_ID)
     private int renderingId;
 
+    public SectionTextItem(String text, int renderingId) {
+        this.text = text;
+        this.renderingId = renderingId;
+    }
+
     @Override
     public int describeContents() {
         return 0;

@@ -80,9 +80,11 @@ import com.bigbasket.mobileapp.model.navigation.SectionNavigationItem;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
+import com.bigbasket.mobileapp.model.section.DestinationInfo;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.model.section.SectionItem;
+import com.bigbasket.mobileapp.model.section.SectionTextItem;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.task.GetCartCountTask;
 import com.bigbasket.mobileapp.util.Constants;
@@ -92,7 +94,6 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
-import com.google.zxing.integration.android.IntentIntegrator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -867,6 +868,7 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
 
     private ArrayList<SectionNavigationItem> getSectionNavigationItems() {
         ArrayList<SectionNavigationItem> sectionNavigationItems = new ArrayList<>();
+        sectionNavigationItems.add(getHomeSectionNavItem());
 
         SectionManager sectionManager = new SectionManager(this, SectionManager.MAIN_MENU);
         SectionData sectionData = sectionManager.getStoredSectionData(true);
@@ -885,6 +887,15 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             }
         }
         return sectionNavigationItems;
+    }
+
+    private SectionNavigationItem getHomeSectionNavItem() {
+        SectionItem homeSectionItem = new SectionItem(new SectionTextItem(getString(R.string.home), 0),
+                null, Constants.LOCAL_RES_URL + "nav_home", -1, new DestinationInfo(DestinationInfo.HOME, null));
+        ArrayList<SectionItem> sectionItems = new ArrayList<>();
+        sectionItems.add(homeSectionItem);
+        Section section = new Section(null, null, Section.MSG, sectionItems, null);
+        return new SectionNavigationItem(section, homeSectionItem);
     }
 
     @Override
