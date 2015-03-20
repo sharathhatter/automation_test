@@ -187,8 +187,9 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 invalidateOptionsMenu();
             }
         };
-
         mDrawerLayout.setDrawerListener(mDrawerToggle);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         loadNavigationItems();
         Intent intent = getIntent();
         handleIntent(intent, savedInstanceState);
