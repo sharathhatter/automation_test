@@ -3,6 +3,8 @@ package com.bigbasket.mobileapp.apiservice.models.response;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+
 /**
  * Created by jugal on 2/2/15.
  */
@@ -16,5 +18,9 @@ public class AppDataResponse {
 
     @SerializedName(Constants.APP_UPDATE)
     public AppUpdate appUpdate;
+
+    @SerializedName(Constants.TOP_SEARCHES)
+    public ArrayList<String> topSearches;
+
 
 }

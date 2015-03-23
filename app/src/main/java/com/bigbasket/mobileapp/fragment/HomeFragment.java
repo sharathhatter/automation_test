@@ -43,6 +43,9 @@ import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.AppNotSupportedDialog;
 import com.bigbasket.mobileapp.view.uiv2.UpgradeAppDialog;
 
+import java.util.ArrayList;
+import java.util.Set;
+
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -357,6 +360,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                                         prefer.getString(Constants.MEMBER_EMAIL_KEY, ""),
                                         prefer.getString(Constants.MID_KEY, ""));//TODO: check with sid
                             }
+                            savePopulateSearcher(callbackAppDataResponse.apiResponseContent.topSearches);
                             homePageGetter(savedInstanceState);
                         } else {
                             handler.sendEmptyMessage(callbackAppDataResponse.status,
@@ -376,6 +380,15 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                     }
 
                 });
+    }
+
+    private void savePopulateSearcher(ArrayList<String> topSearchList){
+        if(topSearchList ==null) return;
+        String topSearchCommaSeparatedString= UIUtil.sentenceJoin(topSearchList, ",");
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(Constants.TOP_SEARCHES, topSearchCommaSeparatedString);
+        editor.commit();
     }
 
 
