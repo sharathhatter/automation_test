@@ -62,7 +62,7 @@ public class ChangeCityActivity extends BackButtonActivity implements CityListDi
                 android.R.layout.simple_list_item_single_choice, cities);
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         listView.setAdapter(citySpinnerAdapter);
-        listView.setItemChecked(0, true);
+        listView.setItemChecked(findCurrentCityPosition(cities), true);
 
         FloatingActionButton btnFab = (FloatingActionButton) base.findViewById(R.id.btnFab);
         btnFab.setImageResource(R.drawable.ic_keyboard_arrow_right_white_36dp);
@@ -78,6 +78,17 @@ public class ChangeCityActivity extends BackButtonActivity implements CityListDi
         });
 
         contentFrame.addView(base);
+    }
+
+    private int findCurrentCityPosition(ArrayList<City> cities) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String currentCityName = preferences.getString(Constants.CITY, null);
+        for (int i = 0; i < cities.size(); i++) {
+            if (cities.get(i).getName().equals(currentCityName)) {
+                return i;
+            }
+        }
+        return 0;
     }
 
     protected void changeCity(final City city) {
