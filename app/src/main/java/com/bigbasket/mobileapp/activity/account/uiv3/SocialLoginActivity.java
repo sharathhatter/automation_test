@@ -45,10 +45,14 @@ import retrofit.RetrofitError;
 
 public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActivity {
 
-    public void setUpSocialButtons(Button btnGoogleLogin, LoginButton btnFacebookLoginButton) {
+    public void setUpSocialButtons(Button btnGoogleLogin, Button btnFacebookLoginButton) {
         btnGoogleLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!checkInternetConnection()) {
+                    handler.sendOfflineError();
+                    return;
+                }
                 // Don't offer G+ sign in if the app's version is too low to support Google Play
                 // Services.
                 if (supportsGooglePlayServices()) {
@@ -62,7 +66,16 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
                 }
             }
         });
-        initializeFacebookLogin(btnFacebookLoginButton);
+        btnFacebookLoginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!checkInternetConnection()) {
+                    handler.sendOfflineError();
+                    return;
+                }
+                initializeFacebookLogin();
+            }
+        });
     }
 
     public void logSignInBtnClickEvent(String type) {
@@ -218,6 +231,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        setSuspended(false);
         if (resultCode == Constants.SOCIAL_ACCOUNT_NOT_LINKED && data != null) {
             String loginType = data.getStringExtra(Constants.SOCIAL_LOGIN_TYPE);
             if (!TextUtils.isEmpty(loginType)) {
@@ -309,6 +323,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
         editor.remove(Constants.MEMBER_FULL_NAME_KEY);
         editor.remove(Constants.MEMBER_EMAIL_KEY);
         editor.remove(Constants.SOCIAL_ACCOUNT_TYPE);
+        editor.remove(Constants.HAS_USER_CHOSEN_CITY);
         editor.commit();
         AuthParameters.updateInstance(getCurrentActivity());
 

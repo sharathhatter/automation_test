@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fb="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -125,16 +124,22 @@
             android:textColor="@color/com_facebook_loginview_text_color"
             android:textSize="@dimen/primary_text_size" />
 
-        <com.facebook.widget.LoginButton
+        <Button
             android:id="@+id/btnFBLogin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/margin_small"
+            android:background="@drawable/com_facebook_button_blue"
+            android:drawableLeft="@drawable/com_facebook_inverse_icon"
             android:minWidth="300dp"
-            android:textSize="@dimen/primary_text_size"
-            fb:login_text="@string/use_facebook"
-            fb:logout_text="@string/signOut" />
+            android:paddingBottom="@dimen/com_facebook_loginview_padding_bottom"
+            android:paddingLeft="@dimen/com_facebook_loginview_padding_left"
+            android:paddingRight="@dimen/com_facebook_loginview_padding_right"
+            android:paddingTop="@dimen/com_facebook_loginview_padding_top"
+            android:text="@string/use_facebook"
+            android:textColor="@color/com_facebook_loginview_text_color"
+            android:textSize="@dimen/com_facebook_loginview_text_size" />
     </LinearLayout>
 
     <ScrollView

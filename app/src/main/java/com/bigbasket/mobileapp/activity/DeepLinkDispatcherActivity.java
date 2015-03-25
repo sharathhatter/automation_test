@@ -268,6 +268,7 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        setSuspended(false);
         if (resultCode == NavigationCodes.GO_TO_HOME) {
             navigateToHome(true);
         } else {

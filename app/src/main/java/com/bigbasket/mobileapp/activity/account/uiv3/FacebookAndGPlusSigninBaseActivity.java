@@ -7,32 +7,44 @@ import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
-import com.facebook.widget.LoginButton;
 
 import java.util.Arrays;
+import java.util.List;
 
 public abstract class FacebookAndGPlusSigninBaseActivity extends PlusBaseActivity {
 
     private UiLifecycleHelper mFacebookUiLifeCycleHelper;
     private Session.StatusCallback mFacebookSessionCallback;
 
-    public void initializeFacebookLogin(LoginButton btnFBLogin) {
+    public void initializeFacebookLogin() {
         if (mFacebookSessionCallback != null || mFacebookUiLifeCycleHelper != null) return;
-        btnFBLogin.setReadPermissions(Arrays.asList("public_profile", "email"));
-
         mFacebookSessionCallback = new Session.StatusCallback() {
             @Override
             public void call(Session session, SessionState state, Exception exception) {
                 onFacebookSessionStateChanged(session, state, exception);
             }
         };
+        openActiveSession(true, Arrays.asList("public_profile", "email"), mFacebookSessionCallback);
 
         mFacebookUiLifeCycleHelper = new UiLifecycleHelper(this, mFacebookSessionCallback);
+    }
+
+    private Session openActiveSession(boolean allowLoginUi, List<String> permissions, Session.StatusCallback callback) {
+        Session.OpenRequest openRequest = new Session.OpenRequest(getCurrentActivity()).
+                setPermissions(permissions).setCallback(callback);
+        Session session = new Session.Builder(getCurrentActivity()).build();
+        if (SessionState.CREATED_TOKEN_LOADED.equals(session.getState()) || allowLoginUi) {
+            Session.setActiveSession(session);
+            session.openForRead(openRequest);
+            return session;
+        }
+        return null;
     }
 
     private void onFacebookSessionStateChanged(Session session, SessionState sessionState,
                                                Exception exception) {
         if (exception != null) {
+            showToast(exception.getMessage());
             return;
         }
 
@@ -67,10 +79,15 @@ public abstract class FacebookAndGPlusSigninBaseActivity extends PlusBaseActivit
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+        setSuspended(false);
+        Session activeSession = Session.getActiveSession();
+        if (activeSession != null) {
+            activeSession.onActivityResult(getCurrentActivity(), requestCode, resultCode, data);
+        }
         if (mFacebookUiLifeCycleHelper != null) {
             mFacebookUiLifeCycleHelper.onActivityResult(requestCode, resultCode, data);
         }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

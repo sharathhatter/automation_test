@@ -75,14 +75,21 @@
                                 android:textColor="@color/com_facebook_loginview_text_color"
                                 android:textSize="@dimen/secondary_text_size" />
 
-                            <com.facebook.widget.LoginButton
+                            <Button
                                 android:id="@+id/btnFBLogin"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:layout_marginTop="@dimen/margin_normal"
-                                fb:login_text="@string/facebookSignup"
-                                fb:logout_text="@string/signOut" />
+                                android:layout_gravity="center_horizontal"
+                                android:layout_marginTop="@dimen/margin_small"
+                                android:background="@drawable/com_facebook_button_blue"
+                                android:drawableLeft="@drawable/com_facebook_inverse_icon"
+                                android:paddingBottom="@dimen/com_facebook_loginview_padding_bottom"
+                                android:paddingLeft="@dimen/com_facebook_loginview_padding_left"
+                                android:paddingRight="@dimen/com_facebook_loginview_padding_right"
+                                android:paddingTop="@dimen/com_facebook_loginview_padding_top"
+                                android:text="@string/facebookSignup"
+                                android:textColor="@color/com_facebook_loginview_text_color"
+                                android:textSize="@dimen/com_facebook_loginview_text_size" />
 
                         </LinearLayout>
 

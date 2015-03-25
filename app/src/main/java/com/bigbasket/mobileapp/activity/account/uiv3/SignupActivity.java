@@ -26,7 +26,6 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.CityDropDownAdapter;
-import com.facebook.widget.LoginButton;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
@@ -99,7 +98,7 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
         mCitySpinner.setAdapter(cityDropDownAdapter);
 
         setUpSocialButtons((Button) base.findViewById(R.id.plus_sign_in_button),
-                (LoginButton) base.findViewById(R.id.btnFBLogin));
+                (Button) base.findViewById(R.id.btnFBLogin));
 
         populateAutoComplete(mEmailView);
         trackEvent(TrackingAware.REGISTRATION_PAGE_SHOWN, null);

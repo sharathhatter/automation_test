@@ -37,7 +37,6 @@ import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.facebook.AppEventsLogger;
-import com.facebook.widget.LoginButton;
 import com.moe.pushlibrary.MoEHelper;
 import com.newrelic.agent.android.NewRelic;
 
@@ -66,16 +65,10 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
     }
 
     private void startSplashScreen() {
+        setContentView(R.layout.loading_layout);
         if (AuthParameters.getInstance(this).isAuthTokenEmpty() && !CityManager.hasUserChosenCity(this)) {
-            setContentView(R.layout.landing_page);
-            if (TextUtils.isEmpty(AuthParameters.getInstance(this).getVisitorId())) {
-                doRegisterDevice(new City("Bangalore", 1));
-            }
-
-            setUpSocialButtons((Button) findViewById(R.id.plus_sign_in_button),
-                    (LoginButton) findViewById(R.id.btnFBLogin));
+            doRegisterDevice(new City("Bangalore", 1));
         } else {
-            setContentView(R.layout.loading_layout);
             loadNavigation();
         }
         trackEvent(TrackingAware.ENTRY_PAGE_SHOWN, null);
@@ -187,6 +180,9 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
                         editor.putString(Constants.MEMBER_FULL_NAME_KEY, null);
                         editor.commit();
                         AuthParameters.updateInstance(getCurrentActivity());
+
+                        Intent intent = new Intent(getCurrentActivity(), LandingPageActivity.class);
+                        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     }
 
                     @Override
@@ -203,6 +199,16 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
     }
 
     @Override
+    public void showProgressDialog(String msg) {
+
+    }
+
+    @Override
+    public void hideProgressDialog() {
+
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         setSuspended(false);
         if (resultCode == NavigationCodes.GO_TO_HOME || resultCode == NavigationCodes.CITY_CHANGED) {
@@ -215,38 +221,6 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
         } else {
             finish();
         }
-    }
-
-    @Override
-    public void showProgressDialog(String msg) {
-        if (findViewById(R.id.progressBar) == null) {
-            super.showProgressDialog(msg);
-        }
-    }
-
-    @Override
-    public void hideProgressDialog() {
-        if (findViewById(R.id.progressBar) == null) {
-            super.hideProgressDialog();
-        }
-    }
-
-    public void onLandingPageButtonClicked(View view) {
-        switch (view.getId()) {
-            case R.id.btnLogin:
-                launchLogin(TrackEventkeys.NAVIGATION_CTX_LANDING_PAGE);
-                break;
-            case R.id.btnRegister:
-                break;
-            case R.id.btnSkip:
-                showChangeCity();
-                break;
-        }
-    }
-
-    private void showChangeCity() {
-        Intent intent = new Intent(this, ChangeCityActivity.class);
-        startActivityForResult(intent, NavigationCodes.CITY_CHANGED);
     }
 
     @Override

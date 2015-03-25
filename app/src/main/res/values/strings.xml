@@ -143,10 +143,10 @@
     <string name="myAccount">My Account</string>
     <string name="signOut">Logout</string>
     <string name="logOutSuccess">Logout successful!</string>
-    <string name="signIn">LOGIN</string>
+    <string name="signIn">Login</string>
     <string name="signoutConfirmation">Are you sure that you want to logout?</string>
     <string name="changeCityHome">Change City</string>
-    <string name="signUp">SIGNUP</string>
+    <string name="signUp">Signup</string>
     <string name="changeCityHeader">CHANGE CITY</string>
     <string name="loginYourAcc">Login to your account</string>
     <string name="HNDetails">House No &amp; Details</string>

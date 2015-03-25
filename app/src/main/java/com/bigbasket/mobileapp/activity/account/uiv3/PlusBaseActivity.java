@@ -226,6 +226,7 @@ public abstract class PlusBaseActivity extends BaseActivity
      */
     @Override
     protected void onActivityResult(int requestCode, int responseCode, Intent intent) {
+        setSuspended(false);
         if (mGoogleApiClient != null) {
             updatePlusConnectedButtonState();
         }

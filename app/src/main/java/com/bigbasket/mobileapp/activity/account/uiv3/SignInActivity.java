@@ -29,7 +29,6 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
-import com.facebook.widget.LoginButton;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -56,7 +55,7 @@ public class SignInActivity extends BackButtonActivity {
         setTitle(getString(R.string.signIn));
 
         setUpSocialButtons((Button) baseView.findViewById(R.id.plus_sign_in_button),
-                (LoginButton) baseView.findViewById(R.id.btnFBLogin));
+                (Button) baseView.findViewById(R.id.btnFBLogin));
 
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) baseView.findViewById(R.id.emailInput);

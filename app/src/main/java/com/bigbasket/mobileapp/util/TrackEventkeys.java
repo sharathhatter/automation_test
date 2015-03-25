@@ -77,6 +77,7 @@ public final class TrackEventkeys {
 
 
     public static final String START_SCREEN = "Entry Page"; //Done
+    public static final String LANDING_PAGE = "Landing Page"; //Done
     public static final String HOME_SCREEN = "Home Page"; //Done
     public static final String DYNAMIC_SCREEN = "Dynamic Screen"; //Done
     //Dialog
