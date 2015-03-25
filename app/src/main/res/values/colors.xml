@@ -71,18 +71,18 @@
     <!-- UIv3 colours -->
     <color name="uiv3_action_bar_background">#F44336</color>
     <color name="uiv3_main_button_background">@color/uiv3_action_bar_background</color>
-    <color name="uiv3_tile_bkg">#E79F30</color>
+    <color name="uiv3_tile_bkg">#FF7F2A</color>
     <color name="uiv3_transparent_view_hint_color">#A7A7A7</color>
-    <color name="uiv3_accent_color">#FF9800</color>
-    <color name="uiv3_primary_btn_bkg">#FFE79F30</color>
-    <color name="uiv3_primary_btn_pressed_bkg">#88E79F30</color>
+    <color name="uiv3_accent_color">#FF7F2A</color>
+    <color name="uiv3_primary_btn_bkg">#FFFF7F2A</color>
+    <color name="uiv3_primary_btn_pressed_bkg">#88FF7F2A</color>
     <color name="uiv3_secondary_btn_bkg">#ff37474f</color>
     <color name="uiv3_secondary_btn_pressed_bkg">#8837474f</color>
     <color name="uiv3_menu_header">@color/uiv3_accent_color</color>
     <!--<color name="uiv3_status_bar_background">#E53935</color>-->
     <color name="uiv3_status_bar_background">@color/uiv3_action_bar_background</color>
     <color name="uiv3_action_bar_background_pressed">#32FF0000</color>
-    <color name="uiv3_category_header_background">#e79f30</color>
+    <color name="uiv3_category_header_background">#FF7F2A</color>
     <color name="uiv3_action_bar_light">#C8E6C9</color>
     <color name="uiv3_product_list_row_bkg">#FAFAFA</color>
     <color name="uiv3_primary_text_color">#212121</color>

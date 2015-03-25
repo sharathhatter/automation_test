@@ -80,7 +80,7 @@ public class ChangeCityActivity extends BackButtonActivity implements CityListDi
         contentFrame.addView(base);
     }
 
-    private void changeCity(final City city) {
+    protected void changeCity(final City city) {
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.CITY, city.getName());
         trackEvent(TrackingAware.CHANGE_CITY_POSSITIVE_BTN_CLICKED, eventAttribs);

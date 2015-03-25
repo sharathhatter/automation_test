@@ -225,16 +225,10 @@ public interface BigBasketApiService {
                      Callback<LoginApiResponse> loginApiResponseContent);
 
     @FormUrlEncoded
-    @POST("/social-link-account/")
-    void socialLinkAccount(@Field(Constants.EMAIL) String email, @Field(Constants.PASSWORD) String password,
-                           @Field(Constants.SOCIAL_LOGIN_TYPE) String socialLoginType,
-                           @Field(Constants.SOCIAL_LOGIN_PARAMS) String socialLoginParams,
-                           Callback<LoginApiResponse> loginApiResponseContent);
-
-    @FormUrlEncoded
     @POST("/social-register-member/")
     void socialRegisterMember(@Field(Constants.SOCIAL_LOGIN_TYPE) String socialLoginType,
                               @Field(Constants.SOCIAL_LOGIN_PARAMS) String socialLoginParams,
+                              @Field(Constants.CITY_ID) String cityId,
                               Callback<LoginApiResponse> loginApiResponseContent);
 
     @FormUrlEncoded
@@ -347,11 +341,6 @@ public interface BigBasketApiService {
     @POST("/co-reserve-quantity/")
     void coReserveQuantity(@Field(Constants.PHARMA_PRESCRIPTION_ID) String pharmaPrescriptionId,
                            Callback<OldApiResponse<COReserveQuantity>> coReserveQtyApiResponseCallback);
-
-    @FormUrlEncoded
-    @POST("/update-location/")
-    void updateLocation(@Field(Constants.ADDRESS_ID) String addressId, @Field(Constants.LAT) double lat,
-                        @Field(Constants.LNG) double lng, Callback<BaseApiResponse> updateLocationApiResponseCallback);
 
     @GET("/get-products-for-order/")
     void getProductsForOrder(@Query(Constants.ORDER_ID) String orderId,
