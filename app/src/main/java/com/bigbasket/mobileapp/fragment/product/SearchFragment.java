@@ -34,7 +34,7 @@ public class SearchFragment extends ProductListAwareFragment {
     @Override
     @Nullable
     public String getTitle() {
-        return getArguments() != null ? getArguments().getString(Constants.SEARCH_QUERY):
+        return getArguments() != null ? getArguments().getString(Constants.SEARCH_QUERY) :
                 "Search Products";
     }
 
@@ -56,7 +56,7 @@ public class SearchFragment extends ProductListAwareFragment {
 
     @Override
 
-    protected void showNoProductsFoundView(LinearLayout contentView){
+    protected void showNoProductsFoundView(LinearLayout contentView) {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View emptyPageView = inflater.inflate(R.layout.uiv3_empty_data_text, contentView, false);
         ImageView imgEmptyPage = (ImageView) emptyPageView.findViewById(R.id.imgEmptyPage);
@@ -70,7 +70,8 @@ public class SearchFragment extends ProductListAwareFragment {
         btnBlankPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((BaseActivity)getActivity()).goToHome(false);
+                if (getCurrentActivity() == null) return;
+                getCurrentActivity().goToHome(false);
             }
         });
         contentView.addView(emptyPageView);

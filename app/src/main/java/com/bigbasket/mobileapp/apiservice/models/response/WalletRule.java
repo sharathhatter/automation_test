@@ -6,10 +6,8 @@ import android.os.Parcelable;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
-/**
- * Created by jugal on 3/3/15.
- */
-public class WalletRule implements Parcelable{
+
+public class WalletRule implements Parcelable {
 
     @SerializedName(Constants.VOUCHER_PER_RULE)
     public int voucherPerRule;

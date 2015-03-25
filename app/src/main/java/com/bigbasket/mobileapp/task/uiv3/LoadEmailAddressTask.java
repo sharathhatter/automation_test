@@ -12,18 +12,17 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.widget.AutoCompleteTextView;
 
 import com.bigbasket.mobileapp.interfaces.EmailAddressAware;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by jugal on 13/1/15.
- */
 public class LoadEmailAddressTask<T> {
 
     private T context;
+    private AutoCompleteTextView emailView;
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private interface ProfileQuery {
@@ -35,8 +34,9 @@ public class LoadEmailAddressTask<T> {
         int ADDRESS = 0;
     }
 
-    public LoadEmailAddressTask(T context) {
+    public LoadEmailAddressTask(T context, AutoCompleteTextView emailView) {
         this.context = context;
+        this.emailView = emailView;
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -70,7 +70,7 @@ public class LoadEmailAddressTask<T> {
                 emails.add(cursor.getString(ProfileQuery.ADDRESS));
                 cursor.moveToNext();
             }
-            ((EmailAddressAware) context).addEmailsToAutoComplete(emails);
+            ((EmailAddressAware) context).addEmailsToAutoComplete(emails, emailView);
         }
 
         @Override
@@ -107,7 +107,7 @@ public class LoadEmailAddressTask<T> {
 
         @Override
         protected void onPostExecute(List<String> emailAddressCollection) {
-            ((EmailAddressAware) context).addEmailsToAutoComplete(emailAddressCollection);
+            ((EmailAddressAware) context).addEmailsToAutoComplete(emailAddressCollection, emailView);
         }
     }
 }

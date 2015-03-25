@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ExpandableListView;
@@ -177,12 +176,12 @@ public class ProductListActivity extends BBActivity implements FilterDisplayAwar
     }
 
     @Override
-    public void onBackPressed(){
-        if(getDrawerLayout().isDrawerOpen(Gravity.RIGHT)){
+    public void onBackPressed() {
+        if (getDrawerLayout().isDrawerOpen(Gravity.RIGHT)) {
             getDrawerLayout().closeDrawer(Gravity.RIGHT);
-        } else if(getDrawerLayout().isDrawerOpen(Gravity.LEFT)){
+        } else if (getDrawerLayout().isDrawerOpen(Gravity.LEFT)) {
             getDrawerLayout().closeDrawer(Gravity.LEFT);
-        }else {
+        } else {
             super.onBackPressed();
         }
     }

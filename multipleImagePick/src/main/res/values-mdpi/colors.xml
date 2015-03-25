@@ -15,7 +15,7 @@
     <color name="light_grey_text">#4D4D4D</color>
 
     <color name="uiv3_primary_text_color">#212121</color>
-    <color name="uiv3_action_bar_background">#4CAF50</color>
+    <color name="uiv3_action_bar_background">#F44336</color>
     <color name="dark_black">#000000</color>
     <color name="white">#ffffff</color>
     <drawable name="light_black_">#33000000</drawable>

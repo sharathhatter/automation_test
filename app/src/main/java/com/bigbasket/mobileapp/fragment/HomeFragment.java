@@ -1,6 +1,5 @@
 package com.bigbasket.mobileapp.fragment;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -13,10 +12,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -146,15 +143,10 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                                 Log.d("HomeFragment", getResources().getString(R.string.versionNoUpdated));
                                 break;
                             default:
-                                Intent result = new Intent();
-                                result.putExtra(Constants.FORCE_REGISTER_DEVICE, true);
-                                getActivity().setResult(Constants.FORCE_REGISTER_CODE, result);
-                                if (getCurrentActivity() == null) return;
-                                getCurrentActivity().onLogoutRequested();
-                                getActivity().finish();
+                                handler.sendEmptyMessage(updateVersionInfoApiResponse.status,
+                                        updateVersionInfoApiResponse.message, true);
                                 break;
                         }
-
                     }
 
                     @Override
@@ -292,27 +284,6 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
             }
         });
         contentView.addView(errorView);
-
-//
-//
-//
-//        View base = getActivity().getLayoutInflater().inflate(R.layout.uiv3_inline_error_page, contentView, false);
-//        TextView txtInlineErrMsg = (TextView) base.findViewById(R.id.txtInlineErrorMsg);
-//        ImageView imgInlineError = (ImageView) base.findViewById(R.id.imgInlineError);
-//        Button btnRetry = (Button) base.findViewById(R.id.btnRetry);
-//
-//        txtInlineErrMsg.setTypeface(faceRobotoRegular);
-//        btnRetry.setTypeface(faceRobotoRegular);
-//
-//        txtInlineErrMsg.setText(msg);
-//        imgInlineError.setImageResource(errorDrawableId);
-//        btnRetry.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                requestHomePage();
-//            }
-//        });
-//        contentView.addView(base);
     }
 
     @NonNull

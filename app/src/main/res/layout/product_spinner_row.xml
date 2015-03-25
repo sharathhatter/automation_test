@@ -3,9 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:paddingBottom="@dimen/padding_mini"
-    android:paddingTop="@dimen/padding_mini">
+    android:orientation="horizontal">
 
     <TextView
         android:id="@+id/txtProductPkgDesc"
@@ -17,4 +15,19 @@
         android:textColor="@color/uiv3_primary_text_color"
         android:textSize="@dimen/primary_text_size" />
 
+    <Button
+        style="@style/LowerCaseButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/main_button_rounded_background"
+        android:clickable="false"
+        android:minHeight="0dp"
+        android:minWidth="0dp"
+        android:paddingBottom="@dimen/padding_mini"
+        android:paddingLeft="@dimen/padding_normal"
+        android:paddingRight="@dimen/padding_normal"
+        android:paddingTop="@dimen/padding_mini"
+        android:text="@string/plusMore"
+        android:textColor="@color/white"
+        android:textSize="@dimen/primary_text_size" />
 </LinearLayout>

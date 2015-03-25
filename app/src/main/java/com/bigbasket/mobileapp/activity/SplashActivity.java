@@ -10,13 +10,13 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.account.uiv3.ChangeCityActivity;
+import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
@@ -25,6 +25,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.model.CityManager;
 import com.bigbasket.mobileapp.model.SectionManager;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -36,58 +37,45 @@ import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.facebook.AppEventsLogger;
+import com.facebook.widget.LoginButton;
 import com.moe.pushlibrary.MoEHelper;
+import com.newrelic.agent.android.NewRelic;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class SplashActivity extends BaseActivity implements DynamicScreenAware {
-
-    boolean mShowCitySelectionDropDown;
+public class SplashActivity extends SocialLoginActivity implements DynamicScreenAware {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (checkInternetConnection()) {
+            NewRelic.withApplicationToken(getString(R.string.new_relic_key)).start(this.getApplication());
+            MoEHelper moEHelper = new MoEHelper(this);
+            moEHelper.initialize(Constants.MO_SENDER_ID, Constants.MO_APP_ID);
+            moEHelper.Register(R.drawable.ic_launcher);
             startSplashScreen();
         } else {
             showNoInternetConnectionView();
-            return;
         }
     }
 
     private void startSplashScreen() {
-        setContentView(R.layout.splash);
-        ((TextView) findViewById(R.id.lblAppSlogan)).setTypeface(faceRobotoRegular);
-        ((TextView) findViewById(R.id.lblSelectCity)).setTypeface(faceRobotoRegular);
-        ((TextView) findViewById(R.id.lblSameDayDelivery)).setTypeface(faceRobotoRegular);
-        ((TextView) findViewById(R.id.lblQualityToLove)).setTypeface(faceRobotoRegular);
-        ((TextView) findViewById(R.id.lblWideRange)).setTypeface(faceRobotoRegular);
-        ((Button) findViewById(R.id.btnStartShopping)).setTypeface(faceRobotoRegular);
+        if (AuthParameters.getInstance(this).isAuthTokenEmpty() && !CityManager.hasUserChosenCity(this)) {
+            setContentView(R.layout.landing_page);
+            if (TextUtils.isEmpty(AuthParameters.getInstance(this).getVisitorId())) {
+                doRegisterDevice(new City("Bangalore", 1));
+            }
 
-        //todo un-comment it
-        //NewRelic.withApplicationToken(getString(R.string.new_relic_key)).start(this.getApplication());
-
-        MoEHelper moEHelper = new MoEHelper(this);
-        moEHelper.initialize(Constants.MO_SENDER_ID, Constants.MO_APP_ID);
-        moEHelper.Register(R.drawable.ic_launcher);
-
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String savedCityName = preferences.getString(Constants.CITY, null);
-        boolean forceRegisterDevice = getIntent().getBooleanExtra(Constants.FORCE_REGISTER_DEVICE, false);
-        if (forceRegisterDevice || TextUtils.isEmpty(savedCityName)) {
-            mShowCitySelectionDropDown = true;
-            loadCities();
+            setUpSocialButtons((Button) findViewById(R.id.plus_sign_in_button),
+                    (LoginButton) findViewById(R.id.btnFBLogin));
         } else {
+            setContentView(R.layout.loading_layout);
             loadNavigation();
         }
         trackEvent(TrackingAware.ENTRY_PAGE_SHOWN, null);
@@ -141,54 +129,7 @@ public class SplashActivity extends BaseActivity implements DynamicScreenAware {
     private void loadHomePage() {
         Intent homePageIntent = new Intent(this, BBActivity.class);
         homePageIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_HOME);
-        startActivityForResult(homePageIntent, Constants.FORCE_REGISTER_CODE);
-    }
-
-    private void loadCities() {
-        if (!checkInternetConnection()) {
-            showNoInternetConnectionView();
-            return;
-        }
-        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
-        showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.listCities(new Callback<ArrayList<City>>() {
-            @Override
-            public void success(ArrayList<City> cities, Response response) {
-                hideProgressDialog();
-                renderCitySelectionDropDown(cities);
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                hideProgressDialog();
-                handler.handleRetrofitError(error, true);
-            }
-        });
-    }
-
-    private void renderCitySelectionDropDown(final ArrayList<City> cities) {
-        final Spinner spinnerCity = (Spinner) findViewById(R.id.spinnerCity);
-        ArrayAdapter<City> citySpinnerAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, cities);
-        citySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerCity.setAdapter(citySpinnerAdapter);
-
-        findViewById(R.id.btnStartShopping).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int selectedPosition = spinnerCity.getSelectedItemPosition();
-                if (selectedPosition != Spinner.INVALID_POSITION) {
-                    City city = cities.get(selectedPosition);
-                    if (city.getId() != -1) {
-                        doRegisterDevice(city);
-                    }
-                    Map<String, String> eventAttribs = new HashMap<>();
-                    eventAttribs.put(TrackEventkeys.CITY, city.getName());
-                    trackEvent(TrackingAware.ENTRY_PAGE_START_SHOPPING_BTN_CLICKED, eventAttribs);
-
-                }
-            }
-        });
+        startActivityForResult(homePageIntent, NavigationCodes.GO_TO_HOME);
     }
 
     private void doRegisterDevice(final City city) {
@@ -226,7 +167,12 @@ public class SplashActivity extends BaseActivity implements DynamicScreenAware {
                 new Callback<RegisterDeviceResponse>() {
                     @Override
                     public void success(RegisterDeviceResponse registerDeviceResponse, Response response) {
-                        //hideProgressDialog(); Let it be visible all the time
+                        if (isSuspended()) return;
+                        try {
+                            hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
                         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
                         SharedPreferences.Editor editor = preferences.edit();
 
@@ -241,42 +187,25 @@ public class SplashActivity extends BaseActivity implements DynamicScreenAware {
                         editor.putString(Constants.MEMBER_FULL_NAME_KEY, null);
                         editor.commit();
                         AuthParameters.updateInstance(getCurrentActivity());
-                        loadNavigation();
                     }
 
                     @Override
                     public void failure(RetrofitError error) {
-                        hideProgressDialog();
+                        if (isSuspended()) return;
+                        try {
+                            hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
                         handler.handleRetrofitError(error, true);
                     }
                 });
     }
 
     @Override
-    public void showProgressDialog(String msg) {
-        if (!mShowCitySelectionDropDown) return;
-        findViewById(R.id.layoutProgress).setVisibility(View.VISIBLE);
-        findViewById(R.id.layoutHomeHeader).setVisibility(View.GONE);
-        findViewById(R.id.layoutHomeFooter).setVisibility(View.GONE);
-    }
-
-    @Override
-    public void hideProgressDialog() {
-        if (!mShowCitySelectionDropDown) return;
-        findViewById(R.id.layoutProgress).setVisibility(View.GONE);
-        findViewById(R.id.layoutHomeHeader).setVisibility(View.VISIBLE);
-        findViewById(R.id.layoutHomeFooter).setVisibility(View.VISIBLE);
-    }
-
-    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         setSuspended(false);
-        if (data != null && resultCode == Constants.FORCE_REGISTER_CODE) {
-            boolean forceRegisterDevice = data.getBooleanExtra(Constants.FORCE_REGISTER_DEVICE, false);
-            if (forceRegisterDevice) {
-                loadCities();
-            }
-        } else if (resultCode == NavigationCodes.GO_TO_HOME) {
+        if (resultCode == NavigationCodes.GO_TO_HOME || resultCode == NavigationCodes.CITY_CHANGED) {
             removePendingGoToHome();
             if (data != null && data.getBooleanExtra(Constants.RELOAD_APP, false)) {
                 loadNavigation();
@@ -286,6 +215,38 @@ public class SplashActivity extends BaseActivity implements DynamicScreenAware {
         } else {
             finish();
         }
+    }
+
+    @Override
+    public void showProgressDialog(String msg) {
+        if (findViewById(R.id.progressBar) == null) {
+            super.showProgressDialog(msg);
+        }
+    }
+
+    @Override
+    public void hideProgressDialog() {
+        if (findViewById(R.id.progressBar) == null) {
+            super.hideProgressDialog();
+        }
+    }
+
+    public void onLandingPageButtonClicked(View view) {
+        switch (view.getId()) {
+            case R.id.btnLogin:
+                launchLogin(TrackEventkeys.NAVIGATION_CTX_LANDING_PAGE);
+                break;
+            case R.id.btnRegister:
+                break;
+            case R.id.btnSkip:
+                showChangeCity();
+                break;
+        }
+    }
+
+    private void showChangeCity() {
+        Intent intent = new Intent(this, ChangeCityActivity.class);
+        startActivityForResult(intent, NavigationCodes.CITY_CHANGED);
     }
 
     @Override

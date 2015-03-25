@@ -241,7 +241,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         }
     }
 
-    protected void showNoProductsFoundView(LinearLayout contentView){
+    protected void showNoProductsFoundView(LinearLayout contentView) {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View emptyPageView = inflater.inflate(R.layout.uiv3_empty_data_text, contentView, false);
         ImageView imgEmptyPage = (ImageView) emptyPageView.findViewById(R.id.imgEmptyPage);
@@ -255,7 +255,8 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         btnBlankPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((BaseActivity)getActivity()).goToHome(false);
+                if (getCurrentActivity() == null) return;
+                getCurrentActivity().goToHome(false);
             }
         });
         contentView.addView(emptyPageView);

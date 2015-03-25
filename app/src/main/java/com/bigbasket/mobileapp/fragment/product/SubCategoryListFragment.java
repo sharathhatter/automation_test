@@ -168,7 +168,7 @@ public class SubCategoryListFragment extends BaseSectionFragment {
         SubCategoryListAdapter subCategoryListAdapter = new SubCategoryListAdapter<>(this, categoryArrayList, getActivity());
         subCategoryExpandableView.setAdapter(subCategoryListAdapter);
 
-        subCategoryExpandableView.setOnGroupClickListener(  new ExpandableListView.OnGroupClickListener() {
+        subCategoryExpandableView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
                 if (categoryArrayList.get(groupPosition).getCategory() != null &&
@@ -209,7 +209,7 @@ public class SubCategoryListFragment extends BaseSectionFragment {
 
     @Override
     public String getTitle() {
-        return  !TextUtils.isEmpty(topCatName) ? topCatName : "Browse by Category";
+        return !TextUtils.isEmpty(topCatName) ? topCatName : "Browse by Category";
     }
 
     @NonNull

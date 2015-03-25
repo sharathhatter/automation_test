@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.activity.account.uiv3;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
@@ -16,6 +17,7 @@ public abstract class FacebookAndGPlusSigninBaseActivity extends PlusBaseActivit
     private Session.StatusCallback mFacebookSessionCallback;
 
     public void initializeFacebookLogin(LoginButton btnFBLogin) {
+        if (mFacebookSessionCallback != null || mFacebookUiLifeCycleHelper != null) return;
         btnFBLogin.setReadPermissions(Arrays.asList("public_profile", "email"));
 
         mFacebookSessionCallback = new Session.StatusCallback() {
@@ -31,22 +33,20 @@ public abstract class FacebookAndGPlusSigninBaseActivity extends PlusBaseActivit
     private void onFacebookSessionStateChanged(Session session, SessionState sessionState,
                                                Exception exception) {
         if (exception != null) {
-            showToast(exception.getMessage());
             return;
         }
 
+        AuthParameters authParameters = AuthParameters.getInstance(this);
         if (session.isOpened()) {
-            if (!isInLogoutMode()) {
+            if (authParameters.isAuthTokenEmpty()) {
                 onFacebookSignIn(session);
             }
         } else if (session.isClosed()) {
-            if (isInLogoutMode()) {
+            if (!authParameters.isAuthTokenEmpty()) {
                 onFacebookSignOut();
             }
         }
     }
-
-    public abstract boolean isInLogoutMode();
 
     public abstract void onFacebookSignIn(Session facebookSession);
 
@@ -90,7 +90,7 @@ public abstract class FacebookAndGPlusSigninBaseActivity extends PlusBaseActivit
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         if (mFacebookUiLifeCycleHelper != null) {
             mFacebookUiLifeCycleHelper.onSaveInstanceState(outState);

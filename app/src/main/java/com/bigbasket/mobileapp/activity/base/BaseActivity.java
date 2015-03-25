@@ -10,13 +10,19 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBarActivity;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -26,18 +32,20 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
+import com.bigbasket.mobileapp.activity.account.uiv3.SignupActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.AgeValidationActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.BasketValidationActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.CheckoutQCActivity;
+import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 import com.bigbasket.mobileapp.adapter.order.PrescriptionImageAdapter;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
-import com.bigbasket.mobileapp.handler.AnalyticsIdentifierKeys;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
@@ -45,27 +53,26 @@ import com.bigbasket.mobileapp.interfaces.COMarketPlaceAware;
 import com.bigbasket.mobileapp.interfaces.COReserveQuantityCheckAware;
 import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
+import com.bigbasket.mobileapp.interfaces.EmailAddressAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
-import com.bigbasket.mobileapp.model.CitySpecificAppSettings;
-import com.bigbasket.mobileapp.model.SectionManager;
-import com.bigbasket.mobileapp.model.account.SocialAccount;
 import com.bigbasket.mobileapp.model.order.COReserveQuantity;
 import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.task.COReserveQuantityCheckTask;
 import com.bigbasket.mobileapp.task.UploadImageService;
+import com.bigbasket.mobileapp.task.uiv3.LoadEmailAddressTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.FontHolder;
+import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
 import com.demach.konotor.Konotor;
-import com.google.gson.Gson;
 import com.moe.pushlibrary.MoEHelper;
 
 import org.json.JSONException;
@@ -77,12 +84,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
 public abstract class BaseActivity extends ActionBarActivity implements COMarketPlaceAware,
         COReserveQuantityCheckAware, CancelableAware, ProgressIndicationAware, ActivityAware,
-        ConnectivityAware, TrackingAware, ApiErrorAware {
+        ConnectivityAware, TrackingAware, ApiErrorAware, EmailAddressAware {
 
     public static Typeface faceRupee;
     public static Typeface faceRobotoRegular;
@@ -417,7 +425,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         isActivitySuspended = false;
-        if (resultCode == NavigationCodes.GO_TO_HOME) {
+        if (resultCode == NavigationCodes.GO_TO_HOME || resultCode == NavigationCodes.CITY_CHANGED) {
             boolean reloadApp = data != null && data.getBooleanExtra(Constants.RELOAD_APP, false);
             goToHome(reloadApp);
         } else if (resultCode == NavigationCodes.GO_TO_SLOT_SELECTION) {
@@ -575,73 +583,6 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         editor.commit();
     }
 
-    public void onLogoutRequested() {
-        if (isSocialLogin()) {
-            Intent intent = new Intent(getCurrentActivity(), SignInActivity.class);
-            intent.putExtra(Constants.SOCIAL_LOGOUT, true);
-            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-        } else {
-            doLogout();
-        }
-    }
-
-    public boolean isSocialLogin() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
-        return preferences.contains(Constants.SOCIAL_ACCOUNT_TYPE)
-                && SocialAccount.getSocialLoginTypes().contains(preferences.getString(Constants.SOCIAL_ACCOUNT_TYPE, ""));
-    }
-
-    public void doLogout() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.remove(Constants.FIRST_NAME);
-        editor.remove(Constants.BBTOKEN_KEY);
-        editor.remove(Constants.OLD_BBTOKEN_KEY);
-        editor.remove(Constants.MID_KEY);
-        editor.remove(Constants.MEMBER_FULL_NAME_KEY);
-        editor.remove(Constants.MEMBER_EMAIL_KEY);
-        editor.remove(Constants.SOCIAL_ACCOUNT_TYPE);
-        editor.commit();
-        AuthParameters.updateInstance(getCurrentActivity());
-
-        String analyticsAdditionalAttrsJson = preferences.getString(Constants.ANALYTICS_ADDITIONAL_ATTRS, null);
-        editor.remove(Constants.ANALYTICS_ADDITIONAL_ATTRS);
-
-        LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_ID, null);
-        LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_EMAIL, null);
-        LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_NAME, null);
-        LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_MOBILE, null);
-        LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_HUB, null);
-        LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_REGISTERED_ON, null);
-        LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_BDAY, null);
-        LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_GENDER, null);
-        LocalyticsWrapper.setIdentifier(AnalyticsIdentifierKeys.CUSTOMER_CITY, null);
-
-        if (!TextUtils.isEmpty(analyticsAdditionalAttrsJson)) {
-            Gson gson = new Gson();
-            HashMap<String, Object> additionalAttrMap = new HashMap<>();
-            additionalAttrMap = (HashMap<String, Object>) gson.fromJson(analyticsAdditionalAttrsJson, additionalAttrMap.getClass());
-            if (additionalAttrMap != null) {
-                for (Map.Entry<String, Object> entry : additionalAttrMap.entrySet()) {
-                    LocalyticsWrapper.setIdentifier(entry.getKey(), null);
-                }
-            }
-        }
-        goToHome(true);
-    }
-
-    public void onLoginSuccess() {
-        CitySpecificAppSettings.clearInstance(getCurrentActivity());
-        SectionManager.clearAllSectionData(getCurrentActivity());
-        String deepLink = getIntent().getStringExtra(Constants.DEEP_LINK);
-        if (!TextUtils.isEmpty(deepLink)) {
-            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
-            editor.putString(Constants.DEEP_LINK, deepLink);
-            editor.commit();
-        }
-        goToHome(true);
-    }
-
     public abstract void onChangeTitle(String title);
 
     public void reportFormInputFieldError(EditText editText, String errMsg) {
@@ -747,5 +688,74 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     public boolean isPendingReloadApp() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
         return preferences.getBoolean(Constants.RELOAD_APP, false);
+    }
+
+    protected void populateAutoComplete(AutoCompleteTextView emailView) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            // Use ContactsContract.Profile (API 14+)
+            getLoaderManager().initLoader(0, null, new LoadEmailAddressTask<>(getCurrentActivity(), emailView).new ContactsLoader());
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+            // Use AccountManager (API 8+)
+            new LoadEmailAddressTask<>(getCurrentActivity(), emailView).new SetupEmailAutoCompleteTask().execute(null, null);
+        }
+    }
+
+    public void addEmailsToAutoComplete(List<String> emailAddressCollection, AutoCompleteTextView emailView) {
+        //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
+        int layout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2 ?
+                android.R.layout.simple_dropdown_item_1line : android.R.layout.simple_list_item_1;
+        ArrayAdapter<String> adapter =
+                new ArrayAdapter<>(getCurrentActivity(), layout, emailAddressCollection);
+
+        emailView.setAdapter(adapter);
+    }
+
+    public void togglePasswordView(EditText passwordEditText, boolean show) {
+        if (!show) {
+            passwordEditText.setTransformationMethod(PasswordTransformationMethod.getInstance());
+            logShowPasswordEnabled(TrackEventkeys.YES, TrackEventkeys.NAVIGATION_CTX_LOGIN_PAGE);
+        } else {
+            passwordEditText.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+            logShowPasswordEnabled(TrackEventkeys.NO, TrackEventkeys.NAVIGATION_CTX_LOGIN_PAGE);
+        }
+    }
+
+    private void logShowPasswordEnabled(String enabled, String navigationCtx) {
+        Map<String, String> eventAttribs = new HashMap<>();
+        eventAttribs.put(TrackEventkeys.ENABLED, enabled);
+        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, navigationCtx);
+        trackEvent(TrackingAware.SHOW_PASSWORD_ENABLED, eventAttribs);
+    }
+
+    public void setTermsAndCondition(TextView txtVw) {
+        txtVw.setTypeface(faceRobotoRegular);
+        SpannableString spannableString = new SpannableString(txtVw.getText());
+        spannableString.setSpan(new UnderlineSpan(), 0, spannableString.length(),
+                Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+        txtVw.setText(spannableString);
+        txtVw.setClickable(true);
+        txtVw.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent flatPageWebviewActivity = new Intent(getCurrentActivity(), FlatPageWebViewActivity.class);
+                flatPageWebviewActivity.putExtra(Constants.WEBVIEW_URL, MobileApiUrl.DOMAIN + "terms-and-conditions/");
+                flatPageWebviewActivity.putExtra(Constants.WEBVIEW_TITLE, getString(R.string.termsAndCondHeading));
+                startActivityForResult(flatPageWebviewActivity, NavigationCodes.GO_TO_HOME);
+            }
+        });
+    }
+
+
+    public void launchLogin(String navigationCtx) {
+        Intent intent = new Intent(this, SignInActivity.class);
+        intent.putExtra(TrackEventkeys.NAVIGATION_CTX, navigationCtx);
+        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+    }
+
+    public void launchRegistrationPage() {
+        trackEvent(TrackingAware.NEW_USER_REGISTER_CLICKED, null);
+        Intent intent = new Intent(this, SignupActivity.class);
+        intent.putExtra(Constants.DEEP_LINK, getIntent().getStringExtra(Constants.DEEP_LINK));
+        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 }

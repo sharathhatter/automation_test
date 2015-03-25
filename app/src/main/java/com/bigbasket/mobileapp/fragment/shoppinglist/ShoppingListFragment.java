@@ -20,7 +20,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
@@ -90,7 +89,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
         ListView shoppingNameListView = (ListView) base.findViewById(R.id.fabListView);
         RelativeLayout noDeliveryAddLayout = (RelativeLayout) base.findViewById(R.id.noDeliveryAddLayout);
 
-        if(mShoppingListNames !=null && mShoppingListNames.size()>0){
+        if (mShoppingListNames != null && mShoppingListNames.size() > 0) {
             noDeliveryAddLayout.setVisibility(View.GONE);
             shoppingNameListView.setVisibility(View.VISIBLE);
             ShoppingListAdapter shoppingListAdapter = new ShoppingListAdapter(mShoppingListNames);
@@ -104,7 +103,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
                 }
             });
 
-        }else {
+        } else {
             noDeliveryAddLayout.setVisibility(View.VISIBLE);
             shoppingNameListView.setVisibility(View.GONE);
             showNoShoppingListView(base);
@@ -124,7 +123,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
         contentView.addView(base);
     }
 
-    private void showNoShoppingListView(View base){
+    private void showNoShoppingListView(View base) {
         ImageView imgEmptyPage = (ImageView) base.findViewById(R.id.imgEmptyPage);
         imgEmptyPage.setImageResource(R.drawable.empty_shopping_list);
 

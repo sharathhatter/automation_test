@@ -1,65 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layoutLoginInput"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:stretchColumns="1"
-    android:id="@+id/layoutLoginInput">
+    android:orientation="vertical">
 
-    <TableRow
+    <AutoCompleteTextView
+        android:id="@+id/emailInput"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:ems="10"
+        android:hint="@string/email"
+        android:imeOptions="actionNext"
+        android:inputType="textEmailAddress"
+        android:paddingLeft="@dimen/padding_normal"
+        android:singleLine="true"
+        android:textColor="@color/uiv3_primary_text_color"
+        android:textSize="@dimen/secondary_text_size" />
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginBottom="@dimen/margin_small"
-            android:contentDescription="@string/email"
-            android:src="@drawable/ic_mail_grey600_24dp" />
-
-        <AutoCompleteTextView
-            android:id="@+id/emailInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/margin_normal"
-            android:ems="10"
-            android:hint="@string/email"
-            android:imeOptions="actionNext"
-            android:inputType="textEmailAddress"
-            android:paddingLeft="@dimen/padding_normal"
-            android:singleLine="true"
-            android:textColor="@color/uiv3_primary_text_color"
-            android:textSize="@dimen/secondary_text_size" />
-    </TableRow>
-
-    <TableRow
+    <EditText
+        android:id="@+id/editTextPasswd"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_marginTop="@dimen/margin_normal"
+        android:ems="10"
+        android:hint="@string/password"
+        android:imeActionId="@+id/login"
+        android:imeActionLabel="@string/action_sign_in_short"
+        android:imeOptions="actionUnspecified"
+        android:inputType="textPassword"
+        android:paddingLeft="@dimen/padding_normal"
+        android:singleLine="true"
+        android:textColor="@color/uiv3_primary_text_color"
+        android:textSize="@dimen/secondary_text_size" />
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginBottom="@dimen/margin_small"
-            android:contentDescription="@string/password"
-            android:src="@drawable/ic_lock_grey600_24dp" />
-
-        <EditText
-            android:id="@+id/editTextPasswd"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/margin_normal"
-            android:layout_marginTop="@dimen/margin_normal"
-            android:ems="10"
-            android:hint="@string/password"
-            android:imeActionId="@+id/login"
-            android:imeActionLabel="@string/action_sign_in_short"
-            android:imeOptions="actionUnspecified"
-            android:inputType="textPassword"
-            android:paddingLeft="@dimen/padding_normal"
-            android:singleLine="true"
-            android:textColor="@color/uiv3_primary_text_color"
-            android:textSize="@dimen/secondary_text_size" />
-    </TableRow>
-
-</TableLayout>
+</LinearLayout>

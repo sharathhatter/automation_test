@@ -122,7 +122,7 @@ public class ShoppingListSummaryFragment extends BaseFragment {
         });
     }
 
-    private void showNoShoppingListView(LinearLayout contentView){
+    private void showNoShoppingListView(LinearLayout contentView) {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View base = inflater.inflate(R.layout.uiv3_empty_data_text, contentView, false);
         ImageView imgEmptyPage = (ImageView) base.findViewById(R.id.imgEmptyPage);
@@ -136,7 +136,8 @@ public class ShoppingListSummaryFragment extends BaseFragment {
         btnBlankPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((BaseActivity)getActivity()).goToHome(false);
+                if (getCurrentActivity() == null) return;
+                getCurrentActivity().goToHome(false);
             }
         });
         contentView.addView(base);

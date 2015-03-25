@@ -35,7 +35,7 @@ public class UpgradeAppDialog extends DialogFragment {
     @Override
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        MaterialDialog.Builder  builder = UIUtil.getMaterialDialogBuilder(getActivity())
+        MaterialDialog.Builder builder = UIUtil.getMaterialDialogBuilder(getActivity())
                 .title(R.string.updateDialogTitle)
                 .content(!TextUtils.isEmpty(upgradeMsg) ? upgradeMsg : getActivity().getString(R.string.appUpdatedMsg))
                 .positiveText(R.string.update)
