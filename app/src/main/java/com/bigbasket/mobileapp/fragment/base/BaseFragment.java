@@ -70,7 +70,6 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         if (getView() != null) {
             getView().setClickable(true);
         }
-        //setTitle();
     }
 
     @Override
@@ -147,11 +146,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     }
 
     public void setTitle() {
-        String title = getTitle();
-        if (!TextUtils.isEmpty(title)) {
-            title = title.toUpperCase();
-        }
-        changeTitle(title);
+        changeTitle(getTitle());
     }
 
     public void setTitle(String title) {

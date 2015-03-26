@@ -463,8 +463,8 @@
     <integer name="grid_portrait_count">1</integer>
 
     <string name="search_activity_launchMode">singleTop</string>
-    <string name="use_facebook">Log in with Facebook</string>
-    <string name="use_google">Log in with Google</string>
+    <string name="use_facebook">Login with Facebook</string>
+    <string name="use_google">Login with Google</string>
     <string name="facebookSignup">Sign up with Facebook</string>
     <string name="googleSignup">Sign up with Google</string>
     <string name="loginPageSignUpText">New user? Signup</string>

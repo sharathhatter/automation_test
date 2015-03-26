@@ -48,6 +48,7 @@
 
         <Button
             android:id="@+id/btnRegister"
+            style="@style/LowerCaseButtonStyle"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2"
@@ -69,6 +70,7 @@
 
         <Button
             android:id="@+id/btnLogin"
+            style="@style/LowerCaseButtonStyle"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2"
@@ -95,10 +97,7 @@
         android:layout_above="@id/layoutLoginButtons"
         android:background="@color/semi_transparent_bkg"
         android:orientation="vertical"
-        android:paddingBottom="@dimen/padding_small"
-        android:paddingLeft="@dimen/padding_normal"
-        android:paddingRight="@dimen/padding_normal"
-        android:paddingTop="@dimen/padding_normal">
+        android:padding="@dimen/padding_normal">
 
         <TextView
             android:id="@+id/lblSignInAndStart"
@@ -115,7 +114,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_normal"
             android:background="@color/gplus_red"
             android:drawableLeft="@drawable/btn_gplus_normal"
             android:minWidth="300dp"
@@ -126,15 +125,16 @@
 
         <Button
             android:id="@+id/btnFBLogin"
+            style="@style/LowerCaseButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_normal"
             android:background="@drawable/com_facebook_button_blue"
             android:drawableLeft="@drawable/com_facebook_inverse_icon"
             android:minWidth="300dp"
             android:paddingBottom="@dimen/com_facebook_loginview_padding_bottom"
-            android:paddingLeft="@dimen/com_facebook_loginview_padding_left"
+            android:paddingLeft="@dimen/com_facebook_loginview_padding_bottom"
             android:paddingRight="@dimen/com_facebook_loginview_padding_right"
             android:paddingTop="@dimen/com_facebook_loginview_padding_top"
             android:text="@string/use_facebook"

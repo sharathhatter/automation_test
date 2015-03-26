@@ -125,7 +125,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         mNavRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         handler = new BigBasketMessageHandler<>(this);
-        mTitle = mDrawerTitle = getTitle().toString().toUpperCase();
+        mTitle = mDrawerTitle = getTitle().toString();
 
         Toolbar toolbar = getToolbar();
         setSupportActionBar(toolbar);
@@ -788,12 +788,8 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     public void setTitle(String title) {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            mTitle = title == null ? "" : "  " + title;
-            if (mTitle.length() > 25) {
-                mTitle = mTitle.substring(0, 22);
-                mTitle += "...";
-            }
-            actionBar.setTitle(mTitle.toUpperCase());
+            mTitle = title == null ? "" : title;
+            actionBar.setTitle(mTitle);
         }
     }
 
