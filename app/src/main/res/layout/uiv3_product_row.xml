@@ -180,9 +180,12 @@
             android:layout_alignParentRight="true"
             android:orientation="vertical">
 
+            <!-- make sure that both layout must have same height so that user will not feel
+            Blip-->
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingTop="@dimen/margin_mini"
                 android:orientation="horizontal">
 
                 <TextView
@@ -191,6 +194,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:paddingBottom="@dimen/padding_mini"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/large_text_size"
                     android:paddingTop="@dimen/padding_mini"
                     android:text="@string/minus" />
 
@@ -216,12 +221,14 @@
                     android:layout_height="match_parent"
                     android:paddingBottom="@dimen/padding_mini"
                     android:paddingTop="@dimen/padding_mini"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/heading_2_text_size"
                     android:text="@string/plus" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_gravity="right"
                 android:orientation="horizontal">
 

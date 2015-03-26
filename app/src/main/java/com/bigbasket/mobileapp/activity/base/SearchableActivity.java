@@ -4,9 +4,11 @@ import android.app.SearchManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.speech.RecognizerIntent;
 import android.support.v7.widget.SearchView;
@@ -135,6 +137,13 @@ public class SearchableActivity extends BackButtonActivity implements SearchView
         finish();
     }
 
+    private String[] getTopSearches(){
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
+        String topSearchCommaSeparatedString = preferences.getString(Constants.TOP_SEARCHES, null);
+        if(topSearchCommaSeparatedString ==null) return null;
+        return topSearchCommaSeparatedString.split(",");
+    }
+
     private Cursor populateCursorList() {
         MatrixCursor matrixCursor = new MatrixCursor(new String[]{BaseColumns._ID, SearchManager.SUGGEST_COLUMN_TEXT_1,
                 SearchManager.SUGGEST_COLUMN_TEXT_2, SearchManager.SUGGEST_COLUMN_INTENT_EXTRA_DATA,
@@ -156,6 +165,16 @@ public class SearchableActivity extends BackButtonActivity implements SearchView
                             mostSearchedItem.getUrl(), null, "SUGGESTION"});
             }
         }
+
+        String[] topSearchArrayString = getTopSearches();
+        if (topSearchArrayString != null && topSearchArrayString.length > 0) {
+            int i = 0;
+            matrixCursor.addRow(new String[]{String.valueOf(i++), "POPULAR SEARCHES", null, null, null});
+            for (String term : topSearchArrayString)
+                matrixCursor.addRow(new String[]{String.valueOf(i++), term,
+                        null, null, "POPULAR SEARCHES"});
+        }
+
         return matrixCursor;
     }
 

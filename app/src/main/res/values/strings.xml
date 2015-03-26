@@ -542,7 +542,7 @@
     <string name="voucherWasRemoved">eVoucher was successfully removed</string>
     <string name="removeVoucherHeading">Remove voucher</string>
     <string name="removeVoucherDesc">Are you sure that you want to remove this voucher?</string>
-    <string name="minus">&#45;</string>
+    <string name="minus">&#x2013;</string>
     <string name="plus">&#43;</string>
     <string name="app_slogan">India\'s largest Online Grocery Store</string>
     <string name="startShopping">Start Shopping</string>
