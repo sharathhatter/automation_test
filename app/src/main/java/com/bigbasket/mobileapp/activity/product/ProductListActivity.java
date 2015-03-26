@@ -6,8 +6,11 @@ import android.support.v4.app.FragmentManager;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ExpandableListView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -83,21 +86,38 @@ public class ProductListActivity extends BBActivity implements FilterDisplayAwar
         Button btnClearFilter = (Button) findViewById(R.id.btnClearFilters);
         btnClearFilter.setTypeface(faceRobotoRegular);
         ExpandableListView listFilter = (ExpandableListView) findViewById(R.id.listFilter);
+        LinearLayout layoutFilterButtons = (LinearLayout) findViewById(R.id.layoutFilterButtons);
+
 
         if (isFilteredOnEmpty()) {
             btnClearFilter.setVisibility(View.GONE);
+            btnApplyFilter.setBackgroundResource(R.drawable.ribbon_btn);
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            params.setMargins(0,0,0,0);
+            params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            layoutFilterButtons.setLayoutParams(params);
         } else {
             btnClearFilter.setVisibility(View.VISIBLE);
+            btnApplyFilter.setBackgroundResource(R.drawable.primary_btn_bkg);
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            params.setMargins((int)getResources().getDimension(R.dimen.padding_mini),
+                    (int)getResources().getDimension(R.dimen.padding_small),
+                    (int)getResources().getDimension(R.dimen.padding_mini),
+                    (int)getResources().getDimension(R.dimen.padding_small));
+            params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            layoutFilterButtons.setLayoutParams(params);
         }
 
         if (mFilterOptionItems == null || mFilterOptionItems.size() == 0) {
-//            LayoutInflater inflater = getLayoutInflater(); //todo fix this
-//            View emptyView = inflater.inflate(R.layout.uiv3_empty_data_text, listFilter, false);
-//            TextView txtEmptyDataMsg = (TextView) emptyView.findViewById(R.id.txtEmptyDataMsg);
-//            txtEmptyDataMsg.setText("Nothing to filter!");
-//            txtEmptyDataMsg.setTextColor(getResources().getColor(R.color.white));
-//            listFilter.setEmptyView(emptyView);
-//            btnApplyFilter.setVisibility(View.GONE);
+            LayoutInflater inflater = getLayoutInflater();
+            View emptyView = inflater.inflate(R.layout.uiv3_empty_data_text, listFilter, false);
+            TextView txtEmptyDataMsg = (TextView) emptyView.findViewById(R.id.txtEmptyMsg1);
+            txtEmptyDataMsg.setText("Nothing to filter!");
+            txtEmptyDataMsg.setTextColor(getResources().getColor(R.color.white));
+            listFilter.setEmptyView(emptyView);
+            btnApplyFilter.setVisibility(View.GONE);
         } else {
             btnApplyFilter.setVisibility(View.VISIBLE);
             FilterByAdapter filterByAdapter = new FilterByAdapter(mFilterOptionItems, mFilteredOn,
@@ -121,7 +141,7 @@ public class ProductListActivity extends BBActivity implements FilterDisplayAwar
         closeFilterDrawer();
 
         ProductListAwareFragment productListAwareFragment = getProductListAwareFragment();
-        if (productListAwareFragment != null) {
+        if (productListAwareFragment != null && mFilteredOn.size()>0) {
             productListAwareFragment.onFilterApplied(mFilteredOn);
         }
     }
