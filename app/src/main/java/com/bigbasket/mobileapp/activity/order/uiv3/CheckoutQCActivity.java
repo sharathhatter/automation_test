@@ -377,6 +377,7 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        setSuspended(false);
         if (resultCode == NavigationCodes.GO_TO_QC) {
             mKeep = true;
             doQc();

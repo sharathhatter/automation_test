@@ -190,9 +190,6 @@ public class Constants {
     public static final String TOP_CATEGORY_NAME = "top_category_name";
     public static final String TOP_CATEGORY_VERSION = "top_category_version";
 
-    public static final String FORCE_REGISTER_DEVICE = "forceRegisterDevice";
-    public static final int FORCE_REGISTER_CODE = 1001;
-
     public static final String OLD_VISITOR_ID_KEY = "vis_id";
     public static final String OLD_BBTOKEN_KEY = "bbtoken";
     public static final String VISITOR_ID_KEY = "bb_visitor_id";
@@ -688,4 +685,5 @@ public class Constants {
     public static final int IN_BASKET_COLOR = 0xFFF9EDDD; // #F9EDDD
     public static final String IS_PENDING_GO_TO_HOME = "isPendingGoToHome";
     public static final String RELOAD_APP = "reloadApp";
+    public static final String HAS_USER_CHOSEN_CITY = "has_user_chosen_city";
 }

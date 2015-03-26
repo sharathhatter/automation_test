@@ -1,88 +1,87 @@
 package com.bigbasket.mobileapp.activity.account.uiv3;
 
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.uiv3.BaseSignInSignupActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.interfaces.CityListDisplayAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.model.account.City;
+import com.bigbasket.mobileapp.task.uiv3.GetCitiesTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.bigbasket.mobileapp.view.uiv3.CityDropDownAdapter;
 import com.google.gson.JsonObject;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
 
-public class SignupActivity extends BaseSignInSignupActivity {
+public class SignupActivity extends BackButtonActivity implements CityListDisplayAware {
 
     // UI References
-    private View mSignUpForm;
-    private ProgressBar mSignUpProgressBar;
+    private ArrayList<City> mCities;
     private EditText mPasswordView;
     private EditText mFirstNameView;
     private EditText mLastNameView;
-    private EditText mRefCodeView;
+    //private EditText mRefCodeView;
+    private Spinner mCitySpinner;
     private EditText mMobileNumView;
-    private CheckBox mChkAcceptTerms;
-    private CheckBox mChkReceivePromos;
+    private AutoCompleteTextView mEmailView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        new GetCitiesTask<>(this).startTask();
+    }
+
+    @Override
+    public void onReadyToDisplayCity(ArrayList<City> cities) {
+        mCities = cities;
+
         FrameLayout contentView = (FrameLayout) findViewById(R.id.content_frame);
         LayoutInflater inflater = getLayoutInflater();
 
         View base = inflater.inflate(R.layout.uiv3_signup, contentView, false);
         setTitle(getString(R.string.signUp));
         contentView.addView(base);
-        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(this);
-        String currentCityName = prefer.getString(Constants.CITY, "");
 
-        mSignUpForm = base.findViewById(R.id.signup_form);
-        mSignUpProgressBar = (ProgressBar) base.findViewById(R.id.signup_progress);
         mPasswordView = (EditText) base.findViewById(R.id.editTextPasswd);
         mFirstNameView = (EditText) base.findViewById(R.id.editTextFirstName);
         mLastNameView = (EditText) base.findViewById(R.id.editTextLastName);
         mMobileNumView = (EditText) base.findViewById(R.id.editTextMobileNumber);
-        mRefCodeView = (EditText) base.findViewById(R.id.editTextRefCode);
-        mChkAcceptTerms = (CheckBox) base.findViewById(R.id.chkAcceptTerms);
-        mChkAcceptTerms.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                logTermAndConditionClicked(TrackingAware.REGISTRATION_PAGE_TC_CLICKED, null, isChecked);
-            }
-        });
-        TextView txtViewTermsAndCond = (TextView) base.findViewById(R.id.txtViewTermsAndCond);
-        setTermsAndCondition(txtViewTermsAndCond);
-        mChkReceivePromos = (CheckBox) base.findViewById(R.id.chkReceivePromos);
-        mChkReceivePromos.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                logTermAndConditionClicked(TrackingAware.PROMO_MAILER_ENABLED,
-                        TrackEventkeys.NAVIGATION_CTX_REGISTRATION_PAGE, isChecked);
-            }
-        });
-        mEmailView = (AutoCompleteTextView) base.findViewById(R.id.editTextEmailSignup);
+//        mRefCodeView = (EditText) base.findViewById(R.id.editTextRefCode);
+        mEmailView = (AutoCompleteTextView) base.findViewById(R.id.emailInput);
 
-        ((EditText) base.findViewById(R.id.editTextCity)).setText(currentCityName);
+        Button btnSignUp = (Button) base.findViewById(R.id.btnRegister);
+        btnSignUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onRegisterButtonClicked();
+            }
+        });
+
+        TextView txtLogin = (TextView) base.findViewById(R.id.txtLogin);
+        txtLogin.setTypeface(faceRobotoRegular);
+        txtLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launchLogin(TrackEventkeys.NAVIGATION_CTX_SIGNUP_PAGE);
+            }
+        });
 
         CheckBox chkShowPassword = (CheckBox) base.findViewById(R.id.chkShowPasswd);
         chkShowPassword.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -92,19 +91,20 @@ public class SignupActivity extends BaseSignInSignupActivity {
             }
         });
 
-        populateAutoComplete();
+        mCitySpinner = (Spinner) base.findViewById(R.id.spinnerCity);
+        CityDropDownAdapter<City> cityDropDownAdapter =
+                new CityDropDownAdapter<>(this, android.R.layout.simple_spinner_item, cities);
+        cityDropDownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mCitySpinner.setAdapter(cityDropDownAdapter);
+
+        setUpSocialButtons((Button) base.findViewById(R.id.plus_sign_in_button),
+                (Button) base.findViewById(R.id.btnFBLogin));
+
+        populateAutoComplete(mEmailView);
         trackEvent(TrackingAware.REGISTRATION_PAGE_SHOWN, null);
     }
 
-    private void logTermAndConditionClicked(String eventName, String navigationCtx, boolean isChecked) {
-        Map<String, String> eventAttribs = new HashMap<>();
-        if (navigationCtx != null)
-            eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, navigationCtx);
-        eventAttribs.put(TrackEventkeys.ENABLED, isChecked ? TrackEventkeys.YES : TrackEventkeys.NO);
-        trackEvent(eventName, eventAttribs);
-    }
-
-    public void OnRegisterButtonClicked(View v) {
+    public void onRegisterButtonClicked() {
         trackEvent(TrackingAware.REGISTER_BTN_CLICK, null);
 
         mEmailView.setError(null);
@@ -112,7 +112,7 @@ public class SignupActivity extends BaseSignInSignupActivity {
         mFirstNameView.setError(null);
         mLastNameView.setError(null);
         mMobileNumView.setError(null);
-        mRefCodeView.setError(null);
+//        mRefCodeView.setError(null);
 
         boolean cancel = false;
         View focusView = null;
@@ -123,7 +123,7 @@ public class SignupActivity extends BaseSignInSignupActivity {
         String firstName = mFirstNameView.getText().toString();
         String lastName = mLastNameView.getText().toString();
         String mobileNumber = mMobileNumView.getText().toString();
-        String refCode = mRefCodeView.getText().toString().trim();
+//        String refCode = mRefCodeView.getText().toString().trim();
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
@@ -178,19 +178,12 @@ public class SignupActivity extends BaseSignInSignupActivity {
             cancel = true;
         }
 
-        // Check is user agreed to terms & conditions
-        if (!mChkAcceptTerms.isChecked()) {
-            showToast(getString(R.string.acceptTermsMsg));
-            focusView = mChkAcceptTerms;
-            cancel = true;
-        }
-
         if (cancel) {
             // There was an error, don't sign-up
             focusView.requestFocus();
         } else {
             showProgress(true);
-            startMemberRegistration(email, password, firstName, lastName, mobileNumber, refCode);
+            startMemberRegistration(email, password, firstName, lastName, mobileNumber, null);
         }
     }
 
@@ -202,12 +195,12 @@ public class SignupActivity extends BaseSignInSignupActivity {
         userDetailsJsonObj.addProperty(Constants.LASTNAME, lastName);
         userDetailsJsonObj.addProperty(Constants.PASSWORD, passwd);
         userDetailsJsonObj.addProperty(Constants.MOBILE_NUMBER, mobileNumber);
-        if (!TextUtils.isEmpty(refCode))
+        userDetailsJsonObj.addProperty(Constants.CITY_ID, mCities.get(mCitySpinner
+                .getSelectedItemPosition()).getId());
+        if (!TextUtils.isEmpty(refCode)) {
             userDetailsJsonObj.addProperty(Constants.REF_CODE, refCode);
-        userDetailsJsonObj.addProperty(Constants.NEWSLETTER_SUBSCRIPTION, mChkReceivePromos.isChecked());
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String cityId = preferences.getString(Constants.CITY_ID, "");
-        userDetailsJsonObj.addProperty(Constants.CITY_ID, cityId);
+        }
+        userDetailsJsonObj.addProperty(Constants.NEWSLETTER_SUBSCRIPTION, true);
 
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         bigBasketApiService.registerMember(userDetailsJsonObj.toString(),
@@ -218,34 +211,10 @@ public class SignupActivity extends BaseSignInSignupActivity {
      * Shows the progress UI and hides the login form.
      */
     public void showProgress(final boolean show) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
-            mSignUpForm.setVisibility(show ? View.GONE : View.VISIBLE);
-            mSignUpForm.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mSignUpForm.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-            });
-
-            mSignUpProgressBar.setVisibility(show ? View.VISIBLE : View.GONE);
-            mSignUpProgressBar.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mSignUpProgressBar.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
+        if (show) {
+            showProgressDialog(getString(R.string.please_wait));
         } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
-            mSignUpProgressBar.setVisibility(show ? View.VISIBLE : View.GONE);
-            mSignUpForm.setVisibility(show ? View.GONE : View.VISIBLE);
+            hideProgressDialog();
         }
     }
 

@@ -106,7 +106,7 @@ public class PromoDetailFragment extends BaseFragment {
                     int status = promoDetailApiResponseContentApiResponse.status;
                     if (status == ApiErrorCodes.PROMO_NOT_EXIST || status == ApiErrorCodes.PROMO_NOT_ACTIVE
                             || status == ApiErrorCodes.INVALID_INPUT) {
-                        showAlertDialogFinish(null,promoDetailApiResponseContentApiResponse.message);
+                        showAlertDialogFinish(null, promoDetailApiResponseContentApiResponse.message);
                     } else if (status == 0) {
                         mPromoDetail = promoDetailApiResponseContentApiResponse.apiResponseContent.promoDetail;
                         if (mPromoDetail != null) {

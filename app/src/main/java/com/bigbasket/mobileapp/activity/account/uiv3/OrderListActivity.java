@@ -20,7 +20,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.OrderDetailActivity;
 import com.bigbasket.mobileapp.adapter.order.OrderListAdapter;
@@ -65,8 +64,8 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
         mOrderType = getIntent().getStringExtra(Constants.ORDER);
         mIsInShopFromPreviousOrderMode = getIntent().getBooleanExtra(Constants.SHOP_FROM_PREVIOUS_ORDER, false);
         setTitle(mIsInShopFromPreviousOrderMode ? getString(R.string.shopFromPreviousOrder) :
-                mOrderType.equals(getString(R.string.active_label)) ?  getString(R.string.active_order_label) :
-        getString(R.string.past_order_title));
+                mOrderType.equals(getString(R.string.active_label)) ? getString(R.string.active_order_label) :
+                        getString(R.string.past_order_title));
         if (savedInstanceState != null) {
             mOrders = savedInstanceState.getParcelableArrayList(Constants.ORDERS);
             if (mOrders != null) {

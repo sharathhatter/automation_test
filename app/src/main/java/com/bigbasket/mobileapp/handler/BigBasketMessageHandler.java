@@ -5,14 +5,11 @@ import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.order.uiv3.AgeValidationActivity;
-import com.bigbasket.mobileapp.activity.order.uiv3.BasketValidationActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.CheckoutQCActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.UploadNewPrescriptionActivity;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
 import com.bigbasket.mobileapp.interfaces.COReserveQuantityCheckAware;
-import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;

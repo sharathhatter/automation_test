@@ -89,7 +89,7 @@ public class SearchUtil {
     }
 
     private static MatrixCursor getMatrixCursorForArray(String[] termsArray, String[] categoriesArray,
-                                                 String[] categoryUrlArray) {
+                                                        String[] categoryUrlArray) {
         MatrixCursor matrixCursor = new MatrixCursor(new String[]{BaseColumns._ID, SearchManager.SUGGEST_COLUMN_TEXT_1,
                 SearchManager.SUGGEST_COLUMN_TEXT_2, SearchManager.SUGGEST_COLUMN_INTENT_EXTRA_DATA,
                 SearchManager.SUGGEST_COLUMN_INTENT_DATA_ID});

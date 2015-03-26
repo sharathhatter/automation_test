@@ -33,8 +33,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.account.uiv3.ChangeCityActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.ShopFromOrderFragment;
-import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
+import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.SearchableActivity;
 import com.bigbasket.mobileapp.activity.product.ProductListActivity;
@@ -43,7 +44,6 @@ import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
 import com.bigbasket.mobileapp.fragment.DynamicScreenFragment;
 import com.bigbasket.mobileapp.fragment.HomeFragment;
 import com.bigbasket.mobileapp.fragment.account.AccountSettingFragment;
-import com.bigbasket.mobileapp.fragment.account.ChangeCityDialogFragment;
 import com.bigbasket.mobileapp.fragment.account.ChangePasswordFragment;
 import com.bigbasket.mobileapp.fragment.account.DoWalletFragment;
 import com.bigbasket.mobileapp.fragment.account.UpdatePinFragment;
@@ -100,7 +100,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class BBActivity extends BaseActivity implements BasketOperationAware,
+public class BBActivity extends SocialLoginActivity implements BasketOperationAware,
         CartInfoAware, HandlerAware, ProductListDialogAware {
 
     private ActionBarDrawerToggle mDrawerToggle;
@@ -504,6 +504,8 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
                 }
                 return true;
             case R.id.action_login:
+                logHomeScreenEvent(TrackingAware.LOGIN_OR_REGISTRATION_CLICKED, TrackEventkeys.NAVIGATION_CTX,
+                        TrackEventkeys.NAVIGATION_CTX_TOPNAV);
                 launchLogin(TrackEventkeys.NAVIGATION_CTX_TOPNAV);
                 return true;
             case R.id.action_view_basket:
@@ -751,15 +753,6 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
         trackEvent(TrackingAware.MY_ACCOUNT_CLICKED, null);
     }
 
-    private void launchLogin(String navigationCtx) {
-        logHomeScreenEvent(TrackingAware.LOGIN_OR_REGISTRATION_CLICKED, TrackEventkeys.NAVIGATION_CTX,
-                navigationCtx);
-        Intent intent = new Intent(this, SignInActivity.class);
-        intent.putExtra(TrackEventkeys.NAVIGATION_CTX, navigationCtx);
-        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-    }
-
-
     private void logHomeScreenEvent(String trackAwareName, String eventKeyName,
                                     String navigationCtx) {
         Map<String, String> eventAttribs = new HashMap<>();
@@ -770,17 +763,13 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
     private void launchChangeCity(String navigationCtx) {
         logHomeScreenEvent(TrackingAware.HOME_CHANGE_CITY, TrackEventkeys.NAVIGATION_CTX,
                 navigationCtx);
-        ChangeCityDialogFragment changeCityDialog = ChangeCityDialogFragment.newInstance();
-        changeCityDialog.show(getSupportFragmentManager(), Constants.CITIES);
+        Intent intent = new Intent(getCurrentActivity(), ChangeCityActivity.class);
+        startActivityForResult(intent, NavigationCodes.CITY_CHANGED);
     }
 
     private void launchLogout(String navigationCtx) {
-        if (isSocialLogin()) {
-            onLogoutRequested();
-        } else {
-            showAlertDialog(getString(R.string.signOut), getString(R.string.signoutConfirmation),
-                    DialogButton.YES, DialogButton.NO, Constants.LOGOUT);
-        }
+        showAlertDialog(getString(R.string.signOut), getString(R.string.signoutConfirmation),
+                DialogButton.YES, DialogButton.NO, Constants.LOGOUT);
         logHomeScreenEvent(TrackingAware.LOG_OUT_ICON_CLICKED, TrackEventkeys.NAVIGATION_CTX,
                 navigationCtx);
     }
@@ -836,8 +825,6 @@ public class BBActivity extends BaseActivity implements BasketOperationAware,
             switch (sourceName) {
                 case Constants.LOGOUT:
                     onLogoutRequested();
-                    this.invalidateOptionsMenu();
-                    addToMainLayout(new HomeFragment(), Constants.HOME);
                     break;
                 default:
                     super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);

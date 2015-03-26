@@ -14,6 +14,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class SectionManager {
@@ -43,7 +44,8 @@ public class SectionManager {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         String storedSectionJson = preferences.getString(preferenceKey, null);
         if (!TextUtils.isEmpty(storedSectionJson)) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss",
+                    Locale.getDefault());
             String createdOn = preferences.getString(preferenceKey + "_time", null);
             if (ignoreStale || !isStale(createdOn, dateFormat)) {
                 return new Gson().fromJson(storedSectionJson, SectionData.class);
@@ -56,7 +58,8 @@ public class SectionManager {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
         String sectionJson = new Gson().toJson(sectionData);
         editor.putString(preferenceKey, sectionJson);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss",
+                Locale.getDefault());
         editor.putString(preferenceKey + "_time", dateFormat.format(new Date()));
         editor.commit();
     }

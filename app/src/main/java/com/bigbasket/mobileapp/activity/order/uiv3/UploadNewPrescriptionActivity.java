@@ -219,6 +219,7 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        setSuspended(false);
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 100 && resultCode == Activity.RESULT_OK) {
         } else if (requestCode == 200 && resultCode == Activity.RESULT_OK) {

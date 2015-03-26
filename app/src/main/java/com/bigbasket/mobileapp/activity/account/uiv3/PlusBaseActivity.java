@@ -5,19 +5,18 @@ import android.content.IntentSender;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.bigbasket.mobileapp.activity.base.uiv3.BaseSignInSignupActivity;
+import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.plus.Plus;
-import com.google.android.gms.plus.PlusClient;
 import com.google.android.gms.plus.model.people.Person;
 
 /**
  * A base class to wrap communication with the Google Play Services PlusClient.
  */
-public abstract class PlusBaseActivity extends BaseSignInSignupActivity
+public abstract class PlusBaseActivity extends BaseActivity
         implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
@@ -39,13 +38,13 @@ public abstract class PlusBaseActivity extends BaseSignInSignupActivity
     // attempt has been made, this is non-null.
     // If this IS null, then the connect method is still running.
     private ConnectionResult mConnectionResult;
+    protected boolean mIsInLogoutMode;
 
     // A flag to track if connection is being established to revoke access
     private boolean mRevokeAccess;
 
-
     /**
-     * Called when the {@link PlusClient} revokes access to this app.
+     * Called when the PlusClient revokes access to this app.
      */
     protected abstract void onPlusClientRevokeAccess();
 
@@ -55,12 +54,12 @@ public abstract class PlusBaseActivity extends BaseSignInSignupActivity
     protected abstract void onPlusClientSignIn(String email, Person person);
 
     /**
-     * Called when the {@link PlusClient} is disconnected.
+     * Called when the PlusClient is disconnected.
      */
     protected abstract void onPlusClientSignOut();
 
     /**
-     * Called when the {@link PlusClient} is blocking the UI.  If you have a progress bar widget,
+     * Called when the PlusClient is blocking the UI.  If you have a progress bar widget,
      * this tells you when to show or hide it.
      */
     protected abstract void onPlusClientBlockingUI(boolean show);
@@ -109,18 +108,18 @@ public abstract class PlusBaseActivity extends BaseSignInSignupActivity
     }
 
     /**
-     * Connect the {@link PlusClient} only if a connection isn't already in progress.  This will
+     * Connect the PlusClient only if a connection isn't already in progress.  This will
      * call back to {@link #onConnected(android.os.Bundle)} or
      * {@link #onConnectionFailed(com.google.android.gms.common.ConnectionResult)}.
      */
-    private void initiatePlusClientConnect() {
+    public void initiatePlusClientConnect() {
         if (mGoogleApiClient == null) return;
         if (!mGoogleApiClient.isConnected() && !mGoogleApiClient.isConnecting()) {
             mGoogleApiClient.connect();
         }
     }
 
-    private void initiatePlusClientDisconnect() {
+    public void initiatePlusClientDisconnect() {
         if (mGoogleApiClient == null) return;
         if (mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
@@ -180,7 +179,6 @@ public abstract class PlusBaseActivity extends BaseSignInSignupActivity
     @Override
     protected void onStart() {
         super.onStart();
-        initiatePlusClientConnect();
     }
 
     @Override
@@ -228,6 +226,7 @@ public abstract class PlusBaseActivity extends BaseSignInSignupActivity
      */
     @Override
     protected void onActivityResult(int requestCode, int responseCode, Intent intent) {
+        setSuspended(false);
         if (mGoogleApiClient != null) {
             updatePlusConnectedButtonState();
         }

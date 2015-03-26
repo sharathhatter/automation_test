@@ -50,7 +50,7 @@ public class AppNotSupportedDialog extends DialogFragment {
         if (!TextUtils.isEmpty(upgradeMsg)) {
             forceUpdateMsg += getString(R.string.whyUpdate) + " " + upgradeMsg;
         }
-        MaterialDialog.Builder builder =  UIUtil.getMaterialDialogBuilder(getActivity())
+        MaterialDialog.Builder builder = UIUtil.getMaterialDialogBuilder(getActivity())
                 .title(R.string.updateDialogTitle)
                 .content(forceUpdateMsg)
                 .positiveText(R.string.update)
@@ -72,9 +72,9 @@ public class AppNotSupportedDialog extends DialogFragment {
                     }
                 });
 
-            MaterialDialog alertDialog = builder.build();
-            alertDialog.setCancelable(false);
-            alertDialog.setCanceledOnTouchOutside(false);
-            return alertDialog;
+        MaterialDialog alertDialog = builder.build();
+        alertDialog.setCancelable(false);
+        alertDialog.setCanceledOnTouchOutside(false);
+        return alertDialog;
     }
 }

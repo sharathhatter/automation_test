@@ -5,7 +5,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
-import android.util.Log;
 
 import com.bigbasket.mobileapp.adapter.db.DatabaseHelper;
 import com.bigbasket.mobileapp.model.product.SubCategoryModel;

@@ -21,7 +21,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.uiv3.BaseSignInSignupActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.model.account.SocialAccount;
@@ -30,9 +30,10 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.google.gson.Gson;
 
-public class SocialLoginConfirmActivity extends BaseSignInSignupActivity {
+public class SocialLoginConfirmActivity extends BackButtonActivity {
 
     private String mLoginType;
+    private AutoCompleteTextView mEmailView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -92,7 +93,7 @@ public class SocialLoginConfirmActivity extends BaseSignInSignupActivity {
         final TextView txtViewTermsAndCond = (TextView) base.findViewById(R.id.txtViewTermsAndCond);
         setTermsAndCondition(txtViewTermsAndCond);
         mEmailView = (AutoCompleteTextView) base.findViewById(R.id.emailInput);
-        populateAutoComplete();
+        populateAutoComplete(mEmailView);
 
         final LinearLayout layoutRefRow = (LinearLayout) base.findViewById(R.id.layoutRefRow);
         final EditText editTextRefCode = (EditText) base.findViewById(R.id.editTextRefCode);
@@ -235,7 +236,6 @@ public class SocialLoginConfirmActivity extends BaseSignInSignupActivity {
                 new LoginApiResponseCallback(socialAccount.getEmail(), null, false, mLoginType, socialAccount, true));
     }
 
-    @Override
     public void showProgress(boolean show) {
         if (show) {
             showProgressDialog(getString(R.string.please_wait));

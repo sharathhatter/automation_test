@@ -1,10 +1,9 @@
 package com.bigbasket.mobileapp.interfaces;
 
+import android.widget.AutoCompleteTextView;
+
 import java.util.List;
 
-/**
- * Created by jugal on 13/1/15.
- */
 public interface EmailAddressAware {
-    public void addEmailsToAutoComplete(List<String> emailAddressCollection);
+    public void addEmailsToAutoComplete(List<String> emailAddressCollection, AutoCompleteTextView emailView);
 }

@@ -25,10 +25,8 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
-import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
-import com.bigbasket.mobileapp.model.order.COReserveQuantity;
 import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.order.MarketPlaceItems;
 import com.bigbasket.mobileapp.model.product.Product;
@@ -50,7 +48,7 @@ public class BasketValidationActivity extends BackButtonActivity {
 
     @Override
     public void onCoMarketPlaceSuccess(MarketPlace marketPlace) {
-        if(marketPlace ==null) return;
+        if (marketPlace == null) return;
         if (marketPlace.isRuleValidationError()) {
             renderBasketValidationErrors(marketPlace);
         } else if (marketPlace.isAgeCheckRequired() || marketPlace.isPharamaPrescriptionNeeded()
@@ -147,7 +145,7 @@ public class BasketValidationActivity extends BackButtonActivity {
 
                 txtItemInBasketAndProductDesc.setText(marketPlaceItems.getItemInCart() + " quantity of " + marketPlaceItems.getDesc());
                 txtItemInBasketAndProductDesc.setTypeface(faceRobotoRegular);
-                txtInBasket.setText(getDecimalAmount(itemTotalVolume) + " " + label +" in ");
+                txtInBasket.setText(getDecimalAmount(itemTotalVolume) + " " + label + " in ");
 //                txtInBasket.setText(getString(R.string.ruleTotal) + " " +
 //                        marketPlace.getMarketPlaceRuleValidators().get(i).getWeightLabel() + ": " +
 //                        getDecimalAmount(itemTotalVolume) + " " + label);

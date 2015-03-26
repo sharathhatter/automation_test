@@ -20,7 +20,6 @@ import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.WalletRule;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.CurrentWalletBalance;
 import com.bigbasket.mobileapp.model.account.WalletDataItem;
@@ -94,18 +93,18 @@ public class DoWalletFragment extends BaseFragment {
         });
     }
 
-    private void renderDeliveryTokenData(WalletRule walletRule, View view){
-        if(walletRule ==null)return;
+    private void renderDeliveryTokenData(WalletRule walletRule, View view) {
+        if (walletRule == null) return;
         LinearLayout layoutDeliveryToken = (LinearLayout) view.findViewById(R.id.layoutDeliveryToken);
         layoutDeliveryToken.setVisibility(View.VISIBLE);
 
         TextView txtTokenMsg = (TextView) view.findViewById(R.id.txtTokenMsg);
 
-        String prefixTokenAmt = walletRule.voucherPerRule>1 ?  walletRule.voucherPerRule +" Free delivery tokens for every"
-                : walletRule.voucherPerRule +" Free delivery token for every";
+        String prefixTokenAmt = walletRule.voucherPerRule > 1 ? walletRule.voucherPerRule + " Free delivery tokens for every"
+                : walletRule.voucherPerRule + " Free delivery token for every";
         prefixTokenAmt += " `";
-        String mrpStrTokenAmt = ((BaseActivity)getActivity()).getDecimalAmount(
-                Double.parseDouble(walletRule.amountPerVoucher+"")) + "/- added to wallet*";
+        String mrpStrTokenAmt = ((BaseActivity) getActivity()).getDecimalAmount(
+                Double.parseDouble(walletRule.amountPerVoucher + "")) + "/- added to wallet*";
         int prefixEndBalLen = prefixTokenAmt.length();
         SpannableString spannableEndingBal = new SpannableString(prefixTokenAmt + mrpStrTokenAmt);
 
@@ -114,10 +113,10 @@ public class DoWalletFragment extends BaseFragment {
         txtTokenMsg.setText(spannableEndingBal);
 
         TextView txtAvailableToken = (TextView) view.findViewById(R.id.txtAvailableToken);
-        txtAvailableToken.setText("Available Delivery Token: " +walletRule.availableDeliveryToken);
+        txtAvailableToken.setText("Available Delivery Token: " + walletRule.availableDeliveryToken);
 
         TextView txtVoucherTc = (TextView) view.findViewById(R.id.txtVoucherTc);
-        if(!TextUtils.isEmpty(walletRule.termAndCondition)) {
+        if (!TextUtils.isEmpty(walletRule.termAndCondition)) {
             txtVoucherTc.setText(walletRule.termAndCondition);
             txtVoucherTc.setVisibility(View.VISIBLE);
         }
@@ -144,7 +143,7 @@ public class DoWalletFragment extends BaseFragment {
         contentView.addView(view);
 
         String prefixBal = "Current Balance `";
-        String mrpStrBal = currentBalance+"";
+        String mrpStrBal = currentBalance + "";
         int prefixBalLen = prefixBal.length();
         SpannableString spannableBal = new SpannableString(prefixBal + " " + mrpStrBal);
         spannableBal.setSpan(new CustomTypefaceSpan("", faceRupee), prefixBalLen - 1,

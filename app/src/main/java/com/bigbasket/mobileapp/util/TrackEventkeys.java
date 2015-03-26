@@ -1,8 +1,5 @@
 package com.bigbasket.mobileapp.util;
 
-/**
- * Created by jugal on 16/12/14.
- */
 public final class TrackEventkeys {
 
     private TrackEventkeys() {
@@ -11,7 +8,8 @@ public final class TrackEventkeys {
     public static final String CITY = "city";
     public static final String NAVIGATION_CTX = "nc";
     public static final String NAVIGATION_CTX_TOPNAV = "topnav";
-    public static final String NAVIGATION_CTX_MENU = "menu";
+    public static final String NAVIGATION_CTX_LANDING_PAGE = "landing_page";
+    public static final String NAVIGATION_CTX_SIGNUP_PAGE = "signup";
     public static final String LOGIN_TYPE_GOOGLE = "Google";
     public static final String LOGIN_TYPE_FACEBOOK = "Facebook"; //todo
     public static final String LOGIN_TYPE_NORMAL = "Normal";
@@ -79,6 +77,7 @@ public final class TrackEventkeys {
 
 
     public static final String START_SCREEN = "Entry Page"; //Done
+    public static final String LANDING_PAGE = "Landing Page"; //Done
     public static final String HOME_SCREEN = "Home Page"; //Done
     public static final String DYNAMIC_SCREEN = "Dynamic Screen"; //Done
     //Dialog
