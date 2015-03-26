@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -93,7 +94,7 @@ public class ProductListActivity extends BBActivity implements FilterDisplayAwar
             btnApplyFilter.setBackgroundResource(R.drawable.ribbon_btn);
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            params.setMargins(0,0,0,0);
+            params.setMargins(0, 0, 0, 0);
             params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
             layoutFilterButtons.setLayoutParams(params);
         } else {
@@ -101,10 +102,10 @@ public class ProductListActivity extends BBActivity implements FilterDisplayAwar
             btnApplyFilter.setBackgroundResource(R.drawable.primary_btn_bkg);
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            params.setMargins((int)getResources().getDimension(R.dimen.padding_mini),
-                    (int)getResources().getDimension(R.dimen.padding_small),
-                    (int)getResources().getDimension(R.dimen.padding_mini),
-                    (int)getResources().getDimension(R.dimen.padding_small));
+            params.setMargins((int) getResources().getDimension(R.dimen.padding_mini),
+                    (int) getResources().getDimension(R.dimen.padding_small),
+                    (int) getResources().getDimension(R.dimen.padding_mini),
+                    (int) getResources().getDimension(R.dimen.padding_small));
             params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
             layoutFilterButtons.setLayoutParams(params);
         }
@@ -140,7 +141,7 @@ public class ProductListActivity extends BBActivity implements FilterDisplayAwar
         closeFilterDrawer();
 
         ProductListAwareFragment productListAwareFragment = getProductListAwareFragment();
-        if (productListAwareFragment != null && mFilteredOn.size()>0) {
+        if (productListAwareFragment != null && mFilteredOn.size() > 0) {
             productListAwareFragment.onFilterApplied(mFilteredOn);
         }
     }
@@ -193,6 +194,9 @@ public class ProductListActivity extends BBActivity implements FilterDisplayAwar
         bundle.putString(Constants.SEARCH_QUERY, searchQuery);
         searchFragment.setArguments(bundle);
         addToMainLayout(searchFragment);
+//        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//        ft.replace(R.id.content_frame, searchFragment);
+//        ft.commitAllowingStateLoss();
     }
 
     @Override

@@ -83,7 +83,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        setSuspended(true);
+        setSuspended(false);
         Activity activity = getActivity();
         if (activity != null && activity instanceof BaseActivity) {
             ((BaseActivity) activity).triggerActivityResult(requestCode, resultCode, data);

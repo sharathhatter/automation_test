@@ -524,7 +524,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        setSuspended(false);
+        super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == FragmentCodes.START_SEARCH) {
             if (data != null) {
                 String searchQuery = data.getStringExtra(Constants.SEARCH_QUERY);
@@ -534,7 +534,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 }
             }
         }
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

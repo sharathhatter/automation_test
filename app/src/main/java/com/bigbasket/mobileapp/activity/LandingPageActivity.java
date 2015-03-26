@@ -38,6 +38,7 @@ public class LandingPageActivity extends SocialLoginActivity {
                 launchLogin(TrackEventkeys.NAVIGATION_CTX_LANDING_PAGE);
                 break;
             case R.id.btnRegister:
+                launchRegistrationPage();
                 break;
             case R.id.btnSkip:
                 showChangeCity();
