@@ -11,13 +11,11 @@ import android.widget.ImageView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.util.TouchImageView;
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
 
-/**
- * Created by jugal on 28/8/14.
- */
+
 public class MultipleImagesPrescriptionAdapter<T> extends BaseAdapter {
 
     private T ctx;
@@ -59,7 +57,7 @@ public class MultipleImagesPrescriptionAdapter<T> extends BaseAdapter {
         if (imageUrl instanceof String) {
             TouchImageView imgNewPrescriptionImage = viewHolder.getImgNewPrescriptionImage();
             if ((String.valueOf(imageUrl)) != null) {
-                ImageLoader.getInstance().displayImage(String.valueOf(imageUrl), imgNewPrescriptionImage);
+                UIUtil.displayAsyncImage(imgNewPrescriptionImage, String.valueOf(imageUrl));
             } else {
                 imgNewPrescriptionImage.setImageResource(R.drawable.image_404_top_cat);
             }

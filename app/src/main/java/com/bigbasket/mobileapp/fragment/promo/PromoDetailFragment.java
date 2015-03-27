@@ -43,7 +43,6 @@ import com.bigbasket.mobileapp.util.ParserUtil;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv2.ProductView;
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,10 +87,6 @@ public class PromoDetailFragment extends BaseFragment {
         super.onBackResume();
         int promoId = getArguments().getInt(Constants.PROMO_ID, -1);
         getPromoDetail(promoId);
-    }
-
-    private void logPromoDetailEvent() {
-
     }
 
     private void getPromoDetail(int promoId) {
@@ -147,8 +142,6 @@ public class PromoDetailFragment extends BaseFragment {
 
         Resources resources = getResources();
 
-        ImageLoader imageLoader = ImageLoader.getInstance();
-
         TextView txtPromoName = (TextView) base.findViewById(R.id.txtPromoName);
         txtPromoName.setTypeface(faceRobotoRegular);
         txtPromoName.setText(mPromoDetail.getPromoName());
@@ -158,8 +151,7 @@ public class PromoDetailFragment extends BaseFragment {
         txtPromoDesc.setText(mPromoDetail.getPromoDesc());
 
         ImageView imageView = (ImageView) base.findViewById(R.id.imgPromoIcon);
-        imageLoader.displayImage(mPromoDetail.getPromoIcon(), imageView);
-
+        UIUtil.displayAsyncImage(imageView, mPromoDetail.getPromoIcon());
 
         TextView txtPromoTermsAndCond2 = (TextView) base.findViewById(R.id.txtPromoTermsAndCond2);
         txtPromoTermsAndCond2.setTypeface(faceRobotoRegular);

@@ -35,7 +35,6 @@ import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.ShowAnnotationInfo;
 import com.bigbasket.mobileapp.view.ShowFulfillmentInfo;
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.HashMap;
 import java.util.List;
@@ -211,9 +210,8 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
     private void renderBasicView(RowHolder rowHolder, int childPosition, final CartItem cartItem) {
         ImageView imgProduct = rowHolder.getImgProduct();
         if (imgProduct != null && !TextUtils.isEmpty(cartItem.getProductImgUrl())) {
-            ImageLoader.getInstance().displayImage(baseImgUrl != null ? baseImgUrl +
-                            cartItem.getProductImgUrl() : cartItem.getProductImgUrl(),
-                    imgProduct);
+            UIUtil.displayAsyncImage(imgProduct, baseImgUrl != null ? baseImgUrl +
+                    cartItem.getProductImgUrl() : cartItem.getProductImgUrl());
         }
 
         ImageView imgMarketPlaceIcon = rowHolder.getImgLiquorIcon();
@@ -223,7 +221,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
                     fulfillmentInfoIdAndIconHashMap.containsKey(fulfillmentId)) {
                 String icon = fulfillmentInfoIdAndIconHashMap.get(fulfillmentId);
                 if (!TextUtils.isEmpty(icon) && !icon.equalsIgnoreCase("null")) {
-                    ImageLoader.getInstance().displayImage(icon, imgMarketPlaceIcon);
+                    UIUtil.displayAsyncImage(imgMarketPlaceIcon, icon);
                     imgMarketPlaceIcon.setVisibility(View.VISIBLE);
                 } else {
                     imgMarketPlaceIcon.setVisibility(View.GONE);
@@ -237,7 +235,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
                     annotationHashMap.containsKey(annotationId)) {
                 String iconUrl = annotationHashMap.get(annotationId).getIconUrl();
                 if (!TextUtils.isEmpty(iconUrl)) {
-                    ImageLoader.getInstance().displayImage(iconUrl, imgMarketPlaceIcon);
+                    UIUtil.displayAsyncImage(imgMarketPlaceIcon, iconUrl);
                     imgMarketPlaceIcon.setVisibility(View.VISIBLE);
                 } else {
                     imgMarketPlaceIcon.setVisibility(View.GONE);

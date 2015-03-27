@@ -14,7 +14,7 @@ import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.PromoDetailNavigationAware;
 import com.bigbasket.mobileapp.model.promo.Promo;
 import com.bigbasket.mobileapp.model.promo.PromoCategory;
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.List;
 
@@ -23,7 +23,6 @@ public class PromoCategoryAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
     private T context;
     private List<Object> promoConsolidatedList;
     private Typeface typeface;
-    private ImageLoader imageLoader = ImageLoader.getInstance();
     private View mSectionView;
 
     public static final int VIEW_TYPE_PROMO = 0;
@@ -99,7 +98,7 @@ public class PromoCategoryAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
         TextView txtPromoDescLine1 = promoCatItemHolder.getTxtPromoDescLine1();
         TextView txtPromoDescLine2 = promoCatItemHolder.getTxtPromoDescLine2();
 
-        imageLoader.displayImage(promo.getPromoIcon(), imgPromoIcon);
+        UIUtil.displayAsyncImage(imgPromoIcon, promo.getPromoIcon());
         txtPromoName.setText(promo.getPromoName());
         txtPromoDescLine1.setText(promo.getPromoDescLine1());
         txtPromoDescLine2.setText(promo.getPromoDescLine2());

@@ -41,7 +41,6 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,8 +71,8 @@ public final class ProductView {
                                         ProductDetailOnClickListener productDetailOnClickListener) {
         ImageView imgProduct = productViewHolder.getImgProduct();
         if (product.getImageUrl() != null) {
-            ImageLoader.getInstance().displayImage(baseImgUrl != null ? baseImgUrl + product.getImageUrl() :
-                    product.getImageUrl(), imgProduct);
+            UIUtil.displayAsyncImage(imgProduct, baseImgUrl != null ? baseImgUrl + product.getImageUrl() :
+                    product.getImageUrl());
         } else {
             imgProduct.setImageResource(R.drawable.noimage);
         }

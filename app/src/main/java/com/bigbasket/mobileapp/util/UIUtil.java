@@ -26,6 +26,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -40,6 +41,7 @@ import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
 import com.google.gson.Gson;
 import com.moe.pushlibrary.MoEHelper;
 import com.moe.pushlibrary.utils.MoEHelperConstants;
+import com.squareup.picasso.Picasso;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -383,5 +385,13 @@ public class UIUtil {
         return new MaterialDialog.Builder(context)
                 .positiveColorRes(R.color.uiv3_accept_label_color)
                 .negativeColorRes(R.color.dark_black);
+    }
+
+    public static void displayAsyncImage(ImageView imageView, String url) {
+        Picasso.with(imageView.getContext())
+                .load(url)
+                .placeholder(R.drawable.loading)
+                .error(R.drawable.noimage)
+                .into(imageView);
     }
 }

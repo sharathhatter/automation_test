@@ -12,7 +12,7 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.model.cart.AnnotationInfo;
 import com.bigbasket.mobileapp.util.MessageFormatUtil;
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.bigbasket.mobileapp.util.UIUtil;
 
 
 public class ShowAnnotationInfo<T> {
@@ -33,7 +33,7 @@ public class ShowAnnotationInfo<T> {
         ImageView imgAnnotationIcon = (ImageView) base.findViewById(R.id.imgLiquorIcon);
         if (annotationInfo.getIconUrl() != null) {
             imgAnnotationIcon.setVisibility(View.VISIBLE);
-            ImageLoader.getInstance().displayImage(annotationInfo.getIconUrl(), imgAnnotationIcon);
+            UIUtil.displayAsyncImage(imgAnnotationIcon, annotationInfo.getIconUrl());
         } else {
             imgAnnotationIcon.setVisibility(View.GONE);
         }
