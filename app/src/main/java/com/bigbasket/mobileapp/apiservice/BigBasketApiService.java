@@ -15,7 +15,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.GetDynamicPageApiRespo
 import com.bigbasket.mobileapp.apiservice.models.response.GetPaymentParamsApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.GetProductsForOrderApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListDetailsApiResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListSummaryApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListSummaryResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListsApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.MemberReferralProduct;
@@ -49,6 +49,7 @@ import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.model.order.OrderSummary;
 import com.bigbasket.mobileapp.model.order.PrescriptionId;
+import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListSummary;
 import com.bigbasket.mobileapp.util.Constants;
 
 import java.util.ArrayList;
@@ -162,7 +163,7 @@ public interface BigBasketApiService {
 
     @GET("/sl-get-list-summary/")
     void getShoppingListSummary(@Query(Constants.SLUG) String shoppingListSlug,
-                                Callback<GetShoppingListSummaryApiResponse> getShoppingListSummaryApiResponseCallback);
+                                Callback<ApiResponse<GetShoppingListSummaryResponse>> getShoppingListSummaryApiResponseCallback);
 
     @FormUrlEncoded
     @POST("/sl-get-list-details/")

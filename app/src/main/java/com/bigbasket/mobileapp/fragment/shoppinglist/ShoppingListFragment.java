@@ -20,7 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
+import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
@@ -31,7 +31,6 @@ import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListNamesTask;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.uiv3.CreateShoppingListDialog;
@@ -180,9 +179,8 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
     }
 
     private void launchShoppingListSummary(ShoppingListName shoppingListName) {
-        Intent intent = new Intent(getActivity(), BackButtonActivity.class);
+        Intent intent = new Intent(getActivity(), ShoppingListSummaryActivity.class);
         intent.putExtra(Constants.SHOPPING_LIST_NAME, shoppingListName);
-        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_SUMMARY);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 

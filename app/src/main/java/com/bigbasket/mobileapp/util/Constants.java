@@ -5,7 +5,6 @@ public class Constants {
     // connection parameters
     public static final String MO_APP_ID = "YSD6Y5AVT60X4AWNLL35EIDJ";
     public static final String MO_SENDER_ID = "551288451469";
-    public static final String CITIES = "cities";
     public static final String DEEP_LINK = "deepLink";
     public static final String HAS_PARENT = "hasParent";
 
@@ -17,6 +16,8 @@ public class Constants {
     public static final String PRODUCT_COUNT = "p_count";
     public static final String NORMAL_COUNT = "normal_count";
     public static final String TABLET_COUNT = "tablet_count";
+    public static final String FACET_NAME = "facet_name";
+    public static final String FACET_SLUG = "facet_slug";
 
     public static final String PRODUCTS = "products";
     public static final String NO_ITEM_IN_CART = "no_items_in_cart";
@@ -119,7 +120,6 @@ public class Constants {
     public static final String SHOP_LST = "shoplist";
     public static final String SMART_BASKET = "Smart Basket";
     public static final String SMART_BASKET_SLUG = "smart-basket";
-    public static final String SMART_BASKET_PRODUCTS = "smart_basket_products";
     public static final String BASKET = "basket";
 
     public static final String PROMO_CATS = "promo_categories";
@@ -679,7 +679,6 @@ public class Constants {
     public static final String ORDER_ITEMS = "order_items";
     public static final String ALL_SL = "sl";
     public static final String SL_SUMMARY = "sl_summary";
-    public static final String SL_PRODUCTS = "sl_products";
     public static final String PROMO_LIST = "promo_list";
     public static final String DYNAMIC_PAGE = "dynamic_page";
     public static final int IN_BASKET_COLOR = 0xFFF9EDDD; // #F9EDDD

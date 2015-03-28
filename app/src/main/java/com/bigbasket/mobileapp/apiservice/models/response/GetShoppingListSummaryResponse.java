@@ -6,8 +6,11 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-public class GetShoppingListSummaryApiResponse extends OldBaseApiResponse {
+public class GetShoppingListSummaryResponse {
 
-    @SerializedName(Constants.SHOPPING_LIST_SUMMARY)
+    @SerializedName(Constants.PRODUCT_INFO)
     public ArrayList<ShoppingListSummary> shoppingListSummaries;
+
+    @SerializedName(Constants.BASE_IMG_URL)
+    public String baseImgUrl;
 }

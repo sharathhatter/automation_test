@@ -39,6 +39,7 @@ import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.SearchableActivity;
 import com.bigbasket.mobileapp.activity.product.ProductListActivity;
+import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
 import com.bigbasket.mobileapp.adapter.NavigationAdapter;
 import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
 import com.bigbasket.mobileapp.fragment.DynamicScreenFragment;
@@ -63,8 +64,6 @@ import com.bigbasket.mobileapp.fragment.promo.PromoCategoryFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoDetailFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoSetProductsFragment;
 import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListFragment;
-import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListProductFragment;
-import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListSummaryFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
@@ -387,14 +386,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                         getIntent().getStringExtra(Constants.SORT_BY),
                         getIntent().getStringExtra(Constants.CATEGORY_TITLE));
                 break;
-            case FragmentCodes.START_SHOPPING_LIST_SUMMARY:
-                bundle = new Bundle();
-                bundle.putParcelable(Constants.SHOPPING_LIST_NAME,
-                        getIntent().getParcelableExtra(Constants.SHOPPING_LIST_NAME));
-                ShoppingListSummaryFragment shoppingListSummaryFragment = new ShoppingListSummaryFragment();
-                shoppingListSummaryFragment.setArguments(bundle);
-                addToMainLayout(shoppingListSummaryFragment);
-                break;
             case FragmentCodes.START_SHOPPING_LIST_LANDING:
                 addToMainLayout(new ShoppingListFragment());
                 break;
@@ -425,16 +416,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 PromoSetProductsFragment promoSetProductsFragment = new PromoSetProductsFragment();
                 promoSetProductsFragment.setArguments(bundle);
                 addToMainLayout(promoSetProductsFragment);
-                break;
-            case FragmentCodes.START_SHOPPING_LIST_PRODUCTS:
-                ShoppingListProductFragment shoppingListProductFragment = new ShoppingListProductFragment();
-                bundle = new Bundle();
-                bundle.putParcelable(Constants.SHOPPING_LIST_NAME,
-                        getIntent().getParcelableExtra(Constants.SHOPPING_LIST_NAME));
-                bundle.putString(Constants.TOP_CAT_SLUG, getIntent().getStringExtra(Constants.TOP_CAT_SLUG));
-                bundle.putString(Constants.TOP_CATEGORY_NAME, getIntent().getStringExtra(Constants.TOP_CATEGORY_NAME));
-                shoppingListProductFragment.setArguments(bundle);
-                addToMainLayout(shoppingListProductFragment);
                 break;
             case FragmentCodes.START_DYNAMIC_SCREEN:
                 DynamicScreenFragment dynamicScreenFragment = new DynamicScreenFragment();
@@ -484,8 +465,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 } else {
                     ShoppingListName shoppingListName = new ShoppingListName(Constants.SMART_BASKET,
                             Constants.SMART_BASKET_SLUG, true);
-                    Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
-                    intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_SUMMARY);
+                    Intent intent = new Intent(getCurrentActivity(), ShoppingListSummaryActivity.class);
                     intent.putExtra(Constants.SHOPPING_LIST_NAME, shoppingListName);
                     startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 }

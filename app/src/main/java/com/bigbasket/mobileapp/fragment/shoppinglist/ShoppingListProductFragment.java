@@ -11,14 +11,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.product.ProductListRecyclerAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
-import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListDetailsApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
@@ -28,8 +25,7 @@ import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListDetail;
-import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
+import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListSummary;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
@@ -43,10 +39,6 @@ import retrofit.client.Response;
 
 
 public class ShoppingListProductFragment extends ProductListAwareFragment {
-
-    private ShoppingListName mShoppingListName;
-    private ShoppingListDetail mShoppingListDetail;
-    private String mBaseImgUrl;
 
     @Override
     public void loadProducts() {
@@ -65,7 +57,9 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
 
     @Override
     public String getNavigationCtx() {
-        if (mShoppingListName.getSlug().equals(Constants.SMART_BASKET_SLUG))
+        ShoppingListSummary shoppingListSummary = getArguments().getParcelable(Constants.SHOPPING_LIST_SUMMARY);
+        String shoppingListSlug = shoppingListSummary.getShoppingListName().getSlug();
+        if (shoppingListSlug.equals(Constants.SMART_BASKET_SLUG))
             return TrackEventkeys.NAVIGATION_CTX_SMART_BASKET;
         else
             return TrackEventkeys.NAVIGATION_CTX_SHOPPING_LIST;
@@ -73,15 +67,6 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
 
     @Override
     public void restoreProductList(Bundle savedInstanceState) {
-        mShoppingListName = getArguments().getParcelable(Constants.SHOPPING_LIST_NAME);
-        if (savedInstanceState != null) {
-            mShoppingListDetail = savedInstanceState.getParcelable(Constants.SHOPPING_LIST_ITEMS);
-            if (mShoppingListDetail != null) {
-                mBaseImgUrl = savedInstanceState.getString(Constants.BASE_IMG_URL);
-                renderShoppingListItems();
-                return;
-            }
-        }
         loadProducts();
     }
 
@@ -92,76 +77,41 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
     }
 
     private void loadShoppingListProducts() {
-        Bundle bundle = getArguments();
-        String topCatSlug = bundle.getString(Constants.TOP_CAT_SLUG);
-
-        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
-        showProgressView();
-        bigBasketApiService.getShoppingListDetails(mShoppingListName.getSlug(), topCatSlug,
-                new Callback<ApiResponse<GetShoppingListDetailsApiResponse>>() {
-                    @Override
-                    public void success(ApiResponse<GetShoppingListDetailsApiResponse> getShoppingListDetailsApiResponse, Response response) {
-                        if (isSuspended()) return;
-                        hideProgressView();
-                        switch (getShoppingListDetailsApiResponse.status) {
-                            case 0:
-                                mBaseImgUrl = getShoppingListDetailsApiResponse.apiResponseContent.baseImgUrl;
-                                mShoppingListDetail = getShoppingListDetailsApiResponse.apiResponseContent.shoppingListDetail;
-                                renderShoppingListItems();
-                                break;
-                            default:
-                                handler.sendEmptyMessage(getShoppingListDetailsApiResponse.status,
-                                        getShoppingListDetailsApiResponse.message);
-                                break;
-                        }
-                    }
-
-                    @Override
-                    public void failure(RetrofitError error) {
-                        if (isSuspended()) return;
-                        hideProgressView();
-                        handler.handleRetrofitError(error);
-                    }
-                });
+        ShoppingListSummary shoppingListSummary = getArguments().getParcelable(Constants.SHOPPING_LIST_SUMMARY);
+        String baseImgUrl = getArguments().getString(Constants.BASE_IMG_URL);
+        renderShoppingListItems(shoppingListSummary, baseImgUrl);
     }
 
-    private void renderShoppingListItems() {
+    private void renderShoppingListItems(final ShoppingListSummary shoppingListSummary,
+                                         String baseImgUrl) {
         if (getActivity() == null) return;
         LinearLayout contentView = getContentView();
         if (contentView == null) return;
 
-        if (mShoppingListDetail == null || mShoppingListDetail.getProducts() == null
-                || mShoppingListDetail.getProducts().size() == 0) {
-            Toast.makeText(getActivity(), "This shopping list has no products", Toast.LENGTH_LONG).show();
-            finish();
-            return;
-        }
+
         contentView.removeAllViews();
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
         View shopListHeaderLayout = inflater.inflate(R.layout.uiv3_shopping_list_products_header, contentView, false);
         TextView brandNameTxt = (TextView) shopListHeaderLayout.findViewById(R.id.brandNameTxt);
-        String topname = mShoppingListDetail.getTopCategoryName();
 
-        topname = topname.replaceAll("<br/>", " ");
-        brandNameTxt.setText(UIUtil.abbreviate(topname, 25));
+        brandNameTxt.setText(UIUtil.abbreviate(shoppingListSummary.getFacetName(), 25));
         brandNameTxt.setTypeface(faceRobotoRegular);
 
-        ArrayList<Product> productList = mShoppingListDetail.getProducts();
         Button btnAddAllToBasket = (Button) shopListHeaderLayout.findViewById(R.id.btnAddAllToBasket);
-        if (Product.areAllProductsOutOfStock(productList)) {
+        if (Product.areAllProductsOutOfStock(shoppingListSummary.getProducts())) {
             btnAddAllToBasket.setVisibility(View.GONE);
         } else {
             btnAddAllToBasket.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     showAlertDialog(null, getString(R.string.addAllProducts),
-                            DialogButton.YES, DialogButton.CANCEL, Constants.ADD_ALL, null, getString(R.string.yesTxt));
+                            DialogButton.YES, DialogButton.CANCEL, Constants.ADD_ALL, shoppingListSummary, getString(R.string.yesTxt));
                 }
             });
         }
         contentView.addView(shopListHeaderLayout);
-        renderProducts(productList);
+        renderProducts(shoppingListSummary, baseImgUrl);
     }
 
 
@@ -172,19 +122,20 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
                 handler.sendOfflineError();
                 return;
             }
-            addAllItemsToBasket();
+            addAllItemsToBasket((ShoppingListSummary) valuePassed);
         } else {
             super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
         }
     }
 
-    private void addAllItemsToBasket() {
+    private void addAllItemsToBasket(ShoppingListSummary shoppingListSummary) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressView();
-        if (mShoppingListName.getSlug().equals(Constants.SMART_BASKET_SLUG)) {
-            trackEvent(TrackingAware.SMART_BASKET + "." + mShoppingListDetail.getTopCategoryName() + "Add All", null);
-            bigBasketApiService.addAllToBasketSmartBasket(mShoppingListName.getSlug(),
-                    mShoppingListDetail.getTopCategorySlug(),
+        String shoppingListSlug = getArguments().getString(Constants.SHOPPING_LIST_SLUG);
+        if (shoppingListSummary.getFacetSlug().equals(Constants.SMART_BASKET_SLUG)) {
+            trackEvent(TrackingAware.SMART_BASKET + "." + shoppingListSummary.getFacetName() + " Add All", null);
+            bigBasketApiService.addAllToBasketSmartBasket(shoppingListSlug,
+                    shoppingListSummary.getFacetSlug(),
                     new Callback<OldApiResponse<CartSummary>>() {
                         @Override
                         public void success(OldApiResponse<CartSummary> addAllToBasketSmartBasketCallBack, Response response) {
@@ -198,7 +149,7 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
                                     break;
                                 case Constants.ERROR:
                                     handler.sendEmptyMessage(addAllToBasketSmartBasketCallBack.getErrorTypeAsInt(),
-                                            addAllToBasketSmartBasketCallBack.message, true);
+                                            addAllToBasketSmartBasketCallBack.message, false);
                                     break;
                             }
                         }
@@ -211,9 +162,9 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
                         }
                     });
         } else {
-            trackEvent(TrackingAware.SHOPPING_LIST + "." + mShoppingListDetail.getTopCategoryName() + "Add All", null);
-            bigBasketApiService.addAllToBasketShoppingList(mShoppingListName.getSlug(),
-                    mShoppingListDetail.getTopCategorySlug(),
+            trackEvent(TrackingAware.SHOPPING_LIST + "." + shoppingListSummary.getFacetName() + " Add All", null);
+            bigBasketApiService.addAllToBasketShoppingList(shoppingListSlug,
+                    shoppingListSummary.getFacetSlug(),
                     new Callback<OldApiResponse<CartSummary>>() {
                         @Override
                         public void success(OldApiResponse<CartSummary> addAllToBasketShoppingListCallBack, Response response) {
@@ -227,7 +178,7 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
                                     break;
                                 case Constants.ERROR:
                                     handler.sendEmptyMessage(addAllToBasketShoppingListCallBack.getErrorTypeAsInt(),
-                                            addAllToBasketShoppingListCallBack.message, true);
+                                            addAllToBasketShoppingListCallBack.message, false);
                                     break;
                             }
                         }
@@ -242,7 +193,7 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
         }
     }
 
-    private void renderProducts(ArrayList<Product> productList) {
+    private void renderProducts(ShoppingListSummary shoppingListSummary, String baseImgUrl) {
         if (getActivity() == null) return;
         LinearLayout contentView = getContentView();
         if (contentView == null) return;
@@ -255,13 +206,14 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
                 .setLoggedInMember(!AuthParameters.getInstance(getActivity()).isAuthTokenEmpty())
                 .setShowShoppingListBtn(false)
                 .setShowBasketBtn(true)
-                .setShowShopListDeleteBtn(!mShoppingListName.isSystem())
-                .setShoppingListName(mShoppingListName)
+                .setShowShopListDeleteBtn(!shoppingListSummary.getShoppingListName().isSystem())
+                .setShoppingListName(shoppingListSummary.getShoppingListName())
                 .setRupeeTypeface(faceRupee)
                 .build();
 
-        ProductListRecyclerAdapter productListAdapter = new ProductListRecyclerAdapter(productList, mBaseImgUrl,
-                productViewDisplayDataHolder, this, productList.size(), getNavigationCtx());
+        ProductListRecyclerAdapter productListAdapter = new ProductListRecyclerAdapter(shoppingListSummary.getProducts(),
+                baseImgUrl,
+                productViewDisplayDataHolder, this, shoppingListSummary.getProducts().size(), getNavigationCtx());
 
         productRecyclerView.setAdapter(productListAdapter);
         contentView.addView(productRecyclerView);
@@ -273,21 +225,13 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
     }
 
     @Override
-    public void parcelProductList(Bundle outState) {
-        if (mShoppingListDetail != null) {
-            outState.putParcelable(Constants.SHOPPING_LIST_ITEMS, mShoppingListDetail);
-            outState.putString(Constants.BASE_IMG_URL, mBaseImgUrl);
-        }
-    }
-
-    @Override
     public void postShoppingListItemDeleteOperation() {
         loadShoppingListProducts();
     }
 
     @Override
     public String getTitle() {
-        return "Shopping List Products";
+        return null;
     }
 
     @NonNull
