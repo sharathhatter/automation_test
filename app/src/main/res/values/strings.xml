@@ -255,7 +255,7 @@
     <string name="callUs">Call Us</string>
     <string name="drawer_open">Open navigation</string>
     <string name="drawer_close">Close navigation</string>
-    <string name="delete_from_shop_lst">Delete this product from shopping list.</string>
+    <string name="delete_from_shop_lst">Delete from shopping list</string>
     <string name="additional_action">Additional action</string>
     <string name="please_wait">Please wait...</string>
     <string name="email">E-mail</string>

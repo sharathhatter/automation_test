@@ -24,7 +24,6 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
     private TextView txtPromoLabel;
     private TextView txtPromoDesc;
     private TextView txtPromoAddSavings;
-    private ImageView imgShoppingListDel;
     private Button btnAddToBasket;
     private TextView txtDecBasketQty;
     private TextView txtInBasket;
@@ -119,13 +118,6 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
             txtPromoAddSavings = (TextView) itemView.findViewById(R.id.txtPromoAddSavings);
         }
         return txtPromoAddSavings;
-    }
-
-    public ImageView getImgShoppingListDel() {
-        if (imgShoppingListDel == null) {
-            imgShoppingListDel = (ImageView) itemView.findViewById(R.id.imgShoppingListDel);
-        }
-        return imgShoppingListDel;
     }
 
     public Button getBtnAddToBasket() {

@@ -3,13 +3,11 @@ package com.bigbasket.mobileapp.view.uiv2;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Typeface;
 import android.support.v7.widget.PopupMenu;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
-import android.text.style.StyleSpan;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -98,7 +96,9 @@ public final class ProductView {
         final List<Product> childProducts = product.getAllProducts();
         boolean hasChildren = childProducts != null && childProducts.size() > 0;
         Spinner spinnerPackageDesc = productViewHolder.getSpinnerPackageDesc();
-        TextView packageDescTxtView = productViewHolder.getPackageDescTextView();
+        TextView txtPackageDesc = productViewHolder.getPackageDescTextView();
+        txtPackageDesc.setText(product.getWeightAndPackDesc());
+        txtPackageDesc.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
         if (hasChildren) {
             ProductListSpinnerAdapter productListSpinnerAdapter = new ProductListSpinnerAdapter(((ActivityAware) productDataAware).getCurrentActivity(), android.R.layout.simple_spinner_item,
                     childProducts, productViewDisplayDataHolder.getSansSerifMediumTypeface(),
@@ -120,11 +120,7 @@ public final class ProductView {
                 }
             });
             spinnerPackageDesc.setVisibility(View.VISIBLE);
-            packageDescTxtView.setVisibility(View.GONE);
         } else {
-            packageDescTxtView.setText(product.getWeightAndPackDesc());
-            packageDescTxtView.setVisibility(View.VISIBLE);
-            packageDescTxtView.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
             spinnerPackageDesc.setVisibility(View.GONE);
         }
     }
@@ -247,14 +243,19 @@ public final class ProductView {
                                                            final ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                                            final T shoppingListNamesAware) {
         final ImageView imgProductOverflowAction = productViewHolder.getImgProductOverflowAction();
-        setShoppingDeleteButton(productViewHolder, product, productViewDisplayDataHolder, shoppingListNamesAware);
-        if (productViewDisplayDataHolder.isShowShoppingListBtn() && productViewDisplayDataHolder.isLoggedInMember()
+        if ((productViewDisplayDataHolder.isShowShoppingListBtn() || productViewDisplayDataHolder.showShopListDeleteBtn())
+                && productViewDisplayDataHolder.isLoggedInMember()
                 && !product.getProductStatus().equalsIgnoreCase("N")) {
             imgProductOverflowAction.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     PopupMenu popupMenu = new PopupMenu(((ActivityAware) shoppingListNamesAware).getCurrentActivity(), imgProductOverflowAction);
                     popupMenu.getMenuInflater().inflate(R.menu.product_menu, popupMenu.getMenu());
+                    MenuItem menuDeleteFromShoppingList = popupMenu.getMenu().findItem(R.id.menuDeleteFromShoppingList);
+                    MenuItem menuAddToShoppingList = popupMenu.getMenu().findItem(R.id.menuAddToShoppingList);
+                    menuAddToShoppingList.setVisible(productViewDisplayDataHolder.isShowShoppingListBtn());
+                    menuDeleteFromShoppingList.setVisible(productViewDisplayDataHolder.showShopListDeleteBtn());
+
                     popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                         @Override
                         public boolean onMenuItemClick(MenuItem menuItem) {
@@ -268,6 +269,30 @@ public final class ProductView {
                                         productViewDisplayDataHolder.getHandler().sendOfflineError();
                                     }
                                     return true;
+                                case R.id.menuDeleteFromShoppingList:
+                                    UIUtil.getMaterialDialogBuilder(((ActivityAware) shoppingListNamesAware).getCurrentActivity())
+                                            .title(R.string.app_name)
+                                            .content("Are you sure you want to delete this product from the shopping list?")
+                                            .cancelable(false)
+                                            .positiveText(R.string.yesTxt)
+                                            .negativeText(R.string.noTxt)
+                                            .callback(new MaterialDialog.ButtonCallback() {
+                                                @Override
+                                                public void onPositive(MaterialDialog dialog) {
+                                                    if (((ConnectivityAware) shoppingListNamesAware).checkInternetConnection()) {
+                                                        List<ShoppingListName> shoppingListNames = new ArrayList<>();
+                                                        shoppingListNames.add(productViewDisplayDataHolder.getShoppingListName());
+                                                        ShoppingListDoAddDeleteTask shoppingListDoAddDeleteTask =
+                                                                new ShoppingListDoAddDeleteTask<>(shoppingListNamesAware, shoppingListNames, ShoppingListOption.DELETE_ITEM);
+                                                        ((ShoppingListNamesAware) shoppingListNamesAware).setSelectedProductId(product.getSku());
+                                                        shoppingListDoAddDeleteTask.startTask();
+                                                    } else {
+                                                        productViewDisplayDataHolder.getHandler().sendOfflineError();
+                                                    }
+                                                }
+                                            })
+                                            .show();
+                                    return true;
                             }
                             return false;
                         }
@@ -277,47 +302,6 @@ public final class ProductView {
             });
         } else {
             imgProductOverflowAction.setVisibility(View.GONE);
-        }
-    }
-
-    private static <T> void setShoppingDeleteButton(ProductViewHolder productViewHolder, final Product product,
-                                                    final ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                                    final T shoppingListNamesAware) {
-
-        // for logged in user display add to list icon
-        final ImageView imgShoppingListDel = productViewHolder.getImgShoppingListDel();
-
-        if (productViewDisplayDataHolder.showShopListDeleteBtn()) {
-            imgShoppingListDel.setVisibility(View.VISIBLE);
-            imgShoppingListDel.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    UIUtil.getMaterialDialogBuilder(((ActivityAware) shoppingListNamesAware).getCurrentActivity())
-                            .title(R.string.app_name)
-                            .content("Are you sure you want to delete this product from the shopping list?")
-                            .cancelable(false)
-                            .positiveText(R.string.yesTxt)
-                            .negativeText(R.string.noTxt)
-                            .callback(new MaterialDialog.ButtonCallback() {
-                                @Override
-                                public void onPositive(MaterialDialog dialog) {
-                                    if (((ConnectivityAware) shoppingListNamesAware).checkInternetConnection()) {
-                                        List<ShoppingListName> shoppingListNames = new ArrayList<>();
-                                        shoppingListNames.add(productViewDisplayDataHolder.getShoppingListName());
-                                        ShoppingListDoAddDeleteTask shoppingListDoAddDeleteTask =
-                                                new ShoppingListDoAddDeleteTask<>(shoppingListNamesAware, shoppingListNames, ShoppingListOption.DELETE_ITEM);
-                                        ((ShoppingListNamesAware) shoppingListNamesAware).setSelectedProductId(product.getSku());
-                                        shoppingListDoAddDeleteTask.startTask();
-                                    } else {
-                                        productViewDisplayDataHolder.getHandler().sendOfflineError();
-                                    }
-                                }
-                            })
-                            .show();
-                }
-            });
-        } else {
-            imgShoppingListDel.setVisibility(View.GONE);
         }
     }
 
