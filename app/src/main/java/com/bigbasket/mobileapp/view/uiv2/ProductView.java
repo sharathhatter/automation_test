@@ -4,11 +4,13 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.support.v7.widget.PopupMenu;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.StyleSpan;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -58,7 +60,6 @@ public final class ProductView {
             setChildProducts(productViewHolder, product, baseImgUrl, productViewDisplayDataHolder,
                     productDataAware, navigationCtx);
         }
-        setProductBrand(productViewHolder, product, productViewDisplayDataHolder, productDetailOnClickListener);
         setProductDesc(productViewHolder, product, productViewDisplayDataHolder, productDetailOnClickListener);
         setPrice(productViewHolder, product, productViewDisplayDataHolder);
         setPromo(productViewHolder, product, productViewDisplayDataHolder, productDataAware);
@@ -128,24 +129,12 @@ public final class ProductView {
         }
     }
 
-    private static void setProductBrand(ProductViewHolder productViewHolder, Product product, ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                        ProductDetailOnClickListener productDetailOnClickListener) {
-        TextView txtProductBrand = productViewHolder.getTxtProductBrand();
-        txtProductBrand.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
-        if (!TextUtils.isEmpty(product.getBrand())) {
-            txtProductBrand.setText(product.getBrand());
-        } else {
-            txtProductBrand.setVisibility(View.GONE);
-        }
-        txtProductBrand.setOnClickListener(productDetailOnClickListener);
-    }
-
     private static void setProductDesc(ProductViewHolder productViewHolder, Product product, ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                        ProductDetailOnClickListener productDetailOnClickListener) {
         TextView txtProductDesc = productViewHolder.getTxtProductDesc();
         txtProductDesc.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
         if (!TextUtils.isEmpty(product.getDescription())) {
-            txtProductDesc.setText(product.getDescription());
+            txtProductDesc.setText(product.getBrand() + " " + product.getDescription());
             txtProductDesc.setVisibility(View.VISIBLE);
         } else {
             txtProductDesc.setVisibility(View.GONE);
@@ -155,10 +144,8 @@ public final class ProductView {
 
     private static void setPrice(ProductViewHolder productViewHolder, Product product,
                                  ProductViewDisplayDataHolder productViewDisplayDataHolder) {
-        TextView labelMrp = productViewHolder.getLabelMrp();
         TextView txtSalePrice = productViewHolder.getTxtSalePrice();
         boolean hasSavings = product.hasSavings();
-        labelMrp.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
         txtSalePrice.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
 
         TextView txtMrp = productViewHolder.getTxtMrp();
@@ -166,17 +153,15 @@ public final class ProductView {
 
         if (hasSavings && !TextUtils.isEmpty(product.getMrp())) {
             String prefix = " `";
-            String mrpStr = product.getMrp() + " ";
+            String mrpStr = product.getMrp();
             int prefixLen = prefix.length();
             SpannableString spannableMrp = new SpannableString(prefix + mrpStr);
             spannableMrp.setSpan(new CustomTypefaceSpan("", productViewDisplayDataHolder.getRupeeTypeface()), prefixLen - 1,
                     prefixLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
             txtMrp.setText(spannableMrp);
-            labelMrp.setVisibility(View.VISIBLE);
             txtMrp.setVisibility(View.VISIBLE);
         } else {
             txtMrp.setVisibility(View.GONE);
-            labelMrp.setVisibility(View.GONE);
         }
         double actualDiscount = product.getActualDiscount();
         TextView txtSave = productViewHolder.getTxtSave();
@@ -187,8 +172,6 @@ public final class ProductView {
             spannableSaving.setSpan(new CustomTypefaceSpan("", productViewDisplayDataHolder.getRupeeTypeface()),
                     prefix.length() - 1,
                     prefix.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
-            spannableSaving.setSpan(new StyleSpan(Typeface.BOLD), 0, prefix.length() - 1,
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             txtSave.setText(spannableSaving);
 
             // for line over Mrp text
@@ -263,24 +246,37 @@ public final class ProductView {
     private static <T> void setProductAdditionalActionMenu(ProductViewHolder productViewHolder, final Product product,
                                                            final ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                                            final T shoppingListNamesAware) {
-        final ImageView imgAddToShoppingList = productViewHolder.getImgAddToShoppingList();
+        final ImageView imgProductOverflowAction = productViewHolder.getImgProductOverflowAction();
         setShoppingDeleteButton(productViewHolder, product, productViewDisplayDataHolder, shoppingListNamesAware);
         if (productViewDisplayDataHolder.isShowShoppingListBtn() && productViewDisplayDataHolder.isLoggedInMember()
                 && !product.getProductStatus().equalsIgnoreCase("N")) {
-            imgAddToShoppingList.setOnClickListener(new View.OnClickListener() {
+            imgProductOverflowAction.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (((ConnectivityAware) shoppingListNamesAware).checkInternetConnection()) {
-                        ((TrackingAware) (shoppingListNamesAware)).trackEvent(TrackingAware.ADD_TO_SHOPPING_LIST, null);
-                        ((ShoppingListNamesAware) shoppingListNamesAware).setSelectedProductId(product.getSku());
-                        new ShoppingListNamesTask<>(shoppingListNamesAware, false).startTask();
-                    } else {
-                        productViewDisplayDataHolder.getHandler().sendOfflineError();
-                    }
+                    PopupMenu popupMenu = new PopupMenu(((ActivityAware) shoppingListNamesAware).getCurrentActivity(), imgProductOverflowAction);
+                    popupMenu.getMenuInflater().inflate(R.menu.product_menu, popupMenu.getMenu());
+                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem menuItem) {
+                            switch (menuItem.getItemId()) {
+                                case R.id.menuAddToShoppingList:
+                                    if (((ConnectivityAware) shoppingListNamesAware).checkInternetConnection()) {
+                                        ((TrackingAware) (shoppingListNamesAware)).trackEvent(TrackingAware.ADD_TO_SHOPPING_LIST, null);
+                                        ((ShoppingListNamesAware) shoppingListNamesAware).setSelectedProductId(product.getSku());
+                                        new ShoppingListNamesTask<>(shoppingListNamesAware, false).startTask();
+                                    } else {
+                                        productViewDisplayDataHolder.getHandler().sendOfflineError();
+                                    }
+                                    return true;
+                            }
+                            return false;
+                        }
+                    });
+                    popupMenu.show();
                 }
             });
         } else {
-            imgAddToShoppingList.setVisibility(View.GONE);
+            imgProductOverflowAction.setVisibility(View.GONE);
         }
     }
 

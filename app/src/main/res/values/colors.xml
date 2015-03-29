@@ -46,9 +46,9 @@
     <color name="search_auto_complete_header_color">#f0f0f0</color>
     <color name="light_yellow_color">#f7f095</color>
     <color name="headerFontColor">#58595b</color>
-    <color name="mrpColor">#666666</color>
-    <color name="saveColor">#ba5253</color>
-    <color name="actualCostColor">#231f20</color>
+    <color name="mrpColor">#231f20</color>
+    <color name="actualCostColor">#4CAF70</color>
+    <color name="saveColor">@color/actualCostColor</color>
     <color name="productBrandColor">#666668</color>
     <color name="selectAsDeliveryAddress">#EAEFD9</color>
     <color name="selectedBkg">#F5ECDD</color>

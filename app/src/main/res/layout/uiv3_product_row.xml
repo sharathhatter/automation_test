@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="@dimen/padding_mini"
-        android:paddingRight="@dimen/padding_small"
+        android:paddingRight="@dimen/padding_mini"
         android:paddingTop="@dimen/padding_mini">
 
         <ImageView
@@ -49,43 +49,23 @@
             android:src="@drawable/bby_img"
             android:visibility="visible" />
 
-        <TextView
-            android:id="@+id/txtSave"
+
+        <ImageView
+            android:id="@+id/imgProductOverflowAction"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_marginLeft="@dimen/margin_mini"
-            android:layout_marginTop="2dp"
-            android:drawableLeft="@drawable/valuestar"
-            android:drawablePadding="@dimen/padding_mini"
-            android:maxLines="1"
-            android:paddingTop="2dp"
-            android:singleLine="true"
-            android:text="Rs 100.00"
-            android:textColor="@color/saveColor"
-            android:textSize="@dimen/small_text_size" />
-
-        <TextView
-            android:id="@+id/txtProductBrand"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/margin_mini"
-            android:layout_marginTop="2dp"
-            android:layout_toLeftOf="@id/txtSave"
-            android:layout_toRightOf="@id/imgProduct"
-            android:text="Prestige"
-            android:textColor="@color/uiv3_secondary_text_color"
-            android:textSize="@dimen/secondary_text_size" />
+            android:contentDescription="@string/shoppingList"
+            android:src="@drawable/ic_more_vert_grey600_24dp" />
 
         <TextView
             android:id="@+id/txtProductDesc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/txtProductBrand"
             android:layout_marginLeft="@dimen/margin_mini"
             android:layout_marginTop="2dp"
+            android:layout_toLeftOf="@id/imgProductOverflowAction"
             android:layout_toRightOf="@id/imgProduct"
-            android:paddingRight="25dp"
             android:text="Delux Prestige - test test test test test test test test"
             android:textColor="@color/uiv3_primary_text_color"
             android:textSize="@dimen/primary_text_size" />
@@ -99,31 +79,29 @@
             android:layout_marginRight="@dimen/margin_small"
             android:layout_marginTop="@dimen/margin_mini"
             android:contentDescription="@string/delete_from_shop_lst"
-            android:src="@drawable/ic_delete_grey600_24dp"
-            android:visibility="gone" />
+            android:src="@drawable/ic_delete_grey600_24dp" />
 
         <Spinner
             android:id="@+id/spinnerPackageDesc"
             style="@style/SpinnerDialogMode"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/txtProductDesc"
-            android:layout_marginBottom="@dimen/margin_small"
             android:layout_marginLeft="@dimen/margin_mini"
-            android:layout_marginRight="@dimen/margin_normal"
+            android:layout_marginRight="@dimen/margin_mini"
             android:layout_marginTop="@dimen/margin_mini"
             android:layout_toLeftOf="@id/imgShoppingListDel"
             android:layout_toRightOf="@id/imgProduct"
+            android:gravity="left"
             android:background="@android:color/transparent"
             android:minWidth="@dimen/spinner_width"
-            android:paddingBottom="@dimen/padding_normal" />
+            android:padding="0dp" />
 
         <TextView
             android:id="@+id/txtPackageDesc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/spinnerPackageDesc"
-            android:layout_marginBottom="@dimen/margin_small"
             android:layout_marginLeft="@dimen/margin_mini"
             android:layout_marginTop="@dimen/margin_mini"
             android:layout_toRightOf="@id/imgProduct"
@@ -131,62 +109,28 @@
             android:textColor="@color/uiv3_primary_text_color"
             android:textSize="@dimen/primary_text_size" />
 
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/padding_mini"
-        android:paddingRight="@dimen/padding_small"
-        android:paddingTop="@dimen/padding_mini">
-
-        <TextView
-            android:id="@+id/labelMrp"
+        <include
+            android:id="@+id/idProductPriceLayout"
+            layout="@layout/product_price_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/margin_normal"
-            android:text="@string/mrp"
-            android:textColor="@color/mrpColor"
-            android:textSize="@dimen/small_text_size" />
-
-        <TextView
-            android:id="@+id/txtMrp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/labelMrp"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:text="1000.00"
-            android:textColor="@color/mrpColor"
-            android:textSize="@dimen/small_text_size" />
-
-        <TextView
-            android:id="@+id/txtSalePrice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/txtMrp"
-            android:layout_marginLeft="@dimen/margin_normal"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:text="Rs 100.00"
-            android:textColor="@color/actualCostColor"
-            android:textSize="@dimen/primary_text_size" />
+            android:layout_below="@id/txtPackageDesc"
+            android:layout_toRightOf="@id/imgProduct" />
 
         <LinearLayout
             android:id="@+id/layoutInBasket"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_below="@id/idProductPriceLayout"
+            android:layout_marginTop="@dimen/margin_mini"
+            android:layout_toRightOf="@id/imgProduct"
             android:orientation="vertical">
 
-            <!-- make sure that both layout must have same height so that user will not feel
-            Blip-->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:paddingTop="@dimen/margin_mini"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:paddingTop="@dimen/margin_mini">
 
                 <TextView
                     android:id="@+id/txtDecBasketQty"
@@ -194,10 +138,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:paddingBottom="@dimen/padding_mini"
-                    android:textStyle="bold"
-                    android:textSize="@dimen/large_text_size"
                     android:paddingTop="@dimen/padding_mini"
-                    android:text="@string/minus" />
+                    android:text="@string/minus"
+                    android:textSize="@dimen/large_text_size"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/txtInBasket"
@@ -221,15 +165,14 @@
                     android:layout_height="match_parent"
                     android:paddingBottom="@dimen/padding_mini"
                     android:paddingTop="@dimen/padding_mini"
-                    android:textStyle="bold"
+                    android:text="@string/plus"
                     android:textSize="@dimen/heading_2_text_size"
-                    android:text="@string/plus" />
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_gravity="right"
                 android:orientation="horizontal">
 
                 <EditText
@@ -255,6 +198,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/margin_small"
+                    android:layout_marginLeft="@dimen/margin_mini"
                     android:background="@drawable/main_button_rounded_background"
                     android:drawablePadding="@dimen/padding_small"
                     android:drawableRight="@drawable/ic_shopping_cart_white_18dp"
@@ -280,15 +224,6 @@
             </LinearLayout>
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/imgAddToShoppingList"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="@dimen/margin_small"
-            android:layout_marginTop="@dimen/margin_mini"
-            android:layout_toLeftOf="@id/layoutInBasket"
-            android:contentDescription="@string/shoppingList"
-            android:src="@drawable/add_to_shopping_list" />
     </RelativeLayout>
 
     <RelativeLayout
