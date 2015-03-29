@@ -76,7 +76,7 @@
                     android:layout_toLeftOf="@id/resendSeparatorLine"
                     android:layout_alignBaseline="@id/txtResendCode"
                     android:id="@+id/editTextMobileCode"
-                    android:textColor="@color/uiv3_dialog_primary_text_color"
+                    android:textColor="@color/uiv3_primary_text_color"
                     android:paddingLeft="@dimen/padding_mini"
                     android:paddingRight="@dimen/padding_mini" />
 

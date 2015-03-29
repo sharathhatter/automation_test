@@ -10,6 +10,6 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_normal"
         android:inputType="text"
-        android:textColor="@color/uiv3_dialog_primary_text_color"
+        android:textColor="@color/uiv3_primary_text_color"
         android:id="@+id/editTextDialog" />
 </LinearLayout>

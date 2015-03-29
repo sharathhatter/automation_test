@@ -100,7 +100,6 @@
     <color name="uiv3_link_color">#66009688</color>
     <color name="uiv3_dark_bkg">#333333</color>
     <color name="uiv3_orange">#E7685D</color>
-    <color name="uiv3_dialog_primary_text_color">@color/white</color>
     <color name="gplus_red">#DD4B39</color>
     <color name="pie_chart_base_color">#8A56E2</color>
     <color name="slider_text_default_bkg">#77000000</color>

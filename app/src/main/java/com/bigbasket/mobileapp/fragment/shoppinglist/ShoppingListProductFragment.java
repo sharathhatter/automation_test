@@ -88,7 +88,6 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
         LinearLayout contentView = getContentView();
         if (contentView == null) return;
 
-
         contentView.removeAllViews();
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
@@ -158,7 +157,7 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
                         public void failure(RetrofitError error) {
                             if (isSuspended()) return;
                             hideProgressView();
-                            handler.handleRetrofitError(error);
+                            handler.handleRetrofitError(error, true);
                         }
                     });
         } else {
@@ -187,7 +186,7 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
                         public void failure(RetrofitError error) {
                             if (isSuspended()) return;
                             hideProgressView();
-                            handler.handleRetrofitError(error);
+                            handler.handleRetrofitError(error, true);
                         }
                     });
         }

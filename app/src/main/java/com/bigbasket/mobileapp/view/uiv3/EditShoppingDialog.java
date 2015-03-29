@@ -45,6 +45,8 @@ public class EditShoppingDialog extends DialogFragment {
         return UIUtil.getMaterialDialogBuilder(getActivity())
                 .customView(view, false)
                 .title(R.string.changeShoppingListName)
+                .positiveText(getString(R.string.change))
+                .negativeText(getString(R.string.cancel))
                 .callback(new MaterialDialog.ButtonCallback() {
                     @Override
                     public void onPositive(MaterialDialog dialog) {
