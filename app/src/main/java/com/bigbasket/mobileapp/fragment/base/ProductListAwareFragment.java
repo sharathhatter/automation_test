@@ -147,6 +147,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         } else {
             ((FilterDisplayAware) getActivity()).setFilterView(null, null, getFragmentTxnTag());
         }
+        displayProductCount();
     }
 
     private void setProductListView() {
@@ -172,11 +173,8 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
             txtSortBy.setTypeface(faceRobotoRegular);
             txtFilterBy.setTypeface(faceRobotoRegular);
 
+            displayProductCount();
             if (productListData.getProductCount() > 0) {
-                String productsStr = productListData.getProductCount() > 1 ? " products" : " product";
-                if (getCurrentActivity() instanceof FilterDisplayAware) {
-                    getCurrentActivity().getSupportActionBar().setSubtitle(productListData.getProductCount() + productsStr);
-                }
                 if (productListData.getFilterOptions() != null && productListData.getFilterOptions().size() > 0) {
                     txtFilterBy.setVisibility(View.VISIBLE);
                     txtFilterBy.setOnClickListener(new View.OnClickListener() {
@@ -228,9 +226,6 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                 contentView.addView(productRecyclerView);
             } else {
                 layoutFilterSort.setVisibility(View.GONE);
-                if (getCurrentActivity() instanceof FilterDisplayAware) {
-                    getCurrentActivity().getSupportActionBar().setSubtitle(null);
-                }
             }
 
             ((FilterDisplayAware) getActivity()).setFilterView(productListData.getFilterOptions(),
@@ -239,6 +234,19 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
 
         if (sectionView == null && (productListData == null || productListData.getProductCount() == 0)) {
             showNoProductsFoundView(contentView);
+        }
+    }
+
+    private void displayProductCount() {
+        if (productListData != null && productListData.getProductCount() > 0) {
+            String productsStr = productListData.getProductCount() > 1 ? " products" : " product";
+            if (getCurrentActivity() instanceof FilterDisplayAware) {
+                getCurrentActivity().getSupportActionBar().setSubtitle(productListData.getProductCount() + productsStr);
+            }
+        } else {
+            if (getCurrentActivity() instanceof FilterDisplayAware) {
+                getCurrentActivity().getSupportActionBar().setSubtitle(null);
+            }
         }
     }
 
