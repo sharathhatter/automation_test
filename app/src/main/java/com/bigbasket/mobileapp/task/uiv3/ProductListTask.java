@@ -42,6 +42,6 @@ public class ProductListTask<T> {
         if (page == 1) {
             ((ProgressIndicationAware) ctx).showProgressView();
         }
-        bigBasketApiService.productListUrl(paramMap, new ProductListApiResponseCallback<>(page, ctx));
+        bigBasketApiService.productListUrl(paramMap, new ProductListApiResponseCallback<>(page, ctx, true));
     }
 }

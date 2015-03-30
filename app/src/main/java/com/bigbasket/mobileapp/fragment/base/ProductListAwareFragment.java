@@ -204,6 +204,28 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                 } else {
                     txtSortBy.setVisibility(View.GONE);
                 }
+
+                RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, contentView);
+
+                // Set product-list data
+                AuthParameters authParameters = AuthParameters.getInstance(getActivity());
+                ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
+                        .setCommonTypeface(faceRobotoRegular)
+                        .setRupeeTypeface(faceRupee)
+                        .setHandler(handler)
+                        .setLoggedInMember(!authParameters.isAuthTokenEmpty())
+                        .setShowShoppingListBtn(true)
+                        .setShowBasketBtn(true)
+                        .setShowShopListDeleteBtn(false)
+                        .build();
+                mProductListRecyclerAdapter = new ProductListRecyclerAdapter(productListData.getProducts(), productListData.getBaseImgUrl(),
+                        productViewDisplayDataHolder, this, productListData.getProductCount(),
+                        getNavigationCtx());
+
+                productRecyclerView.setAdapter(mProductListRecyclerAdapter);
+
+                contentView.addView(headerView);
+                contentView.addView(productRecyclerView);
             } else {
                 layoutFilterSort.setVisibility(View.GONE);
                 if (getCurrentActivity() instanceof FilterDisplayAware) {
@@ -213,37 +235,16 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
 
             ((FilterDisplayAware) getActivity()).setFilterView(productListData.getFilterOptions(),
                     productListData.getFilteredOn(), getFragmentTxnTag());
-
-            RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, contentView);
-
-            // Set product-list data
-            AuthParameters authParameters = AuthParameters.getInstance(getActivity());
-            ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
-                    .setCommonTypeface(faceRobotoRegular)
-                    .setRupeeTypeface(faceRupee)
-                    .setHandler(handler)
-                    .setLoggedInMember(!authParameters.isAuthTokenEmpty())
-                    .setShowShoppingListBtn(true)
-                    .setShowBasketBtn(true)
-                    .setShowShopListDeleteBtn(false)
-                    .build();
-            mProductListRecyclerAdapter = new ProductListRecyclerAdapter(productListData.getProducts(), productListData.getBaseImgUrl(),
-                    productViewDisplayDataHolder, this, productListData.getProductCount(),
-                    getNavigationCtx());
-
-            productRecyclerView.setAdapter(mProductListRecyclerAdapter);
-
-            contentView.addView(headerView);
-            contentView.addView(productRecyclerView);
         }
 
-        if (sectionView == null && productListData == null) {
+        if (sectionView == null && (productListData == null || productListData.getProductCount() == 0)) {
             showNoProductsFoundView(contentView);
         }
     }
 
     protected void showNoProductsFoundView(LinearLayout contentView) {
         LayoutInflater inflater = getActivity().getLayoutInflater();
+        contentView.removeAllViews();
         View emptyPageView = inflater.inflate(R.layout.uiv3_empty_data_text, contentView, false);
         ImageView imgEmptyPage = (ImageView) emptyPageView.findViewById(R.id.imgEmptyPage);
         imgEmptyPage.setVisibility(View.INVISIBLE);
