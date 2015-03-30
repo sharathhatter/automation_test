@@ -27,7 +27,7 @@ public class SearchUtil {
     public static final String HISTORY_LEFT_ICON = "h";
 
     public static Cursor searchQueryCall(String query, Context context) {
-        if(TextUtils.isEmpty(query) || (query.length() < 3))return null;
+        if(TextUtils.isEmpty(query.trim()) || (query.trim().length() < 3))return null;
 
         /*
         SearchSuggestionAdapter searchSuggestionAdapter = new SearchSuggestionAdapter(context);
@@ -73,15 +73,16 @@ public class SearchUtil {
             String[] termsArray = autoSearchResponse.getTerms();
             String[] categoriesArray = autoSearchResponse.getCategories();
             String[] suggestedTermsArray = autoSearchResponse.getSuggestedTerm();
-            String[] topSearchesArray = autoSearchResponse.getTopSearches();
+            //String[] topSearchesArray = autoSearchResponse.getTopSearches();
             if ((termsArray != null && termsArray.length > 0) || (categoriesArray != null && categoriesArray.length > 0)) {
                 matrixCursor = getMatrixCursorForArray(autoSearchResponse.getTerms(), autoSearchResponse.getCategories(),
                         autoSearchResponse.getCategoriesUrl());
             } else if (suggestedTermsArray != null && suggestedTermsArray.length > 0) {
                 matrixCursor = getMatrixCursorForArray(autoSearchResponse.getSuggestedTerm(), "SUGGESTION", false);
-            } else if (topSearchesArray != null && topSearchesArray.length > 0) {
-                matrixCursor = getMatrixCursorForArray(autoSearchResponse.getTopSearches(), "POPULAR SEARCHES", true);
             }
+//            else if (topSearchesArray != null && topSearchesArray.length > 0) {
+//                matrixCursor = getMatrixCursorForArray(autoSearchResponse.getTopSearches(), "POPULAR SEARCHES", true);
+//            }
         }
         populateTopSearch(matrixCursor, context);
         return matrixCursor;

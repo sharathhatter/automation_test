@@ -29,8 +29,8 @@ public class AutoSearchResponse {
     @SerializedName(Constants.SUGGESTED_TERM)
     private String[] suggestedTerm;
 
-    @SerializedName(Constants.TOP_SEARCHES)
-    private String[] topSearches;
+//    @SerializedName(Constants.TOP_SEARCHES)
+//    private String[] topSearches;
 
     private String createdOn;
 
@@ -67,9 +67,9 @@ public class AutoSearchResponse {
         return suggestedTerm;
     }
 
-    public String[] getTopSearches() {
-        return topSearches;
-    }
+//    public String[] getTopSearches() {
+//        return topSearches;
+//    }
 
     public boolean isStale() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
