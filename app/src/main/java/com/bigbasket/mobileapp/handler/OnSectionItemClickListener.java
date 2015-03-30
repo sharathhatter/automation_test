@@ -327,10 +327,12 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
         if (section == null) return;
         if (section.getSectionType().equals(Section.BANNER)) {
             logBannerEvent();
-        } else if (screenName.equals(SectionManager.HOME_PAGE)) {
-            logItemClickEvent(TrackingAware.HOME_PAGE_ITEM_CLICKED);
-        } else if (screenName.equals(SectionManager.MAIN_MENU)) {
-            logItemClickEvent(TrackingAware.MENU_ITEM_CLICKED);
+        } else if (screenName != null) {
+            if (screenName.equals(SectionManager.HOME_PAGE)) {
+                logItemClickEvent(TrackingAware.HOME_PAGE_ITEM_CLICKED);
+            } else if (screenName.equals(SectionManager.MAIN_MENU)) {
+                logItemClickEvent(TrackingAware.MENU_ITEM_CLICKED);
+            }
         }
     }
 

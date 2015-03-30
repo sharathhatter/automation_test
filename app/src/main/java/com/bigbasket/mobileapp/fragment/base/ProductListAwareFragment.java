@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -157,9 +158,6 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         contentView.removeAllViews();
 
         final View sectionView = getSectionView();
-        if (sectionView != null) {
-            contentView.addView(sectionView);
-        }
 
         if (productListData != null) {
 
@@ -222,19 +220,31 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
 
                 productRecyclerView.setAdapter(mProductListRecyclerAdapter);
 
+                if (sectionView != null) {
+                    contentView.addView(sectionView);
+                }
                 contentView.addView(headerView);
                 contentView.addView(productRecyclerView);
             } else {
                 layoutFilterSort.setVisibility(View.GONE);
+                addSectionToScrollView(contentView, sectionView);
             }
 
             ((FilterDisplayAware) getActivity()).setFilterView(productListData.getFilterOptions(),
                     productListData.getFilteredOn(), getFragmentTxnTag());
+        } else if (sectionView != null) {
+            addSectionToScrollView(contentView, sectionView);
         }
 
         if (sectionView == null && (productListData == null || productListData.getProductCount() == 0)) {
             showNoProductsFoundView(contentView);
         }
+    }
+
+    private void addSectionToScrollView(ViewGroup contentView, View sectionView) {
+        ScrollView scrollView = new ScrollView(getActivity());
+        scrollView.addView(sectionView);
+        contentView.addView(scrollView);
     }
 
     private void displayProductCount() {
