@@ -16,7 +16,7 @@ import com.bigbasket.mobileapp.adapter.product.SubCategoryAdapter;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "bigbasket.db";
-    protected static final int DATABASE_VERSION = 10;
+    protected static final int DATABASE_VERSION = 11;
     public static SQLiteDatabase db = null;
     private static DatabaseHelper dbAdapter = null;
     private static boolean isConnectionOpen = false;
