@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.fragment.base;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -186,7 +187,8 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                     });
                     int filterDrawableId = productListData.getFilteredOn() != null && productListData.getFilteredOn().size() > 0 ?
                             R.drawable.filter_applied : R.drawable.filter;
-                    txtFilterBy.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(filterDrawableId), null, null, null);
+                    txtFilterBy.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(getActivity(), filterDrawableId),
+                            null, null, null);
                 } else {
                     txtFilterBy.setVisibility(View.GONE);
                 }

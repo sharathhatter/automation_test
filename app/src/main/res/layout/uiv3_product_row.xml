@@ -92,14 +92,13 @@
             <Spinner
                 android:id="@+id/spinnerPackageDesc"
                 style="@style/SpinnerDialogMode"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/margin_small"
+                android:layout_marginLeft="@dimen/product_row_item_margin_mini"
                 android:layout_marginRight="@dimen/margin_mini"
                 android:layout_marginTop="@dimen/margin_mini"
                 android:background="@android:color/transparent"
                 android:gravity="left"
-                android:minWidth="@dimen/spinner_width"
                 android:padding="0dp" />
         </LinearLayout>
 
@@ -192,7 +191,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/margin_small"
-                    android:layout_marginLeft="@dimen/margin_mini"
+                    android:layout_marginLeft="@dimen/product_row_item_margin_small"
                     android:background="@drawable/main_button_rounded_background"
                     android:drawablePadding="@dimen/padding_small"
                     android:drawableRight="@drawable/ic_shopping_cart_white_18dp"

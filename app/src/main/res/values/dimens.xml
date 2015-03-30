@@ -91,4 +91,6 @@
 
     <dimen name="transparent_view_border_height">1dp</dimen>
     <dimen name="transparent_view_border_radius">2dp</dimen>
+    <dimen name="product_row_item_margin_mini">4dp</dimen>
+    <dimen name="product_row_item_margin_small">8dp</dimen>
 </resources>

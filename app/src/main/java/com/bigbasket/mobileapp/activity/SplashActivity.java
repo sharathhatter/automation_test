@@ -6,16 +6,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.account.uiv3.ChangeCityActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
@@ -213,7 +210,8 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
         setSuspended(false);
         if (resultCode == NavigationCodes.GO_TO_HOME || resultCode == NavigationCodes.CITY_CHANGED) {
             removePendingGoToHome();
-            if (data != null && data.getBooleanExtra(Constants.RELOAD_APP, false)) {
+            if ((data != null && data.getBooleanExtra(Constants.RELOAD_APP, false))
+                    || resultCode == NavigationCodes.CITY_CHANGED) {
                 loadNavigation();
             } else {
                 loadHomePage();

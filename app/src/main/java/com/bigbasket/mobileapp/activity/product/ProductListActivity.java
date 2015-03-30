@@ -219,4 +219,10 @@ public class ProductListActivity extends BBActivity implements FilterDisplayAwar
         // Don't remove the IS_BASKET_DIRTY flag, as Fragment also needs to refresh, only update count
         new GetCartCountTask<>(this, true).startTask();
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        getSupportActionBar().setSubtitle(null);
+    }
 }

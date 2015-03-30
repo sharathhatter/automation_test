@@ -427,7 +427,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         isActivitySuspended = false;
         if (resultCode == NavigationCodes.GO_TO_HOME || resultCode == NavigationCodes.CITY_CHANGED) {
             boolean reloadApp = data != null && data.getBooleanExtra(Constants.RELOAD_APP, false);
-            goToHome(reloadApp);
+            goToHome(reloadApp, resultCode);
         } else if (resultCode == NavigationCodes.GO_TO_SLOT_SELECTION) {
             setResult(NavigationCodes.GO_TO_SLOT_SELECTION);
             finish();
@@ -451,6 +451,10 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
 
 
     public void goToHome(boolean reloadApp) {
+        goToHome(reloadApp, NavigationCodes.GO_TO_HOME);
+    }
+
+    public void goToHome(boolean reloadApp, int resultCode) {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
         editor.putBoolean(Constants.IS_PENDING_GO_TO_HOME, true);
         editor.putBoolean(Constants.RELOAD_APP, reloadApp);
@@ -458,7 +462,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
 
         Intent data = new Intent();
         data.putExtra(Constants.RELOAD_APP, reloadApp);
-        setResult(NavigationCodes.GO_TO_HOME, data);
+        setResult(resultCode, data);
         getCurrentActivity().finish();
     }
 
