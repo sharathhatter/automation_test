@@ -65,6 +65,7 @@ import com.bigbasket.mobileapp.fragment.promo.PromoDetailFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoSetProductsFragment;
 import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
+import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
@@ -512,6 +513,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                     doSearch(searchQuery);
                     return;
                 }
+
             }
         }
     }

@@ -16,6 +16,8 @@ public class Constants {
     public static final String PRODUCT_COUNT = "p_count";
     public static final String NORMAL_COUNT = "normal_count";
     public static final String TABLET_COUNT = "tablet_count";
+    public static final String CATEGORY_NAME = "cat_name";
+    public static final String CATEGORY_URL = "cat_url";
     public static final String FACET_NAME = "facet_name";
     public static final String FACET_SLUG = "facet_slug";
 
