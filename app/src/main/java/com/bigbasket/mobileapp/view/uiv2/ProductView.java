@@ -97,7 +97,7 @@ public final class ProductView {
         boolean hasChildren = childProducts != null && childProducts.size() > 0;
         Spinner spinnerPackageDesc = productViewHolder.getSpinnerPackageDesc();
         TextView txtPackageDesc = productViewHolder.getPackageDescTextView();
-        txtPackageDesc.setText(product.getWeightAndPackDesc());
+        txtPackageDesc.setText(UIUtil.abbreviate(product.getWeightAndPackDesc(), 10));
         txtPackageDesc.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
         if (hasChildren) {
             ProductListSpinnerAdapter productListSpinnerAdapter = new ProductListSpinnerAdapter(((ActivityAware) productDataAware).getCurrentActivity(), android.R.layout.simple_spinner_item,
