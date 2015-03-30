@@ -94,7 +94,7 @@
                 style="@style/SpinnerDialogMode"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/product_row_item_margin_mini"
+                android:layout_marginLeft="@dimen/product_row_item_margin_small"
                 android:layout_marginRight="@dimen/margin_mini"
                 android:layout_marginTop="@dimen/margin_mini"
                 android:background="@android:color/transparent"
