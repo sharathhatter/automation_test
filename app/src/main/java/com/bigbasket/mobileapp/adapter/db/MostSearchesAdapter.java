@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteException;
 import android.text.TextUtils;
+import android.widget.CursorAdapter;
 
 import com.bigbasket.mobileapp.model.search.MostSearchedItem;
 
@@ -21,7 +22,7 @@ public class MostSearchesAdapter {
         open();
     }
 
-    public static final String COLUMN_ID = "id";
+    public static final String COLUMN_ID = "_id";
     public static final String COLUMN_QUERY = "query";
     public static final String COLUMN_URL = "category_url";
     public static final String COLUMN_COUNT = "count";
@@ -57,7 +58,7 @@ public class MostSearchesAdapter {
         Cursor cursor = null;
         List<MostSearchedItem> mostSearchedItems = null;
         try {
-            cursor = DatabaseHelper.db.rawQuery("SELECT * FROM " + tableName + " ORDER BY id DESC LIMIT " + limit, null);
+            cursor = DatabaseHelper.db.rawQuery("SELECT * FROM " + tableName + " ORDER BY "+COLUMN_ID+" DESC LIMIT " + limit, null);
             if (cursor.moveToFirst()) {
                 mostSearchedItems = new ArrayList<>();
                 do {
@@ -73,15 +74,6 @@ public class MostSearchesAdapter {
         }
         return mostSearchedItems;
     }
-
-    /*
-    SELECT * FROM (
-    SELECT * FROM table ORDER BY id DESC LIMIT 50
-) sub
-ORDER BY id ASC
-
-This will select the last 50 rows from table, and then order them in ascending order.
-     */
 
     public int getCountForQuery(String query) {
         int count = 0;
@@ -125,6 +117,14 @@ This will select the last 50 rows from table, and then order them in ascending o
         } else {
             DatabaseHelper.db.insert(tableName, null, contentValues);
         }
+    }
+
+    public void deleteTerm(String term){
+        DatabaseHelper.db.delete(tableName, COLUMN_QUERY + " = \""+term+"\"", null);
+    }
+
+    public void deleteFirstRow(){
+        DatabaseHelper.db.delete(tableName, COLUMN_ID + " = 1", null);
     }
 
     public void open() {
