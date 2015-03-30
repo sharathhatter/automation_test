@@ -6,8 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -16,15 +15,13 @@ public class GalleryAdapter extends BaseAdapter {
     private Context mContext;
     private LayoutInflater infalter;
     private ArrayList<CustomGallery> data = new ArrayList<>();
-    ImageLoader imageLoader;
 
     private boolean isActionMultiplePick;
 
-    public GalleryAdapter(Context c, ImageLoader imageLoader) {
+    public GalleryAdapter(Context c) {
         infalter = (LayoutInflater) c
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mContext = c;
-        this.imageLoader = imageLoader;
         // clearCache();
     }
 
@@ -146,16 +143,16 @@ public class GalleryAdapter extends BaseAdapter {
         holder.imgQueue.setTag(position);
 
         try {
-
-            imageLoader.displayImage("file://" + data.get(position).sdcardPath,
-                    holder.imgQueue, new SimpleImageLoadingListener() {
-                        @Override
-                        public void onLoadingStarted(String imageUri, View view) {
-                            holder.imgQueue
-                                    .setImageResource(R.drawable.no_media);
-                            super.onLoadingStarted(imageUri, view);
-                        }
-                    });
+            Picasso.with(mContext).load("file://" + data.get(position).sdcardPath).into(holder.imgQueue);
+//            imageLoader.displayImage("file://" + data.get(position).sdcardPath,
+//                    holder.imgQueue, new SimpleImageLoadingListener() {
+//                        @Override
+//                        public void onLoadingStarted(String imageUri, View view) {
+//                            holder.imgQueue
+//                                    .setImageResource(R.drawable.no_media);
+//                            super.onLoadingStarted(imageUri, view);
+//                        }
+//                    });
 
             if (isActionMultiplePick) {
 
@@ -176,13 +173,13 @@ public class GalleryAdapter extends BaseAdapter {
         ImageView imgQueueMultiSelected;
     }
 
-    public void clearCache() {
-        imageLoader.clearDiscCache();
-        imageLoader.clearMemoryCache();
-    }
-
-    public void clear() {
-        data.clear();
-        notifyDataSetChanged();
-    }
+//    public void clearCache() {
+//        imageLoader.clearDiscCache();
+//        imageLoader.clearMemoryCache();
+//    }
+//
+//    public void clear() {
+//        data.clear();
+//        notifyDataSetChanged();
+//    }
 }

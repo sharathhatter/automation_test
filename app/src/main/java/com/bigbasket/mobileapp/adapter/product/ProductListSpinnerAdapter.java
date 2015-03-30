@@ -82,18 +82,10 @@ public class ProductListSpinnerAdapter extends ArrayAdapter<Product> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
-        SpinnerViewHolder spinnerViewHolder;
-        Product product = productArrayList.get(position);
         if (row == null) {
             LayoutInflater inflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             row = inflater.inflate(R.layout.product_spinner_row, parent, false);
-            spinnerViewHolder = new SpinnerViewHolder(row);
-            row.setTag(spinnerViewHolder);
-        } else {
-            spinnerViewHolder = (SpinnerViewHolder) row.getTag();
         }
-        TextView txtProductPkgDesc = spinnerViewHolder.getTxtProductPkgDesc();
-        txtProductPkgDesc.setText(product.getWeightAndPackDesc());
         return row;
     }
 
@@ -120,23 +112,6 @@ public class ProductListSpinnerAdapter extends ArrayAdapter<Product> {
                 txtProductSellPrice.setTypeface(typeface);
             }
             return txtProductSellPrice;
-        }
-    }
-
-    private class SpinnerViewHolder {
-        private TextView txtProductPkgDesc;
-        private View itemView;
-
-        private SpinnerViewHolder(View itemView) {
-            this.itemView = itemView;
-        }
-
-        public TextView getTxtProductPkgDesc() {
-            if (txtProductPkgDesc == null) {
-                txtProductPkgDesc = (TextView) itemView.findViewById(R.id.txtProductPkgDesc);
-                txtProductPkgDesc.setTypeface(typeface);
-            }
-            return txtProductPkgDesc;
         }
     }
 }

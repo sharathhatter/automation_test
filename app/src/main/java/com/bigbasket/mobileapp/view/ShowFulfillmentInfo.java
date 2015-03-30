@@ -18,7 +18,7 @@ import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.model.cart.FulfillmentInfo;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.bigbasket.mobileapp.util.UIUtil;
 
 
 public class ShowFulfillmentInfo<T> {
@@ -44,7 +44,7 @@ public class ShowFulfillmentInfo<T> {
             ImageView imgLiquorIcon = (ImageView) base.findViewById(R.id.imgLiquorIcon);
             if (fulfillmentInfo.getIcon() != null && !fulfillmentInfo.getIcon().equalsIgnoreCase("null")) {
                 imgLiquorIcon.setVisibility(View.VISIBLE);
-                ImageLoader.getInstance().displayImage(fulfillmentInfo.getIcon(), imgLiquorIcon);
+                UIUtil.displayAsyncImage(imgLiquorIcon, fulfillmentInfo.getIcon());
             } else {
                 imgLiquorIcon.setVisibility(View.VISIBLE);
             }

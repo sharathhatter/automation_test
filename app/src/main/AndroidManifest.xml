@@ -214,16 +214,6 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="sl_products"
-                    android:scheme="bigbasket" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
                     android:host="flat_page"
                     android:scheme="bigbasket" />
             </intent-filter>
@@ -245,16 +235,6 @@
 
                 <data
                     android:host="smart-basket"
-                    android:scheme="bigbasket" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="smart_basket_products"
                     android:scheme="bigbasket" />
             </intent-filter>
             <intent-filter>
@@ -327,6 +307,11 @@
 
         <activity
             android:name=".activity.order.MemberAddressFormActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+        <activity
+            android:name=".activity.shoppinglist.ShoppingListSummaryActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" />

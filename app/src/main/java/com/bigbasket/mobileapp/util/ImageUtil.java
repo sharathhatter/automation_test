@@ -11,7 +11,6 @@ import android.util.Log;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.adapter.order.PrescriptionImageAdapter;
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -85,8 +84,6 @@ public class ImageUtil<T> {
                 resizedBitmap = Bitmap.createScaledBitmap(roughBitmap, (int) (roughBitmap.getWidth() * values[0]),
                         (int) (roughBitmap.getHeight() * values[4]), true);
             } catch (OutOfMemoryError e) {
-                ImageLoader.getInstance().clearDiskCache();
-                ImageLoader.getInstance().clearMemoryCache();
                 resizedBitmap = Bitmap.createScaledBitmap(roughBitmap, (int) (roughBitmap.getWidth() * values[0]),
                         (int) (roughBitmap.getHeight() * values[4]), true);
             }
@@ -94,8 +91,6 @@ public class ImageUtil<T> {
         } catch (IOException e) {
             Log.e("Image", e.getMessage(), e);
         } catch (OutOfMemoryError e) {
-            ImageLoader.getInstance().clearDiskCache();
-            ImageLoader.getInstance().clearMemoryCache();
             ((BaseActivity) ctx).showAlertDialog(null, ((BaseActivity) ctx).getString(R.string.largeImageError), Constants.LARGE_SIZE_IMAGE);
             return null;
         }

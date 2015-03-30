@@ -11,8 +11,8 @@ import android.widget.ImageView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.model.order.PayuResponse;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.UIUtil;
 import com.google.gson.annotations.SerializedName;
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -129,7 +129,7 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
                 imageView.setVisibility(View.GONE);
             }
         } else {
-            ImageLoader.getInstance().displayImage(image, imageView);
+            UIUtil.displayAsyncImage(imageView, image);
         }
     }
 

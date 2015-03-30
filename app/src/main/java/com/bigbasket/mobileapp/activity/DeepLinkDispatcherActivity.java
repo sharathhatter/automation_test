@@ -12,6 +12,7 @@ import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.OrderDetailActivity;
 import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
+import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.callbacks.CallbackOrderInvoice;
@@ -149,32 +150,8 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
                 }
                 if (!TextUtils.isEmpty(slug)) {
                     ShoppingListName shoppingListName = new ShoppingListName(name, slug, isSystem);
-                    intent = new Intent(this, BackButtonActivity.class);
+                    intent = new Intent(this, ShoppingListSummaryActivity.class);
                     intent.putExtra(Constants.SHOPPING_LIST_NAME, shoppingListName);
-                    intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_SUMMARY);
-                    startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                } else {
-                    showDefaultError();
-                }
-                break;
-            case Constants.SL_PRODUCTS:
-                slug = uri.getQueryParameter(Constants.SLUG);
-                name = uri.getQueryParameter(Constants.NAME);
-                String categorySlug = uri.getQueryParameter(Constants.CATEGORY_SLUG);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                    isSystem = uri.getBooleanQueryParameter(Constants.SHOPPING_LIST_IS_SYSTEM,
-                            false);
-                } else {
-                    String isSystemStr = uri.getQueryParameter(Constants.SHOPPING_LIST_IS_SYSTEM);
-                    isSystem = !TextUtils.isEmpty(isSystemStr) &&
-                            !isSystemStr.equals("false") && !isSystemStr.equals("0");
-                }
-                if (!TextUtils.isEmpty(slug)) {
-                    ShoppingListName shoppingListName = new ShoppingListName(name, slug, isSystem);
-                    intent = new Intent(this, BackButtonActivity.class);
-                    intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_PRODUCTS);
-                    intent.putExtra(Constants.SHOPPING_LIST_NAME, shoppingListName);
-                    intent.putExtra(Constants.TOP_CAT_SLUG, categorySlug);
                     startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 } else {
                     showDefaultError();
@@ -188,19 +165,8 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
             case Constants.SMART_BASKET_SLUG:
                 ShoppingListName shoppingListName = new ShoppingListName(Constants.SMART_BASKET,
                         Constants.SMART_BASKET_SLUG, true);
-                intent = new Intent(this, BackButtonActivity.class);
+                intent = new Intent(this, ShoppingListSummaryActivity.class);
                 intent.putExtra(Constants.SHOPPING_LIST_NAME, shoppingListName);
-                intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_SUMMARY);
-                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                break;
-            case Constants.SMART_BASKET_PRODUCTS:
-                categorySlug = uri.getQueryParameter(Constants.CATEGORY_SLUG);
-                shoppingListName = new ShoppingListName(Constants.SMART_BASKET,
-                        Constants.SMART_BASKET_SLUG, true);
-                intent = new Intent(this, BackButtonActivity.class);
-                intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_PRODUCTS);
-                intent.putExtra(Constants.SHOPPING_LIST_NAME, shoppingListName);
-                intent.putExtra(Constants.TOP_CAT_SLUG, categorySlug);
                 startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 break;
             case Constants.BASKET:
@@ -244,9 +210,7 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
         loginRequiredUrls.add(Constants.ORDER_ITEMS);
         loginRequiredUrls.add(Constants.ALL_SL);
         loginRequiredUrls.add(Constants.SL_SUMMARY);
-        loginRequiredUrls.add(Constants.SL_PRODUCTS);
         loginRequiredUrls.add(Constants.SMART_BASKET_SLUG);
-        loginRequiredUrls.add(Constants.SMART_BASKET_PRODUCTS);
         return loginRequiredUrls;
     }
 

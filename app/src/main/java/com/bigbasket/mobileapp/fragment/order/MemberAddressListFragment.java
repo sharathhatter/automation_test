@@ -247,7 +247,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
     public String getTitle() {
         Bundle args = getArguments();
         mFromAccountPage = args != null && args.getBoolean(Constants.FROM_ACCOUNT_PAGE, false);
-        return mFromAccountPage ? "Delivery Address" : "Choose Delivery Address";
+        return mFromAccountPage ? "Delivery Address" : "Pick an address";
     }
 
     @NonNull

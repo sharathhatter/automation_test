@@ -2,28 +2,27 @@ package com.bigbasket.mobileapp.model.shoppinglist;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.Nullable;
-import android.text.TextUtils;
 
+import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+
 public class ShoppingListSummary implements Parcelable {
 
-    @SerializedName(Constants.TOP_CATEGORY_NAME)
-    private String topCategoryName;
+    @SerializedName(Constants.FACET_NAME)
+    private String facetName;
 
-    @SerializedName(Constants.TOP_CAT_SLUG)
-    private String topCategorySlug;
+    private ArrayList<Product> products;
 
-    @SerializedName(Constants.CART_INFO_NUM_OF_ITEMS)
-    private String numItems;
+    @SerializedName(Constants.PRODUCT_COUNT)
+    private int numProducts;
 
-    public ShoppingListSummary(String topCategoryName, String topCategorySlug, String numItems) {
-        this.topCategoryName = topCategoryName;
-        this.topCategorySlug = topCategorySlug;
-        this.numItems = numItems;
-    }
+    @SerializedName(Constants.FACET_SLUG)
+    private String facetSlug;
+
+    private ShoppingListName shoppingListName;
 
     @Override
     public int describeContents() {
@@ -32,15 +31,20 @@ public class ShoppingListSummary implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(topCategoryName);
-        dest.writeString(topCategorySlug);
-        dest.writeString(numItems);
+        dest.writeString(facetName);
+        dest.writeTypedList(products);
+        dest.writeInt(numProducts);
+        dest.writeString(facetSlug);
+        dest.writeParcelable(shoppingListName, flags);
     }
 
     public ShoppingListSummary(Parcel source) {
-        topCategoryName = source.readString();
-        topCategorySlug = source.readString();
-        numItems = source.readString();
+        facetName = source.readString();
+        products = new ArrayList<>();
+        source.readTypedList(products, Product.CREATOR);
+        numProducts = source.readInt();
+        facetSlug = source.readString();
+        shoppingListName = source.readParcelable(ShoppingListSummary.class.getClassLoader());
     }
 
     public static final Parcelable.Creator<ShoppingListSummary> CREATOR = new Parcelable.Creator<ShoppingListSummary>() {
@@ -55,26 +59,31 @@ public class ShoppingListSummary implements Parcelable {
         }
     };
 
-    public String getTopCategoryName() {
-        return topCategoryName;
+    public String getFacetName() {
+        return facetName;
     }
 
-    public String getTopCategorySlug() {
-        return topCategorySlug;
+    public ArrayList<Product> getProducts() {
+        return products;
     }
 
-    public String getNumItems() {
-        return numItems;
+    public int getNumProducts() {
+        return numProducts;
     }
 
-    @Nullable
-    public String getNumItemsDisplay() {
-        if (!TextUtils.isEmpty(numItems) && TextUtils.isDigitsOnly(numItems)) {
-            if (Integer.parseInt(numItems) > 1) {
-                return numItems + " ITEMS";
-            }
-            return numItems + " ITEM";
-        }
-        return null;
+    public String getFacetSlug() {
+        return facetSlug;
+    }
+
+    public ShoppingListName getShoppingListName() {
+        return shoppingListName;
+    }
+
+    public void setShoppingListName(ShoppingListName shoppingListName) {
+        this.shoppingListName = shoppingListName;
+    }
+
+    public String getTitle() {
+        return facetName + " (" + numProducts + ")";
     }
 }

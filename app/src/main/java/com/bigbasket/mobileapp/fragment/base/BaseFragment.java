@@ -70,7 +70,6 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         if (getView() != null) {
             getView().setClickable(true);
         }
-        //setTitle();
     }
 
     @Override
@@ -84,7 +83,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        setSuspended(true);
+        setSuspended(false);
         Activity activity = getActivity();
         if (activity != null && activity instanceof BaseActivity) {
             ((BaseActivity) activity).triggerActivityResult(requestCode, resultCode, data);
@@ -141,23 +140,23 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     }
 
     private void changeTitle(String title) {
-        if (getCurrentActivity() != null) {
+        if (getCurrentActivity() != null && title != null) {
             getCurrentActivity().onChangeTitle(title);
         }
     }
 
     public void setTitle() {
-        String title = getTitle();
-        if (!TextUtils.isEmpty(title)) {
-            title = title.toUpperCase();
-        }
-        changeTitle(title);
+        changeTitle(getTitle());
     }
 
     public void setTitle(String title) {
         changeTitle(title);
     }
 
+    /**
+     * Return null if you don't want the title to be changed
+     * @return
+     */
     public abstract String getTitle();
 
     public void showErrorMsg(String msg) {

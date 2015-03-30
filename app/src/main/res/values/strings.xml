@@ -127,8 +127,7 @@
     <string name="thankYou">Thank you!</string>
     <string name="thanksForRegistering">Thank you for registering with BigBasket.com. Happy Shopping!</string>
     <string name="mrp">MRP:</string>
-    <string name="chooseCity">Choose City</string>
-    <string name="changeCity">Change Your Location:</string>
+    <string name="chooseCity">Pick a city</string>
     <string name="changeCityMenuTxt">Change city</string>
     <string name="outOfStock">Out of stock</string>
     <string name="notForSale">Not for sale</string>
@@ -256,7 +255,7 @@
     <string name="callUs">Call Us</string>
     <string name="drawer_open">Open navigation</string>
     <string name="drawer_close">Close navigation</string>
-    <string name="delete_from_shop_lst">Delete this product from shopping list.</string>
+    <string name="delete_from_shop_lst">Delete from shopping list</string>
     <string name="additional_action">Additional action</string>
     <string name="please_wait">Please wait...</string>
     <string name="email">E-mail</string>
@@ -464,8 +463,8 @@
     <integer name="grid_portrait_count">1</integer>
 
     <string name="search_activity_launchMode">singleTop</string>
-    <string name="use_facebook">Log in with Facebook</string>
-    <string name="use_google">Log in with Google</string>
+    <string name="use_facebook">Login with Facebook</string>
+    <string name="use_google">Login with Google</string>
     <string name="facebookSignup">Sign up with Facebook</string>
     <string name="googleSignup">Sign up with Google</string>
     <string name="loginPageSignUpText">New user? Signup</string>
