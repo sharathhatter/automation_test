@@ -165,24 +165,4 @@ public class SearchUtil {
         }
         return matrixCursor;
     }
-
-//    private static MatrixCursor getMatrixCursor(List<MostSearchedItem> mostSearchedItems) {
-//        MatrixCursor matrixCursor = new MatrixCursor(new String[]{BaseColumns._ID,
-//                SearchManager.SUGGEST_COLUMN_TEXT_1, SearchManager.SUGGEST_COLUMN_TEXT_2,
-//                SearchManager.SUGGEST_COLUMN_INTENT_EXTRA_DATA,
-//                SearchManager.SUGGEST_COLUMN_INTENT_DATA_ID});
-//        for (int i = 0; i < mostSearchedItems.size(); i++) {
-//            MostSearchedItem mostSearchedItem = mostSearchedItems.get(i);
-//            if (!TextUtils.isEmpty(mostSearchedItem.getUrl())) {
-//                matrixCursor.addRow(new String[]{String.valueOf(i), mostSearchedItem.getQuery(),
-//                        "In Categories", mostSearchedItem.getUrl(), mostSearchedItem.getQuery(),
-//                        SearchUtil.SEARCH_LEFT_ICON, null});
-//            } else {
-//                matrixCursor.addRow(new String[]{String.valueOf(i), mostSearchedItem.getQuery(),
-//                        null, null, mostSearchedItem.getQuery(),
-//                        SearchUtil.SEARCH_LEFT_ICON, null});
-//            }
-//        }
-//        return matrixCursor;
-//    }
 }

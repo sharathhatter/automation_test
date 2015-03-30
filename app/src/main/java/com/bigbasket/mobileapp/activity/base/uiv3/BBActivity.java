@@ -508,18 +508,10 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == FragmentCodes.START_SEARCH) {
             if (data != null) {
-                String catSlug = data.getStringExtra(Constants.CATEGORY_SLUG);
-                if(!TextUtils.isEmpty(catSlug)){
-                    String catURL = data.getStringExtra(Constants.CATEGORY_URL);
-                    String catName = data.getStringExtra(Constants.CATEGORY_NAME);
-                    launchCategoryProducts(catName, catURL, catSlug);
-
-                }else {
-                    String searchQuery = data.getStringExtra(Constants.SEARCH_QUERY);
-                    if (!TextUtils.isEmpty(searchQuery)) {
-                        doSearch(searchQuery);
-                        return;
-                    }
+                String searchQuery = data.getStringExtra(Constants.SEARCH_QUERY);
+                if (!TextUtils.isEmpty(searchQuery)) {
+                    doSearch(searchQuery);
+                    return;
                 }
 
             }
