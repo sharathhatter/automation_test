@@ -31,6 +31,7 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
+import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.adapter.SearchViewAdapter;
 import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
 import com.bigbasket.mobileapp.fragment.product.CategoryProductsFragment;
@@ -124,7 +125,7 @@ public class SearchableActivity extends BackButtonActivity
                 Cursor cursor = (Cursor) parent.getItemAtPosition(position);
                 if (cursor != null && cursor.getString(4) != null) {
                     if(cursor.getString(4).contains("/"))
-                        searchByCategory(cursor.getString(1), cursor.getString(4),
+                        doSearchByCategory(cursor.getString(1), cursor.getString(4),
                                 getCategorySlug(cursor.getString(4)));
                     else
                         doSearch(cursor.getString(4));
@@ -138,13 +139,16 @@ public class SearchableActivity extends BackButtonActivity
 
     }
 
-    private void searchByCategory(String categoryName, String categoryUrl,
-                                        String categorySlug) {
-        Intent data = new Intent();
-        data.putExtra(Constants.CATEGORY_NAME, categoryName);
-        data.putExtra(Constants.CATEGORY_URL, categoryUrl);
-        data.putExtra(Constants.CATEGORY_SLUG, categorySlug);
-        setResult(FragmentCodes.START_SEARCH, data);
+    private void doSearchByCategory(String categoryName, String categoryUrl,
+                                    String categorySlug){
+        MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(this);
+        mostSearchesAdapter.update(categoryName, categoryUrl);
+
+        Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
+        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PRODUCT_CATEGORY);
+        intent.putExtra(Constants.CATEGORY_TITLE, categoryName);
+        intent.putExtra(Constants.CATEGORY_SLUG, categorySlug);
+        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         finish();
     }
 
