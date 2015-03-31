@@ -86,6 +86,7 @@
     <color name="uiv3_action_bar_light">#C8E6C9</color>
     <color name="uiv3_product_list_row_bkg">#FAFAFA</color>
     <color name="uiv3_primary_text_color">#212121</color>
+    <color name="overlay_bkg">#AA000000</color>
     <color name="uiv3_content_area_bkg">#DDDDDD</color>
     <color name="uiv3_divider_color">#B6B6B6</color>
     <!--<color name="uiv3_list_bkg_color">#EEEEEE</color>-->

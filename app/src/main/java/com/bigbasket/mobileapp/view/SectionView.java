@@ -366,7 +366,7 @@ public class SectionView {
             Renderer renderer = mSectionData.getRenderersMap() != null ?
                     mSectionData.getRenderersMap().get(sectionItem.getRenderingId()) : null;
 
-            int viewType = sectionItem.getItemViewType(renderer);
+            int viewType = sectionItem.getItemViewType(renderer, section.getSectionType());
             if (viewType == SectionItem.VIEW_UNKNOWN) {
                 continue;
             }

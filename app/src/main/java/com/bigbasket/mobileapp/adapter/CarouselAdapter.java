@@ -32,8 +32,6 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
     private int numItems;
     private int defaultMargin;
     private int defaultTxtPadding;
-    private int primaryTxtColor;
-    private int primaryBkgColor;
     private int columnWidth;
 
     public CarouselAdapter(T context, Section section,
@@ -49,8 +47,6 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
         this.defaultMargin = (int) ctx.getResources().getDimension(R.dimen.margin_mini);
         this.defaultTxtPadding = (int) ctx.getResources().getDimension(R.dimen.padding_small);
         this.columnWidth = (int) ctx.getResources().getDimension(R.dimen.grid_width);
-        this.primaryTxtColor = ctx.getResources().getColor(R.color.uiv3_primary_text_color);
-        this.primaryBkgColor = ctx.getResources().getColor(R.color.white);
     }
 
     @Override
@@ -100,8 +96,6 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
                 if (itemRenderer != null) {
                     itemRenderer.setRendering(txtTitle, defaultMargin, defaultMargin, true, true, true, true);
                 } else {
-                    txtTitle.setTextColor(primaryTxtColor);
-                    txtTitle.setBackgroundColor(primaryBkgColor);
                     txtTitle.setPadding(defaultTxtPadding, defaultTxtPadding, defaultTxtPadding, defaultTxtPadding);
                 }
             } else {
@@ -119,8 +113,6 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
                 if (itemRenderer != null) {
                     itemRenderer.setRendering(txtTitle, defaultMargin, defaultMargin, true, true, true, true);
                 } else {
-                    txtDescription.setTextColor(primaryTxtColor);
-                    txtDescription.setBackgroundColor(primaryBkgColor);
                     txtDescription.setPadding(defaultTxtPadding, defaultTxtPadding, defaultTxtPadding, defaultTxtPadding);
                 }
             } else {
@@ -154,7 +146,7 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
         SectionItem sectionItem = sectionItems.get(position);
         Renderer renderer = rendererHashMap != null ?
                 rendererHashMap.get(sectionItem.getRenderingId()) : null;
-        return sectionItem.getItemViewType(renderer);
+        return sectionItem.getItemViewType(renderer, section.getSectionType());
     }
 
     @Override
