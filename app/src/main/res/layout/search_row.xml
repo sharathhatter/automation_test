@@ -1,63 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:layout_height="wrap_content">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:background="@color/white"
-        android:layout_marginLeft="@dimen/margin_small"
-        android:layout_marginRight="@dimen/margin_small"
-        android:paddingLeft="@dimen/padding_small"
-        android:paddingTop="@dimen/padding_mini"
-        android:layout_height="wrap_content">
-
+    <!--<ImageView-->
+    <!--android:id="@+id/imgSearchListIcon"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_centerVertical="true"-->
+    <!--android:contentDescription="@string/search"-->
+    <!--android:paddingTop="@dimen/margin_mini"-->
+    <!--android:visibility="gone"-->
+    <!--android:src="@drawable/ic_search_grey600_24dp" />-->
 
     <ImageView
-        android:id="@+id/imgSearchListIcon"
+        android:id="@+id/imgRemoveTerm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="@dimen/margin_small"
-        android:contentDescription="@string/search"
-        android:src="@drawable/ic_search_black_24dp" />
+        android:contentDescription="@string/delete"
+        android:paddingLeft="@dimen/margin_small"
+        android:paddingRight="@dimen/margin_normal"
+        android:paddingTop="2dp"
+        android:src="@drawable/ic_close_grey600_24dp" />
 
     <TextView
         android:id="@+id/txtTerm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
         android:layout_marginLeft="@dimen/margin_normal"
-        android:layout_marginRight="@dimen/margin_large"
-        android:layout_toRightOf="@id/imgSearchListIcon"
+        android:layout_toLeftOf="@id/imgRemoveTerm"
         android:paddingBottom="@dimen/padding_normal"
         android:paddingTop="@dimen/padding_normal"
-        android:maxLines="1"
-        android:textColor="@color/tabDark"
+        android:textColor="@color/uiv3_primary_text_color"
         android:textSize="@dimen/primary_text_size" />
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:id="@+id/imgRemoveTerm"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:src="@drawable/ic_close_black_24dp"
-        android:paddingRight="@dimen/margin_normal"
-        android:paddingBottom="@dimen/margin_small"
-        android:paddingTop="@dimen/margin_small"
-        android:paddingLeft="@dimen/margin_small"
-        android:layout_height="wrap_content" />
 
     <View
         android:id="@+id/viewTermSeparator"
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:layout_below="@id/txtTerm"
-        android:layout_marginLeft="@dimen/margin_normal"
-        android:layout_toRightOf="@id/imgSearchListIcon"
         android:background="@color/uiv3_divider_color" />
-
-    </RelativeLayout>
-
 </RelativeLayout>

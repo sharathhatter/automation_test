@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteException;
 import android.text.TextUtils;
-import android.widget.CursorAdapter;
 
 import com.bigbasket.mobileapp.model.search.MostSearchedItem;
 
@@ -58,7 +57,7 @@ public class MostSearchesAdapter {
         Cursor cursor = null;
         List<MostSearchedItem> mostSearchedItems = null;
         try {
-            cursor = DatabaseHelper.db.rawQuery("SELECT * FROM " + tableName + " ORDER BY "+COLUMN_ID+" DESC LIMIT " + limit, null);
+            cursor = DatabaseHelper.db.rawQuery("SELECT * FROM " + tableName + " ORDER BY " + COLUMN_ID + " DESC LIMIT " + limit, null);
             if (cursor.moveToFirst()) {
                 mostSearchedItems = new ArrayList<>();
                 do {
@@ -119,11 +118,11 @@ public class MostSearchesAdapter {
         }
     }
 
-    public void deleteTerm(String term){
-        DatabaseHelper.db.delete(tableName, COLUMN_QUERY + " = \""+term+"\"", null);
+    public void deleteTerm(String term) {
+        DatabaseHelper.db.delete(tableName, COLUMN_QUERY + " = \"" + term + "\"", null);
     }
 
-    public void deleteFirstRow(){
+    public void deleteFirstRow() {
         DatabaseHelper.db.delete(tableName, COLUMN_ID + " = 1", null);
     }
 

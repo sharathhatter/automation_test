@@ -6,9 +6,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.LayoutAnimationController;
 import android.widget.CursorAdapter;
 import android.widget.Filterable;
 import android.widget.ImageView;
@@ -43,28 +40,28 @@ public class SearchViewAdapter<T> extends CursorAdapter implements Filterable {
             TextView txtTerm = rowViewHolder.getTxtTerm();
             txtTerm.setText(termString);
 
-            ImageView imgSearchListIcon = rowViewHolder.getImgSearchListIcon();
-            imgSearchListIcon.setImageDrawable(getItemLeftIcon(cursor).equals(SearchUtil.SEARCH_LEFT_ICON) ?
-                    context.getResources().getDrawable(R.drawable.ic_search_black_24dp) :
-                    context.getResources().getDrawable(R.drawable.ic_restore_black_24dp));
+//            ImageView imgSearchListIcon = rowViewHolder.getImgSearchListIcon();
+//            imgSearchListIcon.setImageDrawable(getItemLeftIcon(cursor).equals(SearchUtil.SEARCH_LEFT_ICON) ?
+//                    ContextCompat.getDrawable(context, R.drawable.ic_search_grey600_24dp) :
+//                    ContextCompat.getDrawable(context, R.drawable.ic_history_grey600_24dp));
 
 
             ImageView imgRemoveTerm = rowViewHolder.getImgRemoveTerm();
-            if(getItemRightIcon(cursor)!=null && getItemRightIcon(cursor).equals(SearchUtil.CROSS_ICON)){
+            if (getItemRightIcon(cursor) != null && getItemRightIcon(cursor).equals(SearchUtil.CROSS_ICON)) {
                 imgRemoveTerm.setVisibility(View.VISIBLE);
                 imgRemoveTerm.setTag(termString);
                 imgRemoveTerm.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         String deleteTerm = String.valueOf(v.getTag());
-                        if(!TextUtils.isEmpty(deleteTerm)) {
+                        if (!TextUtils.isEmpty(deleteTerm)) {
                             MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(context);
                             mostSearchesAdapter.deleteTerm(deleteTerm);
-                            ((SearchableActivity)context).notifySearchTermAdapter();
+                            ((SearchableActivity) context).notifySearchTermAdapter();
                         }
                     }
                 });
-            }else {
+            } else {
                 imgRemoveTerm.setVisibility(View.GONE);
             }
 
@@ -100,12 +97,12 @@ public class SearchViewAdapter<T> extends CursorAdapter implements Filterable {
             return imgRemoveTerm;
         }
 
-        public ImageView getImgSearchListIcon() {
-            if (imgSearchListIcon == null) {
-                imgSearchListIcon = (ImageView) itemRow.findViewById(R.id.imgSearchListIcon);
-            }
-            return imgSearchListIcon;
-        }
+//        public ImageView getImgSearchListIcon() {
+//            if (imgSearchListIcon == null) {
+//                imgSearchListIcon = (ImageView) itemRow.findViewById(R.id.imgSearchListIcon);
+//            }
+//            return imgSearchListIcon;
+//        }
     }
 
     private class HeaderViewHolder {
@@ -140,11 +137,11 @@ public class SearchViewAdapter<T> extends CursorAdapter implements Filterable {
         return VIEW_TYPE_ITEM;
     }
 
-    public String getItemLeftIcon(Cursor cursor){
+    public String getItemLeftIcon(Cursor cursor) {
         return cursor.getString(5);
     }
 
-    public String getItemRightIcon(Cursor cursor){
+    public String getItemRightIcon(Cursor cursor) {
         return cursor.getString(6);
     }
 

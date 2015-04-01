@@ -3,7 +3,7 @@
     <string name="app_name">BigBasket</string>
     <string name="title_activity_deliveryslots">Delivery slots!</string>
     <string name="search">Search</string>
-    <string name="searchHint">Search Products</string>
+    <string name="searchHint">Search</string>
     <string name="pharma_msg">Please choose/upload pharma prescription or remove pharma products</string>
     <string name="age_validation_required">Age check or validation is required.</string>
     <string name="errorWhileSampling">Error while sampling, please try again!</string>
@@ -564,4 +564,5 @@
     <string name="byLoggingIn">By logging in, you agree to BigBasket\'s\u00A0</string>
     <string name="byRegistering">By signing up, you agree to BigBasket\'s\u00A0</string>
     <string name="authFooterSeparator">, and\u00A0</string>
+    <string name="citiesWhereWeServe">Cities where we serve</string>
 </resources>
