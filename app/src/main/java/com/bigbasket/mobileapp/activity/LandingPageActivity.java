@@ -24,6 +24,9 @@ public class LandingPageActivity extends SocialLoginActivity {
 
         setUpSocialButtons((Button) findViewById(R.id.plus_sign_in_button),
                 (Button) findViewById(R.id.btnFBLogin));
+        ((Button) findViewById(R.id.btnLogin)).setTypeface(faceRobotoRegular);
+        ((Button) findViewById(R.id.btnRegister)).setTypeface(faceRobotoRegular);
+        ((Button) findViewById(R.id.btnSkip)).setTypeface(faceRobotoRegular);
     }
 
     @Override

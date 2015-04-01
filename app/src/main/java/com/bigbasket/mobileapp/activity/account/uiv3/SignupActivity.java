@@ -73,6 +73,7 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
                 onRegisterButtonClicked();
             }
         });
+        btnSignUp.setTypeface(faceRobotoRegular);
 
         TextView txtLogin = (TextView) base.findViewById(R.id.txtLogin);
         txtLogin.setTypeface(faceRobotoRegular);

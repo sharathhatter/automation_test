@@ -43,6 +43,7 @@
     <style name="DefaultButtonStyle" parent="Base.Widget.AppCompat.Button">
         <item name="android:textSize">@dimen/primary_text_size</item>
         <item name="android:textColor">@color/uiv3_primary_text_color</item>
+        <item name="android:textStyle">normal</item>
     </style>
 
     <!-- Other styles -->

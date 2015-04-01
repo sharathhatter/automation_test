@@ -90,6 +90,7 @@ public class SignInActivity extends BackButtonActivity {
                 attemptLogin();
             }
         });
+        mEmailSignInButton.setTypeface(faceRobotoRegular);
 
         TextView txtForgotPasswd = (TextView) baseView.findViewById(R.id.txtForgotPasswd);
         txtForgotPasswd.setTypeface(faceRobotoRegular);
