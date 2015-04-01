@@ -103,5 +103,17 @@
         android:layout_height="match_parent"
         android:layout_above="@id/layoutSocialButtons">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center">
+
+            <com.daimajia.slider.library.LightSliderLayout
+                android:id="@+id/imgSlider"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/banner_slider_height" />
+        </LinearLayout>
+
     </ScrollView>
 </RelativeLayout>

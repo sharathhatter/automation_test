@@ -192,6 +192,15 @@ public abstract class BaseSliderView {
         if (targetImageView == null)
             return;
 
+        if (mRes != 0) {
+            targetImageView.setImageResource(mRes);
+            targetImageView.setVisibility(View.VISIBLE);
+            if(v.findViewById(R.id.loading_bar) != null){
+                v.findViewById(R.id.loading_bar).setVisibility(View.INVISIBLE);
+            }
+            return;
+        }
+
         mLoadListener.onStart(me);
 
         Picasso p = Picasso.with(mContext);
@@ -200,8 +209,6 @@ public abstract class BaseSliderView {
             rq = p.load(mUrl);
         }else if(mFile != null){
             rq = p.load(mFile);
-        }else if(mRes != 0){
-            rq = p.load(mRes);
         }else{
             return;
         }
