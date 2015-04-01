@@ -5,7 +5,7 @@
     <!-- Search / will display always -->
     <item
         android:id="@+id/action_search"
-        android:icon="@drawable/search_white"
+        android:icon="@drawable/ic_search_white_24dp"
         android:orderInCategory="9999"
         android:title="@string/search"
         bb:showAsAction="always" />
@@ -18,7 +18,7 @@
 
     <item
         android:id="@+id/action_account"
-        android:icon="@drawable/user_white"
+        android:icon="@drawable/ic_account_circle_white_24dp"
         android:orderInCategory="9999"
         android:title="@string/myAccount"
         bb:showAsAction="always">

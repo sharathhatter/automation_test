@@ -10,94 +10,34 @@
         android:layout_height="match_parent"
         android:contentDescription="@string/background"
         android:scaleType="fitXY"
-        android:src="@drawable/landing_bkg" />
+        android:src="@drawable/landing_page" />
 
     <Button
         android:id="@+id/btnSkip"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/transparent_bkg"
+        android:background="@color/skip_btn_bkg"
         android:minHeight="0dp"
         android:minWidth="0dp"
         android:onClick="onLandingPageButtonClicked"
         android:paddingBottom="@dimen/padding_small"
         android:paddingTop="@dimen/padding_small"
-        android:text="@string/skip"
+        android:text="@string/skipWithArrow"
         android:textColor="@color/white"
         android:textSize="@dimen/secondary_text_size" />
-
-    <View
-        android:id="@+id/viewLoginButtonFooter"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/padding_small"
-        android:layout_above="@id/btnSkip"
-        android:background="@color/semi_transparent_bkg" />
-
-    <LinearLayout
-        android:id="@+id/layoutLoginButtons"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_above="@id/viewLoginButtonFooter"
-        android:orientation="horizontal">
-
-        <View
-            android:layout_width="@dimen/padding_normal"
-            android:layout_height="wrap_content"
-            android:background="@color/semi_transparent_bkg" />
-
-        <Button
-            android:id="@+id/btnRegister"
-            style="@style/LowerCaseButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:background="@drawable/transparent_bkg"
-            android:minHeight="0dp"
-            android:minWidth="0dp"
-            android:onClick="onLandingPageButtonClicked"
-            android:paddingLeft="@dimen/padding_large"
-            android:paddingRight="@dimen/padding_large"
-            android:text="@string/signUp"
-            android:textColor="@color/white"
-            android:textSize="@dimen/primary_text_size" />
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@color/semi_transparent_bkg" />
-
-        <Button
-            android:id="@+id/btnLogin"
-            style="@style/LowerCaseButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:background="@drawable/transparent_bkg"
-            android:minHeight="0dp"
-            android:minWidth="0dp"
-            android:onClick="onLandingPageButtonClicked"
-            android:paddingLeft="@dimen/padding_large"
-            android:paddingRight="@dimen/padding_large"
-            android:text="@string/signIn"
-            android:textColor="@color/white"
-            android:textSize="@dimen/primary_text_size" />
-
-        <View
-            android:layout_width="@dimen/padding_normal"
-            android:layout_height="wrap_content"
-            android:background="@color/semi_transparent_bkg" />
-    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/layoutSocialButtons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/layoutLoginButtons"
-        android:background="@color/semi_transparent_bkg"
+        android:layout_above="@id/btnSkip"
+        android:background="@color/landing_page_item_bkg"
         android:orientation="vertical"
-        android:padding="@dimen/padding_normal">
+        android:paddingBottom="@dimen/padding_normal"
+        android:paddingLeft="48dp"
+        android:paddingRight="48dp"
+        android:paddingTop="@dimen/padding_normal">
 
         <TextView
             android:id="@+id/lblSignInAndStart"
@@ -106,40 +46,56 @@
             android:layout_gravity="center_horizontal"
             android:text="@string/signinAndStart"
             android:textColor="@color/white"
-            android:textSize="@dimen/small_text_size" />
-
-        <Button
-            android:id="@+id/plus_sign_in_button"
-            style="@style/LowerCaseButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/margin_normal"
-            android:background="@color/gplus_red"
-            android:drawableLeft="@drawable/btn_gplus_normal"
-            android:minWidth="300dp"
-            android:paddingRight="@dimen/padding_normal"
-            android:text="@string/use_google"
-            android:textColor="@color/com_facebook_loginview_text_color"
-            android:textSize="@dimen/primary_text_size" />
+            android:textSize="@dimen/secondary_text_size" />
 
         <Button
             android:id="@+id/btnFBLogin"
-            style="@style/LowerCaseButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            style="@style/BBAppTheme.FacebookButton"
             android:layout_marginTop="@dimen/margin_normal"
-            android:background="@drawable/com_facebook_button_blue"
-            android:drawableLeft="@drawable/com_facebook_inverse_icon"
-            android:minWidth="300dp"
-            android:paddingBottom="@dimen/com_facebook_loginview_padding_bottom"
-            android:paddingLeft="@dimen/com_facebook_loginview_padding_bottom"
-            android:paddingRight="@dimen/com_facebook_loginview_padding_right"
-            android:paddingTop="@dimen/com_facebook_loginview_padding_top"
-            android:text="@string/use_facebook"
-            android:textColor="@color/com_facebook_loginview_text_color"
-            android:textSize="@dimen/com_facebook_loginview_text_size" />
+            android:text="@string/use_facebook" />
+
+        <Button
+            android:id="@+id/plus_sign_in_button"
+            style="@style/BBAppTheme.GoogleButton"
+            android:layout_marginTop="@dimen/margin_normal"
+            android:text="@string/use_google" />
+
+        <LinearLayout
+            android:id="@+id/layoutLoginButtons"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="@dimen/margin_normal"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnRegister"
+                style="@style/DefaultButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:background="@color/see_thru_white_transparent_bkg"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:onClick="onLandingPageButtonClicked"
+                android:text="@string/signUp"
+                android:textColor="@color/white"
+                android:textSize="@dimen/primary_text_size" />
+
+            <Button
+                android:id="@+id/btnLogin"
+                style="@style/DefaultButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:layout_weight="2"
+                android:background="@color/see_thru_white_transparent_bkg"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:onClick="onLandingPageButtonClicked"
+                android:text="@string/signIn"
+                android:textColor="@color/white"
+                android:textSize="@dimen/primary_text_size" />
+        </LinearLayout>
     </LinearLayout>
 
     <ScrollView

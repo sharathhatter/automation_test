@@ -10,7 +10,7 @@
         android:id="@+id/imgViewBasket"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/ic_basket"
+        android:background="@drawable/ic_shopping_cart_white_24dp"
         android:contentDescription="@string/viewBasket" />
 
     <TextView
