@@ -22,6 +22,8 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.Gravity;
@@ -731,10 +733,24 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         trackEvent(TrackingAware.SHOW_PASSWORD_ENABLED, eventAttribs);
     }
 
-    public void setTermsAndCondition(TextView txtVw) {
+    public void setTermsAndCondition(TextView txtVw, String prefix, String tncText, String separator, String privacyPolicyTxt) {
         txtVw.setTypeface(faceRobotoRegular);
-        SpannableString spannableString = new SpannableString(txtVw.getText());
-        spannableString.setSpan(new UnderlineSpan(), 0, spannableString.length(),
+        SpannableString spannableString = new SpannableString(prefix + tncText + separator + privacyPolicyTxt);
+        spannableString.setSpan(new UnderlineSpan(), prefix.length(), prefix.length() + tncText.length(),
+                Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+        spannableString.setSpan(new TncClickListener(), prefix.length(), prefix.length() + tncText.length(),
+                Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+        spannableString.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.uiv3_secondary_text_color)), prefix.length(), prefix.length() + tncText.length(),
+                Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+
+        spannableString.setSpan(new UnderlineSpan(), prefix.length() + tncText.length() + separator.length(),
+                prefix.length() + tncText.length() + separator.length() + privacyPolicyTxt.length(),
+                Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+        spannableString.setSpan(new PrivacyPolicyClickListener(), prefix.length() + tncText.length() + separator.length(),
+                prefix.length() + tncText.length() + separator.length() + privacyPolicyTxt.length(),
+                Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+        spannableString.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.uiv3_secondary_text_color)), prefix.length() + tncText.length() + separator.length(),
+                prefix.length() + tncText.length() + separator.length() + privacyPolicyTxt.length(),
                 Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
         txtVw.setText(spannableString);
         txtVw.setClickable(true);
@@ -749,6 +765,27 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         });
     }
 
+    private class TncClickListener extends ClickableSpan {
+
+        @Override
+        public void onClick(View widget) {
+            Intent flatPageWebviewActivity = new Intent(getCurrentActivity(), FlatPageWebViewActivity.class);
+            flatPageWebviewActivity.putExtra(Constants.WEBVIEW_URL, MobileApiUrl.DOMAIN + "terms-and-conditions/");
+            flatPageWebviewActivity.putExtra(Constants.WEBVIEW_TITLE, getString(R.string.termsAndCondHeading));
+            startActivityForResult(flatPageWebviewActivity, NavigationCodes.GO_TO_HOME);
+        }
+    }
+
+    private class PrivacyPolicyClickListener extends ClickableSpan {
+
+        @Override
+        public void onClick(View widget) {
+            Intent flatPageWebviewActivity = new Intent(getCurrentActivity(), FlatPageWebViewActivity.class);
+            flatPageWebviewActivity.putExtra(Constants.WEBVIEW_URL, MobileApiUrl.DOMAIN + "privacy-policy/");
+            flatPageWebviewActivity.putExtra(Constants.WEBVIEW_TITLE, getString(R.string.privacyPolicy));
+            startActivityForResult(flatPageWebviewActivity, NavigationCodes.GO_TO_HOME);
+        }
+    }
 
     public void launchLogin(String navigationCtx) {
         Intent intent = new Intent(this, SignInActivity.class);

@@ -101,6 +101,8 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
         setUpSocialButtons((Button) base.findViewById(R.id.plus_sign_in_button),
                 (Button) base.findViewById(R.id.btnFBLogin));
 
+        setTermsAndCondition((TextView) base.findViewById(R.id.txtSigninTermsAndCond), getString(R.string.byRegistering),
+                getString(R.string.termsAndCondHeading), getString(R.string.authFooterSeparator), getString(R.string.privacyPolicy));
         populateAutoComplete(mEmailView);
         trackEvent(TrackingAware.REGISTRATION_PAGE_SHOWN, null);
     }

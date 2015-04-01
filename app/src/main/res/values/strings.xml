@@ -524,6 +524,7 @@
     <string name="updateGooglePlayServicesDesc">You are using an outdated version of Google Play Services.\nPlease update it, in order to login with Google.</string>
     <string name="viewTerms">View terms and conditions</string>
     <string name="termsAndCondHeading">Terms and conditions</string>
+    <string name="privacyPolicy">Privacy Policy</string>
     <string name="noSortOptions">There are no sort options currently available</string>
     <string name="noFilterOptions">No products to filter</string>
     <string name="home">Home</string>
@@ -560,4 +561,7 @@
     <string name="skip">SKIP</string>
     <string name="skipWithArrow">SKIP &gt;</string>
     <string name="signinAndStart">SIGN IN AND GET STARTED</string>
+    <string name="byLoggingIn">By logging in, you agree to BigBasket\'s\u00A0</string>
+    <string name="byRegistering">By signing up, you agree to BigBasket\'s\u00A0</string>
+    <string name="authFooterSeparator">, and\u00A0</string>
 </resources>

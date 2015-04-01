@@ -3,7 +3,6 @@
     android:id="@+id/layoutLogin"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/auth_page_bkg"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -16,8 +15,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:paddingLeft="@dimen/margin_small"
+            android:layout_marginBottom="2dp"
             android:paddingRight="@dimen/margin_small"
-            android:text="Hello World"
             android:textColor="@color/uiv3_secondary_text_color"
             android:textSize="@dimen/secondary_text_size" />
 

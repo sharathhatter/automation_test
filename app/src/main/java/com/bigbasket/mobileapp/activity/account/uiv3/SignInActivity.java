@@ -128,7 +128,8 @@ public class SignInActivity extends BackButtonActivity {
             eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX));
             trackEvent(TrackingAware.LOGIN_SHOWN, eventAttribs);
         }
-
+        setTermsAndCondition((TextView) baseView.findViewById(R.id.txtSigninTermsAndCond), getString(R.string.byLoggingIn),
+                getString(R.string.termsAndCondHeading), getString(R.string.authFooterSeparator), getString(R.string.privacyPolicy));
     }
 
     private void logRememberMeEnabled(String enabled) {
