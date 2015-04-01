@@ -137,6 +137,7 @@
     <string name="checkState">checkState</string>
     <string name="registerHomepageTxt">Register</string>
     <string name="orLoginUsingEmail">OR LOGIN USING E-MAIL</string>
+    <string name="orSignupUsingEmail">OR SIGN UP USING E-MAIL</string>
     <string name="or">or</string>
     <string name="OR">OR</string>
     <string name="myAccount">My Account</string>
@@ -463,10 +464,10 @@
     <integer name="grid_portrait_count">1</integer>
 
     <string name="search_activity_launchMode">singleTop</string>
-    <string name="use_facebook">Login with Facebook</string>
-    <string name="use_google">Login with Google</string>
-    <string name="facebookSignup">Sign up with Facebook</string>
-    <string name="googleSignup">Sign up with Google</string>
+    <string name="use_facebook">Facebook</string>
+    <string name="use_google">Google\u00A0\u00A0\u00A0\u00A0</string>
+    <string name="facebookSignup">Facebook</string>
+    <string name="googleSignup">Google\u00A0\u00A0\u00A0\u00A0</string>
     <string name="loginPageSignUpText">New user? Signup</string>
     <string name="alreadyAMember">Already have an account? Login</string>
     <string name="headingNetworkError">Network Error</string>
