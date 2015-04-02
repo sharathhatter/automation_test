@@ -1,0 +1,47 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txtHeaderMsg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingBottom="@dimen/padding_small"
+            android:paddingLeft="@dimen/padding_normal"
+            android:paddingTop="@dimen/padding_small"
+            android:text="@string/citiesWhereWeServe"
+            android:textColor="@color/uiv3_secondary_text_color"
+            android:textSize="@dimen/secondary_text_size" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/uiv3_divider_color" />
+
+        <ListView
+            android:id="@+id/fabListView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@color/uiv3_divider_color"
+            android:dividerHeight="1dp" />
+    </LinearLayout>
+
+    <com.melnykov.fab.FloatingActionButton
+        android:id="@+id/btnFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="@dimen/margin_normal"
+        android:layout_marginRight="@dimen/margin_small"
+        android:src="@drawable/ic_action_content_new"
+        fab:fab_colorNormal="@color/uiv3_action_bar_background"
+        fab:fab_colorPressed="@color/uiv3_action_bar_background_pressed" />
+</RelativeLayout>

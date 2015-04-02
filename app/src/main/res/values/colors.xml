@@ -86,6 +86,7 @@
     <color name="uiv3_action_bar_light">#C8E6C9</color>
     <color name="uiv3_product_list_row_bkg">#FAFAFA</color>
     <color name="uiv3_primary_text_color">#212121</color>
+    <color name="overlay_bkg">#AA000000</color>
     <color name="uiv3_content_area_bkg">#DDDDDD</color>
     <color name="uiv3_divider_color">#B6B6B6</color>
     <!--<color name="uiv3_list_bkg_color">#EEEEEE</color>-->
@@ -100,7 +101,7 @@
     <color name="uiv3_link_color">#66009688</color>
     <color name="uiv3_dark_bkg">#333333</color>
     <color name="uiv3_orange">#E7685D</color>
-    <color name="gplus_red">#DD4B39</color>
+    <color name="gplus_red">#9b1b0c</color>
     <color name="pie_chart_base_color">#8A56E2</color>
     <color name="slider_text_default_bkg">#77000000</color>
 
@@ -153,6 +154,9 @@
     <color name="fbutton_color_asbestos">#7f8c8d</color>
     <color name="fbutton_color_transparent">@android:color/transparent</color>
     <color name="bar_chart_color">#88DCEB</color>
-    <color name="semi_transparent_bkg">#88000000</color>
-    <color name="see_thru_transparent_bkg">#22FFFFFF</color>
+    <color name="fb_btn_color">#0e2c70</color>
+    <color name="see_thru_transparent_bkg">#33727272</color>
+    <color name="see_thru_white_transparent_bkg">#22FFFFFF</color>
+    <color name="skip_btn_bkg">#77000000</color>
+    <color name="landing_page_item_bkg">#BB000000</color>
 </resources>

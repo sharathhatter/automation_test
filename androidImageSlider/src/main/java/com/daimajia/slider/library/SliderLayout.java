@@ -3,6 +3,7 @@ package com.daimajia.slider.library;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Message;
+import android.support.annotation.LayoutRes;
 import android.support.v4.view.PagerAdapter;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -169,7 +170,7 @@ public class SliderLayout extends RelativeLayout{
     public SliderLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         mContext = context;
-        LayoutInflater.from(context).inflate(R.layout.slider_layout, this, true);
+        LayoutInflater.from(context).inflate(getLayoutResId(), this, true);
 
         final TypedArray attributes = context.getTheme().obtainStyledAttributes(attrs,R.styleable.SliderLayout,
                 defStyle,0);
@@ -211,6 +212,11 @@ public class SliderLayout extends RelativeLayout{
         if(mAutoCycle){
             startAutoCycle();
         }
+    }
+
+    @LayoutRes
+    protected int getLayoutResId() {
+        return R.layout.slider_layout;
     }
 
     public void setCustomIndicator(PagerIndicator indicator){

@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -147,6 +148,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         } else {
             ((FilterDisplayAware) getActivity()).setFilterView(null, null, getFragmentTxnTag());
         }
+        displayProductCount();
     }
 
     private void setProductListView() {
@@ -156,9 +158,6 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         contentView.removeAllViews();
 
         final View sectionView = getSectionView();
-        if (sectionView != null) {
-            contentView.addView(sectionView);
-        }
 
         if (productListData != null) {
 
@@ -172,11 +171,8 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
             txtSortBy.setTypeface(faceRobotoRegular);
             txtFilterBy.setTypeface(faceRobotoRegular);
 
+            displayProductCount();
             if (productListData.getProductCount() > 0) {
-                String productsStr = productListData.getProductCount() > 1 ? " products" : " product";
-                if (getCurrentActivity() instanceof FilterDisplayAware) {
-                    getCurrentActivity().getSupportActionBar().setSubtitle(productListData.getProductCount() + productsStr);
-                }
                 if (productListData.getFilterOptions() != null && productListData.getFilterOptions().size() > 0) {
                     txtFilterBy.setVisibility(View.VISIBLE);
                     txtFilterBy.setOnClickListener(new View.OnClickListener() {
@@ -224,21 +220,43 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
 
                 productRecyclerView.setAdapter(mProductListRecyclerAdapter);
 
+                if (sectionView != null) {
+                    contentView.addView(sectionView);
+                }
                 contentView.addView(headerView);
                 contentView.addView(productRecyclerView);
             } else {
                 layoutFilterSort.setVisibility(View.GONE);
-                if (getCurrentActivity() instanceof FilterDisplayAware) {
-                    getCurrentActivity().getSupportActionBar().setSubtitle(null);
-                }
+                addSectionToScrollView(contentView, sectionView);
             }
 
             ((FilterDisplayAware) getActivity()).setFilterView(productListData.getFilterOptions(),
                     productListData.getFilteredOn(), getFragmentTxnTag());
+        } else if (sectionView != null) {
+            addSectionToScrollView(contentView, sectionView);
         }
 
         if (sectionView == null && (productListData == null || productListData.getProductCount() == 0)) {
             showNoProductsFoundView(contentView);
+        }
+    }
+
+    private void addSectionToScrollView(ViewGroup contentView, View sectionView) {
+        ScrollView scrollView = new ScrollView(getActivity());
+        scrollView.addView(sectionView);
+        contentView.addView(scrollView);
+    }
+
+    private void displayProductCount() {
+        if (productListData != null && productListData.getProductCount() > 0) {
+            String productsStr = productListData.getProductCount() > 1 ? " products" : " product";
+            if (getCurrentActivity() instanceof FilterDisplayAware) {
+                getCurrentActivity().getSupportActionBar().setSubtitle(productListData.getProductCount() + productsStr);
+            }
+        } else {
+            if (getCurrentActivity() instanceof FilterDisplayAware) {
+                getCurrentActivity().getSupportActionBar().setSubtitle(null);
+            }
         }
     }
 

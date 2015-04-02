@@ -61,7 +61,6 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="card_img_content_margin">8dp</dimen>
-    <dimen name="bb_button_text_size">@dimen/primary_text_size</dimen>
     <dimen name="vertical_separator_line">25dp</dimen>
     <dimen name="bar_chart_height">350dp</dimen>
     <dimen name="fulfillment_image_size">12dp</dimen>

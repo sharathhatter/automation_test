@@ -6,10 +6,16 @@
     -->
     <!-- Application theme. -->
 
+    <style name="BaseAppTheme.SearchViewStyle" parent="Widget.AppCompat.SearchView">
+        <item name="searchIcon">@drawable/ic_search_white_24dp</item>
+        <item name="closeIcon">@drawable/ic_clear_white_24dp</item>
+    </style>
+
     <style name="BaseAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/uiv3_action_bar_background</item>
         <item name="colorPrimaryDark">@color/uiv3_status_bar_background</item>
         <item name="colorAccent">@color/uiv3_action_bar_background</item>
+        <item name="searchViewStyle">@style/BaseAppTheme.SearchViewStyle</item>
     </style>
 
     <!-- Nav drawer style to set width specified by Material Design specification -->
@@ -40,11 +46,10 @@
         <item name="android:fitsSystemWindows">false</item>
     </style>
 
-    <style name="LowerCaseButtonStyle" parent="Widget.AppCompat.Button" />
-
-    <style name="DefaultButtonStyle">
-        <item name="android:textSize">@dimen/bb_button_text_size</item>
+    <style name="DefaultButtonStyle" parent="Base.Widget.AppCompat.Button">
+        <item name="android:textSize">@dimen/primary_text_size</item>
         <item name="android:textColor">@color/uiv3_primary_text_color</item>
+        <item name="android:textStyle">normal</item>
     </style>
 
     <!-- Other styles -->
@@ -62,7 +67,6 @@
     <style name="FormButtonStyle" parent="@style/DefaultButtonStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">@dimen/bb_button_text_size</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:background">@drawable/main_button_rounded_background</item>
         <item name="android:paddingTop">@dimen/padding_small</item>
@@ -76,7 +80,7 @@
         <item name="android:background">@drawable/green_button_rounded_bkg</item>
     </style>
 
-    <style name="MoreButtonStyle">
+    <style name="MoreButtonStyle" parent="@style/DefaultButtonStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:paddingLeft">@dimen/padding_small</item>
@@ -209,7 +213,6 @@
     <style name="EmptyPageButtonStyle" parent="@style/DefaultButtonStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">@dimen/bb_button_text_size</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:background">@drawable/main_button_rounded_background</item>
         <item name="android:paddingTop">@dimen/padding_small</item>
@@ -219,6 +222,26 @@
         <item name="android:paddingLeft">@dimen/padding_normal</item>
         <item name="android:paddingRight">@dimen/padding_normal</item>
         <item name="android:layout_gravity">center</item>
+    </style>
+
+    <style name="BBAppTheme.SocialButton" parent="DefaultButtonStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/primary_text_size</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:paddingLeft">@dimen/padding_normal</item>
+        <!--<item name="android:drawablePadding">@dimen/padding_small</item>-->
+        <!--<item name="android:gravity">center_vertical|left</item>-->
+    </style>
+
+    <style name="BBAppTheme.FacebookButton" parent="BBAppTheme.SocialButton">
+        <item name="android:drawableLeft">@drawable/fb_logo</item>
+        <item name="android:background">@color/fb_btn_color</item>
+    </style>
+
+    <style name="BBAppTheme.GoogleButton" parent="BBAppTheme.SocialButton">
+        <item name="android:drawableLeft">@drawable/gplus_logo</item>
+        <item name="android:background">@color/gplus_red</item>
     </style>
 
     <style name="SpinnerDialogMode" />

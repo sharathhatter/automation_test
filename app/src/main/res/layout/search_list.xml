@@ -19,8 +19,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:padding="@dimen/margin_small"
             android:contentDescription="@string/back"
+            android:padding="@dimen/margin_small"
             android:src="@drawable/ic_arrow_back_white_24dp" />
 
         <android.support.v7.widget.SearchView
@@ -30,15 +30,16 @@
             android:layout_gravity="center_vertical" />
     </LinearLayout>
 
-
     <ListView
         android:id="@+id/searchList"
-        android:background="@color/uiv3_list_bkg_color"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:dividerHeight="0dp"
+        android:layout_below="@id/layoutSearchView"
+        android:layout_marginLeft="@dimen/margin_small"
+        android:layout_marginRight="@dimen/margin_small"
+        android:background="@color/white"
         android:divider="@null"
-        android:scrollbars="none"
-        android:layout_below="@id/layoutSearchView" />
+        android:dividerHeight="0dp"
+        android:scrollbars="none" />
 
 </RelativeLayout>

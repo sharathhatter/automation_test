@@ -70,6 +70,9 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         if (getView() != null) {
             getView().setClickable(true);
         }
+        if (getCurrentActivity() != null && getCurrentActivity().getSupportActionBar() != null) {
+            getCurrentActivity().getSupportActionBar().setSubtitle(null);
+        }
     }
 
     @Override

@@ -223,7 +223,8 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                     if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
                         boolean isSmartBasket = destinationInfo.getDestinationSlug().equalsIgnoreCase(Constants.SMART_BASKET_SLUG);
                         intent = new Intent(((ActivityAware) context).getCurrentActivity(), ShoppingListSummaryActivity.class);
-                        ShoppingListName shoppingListName = new ShoppingListName(destinationInfo.getDestinationSlug(), destinationInfo.getDestinationSlug(),
+                        String title = section.getTitle() != null ? section.getTitle().getText() : "";
+                        ShoppingListName shoppingListName = new ShoppingListName(title, destinationInfo.getDestinationSlug(),
                                 isSmartBasket);
                         intent.putExtra(Constants.SHOPPING_LIST_NAME, shoppingListName);
                         ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
@@ -327,10 +328,12 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
         if (section == null) return;
         if (section.getSectionType().equals(Section.BANNER)) {
             logBannerEvent();
-        } else if (screenName.equals(SectionManager.HOME_PAGE)) {
-            logItemClickEvent(TrackingAware.HOME_PAGE_ITEM_CLICKED);
-        } else if (screenName.equals(SectionManager.MAIN_MENU)) {
-            logItemClickEvent(TrackingAware.MENU_ITEM_CLICKED);
+        } else if (screenName != null) {
+            if (screenName.equals(SectionManager.HOME_PAGE)) {
+                logItemClickEvent(TrackingAware.HOME_PAGE_ITEM_CLICKED);
+            } else if (screenName.equals(SectionManager.MAIN_MENU)) {
+                logItemClickEvent(TrackingAware.MENU_ITEM_CLICKED);
+            }
         }
     }
 

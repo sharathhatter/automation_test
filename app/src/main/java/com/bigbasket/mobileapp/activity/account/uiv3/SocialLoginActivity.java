@@ -46,6 +46,8 @@ import retrofit.RetrofitError;
 public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActivity {
 
     public void setUpSocialButtons(Button btnGoogleLogin, Button btnFacebookLoginButton) {
+        btnGoogleLogin.setTypeface(faceRobotoRegular);
+        btnFacebookLoginButton.setTypeface(faceRobotoRegular);
         btnGoogleLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

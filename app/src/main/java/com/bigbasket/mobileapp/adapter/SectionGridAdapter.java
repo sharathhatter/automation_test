@@ -30,8 +30,6 @@ public class SectionGridAdapter<T> extends BaseAdapter {
     private int numItems;
     private int defaultMargin;
     private int defaultTxtPadding;
-    private int primaryTxtColor;
-    private int primaryBkgColor;
 
     public SectionGridAdapter(T context, Section section,
                               HashMap<Integer, Renderer> rendererHashMap, Typeface typeface, String screenName) {
@@ -45,8 +43,6 @@ public class SectionGridAdapter<T> extends BaseAdapter {
         Context ctx = ((ActivityAware) context).getCurrentActivity();
         this.defaultMargin = (int) ctx.getResources().getDimension(R.dimen.margin_mini);
         this.defaultTxtPadding = (int) ctx.getResources().getDimension(R.dimen.padding_small);
-        this.primaryTxtColor = ctx.getResources().getColor(R.color.uiv3_primary_text_color);
-        this.primaryBkgColor = ctx.getResources().getColor(R.color.white);
     }
 
     @Override
@@ -66,7 +62,7 @@ public class SectionGridAdapter<T> extends BaseAdapter {
 
     @Override
     public int getViewTypeCount() {
-        return 10;
+        return SectionItem.getViewTypeCount();
     }
 
     @Override
@@ -116,8 +112,6 @@ public class SectionGridAdapter<T> extends BaseAdapter {
                     if (itemRenderer != null) {
                         itemRenderer.setRendering(txtTitle, defaultMargin, defaultMargin, true, true, true, true);
                     } else {
-                        txtTitle.setTextColor(primaryTxtColor);
-                        txtTitle.setBackgroundColor(primaryBkgColor);
                         txtTitle.setPadding(defaultTxtPadding, defaultTxtPadding, defaultTxtPadding, defaultTxtPadding);
                     }
                 } else {
@@ -135,8 +129,6 @@ public class SectionGridAdapter<T> extends BaseAdapter {
                     if (itemRenderer != null) {
                         itemRenderer.setRendering(txtTitle, defaultMargin, defaultMargin, true, true, true, true);
                     } else {
-                        txtDescription.setTextColor(primaryTxtColor);
-                        txtDescription.setBackgroundColor(primaryBkgColor);
                         txtDescription.setPadding(defaultTxtPadding, defaultTxtPadding, defaultTxtPadding, defaultTxtPadding);
                     }
                 } else {
@@ -173,7 +165,7 @@ public class SectionGridAdapter<T> extends BaseAdapter {
         SectionItem sectionItem = sectionItems.get(position);
         Renderer renderer = rendererHashMap != null ?
                 rendererHashMap.get(sectionItem.getRenderingId()) : null;
-        return sectionItem.getItemViewType(renderer);
+        return sectionItem.getItemViewType(renderer, section.getSectionType());
     }
 
 

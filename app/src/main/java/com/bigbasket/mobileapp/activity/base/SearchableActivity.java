@@ -34,7 +34,6 @@ import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.adapter.SearchViewAdapter;
 import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
-import com.bigbasket.mobileapp.fragment.product.CategoryProductsFragment;
 import com.bigbasket.mobileapp.interfaces.SearchTermRemoveAware;
 import com.bigbasket.mobileapp.model.search.MostSearchedItem;
 import com.bigbasket.mobileapp.util.Constants;
@@ -47,7 +46,6 @@ import com.google.zxing.integration.android.IntentResult;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.StringTokenizer;
 
 public class SearchableActivity extends BackButtonActivity
         implements SearchView.OnQueryTextListener, SearchTermRemoveAware {
@@ -85,8 +83,8 @@ public class SearchableActivity extends BackButtonActivity
         View searchListHeaderView = getLayoutInflater().inflate(R.layout.search_list_header, searchList, false);
 
 
-        RelativeLayout layoutVoice = (RelativeLayout)searchListHeaderView.findViewById(R.id.layoutVoice);
-        RelativeLayout layoutScanner = (RelativeLayout)searchListHeaderView.findViewById(R.id.layoutScanner);
+        RelativeLayout layoutVoice = (RelativeLayout) searchListHeaderView.findViewById(R.id.layoutVoice);
+        RelativeLayout layoutScanner = (RelativeLayout) searchListHeaderView.findViewById(R.id.layoutScanner);
 
         TextView txtVoice = (TextView) searchListHeaderView.findViewById(R.id.txtVoice);
         TextView txtScan = (TextView) searchListHeaderView.findViewById(R.id.txtScan);
@@ -124,7 +122,7 @@ public class SearchableActivity extends BackButtonActivity
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Cursor cursor = (Cursor) parent.getItemAtPosition(position);
                 if (cursor != null && cursor.getString(4) != null) {
-                    if(cursor.getString(4).contains("/"))
+                    if (cursor.getString(4).contains("/"))
                         doSearchByCategory(cursor.getString(1), cursor.getString(4),
                                 getCategorySlug(cursor.getString(4)));
                     else
@@ -140,7 +138,7 @@ public class SearchableActivity extends BackButtonActivity
     }
 
     private void doSearchByCategory(String categoryName, String categoryUrl,
-                                    String categorySlug){
+                                    String categorySlug) {
         MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(this);
         mostSearchesAdapter.update(categoryName, categoryUrl);
 
@@ -152,14 +150,14 @@ public class SearchableActivity extends BackButtonActivity
         finish();
     }
 
-    private void setAnimator(ListView listView){
+    private void setAnimator(ListView listView) {
         AnimationSet set = new AnimationSet(true);
         Animation animation = new AlphaAnimation(0.0f, 1.0f);
         set.addAnimation(animation);
 
         animation = new TranslateAnimation(
-                Animation.RELATIVE_TO_SELF, 0.0f,Animation.RELATIVE_TO_SELF, 0.0f,
-                Animation.RELATIVE_TO_SELF, -1.0f,Animation.RELATIVE_TO_SELF, 0.0f
+                Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
+                Animation.RELATIVE_TO_SELF, -1.0f, Animation.RELATIVE_TO_SELF, 0.0f
         );
         animation.setDuration(100);
         set.addAnimation(animation);
@@ -168,7 +166,7 @@ public class SearchableActivity extends BackButtonActivity
         listView.setLayoutAnimation(controller);
     }
 
-    public void notifySearchTermAdapter(){
+    public void notifySearchTermAdapter() {
         mSearchListAdapter.changeCursor(populatePastSearchTermsList());
         mSearchListAdapter.notifyDataSetChanged();
     }
@@ -198,7 +196,7 @@ public class SearchableActivity extends BackButtonActivity
         finish();
     }
 
-    private String getCategorySlug(String categoryUrl){
+    private String getCategorySlug(String categoryUrl) {
         String[] categoryUrlArray = categoryUrl.split("/");
         return categoryUrlArray[categoryUrlArray.length - 1];
     }
@@ -218,14 +216,15 @@ public class SearchableActivity extends BackButtonActivity
         MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(this);
         int mostSearchTermsCount = mostSearchesAdapter.getRowCount();
         if (mostSearchTermsCount > 0) {
+            matrixCursor.addRow(new String[]{"0", "HISTORY", null, null, null, null, null});
             if (mostSearchTermsCount >= 5) {
                 List<MostSearchedItem> mostSearchedItemList = mostSearchesAdapter.getRecentSearchedItems(5);
-                int i = 0;
+                int i = 1;
                 for (MostSearchedItem mostSearchedItem : mostSearchedItemList)
                     matrixCursor.addRow(new String[]{String.valueOf(i++), mostSearchedItem.getQuery(),
                             mostSearchedItem.getUrl(), null, mostSearchedItem.getQuery(),
                             SearchUtil.HISTORY_LEFT_ICON, SearchUtil.CROSS_ICON});
-                if(mostSearchTermsCount>20)
+                if (mostSearchTermsCount > 20)
                     mostSearchesAdapter.deleteFirstRow();
             } else {
                 List<MostSearchedItem> mostSearchedItemList = mostSearchesAdapter.getRecentSearchedItems(mostSearchTermsCount);
@@ -240,7 +239,7 @@ public class SearchableActivity extends BackButtonActivity
         return matrixCursor;
     }
 
-    private void populateTopSearch(MatrixCursor matrixCursor){
+    private void populateTopSearch(MatrixCursor matrixCursor) {
         String[] topSearchArrayString = getTopSearches();
         if (topSearchArrayString != null && topSearchArrayString.length > 0) {
             int i = 0;
@@ -255,25 +254,26 @@ public class SearchableActivity extends BackButtonActivity
     private void setupSearchView() {
         mSearchView.setIconifiedByDefault(false);
         mSearchView.setOnQueryTextListener(this);
-        mSearchView.setQueryHint("Search for Products");
+        mSearchView.setQueryHint(getString(R.string.searchHint));
 
-        // icon
-        ImageView searchIcon = (ImageView) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_mag_icon);
-        searchIcon.setImageResource(R.drawable.ic_search_white_24dp);
-
-        // background
-        View searchPlate = mSearchView.findViewById(android.support.v7.appcompat.R.id.search_plate);
-        //searchPlate.setVisibility(View.GONE);
-
-        // clear button
-        ImageView searchClose = (ImageView) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_close_btn);
-        searchClose.setImageResource(R.drawable.ic_clear_white_24dp);
-
-        SearchView.SearchAutoComplete theTextArea = (SearchView.SearchAutoComplete)mSearchView.findViewById(R.id.search_src_text);
-        theTextArea.requestFocusFromTouch();
-        theTextArea.setTextColor(Color.WHITE);//or any color that you want
-        theTextArea.setHintTextColor(Color.WHITE);
-        theTextArea.setTextSize(20);
+//        // icon
+//        ImageView searchIcon = (ImageView) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_mag_icon);
+//        searchIcon.setImageResource(R.drawable.ic_search_white_24dp);
+//
+//        //searchPlate.setVisibility(View.GONE);
+//
+//        // clear button
+//        ImageView searchClose = (ImageView) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_close_btn);
+//        searchClose.setImageResource(R.drawable.ic_clear_white_24dp);
+//
+        SearchView.SearchAutoComplete theTextArea = (SearchView.SearchAutoComplete) mSearchView.findViewById(R.id.search_src_text);
+        if (theTextArea != null) {
+            theTextArea.requestFocusFromTouch();
+            theTextArea.setTextColor(Color.WHITE);
+            theTextArea.setCursorVisible(true);
+            //
+            theTextArea.setHintTextColor(getResources().getColor(R.color.secondary_text_default_material_dark));
+        }
     }
 
     @Override

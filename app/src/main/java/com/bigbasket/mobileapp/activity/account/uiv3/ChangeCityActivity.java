@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
@@ -54,8 +55,9 @@ public class ChangeCityActivity extends BackButtonActivity implements CityListDi
         FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
 
         LayoutInflater inflater = getLayoutInflater();
-        ViewGroup base = (ViewGroup) inflater.inflate(R.layout.uiv3_fab_list_view, contentFrame, false);
-        base.findViewById(R.id.noDeliveryAddLayout).setVisibility(View.GONE);
+        ViewGroup base = (ViewGroup) inflater.inflate(R.layout.change_city, contentFrame, false);
+
+        ((TextView) base.findViewById(R.id.txtHeaderMsg)).setTypeface(faceRobotoRegular);
 
         final ListView listView = (ListView) base.findViewById(R.id.fabListView);
         ArrayAdapter<City> citySpinnerAdapter = new ArrayAdapter<>(this,
