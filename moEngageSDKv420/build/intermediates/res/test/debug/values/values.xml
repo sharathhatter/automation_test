@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/home/jugal/mobile-app/mobile-app/moEngageSDKv420/build/intermediates/bundles/debug/res/values/values.xml -->
+    <eat-comment/>
+    <dimen name="moe_activity_horizontal_margin">16dp</dimen>
+    <dimen name="moe_activity_vertical_margin">16dp</dimen>
+    <string name="moe_inbox_name">Notification Center</string>
+    <string name="moe_notification_center_empty">Notification Center Empty</string>
+</resources>

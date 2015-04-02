@@ -1,0 +1,68 @@
+<RelativeLayout 
+	xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"  
+    android:background="#00000000"  
+    android:paddingLeft="20dp"
+>
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="@dimen/moe_activity_vertical_margin"
+    android:paddingLeft="@dimen/moe_activity_horizontal_margin"
+    android:paddingRight="@dimen/moe_activity_horizontal_margin"
+    android:paddingTop="@dimen/moe_activity_vertical_margin"
+    android:orientation="vertical"
+    android:id="@+id/MOEviewHolder"
+    android:layout_marginTop="20dp"
+    android:layout_marginRight="20dp"
+>
+    
+    <ImageView 
+        android:id="@+id/MOEimage"
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content"
+    	android:adjustViewBounds="true"
+		android:cropToPadding="false"
+		android:scaleType="fitXY"
+		android:layout_gravity="center_horizontal"
+    />
+    
+    
+    <TextView 
+        android:layout_marginTop="16dp"
+    	android:layout_height="wrap_content"
+    	android:layout_width="match_parent"
+    	android:id="@+id/MOEmessageText"   
+    	android:gravity="center_horizontal"
+    	android:textSize="16sp"
+    />
+    
+    <TextView 
+        android:layout_marginTop="24dp"
+    	android:layout_height="wrap_content"
+    	android:layout_width="wrap_content"
+    	android:layout_gravity="center_horizontal"
+    	android:id="@+id/MOEactionButton"   
+    	android:paddingTop="8dp"
+    	android:paddingBottom="8dp" 
+    	android:paddingLeft="16dp"
+    	android:paddingRight="16dp"
+    	android:textStyle="bold"
+    	android:textSize="18sp"
+    	
+    />
+    
+</LinearLayout>
+
+<ImageView 
+	android:src="@drawable/moe_close"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:layout_alignParentRight="true"
+	android:layout_alignParentTop="true"   
+	android:id="@+id/moeCloseButton"
+/>
+
+
+</RelativeLayout><!-- From: file:/home/jugal/mobile-app/mobile-app/moEngageSDKv420/src/main/res/layout/moe_image_message_button.xml -->
