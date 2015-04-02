@@ -310,11 +310,11 @@ public class SearchableActivity extends BackButtonActivity
         }
         IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (scanResult != null) {
-            String skuId = scanResult.getContents();
-            if (!TextUtils.isEmpty(skuId)) {
+            String eanCode = scanResult.getContents();
+            if (!TextUtils.isEmpty(eanCode)) {
                 Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
                 intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PRODUCT_DETAIL);
-                intent.putExtra(Constants.SKU_ID, skuId);
+                intent.putExtra(Constants.EAN_CODE, eanCode);
                 startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 return;
             }

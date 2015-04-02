@@ -72,9 +72,11 @@ import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.bigbasket.mobileapp.util.analytics.FacebookEventTrackWrapper;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
 import com.demach.konotor.Konotor;
+import com.facebook.AppEventsLogger;
 import com.moe.pushlibrary.MoEHelper;
 
 import org.json.JSONException;
@@ -95,11 +97,12 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         ConnectivityAware, TrackingAware, ApiErrorAware, EmailAddressAware {
 
     public static Typeface faceRupee;
-    public static Typeface faceRobotoRegular;
+    public static Typeface faceRobotoRegular, faceRobotoLight;
     protected BigBasketMessageHandler handler;
     protected boolean isActivitySuspended;
     protected COReserveQuantity coReserveQuantity;
     private MoEHelper moEHelper;
+    private AppEventsLogger fbLogger;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,9 +112,10 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
 
         faceRupee = FontHolder.getInstance(this).getFaceRupee();
         faceRobotoRegular = FontHolder.getInstance(this).getFaceRobotoRegular();
-
+        faceRobotoLight = FontHolder.getInstance(this).getFaceRobotoLight();
         moEHelper = MoEngageWrapper.getMoHelperObj(getCurrentActivity());
         LocalyticsWrapper.integrate(this);
+        fbLogger = AppEventsLogger.newLogger(getCurrentActivity());
     }
 
     @Override
@@ -601,14 +605,13 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
 
     @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs) {
-        AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());
-        if (authParameters.isMoEngageEnabled())
-            trackEvent(eventName, eventAttribs, null, null, false);
+        trackEvent(eventName, eventAttribs, null, null, false);
     }
 
 
     @Override
-    public void trackEvent(String eventName, Map<String, String> eventAttribs, String source, String sourceValue,
+    public void trackEvent(String eventName, Map<String, String> eventAttribs, String source,
+                           String sourceValue,
                            boolean isCustomerValueIncrease) {
         AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());
         if (authParameters.isMoEngageEnabled()) {
@@ -635,6 +638,17 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
                 LocalyticsWrapper.tagEvent(eventName, eventAttribs, Constants.CUSTOMER_VALUE_INCREASE);
             else
                 LocalyticsWrapper.tagEvent(eventName, eventAttribs);
+        }
+
+        if (authParameters.isFBLoggerEnabled()) {
+            if (eventAttribs != null) {
+                Bundle paramBundle = new Bundle();
+                for (Map.Entry<String, String> eventAttrib : eventAttribs.entrySet())
+                    paramBundle.putString(eventAttrib.getKey(), eventAttrib.getValue());
+                FacebookEventTrackWrapper.logAppEvent(fbLogger, eventName, paramBundle);
+            } else {
+                FacebookEventTrackWrapper.logAppEvent(fbLogger, eventName);
+            }
         }
     }
 

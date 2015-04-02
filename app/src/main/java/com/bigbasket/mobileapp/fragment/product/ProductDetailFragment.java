@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ProductDetailApiResponse;
@@ -27,6 +28,7 @@ import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListDoAddDeleteTask;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.uiv2.ProductView;
 import com.bigbasket.mobileapp.view.uiv3.ShoppingListNamesDialog;
@@ -83,10 +85,11 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
         Bundle args = getArguments();
         if (args == null) return;
         String productId = args.getString(Constants.SKU_ID);
-        if (TextUtils.isEmpty(productId)) return;
+        String eanCode = args.getString(Constants.EAN_CODE);
+        if (TextUtils.isEmpty(productId) && TextUtils.isEmpty(eanCode)) return;
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.productDetails(productId, new Callback<ProductDetailApiResponse>() {
+        bigBasketApiService.productDetails(productId, eanCode, new Callback<ProductDetailApiResponse>() {
             @Override
             public void success(ProductDetailApiResponse productDetailApiResponse, Response response) {
                 if (isSuspended()) return;
@@ -124,6 +127,8 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
     private void renderProductDetail() {
         if (getActivity() == null || getView() == null) return;
 
+        setTitle(mProduct!=null && !TextUtils.isEmpty(mProduct.getDescription())
+                ? mProduct.getDescription(): getTitle());
         ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
                 .setCommonTypeface(faceRobotoRegular)
                 .setRupeeTypeface(faceRupee)
@@ -147,10 +152,12 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
                 View additionalInfoView = inflater.inflate(R.layout.uiv3_product_add_desc, layoutProductDetail, false);
                 TextView txtProductAddDescTitle = (TextView) additionalInfoView.findViewById(R.id.txtProductAddDescTitle);
                 TextView txtProductAddDescContent = (TextView) additionalInfoView.findViewById(R.id.txtProductAddDescContent);
-                txtProductAddDescContent.setTypeface(faceRobotoRegular);
-                txtProductAddDescTitle.setTypeface(faceRobotoRegular);
+                txtProductAddDescContent.setTypeface(FontHolder.getInstance(getCurrentActivity()).getFaceRobotoLight());
+                txtProductAddDescTitle.setTypeface(FontHolder.getInstance(getCurrentActivity()).getFaceRobotoLight());
                 txtProductAddDescContent.setText(Html.fromHtml(productAdditionalInfo.getContent()));
-                txtProductAddDescTitle.setText(Html.fromHtml(productAdditionalInfo.getTitle()));
+                if(productAdditionalInfo.getTitle()!=null)
+                    txtProductAddDescTitle.setText(Html.fromHtml(productAdditionalInfo.getTitle()));
+                txtProductAddDescTitle.setVisibility(View.GONE);
                 layoutProductDetail.addView(additionalInfoView);
             }
         }
@@ -159,7 +166,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
 
     @Override
     public String getTitle() {
-        return "Detail";
+        return "";
     }
 
     @Override

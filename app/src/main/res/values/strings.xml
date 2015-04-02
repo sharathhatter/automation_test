@@ -421,10 +421,10 @@
     <string name="voice">Voice</string>
     <string name="scan">Scan</string>
     <string name="voicePrompt">Speak Now</string>
-    <string name="speechNotSupported">Sorry! Your device doesn\'t support speech input</string>
+    <string name="speechNotSupported">Sorry! Your device does not support speech input!</string>
     <string name="clear">Clear all</string>
     <string name="noProducts">Sorry! There are no products to display.</string>
-    <string name="noProductsSearchMsg">Sorry! There are no products found related to your search.</string>
+    <string name="noProductsSearchMsg">Sorry! There are no products found related to your search term.</string>
 
     <!-- Invoice -->
     <string name="orderThankyouText">Thank you! Your order is placed\n Order #</string>

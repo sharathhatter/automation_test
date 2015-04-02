@@ -28,6 +28,7 @@ public class AuthParameters {
     private boolean isKonotorEnabled;
     private boolean isMoEngageEnabled;
     private boolean isLocalyticsEnabled;
+    private boolean isFBLoggerEnabled;
 
     public static void updateInstance(Context context) {
         authParameters = new AuthParameters(context);
@@ -88,20 +89,27 @@ public class AuthParameters {
 
     public void setAnyLyticsEnabled(boolean isMoEngaleEnabled,
                                     boolean isLocalyticsEnabled, boolean isKonotorEnabled,
+                                    boolean isFBLoggerEnabled,
                                     Context context) {
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefer.edit();
         editor.putBoolean(Constants.ENABLE_MOENGAGE, isMoEngaleEnabled);
         editor.putBoolean(Constants.ENABLE_LOCALYTICS, isLocalyticsEnabled);
         editor.putBoolean(Constants.ENABLE_KONOTOR, isKonotorEnabled);
+        editor.putBoolean(Constants.ENABLE_FB_LOGGER, isFBLoggerEnabled);
         editor.commit();
         this.isMoEngageEnabled = isMoEngaleEnabled;
         this.isLocalyticsEnabled = isLocalyticsEnabled;
         this.isKonotorEnabled = isKonotorEnabled;
+        this.isFBLoggerEnabled = isFBLoggerEnabled;
     }
 
     public boolean isLocalyticsEnabled() {
         return isLocalyticsEnabled;
+    }
+
+    public boolean isFBLoggerEnabled() {
+        return isFBLoggerEnabled;
     }
 
     private AuthParameters(Context context) {
@@ -122,6 +130,7 @@ public class AuthParameters {
             isKonotorEnabled = prefer.getBoolean(Constants.ENABLE_KONOTOR, false);
             isMoEngageEnabled = prefer.getBoolean(Constants.ENABLE_MOENGAGE, false);
             isLocalyticsEnabled = prefer.getBoolean(Constants.ENABLE_LOCALYTICS, false);
+            isFBLoggerEnabled = prefer.getBoolean(Constants.ENABLE_FB_LOGGER, false);
             firstName = prefer.getString(Constants.FIRST_NAME_PREF, "");
         }
     }
