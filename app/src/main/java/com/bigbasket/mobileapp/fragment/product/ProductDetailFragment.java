@@ -28,6 +28,7 @@ import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListDoAddDeleteTask;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.uiv2.ProductView;
 import com.bigbasket.mobileapp.view.uiv3.ShoppingListNamesDialog;
@@ -151,8 +152,8 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
                 View additionalInfoView = inflater.inflate(R.layout.uiv3_product_add_desc, layoutProductDetail, false);
                 TextView txtProductAddDescTitle = (TextView) additionalInfoView.findViewById(R.id.txtProductAddDescTitle);
                 TextView txtProductAddDescContent = (TextView) additionalInfoView.findViewById(R.id.txtProductAddDescContent);
-                txtProductAddDescContent.setTypeface(BaseActivity.faceRobotoLight);
-                txtProductAddDescTitle.setTypeface(BaseActivity.faceRobotoLight);
+                txtProductAddDescContent.setTypeface(FontHolder.getInstance(getCurrentActivity()).getFaceRobotoLight());
+                txtProductAddDescTitle.setTypeface(FontHolder.getInstance(getCurrentActivity()).getFaceRobotoLight());
                 txtProductAddDescContent.setText(Html.fromHtml(productAdditionalInfo.getContent()));
                 if(productAdditionalInfo.getTitle()!=null)
                     txtProductAddDescTitle.setText(Html.fromHtml(productAdditionalInfo.getTitle()));

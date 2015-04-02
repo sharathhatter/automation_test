@@ -115,8 +115,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         faceRobotoLight = FontHolder.getInstance(this).getFaceRobotoLight();
         moEHelper = MoEngageWrapper.getMoHelperObj(getCurrentActivity());
         LocalyticsWrapper.integrate(this);
-        fbLogger = AppEventsLogger.newLogger(getCurrentActivity());//,
-        //getString(R.string.fb_app_id));
+        fbLogger = AppEventsLogger.newLogger(getCurrentActivity());
     }
 
     @Override
@@ -213,7 +212,6 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         isActivitySuspended = true;
         MoEngageWrapper.onPause(moEHelper, getCurrentActivity());
         LocalyticsWrapper.onPause();
-        //FacebookEventTrackWrapper.deactivateApp(getCurrentActivity());
     }
 
     @Override
@@ -231,7 +229,6 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         }
         initializeKonotor();
         MoEngageWrapper.onResume(moEHelper, getCurrentActivity());
-        FacebookEventTrackWrapper.activateApp(getCurrentActivity());
         prescriptionImageUploadHandler();
     }
 
