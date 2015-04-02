@@ -271,7 +271,9 @@ public interface BigBasketApiService {
     void cartSummary(Callback<CartSummaryApiResponse> cartSummaryApiResponseCallback);
 
     @GET("/product-details/")
-    void productDetails(@Query(Constants.PROD_ID) String productId, Callback<ProductDetailApiResponse> productDetailApiResponseCallback);
+    void productDetails(@Query(Constants.PROD_ID) String productId,
+                        @Query(Constants.EAN_CODE) String eanCode,
+                        Callback<ProductDetailApiResponse> productDetailApiResponseCallback);
 
     @GET("/co-get-delivery-addresses/")
     void getDeliveryAddresses(Callback<ApiResponse<GetDeliveryAddressApiResponseContent>> getDeliveryAddressApiResponseCallback);

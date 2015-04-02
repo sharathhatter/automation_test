@@ -336,7 +336,10 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             case FragmentCodes.START_PRODUCT_DETAIL:
                 ProductDetailFragment productDetailFragment = new ProductDetailFragment();
                 Bundle bundle = new Bundle();
-                bundle.putString(Constants.SKU_ID, getIntent().getStringExtra(Constants.SKU_ID));
+                if(getIntent().getStringExtra(Constants.SKU_ID)!=null)
+                    bundle.putString(Constants.SKU_ID, getIntent().getStringExtra(Constants.SKU_ID));
+                else
+                    bundle.putString(Constants.EAN_CODE, getIntent().getStringExtra(Constants.EAN_CODE));
                 productDetailFragment.setArguments(bundle);
                 addToMainLayout(productDetailFragment);
                 break;

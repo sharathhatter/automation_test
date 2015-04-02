@@ -20,6 +20,7 @@ public class Constants {
     public static final String CATEGORY_URL = "cat_url";
     public static final String FACET_NAME = "facet_name";
     public static final String FACET_SLUG = "facet_slug";
+    public static final String EAN_CODE = "ean_code";
 
     public static final String PRODUCTS = "products";
     public static final String NO_ITEM_IN_CART = "no_items_in_cart";
@@ -291,6 +292,7 @@ public class Constants {
     public static final String VERSION_NAME = "versionName";
     public static final String APPLIED_VOUCHER = "appliedVoucher";
     public static final String ENABLE_KONOTOR = "enable_konotor";
+    public static final String ENABLE_FB_LOGGER = "enable_fb_logger";
     public static final String ENABLE_MOENGAGE = "enable_moengage";
     public static final String FIRST_TIME_COOKIE_TIME_STAMP = "firstTimeCookieTimestamp";
     public static final String ENABLE_LOCALYTICS = "enable_localytics";

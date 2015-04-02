@@ -20,6 +20,9 @@ public class AnalyticsEngine implements Parcelable {
     @SerializedName(Constants.ENABLE_KONOTOR)
     private boolean isKonotorEnabled;
 
+    @SerializedName(Constants.ENABLE_FB_LOGGER)
+    private boolean isFBLoggerEnabled;
+
     @Override
     public int describeContents() {
         return 0;
@@ -31,12 +34,14 @@ public class AnalyticsEngine implements Parcelable {
         dest.writeByte(isMoEngageEnabled ? (byte) 1 : (byte) 0);
         dest.writeByte(isAnalyticsEnabled ? (byte) 1 : (byte) 0);
         dest.writeByte(isKonotorEnabled ? (byte) 1 : (byte) 0);
+        dest.writeByte(isFBLoggerEnabled ? (byte) 1 : (byte) 0);
     }
 
     public AnalyticsEngine(Parcel source) {
         isMoEngageEnabled = source.readByte() == (byte) 1;
         isAnalyticsEnabled = source.readByte() == (byte) 1;
         isKonotorEnabled = source.readByte() == (byte) 1;
+        isFBLoggerEnabled = source.readByte() == (byte) 1;
     }
 
     public static final Parcelable.Creator<AnalyticsEngine> CREATOR = new Parcelable.Creator<AnalyticsEngine>() {
@@ -73,5 +78,14 @@ public class AnalyticsEngine implements Parcelable {
 
     public void setKonotorEnabled(boolean isKonotorEnabled) {
         this.isKonotorEnabled = isKonotorEnabled;
+    }
+
+
+    public boolean isFBLoggerEnabled() {
+        return isFBLoggerEnabled;
+    }
+
+    public void setFBLoggerEnabled(boolean isFBLoggerEnabled) {
+        this.isFBLoggerEnabled = isFBLoggerEnabled;
     }
 }

@@ -59,7 +59,7 @@ public final class ProductView {
                     productDataAware, navigationCtx);
         }
         setProductDesc(productViewHolder, product, productViewDisplayDataHolder, productDetailOnClickListener);
-        setPrice(productViewHolder, product, productViewDisplayDataHolder);
+        setPrice(productViewHolder, product, productViewDisplayDataHolder, productDataAware);
         setPromo(productViewHolder, product, productViewDisplayDataHolder, productDataAware);
         setProductAdditionalActionMenu(productViewHolder, product, productViewDisplayDataHolder, productDataAware);
         setBasketAndAvailabilityViews(productViewHolder, product, productViewDisplayDataHolder,
@@ -138,8 +138,9 @@ public final class ProductView {
         txtProductDesc.setOnClickListener(productDetailOnClickListener);
     }
 
-    private static void setPrice(ProductViewHolder productViewHolder, Product product,
-                                 ProductViewDisplayDataHolder productViewDisplayDataHolder) {
+    private static<T> void setPrice(ProductViewHolder productViewHolder, Product product,
+                                 ProductViewDisplayDataHolder productViewDisplayDataHolder,
+                                 T activityAware) {
         TextView txtSalePrice = productViewHolder.getTxtSalePrice();
         boolean hasSavings = product.hasSavings();
         txtSalePrice.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
@@ -149,7 +150,8 @@ public final class ProductView {
 
         if (hasSavings && !TextUtils.isEmpty(product.getMrp())) {
             String prefix = " `";
-            String mrpStr = product.getMrp();
+            String mrpStr = ((ActivityAware) activityAware).getCurrentActivity().
+                    getDecimalAmount(Double.parseDouble(product.getMrp()));
             int prefixLen = prefix.length();
             SpannableString spannableMrp = new SpannableString(prefix + mrpStr);
             spannableMrp.setSpan(new CustomTypefaceSpan("", productViewDisplayDataHolder.getRupeeTypeface()), prefixLen - 1,
@@ -164,7 +166,8 @@ public final class ProductView {
 
         if (hasSavings) {
             String prefix = "SAVE: `";
-            Spannable spannableSaving = new SpannableString(prefix + String.format("%.2f", actualDiscount));
+            Spannable spannableSaving = new SpannableString(prefix + ((ActivityAware) activityAware).getCurrentActivity().
+                    getDecimalAmount(actualDiscount));
             spannableSaving.setSpan(new CustomTypefaceSpan("", productViewDisplayDataHolder.getRupeeTypeface()),
                     prefix.length() - 1,
                     prefix.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
@@ -177,7 +180,8 @@ public final class ProductView {
             txtSave.setVisibility(View.GONE);
         }
         txtSalePrice.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
-        txtSalePrice.setText(UIUtil.asRupeeSpannable(product.getSellPrice(), productViewDisplayDataHolder.getRupeeTypeface()));
+        txtSalePrice.setText(UIUtil.asRupeeSpannable(((ActivityAware) activityAware).getCurrentActivity().
+                getDecimalAmount(Double.parseDouble(product.getSellPrice())), productViewDisplayDataHolder.getRupeeTypeface()));
     }
 
     private static <T> void setPromo(ProductViewHolder productViewHolder, Product product, ProductViewDisplayDataHolder productViewDisplayDataHolder,
