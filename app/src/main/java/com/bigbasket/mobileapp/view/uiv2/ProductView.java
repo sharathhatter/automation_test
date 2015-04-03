@@ -96,9 +96,6 @@ public final class ProductView {
         final List<Product> childProducts = product.getAllProducts();
         boolean hasChildren = childProducts != null && childProducts.size() > 0;
         Spinner spinnerPackageDesc = productViewHolder.getSpinnerPackageDesc();
-        TextView txtPackageDesc = productViewHolder.getPackageDescTextView();
-        txtPackageDesc.setText(UIUtil.abbreviate(product.getWeightAndPackDesc(), 10));
-        txtPackageDesc.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
         if (hasChildren) {
             ProductListSpinnerAdapter productListSpinnerAdapter = new ProductListSpinnerAdapter(((ActivityAware) productDataAware).getCurrentActivity(), android.R.layout.simple_spinner_item,
                     childProducts, productViewDisplayDataHolder.getSansSerifMediumTypeface(),
@@ -136,6 +133,9 @@ public final class ProductView {
             txtProductDesc.setVisibility(View.GONE);
         }
         txtProductDesc.setOnClickListener(productDetailOnClickListener);
+        TextView txtPackageDesc = productViewHolder.getPackageDescTextView();
+        txtPackageDesc.setText(UIUtil.abbreviate(product.getWeightAndPackDesc(), 10));
+        txtPackageDesc.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
     }
 
     private static<T> void setPrice(ProductViewHolder productViewHolder, Product product,
