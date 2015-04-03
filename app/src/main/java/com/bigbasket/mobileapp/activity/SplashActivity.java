@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -65,7 +66,11 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
     private void startSplashScreen() {
         setContentView(R.layout.loading_layout);
         if (AuthParameters.getInstance(this).isAuthTokenEmpty() && !CityManager.hasUserChosenCity(this)) {
-            doRegisterDevice(new City("Bangalore", 1));
+            if (TextUtils.isEmpty(AuthParameters.getInstance(this).getVisitorId())) {
+                doRegisterDevice(new City("Bangalore", 1));
+            } else {
+                startLandingPage();
+            }
         } else {
             loadNavigation();
         }
@@ -185,8 +190,7 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
                         editor.commit();
                         AuthParameters.updateInstance(getCurrentActivity());
 
-                        Intent intent = new Intent(getCurrentActivity(), LandingPageActivity.class);
-                        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                        startLandingPage();
                     }
 
                     @Override
@@ -200,6 +204,11 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
                         handler.handleRetrofitError(error, true);
                     }
                 });
+    }
+
+    private void startLandingPage() {
+        Intent intent = new Intent(getCurrentActivity(), LandingPageActivity.class);
+        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
     @Override

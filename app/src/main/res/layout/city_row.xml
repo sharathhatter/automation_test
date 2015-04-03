@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<RadioButton xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rbtnCityName"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/margin_normal"
+    android:button="@drawable/large_radio_button"
+    android:paddingLeft="@dimen/padding_normal"
+    android:textColor="@color/uiv3_primary_text_color"
+    android:textSize="@dimen/secondary_text_size" />

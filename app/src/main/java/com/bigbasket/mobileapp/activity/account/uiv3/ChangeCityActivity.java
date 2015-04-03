@@ -7,8 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.CheckedTextView;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -57,17 +60,31 @@ public class ChangeCityActivity extends BackButtonActivity implements CityListDi
         LayoutInflater inflater = getLayoutInflater();
         ViewGroup base = (ViewGroup) inflater.inflate(R.layout.change_city, contentFrame, false);
 
-        ((TextView) base.findViewById(R.id.txtHeaderMsg)).setTypeface(faceRobotoRegular);
+        ((TextView) base.findViewById(R.id.txtHeaderMsg)).setTypeface(faceRobotoLight);
 
         final ListView listView = (ListView) base.findViewById(R.id.fabListView);
-        ArrayAdapter<City> citySpinnerAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_single_choice, cities);
+        ArrayAdapter<City> citySpinnerAdapter = new ArrayAdapter<City>(this,
+                android.R.layout.simple_list_item_single_choice, cities) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                if (convertView == null) {
+                    convertView = super.getView(position, null, parent);
+                    CheckedTextView checkedTextView = (CheckedTextView) convertView.findViewById(android.R.id.text1);
+                    checkedTextView.setCheckMarkDrawable(R.drawable.large_radio_button);
+                    checkedTextView.setTypeface(faceRobotoLight);
+                    return convertView;
+                } else {
+                    return super.getView(position, convertView, parent);
+                }
+            }
+        };
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         listView.setAdapter(citySpinnerAdapter);
         listView.setItemChecked(findCurrentCityPosition(cities), true);
 
         FloatingActionButton btnFab = (FloatingActionButton) base.findViewById(R.id.btnFab);
         btnFab.setImageResource(R.drawable.ic_keyboard_arrow_right_white_36dp);
+        btnFab.attachToListView(listView);
         btnFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
