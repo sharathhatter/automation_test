@@ -127,7 +127,7 @@ public class SectionGridAdapter<T> extends BaseAdapter {
                     Renderer itemRenderer = rendererHashMap != null ?
                             rendererHashMap.get(sectionItem.getDescription().getRenderingId()) : null;
                     if (itemRenderer != null) {
-                        itemRenderer.setRendering(txtTitle, defaultMargin, defaultMargin, true, true, true, true);
+                        itemRenderer.setRendering(txtDescription, defaultMargin, defaultMargin, true, true, true, true);
                     } else {
                         txtDescription.setPadding(defaultTxtPadding, defaultTxtPadding, defaultTxtPadding, defaultTxtPadding);
                     }

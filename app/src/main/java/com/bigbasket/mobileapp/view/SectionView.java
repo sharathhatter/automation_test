@@ -219,7 +219,7 @@ public class SectionView {
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
             Renderer renderer = mSectionData.getRenderersMap() != null ?
-                    mSectionData.getRenderersMap().get(sectionItem.getDescription().getRenderingId()) : null;
+                    mSectionData.getRenderersMap().get(sectionItem.getRenderingId()) : null;
             if (renderer != null) {
                 int margin = renderer.getSafeMargin(0);
                 layoutParams.setMargins(margin, margin, margin, 0);
@@ -311,14 +311,41 @@ public class SectionView {
             SectionItem sectionItem = section.getSectionItems().get(i);
             if (sectionItem == null || sectionItem.getTitle() == null || TextUtils.isEmpty(sectionItem.getTitle().getText()))
                 continue;
-            View itemView = inflater.inflate(R.layout.uiv3_list_text, menuContainer, false);
+            View itemView = inflater.inflate(R.layout.uiv3_section_menu_row, menuContainer, false);
             TextView txtListText = (TextView) itemView.findViewById(R.id.txtListText);
-            Renderer renderer = mSectionData.getRenderersMap() != null ?
-                    mSectionData.getRenderersMap().get(sectionItem.getRenderingId()) : null;
-            if (renderer != null) {
-                renderer.setRendering(txtListText, 0, 0);
+            TextView txtListSubText = (TextView) itemView.findViewById(R.id.txtListSubText);
+            ImageView imgInRow = (ImageView) itemView.findViewById(R.id.imgInRow);
+            Renderer titleRenderer, descRenderer, itemRenderer;
+            titleRenderer = descRenderer = itemRenderer = null;
+            if (mSectionData.getRenderersMap() != null) {
+                titleRenderer = mSectionData.getRenderersMap().get(sectionItem.getTitle().getRenderingId());
+                descRenderer = sectionItem.getDescription() != null ?
+                        mSectionData.getRenderersMap().get(sectionItem.getDescription().getRenderingId()) : null;
+                itemRenderer = mSectionData.getRenderersMap().get(sectionItem.getRenderingId());
+            }
+            if (titleRenderer != null) {
+                titleRenderer.setRendering(txtListText, 0, 0);
+            }
+            if (itemRenderer != null) {
+                itemRenderer.setRendering(itemView, 0, 0);
             } else {
                 itemView.setBackgroundColor(context.getResources().getColor(R.color.white));
+            }
+
+            if (!TextUtils.isEmpty(sectionItem.getImage())) {
+                sectionItem.displayImage(imgInRow);
+            } else {
+                imgInRow.setVisibility(View.GONE);
+            }
+
+            if (sectionItem.getDescription() != null && !TextUtils.isEmpty(sectionItem.getDescription().getText())) {
+                txtListSubText.setText(sectionItem.getDescription().getText());
+                txtListSubText.setTypeface(faceRobotoRegular);
+                if (descRenderer != null) {
+                    descRenderer.setRendering(txtListSubText, 0, 0);
+                }
+            } else {
+                txtListSubText.setVisibility(View.GONE);
             }
             txtListText.setTypeface(faceRobotoRegular);
             txtListText.setText(sectionItem.getTitle().getText());
@@ -402,7 +429,7 @@ public class SectionView {
                     Renderer itemRenderer = mSectionData.getRenderersMap() != null ?
                             mSectionData.getRenderersMap().get(sectionItem.getDescription().getRenderingId()) : null;
                     if (itemRenderer != null) {
-                        itemRenderer.setRendering(txtTitle, defaultMargin, defaultMargin, true, true, true, true);
+                        itemRenderer.setRendering(txtDescription, defaultMargin, defaultMargin, true, true, true, true);
                     }
                 } else {
                     txtDescription.setVisibility(View.GONE);
@@ -450,8 +477,7 @@ public class SectionView {
             Renderer renderer = mSectionData.getRenderersMap() != null ?
                     mSectionData.getRenderersMap().get(section.getTitle().getRenderingId()) : null;
             if (renderer != null) {
-                renderer.setRendering(txtVw
-                        , 0, 0);
+                renderer.setRendering(txtVw, 0, 0);
             }
         } else {
             txtVw.setVisibility(View.GONE);

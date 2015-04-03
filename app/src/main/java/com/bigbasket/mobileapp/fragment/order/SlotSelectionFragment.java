@@ -292,7 +292,7 @@ public class SlotSelectionFragment extends BaseFragment {
         private View getSlotView(Slot slot, View row, ViewGroup parent) {
             SlotViewHolder slotViewHolder;
             if (row == null) {
-                row = getActivity().getLayoutInflater().inflate(R.layout.uiv3_list_icon_and_two_texts_row, parent, false);
+                row = getActivity().getLayoutInflater().inflate(R.layout.uiv3_slot_list_row, parent, false);
                 row.setBackgroundColor(getResources().getColor(R.color.uiv3_list_bkg_light_color));
                 slotViewHolder = new SlotViewHolder(row);
                 row.setTag(slotViewHolder);

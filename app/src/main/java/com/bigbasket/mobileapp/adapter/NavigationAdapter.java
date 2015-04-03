@@ -54,6 +54,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         if (getItemViewType(position) == VIEW_TYPE_SECTION_ITEM) {
             TextView txtNavListRow = ((NavViewHolder) holder).getTxtNavListRow();
             ImageView imgNavItem = ((NavViewHolder) holder).getImgNavItem();
+            TextView txtNavListRowSubTitle = ((NavViewHolder) holder).getTxtNavListRowSubTitle();
             if (sectionNavigationItem.getSectionItem().getTitle() != null &&
                     !TextUtils.isEmpty(sectionNavigationItem.getSectionItem().getTitle().getText())) {
                 txtNavListRow.setText(sectionNavigationItem.getSectionItem().getTitle().getText());
@@ -63,6 +64,13 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 sectionNavigationItem.getSectionItem().displayImage(imgNavItem);
             } else {
                 imgNavItem.setVisibility(View.GONE);
+            }
+            if (sectionNavigationItem.getSectionItem().getDescription() != null &&
+                    !TextUtils.isEmpty(sectionNavigationItem.getSectionItem().getDescription().getText())) {
+                txtNavListRowSubTitle.setVisibility(View.VISIBLE);
+                txtNavListRowSubTitle.setText(sectionNavigationItem.getSectionItem().getDescription().getText());
+            } else {
+                txtNavListRowSubTitle.setVisibility(View.GONE);
             }
         } else {
             TextView txtNavListRowHeader = ((NavViewHeaderHolder) holder).getTxtNavListRowHeader();
@@ -96,6 +104,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         private ImageView imgNavItem;
         private TextView txtNavListRow;
+        private TextView txtNavListRowSubTitle;
 
         public NavViewHolder(View itemView) {
             super(itemView);
@@ -115,6 +124,14 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 txtNavListRow.setTypeface(typeface);
             }
             return txtNavListRow;
+        }
+
+        public TextView getTxtNavListRowSubTitle() {
+            if (txtNavListRowSubTitle == null) {
+                txtNavListRowSubTitle = (TextView) itemView.findViewById(R.id.txtNavListRowSubTitle);
+                txtNavListRowSubTitle.setTypeface(typeface);
+            }
+            return txtNavListRowSubTitle;
         }
 
         @Override

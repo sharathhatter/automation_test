@@ -16,11 +16,24 @@
         android:layout_marginLeft="@dimen/margin_small"
         android:id="@+id/imgNavItem" />
 
-    <TextView
-        style="@style/NavTxtStyle"
-        android:layout_toRightOf="@id/imgNavItem"
-        android:id="@+id/txtNavListRow"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="@dimen/margin_normal" />
+        android:layout_toRightOf="@id/imgNavItem"
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/NavTxtStyle"
+            android:id="@+id/txtNavListRow"
+            android:layout_marginLeft="@dimen/margin_normal" />
+
+        <TextView
+            style="@style/NavSubTitleStyle"
+            android:id="@+id/txtNavListRowSubTitle"
+            android:layout_marginLeft="@dimen/margin_normal" />
+
+    </LinearLayout>
 
 </RelativeLayout>
