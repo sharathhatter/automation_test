@@ -73,15 +73,6 @@ public class SignInActivity extends BackButtonActivity {
             }
         });
 
-        TextView txtSignup = (TextView) baseView.findViewById(R.id.txtSignup);
-        txtSignup.setTypeface(faceRobotoRegular);
-        txtSignup.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                launchRegistrationPage();
-            }
-        });
-
         Button mEmailSignInButton = (Button) baseView.findViewById(R.id.btnLogin);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override

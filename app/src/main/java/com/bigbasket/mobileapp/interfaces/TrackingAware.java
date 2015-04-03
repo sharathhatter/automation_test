@@ -11,7 +11,8 @@ public interface TrackingAware {
 
     //Home Screen topnav
     public static final String COMMUNICATION_HUB_CLICKED = "MyAccount.CommunicationHubClicked";
-    public static final String LOGIN_OR_REGISTRATION_CLICKED = "Login or Register Clicked";
+    public static final String LOGIN_CLICKED = "Login Clicked";
+    public static final String REGISTRATION_CLICKED = "Sign up Clicked";
     public static final String HOME_CHANGE_CITY = "Change Your Location Clicked";
     public static final String RATE_APP_CLICKED = "Rate This App Clicked";
     public static final String MENU_CLICKED = "Menu.Clicked";

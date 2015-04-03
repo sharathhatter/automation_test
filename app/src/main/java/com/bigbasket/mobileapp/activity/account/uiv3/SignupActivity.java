@@ -37,9 +37,7 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
     private EditText mPasswordView;
     private EditText mFirstNameView;
     private EditText mLastNameView;
-    //private EditText mRefCodeView;
     private Spinner mCitySpinner;
-    private EditText mMobileNumView;
     private AutoCompleteTextView mEmailView;
 
     @Override
@@ -61,8 +59,8 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
 
         mPasswordView = (EditText) base.findViewById(R.id.editTextPasswd);
         mFirstNameView = (EditText) base.findViewById(R.id.editTextFirstName);
+        mFirstNameView.setNextFocusDownId(R.id.editTextLastName);
         mLastNameView = (EditText) base.findViewById(R.id.editTextLastName);
-        mMobileNumView = (EditText) base.findViewById(R.id.editTextMobileNumber);
 //        mRefCodeView = (EditText) base.findViewById(R.id.editTextRefCode);
         mEmailView = (AutoCompleteTextView) base.findViewById(R.id.emailInput);
 
@@ -74,15 +72,6 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
             }
         });
         btnSignUp.setTypeface(faceRobotoRegular);
-
-        TextView txtLogin = (TextView) base.findViewById(R.id.txtLogin);
-        txtLogin.setTypeface(faceRobotoRegular);
-        txtLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                launchLogin(TrackEventkeys.NAVIGATION_CTX_SIGNUP_PAGE);
-            }
-        });
 
         CheckBox chkShowPassword = (CheckBox) base.findViewById(R.id.chkShowPasswd);
         chkShowPassword.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -114,7 +103,6 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
         mPasswordView.setError(null);
         mFirstNameView.setError(null);
         mLastNameView.setError(null);
-        mMobileNumView.setError(null);
 //        mRefCodeView.setError(null);
 
         boolean cancel = false;
@@ -125,7 +113,6 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
         String password = mPasswordView.getText().toString().trim();
         String firstName = mFirstNameView.getText().toString();
         String lastName = mLastNameView.getText().toString();
-        String mobileNumber = mMobileNumView.getText().toString();
 //        String refCode = mRefCodeView.getText().toString().trim();
 
         // Check for a valid email address.
@@ -164,40 +151,22 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
             cancel = true;
         }
 
-        // Check for mobile number
-        if (TextUtils.isEmpty(mobileNumber)) {
-            reportFormInputFieldError(mMobileNumView, "Please provide your mobile-number");
-            focusView = mMobileNumView;
-            cancel = true;
-        }
-        if (!TextUtils.isDigitsOnly(mobileNumber)) {
-            reportFormInputFieldError(mMobileNumView, getString(R.string.error_invalid_mobile_number));
-            focusView = mMobileNumView;
-            cancel = true;
-        }
-        if (mobileNumber.length() > 10) {
-            reportFormInputFieldError(mMobileNumView, getString(R.string.error_mobile_number_less_digits));
-            focusView = mMobileNumView;
-            cancel = true;
-        }
-
         if (cancel) {
             // There was an error, don't sign-up
             focusView.requestFocus();
         } else {
             showProgress(true);
-            startMemberRegistration(email, password, firstName, lastName, mobileNumber, null);
+            startMemberRegistration(email, password, firstName, lastName, null);
         }
     }
 
     private void startMemberRegistration(String email, String passwd, String firstName,
-                                         String lastName, String mobileNumber, String refCode) {
+                                         String lastName, String refCode) {
         JsonObject userDetailsJsonObj = new JsonObject();
         userDetailsJsonObj.addProperty(Constants.EMAIL, email);
         userDetailsJsonObj.addProperty(Constants.FIRSTNAME, firstName);
         userDetailsJsonObj.addProperty(Constants.LASTNAME, lastName);
         userDetailsJsonObj.addProperty(Constants.PASSWORD, passwd);
-        userDetailsJsonObj.addProperty(Constants.MOBILE_NUMBER, mobileNumber);
         userDetailsJsonObj.addProperty(Constants.CITY_ID, mCities.get(mCitySpinner
                 .getSelectedItemPosition()).getId());
         if (!TextUtils.isEmpty(refCode)) {

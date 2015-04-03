@@ -122,7 +122,7 @@
     <string name="evoucherStatement">(If you have eVoucher code, Please enter):</string>
     <string name="orderReview">Review Order</string>
     <string name="createShoppingList">Create shopping List</string>
-    <string name="shoppingListNameDialogTextHint">Enter shopping list name:</string>
+    <string name="shoppingListNameDialogTextHint">Enter shopping list name</string>
     <string name="myList"> My Lists</string>
     <string name="thankYou">Thank you!</string>
     <string name="thanksForRegistering">Thank you for registering with BigBasket.com. Happy Shopping!</string>

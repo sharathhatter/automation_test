@@ -28,7 +28,7 @@
                 android:id="@+id/action_user_info"
                 android:icon="@drawable/user_white"
                 android:orderInCategory="9999"
-                android:title="@string/memberName"
+                android:title="@string/myAccount"
                 bb:showAsAction="never" />
 
             <item
@@ -36,6 +36,13 @@
                 android:icon="@drawable/user_white"
                 android:orderInCategory="9999"
                 android:title="@string/action_sign_in"
+                bb:showAsAction="never" />
+
+            <item
+                android:id="@+id/action_signup"
+                android:icon="@drawable/user_white"
+                android:orderInCategory="9999"
+                android:title="@string/action_sign_up"
                 bb:showAsAction="never" />
 
             <item

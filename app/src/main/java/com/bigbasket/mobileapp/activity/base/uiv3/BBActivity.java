@@ -65,7 +65,6 @@ import com.bigbasket.mobileapp.fragment.promo.PromoDetailFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoSetProductsFragment;
 import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
@@ -234,13 +233,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             hideMemberMenuItems(menu);
         } else {
             hideGuestMenuItems(menu);
-            MenuItem userInfoMenuItem = menu.findItem(R.id.action_user_info);
-            String memberFullName = AuthParameters.getInstance(this).getMemberFullName();
-            if (TextUtils.isEmpty(memberFullName)) {
-                userInfoMenuItem.setTitle(AuthParameters.getInstance(this).getMemberEmail());
-            } else {
-                userInfoMenuItem.setTitle(memberFullName);
-            }
         }
     }
 
@@ -336,7 +328,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             case FragmentCodes.START_PRODUCT_DETAIL:
                 ProductDetailFragment productDetailFragment = new ProductDetailFragment();
                 Bundle bundle = new Bundle();
-                if(getIntent().getStringExtra(Constants.SKU_ID)!=null)
+                if (getIntent().getStringExtra(Constants.SKU_ID) != null)
                     bundle.putString(Constants.SKU_ID, getIntent().getStringExtra(Constants.SKU_ID));
                 else
                     bundle.putString(Constants.EAN_CODE, getIntent().getStringExtra(Constants.EAN_CODE));
@@ -488,9 +480,14 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 }
                 return true;
             case R.id.action_login:
-                logHomeScreenEvent(TrackingAware.LOGIN_OR_REGISTRATION_CLICKED, TrackEventkeys.NAVIGATION_CTX,
+                logHomeScreenEvent(TrackingAware.LOGIN_CLICKED, TrackEventkeys.NAVIGATION_CTX,
                         TrackEventkeys.NAVIGATION_CTX_TOPNAV);
                 launchLogin(TrackEventkeys.NAVIGATION_CTX_TOPNAV);
+                return true;
+            case R.id.action_signup:
+                logHomeScreenEvent(TrackingAware.REGISTRATION_CLICKED, TrackEventkeys.NAVIGATION_CTX,
+                        TrackEventkeys.NAVIGATION_CTX_TOPNAV);
+                launchRegistrationPage();
                 return true;
             case R.id.action_view_basket:
                 launchViewBasket();
@@ -778,25 +775,17 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     private void hideGuestMenuItems(Menu menu) {
-        MenuItem loginMenuItem = menu.findItem(R.id.action_login);
-        MenuItem changeCityRegisterMenu = menu.findItem(R.id.action_change_city);
-
-        loginMenuItem.setVisible(false);
-        changeCityRegisterMenu.setVisible(false);
+        menu.findItem(R.id.action_login).setVisible(false);
+        menu.findItem(R.id.action_signup).setVisible(false);
+        menu.findItem(R.id.action_change_city).setVisible(false);
     }
 
     private void hideMemberMenuItems(Menu menu) {
-        MenuItem userInfoMenuItem = menu.findItem(R.id.action_user_info);
-        MenuItem logoutMenuItem = menu.findItem(R.id.action_logout);
-        MenuItem shoppingListMenuItem = menu.findItem(R.id.action_shopping_list);
-        MenuItem smartBasketMenuItem = menu.findItem(R.id.action_smart_basket);
+        menu.findItem(R.id.action_user_info).setVisible(false);
+        menu.findItem(R.id.action_logout).setVisible(false);
+        menu.findItem(R.id.action_shopping_list).setVisible(false);
+        menu.findItem(R.id.action_smart_basket).setVisible(false);
         //MenuItem referFriendsMenuItem = menu.findItem(R.id.action_member_referral);
-
-        logoutMenuItem.setVisible(false);
-        userInfoMenuItem.setVisible(false);
-        shoppingListMenuItem.setVisible(false);
-        smartBasketMenuItem.setVisible(false);
-        //referFriendsMenuItem.setVisible(false);
     }
 
     @Override

@@ -57,14 +57,15 @@ public class SortProductDialog extends DialogFragment {
                 .positiveText(R.string.sort)
                 .negativeText(R.string.cancel)
                 .items(sortOptionsArray)
-                .itemsCallbackSingleChoice(checkedIdx, new MaterialDialog.ListCallback() {
+                .itemsCallbackSingleChoice(checkedIdx, new MaterialDialog.ListCallbackSingleChoice() {
                     @Override
-                    public void onSelection(MaterialDialog materialDialog, View view, int which, CharSequence text) {
+                    public boolean onSelection(MaterialDialog materialDialog, View view, int which, CharSequence text) {
                         Option option = sortOptions.get(which);
                         if (!option.getSortName().equals(sortedOn)) {
                             ((SortAware) getTargetFragment()).setSortedOn(option.getSortSlug());
                             ((InfiniteProductListAware) getTargetFragment()).loadProducts();
                         }
+                        return true;
                     }
                 })
                 .build();

@@ -162,25 +162,6 @@
                     android:textColor="@color/uiv3_transparent_view_hint_color"
                     android:textSize="@dimen/secondary_text_size" />
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginLeft="@dimen/margin_normal"
-                    android:layout_marginRight="@dimen/margin_normal"
-                    android:layout_marginTop="@dimen/margin_extra_large"
-                    android:background="@color/uiv3_transparent_view_hint_color" />
-
-                <TextView
-                    android:id="@+id/txtSignup"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="@dimen/margin_normal"
-                    android:layout_marginTop="@dimen/margin_normal"
-                    android:text="@string/loginPageSignUpText"
-                    android:textColor="@color/uiv3_transparent_view_hint_color"
-                    android:textSize="@dimen/secondary_text_size" />
-
             </LinearLayout>
 
         </ScrollView>

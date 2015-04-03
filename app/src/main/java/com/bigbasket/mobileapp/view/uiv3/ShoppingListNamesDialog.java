@@ -48,13 +48,14 @@ public class ShoppingListNamesDialog extends DialogFragment {
         return UIUtil.getMaterialDialogBuilder(getActivity())
                 .title(R.string.addItemToShopList)
                 .items(shopListNamesArray)
-                .itemsCallbackMultiChoice(null, new MaterialDialog.ListCallbackMulti() {
+                .itemsCallbackMultiChoice(null, new MaterialDialog.ListCallbackMultiChoice() {
                     @Override
-                    public void onSelection(MaterialDialog materialDialog, Integer[] which, CharSequence[] text) {
+                    public boolean onSelection(MaterialDialog materialDialog, Integer[] which, CharSequence[] text) {
                         for (int i : which) {
                             selectedShoppingList.add(shoppingListNames.get(i));
                         }
                         ((ShoppingListNamesAware) getTargetFragment()).addToShoppingList(selectedShoppingList);
+                        return true;
                     }
                 })
                 .positiveText(R.string.add)

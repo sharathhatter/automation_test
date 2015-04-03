@@ -153,22 +153,6 @@
                     android:textColorHint="@color/uiv3_transparent_view_hint_color"
                     android:textSize="@dimen/secondary_text_size" />
 
-                <EditText
-                    android:id="@+id/editTextMobileNumber"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="1dp"
-                    android:background="@color/see_thru_transparent_bkg"
-                    android:ems="10"
-                    android:hint="@string/mobileNumber"
-                    android:inputType="numberSigned"
-                    android:maxLength="10"
-                    android:padding="@dimen/padding_normal"
-                    android:singleLine="true"
-                    android:textColor="@color/white"
-                    android:textColorHint="@color/uiv3_transparent_view_hint_color"
-                    android:textSize="@dimen/secondary_text_size" />
-
                 <Spinner
                     android:id="@+id/spinnerCity"
                     style="@style/SpinnerDialogMode"
@@ -196,17 +180,6 @@
                     android:paddingTop="@dimen/padding_small"
                     android:text="@string/signUp"
                     android:textSize="@dimen/large_text_size" />
-
-                <TextView
-                    android:id="@+id/txtLogin"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:gravity="center_horizontal"
-                    android:paddingTop="@dimen/padding_normal"
-                    android:text="@string/alreadyAMember"
-                    android:textColor="@color/uiv3_transparent_view_hint_color"
-                    android:textSize="@dimen/secondary_text_size" />
             </LinearLayout>
 
         </ScrollView>
