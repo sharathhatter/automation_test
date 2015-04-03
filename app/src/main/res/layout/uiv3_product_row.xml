@@ -105,7 +105,7 @@
         <include
             android:id="@+id/layoutProductPrice"
             layout="@layout/product_price_layout"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/layoutPackageDesc"
             android:layout_toRightOf="@id/imgProduct" />

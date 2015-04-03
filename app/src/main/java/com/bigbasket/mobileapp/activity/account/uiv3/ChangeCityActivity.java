@@ -63,6 +63,7 @@ public class ChangeCityActivity extends BackButtonActivity implements CityListDi
         ((TextView) base.findViewById(R.id.txtHeaderMsg)).setTypeface(faceRobotoLight);
 
         final ListView listView = (ListView) base.findViewById(R.id.fabListView);
+        final int textColor = getResources().getColor(R.color.uiv3_primary_text_color);
         ArrayAdapter<City> citySpinnerAdapter = new ArrayAdapter<City>(this,
                 android.R.layout.simple_list_item_single_choice, cities) {
             @Override
@@ -71,6 +72,7 @@ public class ChangeCityActivity extends BackButtonActivity implements CityListDi
                     convertView = super.getView(position, null, parent);
                     CheckedTextView checkedTextView = (CheckedTextView) convertView.findViewById(android.R.id.text1);
                     checkedTextView.setCheckMarkDrawable(R.drawable.large_radio_button);
+                    checkedTextView.setTextColor(textColor);
                     checkedTextView.setTypeface(faceRobotoLight);
                     return convertView;
                 } else {

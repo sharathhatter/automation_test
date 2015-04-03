@@ -97,7 +97,8 @@ public final class ProductView {
         boolean hasChildren = childProducts != null && childProducts.size() > 0;
         Spinner spinnerPackageDesc = productViewHolder.getSpinnerPackageDesc();
         if (hasChildren) {
-            ProductListSpinnerAdapter productListSpinnerAdapter = new ProductListSpinnerAdapter(((ActivityAware) productDataAware).getCurrentActivity(), android.R.layout.simple_spinner_item,
+            ProductListSpinnerAdapter productListSpinnerAdapter = new ProductListSpinnerAdapter(((ActivityAware) productDataAware).getCurrentActivity(),
+                    android.R.layout.simple_spinner_item,
                     childProducts, productViewDisplayDataHolder.getSansSerifMediumTypeface(),
                     productViewDisplayDataHolder.getRupeeTypeface());
             spinnerPackageDesc.setAdapter(productListSpinnerAdapter);
@@ -138,9 +139,9 @@ public final class ProductView {
         txtPackageDesc.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
     }
 
-    private static<T> void setPrice(ProductViewHolder productViewHolder, Product product,
-                                 ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                 T activityAware) {
+    private static <T> void setPrice(ProductViewHolder productViewHolder, Product product,
+                                     ProductViewDisplayDataHolder productViewDisplayDataHolder,
+                                     T activityAware) {
         TextView txtSalePrice = productViewHolder.getTxtSalePrice();
         boolean hasSavings = product.hasSavings();
         txtSalePrice.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());

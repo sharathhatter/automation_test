@@ -476,6 +476,14 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         if (getCurrentActivity() != null && getCurrentActivity().isBasketDirty()) {
             syncBasket();
         }
+
+        if (productListData != null) {
+            ((FilterDisplayAware) getActivity()).setFilterView(productListData.getFilterOptions(),
+                    productListData.getFilteredOn(), getFragmentTxnTag());
+        } else {
+            ((FilterDisplayAware) getActivity()).setFilterView(null, null, getFragmentTxnTag());
+        }
+        displayProductCount();
     }
 
     @Override

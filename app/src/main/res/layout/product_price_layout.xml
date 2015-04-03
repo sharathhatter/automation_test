@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <TextView
@@ -9,9 +9,6 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/margin_mini"
         android:layout_marginTop="@dimen/margin_mini"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:singleLine="true"
         android:text="Rs 1000.00"
         android:textColor="@color/actualCostColor"
         android:textSize="@dimen/secondary_text_size" />
@@ -23,8 +20,6 @@
         android:layout_marginLeft="@dimen/margin_mini"
         android:layout_marginTop="5dp"
         android:layout_toRightOf="@id/txtSalePrice"
-        android:maxLines="1"
-        android:singleLine="true"
         android:text="10000.00"
         android:textColor="@color/mrpColor"
         android:textSize="@dimen/small_text_size" />
@@ -37,8 +32,6 @@
         android:layout_marginLeft="@dimen/margin_mini"
         android:layout_marginTop="2dp"
         android:drawablePadding="@dimen/padding_mini"
-        android:maxLines="1"
-        android:singleLine="true"
         android:text="Save: Rs 10000.00"
         android:textColor="@color/saveColor"
         android:textSize="@dimen/small_text_size" />
