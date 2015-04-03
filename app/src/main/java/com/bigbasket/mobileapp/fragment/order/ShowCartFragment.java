@@ -96,9 +96,8 @@ public class ShowCartFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        String fulfillmentIds = null;
         if (getArguments() != null) {
-            fulfillmentIds = getArguments().getString(Constants.INTERNAL_VALUE);
+            String fulfillmentIds = getArguments().getString(Constants.INTERNAL_VALUE);
             getCartItems(fulfillmentIds);
         }
     }

@@ -214,9 +214,9 @@ public class UpdatePinFragment extends BaseFragment {
         editTextNewPin.setTypeface(faceRobotoRegular);
 
         TextView textUpdatePinInfo1 = (TextView) view.findViewById(R.id.textUpdatePinInfo1);
-        textUpdatePinInfo1.setTypeface(faceRobotoRegular);
+        textUpdatePinInfo1.setTypeface(faceRobotoLight);
         TextView textUpdatePinInfo2 = (TextView) view.findViewById(R.id.textUpdatePinInfo2);
-        textUpdatePinInfo2.setTypeface(faceRobotoRegular);
+        textUpdatePinInfo2.setTypeface(faceRobotoLight);
 
     }
 

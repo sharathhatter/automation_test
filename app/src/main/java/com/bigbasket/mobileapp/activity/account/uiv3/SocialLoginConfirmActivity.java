@@ -10,6 +10,7 @@ import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.account.SocialAccount;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
+import com.facebook.Session;
 import com.google.gson.Gson;
 
 public class SocialLoginConfirmActivity extends ChangeCityActivity {
@@ -21,6 +22,11 @@ public class SocialLoginConfirmActivity extends ChangeCityActivity {
         mLoginType = getIntent().getStringExtra(Constants.SOCIAL_LOGIN_TYPE);
         SocialAccount socialAccount = getIntent().getParcelableExtra(Constants.SOCIAL_LOGIN_PARAMS);
         onCreateNewAccount(socialAccount, city);
+    }
+
+    @Override
+    public void onFacebookSignIn(Session facebookSession) {
+        // Don't do anything
     }
 
     @Override

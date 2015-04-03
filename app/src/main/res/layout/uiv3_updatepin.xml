@@ -181,7 +181,7 @@
             android:layout_height="wrap_content"
             android:text="@string/pin_text_para1"
             android:id="@+id/textUpdatePinInfo1"
-            android:textSize="@dimen/primary_text_size"
+            android:textSize="@dimen/secondary_text_size"
             android:textColor="@color/uiv3_primary_text_color" />
 
         <TextView
@@ -191,7 +191,7 @@
             android:layout_marginTop="@dimen/margin_mini"
             android:layout_marginBottom="@dimen/margin_small"
             android:text="@string/pin_text_para2"
-            android:textSize="@dimen/primary_text_size"
+            android:textSize="@dimen/secondary_text_size"
             android:id="@+id/textUpdatePinInfo2"
             android:textColor="@color/uiv3_primary_text_color" />
 
