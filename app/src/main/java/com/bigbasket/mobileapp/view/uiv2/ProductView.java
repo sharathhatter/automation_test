@@ -135,7 +135,17 @@ public final class ProductView {
         }
         txtProductDesc.setOnClickListener(productDetailOnClickListener);
         TextView txtPackageDesc = productViewHolder.getPackageDescTextView();
-        txtPackageDesc.setText(UIUtil.abbreviate(product.getWeightAndPackDesc(), 10));
+        if (productViewHolder.getSpinnerPackageDesc().getVisibility() == View.VISIBLE) {
+            String wtAndPk = product.getWeightAndPackDesc();
+            String[] splitted = wtAndPk.split(" ");
+            if (splitted.length > 2) {
+                txtPackageDesc.setText(splitted[0] + " " + splitted[1] + "...");
+            } else {
+                txtPackageDesc.setText(product.getWeightAndPackDesc());
+            }
+        } else {
+            txtPackageDesc.setText(product.getWeightAndPackDesc());
+        }
         txtPackageDesc.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
     }
 

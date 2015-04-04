@@ -12,7 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
+import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.fragment.base.AbstractOrderSummaryFragment;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.order.CreditDetails;
@@ -188,7 +188,7 @@ public class OrderInvoiceSummaryFragment extends AbstractOrderSummaryFragment {
     }
 
     public void onShopFromThisOrder(String orderNumber) {
-        Intent intent = new Intent(getActivity(), BackButtonActivity.class);
+        Intent intent = new Intent(getActivity(), ProductListActivity.class);
         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_PRODUCT_LIST_FRAGMENT);
         intent.putExtra(TrackEventkeys.NAVIGATION_CTX, getArguments().getString(TrackEventkeys.NAVIGATION_CTX));
         intent.putExtra(Constants.ORDER_ID, orderNumber);
