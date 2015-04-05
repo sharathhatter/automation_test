@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
@@ -15,21 +16,20 @@ import android.widget.LinearLayout;
 
 import com.daimajia.slider.library.R;
 import com.daimajia.slider.library.Tricks.InfinitePagerAdapter;
-import com.daimajia.slider.library.Tricks.ViewPagerEx;
 
 import java.util.ArrayList;
 
 /**
  * Pager Indicator.
  */
-public class PagerIndicator extends LinearLayout implements ViewPagerEx.OnPageChangeListener{
+public class PagerIndicator extends LinearLayout implements ViewPager.OnPageChangeListener {
 
     private Context mContext;
 
     /**
-     * bind this Indicator with {@link com.daimajia.slider.library.Tricks.ViewPagerEx}
+     * bind this Indicator with {@link android.support.v4.view.ViewPager}
      */
-    private ViewPagerEx mPager;
+    private ViewPager mPager;
 
     /**
      * Variable to remember the previous selected indicator.
@@ -323,7 +323,7 @@ public class PagerIndicator extends LinearLayout implements ViewPagerEx.OnPageCh
      * bind indicator with viewpagerEx.
      * @param pager
      */
-    public void setViewPager(ViewPagerEx pager){
+    public void setViewPager(ViewPager pager){
         if(pager.getAdapter() == null){
             throw new IllegalStateException("Viewpager does not have adapter instance");
         }

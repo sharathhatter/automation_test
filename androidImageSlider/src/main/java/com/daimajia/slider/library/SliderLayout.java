@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.os.Message;
 import android.support.annotation.LayoutRes;
 import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -17,7 +18,6 @@ import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.Tricks.FixedSpeedScroller;
 import com.daimajia.slider.library.Tricks.InfinitePagerAdapter;
 import com.daimajia.slider.library.Tricks.InfiniteViewPager;
-import com.daimajia.slider.library.Tricks.ViewPagerEx;
 
 import java.lang.reflect.Field;
 import java.util.Timer;
@@ -25,7 +25,7 @@ import java.util.TimerTask;
 
 /**
  * SliderLayout is compound layout. This is combined with {@link com.daimajia.slider.library.Indicators.PagerIndicator}
- * and {@link com.daimajia.slider.library.Tricks.ViewPagerEx} .
+ * and {@link android.support.v4.view.ViewPager} .
  * <p/>
  * There is some properties you can set in XML:
  * <p/>
@@ -79,37 +79,37 @@ public class SliderLayout extends RelativeLayout {
     private SliderAdapter mSliderAdapter;
 
     /**
-     * {@link com.daimajia.slider.library.Tricks.ViewPagerEx} indicator.
+     * {@link android.support.v4.view.ViewPager} indicator.
      */
     private PagerIndicator mIndicator;
 
 
     /**
-     * A timer and a TimerTask using to cycle the {@link com.daimajia.slider.library.Tricks.ViewPagerEx}.
+     * A timer and a TimerTask using to cycle the {@link android.support.v4.view.ViewPager}.
      */
     private Timer mCycleTimer;
     private TimerTask mCycleTask;
 
     /**
-     * For resuming the cycle, after user touch or click the {@link com.daimajia.slider.library.Tricks.ViewPagerEx}.
+     * For resuming the cycle, after user touch or click the {@link android.support.v4.view.ViewPager}.
      */
     private Timer mResumingTimer;
     private TimerTask mResumingTask;
 
     /**
-     * If {@link com.daimajia.slider.library.Tricks.ViewPagerEx} is Cycling
+     * If {@link android.support.v4.view.ViewPager} is Cycling
      */
     private boolean mCycling;
 
     /**
-     * Determine if auto recover after user touch the {@link com.daimajia.slider.library.Tricks.ViewPagerEx}
+     * Determine if auto recover after user touch the {@link android.support.v4.view.ViewPager}
      */
     private boolean mAutoRecover = true;
 
     private int mTransformerId;
 
     /**
-     * {@link com.daimajia.slider.library.Tricks.ViewPagerEx} transformer time span.
+     * {@link android.support.v4.view.ViewPager} transformer time span.
      */
     private int mTransformerSpan = 1100;
 
@@ -270,26 +270,6 @@ public class SliderLayout extends RelativeLayout {
     }
 
     /**
-     * stop the auto circle
-     */
-    public void stopAutoCycle() {
-        if (mCycleTask != null) {
-            mCycleTask.cancel();
-        }
-        if (mCycleTimer != null) {
-            mCycleTimer.cancel();
-        }
-        if (mResumingTimer != null) {
-            mResumingTimer.cancel();
-        }
-        if (mResumingTask != null) {
-            mResumingTask.cancel();
-        }
-        mAutoCycle = false;
-        mCycling = false;
-    }
-
-    /**
      * when paused cycle, this method can weak it up.
      */
     private void recoverCycle() {
@@ -333,7 +313,7 @@ public class SliderLayout extends RelativeLayout {
      */
     public void setSliderTransformDuration(int period, Interpolator interpolator) {
         try {
-            Field mScroller = ViewPagerEx.class.getDeclaredField("mScroller");
+            Field mScroller = ViewPager.class.getDeclaredField("mScroller");
             mScroller.setAccessible(true);
             FixedSpeedScroller scroller = new FixedSpeedScroller(mViewPager.getContext(), interpolator, period);
             mScroller.set(mViewPager, scroller);
@@ -394,24 +374,6 @@ public class SliderLayout extends RelativeLayout {
         mIndicator.setIndicatorVisibility(visibility);
     }
 
-    public PagerIndicator.IndicatorVisibility getIndicatorVisibility() {
-        if (mIndicator == null) {
-            return mIndicator.getIndicatorVisibility();
-        }
-        return PagerIndicator.IndicatorVisibility.Invisible;
-
-    }
-
-    /**
-     * get the {@link com.daimajia.slider.library.Indicators.PagerIndicator} instance.
-     * You can manipulate the properties of the indicator.
-     *
-     * @return
-     */
-    public PagerIndicator getPagerIndicator() {
-        return mIndicator;
-    }
-
     public enum PresetIndicators {
         Center_Bottom("Center_Bottom", R.id.default_center_bottom_indicator),
         Right_Bottom("Right_Bottom", R.id.default_bottom_right_indicator),
@@ -442,108 +404,12 @@ public class SliderLayout extends RelativeLayout {
         setCustomIndicator(pagerIndicator);
     }
 
-    private InfinitePagerAdapter getWrapperAdapter() {
-        PagerAdapter adapter = mViewPager.getAdapter();
-        if (adapter != null) {
-            return (InfinitePagerAdapter) adapter;
-        } else {
-            return null;
-        }
-    }
-
     private SliderAdapter getRealAdapter() {
         PagerAdapter adapter = mViewPager.getAdapter();
         if (adapter != null) {
             return ((InfinitePagerAdapter) adapter).getRealAdapter();
         }
         return null;
-    }
-
-    /**
-     * get the current item position
-     *
-     * @return
-     */
-    public int getCurrentPosition() {
-
-        if (getRealAdapter() == null)
-            throw new IllegalStateException("You did not set a slider adapter");
-
-        return mViewPager.getCurrentItem() % getRealAdapter().getCount();
-
-    }
-
-    /**
-     * get current slider.
-     *
-     * @return
-     */
-    public BaseSliderView getCurrentSlider() {
-
-        if (getRealAdapter() == null)
-            throw new IllegalStateException("You did not set a slider adapter");
-
-        int count = getRealAdapter().getCount();
-        int realCount = mViewPager.getCurrentItem() % count;
-        return getRealAdapter().getSliderView(realCount);
-    }
-
-    /**
-     * remove  the slider at the position. Notice: It's a not perfect method, a very small bug still exists.
-     */
-    public void removeSliderAt(int position) {
-        if (getRealAdapter() != null) {
-            getRealAdapter().removeSliderAt(position);
-            mViewPager.setCurrentItem(mViewPager.getCurrentItem(), false);
-        }
-    }
-
-    /**
-     * remove all the sliders. Notice: It's a not perfect method, a very small bug still exists.
-     */
-    public void removeAllSliders() {
-        if (getRealAdapter() != null) {
-            int count = getRealAdapter().getCount();
-            getRealAdapter().removeAllSliders();
-            //a small bug, but fixed by this trick.
-            //bug: when remove adapter's all the sliders.some caching slider still alive.
-            mViewPager.setCurrentItem(mViewPager.getCurrentItem() + count, false);
-        }
-    }
-
-    /**
-     * set current slider
-     *
-     * @param position
-     */
-    public void setCurrentPosition(int position, boolean smooth) {
-        if (getRealAdapter() == null)
-            throw new IllegalStateException("You did not set a slider adapter");
-        if (position >= getRealAdapter().getCount()) {
-            throw new IllegalStateException("Item position is not exist");
-        }
-        int p = mViewPager.getCurrentItem() % getRealAdapter().getCount();
-        int n = (position - p) + mViewPager.getCurrentItem();
-        mViewPager.setCurrentItem(n, smooth);
-    }
-
-    public void setCurrentPosition(int position) {
-        setCurrentPosition(position, true);
-    }
-
-    /**
-     * move to prev slide.
-     */
-    public void movePrevPosition(boolean smooth) {
-
-        if (getRealAdapter() == null)
-            throw new IllegalStateException("You did not set a slider adapter");
-
-        mViewPager.setCurrentItem(mViewPager.getCurrentItem() - 1, smooth);
-    }
-
-    public void movePrevPosition() {
-        movePrevPosition(true);
     }
 
     /**
@@ -555,9 +421,5 @@ public class SliderLayout extends RelativeLayout {
             throw new IllegalStateException("You did not set a slider adapter");
 
         mViewPager.setCurrentItem(mViewPager.getCurrentItem() + 1, smooth);
-    }
-
-    public void moveNextPosition() {
-        moveNextPosition(true);
     }
 }

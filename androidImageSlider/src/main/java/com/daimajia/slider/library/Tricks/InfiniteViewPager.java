@@ -9,7 +9,7 @@ import android.util.AttributeSet;
  * A {@link ViewPager} that allows pseudo-infinite paging with a wrap-around effect. Should be used with an {@link
  * InfinitePagerAdapter}.
  */
-public class InfiniteViewPager extends ViewPagerEx {
+public class InfiniteViewPager extends ViewPager {
 
     public InfiniteViewPager(Context context) {
         super(context);
