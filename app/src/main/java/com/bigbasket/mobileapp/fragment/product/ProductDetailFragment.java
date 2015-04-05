@@ -126,8 +126,8 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
     private void renderProductDetail() {
         if (getActivity() == null || getView() == null) return;
 
-        setTitle(mProduct!=null && !TextUtils.isEmpty(mProduct.getDescription())
-                ? mProduct.getDescription(): getTitle());
+        setTitle(mProduct != null && !TextUtils.isEmpty(mProduct.getDescription())
+                ? mProduct.getDescription() : getTitle());
         ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
                 .setCommonTypeface(faceRobotoRegular)
                 .setRupeeTypeface(faceRupee)
@@ -138,9 +138,17 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
                 .setShowShopListDeleteBtn(false)
                 .build();
 
+        int eightDp = (int) getResources().getDimension(R.dimen.margin_small);
         LinearLayout layoutProductDetail = (LinearLayout) getView().findViewById(R.id.layoutProductDetail);
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View productRow = inflater.inflate(R.layout.uiv3_product_row, layoutProductDetail, false);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins(eightDp, 0, eightDp, 0);
+        productRow.setLayoutParams(layoutParams);
+
+        productRow.findViewById(R.id.viewSeparator).setVisibility(View.GONE);
+
         ProductView.setProductView(new ProductViewHolder(productRow), mProduct, null, null, productViewDisplayDataHolder,
                 false, this, getNavigationCtx());
         layoutProductDetail.addView(productRow);
@@ -154,9 +162,11 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
                 txtProductAddDescContent.setTypeface(FontHolder.getInstance(getCurrentActivity()).getFaceRobotoLight());
                 txtProductAddDescTitle.setTypeface(FontHolder.getInstance(getCurrentActivity()).getFaceRobotoLight());
                 txtProductAddDescContent.setText(Html.fromHtml(productAdditionalInfo.getContent()));
-                if(productAdditionalInfo.getTitle()!=null)
+                if (!TextUtils.isEmpty(productAdditionalInfo.getTitle())) {
                     txtProductAddDescTitle.setText(Html.fromHtml(productAdditionalInfo.getTitle()));
-                txtProductAddDescTitle.setVisibility(View.GONE);
+                } else {
+                    txtProductAddDescTitle.setVisibility(View.GONE);
+                }
                 layoutProductDetail.addView(additionalInfoView);
             }
         }

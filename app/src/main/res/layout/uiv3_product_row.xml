@@ -273,6 +273,7 @@
     </RelativeLayout>
 
     <View
+        android:id="@+id/viewSeparator"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/uiv3_divider_color" />
