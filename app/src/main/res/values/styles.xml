@@ -107,7 +107,7 @@
         <item name="android:drawablePadding">@dimen/padding_small</item>
         <item name="android:drawableRight">@drawable/ic_keyboard_arrow_right_white_36dp</item>
         <item name="android:layout_marginTop">2dp</item>
-        <item name="android:gravity">center</item>
+        <item name="android:gravity">center_vertical|right</item>
         <item name="android:textSize">@dimen/large_text_size</item>
     </style>
 
@@ -246,11 +246,13 @@
 
     <style name="BBAppTheme.FacebookButton" parent="BBAppTheme.SocialButton">
         <item name="android:drawableLeft">@drawable/fb_logo</item>
+        <item name="android:drawablePadding">-32dp</item>
         <item name="android:background">@color/fb_btn_color</item>
     </style>
 
     <style name="BBAppTheme.GoogleButton" parent="BBAppTheme.SocialButton">
         <item name="android:drawableLeft">@drawable/gplus_logo</item>
+        <item name="android:drawablePadding">-32dp</item>
         <item name="android:background">@color/gplus_red</item>
     </style>
 

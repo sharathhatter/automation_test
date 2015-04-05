@@ -48,6 +48,9 @@ public abstract class FacebookAndGPlusSigninBaseActivity extends PlusBaseActivit
             return;
         }
 
+        if (sessionState != null && sessionState.isClosed()) {
+            return;
+        }
         AuthParameters authParameters = AuthParameters.getInstance(this);
         if (session.isOpened()) {
             if (authParameters.isAuthTokenEmpty()) {
