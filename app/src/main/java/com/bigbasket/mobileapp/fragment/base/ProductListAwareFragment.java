@@ -142,13 +142,15 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
     public void onBackResume() {
         super.onBackResume();
 
-        if (productListData != null) {
-            ((FilterDisplayAware) getActivity()).setFilterView(productListData.getFilterOptions(),
-                    productListData.getFilteredOn(), getFragmentTxnTag());
-        } else {
-            ((FilterDisplayAware) getActivity()).setFilterView(null, null, getFragmentTxnTag());
+        if (getActivity() != null && getActivity() instanceof FilterDisplayAware) {
+            if (productListData != null) {
+                ((FilterDisplayAware) getActivity()).setFilterView(productListData.getFilterOptions(),
+                        productListData.getFilteredOn(), getFragmentTxnTag());
+            } else {
+                ((FilterDisplayAware) getActivity()).setFilterView(null, null, getFragmentTxnTag());
+            }
+            displayProductCount();
         }
-        displayProductCount();
     }
 
     private void setProductListView() {
@@ -477,13 +479,15 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
             syncBasket();
         }
 
-        if (productListData != null) {
-            ((FilterDisplayAware) getActivity()).setFilterView(productListData.getFilterOptions(),
-                    productListData.getFilteredOn(), getFragmentTxnTag());
-        } else {
-            ((FilterDisplayAware) getActivity()).setFilterView(null, null, getFragmentTxnTag());
+        if (getActivity() != null && getActivity() instanceof FilterDisplayAware) {
+            if (productListData != null) {
+                ((FilterDisplayAware) getActivity()).setFilterView(productListData.getFilterOptions(),
+                        productListData.getFilteredOn(), getFragmentTxnTag());
+            } else {
+                ((FilterDisplayAware) getActivity()).setFilterView(null, null, getFragmentTxnTag());
+            }
+            displayProductCount();
         }
-        displayProductCount();
     }
 
     @Override
