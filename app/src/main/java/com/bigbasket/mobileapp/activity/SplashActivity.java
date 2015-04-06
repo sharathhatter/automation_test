@@ -109,7 +109,7 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
     }
 
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         FacebookEventTrackWrapper.deactivateApp(getCurrentActivity());
         super.onDestroy();
     }
@@ -120,7 +120,6 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
 
     private void getMainMenu() {
         new GetDynamicPageTask<>(this, SectionManager.MAIN_MENU, false, true, true).startTask();
-
     }
 
     @Override

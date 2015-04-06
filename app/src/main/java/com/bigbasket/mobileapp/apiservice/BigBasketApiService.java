@@ -78,7 +78,14 @@ public interface BigBasketApiService {
                         Callback<RegisterDeviceResponse> registerDeviceResponseCallback);
 
     @GET("/get-dynamic-page/")
-    void getDynamicPage(@Query(Constants.SCREEN) String screen, Callback<ApiResponse<GetDynamicPageApiResponse>> homePageApiResponseCallback);
+    void getDynamicPage(@Query(Constants.SCREEN) String screen, Callback<ApiResponse<GetDynamicPageApiResponse>> dynamicPageApiResponseCallback);
+
+
+    @GET("/get-home-page/")
+    void getHomePage(@Query(Constants.SCREEN) String screen, Callback<ApiResponse<GetDynamicPageApiResponse>> dynamicPageApiResponseCallback);
+
+    @GET("/get-main-menu/")
+    void getMainMenu(@Query(Constants.SCREEN) String screen, Callback<ApiResponse<GetDynamicPageApiResponse>> dynamicPageApiResponseCallback);
 
     @GET("/c-get/")
     void cartGet(@Query(Constants.FULFILLMENT_ID) String fulfillmentId,

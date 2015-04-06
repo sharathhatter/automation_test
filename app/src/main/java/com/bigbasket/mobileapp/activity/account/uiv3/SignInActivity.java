@@ -7,6 +7,7 @@ import android.text.InputType;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
@@ -121,6 +122,12 @@ public class SignInActivity extends BackButtonActivity {
         }
         setTermsAndCondition((TextView) baseView.findViewById(R.id.txtSigninTermsAndCond), getString(R.string.byLoggingIn),
                 getString(R.string.termsAndCondHeading), getString(R.string.authFooterSeparator), getString(R.string.privacyPolicy));
+    }
+
+    @Override
+    protected void setOptionsMenu(Menu menu) {
+        super.setOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.login_menu, menu);
     }
 
     private void logRememberMeEnabled(String enabled) {

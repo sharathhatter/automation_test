@@ -54,55 +54,74 @@ public class GetDynamicPageTask<T> {
         } else {
             ((ProgressIndicationAware) context).showProgressDialog("Please wait...");
         }
-        bigBasketApiService.getDynamicPage(screenName, new Callback<ApiResponse<GetDynamicPageApiResponse>>() {
-            @Override
-            public void success(ApiResponse<GetDynamicPageApiResponse> getDynamicPageApiResponse, Response response) {
-                if (((CancelableAware) context).isSuspended()) {
-                    return;
-                }
-                if (!hideProgress) {
-                    try {
-                        if (inlineProgress) {
-                            ((ProgressIndicationAware) context).hideProgressView();
-                        } else {
-                            ((ProgressIndicationAware) context).hideProgressDialog();
-                        }
-                    } catch (IllegalArgumentException e) {
-                        return;
-                    }
-                }
-                switch (getDynamicPageApiResponse.status) {
-                    case 0:
-                        SectionData sectionData = getDynamicPageApiResponse.apiResponseContent.sectionData;
-                        ((DynamicScreenAware) context).onDynamicScreenSuccess(screenName, sectionData);
-                        if (sectionData != null && sectionData.getSections() != null &&
-                                sectionData.getSections().size() > 0) {
-                            sectionManager.storeSectionData(sectionData);
-                        }
-                        break;
-                    default:
-                        ((DynamicScreenAware) context).onDynamicScreenFailure(getDynamicPageApiResponse.status,
-                                getDynamicPageApiResponse.message);
-                        break;
-                }
-            }
+        switch (screenName) {
+            case SectionManager.HOME_PAGE:
+                bigBasketApiService.getHomePage(screenName, new DynamicPageCallback(sectionManager));
+                break;
+            case SectionManager.MAIN_MENU:
+                bigBasketApiService.getMainMenu(screenName, new DynamicPageCallback(sectionManager));
+                break;
+            default:
+                bigBasketApiService.getDynamicPage(screenName, new DynamicPageCallback(sectionManager));
+                break;
+        }
+    }
 
-            @Override
-            public void failure(RetrofitError error) {
-                if (((CancelableAware) context).isSuspended()) {
-                    return;
-                }
+    private class DynamicPageCallback implements Callback<ApiResponse<GetDynamicPageApiResponse>> {
+
+        private SectionManager sectionManager;
+
+        private DynamicPageCallback(SectionManager sectionManager) {
+            this.sectionManager = sectionManager;
+        }
+
+        @Override
+        public void success(ApiResponse<GetDynamicPageApiResponse> getDynamicPageApiResponse, Response response) {
+            if (((CancelableAware) context).isSuspended()) {
+                return;
+            }
+            if (!hideProgress) {
                 try {
                     if (inlineProgress) {
                         ((ProgressIndicationAware) context).hideProgressView();
                     } else {
-                        ((ProgressIndicationAware) context).hideProgressView();
+                        ((ProgressIndicationAware) context).hideProgressDialog();
                     }
                 } catch (IllegalArgumentException e) {
                     return;
                 }
-                ((DynamicScreenAware) context).onDynamicScreenFailure(error);
             }
-        });
+            switch (getDynamicPageApiResponse.status) {
+                case 0:
+                    SectionData sectionData = getDynamicPageApiResponse.apiResponseContent.sectionData;
+                    ((DynamicScreenAware) context).onDynamicScreenSuccess(screenName, sectionData);
+                    if (sectionData != null && sectionData.getSections() != null &&
+                            sectionData.getSections().size() > 0) {
+                        sectionManager.storeSectionData(sectionData);
+                    }
+                    break;
+                default:
+                    ((DynamicScreenAware) context).onDynamicScreenFailure(getDynamicPageApiResponse.status,
+                            getDynamicPageApiResponse.message);
+                    break;
+            }
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            if (((CancelableAware) context).isSuspended()) {
+                return;
+            }
+            try {
+                if (inlineProgress) {
+                    ((ProgressIndicationAware) context).hideProgressView();
+                } else {
+                    ((ProgressIndicationAware) context).hideProgressView();
+                }
+            } catch (IllegalArgumentException e) {
+                return;
+            }
+            ((DynamicScreenAware) context).onDynamicScreenFailure(error);
+        }
     }
 }
