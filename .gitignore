@@ -25,3 +25,5 @@ contactsMultiPickerLibrary/build/*
 androidImageSlider/build/*
 app/manifest-merger-release-report.txt
 moEngageSDKv420/build/*
+wibmoSDK/build/*
+wibmosdklib/build/*

@@ -1,4 +1,4 @@
-include ':app', ':androidImageSlider', ':facebook', ':floatingActionButton'
+include ':app', ':androidImageSlider', ':floatingActionButton', ':wibmosdklib', ':wibmoSDK'
 include ':konotorActivity'
 include ':multipleImagePick'
 include ':moEngageSDKv420'
