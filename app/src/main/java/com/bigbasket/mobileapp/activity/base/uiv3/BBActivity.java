@@ -776,7 +776,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
     private void hideGuestMenuItems(Menu menu) {
         menu.findItem(R.id.action_login).setVisible(false);
-        menu.findItem(R.id.action_signup).setVisible(false);
         menu.findItem(R.id.action_change_city).setVisible(false);
     }
 
