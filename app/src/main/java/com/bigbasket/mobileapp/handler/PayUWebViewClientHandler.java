@@ -56,7 +56,7 @@ public class PayUWebViewClientHandler extends WebViewClient {
                     baseActivity.showAlertDialog("Server Error");
                     return;
                 }
-                baseActivity.setResult(Constants.PAYU_FAILED);
+                baseActivity.setResult(Constants.PREPAID_TXN_FAILED);
                 baseActivity.finish();
             }
         }

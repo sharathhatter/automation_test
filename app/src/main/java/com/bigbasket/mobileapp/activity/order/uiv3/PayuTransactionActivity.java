@@ -146,7 +146,7 @@ public class PayuTransactionActivity extends BackButtonActivity {
             switch (sourceName) {
                 case Constants.PAYU_CANCELLED:
                     PayuResponse.clearTxnDetail(this);
-                    setResult(Constants.PAYU_ABORTED);
+                    setResult(Constants.PREPAID_TXN_ABORTED);
                     finish();
                     break;
                 default:

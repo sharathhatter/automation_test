@@ -29,6 +29,7 @@ import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.order.ActiveVouchers;
 import com.bigbasket.mobileapp.model.order.PaymentType;
 import com.bigbasket.mobileapp.model.order.PayuResponse;
+import com.bigbasket.mobileapp.model.order.PowerPayResponse;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.NavigationCodes;
@@ -85,7 +86,9 @@ public class PaymentSelectionFragment extends BaseFragment implements PostVouche
         }
 
         PayuResponse payuResponse = PayuResponse.getInstance(getActivity());
-        if (payuResponse != null && payuResponse.isSuccess()) {
+        PowerPayResponse powerPayResponse = PowerPayResponse.getInstance(getActivity());
+        if ((payuResponse != null && payuResponse.isSuccess())
+                || (powerPayResponse != null && powerPayResponse.isSuccess())) {
             renderPayuFailedToCreateOrderScenario();
         } else {
             renderPaymentOptions();
@@ -281,10 +284,10 @@ public class PaymentSelectionFragment extends BaseFragment implements PostVouche
                     }
                 }
                 break;
-            case Constants.PAYU_ABORTED:
+            case Constants.PREPAID_TXN_ABORTED:
                 displayPayuFailure(getString(R.string.youAborted));
                 break;
-            case Constants.PAYU_FAILED:
+            case Constants.PREPAID_TXN_FAILED:
                 displayPayuFailure(getString(R.string.failedToProcess));
                 break;
             default:

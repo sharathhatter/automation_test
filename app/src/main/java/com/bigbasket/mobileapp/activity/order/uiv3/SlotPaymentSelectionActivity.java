@@ -39,6 +39,7 @@ import com.bigbasket.mobileapp.model.order.ActiveVouchers;
 import com.bigbasket.mobileapp.model.order.OrderSummary;
 import com.bigbasket.mobileapp.model.order.PaymentType;
 import com.bigbasket.mobileapp.model.order.PayuResponse;
+import com.bigbasket.mobileapp.model.order.PowerPayResponse;
 import com.bigbasket.mobileapp.model.order.VoucherApplied;
 import com.bigbasket.mobileapp.model.slot.SelectedSlotType;
 import com.bigbasket.mobileapp.model.slot.SlotGroup;
@@ -89,7 +90,7 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
 
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.postDeliveryAddresses(mPotentialOrderId, addressId, "yes",
+        bigBasketApiService.postDeliveryAddresses(mPotentialOrderId, addressId, "yes", "yes",
                 new Callback<OldApiResponse<PostDeliveryAddressApiResponseContent>>() {
                     @Override
                     public void success(OldApiResponse<PostDeliveryAddressApiResponseContent> postDeliveryAddressApiResponse, Response response) {
@@ -188,8 +189,11 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
         }
 
         PayuResponse payuResponse = PayuResponse.getInstance(this);
+        PowerPayResponse powerPayResponse = PowerPayResponse.getInstance(this);
         if (payuResponse != null && payuResponse.isSuccess()) {
-            mPaymentMethodSlug = Constants.CREDIT_CARD;
+            mPaymentMethodSlug = Constants.PAYU;
+        } else if (powerPayResponse != null && powerPayResponse.isSuccess()) {
+            mPaymentMethodSlug = Constants.HDFC_POWER_PAY;
         }
 
         PagerSlidingTabStrip pagerSlidingTabStrip = (PagerSlidingTabStrip) base.findViewById(R.id.slidingTabs);
@@ -203,7 +207,8 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
             @Override
             public void onClick(View v) {
                 PayuResponse payuResponse = PayuResponse.getInstance(getCurrentActivity());
-                if (payuResponse != null && payuResponse.isSuccess()) {
+                PowerPayResponse powerPayResponse = PowerPayResponse.getInstance(getCurrentActivity());
+                if ((payuResponse != null && payuResponse.isSuccess()) || (powerPayResponse != null && powerPayResponse.isSuccess())) {
                     ArrayList<VoucherApplied> previouslyAppliedVoucherList = VoucherApplied.readFromPreference(getCurrentActivity());
                     if (previouslyAppliedVoucherList == null || previouslyAppliedVoucherList.size() == 0) {
                         launchOrderReview();
@@ -293,10 +298,10 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
         switch (resultCode) {
             case NavigationCodes.GO_TO_SLOT_SELECTION:
                 break;
-            case Constants.PAYU_ABORTED:
+            case Constants.PREPAID_TXN_ABORTED:
                 mPayuFailureReason = getString(R.string.youAborted);
                 break;
-            case Constants.PAYU_FAILED:
+            case Constants.PREPAID_TXN_FAILED:
                 mPayuFailureReason = getString(R.string.failedToProcess);
                 break;
             default:

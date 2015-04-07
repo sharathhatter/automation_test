@@ -62,7 +62,8 @@ public class OrderSummaryFragment extends AbstractOrderSummaryFragment {
 
 
         // Show message if credit card order
-        if (orderSummary.getOrderDetails().getPaymentMethod().equals(Constants.CREDIT_CARD)) {
+        if (orderSummary.getOrderDetails().getPaymentMethod().equals(Constants.PAYU)
+                || orderSummary.getOrderDetails().getPaymentMethod().equals(Constants.HDFC_POWER_PAY)) {
             TextView txtOrderSummaryMsg = (TextView) base.findViewById(R.id.txtOrderSummaryMsg);
             txtOrderSummaryMsg.setTypeface(faceRobotoRegular);
             String orderSummaryDefaultMsg = txtOrderSummaryMsg.getText().toString();

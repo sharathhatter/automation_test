@@ -9,7 +9,7 @@ public class GetPaymentParamsApiResponseContent {
     @SerializedName(Constants.PAYU_GATEWAY_URL)
     public String payuGatewayUrl;
 
-    @SerializedName(Constants.PAYU_POST_PARAMS)
+    @SerializedName(Constants.POST_PARAMS)
     public JsonObject payuPostParamsJson;
 
     @SerializedName(Constants.SUCCESS_CAPTURE_URL)

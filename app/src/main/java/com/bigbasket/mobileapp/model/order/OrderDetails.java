@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.UIUtil;
 import com.google.gson.annotations.SerializedName;
 
 public class OrderDetails implements Parcelable {
@@ -80,6 +81,10 @@ public class OrderDetails implements Parcelable {
 
     public double getFinalTotal() {
         return finalTotal;
+    }
+
+    public String getFormattedFinalTotal() {
+        return UIUtil.formatAsMoney(finalTotal);
     }
 
     public String getPaymentMethodDisplay() {

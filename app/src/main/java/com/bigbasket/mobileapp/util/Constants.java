@@ -212,7 +212,7 @@ public class Constants {
 
     public static final String PID = "pid";
     public static final String POTENTIAL_ORDER_ID = "potentialid";
-    public static final String PAYU_POST_PARAMS = "post_params";
+    public static final String POST_PARAMS = "post_params";
     public static final String PAYU_GATEWAY_URL = "pg_server_url";
     public static final String SUCCESS_CAPTURE_URL = "scurl";
     public static final String FAILURE_CAPTURE_URL = "fcurl";
@@ -220,11 +220,10 @@ public class Constants {
     public static final String IS_PAYU_SUCCESS_KEY = "isPayuSuccess";
     public static final String TXN_ID = "txn_id";
     public static final String P_ORDER_ID = "p_order_id";
-    public static final int PAYU_FAILED = 255;
     public static final int PAYU_SUCCESS = 256;
-    public static final int PAYU_ABORTED = 257;
     public static final String SUPPORT_CC = "support_cc";
-    public static final String CREDIT_CARD = "payu";
+    public static final String PAYU = "payu";
+    public static final String HDFC_POWER_PAY = "hdfc-power-pay";
     public static final String SOURCE_PLACE_ORDER = "placeOrder";
     public static final String PAYU_CANCELLED = "payuCancelled";
     public static final String SOURCE_POST_PAYMENT = "postPayment";
@@ -469,7 +468,6 @@ public class Constants {
     public static final String MOBILE_NUMBER = "mobile_number";
     public static final String REF_CODE = "ref_code";
     public static final String CITY_ID = "city_id";
-    public static final String REGISTER_MEMBER = "register-member/";
     public static final String NEWSLETTER_SUBSCRIPTION = "newsletter_subscription";
     public static final String FIRST_NAME_PREF = "firstname";
 
@@ -477,6 +475,7 @@ public class Constants {
     public static final String DELIVERY_DATE = "delivery_date";
     public static final String ITEMS_COUNT = "items_count";
     public static final String ORDER_STATUS = "order_status";
+    public static final String STATUS = "status";
     public static final String ORDER_VALUE = "order_value";
 
     // message format
@@ -561,6 +560,7 @@ public class Constants {
 
     public static final String PAYMENT_TYPES = "payment_types";
     public static final String PAYMENT_TYPE = "payment_type";
+    public static final String PAYMENT_STATUS = "payment_status";
     public static final String PAYMENT_METHOD = "payment_method";
     public static final String PAYMENT_METHOD_DISPLAY = "payment_method_display";
     public static final String CANCELLED = "Cancelled";
@@ -689,4 +689,23 @@ public class Constants {
     public static final String IS_PENDING_GO_TO_HOME = "isPendingGoToHome";
     public static final String RELOAD_APP = "reloadApp";
     public static final String HAS_USER_CHOSEN_CITY = "has_user_chosen_city";
+
+    public static final String MERCHANT_ID = "mer_id";
+    public static final String COUNTRY_CODE = "country_code";
+    public static final String MERCHANT_APP_ID = "mer_app_id";
+    public static final String PAYMENT_CHOICES = "payment_choices";
+    public static final String TXN_DESC = "txn_desc";
+    public static final String MSG_HASH = "msg_hash";
+    public static final String FORMATTED_AMOUNT = "formatted_amount";
+    public static final String APP_DATA = "app_data";
+    public static final String PG_SERVER_URL = "pg_server_url";
+    public static final String PG_PKG_NAME = "pg_pkg_name";
+    public static final String PG_TXN_ID = "pg_txn_id";
+    public static final String DATA_PICKUP_CODE = "data_pickup_code";
+    public static final String IS_PP_SUCCESS = "isPpSuccess";
+    public static final int PREPAID_TXN_FAILED = 255;
+    public static final int PREPAID_TXN_ABORTED = 258;
+    public static final String SUPPORT_POWER_PAY = "support_pp";
+    public static final String ERR_RES_CODE = "err_res_code";
+    public static final String ERR_RES_DESC = "err_res_desc";
 }
