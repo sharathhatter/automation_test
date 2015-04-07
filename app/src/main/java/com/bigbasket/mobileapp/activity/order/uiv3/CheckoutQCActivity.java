@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -39,6 +40,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
+import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -182,6 +184,9 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
                                 final ArrayList<CheckoutProduct> productWithSomeStockList) {
         FrameLayout base = (FrameLayout) findViewById(R.id.content_frame);
         LinearLayout contentView = new LinearLayout(this);
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT);
+        contentView.setLayoutParams(layoutParams);
         contentView.setOrientation(LinearLayout.VERTICAL);
         base.addView(contentView);
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -219,7 +224,8 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
                     txtProductBrand.setText(productWithNoStockList.get(i).getBrand());
 
                     TextView txtProductDesc = (TextView) layoutWithNoStockProducts.findViewById(R.id.txtProductDesc);
-                    txtProductDesc.setText(productWithNoStockList.get(i).getDescription());
+                    txtProductDesc.setText(productWithNoStockList.get(i).getBrand() + " " +
+                            productWithNoStockList.get(i).getDescription());
 
                     TextView txtWeight = (TextView) layoutWithNoStockProducts.findViewById(R.id.txtWeight);
                     txtWeight.setText(productWithNoStockList.get(i).getWeight());
@@ -241,8 +247,11 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
                             !TextUtils.isEmpty(productWithSomeStockList.get(i).getCategoryName())) {
                         View categoryRow = inflater.inflate(R.layout.uiv3_category_row, linearLayoutViewQC, false);
                         TextView txtTopCategory = (TextView) categoryRow.findViewById(R.id.txtTopCategory);
+                        categoryRow.findViewById(R.id.topCatTotal).setVisibility(View.GONE);
+                        categoryRow.findViewById(R.id.topCatTotalItems).setVisibility(View.GONE);
                         categoryName = productWithSomeStockList.get(i).getCategoryName();
                         txtTopCategory.setText(productWithSomeStockList.get(i).getCategoryName());
+                        txtTopCategory.setTypeface(faceRobotoRegular);
                         linearLayoutViewQC.addView(categoryRow);
                     }
 
@@ -282,7 +291,7 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
                     TextView txtSalePrice = (TextView) layoutWithSomeStockProducts.findViewById(R.id.txtSalePrice);
                     if (!TextUtils.isEmpty(productWithSomeStockList.get(i).getSpprice())) {
                         String preFixSalePrice = "Sale Price: `";
-                        String postFixSalePrice = getDecimalAmount((Double.parseDouble(productWithSomeStockList.get(i).getSpprice())));
+                        String postFixSalePrice = UIUtil.formatAsMoney((Double.parseDouble(productWithSomeStockList.get(i).getSpprice())));
                         int prefixBalLen = preFixSalePrice.length();
                         SpannableString spannableSalePrice = new SpannableString(preFixSalePrice + " " + postFixSalePrice);
                         spannableSalePrice.setSpan(new CustomTypefaceSpan("", faceRupee), prefixBalLen - 1,
@@ -295,7 +304,7 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
                     TextView txtSaving = (TextView) layoutWithSomeStockProducts.findViewById(R.id.txtSaving);
                     if (!TextUtils.isEmpty(productWithSomeStockList.get(i).getDiscountValue())) {
                         String preFixSaving = "Saving: `";
-                        String postFixSaving = getDecimalAmount(Double.parseDouble(productWithSomeStockList.get(i).getDiscountValue()));
+                        String postFixSaving = UIUtil.formatAsMoney(Double.parseDouble(productWithSomeStockList.get(i).getDiscountValue()));
                         int prefixBalLen = preFixSaving.length();
                         SpannableString spannableSaving = new SpannableString(preFixSaving + " " + postFixSaving);
                         spannableSaving.setSpan(new CustomTypefaceSpan("", faceRupee), prefixBalLen - 1,
@@ -348,6 +357,7 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
             }
 
             btnListFooter.setText("CONTINUE");
+            btnListFooter.setTypeface(faceRobotoRegular);
             btnListFooter.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

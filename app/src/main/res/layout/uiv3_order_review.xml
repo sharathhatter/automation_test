@@ -1,211 +1,164 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/scrollViewOrderReview"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/uiv3_list_bkg_color">
+    android:background="@color/uiv3_list_bkg_color"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <android.support.v7.widget.CardView
-            style="@style/CardViewStyle"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            app:cardBackgroundColor="@color/white"
-            app:cardCornerRadius="@dimen/card_corner_radius"
-            app:cardElevation="@dimen/card_elevation"
-            app:contentPadding="@dimen/padding_normal">
+            android:layout_marginLeft="@dimen/margin_small"
+            android:layout_marginRight="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_small"
+            android:background="@color/white"
+            android:padding="@dimen/padding_normal">
 
-            <RelativeLayout
+            <ImageView
+                android:id="@+id/imgAlmostDone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/info"
+                android:src="@drawable/ic_info_outline_grey600_36dp" />
+
+            <TextView
+                android:id="@+id/txtOrderSummaryMsg"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/margin_small"
+                android:layout_marginTop="@dimen/margin_mini"
+                android:layout_toRightOf="@id/imgAlmostDone"
+                android:text="@string/orderSummaryDefaultMsg"
+                android:textColor="@color/uiv3_primary_text_color"
+                android:textSize="@dimen/secondary_text_size" />
 
-                <ImageView
-                    android:id="@+id/imgAlmostDone"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@string/info"
-                    android:src="@drawable/ic_info_outline_grey600_36dp" />
-
-                <TextView
-                    android:id="@+id/lblAlmostDone"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/margin_small"
-                    android:layout_toRightOf="@id/imgAlmostDone"
-                    android:text="@string/almostDone"
-                    android:textColor="@color/uiv3_primary_text_color"
-                    android:textSize="@dimen/primary_text_size" />
-
-                <TextView
-                    android:id="@+id/txtOrderSummaryMsg"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/lblAlmostDone"
-                    android:layout_marginLeft="@dimen/margin_small"
-                    android:layout_marginTop="@dimen/margin_mini"
-                    android:layout_toRightOf="@id/imgAlmostDone"
-                    android:text="@string/orderSummaryDefaultMsg"
-                    android:textColor="@color/uiv3_primary_text_color"
-                    android:textSize="@dimen/secondary_text_size" />
-
-                <TextView
-                    android:id="@+id/lblOrderNotYetPlaced"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/txtOrderSummaryMsg"
-                    android:layout_marginLeft="@dimen/margin_small"
-                    android:layout_marginTop="@dimen/margin_mini"
-                    android:layout_toRightOf="@id/imgAlmostDone"
-                    android:text="@string/orderYetNotplaced"
-                    android:textColor="@color/uiv3_secondary_text_color"
-                    android:textSize="@dimen/secondary_text_size" />
-            </RelativeLayout>
-        </android.support.v7.widget.CardView>
+        </RelativeLayout>
 
         <TextView
             style="@style/CardViewHeading"
             android:text="@string/deliverySlotHeading" />
 
-        <android.support.v7.widget.CardView
-            style="@style/CardViewStyle"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            app:cardBackgroundColor="@color/white"
-            app:cardCornerRadius="@dimen/card_corner_radius"
-            app:cardElevation="@dimen/card_elevation"
-            app:contentPaddingLeft="@dimen/padding_normal"
-            app:contentPaddingRight="@dimen/padding_normal"
-            app:contentPaddingTop="@dimen/padding_normal">
+            android:layout_marginLeft="@dimen/margin_small"
+            android:layout_marginRight="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_small"
+            android:background="@color/white"
+            android:padding="@dimen/padding_normal">
 
-            <RelativeLayout
+            <ImageView
+                android:id="@+id/imgDeliveryVan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_mini"
+                android:contentDescription="@string/delivery_van"
+                android:src="@drawable/delivery_van" />
+
+            <LinearLayout
+                android:id="@+id/layoutDeliverySlot"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/card_img_content_margin"
+                android:layout_toRightOf="@id/imgDeliveryVan"
+                android:orientation="vertical" />
+        </RelativeLayout>
 
-                <ImageView
-                    android:id="@+id/imgDeliveryVan"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin_mini"
-                    android:contentDescription="@string/delivery_van"
-                    android:src="@drawable/delivery_van" />
-
-                <LinearLayout
-                    android:id="@+id/layoutDeliverySlot"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/card_img_content_margin"
-                    android:layout_toRightOf="@id/imgDeliveryVan"
-                    android:orientation="vertical" />
-            </RelativeLayout>
-
-        </android.support.v7.widget.CardView>
 
         <TextView
             style="@style/CardViewHeading"
             android:text="@string/contactHeading" />
 
-        <android.support.v7.widget.CardView
-            style="@style/CardViewStyle"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            app:cardBackgroundColor="@color/white"
-            app:cardCornerRadius="@dimen/card_corner_radius"
-            app:cardElevation="@dimen/card_elevation"
-            app:contentPadding="@dimen/padding_normal">
+            android:layout_marginLeft="@dimen/margin_small"
+            android:layout_marginRight="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_small"
+            android:background="@color/white"
+            android:padding="@dimen/padding_normal">
 
-            <RelativeLayout
+            <ImageView
+                android:id="@+id/imgPerson"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_mini"
+                android:contentDescription="@string/memberName"
+                android:src="@drawable/user_grey_list" />
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/card_img_content_margin"
+                android:layout_toRightOf="@id/imgPerson"
+                android:orientation="vertical">
 
-                <ImageView
-                    android:id="@+id/imgPerson"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin_mini"
-                    android:contentDescription="@string/memberName"
-                    android:src="@drawable/user_grey_list" />
-
-                <LinearLayout
+                <TextView
+                    android:id="@+id/txtMemberName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/card_img_content_margin"
-                    android:layout_toRightOf="@id/imgPerson"
-                    android:orientation="vertical">
+                    android:paddingBottom="@dimen/padding_small"
+                    android:textColor="@color/uiv3_primary_text_color"
+                    android:textSize="@dimen/secondary_text_size" />
 
-                    <TextView
-                        android:id="@+id/txtMemberName"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingBottom="@dimen/padding_small"
-                        android:textColor="@color/uiv3_primary_text_color"
-                        android:textSize="@dimen/secondary_text_size" />
+                <TextView
+                    android:id="@+id/txtMemberAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/uiv3_primary_text_color"
+                    android:textSize="@dimen/secondary_text_size" />
 
-                    <TextView
-                        android:id="@+id/txtMemberAddress"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/uiv3_primary_text_color"
-                        android:textSize="@dimen/secondary_text_size" />
-
-                    <TextView
-                        android:id="@+id/txtMemberContactNum"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="@dimen/margin_mini"
-                        android:layout_marginTop="@dimen/margin_small"
-                        android:drawableLeft="@drawable/ic_call_grey600_18dp"
-                        android:drawablePadding="@dimen/padding_mini"
-                        android:singleLine="false"
-                        android:textColor="@color/uiv3_primary_text_color"
-                        android:textSize="@dimen/secondary_text_size" />
-                </LinearLayout>
-            </RelativeLayout>
-        </android.support.v7.widget.CardView>
+                <TextView
+                    android:id="@+id/txtMemberContactNum"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/margin_mini"
+                    android:layout_marginTop="@dimen/margin_small"
+                    android:drawableLeft="@drawable/ic_call_grey600_18dp"
+                    android:drawablePadding="@dimen/padding_mini"
+                    android:singleLine="false"
+                    android:textColor="@color/uiv3_primary_text_color"
+                    android:textSize="@dimen/secondary_text_size" />
+            </LinearLayout>
+        </RelativeLayout>
 
         <TextView
             style="@style/CardViewHeading"
             android:text="@string/paymentHeading" />
 
-        <android.support.v7.widget.CardView
-            style="@style/CardViewStyle"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            app:cardBackgroundColor="@color/white"
-            app:cardCornerRadius="@dimen/card_corner_radius"
-            app:cardElevation="@dimen/card_elevation"
-            app:contentPadding="@dimen/padding_normal">
+            android:layout_marginLeft="@dimen/margin_small"
+            android:layout_marginRight="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_small"
+            android:background="@color/white"
+            android:padding="@dimen/padding_normal">
 
-            <RelativeLayout
+            <ImageView
+                android:id="@+id/imgPaymentDetails"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_mini"
+                android:contentDescription="@string/paymentMethod"
+                android:src="@drawable/payment" />
+
+            <LinearLayout
+                android:id="@+id/layoutOrderSummaryInfo"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/card_img_content_margin"
+                android:layout_toRightOf="@id/imgPaymentDetails"
+                android:orientation="vertical">
 
-                <ImageView
-                    android:id="@+id/imgPaymentDetails"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin_mini"
-                    android:contentDescription="@string/paymentMethod"
-                    android:src="@drawable/payment" />
-
-                <LinearLayout
-                    android:id="@+id/layoutOrderSummaryInfo"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/card_img_content_margin"
-                    android:layout_toRightOf="@id/imgPaymentDetails"
-                    android:orientation="vertical">
-
-                </LinearLayout>
-            </RelativeLayout>
-        </android.support.v7.widget.CardView>
+            </LinearLayout>
+        </RelativeLayout>
     </LinearLayout>
 </ScrollView>

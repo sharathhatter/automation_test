@@ -65,10 +65,11 @@ public class SignInActivity extends BackButtonActivity {
         mPasswordView = (EditText) baseView.findViewById(R.id.editTextPasswd);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.login || id == EditorInfo.IME_NULL) {
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+                if (((keyEvent != null && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)) ||
+                        actionId == EditorInfo.IME_ACTION_DONE) {
                     attemptLogin();
-                    return true;
+                    hideKeyboard(getCurrentActivity(), mPasswordView);
                 }
                 return false;
             }

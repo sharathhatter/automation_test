@@ -129,7 +129,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
         }
 
         String separator = " | Total: ";
-        String topCatTotalAmount = ((ActivityAware) context).getCurrentActivity().getDecimalAmount(cartItemList.getTopCatTotal());
+        String topCatTotalAmount = UIUtil.formatAsMoney(cartItemList.getTopCatTotal());
         TextView topCatTotal = headerTitleHolder.getTopCatTotal();
         if (!topCatTotalAmount.equals("0")) {
             topCatTotal.setVisibility(View.VISIBLE);
@@ -247,14 +247,9 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
             imgMarketPlaceIcon.setVisibility(View.GONE);
         }
 
-        TextView txtProductBrand = rowHolder.getTxtProductBrand();
-        if (txtProductBrand != null) {
-            txtProductBrand.setText(cartItem.getProductBrand());
-        }
-
         TextView txtProductDesc = rowHolder.getTxtProductDesc();
         txtProductDesc.setTypeface(faceRobotoRegular);
-        txtProductDesc.setText(cartItem.getProductDesc());
+        txtProductDesc.setText(cartItem.getProductBrand() + " " + cartItem.getProductDesc());
 
         TextView txtSalePrice = rowHolder.getTxtSalePrice();
         if (cartItem.getTotalPrice() > 0) {
@@ -267,7 +262,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
 
         if (cartItem.getSaving() > 0) {
             txtSaving.setVisibility(View.VISIBLE);
-            txtSaving.setText(UIUtil.asRupeeSpannable(cartItem.getSaving(), faceRupee));
+            txtSaving.setText(UIUtil.formatAsSavings(UIUtil.formatAsMoney(cartItem.getSaving()), faceRupee));
         } else {
             txtSaving.setVisibility(View.GONE);
         }
@@ -449,7 +444,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
         String regularQtyStr = UIUtil.roundOrInt(cartItem.getCartItemPromoInfo().
                 getRegularInfo().getNumItemInCart());
         String separator = " @ ";
-        String regularSalePriceStr = "`" + (((ActivityAware) context).getCurrentActivity()).getDecimalAmount(cartItem.getCartItemPromoInfo().getRegularInfo().getSalePrice());
+        String regularSalePriceStr = "`" + UIUtil.formatAsMoney(cartItem.getCartItemPromoInfo().getRegularInfo().getSalePrice());
         Spannable regularSpannable = new SpannableString(regularQtyStr + separator + regularSalePriceStr);
         regularSpannable.setSpan(new CustomTypefaceSpan("", faceRupee), regularQtyStr.length()
                         + separator.length(), regularQtyStr.length() + separator.length() + 1,
@@ -466,7 +461,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
         if (cartItem.getCartItemPromoInfo().getPromoInfo().getSalePrice() > 0) {
             String promoQtyStr = UIUtil.roundOrInt(cartItem.getCartItemPromoInfo().
                     getPromoInfo().getNumItemInCart());
-            String promoSalePriceStr = "`" + (((ActivityAware) context).getCurrentActivity()).getDecimalAmount(cartItem.getCartItemPromoInfo().getPromoInfo().getSalePrice());
+            String promoSalePriceStr = "`" + UIUtil.formatAsMoney(cartItem.getCartItemPromoInfo().getPromoInfo().getSalePrice());
             Spannable promoSpannable = new SpannableString(promoQtyStr + separator + promoSalePriceStr);//
             promoSpannable.setSpan(new CustomTypefaceSpan("", faceRupee), promoQtyStr.length() +
                             separator.length(), separator.length() + promoQtyStr.length() + 1, //
@@ -512,19 +507,10 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
         private ImageView imgRemove;
         private ImageView imgLiquorIcon;
         private View base;
-        private TextView txtProductBrand;
         private View basketOperationSeparatorLine;
 
         public RowHolder(View base) {
             this.base = base;
-        }
-
-        public TextView getTxtProductBrand() {
-            if (txtProductBrand == null) {
-                txtProductBrand = (TextView) base.findViewById(R.id.txtProductBrand);
-                txtProductBrand.setTypeface(faceRobotoRegular);
-            }
-            return txtProductBrand;
         }
 
         public ImageView getImgProduct() {

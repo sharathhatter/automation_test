@@ -52,6 +52,7 @@ import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
+import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -240,9 +241,9 @@ public class ShowCartFragment extends BaseFragment {
         TextView txtSaving = (TextView) base.findViewById(R.id.txtSaving);
         txtSaving.setTypeface(faceRobotoRegular);
 
-        String totalSaveAmount = ((BaseActivity) getActivity()).getDecimalAmount(cartSummary.getSavings());
+        String totalSaveAmount = UIUtil.formatAsMoney(cartSummary.getSavings());
         if (!totalSaveAmount.equals("0")) {
-            Spannable savingSpannable = new SpannableString("` " + ((BaseActivity) getActivity()).getDecimalAmount(cartSummary.getSavings()));
+            Spannable savingSpannable = new SpannableString("` " + UIUtil.formatAsMoney(cartSummary.getSavings()));
             savingSpannable.setSpan(new CustomTypefaceSpan("", faceRupee), 0, 1, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
             txtSaving.setText(savingSpannable);
         } else {
@@ -264,7 +265,7 @@ public class ShowCartFragment extends BaseFragment {
             txtTotalCartItems.setVisibility(View.GONE);
         }
 
-        String totalBasketAmount = ((BaseActivity) getActivity()).getDecimalAmount(cartSummary.getTotal());
+        String totalBasketAmount = UIUtil.formatAsMoney(cartSummary.getTotal());
         TextView txtTotal = (TextView) base.findViewById(R.id.txtTotal);
         txtTotal.setTypeface(faceRobotoRegular);
         if (!totalBasketAmount.equals("0")) {

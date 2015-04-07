@@ -2,8 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/white">
+    android:background="@color/white"
+    android:orientation="vertical">
 
     <EditText
         android:id="@+id/editTextVoucherCode"
@@ -11,6 +11,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_normal"
         android:hint="@string/enterVoucher"
+        android:imeActionLabel="@string/apply"
+        android:imeOptions="actionDone"
         android:inputType="text"
         android:textColor="@color/uiv3_primary_text_color"
         android:textSize="@dimen/primary_text_size" />
@@ -28,12 +30,11 @@
 
     <Button
         android:id="@+id/btnApplyVoucher"
+        style="@style/FormButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:text="@string/applyVoucher"
-        android:textColor="@color/uiv3_primary_text_color"
-        android:textSize="@dimen/primary_text_size" />
+        android:text="@string/applyVoucher" />
 
     <ListView
         android:id="@+id/lstAvailableVouchers"

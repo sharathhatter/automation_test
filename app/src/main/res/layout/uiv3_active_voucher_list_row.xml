@@ -1,53 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.bigbasket.mobileapp.view.uiv3.CheckableRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="@dimen/padding_normal"
-    android:paddingBottom="@dimen/padding_normal">
+    android:paddingBottom="@dimen/padding_small"
+    android:paddingLeft="@dimen/padding_small"
+    android:paddingRight="@dimen/padding_small"
+    android:paddingTop="@dimen/padding_normal">
 
-    <TextView
-        android:id="@+id/txtVoucherCode"
+    <CheckedTextView
+        android:id="@+id/rbtnApplyVoucher"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:minHeight="70dp"
-        android:textSize="@dimen/heading_1_text_size"
-        android:gravity="center"
-        android:paddingLeft="@dimen/padding_small"
-        android:paddingRight="@dimen/padding_small"
-        android:textColor="@color/white"
-        android:minWidth="70dp"
-        android:layout_marginBottom="@dimen/margin_small"
-        android:layout_marginLeft="@dimen/margin_small"
-        android:layout_marginRight="@dimen/margin_small"
-        android:contentDescription="@string/voucherCode" />
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/margin_mini"
+        android:checkMark="@drawable/large_radio_button"
+        android:minHeight="32dp" />
+
+    <LinearLayout
+        android:id="@+id/layoutVoucherCode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/rbtnApplyVoucher"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/txtVoucherCode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_small"
+            android:layout_marginRight="@dimen/margin_small"
+            android:background="@color/fbutton_color_asbestos"
+            android:contentDescription="@string/voucherCode"
+            android:gravity="center"
+            android:padding="@dimen/padding_normal"
+            android:textColor="@color/white"
+            android:textSize="@dimen/primary_text_size" />
+
+        <TextView
+            android:id="@+id/txtVoucherDesc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:textColor="@color/uiv3_primary_text_color"
+            android:textSize="@dimen/secondary_text_size" />
+
+    </LinearLayout>
 
     <TextView
-        android:layout_width="wrap_content"
-        android:textColor="@color/uiv3_primary_text_color"
+        android:id="@+id/txtVoucherMsg"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/primary_text_size"
-        android:layout_toRightOf="@id/txtVoucherCode"
-        android:id="@+id/txtVoucherDesc" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_below="@id/layoutVoucherCode"
         android:layout_marginTop="@dimen/margin_small"
-        android:textSize="@dimen/primary_text_size"
-        android:layout_toRightOf="@id/txtVoucherCode"
-        android:layout_below="@id/txtVoucherDesc"
+        android:layout_toLeftOf="@id/rbtnApplyVoucher"
         android:textColor="@color/uiv3_secondary_text_color"
-        android:id="@+id/txtVoucherMsg" />
+        android:textSize="@dimen/secondary_text_size" />
 
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/txtVoucherValidity"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/txtVoucherMsg"
         android:layout_marginTop="@dimen/margin_small"
-        android:textSize="@dimen/primary_text_size"
+        android:layout_toLeftOf="@id/rbtnApplyVoucher"
         android:text="@string/pleaseNote"
         android:textColor="@color/uiv3_secondary_text_color"
-        android:layout_toRightOf="@id/txtVoucherCode"
-        android:layout_below="@id/txtVoucherMsg"
-        android:id="@+id/txtVoucherValidity" />
-</RelativeLayout>
+        android:textSize="@dimen/secondary_text_size"
+        android:textStyle="italic" />
+</com.bigbasket.mobileapp.view.uiv3.CheckableRelativeLayout>

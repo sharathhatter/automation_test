@@ -46,7 +46,7 @@ public class ShoppingListNamesDialog extends DialogFragment {
         }
 
         return UIUtil.getMaterialDialogBuilder(getActivity())
-                .title(R.string.addItemToShopList)
+                .title(R.string.selectShoppingList)
                 .items(shopListNamesArray)
                 .itemsCallbackMultiChoice(null, new MaterialDialog.ListCallbackMultiChoice() {
                     @Override

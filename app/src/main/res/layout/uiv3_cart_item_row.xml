@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginLeft="@dimen/margin_mini"
+    android:layout_marginRight="@dimen/margin_mini"
     android:background="@color/white"
-    android:paddingTop="@dimen/padding_mini">
+    android:orientation="vertical">
 
     <RelativeLayout
-        android:id="@+id/layoutBasketSubContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/padding_small"
-        android:paddingLeft="@dimen/padding_mini"
-        android:paddingRight="@dimen/padding_small">
+        android:paddingBottom="@dimen/padding_mini"
+        android:paddingRight="@dimen/padding_mini"
+        android:paddingTop="@dimen/padding_mini">
 
         <ImageView
             android:id="@+id/imgProduct"
@@ -33,7 +34,6 @@
             android:contentDescription="@string/remove"
             android:src="@drawable/ic_delete_grey600_24dp" />
 
-
         <ImageView
             android:id="@+id/imgLiquorIcon"
             android:layout_width="@dimen/fulfillment_image_size"
@@ -43,45 +43,17 @@
             android:layout_toRightOf="@id/imgProduct"
             android:adjustViewBounds="true"
             android:contentDescription="@string/alt_placeholder"
-            android:src="@drawable/delete"
-            />
-
-
-        <TextView
-            android:id="@+id/txtSaving"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/margin_mini"
-            android:layout_marginTop="@dimen/margin_mini"
-            android:layout_toLeftOf="@id/imgRemove"
-            android:drawableLeft="@drawable/valuestar"
-            android:drawablePadding="@dimen/padding_mini"
-            android:paddingTop="2dp"
-            android:text="Rs 100.00"
-            android:textColor="@color/saveColor"
-            android:textSize="@dimen/secondary_text_size" />
-
-        <TextView
-            android:id="@+id/txtProductBrand"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/margin_small"
-            android:layout_marginTop="@dimen/margin_mini"
-            android:layout_toLeftOf="@id/txtSaving"
-            android:layout_toRightOf="@id/imgLiquorIcon"
-            android:text="Prestige"
-            android:textColor="@color/uiv3_secondary_text_color"
-            android:textSize="@dimen/secondary_text_size" />
+            android:src="@drawable/delete" />
 
         <TextView
             android:id="@+id/txtProductDesc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/txtProductBrand"
-            android:layout_marginLeft="@dimen/margin_small"
-            android:layout_marginTop="@dimen/margin_small"
-            android:layout_toRightOf="@id/imgProduct"
-            android:text="product description is the short sadf a dadasdasdadsasdaddsf"
+            android:layout_marginLeft="@dimen/margin_mini"
+            android:layout_marginTop="2dp"
+            android:layout_toLeftOf="@id/imgRemove"
+            android:layout_toRightOf="@id/imgLiquorIcon"
+            android:text="Delux Prestige - test test test test test test test test"
             android:textColor="@color/uiv3_primary_text_color"
             android:textSize="@dimen/primary_text_size" />
 
@@ -90,23 +62,36 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/txtProductDesc"
-            android:layout_marginLeft="@dimen/margin_small"
-            android:layout_marginTop="@dimen/margin_small"
-            android:layout_alignParentRight="true"
-            android:gravity="left|center_vertical"
-            android:paddingRight="@dimen/padding_small"
-            android:text="Rs 900"
-            android:textColor="@color/uiv3_primary_text_color"
-            android:textSize="@dimen/large_text_size" />
+            android:layout_marginLeft="@dimen/margin_mini"
+            android:layout_marginTop="@dimen/margin_mini"
+            android:layout_toRightOf="@id/imgProduct"
+            android:text="Rs 1000.00"
+            android:textColor="@color/actualCostColor"
+            android:textSize="@dimen/secondary_text_size" />
+
+        <TextView
+            android:id="@+id/txtSaving"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/txtProductDesc"
+            android:layout_marginLeft="@dimen/margin_mini"
+            android:layout_marginTop="5dp"
+            android:layout_toRightOf="@id/txtSalePrice"
+            android:drawablePadding="@dimen/padding_mini"
+            android:text="Save: Rs 10000.00"
+            android:textColor="@color/saveColor"
+            android:textSize="@dimen/small_text_size" />
 
         <include
             android:id="@+id/layoutBasketOperation"
             layout="@layout/uiv3_basket_operation_control"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
             android:layout_below="@id/txtSalePrice"
-            android:layout_marginTop="@dimen/margin_small" />
+            android:layout_gravity="left"
+            android:layout_marginBottom="@dimen/margin_mini"
+            android:layout_marginTop="@dimen/margin_small"
+            android:layout_toRightOf="@id/imgProduct" />
 
         <ImageView
             android:id="@+id/imgRegularImg"
@@ -155,6 +140,7 @@
             android:layout_marginLeft="@dimen/margin_small"
             android:layout_marginTop="@dimen/margin_mini"
             android:adjustViewBounds="true"
+            android:contentDescription="@string/promo"
             android:maxHeight="20dp"
             android:maxWidth="24dp"
             android:src="@drawable/promo_used" />
@@ -192,8 +178,7 @@
     <View
         android:id="@+id/basketOperationSeparatorLine"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_below="@id/layoutBasketSubContainer"
+        android:layout_height="1dp"
         android:layout_marginTop="@dimen/margin_small"
         android:background="@color/uiv3_divider_color" />
-</RelativeLayout>
+</LinearLayout>

@@ -13,7 +13,9 @@
         android:layout_height="match_parent"
         android:paddingBottom="@dimen/padding_mini"
         android:paddingTop="@dimen/padding_mini"
-        android:text="@string/minus" />
+        android:text="@string/minus"
+        android:textSize="@dimen/large_text_size"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/txtInBasket"
@@ -37,5 +39,7 @@
         android:layout_height="match_parent"
         android:paddingBottom="@dimen/padding_mini"
         android:paddingTop="@dimen/padding_mini"
-        android:text="@string/plus" />
+        android:text="@string/plus"
+        android:textSize="@dimen/heading_2_text_size"
+        android:textStyle="bold" />
 </LinearLayout>

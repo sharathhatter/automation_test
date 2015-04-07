@@ -341,18 +341,9 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
                     map.put(TrackEventkeys.VOUCHER_NAME, voucherCode);
                     switch (postVoucherApiResponse.status) {
                         case Constants.OK:
-                            // TODO : Add previous applied voucher handling logic for credit card
-
                             if (mPreviouslyAppliedVoucherMap == null ||
                                     mPreviouslyAppliedVoucherMap.size() == 0) {
-                                String voucherMsg;
-                                if (!TextUtils.isEmpty(postVoucherApiResponse.evoucherMsg)) {
-                                    voucherMsg = postVoucherApiResponse.evoucherMsg;
-                                } else {
-                                    voucherMsg = "eVoucher has been successfully applied";
-                                    trackEvent(TrackingAware.CHECKOUT_VOUCHER_APPLIED, map);
-                                }
-                                showAlertDialog(voucherMsg);
+                                trackEvent(TrackingAware.CHECKOUT_VOUCHER_APPLIED, map);
                             }
                             onVoucherSuccessfullyApplied(voucherCode);
                             break;

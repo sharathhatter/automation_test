@@ -97,7 +97,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         ConnectivityAware, TrackingAware, ApiErrorAware, EmailAddressAware {
 
     public static Typeface faceRupee;
-    public static Typeface faceRobotoRegular, faceRobotoLight;
+    public static Typeface faceRobotoRegular, faceRobotoLight, faceRobotoItalic;
     protected BigBasketMessageHandler handler;
     protected boolean isActivitySuspended;
     protected COReserveQuantity coReserveQuantity;
@@ -113,6 +113,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         faceRupee = FontHolder.getInstance(this).getFaceRupee();
         faceRobotoRegular = FontHolder.getInstance(this).getFaceRobotoRegular();
         faceRobotoLight = FontHolder.getInstance(this).getFaceRobotoLight();
+        faceRobotoItalic = FontHolder.getInstance(this).getFaceRobotoItalic();
         moEHelper = MoEngageWrapper.getMoHelperObj(getCurrentActivity());
         LocalyticsWrapper.integrate(this);
         fbLogger = AppEventsLogger.newLogger(getCurrentActivity());
@@ -470,17 +471,6 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         data.putExtra(Constants.RELOAD_APP, reloadApp);
         setResult(resultCode, data);
         getCurrentActivity().finish();
-    }
-
-    public String getDecimalAmount(Double amount) {
-        int amountInt = amount.intValue();
-        if (amountInt == amount)
-            return String.valueOf(amountInt);
-        final NumberFormat nf = NumberFormat.getInstance();
-        nf.setMinimumFractionDigits(2);
-        nf.setMaximumFractionDigits(2);
-        nf.setGroupingUsed(false);
-        return (nf.format(amount).equals("0.00") || nf.format(amount).equals("0.0")) ? "0" : nf.format(amount);
     }
 
     public static void showKeyboard(final EditText editText) {

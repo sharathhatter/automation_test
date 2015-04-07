@@ -4,17 +4,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
+import android.view.inputmethod.EditorInfo;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
@@ -30,13 +31,11 @@ import java.util.ArrayList;
 
 public class AvailableVoucherListActivity extends BackButtonActivity {
 
-    private int mSelectedIndex = ListView.INVALID_POSITION;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setTitle(getString(R.string.applyVoucher));
+        setTitle(getString(R.string.selectAndApplyVoucher));
         ArrayList<ActiveVouchers> activeVouchersList = getIntent().getParcelableArrayListExtra(Constants.VOUCHERS);
         renderVouchers(activeVouchersList);
     }
@@ -50,6 +49,20 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
         View base = inflater.inflate(R.layout.uiv3_apply_voucher, contentLayout, false);
 
         final EditText editTextVoucherCode = (EditText) base.findViewById(R.id.editTextVoucherCode);
+        editTextVoucherCode.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent keyEvent) {
+                if (((keyEvent != null && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER)) ||
+                        actionId == EditorInfo.IME_ACTION_DONE) {
+                    String voucherCode = editTextVoucherCode.getText().toString();
+                    if (!TextUtils.isEmpty(voucherCode)) {
+                        applyVoucher(voucherCode);
+                    }
+                    hideKeyboard(getCurrentActivity(), editTextVoucherCode);
+                }
+                return false;
+            }
+        });
         TextView lblOr = (TextView) base.findViewById(R.id.lblOr);
         Button btnApplyVoucher = (Button) base.findViewById(R.id.btnApplyVoucher);
         final ListView listVoucher = (ListView) base.findViewById(R.id.lstAvailableVouchers);
@@ -61,15 +74,8 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
         } else {
             lblOr.setTypeface(faceRobotoRegular);
             ActiveVoucherListAdapter activeVoucherListAdapter = new ActiveVoucherListAdapter(activeVouchersList);
+            listVoucher.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
             listVoucher.setAdapter(activeVoucherListAdapter);
-            listVoucher.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    mSelectedIndex = position;
-                    Toast.makeText(getCurrentActivity(), getString(R.string.nowClickApplyVoucher),
-                            Toast.LENGTH_LONG).show();
-                }
-            });
         }
 
         btnApplyVoucher.setTypeface(faceRobotoRegular);
@@ -78,16 +84,14 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
             public void onClick(View v) {
                 if (!TextUtils.isEmpty(editTextVoucherCode.getText().toString())) {
                     String voucherCode = editTextVoucherCode.getText().toString();
-                    if (!TextUtils.isEmpty(voucherCode)) {
-                        applyVoucher(voucherCode);
-                    }
+                    applyVoucher(voucherCode);
                 } else if (activeVouchersList != null && activeVouchersList.size() > 0
-                        && mSelectedIndex != ListView.INVALID_POSITION) {
-                    ActiveVouchers activeVouchers = activeVouchersList.get(mSelectedIndex);
+                        && listVoucher.getCheckedItemPosition() != ListView.INVALID_POSITION) {
+                    ActiveVouchers activeVouchers = activeVouchersList.get(listVoucher.getCheckedItemPosition());
                     if (activeVouchers.canApply()) {
                         applyVoucher(activeVouchers.getCode());
                     } else {
-                        showAlertDialog(getString(R.string.voucherCannotBeApplied),
+                        showAlertDialogFinish(getString(R.string.voucherCannotBeApplied),
                                 activeVouchers.getMessage());
                     }
                 }
@@ -166,7 +170,7 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
             public TextView getTxtVoucherValidity() {
                 if (txtVoucherValidity == null) {
                     txtVoucherValidity = (TextView) base.findViewById(R.id.txtVoucherValidity);
-                    txtVoucherValidity.setTypeface(faceRobotoRegular);
+                    txtVoucherValidity.setTypeface(faceRobotoItalic);
                 }
                 return txtVoucherValidity;
             }
@@ -174,7 +178,7 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
             public TextView getTxtVoucherCode() {
                 if (txtVoucherCode == null) {
                     txtVoucherCode = (TextView) base.findViewById(R.id.txtVoucherCode);
-                    txtVoucherCode.setTypeface(faceRobotoRegular);
+                    txtVoucherCode.setTypeface(faceRobotoLight);
                 }
                 return txtVoucherCode;
             }

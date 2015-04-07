@@ -6,23 +6,23 @@
 
 
     <Button
+        android:id="@+id/btnListFooter"
         style="@style/FooterButtonStyle"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:id="@+id/btnListFooter" />
+        android:layout_alignParentBottom="true" />
 
     <ScrollView
         android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:layout_alignParentTop="true"
+        android:layout_height="wrap_content"
         android:layout_above="@id/btnListFooter"
-        android:layout_height="wrap_content">
+        android:layout_alignParentTop="true"
+        android:fillViewport="true"
+        android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:orientation="vertical"
             android:id="@+id/layoutMainLayout"
-            android:layout_height="wrap_content">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
         </LinearLayout>
 

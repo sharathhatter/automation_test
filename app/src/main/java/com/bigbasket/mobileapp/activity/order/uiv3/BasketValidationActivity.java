@@ -37,6 +37,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
+import com.bigbasket.mobileapp.util.UIUtil;
 
 public class BasketValidationActivity extends BackButtonActivity {
 
@@ -106,18 +107,20 @@ public class BasketValidationActivity extends BackButtonActivity {
                 label = label + "Kg";
             }
             TextView txtRuleTotalWeight = (TextView) marketPlaceBaseLayout.findViewById(R.id.txtTopCategory);
+            txtRuleTotalWeight.setTypeface(faceRobotoRegular);
             txtRuleTotalWeight.setText(getString(R.string.ruleTotal) + " " +
                     marketPlace.getMarketPlaceRuleValidators().get(i).getWeightLabel() + ": " +
-                    getDecimalAmount(marketPlace.getMarketPlaceRuleValidators().get(i).getRuleTotalQty()) + " " + label);
-
+                    UIUtil.formatAsMoney(marketPlace.getMarketPlaceRuleValidators().get(i).getRuleTotalQty()) + " " + label);
 
             TextView txtRuleTotalPriceValue = (TextView) marketPlaceBaseLayout.findViewById(R.id.topCatTotal);
+            txtRuleTotalPriceValue.setTypeface(faceRobotoRegular);
             TextView txtTotalPriceValue = (TextView) marketPlaceBaseLayout.findViewById(R.id.topCatTotalItems);
             txtTotalPriceValue.setText(getString(R.string.ruleTotalPrice));
+            txtTotalPriceValue.setTypeface(faceRobotoRegular);
 
             if (!TextUtils.isEmpty(String.valueOf(marketPlace.getMarketPlaceRuleValidators().get(i).getRuleTotalPrice()))) {
                 String prefix = " `";
-                String mrpStr = getDecimalAmount(marketPlace.getMarketPlaceRuleValidators().get(i).getRuleTotalPrice()) + " ";
+                String mrpStr = UIUtil.formatAsMoney(marketPlace.getMarketPlaceRuleValidators().get(i).getRuleTotalPrice()) + " ";
                 int prefixLen = prefix.length();
                 SpannableString spannableMrp = new SpannableString(prefix + mrpStr);
                 spannableMrp.setSpan(new CustomTypefaceSpan("", faceRupee), prefixLen - 1,
@@ -145,14 +148,14 @@ public class BasketValidationActivity extends BackButtonActivity {
 
                 txtItemInBasketAndProductDesc.setText(marketPlaceItems.getItemInCart() + " quantity of " + marketPlaceItems.getDesc());
                 txtItemInBasketAndProductDesc.setTypeface(faceRobotoRegular);
-                txtInBasket.setText(getDecimalAmount(itemTotalVolume) + " " + label + " in ");
+                txtInBasket.setText(UIUtil.formatAsMoney(itemTotalVolume) + " " + label + " in ");
 //                txtInBasket.setText(getString(R.string.ruleTotal) + " " +
 //                        marketPlace.getMarketPlaceRuleValidators().get(i).getWeightLabel() + ": " +
 //                        getDecimalAmount(itemTotalVolume) + " " + label);
 
                 if (!TextUtils.isEmpty(String.valueOf(marketPlaceItems.getSalePrice()))) {
                     String prefix = "Total Price: `";
-                    String mrpStr = getDecimalAmount(marketPlaceItems.getSalePrice()) + " ";
+                    String mrpStr = UIUtil.formatAsMoney(marketPlaceItems.getSalePrice()) + " ";
                     int prefixLen = prefix.length();
                     SpannableString spannableMrp = new SpannableString(prefix + mrpStr);
                     spannableMrp.setSpan(new CustomTypefaceSpan("", faceRupee), prefixLen - 1,

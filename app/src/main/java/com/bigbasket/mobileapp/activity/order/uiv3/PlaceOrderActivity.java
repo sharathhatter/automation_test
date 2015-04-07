@@ -69,7 +69,7 @@ public class PlaceOrderActivity extends BackButtonActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle(getString(R.string.placeorder));
+        setTitle(getString(R.string.reviewAndPlaceorder));
 
         mOrderSummary = getIntent().getParcelableExtra(Constants.ORDER_REVIEW_SUMMARY);
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);

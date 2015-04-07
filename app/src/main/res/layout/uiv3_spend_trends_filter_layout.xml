@@ -28,7 +28,7 @@
         android:onClick="onApplyFilterButtonClicked"
         android:paddingBottom="@dimen/padding_small"
         android:paddingTop="@dimen/padding_small"
-        android:text="@string/apply" />
+        android:text="@string/applyAllCaps" />
 
 
     <LinearLayout

@@ -26,6 +26,7 @@ import com.bigbasket.mobileapp.model.account.WalletDataItem;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
+import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -103,7 +104,7 @@ public class DoWalletFragment extends BaseFragment {
         String prefixTokenAmt = walletRule.voucherPerRule > 1 ? walletRule.voucherPerRule + " Free delivery tokens for every"
                 : walletRule.voucherPerRule + " Free delivery token for every";
         prefixTokenAmt += " `";
-        String mrpStrTokenAmt = ((BaseActivity) getActivity()).getDecimalAmount(
+        String mrpStrTokenAmt = UIUtil.formatAsMoney(
                 Double.parseDouble(walletRule.amountPerVoucher + "")) + "/- added to wallet*";
         int prefixEndBalLen = prefixTokenAmt.length();
         SpannableString spannableEndingBal = new SpannableString(prefixTokenAmt + mrpStrTokenAmt);

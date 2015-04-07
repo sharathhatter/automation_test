@@ -17,12 +17,13 @@ public class FontHolder {
         faceRupee = Typeface.createFromAsset(context.getAssets(), "Rupee.ttf");
         faceRobotoRegular = Typeface.createFromAsset(context.getAssets(), "Roboto-Regular.ttf");
         faceRobotoLight = Typeface.createFromAsset(context.getAssets(), "Roboto-Light.ttf");
+        faceRobotoItalic = Typeface.createFromAsset(context.getAssets(), "Roboto-Italic.ttf");
     }
 
     private Typeface faceRupee;
     private Typeface faceRobotoRegular;
     private Typeface faceRobotoLight;
-
+    private Typeface faceRobotoItalic;
 
     public Typeface getFaceRupee() {
         return faceRupee;
@@ -34,5 +35,9 @@ public class FontHolder {
 
     public Typeface getFaceRobotoLight() {
         return faceRobotoLight;
+    }
+
+    public Typeface getFaceRobotoItalic() {
+        return faceRobotoItalic;
     }
 }

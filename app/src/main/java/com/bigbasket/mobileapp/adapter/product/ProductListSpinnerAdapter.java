@@ -14,6 +14,7 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.model.product.Product;
+import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.List;
 
@@ -66,7 +67,7 @@ public class ProductListSpinnerAdapter extends ArrayAdapter<Product> {
 
         row.setPadding(fourDp, eightDp, eightDp, eightDp);
         String rupeeSymbol = "`";
-        String sellPrice = (ctx).getDecimalAmount(Double.parseDouble(product.getSellPrice())) + "";
+        String sellPrice = UIUtil.formatAsMoney(Double.parseDouble(product.getSellPrice())) + "";
         SpannableString spannableString = new SpannableString(rupeeSymbol + sellPrice);
         spannableString.setSpan(new CustomTypefaceSpan("", faceRupee), 0,
                 rupeeSymbol.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);

@@ -326,6 +326,15 @@ public class UIUtil {
         return new SimpleDateFormat(format).format(date);
     }
 
+    public static Spannable formatAsSavings(String savingsStr, Typeface faceRupee) {
+        String prefix = "SAVE: `";
+        Spannable spannableSaving = new SpannableString(prefix + savingsStr);
+        spannableSaving.setSpan(new CustomTypefaceSpan("", faceRupee),
+                prefix.length() - 1,
+                prefix.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+        return spannableSaving;
+    }
+
     public static int handleUpdateDialog(String serverAppExpireDateString, Activity activity) {
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(activity);
         long lastPopUpShownTime = prefer.getLong(Constants.LAST_POPUP_SHOWN_TIME, 0);
@@ -383,7 +392,7 @@ public class UIUtil {
 
     public static MaterialDialog.Builder getMaterialDialogBuilder(Context context) {
         return new MaterialDialog.Builder(context)
-                .positiveColorRes(R.color.uiv3_accept_label_color)
+                .positiveColorRes(R.color.uiv3_action_bar_background)
                 .negativeColorRes(R.color.dark_black);
     }
 

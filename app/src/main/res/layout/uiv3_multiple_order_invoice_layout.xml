@@ -9,21 +9,23 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_normal"
         android:background="@color/uiv3_list_bkg_color">
 
-        <ImageView
-            android:id="@+id/imageView"
+        <TextView
+            android:id="@+id/txtThankYou"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:contentDescription="@string/orderPlaced"
-            android:src="@drawable/bigbasket_van" />
+            android:padding="@dimen/padding_normal"
+            android:text="@string/multipleOrderThankyouText"
+            android:textColor="@color/uiv3_primary_text_color"
+            android:textSize="@dimen/primary_text_size" />
 
         <View
             android:id="@+id/viewSeparator"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_below="@id/imageView"
+            android:layout_below="@id/txtThankYou"
             android:background="@color/uiv3_divider_color" />
 
         <ListView

@@ -85,19 +85,18 @@
     <string name="pin_text_para2">The PIN will also be sent to you, as part of ready to ship email or SMS for each order.</string>
     <string name="new_pin_hint">Please enter 4-digit PIN</string>
     <string name="placeorder">Place Order</string>
+    <string name="reviewAndPlaceorder">Review &amp; Place Order</string>
     <string name="modepayment">Mode of payment:</string>
     <string name="invoicenumber">Invoice No:</string>
     <string name="ordernumber">Order No:</string>
     <string name="amountpay">Amount to Pay</string>
-    <string name="almostDone">Almost done!</string>
     <string name="proceedToOrderReview">Review Order</string>
     <string name="vat">VAT</string>
     <string name="type">Type</string>
     <string name="message">Message</string>
-    <string name="orderYetNotplaced">Your order is not yet placed!</string>
     <string name="orderPlaced">Order Placed</string>
-    <string name="orderSummaryDefaultMsg">Please review and then place order.</string>
-    <string name="paymentGatewayRedirectMsg">Please note: You will be re-directed to the payment gateway, to complete the payment.</string>
+    <string name="orderSummaryDefaultMsg">Your order is not placed yet! Please review and then place order</string>
+    <string name="paymentGatewayRedirectMsg">Please note: You will be re-directed to the payment gateway, to complete the payment</string>
     <string name="orderSummaryPayuFailureTitleMsg">Transaction Failed!</string>
     <string name="txnFailedRetryTxt">Please choose a different payment method, or retry again!</string>
     <string name="txnFailedRetryTitle">Transaction failed!</string>
@@ -206,7 +205,8 @@
     <string name="youHaveActiveVoucher">You have an active voucher!</string>
     <string name="clickToView">Touch here to view!</string>
     <string name="evoucherCode">eVoucher Code</string>
-    <string name="apply">APPLY</string>
+    <string name="applyAllCaps">APPLY</string>
+    <string name="apply">Apply</string>
     <string name="redeemYourVoucher">Redeem your eVoucher today!</string>
     <string name="pleaseNote">Please Note:</string>
     <string name="shopFromOrder">Shop from this order</string>
@@ -282,8 +282,8 @@
     <string name="mobileNumber">Mobile Number</string>
     <string name="refCode">Referral Code (Optional)</string>
     <string name="acceptTermsMsg">Please accept the terms and conditions.</string>
-    <string name="addItemToShopList">Add item to shopping list.</string>
-    <string name="chooseShopList">Please select a shopping list.</string>
+    <string name="selectShoppingList">Select a shopping list</string>
+    <string name="chooseShopList">Please select a shopping list</string>
     <string name="uploadPrescription">Choose/Upload Prescription</string>
     <string name="pharmaPrescriptionHeading">Pharma Prescription</string>
     <string name="prescriptionIDSaved">Prescription selected</string>
@@ -315,7 +315,7 @@
     <string name="connectionOffline">Can not proceed with the operation.\n Please check your internet connection.</string>
     <string name="info">Information</string>
     <string name="memberName">Member Name</string>
-    <string name="contactHeading">Member</string>
+    <string name="contactHeading">ADDRESS</string>
     <string name="paymentHeading">PAYMENT DETAILS</string>
     <string name="subTotal">Sub Total</string>
     <string name="finalTotal">Total</string>
@@ -346,6 +346,7 @@
     <string name="wallet_activity">My Wallet</string>
     <string name="delivery_address">Delivery Addresses</string>
     <string name="delivery_van">Delivery Van</string>
+    <string name="delivery_time">Delivery Time</string>
     <string name="view_edit_pin_label">Delivery Pin</string>
     <string name="active_label">active</string>
     <string name="past_label">past</string>
@@ -427,7 +428,8 @@
     <string name="noProductsSearchMsg">Sorry! There are no products found related to your search term.</string>
 
     <!-- Invoice -->
-    <string name="orderThankyouText">Thank you! Your order is placed\n Order #</string>
+    <string name="orderThankyouText">Thank you! Your order is placed\nOrder #</string>
+    <string name="multipleOrderThankyouText">Thank you! Your orders have been placed</string>
     <string name="viewInvoice">VIEW INVOICE</string>
     <string name="locateOnMapViaInvoice">LOCATE ON MAP</string>
     <string name="locateOnMap">Locate on map</string>
@@ -449,14 +451,14 @@
 
     <!-- checkOut QC -->
     <string name="out_of_stock">Out of stock</string>
-    <string name="out_of_stock_msg1">We are sorry, but based on our current stock availability, following products
-        are currently out of stock.</string>
     <string name="check_out_selected">Selected:</string>
     <string name="check_out_available">Available:</string>
     <string name="similar_products">Add Similar products</string>
     <string name="addSomeAvailProducts">Please add available products.</string>
+    <string name="out_of_stock_msg1">We are sorry, but based on our current stock availability, following products
+        are currently out of stock.</string>
     <string name="out_of_stock_msg2">We are sorry, but based on our current stock availability, we do not have sufficient
-        quantities for the following products.</string>
+        quantities for the following product(s).</string>
     <string name="deleteQCProduct">Delete Product</string>
     <string name="deviceOffline">Cannot proceed with the operation. No network connection.</string>
     <string name="chooseYourLocation">Select your city</string>
@@ -539,6 +541,7 @@
     <string name="shopFromPreviousOrder">Shop from previous order</string>
     <string name="orders">Orders</string>
     <string name="applyVoucher">Apply Voucher</string>
+    <string name="selectAndApplyVoucher">Select &amp; Apply Voucher</string>
     <string name="removeVoucher">eVoucher: BBFNV Applied!</string>
     <string name="voucherCannotBeApplied">eVoucher not applicable</string>
     <string name="voucherWasRemoved">eVoucher was successfully removed</string>
