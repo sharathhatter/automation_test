@@ -21,6 +21,8 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -42,6 +44,7 @@ import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
 import com.bigbasket.mobileapp.adapter.NavigationAdapter;
 import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
+import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.DynamicScreenFragment;
 import com.bigbasket.mobileapp.fragment.HomeFragment;
 import com.bigbasket.mobileapp.fragment.account.AccountSettingFragment;
@@ -172,7 +175,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 super.onDrawerClosed(drawerView);
                 logHomeScreenEvent(TrackingAware.MENU_CLICKED, TrackEventkeys.NAVIGATION_CTX,
                         TrackEventkeys.NAVIGATION_CTX_TOPNAV); //todo check with sid
-                toolbar.setTitle(mTitle);
+                toolbar.setTitle(formatToolbarTitle(mTitle));
                 invalidateOptionsMenu();
             }
 
@@ -182,7 +185,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 logHomeScreenEvent(TrackingAware.MENU_CLICKED, TrackEventkeys.NAVIGATION_CTX,
                         TrackEventkeys.NAVIGATION_CTX_TOPNAV); //todo check with sid
                 trackEvent(TrackingAware.MENU_SHOWN, null);
-                toolbar.setTitle(mDrawerTitle);
+                toolbar.setTitle(formatToolbarTitle(mDrawerTitle));
                 invalidateOptionsMenu();
             }
         };
@@ -777,8 +780,15 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             mTitle = title == null ? "" : title;
-            actionBar.setTitle(mTitle);
+            actionBar.setTitle(formatToolbarTitle(mTitle));
         }
+    }
+
+    private SpannableString formatToolbarTitle(String title) {
+        SpannableString spannableString = new SpannableString(title);
+        spannableString.setSpan(new CustomTypefaceSpan("", faceRobotoRegular),
+                0, spannableString.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        return spannableString;
     }
 
     private void hideGuestMenuItems(Menu menu) {

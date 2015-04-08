@@ -9,6 +9,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
+import android.text.style.RelativeSizeSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -261,7 +262,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                         new SpannableString(productListData.getProductCount() + productsStr);
                 productCountSpannable.setSpan(new CustomTypefaceSpan("", faceRobotoLight), 0, productCountSpannable.length(),
                         Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-                productCountSpannable.setSpan(new AbsoluteSizeSpan((int) getResources().getDimension(R.dimen.small_text_size), true),
+                productCountSpannable.setSpan(new RelativeSizeSpan(0.8f),
                         0, productCountSpannable.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
                 getCurrentActivity().getSupportActionBar().setSubtitle(productCountSpannable);
             }
