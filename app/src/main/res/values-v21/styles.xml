@@ -12,11 +12,4 @@
     <style name="WindowStyle">
         <item name="android:fitsSystemWindows">false</item>
     </style>
-
-    <style name="DefaultButtonStyle" parent="Base.Widget.AppCompat.Button">
-        <item name="android:textSize">@dimen/primary_text_size</item>
-        <item name="android:textColor">@color/uiv3_primary_text_color</item>
-        <item name="android:textAllCaps">false</item>
-        <item name="android:textStyle">normal</item>
-    </style>
 </resources>

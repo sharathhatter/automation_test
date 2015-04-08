@@ -31,7 +31,7 @@ public class LandingPageActivity extends SocialLoginActivity {
         ((Button) findViewById(R.id.btnSkip)).setTypeface(faceRobotoRegular);
 
         LightSliderLayout sliderLayout = (LightSliderLayout) findViewById(R.id.imgSlider);
-        int[] images = new int[]{R.drawable.nav_bd_e, R.drawable.nav_new_bb, R.drawable.nav_now_bb};
+        int[] images = new int[]{R.drawable.slider_quality, R.drawable.slider_bigapril, R.drawable.slider_all_products};
         for (int imageResId : images) {
             TransparentSliderView transparentSliderView = new TransparentSliderView(this);
             transparentSliderView.image(imageResId);
