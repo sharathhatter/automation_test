@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.fragment.product;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -10,7 +11,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
@@ -34,8 +34,13 @@ public class SearchFragment extends ProductListAwareFragment {
     @Override
     @Nullable
     public String getTitle() {
-        return getArguments() != null ? getArguments().getString(Constants.SEARCH_QUERY) :
-                "Search Products";
+        String searchQuery = getArguments() != null ? getArguments().getString(Constants.SEARCH_QUERY) : null;
+        if (!TextUtils.isEmpty(searchQuery)) {
+            StringBuilder stringBuilder = new StringBuilder(searchQuery);
+            stringBuilder.setCharAt(0, Character.toUpperCase(stringBuilder.charAt(0)));
+            searchQuery = stringBuilder.toString();
+        }
+        return !TextUtils.isEmpty(searchQuery) ? searchQuery : "Search Products";
     }
 
     @NonNull

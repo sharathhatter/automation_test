@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.ColorRes;
 import android.support.annotation.Nullable;
 import android.text.Spannable;
 import android.text.TextUtils;
@@ -159,6 +158,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
 
     /**
      * Return null if you don't want the title to be changed
+     *
      * @return
      */
     public abstract String getTitle();
@@ -201,6 +201,9 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
                                                    @Nullable View productView) {
         if (errorType.equals(Constants.PRODUCT_ID_NOT_FOUND)) {
             Toast.makeText(getActivity(), "0 added to basket.", Toast.LENGTH_SHORT).show();
+        }
+        if (editTextQty != null && !isSuspended() && getCurrentActivity() != null) {
+            BaseActivity.hideKeyboard(getCurrentActivity(), editTextQty);
         }
     }
 
@@ -256,6 +259,10 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
             if (productView != null) {
                 productView.setBackgroundColor(Constants.IN_BASKET_COLOR);
             }
+        }
+
+        if (editTextQty != null && getCurrentActivity() != null && !isSuspended()) {
+            BaseActivity.hideKeyboard(getCurrentActivity(), editTextQty);
         }
 
         if (product != null) {

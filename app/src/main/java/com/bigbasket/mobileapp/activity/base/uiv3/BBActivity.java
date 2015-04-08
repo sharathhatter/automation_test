@@ -536,6 +536,9 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         if (errorType.equals(Constants.PRODUCT_ID_NOT_FOUND)) {
             Toast.makeText(this, "0 added to basket.", Toast.LENGTH_SHORT).show();
         }
+        if (editTextQty != null && !isSuspended()) {
+            hideKeyboard(getCurrentActivity(), editTextQty);
+        }
     }
 
     @Override
@@ -591,6 +594,10 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             if (productView != null) {
                 productView.setBackgroundColor(Constants.IN_BASKET_COLOR);
             }
+        }
+
+        if (editTextQty != null && !isSuspended()) {
+            hideKeyboard(getCurrentActivity(), editTextQty);
         }
 
         if (product != null) {
@@ -817,7 +824,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
         ArrayList<SectionNavigationItem> sectionNavigationItems = getSectionNavigationItems();
 
-        NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoRegular, sectionNavigationItems,
+        NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoLight, sectionNavigationItems,
                 SectionManager.MAIN_MENU);
         mNavRecyclerView.setAdapter(navigationAdapter);
     }

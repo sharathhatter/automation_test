@@ -80,11 +80,12 @@ public final class ProductView {
 
     private static void setIsNewAndBby(ProductViewHolder productViewHolder, Product product) {
         ImageView imgBby = productViewHolder.getImgBby();
+        TextView txtIsNewProduct = productViewHolder.getTxtIsNewProduct();
         if (product.isBbyProduct()) {
             imgBby.setVisibility(View.VISIBLE);
+            txtIsNewProduct.setVisibility(View.GONE);
         } else {
             imgBby.setVisibility(View.GONE);
-            TextView txtIsNewProduct = productViewHolder.getTxtIsNewProduct();
             txtIsNewProduct.setVisibility(product.isNewProduct() ? View.VISIBLE : View.GONE);
         }
     }
@@ -149,7 +150,7 @@ public final class ProductView {
         txtPackageDesc.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
     }
 
-    private static <T> void setPrice(ProductViewHolder productViewHolder, Product product,
+    private static void setPrice(ProductViewHolder productViewHolder, Product product,
                                      ProductViewDisplayDataHolder productViewDisplayDataHolder) {
         TextView txtSalePrice = productViewHolder.getTxtSalePrice();
         boolean hasSavings = product.hasSavings();

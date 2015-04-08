@@ -5,7 +5,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.AbsoluteSizeSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +21,7 @@ import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.product.ProductListRecyclerAdapter;
+import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.interfaces.FilterDisplayAware;
 import com.bigbasket.mobileapp.interfaces.InfiniteProductListAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
@@ -251,9 +255,15 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
 
     private void displayProductCount() {
         if (productListData != null && productListData.getProductCount() > 0) {
-            String productsStr = productListData.getProductCount() > 1 ? " products" : " product";
+            String productsStr = productListData.getProductCount() > 1 ? " Products" : " Product";
             if (getCurrentActivity() instanceof FilterDisplayAware) {
-                getCurrentActivity().getSupportActionBar().setSubtitle(productListData.getProductCount() + productsStr);
+                SpannableString productCountSpannable =
+                        new SpannableString(productListData.getProductCount() + productsStr);
+                productCountSpannable.setSpan(new CustomTypefaceSpan("", faceRobotoLight), 0, productCountSpannable.length(),
+                        Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                productCountSpannable.setSpan(new AbsoluteSizeSpan((int) getResources().getDimension(R.dimen.small_text_size), true),
+                        0, productCountSpannable.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                getCurrentActivity().getSupportActionBar().setSubtitle(productCountSpannable);
             }
         } else {
             if (getCurrentActivity() instanceof FilterDisplayAware) {

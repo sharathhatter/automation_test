@@ -100,10 +100,6 @@ public class UIUtil {
         return criteriaSpannableList;
     }
 
-    public static String sentenceJoin(List<String> lst) {
-        return sentenceJoin(lst, "and");
-    }
-
     public static String sentenceJoin(List<String> lst, String separator) {
         if (lst == null || lst.size() == 0)
             return "";
@@ -157,7 +153,7 @@ public class UIUtil {
 
     public static Spannable asRupeeSpannable(String amtTxt, Typeface faceRupee) {
         String rupeeSym = "`";
-        SpannableString spannableString = new SpannableString(rupeeSym + " " + amtTxt);
+        SpannableString spannableString = new SpannableString(rupeeSym + amtTxt);
         spannableString.setSpan(new CustomTypefaceSpan("", faceRupee), 0, rupeeSym.length(),
                 Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
         return spannableString;

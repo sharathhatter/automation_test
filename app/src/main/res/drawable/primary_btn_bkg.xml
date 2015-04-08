@@ -2,5 +2,4 @@
 
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <solid android:color="@color/uiv3_primary_btn_bkg" />
-    <corners android:radius="5dp" />
 </shape>

@@ -135,8 +135,8 @@
     <string name="hi">Hi</string>
     <string name="checkState">checkState</string>
     <string name="registerHomepageTxt">Register</string>
-    <string name="orLoginUsingEmail">OR LOGIN USING E-MAIL</string>
-    <string name="orSignupUsingEmail">OR SIGN UP USING E-MAIL</string>
+    <string name="orLoginUsingEmail">Or Login using E-mail</string>
+    <string name="orSignupUsingEmail">Or Sign Up using E-mail</string>
     <string name="or">or</string>
     <string name="OR">OR</string>
     <string name="myAccount">My Account</string>
@@ -145,7 +145,7 @@
     <string name="signIn">Login</string>
     <string name="signoutConfirmation">Are you sure that you want to logout?</string>
     <string name="changeCityHome">Change City</string>
-    <string name="signUp">Signup</string>
+    <string name="signUp">Sign up</string>
     <string name="changeCityHeader">CHANGE CITY</string>
     <string name="loginYourAcc">Login to your account</string>
     <string name="HNDetails">House No &amp; Details</string>
@@ -268,8 +268,8 @@
     <string name="password">Password</string>
     <string name="editPin">Edit</string>
     <string name="edit">Edit</string>
-    <string name="remember">Remember me</string>
-    <string name="showPassword">Show password</string>
+    <string name="remember">Remember Me</string>
+    <string name="showPassword">Show Password</string>
     <string name="forgotPasswd">Forgot Password?</string>
     <string name="newPasswordSent">Your new password is emailed to you. Please check and login!</string>
     <string name="acceptTermsAndCond">I accept the terms and conditions.</string>
@@ -470,7 +470,7 @@
     <string name="use_google">Google\u00A0\u00A0\u00A0\u00A0</string>
     <string name="facebookSignup">Facebook</string>
     <string name="googleSignup">Google\u00A0\u00A0\u00A0\u00A0</string>
-    <string name="loginPageSignUpText">New user? Signup</string>
+    <string name="loginPageSignUpText">New user? Sign up</string>
     <string name="alreadyAMember">Already have an account? Login</string>
     <string name="headingNetworkError">Network Error</string>
     <string name="headingConnectionOffline">Connection Offline</string>
@@ -563,7 +563,7 @@
     <string name="noSmartBasketProducts">It will be updated 3 days after your first order is delivered! Enjoy awesome grocery shopping experience with BigBasket Mobile app!</string>
     <string name="skip">SKIP</string>
     <string name="skipWithArrow">SKIP &gt;</string>
-    <string name="signinAndStart">SIGN IN AND GET STARTED</string>
+    <string name="signinAndStart">Login and Get Started</string>
     <string name="byLoggingIn">By logging in, you agree to BigBasket\'s\u00A0</string>
     <string name="byRegistering">By signing up, you agree to BigBasket\'s\u00A0</string>
     <string name="authFooterSeparator">, and\u00A0</string>

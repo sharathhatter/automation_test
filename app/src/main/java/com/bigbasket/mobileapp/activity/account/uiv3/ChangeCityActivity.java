@@ -7,11 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.CheckedTextView;
 import android.widget.FrameLayout;
 import android.widget.ListView;
-import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -64,6 +62,8 @@ public class ChangeCityActivity extends BackButtonActivity implements CityListDi
 
         final ListView listView = (ListView) base.findViewById(R.id.fabListView);
         final int textColor = getResources().getColor(R.color.uiv3_primary_text_color);
+        final int dp16 = (int) getResources().getDimension(R.dimen.padding_normal);
+        final int dp8 = (int) getResources().getDimension(R.dimen.padding_small);
         ArrayAdapter<City> citySpinnerAdapter = new ArrayAdapter<City>(this,
                 android.R.layout.simple_list_item_single_choice, cities) {
             @Override
@@ -74,6 +74,7 @@ public class ChangeCityActivity extends BackButtonActivity implements CityListDi
                     checkedTextView.setCheckMarkDrawable(R.drawable.large_radio_button);
                     checkedTextView.setTextColor(textColor);
                     checkedTextView.setTypeface(faceRobotoLight);
+                    checkedTextView.setPadding(dp16, dp8, dp8, dp8);
                     return convertView;
                 } else {
                     return super.getView(position, convertView, parent);

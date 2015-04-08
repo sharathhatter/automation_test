@@ -4,15 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/nav_item_background"
-    android:paddingBottom="@dimen/padding_small"
-    android:paddingTop="@dimen/padding_small">
+    android:paddingBottom="@dimen/padding_normal"
+    android:paddingTop="@dimen/padding_normal">
 
     <ImageView
         android:id="@+id/imgNavItem"
         android:layout_width="24dp"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="@dimen/margin_small"
+        android:layout_marginLeft="@dimen/margin_normal"
         android:adjustViewBounds="true"
         android:contentDescription="@string/alt_placeholder" />
 
