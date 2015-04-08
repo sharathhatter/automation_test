@@ -9,6 +9,7 @@ public final class TrackEventkeys {
     public static final String NAVIGATION_CTX = "nc";
     public static final String NAVIGATION_CTX_TOPNAV = "topnav";
     public static final String NAVIGATION_CTX_LANDING_PAGE = "landing_page";
+    public static final String NAVIGATION_CTX_DIALOG = "dialog";
     public static final String NAVIGATION_CTX_SIGNUP_PAGE = "signup";
     public static final String LOGIN_TYPE_GOOGLE = "Google";
     public static final String LOGIN_TYPE_FACEBOOK = "Facebook"; //todo

@@ -35,13 +35,13 @@ import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.task.GetDynamicPageTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
+import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.AppNotSupportedDialog;
 import com.bigbasket.mobileapp.view.uiv2.UpgradeAppDialog;
 
 import java.util.ArrayList;
-import java.util.Set;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -242,6 +242,17 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
             editor.remove(Constants.DEEP_LINK);
             editor.commit();
             getCurrentActivity().launchAppDeepLink(pendingDeepLink);
+        } else {
+            String pendingFragmentCode = preferences.getString(Constants.FRAGMENT_CODE, null);
+            if (!TextUtils.isEmpty(pendingFragmentCode)) {
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.remove(Constants.FRAGMENT_CODE);
+                editor.commit();
+                if (TextUtils.isDigitsOnly(pendingFragmentCode) &&
+                        Integer.parseInt(pendingFragmentCode) == FragmentCodes.START_VIEW_BASKET) {
+                    getCurrentActivity().launchViewBasket();
+                }
+            }
         }
     }
 
@@ -354,9 +365,9 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                 });
     }
 
-    private void savePopulateSearcher(ArrayList<String> topSearchList){
-        if(topSearchList ==null) return;
-        String topSearchCommaSeparatedString= UIUtil.sentenceJoin(topSearchList, ",");
+    private void savePopulateSearcher(ArrayList<String> topSearchList) {
+        if (topSearchList == null) return;
+        String topSearchCommaSeparatedString = UIUtil.sentenceJoin(topSearchList, ",");
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(Constants.TOP_SEARCHES, topSearchCommaSeparatedString);

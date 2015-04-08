@@ -390,6 +390,13 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
             editor.putString(Constants.DEEP_LINK, deepLink);
             editor.commit();
+        } else {
+            String fragmentCode = getIntent().getStringExtra(Constants.FRAGMENT_CODE);
+            if (!TextUtils.isEmpty(fragmentCode)) {
+                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
+                editor.putString(Constants.FRAGMENT_CODE, fragmentCode);
+                editor.commit();
+            }
         }
         goToHome(true);
     }

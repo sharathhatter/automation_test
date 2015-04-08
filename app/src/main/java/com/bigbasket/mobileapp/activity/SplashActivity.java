@@ -52,12 +52,15 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Defensive fix
+        removePendingGoToHome();
+
         if (checkInternetConnection()) {
             NewRelic.withApplicationToken(getString(R.string.new_relic_key)).start(this.getApplication());
             MoEHelper moEHelper = new MoEHelper(this);
             moEHelper.initialize(Constants.MO_SENDER_ID, Constants.MO_APP_ID);
             moEHelper.Register(R.drawable.ic_launcher);
-            startSplashScreen();
         } else {
             showNoInternetConnectionView();
         }
@@ -106,6 +109,7 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
     protected void onResume() {
         super.onResume();
         FacebookEventTrackWrapper.activateApp(getCurrentActivity());
+        startSplashScreen();
     }
 
     @Override

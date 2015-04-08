@@ -50,7 +50,7 @@ import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.DialogButton;
-import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 
@@ -195,8 +195,9 @@ public class ShowCartFragment extends BaseFragment {
             public void onClick(View v) {
                 if (getCartInfo() != null && getCartInfo().getNoOfItems() > 0) {
                     if (AuthParameters.getInstance(getActivity()).isAuthTokenEmpty()) {
-                        showAlertDialog("Login", getString(R.string.login_to_place_order),
-                                DialogButton.OK, DialogButton.NO, NavigationCodes.GO_TO_LOGIN, null, "Login");
+                        if (getCurrentActivity() != null) {
+                            getCurrentActivity().launchLogin(TrackEventkeys.NAVIGATION_CTX_SHOW_BASKET, FragmentCodes.START_VIEW_BASKET);
+                        }
                     } else {
                         new COMarketPlaceCheckTask<>(getCurrentActivity()).startTask();
                     }

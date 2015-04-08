@@ -41,6 +41,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignupActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.AgeValidationActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.BasketValidationActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.CheckoutQCActivity;
@@ -68,6 +69,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.FontHolder;
+import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
@@ -83,7 +85,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DateFormat;
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -411,14 +412,16 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         if (sourceName != null) {
             switch (sourceName) {
                 case NavigationCodes.GO_TO_LOGIN:
-                    Intent loginIntent = new Intent(this, SignInActivity.class);
-                    if (valuePassed != null && valuePassed instanceof Uri) {
-                        loginIntent.putExtra(Constants.DEEP_LINK, valuePassed.toString());
-                    }
-                    startActivityForResult(loginIntent, NavigationCodes.GO_TO_HOME);
+                    launchLogin(TrackEventkeys.NAVIGATION_CTX_DIALOG, valuePassed);
                     break;
             }
         }
+    }
+
+    public void launchViewBasket() {
+        Intent intent = new Intent(this, BackButtonActivity.class);
+        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_VIEW_BASKET);
+        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
     protected void onNegativeButtonClicked(DialogInterface dialogInterface, String sourceName) {
@@ -792,15 +795,27 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     }
 
     public void launchLogin(String navigationCtx) {
-        Intent intent = new Intent(this, SignInActivity.class);
-        intent.putExtra(TrackEventkeys.NAVIGATION_CTX, navigationCtx);
-        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+        launchLogin(navigationCtx, null);
+    }
+
+    public void launchLogin(String navigationCtx, Object params) {
+        Intent loginIntent = new Intent(this, SignInActivity.class);
+        loginIntent.putExtra(TrackEventkeys.NAVIGATION_CTX, navigationCtx);
+        if (params != null) {
+            if (params instanceof Uri) {
+                loginIntent.putExtra(Constants.DEEP_LINK, params.toString());
+            } else {
+                loginIntent.putExtra(Constants.FRAGMENT_CODE, params.toString());
+            }
+        }
+        startActivityForResult(loginIntent, NavigationCodes.GO_TO_HOME);
     }
 
     public void launchRegistrationPage() {
         trackEvent(TrackingAware.NEW_USER_REGISTER_CLICKED, null);
         Intent intent = new Intent(this, SignupActivity.class);
         intent.putExtra(Constants.DEEP_LINK, getIntent().getStringExtra(Constants.DEEP_LINK));
+        intent.putExtra(Constants.FRAGMENT_CODE, getIntent().getStringExtra(Constants.FRAGMENT_CODE));
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 }

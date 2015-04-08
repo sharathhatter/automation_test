@@ -259,12 +259,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         }
     }
 
-    private void launchViewBasket() {
-        Intent intent = new Intent(this, BackButtonActivity.class);
-        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_VIEW_BASKET);
-        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-    }
-
     @Override
     public void setTitle(CharSequence title) {
         setTitle(title.toString());
@@ -288,6 +282,10 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
     public void startFragment() {
         int fragmentCode = getIntent().getIntExtra(Constants.FRAGMENT_CODE, -1);
+        startFragment(fragmentCode);
+    }
+
+    public void startFragment(int fragmentCode) {
         switch (fragmentCode) {
             case FragmentCodes.START_HOME:
                 addToMainLayout(new HomeFragment(), Constants.HOME);
