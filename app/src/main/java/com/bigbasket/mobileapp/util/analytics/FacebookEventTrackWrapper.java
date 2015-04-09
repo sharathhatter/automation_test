@@ -2,13 +2,8 @@ package com.bigbasket.mobileapp.util.analytics;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 
-import com.bigbasket.mobileapp.R;
 import com.facebook.AppEventsLogger;
-import com.localytics.android.Localytics;
-
-import org.json.JSONObject;
 
 /**
  * Created by jugal on 30/3/15.

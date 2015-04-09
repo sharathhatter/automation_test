@@ -9,16 +9,11 @@ import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.text.TextUtils;
 
-import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
-import com.bigbasket.mobileapp.adapter.db.SearchSuggestionAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.AutoSearchApiResponseContent;
 import com.bigbasket.mobileapp.model.search.AutoSearchResponse;
-import com.bigbasket.mobileapp.model.search.MostSearchedItem;
-
-import java.util.List;
 
 public class SearchUtil {
 
@@ -27,7 +22,7 @@ public class SearchUtil {
     public static final String HISTORY_LEFT_ICON = "h";
 
     public static Cursor searchQueryCall(String query, Context context) {
-        if(TextUtils.isEmpty(query.trim()) || (query.trim().length() < 3))return null;
+        if (TextUtils.isEmpty(query.trim()) || (query.trim().length() < 3)) return null;
 
         /*
         SearchSuggestionAdapter searchSuggestionAdapter = new SearchSuggestionAdapter(context);
@@ -57,7 +52,7 @@ public class SearchUtil {
 
         */
 
-        AutoSearchResponse autoSearchResponse=  null;
+        AutoSearchResponse autoSearchResponse = null;
         if (DataUtil.isInternetAvailable(context)) {
             BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(context);
             ApiResponse<AutoSearchApiResponseContent> autoSearchApiResponse = bigBasketApiService.autoSearch(query);
@@ -78,7 +73,7 @@ public class SearchUtil {
                 matrixCursor = getMatrixCursorForArray(autoSearchResponse.getTerms(), autoSearchResponse.getCategories(),
                         autoSearchResponse.getCategoriesUrl());
             } else if (suggestedTermsArray != null && suggestedTermsArray.length > 0) {
-                matrixCursor = getMatrixCursorForArray(autoSearchResponse.getSuggestedTerm(), "SUGGESTION", false);
+                matrixCursor = getMatrixCursorForArray(autoSearchResponse.getSuggestedTerm(), "Suggestion", false);
             }
 //            else if (topSearchesArray != null && topSearchesArray.length > 0) {
 //                matrixCursor = getMatrixCursorForArray(autoSearchResponse.getTopSearches(), "POPULAR SEARCHES", true);
@@ -89,11 +84,11 @@ public class SearchUtil {
     }
 
 
-    private static void populateTopSearch(MatrixCursor matrixCursor, Context context){
+    private static void populateTopSearch(MatrixCursor matrixCursor, Context context) {
         String[] topSearchArrayString = getTopSearches(context);
         if (topSearchArrayString != null && topSearchArrayString.length > 0) {
             int i = 0;
-            matrixCursor.addRow(new String[]{String.valueOf(i++), "POPULAR SEARCHES", null, null, null, null, null});
+            matrixCursor.addRow(new String[]{String.valueOf(i++), "Popular Searches", null, null, null, null, null});
             for (String term : topSearchArrayString)
                 matrixCursor.addRow(new String[]{String.valueOf(i++), term,
                         null, null, term,
@@ -114,7 +109,7 @@ public class SearchUtil {
                 SearchManager.SUGGEST_COLUMN_TEXT_1, SearchManager.SUGGEST_COLUMN_TEXT_2,
                 SearchManager.SUGGEST_COLUMN_INTENT_EXTRA_DATA, SearchManager.SUGGEST_COLUMN_INTENT_DATA_ID,
                 SearchManager.SUGGEST_COLUMN_ICON_1, SearchManager.SUGGEST_COLUMN_ICON_2});
-                //last two column are for left and right icon for a row
+        //last two column are for left and right icon for a row
         int startVal = 0;
         if (isPopularSearcher)
             matrixCursor.addRow(new String[]{String.valueOf(startVal++), heading, null, null, null, null, null});
@@ -139,7 +134,7 @@ public class SearchUtil {
             }
         }
         if (categoriesArray != null && categoriesArray.length > 0) {
-            matrixCursor.addRow(new String[]{String.valueOf(i), "POPULAR CATEGORIES", null, null,
+            matrixCursor.addRow(new String[]{String.valueOf(i), "Popular Categories", null, null,
                     null, null, null});
             for (int j = 0; j < categoriesArray.length; j++) {
                 String categoryName = null;

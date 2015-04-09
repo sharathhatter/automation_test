@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,7 +16,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +24,7 @@ import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
+import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
@@ -36,7 +37,6 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.uiv3.CreateShoppingListDialog;
 import com.bigbasket.mobileapp.view.uiv3.DeleteShoppingListDialog;
 import com.bigbasket.mobileapp.view.uiv3.EditShoppingDialog;
-import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +49,17 @@ import retrofit.client.Response;
 public class ShoppingListFragment extends BaseFragment implements ShoppingListNamesAware {
 
     private ArrayList<ShoppingListName> mShoppingListNames;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.shopping_list_menu, menu);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -68,6 +79,18 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
         loadShoppingLists();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.menuAddShoppingList) {
+            CreateShoppingListDialog createShoppingListDialog = new CreateShoppingListDialog();
+            createShoppingListDialog.setTargetFragment(getFragmentInstance(), 0);
+            createShoppingListDialog.show(getFragmentManager(), Constants.SHOPPING_LIST_NAME);
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
+    }
+
     private void loadShoppingLists() {
         if (getActivity() == null || getCurrentActivity() == null) return;
         AuthParameters authParameters = AuthParameters.getInstance(getActivity());
@@ -83,14 +106,9 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
         if (getActivity() == null) return;
         LinearLayout contentView = getContentView();
         if (contentView == null) return;
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        View base = inflater.inflate(R.layout.uiv3_fab_list_view, contentView, false);
-        ListView shoppingNameListView = (ListView) base.findViewById(R.id.fabListView);
-        RelativeLayout noDeliveryAddLayout = (RelativeLayout) base.findViewById(R.id.noDeliveryAddLayout);
 
         if (mShoppingListNames != null && mShoppingListNames.size() > 0) {
-            noDeliveryAddLayout.setVisibility(View.GONE);
-            shoppingNameListView.setVisibility(View.VISIBLE);
+            ListView shoppingNameListView = new ListView(getActivity());
             ShoppingListAdapter shoppingListAdapter = new ShoppingListAdapter(mShoppingListNames);
             shoppingNameListView.setAdapter(shoppingListAdapter);
 
@@ -101,28 +119,15 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
                     launchShoppingListSummary(shoppingListName);
                 }
             });
-
+            contentView.addView(shoppingNameListView);
         } else {
-            noDeliveryAddLayout.setVisibility(View.VISIBLE);
-            shoppingNameListView.setVisibility(View.GONE);
-            showNoShoppingListView(base);
+            showNoShoppingListView(contentView);
         }
-
-        FloatingActionButton fabCreateShoppingList = (FloatingActionButton) base.findViewById(R.id.btnFab);
-        fabCreateShoppingList.attachToListView(shoppingNameListView);
-        fabCreateShoppingList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CreateShoppingListDialog createShoppingListDialog = new CreateShoppingListDialog();
-                createShoppingListDialog.setTargetFragment(getFragmentInstance(), 0);
-                createShoppingListDialog.show(getFragmentManager(), Constants.SHOPPING_LIST_NAME);
-            }
-        });
-        contentView.removeAllViews();
-        contentView.addView(base);
     }
 
-    private void showNoShoppingListView(View base) {
+    private void showNoShoppingListView(LinearLayout contentView) {
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View base = inflater.inflate(R.layout.uiv3_empty_data_text, contentView, false);
         ImageView imgEmptyPage = (ImageView) base.findViewById(R.id.imgEmptyPage);
         imgEmptyPage.setImageResource(R.drawable.empty_shopping_list);
 
@@ -132,6 +137,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
         txtEmptyMsg2.setText(R.string.nowShoppingListMsg2);
         Button btnBlankPage = (Button) base.findViewById(R.id.btnBlankPage);
         btnBlankPage.setVisibility(View.GONE);
+        contentView.addView(base);
     }
 
     public void createShoppingList(final String shoppingListName) {
@@ -262,7 +268,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
                     public void onClick(View v) {
                         PopupMenu popupMenu = new PopupMenu(getActivity(), v);
                         MenuInflater menuInflater = popupMenu.getMenuInflater();
-                        menuInflater.inflate(R.menu.shopping_list_menu, popupMenu.getMenu());
+                        menuInflater.inflate(R.menu.shopping_list_item_menu, popupMenu.getMenu());
                         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                             @Override
                             public boolean onMenuItemClick(MenuItem menuItem) {
@@ -470,5 +476,23 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
     @Override
     public String getScreenTag() {
         return TrackEventkeys.SHOPPING_LIST_SCREEN;
+    }
+
+    @Override
+    public void changeFragment(AbstractFragment newFragment) {
+        setHasOptionsMenu(false);
+        if (getCurrentActivity() != null) {
+            getCurrentActivity().invalidateOptionsMenu();
+        }
+        super.changeFragment(newFragment);
+    }
+
+    @Override
+    public void onBackResume() {
+        super.onBackResume();
+        setHasOptionsMenu(true);
+        if (getCurrentActivity() != null) {
+            getCurrentActivity().invalidateOptionsMenu();
+        }
     }
 }

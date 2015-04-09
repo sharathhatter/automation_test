@@ -68,16 +68,21 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
     private HashMap<String, Boolean> mPreviouslyAppliedVoucherMap;
     private String mPayuFailureReason;
     private boolean mIsVoucherInProgress;
+    private Button mBtnFooter;
+    private boolean mHasSlotTabLaunchedOnce;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle(getString(R.string.check_out));
+        setTitle(getString(R.string.payment_and_slot_selection));
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        mHasSlotTabLaunchedOnce = false;
+
         if (!mIsVoucherInProgress) {
             loadSlotsAndPayments();
         }
@@ -179,11 +184,10 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
         bbTabs.add(new BBTab<>(getString(R.string.paymentMethod), PaymentSelectionFragment.class, paymentSelectionBundle));
         bbTabs.add(new BBTab<>(getString(R.string.slot), SlotSelectionFragment.class, slotBundle));
 
-        ViewPager viewPager = (ViewPager) base.findViewById(R.id.pager);
+        final ViewPager viewPager = (ViewPager) base.findViewById(R.id.pager);
         FragmentStatePagerAdapter fragmentStatePagerAdapter = new
                 TabPagerAdapter(getCurrentActivity(), getSupportFragmentManager(), bbTabs);
         viewPager.setAdapter(fragmentStatePagerAdapter);
-
         if (hasPayuFailed) {
             viewPager.setCurrentItem(1);
         }
@@ -196,14 +200,32 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
             mPaymentMethodSlug = Constants.HDFC_POWER_PAY;
         }
 
-        PagerSlidingTabStrip pagerSlidingTabStrip = (PagerSlidingTabStrip) base.findViewById(R.id.slidingTabs);
         contentView.addView(base);
-        pagerSlidingTabStrip.setViewPager(viewPager);
+        final PagerSlidingTabStrip slidingTabStrip = (PagerSlidingTabStrip) base.findViewById(R.id.slidingTabs);
+        slidingTabStrip.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                if (position == 1) {
+                    onSlotNavigation();
+                }
+            }
 
-        Button btnFooter = (Button) base.findViewById(R.id.btnListFooter);
-        btnFooter.setTypeface(faceRobotoRegular);
-        btnFooter.setText(getString(R.string.orderReview).toUpperCase());
-        btnFooter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+        slidingTabStrip.setViewPager(viewPager);
+
+        mBtnFooter = (Button) base.findViewById(R.id.btnListFooter);
+        mBtnFooter.setTypeface(faceRobotoRegular);
+        mBtnFooter.setText(getString(R.string.chooseSlot).toUpperCase());
+        mBtnFooter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 PayuResponse payuResponse = PayuResponse.getInstance(getCurrentActivity());
@@ -217,7 +239,11 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
                         applyVoucher(previouslyAppliedVoucherList.get(0).getVoucherCode());
                     }
                 } else {
-                    launchOrderReview();
+                    if (!mHasSlotTabLaunchedOnce) {
+                        viewPager.setCurrentItem(1, true);
+                    } else {
+                        launchOrderReview();
+                    }
                 }
             }
         });
@@ -462,5 +488,10 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
     @Override
     public String getScreenTag() {
         return null;
+    }
+
+    public void onSlotNavigation() {
+        mHasSlotTabLaunchedOnce = true;
+        mBtnFooter.setText(getString(R.string.orderReview).toUpperCase());
     }
 }

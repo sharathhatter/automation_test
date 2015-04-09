@@ -8,7 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
-import android.text.style.AbsoluteSizeSpan;
 import android.text.style.RelativeSizeSpan;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -165,77 +164,70 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         contentView.removeAllViews();
 
         final View sectionView = getSectionView();
+        displayProductCount();
 
-        if (productListData != null) {
+        if (productListData != null && productListData.getProductCount() > 0) {
 
             // Set product-list header view
             final View headerView = getActivity().getLayoutInflater().inflate(R.layout.uiv3_product_list_header, contentView, false);
-            LinearLayout layoutFilterSort = (LinearLayout) headerView.findViewById(R.id.layoutFilterSort);
 
             TextView txtFilterBy = (TextView) headerView.findViewById(R.id.txtFilterBy);
             TextView txtSortBy = (TextView) headerView.findViewById(R.id.txtSortBy);
 
             txtSortBy.setTypeface(faceRobotoRegular);
             txtFilterBy.setTypeface(faceRobotoRegular);
-
-            displayProductCount();
-            if (productListData.getProductCount() > 0) {
-                if (productListData.getFilterOptions() != null && productListData.getFilterOptions().size() > 0) {
-                    txtFilterBy.setVisibility(View.VISIBLE);
-                    txtFilterBy.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            ((FilterDisplayAware) getActivity()).showFilters();
-                        }
-                    });
-                    int filterDrawableId = productListData.getFilteredOn() != null && productListData.getFilteredOn().size() > 0 ?
-                            R.drawable.filter_applied : R.drawable.filter;
-                    txtFilterBy.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(getActivity(), filterDrawableId),
-                            null, null, null);
-                } else {
-                    txtFilterBy.setVisibility(View.GONE);
-                }
-
-                if (productListData.getSortOptions().size() > 0) {
-                    txtSortBy.setVisibility(View.VISIBLE);
-                    txtSortBy.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            ((FilterDisplayAware) getActivity()).showSortOptions();
-                        }
-                    });
-                } else {
-                    txtSortBy.setVisibility(View.GONE);
-                }
-
-                RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, contentView);
-
-                // Set product-list data
-                AuthParameters authParameters = AuthParameters.getInstance(getActivity());
-                ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
-                        .setCommonTypeface(faceRobotoRegular)
-                        .setRupeeTypeface(faceRupee)
-                        .setHandler(handler)
-                        .setLoggedInMember(!authParameters.isAuthTokenEmpty())
-                        .setShowShoppingListBtn(true)
-                        .setShowBasketBtn(true)
-                        .setShowShopListDeleteBtn(false)
-                        .build();
-                mProductListRecyclerAdapter = new ProductListRecyclerAdapter(productListData.getProducts(), productListData.getBaseImgUrl(),
-                        productViewDisplayDataHolder, this, productListData.getProductCount(),
-                        getNavigationCtx());
-
-                productRecyclerView.setAdapter(mProductListRecyclerAdapter);
-
-                if (sectionView != null) {
-                    contentView.addView(sectionView);
-                }
-                contentView.addView(headerView);
-                contentView.addView(productRecyclerView);
+            if (productListData.getFilterOptions() != null && productListData.getFilterOptions().size() > 0) {
+                txtFilterBy.setVisibility(View.VISIBLE);
+                txtFilterBy.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ((FilterDisplayAware) getActivity()).showFilters();
+                    }
+                });
+                int filterDrawableId = productListData.getFilteredOn() != null && productListData.getFilteredOn().size() > 0 ?
+                        R.drawable.filter_applied : R.drawable.filter;
+                txtFilterBy.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(getActivity(), filterDrawableId),
+                        null, null, null);
             } else {
-                layoutFilterSort.setVisibility(View.GONE);
-                addSectionToScrollView(contentView, sectionView);
+                txtFilterBy.setVisibility(View.GONE);
             }
+
+            if (productListData.getSortOptions().size() > 0) {
+                txtSortBy.setVisibility(View.VISIBLE);
+                txtSortBy.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ((FilterDisplayAware) getActivity()).showSortOptions();
+                    }
+                });
+            } else {
+                txtSortBy.setVisibility(View.GONE);
+            }
+
+            RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, contentView);
+
+            // Set product-list data
+            AuthParameters authParameters = AuthParameters.getInstance(getActivity());
+            ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
+                    .setCommonTypeface(faceRobotoRegular)
+                    .setRupeeTypeface(faceRupee)
+                    .setHandler(handler)
+                    .setLoggedInMember(!authParameters.isAuthTokenEmpty())
+                    .setShowShoppingListBtn(true)
+                    .setShowBasketBtn(true)
+                    .setShowShopListDeleteBtn(false)
+                    .build();
+            mProductListRecyclerAdapter = new ProductListRecyclerAdapter(productListData.getProducts(), productListData.getBaseImgUrl(),
+                    productViewDisplayDataHolder, this, productListData.getProductCount(),
+                    getNavigationCtx());
+
+            productRecyclerView.setAdapter(mProductListRecyclerAdapter);
+
+            if (sectionView != null) {
+                contentView.addView(sectionView);
+            }
+            contentView.addView(headerView);
+            contentView.addView(productRecyclerView);
 
             ((FilterDisplayAware) getActivity()).setFilterView(productListData.getFilterOptions(),
                     productListData.getFilteredOn(), getFragmentTxnTag());
@@ -353,7 +345,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
     @Override
     public void onShoppingListFetched(ArrayList<ShoppingListName> shoppingListNames) {
         if (shoppingListNames == null || shoppingListNames.size() == 0) {
-            Toast.makeText(getActivity(), "Create a new shopping list", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), getString(R.string.createAShoppingList), Toast.LENGTH_SHORT).show();
         } else {
             ShoppingListNamesDialog shoppingListNamesDialog = ShoppingListNamesDialog.newInstance(shoppingListNames);
             shoppingListNamesDialog.setTargetFragment(getFragment(), 0);

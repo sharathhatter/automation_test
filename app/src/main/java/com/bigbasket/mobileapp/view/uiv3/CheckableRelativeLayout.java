@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.view.uiv3;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Checkable;
 import android.widget.CheckedTextView;
 import android.widget.RelativeLayout;
@@ -31,6 +32,18 @@ public class CheckableRelativeLayout extends RelativeLayout implements Checkable
             View v = getChildAt(i);
             if (v instanceof CheckedTextView) {
                 mCheckedTextView = (CheckedTextView) v;
+            } else if (v instanceof ViewGroup) {
+                int childChildCount = ((ViewGroup) v).getChildCount();
+                for (int j = 0; j < childChildCount; j++) {
+                    View v1 = ((ViewGroup) v).getChildAt(j);
+                    if (v1 instanceof CheckedTextView) {
+                        mCheckedTextView = (CheckedTextView) v1;
+                        break;
+                    }
+                }
+            }
+            if (mCheckedTextView != null) {
+                break;
             }
         }
     }

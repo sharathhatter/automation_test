@@ -323,7 +323,7 @@ public class UIUtil {
     }
 
     public static Spannable formatAsSavings(String savingsStr, Typeface faceRupee) {
-        String prefix = "SAVE: `";
+        String prefix = "SAVE:`";
         Spannable spannableSaving = new SpannableString(prefix + savingsStr);
         spannableSaving.setSpan(new CustomTypefaceSpan("", faceRupee),
                 prefix.length() - 1,

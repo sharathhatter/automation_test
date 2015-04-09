@@ -71,7 +71,7 @@
     <string name="regular_price">Regular Price</string>
     <string name="change_view">Change View</string>
     <string name="shop">SHOP</string>
-    <string name="totalMrp">Total: </string>
+    <string name="totalMrp">\u00A0|\u00A0Total: </string>
     <string name="Rs">\u20B9</string>
     <string name="search_icon">Search Image</string>
     <string name="new_pin">New Pin:</string>
@@ -95,7 +95,7 @@
     <string name="type">Type</string>
     <string name="message">Message</string>
     <string name="orderPlaced">Order Placed</string>
-    <string name="orderSummaryDefaultMsg">Your order is not placed yet! Please review and then place order</string>
+    <string name="orderSummaryDefaultMsg">Your order is not placed yet! Please review and then place order.</string>
     <string name="paymentGatewayRedirectMsg">Please note: You will be re-directed to the payment gateway, to complete the payment</string>
     <string name="orderSummaryPayuFailureTitleMsg">Transaction Failed!</string>
     <string name="txnFailedRetryTxt">Please choose a different payment method, or retry again!</string>
@@ -120,6 +120,7 @@
     <string name="EVocher">eVoucher</string>
     <string name="evoucherStatement">(If you have eVoucher code, Please enter):</string>
     <string name="orderReview">Review Order</string>
+    <string name="chooseSlot">Choose Slot</string>
     <string name="createShoppingList">Create shopping List</string>
     <string name="shoppingListNameDialogTextHint">Enter shopping list name</string>
     <string name="myList"> My Lists</string>
@@ -145,7 +146,7 @@
     <string name="signIn">Login</string>
     <string name="signoutConfirmation">Are you sure that you want to logout?</string>
     <string name="changeCityHome">Change City</string>
-    <string name="signUp">Sign up</string>
+    <string name="signUp">Sign Up</string>
     <string name="changeCityHeader">CHANGE CITY</string>
     <string name="loginYourAcc">Login to your account</string>
     <string name="HNDetails">House No &amp; Details</string>
@@ -216,7 +217,7 @@
     <string name="background">Background</string>
     <string name="pleaseNoteOnlyOneVoucher">* Please note you can apply only one voucher per checkout!</string>
     <string name="empty">Empty</string>
-    <string name="slot">Slot</string>
+    <string name="slot">Slots</string>
     <string name="go">Go</string>
     <string name="captcha">Captcha</string>
     <string name="slotSelected">Slot selected</string>
@@ -304,7 +305,7 @@
     <!-- payment -->
     <string name="evoucherApplied">eVoucher added successfully.Please select a payment method.</string>
     <string name="choosePayment">Choose payment method</string>
-    <string name="paymentMethod">Payment Method</string>
+    <string name="paymentMethod">Payment Options</string>
     <string name="pleaseChoosePaymentMethod">Please select a payment option.</string>
     <string name="orderItems">Order Items</string>
     <string name="enterVoucher">Enter eVoucher code</string>
@@ -428,7 +429,7 @@
     <string name="noProductsSearchMsg">Sorry! There are no products found related to your search term.</string>
 
     <!-- Invoice -->
-    <string name="orderThankyouText">Thank you! Your order is placed\nOrder #</string>
+    <string name="orderThankyouText">Thank you for placing order with BigBasket.\nYour Order# is</string>
     <string name="multipleOrderThankyouText">Thank you! Your orders have been placed</string>
     <string name="viewInvoice">VIEW INVOICE</string>
     <string name="locateOnMapViaInvoice">LOCATE ON MAP</string>
@@ -438,6 +439,7 @@
     <!-- cart page -->
     <string name="empty_basket">Remove all items from basket!</string>
     <string name="check_out">Checkout</string>
+    <string name="payment_and_slot_selection">Payment &amp; Slot Selection</string>
     <string name="empty_basket_txt1">There are no items in your basket.</string>
     <string name="empty_basket_txt2">Enjoy great shopping experience with us!</string>
 
@@ -470,7 +472,7 @@
     <string name="use_google">Google\u00A0\u00A0\u00A0\u00A0</string>
     <string name="facebookSignup">Facebook</string>
     <string name="googleSignup">Google\u00A0\u00A0\u00A0\u00A0</string>
-    <string name="loginPageSignUpText">New user? Sign up</string>
+    <string name="loginPageSignUpText">New user? Sign Up</string>
     <string name="alreadyAMember">Already have an account? Login</string>
     <string name="headingNetworkError">Network Error</string>
     <string name="headingConnectionOffline">Connection Offline</string>
@@ -538,7 +540,7 @@
     <string name="pressOrderReview">Press the \'Review Order\' button to place your order</string>
     <string name="smartBasket">Smart Basket</string>
     <string name="rateTheApp">Rate this app</string>
-    <string name="shopFromPreviousOrder">Shop from previous order</string>
+    <string name="shopFromPreviousOrder">Shop From Previous Order(s)</string>
     <string name="orders">Orders</string>
     <string name="applyVoucher">Apply Voucher</string>
     <string name="selectAndApplyVoucher">Select &amp; Apply Voucher</string>
@@ -568,4 +570,6 @@
     <string name="byRegistering">By signing up, you agree to BigBasket\'s\u00A0</string>
     <string name="authFooterSeparator">, and\u00A0</string>
     <string name="citiesWhereWeServe">Cities where we currently serve</string>
+    <string name="nextAvailableSlot">Next available slot:</string>
+    <string name="createAShoppingList">You do not have a shopping list! Please create one to add items</string>
 </resources>

@@ -17,8 +17,7 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="@dimen/margin_normal"
         android:layout_marginRight="@dimen/margin_normal"
-        android:contentDescription="@string/alt_placeholder"
-        android:src="@drawable/ic_access_time_grey600_24dp" />
+        android:contentDescription="@string/alt_placeholder" />
 
     <CheckBox
         android:id="@+id/itemTick"
@@ -34,20 +33,29 @@
         android:id="@+id/itemTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
         android:layout_gravity="center_vertical"
-        android:layout_marginBottom="@dimen/margin_small"
         android:layout_marginTop="@dimen/margin_small"
         android:layout_toLeftOf="@id/itemTick"
         android:layout_toRightOf="@id/itemImg"
-        android:text="7:00 AM to 9.30 AM"
         android:textColor="@color/uiv3_primary_text_color"
         android:textSize="@dimen/primary_text_size" />
+
+    <TextView
+        android:id="@+id/itemSubTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/itemTitle"
+        android:layout_marginBottom="@dimen/margin_small"
+        android:layout_marginTop="@dimen/margin_mini"
+        android:layout_toLeftOf="@id/itemTick"
+        android:layout_toRightOf="@id/itemImg"
+        android:textColor="@color/uiv3_secondary_text_color"
+        android:textSize="@dimen/secondary_text_size" />
 
     <View
         android:id="@+id/listSeparator"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_below="@id/itemTitle"
+        android:layout_below="@id/itemSubTitle"
         android:background="@color/uiv3_divider_color" />
 </RelativeLayout>

@@ -159,7 +159,7 @@ public class ShoppingListSummaryActivity extends BackButtonActivity {
     private ArrayList<BBTab> getTabs(ArrayList<ShoppingListSummary> shoppingListSummaries,
                                      ShoppingListName shoppingListName, String baseImgUrl) {
         ArrayList<BBTab> bbTabs = new ArrayList<>();
-        for (ShoppingListSummary shoppingListSummary: shoppingListSummaries) {
+        for (ShoppingListSummary shoppingListSummary : shoppingListSummaries) {
             if (shoppingListSummary.getNumProducts() <= 0) {
                 continue;
             }
@@ -170,8 +170,8 @@ public class ShoppingListSummaryActivity extends BackButtonActivity {
     }
 
     private Bundle getBundleForShoppingListProductFragment(ShoppingListSummary shoppingListSummary,
-                                                         ShoppingListName shoppingListName,
-                                                         String baseImgUrl) {
+                                                           ShoppingListName shoppingListName,
+                                                           String baseImgUrl) {
         Bundle bundle = new Bundle();
         shoppingListSummary.setShoppingListName(shoppingListName);
         bundle.putParcelable(Constants.SHOPPING_LIST_SUMMARY, shoppingListSummary);

@@ -151,7 +151,7 @@ public final class ProductView {
     }
 
     private static void setPrice(ProductViewHolder productViewHolder, Product product,
-                                     ProductViewDisplayDataHolder productViewDisplayDataHolder) {
+                                 ProductViewDisplayDataHolder productViewDisplayDataHolder) {
         TextView txtSalePrice = productViewHolder.getTxtSalePrice();
         boolean hasSavings = product.hasSavings();
         txtSalePrice.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());

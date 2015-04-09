@@ -186,7 +186,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
     @Override
     public void onShoppingListFetched(ArrayList<ShoppingListName> shoppingListNames) {
         if (shoppingListNames == null || shoppingListNames.size() == 0) {
-            Toast.makeText(getActivity(), "Create a new shopping list", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), getString(R.string.createAShoppingList), Toast.LENGTH_SHORT).show();
         } else {
             ShoppingListNamesDialog shoppingListNamesDialog = ShoppingListNamesDialog.newInstance(shoppingListNames);
             shoppingListNamesDialog.setTargetFragment(this, 0);

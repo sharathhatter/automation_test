@@ -216,7 +216,7 @@ public class SearchableActivity extends BackButtonActivity
         MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(this);
         int mostSearchTermsCount = mostSearchesAdapter.getRowCount();
         if (mostSearchTermsCount > 0) {
-            matrixCursor.addRow(new String[]{"0", "HISTORY", null, null, null, null, null});
+            matrixCursor.addRow(new String[]{"0", "History", null, null, null, null, null});
             if (mostSearchTermsCount >= 5) {
                 List<MostSearchedItem> mostSearchedItemList = mostSearchesAdapter.getRecentSearchedItems(5);
                 int i = 1;
@@ -243,7 +243,7 @@ public class SearchableActivity extends BackButtonActivity
         String[] topSearchArrayString = getTopSearches();
         if (topSearchArrayString != null && topSearchArrayString.length > 0) {
             int i = 0;
-            matrixCursor.addRow(new String[]{String.valueOf(i++), "POPULAR SEARCHES", null, null, null, null, null});
+            matrixCursor.addRow(new String[]{String.valueOf(i++), "Popular Searches", null, null, null, null, null});
             for (String term : topSearchArrayString)
                 matrixCursor.addRow(new String[]{String.valueOf(i++), term,
                         null, null, term,

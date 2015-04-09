@@ -78,8 +78,6 @@ public class OrderInvoiceItemsListFragment extends BaseFragment {
 
         // Render the consolidated listview
         ListView listView = new ListView(getActivity());
-        listView.setDivider(null);
-        listView.setDividerHeight(0);
         ActiveOrderRowAdapter activeOrderRowAdapter = new ActiveOrderRowAdapter<>(cartItemConsolidatedList, this,
                 faceRupee, faceRobotoRegular, OrderItemDisplaySource.ORDER_DISPLAY, true,
                 null, null, orderInvoice.getBaseImgUrl(), null);

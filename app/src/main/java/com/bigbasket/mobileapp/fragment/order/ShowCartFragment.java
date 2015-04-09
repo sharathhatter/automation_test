@@ -244,7 +244,7 @@ public class ShowCartFragment extends BaseFragment {
 
         String totalSaveAmount = UIUtil.formatAsMoney(cartSummary.getSavings());
         if (!totalSaveAmount.equals("0")) {
-            Spannable savingSpannable = new SpannableString("` " + UIUtil.formatAsMoney(cartSummary.getSavings()));
+            Spannable savingSpannable = new SpannableString("`" + UIUtil.formatAsMoney(cartSummary.getSavings()));
             savingSpannable.setSpan(new CustomTypefaceSpan("", faceRupee), 0, 1, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
             txtSaving.setText(savingSpannable);
         } else {
@@ -258,9 +258,9 @@ public class ShowCartFragment extends BaseFragment {
         if (cartSummary.getNoOfItems() != 0) {
             menu.findItem(R.id.action_empty_basket).setVisible(true);
             if (cartSummary.getNoOfItems() > 1) {
-                txtTotalCartItems.setText(cartSummary.getNoOfItems() + " Items | ");
+                txtTotalCartItems.setText(cartSummary.getNoOfItems() + " Items");
             } else {
-                txtTotalCartItems.setText(cartSummary.getNoOfItems() + " Item | ");
+                txtTotalCartItems.setText(cartSummary.getNoOfItems() + " Item");
             }
         } else {
             txtTotalCartItems.setVisibility(View.GONE);
@@ -270,7 +270,7 @@ public class ShowCartFragment extends BaseFragment {
         TextView txtTotal = (TextView) base.findViewById(R.id.txtTotal);
         txtTotal.setTypeface(faceRobotoRegular);
         if (!totalBasketAmount.equals("0")) {
-            Spannable totalSpannable = new SpannableString("` " + totalBasketAmount);
+            Spannable totalSpannable = new SpannableString("`" + totalBasketAmount + (!totalSaveAmount.equals("0") ? " | " : ""));
             totalSpannable.setSpan(new CustomTypefaceSpan("", faceRupee), 0, 1, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
             txtTotal.setText(totalSpannable);
         } else {

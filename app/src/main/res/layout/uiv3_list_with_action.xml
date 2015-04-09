@@ -9,8 +9,7 @@
         android:id="@+id/btnListFooter"
         style="@style/FooterButtonStyle"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:textSize="@dimen/large_text_size" />
+        android:layout_alignParentRight="true" />
 
     <ListView
         android:id="@+id/listWithFixedFooter"

@@ -99,8 +99,6 @@ public class OrderItemListFragment extends BaseFragment {
 
         // Render the consolidated listview
         ListView listView = new ListView(getActivity());
-        listView.setDividerHeight(0);
-        listView.setDivider(null);
         ActiveOrderRowAdapter activeOrderRowAdapter = new ActiveOrderRowAdapter<>(cartItemConsolidatedList,
                 this, faceRupee, faceRobotoRegular, OrderItemDisplaySource.ORDER_DISPLAY, true,
                 fulfillmentInfoIdAndIconHashMap, annotationHashMap, orderSummary.getBaseImgUrl(), null);
