@@ -186,6 +186,14 @@ public class SignInActivity extends BackButtonActivity {
             cancel = true;
         }
 
+        // Check for a valid password length
+        if (!TextUtils.isEmpty(password) && password.length() < 6) {
+            reportFormInputFieldError(mPasswordView,
+                    getString(R.string.psswordMst6Digit));
+            focusView = mPasswordView;
+            cancel = true;
+        }
+
         if (cancel) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
