@@ -85,10 +85,9 @@
         <include
             android:id="@+id/layoutBasketOperation"
             layout="@layout/uiv3_basket_operation_control"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/txtSalePrice"
-            android:layout_gravity="left"
             android:layout_marginBottom="@dimen/margin_mini"
             android:layout_marginTop="@dimen/margin_small"
             android:layout_toRightOf="@id/imgProduct" />
