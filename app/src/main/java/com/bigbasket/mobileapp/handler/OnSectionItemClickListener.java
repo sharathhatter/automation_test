@@ -223,7 +223,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                     if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
                         boolean isSmartBasket = destinationInfo.getDestinationSlug().equalsIgnoreCase(Constants.SMART_BASKET_SLUG);
                         intent = new Intent(((ActivityAware) context).getCurrentActivity(), ShoppingListSummaryActivity.class);
-                        String title = section.getTitle() != null ? section.getTitle().getText() : "";
+                        String title = sectionItem.getTitle() != null ? sectionItem.getTitle().getText() : "";
                         ShoppingListName shoppingListName = new ShoppingListName(title, destinationInfo.getDestinationSlug(),
                                 isSmartBasket);
                         intent.putExtra(Constants.SHOPPING_LIST_NAME, shoppingListName);
