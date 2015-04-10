@@ -141,6 +141,7 @@ public class DoWalletFragment extends BaseFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.uiv3_dowallet, contentView, false);
         contentView.addView(view);
+        ((TextView) view.findViewById(R.id.walletInfoMsg1)).setTypeface(faceRobotoLight);
 
         String prefixBal = "Current Balance `";
         String mrpStrBal = currentBalance + "";

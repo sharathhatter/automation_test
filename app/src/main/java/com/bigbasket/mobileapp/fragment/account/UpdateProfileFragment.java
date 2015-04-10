@@ -75,6 +75,7 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware,
 
         editTextFirstName = (EditText) view.findViewById(R.id.editTextFirstName);
         editTextFirstName.setTypeface(faceRobotoRegular);
+        editTextFirstName.setNextFocusDownId(R.id.editTextLastName);
 
         editTextLastName = (EditText) view.findViewById(R.id.editTextLastName);
         editTextLastName.setTypeface(faceRobotoRegular);

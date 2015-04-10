@@ -111,6 +111,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
     private void populateUiFields() {
         EditText editTextAddressNick = (EditText) base.findViewById(R.id.editTextAddressNick);
         EditText editTextFirstName = (EditText) base.findViewById(R.id.editTextFirstName);
+        editTextFirstName.setNextFocusDownId(R.id.editTextLastName);
         EditText editTextLastName = (EditText) base.findViewById(R.id.editTextLastName);
         EditText editTextMobileNumber = (EditText) base.findViewById(R.id.editTextMobileNumber);
         EditText editTextHouseNum = (EditText) base.findViewById(R.id.editTextHouseNum);

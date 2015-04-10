@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="oval">
-    <corners android:radius="0dp" />
-    <solid android:color="#ffff0000" />
-    <stroke
-        android:color="@color/white"
-        android:width="2dp" />
+
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/uiv3_secondary_btn_bkg" />
+    <corners android:radius="2dp" />
 </shape>

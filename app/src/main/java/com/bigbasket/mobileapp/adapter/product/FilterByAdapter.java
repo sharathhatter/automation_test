@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.adapter.product;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -84,14 +85,9 @@ public class FilterByAdapter extends BaseExpandableListAdapter {
         int expandIndicatorDrawable = R.drawable.ic_keyboard_arrow_right_grey600_24dp;
         if (isExpanded) {
             expandIndicatorDrawable = R.drawable.ic_keyboard_arrow_down_grey600_24dp;
-            txtListRow.setTextColor(context.getResources().getColor(R.color.white));
-            row.setBackgroundColor(context.getResources().getColor(R.color.fbutton_color_nephritis));
-        } else {
-            txtListRow.setTextColor(context.getResources().getColor(R.color.primary_text_default_material_light));
-            row.setBackgroundColor(context.getResources().getColor(R.color.background_material_light));
         }
         txtListRow.setCompoundDrawablesWithIntrinsicBounds(null, null,
-                context.getResources().getDrawable(expandIndicatorDrawable), null);
+                ContextCompat.getDrawable(context, expandIndicatorDrawable), null);
         return row;
     }
 

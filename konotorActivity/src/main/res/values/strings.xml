@@ -19,10 +19,10 @@
 		
 	<color name="konotor_white">#FFFFFF</color>
 	<color name="konotor_light_gray">#B6B6B6</color>
-	<color name="konotor_progress_start">#4CAF50</color>
-	<color name="konotor_progress_end">#4CAF50</color>
-	<color name="konotor_voice_feedback_progress_start">#4CAF50</color>
-	<color name="konotor_voice_feedback_progress_end">#4CAF50</color>
+	<color name="konotor_progress_start">#F44336</color>
+	<color name="konotor_progress_end">#F44336</color>
+	<color name="konotor_voice_feedback_progress_start">#F44336</color>
+	<color name="konotor_voice_feedback_progress_end">#F44336</color>
 	<color name="konotor_message_read">#FFFFFF</color>
 	<string name="konotor_what_is_your_name">What is your name ?</string>
 	<string name="konotor_john_doe">John Doe</string>

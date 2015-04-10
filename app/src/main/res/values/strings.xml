@@ -202,7 +202,7 @@
     <string name="rating">Rating:</string>
     <string name="yourComments">Your comments (optional)</string>
     <string name="submit">Submit</string>
-    <string name="konotorWelcomeMessage">Welcome to BigBasket communication hub.You can send us your feedback or report problems through communication hub, someone will respond to your query.</string>
+    <string name="konotorWelcomeMessage">Welcome to BigBasket communication hub. You can send us your feedback or report problems through communication hub, someone will respond to your query.</string>
     <string name="youHaveActiveVoucher">You have an active voucher!</string>
     <string name="clickToView">Touch here to view!</string>
     <string name="evoucherCode">eVoucher Code</string>
@@ -387,8 +387,8 @@
     <string name="credited">Credited</string>
     <string name="debited">Debited:</string>
     <string name="walletActivityFor">Wallet activity for</string>
-    <string name="walletInfoMsg1">The BigBasket Wallet is a pre-paid credit account that is associated with your BigBasket account.\nWallet allows you to pay a lump sum amount and then shop multiple times without the hassle of making payments every time.\n We will automatically deduct the amount corresponding to your order from your “Wallet” at the time of checkout until you run out of Wallet Credit.</string>
-    <string name="walletInfoMsg2">Your BigBasket Wallet also gets credited automatically when BigBasket issues a Cashback, return of items credit etc.</string>
+    <string name="walletInfoMsg1">The BigBasket Wallet is a pre-paid credit account that is associated with your BigBasket account.\nWallet allows you to pay a lump sum amount and then shop multiple times without the hassle of making payments every time.\nWe will automatically deduct the amount corresponding to your order from your “Wallet” at the time of checkout until you run out of Wallet Credit.
+    \nYour BigBasket Wallet also gets credited automatically when BigBasket issues a Cashback, return of items credit etc.</string>
     <!-- signup -->
     <string name="responseStr">Response Code</string>
     <string name="passwordUpdated">Password successfully updated!</string>
