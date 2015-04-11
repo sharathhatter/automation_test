@@ -1,6 +1,6 @@
 package com.bigbasket.mobileapp.view.uiv2;
 
-import android.app.Dialog;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.support.v7.widget.PopupMenu;
@@ -103,7 +103,8 @@ public final class ProductView {
             btnMorePackSizes.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    final Dialog dialog = new Dialog(((ActivityAware) productDataAware).getCurrentActivity());
+                    AlertDialog.Builder builder = new AlertDialog.Builder(((ActivityAware) productDataAware).getCurrentActivity());
+                    final AlertDialog dialog = builder.create();
                     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                     ListView listView = new ListView(((ActivityAware) productDataAware).getCurrentActivity());
 
@@ -123,7 +124,7 @@ public final class ProductView {
                             }
                         }
                     });
-                    dialog.setContentView(listView);
+                    dialog.setView(listView, 0, 0, 0, 0);
                     dialog.show();
                 }
             });

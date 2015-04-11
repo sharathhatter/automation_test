@@ -293,8 +293,9 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         if (productListData == null || mProductListRecyclerAdapter == null) return;
         setNextPageLoading(false);
         List<Product> currentProducts = productListData.getProducts();
+        int insertedAt = productListData.getProducts().size();
         currentProducts.addAll(nextPageProducts);
-        mProductListRecyclerAdapter.notifyDataSetChanged();
+        mProductListRecyclerAdapter.notifyItemRangeInserted(insertedAt, nextPageProducts.size());
     }
 
     public abstract String getNavigationCtx();

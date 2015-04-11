@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
-    android:minWidth="@dimen/min_width_product_drop_down"
     android:paddingBottom="@dimen/padding_mini"
     android:paddingTop="@dimen/padding_mini">
 
