@@ -81,6 +81,17 @@ public class OrderThankYouFragment extends BaseFragment implements InvoiceDataAw
             }
         });
 
+        TextView lblContinueShopping = (TextView) base.findViewById(R.id.lblContinueShopping);
+        lblContinueShopping.setTypeface(faceRobotoRegular);
+        lblContinueShopping.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (getCurrentActivity() != null) {
+                    getCurrentActivity().goToHome(false);
+                }
+            }
+        });
+
         contentView.removeAllViews();
         contentView.addView(base);
     }
@@ -100,11 +111,23 @@ public class OrderThankYouFragment extends BaseFragment implements InvoiceDataAw
         txtSlotInfo.setTypeface(faceRobotoRegular);
         txtSlotInfo.setText(order.getDeliveryDate());
         TextView lblViewInvoice = (TextView) base.findViewById(R.id.lblViewInvoice);
+        TextView lblContinueShopping = (TextView) base.findViewById(R.id.lblContinueShopping);
+        lblViewInvoice.setTypeface(faceRobotoRegular);
+        lblContinueShopping.setTypeface(faceRobotoRegular);
+
         lblViewInvoice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 trackEvent(TrackingAware.THANK_YOU_VIEW_INVOICE_CLICKED, null);
                 showInvoice(order);
+            }
+        });
+        lblContinueShopping.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (getCurrentActivity() != null) {
+                    getCurrentActivity().goToHome(false);
+                }
             }
         });
 
@@ -119,7 +142,7 @@ public class OrderThankYouFragment extends BaseFragment implements InvoiceDataAw
 
     @Override
     public String getTitle() {
-        return "Thank You";
+        return getString(R.string.thankYouHeader);
     }
 
     @Override

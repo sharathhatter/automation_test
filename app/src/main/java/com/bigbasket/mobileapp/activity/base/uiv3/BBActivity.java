@@ -99,6 +99,7 @@ import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -248,7 +249,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             basketCountView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    launchViewBasket();
+                    showViewBasketFragment();
                 }
             });
             mTextCartCount = (TextView) basketCountView.findViewById(R.id.txtNumItemsInBasket);
@@ -320,11 +321,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 addToMainLayout(new DoWalletFragment());
                 break;
             case FragmentCodes.START_VIEW_BASKET:
-                ShowCartFragment showCartFragment = new ShowCartFragment();
-                Bundle cartBundle = new Bundle();
-                cartBundle.putString(Constants.INTERNAL_VALUE, getIntent().getStringExtra(Constants.INTERNAL_VALUE));
-                showCartFragment.setArguments(cartBundle);
-                addToMainLayout(showCartFragment);
+                launchViewBasket();
                 break;
             case FragmentCodes.START_PRODUCT_DETAIL:
                 ProductDetailFragment productDetailFragment = new ProductDetailFragment();
@@ -491,7 +488,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 launchRegistrationPage();
                 return true;
             case R.id.action_view_basket:
-                launchViewBasket();
+                showViewBasketFragment();
                 return true;
             case R.id.action_logout:
                 launchLogout(TrackEventkeys.NAVIGATION_CTX_TOPNAV);
@@ -501,6 +498,14 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void showViewBasketFragment() {
+        List<Fragment> fragments = getSupportFragmentManager().getFragments();
+        if (!(fragments != null && fragments.size() > 0 &&
+                fragments.get(fragments.size() - 1) instanceof ShowCartFragment)) {
+            launchViewBasket();
         }
     }
 

@@ -1,243 +1,223 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginLeft="@dimen/margin_mini"
     android:layout_marginRight="@dimen/margin_mini"
     android:background="@color/white"
-    android:orientation="vertical">
+    android:paddingRight="@dimen/padding_mini"
+    android:paddingTop="@dimen/padding_mini">
 
-    <RelativeLayout
+    <ImageView
+        android:id="@+id/imgProduct"
+        android:layout_width="@dimen/product_image_width"
+        android:layout_height="@dimen/product_image_height"
+        android:contentDescription="@string/product_image"
+        android:padding="2dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/image_404" />
+
+    <TextView
+        android:id="@+id/imgNew"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:background="@color/new_product_label_color"
+        android:paddingBottom="2dp"
+        android:paddingLeft="@dimen/padding_mini"
+        android:paddingRight="@dimen/padding_mini"
+        android:paddingTop="2dp"
+        android:text="@string/newTxt"
+        android:textColor="@color/white"
+        android:textSize="@dimen/small_text_size"
+        android:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/imgBBY"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="2dp"
+        android:layout_toRightOf="@id/imgNew"
+        android:contentDescription="@string/discount"
+        android:src="@drawable/bby_img"
+        android:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/imgProductOverflowAction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:contentDescription="@string/shoppingList"
+        android:src="@drawable/ic_more_vert_grey600_24dp" />
+
+    <TextView
+        android:id="@+id/txtProductDesc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/padding_mini"
-        android:paddingRight="@dimen/padding_mini"
-        android:paddingTop="@dimen/padding_mini">
+        android:layout_marginLeft="@dimen/margin_mini"
+        android:layout_marginTop="2dp"
+        android:layout_toLeftOf="@id/imgProductOverflowAction"
+        android:layout_toRightOf="@id/imgProduct"
+        android:text="Delux Prestige - test test test test test test test test"
+        android:textColor="@color/uiv3_primary_text_color"
+        android:textSize="@dimen/primary_text_size" />
 
-        <ImageView
-            android:id="@+id/imgProduct"
-            android:layout_width="@dimen/product_image_width"
-            android:layout_height="@dimen/product_image_height"
-            android:contentDescription="@string/product_image"
-            android:padding="2dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/image_404" />
-
-        <TextView
-            android:id="@+id/imgNew"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:background="@color/new_product_label_color"
-            android:paddingBottom="2dp"
-            android:paddingLeft="@dimen/padding_mini"
-            android:paddingRight="@dimen/padding_mini"
-            android:paddingTop="2dp"
-            android:text="@string/newTxt"
-            android:textColor="@color/white"
-            android:textSize="@dimen/small_text_size"
-            android:visibility="visible" />
-
-        <ImageView
-            android:id="@+id/imgBBY"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="2dp"
-            android:layout_toRightOf="@id/imgNew"
-            android:contentDescription="@string/discount"
-            android:src="@drawable/bby_img"
-            android:visibility="visible" />
-
-
-        <ImageView
-            android:id="@+id/imgProductOverflowAction"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:contentDescription="@string/shoppingList"
-            android:src="@drawable/ic_more_vert_grey600_24dp" />
+    <!-- Hate doing this, but some older phones are adding left margin to spinner-->
+    <LinearLayout
+        android:id="@+id/layoutPackageDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtProductDesc"
+        android:layout_toRightOf="@id/imgProduct"
+        android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/txtProductDesc"
-            android:layout_width="match_parent"
+            android:id="@+id/txtPackageDesc"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_marginLeft="@dimen/margin_mini"
-            android:layout_marginTop="2dp"
-            android:layout_toLeftOf="@id/imgProductOverflowAction"
-            android:layout_toRightOf="@id/imgProduct"
-            android:text="Delux Prestige - test test test test test test test test"
+            android:text="5 lt"
             android:textColor="@color/uiv3_primary_text_color"
             android:textSize="@dimen/primary_text_size" />
 
-        <!-- Hate doing this, but some older phones are adding left margin to spinner-->
-        <LinearLayout
-            android:id="@+id/layoutPackageDesc"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/txtProductDesc"
-            android:layout_toRightOf="@id/imgProduct"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/txtPackageDesc"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="@dimen/margin_mini"
-                android:text="5 lt"
-                android:textColor="@color/uiv3_primary_text_color"
-                android:textSize="@dimen/primary_text_size" />
-
-            <Spinner
-                android:id="@+id/spinnerPackageDesc"
-                style="@style/SpinnerDialogMode"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/product_row_item_margin_small"
-                android:layout_marginRight="@dimen/margin_mini"
-                android:layout_marginTop="@dimen/margin_mini"
-                android:background="@android:color/transparent"
-                android:gravity="left"
-                android:padding="0dp"
-                android:visibility="gone" />
-        </LinearLayout>
-
-        <include
-            android:id="@+id/layoutProductPrice"
-            layout="@layout/product_price_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/layoutPackageDesc"
-            android:layout_toRightOf="@id/imgProduct" />
-
-        <LinearLayout
-            android:id="@+id/layoutInBasket"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/layoutProductPrice"
-            android:layout_marginTop="@dimen/margin_mini"
-            android:layout_toRightOf="@id/imgProduct"
-            android:orientation="vertical">
-
-            <include
-                layout="@layout/uiv3_basket_operation_control"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/margin_mini" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <EditText
-                    android:id="@+id/editTextQty"
-                    style="@style/BBEditTextStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="@dimen/margin_mini"
-                    android:inputType="numberSigned"
-                    android:maxLength="2"
-                    android:minLines="1"
-                    android:paddingBottom="2dp"
-                    android:paddingLeft="@dimen/padding_small"
-                    android:paddingRight="@dimen/padding_small"
-                    android:paddingTop="0dp"
-                    android:selectAllOnFocus="true"
-                    android:text="@string/one"
-                    android:textColor="@color/uiv3_primary_text_color"
-                    android:textSize="@dimen/primary_text_size" />
-
-                <Button
-                    android:id="@+id/btnAddToBasket"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/margin_small"
-                    android:layout_marginLeft="@dimen/product_row_item_margin_small"
-                    android:background="@drawable/main_button_rounded_background"
-                    android:drawablePadding="@dimen/padding_small"
-                    android:drawableRight="@drawable/ic_shopping_cart_white_18dp"
-                    android:minHeight="0dp"
-                    android:minWidth="0dp"
-                    android:paddingBottom="@dimen/padding_mini"
-                    android:paddingLeft="@dimen/padding_normal"
-                    android:paddingRight="@dimen/padding_small"
-                    android:paddingTop="@dimen/padding_mini"
-                    android:text="@string/ADD"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/primary_text_size" />
-
-                <TextView
-                    android:id="@+id/txtOutOfStockORNotForSale"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="@dimen/margin_normal"
-                    android:text="@string/outOfStock"
-                    android:textColor="@color/red"
-                    android:textSize="@dimen/primary_text_size"
-                    android:visibility="gone" />
-            </LinearLayout>
-        </LinearLayout>
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingBottom="@dimen/padding_mini"
-        android:paddingRight="@dimen/padding_small"
-        android:paddingTop="@dimen/padding_mini">
-
-        <TextView
-            android:id="@+id/promoLabel"
+        <Spinner
+            android:id="@+id/spinnerPackageDesc"
+            style="@style/SpinnerDialogMode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/margin_normal"
-            android:layout_marginTop="2dp"
-            android:background="@color/promo_label_backgroung_color"
-            android:gravity="center"
+            android:layout_marginLeft="@dimen/product_row_item_margin_small"
+            android:layout_marginRight="@dimen/margin_mini"
+            android:layout_marginTop="@dimen/margin_mini"
+            android:background="@android:color/transparent"
+            android:gravity="left"
+            android:padding="0dp"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <include
+        android:id="@+id/layoutProductPrice"
+        layout="@layout/product_price_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layoutPackageDesc"
+        android:layout_toRightOf="@id/imgProduct" />
+
+    <include
+        android:id="@+id/layoutInBasket"
+        layout="@layout/uiv3_basket_operation_control"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layoutProductPrice"
+        android:layout_marginTop="@dimen/margin_mini"
+        android:layout_toRightOf="@id/imgProduct" />
+
+    <LinearLayout
+        android:id="@+id/layoutAddToBasket"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layoutInBasket"
+        android:layout_toRightOf="@id/imgProduct"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/editTextQty"
+            style="@style/BBEditTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/margin_mini"
+            android:inputType="numberSigned"
+            android:maxLength="2"
+            android:minLines="1"
+            android:paddingBottom="2dp"
+            android:paddingLeft="@dimen/padding_small"
+            android:paddingRight="@dimen/padding_small"
+            android:paddingTop="0dp"
+            android:selectAllOnFocus="true"
+            android:text="@string/one"
+            android:textColor="@color/uiv3_primary_text_color"
+            android:textSize="@dimen/primary_text_size" />
+
+        <Button
+            android:id="@+id/btnAddToBasket"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_small"
+            android:layout_marginLeft="@dimen/product_row_item_margin_small"
+            android:background="@drawable/main_button_rounded_background"
+            android:drawablePadding="@dimen/padding_small"
+            android:drawableRight="@drawable/ic_shopping_cart_white_18dp"
+            android:minHeight="0dp"
+            android:minWidth="0dp"
             android:paddingBottom="@dimen/padding_mini"
             android:paddingLeft="@dimen/padding_normal"
-            android:paddingRight="@dimen/padding_normal"
+            android:paddingRight="@dimen/padding_small"
             android:paddingTop="@dimen/padding_mini"
-            android:text="Offer!"
+            android:text="@string/ADD"
             android:textColor="@color/white"
             android:textSize="@dimen/primary_text_size" />
 
         <TextView
-            android:id="@+id/txtPromoAddSavings"
-            android:layout_width="match_parent"
+            android:id="@+id/txtOutOfStockORNotForSale"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/margin_mini"
-            android:layout_marginLeft="@dimen/margin_small"
-            android:layout_marginRight="@dimen/margin_mini"
-            android:layout_toRightOf="@id/promoLabel"
-            android:text="Save Rs. 22"
-            android:textColor="@color/promoAdditionalSavingsColor"
-            android:textSize="@dimen/secondary_text_size"
-            android:visibility="visible" />
+            android:layout_marginRight="@dimen/margin_normal"
+            android:text="@string/outOfStock"
+            android:textColor="@color/red"
+            android:textSize="@dimen/primary_text_size"
+            android:visibility="gone" />
+    </LinearLayout>
 
-        <TextView
-            android:id="@+id/txtPromoName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/txtPromoAddSavings"
-            android:layout_marginLeft="@dimen/margin_small"
-            android:layout_marginRight="@dimen/margin_mini"
-            android:layout_toRightOf="@id/promoLabel"
-            android:paddingBottom="10dp"
-            android:text="Buy 1 get 1 free"
-            android:textColor="@color/promoDescColor"
-            android:textSize="@dimen/secondary_text_size"
-            android:visibility="visible" />
-    </RelativeLayout>
+    <TextView
+        android:id="@+id/promoLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layoutAddToBasket"
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_marginTop="@dimen/margin_mini"
+        android:background="@color/promo_label_backgroung_color"
+        android:gravity="center"
+        android:paddingBottom="@dimen/padding_mini"
+        android:paddingLeft="@dimen/padding_normal"
+        android:paddingRight="@dimen/padding_normal"
+        android:paddingTop="@dimen/padding_mini"
+        android:text="Offer!"
+        android:textColor="@color/white"
+        android:textSize="@dimen/primary_text_size" />
+
+    <TextView
+        android:id="@+id/txtPromoAddSavings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layoutAddToBasket"
+        android:layout_marginLeft="@dimen/margin_small"
+        android:layout_marginRight="@dimen/margin_mini"
+        android:layout_marginTop="@dimen/margin_mini"
+        android:layout_toRightOf="@id/promoLabel"
+        android:text="Save Rs. 22"
+        android:textColor="@color/promoAdditionalSavingsColor"
+        android:textSize="@dimen/secondary_text_size" />
+
+    <TextView
+        android:id="@+id/txtPromoName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtPromoAddSavings"
+        android:layout_marginLeft="@dimen/margin_small"
+        android:layout_marginRight="@dimen/margin_mini"
+        android:layout_marginTop="@dimen/margin_small"
+        android:layout_toRightOf="@id/promoLabel"
+        android:paddingBottom="10dp"
+        android:text="Buy 1 get 1 free"
+        android:textColor="@color/promoDescColor"
+        android:textSize="@dimen/secondary_text_size" />
 
     <View
+        android:layout_below="@id/txtPromoName"
         android:id="@+id/viewSeparator"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/uiv3_divider_color" />
-</LinearLayout>
+</RelativeLayout>

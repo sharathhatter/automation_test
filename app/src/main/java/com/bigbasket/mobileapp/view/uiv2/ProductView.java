@@ -1,7 +1,6 @@
 package com.bigbasket.mobileapp.view.uiv2;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.v7.widget.PopupMenu;
 import android.text.Spannable;
@@ -160,7 +159,7 @@ public final class ProductView {
         txtMrp.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
 
         if (hasSavings && !TextUtils.isEmpty(product.getMrp())) {
-            String prefix = " `";
+            String prefix = "`";
             String mrpStr = UIUtil.formatAsMoney(Double.parseDouble(product.getMrp()));
             int prefixLen = prefix.length();
             SpannableString spannableMrp = new SpannableString(prefix + mrpStr);
@@ -186,7 +185,8 @@ public final class ProductView {
             txtSave.setVisibility(View.GONE);
         }
         txtSalePrice.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
-        txtSalePrice.setText(UIUtil.asRupeeSpannable(product.getSellPrice(), productViewDisplayDataHolder.getRupeeTypeface()));
+        txtSalePrice.setText(UIUtil.asRupeeSpannable(
+                UIUtil.formatAsMoney(Double.parseDouble(product.getSellPrice())), productViewDisplayDataHolder.getRupeeTypeface()));
     }
 
     private static <T> void setPromo(ProductViewHolder productViewHolder, Product product, ProductViewDisplayDataHolder productViewDisplayDataHolder,
@@ -334,7 +334,7 @@ public final class ProductView {
                     txtInBasket.setVisibility(View.VISIBLE);
                     txtDecBasketQty.setVisibility(View.VISIBLE);
                     txtIncBasketQty.setVisibility(View.VISIBLE);
-                    productViewHolder.itemView.setBackgroundColor(Constants.IN_BASKET_COLOR);
+                    //productViewHolder.itemView.setBackgroundColor(Constants.IN_BASKET_COLOR);
 
                     btnAddToBasket.setVisibility(View.GONE);
                     editTextQty.setVisibility(View.GONE);
@@ -346,7 +346,7 @@ public final class ProductView {
 
                     btnAddToBasket.setVisibility(View.VISIBLE);
                     editTextQty.setVisibility(View.VISIBLE);
-                    productViewHolder.itemView.setBackgroundColor(Color.WHITE);
+                    //productViewHolder.itemView.setBackgroundColor(Color.WHITE);
                 }
 
                 txtIncBasketQty.setOnClickListener(new View.OnClickListener() {
@@ -415,7 +415,7 @@ public final class ProductView {
                 } else {
                     txtOutOfStockORNotForSale.setText("Not for sale");
                 }
-                productViewHolder.itemView.setBackgroundColor(Color.WHITE);
+                //productViewHolder.itemView.setBackgroundColor(Color.WHITE);
             }
         } else {
             txtInBasket.setVisibility(View.GONE);
@@ -423,7 +423,7 @@ public final class ProductView {
             txtIncBasketQty.setVisibility(View.GONE);
             btnAddToBasket.setVisibility(View.GONE);
             editTextQty.setVisibility(View.GONE);
-            productViewHolder.itemView.setBackgroundColor(Color.WHITE);
+            //productViewHolder.itemView.setBackgroundColor(Color.WHITE);
         }
     }
 }

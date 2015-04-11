@@ -54,5 +54,14 @@
             android:textColor="@color/uiv3_primary_btn_bkg"
             android:textSize="@dimen/secondary_text_size" />
 
+        <TextView
+            android:id="@+id/lblContinueShopping"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/padding_normal"
+            android:text="@string/continue_shopping_txt"
+            android:textColor="@color/uiv3_primary_btn_bkg"
+            android:textSize="@dimen/secondary_text_size" />
+
     </LinearLayout>
 </ScrollView>

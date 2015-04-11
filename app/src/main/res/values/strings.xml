@@ -429,6 +429,7 @@
     <string name="noProductsSearchMsg">Sorry! There are no products found related to your search term.</string>
 
     <!-- Invoice -->
+    <string name="thankYouHeader">Thank You</string>
     <string name="orderThankyouText">Thank you for placing order with BigBasket.\nYour Order# is\u00A0</string>
     <string name="multipleOrderThankyouText">Thank you! Your orders have been placed</string>
     <string name="viewInvoice">VIEW INVOICE</string>

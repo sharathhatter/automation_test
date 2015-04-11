@@ -151,7 +151,7 @@ public class UIUtil {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
-    public static Spannable asRupeeSpannable(String amtTxt, Typeface faceRupee) {
+    public static SpannableString asRupeeSpannable(String amtTxt, Typeface faceRupee) {
         String rupeeSym = "`";
         SpannableString spannableString = new SpannableString(rupeeSym + amtTxt);
         spannableString.setSpan(new CustomTypefaceSpan("", faceRupee), 0, rupeeSym.length(),
@@ -159,7 +159,7 @@ public class UIUtil {
         return spannableString;
     }
 
-    public static Spannable asRupeeSpannable(double amt, Typeface faceRupee) {
+    public static SpannableString asRupeeSpannable(double amt, Typeface faceRupee) {
         return asRupeeSpannable(formatAsMoney(amt), faceRupee);
     }
 
@@ -393,8 +393,9 @@ public class UIUtil {
     }
 
     public static void displayAsyncImage(ImageView imageView, String url) {
-        Picasso.with(imageView.getContext())
-                .load(url)
+        Picasso picasso = Picasso.with(imageView.getContext());
+        picasso.setIndicatorsEnabled(true);
+        picasso.load(url)
                 .placeholder(R.drawable.loading)
                 .error(R.drawable.noimage)
                 .into(imageView);

@@ -399,6 +399,10 @@ public class ShowCartFragment extends BaseFragment {
         if (getCurrentActivity() != null) {
             getCurrentActivity().invalidateOptionsMenu();
         }
+        if (getArguments() != null) {
+            String fulfillmentIds = getArguments().getString(Constants.INTERNAL_VALUE);
+            getCartItems(fulfillmentIds);
+        }
     }
 
     private void showBasketEmptyMessage() {
