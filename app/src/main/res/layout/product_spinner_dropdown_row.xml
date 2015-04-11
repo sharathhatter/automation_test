@@ -2,38 +2,37 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:paddingTop="@dimen/padding_mini"
-    android:paddingBottom="@dimen/padding_mini"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
     android:minWidth="@dimen/min_width_product_drop_down"
-    android:layout_height="wrap_content">
+    android:paddingBottom="@dimen/padding_mini"
+    android:paddingTop="@dimen/padding_mini">
 
 
     <TextView
+        android:id="@+id/txtProductSellPrice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:paddingBottom="@dimen/padding_small"
+        android:layout_alignParentTop="true"
         android:layout_marginRight="@dimen/margin_mini"
+        android:paddingBottom="@dimen/padding_small"
         android:paddingTop="@dimen/padding_small"
-        android:id="@+id/txtProductSellPrice"
         android:textColor="@color/uiv3_primary_text_color"
-        android:textSize="@dimen/secondary_text_size"
-        />
+        android:textSize="@dimen/secondary_text_size" />
 
     <TextView
+        android:id="@+id/txtProductPkgDesc"
         android:layout_width="wrap_content"
-        android:layout_toLeftOf="@+id/txtProductSellPrice"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_marginLeft="@dimen/margin_mini"
         android:layout_alignParentTop="true"
-        android:id="@+id/txtProductPkgDesc"
-        android:textColor="@color/uiv3_primary_text_color"
-        android:textSize="@dimen/secondary_text_size"
+        android:layout_marginLeft="@dimen/margin_mini"
         android:layout_marginRight="@dimen/margin_small"
+        android:layout_toLeftOf="@+id/txtProductSellPrice"
         android:paddingBottom="@dimen/padding_small"
         android:paddingTop="@dimen/padding_small"
-        />
+        android:textColor="@color/uiv3_primary_text_color"
+        android:textSize="@dimen/secondary_text_size" />
 
 </RelativeLayout>

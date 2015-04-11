@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -19,7 +20,7 @@ import com.bigbasket.mobileapp.util.UIUtil;
 import java.util.List;
 
 
-public class ProductListSpinnerAdapter extends ArrayAdapter<Product> {
+public class ProductListSpinnerAdapter extends BaseAdapter {
     private BaseActivity ctx;
     List<Product> productArrayList;
     private Typeface typeface;
@@ -27,15 +28,19 @@ public class ProductListSpinnerAdapter extends ArrayAdapter<Product> {
     private int eightDp;
     private int fourDp;
 
-    public ProductListSpinnerAdapter(BaseActivity ctx, int resource, List<Product> productArrayList,
+    public ProductListSpinnerAdapter(BaseActivity ctx, List<Product> productArrayList,
                                      Typeface typeface, Typeface faceRupee) {
-        super(ctx, resource, productArrayList);
         this.ctx = ctx;
         this.productArrayList = productArrayList;
         this.typeface = typeface;
         this.faceRupee = faceRupee;
         this.eightDp = (int) ctx.getResources().getDimension(R.dimen.padding_small);
         this.fourDp = (int) ctx.getResources().getDimension(R.dimen.padding_mini);
+    }
+
+    @Override
+    public int getCount() {
+        return productArrayList.size();
     }
 
     @Override
@@ -49,7 +54,7 @@ public class ProductListSpinnerAdapter extends ArrayAdapter<Product> {
     }
 
     @Override
-    public View getDropDownView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
         Product product = productArrayList.get(position);
         SpinnerDropDownViewHolder spinnerDropDownViewHolder;
@@ -77,16 +82,6 @@ public class ProductListSpinnerAdapter extends ArrayAdapter<Product> {
                 Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
         txtProductSellPrice.setVisibility(View.VISIBLE);
         txtProductSellPrice.setText(spannableString);
-        return row;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View row = convertView;
-        if (row == null) {
-            LayoutInflater inflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            row = inflater.inflate(R.layout.product_spinner_row, parent, false);
-        }
         return row;
     }
 

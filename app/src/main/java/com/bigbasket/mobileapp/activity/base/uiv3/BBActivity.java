@@ -61,7 +61,6 @@ import com.bigbasket.mobileapp.fragment.product.BrowseByOffersFragment;
 import com.bigbasket.mobileapp.fragment.product.CategoryProductsFragment;
 import com.bigbasket.mobileapp.fragment.product.GenericProductListFragment;
 import com.bigbasket.mobileapp.fragment.product.ProductDetailFragment;
-import com.bigbasket.mobileapp.fragment.product.ProductListDialogFragment;
 import com.bigbasket.mobileapp.fragment.product.SubCategoryListFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoCategoryFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoDetailFragment;
@@ -71,7 +70,6 @@ import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
-import com.bigbasket.mobileapp.interfaces.ProductListDialogAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.SectionManager;
@@ -104,7 +102,7 @@ import java.util.Map;
 
 
 public class BBActivity extends SocialLoginActivity implements BasketOperationAware,
-        CartInfoAware, HandlerAware, ProductListDialogAware {
+        CartInfoAware, HandlerAware {
 
     private ActionBarDrawerToggle mDrawerToggle;
     private String mDrawerTitle;
@@ -872,27 +870,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         sectionItems.add(homeSectionItem);
         Section section = new Section(null, null, Section.MSG, sectionItems, null);
         return new SectionNavigationItem(section, homeSectionItem);
-    }
-
-    @Override
-    public void showDialog(String title, ArrayList<Product> products, int productCount, String baseImgUrl,
-                           boolean asDialog, String tagName) {
-        if (asDialog) {
-            ProductListDialogFragment productListDialogFragment = ProductListDialogFragment.
-                    newInstance(title, products, productCount, baseImgUrl, 10, 20);
-            productListDialogFragment.show(getSupportFragmentManager(),
-                    Constants.SHOPPING_LISTS);
-        } else {
-            ProductListDialogFragment productListDialogFragment = ProductListDialogFragment.
-                    newInstance(title, products, productCount, baseImgUrl, ProductListDialogFragment.SHOW_ALL,
-                            ProductListDialogFragment.SHOW_ALL);
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.add(R.id.content_frame, productListDialogFragment, tagName);
-            if (tagName != null) {
-                ft.addToBackStack(tagName);
-            }
-            ft.commit();
-        }
     }
 
     @Override

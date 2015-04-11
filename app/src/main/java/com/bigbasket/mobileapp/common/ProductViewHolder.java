@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -15,7 +14,7 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
     private ImageView imgProduct;
     private ImageView imgBby;
     private TextView txtIsNewProduct;
-    private Spinner spinnerPackageDesc;
+    private Button btnMorePackSizes;
     private TextView packageDescTextView;
     private TextView txtProductDesc;
     private TextView txtSalePrice;
@@ -57,11 +56,11 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
         return txtIsNewProduct;
     }
 
-    public Spinner getSpinnerPackageDesc() {
-        if (spinnerPackageDesc == null) {
-            spinnerPackageDesc = (Spinner) itemView.findViewById(R.id.spinnerPackageDesc);
+    public Button getBtnMorePackSizes() {
+        if (btnMorePackSizes == null) {
+            btnMorePackSizes = (Button) itemView.findViewById(R.id.btnMorePackSizes);
         }
-        return spinnerPackageDesc;
+        return btnMorePackSizes;
     }
 
     public TextView getPackageDescTextView() {

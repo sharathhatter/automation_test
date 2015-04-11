@@ -80,12 +80,12 @@ public class ProductListApiResponseCallback<T> implements Callback<ApiResponse<P
                         }
                     }
                     ((ProductListDataAware) ctx).setProductListData(productListData);
+                    if (ctx instanceof SectionAware) {
+                        ((SectionAware) ctx).setSectionData(productListDataApiResponse.apiResponseContent.sectionData);
+                    }
+                    ((ProductListDataAware) ctx).updateData();
                 }
             }
-            if (ctx instanceof SectionAware) {
-                ((SectionAware) ctx).setSectionData(productListDataApiResponse.apiResponseContent.sectionData);
-            }
-            ((ProductListDataAware) ctx).updateData();
         } else {
             ((HandlerAware) ctx).getHandler().sendEmptyMessage(productListDataApiResponse.status,
                     productListDataApiResponse.message, true);

@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.view.uiv2;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.support.v7.widget.PopupMenu;
@@ -9,11 +10,12 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Spinner;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -95,31 +97,39 @@ public final class ProductView {
                                              final T productDataAware, final String navigationCtx) {
         final List<Product> childProducts = product.getAllProducts();
         boolean hasChildren = childProducts != null && childProducts.size() > 0;
-        Spinner spinnerPackageDesc = productViewHolder.getSpinnerPackageDesc();
+        Button btnMorePackSizes = productViewHolder.getBtnMorePackSizes();
+        btnMorePackSizes.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
         if (hasChildren) {
-            ProductListSpinnerAdapter productListSpinnerAdapter = new ProductListSpinnerAdapter(((ActivityAware) productDataAware).getCurrentActivity(),
-                    android.R.layout.simple_spinner_item,
-                    childProducts, productViewDisplayDataHolder.getSansSerifMediumTypeface(),
-                    productViewDisplayDataHolder.getRupeeTypeface());
-            spinnerPackageDesc.setAdapter(productListSpinnerAdapter);
-            productListSpinnerAdapter.notifyDataSetChanged();
-            spinnerPackageDesc.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            btnMorePackSizes.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    Product childProduct = childProducts.get(position);
-                    setProductView(productViewHolder, childProduct, baseImgUrl,
-                            new ProductDetailOnClickListener(childProduct.getSku(), (ActivityAware) productDataAware),
-                            productViewDisplayDataHolder, true, productDataAware, navigationCtx);
-                }
+                public void onClick(View v) {
+                    final Dialog dialog = new Dialog(((ActivityAware) productDataAware).getCurrentActivity());
+                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    ListView listView = new ListView(((ActivityAware) productDataAware).getCurrentActivity());
 
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-
+                    ProductListSpinnerAdapter productListSpinnerAdapter = new ProductListSpinnerAdapter(((ActivityAware) productDataAware).getCurrentActivity(),
+                            childProducts, productViewDisplayDataHolder.getSansSerifMediumTypeface(),
+                            productViewDisplayDataHolder.getRupeeTypeface());
+                    listView.setAdapter(productListSpinnerAdapter);
+                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            Product childProduct = childProducts.get(position);
+                            setProductView(productViewHolder, childProduct, baseImgUrl,
+                                    new ProductDetailOnClickListener(childProduct.getSku(), (ActivityAware) productDataAware),
+                                    productViewDisplayDataHolder, true, productDataAware, navigationCtx);
+                            if (dialog.isShowing()) {
+                                dialog.dismiss();
+                            }
+                        }
+                    });
+                    dialog.setContentView(listView);
+                    dialog.show();
                 }
             });
-            spinnerPackageDesc.setVisibility(View.VISIBLE);
+            btnMorePackSizes.setVisibility(View.VISIBLE);
         } else {
-            spinnerPackageDesc.setVisibility(View.GONE);
+            btnMorePackSizes.setVisibility(View.GONE);
         }
     }
 
@@ -135,17 +145,7 @@ public final class ProductView {
         }
         txtProductDesc.setOnClickListener(productDetailOnClickListener);
         TextView txtPackageDesc = productViewHolder.getPackageDescTextView();
-        if (productViewHolder.getSpinnerPackageDesc().getVisibility() == View.VISIBLE) {
-            String wtAndPk = product.getWeightAndPackDesc();
-            String[] splitted = wtAndPk.split(" ");
-            if (splitted.length > 2) {
-                txtPackageDesc.setText(splitted[0] + " " + splitted[1] + "...");
-            } else {
-                txtPackageDesc.setText(product.getWeightAndPackDesc());
-            }
-        } else {
-            txtPackageDesc.setText(product.getWeightAndPackDesc());
-        }
+        txtPackageDesc.setText(product.getWeightAndPackDesc());
         txtPackageDesc.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
     }
 
