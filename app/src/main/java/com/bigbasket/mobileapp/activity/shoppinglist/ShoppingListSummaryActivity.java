@@ -32,7 +32,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class ShoppingListSummaryActivity extends BBActivityBB-4206  {
+public class ShoppingListSummaryActivity extends BBActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
