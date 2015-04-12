@@ -397,7 +397,7 @@ public class PromoDetailFragment extends BaseFragment {
                     16, 16);
             ImageView imgTick = (ImageView) base.findViewById(R.id.imgTick);
             imgTick.setLayoutParams(layoutParams);
-            imgTick.setImageResource(R.drawable.promo_flash_icon);
+            imgTick.setImageResource(R.drawable.ic_star_outline_grey600_24dp);
             imgTick.setVisibility(View.VISIBLE);
         }
         return base;

@@ -15,7 +15,7 @@
             android:layout_width="16dp"
             android:id="@+id/imgTick"
             android:layout_height="14dp"
-            android:visibility="gone"
+            android:visibility="visible"
             android:layout_marginTop="4dp"
             android:src="@drawable/no_bkg_tick"
             android:contentDescription="@string/alt_placeholder"
