@@ -14,7 +14,7 @@ import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
-import com.bigbasket.mobileapp.fragment.product.SubCategoryListFragment;
+import com.bigbasket.mobileapp.fragment.product.CategoryLandingFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoCategoryFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoDetailFragment;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
@@ -141,12 +141,12 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                     if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
                         String title = sectionItem.getTitle() != null ? sectionItem.getTitle().getText() : "";
                         if (hasMainMenu()) {
-                            SubCategoryListFragment subCategoryListFragment = new SubCategoryListFragment();
+                            CategoryLandingFragment categoryLandingFragment = new CategoryLandingFragment();
                             Bundle subCatBundle = new Bundle();
                             subCatBundle.putString(Constants.TOP_CATEGORY_SLUG, destinationInfo.getDestinationSlug());
                             subCatBundle.putString(Constants.TOP_CATEGORY_NAME, title);
-                            subCategoryListFragment.setArguments(subCatBundle);
-                            ((BBActivity) context).onChangeFragment(subCategoryListFragment);
+                            categoryLandingFragment.setArguments(subCatBundle);
+                            ((BBActivity) context).onChangeFragment(categoryLandingFragment);
                         } else {
                             Intent intent = new Intent(((ActivityAware) context).getCurrentActivity(), BBActivity.class);
                             intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_CATEGORY_LANDING);
@@ -223,7 +223,12 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                     if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
                         boolean isSmartBasket = destinationInfo.getDestinationSlug().equalsIgnoreCase(Constants.SMART_BASKET_SLUG);
                         intent = new Intent(((ActivityAware) context).getCurrentActivity(), ShoppingListSummaryActivity.class);
-                        String title = sectionItem.getTitle() != null ? sectionItem.getTitle().getText() : "";
+                        String title;
+                        if (isSmartBasket) {
+                            title = Constants.SMART_BASKET;
+                        } else {
+                            title = section.getTitle() != null ? section.getTitle().getText() : "";
+                        }
                         ShoppingListName shoppingListName = new ShoppingListName(title, destinationInfo.getDestinationSlug(),
                                 isSmartBasket);
                         intent.putExtra(Constants.SHOPPING_LIST_NAME, shoppingListName);

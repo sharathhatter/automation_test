@@ -58,7 +58,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.shopping_list_menu, menu);
+        inflater.inflate(R.menu.add_menu, menu);
     }
 
     @Override
@@ -81,7 +81,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menuAddShoppingList) {
+        if (item.getItemId() == R.id.menuAddItem) {
             CreateShoppingListDialog createShoppingListDialog = new CreateShoppingListDialog();
             createShoppingListDialog.setTargetFragment(getFragmentInstance(), 0);
             createShoppingListDialog.show(getFragmentManager(), Constants.SHOPPING_LIST_NAME);

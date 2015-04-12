@@ -12,6 +12,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CheckedTextView;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
@@ -146,6 +147,7 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
             private TextView txtVoucherDesc;
             private TextView txtVoucherMsg;
             private TextView txtVoucherValidity;
+            private CheckedTextView rbtnApplyVoucher;
 
             private ActiveVoucherViewHolder(View base) {
                 this.base = base;
@@ -182,6 +184,13 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
                 }
                 return txtVoucherCode;
             }
+
+            public CheckedTextView getRbtnApplyVoucher() {
+                if (rbtnApplyVoucher == null) {
+                    rbtnApplyVoucher = (CheckedTextView) base.findViewById(R.id.rbtnApplyVoucher);
+                }
+                return rbtnApplyVoucher;
+            }
         }
 
         @Override
@@ -201,10 +210,13 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
             TextView txtVoucherDesc = activeVoucherViewHolder.getTxtVoucherDesc();
             TextView txtVoucherValidity = activeVoucherViewHolder.getTxtVoucherValidity();
             TextView txtVoucherMsg = activeVoucherViewHolder.getTxtVoucherMsg();
+            CheckedTextView rbtnApplyVoucher = activeVoucherViewHolder.getRbtnApplyVoucher();
 
             if (activeVouchers.canApply()) {
+                rbtnApplyVoucher.setVisibility(View.VISIBLE);
                 txtVoucherMsg.setTextColor(getResources().getColor(R.color.uiv3_secondary_text_color));
             } else {
+                rbtnApplyVoucher.setVisibility(View.GONE);
                 txtVoucherMsg.setTextColor(getResources().getColor(R.color.dark_red));
             }
 

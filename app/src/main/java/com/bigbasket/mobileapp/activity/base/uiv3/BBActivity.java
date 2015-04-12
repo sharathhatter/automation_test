@@ -58,10 +58,10 @@ import com.bigbasket.mobileapp.fragment.order.OrderThankYouFragment;
 import com.bigbasket.mobileapp.fragment.order.ShowCartFragment;
 import com.bigbasket.mobileapp.fragment.order.SlotSelectionFragment;
 import com.bigbasket.mobileapp.fragment.product.BrowseByOffersFragment;
+import com.bigbasket.mobileapp.fragment.product.CategoryLandingFragment;
 import com.bigbasket.mobileapp.fragment.product.CategoryProductsFragment;
 import com.bigbasket.mobileapp.fragment.product.GenericProductListFragment;
 import com.bigbasket.mobileapp.fragment.product.ProductDetailFragment;
-import com.bigbasket.mobileapp.fragment.product.SubCategoryListFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoCategoryFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoDetailFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoSetProductsFragment;
@@ -343,12 +343,12 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 addToMainLayout(new BrowseByOffersFragment());
                 break;
             case FragmentCodes.START_CATEGORY_LANDING:
-                SubCategoryListFragment subCategoryListFragment = new SubCategoryListFragment();
+                CategoryLandingFragment categoryLandingFragment = new CategoryLandingFragment();
                 Bundle subCatBundle = new Bundle();
                 subCatBundle.putString(Constants.TOP_CATEGORY_SLUG, getIntent().getStringExtra(Constants.TOP_CATEGORY_SLUG));
                 subCatBundle.putString(Constants.TOP_CATEGORY_NAME, getIntent().getStringExtra(Constants.TOP_CATEGORY_NAME));
-                subCategoryListFragment.setArguments(subCatBundle);
-                addToMainLayout(subCategoryListFragment);
+                categoryLandingFragment.setArguments(subCatBundle);
+                addToMainLayout(categoryLandingFragment);
                 break;
             case FragmentCodes.START_PROMO_DETAIL:
                 int promoId = getIntent().getIntExtra(Constants.PROMO_ID, -1);
@@ -594,9 +594,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             if (basketCountTextView != null) {
                 basketCountTextView.setText(productQtyInBasket + " in");
                 basketCountTextView.setVisibility(View.VISIBLE);
-            }
-            if (productView != null) {
-                productView.setBackgroundColor(Constants.IN_BASKET_COLOR);
             }
         }
 

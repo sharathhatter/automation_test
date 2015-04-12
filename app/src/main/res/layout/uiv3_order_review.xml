@@ -36,7 +36,7 @@
                 android:layout_marginTop="@dimen/margin_mini"
                 android:layout_toRightOf="@id/imgAlmostDone"
                 android:text="@string/orderSummaryDefaultMsg"
-                android:textColor="@color/uiv3_primary_text_color"
+                android:textColor="@color/dark_red"
                 android:textSize="@dimen/secondary_text_size" />
 
         </RelativeLayout>

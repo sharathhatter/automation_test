@@ -100,6 +100,7 @@ public class Constants {
     public static final String EXTRA_ATTR = "extra_attr";
     public static final String INTERNAL_VALUE = "internal_value";
     public static final String APP_LINK = "app_link";
+    public static final String GO_TO_INVOICE = "goToInvoice";
     public static final String WEB_LINK = "link";
     public static final String TOP_CATEGORY_SLUG = "top_category_slug";
     public static final String SLUG_NAME = "slug_name";
@@ -685,7 +686,6 @@ public class Constants {
     public static final String SL_SUMMARY = "sl_summary";
     public static final String PROMO_LIST = "promo_list";
     public static final String DYNAMIC_PAGE = "dynamic_page";
-    public static final int IN_BASKET_COLOR = 0xFFF9EDDD; // #F9EDDD
     public static final String IS_PENDING_GO_TO_HOME = "isPendingGoToHome";
     public static final String RELOAD_APP = "reloadApp";
     public static final String HAS_USER_CHOSEN_CITY = "has_user_chosen_city";

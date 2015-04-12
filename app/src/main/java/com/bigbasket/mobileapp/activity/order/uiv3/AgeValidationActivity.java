@@ -11,12 +11,12 @@ import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -114,7 +114,7 @@ public class AgeValidationActivity extends BackButtonActivity {
         contentView.removeAllViews();
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        RelativeLayout layoutRelativeMain = (RelativeLayout) inflater.inflate(R.layout.uiv3_checkout_qc_scroll, contentView, false);
+        ViewGroup layoutRelativeMain = (ViewGroup) inflater.inflate(R.layout.uiv3_checkout_qc_scroll, contentView, false);
         LinearLayout baseView = (LinearLayout) layoutRelativeMain.findViewById(R.id.layoutMainLayout);
         contentView.addView(layoutRelativeMain);
         btnListFooter = (Button) layoutRelativeMain.findViewById(R.id.btnListFooter);

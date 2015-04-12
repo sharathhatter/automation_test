@@ -256,9 +256,6 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
                 basketCountTextView.setText(productQtyInBasket + " in");
                 basketCountTextView.setVisibility(View.VISIBLE);
             }
-            if (productView != null) {
-                productView.setBackgroundColor(Constants.IN_BASKET_COLOR);
-            }
         }
 
         if (editTextQty != null && getCurrentActivity() != null && !isSuspended()) {

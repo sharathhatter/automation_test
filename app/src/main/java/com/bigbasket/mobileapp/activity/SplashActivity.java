@@ -17,6 +17,7 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
+import com.bigbasket.mobileapp.activity.order.uiv3.OrderInvoiceActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse;
@@ -232,9 +233,15 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
             if ((data != null && data.getBooleanExtra(Constants.RELOAD_APP, false))
                     || resultCode == NavigationCodes.CITY_CHANGED) {
                 loadNavigation();
+            } else if (data != null && data.getBooleanExtra(Constants.GO_TO_INVOICE, false)) {
+                Intent invoiceIntent = new Intent(this, OrderInvoiceActivity.class);
+                invoiceIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_THANKYOU);
+                invoiceIntent.putExtra(Constants.ORDERS, data.getParcelableArrayListExtra(Constants.ORDERS));
+                startActivityForResult(invoiceIntent, NavigationCodes.GO_TO_HOME);
             } else {
                 loadHomePage();
             }
+
         } else {
             finish();
         }

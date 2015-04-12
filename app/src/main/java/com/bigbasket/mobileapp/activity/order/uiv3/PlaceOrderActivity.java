@@ -39,8 +39,6 @@ import com.bigbasket.mobileapp.model.order.VoucherApplied;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
-import com.bigbasket.mobileapp.util.FragmentCodes;
-import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
@@ -506,10 +504,10 @@ public class PlaceOrderActivity extends BackButtonActivity {
     }
 
     private void showOrderThankyou(ArrayList<Order> orders) {
-        Intent invoiceIntent = new Intent(this, OrderInvoiceActivity.class);
-        invoiceIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_THANKYOU);
-        invoiceIntent.putExtra(Constants.ORDERS, orders);
-        startActivityForResult(invoiceIntent, NavigationCodes.GO_TO_HOME);
+        Intent data = new Intent();
+        data.putParcelableArrayListExtra(Constants.ORDERS, orders);
+        data.putExtra(Constants.GO_TO_INVOICE, true);
+        goToHome(data);
     }
 
     @Override

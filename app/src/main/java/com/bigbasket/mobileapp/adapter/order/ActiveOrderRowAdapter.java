@@ -268,18 +268,11 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
         }
 
         final TextView txtInBasket = rowHolder.getTxtInBasket();
-        if (cartItem.getTotalQty() > 0) {
-            txtInBasket.setVisibility(View.VISIBLE);
-            int itemCount = (int) cartItem.getTotalQty();
-            txtInBasket.setText(String.valueOf(itemCount) + " in ");
-        } else {
-            txtInBasket.setVisibility(View.GONE);
-        }
-
         final TextView txtDecBasketQty = rowHolder.getTxtDecBasketQty();
         final TextView txtIncBasketQty = rowHolder.getTxtIncBasketQty();
         final ImageView imgRemove = rowHolder.getImgRemove();
         final View basketOperationSeparatorLine = rowHolder.getBasketOperationSeparatorLine();
+        TextView txtQty = rowHolder.getTxtQty();
         if (txtDecBasketQty != null && txtIncBasketQty != null && imgRemove != null) {
             if (orderItemDisplaySource == OrderItemDisplaySource.BASKET && !isReadOnlyBasket && cartItem.getTotalPrice() > 0) {
                 txtInBasket.setVisibility(View.VISIBLE);
@@ -287,6 +280,16 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
                 txtDecBasketQty.setVisibility(View.VISIBLE);
                 imgRemove.setVisibility(View.VISIBLE);
                 basketOperationSeparatorLine.setVisibility(View.VISIBLE);
+                txtQty.setVisibility(View.GONE);
+
+                if (cartItem.getTotalQty() > 0) {
+                    txtInBasket.setVisibility(View.VISIBLE);
+                    int itemCount = (int) cartItem.getTotalQty();
+                    txtInBasket.setText(String.valueOf(itemCount) + " in ");
+                } else {
+                    txtInBasket.setVisibility(View.GONE);
+                }
+
                 txtDecBasketQty.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -344,6 +347,13 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
                     }
                 });
             } else {
+                if (cartItem.getTotalQty() > 0) {
+                    txtQty.setVisibility(View.VISIBLE);
+                    String itemCount = UIUtil.formatAsMoney(cartItem.getTotalQty());
+                    txtQty.setText(itemCount + " item" + (cartItem.getTotalQty() > 1 ? "s" : ""));
+                } else {
+                    txtQty.setVisibility(View.GONE);
+                }
                 txtInBasket.setVisibility(View.GONE);
                 txtIncBasketQty.setVisibility(View.GONE);
                 txtDecBasketQty.setVisibility(View.GONE);
@@ -508,6 +518,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
         private ImageView imgLiquorIcon;
         private View base;
         private View basketOperationSeparatorLine;
+        private TextView txtQty;
 
         public RowHolder(View base) {
             this.base = base;
@@ -599,6 +610,14 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
                 txtPromoNameDesc.setTypeface(faceRobotoRegular);
             }
             return txtPromoNameDesc;
+        }
+
+        public TextView getTxtQty() {
+            if (txtQty == null) {
+                txtQty = (TextView) base.findViewById(R.id.txtQty);
+                txtQty.setTypeface(faceRobotoRegular);
+            }
+            return txtQty;
         }
 
         public ImageView getImgRemove() {

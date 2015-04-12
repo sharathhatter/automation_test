@@ -75,28 +75,47 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/txtProductDesc"
             android:layout_marginLeft="@dimen/margin_mini"
-            android:paddingTop="5dp"
             android:layout_toRightOf="@id/txtSalePrice"
             android:drawablePadding="@dimen/padding_mini"
+            android:paddingTop="5dp"
             android:text="Save: Rs 10000.00"
             android:textColor="@color/saveColor"
             android:textSize="@dimen/small_text_size" />
 
-        <include
-            android:id="@+id/layoutBasketOperation"
-            layout="@layout/uiv3_basket_operation_control"
+        <LinearLayout
+            android:id="@+id/layoutQty"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/txtSalePrice"
-            android:layout_marginBottom="@dimen/margin_mini"
-            android:layout_marginTop="@dimen/margin_small"
-            android:layout_toRightOf="@id/imgProduct" />
+            android:layout_marginLeft="@dimen/margin_mini"
+            android:layout_toRightOf="@id/imgProduct"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtQty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin_mini"
+                android:layout_marginTop="@dimen/margin_small"
+                android:text="10 Items"
+                android:textColor="@color/uiv3_primary_text_color"
+                android:textSize="@dimen/secondary_text_size" />
+
+            <include
+                android:id="@+id/layoutBasketOperation"
+                layout="@layout/uiv3_basket_operation_control"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin_mini"
+                android:layout_marginTop="@dimen/margin_small" />
+
+        </LinearLayout>
 
         <ImageView
             android:id="@+id/imgRegularImg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/layoutBasketOperation"
+            android:layout_below="@id/layoutQty"
             android:layout_marginLeft="@dimen/margin_small"
             android:layout_marginTop="@dimen/margin_mini"
             android:adjustViewBounds="true"
@@ -109,7 +128,7 @@
             android:id="@+id/txtRegularPriceAndQty"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/layoutBasketOperation"
+            android:layout_below="@id/layoutQty"
             android:layout_marginLeft="@dimen/margin_small"
             android:layout_marginTop="@dimen/margin_mini"
             android:layout_toRightOf="@id/imgRegularImg"
@@ -122,7 +141,7 @@
             android:id="@+id/lblRegularPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/layoutBasketOperation"
+            android:layout_below="@id/layoutQty"
             android:layout_marginBottom="@dimen/margin_small"
             android:layout_marginLeft="@dimen/margin_small"
             android:layout_marginTop="@dimen/margin_mini"

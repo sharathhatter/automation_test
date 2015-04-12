@@ -39,7 +39,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class SubCategoryListFragment extends BaseSectionFragment {
+public class CategoryLandingFragment extends BaseSectionFragment {
 
     private String topCatSlug;
     private String topCatName;
@@ -146,6 +146,10 @@ public class SubCategoryListFragment extends BaseSectionFragment {
         if (subCategoryModel != null && subCategoryModel.getCategory() != null) {
             for (int i = 0; i < subCategoryModel.getCategory().size(); i++) {
                 Category subCat = subCategoryModel.getCategory().get(i);
+                if (subCat.getCategory() != null && subCat.getCategory().size() > 0) {
+                    Category allSubCatProductList = new Category("All " + subCat.getName(), subCat.getSlug());
+                    subCat.getCategory().add(0, allSubCatProductList);
+                }
                 categoryArrayList.add(subCat);
             }
         }
@@ -215,7 +219,7 @@ public class SubCategoryListFragment extends BaseSectionFragment {
     @NonNull
     @Override
     public String getFragmentTxnTag() {
-        return SubCategoryListFragment.class.getName();
+        return CategoryLandingFragment.class.getName();
     }
 
     @Override

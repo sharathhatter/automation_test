@@ -70,7 +70,7 @@ public class BigBasketApiAdapter {
         };
 
         OkHttpClient okHttpClient = new OkHttpClient();
-        okHttpClient.setReadTimeout(45, TimeUnit.SECONDS);
+        okHttpClient.setReadTimeout(30, TimeUnit.SECONDS);
         okHttpClient.setConnectTimeout(20, TimeUnit.SECONDS);
 
         RestAdapter restAdapter = new RestAdapter.Builder()

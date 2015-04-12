@@ -169,6 +169,7 @@
             android:id="@+id/txtOutOfStockORNotForSale"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_mini"
             android:layout_marginRight="@dimen/margin_normal"
             android:text="@string/outOfStock"
             android:textColor="@color/red"

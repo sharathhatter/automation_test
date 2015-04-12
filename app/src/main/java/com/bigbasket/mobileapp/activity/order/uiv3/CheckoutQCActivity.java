@@ -184,9 +184,6 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
                                 final ArrayList<CheckoutProduct> productWithSomeStockList) {
         FrameLayout base = (FrameLayout) findViewById(R.id.content_frame);
         LinearLayout contentView = new LinearLayout(this);
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT);
-        contentView.setLayoutParams(layoutParams);
         contentView.setOrientation(LinearLayout.VERTICAL);
         base.addView(contentView);
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -200,7 +197,7 @@ public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateRe
             contentView.setBackgroundColor(getResources().getColor(R.color.uiv3_list_bkg_color));
             contentView.setPadding(0, 0, 0, 10);
 
-            RelativeLayout layoutRelativeMain = (RelativeLayout) inflater.inflate(R.layout.uiv3_checkout_qc_scroll, contentView, false);
+            ViewGroup layoutRelativeMain = (ViewGroup) inflater.inflate(R.layout.uiv3_checkout_qc_scroll, contentView, false);
             LinearLayout linearLayoutViewQC = (LinearLayout) layoutRelativeMain.findViewById(R.id.layoutMainLayout);
             Button btnListFooter = (Button) layoutRelativeMain.findViewById(R.id.btnListFooter);
             contentView.addView(layoutRelativeMain);
