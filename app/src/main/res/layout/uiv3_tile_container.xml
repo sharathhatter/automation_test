@@ -1,31 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_marginBottom="@dimen/margin_mini">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/margin_mini">
+    <Button
+        android:id="@+id/btnMore"
+        style="@style/MoreButtonStyle"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/margin_mini" />
 
-        <Button
-            android:id="@+id/btnMore"
-            style="@style/MoreButtonStyle"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="@dimen/margin_mini" />
-
-        <TextView
-            android:id="@+id/txtListTitle"
-            style="@style/SectionHeaderTextStyle"
-            android:layout_toLeftOf="@id/btnMore" />
-    </RelativeLayout>
+    <TextView
+        android:id="@+id/txtListTitle"
+        style="@style/SectionHeaderTextStyle"
+        android:layout_toLeftOf="@id/btnMore" />
 
     <LinearLayout
         android:id="@+id/layoutTileContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/txtListTitle"
         android:layout_marginLeft="@dimen/margin_mini"
         android:layout_marginRight="@dimen/margin_mini"
         android:orientation="horizontal" />
-</LinearLayout>
+</RelativeLayout>

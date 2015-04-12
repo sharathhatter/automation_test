@@ -18,6 +18,9 @@ public class ShoppingListName implements Parcelable {
     @SerializedName(Constants.SHOPPING_LIST_IS_SYSTEM)
     private int isSystem;
 
+    @SerializedName(Constants.SHOPPING_LIST_DESC)
+    private String description;
+
     public ShoppingListName() {
     }
 
@@ -34,6 +37,10 @@ public class ShoppingListName implements Parcelable {
         }
         this.slug = source.readString();
         this.isSystem = source.readInt();
+        boolean wasDescNull = source.readByte() == (byte) 1;
+        if (!wasDescNull) {
+            this.description = source.readString();
+        }
     }
 
     public String getName() {
@@ -60,6 +67,10 @@ public class ShoppingListName implements Parcelable {
         isSystem = system ? 1 : 0;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
     @Override
     public String toString() {
         return name;
@@ -79,6 +90,11 @@ public class ShoppingListName implements Parcelable {
         }
         dest.writeString(this.slug);
         dest.writeInt(this.isSystem);
+        boolean wasDescNull = this.description == null;
+        dest.writeByte(wasDescNull ? (byte) 1 : (byte) 0);
+        if (!wasDescNull) {
+            dest.writeString(description);
+        }
     }
 
     public static final Parcelable.Creator<ShoppingListName> CREATOR = new Parcelable.Creator<ShoppingListName>() {

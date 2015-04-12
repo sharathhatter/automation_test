@@ -58,6 +58,8 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             if (sectionNavigationItem.getSectionItem().getTitle() != null &&
                     !TextUtils.isEmpty(sectionNavigationItem.getSectionItem().getTitle().getText())) {
                 txtNavListRow.setText(sectionNavigationItem.getSectionItem().getTitle().getText());
+            } else {
+                txtNavListRow.setText("");
             }
             if (!TextUtils.isEmpty(sectionNavigationItem.getSectionItem().getImage())) {
                 imgNavItem.setVisibility(View.VISIBLE);

@@ -13,6 +13,7 @@ import java.util.HashMap;
 
 public class Section extends BaseSectionTextItem implements Parcelable, Serializable {
     public static final String BANNER = "banner";
+    public static final String SALUTATION_TITLE = "salutation_title";
     public static final String SALUTATION = "salutation";
     public static final String PRODUCT_CAROUSEL = "product_carousel";
     public static final String NON_PRODUCT_CAROUSEL = "non_product_carousel";

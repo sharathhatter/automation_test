@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.PopupMenu;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -294,6 +295,14 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
                 TextView txtShopLstName = shoppingListViewHolder.getTxtShopLstName();
                 txtShopLstName.setText(shoppingListName.getName());
 
+                TextView txtShopLstDesc = shoppingListViewHolder.getTxtShopLstDesc();
+                if (TextUtils.isEmpty(shoppingListName.getDescription())) {
+                    txtShopLstDesc.setVisibility(View.GONE);
+                } else {
+                    txtShopLstDesc.setVisibility(View.VISIBLE);
+                    txtShopLstDesc.setText(shoppingListName.getDescription());
+                }
+
                 if (shoppingListName.isSystem()) {
                     ImageView imgShoppingListAdditionalAction = shoppingListViewHolder.getImgShoppingListAdditionalAction();
                     if (imgShoppingListAdditionalAction != null) {
@@ -375,6 +384,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
             private ImageView imgEditShopList;
             private ImageView imgDeleteShoppingList;
             private ImageView imgShoppingListAdditionalAction;
+            private TextView txtShopLstDesc;
 
             private ShoppingListViewHolder(View itemView) {
                 this.itemView = itemView;
@@ -407,6 +417,13 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
                     imgShoppingListAdditionalAction = (ImageView) itemView.findViewById(R.id.imgShoppingListAdditionalAction);
                 }
                 return imgShoppingListAdditionalAction;
+            }
+
+            public TextView getTxtShopLstDesc() {
+                if (txtShopLstDesc == null) {
+                    txtShopLstDesc = (TextView) itemView.findViewById(R.id.txtShopLstDesc);
+                }
+                return txtShopLstDesc;
             }
         }
     }

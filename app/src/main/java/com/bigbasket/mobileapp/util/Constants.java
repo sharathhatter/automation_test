@@ -61,6 +61,7 @@ public class Constants {
     public static final String SHOPPING_LISTS = "shopping_lists";
     public static final String SHOPPING_LIST_NAME = "list_name";
     public static final String SHOPPING_LIST_SLUG = "list_slug";
+    public static final String SHOPPING_LIST_DESC = "list_description";
     public static final String SHOPPING_LIST_IS_SYSTEM = "is_system";
     public static final String SYSTEM = "system";
     public static final String SLUG = "slug";

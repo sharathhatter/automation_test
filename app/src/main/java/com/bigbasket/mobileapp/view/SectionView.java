@@ -79,6 +79,8 @@ public class SectionView {
                 continue;
             }
             mainLayout.addView(sectionView);
+            if (section.getSectionType().equals(Section.SALUTATION))
+                continue;
             ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams)
                     sectionView.getLayoutParams();
             if (i == 0) {
@@ -113,6 +115,8 @@ public class SectionView {
                 return getInfoWidgetView(section);
             case Section.AD_IMAGE:
                 return getImageView(section);
+            case Section.SALUTATION_TITLE:
+                return getMsgView(section, inflater);
             case Section.MSG:
                 return getMsgView(section, inflater);
             case Section.MENU:
@@ -264,19 +268,22 @@ public class SectionView {
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         linearLayout.setLayoutParams(baseLayoutParams);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
+        boolean applyBottom = !section.getSectionType().equals(Section.SALUTATION_TITLE);
         for (SectionItem sectionItem : section.getSectionItems()) {
             if (sectionItem.getTitle() == null || TextUtils.isEmpty(sectionItem.getTitle().getText()))
                 continue;
-            TextView txtVw = (TextView) inflater.inflate(R.layout.uiv3_msg_text, linearLayout, false);
+            View view = inflater.inflate(R.layout.uiv3_msg_text, linearLayout, false);
+            TextView txtVw = (TextView) view.findViewById(R.id.txtMsg);
             Renderer renderer = mSectionData.getRenderersMap() != null ?
                     mSectionData.getRenderersMap().get(sectionItem.getTitle().getRenderingId()) : null;
             if (renderer != null) {
-                renderer.setRendering(txtVw, 0, 0, true, true, true, false);
+                renderer.setRendering(txtVw, 0, 0, true, true, true, false,
+                        true, true, true, applyBottom);
             }
             txtVw.setText(sectionItem.getTitle().getText());
             txtVw.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
             txtVw.setTypeface(faceRobotoRegular);
-            linearLayout.addView(txtVw);
+            linearLayout.addView(view);
         }
         return linearLayout;
     }
@@ -287,13 +294,11 @@ public class SectionView {
 
         LinearLayout.LayoutParams menuContainerLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
-        menuContainerLayoutParams.setMargins(defaultMargin, 0, defaultMargin, 0);
         menuContainer.setLayoutParams(menuContainerLayoutParams);
 
         if (section.getTitle() != null && !TextUtils.isEmpty(section.getTitle().getText())) {
-            View view = inflater.inflate(R.layout.uiv3_list_text, menuContainer, false);
-            TextView txtVw = (TextView) view.findViewById(R.id.txtListText);
-            view.findViewById(R.id.listArrow).setVisibility(View.GONE);
+            View view = inflater.inflate(R.layout.uiv3_section_title, menuContainer, false);
+            TextView txtVw = (TextView) view.findViewById(R.id.txtListTitle);
             Renderer renderer = mSectionData.getRenderersMap() != null ?
                     mSectionData.getRenderersMap().get(section.getTitle().getRenderingId()) : null;
             if (renderer != null) {
@@ -331,6 +336,11 @@ public class SectionView {
             if (itemRenderer != null) {
                 itemRenderer.setRendering(itemView, 0, 0);
             } else {
+                ViewGroup.LayoutParams layoutParams = itemView.getLayoutParams();
+                if (layoutParams instanceof ViewGroup.MarginLayoutParams) {
+                    ((ViewGroup.MarginLayoutParams) layoutParams).
+                            setMargins(defaultMargin, 0, defaultMargin, 0);
+                }
                 itemView.setBackgroundColor(context.getResources().getColor(R.color.white));
             }
 
@@ -479,7 +489,8 @@ public class SectionView {
             Renderer renderer = mSectionData.getRenderersMap() != null ?
                     mSectionData.getRenderersMap().get(section.getTitle().getRenderingId()) : null;
             if (renderer != null) {
-                renderer.setRendering(txtVw, 0, 0);
+                renderer.setRendering(txtVw, 0, 0, true, true, true, false,
+                        true, true, true, true);
             }
         } else {
             txtVw.setVisibility(View.GONE);

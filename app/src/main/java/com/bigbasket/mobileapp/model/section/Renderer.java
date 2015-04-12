@@ -188,13 +188,21 @@ public class Renderer implements Parcelable, Serializable {
     public void setRendering(View view, int defaultMargin, int defaultPadding,
                              boolean applyLeft, boolean applyTop, boolean applyRight,
                              boolean applyBottom) {
+        setRendering(view, defaultMargin, defaultPadding, applyLeft, applyTop, applyRight,
+                applyBottom, applyLeft, applyTop, applyRight, applyBottom);
+    }
+
+    public void setRendering(View view, int defaultMargin, int defaultPadding,
+                             boolean applyLeft, boolean applyTop, boolean applyRight,
+                             boolean applyBottom, boolean applyLeftPadding,
+                             boolean applyTopPadding, boolean applyRightPadding,
+                             boolean applyBottomPadding) {
         int margin = this.getSafeMargin(defaultMargin);
         int padding = this.getSafePadding(defaultPadding);
         if (margin >= 0) {
             ViewParent viewParent = view.getParent();
             if (viewParent instanceof ViewGroup) {
-                ViewGroup viewGroup = (ViewGroup) viewParent;
-                ViewGroup.LayoutParams layoutParams = viewGroup.getLayoutParams();
+                ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
                 if (layoutParams instanceof ViewGroup.MarginLayoutParams) {
                     ((ViewGroup.MarginLayoutParams) layoutParams).
                             setMargins(applyLeft ? margin : 0, applyTop ? margin : 0,
@@ -203,8 +211,8 @@ public class Renderer implements Parcelable, Serializable {
             }
         }
         if (padding >= 0 && !(view instanceof ImageView)) {
-            view.setPadding(applyLeft ? padding : 0, applyTop ? padding : 0, applyRight ? padding : 0,
-                    applyBottom ? padding : 0);
+            view.setPadding(applyLeftPadding ? padding : 0, applyTopPadding ? padding : 0,
+                    applyRightPadding ? padding : 0, applyBottomPadding ? padding : 0);
         }
         if (view instanceof TextView) {
             ((TextView) view).setTextColor(this.getNativeTextColor());

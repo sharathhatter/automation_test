@@ -1,29 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="horizontal"
     android:background="@color/uiv3_list_bkg_light_color">
 
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/padding_normal"
+        android:paddingBottom="@dimen/padding_normal"
+        android:layout_weight="1"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/txtShopLstName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/padding_normal"
+            android:paddingRight="@dimen/padding_normal"
+            android:textColor="@color/uiv3_primary_text_color"
+            android:textSize="@dimen/primary_text_size" />
+
+        <TextView
+            android:id="@+id/txtShopLstDesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/padding_normal"
+            android:paddingRight="@dimen/padding_normal"
+            android:paddingTop="@dimen/padding_small"
+            android:textColor="@color/uiv3_secondary_text_color"
+            android:textSize="@dimen/secondary_text_size" />
+    </LinearLayout>
 
     <ImageView
         android:id="@+id/imgShoppingListAdditionalAction"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
+        android:layout_gravity="center_vertical"
         android:contentDescription="@string/additional_action"
         android:src="@drawable/ic_more_vert_grey600_36dp" />
-
-    <TextView
-        android:id="@+id/txtShopLstName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
-        android:layout_toLeftOf="@id/imgShoppingListAdditionalAction"
-        android:padding="@dimen/padding_normal"
-        android:paddingLeft="@dimen/padding_normal"
-        android:textColor="@color/uiv3_primary_text_color"
-        android:textSize="@dimen/primary_text_size" />
-</RelativeLayout>
+</LinearLayout>
