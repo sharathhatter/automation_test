@@ -11,8 +11,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
         android:contentDescription="@string/additional_action"
-        android:padding="@dimen/padding_normal"
         android:src="@drawable/ic_more_vert_grey600_36dp" />
 
     <TextView
@@ -22,9 +22,8 @@
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@id/imgShoppingListAdditionalAction"
+        android:padding="@dimen/padding_normal"
         android:paddingLeft="@dimen/padding_normal"
-        android:paddingRight="@dimen/padding_small"
         android:textColor="@color/uiv3_primary_text_color"
         android:textSize="@dimen/primary_text_size" />
-
 </RelativeLayout>

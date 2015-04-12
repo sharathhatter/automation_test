@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.fragment.shoppinglist;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.PopupMenu;
@@ -26,6 +27,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.fragment.order.SlotSelectionFragment;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -99,7 +101,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
             return;
         }
 
-        new ShoppingListNamesTask<>(this, false).startTask();
+        new ShoppingListNamesTask<>(this, true).startTask();
     }
 
     private void renderShoppingList() {
@@ -108,15 +110,32 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
         if (contentView == null) return;
 
         if (mShoppingListNames != null && mShoppingListNames.size() > 0) {
+            final ArrayList<Object> shoppingLists = new ArrayList<>();
+            ArrayList<Object> systemShoppingLists = new ArrayList<>();
+            for (ShoppingListName shoppingListName : mShoppingListNames) {
+                if (shoppingListName.isSystem()) {
+                    systemShoppingLists.add(shoppingListName);
+                } else {
+                    shoppingLists.add(shoppingListName);
+                }
+            }
+            if (systemShoppingLists.size() > 0) {
+                shoppingLists.add(getString(R.string.bbShoppingLists) +
+                        (systemShoppingLists.size() > 0 ? "s" : ""));
+                shoppingLists.addAll(systemShoppingLists);
+            }
             ListView shoppingNameListView = new ListView(getActivity());
-            ShoppingListAdapter shoppingListAdapter = new ShoppingListAdapter(mShoppingListNames);
+            ShoppingListAdapter shoppingListAdapter = new ShoppingListAdapter(shoppingLists);
             shoppingNameListView.setAdapter(shoppingListAdapter);
 
             shoppingNameListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    ShoppingListName shoppingListName = mShoppingListNames.get(position);
-                    launchShoppingListSummary(shoppingListName);
+                    Object obj = shoppingLists.get(position);
+                    if (obj instanceof ShoppingListName) {
+                        ShoppingListName shoppingListName = (ShoppingListName) obj;
+                        launchShoppingListSummary(shoppingListName);
+                    }
                 }
             });
             contentView.addView(shoppingNameListView);
@@ -223,11 +242,23 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
     }
 
     private class ShoppingListAdapter extends BaseAdapter {
+        private int VIEW_TYPE_HEADER = 0;
+        private int VIEW_TYPE_ITEM = 1;
+        private List<Object> shoppingListNames;
 
-        private List<ShoppingListName> shoppingListNames;
-
-        public ShoppingListAdapter(List<ShoppingListName> shoppingListNames) {
+        public ShoppingListAdapter(List<Object> shoppingListNames) {
             this.shoppingListNames = shoppingListNames;
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            return shoppingListNames.get(position) instanceof ShoppingListName ?
+                    VIEW_TYPE_ITEM : VIEW_TYPE_HEADER;
+        }
+
+        @Override
+        public int getViewTypeCount() {
+            return 2;
         }
 
         @Override
@@ -247,61 +278,93 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            final ShoppingListName shoppingListName = shoppingListNames.get(position);
-            ShoppingListViewHolder shoppingListViewHolder;
-            if (convertView == null) {
-                LayoutInflater inflater = getActivity().getLayoutInflater();
-                convertView = inflater.inflate(R.layout.uiv3_shopping_list_name_row, parent, false);
-                shoppingListViewHolder = new ShoppingListViewHolder(convertView);
-                convertView.setTag(shoppingListViewHolder);
-            } else {
-                shoppingListViewHolder = (ShoppingListViewHolder) convertView.getTag();
-            }
+            if (getItemViewType(position) == VIEW_TYPE_ITEM) {
+                final ShoppingListName shoppingListName = (ShoppingListName)
+                        shoppingListNames.get(position);
+                ShoppingListViewHolder shoppingListViewHolder;
+                if (convertView == null) {
+                    LayoutInflater inflater = getActivity().getLayoutInflater();
+                    convertView = inflater.inflate(R.layout.uiv3_shopping_list_name_row, parent, false);
+                    shoppingListViewHolder = new ShoppingListViewHolder(convertView);
+                    convertView.setTag(shoppingListViewHolder);
+                } else {
+                    shoppingListViewHolder = (ShoppingListViewHolder) convertView.getTag();
+                }
 
-            TextView txtShopLstName = shoppingListViewHolder.getTxtShopLstName();
-            txtShopLstName.setText(shoppingListName.getName());
+                TextView txtShopLstName = shoppingListViewHolder.getTxtShopLstName();
+                txtShopLstName.setText(shoppingListName.getName());
 
-            ImageView imgShoppingListAdditionalAction = shoppingListViewHolder.getImgShoppingListAdditionalAction();
-            if (imgShoppingListAdditionalAction != null) {
-                imgShoppingListAdditionalAction.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        PopupMenu popupMenu = new PopupMenu(getActivity(), v);
-                        MenuInflater menuInflater = popupMenu.getMenuInflater();
-                        menuInflater.inflate(R.menu.shopping_list_item_menu, popupMenu.getMenu());
-                        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                if (shoppingListName.isSystem()) {
+                    ImageView imgShoppingListAdditionalAction = shoppingListViewHolder.getImgShoppingListAdditionalAction();
+                    if (imgShoppingListAdditionalAction != null) {
+                        imgShoppingListAdditionalAction.setVisibility(View.GONE);
+                    } else {
+                        ImageView imgEditShopList = shoppingListViewHolder.getImgEditShopList();
+                        ImageView imgDeleteShoppingList = shoppingListViewHolder.getImgDeleteShoppingList();
+                        imgEditShopList.setVisibility(View.GONE);
+                        imgDeleteShoppingList.setVisibility(View.GONE);
+                    }
+                } else {
+                    ImageView imgShoppingListAdditionalAction = shoppingListViewHolder.getImgShoppingListAdditionalAction();
+                    if (imgShoppingListAdditionalAction != null) {
+                        imgShoppingListAdditionalAction.setVisibility(View.VISIBLE);
+                        imgShoppingListAdditionalAction.setOnClickListener(new View.OnClickListener() {
                             @Override
-                            public boolean onMenuItemClick(MenuItem menuItem) {
-                                switch (menuItem.getItemId()) {
-                                    case R.id.menuEditShoppingList:
-                                        showEditShoppingListDialog(shoppingListName);
-                                        return true;
-                                    case R.id.menuDeleteShoppingList:
-                                        showDeleteShoppingListDialog(shoppingListName);
-                                        return true;
-                                }
-                                return false;
+                            public void onClick(View v) {
+                                PopupMenu popupMenu = new PopupMenu(getActivity(), v);
+                                MenuInflater menuInflater = popupMenu.getMenuInflater();
+                                menuInflater.inflate(R.menu.shopping_list_item_menu, popupMenu.getMenu());
+                                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                                    @Override
+                                    public boolean onMenuItemClick(MenuItem menuItem) {
+                                        switch (menuItem.getItemId()) {
+                                            case R.id.menuEditShoppingList:
+                                                showEditShoppingListDialog(shoppingListName);
+                                                return true;
+                                            case R.id.menuDeleteShoppingList:
+                                                showDeleteShoppingListDialog(shoppingListName);
+                                                return true;
+                                        }
+                                        return false;
+                                    }
+                                });
+                                popupMenu.show();
                             }
                         });
-                        popupMenu.show();
-                    }
-                });
-            } else {
-                ImageView imgEditShopList = shoppingListViewHolder.getImgEditShopList();
-                imgEditShopList.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        showEditShoppingListDialog(shoppingListName);
-                    }
-                });
+                    } else {
+                        ImageView imgEditShopList = shoppingListViewHolder.getImgEditShopList();
+                        imgEditShopList.setVisibility(View.VISIBLE);
+                        imgEditShopList.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                showEditShoppingListDialog(shoppingListName);
+                            }
+                        });
 
-                ImageView imgDeleteShoppingList = shoppingListViewHolder.getImgDeleteShoppingList();
-                imgDeleteShoppingList.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        showDeleteShoppingListDialog(shoppingListName);
+                        ImageView imgDeleteShoppingList = shoppingListViewHolder.getImgDeleteShoppingList();
+                        imgDeleteShoppingList.setVisibility(View.VISIBLE);
+                        imgDeleteShoppingList.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                showDeleteShoppingListDialog(shoppingListName);
+                            }
+                        });
                     }
-                });
+                }
+            } else {
+                String headerText = shoppingListNames.get(position).toString();
+                SlotSelectionFragment.SlotHeaderViewHolder holder;
+                if (convertView == null) {
+                    LayoutInflater inflater = getActivity().getLayoutInflater();
+                    convertView = inflater.inflate(R.layout.uiv3_list_title, parent, false);
+                    holder = new SlotSelectionFragment.SlotHeaderViewHolder(convertView);
+                    convertView.setTag(holder);
+                } else {
+                    holder = (SlotSelectionFragment.SlotHeaderViewHolder) convertView.getTag();
+                }
+                TextView txtHeaderMsg = holder.getTxtHeaderMsg();
+                txtHeaderMsg.setBackgroundColor(Color.TRANSPARENT);
+                txtHeaderMsg.setText(headerText);
             }
             return convertView;
         }

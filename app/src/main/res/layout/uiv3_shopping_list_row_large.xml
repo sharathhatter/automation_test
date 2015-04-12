@@ -33,8 +33,10 @@
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@id/imgEditShopList"
+        android:paddingBottom="@dimen/padding_normal"
         android:paddingLeft="@dimen/padding_normal"
         android:paddingRight="@dimen/padding_small"
+        android:paddingTop="@dimen/padding_normal"
         android:textColor="@color/uiv3_primary_text_color"
         android:textSize="@dimen/primary_text_size" />
 

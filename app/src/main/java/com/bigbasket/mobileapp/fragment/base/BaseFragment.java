@@ -139,11 +139,12 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
 
     public void changeFragment(AbstractFragment newFragment) {
         if (getCurrentActivity() == null) return;
+        setSuspended(true);
         getCurrentActivity().onChangeFragment(newFragment);
     }
 
     private void changeTitle(String title) {
-        if (getCurrentActivity() != null && title != null) {
+        if (getCurrentActivity() != null && title != null && !isSuspended()) {
             getCurrentActivity().onChangeTitle(title);
         }
     }

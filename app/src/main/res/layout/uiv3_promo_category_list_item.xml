@@ -8,7 +8,7 @@
     app:cardElevation="@dimen/card_elevation"
     app:cardCornerRadius="@dimen/card_corner_radius">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
@@ -30,7 +30,6 @@
             android:layout_height="wrap_content"
             android:textSize="@dimen/secondary_text_size"
             android:textColor="@color/uiv3_secondary_text_color"
-            android:layout_marginTop="@dimen/margin_small"
             android:layout_marginLeft="@dimen/margin_small"
             android:layout_alignParentLeft="true"
             android:layout_toLeftOf="@id/imgPromoIcon"
@@ -55,7 +54,6 @@
             android:textColor="@color/uiv3_primary_text_color"
             android:layout_marginTop="@dimen/margin_small"
             android:layout_marginLeft="@dimen/margin_small"
-            android:layout_marginBottom="@dimen/margin_small"
             android:layout_alignParentLeft="true"
             android:layout_toLeftOf="@id/imgPromoIcon"
             android:layout_below="@id/txtPromoDescLine1"

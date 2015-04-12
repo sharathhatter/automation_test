@@ -27,6 +27,7 @@ import com.bigbasket.mobileapp.model.section.SectionItem;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.ExpandableHeightGridView;
 import com.daimajia.slider.library.SliderLayout;
+import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.SliderTypes.DefaultSliderView;
 
 import java.util.ArrayList;
@@ -126,6 +127,7 @@ public class SectionView {
         for (SectionItem sectionItem : section.getSectionItems()) {
             if (!TextUtils.isEmpty(sectionItem.getImage())) {
                 DefaultSliderView defaultSliderView = new DefaultSliderView(context);
+                defaultSliderView.setScaleType(BaseSliderView.ScaleType.CenterInside);
                 defaultSliderView.image(sectionItem.getImage());
                 defaultSliderView.setOnSliderClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
                 bannerSlider.addSlider(defaultSliderView);

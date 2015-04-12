@@ -50,12 +50,14 @@ public class ProductListApiResponseCallback<T> implements Callback<ApiResponse<P
         }
         if (productListDataApiResponse.status == 0) {
             ProductListData productListData = productListDataApiResponse.apiResponseContent.productListData;
-            if (productListData != null) {
-                if (page > 1) {
+            if (page > 1) {
+                if (productListData != null) {
                     ProductListData existingProductListData = ((ProductListDataAware) ctx).getProductListData();
                     existingProductListData.setCurrentPage(productListData.getCurrentPage());
                     ((ProductListDataAware) ctx).updateProductList(productListData.getProducts());
-                } else {
+                }
+            } else {
+                if (productListData != null) {
                     if (productListData.getFilteredOn() == null) {
                         productListData.setFilteredOn(new ArrayList<FilteredOn>());
                     }
@@ -79,12 +81,12 @@ public class ProductListApiResponseCallback<T> implements Callback<ApiResponse<P
                             }
                         }
                     }
-                    ((ProductListDataAware) ctx).setProductListData(productListData);
-                    if (ctx instanceof SectionAware) {
-                        ((SectionAware) ctx).setSectionData(productListDataApiResponse.apiResponseContent.sectionData);
-                    }
-                    ((ProductListDataAware) ctx).updateData();
                 }
+                ((ProductListDataAware) ctx).setProductListData(productListData);
+                if (ctx instanceof SectionAware) {
+                    ((SectionAware) ctx).setSectionData(productListDataApiResponse.apiResponseContent.sectionData);
+                }
+                ((ProductListDataAware) ctx).updateData();
             }
         } else {
             ((HandlerAware) ctx).getHandler().sendEmptyMessage(productListDataApiResponse.status,

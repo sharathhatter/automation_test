@@ -332,7 +332,7 @@ public class SlotSelectionFragment extends BaseFragment {
                 row.setBackgroundColor(getResources().getColor(R.color.uiv3_list_bkg_color));
             } else {
                 itemTick.setChecked(false);
-                itemTick.setVisibility(View.GONE);
+                itemTick.setVisibility(View.INVISIBLE);
                 row.setBackgroundColor(getResources().getColor(R.color.uiv3_list_bkg_light_color));
             }
             return row;
@@ -379,22 +379,22 @@ public class SlotSelectionFragment extends BaseFragment {
                 return itemTick;
             }
         }
+    }
 
-        private class SlotHeaderViewHolder {
-            private TextView txtHeaderMsg;
-            private View base;
+    public static class SlotHeaderViewHolder {
+        private TextView txtHeaderMsg;
+        private View base;
 
-            private SlotHeaderViewHolder(View base) {
-                this.base = base;
+        public SlotHeaderViewHolder(View base) {
+            this.base = base;
+        }
+
+        public TextView getTxtHeaderMsg() {
+            if (txtHeaderMsg == null) {
+                txtHeaderMsg = (TextView) base.findViewById(R.id.txtHeaderMsg);
+                txtHeaderMsg.setTypeface(faceRobotoRegular);
             }
-
-            public TextView getTxtHeaderMsg() {
-                if (txtHeaderMsg == null) {
-                    txtHeaderMsg = (TextView) base.findViewById(R.id.txtHeaderMsg);
-                    txtHeaderMsg.setTypeface(faceRobotoRegular);
-                }
-                return txtHeaderMsg;
-            }
+            return txtHeaderMsg;
         }
     }
 
