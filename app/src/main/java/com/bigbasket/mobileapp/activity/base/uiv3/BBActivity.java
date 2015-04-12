@@ -443,9 +443,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                     showAlertDialog(null,
                             "Please sign-in to view your shopping lists", NavigationCodes.GO_TO_LOGIN);
                 } else {
-                    Intent intent = new Intent(this, BackButtonActivity.class);
-                    intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_LANDING);
-                    startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                    addToMainLayout(new ShoppingListFragment());
                 }
                 logHomeScreenEvent(TrackingAware.SHOPPING_LIST_ICON_CLICKED, TrackEventkeys.NAVIGATION_CTX,
                         TrackEventkeys.NAVIGATION_CTX_TOPNAV);

@@ -129,7 +129,7 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
             case Constants.ALL_SL:
                 id = uri.getQueryParameter(Constants.ID);
                 if (!TextUtils.isEmpty(id)) {
-                    intent = new Intent(this, BackButtonActivity.class);
+                    intent = new Intent(this, BBActivity.class);
                     intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_LANDING);
                     startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 } else {

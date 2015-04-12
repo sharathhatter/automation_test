@@ -244,7 +244,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
 //                    }
                     break;
                 case DestinationInfo.SHOPPING_LIST_LANDING:
-                    intent = new Intent(((ActivityAware) context).getCurrentActivity(), BackButtonActivity.class);
+                    intent = new Intent(((ActivityAware) context).getCurrentActivity(), BBActivity.class);
                     intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_LANDING);
                     ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     logMainMenuEvent(TrackingAware.SHOPPING_LIST_ICON_CLICKED, TrackEventkeys.NAVIGATION_CTX,
@@ -292,7 +292,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                     ((ActivityAware) context).getCurrentActivity().goToHome(false);
                     break;
                 case DestinationInfo.SHOPPING_LIST:
-                    intent = new Intent(((ActivityAware) context).getCurrentActivity(), BackButtonActivity.class);
+                    intent = new Intent(((ActivityAware) context).getCurrentActivity(), BBActivity.class);
                     intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_LANDING);
                     ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     break;
