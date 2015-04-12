@@ -43,6 +43,7 @@ public class GetDynamicPageTask<T> {
         SectionData sectionData = sectionManager.getStoredSectionData();
         if (sectionData != null && sectionData.getSections() != null && sectionData.getSections().size() > 0) {
             ((DynamicScreenAware) context).onDynamicScreenSuccess(screenName, sectionData);
+            return;
         }
         if (!((ConnectivityAware) context).checkInternetConnection()) {
             ((HandlerAware) context).getHandler().sendOfflineError(finishOnError);
