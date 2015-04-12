@@ -38,7 +38,6 @@ import com.bigbasket.mobileapp.model.promo.PromoMessage;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.ParserUtil;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 
@@ -69,17 +68,13 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
         int setId = bundle.getInt(Constants.SET_ID);
         promoType = bundle.getString(Constants.PROMO_TYPE);
         String baseImgUrl = bundle.getString(Constants.BASE_IMG_URL);
-        String productsListStr = bundle.getString(Constants.PRODUCT_LIST);
+        ArrayList<Product> products = bundle.getParcelableArrayList(Constants.PRODUCT_LIST);
         double saving = bundle.getDouble(Constants.SAVING, 0);
         String promoInfoMsg = bundle.getString(Constants.INFO_MESSAGE);
         ArrayList<String> criteriaMsgs = bundle.getStringArrayList(Constants.CRITERIA_MSGS);
         int numPromoCompletedInBasket = bundle.getInt(Constants.NUM_IN_BASKET, 0);
 
         displayPromoSummary(promoInfoMsg, criteriaMsgs, saving, numPromoCompletedInBasket);
-        ArrayList<Product> products = null;
-        if (!TextUtils.isEmpty(productsListStr)) {
-            products = ParserUtil.parseProductList(productsListStr);
-        }
         renderPromoSet(setId, products, baseImgUrl);
     }
 

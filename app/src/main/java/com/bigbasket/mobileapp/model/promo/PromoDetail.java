@@ -9,8 +9,11 @@ import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
+import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.ArrayList;
 
 public class PromoDetail extends Promo {
 
@@ -41,9 +44,11 @@ public class PromoDetail extends Promo {
     @SerializedName(Constants.REDEMPTION_INFO)
     private PromoRedemptionInfo promoRedemptionInfo;
 
-    private String fixedComboProducts;
+    @SerializedName(Constants.FIXED_COMBO_PRODUCTS)
+    private ArrayList<Product> fixedComboProducts;
 
-    private String freeProducts;
+    @SerializedName(Constants.FREE_PRODUCTS)
+    private ArrayList<Product> freeProducts;
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
@@ -64,12 +69,12 @@ public class PromoDetail extends Promo {
         boolean isFixedComboProductsNull = fixedComboProducts == null;
         dest.writeByte(isFixedComboProductsNull ? (byte) 1 : (byte) 0);
         if (!isFixedComboProductsNull) {
-            dest.writeString(fixedComboProducts);
+            dest.writeTypedList(fixedComboProducts);
         }
         boolean isFreeProductsNull = freeProducts == null;
         dest.writeByte(isFreeProductsNull ? (byte) 1 : (byte) 0);
         if (!isFreeProductsNull) {
-            dest.writeString(freeProducts);
+            dest.writeTypedList(freeProducts);
         }
     }
 
@@ -89,11 +94,13 @@ public class PromoDetail extends Promo {
         promoRedemptionInfo = source.readParcelable(PromoDetail.class.getClassLoader());
         boolean isFixedComboProductsNull = source.readByte() == (byte) 1;
         if (!isFixedComboProductsNull) {
-            fixedComboProducts = source.readString();
+            fixedComboProducts = new ArrayList<>();
+            source.readTypedList(fixedComboProducts, Product.CREATOR);
         }
         boolean isFreeProducts = source.readByte() == (byte) 1;
         if (!isFreeProducts) {
-            freeProducts = source.readString();
+            freeProducts = new ArrayList<>();
+            source.readTypedList(freeProducts, Product.CREATOR);
         }
     }
 
@@ -109,44 +116,13 @@ public class PromoDetail extends Promo {
         }
     };
 
-    public PromoDetail(String promoName, String promoIcon, int id,
-                       int numPromoCompletedInBasket, double saving,
-                       int additionalNumAllowedInOrder,
-                       int additionalNumAllowedInLifetime, boolean active,
-                       String promoType, String termsAndCond, String baseImgUrl,
-                       String promoDesc, double promoSaving,
-                       PromoRedemptionInfo promoRedemptionInfo,
-                       String fixedComboProducts, String freeProducts, String promoLabel) {
-        super(promoName, promoIcon, id, promoType, promoLabel, promoDesc);
-        this.numPromoCompletedInBasket = numPromoCompletedInBasket;
-        this.saving = saving;
-        this.additionalNumAllowedInOrder = additionalNumAllowedInOrder;
-        this.additionalNumAllowedInLifetime = additionalNumAllowedInLifetime;
-        this.active = active;
-        this.termsAndCond = termsAndCond;
-        this.baseImgUrl = baseImgUrl;
-        this.promoSaving = promoSaving;
-        this.promoRedemptionInfo = promoRedemptionInfo;
-        this.fixedComboProducts = fixedComboProducts;
-        this.freeProducts = freeProducts;
-    }
-
-    public String getFixedComboProducts() {
+    public ArrayList<Product> getFixedComboProducts() {
         return fixedComboProducts;
     }
 
-    public void setFixedComboProducts(String fixedComboProducts) {
-        this.fixedComboProducts = fixedComboProducts;
-    }
-
-    public String getFreeProducts() {
+    public ArrayList<Product> getFreeProducts() {
         return freeProducts;
     }
-
-    public void setFreeProducts(String freeProducts) {
-        this.freeProducts = freeProducts;
-    }
-
     public int getNumPromoCompletedInBasket() {
         return numPromoCompletedInBasket;
     }
@@ -157,14 +133,6 @@ public class PromoDetail extends Promo {
 
     public void setSaving(double saving) {
         this.saving = saving;
-    }
-
-    public int getAdditionalNumAllowedInOrder() {
-        return additionalNumAllowedInOrder;
-    }
-
-    public int getAdditionalNumAllowedInLifetime() {
-        return additionalNumAllowedInLifetime;
     }
 
     public boolean isActive() {

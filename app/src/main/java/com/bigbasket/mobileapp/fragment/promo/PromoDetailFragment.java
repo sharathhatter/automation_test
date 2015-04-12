@@ -39,7 +39,6 @@ import com.bigbasket.mobileapp.model.promo.PromoSet;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.ParserUtil;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv2.ProductView;
@@ -219,7 +218,7 @@ public class PromoDetailFragment extends BaseFragment {
             }
             View freePromoView = getFreePromoMsgView(isRedeemed);
             layoutMain.addView(freePromoView);
-            if (mPromoDetail.getFreeProducts() != null && mPromoDetail.getFreeProducts().length() > 0) {
+            if (mPromoDetail.getFreeProducts() != null && mPromoDetail.getFreeProducts().size() > 0) {
                 addFreeProductToLayout(mPromoDetail, layoutMain, layoutInflater);
             }
 
@@ -261,7 +260,7 @@ public class PromoDetailFragment extends BaseFragment {
             }
             View freePromoView = getFreePromoMsgView(isRedeemed);
             layoutMain.addView(freePromoView);
-            if (mPromoDetail.getFreeProducts() != null && mPromoDetail.getFreeProducts().length() > 0) {
+            if (mPromoDetail.getFreeProducts() != null && mPromoDetail.getFreeProducts().size() > 0) {
                 addFreeProductToLayout(mPromoDetail, layoutMain, layoutInflater);
             }
         }
@@ -273,8 +272,7 @@ public class PromoDetailFragment extends BaseFragment {
     private void addFreeProductToLayout(PromoDetail promoDetail, LinearLayout view,
                                         LayoutInflater layoutInflater) {
         if (getActivity() == null || getCurrentActivity() == null) return;
-        String freeProductStr = promoDetail.getFreeProducts();
-        ArrayList<Product> freeProducts = ParserUtil.parseProductList(freeProductStr);
+        ArrayList<Product> freeProducts = promoDetail.getFreeProducts();
         ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
                 .setCommonTypeface(faceRobotoRegular)
                 .setRupeeTypeface(faceRupee)
@@ -286,6 +284,7 @@ public class PromoDetailFragment extends BaseFragment {
                 .build();
         for (Product freeProduct : freeProducts) {
             View base = layoutInflater.inflate(R.layout.uiv3_product_row, view, false);
+            base.findViewById(R.id.viewSeparator).setVisibility(View.GONE);
             LinearLayout.LayoutParams productRowParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
             productRowParams.setMargins(8, 8, 8, 0);
@@ -425,19 +424,19 @@ public class PromoDetailFragment extends BaseFragment {
             bundle.putString(Constants.PROMO_TYPE, promoDetail.getPromoType());
             bundle.putString(Constants.BASE_IMG_URL, promoDetail.getBaseImgUrl());
             bundle.putString(Constants.PROMO_NAME, promoDetail.getPromoName());
-            String productListStr = null;
+            ArrayList<Product> products = null;
             if (!promoDetail.getPromoType().equalsIgnoreCase(Promo.PromoType.FREE)) {
                 if (promoDetail.getPromoType().equalsIgnoreCase(Promo.PromoType.FIXED_FREE_COMBO))
-                    productListStr = promoDetail.getFixedComboProducts();
+                    products = promoDetail.getFixedComboProducts();
                 else {
                     if (promoDetail.getFreeProducts() != null) {
-                        productListStr = promoDetail.getFreeProducts();
+                        products = promoDetail.getFreeProducts();
                     } else if (promoDetail.getFixedComboProducts() != null) {
-                        productListStr = promoDetail.getFixedComboProducts();
+                        products = promoDetail.getFixedComboProducts();
                     }
                 }
             }
-            bundle.putString(Constants.PRODUCT_LIST, productListStr);
+            bundle.putParcelableArrayList(Constants.PRODUCT_LIST, products);
             bundle.putDouble(Constants.SAVING, promoDetail.getSaving());
             bundle.putString(Constants.PROMO_NAME, promoDetail.getPromoName());
             bundle.putString(Constants.INFO_MESSAGE, promoDetail.getPromoRedemptionInfo().getPromoMessage().getPromoMessage());

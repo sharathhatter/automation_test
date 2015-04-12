@@ -68,14 +68,12 @@ public abstract class AbstractFragment extends Fragment implements CancelableAwa
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        isFragmentSuspended = true;
+        isFragmentSuspended = false;
         super.onActivityResult(requestCode, resultCode, data);
     }
 
     public void setSuspended(boolean isFragmentSuspended) {
         this.isFragmentSuspended = isFragmentSuspended;
-        if (getActivity() == null || getCurrentActivity() == null) return;
-        getCurrentActivity().setSuspended(isFragmentSuspended);
     }
 
     public boolean isSuspended() {

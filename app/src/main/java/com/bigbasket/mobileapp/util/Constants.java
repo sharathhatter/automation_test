@@ -708,4 +708,6 @@ public class Constants {
     public static final String SUPPORT_POWER_PAY = "support_pp";
     public static final String ERR_RES_CODE = "err_res_code";
     public static final String ERR_RES_DESC = "err_res_desc";
+    public static final String FIXED_COMBO_PRODUCTS = "fixed_combo_products";
+    public static final String FREE_PRODUCTS = "free_products";
 }
