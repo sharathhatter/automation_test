@@ -110,7 +110,7 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
     protected void onResume() {
         super.onResume();
         FacebookEventTrackWrapper.activateApp(getCurrentActivity());
-        startSplashScreen();
+//        startSplashScreen();
     }
 
     @Override
