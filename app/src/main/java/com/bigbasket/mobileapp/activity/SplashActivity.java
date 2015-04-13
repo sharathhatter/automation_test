@@ -22,6 +22,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
+import com.bigbasket.mobileapp.handler.HDFCPowerPayHandler;
 import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.CityManager;
@@ -56,7 +57,14 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
 
         // Defensive fix
         removePendingGoToHome();
+        try {
+            boolean isHDFCPayMode = getIntent().getBooleanExtra(Constants.MODE_HDFC_PAY, false);
+            if (isHDFCPayMode) {
+                HDFCPowerPayHandler.setHDFCPayMode(this);
+            }
+        } catch (ClassCastException e) {
 
+        }
         if (checkInternetConnection()) {
             NewRelic.withApplicationToken(getString(R.string.new_relic_key)).start(this.getApplication());
             MoEHelper moEHelper = new MoEHelper(this);

@@ -120,7 +120,7 @@
     <string name="EVocher">eVoucher</string>
     <string name="evoucherStatement">(If you have eVoucher code, Please enter):</string>
     <string name="orderReview">Review Order</string>
-    <string name="chooseSlot">Choose Slot</string>
+    <string name="chooseSlot">Select Slot</string>
     <string name="createShoppingList">Create shopping List</string>
     <string name="shoppingListNameDialogTextHint">Enter shopping list name</string>
     <string name="myList"> My Lists</string>
@@ -538,7 +538,7 @@
     <string name="failedToProcess">Failed to process your transaction</string>
     <string name="youAborted">You aborted the transaction</string>
     <string name="paymentSelectionNotAvailable">Sorry, but you can\'t change the payment method.\nAfter you\'ve chosen the slot, click on \"Review order\" button, and your order will be automatically created</string>
-    <string name="pressOrderReview">Press the \'Review Order\' button to place your order</string>
+    <string name="pressOrderReview">Your transaction was successful, but the order was not created. Please select a slot, and your order will be placed.</string>
     <string name="smartBasket">Smart Basket</string>
     <string name="rateTheApp">Rate this app</string>
     <string name="shopFromPreviousOrder">Shop From Previous Order(s)</string>

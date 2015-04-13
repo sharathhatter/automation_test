@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.order.uiv3.AvailableVoucherListActivity;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.handler.HDFCPowerPayHandler;
 import com.bigbasket.mobileapp.interfaces.OnApplyVoucherListener;
 import com.bigbasket.mobileapp.interfaces.PostVoucherAppliedListener;
 import com.bigbasket.mobileapp.interfaces.SelectedPaymentAware;
@@ -87,14 +88,17 @@ public class PaymentSelectionFragment extends BaseFragment implements PostVouche
 
         PayuResponse payuResponse = PayuResponse.getInstance(getActivity());
         PowerPayResponse powerPayResponse = PowerPayResponse.getInstance(getActivity());
-        if ((payuResponse != null && payuResponse.isSuccess())
-                || (powerPayResponse != null && powerPayResponse.isSuccess())) {
+        String payuFailureReason = args.getString(Constants.PAYU_CANCELLED);
+        if (TextUtils.isEmpty(payuFailureReason)
+                && ((payuResponse != null && payuResponse.isSuccess())
+                    || (powerPayResponse != null && powerPayResponse.isSuccess()))) {
             renderPayuFailedToCreateOrderScenario();
         } else {
             renderPaymentOptions();
             logPaymentOptionEvent();
-            String payuFailureReason = args.getString(Constants.PAYU_CANCELLED);
             if (!TextUtils.isEmpty(payuFailureReason)) {
+                PayuResponse.clearTxnDetail(getActivity());
+                PowerPayResponse.clearTxnDetail(getActivity());
                 displayPayuFailure(payuFailureReason);
             }
         }
@@ -187,9 +191,14 @@ public class PaymentSelectionFragment extends BaseFragment implements PostVouche
         }
 
         if (amtPayable > 0) {
+            boolean isInHDFCPayMode = HDFCPowerPayHandler.isInHDFCPayMode(getActivity())
+                    && mPaymentTypeMap.containsValue(Constants.HDFC_POWER_PAY);
             RadioGroup layoutPaymentOptions = (RadioGroup) base.findViewById(R.id.layoutPaymentOptions);
             int i = 0;
             for (final Map.Entry<String, String> entrySet : mPaymentTypeMap.entrySet()) {
+                if (isInHDFCPayMode && !entrySet.getValue().equals(Constants.HDFC_POWER_PAY)) {
+                    continue;
+                }
                 RadioButton rbtnPaymentType = getPaymentOptionRadioButton(layoutPaymentOptions);
                 rbtnPaymentType.setText(entrySet.getKey());
                 rbtnPaymentType.setId(i);

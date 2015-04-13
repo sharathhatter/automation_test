@@ -66,10 +66,12 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
     private String mPotentialOrderId;
     private ArrayList<VoucherApplied> mVoucherAppliedList;
     private HashMap<String, Boolean> mPreviouslyAppliedVoucherMap;
-    private String mPayuFailureReason;
+    private String mCreditCardTxnFailureReason;
     private boolean mIsVoucherInProgress;
     private Button mBtnFooter;
     private boolean mHasSlotTabLaunchedOnce;
+    private boolean mHasSlotExpired;
+    private boolean mPrevTxnPending;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -177,9 +179,9 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
             paymentSelectionBundle.putString(Constants.EVOUCHER_CODE, voucherCode);
         }
 
-        boolean hasPayuFailed = !TextUtils.isEmpty(mPayuFailureReason);
-        if (hasPayuFailed) {
-            paymentSelectionBundle.putString(Constants.PAYU_CANCELLED, mPayuFailureReason);
+        boolean hasCreditCardTxnFailed = !TextUtils.isEmpty(mCreditCardTxnFailureReason);
+        if (hasCreditCardTxnFailed) {
+            paymentSelectionBundle.putString(Constants.PAYU_CANCELLED, mCreditCardTxnFailureReason);
         }
         bbTabs.add(new BBTab<>(getString(R.string.paymentMethod), PaymentSelectionFragment.class, paymentSelectionBundle));
         bbTabs.add(new BBTab<>(getString(R.string.slot), SlotSelectionFragment.class, slotBundle));
@@ -188,16 +190,28 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
         FragmentStatePagerAdapter fragmentStatePagerAdapter = new
                 TabPagerAdapter(getCurrentActivity(), getSupportFragmentManager(), bbTabs);
         viewPager.setAdapter(fragmentStatePagerAdapter);
-        if (hasPayuFailed) {
-            viewPager.setCurrentItem(1);
-        }
 
-        PayuResponse payuResponse = PayuResponse.getInstance(this);
-        PowerPayResponse powerPayResponse = PowerPayResponse.getInstance(this);
-        if (payuResponse != null && payuResponse.isSuccess()) {
-            mPaymentMethodSlug = Constants.PAYU;
-        } else if (powerPayResponse != null && powerPayResponse.isSuccess()) {
-            mPaymentMethodSlug = Constants.HDFC_POWER_PAY;
+
+        mBtnFooter = (Button) base.findViewById(R.id.btnListFooter);
+        mBtnFooter.setTypeface(faceRobotoRegular);
+        mBtnFooter.setText(getString(R.string.chooseSlot).toUpperCase());
+
+        if (!hasCreditCardTxnFailed) {
+            PayuResponse payuResponse = PayuResponse.getInstance(this);
+            PowerPayResponse powerPayResponse = PowerPayResponse.getInstance(this);
+            if (payuResponse != null && payuResponse.isSuccess()) {
+                mPrevTxnPending = true;
+                mPaymentMethodSlug = Constants.PAYU;
+            } else if (powerPayResponse != null && powerPayResponse.isSuccess()) {
+                mPrevTxnPending = true;
+                mPaymentMethodSlug = Constants.HDFC_POWER_PAY;
+            }
+            if (mHasSlotExpired || mPrevTxnPending) {
+                viewPager.setCurrentItem(1);
+            }
+            if (mPrevTxnPending) {
+                mBtnFooter.setText(getString(R.string.placeorder).toUpperCase());
+            }
         }
 
         contentView.addView(base);
@@ -206,7 +220,10 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 if (position == 1) {
-                    onSlotNavigation();
+                    mHasSlotTabLaunchedOnce = true;
+                    if (!mPrevTxnPending) {
+                        onSlotNavigation();
+                    }
                 }
             }
 
@@ -222,12 +239,10 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
         });
         slidingTabStrip.setViewPager(viewPager);
 
-        mBtnFooter = (Button) base.findViewById(R.id.btnListFooter);
-        mBtnFooter.setTypeface(faceRobotoRegular);
-        mBtnFooter.setText(getString(R.string.chooseSlot).toUpperCase());
         mBtnFooter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mHasSlotExpired = false;
                 PayuResponse payuResponse = PayuResponse.getInstance(getCurrentActivity());
                 PowerPayResponse powerPayResponse = PowerPayResponse.getInstance(getCurrentActivity());
                 if ((payuResponse != null && payuResponse.isSuccess()) || (powerPayResponse != null && powerPayResponse.isSuccess())) {
@@ -323,12 +338,14 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
         setSuspended(false);
         switch (resultCode) {
             case NavigationCodes.GO_TO_SLOT_SELECTION:
+                mHasSlotExpired = true;
+                mHasSlotTabLaunchedOnce = false;
                 break;
             case Constants.PREPAID_TXN_ABORTED:
-                mPayuFailureReason = getString(R.string.youAborted);
+                mCreditCardTxnFailureReason = getString(R.string.youAborted);
                 break;
             case Constants.PREPAID_TXN_FAILED:
-                mPayuFailureReason = getString(R.string.failedToProcess);
+                mCreditCardTxnFailureReason = getString(R.string.failedToProcess);
                 break;
             default:
                 super.onActivityResult(requestCode, resultCode, data);
@@ -340,7 +357,7 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
     @Override
     protected void onPause() {
         super.onPause();
-        mPayuFailureReason = null;
+        mCreditCardTxnFailureReason = null;
     }
 
     @Override
@@ -491,7 +508,6 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
     }
 
     public void onSlotNavigation() {
-        mHasSlotTabLaunchedOnce = true;
         mBtnFooter.setText(getString(R.string.orderReview).toUpperCase());
     }
 }
