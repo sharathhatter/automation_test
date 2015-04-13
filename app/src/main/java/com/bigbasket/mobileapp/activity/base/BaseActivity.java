@@ -128,8 +128,14 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
 
     @Override
     public void showProgressDialog(String msg) {
+        showProgressDialog(msg, true);
+    }
+
+
+    @Override
+    public void showProgressDialog(String msg, boolean cancelable) {
         progressDialog = new ProgressDialog(this);
-        progressDialog.setCancelable(false);
+        progressDialog.setCancelable(cancelable);
         progressDialog.setMessage(msg);
         progressDialog.show();
     }

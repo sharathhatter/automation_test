@@ -341,7 +341,7 @@ public class PlaceOrderActivity extends BackButtonActivity {
 
     private void placeOrder(String potentialOrderId, String txnId) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
-        showProgressDialog(getString(R.string.please_wait));
+        showProgressDialog(getString(R.string.please_wait), false);
         bigBasketApiService.placeOrder(potentialOrderId, txnId, new Callback<OldApiResponse<PlaceOrderApiResponseContent>>() {
             @Override
             public void success(OldApiResponse<PlaceOrderApiResponseContent> placeOrderApiResponse, Response response) {

@@ -113,10 +113,16 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     }
 
     public void showProgressDialog(String msg) {
+        showProgressDialog(msg, true);
+    }
+
+    @Override
+    public void showProgressDialog(String msg, boolean cancelable) {
         if (TextUtils.isEmpty(msg)) {
             msg = getResources().getString(R.string.please_wait);
         }
         progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setCancelable(cancelable);
         progressDialog.setMessage(msg);
         progressDialog.show();
     }

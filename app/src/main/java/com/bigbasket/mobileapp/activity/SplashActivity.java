@@ -62,6 +62,7 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
             MoEHelper moEHelper = new MoEHelper(this);
             moEHelper.initialize(Constants.MO_SENDER_ID, Constants.MO_APP_ID);
             moEHelper.Register(R.drawable.ic_launcher);
+            startSplashScreen();
         } else {
             showNoInternetConnectionView();
         }
