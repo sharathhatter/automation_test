@@ -112,7 +112,7 @@ public class SectionGridAdapter<T> extends BaseAdapter {
                     if (itemRenderer != null) {
                         itemRenderer.setRendering(txtTitle, fourDp, fourDp, true, true, true, true);
                         if (itemRenderer.getPadding() == 0 && sectionItem.isOverlayWithAdjacentTitleDesc(viewType)) {
-                            itemRenderer.adjustTitlePaddingForOverlayWithAdjacentTitleAndDesc(fourDp, txtTitle, txtDescription);
+                            itemRenderer.adjustTitlePaddingForOverlayWithAdjacentTitleAndDesc(eightDp, txtTitle, txtDescription);
                         }
                     } else {
                         txtTitle.setPadding(eightDp, eightDp, eightDp, txtDescription != null ? fourDp : eightDp);

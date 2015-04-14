@@ -91,7 +91,7 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
     }
 
     private void loadSlotsAndPayments() {
-        String addressId = getIntent().getStringExtra(Constants.ADDRESS_ID);
+        String addressId = getIntent().getStringExtra(Constants.MEMBER_ADDRESS_ID);
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         mPotentialOrderId = preferences.getString(Constants.POTENTIAL_ORDER_ID, null);
 
