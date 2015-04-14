@@ -55,7 +55,6 @@
                 android:paddingBottom="@dimen/padding_small"
                 android:paddingLeft="@dimen/padding_small"
                 android:paddingRight="@dimen/padding_small"
-                android:paddingTop="@dimen/padding_small"
                 android:text="World"
                 android:textColor="@color/white"
                 android:textSize="@dimen/small_text_size" />

@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 public class HDFCPowerPayHandler {
     private static final String DATE_FORMAT = "dd-MM-yyyy HH:mm:ss";
-    private static final int TIMEOUT_IN_MINUTES = 3 * 60;
+    private static final int TIMEOUT_IN_MINUTES = 6 * 60;
 
     public static void setHDFCPayMode(Context context) {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();

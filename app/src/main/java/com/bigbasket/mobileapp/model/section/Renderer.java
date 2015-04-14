@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.model.section;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -199,7 +200,7 @@ public class Renderer implements Parcelable, Serializable {
                              boolean applyBottomPadding) {
         int margin = this.getSafeMargin(defaultMargin);
         int padding = this.getSafePadding(defaultPadding);
-        if (margin >= 0) {
+        if (margin >= 0 && this.margin > 0) {
             ViewParent viewParent = view.getParent();
             if (viewParent instanceof ViewGroup) {
                 ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
@@ -210,14 +211,18 @@ public class Renderer implements Parcelable, Serializable {
                 }
             }
         }
-        if (padding >= 0 && !(view instanceof ImageView)) {
+        if (padding >= 0 && !(view instanceof ImageView) && this.padding > 0) {
             view.setPadding(applyLeftPadding ? padding : 0, applyTopPadding ? padding : 0,
                     applyRightPadding ? padding : 0, applyBottomPadding ? padding : 0);
         }
         if (view instanceof TextView) {
-            ((TextView) view).setTextColor(this.getNativeTextColor());
+            if (!TextUtils.isEmpty(textColor)) {
+                ((TextView) view).setTextColor(this.getNativeTextColor());
+            }
             ((TextView) view).setGravity(this.getAsNativeAlignment());
         }
-        view.setBackgroundColor(this.getNativeBkgColor());
+        if (!TextUtils.isEmpty(backgroundColor)) {
+            view.setBackgroundColor(this.getNativeBkgColor());
+        }
     }
 }
