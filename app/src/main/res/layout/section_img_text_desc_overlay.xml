@@ -19,7 +19,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:contentDescription="@string/product_image"
-            android:scaleType="fitXY"
             android:src="@drawable/bb_logo_transparent_bkg" />
 
         <LinearLayout
