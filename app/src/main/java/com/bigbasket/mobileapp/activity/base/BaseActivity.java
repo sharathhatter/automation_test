@@ -442,16 +442,14 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         isActivitySuspended = false;
-        if (resultCode == NavigationCodes.GO_TO_HOME) {
-            boolean reloadApp = data != null && data.getBooleanExtra(Constants.RELOAD_APP, false);
+        if (resultCode == NavigationCodes.GO_TO_HOME || resultCode == NavigationCodes.CITY_CHANGED) {
+            boolean reloadApp = (data != null && data.getBooleanExtra(Constants.RELOAD_APP, false))
+                    || resultCode == NavigationCodes.CITY_CHANGED;
             if (reloadApp) {
                 goToHome(true, resultCode);
             } else {
                 goToHome(data);
             }
-        } else if (resultCode == NavigationCodes.CITY_CHANGED) {
-            setResult(NavigationCodes.CITY_CHANGED);
-            finish();
         } else if (resultCode == NavigationCodes.GO_TO_SLOT_SELECTION) {
             setResult(NavigationCodes.GO_TO_SLOT_SELECTION);
             finish();
