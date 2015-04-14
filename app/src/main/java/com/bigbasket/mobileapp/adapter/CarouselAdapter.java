@@ -30,8 +30,8 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
     protected T context;
     protected String screenName;
     private int numItems;
-    private int defaultMargin;
-    private int defaultTxtPadding;
+    private int fourDp;
+    private int eightDp;
     private int columnWidth;
 
     public CarouselAdapter(T context, Section section,
@@ -44,8 +44,8 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
         this.screenName = screenName;
         this.numItems = sectionItems.size();
         Context ctx = ((ActivityAware) context).getCurrentActivity();
-        this.defaultMargin = (int) ctx.getResources().getDimension(R.dimen.margin_mini);
-        this.defaultTxtPadding = (int) ctx.getResources().getDimension(R.dimen.padding_small);
+        this.fourDp = (int) ctx.getResources().getDimension(R.dimen.margin_mini);
+        this.eightDp = (int) ctx.getResources().getDimension(R.dimen.padding_small);
         this.columnWidth = (int) ctx.getResources().getDimension(R.dimen.grid_width);
     }
 
@@ -66,7 +66,8 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
-        if (getItemViewType(position) == SectionItem.VIEW_UNKNOWN) {
+        int viewType = getItemViewType(position);
+        if (viewType == SectionItem.VIEW_UNKNOWN) {
             return;
         }
         ViewHolder holder = (ViewHolder) viewHolder;
@@ -94,9 +95,12 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
                 Renderer itemRenderer = rendererHashMap != null ?
                         rendererHashMap.get(sectionItem.getTitle().getRenderingId()) : null;
                 if (itemRenderer != null) {
-                    itemRenderer.setRendering(txtTitle, defaultMargin, defaultMargin, true, true, true, true);
-                } else {
-                    txtTitle.setPadding(defaultTxtPadding, defaultTxtPadding, defaultTxtPadding, defaultTxtPadding);
+                    itemRenderer.setRendering(txtTitle, fourDp, fourDp, true, true, true, true);
+                    if (itemRenderer.getPadding() == 0 && sectionItem.isOverlayWithAdjacentTitleDesc(viewType)) {
+                        itemRenderer.adjustTitlePaddingForOverlayWithAdjacentTitleAndDesc(fourDp, txtTitle, txtDescription);
+                    }
+                } else if (sectionItem.isOverlayWithAdjacentTitleDesc(viewType)) {
+                    txtTitle.setPadding(eightDp, eightDp, eightDp, txtDescription != null ? fourDp : eightDp);
                 }
             } else {
                 txtTitle.setVisibility(View.GONE);
@@ -111,9 +115,12 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
                 Renderer itemRenderer = rendererHashMap != null ?
                         rendererHashMap.get(sectionItem.getDescription().getRenderingId()) : null;
                 if (itemRenderer != null) {
-                    itemRenderer.setRendering(txtDescription, defaultMargin, defaultMargin, true, true, true, true);
-                } else {
-                    txtDescription.setPadding(defaultTxtPadding, defaultTxtPadding, defaultTxtPadding, defaultTxtPadding);
+                    itemRenderer.setRendering(txtDescription, fourDp, fourDp, true, true, true, true);
+                    if (itemRenderer.getPadding() == 0 && sectionItem.isOverlayWithAdjacentTitleDesc(viewType)) {
+                        itemRenderer.adjustDescPaddingForOverlayWithAdjacentTitleAndDesc(0, txtTitle, txtDescription);
+                    }
+                } else if (sectionItem.isOverlayWithAdjacentTitleDesc(viewType)){
+                    txtDescription.setPadding(txtTitle != null ? 0 : eightDp, eightDp, eightDp, eightDp);
                 }
             } else {
                 txtDescription.setVisibility(View.GONE);

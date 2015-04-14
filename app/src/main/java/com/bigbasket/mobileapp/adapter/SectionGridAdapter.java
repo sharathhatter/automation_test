@@ -28,8 +28,8 @@ public class SectionGridAdapter<T> extends BaseAdapter {
     protected T context;
     protected String screenName;
     private int numItems;
-    private int defaultMargin;
-    private int defaultTxtPadding;
+    private int fourDp;
+    private int eightDp;
 
     public SectionGridAdapter(T context, Section section,
                               HashMap<Integer, Renderer> rendererHashMap, Typeface typeface, String screenName) {
@@ -41,8 +41,8 @@ public class SectionGridAdapter<T> extends BaseAdapter {
         this.screenName = screenName;
         this.numItems = sectionItems.size();
         Context ctx = ((ActivityAware) context).getCurrentActivity();
-        this.defaultMargin = (int) ctx.getResources().getDimension(R.dimen.margin_mini);
-        this.defaultTxtPadding = (int) ctx.getResources().getDimension(R.dimen.padding_small);
+        this.fourDp = (int) ctx.getResources().getDimension(R.dimen.margin_mini);
+        this.eightDp = (int) ctx.getResources().getDimension(R.dimen.padding_small);
     }
 
     @Override
@@ -110,9 +110,12 @@ public class SectionGridAdapter<T> extends BaseAdapter {
                     Renderer itemRenderer = rendererHashMap != null ?
                             rendererHashMap.get(sectionItem.getTitle().getRenderingId()) : null;
                     if (itemRenderer != null) {
-                        itemRenderer.setRendering(txtTitle, defaultMargin, defaultMargin, true, true, true, true);
+                        itemRenderer.setRendering(txtTitle, fourDp, fourDp, true, true, true, true);
+                        if (itemRenderer.getPadding() == 0 && sectionItem.isOverlayWithAdjacentTitleDesc(viewType)) {
+                            itemRenderer.adjustTitlePaddingForOverlayWithAdjacentTitleAndDesc(fourDp, txtTitle, txtDescription);
+                        }
                     } else {
-                        txtTitle.setPadding(defaultTxtPadding, defaultTxtPadding, defaultTxtPadding, defaultTxtPadding);
+                        txtTitle.setPadding(eightDp, eightDp, eightDp, txtDescription != null ? fourDp : eightDp);
                     }
                 } else {
                     txtTitle.setVisibility(View.GONE);
@@ -127,9 +130,12 @@ public class SectionGridAdapter<T> extends BaseAdapter {
                     Renderer itemRenderer = rendererHashMap != null ?
                             rendererHashMap.get(sectionItem.getDescription().getRenderingId()) : null;
                     if (itemRenderer != null) {
-                        itemRenderer.setRendering(txtDescription, defaultMargin, defaultMargin, true, true, true, true);
+                        itemRenderer.setRendering(txtDescription, fourDp, fourDp, true, true, true, true);
+                        if (itemRenderer.getPadding() == 0 && sectionItem.isOverlayWithAdjacentTitleDesc(viewType)) {
+                            itemRenderer.adjustDescPaddingForOverlayWithAdjacentTitleAndDesc(0, txtTitle, txtDescription);
+                        }
                     } else {
-                        txtDescription.setPadding(defaultTxtPadding, defaultTxtPadding, defaultTxtPadding, defaultTxtPadding);
+                        txtDescription.setPadding(txtTitle != null ? 0 : eightDp, eightDp, eightDp, eightDp);
                     }
                 } else {
                     txtDescription.setVisibility(View.GONE);

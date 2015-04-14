@@ -229,6 +229,11 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
         }
     }
 
+    public boolean isOverlayWithAdjacentTitleDesc(int viewType) {
+        return viewType == VIEW_IMG_TITLE_DESC_VERTICAL_OVERLAY ||
+                viewType == VIEW_TITLE_DESC_IMG_VERTICAL_OVERLAY;
+    }
+
     public int getHeight(Context context, Renderer renderer) {
         if (renderer != null) {
             if (renderer.getOrientation() == Renderer.VERTICAL) {

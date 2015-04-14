@@ -37,7 +37,8 @@ public class SectionView {
     private Context context;
     private Typeface faceRobotoRegular;
     private SectionData mSectionData;
-    private int defaultMargin;
+    private int fourDp;
+    private int eightDp;
     private String screenName;
 
     public SectionView(Context context, Typeface faceRobotoRegular, SectionData mSectionData, String screenName) {
@@ -45,7 +46,8 @@ public class SectionView {
         this.faceRobotoRegular = faceRobotoRegular;
         this.mSectionData = mSectionData;
         this.screenName = screenName;
-        this.defaultMargin = (int) context.getResources().getDimension(R.dimen.margin_mini);
+        this.fourDp = (int) context.getResources().getDimension(R.dimen.margin_mini);
+        this.eightDp = (int) context.getResources().getDimension(R.dimen.margin_small);
     }
 
     private void parseRendererColors() {
@@ -85,7 +87,7 @@ public class SectionView {
                     sectionView.getLayoutParams();
             if (i == 0) {
                 if (!section.getSectionType().equals(Section.BANNER)) {
-                    layoutParams.topMargin = defaultMargin;
+                    layoutParams.topMargin = fourDp;
                     sectionView.setLayoutParams(layoutParams);
                 }
             } else {
@@ -339,7 +341,7 @@ public class SectionView {
                 ViewGroup.LayoutParams layoutParams = itemView.getLayoutParams();
                 if (layoutParams instanceof ViewGroup.MarginLayoutParams) {
                     ((ViewGroup.MarginLayoutParams) layoutParams).
-                            setMargins(defaultMargin, 0, defaultMargin, 0);
+                            setMargins(fourDp, 0, fourDp, 0);
                 }
                 itemView.setBackgroundColor(context.getResources().getColor(R.color.white));
             }
@@ -427,7 +429,12 @@ public class SectionView {
                     Renderer itemRenderer = mSectionData.getRenderersMap() != null ?
                             mSectionData.getRenderersMap().get(sectionItem.getTitle().getRenderingId()) : null;
                     if (itemRenderer != null) {
-                        itemRenderer.setRendering(txtTitle, defaultMargin, defaultMargin, true, true, true, true);
+                        itemRenderer.setRendering(txtTitle, fourDp, fourDp, true, true, true, true);
+                        if (itemRenderer.getPadding() == 0 && sectionItem.isOverlayWithAdjacentTitleDesc(viewType)) {
+                            itemRenderer.adjustTitlePaddingForOverlayWithAdjacentTitleAndDesc(fourDp, txtTitle, txtDescription);
+                        }
+                    } else {
+                        txtTitle.setPadding(eightDp, eightDp, eightDp, txtDescription != null ? fourDp : eightDp);
                     }
                 } else {
                     txtTitle.setVisibility(View.GONE);
@@ -441,7 +448,12 @@ public class SectionView {
                     Renderer itemRenderer = mSectionData.getRenderersMap() != null ?
                             mSectionData.getRenderersMap().get(sectionItem.getDescription().getRenderingId()) : null;
                     if (itemRenderer != null) {
-                        itemRenderer.setRendering(txtDescription, defaultMargin, defaultMargin, true, true, true, true);
+                        itemRenderer.setRendering(txtDescription, fourDp, fourDp, true, true, true, true);
+                        if (itemRenderer.getPadding() == 0 && sectionItem.isOverlayWithAdjacentTitleDesc(viewType)) {
+                            itemRenderer.adjustDescPaddingForOverlayWithAdjacentTitleAndDesc(0, txtTitle, txtDescription);
+                        }
+                    } else {
+                        txtDescription.setPadding(txtTitle != null ? 0 : eightDp, eightDp, eightDp, eightDp);
                     }
                 } else {
                     txtDescription.setVisibility(View.GONE);
@@ -467,7 +479,7 @@ public class SectionView {
                 layoutParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
             }
             if (layoutParams instanceof ViewGroup.MarginLayoutParams) {
-                ((ViewGroup.MarginLayoutParams) layoutParams).setMargins(0, defaultMargin, applyRight ? defaultMargin : 0, defaultMargin);
+                ((ViewGroup.MarginLayoutParams) layoutParams).setMargins(0, fourDp, applyRight ? fourDp : 0, fourDp);
             }
             view.setLayoutParams(layoutParams);
 

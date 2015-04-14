@@ -151,6 +151,13 @@ public class Renderer implements Parcelable, Serializable {
         }
     };
 
+    public int getMargin() {
+        return margin;
+    }
+
+    public int getPadding() {
+        return padding;
+    }
 
     public int getSafeMargin(int defaultValue) {
         return getSafeUnit(margin, Renderer.MARGIN, defaultValue, Renderer.MAX_MARGIN);
@@ -224,5 +231,17 @@ public class Renderer implements Parcelable, Serializable {
         if (!TextUtils.isEmpty(backgroundColor)) {
             view.setBackgroundColor(this.getNativeBkgColor());
         }
+    }
+
+    public void adjustTitlePaddingForOverlayWithAdjacentTitleAndDesc(int newPadding,
+                                                                     TextView txtTitle, TextView txtDescription) {
+        txtTitle.setPadding(txtTitle.getPaddingLeft(), txtTitle.getPaddingTop(),
+                txtTitle.getPaddingRight(), txtDescription != null ? newPadding : txtTitle.getPaddingBottom());
+    }
+
+    public void adjustDescPaddingForOverlayWithAdjacentTitleAndDesc(int newPadding,
+                                                                    TextView txtTitle, TextView txtDescription) {
+        txtDescription.setPadding(txtDescription.getPaddingLeft(), txtTitle != null ? newPadding : txtDescription.getPaddingTop(),
+                txtDescription.getPaddingRight(), txtDescription.getPaddingBottom());
     }
 }
