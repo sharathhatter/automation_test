@@ -11,8 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -47,7 +45,6 @@ public class PrescriptionListAdapter<T> extends RecyclerView.Adapter<RecyclerVie
     private ArrayList<SavedPrescription> savedPrescriptionArrayList;
     private Typeface faceRobotoRegular;
     private LinearLayout visibleChoosePrescriptionAndViewPrescriptionImages;
-    private Animation bottomDown, bottomUp;
 
     public PrescriptionListAdapter(T ctx, ArrayList<SavedPrescription> savedPrescriptionArrayList,
                                    Typeface faceRobotoRegular) {
@@ -55,8 +52,6 @@ public class PrescriptionListAdapter<T> extends RecyclerView.Adapter<RecyclerVie
         this.savedPrescriptionArrayList = savedPrescriptionArrayList;
         this.faceRobotoRegular = faceRobotoRegular;
         this.inflater = (LayoutInflater) ((ActivityAware) ctx).getCurrentActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        bottomDown = AnimationUtils.loadAnimation(((ActivityAware) ctx).getCurrentActivity(), R.anim.bottom_down);
-        bottomUp = AnimationUtils.loadAnimation(((ActivityAware) ctx).getCurrentActivity(), R.anim.bottom_up);
 
     }
 
@@ -139,23 +134,19 @@ public class PrescriptionListAdapter<T> extends RecyclerView.Adapter<RecyclerVie
         if (visibleChoosePrescriptionAndViewPrescriptionImages != null) {
             if (visibleChoosePrescriptionAndViewPrescriptionImages == (LinearLayout) view.getTag() &&
                     visibleChoosePrescriptionAndViewPrescriptionImages.getVisibility() == View.VISIBLE) {
-                visibleChoosePrescriptionAndViewPrescriptionImages.startAnimation(bottomDown);
                 visibleChoosePrescriptionAndViewPrescriptionImages.setVisibility(View.GONE);
             } else {
                 if (visibleChoosePrescriptionAndViewPrescriptionImages.getVisibility() == View.VISIBLE) {
                     // hide current view
-                    visibleChoosePrescriptionAndViewPrescriptionImages.startAnimation(bottomDown);
                     visibleChoosePrescriptionAndViewPrescriptionImages.setVisibility(View.GONE);
                 }
                 // show new view
                 visibleChoosePrescriptionAndViewPrescriptionImages = (LinearLayout) view.getTag();
-                visibleChoosePrescriptionAndViewPrescriptionImages.startAnimation(bottomUp);
                 visibleChoosePrescriptionAndViewPrescriptionImages.setVisibility(View.VISIBLE);
 
             }
         } else {
             visibleChoosePrescriptionAndViewPrescriptionImages = (LinearLayout) view.getTag();
-            visibleChoosePrescriptionAndViewPrescriptionImages.startAnimation(bottomUp);
             visibleChoosePrescriptionAndViewPrescriptionImages.setVisibility(View.VISIBLE);
         }
     }

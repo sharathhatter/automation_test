@@ -59,7 +59,7 @@ public class MultipleImagesPrescriptionAdapter<T> extends BaseAdapter {
             if ((String.valueOf(imageUrl)) != null) {
                 UIUtil.displayAsyncImage(imgNewPrescriptionImage, String.valueOf(imageUrl));
             } else {
-                imgNewPrescriptionImage.setImageResource(R.drawable.image_404_top_cat);
+                imgNewPrescriptionImage.setImageResource(R.drawable.image_404);
             }
         } else {
             Bitmap bitmapImage = (Bitmap) imageUrl;
