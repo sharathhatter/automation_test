@@ -233,15 +233,19 @@ public class Renderer implements Parcelable, Serializable {
         }
     }
 
-    public void adjustTitlePaddingForOverlayWithAdjacentTitleAndDesc(int newPadding,
-                                                                     TextView txtTitle, TextView txtDescription) {
+    public void adjustTitlePaddingForOverlayWithAdjacentTitleAndDesc(int paddingWhenNoDesc, int paddingWhenDesc,
+                                                                     TextView txtTitle, TextView txtDescription,
+                                                                     SectionItem sectionItem) {
         txtTitle.setPadding(txtTitle.getPaddingLeft(), txtTitle.getPaddingTop(),
-                txtTitle.getPaddingRight(), txtDescription != null ? newPadding : txtTitle.getPaddingBottom());
+                txtTitle.getPaddingRight(),
+                txtDescription != null && sectionItem.hasDescription() ? paddingWhenDesc : paddingWhenNoDesc);
     }
 
-    public void adjustDescPaddingForOverlayWithAdjacentTitleAndDesc(int newPadding,
-                                                                    TextView txtTitle, TextView txtDescription) {
-        txtDescription.setPadding(txtDescription.getPaddingLeft(), txtTitle != null ? newPadding : txtDescription.getPaddingTop(),
+    public void adjustDescPaddingForOverlayWithAdjacentTitleAndDesc(int paddingWhenNoTitle, int paddingWhenTitle,
+                                                                    TextView txtTitle, TextView txtDescription,
+                                                                    SectionItem sectionItem) {
+        txtDescription.setPadding(txtDescription.getPaddingLeft(),
+                txtTitle != null && sectionItem.hasTitle() ? paddingWhenTitle : paddingWhenNoTitle,
                 txtDescription.getPaddingRight(), txtDescription.getPaddingBottom());
     }
 }

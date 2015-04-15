@@ -97,10 +97,10 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
                 if (itemRenderer != null) {
                     itemRenderer.setRendering(txtTitle, fourDp, fourDp, true, true, true, true);
                     if (itemRenderer.getPadding() == 0 && sectionItem.isOverlayWithAdjacentTitleDesc(viewType)) {
-                        itemRenderer.adjustTitlePaddingForOverlayWithAdjacentTitleAndDesc(eightDp, txtTitle, txtDescription);
+                        itemRenderer.adjustTitlePaddingForOverlayWithAdjacentTitleAndDesc(eightDp, fourDp, txtTitle, txtDescription, sectionItem);
                     }
                 } else if (sectionItem.isOverlayWithAdjacentTitleDesc(viewType)) {
-                    txtTitle.setPadding(eightDp, eightDp, eightDp, txtDescription != null ? fourDp : eightDp);
+                    txtTitle.setPadding(eightDp, eightDp, eightDp, txtDescription != null && sectionItem.hasDescription() ? fourDp : eightDp);
                 }
             } else {
                 txtTitle.setVisibility(View.GONE);
@@ -117,10 +117,10 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
                 if (itemRenderer != null) {
                     itemRenderer.setRendering(txtDescription, fourDp, fourDp, true, true, true, true);
                     if (itemRenderer.getPadding() == 0 && sectionItem.isOverlayWithAdjacentTitleDesc(viewType)) {
-                        itemRenderer.adjustDescPaddingForOverlayWithAdjacentTitleAndDesc(0, txtTitle, txtDescription);
+                        itemRenderer.adjustDescPaddingForOverlayWithAdjacentTitleAndDesc(eightDp, 0, txtTitle, txtDescription, sectionItem);
                     }
                 } else if (sectionItem.isOverlayWithAdjacentTitleDesc(viewType)){
-                    txtDescription.setPadding(txtTitle != null ? 0 : eightDp, eightDp, eightDp, eightDp);
+                    txtDescription.setPadding(txtTitle != null && sectionItem.hasTitle() ? 0 : eightDp, eightDp, eightDp, eightDp);
                 }
             } else {
                 txtDescription.setVisibility(View.GONE);

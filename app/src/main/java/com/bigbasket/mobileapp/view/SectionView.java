@@ -39,6 +39,7 @@ public class SectionView {
     private SectionData mSectionData;
     private int fourDp;
     private int eightDp;
+    private int sixteenDp;
     private String screenName;
 
     public SectionView(Context context, Typeface faceRobotoRegular, SectionData mSectionData, String screenName) {
@@ -48,6 +49,7 @@ public class SectionView {
         this.screenName = screenName;
         this.fourDp = (int) context.getResources().getDimension(R.dimen.margin_mini);
         this.eightDp = (int) context.getResources().getDimension(R.dimen.margin_small);
+        this.sixteenDp = (int) context.getResources().getDimension(R.dimen.margin_normal);
     }
 
     private void parseRendererColors() {
@@ -73,7 +75,7 @@ public class SectionView {
         mainLayout.setBackgroundColor(context.getResources().getColor(R.color.uiv3_list_bkg_color));
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         ArrayList<Section> sections = mSectionData.getSections();
-        int marginLarge = (int) context.getResources().getDimension(R.dimen.margin_large);
+        int marginBetweenWidgets = (int) context.getResources().getDimension(R.dimen.margin_normal);
         for (int i = 0; i < sections.size(); i++) {
             Section section = sections.get(i);
             View sectionView = getViewToRender(section, inflater, mainLayout);
@@ -91,7 +93,7 @@ public class SectionView {
                     sectionView.setLayoutParams(layoutParams);
                 }
             } else {
-                layoutParams.topMargin = marginLarge;
+                layoutParams.topMargin = marginBetweenWidgets;
                 sectionView.setLayoutParams(layoutParams);
             }
         }
@@ -306,8 +308,8 @@ public class SectionView {
             if (renderer != null) {
                 renderer.setRendering(txtVw, 0, 0);
             } else {
-                txtVw.setBackgroundColor(context.getResources().getColor(R.color.uiv3_menu_header));
-                txtVw.setTextColor(Color.WHITE);
+                txtVw.setPadding(txtVw.getPaddingLeft(), txtVw.getPaddingTop(),
+                        txtVw.getPaddingRight(), fourDp);
             }
             txtVw.setText(section.getTitle().getText());
             txtVw.setTypeface(faceRobotoRegular);
@@ -321,6 +323,7 @@ public class SectionView {
             if (sectionItem == null || sectionItem.getTitle() == null || TextUtils.isEmpty(sectionItem.getTitle().getText()))
                 continue;
             View itemView = inflater.inflate(R.layout.uiv3_section_menu_row, menuContainer, false);
+            ViewGroup layoutMenuTxt = (ViewGroup) itemView.findViewById(R.id.layoutMenuTxt);
             TextView txtListText = (TextView) itemView.findViewById(R.id.txtListText);
             TextView txtListSubText = (TextView) itemView.findViewById(R.id.txtListSubText);
             ImageView imgInRow = (ImageView) itemView.findViewById(R.id.imgInRow);
@@ -338,13 +341,11 @@ public class SectionView {
             if (itemRenderer != null) {
                 itemRenderer.setRendering(itemView, 0, 0);
             } else {
-                ViewGroup.LayoutParams layoutParams = itemView.getLayoutParams();
-                if (layoutParams instanceof ViewGroup.MarginLayoutParams) {
-                    ((ViewGroup.MarginLayoutParams) layoutParams).
-                            setMargins(fourDp, 0, fourDp, 0);
-                }
                 itemView.setBackgroundColor(context.getResources().getColor(R.color.white));
             }
+
+            int layoutMenuTxtPadding = sectionItem.hasDescription() && sectionItem.hasTitle() ? eightDp : sixteenDp;
+            layoutMenuTxt.setPadding(sixteenDp, layoutMenuTxtPadding, layoutMenuTxtPadding, layoutMenuTxtPadding);
 
             if (!TextUtils.isEmpty(sectionItem.getImage())) {
                 sectionItem.displayImage(imgInRow);
@@ -431,10 +432,11 @@ public class SectionView {
                     if (itemRenderer != null) {
                         itemRenderer.setRendering(txtTitle, fourDp, fourDp, true, true, true, true);
                         if (itemRenderer.getPadding() == 0 && sectionItem.isOverlayWithAdjacentTitleDesc(viewType)) {
-                            itemRenderer.adjustTitlePaddingForOverlayWithAdjacentTitleAndDesc(eightDp, txtTitle, txtDescription);
+                            itemRenderer.adjustTitlePaddingForOverlayWithAdjacentTitleAndDesc(eightDp, fourDp, txtTitle, txtDescription, sectionItem);
                         }
                     } else {
-                        txtTitle.setPadding(eightDp, eightDp, eightDp, txtDescription != null ? fourDp : eightDp);
+                        txtTitle.setPadding(eightDp, eightDp, eightDp,
+                                txtDescription != null && sectionItem.hasDescription() ? fourDp : eightDp);
                     }
                 } else {
                     txtTitle.setVisibility(View.GONE);
@@ -450,10 +452,10 @@ public class SectionView {
                     if (itemRenderer != null) {
                         itemRenderer.setRendering(txtDescription, fourDp, fourDp, true, true, true, true);
                         if (itemRenderer.getPadding() == 0 && sectionItem.isOverlayWithAdjacentTitleDesc(viewType)) {
-                            itemRenderer.adjustDescPaddingForOverlayWithAdjacentTitleAndDesc(0, txtTitle, txtDescription);
+                            itemRenderer.adjustDescPaddingForOverlayWithAdjacentTitleAndDesc(eightDp, 0, txtTitle, txtDescription, sectionItem);
                         }
                     } else {
-                        txtDescription.setPadding(txtTitle != null ? 0 : eightDp, eightDp, eightDp, eightDp);
+                        txtDescription.setPadding(txtTitle != null && sectionItem.hasTitle() ? 0 : eightDp, eightDp, eightDp, eightDp);
                     }
                 } else {
                     txtDescription.setVisibility(View.GONE);

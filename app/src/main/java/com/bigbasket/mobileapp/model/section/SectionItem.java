@@ -258,4 +258,12 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
         }
         return 0;
     }
+
+    public boolean hasTitle() {
+        return getTitle() != null && !TextUtils.isEmpty(getTitle().getText());
+    }
+
+    public boolean hasDescription() {
+        return getDescription() != null && !TextUtils.isEmpty(getDescription().getText());
+    }
 }

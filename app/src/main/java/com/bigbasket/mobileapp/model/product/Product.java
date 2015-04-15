@@ -277,7 +277,7 @@ public class Product implements Parcelable {
     }
 
     public String getWeightAndPackDesc() {
-        return weight + (TextUtils.isEmpty(packageDescription) ? "" : " (" + packageDescription + ")");
+        return weight + (TextUtils.isEmpty(packageDescription) ? "" : " - " + packageDescription);
     }
 
     public void setWeight(String weight) {

@@ -22,7 +22,7 @@
             android:ellipsize="end"
             android:gravity="center_horizontal"
             android:maxLines="2"
-            android:paddingBottom="@dimen/padding_small"
+            android:paddingBottom="@dimen/padding_mini"
             android:paddingLeft="@dimen/padding_small"
             android:paddingRight="@dimen/padding_small"
             android:paddingTop="@dimen/padding_small"
