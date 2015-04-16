@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -65,7 +64,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
             cityName = preferences.getString(Constants.CITY, null);
         }
         if (getSystemAreaInfo()) {
-            hRefresh.sendEmptyMessage(1);
+            handleMessage(1);
         } else {
             showForm();
         }
@@ -318,15 +317,15 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
                     break;
                 case ApiErrorCodes.NUMBER_IN_USE:
                     mErrorMsg = createUpdateAddressApiResponse.message;
-                    hRefresh.sendEmptyMessage(Constants.MOBILE_NUMBER_USED_BY_ANOTHER_MEMBER);
+                    handleMessage(Constants.MOBILE_NUMBER_USED_BY_ANOTHER_MEMBER);
                     break;
                 case ApiErrorCodes.OTP_NEEDED:
                     mErrorMsg = createUpdateAddressApiResponse.message;
-                    hRefresh.sendEmptyMessage(Constants.VALIDATE_MOBILE_NUMBER_POPUP);
+                    handleMessage(Constants.VALIDATE_MOBILE_NUMBER_POPUP);
                     break;
                 case ApiErrorCodes.OTP_INVALID:
                     mErrorMsg = createUpdateAddressApiResponse.message;
-                    hRefresh.sendEmptyMessage(Constants.VALIDATE_MOBILE_NUMBER_POPUP_ERROR_MSG);
+                    handleMessage(Constants.VALIDATE_MOBILE_NUMBER_POPUP_ERROR_MSG);
                     break;
                 default:
                     HashMap<String, String> map = new HashMap<>();
@@ -418,27 +417,24 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
         hideProgressDialog();
     }
 
-    // TODO : Jugal fix this
-    Handler hRefresh = new Handler() {
-        public void handleMessage(android.os.Message msg) {
-            switch (msg.what) {
-                case 1:
-                    BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
-                    showProgressDialog(getString(R.string.please_wait));
-                    bigBasketApiService.getAreaInfo(new CallbackGetAreaInfo<>(getCurrentActivity()));
-                    break;
-                case Constants.VALIDATE_MOBILE_NUMBER_POPUP:
-                    validateMobileNumber(false, mErrorMsg);
-                    break;
-                case Constants.VALIDATE_MOBILE_NUMBER_POPUP_ERROR_MSG:
-                    validateMobileNumber(true, mErrorMsg);
-                    break;
-                case Constants.MOBILE_NUMBER_USED_BY_ANOTHER_MEMBER:
-                    showAlertDialog(mErrorMsg != null ? mErrorMsg : getResources().getString(R.string.numberUsedByAnotherMember));
-                    break;
-            }
+    public void handleMessage(int what) {
+        switch (what) {
+            case 1:
+                BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
+                showProgressDialog(getString(R.string.please_wait));
+                bigBasketApiService.getAreaInfo(new CallbackGetAreaInfo<>(getCurrentActivity()));
+                break;
+            case Constants.VALIDATE_MOBILE_NUMBER_POPUP:
+                validateMobileNumber(false, mErrorMsg);
+                break;
+            case Constants.VALIDATE_MOBILE_NUMBER_POPUP_ERROR_MSG:
+                validateMobileNumber(true, mErrorMsg);
+                break;
+            case Constants.MOBILE_NUMBER_USED_BY_ANOTHER_MEMBER:
+                showAlertDialog(mErrorMsg != null ? mErrorMsg : getResources().getString(R.string.numberUsedByAnotherMember));
+                break;
         }
-    };
+    }
 
     @Override
     public String getScreenTag() {

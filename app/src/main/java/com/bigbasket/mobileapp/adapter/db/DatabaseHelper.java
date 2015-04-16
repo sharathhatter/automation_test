@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 import com.bigbasket.mobileapp.adapter.order.PrescriptionImageAdapter;
@@ -24,25 +23,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void open(Context context) {
         if (!isConnectionOpen) {
             try {
-                Log.d("Opening connection to database in r/w mode for ", context.getClass().getSimpleName());
                 db = getInstance(context).getWritableDatabase();
             } catch (SQLiteException e) {
-                Log.d("Unable to get write access for database, so reverting to read-only mode", "");            //warn
                 db = getInstance(context).getReadableDatabase();
             }
             isConnectionOpen = true;
-        } else {
-            Log.d("Database connection is already open", "");
         }
     }
 
     public void close() {
         if (isConnectionOpen) {
-            Log.d("Database connection closed", "");
             db.close();
             isConnectionOpen = false;
-        } else {
-            Log.d("Database connection is already closed", "");
         }
     }
 
@@ -64,10 +56,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-    }
-
-    public static boolean isConnectionOpen() {
-        return isConnectionOpen;
     }
 
     @Override

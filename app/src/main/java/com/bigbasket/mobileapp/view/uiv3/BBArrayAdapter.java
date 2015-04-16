@@ -32,9 +32,6 @@ public class BBArrayAdapter<T> extends ArrayAdapter<T> {
 
     public BBArrayAdapter(Context context, int resource, T[] objects) {
         super(context, resource, objects);
-        this.typeface = typeface;
-        this.itemColor = itemColor;
-        this.dropDownItemColor = dropDownItemColor;
     }
 
     public BBArrayAdapter(Context context, int resource, int textViewResourceId, T[] objects, Typeface typeface, int itemColor, int dropDownItemColor) {

@@ -39,10 +39,9 @@ public class MessageFormatUtil<T> {
 
             spannableString = new SpannableString(msgStr);
             // change str to link color
-            int preIndex = preIndexOfFormatStr;
-            int postIndex = preIndex + messageParamInfoList.get(replacedStringIndex).getDisplayName().length();
+            int postIndex = preIndexOfFormatStr + messageParamInfoList.get(replacedStringIndex).getDisplayName().length();
             spannableString.setSpan(new ForegroundColorSpan(((ActivityAware) ctx).getCurrentActivity().getResources().getColor(R.color.link_color)),
-                    preIndex, postIndex, 0);
+                    preIndexOfFormatStr, postIndex, 0);
         }
         if (activityArrayList != null && activityArrayList.size() > 0) {
             return addClickablePart(spannableString.toString().replaceAll("\\s*\\[\\s*", "["),

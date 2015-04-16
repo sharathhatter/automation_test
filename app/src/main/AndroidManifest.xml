@@ -37,7 +37,7 @@
     <uses-permission android:name="com.bigbasket.mobileapp.permission.C2D_MESSAGE" />
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.READ_PROFILE" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
 
     <application
@@ -344,21 +344,6 @@
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
         <activity
-            android:name=".activity.account.uiv3.MemberReferralActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
-
-        <activity
-            android:name=".activity.account.uiv3.BBReferralMailActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
-
-        <activity
-            android:name=".activity.account.uiv3.ContactListActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
-
-        <activity
             android:name=".activity.account.uiv3.SignupActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
@@ -383,6 +368,10 @@
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/fb_app_id" />
 
+        <activity
+            android:name="com.luminous.pick.CustomGalleryActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.account.uiv3.OrderListActivity"
             android:screenOrientation="portrait"

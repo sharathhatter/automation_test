@@ -20,9 +20,8 @@ public class ResponseSerializer {
             out.close();
 
             // Get the bytes of the serialized object
-            byte[] buf = bos.toByteArray();
 
-            return buf;
+            return bos.toByteArray();
         } catch (IOException e) {
             Log.e("serializeObject", "error", e);
 

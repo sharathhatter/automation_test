@@ -12,6 +12,7 @@ import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class SearchSuggestionAdapter {
 
@@ -41,7 +42,8 @@ public class SearchSuggestionAdapter {
     public void insert(AutoSearchResponse autoSearchResponse) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(COLUMN_QUERY, DatabaseUtils.sqlEscapeString(autoSearchResponse.getQuery()));
-        contentValues.put(COLUMN_CREATED_ON, new SimpleDateFormat("dd-MM-yyyy").format(new Date(System.currentTimeMillis())));
+        contentValues.put(COLUMN_CREATED_ON, new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).
+                format(new Date(System.currentTimeMillis())));
 
         String[] termsArray = autoSearchResponse.getTerms();
         String[] categoriesArray = autoSearchResponse.getCategories();

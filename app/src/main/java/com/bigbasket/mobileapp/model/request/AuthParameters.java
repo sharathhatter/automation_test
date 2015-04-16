@@ -12,6 +12,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class AuthParameters {
@@ -139,7 +140,7 @@ public class AuthParameters {
         if (!AuthParameters.getInstance(context).isAuthTokenEmpty()) return false;
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(context);
         String firstTimeCookieTimeStamp = prefer.getString(Constants.FIRST_TIME_COOKIE_TIME_STAMP, null);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
         Date now = new Date();
         if (TextUtils.isEmpty(firstTimeCookieTimeStamp)) {
             setFirstTimeVisitor(context, now, simpleDateFormat);

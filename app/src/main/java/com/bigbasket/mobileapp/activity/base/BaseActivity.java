@@ -89,6 +89,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
@@ -548,7 +549,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         String areaInfoCalledLast = prefer.getString("areaInfoCalledLast", null);
         SharedPreferences.Editor editor = prefer.edit();
         try {
-            DateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+            DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
             Date d1 = format.getCalendar().getTime();
             int days = 0;
             if (areaInfoCalledLast != null) {
@@ -727,9 +728,6 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             // Use ContactsContract.Profile (API 14+)
             getLoaderManager().initLoader(0, null, new LoadEmailAddressTask<>(getCurrentActivity(), emailView).new ContactsLoader());
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-            // Use AccountManager (API 8+)
-            new LoadEmailAddressTask<>(getCurrentActivity(), emailView).new SetupEmailAutoCompleteTask().execute(null, null);
         }
     }
 

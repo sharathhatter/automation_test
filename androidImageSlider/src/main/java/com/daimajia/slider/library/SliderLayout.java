@@ -2,6 +2,7 @@ package com.daimajia.slider.library;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.LayoutRes;
 import android.support.v4.view.PagerAdapter;
@@ -19,6 +20,7 @@ import com.daimajia.slider.library.Tricks.FixedSpeedScroller;
 import com.daimajia.slider.library.Tricks.InfinitePagerAdapter;
 import com.daimajia.slider.library.Tricks.InfiniteViewPager;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -125,20 +127,25 @@ public class SliderLayout extends RelativeLayout {
      */
     private PagerIndicator.IndicatorVisibility mIndicatorVisibility = PagerIndicator.IndicatorVisibility.Visible;
 
+    private AutoCycleHandler mh;
+
     /**
      * {@link com.daimajia.slider.library.Indicators.PagerIndicator} shape, rect or oval.
      */
 
     public SliderLayout(Context context) {
         this(context, null);
+        this.mh = new AutoCycleHandler(this);
     }
 
     public SliderLayout(Context context, AttributeSet attrs) {
         this(context, attrs, R.attr.SliderStyle);
+        this.mh = new AutoCycleHandler(this);
     }
 
     public SliderLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        this.mh = new AutoCycleHandler(this);
         mContext = context;
         LayoutInflater.from(context).inflate(getLayoutResId(), this, true);
 
@@ -202,13 +209,21 @@ public class SliderLayout extends RelativeLayout {
         mSliderAdapter.addSlider(imageContent);
     }
 
-    private android.os.Handler mh = new android.os.Handler() {
+    private static class AutoCycleHandler extends Handler {
+        private WeakReference<SliderLayout> sliderLayoutRef;
+
+        public AutoCycleHandler(SliderLayout sliderLayout) {
+            this.sliderLayoutRef = new WeakReference<>(sliderLayout);
+        }
+
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            moveNextPosition(true);
+            if (sliderLayoutRef != null) {
+                sliderLayoutRef.get().moveNextPosition(true);
+            }
         }
-    };
+    }
 
     public void startAutoCycle() {
         startAutoCycle(1000, mSliderDuration, mAutoRecover);
@@ -354,7 +369,7 @@ public class SliderLayout extends RelativeLayout {
         }
 
         public boolean equals(String other) {
-            return (other == null) ? false : name.equals(other);
+            return (other != null) && name.equals(other);
         }
     }
 

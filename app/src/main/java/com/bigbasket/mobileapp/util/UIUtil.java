@@ -49,6 +49,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class UIUtil {
@@ -319,7 +320,7 @@ public class UIUtil {
 
     public static String getToday(String format) {
         Date date = new Date();
-        return new SimpleDateFormat(format).format(date);
+        return new SimpleDateFormat(format, Locale.getDefault()).format(date);
     }
 
     public static Spannable formatAsSavings(String savingsStr, Typeface faceRupee) {
@@ -334,7 +335,7 @@ public class UIUtil {
     public static int handleUpdateDialog(String serverAppExpireDateString, Activity activity) {
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(activity);
         long lastPopUpShownTime = prefer.getLong(Constants.LAST_POPUP_SHOWN_TIME, 0);
-        SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_FOR_APP_UPGRADE_POPUP);
+        SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_FOR_APP_UPGRADE_POPUP, Locale.getDefault());
         String today = getToday(Constants.DATE_FORMAT_FOR_APP_UPGRADE_POPUP);
 
         Date serverAppExpireDate, toDaysData;

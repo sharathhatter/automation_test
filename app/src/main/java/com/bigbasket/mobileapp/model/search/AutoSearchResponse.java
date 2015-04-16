@@ -10,6 +10,7 @@ import com.google.gson.annotations.SerializedName;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class AutoSearchResponse {
@@ -72,7 +73,7 @@ public class AutoSearchResponse {
 //    }
 
     public boolean isStale() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
         try {
             Date createdOnDate = dateFormat.parse(createdOn);
             Date now = new Date();

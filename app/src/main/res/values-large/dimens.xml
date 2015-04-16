@@ -6,14 +6,14 @@
     <dimen name="primary_text_size">18sp</dimen>
     <dimen name="secondary_text_size">16sp</dimen>
     <dimen name="small_text_size">14sp</dimen>
-    <dimen name="footer_button_vertical_padding">16dp</dimen>
+    <!--<dimen name="footer_button_vertical_padding">16dp</dimen>-->
     <dimen name="card_img_content_margin">16dp</dimen>
     <dimen name="bar_chart_height">500dp</dimen>
     <dimen name="grid_width">160dp</dimen>
-    <dimen name="carousel_height">220dp</dimen>
+    <!--<dimen name="carousel_height">220dp</dimen>-->
     <dimen name="vertical_tile_with_img_min_height">220dp</dimen>
     <integer name="numGridCols">3</integer>
     <dimen name="banner_slider_height">180dp</dimen>
-    <dimen name="product_row_item_margin_mini">8dp</dimen>
+    <!--<dimen name="product_row_item_margin_mini">8dp</dimen>-->
     <dimen name="product_row_item_margin_small">16dp</dimen>
 </resources>

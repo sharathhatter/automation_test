@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
-import android.util.Log;
 
 import com.bigbasket.mobileapp.adapter.db.DatabaseHelper;
 
@@ -37,7 +36,6 @@ public class AreaPinInfoAdapter {
     }
 
     public void insert(String areaName, String pinCode) {
-        Log.d("Inserting AreaInfo to database", "");
         try {
             ContentValues cv = new ContentValues();
 
@@ -50,7 +48,6 @@ public class AreaPinInfoAdapter {
     }
 
     public String getAreaPin(String areaName) {
-        Log.d("Inside get Area pin Method ", "");
         Cursor areaPinCursor = null;
         String pinCode = null;
         try {
@@ -72,7 +69,6 @@ public class AreaPinInfoAdapter {
 
 
     public ArrayList<String> getAreaNameList() {
-        Log.d("Inside getAreaNameList Method ", "");
         Cursor areaNameCursor = null;
         String areaNameStr = null;
         ArrayList<String> result = new ArrayList<>();
@@ -93,17 +89,5 @@ public class AreaPinInfoAdapter {
             }
         }
         return result;
-    }
-
-
-    public void deleteTable() {
-        Log.d("Inside dropTable Method ", "");
-        try {
-            DatabaseHelper.db.execSQL("DELETE FROM " + tableName);
-            Log.d(tableName, "Table deleted *************");
-        } catch (SQLiteException e) {
-            e.printStackTrace();
-        }
-
     }
 }

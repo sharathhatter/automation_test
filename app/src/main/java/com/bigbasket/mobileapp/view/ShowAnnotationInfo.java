@@ -41,7 +41,7 @@ public class ShowAnnotationInfo<T> {
         final TextView txtFulfilledBy = (TextView) base.findViewById(R.id.txtFulfilledBy);
 
         if (annotationInfo.getMsgInfo().getParams() != null && annotationInfo.getMsgInfo().getMessageStr() != null) {
-            MessageFormatUtil<T> messageFormatUtil = new MessageFormatUtil<T>();
+            MessageFormatUtil<T> messageFormatUtil = new MessageFormatUtil<>();
             SpannableStringBuilder msgContent = messageFormatUtil.
                     replaceStringArgWithDisplayNameAndLink(ctx,
                             " " + annotationInfo.getMsgInfo().getMessageStr(),

@@ -14,7 +14,6 @@ import android.widget.ViewAnimator;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
-import com.bigbasket.mobileapp.animation.AnimationFactory;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
@@ -70,7 +69,6 @@ public class UpdatePinFragment extends BaseFragment {
         imgEditPin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AnimationFactory.flipTransition(viewAnimator, AnimationFactory.FlipDirection.LEFT_RIGHT);
                 editTextNewPin.requestFocus();
                 BaseActivity.showKeyboard(editTextNewPin);
             }
@@ -81,7 +79,6 @@ public class UpdatePinFragment extends BaseFragment {
         txtCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AnimationFactory.flipTransition(viewAnimator, AnimationFactory.FlipDirection.LEFT_RIGHT);
                 BaseActivity.hideKeyboard((BaseActivity) getActivity(), editTextNewPin);
             }
         });
@@ -168,7 +165,6 @@ public class UpdatePinFragment extends BaseFragment {
                 String msg = ApiResponse.message;
                 setCurrentPin(currentPin);
                 if (status == 0) {
-                    AnimationFactory.flipTransition(viewAnimator, AnimationFactory.FlipDirection.LEFT_RIGHT);
                     currentPin = newPin;
                     setCurrentPin(editTextNewPin.getText().toString());
                     BaseActivity.hideKeyboard((BaseActivity) getActivity(), editTextNewPin);

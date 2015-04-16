@@ -5,9 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-/**
- * Created by jugal on 2/2/15.
- */
+
 public class AppDataResponse {
 
     @SerializedName(Constants.ANALYTICS)

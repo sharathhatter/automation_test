@@ -274,7 +274,6 @@ public class AgeValidationActivity extends BackButtonActivity {
         if (fulFillmentIds != null) {
             rbtnNo.setTag(fulFillmentIds);
         } else {
-            assert false : "Fulfillment info ID(s) should not be Null";
             return;
         }
 
