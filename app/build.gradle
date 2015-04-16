@@ -60,7 +60,6 @@ android {
 
 dependencies {
     compile files('libs/gcm.jar')
-    compile files('libs/achartengine-1.1.0.jar')
     compile files('libs/localytics.jar')
     compile project(':konotorActivity')
     compile project(':multipleImagePick')

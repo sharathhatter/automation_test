@@ -15,11 +15,9 @@ import com.bigbasket.mobileapp.apiservice.models.response.GetDynamicPageApiRespo
 import com.bigbasket.mobileapp.apiservice.models.response.GetPaymentParamsApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPrepaidPaymentResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetProductsForOrderApiResponseContent;
-import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListDetailsApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListSummaryResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListsApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginApiResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.MemberReferralProduct;
 import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OrderListApiResponse;
@@ -44,7 +42,6 @@ import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.account.CurrentWalletBalance;
 import com.bigbasket.mobileapp.model.account.UpdatePin;
 import com.bigbasket.mobileapp.model.account.WalletDataItem;
-import com.bigbasket.mobileapp.model.account.spendTrends.SpendTrends;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.order.COReserveQuantity;
 import com.bigbasket.mobileapp.model.order.MarketPlace;
@@ -172,12 +169,6 @@ public interface BigBasketApiService {
     @GET("/sl-get-list-summary/")
     void getShoppingListSummary(@Query(Constants.SLUG) String shoppingListSlug,
                                 Callback<ApiResponse<GetShoppingListSummaryResponse>> getShoppingListSummaryApiResponseCallback);
-
-    @FormUrlEncoded
-    @POST("/sl-get-list-details/")
-    void getShoppingListDetails(@Field(Constants.SLUG) String shoppingListSlug, @Field(Constants.TOP_CAT_SLUG) String topCategorySlug,
-                                Callback<ApiResponse<GetShoppingListDetailsApiResponse>> getShoppingListDetailsApiResponseCallback);
-
 
     @FormUrlEncoded
     @POST("/sl-cat-items-to-cart/")
@@ -357,25 +348,6 @@ public interface BigBasketApiService {
     @GET("/get-products-for-order/")
     void getProductsForOrder(@Query(Constants.ORDER_ID) String orderId,
                              Callback<ApiResponse<GetProductsForOrderApiResponseContent>> getProductsForOrderApiResponseCallback);
-
-    @GET("/get-referral/")
-    void getReferralProduct(Callback<ApiResponse<MemberReferralProduct>> getRefProductApiResponseCallback);
-
-    @FormUrlEncoded
-    @POST("/post-referral/")
-    void postProduct(@Field(Constants.REF_EMAILS) String refEmails,
-                     @Field(Constants.REF_MESSAGE) String refMessage,
-                     @Field(Constants.REF_TYPE) String refType,
-                     Callback<ApiResponse> postReferralApiResponseCallback);
-
-    @FormUrlEncoded
-    @POST("/post-referral/")
-    void postReferralSms(@Field(Constants.REF_TYPE) String refType,
-                         @Field(Constants.REF_MOB_NUMBERS) String refMobNumbers,
-                         Callback<ApiResponse> postReferralApiResponseCallback);
-
-    @GET("/spend-trends/")
-    void spendTrends(Callback<ApiResponse<SpendTrends>> spendTrendsApiResponseCallback);
 
     @FormUrlEncoded
     @POST("/forgot-password/")

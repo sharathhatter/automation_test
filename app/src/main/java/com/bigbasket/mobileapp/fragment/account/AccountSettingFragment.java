@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.OrderListActivity;
-import com.bigbasket.mobileapp.activity.account.uiv3.SpendTrendsActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
@@ -99,11 +98,6 @@ public class AccountSettingFragment extends BaseFragment {
                         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                         trackEvent(TrackingAware.CHANGE_PIN_CLICKED, null);
                         break;
-                    case 7:
-                        intent = new Intent(getActivity(), SpendTrendsActivity.class);
-                        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                        trackEvent(TrackingAware.SPEND_TRENDS_CLICKED, null);
-                        break;
                 }
             }
         });
@@ -121,8 +115,7 @@ public class AccountSettingFragment extends BaseFragment {
                 getResources().getString(R.string.change_password),
                 getResources().getString(R.string.wallet_activity),
                 getResources().getString(R.string.delivery_address),
-                getResources().getString(R.string.view_edit_pin_label),
-                getString(R.string.spendTrends)};
+                getResources().getString(R.string.view_edit_pin_label)};
         int[] imageArray = {
                 R.drawable.delivery_van,
                 R.drawable.order_history_grey_list,
@@ -130,8 +123,7 @@ public class AccountSettingFragment extends BaseFragment {
                 R.drawable.ic_lock_grey600_36dp,
                 R.drawable.wallet_grey_list,
                 R.drawable.delivery_grey_list,
-                R.drawable.dpin,
-                R.drawable.trends};
+                R.drawable.dpin};
 
         @Override
         public int getCount() {
