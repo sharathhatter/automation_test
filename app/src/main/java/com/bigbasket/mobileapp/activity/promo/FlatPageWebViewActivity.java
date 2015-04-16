@@ -36,15 +36,22 @@ public class FlatPageWebViewActivity extends BackButtonActivity {
         }
         progressBar = (ProgressBar) findViewById(R.id.progressbar_Horizontal);
 
-        BBWebView wevViewFulfillmentPage = (BBWebView) findViewById(R.id.webViewFulfillmentPage);
-        wevViewFulfillmentPage.getSettings().setJavaScriptEnabled(true);
-        wevViewFulfillmentPage.getSettings().setDomStorageEnabled(true);
+        BBWebView bbWebView = (BBWebView) findViewById(R.id.webViewFulfillmentPage);
+        bbWebView.getSettings().setJavaScriptEnabled(true);
+        bbWebView.getSettings().setDomStorageEnabled(true);
         if (webViewUrl != null) {
-            wevViewFulfillmentPage.loadUrl(webViewUrl); // To get responsive template
-            wevViewFulfillmentPage.setWebViewClient(new FulFillmentWebViewClient());
+            if (!webViewUrl.contains("source=app")) {
+                if (webViewUrl.contains("?")) {
+                    webViewUrl += "&source=app";
+                } else {
+                    webViewUrl += "?source=app";
+                }
+            }
+            bbWebView.loadUrl(webViewUrl); // To get responsive template
+            bbWebView.setWebViewClient(new FulFillmentWebViewClient());
         }
 
-        wevViewFulfillmentPage.setWebChromeClient((new WebChromeClient() {
+        bbWebView.setWebChromeClient((new WebChromeClient() {
 
             // this will be called on page loading progress
 
