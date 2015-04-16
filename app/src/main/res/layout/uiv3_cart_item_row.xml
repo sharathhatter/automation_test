@@ -42,8 +42,7 @@
             android:layout_marginTop="@dimen/margin_small"
             android:layout_toRightOf="@id/imgProduct"
             android:adjustViewBounds="true"
-            android:contentDescription="@string/alt_placeholder"
-            android:src="@drawable/delete" />
+            android:contentDescription="@string/alt_placeholder" />
 
         <TextView
             android:id="@+id/txtProductDesc"
