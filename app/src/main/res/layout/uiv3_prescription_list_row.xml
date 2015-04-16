@@ -1,164 +1,155 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    style="@style/CardViewStyle"
     android:layout_width="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <android.support.v7.widget.CardView
-        style="@style/CardViewStyle"
+    <LinearLayout
+        android:id="@+id/layoutListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/white"
         android:orientation="vertical"
-        app:cardCornerRadius="@dimen/card_corner_radius"
-        app:cardElevation="@dimen/card_elevation">
+        android:paddingBottom="@dimen/padding_small"
+        android:paddingLeft="@dimen/padding_normal"
+        android:paddingRight="@dimen/padding_small"
+        android:paddingTop="@dimen/padding_small">
 
         <LinearLayout
-            android:id="@+id/layoutListView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:orientation="vertical"
-            android:paddingBottom="@dimen/padding_small"
-            android:paddingLeft="@dimen/padding_normal"
-            android:paddingRight="@dimen/padding_small"
-            android:paddingTop="@dimen/padding_small">
+            android:orientation="horizontal">
 
-            <LinearLayout
+            <TextView
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/prescriptionNameList"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/txtPrescriptionName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_weight="1"
+                android:text="Pain-Killer"
+                android:textSize="16sp" />
 
-                <TextView
-                    android:layout_width="300dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/prescriptionNameList"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/txtPrescriptionName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Pain-Killer"
-                    android:textSize="16sp" />
-
-            </LinearLayout>
+        </LinearLayout>
 
 
-            <LinearLayout
-                android:id="@+id/patientNameLayout"
+        <LinearLayout
+            android:id="@+id/patientNameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/patientNameList"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/txtPatientName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="300dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/patientNameList"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/txtPatientName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Jugal Joshi "
-                    android:textSize="16sp" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/doctorNameLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="300dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/doctorNameList"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/txtDoctorName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Manoj Joshi"
-                    android:textSize="16sp" />
-
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:id="@+id/dateLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="300dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/dateCreatedList"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/txtDateCreated"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="10 july 2014"
-                    android:textSize="16sp" />
-            </LinearLayout>
+                android:layout_weight="1"
+                android:text="Jugal Joshi "
+                android:textSize="16sp" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/layoutViewPrescriptionImageAndChoosePrescription"
+            android:id="@+id/doctorNameLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal|bottom"
-            android:orientation="horizontal"
-            android:visibility="gone">
+            android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/txtViewPrescriptionImages"
-                android:layout_width="0dp"
+                android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
                 android:layout_weight="1"
-                android:background="@color/footer_background"
-                android:gravity="center"
-                android:paddingBottom="8dp"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:paddingTop="8dp"
-                android:text="@string/viewPrescriptionImages"
-                android:textColor="@android:color/white"
-                android:textSize="13.5sp" />
+                android:text="@string/doctorNameList"
+                android:textSize="16sp" />
 
             <TextView
-                android:id="@+id/txtChoosePrescription"
-                android:layout_width="0dp"
+                android:id="@+id/txtDoctorName"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
                 android:layout_weight="1"
-                android:background="@color/uiv3_action_bar_background"
-                android:gravity="center"
-                android:paddingBottom="8dp"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:paddingTop="8dp"
-                android:text="@string/txtChoosePrescription"
-                android:textColor="@android:color/white"
-                android:textSize="13.5sp" />
+                android:text="Manoj Joshi"
+                android:textSize="16sp" />
+
         </LinearLayout>
 
 
-    </android.support.v7.widget.CardView>
+        <LinearLayout
+            android:id="@+id/dateLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/dateCreatedList"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/txtDateCreated"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="10 july 2014"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layoutViewPrescriptionImageAndChoosePrescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|bottom"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/txtViewPrescriptionImages"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="@color/footer_background"
+            android:gravity="center"
+            android:paddingBottom="8dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="8dp"
+            android:text="@string/viewPrescriptionImages"
+            android:textColor="@android:color/white"
+            android:textSize="13.5sp" />
+
+        <TextView
+            android:id="@+id/txtChoosePrescription"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="@color/uiv3_action_bar_background"
+            android:gravity="center"
+            android:paddingBottom="8dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="8dp"
+            android:text="@string/txtChoosePrescription"
+            android:textColor="@android:color/white"
+            android:textSize="13.5sp" />
+    </LinearLayout>
+
+
 </LinearLayout>

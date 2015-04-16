@@ -3,12 +3,6 @@
 
     <style name="BBAppTheme" parent="BaseAppTheme" />
 
-    <style name="CardViewStyle">
-        <item name="android:layout_marginTop">@dimen/margin_small</item>
-        <item name="android:layout_marginLeft">@dimen/margin_small</item>
-        <item name="android:layout_marginRight">@dimen/margin_small</item>
-    </style>
-
     <style name="WindowStyle">
         <item name="android:fitsSystemWindows">false</item>
     </style>

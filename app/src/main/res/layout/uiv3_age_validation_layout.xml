@@ -1,73 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/CardViewStyle"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layoutAgeValidation"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/margin_small"
-    app:cardBackgroundColor="@color/white"
-    app:cardCornerRadius="@dimen/card_corner_radius">
+    android:orientation="vertical"
+    android:background="@color/white"
+    android:paddingBottom="@dimen/padding_normal">
 
-    <LinearLayout
-        android:id="@+id/layoutAgeValidation"
+    <TextView
+        android:id="@+id/txtAgeMsg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingBottom="@dimen/padding_normal">
+        android:layout_marginLeft="@dimen/margin_small"
+        android:layout_marginRight="@dimen/margin_small"
+        android:layout_marginTop="@dimen/margin_small"
+        android:gravity="left"
+        android:textColor="@color/uiv3_primary_text_color"
+        android:textSize="@dimen/primary_text_size" />
 
-        <TextView
-            android:id="@+id/txtAgeMsg"
-            android:layout_width="match_parent"
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/radioBtnYes"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/margin_small"
             android:layout_marginRight="@dimen/margin_small"
-            android:layout_marginTop="@dimen/margin_small"
-            android:gravity="left"
+            android:layout_marginTop="@dimen/margin_normal"
+            android:checked="true"
             android:textColor="@color/uiv3_primary_text_color"
             android:textSize="@dimen/primary_text_size" />
 
-        <RadioGroup
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
 
-            <RadioButton
-                android:id="@+id/radioBtnYes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/margin_small"
-                android:layout_marginRight="@dimen/margin_small"
-                android:layout_marginTop="@dimen/margin_normal"
-                android:checked="true"
-                android:textColor="@color/uiv3_primary_text_color"
-                android:textSize="@dimen/primary_text_size" />
-
-
-            <RadioButton
-                android:id="@+id/radioBtnNo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/margin_small"
-                android:layout_marginRight="@dimen/margin_small"
-                android:layout_marginTop="@dimen/margin_normal"
-                android:checked="false"
-                android:textColor="@color/uiv3_primary_text_color"
-                android:textSize="@dimen/primary_text_size" />
-        </RadioGroup>
-
-        <TextView
+        <RadioButton
+            android:id="@+id/radioBtnNo"
             android:layout_width="wrap_content"
-            android:id="@+id/txtPharmaTcLink"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_small"
+            android:layout_marginRight="@dimen/margin_small"
             android:layout_marginTop="@dimen/margin_normal"
-            android:layout_marginLeft="@dimen/margin_normal"
-            android:text="@string/viewTerms"
-            android:visibility="gone"
-            android:textColor="@color/link_color"
-            android:textStyle="italic"
-            android:layout_height="wrap_content" />
+            android:checked="false"
+            android:textColor="@color/uiv3_primary_text_color"
+            android:textSize="@dimen/primary_text_size" />
+    </RadioGroup>
 
-    </LinearLayout>
+    <TextView
+        android:id="@+id/txtPharmaTcLink"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_marginTop="@dimen/margin_normal"
+        android:text="@string/viewTerms"
+        android:textColor="@color/link_color"
+        android:textStyle="italic"
+        android:visibility="gone" />
 
+</LinearLayout>
 
-</android.support.v7.widget.CardView>

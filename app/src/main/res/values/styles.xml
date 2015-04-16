@@ -164,7 +164,11 @@
         <item name="android:paddingRight">@dimen/padding_normal</item>
     </style>
 
-    <style name="CardViewStyle" />
+    <style name="CardViewStyle">
+        <item name="android:layout_marginTop">@dimen/margin_small</item>
+        <item name="android:layout_marginLeft">@dimen/margin_small</item>
+        <item name="android:layout_marginRight">@dimen/margin_small</item>
+    </style>
 
     <style name="CardViewHeading">
         <item name="android:layout_width">match_parent</item>
