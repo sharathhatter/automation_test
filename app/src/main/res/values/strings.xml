@@ -38,7 +38,7 @@
     <string name="addAll">Add all</string>
     <string name="saving">Savings:</string>
     <string name="regular_price">Regular Price</string>
-    <string name="totalMrp">\u00A0|\u00A0Total: </string>
+    <string name="totalMrp">Total: </string>
     <string name="current_pin">Your current Pin</string>
     <string name="update">Update</string>
     <string name="updateDialogTitle">Update BigBasket App</string>
@@ -283,7 +283,7 @@
     <string name="viewInvoice">VIEW INVOICE</string>
 
     <!-- cart page -->
-    <string name="empty_basket">Remove all items from basket!</string>
+    <string name="empty_basket">Empty</string>
     <string name="check_out">Checkout</string>
     <string name="payment_and_slot_selection">Payment &amp; Slot Selection</string>
     <string name="empty_basket_txt1">There are no items in your basket.</string>

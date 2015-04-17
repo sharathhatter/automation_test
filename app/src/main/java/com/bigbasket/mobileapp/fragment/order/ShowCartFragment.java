@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.fragment.order;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -11,9 +12,6 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -32,7 +30,6 @@ import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.BaseApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.CartGetApiResponseContent;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
-import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.AnnotationInfo;
@@ -69,24 +66,10 @@ public class ShowCartFragment extends BaseFragment {
     private ArrayList<CartItemList> cartItemLists;
     private ArrayList<FulfillmentInfo> fullfillmentInfos;
     private ArrayList<AnnotationInfo> annotationInfoArrayList;
-    private Menu menu;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.uiv3_list_container, container, false);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.basket_page_menu, menu);
-        this.menu = menu;
-        menu.findItem(R.id.action_empty_basket).setVisible(false);
     }
 
     @Override
@@ -100,22 +83,6 @@ public class ShowCartFragment extends BaseFragment {
         if (getArguments() != null) {
             String fulfillmentIds = getArguments().getString(Constants.INTERNAL_VALUE);
             getCartItems(fulfillmentIds);
-        }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_empty_basket:
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-                if (preferences.getString(Constants.GET_CART, "0") != null
-                        && !preferences.getString(Constants.GET_CART, "0").equals("0")) {
-                    showAlertDialog(null, "Remove all the products from basket?", DialogButton.YES,
-                            DialogButton.NO, Constants.EMPTY_BASKET, null, "Empty Basket");
-                }
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
         }
     }
 
@@ -252,20 +219,6 @@ public class ShowCartFragment extends BaseFragment {
             lblSaving.setVisibility(View.GONE);
         }
 
-
-        TextView txtTotalCartItems = (TextView) base.findViewById(R.id.txtTotalCartItems);
-        txtTotalCartItems.setTypeface(faceRobotoRegular);
-        if (cartSummary.getNoOfItems() != 0) {
-            menu.findItem(R.id.action_empty_basket).setVisible(true);
-            if (cartSummary.getNoOfItems() > 1) {
-                txtTotalCartItems.setText(cartSummary.getNoOfItems() + " Items");
-            } else {
-                txtTotalCartItems.setText(cartSummary.getNoOfItems() + " Item");
-            }
-        } else {
-            txtTotalCartItems.setVisibility(View.GONE);
-        }
-
         String totalBasketAmount = UIUtil.formatAsMoney(cartSummary.getTotal());
         TextView txtTotal = (TextView) base.findViewById(R.id.txtTotal);
         txtTotal.setTypeface(faceRobotoRegular);
@@ -277,6 +230,25 @@ public class ShowCartFragment extends BaseFragment {
             txtTotal.setText("");
             txtTotal.setVisibility(View.INVISIBLE);
         }
+
+        // TextView on Gingerbread and Button on HoneyComb onwards
+        View viewEmptyBasket = base.findViewById(R.id.viewEmptyBasket);
+        // Since button extends textview hence it'll work for both
+        ((TextView) viewEmptyBasket).setTypeface(faceRobotoRegular);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            ((TextView) viewEmptyBasket).setAllCaps(false);
+        }
+        viewEmptyBasket.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                if (preferences.getString(Constants.GET_CART, "0") != null
+                        && !preferences.getString(Constants.GET_CART, "0").equals("0")) {
+                    showAlertDialog(null, "Remove all the products from basket?", DialogButton.YES,
+                            DialogButton.NO, Constants.EMPTY_BASKET, null, "Empty Basket");
+                }
+            }
+        });
         return base;
     }
 
@@ -291,7 +263,6 @@ public class ShowCartFragment extends BaseFragment {
         if (getActivity() == null) return;
         if (!DataUtil.isInternetAvailable(getActivity())) return;
         trackEvent(TrackingAware.BASKET_EMPTY_CLICKED, null);
-        menu.findItem(R.id.action_empty_basket).setVisible(false);
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
         final SharedPreferences.Editor editor = prefer.edit();
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
@@ -384,21 +355,8 @@ public class ShowCartFragment extends BaseFragment {
     }
 
     @Override
-    public void changeFragment(AbstractFragment newFragment) {
-        setHasOptionsMenu(false);
-        if (getCurrentActivity() != null) {
-            getCurrentActivity().invalidateOptionsMenu();
-        }
-        super.changeFragment(newFragment);
-    }
-
-    @Override
     public void onBackResume() {
         super.onBackResume();
-        setHasOptionsMenu(true);
-        if (getCurrentActivity() != null) {
-            getCurrentActivity().invalidateOptionsMenu();
-        }
         if (getArguments() != null) {
             String fulfillmentIds = getArguments().getString(Constants.INTERNAL_VALUE);
             getCartItems(fulfillmentIds);
