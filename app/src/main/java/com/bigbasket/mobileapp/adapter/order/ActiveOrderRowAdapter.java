@@ -285,7 +285,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
                 if (cartItem.getTotalQty() > 0) {
                     txtInBasket.setVisibility(View.VISIBLE);
                     int itemCount = (int) cartItem.getTotalQty();
-                    txtInBasket.setText(String.valueOf(itemCount) + " in ");
+                    txtInBasket.setText(String.valueOf(itemCount));
                 } else {
                     txtInBasket.setVisibility(View.GONE);
                 }

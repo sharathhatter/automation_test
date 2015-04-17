@@ -80,10 +80,10 @@ public interface BigBasketApiService {
 
 
     @GET("/get-home-page/")
-    void getHomePage(@Query(Constants.SCREEN) String screen, Callback<ApiResponse<GetDynamicPageApiResponse>> dynamicPageApiResponseCallback);
+    void getHomePage(Callback<ApiResponse<GetDynamicPageApiResponse>> dynamicPageApiResponseCallback);
 
     @GET("/get-main-menu/")
-    void getMainMenu(@Query(Constants.SCREEN) String screen, Callback<ApiResponse<GetDynamicPageApiResponse>> dynamicPageApiResponseCallback);
+    void getMainMenu(Callback<ApiResponse<GetDynamicPageApiResponse>> dynamicPageApiResponseCallback);
 
     @GET("/c-get/")
     void cartGet(@Query(Constants.FULFILLMENT_ID) String fulfillmentId,
@@ -267,7 +267,7 @@ public interface BigBasketApiService {
     void basketCheck(Callback<ApiResponse<MarketPlace>> marketPlaceApiResponseCallback);
 
     @GET("/c-summary/")
-    void cartSummary(Callback<CartSummaryApiResponse> cartSummaryApiResponseCallback);
+    CartSummaryApiResponse cartSummary();
 
     @GET("/product-details/")
     void productDetails(@Query(Constants.PROD_ID) String productId,

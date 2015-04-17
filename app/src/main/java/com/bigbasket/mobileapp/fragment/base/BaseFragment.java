@@ -260,7 +260,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
                 editTextQty.setVisibility(View.GONE);
             }
             if (basketCountTextView != null) {
-                basketCountTextView.setText(productQtyInBasket + " in");
+                basketCountTextView.setText(String.valueOf(productQtyInBasket));
                 basketCountTextView.setVisibility(View.VISIBLE);
             }
         }

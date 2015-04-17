@@ -190,7 +190,7 @@
     <string name="enterVoucher">Enter eVoucher code</string>
     <string name="largeImageError">Please upload smaller size image.</string>
     <string name="maxImageError">Can not upload more than 5 images.</string>
-    <string name="connectionOffline">Can not proceed with the operation.\n Please check your internet connection.</string>
+    <string name="connectionOffline">Apologies, cannot proceed with the operation. No network connection!\nPlease check your Internet connection</string>
     <string name="info">Information</string>
     <string name="contactHeading">ADDRESS</string>
     <string name="paymentHeading">PAYMENT DETAILS</string>

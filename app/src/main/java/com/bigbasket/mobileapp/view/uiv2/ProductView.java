@@ -331,7 +331,7 @@ public final class ProductView {
                 int noOfItemsInCart = product.getNoOfItemsInCart();
 
                 if (noOfItemsInCart > 0) {
-                    txtInBasket.setText(noOfItemsInCart + " in");
+                    txtInBasket.setText(String.valueOf(noOfItemsInCart));
                     txtInBasket.setVisibility(View.VISIBLE);
                     txtDecBasketQty.setVisibility(View.VISIBLE);
                     txtIncBasketQty.setVisibility(View.VISIBLE);

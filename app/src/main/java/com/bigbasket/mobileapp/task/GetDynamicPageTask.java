@@ -57,10 +57,10 @@ public class GetDynamicPageTask<T> {
         }
         switch (screenName) {
             case SectionManager.HOME_PAGE:
-                bigBasketApiService.getHomePage(screenName, new DynamicPageCallback(sectionManager));
+                bigBasketApiService.getHomePage(new DynamicPageCallback(sectionManager));
                 break;
             case SectionManager.MAIN_MENU:
-                bigBasketApiService.getMainMenu(screenName, new DynamicPageCallback(sectionManager));
+                bigBasketApiService.getMainMenu(new DynamicPageCallback(sectionManager));
                 break;
             default:
                 bigBasketApiService.getDynamicPage(screenName, new DynamicPageCallback(sectionManager));

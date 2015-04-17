@@ -590,7 +590,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 editTextQty.setVisibility(View.GONE);
             }
             if (basketCountTextView != null) {
-                basketCountTextView.setText(productQtyInBasket + " in");
+                basketCountTextView.setText(String.valueOf(productQtyInBasket));
                 basketCountTextView.setVisibility(View.VISIBLE);
             }
         }
@@ -640,7 +640,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
         editor.remove(Constants.IS_BASKET_COUNT_DIRTY);
         editor.commit();
-        new GetCartCountTask<>(this, true).startTask();
+        new GetCartCountTask<>(this).startTask();
     }
 
     private void updateCartCountHeaderTextView() {

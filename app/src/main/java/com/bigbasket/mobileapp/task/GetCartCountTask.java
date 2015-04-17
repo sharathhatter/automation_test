@@ -7,70 +7,56 @@ import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
-import com.bigbasket.mobileapp.interfaces.HandlerAware;
-import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.util.Constants;
 
-import retrofit.Callback;
+import java.lang.ref.WeakReference;
+
 import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 public class GetCartCountTask<T> {
 
-    private T ctx;
-    boolean failSilently;
+    private WeakReference<T> ctx;
 
-    public GetCartCountTask(T ctx, boolean failSilently) {
-        this.ctx = ctx;
-        this.failSilently = failSilently;
+    public GetCartCountTask(T ctx) {
+        this.ctx = new WeakReference<>(ctx);
     }
 
     public void startTask() {
-        if (((ConnectivityAware) ctx).checkInternetConnection()) {
-            BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(((ActivityAware) ctx).getCurrentActivity());
-            ((ProgressIndicationAware) ctx).showProgressDialog("Please wait...");
-            bigBasketApiService.cartSummary(new Callback<CartSummaryApiResponse>() {
+        if (ctx.get() == null) return;
+        if (((ConnectivityAware) ctx.get()).checkInternetConnection()) {
+            final BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(((ActivityAware) ctx.get()).getCurrentActivity());
+            new Thread() {
                 @Override
-                public void success(CartSummaryApiResponse cartSummaryApiResponse, Response response) {
-                    if (((CancelableAware) ctx).isSuspended()) {
-                        return;
-                    } else {
-                        try {
-                            ((ProgressIndicationAware) ctx).hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                    }
-                    switch (cartSummaryApiResponse.status) {
-                        case Constants.OK:
-                            ((CartInfoAware) ctx).setCartInfo(cartSummaryApiResponse.cartSummaryApiResponseContent.cartSummary);
-                            ((CartInfoAware) ctx).updateUIForCartInfo();
-                            break;
-                        default:
-                            if (!failSilently) {
-                                ((HandlerAware) ctx).getHandler().sendEmptyMessage(cartSummaryApiResponse.getErrorTypeAsInt(),
-                                        cartSummaryApiResponse.message);
+                public void run() {
+                    try {
+                        final CartSummaryApiResponse cartSummaryApiResponse = bigBasketApiService.cartSummary();
+                        if (ctx.get() != null && cartSummaryApiResponse != null) {
+                            if (((CancelableAware) ctx.get()).isSuspended()) {
+                                return;
                             }
-                            break;
-                    }
-                }
-
-                @Override
-                public void failure(RetrofitError error) {
-                    if (((CancelableAware) ctx).isSuspended()) {
-                        return;
-                    } else {
-                        try {
-                            ((ProgressIndicationAware) ctx).hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
+                            switch (cartSummaryApiResponse.status) {
+                                case Constants.OK:
+                                    if (ctx.get() != null) {
+                                        ((ActivityAware) ctx.get()).getCurrentActivity().runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                if (ctx.get() != null) {
+                                                    ((CartInfoAware) ctx.get()).setCartInfo(cartSummaryApiResponse.cartSummaryApiResponseContent.cartSummary);
+                                                }
+                                                if (ctx.get() != null) {
+                                                    ((CartInfoAware) ctx.get()).updateUIForCartInfo();
+                                                }
+                                            }
+                                        });
+                                    }
+                                    break;
+                            }
                         }
-                    }
-                    if (!failSilently) {
-                        ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
+                    } catch (RetrofitError | NullPointerException e) {
+
                     }
                 }
-            });
+            }.start();
         }
     }
 }

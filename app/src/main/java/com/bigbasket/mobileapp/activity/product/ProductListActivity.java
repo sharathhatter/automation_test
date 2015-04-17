@@ -194,9 +194,6 @@ public class ProductListActivity extends BBActivity implements FilterDisplayAwar
         bundle.putString(Constants.SEARCH_QUERY, searchQuery);
         searchFragment.setArguments(bundle);
         addToMainLayout(searchFragment);
-//        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//        ft.replace(R.id.content_frame, searchFragment);
-//        ft.commitAllowingStateLoss();
     }
 
     @Override
@@ -217,7 +214,7 @@ public class ProductListActivity extends BBActivity implements FilterDisplayAwar
 
     public void syncBasket() {
         // Don't remove the IS_BASKET_DIRTY flag, as Fragment also needs to refresh, only update count
-        new GetCartCountTask<>(this, true).startTask();
+        new GetCartCountTask<>(this).startTask();
     }
 
     @Override
