@@ -33,6 +33,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 public class FloatingActionButton extends ImageButton {
+    private static final int TRANSLATE_DURATION_MILLIS = 200;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({TYPE_NORMAL, TYPE_MINI})
@@ -214,13 +215,6 @@ public class FloatingActionButton extends ImageButton {
         return marginBottom;
     }
 
-    public void setColorRipple(int color) {
-        if (color != mColorRipple) {
-            mColorRipple = color;
-            updateBackground();
-        }
-    }
-
     public void setType(@TYPE int type) {
         if (type != mType) {
             mType = type;
@@ -277,10 +271,12 @@ public class FloatingActionButton extends ImageButton {
             int translationY = visible ? 0 : height + getMarginBottom();
             if (animate) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
-                    animate().setInterpolator(mInterpolator);
+                    animate().setInterpolator(mInterpolator)
+                            .setDuration(TRANSLATE_DURATION_MILLIS)
+                            .translationY(translationY);
                 }
             } else {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
                     setTranslationY(translationY);
                 }
             }

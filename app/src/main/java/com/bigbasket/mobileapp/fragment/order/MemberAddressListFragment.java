@@ -6,12 +6,10 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -29,7 +27,6 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetDeliveryAddressApiResponseContent;
-import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.AddressSelectionAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
@@ -40,6 +37,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,27 +51,6 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
 
     protected ArrayList<Address> mAddressArrayList;
     private boolean mFromAccountPage = false;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.add_menu, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menuAddItem) {
-            showCreateAddressForm();
-            return true;
-        } else {
-            return super.onOptionsItemSelected(item);
-        }
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -200,7 +177,17 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             btnBlankPage.setVisibility(View.GONE);
         }
 
-        addressView.findViewById(R.id.btnFab).setVisibility(View.GONE);
+        FloatingActionButton floatingActionButton = (FloatingActionButton) addressView.findViewById(R.id.btnFab);
+        if (addressRecyclerView.getVisibility() == View.VISIBLE &&
+                addressRecyclerView.getLayoutManager() instanceof LinearLayoutManager) {
+            floatingActionButton.attachToRecyclerView(addressRecyclerView);
+        }
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showCreateAddressForm();
+            }
+        });
         contentView.addView(addressView);
     }
 
@@ -293,24 +280,6 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
-    @Override
-    public void changeFragment(AbstractFragment newFragment) {
-        setHasOptionsMenu(false);
-        if (getCurrentActivity() != null) {
-            getCurrentActivity().invalidateOptionsMenu();
-        }
-        super.changeFragment(newFragment);
-    }
-
-    @Override
-    public void onBackResume() {
-        super.onBackResume();
-        setHasOptionsMenu(false);
-        if (getCurrentActivity() != null) {
-            getCurrentActivity().invalidateOptionsMenu();
         }
     }
 
