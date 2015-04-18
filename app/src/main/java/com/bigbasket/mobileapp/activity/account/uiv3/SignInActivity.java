@@ -217,21 +217,15 @@ public class SignInActivity extends BackButtonActivity {
     }
 
     private void showForgotPasswordDialog() {
-        View base = getLayoutInflater().inflate(R.layout.uiv3_editable_dialog, null);
-
-        final EditText editTextDialog = (EditText) base.findViewById(R.id.editTextDialog);
-        editTextDialog.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-        editTextDialog.setHint(getString(R.string.email));
-
-        UIUtil.getMaterialDialogBuilder(this)
+        new MaterialDialog.Builder(this)
                 .title(R.string.forgotPasswd)
-                .positiveText(R.string.emailNewPassword)
-                .negativeText(R.string.cancel)
-                .customView(base, false)
-                .callback(new MaterialDialog.ButtonCallback() {
+                .positiveText(getString(R.string.emailNewPassword))
+                .negativeText(getString(R.string.cancel))
+                .inputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS)
+                .input(getString(R.string.email), "", new MaterialDialog.InputCallback() {
                     @Override
-                    public void onPositive(MaterialDialog dialog) {
-                        String inputEmail = editTextDialog.getText().toString();
+                    public void onInput(MaterialDialog materialDialog, CharSequence charSequence) {
+                        String inputEmail = charSequence != null ? charSequence.toString() : "";
                         if (TextUtils.isEmpty(inputEmail)) {
                             showToast("Please enter an email address");
                             return;
@@ -242,7 +236,8 @@ public class SignInActivity extends BackButtonActivity {
                         }
                         requestNewPassword(inputEmail);
                     }
-                }).show();
+                })
+                .show();
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_LOGIN_PAGE);
         trackEvent(TrackingAware.FORGOT_PASSWORD_DIALOG_SHOWN, eventAttribs);

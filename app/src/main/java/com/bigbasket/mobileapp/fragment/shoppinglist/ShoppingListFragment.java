@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.PopupMenu;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -21,6 +22,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
@@ -36,9 +38,7 @@ import com.bigbasket.mobileapp.task.uiv3.ShoppingListNamesTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
-import com.bigbasket.mobileapp.view.uiv3.CreateShoppingListDialog;
-import com.bigbasket.mobileapp.view.uiv3.DeleteShoppingListDialog;
-import com.bigbasket.mobileapp.view.uiv3.EditShoppingDialog;
+import com.bigbasket.mobileapp.util.UIUtil;
 import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -139,13 +139,26 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
         fabCreateShoppingList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CreateShoppingListDialog createShoppingListDialog = new CreateShoppingListDialog();
-                createShoppingListDialog.setTargetFragment(getFragmentInstance(), 0);
-                createShoppingListDialog.show(getFragmentManager(), Constants.SHOPPING_LIST_NAME);
+                showCreateShoppingListDialog();
             }
         });
         contentView.removeAllViews();
         contentView.addView(base);
+    }
+
+    private void showCreateShoppingListDialog() {
+        new MaterialDialog.Builder(getActivity())
+                .title(R.string.createShoppingList)
+                .inputType(InputType.TYPE_CLASS_TEXT)
+                .input(getString(R.string.shoppingListNameDialogTextHint), "", new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(MaterialDialog materialDialog, CharSequence charSequence) {
+                        createShoppingList(charSequence != null ? charSequence.toString() : "");
+                    }
+                })
+                .positiveText(R.string.createList)
+                .negativeText(R.string.cancel)
+                .show();
     }
 
     private void showNoShoppingListView(View base) {
@@ -161,7 +174,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
     }
 
     public void createShoppingList(final String shoppingListName) {
-        if (shoppingListName.length() == 0) {
+        if (TextUtils.isEmpty(shoppingListName)) {
             Toast.makeText(getActivity(), "Please enter a valid name", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -432,28 +445,48 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
         return this;
     }
 
-    private void showEditShoppingListDialog(ShoppingListName shoppingListName) {
+    private void showEditShoppingListDialog(final ShoppingListName shoppingListName) {
         if (shoppingListName.isSystem()) {
             if (getCurrentActivity() != null) {
                 getCurrentActivity().showAlertDialog(null, getString(R.string.isSystemShoppingListMsg));
             }
             return;
         }
-        EditShoppingDialog editShoppingDialog = EditShoppingDialog.newInstance(shoppingListName);
-        editShoppingDialog.setTargetFragment(getFragmentInstance(), 0);
-        editShoppingDialog.show(getFragmentManager(), Constants.SHOPPING_LIST_NAME);
+        new MaterialDialog.Builder(getActivity())
+                .title(R.string.changeShoppingListName)
+                .positiveText(getString(R.string.change))
+                .negativeText(getString(R.string.cancel))
+                .inputType(InputType.TYPE_CLASS_TEXT)
+                .input(getString(R.string.shoppingListNameDialogTextHint), shoppingListName.getName(), new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(MaterialDialog materialDialog, CharSequence charSequence) {
+                        if (charSequence != null && charSequence.toString().trim().equals(shoppingListName.getName())) {
+                            editShoppingListName(shoppingListName, charSequence.toString());
+                        }
+                    }
+                })
+                .show();
     }
 
-    private void showDeleteShoppingListDialog(ShoppingListName shoppingListName) {
+    private void showDeleteShoppingListDialog(final ShoppingListName shoppingListName) {
         if (shoppingListName.isSystem()) {
             if (getCurrentActivity() != null) {
                 getCurrentActivity().showAlertDialog(null, getString(R.string.isSystemShoppingListMsg));
             }
             return;
         }
-        DeleteShoppingListDialog deleteShoppingListDialog = DeleteShoppingListDialog.newInstance(shoppingListName);
-        deleteShoppingListDialog.setTargetFragment(getFragmentInstance(), 0);
-        deleteShoppingListDialog.show(getFragmentManager(), Constants.SHOPPING_LIST_NAME);
+        UIUtil.getMaterialDialogBuilder(getActivity())
+                .title(R.string.deleteQuestion)
+                .content(R.string.deleteShoppingListText)
+                .positiveText(R.string.delete)
+                .negativeText(R.string.cancel)
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        ((ShoppingListFragment) getTargetFragment()).deleteShoppingList(shoppingListName);
+                    }
+                })
+                .build();
     }
 
     public void editShoppingListName(ShoppingListName shoppingListName, String newName) {
