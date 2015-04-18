@@ -123,6 +123,7 @@ public class PromoDetail extends Promo {
     public ArrayList<Product> getFreeProducts() {
         return freeProducts;
     }
+
     public int getNumPromoCompletedInBasket() {
         return numPromoCompletedInBasket;
     }

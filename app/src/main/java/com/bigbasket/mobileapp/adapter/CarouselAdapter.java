@@ -119,7 +119,7 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
                     if (itemRenderer.getPadding() == 0 && sectionItem.isOverlayWithAdjacentTitleDesc(viewType)) {
                         itemRenderer.adjustDescPaddingForOverlayWithAdjacentTitleAndDesc(eightDp, 0, txtTitle, txtDescription, sectionItem);
                     }
-                } else if (sectionItem.isOverlayWithAdjacentTitleDesc(viewType)){
+                } else if (sectionItem.isOverlayWithAdjacentTitleDesc(viewType)) {
                     txtDescription.setPadding(txtTitle != null && sectionItem.hasTitle() ? 0 : eightDp, eightDp, eightDp, eightDp);
                 }
             } else {

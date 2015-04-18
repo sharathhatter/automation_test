@@ -91,7 +91,7 @@ public class PaymentSelectionFragment extends BaseFragment implements PostVouche
         String payuFailureReason = args.getString(Constants.PAYU_CANCELLED);
         if (TextUtils.isEmpty(payuFailureReason)
                 && ((payuResponse != null && payuResponse.isSuccess())
-                    || (powerPayResponse != null && powerPayResponse.isSuccess()))) {
+                || (powerPayResponse != null && powerPayResponse.isSuccess()))) {
             renderPayuFailedToCreateOrderScenario();
         } else {
             renderPaymentOptions();
