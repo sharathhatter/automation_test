@@ -184,7 +184,6 @@ public interface BigBasketApiService {
 
 
     @FormUrlEncoded
-
     @POST("/c-incr-i/")
     void incrementCartItem(@Field(Constants.PROD_ID) String productId, @Field(Constants.QTY) String qty,
                            Callback<CartOperationApiResponse> cartOperationApiResponseCallback);

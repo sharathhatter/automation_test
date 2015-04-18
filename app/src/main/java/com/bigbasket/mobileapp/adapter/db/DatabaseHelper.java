@@ -9,7 +9,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 import com.bigbasket.mobileapp.adapter.order.PrescriptionImageAdapter;
 import com.bigbasket.mobileapp.adapter.product.CategoryAdapter;
-import com.bigbasket.mobileapp.adapter.product.ShopInShopAdapter;
 import com.bigbasket.mobileapp.adapter.product.SubCategoryAdapter;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -71,6 +70,5 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(PrescriptionImageAdapter.createTable);
         db.execSQL(SearchSuggestionAdapter.createTable);
         db.execSQL(MostSearchesAdapter.createTable);
-        db.execSQL(ShopInShopAdapter.createTable);
     }
 }

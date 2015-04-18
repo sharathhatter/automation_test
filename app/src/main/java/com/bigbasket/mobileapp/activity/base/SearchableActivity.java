@@ -166,6 +166,7 @@ public class SearchableActivity extends BackButtonActivity
         listView.setLayoutAnimation(controller);
     }
 
+    @Override
     public void notifySearchTermAdapter() {
         mSearchListAdapter.changeCursor(populatePastSearchTermsList());
         mSearchListAdapter.notifyDataSetChanged();

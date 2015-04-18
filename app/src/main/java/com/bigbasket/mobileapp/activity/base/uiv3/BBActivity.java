@@ -57,7 +57,6 @@ import com.bigbasket.mobileapp.fragment.order.MemberAddressListFragment;
 import com.bigbasket.mobileapp.fragment.order.OrderThankYouFragment;
 import com.bigbasket.mobileapp.fragment.order.ShowCartFragment;
 import com.bigbasket.mobileapp.fragment.order.SlotSelectionFragment;
-import com.bigbasket.mobileapp.fragment.product.BrowseByOffersFragment;
 import com.bigbasket.mobileapp.fragment.product.CategoryLandingFragment;
 import com.bigbasket.mobileapp.fragment.product.CategoryProductsFragment;
 import com.bigbasket.mobileapp.fragment.product.GenericProductListFragment;
@@ -338,9 +337,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 bundle.putParcelableArrayList(Constants.ORDERS, orders);
                 orderThankYouFragment.setArguments(bundle);
                 addToMainLayout(orderThankYouFragment);
-                break;
-            case FragmentCodes.START_BROWSE_BY_OFFERS:
-                addToMainLayout(new BrowseByOffersFragment());
                 break;
             case FragmentCodes.START_CATEGORY_LANDING:
                 CategoryLandingFragment categoryLandingFragment = new CategoryLandingFragment();
