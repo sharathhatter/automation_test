@@ -74,7 +74,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-plus:6.5.87'
     compile 'com.newrelic.agent.android:android-agent:4.+'
     compile 'com.facebook.android:facebook-android-sdk:3.23.0'
-    compile 'com.afollestad:material-dialogs:0.7.2.3'
+    compile 'com.afollestad:material-dialogs:0.7.2.4'
     provided 'com.squareup.okhttp:okhttp:2.3.0'
     compile('com.crashlytics.sdk.android:crashlytics:2.2.1@aar') {
         transitive = true;

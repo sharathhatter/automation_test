@@ -150,7 +150,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
         new MaterialDialog.Builder(getActivity())
                 .title(R.string.createShoppingList)
                 .inputType(InputType.TYPE_CLASS_TEXT)
-                .input(getString(R.string.shoppingListNameDialogTextHint), "", new MaterialDialog.InputCallback() {
+                .input(getString(R.string.shoppingListNameDialogTextHint), "", false, new MaterialDialog.InputCallback() {
                     @Override
                     public void onInput(MaterialDialog materialDialog, CharSequence charSequence) {
                         createShoppingList(charSequence != null ? charSequence.toString() : "");
@@ -441,10 +441,6 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
         }
     }
 
-    public ShoppingListFragment getFragmentInstance() {
-        return this;
-    }
-
     private void showEditShoppingListDialog(final ShoppingListName shoppingListName) {
         if (shoppingListName.isSystem()) {
             if (getCurrentActivity() != null) {
@@ -457,7 +453,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
                 .positiveText(getString(R.string.change))
                 .negativeText(getString(R.string.cancel))
                 .inputType(InputType.TYPE_CLASS_TEXT)
-                .input(getString(R.string.shoppingListNameDialogTextHint), shoppingListName.getName(), new MaterialDialog.InputCallback() {
+                .input(getString(R.string.shoppingListNameDialogTextHint), shoppingListName.getName(), false, new MaterialDialog.InputCallback() {
                     @Override
                     public void onInput(MaterialDialog materialDialog, CharSequence charSequence) {
                         if (charSequence != null && charSequence.toString().trim().equals(shoppingListName.getName())) {

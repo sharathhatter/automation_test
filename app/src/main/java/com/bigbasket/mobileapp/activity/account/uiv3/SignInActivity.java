@@ -222,7 +222,7 @@ public class SignInActivity extends BackButtonActivity {
                 .positiveText(getString(R.string.emailNewPassword))
                 .negativeText(getString(R.string.cancel))
                 .inputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS)
-                .input(getString(R.string.email), "", new MaterialDialog.InputCallback() {
+                .input(getString(R.string.email), "", false, new MaterialDialog.InputCallback() {
                     @Override
                     public void onInput(MaterialDialog materialDialog, CharSequence charSequence) {
                         String inputEmail = charSequence != null ? charSequence.toString() : "";
