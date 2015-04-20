@@ -56,7 +56,7 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
         super.onCreate(savedInstanceState);
 
         // Defensive fix
-        removePendingGoToHome();
+        removePendingCodes();
         try {
             boolean isHDFCPayMode = getIntent().getBooleanExtra(Constants.MODE_HDFC_PAY, false);
             if (isHDFCPayMode) {

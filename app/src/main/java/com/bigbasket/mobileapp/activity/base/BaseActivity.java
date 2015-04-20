@@ -69,6 +69,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.FontHolder;
+import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
@@ -262,8 +263,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         if (!authParameters.isAuthTokenEmpty()) {
             Konotor.getInstance(getApplicationContext()).launchFeedbackScreen(this);
         } else {
-            showAlertDialog(null, getString(R.string.login_required),
-                    NavigationCodes.GO_TO_LOGIN);
+            launchLogin(TrackEventkeys.NAVIGATION_CTX_SHOW_BASKET, FragmentCodes.START_COMMUNICATION_HUB);
         }
 
         Map<String, String> eventAttribs = new HashMap<>();
@@ -717,6 +717,14 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         editor.remove(Constants.IS_PENDING_GO_TO_HOME);
         editor.remove(Constants.RELOAD_APP);
         editor.commit();
+    }
+
+    public void removePendingCodes() {
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
+        editor.remove(Constants.FRAGMENT_CODE);
+        editor.remove(Constants.DEEP_LINK);
+        editor.commit();
+        removePendingGoToHome();
     }
 
     public boolean isPendingReloadApp() {

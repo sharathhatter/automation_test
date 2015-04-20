@@ -284,7 +284,7 @@
     <string name="viewInvoice">VIEW INVOICE</string>
 
     <!-- cart page -->
-    <string name="empty_basket">Empty</string>
+    <string name="empty">Empty</string>
     <string name="check_out">Checkout</string>
     <string name="payment_and_slot_selection">Payment &amp; Slot Selection</string>
     <string name="empty_basket_txt1">There are no items in your basket.</string>
@@ -365,4 +365,6 @@
     <string name="citiesWhereWeServe">Cities where we currently serve</string>
     <string name="createAShoppingList">You do not have a shopping list! Please create one to add items</string>
     <string name="bbShoppingLists">BigBasket Shopping List</string>
+    <string name="removeAllProducts">Remove all the products from basket?</string>
+    <string name="emptyBasket">Empty Basket</string>
 </resources>

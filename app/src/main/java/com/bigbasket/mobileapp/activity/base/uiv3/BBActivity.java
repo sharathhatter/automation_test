@@ -319,6 +319,9 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             case FragmentCodes.START_VIEW_BASKET:
                 launchViewBasket();
                 break;
+            case FragmentCodes.START_COMMUNICATION_HUB:
+                launchKonotor();
+                break;
             case FragmentCodes.START_PRODUCT_DETAIL:
                 ProductDetailFragment productDetailFragment = new ProductDetailFragment();
                 Bundle bundle = new Bundle();

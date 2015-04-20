@@ -35,7 +35,6 @@ import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.task.GetDynamicPageTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
-import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.AppNotSupportedDialog;
@@ -248,9 +247,11 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.remove(Constants.FRAGMENT_CODE);
                 editor.commit();
-                if (TextUtils.isDigitsOnly(pendingFragmentCode) &&
-                        Integer.parseInt(pendingFragmentCode) == FragmentCodes.START_VIEW_BASKET) {
-                    getCurrentActivity().launchViewBasket();
+                if (TextUtils.isDigitsOnly(pendingFragmentCode)) {
+                    int fragmentCode = Integer.parseInt(pendingFragmentCode);
+                    if (getCurrentActivity() instanceof BBActivity) {
+                        ((BBActivity) getCurrentActivity()).startFragment(fragmentCode);
+                    }
                 }
             }
         }

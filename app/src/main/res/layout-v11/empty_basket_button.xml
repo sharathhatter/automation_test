@@ -12,6 +12,6 @@
     android:minHeight="0dp"
     android:minWidth="0dp"
     android:paddingRight="@dimen/padding_small"
-    android:text="@string/empty_basket"
+    android:text="@string/empty"
     android:textColor="@color/uiv3_primary_text_color"
     android:textSize="@dimen/secondary_text_size" />

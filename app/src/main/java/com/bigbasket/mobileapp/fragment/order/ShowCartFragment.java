@@ -244,8 +244,8 @@ public class ShowCartFragment extends BaseFragment {
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
                 if (preferences.getString(Constants.GET_CART, "0") != null
                         && !preferences.getString(Constants.GET_CART, "0").equals("0")) {
-                    showAlertDialog(null, "Remove all the products from basket?", DialogButton.YES,
-                            DialogButton.NO, Constants.EMPTY_BASKET, null, "Empty Basket");
+                    showAlertDialog(null, getString(R.string.removeAllProducts), DialogButton.YES,
+                            DialogButton.NO, Constants.EMPTY_BASKET, null, getString(R.string.emptyBasket));
                 }
             }
         });

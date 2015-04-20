@@ -26,4 +26,5 @@ public final class FragmentCodes {
     public static final int START_PROMO_CATEGORY = 28;
     public static final int START_PROMO_SET_PRODUCTS = 29;
     public static final int START_DYNAMIC_SCREEN = 31;
+    public static final int START_COMMUNICATION_HUB = 32;
 }
