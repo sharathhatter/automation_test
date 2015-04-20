@@ -7,7 +7,10 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.text.Html;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.StrikethroughSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,7 +48,6 @@ public class SlotSelectionFragment extends BaseFragment {
     private SlotGroupListAdapter mSlotGroupListAdapter;
     private SlotListAdapter mSlotListAdapter;
     private String potentialOrderId;
-    private static final int NEXT_AVAILABLE_SLOT_POSITION = 1;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -138,12 +140,6 @@ public class SlotSelectionFragment extends BaseFragment {
     private void fillSlotList(ListView listViewSlot, final SlotGroup slotGroup) {
         final List<BaseSlot> flattenedSlotGroupList =
                 Slot.getFlattenedSlotGroupList(slotGroup.getSlotList());
-        Slot nxtAvailableSlot = slotGroup.getNextAvailableSlot();
-        if (nxtAvailableSlot != null) {
-            SlotHeader slotHeader = new SlotHeader(getString(R.string.nextAvailableSlot));
-            flattenedSlotGroupList.add(0, slotHeader);
-            flattenedSlotGroupList.add(NEXT_AVAILABLE_SLOT_POSITION, nxtAvailableSlot);
-        }
         mSlotListAdapter = new SlotListAdapter(flattenedSlotGroupList,
                 slotGroup);
         listViewSlot.setAdapter(mSlotListAdapter);
@@ -227,7 +223,6 @@ public class SlotSelectionFragment extends BaseFragment {
         private int size;
         private int VIEW_TYPE_HEADER = 0;
         private int VIEW_TYPE_ITEM = 1;
-        private int VIEW_TYPE_NEXT_AVAILABLE_SLOT = 2;
 
         public SlotListAdapter(List<BaseSlot> flattenedSlotGroupList, SlotGroup slotGroup) {
             this.flattenedSlotGroupList = flattenedSlotGroupList;
@@ -237,7 +232,7 @@ public class SlotSelectionFragment extends BaseFragment {
 
         @Override
         public int getViewTypeCount() {
-            return 3;
+            return 2;
         }
 
         @Override
@@ -245,8 +240,7 @@ public class SlotSelectionFragment extends BaseFragment {
             if (flattenedSlotGroupList.get(position) instanceof SlotHeader) {
                 return VIEW_TYPE_HEADER;
             }
-            return position == NEXT_AVAILABLE_SLOT_POSITION ?
-                    VIEW_TYPE_NEXT_AVAILABLE_SLOT : VIEW_TYPE_ITEM;
+            return VIEW_TYPE_ITEM;
         }
 
         @Override
@@ -268,8 +262,8 @@ public class SlotSelectionFragment extends BaseFragment {
         public View getView(int position, View convertView, ViewGroup parent) {
             BaseSlot baseSlot = flattenedSlotGroupList.get(position);
             int viewType = getItemViewType(position);
-            if (viewType == VIEW_TYPE_ITEM || viewType == VIEW_TYPE_NEXT_AVAILABLE_SLOT) {
-                View slotView = getSlotView((Slot) baseSlot, convertView, parent, position);
+            if (viewType == VIEW_TYPE_ITEM) {
+                View slotView = getSlotView((Slot) baseSlot, convertView, parent);
                 View listSeparator = slotView.findViewById(R.id.listSeparator);
                 if ((position + 1) < size && getItemViewType(position + 1) == VIEW_TYPE_HEADER) {
                     listSeparator.setVisibility(View.VISIBLE);
@@ -296,12 +290,10 @@ public class SlotSelectionFragment extends BaseFragment {
             return row;
         }
 
-        private View getSlotView(Slot slot, View row, ViewGroup parent, int position) {
-            int viewType = getItemViewType(position);
+        private View getSlotView(Slot slot, View row, ViewGroup parent) {
             SlotViewHolder slotViewHolder;
             if (row == null) {
-                int layoutId = viewType == VIEW_TYPE_NEXT_AVAILABLE_SLOT ? R
-                        .layout.uiv3_next_available_slot_row : R.layout.uiv3_slot_list_row;
+                int layoutId = R.layout.uiv3_slot_list_row;
                 row = getActivity().getLayoutInflater().inflate(layoutId, parent, false);
                 row.setBackgroundColor(getResources().getColor(R.color.uiv3_list_bkg_light_color));
                 slotViewHolder = new SlotViewHolder(row);
@@ -312,21 +304,20 @@ public class SlotSelectionFragment extends BaseFragment {
             TextView txtTitle = slotViewHolder.getTxtTitle();
             ImageView imgRow = slotViewHolder.getImgRow();
 
-            if (viewType == VIEW_TYPE_NEXT_AVAILABLE_SLOT) {
-                TextView txtSubTitle = slotViewHolder.getTxtSubTitle();
-                txtTitle.setText(slot.getFormattedSlotDate());
-                txtSubTitle.setText(slot.getFormattedDisplayName());
+            imgRow.setImageResource(R.drawable.ic_access_time_grey600_24dp);
+
+            if (!slot.isAvailable()) {
+                SpannableString slotDateUnderlineSpannable = new SpannableString(slot.getFormattedDisplayName());
+                slotDateUnderlineSpannable.setSpan(new StrikethroughSpan(), 0, slotDateUnderlineSpannable.length(),
+                        Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+                txtTitle.setText(slotDateUnderlineSpannable);
             } else {
                 txtTitle.setText(slot.getFormattedDisplayName());
             }
 
-//            if (slot.isAvailable()) {
-            imgRow.setImageResource(R.drawable.ic_access_time_grey600_24dp);
-//            } else {
-//            }
-
             CheckBox itemTick = slotViewHolder.getItemTick();
-            if (slot == slotGroup.getSelectedSlot()) {
+            if (slot.getSlotId().equals(slotGroup.getSelectedSlot().getSlotId())
+                    && slot.getSlotDate().equals(slotGroup.getSelectedSlot().getSlotDate())) {
                 itemTick.setChecked(true);
                 itemTick.setVisibility(View.VISIBLE);
                 row.setBackgroundColor(getResources().getColor(R.color.uiv3_list_bkg_color));
@@ -340,7 +331,6 @@ public class SlotSelectionFragment extends BaseFragment {
 
         private class SlotViewHolder {
             private TextView txtTitle;
-            private TextView txtSubTitle;
             private ImageView imgRow;
             private CheckBox itemTick;
             private View base;
@@ -355,14 +345,6 @@ public class SlotSelectionFragment extends BaseFragment {
                     txtTitle.setTypeface(faceRobotoRegular);
                 }
                 return txtTitle;
-            }
-
-            public TextView getTxtSubTitle() {
-                if (txtSubTitle == null) {
-                    txtSubTitle = (TextView) base.findViewById(R.id.itemSubTitle);
-                    txtSubTitle.setTypeface(faceRobotoRegular);
-                }
-                return txtSubTitle;
             }
 
             public ImageView getImgRow() {

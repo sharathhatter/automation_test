@@ -363,7 +363,6 @@
     <string name="byRegistering">By signing up, you agree to BigBasket\'s\u00A0</string>
     <string name="authFooterSeparator">, and\u00A0</string>
     <string name="citiesWhereWeServe">Cities where we currently serve</string>
-    <string name="nextAvailableSlot">Next available slot:</string>
     <string name="createAShoppingList">You do not have a shopping list! Please create one to add items</string>
     <string name="bbShoppingLists">BigBasket Shopping List</string>
 </resources>
