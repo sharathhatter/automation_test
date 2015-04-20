@@ -54,8 +54,8 @@
     <string name="ordernumber">Order No:</string>
     <string name="amountpay">Amount to Pay</string>
     <string name="vat">VAT</string>
-    <string name="type">Type</string>
-    <string name="message">Message</string>
+    <string name="action">Action</string>
+    <string name="item">Item</string>
     <string name="orderSummaryDefaultMsg">Your order is not placed yet! Please review and then place order.</string>
     <string name="paymentGatewayRedirectMsg">Please note: You will be re-directed to the payment gateway, to complete the payment</string>
     <string name="txnFailedRetryTxt">Please choose a different payment method, or retry again!</string>
@@ -69,13 +69,13 @@
     <string name="walletBalance">Current Balance</string>
     <string name="summary">Summary</string>
     <string name="items">Items</string>
-    <string name="orderModification">Modifications</string>
+    <string name="orderModification">Modified</string>
     <string name="orderReview">Review Order</string>
     <string name="chooseSlot">Select Slot</string>
     <string name="createShoppingList">Create shopping List</string>
     <string name="shoppingListNameDialogTextHint">Enter shopping list name</string>
     <string name="chooseCity">Pick Your City</string>
-    <string name="changeCityMenuTxt">Change city</string>
+    <string name="changeCityMenuTxt">Change City</string>
     <string name="outOfStock">Out of stock</string>
     <string name="orLoginUsingEmail">Or Login using E-mail</string>
     <string name="orSignupUsingEmail">Or Sign Up using E-mail</string>
@@ -167,7 +167,8 @@
     <string name="forgotPasswd">Forgot Password?</string>
     <string name="newPasswordSent">Your new password is emailed to you. Please check and login!</string>
     <string name="abortPayu">Are you sure, that you want to abort this transaction?</string>
-    <string name="receivePromos">Receive mail about promotions, offers and services.</string>
+    <string name="receivePromos">Send me mails on promotions, offers and services.</string>
+    <string name="yourList">Your List</string>
     <string name="firstName">First Name</string>
     <string name="lastName">Last Name</string>
     <string name="mobileNumber">Mobile Number</string>
@@ -339,7 +340,7 @@
     <string name="youAborted">You aborted the transaction</string>
     <string name="pressOrderReview">Your transaction was successful, but the order was not created. Please select a slot, and your order will be placed.</string>
     <string name="smartBasket">Smart Basket</string>
-    <string name="rateTheApp">Rate this app</string>
+    <string name="rateTheApp">Rate our App</string>
     <string name="shopFromPreviousOrder">Shop From Previous Order(s)</string>
     <string name="applyVoucher">Apply Voucher</string>
     <string name="selectAndApplyVoucher">Select &amp; Apply Voucher</string>

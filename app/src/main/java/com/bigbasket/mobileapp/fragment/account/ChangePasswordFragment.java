@@ -33,9 +33,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-/**
- * Created by jugal on 22/9/14.
- */
+
 public class ChangePasswordFragment extends BaseFragment {
 
     private EditText oldEditText, newPwdText, confirmPwdEditText;
@@ -231,6 +229,14 @@ public class ChangePasswordFragment extends BaseFragment {
         oldEditText.setText("");
         newPwdText.setText("");
         confirmPwdEditText.setText("");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (getCurrentActivity() != null && oldEditText != null) {
+            BaseActivity.hideKeyboard(getCurrentActivity(), oldEditText);
+        }
     }
 
     @Override

@@ -34,22 +34,12 @@
             android:paddingLeft="@dimen/padding_normal"
             android:paddingRight="@dimen/padding_normal">
 
-            <ImageView
-                android:id="@+id/imgDeliveryVan"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_normal"
-                android:contentDescription="@string/delivery_van"
-                android:src="@drawable/ic_access_time_grey600_24dp" />
-
             <LinearLayout
                 android:id="@+id/layoutDeliverySlot"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/card_img_content_margin"
-                android:layout_toRightOf="@id/imgDeliveryVan"
                 android:orientation="vertical" />
-
 
             <TextView
                 android:id="@+id/txtOrderStatus"
@@ -57,7 +47,6 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/layoutDeliverySlot"
                 android:layout_marginLeft="@dimen/card_img_content_margin"
-                android:layout_toRightOf="@id/imgDeliveryVan"
                 android:textColor="@color/uiv3_primary_text_color"
                 android:textSize="@dimen/primary_text_size" />
         </RelativeLayout>

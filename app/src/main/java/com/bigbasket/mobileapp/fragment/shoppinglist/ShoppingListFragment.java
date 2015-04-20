@@ -109,9 +109,13 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
                     shoppingLists.add(shoppingListName);
                 }
             }
+            if (shoppingLists.size() > 0) {  // There are some user lists
+                shoppingLists.add(0, getString(R.string.yourList) +
+                        (shoppingLists.size() > 1 ? "s" : ""));
+            }
             if (systemShoppingLists.size() > 0) {
                 shoppingLists.add(getString(R.string.bbShoppingLists) +
-                        (systemShoppingLists.size() > 0 ? "s" : ""));
+                        (systemShoppingLists.size() > 1 ? "s" : ""));
                 shoppingLists.addAll(systemShoppingLists);
             }
             ShoppingListAdapter shoppingListAdapter = new ShoppingListAdapter(shoppingLists);
@@ -384,7 +388,10 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
                 } else {
                     holder = (SlotSelectionFragment.SlotHeaderViewHolder) convertView.getTag();
                 }
+                int padding = (int) getResources().getDimension(R.dimen.padding_small);
                 TextView txtHeaderMsg = holder.getTxtHeaderMsg();
+                txtHeaderMsg.setPadding(txtHeaderMsg.getPaddingLeft(), padding,
+                        txtHeaderMsg.getPaddingRight(), padding);
                 txtHeaderMsg.setBackgroundColor(Color.TRANSPARENT);
                 txtHeaderMsg.setText(headerText);
             }
@@ -573,7 +580,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
 
     @Override
     public String getTitle() {
-        return "Shopping Lists";
+        return getString(R.string.shoppingList);
     }
 
     @NonNull

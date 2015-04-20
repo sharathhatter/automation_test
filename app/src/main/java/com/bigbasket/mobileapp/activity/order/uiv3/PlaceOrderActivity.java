@@ -39,6 +39,8 @@ import com.bigbasket.mobileapp.model.order.VoucherApplied;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
+import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
@@ -165,7 +167,7 @@ public class PlaceOrderActivity extends BackButtonActivity {
             return;
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
-        showProgressDialog(getString(R.string.message));
+        showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.getPrepaidPaymentParams(mPotentialOrderId, mOrderSummary.getOrderDetails().getPaymentMethod(),
                 mOrderSummary.getOrderDetails().getFormattedFinalTotal(), new Callback<ApiResponse<GetPrepaidPaymentResponse>>() {
                     @Override
@@ -207,7 +209,7 @@ public class PlaceOrderActivity extends BackButtonActivity {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         PowerPayResponse.createInstance(this, txnId,
                 pgTxnId, dataPickupCode, true);
-        showProgressDialog(getString(R.string.message));
+        showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.postPrepaidPayment(txnId, mPotentialOrderId, mOrderSummary.getOrderDetails().getPaymentMethod(), "1",
                 pgTxnId, dataPickupCode, mOrderSummary.getOrderDetails().getFormattedFinalTotal(),
                 new PostPrepaidParamsCallback());
@@ -219,7 +221,7 @@ public class PlaceOrderActivity extends BackButtonActivity {
             return;
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
-        showProgressDialog(getString(R.string.message));
+        showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.postPrepaidPayment(wPayInitRequest.getTransactionInfo().getMerTxnId(),
                 mPotentialOrderId, mOrderSummary.getOrderDetails().getPaymentMethod(), "0",
                 resCode, resDesc,
@@ -504,10 +506,10 @@ public class PlaceOrderActivity extends BackButtonActivity {
     }
 
     private void showOrderThankyou(ArrayList<Order> orders) {
-        Intent data = new Intent();
-        data.putParcelableArrayListExtra(Constants.ORDERS, orders);
-        data.putExtra(Constants.GO_TO_INVOICE, true);
-        goToHome(data);
+        Intent invoiceIntent = new Intent(this, OrderInvoiceActivity.class);
+        invoiceIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_THANKYOU);
+        invoiceIntent.putExtra(Constants.ORDERS, orders);
+        startActivityForResult(invoiceIntent, NavigationCodes.GO_TO_HOME);
     }
 
     @Override

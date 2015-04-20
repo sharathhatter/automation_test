@@ -431,6 +431,13 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware,
         trackEvent(eventName, map);
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (editTextFirstName != null && getCurrentActivity() != null) {
+            BaseActivity.hideKeyboard(getCurrentActivity(), editTextFirstName);
+        }
+    }
 
     public LinearLayout getContentView() {
         return getView() != null ? (LinearLayout) getView().findViewById(R.id.layoutUpdateProfile) : null;

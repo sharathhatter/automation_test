@@ -300,6 +300,14 @@ public class SearchableActivity extends BackButtonActivity
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        if (mSearchView != null) {
+            hideKeyboard(this, mSearchView);
+        }
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         setSuspended(false);
         if (requestCode == REQ_CODE_SPEECH_INPUT && resultCode == RESULT_OK && data != null) {

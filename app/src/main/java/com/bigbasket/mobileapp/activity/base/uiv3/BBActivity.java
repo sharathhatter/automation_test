@@ -87,7 +87,6 @@ import com.bigbasket.mobileapp.model.section.SectionTextItem;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.task.GetCartCountTask;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
@@ -751,10 +750,9 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     private void launchLogout(String navigationCtx) {
-        showAlertDialog(getString(R.string.signOut), getString(R.string.signoutConfirmation),
-                DialogButton.YES, DialogButton.NO, Constants.LOGOUT);
         logHomeScreenEvent(TrackingAware.LOG_OUT_ICON_CLICKED, TrackEventkeys.NAVIGATION_CTX,
                 navigationCtx);
+        onLogoutRequested();
     }
 
     public void doSearch(String searchQuery) {

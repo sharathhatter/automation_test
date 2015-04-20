@@ -445,4 +445,12 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
         setResult(NavigationCodes.ADDRESS_CREATED_MODIFIED);
         super.onBackPressed();
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (editTextPincode != null) {
+            hideKeyboard(this, editTextPincode);
+        }
+    }
 }

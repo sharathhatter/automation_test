@@ -69,7 +69,6 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
     private String mCreditCardTxnFailureReason;
     private boolean mIsVoucherInProgress;
     private Button mBtnFooter;
-    private boolean mHasSlotTabLaunchedOnce;
     private boolean mHasSlotExpired;
     private boolean mPrevTxnPending;
 
@@ -82,8 +81,6 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
     @Override
     protected void onResume() {
         super.onResume();
-
-        mHasSlotTabLaunchedOnce = false;
 
         if (!mIsVoucherInProgress) {
             loadSlotsAndPayments();
@@ -219,10 +216,11 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
         slidingTabStrip.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                if (position == 1) {
-                    mHasSlotTabLaunchedOnce = true;
-                    if (!mPrevTxnPending) {
-                        onSlotNavigation();
+                if (!mPrevTxnPending) {
+                    if (position == 1) {
+                        mBtnFooter.setText(getString(R.string.orderReview).toUpperCase());
+                    } else {
+                        mBtnFooter.setText(getString(R.string.chooseSlot).toUpperCase());
                     }
                 }
             }
@@ -254,7 +252,7 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
                         applyVoucher(previouslyAppliedVoucherList.get(0).getVoucherCode());
                     }
                 } else {
-                    if (!mHasSlotTabLaunchedOnce) {
+                    if (viewPager.getCurrentItem() == 0) {
                         viewPager.setCurrentItem(1, true);
                     } else {
                         launchOrderReview();
@@ -339,7 +337,6 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
         switch (resultCode) {
             case NavigationCodes.GO_TO_SLOT_SELECTION:
                 mHasSlotExpired = true;
-                mHasSlotTabLaunchedOnce = false;
                 break;
             case Constants.PREPAID_TXN_ABORTED:
                 mCreditCardTxnFailureReason = getString(R.string.youAborted);
@@ -505,9 +502,5 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
     @Override
     public String getScreenTag() {
         return null;
-    }
-
-    public void onSlotNavigation() {
-        mBtnFooter.setText(getString(R.string.orderReview).toUpperCase());
     }
 }

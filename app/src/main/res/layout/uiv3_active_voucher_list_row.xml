@@ -34,7 +34,7 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:textColor="@color/uiv3_primary_text_color"
-            android:textSize="@dimen/secondary_text_size" />
+            android:textSize="@dimen/small_text_size" />
 
         <CheckedTextView
             android:id="@+id/rbtnApplyVoucher"
@@ -63,6 +63,6 @@
         android:layout_marginTop="@dimen/margin_small"
         android:text="@string/pleaseNote"
         android:textColor="@color/uiv3_secondary_text_color"
-        android:textSize="@dimen/secondary_text_size"
+        android:textSize="@dimen/small_text_size"
         android:textStyle="italic" />
 </com.bigbasket.mobileapp.view.uiv3.CheckableRelativeLayout>

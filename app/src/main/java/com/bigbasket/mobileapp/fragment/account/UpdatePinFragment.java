@@ -10,7 +10,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.ViewAnimator;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
@@ -35,7 +34,8 @@ public class UpdatePinFragment extends BaseFragment {
     private String currentPin;
     private TextView txtPinValue;
     private EditText editTextNewPin;
-    private ViewAnimator viewAnimator;
+    private ViewGroup layoutCurrentPin;
+    private ViewGroup layoutEditPin;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -51,6 +51,8 @@ public class UpdatePinFragment extends BaseFragment {
     }
 
     private void setCurrentPin(String currentPin) {
+        layoutCurrentPin.setVisibility(View.VISIBLE);
+        layoutEditPin.setVisibility(View.GONE);
         txtPinValue.setText(!TextUtils.isEmpty(currentPin) ? currentPin : getString(R.string.blankPin));
     }
 
@@ -69,6 +71,8 @@ public class UpdatePinFragment extends BaseFragment {
         imgEditPin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                layoutCurrentPin.setVisibility(View.GONE);
+                layoutEditPin.setVisibility(View.VISIBLE);
                 editTextNewPin.requestFocus();
                 BaseActivity.showKeyboard(editTextNewPin);
             }
@@ -79,6 +83,8 @@ public class UpdatePinFragment extends BaseFragment {
         txtCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                layoutCurrentPin.setVisibility(View.VISIBLE);
+                layoutEditPin.setVisibility(View.GONE);
                 BaseActivity.hideKeyboard((BaseActivity) getActivity(), editTextNewPin);
             }
         });
@@ -192,7 +198,8 @@ public class UpdatePinFragment extends BaseFragment {
         LinearLayout view = getContentView();
         if (view == null) return;
 
-        viewAnimator = (ViewAnimator) view.findViewById(R.id.viewFlipper);
+        layoutCurrentPin = (ViewGroup) view.findViewById(R.id.layoutCurrentPin);
+        layoutEditPin = (ViewGroup) view.findViewById(R.id.layoutEditPin);
 
         TextView textPinLabel = (TextView) view.findViewById(R.id.textPinLabel);
         textPinLabel.setTypeface(faceRobotoRegular);
@@ -213,7 +220,6 @@ public class UpdatePinFragment extends BaseFragment {
         textUpdatePinInfo1.setTypeface(faceRobotoLight);
         TextView textUpdatePinInfo2 = (TextView) view.findViewById(R.id.textUpdatePinInfo2);
         textUpdatePinInfo2.setTypeface(faceRobotoLight);
-
     }
 
     @Override
@@ -235,5 +241,13 @@ public class UpdatePinFragment extends BaseFragment {
     @Override
     public String getScreenTag() {
         return TrackEventkeys.ACCOUNT_EDIT_PIN_SCREEN;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (editTextNewPin != null && getCurrentActivity() != null) {
+            BaseActivity.hideKeyboard(getCurrentActivity(), editTextNewPin);
+        }
     }
 }
