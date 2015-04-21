@@ -286,6 +286,11 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".activity.product.SortFilterActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+        <activity
             android:name=".activity.order.uiv3.PlaceOrderActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"

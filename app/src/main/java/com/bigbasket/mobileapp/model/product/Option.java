@@ -42,9 +42,9 @@ public class Option implements Parcelable {
         }
     };
 
-    public Option(String sortName, String sortSlug) {
-        this.sortName = sortName;
-        this.sortSlug = sortSlug;
+    @Override
+    public String toString() {
+        return sortName;
     }
 
     public String getSortName() {

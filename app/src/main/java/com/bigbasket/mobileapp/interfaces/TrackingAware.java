@@ -144,6 +144,7 @@ public interface TrackingAware {
 
     //product page dialog
     public static final String FILTER_APPLIED = "Filter.Applied";
+    public static final String FILTER_CLEARED = "Filter.Cleared";
     public static final String SORT_BY = "SortBy.Selected";
 
     //precheckout

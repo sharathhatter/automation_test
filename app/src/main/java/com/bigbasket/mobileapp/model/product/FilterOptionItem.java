@@ -45,12 +45,6 @@ public class FilterOptionItem implements Parcelable {
         }
     };
 
-    public FilterOptionItem(String displayName, String filterValueSlug) {
-        this.displayName = displayName;
-        this.filterValueSlug = filterValueSlug;
-        this.isSelected = false;
-    }
-
     public String getDisplayName() {
         return displayName;
     }
@@ -65,5 +59,10 @@ public class FilterOptionItem implements Parcelable {
 
     public void setSelected(boolean isSelected) {
         this.isSelected = isSelected;
+    }
+
+    @Override
+    public String toString() {
+        return displayName;
     }
 }

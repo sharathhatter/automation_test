@@ -120,8 +120,10 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         setContentView(getMainLayout());
 
         mNavRecyclerView = (RecyclerView) findViewById(R.id.listNavigation);
-        mNavRecyclerView.setHasFixedSize(false);
-        mNavRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        if (mNavRecyclerView != null) {
+            mNavRecyclerView.setHasFixedSize(false);
+            mNavRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        }
 
         handler = new BigBasketMessageHandler<>(this);
         mTitle = mDrawerTitle = getTitle().toString();
@@ -814,7 +816,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     private void loadNavigationItems() {
-
+        if (mNavRecyclerView == null) return;
         TextView txtNavSalutation = (TextView) findViewById(R.id.txtNavSalutation);
         txtNavSalutation.setTypeface(faceRobotoRegular);
         AuthParameters authParameters = AuthParameters.getInstance(this);

@@ -51,6 +51,7 @@
     <color name="uiv3_dark_bkg">#333333</color>
     <color name="uiv3_orange">#E7685D</color>
     <color name="gplus_red">#9b1b0c</color>
+    <color name="uiv3_expandable_row_header_bkg">#EEEEEE</color>
 
     <!-- LetterImageViewColor -->
     <string-array name="letterImageViewColors" translatable="false">
