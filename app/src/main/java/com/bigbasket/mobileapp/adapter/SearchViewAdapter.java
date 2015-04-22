@@ -38,12 +38,7 @@ public class SearchViewAdapter<T> extends CursorAdapter implements Filterable {
         if (viewType == VIEW_TYPE_ITEM) {
             RowViewHolder rowViewHolder = (RowViewHolder) view.getTag();
             TextView txtTerm = rowViewHolder.getTxtTerm();
-            txtTerm.setText(termString);
-
-//            ImageView imgSearchListIcon = rowViewHolder.getImgSearchListIcon();
-//            imgSearchListIcon.setImageDrawable(getItemLeftIcon(cursor).equals(SearchUtil.SEARCH_LEFT_ICON) ?
-//                    ContextCompat.getDrawable(context, R.drawable.ic_search_grey600_24dp) :
-//                    ContextCompat.getDrawable(context, R.drawable.ic_history_grey600_24dp));
+            txtTerm.setText(termString.trim());
 
 
             ImageView imgRemoveTerm = rowViewHolder.getImgRemoveTerm();
@@ -76,7 +71,6 @@ public class SearchViewAdapter<T> extends CursorAdapter implements Filterable {
         private TextView txtTerm;
         private View itemRow;
         private ImageView imgRemoveTerm;
-        private ImageView imgSearchListIcon;
 
         private RowViewHolder(View itemRow) {
             this.itemRow = itemRow;
@@ -135,10 +129,6 @@ public class SearchViewAdapter<T> extends CursorAdapter implements Filterable {
             return VIEW_TYPE_HEADER;
         }
         return VIEW_TYPE_ITEM;
-    }
-
-    public String getItemLeftIcon(Cursor cursor) {
-        return cursor.getString(5);
     }
 
     public String getItemRightIcon(Cursor cursor) {
