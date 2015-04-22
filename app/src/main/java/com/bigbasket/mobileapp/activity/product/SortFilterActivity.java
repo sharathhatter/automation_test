@@ -7,12 +7,16 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckedTextView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -29,6 +33,7 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class SortFilterActivity extends BackButtonActivity {
 
@@ -182,14 +187,48 @@ public class SortFilterActivity extends BackButtonActivity {
 
         @Override
         public Object instantiateItem(ViewGroup container, final int position) {
-            ListView lstFilterOnItems = new ListView(getCurrentActivity());
-            BBCheckedListAdapter<FilterOptionItem> filterByAdapter = new BBCheckedListAdapter<>
+            List<FilterOptionItem> filterOptionItems = filterOptionCategories.get(position).getFilterOptionItems();
+            View returnView;
+            ListView lstFilterOnItems;
+            final BBCheckedListAdapter<FilterOptionItem> filterByAdapter = new BBCheckedListAdapter<>
                     (getCurrentActivity(), android.R.layout.simple_list_item_multiple_choice,
-                            filterOptionCategories.get(position).getFilterOptionItems());
+                            filterOptionItems);
+            if (filterOptionItems.size() < 15) {
+                lstFilterOnItems = new ListView(getCurrentActivity());
+                returnView = lstFilterOnItems;
+            } else {
+                View base = getLayoutInflater().inflate(R.layout.uiv3_filterable_listview, container, false);
+                returnView = base;
+                lstFilterOnItems = (ListView) base.findViewById(R.id.lstVw);
+                final EditText editTextFilter = (EditText) base.findViewById(R.id.editTextFilter);
+                editTextFilter.setTypeface(faceRobotoRegular);
+                editTextFilter.setHint(getString(R.string.search) + " " +
+                        filterOptionCategories.get(position).getFilterName());
+                editTextFilter.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        String text = s.toString().trim();
+                        if (TextUtils.isEmpty(text)) {
+                            filterByAdapter.getFilter().filter(null);
+                        } else {
+                            filterByAdapter.getFilter().filter(text.toLowerCase(Locale.getDefault()));
+                        }
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
+                    }
+                });
+            }
             lstFilterOnItems.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
             lstFilterOnItems.setAdapter(filterByAdapter);
 
-            List<FilterOptionItem> filterOptionItems = filterOptionCategories.get(position).getFilterOptionItems();
             int sz = filterOptionItems.size();
             for (int i = 0; i < sz; i++) {
                 FilterOptionItem filterOptionItem = filterOptionItems.get(i);
@@ -217,13 +256,13 @@ public class SortFilterActivity extends BackButtonActivity {
                 }
             });
 
-            container.addView(lstFilterOnItems);
-            return lstFilterOnItems;
+            container.addView(returnView);
+            return returnView;
         }
 
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
-            container.removeView((ListView) object);
+            container.removeView((View) object);
         }
     }
 
