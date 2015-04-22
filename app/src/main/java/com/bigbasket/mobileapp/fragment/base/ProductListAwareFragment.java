@@ -185,7 +185,6 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
             // Set product-list data
             if (productListData.getProducts() != null && productListData.getProducts().size() > 0) {
                 base.findViewById(R.id.noDeliveryAddLayout).setVisibility(View.GONE);
-                fabFilterSort.attachToRecyclerView(productRecyclerView);
                 AuthParameters authParameters = AuthParameters.getInstance(getActivity());
                 ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
                         .setCommonTypeface(faceRobotoRegular)
