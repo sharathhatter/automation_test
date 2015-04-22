@@ -16,7 +16,7 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -94,7 +94,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
-public abstract class BaseActivity extends ActionBarActivity implements COMarketPlaceAware,
+public abstract class BaseActivity extends AppCompatActivity implements COMarketPlaceAware,
         COReserveQuantityCheckAware, CancelableAware, ProgressIndicationAware, ActivityAware,
         ConnectivityAware, TrackingAware, ApiErrorAware, EmailAddressAware {
 
