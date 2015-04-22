@@ -59,10 +59,11 @@ public class SortFilterActivity extends BackButtonActivity {
         ArrayList<Option> sortOpts = getIntent().getParcelableArrayListExtra(Constants.PRODUCT_SORT_OPTION);
         mSortedOn = getIntent().getStringExtra(Constants.SORT_ON);
 
-        setToggleBehaviour((TextView) findViewById(R.id.lblSortBy), findViewById(R.id.lstSortBy), true);
+        boolean isLargeScreen = hasSpaceToShowFilterLayout();
+        setToggleBehaviour((TextView) findViewById(R.id.lblSortBy), findViewById(R.id.lstSortBy), isLargeScreen);
 
         setToggleBehaviour((TextView) findViewById(R.id.lblFilterBy), findViewById(R.id.layoutSwipeTabContainer),
-                hasSpaceToShowFilterLayout());
+                isLargeScreen);
         renderSortOpts(sortOpts);
         renderFilterOptions(filterOptionCategories);
     }
