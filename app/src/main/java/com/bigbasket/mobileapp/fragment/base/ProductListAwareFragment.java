@@ -162,9 +162,8 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         final View sectionView = getSectionView();
         displayProductCount();
 
-        if (productListData != null && productListData.getProductCount() > 0) {
-
-            View base = getActivity().getLayoutInflater().inflate(R.layout.uiv3_product_layout, contentView, false);
+        if (productListData != null) {
+            View base = getActivity().getLayoutInflater().inflate(R.layout.uiv3_fab_recycler_view, contentView, false);
             RecyclerView productRecyclerView = (RecyclerView) base.findViewById(R.id.fabRecyclerView);
             UIUtil.configureRecyclerView(productRecyclerView, getActivity(), 1, 1);
 
@@ -173,7 +172,6 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
 
             if ((productListData.getFilterOptions() != null && productListData.getFilterOptions().size() > 0)
                     || (productListData.getSortOptions().size() > 0)) {
-                fabFilterSort.attachToRecyclerView(productRecyclerView);
                 fabFilterSort.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -185,21 +183,29 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
             }
 
             // Set product-list data
-            AuthParameters authParameters = AuthParameters.getInstance(getActivity());
-            ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
-                    .setCommonTypeface(faceRobotoRegular)
-                    .setRupeeTypeface(faceRupee)
-                    .setHandler(handler)
-                    .setLoggedInMember(!authParameters.isAuthTokenEmpty())
-                    .setShowShoppingListBtn(true)
-                    .setShowBasketBtn(true)
-                    .setShowShopListDeleteBtn(false)
-                    .build();
-            mProductListRecyclerAdapter = new ProductListRecyclerAdapter(productListData.getProducts(), productListData.getBaseImgUrl(),
-                    productViewDisplayDataHolder, this, productListData.getProductCount(),
-                    getNavigationCtx());
+            if (productListData.getProducts() != null && productListData.getProducts().size() > 0) {
+                base.findViewById(R.id.noDeliveryAddLayout).setVisibility(View.GONE);
+                fabFilterSort.attachToRecyclerView(productRecyclerView);
+                AuthParameters authParameters = AuthParameters.getInstance(getActivity());
+                ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
+                        .setCommonTypeface(faceRobotoRegular)
+                        .setRupeeTypeface(faceRupee)
+                        .setHandler(handler)
+                        .setLoggedInMember(!authParameters.isAuthTokenEmpty())
+                        .setShowShoppingListBtn(true)
+                        .setShowBasketBtn(true)
+                        .setShowShopListDeleteBtn(false)
+                        .build();
+                mProductListRecyclerAdapter = new ProductListRecyclerAdapter(productListData.getProducts(), productListData.getBaseImgUrl(),
+                        productViewDisplayDataHolder, this, productListData.getProductCount(),
+                        getNavigationCtx());
 
-            productRecyclerView.setAdapter(mProductListRecyclerAdapter);
+                productRecyclerView.setAdapter(mProductListRecyclerAdapter);
+            } else {
+                productRecyclerView.setVisibility(View.GONE);
+                View emptyPageLayout = base.findViewById(R.id.noDeliveryAddLayout);
+                showNoProductsFoundView(emptyPageLayout);
+            }
 
             if (sectionView != null) {
                 contentView.addView(sectionView);
@@ -210,8 +216,11 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
             addSectionToScrollView(contentView, sectionView);
         }
 
-        if (sectionView == null && (productListData == null || productListData.getProductCount() == 0)) {
-            showNoProductsFoundView(contentView);
+        if (sectionView == null && productListData == null) {
+            LayoutInflater inflater = getActivity().getLayoutInflater();
+            View emptyPageView = inflater.inflate(R.layout.uiv3_empty_data_text, contentView, false);
+            showNoProductsFoundView(emptyPageView);
+            contentView.addView(emptyPageView);
         }
     }
 
@@ -240,14 +249,11 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         }
     }
 
-    protected void showNoProductsFoundView(LinearLayout contentView) {
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        contentView.removeAllViews();
-        View emptyPageView = inflater.inflate(R.layout.uiv3_empty_data_text, contentView, false);
+    private void showNoProductsFoundView(View emptyPageView) {
         ImageView imgEmptyPage = (ImageView) emptyPageView.findViewById(R.id.imgEmptyPage);
         imgEmptyPage.setVisibility(View.INVISIBLE);
         TextView txtEmptyMsg1 = (TextView) emptyPageView.findViewById(R.id.txtEmptyMsg1);
-        txtEmptyMsg1.setText(R.string.noProducts);
+        txtEmptyMsg1.setText(getEmptyPageText());
         TextView txtEmptyMsg2 = (TextView) emptyPageView.findViewById(R.id.txtEmptyMsg2);
         txtEmptyMsg2.setVisibility(View.GONE);
         Button btnBlankPage = (Button) emptyPageView.findViewById(R.id.btnBlankPage);
@@ -259,9 +265,11 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                 getCurrentActivity().goToHome(false);
             }
         });
-        contentView.addView(emptyPageView);
     }
 
+    protected String getEmptyPageText() {
+        return getString(R.string.noProducts);
+    }
 
     @Override
     public void updateProductList(List<Product> nextPageProducts) {
