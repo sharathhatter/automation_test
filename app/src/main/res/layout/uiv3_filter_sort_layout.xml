@@ -14,7 +14,7 @@
         android:layout_weight="1"
         android:orientation="vertical">
 
-        <TextView
+        <com.bigbasket.mobileapp.view.uiv3.ExpandableTextView
             android:id="@+id/lblSortBy"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -35,7 +35,7 @@
             android:layout_height="1dp"
             android:background="@color/uiv3_divider_color" />
 
-        <TextView
+        <com.bigbasket.mobileapp.view.uiv3.ExpandableTextView
             android:id="@+id/lblFilterBy"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
