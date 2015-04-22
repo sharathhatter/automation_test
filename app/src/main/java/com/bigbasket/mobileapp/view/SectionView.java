@@ -364,7 +364,7 @@ public class SectionView {
             }
             txtListText.setTypeface(faceRobotoRegular);
             txtListText.setText(sectionItem.getTitle().getText());
-            txtListText.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
+            itemView.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
             View viewSeparator = itemView.findViewById(R.id.viewSeparator);
             viewSeparator.setVisibility(i == numItems - 1 ? View.GONE : View.VISIBLE);
             menuContainer.addView(itemView);

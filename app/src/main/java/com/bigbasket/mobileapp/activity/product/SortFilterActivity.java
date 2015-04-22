@@ -39,6 +39,9 @@ public class SortFilterActivity extends BackButtonActivity {
 
     private ArrayList<FilteredOn> mFilteredOns;
     private String mSortedOn;
+    private TextView mLblSortyBy;
+    private ListView mLstSortBy;
+    private boolean mHasSortOpts;
 
     @Override
     public int getMainLayout() {
@@ -66,7 +69,9 @@ public class SortFilterActivity extends BackButtonActivity {
         mSortedOn = getIntent().getStringExtra(Constants.SORT_ON);
 
         boolean isLargeScreen = hasSpaceToShowFilterLayout();
-        setToggleBehaviour((TextView) findViewById(R.id.lblSortBy), findViewById(R.id.lstSortBy), isLargeScreen);
+        mLblSortyBy = (TextView) findViewById(R.id.lblSortBy);
+        mLstSortBy = (ListView) findViewById(R.id.lstSortBy);
+        setToggleBehaviour(mLblSortyBy, mLblSortyBy, isLargeScreen);
 
         setToggleBehaviour((TextView) findViewById(R.id.lblFilterBy), findViewById(R.id.layoutSwipeTabContainer),
                 isLargeScreen);
@@ -128,21 +133,19 @@ public class SortFilterActivity extends BackButtonActivity {
     }
 
     private void renderSortOpts(final ArrayList<Option> sortOpts) {
-        TextView lblSortBy = (TextView) findViewById(R.id.lblSortBy);
-        lblSortBy.setTypeface(faceRobotoRegular);
-        ListView lstSortBy = (ListView) findViewById(R.id.lstSortBy);
-
-        if (sortOpts == null || sortOpts.size() == 0) {
-            lstSortBy.setVisibility(View.GONE);
-            lblSortBy.setVisibility(View.GONE);
+        mLblSortyBy.setTypeface(faceRobotoRegular);
+        mHasSortOpts = sortOpts != null && sortOpts.size() > 0;
+        if (!mHasSortOpts) {
+            mLstSortBy.setVisibility(View.GONE);
+            mLblSortyBy.setVisibility(View.GONE);
             return;
         }
         BBCheckedListAdapter<Option> sortByAdapter = new BBCheckedListAdapter<>
                 (this, android.R.layout.simple_list_item_single_choice, sortOpts);
-        lstSortBy.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        lstSortBy.setAdapter(sortByAdapter);
-        lstSortBy.setItemChecked(findCurrentSortedByPosition(sortOpts, mSortedOn), true);
-        lstSortBy.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mLstSortBy.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        mLstSortBy.setAdapter(sortByAdapter);
+        mLstSortBy.setItemChecked(findCurrentSortedByPosition(sortOpts, mSortedOn), true);
+        mLstSortBy.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (position != ListView.INVALID_POSITION) {
@@ -204,6 +207,19 @@ public class SortFilterActivity extends BackButtonActivity {
                 editTextFilter.setTypeface(faceRobotoRegular);
                 editTextFilter.setHint(getString(R.string.search) + " " +
                         filterOptionCategories.get(position).getFilterName());
+                editTextFilter.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                    @Override
+                    public void onFocusChange(View v, boolean hasFocus) {
+                        if (!hasFocus && mHasSortOpts) {
+                            if (mLstSortBy.getVisibility() != View.VISIBLE) {
+                                mLstSortBy.setVisibility(View.VISIBLE);
+                            }
+                            if (mLblSortyBy.getVisibility() != View.VISIBLE) {
+                                mLblSortyBy.setVisibility(View.VISIBLE);
+                            }
+                        }
+                    }
+                });
                 editTextFilter.addTextChangedListener(new TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -215,8 +231,24 @@ public class SortFilterActivity extends BackButtonActivity {
                         String text = s.toString().trim();
                         if (TextUtils.isEmpty(text)) {
                             filterByAdapter.getFilter().filter(null);
+                            if (mHasSortOpts) {
+                                if (mLstSortBy.getVisibility() != View.VISIBLE) {
+                                    mLstSortBy.setVisibility(View.VISIBLE);
+                                }
+                                if (mLblSortyBy.getVisibility() != View.VISIBLE) {
+                                    mLblSortyBy.setVisibility(View.VISIBLE);
+                                }
+                            }
                         } else {
                             filterByAdapter.getFilter().filter(text.toLowerCase(Locale.getDefault()));
+                            if (mHasSortOpts) {
+                                if (mLstSortBy.getVisibility() != View.GONE) {
+                                    mLstSortBy.setVisibility(View.GONE);
+                                }
+                                if (mLblSortyBy.getVisibility() != View.GONE) {
+                                    mLblSortyBy.setVisibility(View.GONE);
+                                }
+                            }
                         }
                     }
 
