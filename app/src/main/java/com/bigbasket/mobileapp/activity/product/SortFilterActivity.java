@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.activity.product;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
@@ -203,8 +204,15 @@ public class SortFilterActivity extends BackButtonActivity {
                         FilterOptionCategory filterOptionCategory = filterOptionCategories.get(position);
                         FilterOptionItem filterOptionItem = filterOptionCategory.getFilterOptionItems().
                                 get(itemPosition);
+                        CheckedTextView checkedTextView = (CheckedTextView) view.findViewById(android.R.id.text1);
+                        boolean isChecked;
+                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+                            isChecked = !checkedTextView.isChecked();
+                        } else {
+                            isChecked = checkedTextView.isChecked();
+                        }
                         onFilterOptionClick(filterOptionCategory, filterOptionItem,
-                                (CheckedTextView) view.findViewById(android.R.id.text1));
+                                isChecked);
                     }
                 }
             });
@@ -220,8 +228,7 @@ public class SortFilterActivity extends BackButtonActivity {
     }
 
     private void onFilterOptionClick(FilterOptionCategory filterOptionCategory,
-                                     FilterOptionItem filterOptionItem, CheckedTextView chkFilter) {
-        boolean isChecked = chkFilter.isChecked();
+                                     FilterOptionItem filterOptionItem, boolean isChecked) {
         filterOptionItem.setSelected(isChecked);
         FilteredOn filteredOn = FilteredOn.getFilteredOn(mFilteredOns,
                 filterOptionCategory.getFilterSlug());
