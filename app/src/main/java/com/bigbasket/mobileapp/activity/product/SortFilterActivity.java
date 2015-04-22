@@ -71,7 +71,7 @@ public class SortFilterActivity extends BackButtonActivity {
         boolean isLargeScreen = hasSpaceToShowFilterLayout();
         mLblSortyBy = (TextView) findViewById(R.id.lblSortBy);
         mLstSortBy = (ListView) findViewById(R.id.lstSortBy);
-        setToggleBehaviour(mLblSortyBy, mLblSortyBy, isLargeScreen);
+        setToggleBehaviour(mLblSortyBy, mLstSortBy, isLargeScreen);
 
         setToggleBehaviour((TextView) findViewById(R.id.lblFilterBy), findViewById(R.id.layoutSwipeTabContainer),
                 isLargeScreen);
