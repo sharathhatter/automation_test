@@ -29,6 +29,6 @@
         android:paddingRight="@dimen/padding_normal"
         android:paddingTop="@dimen/padding_small"
         android:text="@string/applyAllCaps"
-        android:textColor="@color/uiv3_primary_text_color"
+        android:textColor="@color/uiv3_action_bar_background"
         android:textSize="@dimen/primary_text_size" />
 </LinearLayout>
