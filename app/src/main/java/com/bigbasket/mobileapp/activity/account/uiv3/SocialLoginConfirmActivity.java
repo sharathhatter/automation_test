@@ -10,7 +10,7 @@ import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.account.SocialAccount;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
-import com.facebook.Session;
+import com.facebook.AccessToken;
 import com.google.gson.Gson;
 
 public class SocialLoginConfirmActivity extends ChangeCityActivity {
@@ -25,7 +25,7 @@ public class SocialLoginConfirmActivity extends ChangeCityActivity {
     }
 
     @Override
-    public void onFacebookSignIn(Session facebookSession) {
+    public void onFacebookSignIn(AccessToken accessToken) {
         // Don't do anything
     }
 

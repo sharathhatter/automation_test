@@ -14,7 +14,7 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.daimajia.slider.library.LightSliderLayout;
 import com.daimajia.slider.library.SliderTypes.TransparentSliderView;
-import com.facebook.AppEventsLogger;
+import com.facebook.appevents.AppEventsLogger;
 
 
 public class LandingPageActivity extends SocialLoginActivity {

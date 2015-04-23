@@ -37,7 +37,6 @@ import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.analytics.FacebookEventTrackWrapper;
-import com.facebook.AppEventsLogger;
 import com.moe.pushlibrary.MoEHelper;
 import com.newrelic.agent.android.NewRelic;
 
@@ -124,7 +123,6 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
 
     @Override
     public void onDestroy() {
-        FacebookEventTrackWrapper.deactivateApp(getCurrentActivity());
         super.onDestroy();
     }
 
@@ -274,7 +272,7 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
     @Override
     protected void onPause() {
         super.onPause();
-        AppEventsLogger.deactivateApp(this);
+        FacebookEventTrackWrapper.deactivateApp(getCurrentActivity());
     }
 
     @Override

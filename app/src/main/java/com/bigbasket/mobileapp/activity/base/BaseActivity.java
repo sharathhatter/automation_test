@@ -78,7 +78,7 @@ import com.bigbasket.mobileapp.util.analytics.FacebookEventTrackWrapper;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
 import com.demach.konotor.Konotor;
-import com.facebook.AppEventsLogger;
+import com.facebook.appevents.AppEventsLogger;
 import com.moe.pushlibrary.MoEHelper;
 
 import org.json.JSONException;

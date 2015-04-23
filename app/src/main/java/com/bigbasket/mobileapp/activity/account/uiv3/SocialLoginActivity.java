@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.View;
@@ -25,16 +26,16 @@ import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
-import com.facebook.Request;
-import com.facebook.Response;
-import com.facebook.Session;
-import com.facebook.model.GraphUser;
+import com.facebook.AccessToken;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.login.LoginManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.plus.model.people.Person;
 import com.google.gson.Gson;
 
-import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -147,50 +148,41 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
     }
 
     @Override
-    public void onFacebookSignIn(Session facebookSession) {
+    public void onFacebookSignIn(AccessToken accessToken) {
         if (mIsInLogoutMode) {
             doLogout();
             return;
         }
         showProgressDialog(getString(R.string.please_wait));
-        Request facebookUserDetailRequest = Request.newMeRequest(facebookSession, new Request.GraphUserCallback() {
+        GraphRequest graphRequest = GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
             @Override
-            public void onCompleted(GraphUser user, Response response) {
+            public void onCompleted(JSONObject jsonObject, GraphResponse graphResponse) {
                 hideProgressDialog();
-                if (user != null) {
-                    Object emailObj = response.getGraphObject().getProperty(Constants.EMAIL);
-                    String email = emailObj != null ? emailObj.toString() : null;
+                if (jsonObject != null) {
+                    String email = jsonObject.optString("email");
                     if (TextUtils.isEmpty(email)) {
                         showAlertDialog("Email required", "Unable to get your email-address\n" +
                                 "Please check your privacy settings.", Constants.SOCIAL_LOGOUT, SocialAccount.FB);
                         return;
                     }
-                    String firstName = user.getFirstName();
-                    String lastName = user.getLastName();
-                    String gender = null;
-                    try {
-                        gender = user.getInnerJSONObject().getString(Constants.FB_GENDER);
-                    } catch (JSONException e) {
-
-                    }
-                    String profileLink = user.getLink();
-                    String imgUrl = "http://graph.facebook.com/" + user.getId() + "/picture?type=large";
-                    boolean isVerified = false;
-                    try {
-                        isVerified = user.getInnerJSONObject().getString(Constants.FB_VERIFIED).equalsIgnoreCase("verified");
-                    } catch (JSONException e) {
-
-                    }
-                    String uid = user.getId();
+                    String firstName = jsonObject.optString("first_name");
+                    String lastName = jsonObject.optString("last_name");
+                    String gender = jsonObject.optString(Constants.FB_GENDER);
+                    String profileLink = jsonObject.optString("link");
+                    boolean isVerified = jsonObject.optBoolean(Constants.FB_VERIFIED, false);
+                    String uid = jsonObject.optString("id");
                     SocialAccount socialAccount = new SocialAccount(email, firstName, gender, profileLink, uid,
-                            isVerified, firstName, lastName, imgUrl);
+                            isVerified, firstName, lastName, null);
                     startSocialLogin(SocialAccount.FB, socialAccount);
-                } else if (response.getError() != null) {
-                    showAlertDialog(null, response.getError().getErrorMessage());
+                } else if (graphResponse.getError() != null) {
+                    showAlertDialog(null, graphResponse.getError().getErrorMessage());
                 }
             }
         });
-        Request.executeBatchAsync(facebookUserDetailRequest);
+        Bundle bundle = new Bundle();
+        bundle.putString("fields", "id,first_name,last_name,email,gender,verified,link");
+        graphRequest.setParameters(bundle);
+        graphRequest.executeAsync();
     }
 
     @Override
@@ -223,11 +215,6 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
         } else {
             hideProgressDialog();
         }
-    }
-
-    @Override
-    public void onFacebookSignOut() {
-        doLogout();
     }
 
     @Override
@@ -290,16 +277,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
             switch (socialAccountType) {
                 case SocialAccount.FB:
                     mIsInLogoutMode = true;
-                    Session session = Session.getActiveSession();
-                    if (session != null) {
-                        if (!session.isClosed()) {
-                            session.closeAndClearTokenInformation();
-                        }
-                    } else {
-                        session = new Session(getCurrentActivity());
-                        Session.setActiveSession(session);
-                        session.closeAndClearTokenInformation();
-                    }
+                    LoginManager.getInstance().logOut();
                     doLogout();
                     break;
                 case SocialAccount.GP:
