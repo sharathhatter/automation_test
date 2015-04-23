@@ -42,6 +42,10 @@ import java.util.List;
 
 public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
 
+    private static final int VIEW_TYPE_CART_ITEM = 0;
+    private static final int VIEW_TYPE_CART_HEADER = 1;
+    private static final int VIEW_TYPE_CART_ANNOTATION = 2;
+    private static final int VIEW_TYPE_FULFILLMENT_INFO = 3;
     private List<Object> orderList;
     private LayoutInflater inflater;
     private OrderItemDisplaySource orderItemDisplaySource;
@@ -52,29 +56,6 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
     private Typeface faceRobotoRegular, faceRupee;
     private String navigationCtx;
     private T context;
-
-    private static final int VIEW_TYPE_CART_ITEM = 0;
-    private static final int VIEW_TYPE_CART_HEADER = 1;
-    private static final int VIEW_TYPE_CART_ANNOTATION = 2;
-    private static final int VIEW_TYPE_FULFILLMENT_INFO = 3;
-
-    @Override
-    public int getViewTypeCount() {
-        return 4;
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        Object obj = orderList.get(position);
-        if (obj instanceof CartItem) {
-            return VIEW_TYPE_CART_ITEM;
-        } else if (obj instanceof FulfillmentInfo) {
-            return VIEW_TYPE_FULFILLMENT_INFO;
-        } else if (obj instanceof AnnotationInfo) {
-            return VIEW_TYPE_CART_ANNOTATION;
-        }
-        return VIEW_TYPE_CART_HEADER;
-    }
 
     public ActiveOrderRowAdapter(List<Object> orderList, T context, Typeface faceRupee,
                                  Typeface faceRobotoRegular, OrderItemDisplaySource orderItemDisplaySource,
@@ -93,6 +74,24 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
         this.baseImgUrl = baseImageUrl;
         this.navigationCtx = navigationCtx;
         this.inflater = (LayoutInflater) ((ActivityAware) context).getCurrentActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    }
+
+    @Override
+    public int getViewTypeCount() {
+        return 4;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        Object obj = orderList.get(position);
+        if (obj instanceof CartItem) {
+            return VIEW_TYPE_CART_ITEM;
+        } else if (obj instanceof FulfillmentInfo) {
+            return VIEW_TYPE_FULFILLMENT_INFO;
+        } else if (obj instanceof AnnotationInfo) {
+            return VIEW_TYPE_CART_ANNOTATION;
+        }
+        return VIEW_TYPE_CART_HEADER;
     }
 
     @Override

@@ -20,17 +20,15 @@ import java.util.List;
 
 public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    public static final int VIEW_TYPE_LOADING = 0;
+    public static final int VIEW_TYPE_DATA = 1;
+    public static final int VIEW_TYPE_EMPTY = 2;
+    protected int serverListSize = -1;
     private String baseImgUrl;
     private ProductViewDisplayDataHolder productViewDisplayDataHolder;
     private ActivityAware activityAware;
     private List<Product> products;
     private String navigationCtx;
-
-    protected int serverListSize = -1;
-
-    public static final int VIEW_TYPE_LOADING = 0;
-    public static final int VIEW_TYPE_DATA = 1;
-    public static final int VIEW_TYPE_EMPTY = 2;
 
     public ProductListRecyclerAdapter(List<Product> products, String baseImgUrl,
                                       ProductViewDisplayDataHolder productViewDisplayDataHolder,

@@ -19,27 +19,6 @@ import java.util.HashMap;
 
 public class VoucherApplied implements Parcelable {
 
-    @SerializedName(Constants.APPLIED_VOUCHER)
-    private String voucherCode;
-
-    private boolean isApplied;
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(voucherCode);
-        dest.writeByte(isApplied ? (byte) 1 : (byte) 0);
-    }
-
-    public VoucherApplied(Parcel source) {
-        voucherCode = source.readString();
-        isApplied = source.readByte() == (byte) 1;
-    }
-
     public static final Parcelable.Creator<VoucherApplied> CREATOR = new Parcelable.Creator<VoucherApplied>() {
         @Override
         public VoucherApplied createFromParcel(Parcel source) {
@@ -51,6 +30,14 @@ public class VoucherApplied implements Parcelable {
             return new VoucherApplied[size];
         }
     };
+    @SerializedName(Constants.APPLIED_VOUCHER)
+    private String voucherCode;
+    private boolean isApplied;
+
+    public VoucherApplied(Parcel source) {
+        voucherCode = source.readString();
+        isApplied = source.readByte() == (byte) 1;
+    }
 
     public VoucherApplied(String voucherCode) {
         this(voucherCode, false);
@@ -58,18 +45,6 @@ public class VoucherApplied implements Parcelable {
 
     public VoucherApplied(String voucherCode, boolean isApplied) {
         this.voucherCode = voucherCode;
-        this.isApplied = isApplied;
-    }
-
-    public String getVoucherCode() {
-        return voucherCode;
-    }
-
-    public boolean isApplied() {
-        return isApplied;
-    }
-
-    public void setApplied(boolean isApplied) {
         this.isApplied = isApplied;
     }
 
@@ -107,5 +82,28 @@ public class VoucherApplied implements Parcelable {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.remove(Constants.APPLIED_VOUCHER);
         editor.commit();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(voucherCode);
+        dest.writeByte(isApplied ? (byte) 1 : (byte) 0);
+    }
+
+    public String getVoucherCode() {
+        return voucherCode;
+    }
+
+    public boolean isApplied() {
+        return isApplied;
+    }
+
+    public void setApplied(boolean isApplied) {
+        this.isApplied = isApplied;
     }
 }

@@ -20,8 +20,8 @@ import java.util.List;
 
 
 public class ProductListSpinnerAdapter extends BaseAdapter {
-    private BaseActivity ctx;
     List<Product> productArrayList;
+    private BaseActivity ctx;
     private Typeface typeface;
     private Typeface faceRupee;
     private int eightDp;

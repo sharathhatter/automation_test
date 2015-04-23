@@ -106,6 +106,26 @@ public class AccountSettingFragment extends BaseFragment {
         trackEvent(TrackingAware.MY_ACCOUNT_SHOWN, null);
     }
 
+    public LinearLayout getContentView() {
+        return getView() != null ? (LinearLayout) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
+    }
+
+    @Override
+    public String getTitle() {
+        return getString(R.string.myAccount);
+    }
+
+    @NonNull
+    @Override
+    public String getFragmentTxnTag() {
+        return AccountSettingFragment.class.getName();
+    }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.ACCOUNT_SCREEN;
+    }
+
     private class MyAccountListAdapter extends BaseAdapter {
 
         String[] itemDetails = {
@@ -185,25 +205,5 @@ public class AccountSettingFragment extends BaseFragment {
                 return itemTitle;
             }
         }
-    }
-
-    public LinearLayout getContentView() {
-        return getView() != null ? (LinearLayout) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
-    }
-
-    @Override
-    public String getTitle() {
-        return getString(R.string.myAccount);
-    }
-
-    @NonNull
-    @Override
-    public String getFragmentTxnTag() {
-        return AccountSettingFragment.class.getName();
-    }
-
-    @Override
-    public String getScreenTag() {
-        return TrackEventkeys.ACCOUNT_SCREEN;
     }
 }

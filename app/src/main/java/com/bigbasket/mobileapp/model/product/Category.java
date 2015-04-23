@@ -15,18 +15,25 @@ import java.util.ArrayList;
 
 public class Category implements Parcelable, Serializable {
 
+    public static final Parcelable.Creator<Category> CREATOR = new Parcelable.Creator<Category>() {
+        @Override
+        public Category createFromParcel(Parcel source) {
+            return new Category(source);
+        }
+
+        @Override
+        public Category[] newArray(int size) {
+            return new Category[size];
+        }
+    };
     @SerializedName(Constants.SLUG_NAME)
     private String slug;
-
     @SerializedName(Constants.SUB_CATS)
     private ArrayList<Category> category;
-
     @SerializedName(Constants.DISPLAY_NAME)
     private String name;
-
     @SerializedName(Constants.FILTER)
     private String filter;
-
     @SerializedName(Constants.SORT_BY)
     private String sortBy;
 
@@ -73,10 +80,6 @@ public class Category implements Parcelable, Serializable {
         return category;
     }
 
-    public void setCategory(ArrayList<Category> category) {
-        this.category = category;
-    }
-
     public void setCategory(JsonArray jsonCategoryArray) {
         ArrayList<Category> categories = null;
         if (jsonCategoryArray != null && jsonCategoryArray.size() > 0) {
@@ -91,6 +94,10 @@ public class Category implements Parcelable, Serializable {
             }
         }
         this.category = categories;
+    }
+
+    public void setCategory(ArrayList<Category> category) {
+        this.category = category;
     }
 
     @Override
@@ -118,18 +125,6 @@ public class Category implements Parcelable, Serializable {
             dest.writeTypedList(category);
         }
     }
-
-    public static final Parcelable.Creator<Category> CREATOR = new Parcelable.Creator<Category>() {
-        @Override
-        public Category createFromParcel(Parcel source) {
-            return new Category(source);
-        }
-
-        @Override
-        public Category[] newArray(int size) {
-            return new Category[size];
-        }
-    };
 
     public String getFilter() {
         return filter;

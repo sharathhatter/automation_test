@@ -13,13 +13,6 @@ import java.util.ArrayList;
 
 public class CategoryAdapter {
 
-    private Context context;
-
-    public CategoryAdapter(Context context) {
-        this.context = context;
-        open();
-    }
-
     public static final String COLUMN_ID = "_Id";
     public static final String COLUMN_SLUG = "slug";
     public static final String COLUMN_VERSION = "version";
@@ -28,11 +21,16 @@ public class CategoryAdapter {
     public static final String COLUMN_IMAGE_PATH = "icon";
     public static final String COLUMN_FLAT_PAGE = "flat_page";
     public static final String tableName = "category";
-
     public static String createTable = String.format("CREATE TABLE IF NOT EXISTS %1$s (%2$s INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "%3$s TEXT NOT NULL, %4$s TEXT NOT NULL, %5$s TEXT, %6$s TEXT, %7$s TEXT, %8$s BLOB );", tableName, COLUMN_ID, COLUMN_SLUG,
             COLUMN_VERSION, COLUMN_NAME, COLUMN_IMAGE_PATH, COLUMN_FLAT_PAGE, COLUMN_BLOB
     );
+    private Context context;
+
+    public CategoryAdapter(Context context) {
+        this.context = context;
+        open();
+    }
 
     public void open() {
         DatabaseHelper.getInstance(context).open(context);

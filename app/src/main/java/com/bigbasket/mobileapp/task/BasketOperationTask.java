@@ -105,6 +105,20 @@ public class BasketOperationTask<T> {
         }
     }
 
+    private void logBasketEvent(String eventName, Product product, String navigationCtx) {
+        Map<String, String> eventAttribs = new HashMap<>();
+        eventAttribs.put(TrackEventkeys.PRODUCT_ID, product.getSku());
+        eventAttribs.put(TrackEventkeys.PRODUCT_BRAND, product.getBrand());
+        String desc = product.getDescription();
+        if (!TextUtils.isEmpty(product.getPackageDescription()))
+            desc = " " + product.getWeightAndPackDesc();
+        eventAttribs.put(TrackEventkeys.PRODUCT_DESC, desc);
+        eventAttribs.put(TrackEventkeys.PRODUCT_TOP_CAT, product.getTopLevelCategoryName());
+        eventAttribs.put(TrackEventkeys.PRODUCT_CAT, product.getProductCategoryName());
+        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, navigationCtx);
+        ((TrackingAware) context).trackEvent(eventName, eventAttribs, navigationCtx, null, false);
+    }
+
     private class CartOperationApiResponseCallback implements Callback<CartOperationApiResponse> {
 
         @Override
@@ -161,19 +175,5 @@ public class BasketOperationTask<T> {
             }
             ((HandlerAware) context).getHandler().handleRetrofitError(error);
         }
-    }
-
-    private void logBasketEvent(String eventName, Product product, String navigationCtx) {
-        Map<String, String> eventAttribs = new HashMap<>();
-        eventAttribs.put(TrackEventkeys.PRODUCT_ID, product.getSku());
-        eventAttribs.put(TrackEventkeys.PRODUCT_BRAND, product.getBrand());
-        String desc = product.getDescription();
-        if (!TextUtils.isEmpty(product.getPackageDescription()))
-            desc = " " + product.getWeightAndPackDesc();
-        eventAttribs.put(TrackEventkeys.PRODUCT_DESC, desc);
-        eventAttribs.put(TrackEventkeys.PRODUCT_TOP_CAT, product.getTopLevelCategoryName());
-        eventAttribs.put(TrackEventkeys.PRODUCT_CAT, product.getProductCategoryName());
-        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, navigationCtx);
-        ((TrackingAware) context).trackEvent(eventName, eventAttribs, navigationCtx, null, false);
     }
 }

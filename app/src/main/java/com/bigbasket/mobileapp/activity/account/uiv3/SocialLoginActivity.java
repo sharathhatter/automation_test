@@ -400,6 +400,12 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
         goToHome(true);
     }
 
+    private void logSignInFailureEvent(String type, String reason) {
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.FAILURE_REASON, reason);
+        map.put(TrackEventkeys.TYPE, type);
+        trackEvent(TrackingAware.LOGIN_FAILED, map);
+    }
 
     public class LoginApiResponseCallback implements Callback<LoginApiResponse> {
 
@@ -528,12 +534,5 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
                     throw new AssertionError("Login or register type error while success(status=ERROR)");
             }
         }
-    }
-
-    private void logSignInFailureEvent(String type, String reason) {
-        HashMap<String, String> map = new HashMap<>();
-        map.put(TrackEventkeys.FAILURE_REASON, reason);
-        map.put(TrackEventkeys.TYPE, type);
-        trackEvent(TrackingAware.LOGIN_FAILED, map);
     }
 }

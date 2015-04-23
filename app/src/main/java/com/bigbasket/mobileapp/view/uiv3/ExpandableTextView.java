@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 
-public class ExpandableTextView extends TextView implements View.OnClickListener{
+public class ExpandableTextView extends TextView implements View.OnClickListener {
 
     private boolean mIsExpanded;
     private View mChildView;

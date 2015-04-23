@@ -7,6 +7,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class NameValuePair implements Parcelable {
+    public static final Parcelable.Creator<NameValuePair> CREATOR = new Parcelable.Creator<NameValuePair>() {
+
+        @Override
+        public NameValuePair createFromParcel(Parcel source) {
+            return new NameValuePair(source);
+        }
+
+        @Override
+        public NameValuePair[] newArray(int size) {
+            return new NameValuePair[size];
+        }
+    };
     private String name;
     private String value;
 
@@ -46,17 +58,4 @@ public class NameValuePair implements Parcelable {
         dest.writeString(name);
         dest.writeString(value);
     }
-
-    public static final Parcelable.Creator<NameValuePair> CREATOR = new Parcelable.Creator<NameValuePair>() {
-
-        @Override
-        public NameValuePair createFromParcel(Parcel source) {
-            return new NameValuePair(source);
-        }
-
-        @Override
-        public NameValuePair[] newArray(int size) {
-            return new NameValuePair[size];
-        }
-    };
 }

@@ -7,13 +7,35 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
 public class BaseCartItem implements Parcelable {
+    public static final Parcelable.Creator<BaseCartItem> CREATOR = new Parcelable.Creator<BaseCartItem>() {
+        @Override
+        public BaseCartItem createFromParcel(Parcel source) {
+            return new BaseCartItem(source);
+        }
+
+        @Override
+        public BaseCartItem[] newArray(int size) {
+            return new CartItem[size];
+        }
+    };
     private double saving;
     private double mrp;
-
     @SerializedName(Constants.SALE_PRICE)
     private double salePrice;
 
     protected BaseCartItem() {
+    }
+
+    BaseCartItem(Parcel source) {
+        saving = source.readDouble();
+        mrp = source.readDouble();
+        salePrice = source.readDouble();
+    }
+
+    protected BaseCartItem(double saving, double mrp, double salePrice) {
+        this.saving = saving;
+        this.mrp = mrp;
+        this.salePrice = salePrice;
     }
 
     @Override
@@ -28,48 +50,24 @@ public class BaseCartItem implements Parcelable {
         dest.writeDouble(salePrice);
     }
 
-    BaseCartItem(Parcel source) {
-        saving = source.readDouble();
-        mrp = source.readDouble();
-        salePrice = source.readDouble();
-    }
-
-    public static final Parcelable.Creator<BaseCartItem> CREATOR = new Parcelable.Creator<BaseCartItem>() {
-        @Override
-        public BaseCartItem createFromParcel(Parcel source) {
-            return new BaseCartItem(source);
-        }
-
-        @Override
-        public BaseCartItem[] newArray(int size) {
-            return new CartItem[size];
-        }
-    };
-
-    protected BaseCartItem(double saving, double mrp, double salePrice) {
-        this.saving = saving;
-        this.mrp = mrp;
-        this.salePrice = salePrice;
-    }
-
     public double getSaving() {
         return saving;
-    }
-
-    public double getMrp() {
-        return mrp;
-    }
-
-    public double getSalePrice() {
-        return salePrice;
     }
 
     public void setSaving(double saving) {
         this.saving = saving;
     }
 
+    public double getMrp() {
+        return mrp;
+    }
+
     public void setMrp(double mrp) {
         this.mrp = mrp;
+    }
+
+    public double getSalePrice() {
+        return salePrice;
     }
 
     public void setSalePrice(double salePrice) {

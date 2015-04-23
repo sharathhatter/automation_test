@@ -8,11 +8,32 @@ import com.google.gson.annotations.SerializedName;
 
 public class CartItemPromoInfo implements Parcelable {
 
+    public static final Parcelable.Creator<CartItemPromoInfo> CREATOR = new Parcelable.Creator<CartItemPromoInfo>() {
+        @Override
+        public CartItemPromoInfo createFromParcel(Parcel source) {
+            return new CartItemPromoInfo(source);
+        }
+
+        @Override
+        public CartItemPromoInfo[] newArray(int size) {
+            return new CartItemPromoInfo[size];
+        }
+    };
     @SerializedName(Constants.PROMO)
     private CartItemPromo promoInfo;
-
     @SerializedName(Constants.REGULAR)
     private CartItemPromo regularInfo;
+
+    CartItemPromoInfo(Parcel source) {
+        boolean isPromoInfoNull = source.readByte() == (byte) 1;
+        if (!isPromoInfoNull) {
+            promoInfo = source.readParcelable(CartItemPromoInfo.class.getClassLoader());
+        }
+        boolean isRegularInfoNull = source.readByte() == (byte) 1;
+        if (!isRegularInfoNull) {
+            regularInfo = source.readParcelable(CartItemPromoInfo.class.getClassLoader());
+        }
+    }
 
     @Override
     public int describeContents() {
@@ -32,29 +53,6 @@ public class CartItemPromoInfo implements Parcelable {
             dest.writeParcelable(regularInfo, flags);
         }
     }
-
-    CartItemPromoInfo(Parcel source) {
-        boolean isPromoInfoNull = source.readByte() == (byte) 1;
-        if (!isPromoInfoNull) {
-            promoInfo = source.readParcelable(CartItemPromoInfo.class.getClassLoader());
-        }
-        boolean isRegularInfoNull = source.readByte() == (byte) 1;
-        if (!isRegularInfoNull) {
-            regularInfo = source.readParcelable(CartItemPromoInfo.class.getClassLoader());
-        }
-    }
-
-    public static final Parcelable.Creator<CartItemPromoInfo> CREATOR = new Parcelable.Creator<CartItemPromoInfo>() {
-        @Override
-        public CartItemPromoInfo createFromParcel(Parcel source) {
-            return new CartItemPromoInfo(source);
-        }
-
-        @Override
-        public CartItemPromoInfo[] newArray(int size) {
-            return new CartItemPromoInfo[size];
-        }
-    };
 
     public CartItemPromo getPromoInfo() {
         return promoInfo;

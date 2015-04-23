@@ -18,6 +18,55 @@ public class ProductViewDisplayDataHolder {
     private BigBasketMessageHandler handler;
     private ShoppingListName shoppingListName;
 
+    public ProductViewDisplayDataHolder(Builder builder) {
+        this.sanSerifLightTypeface = builder.sanSerifLightTypeface;
+        this.serifTypeface = builder.serifTypeface;
+        this.sansSerifMediumTypeface = builder.sansSerifMediumTypeface;
+        this.rupeeTypeface = builder.rupeeTypeface;
+        this.showShoppingListBtn = builder.showShoppingListBtn;
+        this.isLoggedInMember = builder.isLoggedInMember;
+        this.showBasketBtn = builder.showBasketBtn;
+        this.showShopListDeleteBtn = builder.showShopListDeleteBtn;
+        this.handler = builder.handler;
+        this.shoppingListName = builder.shoppingListName;
+    }
+
+    public ShoppingListName getShoppingListName() {
+        return shoppingListName;
+    }
+
+    public boolean showShopListDeleteBtn() {
+        return showShopListDeleteBtn;
+    }
+
+    public Typeface getSerifTypeface() {
+        return serifTypeface;
+    }
+
+    public Typeface getSansSerifMediumTypeface() {
+        return sansSerifMediumTypeface;
+    }
+
+    public Typeface getRupeeTypeface() {
+        return rupeeTypeface;
+    }
+
+    public boolean isShowShoppingListBtn() {
+        return showShoppingListBtn;
+    }
+
+    public boolean isLoggedInMember() {
+        return isLoggedInMember;
+    }
+
+    public boolean isShowBasketBtn() {
+        return showBasketBtn;
+    }
+
+    public BigBasketMessageHandler getHandler() {
+        return handler;
+    }
+
     public static class Builder {
         private Typeface sanSerifLightTypeface;
         private Typeface serifTypeface;
@@ -78,55 +127,6 @@ public class ProductViewDisplayDataHolder {
         public ProductViewDisplayDataHolder build() {
             return new ProductViewDisplayDataHolder(this);
         }
-    }
-
-    public ProductViewDisplayDataHolder(Builder builder) {
-        this.sanSerifLightTypeface = builder.sanSerifLightTypeface;
-        this.serifTypeface = builder.serifTypeface;
-        this.sansSerifMediumTypeface = builder.sansSerifMediumTypeface;
-        this.rupeeTypeface = builder.rupeeTypeface;
-        this.showShoppingListBtn = builder.showShoppingListBtn;
-        this.isLoggedInMember = builder.isLoggedInMember;
-        this.showBasketBtn = builder.showBasketBtn;
-        this.showShopListDeleteBtn = builder.showShopListDeleteBtn;
-        this.handler = builder.handler;
-        this.shoppingListName = builder.shoppingListName;
-    }
-
-    public ShoppingListName getShoppingListName() {
-        return shoppingListName;
-    }
-
-    public boolean showShopListDeleteBtn() {
-        return showShopListDeleteBtn;
-    }
-
-    public Typeface getSerifTypeface() {
-        return serifTypeface;
-    }
-
-    public Typeface getSansSerifMediumTypeface() {
-        return sansSerifMediumTypeface;
-    }
-
-    public Typeface getRupeeTypeface() {
-        return rupeeTypeface;
-    }
-
-    public boolean isShowShoppingListBtn() {
-        return showShoppingListBtn;
-    }
-
-    public boolean isLoggedInMember() {
-        return isLoggedInMember;
-    }
-
-    public boolean isShowBasketBtn() {
-        return showBasketBtn;
-    }
-
-    public BigBasketMessageHandler getHandler() {
-        return handler;
     }
 }
 

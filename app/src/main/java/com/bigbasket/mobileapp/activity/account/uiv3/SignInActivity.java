@@ -1,8 +1,10 @@
 package com.bigbasket.mobileapp.activity.account.uiv3;
 
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -19,7 +21,6 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
@@ -217,15 +218,18 @@ public class SignInActivity extends BackButtonActivity {
     }
 
     private void showForgotPasswordDialog() {
-        new MaterialDialog.Builder(this)
-                .title(R.string.forgotPasswd)
-                .positiveText(getString(R.string.emailNewPassword))
-                .negativeText(getString(R.string.cancel))
-                .inputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS)
-                .input(getString(R.string.email), "", false, new MaterialDialog.InputCallback() {
+        View base = getLayoutInflater().inflate(R.layout.uiv3_editable_dialog, null);
+
+        final EditText editTextDialog = (EditText) base.findViewById(R.id.editTextDialog);
+        editTextDialog.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        editTextDialog.setHint(getString(R.string.email));
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setPositiveButton(R.string.emailNewPassword, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onInput(MaterialDialog materialDialog, CharSequence charSequence) {
-                        String inputEmail = charSequence != null ? charSequence.toString() : "";
+                    public void onClick(DialogInterface dialog, int which) {
+                        String inputEmail = editTextDialog.getText() != null ?
+                                editTextDialog.getText().toString() : "";
                         if (TextUtils.isEmpty(inputEmail)) {
                             showToast("Please enter an email address");
                             return;
@@ -237,7 +241,15 @@ public class SignInActivity extends BackButtonActivity {
                         requestNewPassword(inputEmail);
                     }
                 })
-                .show();
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .setTitle(R.string.forgotPasswd)
+                .setView(base);
+        builder.create().show();
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_LOGIN_PAGE);
         trackEvent(TrackingAware.FORGOT_PASSWORD_DIALOG_SHOWN, eventAttribs);

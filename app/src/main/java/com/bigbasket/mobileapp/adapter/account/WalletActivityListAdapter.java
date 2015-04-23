@@ -127,14 +127,6 @@ public class WalletActivityListAdapter<T> extends BaseAdapter {
         return convertView;
     }
 
-    static class ViewHolder {
-        TextView dateHolder;
-        TextView creditedHolder;
-        TextView endingBalanceHolder;
-        TextView orderIdHolder;
-        TextView creditCreatedHolder;
-    }
-
     public String getDecimalAmount(Double amount) {
         int amountInt = amount.intValue();
         if (amountInt == amount)
@@ -144,5 +136,13 @@ public class WalletActivityListAdapter<T> extends BaseAdapter {
         nf.setMaximumFractionDigits(2);
         nf.setGroupingUsed(false);
         return (nf.format(amount).equals("0.00") || nf.format(amount).equals("0.0")) ? "0" : nf.format(amount);
+    }
+
+    static class ViewHolder {
+        TextView dateHolder;
+        TextView creditedHolder;
+        TextView endingBalanceHolder;
+        TextView orderIdHolder;
+        TextView creditCreatedHolder;
     }
 }

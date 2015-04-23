@@ -72,8 +72,8 @@ public class MultipleImagesPrescriptionAdapter<T> extends BaseAdapter {
     }
 
     private class ViewHolder {
-        private TouchImageView imgNewPrescriptionImage;
         public View base;
+        private TouchImageView imgNewPrescriptionImage;
 
         public ViewHolder(View base) {
             this.base = base;

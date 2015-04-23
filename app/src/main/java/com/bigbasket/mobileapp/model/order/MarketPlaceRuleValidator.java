@@ -10,29 +10,34 @@ import java.util.ArrayList;
 
 public class MarketPlaceRuleValidator implements Parcelable {
 
+    public static final Parcelable.Creator<MarketPlaceRuleValidator> CREATOR = new Parcelable.Creator<MarketPlaceRuleValidator>() {
+        @Override
+        public MarketPlaceRuleValidator createFromParcel(Parcel source) {
+            return new MarketPlaceRuleValidator(source);
+        }
+
+        @Override
+        public MarketPlaceRuleValidator[] newArray(int size) {
+            return new MarketPlaceRuleValidator[size];
+        }
+    };
     @SerializedName(Constants.RULE_NAME)
     private String ruleName;
-
     @SerializedName(Constants.RULE_DESC)
     private String ruleDesc;
-
     @SerializedName(Constants.WEIGHT_LABEL)
     private String weightLabel;
-
     @SerializedName(Constants.RULE_TOTAL_QTY)
     private double ruleTotalQty;
-
     @SerializedName(Constants.RULE_TOTAL_PRICE)
     private double ruleTotalPrice;
-
     @SerializedName(Constants.ITEMS)
     private ArrayList<MarketPlaceItems> items;
-
     @SerializedName(Constants.RULE_MAX_WEIGHT_LIMIT)
     private double ruleMaxWeightLimit;
-
     //private int totalRuleNoOfItems;
     private boolean noRuleError;
+
 
     public MarketPlaceRuleValidator(String ruleName, String ruleDesc, String weightLabel, float ruleTotalQty,
                                     float ruleTotalPrice,
@@ -44,12 +49,6 @@ public class MarketPlaceRuleValidator implements Parcelable {
         this.ruleTotalPrice = ruleTotalPrice;
         this.items = items;
         this.ruleMaxWeightLimit = ruleMaxWeightLimit;
-    }
-
-
-    @Override
-    public int describeContents() {
-        return 0;
     }
 
     public MarketPlaceRuleValidator(Parcel source) {
@@ -64,6 +63,11 @@ public class MarketPlaceRuleValidator implements Parcelable {
             source.readTypedList(items, MarketPlaceItems.CREATOR);
         }
         ruleMaxWeightLimit = source.readDouble();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     @Override
@@ -84,18 +88,6 @@ public class MarketPlaceRuleValidator implements Parcelable {
         dest.writeDouble(ruleMaxWeightLimit);
 
     }
-
-    public static final Parcelable.Creator<MarketPlaceRuleValidator> CREATOR = new Parcelable.Creator<MarketPlaceRuleValidator>() {
-        @Override
-        public MarketPlaceRuleValidator createFromParcel(Parcel source) {
-            return new MarketPlaceRuleValidator(source);
-        }
-
-        @Override
-        public MarketPlaceRuleValidator[] newArray(int size) {
-            return new MarketPlaceRuleValidator[size];
-        }
-    };
 
     public double getRuleTotalPrice() {
         return ruleTotalPrice;

@@ -24,22 +24,17 @@ public abstract class PlusBaseActivity extends BaseActivity
 
     // A magic number we will use to know that our sign-in error resolution activity has completed
     private static final int RC_SIGN_IN = 49404;
-
-    // A flag to stop multiple dialogues appearing for the user
-    private boolean mAutoResolveOnFail;
-
     // A flag to track when a connection is already in progress
     public boolean mPlusClientIsConnecting = false;
-
+    protected boolean mIsInLogoutMode;
+    // A flag to stop multiple dialogues appearing for the user
+    private boolean mAutoResolveOnFail;
     // This is the helper object that connects to Google Play Services.
     private GoogleApiClient mGoogleApiClient;
-
     // The saved result from {@link #onConnectionFailed(ConnectionResult)}.  If a connection
     // attempt has been made, this is non-null.
     // If this IS null, then the connect method is still running.
     private ConnectionResult mConnectionResult;
-    protected boolean mIsInLogoutMode;
-
     // A flag to track if connection is being established to revoke access
     private boolean mRevokeAccess;
 

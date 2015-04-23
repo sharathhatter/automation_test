@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.text.Spannable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -19,7 +20,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
@@ -53,9 +53,8 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         ConnectivityAware, TrackingAware, ApiErrorAware {
 
     protected BigBasketMessageHandler handler;
-    private ProgressDialog progressDialog;
     protected COReserveQuantity coReserveQuantity;
-
+    private ProgressDialog progressDialog;
     private BasketOperationResponse basketOperationResponse;
 
     @Override
@@ -159,16 +158,16 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         changeTitle(getTitle());
     }
 
-    public void setTitle(String title) {
-        changeTitle(title);
-    }
-
     /**
      * Return null if you don't want the title to be changed
      *
      * @return
      */
     public abstract String getTitle();
+
+    public void setTitle(String title) {
+        changeTitle(title);
+    }
 
     public void showErrorMsg(String msg) {
         if (getCurrentActivity() != null) {
@@ -282,18 +281,18 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     }
 
     @Override
-    public void setCartInfo(CartSummary cartInfo) {
-        if (getCurrentActivity() instanceof CartInfoAware) {
-            ((CartInfoAware) getCurrentActivity()).setCartInfo(cartInfo);
-        }
-    }
-
-    @Override
     public CartSummary getCartInfo() {
         if (getCurrentActivity() instanceof CartInfoAware) {
             return ((CartInfoAware) getCurrentActivity()).getCartInfo();
         }
         return null;
+    }
+
+    @Override
+    public void setCartInfo(CartSummary cartInfo) {
+        if (getCurrentActivity() instanceof CartInfoAware) {
+            ((CartInfoAware) getCurrentActivity()).setCartInfo(cartInfo);
+        }
     }
 
     @Override
@@ -322,37 +321,36 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
                                 DialogButton nxtDialogButton, final String sourceName,
                                 final Object passedValue, String positiveBtnText) {
         if (getActivity() == null) return;
-        MaterialDialog.Builder builder = UIUtil.getMaterialDialogBuilder(getActivity())
-                .title(!TextUtils.isEmpty(title) ? title : "BigBasket")
-                .content(msg);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(!TextUtils.isEmpty(title) ? title : "BigBasket");
+        builder.setMessage(msg);
+        builder.setCancelable(false);
         if (dialogButton != null) {
             if (dialogButton.equals(DialogButton.YES) || dialogButton.equals(DialogButton.OK)) {
                 if (TextUtils.isEmpty(positiveBtnText)) {
                     int textId = dialogButton.equals(DialogButton.YES) ? R.string.yesTxt : R.string.ok;
                     positiveBtnText = getString(textId);
                 }
-                builder.positiveText(positiveBtnText);
+                builder.setPositiveButton(positiveBtnText, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int id) {
+                        onPositiveButtonClicked(dialogInterface, sourceName, passedValue);
+                    }
+                });
             }
             if (nxtDialogButton != null && (nxtDialogButton.equals(DialogButton.NO)
-                    || nxtDialogButton.equals(DialogButton.CANCEL))) {
-                int textId = nxtDialogButton.equals(DialogButton.NO) ? R.string.noTxt : R.string.cancel;
-                builder.negativeText(textId);
-            }
-            builder.callback(new MaterialDialog.ButtonCallback() {
-                @Override
-                public void onPositive(MaterialDialog dialog) {
-                    onPositiveButtonClicked(dialog, sourceName, passedValue);
-                }
-
-                @Override
-                public void onNegative(MaterialDialog dialog) {
-                    onNegativeButtonClicked(dialog, sourceName);
-                }
-            });
+                    || nxtDialogButton.equals(DialogButton.CANCEL)))
+                builder.setNegativeButton(R.string.noTxt, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int id) {
+                        onNegativeButtonClicked(dialogInterface, sourceName);
+                    }
+                });
         }
+        AlertDialog alertDialog = builder.create();
         if (isSuspended())
             return;
-        builder.show();
+        alertDialog.show();
     }
 
     protected void onPositiveButtonClicked(DialogInterface dialogInterface, @Nullable String sourceName, Object valuePassed) {
@@ -434,22 +432,22 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     public void showAlertDialogFinish(String title, String msg) {
         if (getCurrentActivity() == null || isSuspended()) return;
 
-        MaterialDialog.Builder builder = UIUtil.getMaterialDialogBuilder(getCurrentActivity())
-                .title(title == null ? "BigBasket" : title)
-                .content(msg)
-                .positiveText(R.string.ok)
-                .cancelable(false)
-                .callback(new MaterialDialog.ButtonCallback() {
-                    @Override
-                    public void onPositive(MaterialDialog dialog) {
-                        if (getCurrentActivity() != null) {
-                            finish();
-                        }
-                    }
-                });
+        AlertDialog.Builder builder = new AlertDialog.Builder(getCurrentActivity());
+        builder.setTitle(title == null ? "BigBasket" : title);
+        builder.setMessage(msg);
+        builder.setCancelable(false);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (getCurrentActivity() != null) {
+                    finish();
+                }
+            }
+        });
+        AlertDialog alertDialog = builder.create();
         if (isSuspended())
             return;
-        builder.show();
+        alertDialog.show();
     }
 
     @Override

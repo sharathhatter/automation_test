@@ -143,6 +143,32 @@ public class SortFilterActivity extends BackButtonActivity {
         return 0;
     }
 
+    private void onFilterOptionClick(FilterOptionCategory filterOptionCategory,
+                                     FilterOptionItem filterOptionItem, boolean isChecked) {
+        filterOptionItem.setSelected(isChecked);
+        FilteredOn filteredOn = FilteredOn.getFilteredOn(mFilteredOns,
+                filterOptionCategory.getFilterSlug());
+        if (filteredOn == null) {
+            filteredOn = new FilteredOn(filterOptionCategory.getFilterSlug());
+            mFilteredOns.add(filteredOn);
+        }
+        ArrayList<String> filterValues = filteredOn.getFilterValues();
+        if (filterValues == null) {
+            filterValues = new ArrayList<>();
+            filteredOn.setFilterValues(filterValues);
+        }
+
+        if (isChecked) {
+            if (!filterValues.contains(filterOptionItem.getFilterValueSlug())) {
+                filterValues.add(filterOptionItem.getFilterValueSlug());
+            }
+        } else {
+            if (filterValues.contains(filterOptionItem.getFilterValueSlug())) {
+                filterValues.remove(filterOptionItem.getFilterValueSlug());
+            }
+        }
+    }
+
     private class FilterByPagerAdapter extends PagerAdapter {
 
         private ArrayList<FilterOptionCategory> filterOptionCategories;
@@ -264,32 +290,6 @@ public class SortFilterActivity extends BackButtonActivity {
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
             container.removeView((View) object);
-        }
-    }
-
-    private void onFilterOptionClick(FilterOptionCategory filterOptionCategory,
-                                     FilterOptionItem filterOptionItem, boolean isChecked) {
-        filterOptionItem.setSelected(isChecked);
-        FilteredOn filteredOn = FilteredOn.getFilteredOn(mFilteredOns,
-                filterOptionCategory.getFilterSlug());
-        if (filteredOn == null) {
-            filteredOn = new FilteredOn(filterOptionCategory.getFilterSlug());
-            mFilteredOns.add(filteredOn);
-        }
-        ArrayList<String> filterValues = filteredOn.getFilterValues();
-        if (filterValues == null) {
-            filterValues = new ArrayList<>();
-            filteredOn.setFilterValues(filterValues);
-        }
-
-        if (isChecked) {
-            if (!filterValues.contains(filterOptionItem.getFilterValueSlug())) {
-                filterValues.add(filterOptionItem.getFilterValueSlug());
-            }
-        } else {
-            if (filterValues.contains(filterOptionItem.getFilterValueSlug())) {
-                filterValues.remove(filterOptionItem.getFilterValueSlug());
-            }
         }
     }
 

@@ -68,6 +68,17 @@ public class OrderModificationFragment extends BaseFragment {
         return getView() != null ? (LinearLayout) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
     }
 
+    @NonNull
+    @Override
+    public String getFragmentTxnTag() {
+        return OrderModificationFragment.class.getName();
+    }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.ORDER_DETAILS_MODIFICATION_SCREEN;
+    }
+
     private class OrderModListAdapter extends BaseAdapter {
 
         private ArrayList<OrderModification> orderModifications;
@@ -136,16 +147,5 @@ public class OrderModificationFragment extends BaseFragment {
                 return txtOrderModMsg;
             }
         }
-    }
-
-    @NonNull
-    @Override
-    public String getFragmentTxnTag() {
-        return OrderModificationFragment.class.getName();
-    }
-
-    @Override
-    public String getScreenTag() {
-        return TrackEventkeys.ORDER_DETAILS_MODIFICATION_SCREEN;
     }
 }

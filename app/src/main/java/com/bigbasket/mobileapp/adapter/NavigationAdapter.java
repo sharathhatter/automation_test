@@ -86,6 +86,19 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        if (sectionNavigationItems.get(position).isHeader()) {
+            return VIEW_TYPE_HEADER;
+        }
+        return VIEW_TYPE_SECTION_ITEM;
+    }
+
+    @Override
+    public int getItemCount() {
+        return sectionNavigationItems.size();
+    }
+
     private class NavViewHeaderHolder extends RecyclerView.ViewHolder {
         private TextView txtNavListRowHeader;
 
@@ -144,18 +157,5 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         sectionNavigationItem.getSectionItem(), screenName).onClick(v);
             }
         }
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        if (sectionNavigationItems.get(position).isHeader()) {
-            return VIEW_TYPE_HEADER;
-        }
-        return VIEW_TYPE_SECTION_ITEM;
-    }
-
-    @Override
-    public int getItemCount() {
-        return sectionNavigationItems.size();
     }
 }

@@ -49,15 +49,15 @@ public class CheckableRelativeLayout extends RelativeLayout implements Checkable
     }
 
     @Override
+    public boolean isChecked() {
+        return mCheckedTextView != null && mCheckedTextView.isChecked();
+    }
+
+    @Override
     public void setChecked(boolean checked) {
         if (mCheckedTextView != null) {
             mCheckedTextView.setChecked(checked);
         }
-    }
-
-    @Override
-    public boolean isChecked() {
-        return mCheckedTextView != null && mCheckedTextView.isChecked();
     }
 
     @Override

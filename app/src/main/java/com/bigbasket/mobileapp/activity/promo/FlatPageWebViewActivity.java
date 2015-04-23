@@ -78,15 +78,6 @@ public class FlatPageWebViewActivity extends BackButtonActivity {
         return this;
     }
 
-    private class FulFillmentWebViewClient extends WebViewClient {
-
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            view.loadUrl(url);
-            return true;
-        }
-    }
-
     @Override
     public void onChangeFragment(AbstractFragment newFragment) {
 
@@ -100,5 +91,14 @@ public class FlatPageWebViewActivity extends BackButtonActivity {
     @Override
     public String getScreenTag() {
         return TrackEventkeys.FLAT_PAGE_SCREEN;
+    }
+
+    private class FulFillmentWebViewClient extends WebViewClient {
+
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            view.loadUrl(url);
+            return true;
+        }
     }
 }

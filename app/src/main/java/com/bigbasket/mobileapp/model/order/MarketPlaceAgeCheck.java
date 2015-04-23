@@ -10,16 +10,21 @@ import com.google.gson.annotations.SerializedName;
 public class MarketPlaceAgeCheck extends FulfillmentInfo implements Parcelable {
 
 
+    public static final Parcelable.Creator<MarketPlaceAgeCheck> CREATOR = new Parcelable.Creator<MarketPlaceAgeCheck>() {
+        @Override
+        public MarketPlaceAgeCheck createFromParcel(Parcel source) {
+            return new MarketPlaceAgeCheck(source);
+        }
+
+        @Override
+        public MarketPlaceAgeCheck[] newArray(int size) {
+            return new MarketPlaceAgeCheck[size];
+        }
+    };
     @SerializedName(Constants.AGE_LIMIT)
     private int ageLimit;
-
     @SerializedName(Constants.AGE_MESSAGE)
     private String ageMessage;
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
 
     public MarketPlaceAgeCheck(Parcel source) {
         super(source);
@@ -29,6 +34,11 @@ public class MarketPlaceAgeCheck extends FulfillmentInfo implements Parcelable {
         if (!wasAgeMsgNull) {
             ageMessage = source.readString();
         }
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     @Override
@@ -42,18 +52,6 @@ public class MarketPlaceAgeCheck extends FulfillmentInfo implements Parcelable {
             dest.writeString(ageMessage);
         }
     }
-
-    public static final Parcelable.Creator<MarketPlaceAgeCheck> CREATOR = new Parcelable.Creator<MarketPlaceAgeCheck>() {
-        @Override
-        public MarketPlaceAgeCheck createFromParcel(Parcel source) {
-            return new MarketPlaceAgeCheck(source);
-        }
-
-        @Override
-        public MarketPlaceAgeCheck[] newArray(int size) {
-            return new MarketPlaceAgeCheck[size];
-        }
-    };
 
     public int getAgeLimit() {
         return ageLimit;

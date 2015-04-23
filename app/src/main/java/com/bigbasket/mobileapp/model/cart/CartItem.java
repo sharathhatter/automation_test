@@ -11,41 +11,58 @@ public class CartItem extends BaseCartItem {
     public static final byte PROMO_APPLIED_AND_PROMO_PRICING = 2;
     public static final byte PROMO_APPLIED_AND_MIXED_PRICING = 3;
     public static final byte REGULAR_PRICE_AND_NO_PROMO = 4;
+    public static final Parcelable.Creator<CartItem> CREATOR = new Parcelable.Creator<CartItem>() {
+        @Override
+        public CartItem createFromParcel(Parcel source) {
+            return new CartItem(source);
+        }
 
+        @Override
+        public CartItem[] newArray(int size) {
+            return new CartItem[size];
+        }
+    };
     @SerializedName(Constants.PRODUCT_ID)
     private int skuId;
-
     @SerializedName(Constants.TOTAL_QTY)
     private double totalQty;
-
     @SerializedName(Constants.PRODUCT_DESC)
     private String productDesc;
-
     @SerializedName(Constants.PRODUCT_BRAND)
     private String productBrand;
-
     @SerializedName(Constants.IMAGE_URL)
     private String productImgUrl;
-
     @SerializedName(Constants.PROMO_APPLIED_TYPE)
     private byte promoAppliedType;
-
     @SerializedName(Constants.PROMO_INFO)
     private CartItemPromoInfo cartItemPromoInfo;
-
     @SerializedName(Constants.FULFILLMENT_ID)
     private String fulfillmentId;
-
     @SerializedName(Constants.ANNOTATION_ID)
     private String annotationId;
-
     @SerializedName(Constants.PRODUCT_TOP_LEVEL_CATEGORY_NAME)
     private String topCategoryName;
-
     @SerializedName(Constants.PRODUCT_CATEGORY_NAME)
     private String productCategoryName;
-
     private int index;
+
+    CartItem(Parcel source) {
+        super(source);
+        skuId = source.readInt();
+        totalQty = source.readDouble();
+        productDesc = source.readString();
+        productBrand = source.readString();
+        productImgUrl = source.readString();
+        promoAppliedType = source.readByte();
+        boolean isCartItemPromoInfoNull = source.readByte() == (byte) 1;
+        if (!isCartItemPromoInfoNull) {
+            cartItemPromoInfo = source.readParcelable(CartItem.class.getClassLoader());
+        }
+        fulfillmentId = source.readString();
+        annotationId = source.readString();
+        topCategoryName = source.readString();
+        productCategoryName = source.readString();
+    }
 
     @Override
     public int describeContents() {
@@ -71,36 +88,6 @@ public class CartItem extends BaseCartItem {
         dest.writeString(topCategoryName);
         dest.writeString(productCategoryName);
     }
-
-    CartItem(Parcel source) {
-        super(source);
-        skuId = source.readInt();
-        totalQty = source.readDouble();
-        productDesc = source.readString();
-        productBrand = source.readString();
-        productImgUrl = source.readString();
-        promoAppliedType = source.readByte();
-        boolean isCartItemPromoInfoNull = source.readByte() == (byte) 1;
-        if (!isCartItemPromoInfoNull) {
-            cartItemPromoInfo = source.readParcelable(CartItem.class.getClassLoader());
-        }
-        fulfillmentId = source.readString();
-        annotationId = source.readString();
-        topCategoryName = source.readString();
-        productCategoryName = source.readString();
-    }
-
-    public static final Parcelable.Creator<CartItem> CREATOR = new Parcelable.Creator<CartItem>() {
-        @Override
-        public CartItem createFromParcel(Parcel source) {
-            return new CartItem(source);
-        }
-
-        @Override
-        public CartItem[] newArray(int size) {
-            return new CartItem[size];
-        }
-    };
 
     public String getAnnotationId() {
         return annotationId;

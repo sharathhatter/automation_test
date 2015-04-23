@@ -36,11 +36,6 @@ public abstract class BaseSectionFragment extends BaseFragment implements Sectio
     }
 
     @Override
-    public void setSectionData(SectionData sectionData) {
-        mSectionData = sectionData;
-    }
-
-    @Override
     public void setScreenName(String screenName) {
         mScreenName = screenName;
     }
@@ -48,5 +43,10 @@ public abstract class BaseSectionFragment extends BaseFragment implements Sectio
     @Override
     public SectionData getSectionData() {
         return mSectionData;
+    }
+
+    @Override
+    public void setSectionData(SectionData sectionData) {
+        mSectionData = sectionData;
     }
 }

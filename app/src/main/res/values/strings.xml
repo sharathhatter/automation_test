@@ -369,4 +369,5 @@
     <string name="removeAllProducts">Remove all the products from basket?</string>
     <string name="emptyBasket">Empty Basket</string>
     <string name="sortOrFilterBy">Sort By or Filter Options</string>
+    <string name="deleteProductFromShoppingList">Are you sure you want to delete this product from the shopping list?</string>
 </resources>

@@ -17,12 +17,21 @@ import java.util.Map;
 
 
 public class Slot extends BaseSlot implements Parcelable {
+    public static final Parcelable.Creator<Slot> CREATOR = new Parcelable.Creator<Slot>() {
+        @Override
+        public Slot createFromParcel(Parcel source) {
+            return new Slot(source);
+        }
+
+        @Override
+        public Slot[] newArray(int size) {
+            return new Slot[size];
+        }
+    };
     @SerializedName(Constants.AVAILABLE)
     private boolean available;
-
     @SerializedName(Constants.SLOT_DATE)
     private String slotDate;
-
     @SerializedName(Constants.SLOT_ID)
     private String slotId;
 
@@ -47,6 +56,29 @@ public class Slot extends BaseSlot implements Parcelable {
         this.slotId = source.readString();
     }
 
+    public static List<BaseSlot> getFlattenedSlotGroupList(List<Slot> slotListToGroup) {
+        List<BaseSlot> groupedSlotList = new LinkedList<>();
+        HashMap<String, List<Slot>> groupedSlotMap = getGroupedSlotMap(slotListToGroup);
+        for (Map.Entry<String, List<Slot>> entry : groupedSlotMap.entrySet()) {
+            groupedSlotList.add(new SlotHeader(entry.getKey()));
+            groupedSlotList.addAll(entry.getValue());
+        }
+        return groupedSlotList;
+    }
+
+    private static LinkedHashMap<String, List<Slot>> getGroupedSlotMap(List<Slot> slotListToGroup) {
+        LinkedHashMap<String, List<Slot>> groupedSlotMap = new LinkedHashMap<>();
+        for (Slot slot : slotListToGroup) {
+            List<Slot> slotList = groupedSlotMap.get(slot.getSlotDate());
+            if (slotList == null) {
+                slotList = new LinkedList<>();
+                groupedSlotMap.put(slot.getSlotDate(), slotList);
+            }
+            slotList.add(slot);
+        }
+        return groupedSlotMap;
+    }
+
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.displayName);
@@ -59,18 +91,6 @@ public class Slot extends BaseSlot implements Parcelable {
     public int describeContents() {
         return 0;
     }
-
-    public static final Parcelable.Creator<Slot> CREATOR = new Parcelable.Creator<Slot>() {
-        @Override
-        public Slot createFromParcel(Parcel source) {
-            return new Slot(source);
-        }
-
-        @Override
-        public Slot[] newArray(int size) {
-            return new Slot[size];
-        }
-    };
 
     public boolean isAvailable() {
         return available;
@@ -94,29 +114,6 @@ public class Slot extends BaseSlot implements Parcelable {
 
     public void setSlotId(String slotId) {
         this.slotId = slotId;
-    }
-
-    public static List<BaseSlot> getFlattenedSlotGroupList(List<Slot> slotListToGroup) {
-        List<BaseSlot> groupedSlotList = new LinkedList<>();
-        HashMap<String, List<Slot>> groupedSlotMap = getGroupedSlotMap(slotListToGroup);
-        for (Map.Entry<String, List<Slot>> entry : groupedSlotMap.entrySet()) {
-            groupedSlotList.add(new SlotHeader(entry.getKey()));
-            groupedSlotList.addAll(entry.getValue());
-        }
-        return groupedSlotList;
-    }
-
-    private static LinkedHashMap<String, List<Slot>> getGroupedSlotMap(List<Slot> slotListToGroup) {
-        LinkedHashMap<String, List<Slot>> groupedSlotMap = new LinkedHashMap<>();
-        for (Slot slot : slotListToGroup) {
-            List<Slot> slotList = groupedSlotMap.get(slot.getSlotDate());
-            if (slotList == null) {
-                slotList = new LinkedList<>();
-                groupedSlotMap.put(slot.getSlotDate(), slotList);
-            }
-            slotList.add(slot);
-        }
-        return groupedSlotMap;
     }
 
     public String getFormattedSlotDate() {

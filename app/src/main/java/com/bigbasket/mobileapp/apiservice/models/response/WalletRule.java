@@ -9,17 +9,32 @@ import com.google.gson.annotations.SerializedName;
 
 public class WalletRule implements Parcelable {
 
+    public static final Parcelable.Creator<WalletRule> CREATOR = new Parcelable.Creator<WalletRule>() {
+        @Override
+        public WalletRule createFromParcel(Parcel source) {
+            return new WalletRule(source);
+        }
+
+        @Override
+        public WalletRule[] newArray(int size) {
+            return new WalletRule[size];
+        }
+    };
     @SerializedName(Constants.VOUCHER_PER_RULE)
     public int voucherPerRule;
-
     @SerializedName(Constants.AMOUNT_PER_VOUCHER)
     public float amountPerVoucher;
-
     @SerializedName(Constants.TC)
     public String termAndCondition;
-
     @SerializedName(Constants.AVAILABLE_DELIVERY_TOKEN)
     public int availableDeliveryToken;
+
+    public WalletRule(Parcel source) {
+        voucherPerRule = source.readInt();
+        amountPerVoucher = source.readFloat();
+        termAndCondition = source.readString();
+        availableDeliveryToken = source.readInt();
+    }
 
     @Override
     public int describeContents() {
@@ -33,23 +48,4 @@ public class WalletRule implements Parcelable {
         dest.writeString(termAndCondition);
         dest.writeInt(availableDeliveryToken);
     }
-
-    public WalletRule(Parcel source) {
-        voucherPerRule = source.readInt();
-        amountPerVoucher = source.readFloat();
-        termAndCondition = source.readString();
-        availableDeliveryToken = source.readInt();
-    }
-
-    public static final Parcelable.Creator<WalletRule> CREATOR = new Parcelable.Creator<WalletRule>() {
-        @Override
-        public WalletRule createFromParcel(Parcel source) {
-            return new WalletRule(source);
-        }
-
-        @Override
-        public WalletRule[] newArray(int size) {
-            return new WalletRule[size];
-        }
-    };
 }

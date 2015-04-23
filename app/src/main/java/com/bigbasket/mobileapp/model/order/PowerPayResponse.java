@@ -7,11 +7,11 @@ import android.preference.PreferenceManager;
 import com.bigbasket.mobileapp.util.Constants;
 
 public class PowerPayResponse {
+    private static PowerPayResponse powerPayResponse;
     private String txnId;
     private String pgTxnId;
     private String dataPickupCode;
     private boolean isSuccess;
-    private static PowerPayResponse powerPayResponse;
 
     private PowerPayResponse(String txnId, String pgTxnId, String dataPickupCode,
                              boolean isSuccess) {

@@ -13,10 +13,38 @@ import java.util.Map;
 
 public class SectionData implements Parcelable, Serializable {
 
-    private ArrayList<Section> sections;
+    public static final Parcelable.Creator<SectionData> CREATOR = new Parcelable.Creator<SectionData>() {
+        @Override
+        public SectionData createFromParcel(Parcel source) {
+            return new SectionData(source);
+        }
 
+        @Override
+        public SectionData[] newArray(int size) {
+            return new SectionData[size];
+        }
+    };
+    private ArrayList<Section> sections;
     @SerializedName(Constants.RENDERERS)
     private HashMap<Integer, Renderer> renderersMap;
+
+    public SectionData(Parcel source) {
+        boolean wasSectionsNull = source.readByte() == (byte) 1;
+        if (!wasSectionsNull) {
+            sections = new ArrayList<>();
+            source.readTypedList(sections, Section.CREATOR);
+        }
+        boolean wasRendererMapNull = source.readByte() == (byte) 1;
+        if (!wasRendererMapNull) {
+            renderersMap = new HashMap<>();
+            int size = source.readInt();
+            for (int i = 0; i < size; i++) {
+                int rendererId = source.readInt();
+                Renderer renderer = source.readParcelable(Section.class.getClassLoader());
+                renderersMap.put(rendererId, renderer);
+            }
+        }
+    }
 
     @Override
     public int describeContents() {
@@ -40,36 +68,6 @@ public class SectionData implements Parcelable, Serializable {
             }
         }
     }
-
-    public SectionData(Parcel source) {
-        boolean wasSectionsNull = source.readByte() == (byte) 1;
-        if (!wasSectionsNull) {
-            sections = new ArrayList<>();
-            source.readTypedList(sections, Section.CREATOR);
-        }
-        boolean wasRendererMapNull = source.readByte() == (byte) 1;
-        if (!wasRendererMapNull) {
-            renderersMap = new HashMap<>();
-            int size = source.readInt();
-            for (int i = 0; i < size; i++) {
-                int rendererId = source.readInt();
-                Renderer renderer = source.readParcelable(Section.class.getClassLoader());
-                renderersMap.put(rendererId, renderer);
-            }
-        }
-    }
-
-    public static final Parcelable.Creator<SectionData> CREATOR = new Parcelable.Creator<SectionData>() {
-        @Override
-        public SectionData createFromParcel(Parcel source) {
-            return new SectionData(source);
-        }
-
-        @Override
-        public SectionData[] newArray(int size) {
-            return new SectionData[size];
-        }
-    };
 
     public ArrayList<Section> getSections() {
         return sections;

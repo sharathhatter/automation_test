@@ -8,17 +8,35 @@ import com.google.gson.annotations.SerializedName;
 
 public class CartItemPromo extends BaseCartItem {
 
+    public static final Parcelable.Creator<CartItemPromo> CREATOR = new Parcelable.Creator<CartItemPromo>() {
+        @Override
+        public CartItemPromo createFromParcel(Parcel source) {
+            return new CartItemPromo(source);
+        }
+
+        @Override
+        public CartItemPromo[] newArray(int size) {
+            return new CartItemPromo[size];
+        }
+    };
+    @SerializedName(Constants.PROMO_LABEL)
+    protected String promo_label;
     @SerializedName(Constants.PROMO_ID)
     private int promoId;
-
     @SerializedName(Constants.PROMO_NAME)
     private String promoName;
-
     @SerializedName(Constants.NO_ITEM_IN_CART)
     private double numItemInCart;
 
-    @SerializedName(Constants.PROMO_LABEL)
-    protected String promo_label;
+    CartItemPromo(Parcel source) {
+        promoId = source.readInt();
+        promoName = source.readString();
+        numItemInCart = source.readDouble();
+        promo_label = source.readString();
+        setMrp(source.readDouble());
+        setSalePrice(source.readDouble());
+        setSaving(source.readDouble());
+    }
 
     @Override
     public int describeContents() {
@@ -35,28 +53,6 @@ public class CartItemPromo extends BaseCartItem {
         dest.writeDouble(getSalePrice());
         dest.writeDouble(getSaving());
     }
-
-    CartItemPromo(Parcel source) {
-        promoId = source.readInt();
-        promoName = source.readString();
-        numItemInCart = source.readDouble();
-        promo_label = source.readString();
-        setMrp(source.readDouble());
-        setSalePrice(source.readDouble());
-        setSaving(source.readDouble());
-    }
-
-    public static final Parcelable.Creator<CartItemPromo> CREATOR = new Parcelable.Creator<CartItemPromo>() {
-        @Override
-        public CartItemPromo createFromParcel(Parcel source) {
-            return new CartItemPromo(source);
-        }
-
-        @Override
-        public CartItemPromo[] newArray(int size) {
-            return new CartItemPromo[size];
-        }
-    };
 
     public int getPromoId() {
         return promoId;

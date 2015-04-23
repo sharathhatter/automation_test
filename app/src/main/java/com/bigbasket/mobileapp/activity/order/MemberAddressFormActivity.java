@@ -283,75 +283,6 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
         uploadAddress(otpCode);
     }
 
-    class CreateUpdateAddressApiCallback implements Callback<ApiResponse<CreateUpdateAddressApiResponseContent>> {
-
-        @Override
-        public void success(ApiResponse<CreateUpdateAddressApiResponseContent> createUpdateAddressApiResponse, Response response) {
-            if (isSuspended()) return;
-            try {
-                hideProgressDialog();
-            } catch (IllegalArgumentException e) {
-                return;
-            }
-            switch (createUpdateAddressApiResponse.status) {
-                case 0:
-                    if (address == null) {
-                        Toast.makeText(getCurrentActivity(), "Address added successfully", Toast.LENGTH_LONG).show();
-                        addressCreatedModified(createUpdateAddressApiResponse.apiResponseContent.addressId);
-                    } else {
-                        Toast.makeText(getCurrentActivity(), "Address updated successfully", Toast.LENGTH_LONG).show();
-                        addressCreatedModified();
-                    }
-                    if (otpValidationDialogFragment != null && otpValidationDialogFragment.isVisible()) {
-                        otpValidationDialogFragment.dismiss();
-                        BaseActivity.hideKeyboard(getCurrentActivity(), otpValidationDialogFragment.getView());
-                    }
-
-                    if (!mFromAccountPage) {
-                        HashMap<String, String> map = new HashMap<>();
-                        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
-                        map.put(TrackEventkeys.POTENTIAL_ORDER, prefer.getString(Constants.POTENTIAL_ORDER_ID, null));
-                        trackEvent(TrackingAware.CHECKOUT_ADDRESS_CREATED, map);
-                    }
-
-                    break;
-                case ApiErrorCodes.NUMBER_IN_USE:
-                    mErrorMsg = createUpdateAddressApiResponse.message;
-                    handleMessage(Constants.MOBILE_NUMBER_USED_BY_ANOTHER_MEMBER);
-                    break;
-                case ApiErrorCodes.OTP_NEEDED:
-                    mErrorMsg = createUpdateAddressApiResponse.message;
-                    handleMessage(Constants.VALIDATE_MOBILE_NUMBER_POPUP);
-                    break;
-                case ApiErrorCodes.OTP_INVALID:
-                    mErrorMsg = createUpdateAddressApiResponse.message;
-                    handleMessage(Constants.VALIDATE_MOBILE_NUMBER_POPUP_ERROR_MSG);
-                    break;
-                default:
-                    HashMap<String, String> map = new HashMap<>();
-                    map.put(TrackEventkeys.FAILURE_REASON, createUpdateAddressApiResponse.message);
-                    map.put(TrackEventkeys.NAVIGATION_CTX, mFromAccountPage ? TrackEventkeys.NAVIGATION_CTX_MY_ACCOUNT :
-                            TrackEventkeys.NAVIGATION_CTX_MY_ACCOUNT);
-                    trackEvent(address == null ? TrackingAware.NEW_ADDRESS_FAILED :
-                            TrackingAware.UPDATE_ADDRESS_FAILED, map);
-                    handler.sendEmptyMessage(createUpdateAddressApiResponse.status,
-                            createUpdateAddressApiResponse.message);
-                    break;
-            }
-        }
-
-        @Override
-        public void failure(RetrofitError error) {
-            if (isSuspended()) return;
-            try {
-                hideProgressDialog();
-            } catch (IllegalArgumentException e) {
-                return;
-            }
-            handler.handleRetrofitError(error);
-        }
-    }
-
     private void addressCreatedModified(String addressId) {
         Intent result = new Intent();
         result.putExtra(Constants.MEMBER_ADDRESS_ID, addressId);
@@ -383,7 +314,6 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
     public void OnSubmitButtonClicked(View v) {
         uploadAddress(null);
     }
-
 
     private void validateMobileNumber(boolean txtErrorValidateNumberVisibility, String errorMsg) {
         if (otpValidationDialogFragment == null) {
@@ -451,6 +381,75 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
         super.onPause();
         if (editTextPincode != null) {
             hideKeyboard(this, editTextPincode);
+        }
+    }
+
+    class CreateUpdateAddressApiCallback implements Callback<ApiResponse<CreateUpdateAddressApiResponseContent>> {
+
+        @Override
+        public void success(ApiResponse<CreateUpdateAddressApiResponseContent> createUpdateAddressApiResponse, Response response) {
+            if (isSuspended()) return;
+            try {
+                hideProgressDialog();
+            } catch (IllegalArgumentException e) {
+                return;
+            }
+            switch (createUpdateAddressApiResponse.status) {
+                case 0:
+                    if (address == null) {
+                        Toast.makeText(getCurrentActivity(), "Address added successfully", Toast.LENGTH_LONG).show();
+                        addressCreatedModified(createUpdateAddressApiResponse.apiResponseContent.addressId);
+                    } else {
+                        Toast.makeText(getCurrentActivity(), "Address updated successfully", Toast.LENGTH_LONG).show();
+                        addressCreatedModified();
+                    }
+                    if (otpValidationDialogFragment != null && otpValidationDialogFragment.isVisible()) {
+                        otpValidationDialogFragment.dismiss();
+                        BaseActivity.hideKeyboard(getCurrentActivity(), otpValidationDialogFragment.getView());
+                    }
+
+                    if (!mFromAccountPage) {
+                        HashMap<String, String> map = new HashMap<>();
+                        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
+                        map.put(TrackEventkeys.POTENTIAL_ORDER, prefer.getString(Constants.POTENTIAL_ORDER_ID, null));
+                        trackEvent(TrackingAware.CHECKOUT_ADDRESS_CREATED, map);
+                    }
+
+                    break;
+                case ApiErrorCodes.NUMBER_IN_USE:
+                    mErrorMsg = createUpdateAddressApiResponse.message;
+                    handleMessage(Constants.MOBILE_NUMBER_USED_BY_ANOTHER_MEMBER);
+                    break;
+                case ApiErrorCodes.OTP_NEEDED:
+                    mErrorMsg = createUpdateAddressApiResponse.message;
+                    handleMessage(Constants.VALIDATE_MOBILE_NUMBER_POPUP);
+                    break;
+                case ApiErrorCodes.OTP_INVALID:
+                    mErrorMsg = createUpdateAddressApiResponse.message;
+                    handleMessage(Constants.VALIDATE_MOBILE_NUMBER_POPUP_ERROR_MSG);
+                    break;
+                default:
+                    HashMap<String, String> map = new HashMap<>();
+                    map.put(TrackEventkeys.FAILURE_REASON, createUpdateAddressApiResponse.message);
+                    map.put(TrackEventkeys.NAVIGATION_CTX, mFromAccountPage ? TrackEventkeys.NAVIGATION_CTX_MY_ACCOUNT :
+                            TrackEventkeys.NAVIGATION_CTX_MY_ACCOUNT);
+                    trackEvent(address == null ? TrackingAware.NEW_ADDRESS_FAILED :
+                            TrackingAware.UPDATE_ADDRESS_FAILED, map);
+                    handler.sendEmptyMessage(createUpdateAddressApiResponse.status,
+                            createUpdateAddressApiResponse.message);
+                    break;
+            }
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            if (isSuspended()) return;
+            try {
+                hideProgressDialog();
+            } catch (IllegalArgumentException e) {
+                return;
+            }
+            handler.handleRetrofitError(error);
         }
     }
 }

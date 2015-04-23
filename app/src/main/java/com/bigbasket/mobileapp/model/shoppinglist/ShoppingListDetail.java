@@ -11,30 +11,6 @@ import java.util.ArrayList;
 
 public class ShoppingListDetail implements Parcelable {
 
-    @SerializedName(Constants.ITEMS)
-    private ArrayList<Product> products;
-
-    @SerializedName(Constants.TOP_CATEGORY_NAME)
-    private String topCategoryName;
-
-    @SerializedName(Constants.TOP_CAT_SLUG)
-    private String topCategorySlug;
-
-    @SerializedName(Constants.NUM_ITEMS)
-    private int numItems;
-
-    public ArrayList<Product> getProducts() {
-        return products;
-    }
-
-    public String getTopCategoryName() {
-        return topCategoryName;
-    }
-
-    public String getTopCategorySlug() {
-        return topCategorySlug;
-    }
-
     public static final Parcelable.Creator<ShoppingListDetail> CREATOR = new Parcelable.Creator<ShoppingListDetail>() {
         @Override
         public ShoppingListDetail createFromParcel(Parcel source) {
@@ -46,6 +22,14 @@ public class ShoppingListDetail implements Parcelable {
             return new ShoppingListDetail[size];
         }
     };
+    @SerializedName(Constants.ITEMS)
+    private ArrayList<Product> products;
+    @SerializedName(Constants.TOP_CATEGORY_NAME)
+    private String topCategoryName;
+    @SerializedName(Constants.TOP_CAT_SLUG)
+    private String topCategorySlug;
+    @SerializedName(Constants.NUM_ITEMS)
+    private int numItems;
 
     public ShoppingListDetail(Parcel source) {
         this.products = new ArrayList<>();
@@ -53,6 +37,18 @@ public class ShoppingListDetail implements Parcelable {
         this.topCategoryName = source.readString();
         this.topCategorySlug = source.readString();
         this.numItems = source.readInt();
+    }
+
+    public ArrayList<Product> getProducts() {
+        return products;
+    }
+
+    public String getTopCategoryName() {
+        return topCategoryName;
+    }
+
+    public String getTopCategorySlug() {
+        return topCategorySlug;
     }
 
     @Override

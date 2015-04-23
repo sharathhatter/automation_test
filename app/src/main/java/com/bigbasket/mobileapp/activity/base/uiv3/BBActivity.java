@@ -102,12 +102,12 @@ import java.util.Map;
 public class BBActivity extends SocialLoginActivity implements BasketOperationAware,
         CartInfoAware, HandlerAware {
 
+    protected BigBasketMessageHandler handler;
     private ActionBarDrawerToggle mDrawerToggle;
     private String mDrawerTitle;
     private String mTitle;
     private BasketOperationResponse basketOperationResponse;
     private CartSummary cartInfo = new CartSummary();
-    protected BigBasketMessageHandler handler;
     private BBDrawerLayout mDrawerLayout;
     private String currentFragmentTag;
     private TextView mTextCartCount;
@@ -610,13 +610,13 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     @Override
-    public void setCartInfo(CartSummary cartInfo) {
-        this.cartInfo = cartInfo;
+    public CartSummary getCartInfo() {
+        return cartInfo;
     }
 
     @Override
-    public CartSummary getCartInfo() {
-        return cartInfo;
+    public void setCartInfo(CartSummary cartInfo) {
+        this.cartInfo = cartInfo;
     }
 
     @Override

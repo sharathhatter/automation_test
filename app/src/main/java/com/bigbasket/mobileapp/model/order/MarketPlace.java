@@ -12,37 +12,35 @@ import java.util.ArrayList;
 
 public class MarketPlace implements Parcelable {
 
+    public static final Parcelable.Creator<MarketPlace> CREATOR = new Parcelable.Creator<MarketPlace>() {
+        @Override
+        public MarketPlace createFromParcel(Parcel source) {
+            return new MarketPlace(source);
+        }
+
+        @Override
+        public MarketPlace[] newArray(int size) {
+            return new MarketPlace[size];
+        }
+    };
     @SerializedName(Constants.RULE_VALIDATION_ERROR)
     private boolean ruleValidationError;
-
     @SerializedName(Constants.RULE_VALIDATION_DETAILS)
     private ArrayList<MarketPlaceRuleValidator> marketPlaceRuleValidators;
-
     @SerializedName(Constants.AGE_CHECK_REQUIRED)
     private boolean ageCheckRequired;
-
     @SerializedName(Constants.AGE_CHECK_REQUIRED_DETAILS)
     private ArrayList<MarketPlaceAgeCheck> ageCheckRequiredDetail;  // arrayList of objects
-
     @SerializedName(Constants.PHARMA_PRESCRIPTION_NEEDED)
     private boolean pharamaPrescriptionNeeded;
-
     @SerializedName(Constants.PHARMA_PRESCRIPTION_INFO)
     private PharmaPrescriptionInfo pharmaPrescriptionInfo;
-
     @SerializedName(Constants.RULE_VALIDATION_TITLE)
     private String ruleValidationTitle;
-
     @SerializedName(Constants.SAVED_PRESCRIPTION)
     private ArrayList<SavedPrescription> savedPrescription;
-
     @SerializedName(Constants.TERMS_AND_COND)
     private String termsAndCond;
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
 
     public MarketPlace(Parcel source) {
         this.ruleValidationError = source.readByte() == (byte) 1;
@@ -81,6 +79,11 @@ public class MarketPlace implements Parcelable {
         if (!_wasTermsAndCondNull) {
             termsAndCond = source.readString();
         }
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     @Override
@@ -131,19 +134,6 @@ public class MarketPlace implements Parcelable {
             dest.writeString(termsAndCond);
         }
     }
-
-    public static final Parcelable.Creator<MarketPlace> CREATOR = new Parcelable.Creator<MarketPlace>() {
-        @Override
-        public MarketPlace createFromParcel(Parcel source) {
-            return new MarketPlace(source);
-        }
-
-        @Override
-        public MarketPlace[] newArray(int size) {
-            return new MarketPlace[size];
-        }
-    };
-
 
     public ArrayList<SavedPrescription> getSavedPrescription() {
         return savedPrescription;

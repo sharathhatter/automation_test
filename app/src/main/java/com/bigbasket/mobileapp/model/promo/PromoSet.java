@@ -13,24 +13,38 @@ public class PromoSet implements Parcelable {
 
     public static final String CRITERIA = "criteria";
     public static final String PROMO_PRODUCT = "promo_product";
+    public static final Parcelable.Creator<PromoSet> CREATOR = new Parcelable.Creator<PromoSet>() {
+        @Override
+        public PromoSet createFromParcel(Parcel source) {
+            return new PromoSet(source);
+        }
 
+        @Override
+        public PromoSet[] newArray(int size) {
+            return new PromoSet[size];
+        }
+    };
     @SerializedName(Constants.PROMO_SET_NAME)
     private String name;
-
     @SerializedName(Constants.VAL_IN_BASKET)
     private int valueInBasket;
-
     @SerializedName(Constants.PROMO_CRITERIA_VAL)
     private int promoCriteriaVal;
-
     @SerializedName(Constants.SET_ID)
     private int setId;
-
     @SerializedName(Constants.SET_TYPE)
     private String setType;
-
     @SerializedName(Constants.VALUE_TYPE)
     private String valType;
+
+    public PromoSet(Parcel source) {
+        name = source.readString();
+        valueInBasket = source.readInt();
+        promoCriteriaVal = source.readInt();
+        setId = source.readInt();
+        setType = source.readString();
+        valType = source.readString();
+    }
 
     @Override
     public int describeContents() {
@@ -46,27 +60,6 @@ public class PromoSet implements Parcelable {
         dest.writeString(setType);
         dest.writeString(valType);
     }
-
-    public PromoSet(Parcel source) {
-        name = source.readString();
-        valueInBasket = source.readInt();
-        promoCriteriaVal = source.readInt();
-        setId = source.readInt();
-        setType = source.readString();
-        valType = source.readString();
-    }
-
-    public static final Parcelable.Creator<PromoSet> CREATOR = new Parcelable.Creator<PromoSet>() {
-        @Override
-        public PromoSet createFromParcel(Parcel source) {
-            return new PromoSet(source);
-        }
-
-        @Override
-        public PromoSet[] newArray(int size) {
-            return new PromoSet[size];
-        }
-    };
 
     public String getName() {
         return name;

@@ -13,30 +13,6 @@ import java.util.List;
 
 public class PromoMessage implements Parcelable {
 
-    @SerializedName(Constants.MSG)
-    private String promoMessage;
-
-    @SerializedName(Constants.CRITERIA_MSGS)
-    private ArrayList<String> criteriaMessages;
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(promoMessage);
-        dest.writeStringList(criteriaMessages);
-    }
-
-    public PromoMessage(Parcel source) {
-        promoMessage = source.readString();
-
-        criteriaMessages = new ArrayList<>();
-        source.readStringList(criteriaMessages);
-    }
-
     public static final Parcelable.Creator<PromoMessage> CREATOR = new Parcelable.Creator<PromoMessage>() {
         @Override
         public PromoMessage createFromParcel(Parcel source) {
@@ -48,6 +24,28 @@ public class PromoMessage implements Parcelable {
             return new PromoMessage[size];
         }
     };
+    @SerializedName(Constants.MSG)
+    private String promoMessage;
+    @SerializedName(Constants.CRITERIA_MSGS)
+    private ArrayList<String> criteriaMessages;
+
+    public PromoMessage(Parcel source) {
+        promoMessage = source.readString();
+
+        criteriaMessages = new ArrayList<>();
+        source.readStringList(criteriaMessages);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(promoMessage);
+        dest.writeStringList(criteriaMessages);
+    }
 
     public String getPromoMessage() {
         return promoMessage;

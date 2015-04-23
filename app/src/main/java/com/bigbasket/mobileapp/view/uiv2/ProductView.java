@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.view.uiv2;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.support.v7.widget.PopupMenu;
@@ -18,7 +19,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.adapter.product.ProductListSpinnerAdapter;
@@ -280,15 +280,14 @@ public final class ProductView {
                                     }
                                     return true;
                                 case R.id.menuDeleteFromShoppingList:
-                                    UIUtil.getMaterialDialogBuilder(((ActivityAware) shoppingListNamesAware).getCurrentActivity())
-                                            .title(R.string.app_name)
-                                            .content("Are you sure you want to delete this product from the shopping list?")
-                                            .cancelable(false)
-                                            .positiveText(R.string.yesTxt)
-                                            .negativeText(R.string.noTxt)
-                                            .callback(new MaterialDialog.ButtonCallback() {
+                                    android.support.v7.app.AlertDialog.Builder builder =
+                                            new android.support.v7.app.AlertDialog.Builder(((ActivityAware) shoppingListNamesAware).getCurrentActivity());
+                                    builder.setTitle(R.string.app_name)
+                                            .setMessage(R.string.deleteProductFromShoppingList)
+                                            .setCancelable(false)
+                                            .setPositiveButton(R.string.yesTxt, new DialogInterface.OnClickListener() {
                                                 @Override
-                                                public void onPositive(MaterialDialog dialog) {
+                                                public void onClick(DialogInterface dialog, int which) {
                                                     if (((ConnectivityAware) shoppingListNamesAware).checkInternetConnection()) {
                                                         List<ShoppingListName> shoppingListNames = new ArrayList<>();
                                                         shoppingListNames.add(productViewDisplayDataHolder.getShoppingListName());
@@ -301,7 +300,13 @@ public final class ProductView {
                                                     }
                                                 }
                                             })
-                                            .show();
+                                            .setNegativeButton(R.string.noTxt, new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+
+                                                }
+                                            });
+                                    builder.create().show();
                                     return true;
                             }
                             return false;

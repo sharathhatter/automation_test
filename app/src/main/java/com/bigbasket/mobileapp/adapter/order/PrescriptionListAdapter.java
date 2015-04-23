@@ -151,13 +151,75 @@ public class PrescriptionListAdapter<T> extends RecyclerView.Adapter<RecyclerVie
         }
     }
 
+    private void getImageUrls(final String pharmaPrescriptionId) {
+        if (!DataUtil.isInternetAvailable(((ActivityAware) ctx).getCurrentActivity()))
+            ((ActivityAware) ctx).getCurrentActivity().getHandler().sendOfflineError();
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(((ActivityAware) ctx).getCurrentActivity());
+        ((ActivityAware) ctx).getCurrentActivity().showProgressDialog(((ActivityAware) ctx).getCurrentActivity().getString(R.string.please_wait));
+        bigBasketApiService.getPrescriptionImageUrls(pharmaPrescriptionId, new Callback<ApiResponse<PrescriptionImageUrls>>() {
+            @Override
+            public void success(ApiResponse<PrescriptionImageUrls> imageUrlsCallback, Response response) {
+                if (((CancelableAware) ctx).isSuspended()) return;
+                try {
+                    ((ProgressIndicationAware) ctx).hideProgressDialog();
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
+                if (imageUrlsCallback.status == 0) {
+                    ArrayList<String> imageUrls = imageUrlsCallback.apiResponseContent.arrayListPrescriptionImages;
+                    if (imageUrls != null && imageUrls.size() > 0) {
+                        ArrayList<Object> arrayListImgUrls = new ArrayList<>();
+                        arrayListImgUrls.addAll(imageUrls);
+                        showPrescriptionImageDialog(arrayListImgUrls);
+                    } else {
+                        (((ActivityAware) ctx)).getCurrentActivity().showAlertDialog(null, ((ActivityAware) ctx).getCurrentActivity().getString(R.string.imageUploading));
+                    }
+                } else {
+                    ((ActivityAware) ctx).getCurrentActivity().getHandler().sendEmptyMessage(imageUrlsCallback.status,
+                            imageUrlsCallback.message);
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                if (((CancelableAware) ctx).isSuspended()) return;
+                try {
+                    ((ProgressIndicationAware) ctx).hideProgressDialog();
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
+                ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
+            }
+        });
+    }
+
+    private void showPrescriptionImageDialog(ArrayList<Object> uploadImageList) {
+        final Dialog prescriptionImageDialog = new Dialog(((ActivityAware) ctx).getCurrentActivity());
+        prescriptionImageDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        prescriptionImageDialog.setCanceledOnTouchOutside(true);
+        ListView listView = new ListView(((ActivityAware) ctx).getCurrentActivity());
+        listView.setDividerHeight(0);
+        listView.setDivider(null);
+        prescriptionImageDialog.setContentView(listView);
+
+        Rect displayRectangle = new Rect();
+        ((ActivityAware) ctx).getCurrentActivity().getWindow().getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
+        prescriptionImageDialog.getWindow().setLayout(displayRectangle.width() - 20,
+                (int) (displayRectangle.height() * 0.7f));
+
+        MultipleImagesPrescriptionAdapter multipleImagesPrescriptionAdapter = new MultipleImagesPrescriptionAdapter<>(((ActivityAware) ctx).getCurrentActivity(),
+                uploadImageList);
+        listView.setAdapter(multipleImagesPrescriptionAdapter);
+        prescriptionImageDialog.show();
+
+    }
 
     class ViewHolder extends RecyclerView.ViewHolder {
+        public View base;
         private TextView dateCreated;
         private TextView patientName;
         private TextView doctorName;
         private TextView prescriptionName;
-        public View base;
         private LinearLayout layoutViewPrescriptionImageAndChoosePrescription;
         private TextView txtViewPrescriptionImages;
         private TextView txtChoosePrescription;
@@ -227,70 +289,6 @@ public class PrescriptionListAdapter<T> extends RecyclerView.Adapter<RecyclerVie
             }
             return prescriptionName;
         }
-    }
-
-    private void getImageUrls(final String pharmaPrescriptionId) {
-        if (!DataUtil.isInternetAvailable(((ActivityAware) ctx).getCurrentActivity()))
-            ((ActivityAware) ctx).getCurrentActivity().getHandler().sendOfflineError();
-        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(((ActivityAware) ctx).getCurrentActivity());
-        ((ActivityAware) ctx).getCurrentActivity().showProgressDialog(((ActivityAware) ctx).getCurrentActivity().getString(R.string.please_wait));
-        bigBasketApiService.getPrescriptionImageUrls(pharmaPrescriptionId, new Callback<ApiResponse<PrescriptionImageUrls>>() {
-            @Override
-            public void success(ApiResponse<PrescriptionImageUrls> imageUrlsCallback, Response response) {
-                if (((CancelableAware) ctx).isSuspended()) return;
-                try {
-                    ((ProgressIndicationAware) ctx).hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
-                if (imageUrlsCallback.status == 0) {
-                    ArrayList<String> imageUrls = imageUrlsCallback.apiResponseContent.arrayListPrescriptionImages;
-                    if (imageUrls != null && imageUrls.size() > 0) {
-                        ArrayList<Object> arrayListImgUrls = new ArrayList<>();
-                        arrayListImgUrls.addAll(imageUrls);
-                        showPrescriptionImageDialog(arrayListImgUrls);
-                    } else {
-                        (((ActivityAware) ctx)).getCurrentActivity().showAlertDialog(null, ((ActivityAware) ctx).getCurrentActivity().getString(R.string.imageUploading));
-                    }
-                } else {
-                    ((ActivityAware) ctx).getCurrentActivity().getHandler().sendEmptyMessage(imageUrlsCallback.status,
-                            imageUrlsCallback.message);
-                }
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                if (((CancelableAware) ctx).isSuspended()) return;
-                try {
-                    ((ProgressIndicationAware) ctx).hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
-                ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
-            }
-        });
-    }
-
-
-    private void showPrescriptionImageDialog(ArrayList<Object> uploadImageList) {
-        final Dialog prescriptionImageDialog = new Dialog(((ActivityAware) ctx).getCurrentActivity());
-        prescriptionImageDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        prescriptionImageDialog.setCanceledOnTouchOutside(true);
-        ListView listView = new ListView(((ActivityAware) ctx).getCurrentActivity());
-        listView.setDividerHeight(0);
-        listView.setDivider(null);
-        prescriptionImageDialog.setContentView(listView);
-
-        Rect displayRectangle = new Rect();
-        ((ActivityAware) ctx).getCurrentActivity().getWindow().getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
-        prescriptionImageDialog.getWindow().setLayout(displayRectangle.width() - 20,
-                (int) (displayRectangle.height() * 0.7f));
-
-        MultipleImagesPrescriptionAdapter multipleImagesPrescriptionAdapter = new MultipleImagesPrescriptionAdapter<>(((ActivityAware) ctx).getCurrentActivity(),
-                uploadImageList);
-        listView.setAdapter(multipleImagesPrescriptionAdapter);
-        prescriptionImageDialog.show();
-
     }
 
 }

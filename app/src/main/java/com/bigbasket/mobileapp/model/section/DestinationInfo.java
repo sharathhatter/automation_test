@@ -28,31 +28,27 @@ public class DestinationInfo implements Parcelable, Serializable {
     public static final String DEEP_LINK = "deep_link";
     public static final String PROMO_LIST = "promo_list";
     public static final String HOME = "home";
+    public static final Parcelable.Creator<DestinationInfo> CREATOR = new Parcelable.Creator<DestinationInfo>() {
+        @Override
+        public DestinationInfo createFromParcel(Parcel source) {
+            return new DestinationInfo(source);
+        }
 
+        @Override
+        public DestinationInfo[] newArray(int size) {
+            return new DestinationInfo[size];
+        }
+    };
     @SerializedName(Constants.DESTINATION_TYPE)
     private String destinationType;
-
     @SerializedName(Constants.DESTINATION_SLUG)
     private String destinationSlug;
-
     @SerializedName(Constants.VERSION)
     private String cacheVersion;
 
     public DestinationInfo(String destinationType, String destinationSlug) {
         this.destinationType = destinationType;
         this.destinationSlug = destinationSlug;
-    }
-
-    public String getDestinationType() {
-        return destinationType;
-    }
-
-    public String getDestinationSlug() {
-        return destinationSlug;
-    }
-
-    public String getCacheVersion() {
-        return cacheVersion;
     }
 
     public DestinationInfo(Parcel source) {
@@ -65,6 +61,18 @@ public class DestinationInfo implements Parcelable, Serializable {
         if (!_wasCacheVersionNull) {
             cacheVersion = source.readString();
         }
+    }
+
+    public String getDestinationType() {
+        return destinationType;
+    }
+
+    public String getDestinationSlug() {
+        return destinationSlug;
+    }
+
+    public String getCacheVersion() {
+        return cacheVersion;
     }
 
     @Override
@@ -112,16 +120,4 @@ public class DestinationInfo implements Parcelable, Serializable {
         }
         return nameValuePairs;
     }
-
-    public static final Parcelable.Creator<DestinationInfo> CREATOR = new Parcelable.Creator<DestinationInfo>() {
-        @Override
-        public DestinationInfo createFromParcel(Parcel source) {
-            return new DestinationInfo(source);
-        }
-
-        @Override
-        public DestinationInfo[] newArray(int size) {
-            return new DestinationInfo[size];
-        }
-    };
 }

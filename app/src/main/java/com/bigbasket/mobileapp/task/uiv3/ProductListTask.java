@@ -13,9 +13,9 @@ import java.util.HashMap;
 
 public class ProductListTask<T> {
 
+    protected T ctx;
     private HashMap<String, String> paramMap;
     private int page;
-    protected T ctx;
 
     public ProductListTask(T ctx, HashMap<String, String> paramMap) {
         this(1, ctx, paramMap);

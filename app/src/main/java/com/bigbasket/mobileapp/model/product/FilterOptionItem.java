@@ -8,12 +8,28 @@ import com.google.gson.annotations.SerializedName;
 
 public class FilterOptionItem implements Parcelable {
 
+    public static final Parcelable.Creator<FilterOptionItem> CREATOR = new Parcelable.Creator<FilterOptionItem>() {
+        @Override
+        public FilterOptionItem createFromParcel(Parcel source) {
+            return new FilterOptionItem(source);
+        }
+
+        @Override
+        public FilterOptionItem[] newArray(int size) {
+            return new FilterOptionItem[size];
+        }
+    };
     @SerializedName(Constants.DISPLAY_NAME)
     private String displayName;
-
     @SerializedName(Constants.FILTER_VALUES_SLUG)
     private String filterValueSlug;
     private boolean isSelected;
+
+    public FilterOptionItem(Parcel source) {
+        displayName = source.readString();
+        filterValueSlug = source.readString();
+        isSelected = source.readByte() == (byte) 1;
+    }
 
     @Override
     public int describeContents() {
@@ -26,24 +42,6 @@ public class FilterOptionItem implements Parcelable {
         dest.writeString(filterValueSlug);
         dest.writeByte(isSelected ? (byte) 1 : (byte) 0);
     }
-
-    public FilterOptionItem(Parcel source) {
-        displayName = source.readString();
-        filterValueSlug = source.readString();
-        isSelected = source.readByte() == (byte) 1;
-    }
-
-    public static final Parcelable.Creator<FilterOptionItem> CREATOR = new Parcelable.Creator<FilterOptionItem>() {
-        @Override
-        public FilterOptionItem createFromParcel(Parcel source) {
-            return new FilterOptionItem(source);
-        }
-
-        @Override
-        public FilterOptionItem[] newArray(int size) {
-            return new FilterOptionItem[size];
-        }
-    };
 
     public String getDisplayName() {
         return displayName;

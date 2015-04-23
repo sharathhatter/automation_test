@@ -67,29 +67,6 @@ public class SubCategoryListAdapter<T> extends BaseExpandableListAdapter {
         return true;
     }
 
-    private class SubCatHolder {
-        private View base;
-        private TextView txtListText;
-        private ImageView listArrow;
-
-        private SubCatHolder(View base) {
-            this.base = base;
-        }
-
-        private TextView getListText() {
-            if (txtListText == null)
-                txtListText = (TextView) base.findViewById(R.id.txtListText);
-            return txtListText;
-        }
-
-        public ImageView getListArrow() {
-            if (listArrow == null)
-                listArrow = (ImageView) base.findViewById(R.id.listArrow);
-            return listArrow;
-        }
-    }
-
-
     @Override
     public View getChildView(final int groupPosition, final int childPosition,
                              boolean isLastChild, View convertView, ViewGroup parent) {
@@ -141,5 +118,27 @@ public class SubCategoryListAdapter<T> extends BaseExpandableListAdapter {
         imgArrow.setImageResource(isExpanded ? R.drawable.ic_keyboard_arrow_down_grey600_24dp :
                 R.drawable.ic_keyboard_arrow_right_grey600_24dp);
         return row;
+    }
+
+    private class SubCatHolder {
+        private View base;
+        private TextView txtListText;
+        private ImageView listArrow;
+
+        private SubCatHolder(View base) {
+            this.base = base;
+        }
+
+        private TextView getListText() {
+            if (txtListText == null)
+                txtListText = (TextView) base.findViewById(R.id.txtListText);
+            return txtListText;
+        }
+
+        public ImageView getListArrow() {
+            if (listArrow == null)
+                listArrow = (ImageView) base.findViewById(R.id.listArrow);
+            return listArrow;
+        }
     }
 }

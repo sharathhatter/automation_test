@@ -19,42 +19,6 @@ import java.util.ArrayList;
 
 public class MessageFormatUtil<T> {
 
-    public SpannableStringBuilder replaceStringArgWithDisplayNameAndLink(final T ctx, String msgStr,
-                                                                         final ArrayList<MessageParamInfo> messageParamInfoList,
-                                                                         final ArrayList<Class<?>> activityArrayList,
-                                                                         final ArrayList<Integer> fragmentCodeArrayList) {
-        SpannableString spannableString = null;
-        int replacedStringIndex = 0;
-        ArrayList<Integer> arrayListIndex = new ArrayList<>();
-
-        while (msgStr.contains("{") && msgStr.contains("}")) {
-            int preIndexOfFormatStr = msgStr.indexOf("{");
-            int postIndexFormatStr = msgStr.indexOf("}");
-
-            String replacedString = (msgStr.substring(preIndexOfFormatStr + 1, postIndexFormatStr));
-            replacedStringIndex = Integer.valueOf(replacedString); //.replaceAll("\\s", "")
-            arrayListIndex.add(replacedStringIndex);
-            msgStr = msgStr.replaceFirst("\\{ *\\d+ *\\}",
-                    "[" + messageParamInfoList.get(replacedStringIndex).getDisplayName() + "]");
-
-            spannableString = new SpannableString(msgStr);
-            // change str to link color
-            int postIndex = preIndexOfFormatStr + messageParamInfoList.get(replacedStringIndex).getDisplayName().length();
-            spannableString.setSpan(new ForegroundColorSpan(((ActivityAware) ctx).getCurrentActivity().getResources().getColor(R.color.link_color)),
-                    preIndexOfFormatStr, postIndex, 0);
-        }
-        if (activityArrayList != null && activityArrayList.size() > 0) {
-            return addClickablePart(spannableString.toString().replaceAll("\\s*\\[\\s*", "["),
-                    ((ActivityAware) ctx).getCurrentActivity(), messageParamInfoList, activityArrayList,
-                    arrayListIndex, fragmentCodeArrayList);
-        } else {
-            return addClickablePart(spannableString.toString().replaceAll("\\s*\\[\\s*", "["),
-                    ((ActivityAware) ctx).getCurrentActivity(), messageParamInfoList,
-                    arrayListIndex);
-        }
-
-    }
-
     private static SpannableStringBuilder addClickablePart(String str, final Activity activity,
                                                            final ArrayList<MessageParamInfo> messageParamInfoList,
                                                            final ArrayList<Class<?>> activityArrayList,
@@ -107,7 +71,6 @@ public class MessageFormatUtil<T> {
         return spannableStringBuilder;
     }
 
-
     private static SpannableStringBuilder addClickablePart(String str, final Activity activity,
                                                            final ArrayList<MessageParamInfo> messageParamInfoList,
                                                            final ArrayList<Integer> arrayListIndex) {
@@ -145,6 +108,42 @@ public class MessageFormatUtil<T> {
             index++;
         }
         return spannableStringBuilder;
+    }
+
+    public SpannableStringBuilder replaceStringArgWithDisplayNameAndLink(final T ctx, String msgStr,
+                                                                         final ArrayList<MessageParamInfo> messageParamInfoList,
+                                                                         final ArrayList<Class<?>> activityArrayList,
+                                                                         final ArrayList<Integer> fragmentCodeArrayList) {
+        SpannableString spannableString = null;
+        int replacedStringIndex = 0;
+        ArrayList<Integer> arrayListIndex = new ArrayList<>();
+
+        while (msgStr.contains("{") && msgStr.contains("}")) {
+            int preIndexOfFormatStr = msgStr.indexOf("{");
+            int postIndexFormatStr = msgStr.indexOf("}");
+
+            String replacedString = (msgStr.substring(preIndexOfFormatStr + 1, postIndexFormatStr));
+            replacedStringIndex = Integer.valueOf(replacedString); //.replaceAll("\\s", "")
+            arrayListIndex.add(replacedStringIndex);
+            msgStr = msgStr.replaceFirst("\\{ *\\d+ *\\}",
+                    "[" + messageParamInfoList.get(replacedStringIndex).getDisplayName() + "]");
+
+            spannableString = new SpannableString(msgStr);
+            // change str to link color
+            int postIndex = preIndexOfFormatStr + messageParamInfoList.get(replacedStringIndex).getDisplayName().length();
+            spannableString.setSpan(new ForegroundColorSpan(((ActivityAware) ctx).getCurrentActivity().getResources().getColor(R.color.link_color)),
+                    preIndexOfFormatStr, postIndex, 0);
+        }
+        if (activityArrayList != null && activityArrayList.size() > 0) {
+            return addClickablePart(spannableString.toString().replaceAll("\\s*\\[\\s*", "["),
+                    ((ActivityAware) ctx).getCurrentActivity(), messageParamInfoList, activityArrayList,
+                    arrayListIndex, fragmentCodeArrayList);
+        } else {
+            return addClickablePart(spannableString.toString().replaceAll("\\s*\\[\\s*", "["),
+                    ((ActivityAware) ctx).getCurrentActivity(), messageParamInfoList,
+                    arrayListIndex);
+        }
+
     }
 
 }

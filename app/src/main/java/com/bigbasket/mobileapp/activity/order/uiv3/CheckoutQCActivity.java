@@ -46,9 +46,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class CheckoutQCActivity extends BackButtonActivity implements OnUpdateReserveQtyAware {
+    boolean mKeep = false;
     private COReserveQuantity coReserveQuantity;
     private String categoryName = "";
-    boolean mKeep = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

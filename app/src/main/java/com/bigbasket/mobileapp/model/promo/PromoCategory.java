@@ -9,38 +9,27 @@ import java.util.ArrayList;
 
 public class PromoCategory implements Parcelable {
 
+    public static final Parcelable.Creator<PromoCategory> CREATOR = new Parcelable.Creator<PromoCategory>() {
+        @Override
+        public PromoCategory createFromParcel(Parcel source) {
+            return new PromoCategory(source);
+        }
+
+        @Override
+        public PromoCategory[] newArray(int size) {
+            return new PromoCategory[size];
+        }
+    };
     @SerializedName("desc")
     private String description;
-
     @SerializedName("id")
     private int id;
-
     @SerializedName("name")
     private String name;
-
     @SerializedName("icon")
     private String icon;
-
     @SerializedName("promos")
     private ArrayList<Promo> promos;
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(description);
-        dest.writeInt(id);
-        dest.writeString(name);
-        boolean isIconNull = icon == null;
-        dest.writeByte(isIconNull ? (byte) 1 : (byte) 0);
-        if (!isIconNull) {
-            dest.writeString(icon);
-        }
-        dest.writeTypedList(promos);
-    }
 
     public PromoCategory(Parcel source) {
         description = source.readString();
@@ -53,18 +42,6 @@ public class PromoCategory implements Parcelable {
         promos = new ArrayList<>();
         source.readTypedList(promos, Promo.CREATOR);
     }
-
-    public static final Parcelable.Creator<PromoCategory> CREATOR = new Parcelable.Creator<PromoCategory>() {
-        @Override
-        public PromoCategory createFromParcel(Parcel source) {
-            return new PromoCategory(source);
-        }
-
-        @Override
-        public PromoCategory[] newArray(int size) {
-            return new PromoCategory[size];
-        }
-    };
 
     /**
      * Copy Constructor for PromoCategory. This won't assign "promos",
@@ -85,6 +62,24 @@ public class PromoCategory implements Parcelable {
         this.name = name;
         this.icon = icon;
         this.promos = promos;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(description);
+        dest.writeInt(id);
+        dest.writeString(name);
+        boolean isIconNull = icon == null;
+        dest.writeByte(isIconNull ? (byte) 1 : (byte) 0);
+        if (!isIconNull) {
+            dest.writeString(icon);
+        }
+        dest.writeTypedList(promos);
     }
 
     public String getDescription() {

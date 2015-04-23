@@ -16,13 +16,6 @@ import java.util.Locale;
 
 public class SearchSuggestionAdapter {
 
-    private Context context;
-
-    public SearchSuggestionAdapter(Context context) {
-        this.context = context;
-        open();
-    }
-
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_QUERY = "query";
     public static final String COLUMN_TERMS = "terms";
@@ -31,13 +24,17 @@ public class SearchSuggestionAdapter {
     public static final String COLUMN_SUGGESTED_TERMS = "suggested_terms";
     public static final String COLUMN_CREATED_ON = "created_on";
     public static final String tableName = "searchsuggestion";
-
     public static String createTable = String.format("CREATE TABLE IF NOT EXISTS %1$s (%2$s INTEGER " +
                     "PRIMARY KEY AUTOINCREMENT, %3$s TEXT NOT NULL, %4$s TEXT, %5$s TEXT, %6$s TEXT," +
                     "%7$s TEXT, %8$s TEXT NOT NULL);",
             tableName, COLUMN_ID, COLUMN_QUERY, COLUMN_TERMS, COLUMN_CATEGORIES, COLUMN_CATEGORY_URLS,
             COLUMN_SUGGESTED_TERMS, COLUMN_CREATED_ON);
+    private Context context;
 
+    public SearchSuggestionAdapter(Context context) {
+        this.context = context;
+        open();
+    }
 
     public void insert(AutoSearchResponse autoSearchResponse) {
         ContentValues contentValues = new ContentValues();

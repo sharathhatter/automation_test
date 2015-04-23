@@ -15,6 +15,15 @@ import java.util.ArrayList;
 
 public class SubCategoryAdapter {
 
+    public static final String COLUMN_ID = "_Id";
+    public static final String COLUMN_VERSION = "version";
+    public static final String COLUMN_BLOB = "subCategoryResponse";
+    public static final String COLUMN_SECTION_DATA = "sectionData";
+    public static final String COLUMN_SLUG = "slug";
+    public static final String tableName = "subcategory";
+    public static String createTable = String.format("CREATE TABLE IF NOT EXISTS %1$s (%2$s INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "%3$s TEXT , %4$s TEXT ,%5$s BLOB, %6$s BLOB NULL);", tableName, COLUMN_ID, COLUMN_VERSION,
+            COLUMN_SLUG, COLUMN_BLOB, COLUMN_SECTION_DATA);
     private Context context;
 
     public SubCategoryAdapter(Context context) {
@@ -22,16 +31,10 @@ public class SubCategoryAdapter {
         open();
     }
 
-    public static final String COLUMN_ID = "_Id";
-    public static final String COLUMN_VERSION = "version";
-    public static final String COLUMN_BLOB = "subCategoryResponse";
-    public static final String COLUMN_SECTION_DATA = "sectionData";
-    public static final String COLUMN_SLUG = "slug";
-    public static final String tableName = "subcategory";
-
-    public static String createTable = String.format("CREATE TABLE IF NOT EXISTS %1$s (%2$s INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    "%3$s TEXT , %4$s TEXT ,%5$s BLOB, %6$s BLOB NULL);", tableName, COLUMN_ID, COLUMN_VERSION,
-            COLUMN_SLUG, COLUMN_BLOB, COLUMN_SECTION_DATA);
+    public static Cursor getCursorForAllRows() {
+        return DatabaseHelper.db.query(tableName, new String[]{COLUMN_VERSION, COLUMN_BLOB}
+                , null, null, null, null, null);
+    }
 
     public void open() {
         DatabaseHelper.getInstance(context).open(context);
@@ -54,11 +57,6 @@ public class SubCategoryAdapter {
         }
         DatabaseHelper.db.insert(tableName, null, cv);
 
-    }
-
-    public static Cursor getCursorForAllRows() {
-        return DatabaseHelper.db.query(tableName, new String[]{COLUMN_VERSION, COLUMN_BLOB}
-                , null, null, null, null, null);
     }
 
     public ArrayList<Object> getSubCategory(String slug) {

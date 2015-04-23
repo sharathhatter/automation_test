@@ -5,12 +5,30 @@ import android.os.Parcelable;
 
 public class CartItemHeader implements Parcelable {
 
+    public static final Parcelable.Creator<CartItemHeader> CREATOR = new Parcelable.Creator<CartItemHeader>() {
+        @Override
+        public CartItemHeader createFromParcel(Parcel source) {
+            return new CartItemHeader(source);
+        }
+
+        @Override
+        public CartItemHeader[] newArray(int size) {
+            return new CartItemHeader[size];
+        }
+    };
     private String topCatName;
     private double topCatTotal;
     private int topCatItems;
     private CartItem cartItems;
 
     public CartItemHeader() {
+    }
+
+    public CartItemHeader(Parcel source) {
+        topCatName = source.readString();
+        topCatTotal = source.readDouble();
+        topCatItems = source.readInt();
+        cartItems = source.readParcelable(CartItemHeader.class.getClassLoader());
     }
 
     @Override
@@ -25,25 +43,6 @@ public class CartItemHeader implements Parcelable {
         dest.writeInt(topCatItems);
         dest.writeParcelable(cartItems, flags);
     }
-
-    public CartItemHeader(Parcel source) {
-        topCatName = source.readString();
-        topCatTotal = source.readDouble();
-        topCatItems = source.readInt();
-        cartItems = source.readParcelable(CartItemHeader.class.getClassLoader());
-    }
-
-    public static final Parcelable.Creator<CartItemHeader> CREATOR = new Parcelable.Creator<CartItemHeader>() {
-        @Override
-        public CartItemHeader createFromParcel(Parcel source) {
-            return new CartItemHeader(source);
-        }
-
-        @Override
-        public CartItemHeader[] newArray(int size) {
-            return new CartItemHeader[size];
-        }
-    };
 
     public String getTopCatName() {
         return topCatName;

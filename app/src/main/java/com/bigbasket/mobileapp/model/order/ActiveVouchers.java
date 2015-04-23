@@ -7,18 +7,25 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
 public class ActiveVouchers implements Parcelable {
+    public static final Creator<ActiveVouchers> CREATOR = new Parcelable.Creator<ActiveVouchers>() {
+        @Override
+        public ActiveVouchers createFromParcel(Parcel source) {
+            return new ActiveVouchers(source);
+        }
+
+        @Override
+        public ActiveVouchers[] newArray(int size) {
+            return new ActiveVouchers[size];
+        }
+    };
     @SerializedName(Constants.CODE)
     private String code;
-
     @SerializedName(Constants.CUSTOMER_DESC)
     private String customerDesc;
-
     @SerializedName(Constants.MESSAGE)
     private String message;
-
     @SerializedName(Constants.VALIDITY)
     private String validity;
-
     @SerializedName(Constants.CAN_APPLY)
     private boolean canApply;
 
@@ -51,18 +58,6 @@ public class ActiveVouchers implements Parcelable {
     public int describeContents() {
         return 0;
     }
-
-    public static final Creator<ActiveVouchers> CREATOR = new Parcelable.Creator<ActiveVouchers>() {
-        @Override
-        public ActiveVouchers createFromParcel(Parcel source) {
-            return new ActiveVouchers(source);
-        }
-
-        @Override
-        public ActiveVouchers[] newArray(int size) {
-            return new ActiveVouchers[size];
-        }
-    };
 
     public String getCode() {
         return code;

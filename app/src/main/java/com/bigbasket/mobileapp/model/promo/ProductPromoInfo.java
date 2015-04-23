@@ -10,26 +10,6 @@ import java.text.DecimalFormat;
 
 public class ProductPromoInfo extends Promo {
 
-    @SerializedName(Constants.PROMO_SAVING)
-    private double promoSavings;
-
-    public ProductPromoInfo(String promoName, String promoIcon, int promoId, String promoType,
-                            String promoLabel, String promoDesc, double promoSavings) {
-        super(promoName, promoIcon, promoId, promoType, promoLabel, promoDesc);
-        this.promoSavings = promoSavings;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        super.writeToParcel(dest, flags);
-        dest.writeDouble(promoSavings);
-    }
-
-    public ProductPromoInfo(Parcel source) {
-        super(source);
-        promoSavings = source.readDouble();
-    }
-
     public static final Parcelable.Creator<ProductPromoInfo> CREATOR = new Parcelable.Creator<ProductPromoInfo>() {
         @Override
         public ProductPromoInfo createFromParcel(Parcel source) {
@@ -41,6 +21,25 @@ public class ProductPromoInfo extends Promo {
             return new ProductPromoInfo[size];
         }
     };
+    @SerializedName(Constants.PROMO_SAVING)
+    private double promoSavings;
+
+    public ProductPromoInfo(String promoName, String promoIcon, int promoId, String promoType,
+                            String promoLabel, String promoDesc, double promoSavings) {
+        super(promoName, promoIcon, promoId, promoType, promoLabel, promoDesc);
+        this.promoSavings = promoSavings;
+    }
+
+    public ProductPromoInfo(Parcel source) {
+        super(source);
+        promoSavings = source.readDouble();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
+        dest.writeDouble(promoSavings);
+    }
 
     public double getPromoSavings() {
         return promoSavings;

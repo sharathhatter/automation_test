@@ -2,9 +2,6 @@ package com.bigbasket.mobileapp.util;
 
 public final class TrackEventkeys {
 
-    private TrackEventkeys() {
-    }
-
     public static final String CITY = "city";
     public static final String NAVIGATION_CTX = "nc";
     public static final String NAVIGATION_CTX_TOPNAV = "topnav";
@@ -73,10 +70,7 @@ public final class TrackEventkeys {
     public static final String EXPECTED_AMOUNT = "expected amount";
     public static final String ORDER_TYPE = "order type";
     public static final String VOUCHER_NAME = "voucher name";
-
     public static final String SECTION = "section"; //todo this is removed with new code
-
-
     public static final String START_SCREEN = "Entry Page"; //Done
     public static final String LANDING_PAGE = "Landing Page"; //Done
     public static final String HOME_SCREEN = "Home Page"; //Done
@@ -132,9 +126,10 @@ public final class TrackEventkeys {
     public static final String ORDER_REVIEW_SUMMARY_SCREEN = "Order Review Summary"; //Done
     public static final String CREDIT_CARD_SCREEN = "Credit Card"; //Done
     public static final String THANK_YOU_SCREEN = "Thank You"; //Done
-
     //referral
     public static final String BB_REFERRAL_MAIL_SCREEN = "offer";
     public static final String CONTACT_REFERRAL_SCREEN = "offer";
     public static final String REFERRAL_SCREEN = "offer";
+    private TrackEventkeys() {
+    }
 }

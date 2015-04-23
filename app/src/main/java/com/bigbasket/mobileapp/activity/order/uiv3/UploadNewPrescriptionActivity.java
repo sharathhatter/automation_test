@@ -233,6 +233,37 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
         }
     }
 
+    public void doSampling() {
+        boolean notBreak = true;
+        for (int i = 0; i < all_path.length; i++) {
+            byte[] imageByte = sampleImage(all_path[i]);
+            if (imageByte == null) {
+                arrayListByteArray.clear();
+                notBreak = false;
+                break;
+            }
+            arrayListByteArray.add(imageByte);
+        }
+        if (!notBreak)
+            showToast(getString(R.string.errorWhileSampling));
+    }
+
+    private byte[] sampleImage(String filePath) {
+        Bitmap bmpPic = new ImageUtil<>(getCurrentActivity()).getBitmap(filePath);
+        int compressQuality = 100;
+        ByteArrayOutputStream bmpStream = new ByteArrayOutputStream();
+        if (bmpPic != null) {
+            bmpPic.compress(Bitmap.CompressFormat.JPEG, compressQuality, bmpStream);
+            return bmpStream.toByteArray();
+        }
+        return null;
+    }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.UPLOAD_NEW_PRESCRIPTION_SCREEN;
+    }
+
     private class SamplePrescriptionImage extends AsyncTask<String, Long, Void> {
 
         private ProgressDialog progressDialog;
@@ -266,37 +297,6 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
             return null;
         }
 
-    }
-
-    public void doSampling() {
-        boolean notBreak = true;
-        for (int i = 0; i < all_path.length; i++) {
-            byte[] imageByte = sampleImage(all_path[i]);
-            if (imageByte == null) {
-                arrayListByteArray.clear();
-                notBreak = false;
-                break;
-            }
-            arrayListByteArray.add(imageByte);
-        }
-        if (!notBreak)
-            showToast(getString(R.string.errorWhileSampling));
-    }
-
-    private byte[] sampleImage(String filePath) {
-        Bitmap bmpPic = new ImageUtil<>(getCurrentActivity()).getBitmap(filePath);
-        int compressQuality = 100;
-        ByteArrayOutputStream bmpStream = new ByteArrayOutputStream();
-        if (bmpPic != null) {
-            bmpPic.compress(Bitmap.CompressFormat.JPEG, compressQuality, bmpStream);
-            return bmpStream.toByteArray();
-        }
-        return null;
-    }
-
-    @Override
-    public String getScreenTag() {
-        return TrackEventkeys.UPLOAD_NEW_PRESCRIPTION_SCREEN;
     }
 
 }

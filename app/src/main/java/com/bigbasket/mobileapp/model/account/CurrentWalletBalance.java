@@ -12,13 +12,28 @@ import com.google.gson.annotations.SerializedName;
  */
 public class CurrentWalletBalance implements Parcelable {
 
+    public static final Parcelable.Creator<CurrentWalletBalance> CREATOR = new Parcelable.Creator<CurrentWalletBalance>() {
+        @Override
+        public CurrentWalletBalance createFromParcel(Parcel source) {
+            return new CurrentWalletBalance(source);
+        }
+
+        @Override
+        public CurrentWalletBalance[] newArray(int size) {
+            return new CurrentWalletBalance[size];
+        }
+    };
     @SerializedName(Constants.CURRENT_BALANCE)
     public float currentBalance;
-
     @SerializedName(Constants.WALLET_RULE)
     public WalletRule walletRule;
-
     public String responseJsonStringWalletActivity;
+
+    public CurrentWalletBalance(Parcel source) {
+        currentBalance = source.readFloat();
+        responseJsonStringWalletActivity = source.readString(); //todo
+        walletRule = source.readParcelable(CurrentWalletBalance.class.getClassLoader());
+    }
 
     @Override
     public int describeContents() {
@@ -31,22 +46,4 @@ public class CurrentWalletBalance implements Parcelable {
         dest.writeString(responseJsonStringWalletActivity);
         dest.writeParcelable(walletRule, flags);
     }
-
-    public CurrentWalletBalance(Parcel source) {
-        currentBalance = source.readFloat();
-        responseJsonStringWalletActivity = source.readString(); //todo
-        walletRule = source.readParcelable(CurrentWalletBalance.class.getClassLoader());
-    }
-
-    public static final Parcelable.Creator<CurrentWalletBalance> CREATOR = new Parcelable.Creator<CurrentWalletBalance>() {
-        @Override
-        public CurrentWalletBalance createFromParcel(Parcel source) {
-            return new CurrentWalletBalance(source);
-        }
-
-        @Override
-        public CurrentWalletBalance[] newArray(int size) {
-            return new CurrentWalletBalance[size];
-        }
-    };
 }

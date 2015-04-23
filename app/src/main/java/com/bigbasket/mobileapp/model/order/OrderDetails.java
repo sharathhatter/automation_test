@@ -9,23 +9,38 @@ import com.google.gson.annotations.SerializedName;
 
 public class OrderDetails implements Parcelable {
 
+    public static final Parcelable.Creator<OrderDetails> CREATOR = new Parcelable.Creator<OrderDetails>() {
+        @Override
+        public OrderDetails createFromParcel(Parcel source) {
+            return new OrderDetails(source);
+        }
+
+        @Override
+        public OrderDetails[] newArray(int size) {
+            return new OrderDetails[size];
+        }
+    };
     @SerializedName(Constants.PAYMENT_METHOD)
     private String paymentMethod;
-
     @SerializedName(Constants.PAYMENT_METHOD_DISPLAY)
     private String paymentMethodDisplay;
-
     @SerializedName(Constants.TOTAL_ITEMS)
     private int totalItems;
-
     @SerializedName(Constants.SUB_TOTAL)
     private double subTotal;
-
     @SerializedName(Constants.DELIVERY_CHARGE)
     private double deliveryCharge;
-
     @SerializedName(Constants.FINAL_TOTAL)
     private double finalTotal;
+
+    OrderDetails(Parcel source) {
+        paymentMethod = source.readString();
+        paymentMethodDisplay = source.readString();
+        totalItems = source.readInt();
+        subTotal = source.readDouble();
+        deliveryCharge = source.readDouble();
+        finalTotal = source.readDouble();
+    }
 
     @Override
     public int describeContents() {
@@ -41,27 +56,6 @@ public class OrderDetails implements Parcelable {
         dest.writeDouble(deliveryCharge);
         dest.writeDouble(finalTotal);
     }
-
-    OrderDetails(Parcel source) {
-        paymentMethod = source.readString();
-        paymentMethodDisplay = source.readString();
-        totalItems = source.readInt();
-        subTotal = source.readDouble();
-        deliveryCharge = source.readDouble();
-        finalTotal = source.readDouble();
-    }
-
-    public static final Parcelable.Creator<OrderDetails> CREATOR = new Parcelable.Creator<OrderDetails>() {
-        @Override
-        public OrderDetails createFromParcel(Parcel source) {
-            return new OrderDetails(source);
-        }
-
-        @Override
-        public OrderDetails[] newArray(int size) {
-            return new OrderDetails[size];
-        }
-    };
 
     public String getPaymentMethod() {
         return paymentMethod;

@@ -22,6 +22,15 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class UploadImageService extends Service {
+    ExecutorService executorService;
+    private Context context;
+    private Runnable postInformation = new Runnable() {
+        @Override
+        public void run() {
+            uploadImages();
+        }
+    };
+
     public IBinder onBind(Intent intent) {
         return null;
     }
@@ -35,23 +44,12 @@ public class UploadImageService extends Service {
     public void onDestroy() {
     }
 
-    ExecutorService executorService;
-    private Context context;
-
     @Override
     public void onCreate() {
         this.context = this;
         executorService = Executors.newSingleThreadExecutor();
         executorService.execute(postInformation);
     }
-
-    private Runnable postInformation = new Runnable() {
-        @Override
-        public void run() {
-            uploadImages();
-        }
-    };
-
 
     private void uploadImages() {
         try {

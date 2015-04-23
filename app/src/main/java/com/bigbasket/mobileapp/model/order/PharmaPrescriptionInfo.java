@@ -10,28 +10,6 @@ import com.google.gson.annotations.SerializedName;
 
 public class PharmaPrescriptionInfo implements Parcelable {
 
-    @SerializedName(Constants.MESSAGE_OBJ)
-    private MessageInfo msgInfo;
-
-    public PharmaPrescriptionInfo(MessageInfo msgInfo) {
-        this.msgInfo = msgInfo;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-
-    public PharmaPrescriptionInfo(Parcel parcel) {
-        msgInfo = parcel.readParcelable(PharmaPrescriptionInfo.class.getClassLoader());
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(msgInfo, flags);
-    }
-
     public static final Parcelable.Creator<PharmaPrescriptionInfo> CREATOR = new Parcelable.Creator<PharmaPrescriptionInfo>() {
         @Override
         public PharmaPrescriptionInfo createFromParcel(Parcel source) {
@@ -43,6 +21,27 @@ public class PharmaPrescriptionInfo implements Parcelable {
             return new PharmaPrescriptionInfo[size];
         }
     };
+    @SerializedName(Constants.MESSAGE_OBJ)
+    private MessageInfo msgInfo;
+
+    public PharmaPrescriptionInfo(MessageInfo msgInfo) {
+        this.msgInfo = msgInfo;
+    }
+
+
+    public PharmaPrescriptionInfo(Parcel parcel) {
+        msgInfo = parcel.readParcelable(PharmaPrescriptionInfo.class.getClassLoader());
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(msgInfo, flags);
+    }
 
     public MessageInfo getMsgInfo() {
         return msgInfo;

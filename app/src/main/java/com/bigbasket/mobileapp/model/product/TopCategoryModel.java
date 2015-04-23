@@ -13,19 +13,26 @@ import java.io.Serializable;
 
 public class TopCategoryModel implements Parcelable, Serializable {
 
+    public static final Parcelable.Creator<TopCategoryModel> CREATOR = new Parcelable.Creator<TopCategoryModel>() {
+
+        @Override
+        public TopCategoryModel createFromParcel(Parcel source) {
+            return new TopCategoryModel(source);
+        }
+
+        @Override
+        public TopCategoryModel[] newArray(int size) {
+            return new TopCategoryModel[size];
+        }
+    };
     @SerializedName(Constants.TOP_CATEGORY)
     private String name;
-
     private String slug;
     private String version;
-
     @SerializedName(Constants.ICON)
     private String imagePath;
-
-
     @SerializedName(Constants.FLAT_PAGE)
     private String flatPage;
-
 
     public TopCategoryModel() {
 
@@ -48,19 +55,19 @@ public class TopCategoryModel implements Parcelable, Serializable {
         this.flatPage = flatPage;
     }
 
-    public TopCategoryModel(Parcel source) {
-        this.name = source.readString();
-        this.slug = source.readString();
-        this.version = source.readString();
-        this.imagePath = source.readString();
-    }
-
 //    public TopCategoryModel(String name, String slug, String version, String imagePath) {
 //        this.name = name;
 //        this.slug = slug;
 //        this.version = version;
 //        this.imagePath = imagePath;
 //    }
+
+    public TopCategoryModel(Parcel source) {
+        this.name = source.readString();
+        this.slug = source.readString();
+        this.version = source.readString();
+        this.imagePath = source.readString();
+    }
 
     public String getName() {
         return name;
@@ -77,7 +84,6 @@ public class TopCategoryModel implements Parcelable, Serializable {
     public void setVersion(String version) {
         this.version = version;
     }
-
 
     public String getSlug() {
         return slug;
@@ -107,19 +113,6 @@ public class TopCategoryModel implements Parcelable, Serializable {
         dest.writeString(this.version);
         dest.writeString(this.imagePath);
     }
-
-    public static final Parcelable.Creator<TopCategoryModel> CREATOR = new Parcelable.Creator<TopCategoryModel>() {
-
-        @Override
-        public TopCategoryModel createFromParcel(Parcel source) {
-            return new TopCategoryModel(source);
-        }
-
-        @Override
-        public TopCategoryModel[] newArray(int size) {
-            return new TopCategoryModel[size];
-        }
-    };
 
     public String getFlatPage() {
         return flatPage;

@@ -11,21 +11,28 @@ import com.google.gson.annotations.SerializedName;
  */
 public class SavedPrescription implements Parcelable {
 
+    public static final Parcelable.Creator<SavedPrescription> CREATOR = new Parcelable.Creator<SavedPrescription>() {
+        @Override
+        public SavedPrescription createFromParcel(Parcel source) {
+            return new SavedPrescription(source);
+        }
+
+        @Override
+        public SavedPrescription[] newArray(int size) {
+            return new SavedPrescription[size];
+        }
+    };
     @SerializedName(Constants.DATE_CREATED)
     private String dateCreated;
-
     @SerializedName(Constants.PATIENT_NAME)
     private String patientName;
-
     @SerializedName(Constants.DOCTOR_NAME)
     private String doctorName;
 
-    @SerializedName(Constants.PHARMA_PRESCRIPTION_ID)
-    private int pharmaPrescriptionId;
-
 //    @SerializedName(Constants.PRESCRIPTION_IMG_URL)
 //    private String prescriptionImageUrl;
-
+    @SerializedName(Constants.PHARMA_PRESCRIPTION_ID)
+    private int pharmaPrescriptionId;
     @SerializedName(Constants.PRESCRIPTION_NAME)
     private String prescriptionName;
 
@@ -40,11 +47,6 @@ public class SavedPrescription implements Parcelable {
         this.prescriptionName = prescriptionName;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
     SavedPrescription(Parcel source) {
         this.dateCreated = source.readString();
         this.patientName = source.readString();
@@ -52,6 +54,11 @@ public class SavedPrescription implements Parcelable {
         this.pharmaPrescriptionId = source.readInt();
         //this.prescriptionImageUrl = source.readString();
         this.prescriptionName = source.readString();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     @Override
@@ -64,18 +71,6 @@ public class SavedPrescription implements Parcelable {
         dest.writeString(this.prescriptionName);
 
     }
-
-    public static final Parcelable.Creator<SavedPrescription> CREATOR = new Parcelable.Creator<SavedPrescription>() {
-        @Override
-        public SavedPrescription createFromParcel(Parcel source) {
-            return new SavedPrescription(source);
-        }
-
-        @Override
-        public SavedPrescription[] newArray(int size) {
-            return new SavedPrescription[size];
-        }
-    };
 
     public String getDateCreated() {
         return dateCreated;

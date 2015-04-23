@@ -10,14 +10,29 @@ import com.google.gson.annotations.SerializedName;
 
 public class QCErrorData implements Parcelable {
 
+    public static final Parcelable.Creator<QCErrorData> CREATOR = new Parcelable.Creator<QCErrorData>() {
+        @Override
+        public QCErrorData createFromParcel(Parcel source) {
+            return new QCErrorData(source);
+        }
+
+        @Override
+        public QCErrorData[] newArray(int size) {
+            return new QCErrorData[size];
+        }
+    };
     @SerializedName(Constants.QC_RESERVED_QUANTITY)
     private String reservedQuantity;
-
     @SerializedName(Constants.QC_ORIGINAL_QUANTITY)
     private String originalQuantity;
-
     @SerializedName(Constants.QC_RESERVED_PRODUCT)
     private Product product;
+
+    public QCErrorData(Parcel source) {
+        reservedQuantity = source.readString();
+        originalQuantity = source.readString();
+        product = source.readParcelable(QCErrorData.class.getClassLoader());
+    }
 
     @Override
     public int describeContents() {
@@ -30,24 +45,6 @@ public class QCErrorData implements Parcelable {
         dest.writeString(originalQuantity);
         dest.writeParcelable(product, flags);
     }
-
-    public QCErrorData(Parcel source) {
-        reservedQuantity = source.readString();
-        originalQuantity = source.readString();
-        product = source.readParcelable(QCErrorData.class.getClassLoader());
-    }
-
-    public static final Parcelable.Creator<QCErrorData> CREATOR = new Parcelable.Creator<QCErrorData>() {
-        @Override
-        public QCErrorData createFromParcel(Parcel source) {
-            return new QCErrorData(source);
-        }
-
-        @Override
-        public QCErrorData[] newArray(int size) {
-            return new QCErrorData[size];
-        }
-    };
 
     public String getReservedQuantity() {
         return reservedQuantity;

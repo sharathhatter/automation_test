@@ -264,65 +264,6 @@ public class PlaceOrderActivity extends BackButtonActivity {
         WibmoSDK.startForInApp(this, wPayInitRequest);
     }
 
-    private class PowerPayTriggerAsyncTask extends AsyncTask<PowerPayPostParams, Integer, PowerPayPostParams> {
-
-        @Override
-        protected void onPreExecute() {
-            showProgressDialog(getString(R.string.please_wait));
-        }
-
-        @Override
-        protected PowerPayPostParams doInBackground(PowerPayPostParams... params) {
-            PowerPayPostParams powerPayPostParams = params[0];
-            WibmoSDK.setWibmoIntentActionPackage(powerPayPostParams.getPkgName());
-            WibmoSDKConfig.setWibmoDomain(powerPayPostParams.getServerUrl());
-            WibmoSDK.init(getApplicationContext());
-            return powerPayPostParams;
-        }
-
-        @Override
-        protected void onPostExecute(PowerPayPostParams powerPayPostParams) {
-            hideProgressDialog();
-            startHDFCPowerPay(powerPayPostParams);
-        }
-    }
-
-    private class PostPrepaidParamsCallback implements Callback<ApiResponse<PostPrepaidPaymentResponse>> {
-        @Override
-        public void success(ApiResponse<PostPrepaidPaymentResponse> postPrepaidPaymentApiResponse, Response response) {
-            if (isSuspended()) return;
-            try {
-                hideProgressDialog();
-            } catch (IllegalArgumentException e) {
-                return;
-            }
-            switch (postPrepaidPaymentApiResponse.status) {
-                case 0:
-                    if (postPrepaidPaymentApiResponse.apiResponseContent.paymentStatus) {
-                        placeOrder(mPotentialOrderId, PowerPayResponse.getInstance(getCurrentActivity()).getTxnId());
-                    } else {
-                        setResult(Constants.PREPAID_TXN_FAILED);
-                        finish();
-                    }
-                    break;
-                default:
-                    handler.sendEmptyMessage(postPrepaidPaymentApiResponse.status, postPrepaidPaymentApiResponse.message);
-                    break;
-            }
-        }
-
-        @Override
-        public void failure(RetrofitError error) {
-            if (isSuspended()) return;
-            try {
-                hideProgressDialog();
-            } catch (IllegalArgumentException e) {
-                return;
-            }
-            handler.handleRetrofitError(error);
-        }
-    }
-
     private void startCreditCardTxnActivity(double amount) {
         switch (mOrderSummary.getOrderDetails().getPaymentMethod()) {
             case Constants.PAYU:
@@ -520,5 +461,64 @@ public class PlaceOrderActivity extends BackButtonActivity {
     public boolean isCreditCardPayment() {
         String paymentType = mOrderSummary.getOrderDetails().getPaymentMethod();
         return paymentType.equals(Constants.PAYU) || paymentType.equals(Constants.HDFC_POWER_PAY);
+    }
+
+    private class PowerPayTriggerAsyncTask extends AsyncTask<PowerPayPostParams, Integer, PowerPayPostParams> {
+
+        @Override
+        protected void onPreExecute() {
+            showProgressDialog(getString(R.string.please_wait));
+        }
+
+        @Override
+        protected PowerPayPostParams doInBackground(PowerPayPostParams... params) {
+            PowerPayPostParams powerPayPostParams = params[0];
+            WibmoSDK.setWibmoIntentActionPackage(powerPayPostParams.getPkgName());
+            WibmoSDKConfig.setWibmoDomain(powerPayPostParams.getServerUrl());
+            WibmoSDK.init(getApplicationContext());
+            return powerPayPostParams;
+        }
+
+        @Override
+        protected void onPostExecute(PowerPayPostParams powerPayPostParams) {
+            hideProgressDialog();
+            startHDFCPowerPay(powerPayPostParams);
+        }
+    }
+
+    private class PostPrepaidParamsCallback implements Callback<ApiResponse<PostPrepaidPaymentResponse>> {
+        @Override
+        public void success(ApiResponse<PostPrepaidPaymentResponse> postPrepaidPaymentApiResponse, Response response) {
+            if (isSuspended()) return;
+            try {
+                hideProgressDialog();
+            } catch (IllegalArgumentException e) {
+                return;
+            }
+            switch (postPrepaidPaymentApiResponse.status) {
+                case 0:
+                    if (postPrepaidPaymentApiResponse.apiResponseContent.paymentStatus) {
+                        placeOrder(mPotentialOrderId, PowerPayResponse.getInstance(getCurrentActivity()).getTxnId());
+                    } else {
+                        setResult(Constants.PREPAID_TXN_FAILED);
+                        finish();
+                    }
+                    break;
+                default:
+                    handler.sendEmptyMessage(postPrepaidPaymentApiResponse.status, postPrepaidPaymentApiResponse.message);
+                    break;
+            }
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            if (isSuspended()) return;
+            try {
+                hideProgressDialog();
+            } catch (IllegalArgumentException e) {
+                return;
+            }
+            handler.handleRetrofitError(error);
+        }
     }
 }

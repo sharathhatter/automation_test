@@ -8,47 +8,80 @@ import com.google.gson.annotations.SerializedName;
 
 public class UpdateProfileModel implements Parcelable {
 
+    public static final Parcelable.Creator<UpdateProfileModel> CREATOR = new Parcelable.Creator<UpdateProfileModel>() {
+        @Override
+        public UpdateProfileModel createFromParcel(Parcel source) {
+            return new UpdateProfileModel(source);
+        }
+
+        @Override
+        public UpdateProfileModel[] newArray(int size) {
+            return new UpdateProfileModel[size];
+        }
+    };
     @SerializedName(Constants.EMAIL)
     private String email;
-
     @SerializedName(Constants.FIRSTNAME)
     private String firstName;
-
     @SerializedName(Constants.LASTNAME)
     private String lastName;
-
     @SerializedName(Constants.DATE_OF_BIRTH)
     private String dateOfBirth;
-
     @SerializedName(Constants.MOBILE_NUMBER)
     private String mobileNumber;
-
     @SerializedName(Constants.TELEPHONE_NUMBER)
     private String telephoneNumber;
-
     @SerializedName(Constants.HOUSE_NO)
     private String houseNumber;
-
     @SerializedName(Constants.RES_CMPLX)
     private String residentialComplex;
-
     @SerializedName(Constants.LANDMARK)
     private String landmark;
-
     @SerializedName(Constants.AREA)
     private String area;
-
     @SerializedName(Constants.CITY_NAME)
     private String cityName;
-
     @SerializedName(Constants.STREET)
     private String street;
-
     @SerializedName(Constants.PIN_CODE)
     private String pincode;
-
     @SerializedName(Constants.NEWSPAPER_SUBSCRIPTION)
     private String newPaperSubscription;
+
+    public UpdateProfileModel(Parcel source) {
+        email = source.readString();
+        firstName = source.readString();
+        lastName = source.readString();
+        boolean isDobNull = source.readByte() == (byte) 1;
+        if (!isDobNull) {
+            dateOfBirth = source.readString();
+        }
+        mobileNumber = source.readString();
+        boolean isTelephNumNull = source.readByte() == (byte) 1;
+        if (!isTelephNumNull) {
+            telephoneNumber = source.readString();
+        }
+        houseNumber = source.readString();
+        boolean isResComplxNull = source.readByte() == (byte) 1;
+        if (!isResComplxNull) {
+            residentialComplex = source.readString();
+        }
+        boolean isLandmarkNull = source.readByte() == (byte) 1;
+        if (!isLandmarkNull) {
+            landmark = source.readString();
+        }
+        area = source.readString();
+        cityName = source.readString();
+        boolean isStreetNull = source.readByte() == (byte) 1;
+        if (!isStreetNull) {
+            street = source.readString();
+        }
+        pincode = source.readString();
+        boolean isSubNull = source.readByte() == (byte) 1;
+        if (!isSubNull) {
+            newPaperSubscription = source.readString();
+        }
+    }
 
     @Override
     public int describeContents() {
@@ -94,41 +127,6 @@ public class UpdateProfileModel implements Parcelable {
         dest.writeByte(isSubscriptionNull ? (byte) 1 : (byte) 0);
         if (!isSubscriptionNull) {
             dest.writeString(newPaperSubscription);
-        }
-    }
-
-    public UpdateProfileModel(Parcel source) {
-        email = source.readString();
-        firstName = source.readString();
-        lastName = source.readString();
-        boolean isDobNull = source.readByte() == (byte) 1;
-        if (!isDobNull) {
-            dateOfBirth = source.readString();
-        }
-        mobileNumber = source.readString();
-        boolean isTelephNumNull = source.readByte() == (byte) 1;
-        if (!isTelephNumNull) {
-            telephoneNumber = source.readString();
-        }
-        houseNumber = source.readString();
-        boolean isResComplxNull = source.readByte() == (byte) 1;
-        if (!isResComplxNull) {
-            residentialComplex = source.readString();
-        }
-        boolean isLandmarkNull = source.readByte() == (byte) 1;
-        if (!isLandmarkNull) {
-            landmark = source.readString();
-        }
-        area = source.readString();
-        cityName = source.readString();
-        boolean isStreetNull = source.readByte() == (byte) 1;
-        if (!isStreetNull) {
-            street = source.readString();
-        }
-        pincode = source.readString();
-        boolean isSubNull = source.readByte() == (byte) 1;
-        if (!isSubNull) {
-            newPaperSubscription = source.readString();
         }
     }
 
@@ -243,16 +241,4 @@ public class UpdateProfileModel implements Parcelable {
     public void setNewPaperSubscription(String newPaperSubscription) {
         this.newPaperSubscription = newPaperSubscription;
     }
-
-    public static final Parcelable.Creator<UpdateProfileModel> CREATOR = new Parcelable.Creator<UpdateProfileModel>() {
-        @Override
-        public UpdateProfileModel createFromParcel(Parcel source) {
-            return new UpdateProfileModel(source);
-        }
-
-        @Override
-        public UpdateProfileModel[] newArray(int size) {
-            return new UpdateProfileModel[size];
-        }
-    };
 }

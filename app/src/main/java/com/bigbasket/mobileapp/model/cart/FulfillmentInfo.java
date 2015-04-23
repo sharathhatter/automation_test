@@ -12,27 +12,31 @@ import org.json.JSONObject;
 
 public class FulfillmentInfo implements Parcelable {
 
+    public static final Parcelable.Creator<FulfillmentInfo> CREATOR = new Parcelable.Creator<FulfillmentInfo>() {
+        @Override
+        public FulfillmentInfo[] newArray(int size) {
+            return new FulfillmentInfo[size];
+        }
+
+        @Override
+        public FulfillmentInfo createFromParcel(Parcel source) {
+            return new FulfillmentInfo(source);
+        }
+    };
     @SerializedName(Constants.DISPLAY_NAME)
     private String displayName;
-
     @SerializedName(Constants.TC2)
     private String tc2;
-
     @SerializedName(Constants.FULFILLED_BY)
     private String fulfilledBy;
-
     @SerializedName(Constants.FULFILLMENT_ID)
     private String fulfillmentId;
-
     @SerializedName(Constants.FULFILLED_BY_INFO_PAGE)
     private String fulfilledByInfoPage;
-
     @SerializedName(Constants.TC1)
     private String tc1;
-
     @SerializedName(Constants.ICON_URL)
     private String icon;
-
 
     public FulfillmentInfo(String displayName, String tc2, String fulfilledBy, String fulfillmentId,
                            String fulfilledByInfoPage, String tc1, String icon) {
@@ -145,18 +149,6 @@ public class FulfillmentInfo implements Parcelable {
     public int describeContents() {
         return 0;
     }
-
-    public static final Parcelable.Creator<FulfillmentInfo> CREATOR = new Parcelable.Creator<FulfillmentInfo>() {
-        @Override
-        public FulfillmentInfo[] newArray(int size) {
-            return new FulfillmentInfo[size];
-        }
-
-        @Override
-        public FulfillmentInfo createFromParcel(Parcel source) {
-            return new FulfillmentInfo(source);
-        }
-    };
 
     public String getDisplayName() {
         return displayName;
