@@ -19,8 +19,6 @@ public abstract class PlusBaseActivity extends BaseActivity
         implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
-    private static final String TAG = PlusBaseActivity.class.getSimpleName();
-
     // A magic number we will use to know that our sign-in error resolution activity has completed
     private static final int RC_SIGN_IN = 49404;
     // A flag to track when a connection is already in progress
@@ -178,10 +176,6 @@ public abstract class PlusBaseActivity extends BaseActivity
     protected void onStop() {
         super.onStop();
         initiatePlusClientDisconnect();
-    }
-
-    public boolean isPlusClientConnecting() {
-        return mPlusClientIsConnecting;
     }
 
     private void setProgressBarVisible(boolean flag) {
