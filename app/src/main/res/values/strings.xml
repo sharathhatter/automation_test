@@ -264,7 +264,7 @@
     <!-- main nav -->
     <string name="viewProducts">View Products</string>
     <string name="shoppingList">Shopping Lists</string>
-    <string name="sort">Sort</string>
+    <string name="sortBy">Sort By</string>
     <string name="filterBy">Filter By</string>
     <string name="voice">Voice</string>
     <string name="scan">Scan</string>
