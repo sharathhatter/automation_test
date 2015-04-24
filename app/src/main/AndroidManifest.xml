@@ -465,10 +465,6 @@
             android:name="LOCALYTICS_APP_KEY"
             android:value="@string/localytics_api_key" />
 
-        <activity
-            android:name=".activity.account.uiv3.SpendTrendsActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
         <meta-data
             android:name="com.crashlytics.ApiKey"
             android:value="d2ddc47cb01fb54a209f0ff02a2aecfec7b4d827" />

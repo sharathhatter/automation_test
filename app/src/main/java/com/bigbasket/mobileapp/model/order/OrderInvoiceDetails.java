@@ -69,7 +69,7 @@ public class OrderInvoiceDetails extends OrderDetails implements Parcelable {
 
     @Override
     public int describeContents() {
-        return super.describeContents();
+        return 0;
     }
 
     @Override

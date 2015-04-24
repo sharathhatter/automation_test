@@ -47,11 +47,6 @@ public class ChangePasswordFragment extends BaseFragment {
         return view;
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-    }
-
     public void initiateChangePassword(View base) {
 
         oldEditText = (EditText) base.findViewById(R.id.oldPwdEditTxt);

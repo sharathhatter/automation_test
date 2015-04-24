@@ -68,7 +68,7 @@ public class AreaPinInfoAdapter {
 
     public ArrayList<String> getAreaNameList() {
         Cursor areaNameCursor = null;
-        String areaNameStr = null;
+        String areaNameStr;
         ArrayList<String> result = new ArrayList<>();
         try {
             areaNameCursor = DatabaseHelper.db.query(tableName, new String[]{COLUMN_AREA}

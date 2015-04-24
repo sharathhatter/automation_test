@@ -37,6 +37,8 @@ public class ProductListActivity extends BBActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        getSupportActionBar().setSubtitle(null);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setSubtitle(null);
+        }
     }
 }

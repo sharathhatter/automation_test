@@ -90,11 +90,9 @@ public class ShowFulfillmentInfo<T> {
         if (showTC) {
             //TextView txtTCLabel = (TextView) base.findViewById(R.id.txtTCLabel);
             TextView txtTC1 = (TextView) base.findViewById(R.id.txtTC1);
-            int indexTc = 1;
             if (fulfillmentInfo.getTc1() != null && fulfillmentInfo.getTc1().length() > 0) {
                 txtTC1.setVisibility(View.VISIBLE);
                 txtTC1.setText(fulfillmentInfo.getTc1());
-                indexTc += 1;
             } else {
                 txtTC1.setVisibility(View.GONE);
             }

@@ -64,11 +64,6 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
     private boolean mIsNextPageLoading;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.uiv3_list_container, container, false);
     }

@@ -18,7 +18,6 @@
     <string name="OLD_PASS_NOT_CORRECT">Old password is incorrect!</string>
     <string name="slotNotAvailable">The selected delivery slot is no longer available, please select a new slot!</string>
     <string name="REGISTERED_EMAIL">Already registered with us, please use a different email!</string>
-    <string name="selectDateRange">Select a date range</string>
     <string name="multipleDeliverySlotMsg1">This order is fulfilled by more than one vendor and hence will be delivered separately.</string>
     <string name="deliverySlotHeading">DELIVERY SLOT</string>
     <string name="cartNotExistsError">Cart does not exist!</string>
@@ -83,7 +82,6 @@
     <string name="myAccount">My Account</string>
     <string name="signOut">Logout</string>
     <string name="signIn">Login</string>
-    <string name="signoutConfirmation">Are you sure that you want to logout?</string>
     <string name="signUp">Sign Up</string>
     <string name="HNDetails">House No &amp; Details</string>
     <string name="addressNick">Address nickname (Optional)</string>
@@ -266,9 +264,7 @@
     <!-- main nav -->
     <string name="viewProducts">View Products</string>
     <string name="shoppingList">Shopping Lists</string>
-    <string name="sortBy">Sort By</string>
     <string name="sort">Sort</string>
-    <string name="filter">Filter</string>
     <string name="filterBy">Filter By</string>
     <string name="voice">Voice</string>
     <string name="scan">Scan</string>
@@ -295,7 +291,6 @@
 
     <string name="start_shopping_txt">START SHOPPING</string>
     <string name="continue_shopping_txt">CONTINUE SHOPPING</string>
-    <string name="spend_trends_msg">You haven\'t placed any order  to view  your spends.</string>
     <string name="lostInternetConnection">Lost internet connection?</string>
     <string name="tapRetry">Tap to Retry</string>
 
@@ -327,14 +322,11 @@
     <string name="amountSpent">Total Amount Spent</string>
     <string name="amountSaved">Total Amount Saved</string>
     <string name="amountSpentPerMonth">Amount Spent per month</string>
-    <string name="nothingToFilter">Nothing to filter!</string>
     <string name="updateGooglePlayServices">Update Google Play Services</string>
     <string name="updateGooglePlayServicesDesc">You are using an outdated version of Google Play Services.\nPlease update it, in order to login with Google.</string>
     <string name="viewTerms">View terms and conditions</string>
     <string name="termsAndCondHeading">Terms and conditions</string>
     <string name="privacyPolicy">Privacy Policy</string>
-    <string name="noSortOptions">There are no sort options currently available</string>
-    <string name="noFilterOptions">No products to filter</string>
     <string name="home">Home</string>
     <string name="transactionFailed">Transaction Failed!</string>
     <string name="failedToProcess">Failed to process your transaction</string>

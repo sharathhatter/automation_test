@@ -373,9 +373,6 @@ public class SliderLayout extends RelativeLayout {
         }
     }
 
-    ;
-
-
     /**
      * Set the visibility of the indicators.
      *

@@ -189,7 +189,9 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         loadNavigationItems();
         Intent intent = getIntent();
@@ -513,9 +515,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 String searchQuery = data.getStringExtra(Constants.SEARCH_QUERY);
                 if (!TextUtils.isEmpty(searchQuery)) {
                     doSearch(searchQuery);
-                    return;
                 }
-
             }
         }
     }
@@ -880,10 +880,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
     public String getScreenTag() {
         return null;
-    }
-
-    public BBDrawerLayout getDrawerLayout() {
-        return mDrawerLayout;
     }
 
     public Menu getMenu() {

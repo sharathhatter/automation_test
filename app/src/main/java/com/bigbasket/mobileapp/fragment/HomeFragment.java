@@ -72,11 +72,6 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
     }
 
     @Override
-    public void onBackResume() {
-        super.onBackResume();
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         if (getCurrentActivity() == null) return;

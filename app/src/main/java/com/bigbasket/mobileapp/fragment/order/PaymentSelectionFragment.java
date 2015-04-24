@@ -326,11 +326,6 @@ public class PaymentSelectionFragment extends BaseFragment implements PostVouche
         return null;
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
-
     @NonNull
     @Override
     public String getFragmentTxnTag() {

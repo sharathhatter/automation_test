@@ -110,7 +110,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
     }
 
 
-    private void renderHeaderView(HeaderTitleHolder headerTitleHolder, int position, CartItemHeader cartItemList) {
+    private void renderHeaderView(HeaderTitleHolder headerTitleHolder, CartItemHeader cartItemList) {
 
         TextView txtTopCategory = headerTitleHolder.getTxtTopCategory();
         txtTopCategory.setText(cartItemList.getTopCatName());
@@ -160,12 +160,12 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
             } else {
                 rowHolder = (RowHolder) row.getTag();
             }
-            renderBasicView(rowHolder, position, (CartItem) obj);
+            renderBasicView(rowHolder, (CartItem) obj);
 
             CartItem cartItem = (CartItem) obj;
             switch (cartItem.getPromoAppliedType()) {
                 case CartItem.REGULAR_PRICE_AND_NO_PROMO:
-                    getRegularPriceAndNoPromoView(rowHolder, cartItem);
+                    getRegularPriceAndNoPromoView(rowHolder);
                     break;
                 case CartItem.REGULAR_PRICE_AND_PROMO_NOT_APPLIED:
                     getRegularPriceAndPromoNotAppliedView(rowHolder, cartItem);
@@ -186,7 +186,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
             HeaderTitleHolder headerTitleHolder;
             row = inflater.inflate(R.layout.uiv3_category_row, parent, false);
             headerTitleHolder = new HeaderTitleHolder(row);
-            renderHeaderView(headerTitleHolder, position, (CartItemHeader) obj);
+            renderHeaderView(headerTitleHolder, (CartItemHeader) obj);
         }
         return row;
     }
@@ -206,7 +206,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
         return null;
     }
 
-    private void renderBasicView(RowHolder rowHolder, int childPosition, final CartItem cartItem) {
+    private void renderBasicView(RowHolder rowHolder, final CartItem cartItem) {
         ImageView imgProduct = rowHolder.getImgProduct();
         if (imgProduct != null && !TextUtils.isEmpty(cartItem.getProductImgUrl())) {
             UIUtil.displayAsyncImage(imgProduct, baseImgUrl != null ? baseImgUrl +
@@ -362,7 +362,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
         }
     }
 
-    private void getRegularPriceAndNoPromoView(RowHolder rowHolder, CartItem cartItem) {
+    private void getRegularPriceAndNoPromoView(RowHolder rowHolder) {
         ImageView imgRegularImg = rowHolder.getImgRegularImg();
         imgRegularImg.setVisibility(View.GONE);
 
@@ -642,10 +642,6 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
                 basketOperationSeparatorLine = base.findViewById(R.id.basketOperationSeparatorLine);
             }
             return basketOperationSeparatorLine;
-        }
-
-        public View getBase() {
-            return base;
         }
     }
 

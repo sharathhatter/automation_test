@@ -19,7 +19,7 @@ public class SliderAdapter extends PagerAdapter implements BaseSliderView.ImageL
 
     public SliderAdapter(Context context){
         mContext = context;
-        mImageContents = new ArrayList<BaseSliderView>();
+        mImageContents = new ArrayList<>();
     }
 
     public <T extends BaseSliderView> void addSlider(T slider){

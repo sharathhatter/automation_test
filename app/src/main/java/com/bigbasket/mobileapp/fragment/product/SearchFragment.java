@@ -44,11 +44,6 @@ public class SearchFragment extends ProductListAwareFragment {
     }
 
     @Override
-    public void updateData() {
-        super.updateData();
-    }
-
-    @Override
     public String getNavigationCtx() {
         return TrackEventkeys.NAVIGATION_CTX_PRODUCT_SEARCH;
     }

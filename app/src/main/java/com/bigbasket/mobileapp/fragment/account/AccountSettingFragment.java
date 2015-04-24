@@ -128,7 +128,7 @@ public class AccountSettingFragment extends BaseFragment {
 
     private class MyAccountListAdapter extends BaseAdapter {
 
-        String[] itemDetails = {
+        final String[] itemDetails = {
                 getResources().getString(R.string.active_order_label),
                 getResources().getString(R.string.past_order_label),
                 getResources().getString(R.string.update_my_profile),

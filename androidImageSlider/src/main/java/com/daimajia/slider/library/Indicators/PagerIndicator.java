@@ -88,7 +88,7 @@ public class PagerIndicator extends LinearLayout implements ViewPager.OnPageChan
     /**
      * Put all the indicators into a ArrayList, so we can remove them easily.
      */
-    private ArrayList<ImageView> mIndicators = new ArrayList<ImageView>();
+    private ArrayList<ImageView> mIndicators = new ArrayList<>();
 
 
     public PagerIndicator(Context context) {

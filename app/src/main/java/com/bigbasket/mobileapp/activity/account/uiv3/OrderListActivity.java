@@ -146,7 +146,9 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
                 mOrderDurationSpinner.setAdapter(spinnerDateRangeArrayAdapter);
                 Toolbar toolbar = getToolbar();
                 toolbar.addView(mOrderDurationSpinner);
-                getSupportActionBar().setDisplayShowTitleEnabled(false);
+                if (getSupportActionBar() != null) {
+                    getSupportActionBar().setDisplayShowTitleEnabled(false);
+                }
             } else {
                 spinnerDateRangeArrayAdapter = (BBArrayAdapter<OrderMonthRange>) mOrderDurationSpinner.getAdapter();
             }

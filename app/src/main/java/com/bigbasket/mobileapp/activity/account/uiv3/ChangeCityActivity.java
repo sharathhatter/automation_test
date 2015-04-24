@@ -60,7 +60,7 @@ public class ChangeCityActivity extends BackButtonActivity implements CityListDi
         ((TextView) base.findViewById(R.id.txtHeaderMsg)).setTypeface(faceRobotoLight);
 
         final ListView listView = (ListView) base.findViewById(R.id.fabListView);
-        BBCheckedListAdapter<City> citySpinnerAdapter = new BBCheckedListAdapter<City>(this,
+        BBCheckedListAdapter<City> citySpinnerAdapter = new BBCheckedListAdapter<>(this,
                 android.R.layout.simple_list_item_single_choice, cities);
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         listView.setAdapter(citySpinnerAdapter);

@@ -29,14 +29,6 @@ public class ActiveVouchers implements Parcelable {
     @SerializedName(Constants.CAN_APPLY)
     private boolean canApply;
 
-    public ActiveVouchers(String code, String customerDesc, String message, String validity, boolean canApply) {
-        this.code = code;
-        this.customerDesc = customerDesc;
-        this.validity = validity;
-        this.message = message;
-        this.canApply = canApply;
-    }
-
     public ActiveVouchers(Parcel source) {
         this.code = source.readString();
         this.customerDesc = source.readString();

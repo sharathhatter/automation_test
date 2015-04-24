@@ -6,9 +6,6 @@ import android.os.Parcelable;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
-/**
- * Created by jugal on 16/7/14.
- */
 public class SavedPrescription implements Parcelable {
 
     public static final Parcelable.Creator<SavedPrescription> CREATOR = new Parcelable.Creator<SavedPrescription>() {
@@ -35,17 +32,6 @@ public class SavedPrescription implements Parcelable {
     private int pharmaPrescriptionId;
     @SerializedName(Constants.PRESCRIPTION_NAME)
     private String prescriptionName;
-
-    public SavedPrescription(String dateCreated, String patientName,
-                             String doctorName, int pharmaPrescriptionId,
-                             String prescriptionImageUrl, String prescriptionName) {
-        this.dateCreated = dateCreated;
-        this.patientName = patientName;
-        this.doctorName = doctorName;
-        this.pharmaPrescriptionId = pharmaPrescriptionId;
-        //this.prescriptionImageUrl = prescriptionImageUrl;
-        this.prescriptionName = prescriptionName;
-    }
 
     SavedPrescription(Parcel source) {
         this.dateCreated = source.readString();

@@ -25,11 +25,6 @@ public class OrderMonthRange implements Parcelable {
     @SerializedName(Constants.DISPLAY_VALUE)
     private String displayValue;
 
-    public OrderMonthRange(int value, String displayValue) {
-        this.value = value;
-        this.displayValue = displayValue;
-    }
-
     public OrderMonthRange(Parcel source) {
         value = source.readInt();
         displayValue = source.readString();
