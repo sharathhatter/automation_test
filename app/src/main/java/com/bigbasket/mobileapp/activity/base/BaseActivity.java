@@ -693,7 +693,7 @@ public abstract class BaseActivity extends AppCompatActivity implements COMarket
             intent.putExtra(Constants.HAS_PARENT, true);
             startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         } catch (ActivityNotFoundException e) {
-            Log.e("HomeFragment", "No target found for the pending deep-link");
+
         }
     }
 

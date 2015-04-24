@@ -3,7 +3,6 @@ package com.bigbasket.mobileapp.activity.account.uiv3;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.google.android.gms.common.ConnectionResult;
@@ -138,7 +137,6 @@ public abstract class PlusBaseActivity extends BaseActivity
             // process from scratch.
             initiatePlusClientDisconnect();
             onPlusClientSignOut();
-            Log.v(TAG, "Sign out successful!");
         }
 
         updatePlusConnectedButtonState();
