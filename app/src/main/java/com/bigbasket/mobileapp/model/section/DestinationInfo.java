@@ -19,7 +19,6 @@ public class DestinationInfo implements Parcelable, Serializable {
     public static final String SEARCH = "search";
     public static final String SHOPPING_LIST_LANDING = "shopping_list_landing";
     public static final String SHOPPING_LIST_SUMMARY = "shopping_list_summary";
-    public static final String SHOPPING_LIST = "shopping_list";
     public static final String PROMO_DETAIL = "promo_detail";
     public static final String CATEGORY_LANDING = "category_landing";
     public static final String PREVIOUS_ORDERS = "previous_orders";
@@ -28,6 +27,9 @@ public class DestinationInfo implements Parcelable, Serializable {
     public static final String DEEP_LINK = "deep_link";
     public static final String PROMO_LIST = "promo_list";
     public static final String HOME = "home";
+    public static final String COMMUNICATION_HUB = "com_hub";
+    public static final String CALL = "call";
+
     public static final Parcelable.Creator<DestinationInfo> CREATOR = new Parcelable.Creator<DestinationInfo>() {
         @Override
         public DestinationInfo createFromParcel(Parcel source) {
