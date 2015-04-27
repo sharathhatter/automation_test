@@ -24,6 +24,11 @@ public class SectionManager {
     private Context context;
     private String preferenceKey;
 
+    public SectionManager(Context context, String preferenceKey) {
+        this.context = context;
+        this.preferenceKey = preferenceKey;
+    }
+
     public static ArrayList<String> getAllSectionPreferenceKeys() {
         ArrayList<String> sectionPreferenceKeys = new ArrayList<>();
         sectionPreferenceKeys.add(HOME_PAGE);
@@ -31,9 +36,13 @@ public class SectionManager {
         return sectionPreferenceKeys;
     }
 
-    public SectionManager(Context context, String preferenceKey) {
-        this.context = context;
-        this.preferenceKey = preferenceKey;
+    public static void clearAllSectionData(Context context) {
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
+        for (String preferenceKey : getAllSectionPreferenceKeys()) {
+            editor.remove(preferenceKey);
+            editor.remove(preferenceKey + "_time");
+        }
+        editor.commit();
     }
 
     public SectionData getStoredSectionData() {
@@ -61,15 +70,6 @@ public class SectionManager {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss",
                 Locale.getDefault());
         editor.putString(preferenceKey + "_time", dateFormat.format(new Date()));
-        editor.commit();
-    }
-
-    public static void clearAllSectionData(Context context) {
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
-        for (String preferenceKey : getAllSectionPreferenceKeys()) {
-            editor.remove(preferenceKey);
-            editor.remove(preferenceKey + "_time");
-        }
         editor.commit();
     }
 

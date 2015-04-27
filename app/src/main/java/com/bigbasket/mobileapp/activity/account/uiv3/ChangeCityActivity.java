@@ -6,14 +6,13 @@ import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.CheckedTextView;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
+import com.bigbasket.mobileapp.adapter.BBCheckedListAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
@@ -61,26 +60,8 @@ public class ChangeCityActivity extends BackButtonActivity implements CityListDi
         ((TextView) base.findViewById(R.id.txtHeaderMsg)).setTypeface(faceRobotoLight);
 
         final ListView listView = (ListView) base.findViewById(R.id.fabListView);
-        final int textColor = getResources().getColor(R.color.uiv3_primary_text_color);
-        final int dp16 = (int) getResources().getDimension(R.dimen.padding_normal);
-        final int dp8 = (int) getResources().getDimension(R.dimen.padding_small);
-        ArrayAdapter<City> citySpinnerAdapter = new ArrayAdapter<City>(this,
-                android.R.layout.simple_list_item_single_choice, cities) {
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                if (convertView == null) {
-                    convertView = super.getView(position, null, parent);
-                    CheckedTextView checkedTextView = (CheckedTextView) convertView.findViewById(android.R.id.text1);
-                    checkedTextView.setCheckMarkDrawable(R.drawable.large_radio_button);
-                    checkedTextView.setTextColor(textColor);
-                    checkedTextView.setTypeface(faceRobotoLight);
-                    checkedTextView.setPadding(dp16, dp8, dp8, dp8);
-                    return convertView;
-                } else {
-                    return super.getView(position, convertView, parent);
-                }
-            }
-        };
+        BBCheckedListAdapter<City> citySpinnerAdapter = new BBCheckedListAdapter<>(this,
+                android.R.layout.simple_list_item_single_choice, cities);
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         listView.setAdapter(citySpinnerAdapter);
         listView.setItemChecked(findCurrentCityPosition(cities), true);

@@ -35,12 +35,17 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
     public static final int VIEW_TITLE_IMG_DESC_VERTICAL_OVERLAY = 10;
     public static final int VIEW_IMG_TITLE_DESC_VERTICAL_OVERLAY = 11;
     public static final int VIEW_UNKNOWN = 12;
+    public static final Parcelable.Creator<SectionItem> CREATOR = new Parcelable.Creator<SectionItem>() {
+        @Override
+        public SectionItem createFromParcel(Parcel source) {
+            return new SectionItem(source);
+        }
 
-    public static int getViewTypeCount() {
-        // Update this number once you add/remove any of the above view-types
-        return 13;
-    }
-
+        @Override
+        public SectionItem[] newArray(int size) {
+            return new SectionItem[size];
+        }
+    };
     private String image;
 
     @SerializedName(Constants.RENDERING_ID)
@@ -54,6 +59,56 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
         this.image = image;
         this.renderingId = renderingId;
         this.destinationInfo = destinationInfo;
+    }
+
+    public SectionItem(Parcel source) {
+        super(source);
+        boolean _wasImageNull = source.readByte() == (byte) 1;
+        if (!_wasImageNull) {
+            image = source.readString();
+        }
+        renderingId = source.readInt();
+        boolean wasDestNull = source.readByte() == (byte) 1;
+        if (!wasDestNull) {
+            destinationInfo = source.readParcelable(SectionItem.class.getClassLoader());
+        }
+    }
+
+    public static int getViewTypeCount() {
+        // Update this number once you add/remove any of the above view-types
+        return 13;
+    }
+
+    @LayoutRes
+    public static int getLayoutResId(int viewType) {
+        switch (viewType) {
+            case VIEW_TITLE_DESC_VERTICAL:
+                return R.layout.section_text_desc;
+            case VIEW_TITLE_DESC_IMG_VERTICAL:
+                return R.layout.section_text_desc_img;
+            case VIEW_TITLE_IMG_DESC_VERTICAL:
+                return R.layout.section_text_img_desc;
+            case VIEW_IMG_TITLE_DESC_VERTICAL:
+                return R.layout.section_img_text_desc;
+            case VIEW_TITLE_DESC_HORIZONTAL:
+                return R.layout.section_text_desc_horizontal;
+            case VIEW_TITLE_DESC_IMG_HORIZONTAL:
+                return R.layout.section_text_desc_img_horizontal;
+            case VIEW_TITLE_IMG_DESC_HORIZONTAL:
+                return R.layout.section_text_img_desc_horizontal;
+            case VIEW_IMG_TITLE_DESC_HORIZONTAL:
+                return R.layout.section_img_text_desc_horizontal;
+            case VIEW_IMG:
+                return R.layout.section_img;
+            case VIEW_IMG_TITLE_DESC_VERTICAL_OVERLAY:
+                return R.layout.section_img_text_desc_overlay;
+            case VIEW_TITLE_DESC_IMG_VERTICAL_OVERLAY:
+                return R.layout.section_text_desc_img_overlay;
+            case VIEW_TITLE_IMG_DESC_VERTICAL_OVERLAY:
+                return R.layout.section_text_img_desc_overlay;
+            default:
+                return 0;
+        }
     }
 
     public String getImage() {
@@ -88,31 +143,6 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
             dest.writeParcelable(destinationInfo, flags);
         }
     }
-
-    public SectionItem(Parcel source) {
-        super(source);
-        boolean _wasImageNull = source.readByte() == (byte) 1;
-        if (!_wasImageNull) {
-            image = source.readString();
-        }
-        renderingId = source.readInt();
-        boolean wasDestNull = source.readByte() == (byte) 1;
-        if (!wasDestNull) {
-            destinationInfo = source.readParcelable(SectionItem.class.getClassLoader());
-        }
-    }
-
-    public static final Parcelable.Creator<SectionItem> CREATOR = new Parcelable.Creator<SectionItem>() {
-        @Override
-        public SectionItem createFromParcel(Parcel source) {
-            return new SectionItem(source);
-        }
-
-        @Override
-        public SectionItem[] newArray(int size) {
-            return new SectionItem[size];
-        }
-    };
 
     public void displayImage(ImageView imageView) {
         imageView.setVisibility(View.VISIBLE);
@@ -195,38 +225,6 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
                     VIEW_TITLE_IMG_DESC_VERTICAL : VIEW_TITLE_IMG_DESC_VERTICAL_OVERLAY;
         }
         return VIEW_UNKNOWN;
-    }
-
-    @LayoutRes
-    public static int getLayoutResId(int viewType) {
-        switch (viewType) {
-            case VIEW_TITLE_DESC_VERTICAL:
-                return R.layout.section_text_desc;
-            case VIEW_TITLE_DESC_IMG_VERTICAL:
-                return R.layout.section_text_desc_img;
-            case VIEW_TITLE_IMG_DESC_VERTICAL:
-                return R.layout.section_text_img_desc;
-            case VIEW_IMG_TITLE_DESC_VERTICAL:
-                return R.layout.section_img_text_desc;
-            case VIEW_TITLE_DESC_HORIZONTAL:
-                return R.layout.section_text_desc_horizontal;
-            case VIEW_TITLE_DESC_IMG_HORIZONTAL:
-                return R.layout.section_text_desc_img_horizontal;
-            case VIEW_TITLE_IMG_DESC_HORIZONTAL:
-                return R.layout.section_text_img_desc_horizontal;
-            case VIEW_IMG_TITLE_DESC_HORIZONTAL:
-                return R.layout.section_img_text_desc_horizontal;
-            case VIEW_IMG:
-                return R.layout.section_img;
-            case VIEW_IMG_TITLE_DESC_VERTICAL_OVERLAY:
-                return R.layout.section_img_text_desc_overlay;
-            case VIEW_TITLE_DESC_IMG_VERTICAL_OVERLAY:
-                return R.layout.section_text_desc_img_overlay;
-            case VIEW_TITLE_IMG_DESC_VERTICAL_OVERLAY:
-                return R.layout.section_text_img_desc_overlay;
-            default:
-                return 0;
-        }
     }
 
     public boolean isOverlayWithAdjacentTitleDesc(int viewType) {

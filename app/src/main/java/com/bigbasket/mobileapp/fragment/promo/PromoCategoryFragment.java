@@ -39,9 +39,7 @@ public class PromoCategoryFragment extends BaseSectionFragment implements PromoD
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.uiv3_list_container, container, false);
-        view.setBackgroundColor(getResources().getColor(R.color.uiv3_list_bkg_light_color));
-        return view;
+        return inflater.inflate(R.layout.uiv3_list_container, container, false);
     }
 
     @Override

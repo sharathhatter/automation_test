@@ -10,29 +10,6 @@ import java.util.ArrayList;
 
 public class PromoRedemptionInfo implements Parcelable {
 
-    @SerializedName(Constants.INFO_MESSAGE)
-    private PromoMessage promoMessage;
-
-    @SerializedName(Constants.PROMO_SETS)
-    private ArrayList<PromoSet> promoSets;
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(promoMessage, flags);
-        dest.writeTypedList(promoSets);
-    }
-
-    public PromoRedemptionInfo(Parcel source) {
-        promoMessage = source.readParcelable(PromoRedemptionInfo.class.getClassLoader());
-        promoSets = new ArrayList<>();
-        source.readTypedList(promoSets, PromoSet.CREATOR);
-    }
-
     public static final Parcelable.Creator<PromoRedemptionInfo> CREATOR = new Parcelable.Creator<PromoRedemptionInfo>() {
         @Override
         public PromoRedemptionInfo createFromParcel(Parcel source) {
@@ -44,6 +21,27 @@ public class PromoRedemptionInfo implements Parcelable {
             return new PromoRedemptionInfo[size];
         }
     };
+    @SerializedName(Constants.INFO_MESSAGE)
+    private PromoMessage promoMessage;
+    @SerializedName(Constants.PROMO_SETS)
+    private ArrayList<PromoSet> promoSets;
+
+    public PromoRedemptionInfo(Parcel source) {
+        promoMessage = source.readParcelable(PromoRedemptionInfo.class.getClassLoader());
+        promoSets = new ArrayList<>();
+        source.readTypedList(promoSets, PromoSet.CREATOR);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(promoMessage, flags);
+        dest.writeTypedList(promoSets);
+    }
 
     public PromoMessage getPromoMessage() {
         return promoMessage;

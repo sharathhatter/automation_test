@@ -22,6 +22,11 @@ public class LoadEmailAddressTask<T> {
     private T context;
     private AutoCompleteTextView emailView;
 
+    public LoadEmailAddressTask(T context, AutoCompleteTextView emailView) {
+        this.context = context;
+        this.emailView = emailView;
+    }
+
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private interface ProfileQuery {
         String[] PROJECTION = {
@@ -30,11 +35,6 @@ public class LoadEmailAddressTask<T> {
         };
 
         int ADDRESS = 0;
-    }
-
-    public LoadEmailAddressTask(T context, AutoCompleteTextView emailView) {
-        this.context = context;
-        this.emailView = emailView;
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)

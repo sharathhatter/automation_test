@@ -16,12 +16,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PayuResponse {
+    private static PayuResponse payuResponse;
     private String amount;
     private String pid;
     private String failureReason;
     private String txnId;
     private boolean isSuccess;
-    private static PayuResponse payuResponse;
+
+    private PayuResponse(String capturedUrl, boolean isSuccess, String pid)
+            throws URISyntaxException {
+        this.isSuccess = isSuccess;
+        this.pid = pid;
+        if (isSuccess) {
+            parseSuccessUrl(capturedUrl);
+        } else {
+            parseErrorUrl(capturedUrl);
+        }
+    }
 
     public static void createInstance(Context ctx,
                                       String capturedUrl, boolean isSuccess,
@@ -76,15 +87,26 @@ public class PayuResponse {
         }
     }
 
-    private PayuResponse(String capturedUrl, boolean isSuccess, String pid)
-            throws URISyntaxException {
-        this.isSuccess = isSuccess;
-        this.pid = pid;
-        if (isSuccess) {
-            parseSuccessUrl(capturedUrl);
-        } else {
-            parseErrorUrl(capturedUrl);
+    public static Map<String, String> getQueryMap(String queryStr) {
+        Map<String, String> queryMap = null;
+        if (queryStr != null) {
+            queryMap = new HashMap<>();
+            for (String queryKeyValPair : queryStr.split("&")) {
+                if (queryKeyValPair.contains("=")) {
+                    String[] splittedParams = queryKeyValPair.split("=");
+                    if (splittedParams.length != 2)
+                        continue;
+                    try {
+                        queryMap.put(splittedParams[0], URLDecoder.decode(splittedParams[1], "UTF-8"));
+                    } catch (UnsupportedEncodingException e) {
+                        Log.e("Payu Response Parser ", "Unable to url-decode " + splittedParams[1]);
+                    }
+                } else {
+                    queryMap.put(queryKeyValPair, "");
+                }
+            }
         }
+        return queryMap;
     }
 
     private void parseSuccessUrl(String capturedUrl)
@@ -117,28 +139,6 @@ public class PayuResponse {
                     break;
             }
         }
-    }
-
-    public static Map<String, String> getQueryMap(String queryStr) {
-        Map<String, String> queryMap = null;
-        if (queryStr != null) {
-            queryMap = new HashMap<>();
-            for (String queryKeyValPair : queryStr.split("&")) {
-                if (queryKeyValPair.contains("=")) {
-                    String[] splittedParams = queryKeyValPair.split("=");
-                    if (splittedParams.length != 2)
-                        continue;
-                    try {
-                        queryMap.put(splittedParams[0], URLDecoder.decode(splittedParams[1], "UTF-8"));
-                    } catch (UnsupportedEncodingException e) {
-                        Log.e("Payu Response Parser ", "Unable to url-decode " + splittedParams[1]);
-                    }
-                } else {
-                    queryMap.put(queryKeyValPair, "");
-                }
-            }
-        }
-        return queryMap;
     }
 
     public String getAmount() {

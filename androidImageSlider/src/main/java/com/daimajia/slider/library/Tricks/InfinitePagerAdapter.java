@@ -2,7 +2,6 @@ package com.daimajia.slider.library.Tricks;
 
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -13,9 +12,6 @@ import com.daimajia.slider.library.SliderAdapter;
  * Thanks to: https://github.com/antonyt/InfiniteViewPager
  */
 public class InfinitePagerAdapter extends PagerAdapter {
-
-    private static final String TAG = "InfinitePagerAdapter";
-    private static final boolean DEBUG = false;
 
     private SliderAdapter adapter;
 
@@ -47,8 +43,6 @@ public class InfinitePagerAdapter extends PagerAdapter {
             return null;
         }
         int virtualPosition = position % getRealCount();
-        debug("instantiateItem: real position: " + position);
-        debug("instantiateItem: virtual position: " + virtualPosition);
 
         // only expose virtual position to the inner adapter
         return adapter.instantiateItem(container, virtualPosition);
@@ -60,8 +54,6 @@ public class InfinitePagerAdapter extends PagerAdapter {
             return;
         }
         int virtualPosition = position % getRealCount();
-        debug("destroyItem: real position: " + position);
-        debug("destroyItem: virtual position: " + virtualPosition);
 
         // only expose virtual position to the inner adapter
         adapter.destroyItem(container, virtualPosition, object);
@@ -94,15 +86,5 @@ public class InfinitePagerAdapter extends PagerAdapter {
     @Override
     public void startUpdate(ViewGroup container) {
         adapter.startUpdate(container);
-    }
-
-    /*
-     * End delegation
-     */
-
-    private void debug(String message) {
-        if (DEBUG) {
-            Log.d(TAG, message);
-        }
     }
 }

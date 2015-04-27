@@ -8,11 +8,26 @@ import com.google.gson.annotations.SerializedName;
 
 public class Option implements Parcelable {
 
+    public static final Parcelable.Creator<Option> CREATOR = new Parcelable.Creator<Option>() {
+        @Override
+        public Option createFromParcel(Parcel source) {
+            return new Option(source);
+        }
+
+        @Override
+        public Option[] newArray(int size) {
+            return new Option[size];
+        }
+    };
     @SerializedName(Constants.DISPLAY_NAME)
     private String sortName;
-
     @SerializedName(Constants.VALUE)
     private String sortSlug;
+
+    public Option(Parcel source) {
+        sortName = source.readString();
+        sortSlug = source.readString();
+    }
 
     @Override
     public int describeContents() {
@@ -25,26 +40,9 @@ public class Option implements Parcelable {
         dest.writeString(sortSlug);
     }
 
-    public Option(Parcel source) {
-        sortName = source.readString();
-        sortSlug = source.readString();
-    }
-
-    public static final Parcelable.Creator<Option> CREATOR = new Parcelable.Creator<Option>() {
-        @Override
-        public Option createFromParcel(Parcel source) {
-            return new Option(source);
-        }
-
-        @Override
-        public Option[] newArray(int size) {
-            return new Option[size];
-        }
-    };
-
-    public Option(String sortName, String sortSlug) {
-        this.sortName = sortName;
-        this.sortSlug = sortSlug;
+    @Override
+    public String toString() {
+        return sortName;
     }
 
     public String getSortName() {

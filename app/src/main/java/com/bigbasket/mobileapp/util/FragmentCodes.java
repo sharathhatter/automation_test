@@ -1,9 +1,6 @@
 package com.bigbasket.mobileapp.util;
 
 public final class FragmentCodes {
-    private FragmentCodes() {
-    }
-
     public static final int START_HOME = 1;
     public static final int START_PRODUCT_CATEGORY = 4;
     public static final int START_ADDRESS_SELECTION = 6;
@@ -27,4 +24,6 @@ public final class FragmentCodes {
     public static final int START_PROMO_SET_PRODUCTS = 29;
     public static final int START_DYNAMIC_SCREEN = 31;
     public static final int START_COMMUNICATION_HUB = 32;
+    private FragmentCodes() {
+    }
 }

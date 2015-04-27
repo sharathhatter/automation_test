@@ -5,21 +5,45 @@ import android.os.Parcelable;
 
 public class CheckoutProduct implements Parcelable {
 
+    public static final Parcelable.Creator<CheckoutProduct> CREATOR = new Parcelable.Creator<CheckoutProduct>() {
+        @Override
+        public CheckoutProduct createFromParcel(Parcel source) {
+            return new CheckoutProduct(source);
+        }
+
+        @Override
+        public CheckoutProduct[] newArray(int size) {
+            return new CheckoutProduct[size];
+        }
+    };
     private String reserveQuantity;
     private String originalQuantity;
-
     private String description;
     private String spprice;
-
     private String mrp;
     private String brand;
-
     private String discountValue;
     private String id;
-
     private String weight;
     private String categoryName;
     private String topLevelCategorySlug;
+
+    public CheckoutProduct(Parcel source) {
+        reserveQuantity = source.readString();
+        originalQuantity = source.readString();
+        description = source.readString();
+        spprice = source.readString();
+        mrp = source.readString();
+        brand = source.readString();
+        discountValue = source.readString();
+        id = source.readString();
+        weight = source.readString();
+        categoryName = source.readString();
+        topLevelCategorySlug = source.readString();
+    }
+
+    public CheckoutProduct() {
+    }
 
     @Override
     public int describeContents() {
@@ -40,35 +64,6 @@ public class CheckoutProduct implements Parcelable {
         dest.writeString(categoryName);
         dest.writeString(topLevelCategorySlug);
     }
-
-    public CheckoutProduct(Parcel source) {
-        reserveQuantity = source.readString();
-        originalQuantity = source.readString();
-        description = source.readString();
-        spprice = source.readString();
-        mrp = source.readString();
-        brand = source.readString();
-        discountValue = source.readString();
-        id = source.readString();
-        weight = source.readString();
-        categoryName = source.readString();
-        topLevelCategorySlug = source.readString();
-    }
-
-    public CheckoutProduct() {
-    }
-
-    public static final Parcelable.Creator<CheckoutProduct> CREATOR = new Parcelable.Creator<CheckoutProduct>() {
-        @Override
-        public CheckoutProduct createFromParcel(Parcel source) {
-            return new CheckoutProduct(source);
-        }
-
-        @Override
-        public CheckoutProduct[] newArray(int size) {
-            return new CheckoutProduct[size];
-        }
-    };
 
     public String getReserveQuantity() {
         return reserveQuantity;

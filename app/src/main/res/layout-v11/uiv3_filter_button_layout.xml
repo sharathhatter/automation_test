@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/uiv3_expandable_row_header_bkg"
+    android:gravity="right|center_vertical"
+    android:orientation="horizontal">
+
+    <Button
+        android:id="@+id/btnClear"
+        style="?android:borderlessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/clear"
+        android:textColor="@color/uiv3_secondary_text_color"
+        android:textSize="@dimen/primary_text_size" />
+
+    <Button
+        android:id="@+id/btnApply"
+        style="?android:borderlessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/applyAllCaps"
+        android:textColor="@color/uiv3_action_bar_background"
+        android:textSize="@dimen/primary_text_size" />
+</LinearLayout>

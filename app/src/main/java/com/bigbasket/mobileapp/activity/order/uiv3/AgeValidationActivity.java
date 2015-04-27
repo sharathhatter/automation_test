@@ -261,7 +261,7 @@ public class AgeValidationActivity extends BackButtonActivity {
         rbtnNo.setText(getString(R.string.NoRadioBtnPharmaMsg));
 
         ArrayList<MessageParamInfo> messageParamInfos = marketPlace.getPharmaPrescriptionInfo().getMsgInfo().getParams();
-        String fulFillmentIds = null;
+        String fulFillmentIds;
         int pharmaInfoSize = messageParamInfos.size();
         if (pharmaInfoSize == 1) {
             fulFillmentIds = messageParamInfos.get(0).getInternalValue();

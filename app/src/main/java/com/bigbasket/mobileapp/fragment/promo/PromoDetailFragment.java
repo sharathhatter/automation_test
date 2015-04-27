@@ -403,6 +403,67 @@ public class PromoDetailFragment extends BaseFragment {
         return base;
     }
 
+    private void renderPromoList(View base) {
+        if (mPromoCategory == null || mPromoCategory.getPromos() == null ||
+                mPromoCategory.getPromos().size() == 0) return;
+        ListView lstPromoNames = (ListView) base.findViewById(R.id.lstPromoNames);
+        if (lstPromoNames == null) return;
+        if (mPromoCategory.getPromos().size() <= 1) {
+            View layoutPromoNameListContainer = base.findViewById(R.id.layoutPromoNameListContainer);
+            View viewPromoDetailPageSeparator = base.findViewById(R.id.viewPromoDetailPageSeparator);
+            layoutPromoNameListContainer.setVisibility(View.GONE);
+            viewPromoDetailPageSeparator.setVisibility(View.GONE);
+        }
+        TextView txtPromoCategoryName = (TextView) base.findViewById(R.id.txtHeaderMsg);
+        txtPromoCategoryName.setTypeface(faceRobotoRegular);
+        txtPromoCategoryName.setText(mPromoCategory.getName());
+        txtPromoCategoryName.setTextColor(getActivity().getResources().getColor(R.color.uiv3_primary_text_color));
+        txtPromoCategoryName.setTextSize(getActivity().getResources().getDimension(R.dimen.primary_text_size));
+        PromoNameListAdapter promoNameListAdapter = new PromoNameListAdapter();
+        lstPromoNames.setAdapter(promoNameListAdapter);
+        lstPromoNames.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                getPromoDetail(mPromoCategory.getPromos().get(position).getId());
+            }
+        });
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (mPromoDetail != null) {
+            outState.putParcelable(Constants.PROMO_DETAIL, mPromoDetail);
+            outState.putParcelable(Constants.PROMO_CATS, mPromoCategory);
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public LinearLayout getContentView() {
+        return getView() != null ? (LinearLayout) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
+    }
+
+    @Override
+    public String getTitle() {
+        String promoName = getArguments() != null ? getArguments().getString(Constants.PROMO_NAME) : null;
+        return TextUtils.isEmpty(promoName) ? "Promotion Detail" : promoName;
+    }
+
+    public String getNavigationCtx() {
+        return TrackEventkeys.NAVIGATION_CTX_PROMO_DETAIL;
+    }
+
+    @NonNull
+    @Override
+    public String getFragmentTxnTag() {
+        return PromoDetailFragment.class.getName();
+    }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.PROMO_DETAIL_SCREEN;
+    }
+
     private class PromoSetActivityHandler implements View.OnClickListener {
 
         private PromoDetail promoDetail;
@@ -451,37 +512,17 @@ public class PromoDetailFragment extends BaseFragment {
         }
     }
 
-    private void renderPromoList(View base) {
-        if (mPromoCategory == null || mPromoCategory.getPromos() == null ||
-                mPromoCategory.getPromos().size() == 0) return;
-        ListView lstPromoNames = (ListView) base.findViewById(R.id.lstPromoNames);
-        if (lstPromoNames == null) return;
-        if (mPromoCategory.getPromos().size() <= 1) {
-            View layoutPromoNameListContainer = base.findViewById(R.id.layoutPromoNameListContainer);
-            View viewPromoDetailPageSeparator = base.findViewById(R.id.viewPromoDetailPageSeparator);
-            layoutPromoNameListContainer.setVisibility(View.GONE);
-            viewPromoDetailPageSeparator.setVisibility(View.GONE);
-        }
-        TextView txtPromoCategoryName = (TextView) base.findViewById(R.id.txtHeaderMsg);
-        txtPromoCategoryName.setTypeface(faceRobotoRegular);
-        txtPromoCategoryName.setText(mPromoCategory.getName());
-        txtPromoCategoryName.setTextColor(getActivity().getResources().getColor(R.color.uiv3_primary_text_color));
-        txtPromoCategoryName.setTextSize(getActivity().getResources().getDimension(R.dimen.primary_text_size));
-        PromoNameListAdapter promoNameListAdapter = new PromoNameListAdapter();
-        lstPromoNames.setAdapter(promoNameListAdapter);
-        lstPromoNames.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                getPromoDetail(mPromoCategory.getPromos().get(position).getId());
-            }
-        });
-    }
-
     private class PromoNameListAdapter extends BaseAdapter {
 
         private int highlightedColor;
         private int regularColor;
         private float textSize;
+
+        public PromoNameListAdapter() {
+            regularColor = getActivity().getResources().getColor(R.color.uiv3_primary_text_color);
+            highlightedColor = getActivity().getResources().getColor(R.color.uiv3_link_color);
+            textSize = getActivity().getResources().getDimension(R.dimen.primary_text_size);
+        }
 
         @Override
         public int getCount() {
@@ -496,12 +537,6 @@ public class PromoDetailFragment extends BaseFragment {
         @Override
         public long getItemId(int position) {
             return position;
-        }
-
-        public PromoNameListAdapter() {
-            regularColor = getActivity().getResources().getColor(R.color.uiv3_primary_text_color);
-            highlightedColor = getActivity().getResources().getColor(R.color.uiv3_link_color);
-            textSize = getActivity().getResources().getDimension(R.dimen.primary_text_size);
         }
 
         @Override
@@ -526,40 +561,5 @@ public class PromoDetailFragment extends BaseFragment {
             }
             return row;
         }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        if (mPromoDetail != null) {
-            outState.putParcelable(Constants.PROMO_DETAIL, mPromoDetail);
-            outState.putParcelable(Constants.PROMO_CATS, mPromoCategory);
-        }
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public LinearLayout getContentView() {
-        return getView() != null ? (LinearLayout) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
-    }
-
-    @Override
-    public String getTitle() {
-        String promoName = getArguments() != null ? getArguments().getString(Constants.PROMO_NAME) : null;
-        return TextUtils.isEmpty(promoName) ? "Promotion Detail" : promoName;
-    }
-
-    public String getNavigationCtx() {
-        return TrackEventkeys.NAVIGATION_CTX_PROMO_DETAIL;
-    }
-
-    @NonNull
-    @Override
-    public String getFragmentTxnTag() {
-        return PromoDetailFragment.class.getName();
-    }
-
-    @Override
-    public String getScreenTag() {
-        return TrackEventkeys.PROMO_DETAIL_SCREEN;
     }
 }

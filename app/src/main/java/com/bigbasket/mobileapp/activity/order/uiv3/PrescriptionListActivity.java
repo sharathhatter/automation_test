@@ -28,11 +28,6 @@ import java.util.ArrayList;
 public class PrescriptionListActivity extends BackButtonActivity {
 
     @Override
-    public void onCreate(Bundle saveInstanceState) {
-        super.onCreate(saveInstanceState);
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         new COMarketPlaceCheckTask<>(getCurrentActivity()).startTask();

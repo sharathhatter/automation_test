@@ -8,12 +8,21 @@ import com.google.gson.annotations.SerializedName;
 
 
 public class SelectedSlotType implements Parcelable {
+    public static final Parcelable.Creator<SelectedSlotType> CREATOR = new Parcelable.Creator<SelectedSlotType>() {
+        @Override
+        public SelectedSlotType createFromParcel(Parcel source) {
+            return new SelectedSlotType(source);
+        }
+
+        @Override
+        public SelectedSlotType[] newArray(int size) {
+            return new SelectedSlotType[size];
+        }
+    };
     @SerializedName(Constants.FULFILLMENT_ID)
     private String fulfillmentId;
-
     @SerializedName(Constants.SLOT_ID)
     private String slotId;
-
     @SerializedName(Constants.SLOT_DATE)
     private String slotDate;
 
@@ -40,18 +49,6 @@ public class SelectedSlotType implements Parcelable {
         dest.writeString(this.slotId);
         dest.writeString(this.slotDate);
     }
-
-    public static final Parcelable.Creator<SelectedSlotType> CREATOR = new Parcelable.Creator<SelectedSlotType>() {
-        @Override
-        public SelectedSlotType createFromParcel(Parcel source) {
-            return new SelectedSlotType(source);
-        }
-
-        @Override
-        public SelectedSlotType[] newArray(int size) {
-            return new SelectedSlotType[size];
-        }
-    };
 
     public String getFulfillmentId() {
         return fulfillmentId;

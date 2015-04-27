@@ -42,6 +42,10 @@ import java.util.List;
 
 public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
 
+    private static final int VIEW_TYPE_CART_ITEM = 0;
+    private static final int VIEW_TYPE_CART_HEADER = 1;
+    private static final int VIEW_TYPE_CART_ANNOTATION = 2;
+    private static final int VIEW_TYPE_FULFILLMENT_INFO = 3;
     private List<Object> orderList;
     private LayoutInflater inflater;
     private OrderItemDisplaySource orderItemDisplaySource;
@@ -52,29 +56,6 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
     private Typeface faceRobotoRegular, faceRupee;
     private String navigationCtx;
     private T context;
-
-    private static final int VIEW_TYPE_CART_ITEM = 0;
-    private static final int VIEW_TYPE_CART_HEADER = 1;
-    private static final int VIEW_TYPE_CART_ANNOTATION = 2;
-    private static final int VIEW_TYPE_FULFILLMENT_INFO = 3;
-
-    @Override
-    public int getViewTypeCount() {
-        return 4;
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        Object obj = orderList.get(position);
-        if (obj instanceof CartItem) {
-            return VIEW_TYPE_CART_ITEM;
-        } else if (obj instanceof FulfillmentInfo) {
-            return VIEW_TYPE_FULFILLMENT_INFO;
-        } else if (obj instanceof AnnotationInfo) {
-            return VIEW_TYPE_CART_ANNOTATION;
-        }
-        return VIEW_TYPE_CART_HEADER;
-    }
 
     public ActiveOrderRowAdapter(List<Object> orderList, T context, Typeface faceRupee,
                                  Typeface faceRobotoRegular, OrderItemDisplaySource orderItemDisplaySource,
@@ -96,6 +77,24 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
     }
 
     @Override
+    public int getViewTypeCount() {
+        return 4;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        Object obj = orderList.get(position);
+        if (obj instanceof CartItem) {
+            return VIEW_TYPE_CART_ITEM;
+        } else if (obj instanceof FulfillmentInfo) {
+            return VIEW_TYPE_FULFILLMENT_INFO;
+        } else if (obj instanceof AnnotationInfo) {
+            return VIEW_TYPE_CART_ANNOTATION;
+        }
+        return VIEW_TYPE_CART_HEADER;
+    }
+
+    @Override
     public int getCount() {
         return orderList.size();
     }
@@ -111,7 +110,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
     }
 
 
-    private void renderHeaderView(HeaderTitleHolder headerTitleHolder, int position, CartItemHeader cartItemList) {
+    private void renderHeaderView(HeaderTitleHolder headerTitleHolder, CartItemHeader cartItemList) {
 
         TextView txtTopCategory = headerTitleHolder.getTxtTopCategory();
         txtTopCategory.setText(cartItemList.getTopCatName());
@@ -161,12 +160,12 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
             } else {
                 rowHolder = (RowHolder) row.getTag();
             }
-            renderBasicView(rowHolder, position, (CartItem) obj);
+            renderBasicView(rowHolder, (CartItem) obj);
 
             CartItem cartItem = (CartItem) obj;
             switch (cartItem.getPromoAppliedType()) {
                 case CartItem.REGULAR_PRICE_AND_NO_PROMO:
-                    getRegularPriceAndNoPromoView(rowHolder, cartItem);
+                    getRegularPriceAndNoPromoView(rowHolder);
                     break;
                 case CartItem.REGULAR_PRICE_AND_PROMO_NOT_APPLIED:
                     getRegularPriceAndPromoNotAppliedView(rowHolder, cartItem);
@@ -187,7 +186,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
             HeaderTitleHolder headerTitleHolder;
             row = inflater.inflate(R.layout.uiv3_category_row, parent, false);
             headerTitleHolder = new HeaderTitleHolder(row);
-            renderHeaderView(headerTitleHolder, position, (CartItemHeader) obj);
+            renderHeaderView(headerTitleHolder, (CartItemHeader) obj);
         }
         return row;
     }
@@ -207,7 +206,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
         return null;
     }
 
-    private void renderBasicView(RowHolder rowHolder, int childPosition, final CartItem cartItem) {
+    private void renderBasicView(RowHolder rowHolder, final CartItem cartItem) {
         ImageView imgProduct = rowHolder.getImgProduct();
         if (imgProduct != null && !TextUtils.isEmpty(cartItem.getProductImgUrl())) {
             UIUtil.displayAsyncImage(imgProduct, baseImgUrl != null ? baseImgUrl +
@@ -363,7 +362,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
         }
     }
 
-    private void getRegularPriceAndNoPromoView(RowHolder rowHolder, CartItem cartItem) {
+    private void getRegularPriceAndNoPromoView(RowHolder rowHolder) {
         ImageView imgRegularImg = rowHolder.getImgRegularImg();
         imgRegularImg.setVisibility(View.GONE);
 
@@ -643,10 +642,6 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
                 basketOperationSeparatorLine = base.findViewById(R.id.basketOperationSeparatorLine);
             }
             return basketOperationSeparatorLine;
-        }
-
-        public View getBase() {
-            return base;
         }
     }
 

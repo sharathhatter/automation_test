@@ -9,46 +9,6 @@ import com.google.gson.annotations.SerializedName;
 
 public class MessageParamInfo implements Parcelable {
 
-    @SerializedName(Constants.TYPE)
-    private String type;
-
-    @SerializedName(Constants.DISPLAY_NAME)
-    private String displayName;
-
-    @SerializedName(Constants.EXTRA_ATTR)
-    private String extraInfo;
-
-    @SerializedName(Constants.INTERNAL_VALUE)
-    private String internalValue;
-
-    public MessageParamInfo(String type, String displayName, String extraInfo, String internalValue) {
-        this.type = type;
-        this.displayName = displayName;
-        this.extraInfo = extraInfo;
-        this.internalValue = internalValue;
-    }
-
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    public MessageParamInfo(Parcel parcel) {
-        this.type = parcel.readString();
-        this.displayName = parcel.readString();
-        this.extraInfo = parcel.readString();
-        this.internalValue = parcel.readString();
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(type);
-        dest.writeString(displayName);
-        dest.writeString(extraInfo);
-        dest.writeString(internalValue);
-    }
-
     public static final Parcelable.Creator<MessageParamInfo> CREATOR = new Parcelable.Creator<MessageParamInfo>() {
         @Override
         public MessageParamInfo createFromParcel(Parcel source) {
@@ -60,6 +20,42 @@ public class MessageParamInfo implements Parcelable {
             return new MessageParamInfo[size];
         }
     };
+    @SerializedName(Constants.TYPE)
+    private String type;
+    @SerializedName(Constants.DISPLAY_NAME)
+    private String displayName;
+    @SerializedName(Constants.EXTRA_ATTR)
+    private String extraInfo;
+    @SerializedName(Constants.INTERNAL_VALUE)
+    private String internalValue;
+
+
+    public MessageParamInfo(String type, String displayName, String extraInfo, String internalValue) {
+        this.type = type;
+        this.displayName = displayName;
+        this.extraInfo = extraInfo;
+        this.internalValue = internalValue;
+    }
+
+    public MessageParamInfo(Parcel parcel) {
+        this.type = parcel.readString();
+        this.displayName = parcel.readString();
+        this.extraInfo = parcel.readString();
+        this.internalValue = parcel.readString();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(type);
+        dest.writeString(displayName);
+        dest.writeString(extraInfo);
+        dest.writeString(internalValue);
+    }
 
     public String getType() {
         return type;

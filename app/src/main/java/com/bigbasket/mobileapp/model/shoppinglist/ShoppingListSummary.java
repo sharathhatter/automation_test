@@ -11,18 +11,34 @@ import java.util.ArrayList;
 
 public class ShoppingListSummary implements Parcelable {
 
+    public static final Parcelable.Creator<ShoppingListSummary> CREATOR = new Parcelable.Creator<ShoppingListSummary>() {
+        @Override
+        public ShoppingListSummary createFromParcel(Parcel source) {
+            return new ShoppingListSummary(source);
+        }
+
+        @Override
+        public ShoppingListSummary[] newArray(int size) {
+            return new ShoppingListSummary[size];
+        }
+    };
     @SerializedName(Constants.FACET_NAME)
     private String facetName;
-
     private ArrayList<Product> products;
-
     @SerializedName(Constants.PRODUCT_COUNT)
     private int numProducts;
-
     @SerializedName(Constants.FACET_SLUG)
     private String facetSlug;
-
     private ShoppingListName shoppingListName;
+
+    public ShoppingListSummary(Parcel source) {
+        facetName = source.readString();
+        products = new ArrayList<>();
+        source.readTypedList(products, Product.CREATOR);
+        numProducts = source.readInt();
+        facetSlug = source.readString();
+        shoppingListName = source.readParcelable(ShoppingListSummary.class.getClassLoader());
+    }
 
     @Override
     public int describeContents() {
@@ -37,27 +53,6 @@ public class ShoppingListSummary implements Parcelable {
         dest.writeString(facetSlug);
         dest.writeParcelable(shoppingListName, flags);
     }
-
-    public ShoppingListSummary(Parcel source) {
-        facetName = source.readString();
-        products = new ArrayList<>();
-        source.readTypedList(products, Product.CREATOR);
-        numProducts = source.readInt();
-        facetSlug = source.readString();
-        shoppingListName = source.readParcelable(ShoppingListSummary.class.getClassLoader());
-    }
-
-    public static final Parcelable.Creator<ShoppingListSummary> CREATOR = new Parcelable.Creator<ShoppingListSummary>() {
-        @Override
-        public ShoppingListSummary createFromParcel(Parcel source) {
-            return new ShoppingListSummary(source);
-        }
-
-        @Override
-        public ShoppingListSummary[] newArray(int size) {
-            return new ShoppingListSummary[size];
-        }
-    };
 
     public String getFacetName() {
         return facetName;

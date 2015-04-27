@@ -11,21 +11,57 @@ import java.util.Set;
 
 public class Promo implements Parcelable {
 
-    public final class PromoType {
-        private PromoType() {
+    public static final Parcelable.Creator<Promo> CREATOR = new Parcelable.Creator<Promo>() {
+        @Override
+        public Promo createFromParcel(Parcel source) {
+            return new Promo(source);
         }
 
-        public static final String FREE = "free";
-        public static final String DISCOUNT_PRICE = "discount_price";
-        public static final String CUSTOMIZED_COMBO = "customized_combo";
-        public static final String FIXED_COMBO = "fixed_combo";
-        public static final String MIN_ORDER_DISCOUNTED_PRODUCT =
-                "min_order_discounted_product";
-        public static final String MIN_ORDER_FREE_PRODUCT = "min_order_free_product";
-        public static final String DISCOUNTED_BIN = "discounted_bin";
-        public static final String FIXED_FREE_COMBO = "fixed_free_combo";
-        public static final String MEMBER_REFERRAL = "member_referral";
+        @Override
+        public Promo[] newArray(int size) {
+            return new Promo[size];
+        }
+    };
+    @SerializedName(Constants.PROMO_NAME)
+    protected String promoName;
+    @SerializedName(Constants.PROMO_ICON)
+    protected String promoIcon;
+    @SerializedName(Constants.PROMO_ID)
+    protected int id;
+    @SerializedName(Constants.PROMO_LABEL)
+    protected String promoLabel;
+    @SerializedName(Constants.PROMO_TYPE)
+    private String promoType;
+    @SerializedName(Constants.PROMO_DESC)
+    private String promoDesc;
+    @SerializedName(Constants.PROMO_DESC_LINE1)
+    private String promoDescLine1;
+    @SerializedName(Constants.PROMO_DESC_LINE2)
+    private String promoDescLine2;
+    private PromoCategory promoCategory;
 
+    public Promo(Parcel source) {
+        promoName = source.readString();
+        boolean isPromoIconNull = source.readByte() == (byte) 1;
+        if (!isPromoIconNull) {
+            promoIcon = source.readString();
+        }
+        id = source.readInt();
+        promoType = source.readString();
+        promoLabel = source.readString();
+        promoDesc = source.readString();
+        promoDescLine1 = source.readString();
+        promoDescLine2 = source.readString();
+    }
+
+    public Promo(String promoName, String promoIcon, int id, String promoType,
+                 String promoLabel, String promoDesc) {
+        this.promoName = promoName;
+        this.id = id;
+        this.promoType = promoType;
+        this.promoDesc = promoDesc;
+        this.promoLabel = promoLabel;
+        this.promoIcon = promoIcon;
     }
 
     public static Set<String> getAllTypes() {
@@ -41,32 +77,6 @@ public class Promo implements Parcelable {
         promoTypes.add(PromoType.MEMBER_REFERRAL);
         return promoTypes;
     }
-
-    @SerializedName(Constants.PROMO_NAME)
-    protected String promoName;
-
-    @SerializedName(Constants.PROMO_ICON)
-    protected String promoIcon;
-
-    @SerializedName(Constants.PROMO_ID)
-    protected int id;
-
-    @SerializedName(Constants.PROMO_TYPE)
-    private String promoType;
-
-    @SerializedName(Constants.PROMO_LABEL)
-    protected String promoLabel;
-
-    @SerializedName(Constants.PROMO_DESC)
-    private String promoDesc;
-
-    @SerializedName(Constants.PROMO_DESC_LINE1)
-    private String promoDescLine1;
-
-    @SerializedName(Constants.PROMO_DESC_LINE2)
-    private String promoDescLine2;
-
-    private PromoCategory promoCategory;
 
     @Override
     public int describeContents() {
@@ -87,42 +97,6 @@ public class Promo implements Parcelable {
         dest.writeString(promoDesc);
         dest.writeString(promoDescLine1);
         dest.writeString(promoDescLine2);
-    }
-
-    public Promo(Parcel source) {
-        promoName = source.readString();
-        boolean isPromoIconNull = source.readByte() == (byte) 1;
-        if (!isPromoIconNull) {
-            promoIcon = source.readString();
-        }
-        id = source.readInt();
-        promoType = source.readString();
-        promoLabel = source.readString();
-        promoDesc = source.readString();
-        promoDescLine1 = source.readString();
-        promoDescLine2 = source.readString();
-    }
-
-    public static final Parcelable.Creator<Promo> CREATOR = new Parcelable.Creator<Promo>() {
-        @Override
-        public Promo createFromParcel(Parcel source) {
-            return new Promo(source);
-        }
-
-        @Override
-        public Promo[] newArray(int size) {
-            return new Promo[size];
-        }
-    };
-
-    public Promo(String promoName, String promoIcon, int id, String promoType,
-                 String promoLabel, String promoDesc) {
-        this.promoName = promoName;
-        this.id = id;
-        this.promoType = promoType;
-        this.promoDesc = promoDesc;
-        this.promoLabel = promoLabel;
-        this.promoIcon = promoIcon;
     }
 
     public String getPromoLabel() {
@@ -167,5 +141,21 @@ public class Promo implements Parcelable {
 
     public void setPromoCategory(PromoCategory promoCategory) {
         this.promoCategory = promoCategory;
+    }
+
+    public final class PromoType {
+        public static final String FREE = "free";
+        public static final String DISCOUNT_PRICE = "discount_price";
+        public static final String CUSTOMIZED_COMBO = "customized_combo";
+        public static final String FIXED_COMBO = "fixed_combo";
+        public static final String MIN_ORDER_DISCOUNTED_PRODUCT =
+                "min_order_discounted_product";
+        public static final String MIN_ORDER_FREE_PRODUCT = "min_order_free_product";
+        public static final String DISCOUNTED_BIN = "discounted_bin";
+        public static final String FIXED_FREE_COMBO = "fixed_free_combo";
+        public static final String MEMBER_REFERRAL = "member_referral";
+        private PromoType() {
+        }
+
     }
 }

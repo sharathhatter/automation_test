@@ -11,20 +11,25 @@ import java.util.ArrayList;
 
 public class MessageInfo implements Parcelable {
 
+    public static final Parcelable.Creator<MessageInfo> CREATOR = new Parcelable.Creator<MessageInfo>() {
+        @Override
+        public MessageInfo createFromParcel(Parcel source) {
+            return new MessageInfo(source);
+        }
+
+        @Override
+        public MessageInfo[] newArray(int size) {
+            return new MessageInfo[size];
+        }
+    };
     @SerializedName(Constants.MSG_STR)
     private String messageStr;
-
     @SerializedName(Constants.PARAMS)
     private ArrayList<MessageParamInfo> params;
 
     public MessageInfo(String messageStr, ArrayList<MessageParamInfo> params) {
         this.messageStr = messageStr;
         this.params = params;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
     }
 
     public MessageInfo(Parcel parcel) {
@@ -37,6 +42,11 @@ public class MessageInfo implements Parcelable {
     }
 
     @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(messageStr);
         boolean isParamsNull = params == null;
@@ -45,18 +55,6 @@ public class MessageInfo implements Parcelable {
             dest.writeTypedList(params);
         }
     }
-
-    public static final Parcelable.Creator<MessageInfo> CREATOR = new Parcelable.Creator<MessageInfo>() {
-        @Override
-        public MessageInfo createFromParcel(Parcel source) {
-            return new MessageInfo(source);
-        }
-
-        @Override
-        public MessageInfo[] newArray(int size) {
-            return new MessageInfo[size];
-        }
-    };
 
     public String getMessageStr() {
         return messageStr;

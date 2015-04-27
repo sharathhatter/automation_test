@@ -11,34 +11,6 @@ import java.util.List;
 
 public class FilterOptionCategory implements Parcelable {
 
-    @SerializedName(Constants.FILTER_SLUG)
-    private String filterSlug;
-
-    @SerializedName(Constants.FILTER_NAME)
-    private String filterName;
-
-    @SerializedName(Constants.FILTER_VALUES)
-    private List<FilterOptionItem> filterOptionItems;
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(filterSlug);
-        dest.writeString(filterName);
-        dest.writeTypedList(filterOptionItems);
-    }
-
-    public FilterOptionCategory(Parcel source) {
-        filterSlug = source.readString();
-        filterName = source.readString();
-        filterOptionItems = new ArrayList<>();
-        source.readTypedList(filterOptionItems, FilterOptionItem.CREATOR);
-    }
-
     public static final Parcelable.Creator<FilterOptionCategory> CREATOR = new Parcelable.Creator<FilterOptionCategory>() {
         @Override
         public FilterOptionCategory createFromParcel(Parcel source) {
@@ -50,11 +22,36 @@ public class FilterOptionCategory implements Parcelable {
             return new FilterOptionCategory[size];
         }
     };
+    @SerializedName(Constants.FILTER_SLUG)
+    private String filterSlug;
+    @SerializedName(Constants.FILTER_NAME)
+    private String filterName;
+    @SerializedName(Constants.FILTER_VALUES)
+    private List<FilterOptionItem> filterOptionItems;
+
+    public FilterOptionCategory(Parcel source) {
+        filterSlug = source.readString();
+        filterName = source.readString();
+        filterOptionItems = new ArrayList<>();
+        source.readTypedList(filterOptionItems, FilterOptionItem.CREATOR);
+    }
 
     public FilterOptionCategory(String filterName, String filterSlug, List<FilterOptionItem> filterOptionItems) {
         this.filterSlug = filterSlug;
         this.filterName = filterName;
         this.filterOptionItems = filterOptionItems;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(filterSlug);
+        dest.writeString(filterName);
+        dest.writeTypedList(filterOptionItems);
     }
 
     public String getFilterSlug() {

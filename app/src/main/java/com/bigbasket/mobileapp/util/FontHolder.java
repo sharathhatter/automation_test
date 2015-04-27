@@ -5,14 +5,10 @@ import android.graphics.Typeface;
 
 public class FontHolder {
     private static FontHolder fontHolder;
-
-    public static FontHolder getInstance(Context context) {
-        if (fontHolder == null) {
-            fontHolder = new FontHolder(context);
-        }
-        return fontHolder;
-    }
-
+    private Typeface faceRupee;
+    private Typeface faceRobotoRegular;
+    private Typeface faceRobotoLight;
+    private Typeface faceRobotoItalic;
     private FontHolder(Context context) {
         faceRupee = Typeface.createFromAsset(context.getAssets(), "Rupee.ttf");
         faceRobotoRegular = Typeface.createFromAsset(context.getAssets(), "Roboto-Regular.ttf");
@@ -20,10 +16,12 @@ public class FontHolder {
         faceRobotoItalic = Typeface.createFromAsset(context.getAssets(), "Roboto-Italic.ttf");
     }
 
-    private Typeface faceRupee;
-    private Typeface faceRobotoRegular;
-    private Typeface faceRobotoLight;
-    private Typeface faceRobotoItalic;
+    public static FontHolder getInstance(Context context) {
+        if (fontHolder == null) {
+            fontHolder = new FontHolder(context);
+        }
+        return fontHolder;
+    }
 
     public Typeface getFaceRupee() {
         return faceRupee;

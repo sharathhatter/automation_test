@@ -17,10 +17,10 @@ import retrofit.client.OkClient;
 
 public class BigBasketApiAdapter {
 
+    private static BigBasketApiService bigBasketApiService;
+
     private BigBasketApiAdapter() {
     }
-
-    private static BigBasketApiService bigBasketApiService;
 
     public static BigBasketApiService getApiService(Context context) {
         if (bigBasketApiService == null) {

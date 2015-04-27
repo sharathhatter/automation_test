@@ -8,13 +8,28 @@ import com.google.gson.annotations.SerializedName;
 
 public class CreditDetails implements Parcelable {
 
-    private String type;
+    public static final Parcelable.Creator<CreditDetails> CREATOR = new Parcelable.Creator<CreditDetails>() {
+        @Override
+        public CreditDetails createFromParcel(Parcel source) {
+            return new CreditDetails(source);
+        }
 
+        @Override
+        public CreditDetails[] newArray(int size) {
+            return new CreditDetails[size];
+        }
+    };
+    private String type;
     @SerializedName(Constants.CREDIT_VALUE)
     private String creditValue;
-
     @SerializedName(Constants.MESG)
     private String message;
+
+    CreditDetails(Parcel source) {
+        type = source.readString();
+        creditValue = source.readString();
+        message = source.readString();
+    }
 
     @Override
     public int describeContents() {
@@ -27,24 +42,6 @@ public class CreditDetails implements Parcelable {
         dest.writeString(creditValue);
         dest.writeString(message);
     }
-
-    CreditDetails(Parcel source) {
-        type = source.readString();
-        creditValue = source.readString();
-        message = source.readString();
-    }
-
-    public static final Parcelable.Creator<CreditDetails> CREATOR = new Parcelable.Creator<CreditDetails>() {
-        @Override
-        public CreditDetails createFromParcel(Parcel source) {
-            return new CreditDetails(source);
-        }
-
-        @Override
-        public CreditDetails[] newArray(int size) {
-            return new CreditDetails[size];
-        }
-    };
 
     public String getType() {
         return type;

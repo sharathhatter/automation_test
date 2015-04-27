@@ -16,7 +16,8 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -37,7 +38,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignupActivity;
@@ -78,7 +78,7 @@ import com.bigbasket.mobileapp.util.analytics.FacebookEventTrackWrapper;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
 import com.demach.konotor.Konotor;
-import com.facebook.AppEventsLogger;
+import com.facebook.appevents.AppEventsLogger;
 import com.moe.pushlibrary.MoEHelper;
 
 import org.json.JSONException;
@@ -94,7 +94,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
-public abstract class BaseActivity extends ActionBarActivity implements COMarketPlaceAware,
+public abstract class BaseActivity extends AppCompatActivity implements COMarketPlaceAware,
         COReserveQuantityCheckAware, CancelableAware, ProgressIndicationAware, ActivityAware,
         ConnectivityAware, TrackingAware, ApiErrorAware, EmailAddressAware {
 
@@ -103,8 +103,31 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     protected BigBasketMessageHandler handler;
     protected boolean isActivitySuspended;
     protected COReserveQuantity coReserveQuantity;
+    protected ProgressDialog progressDialog = null;
     private MoEHelper moEHelper;
     private AppEventsLogger fbLogger;
+
+    public static void showKeyboard(final EditText editText) {
+        (new Handler()).postDelayed(new Runnable() {
+
+            public void run() {
+                MotionEvent motionActionDown = MotionEvent.obtain(SystemClock.uptimeMillis(),
+                        SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0);
+                MotionEvent motionActionUp = MotionEvent.obtain(SystemClock.uptimeMillis(),
+                        SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0);
+                if (motionActionDown == null || motionActionUp == null) return;
+                editText.dispatchTouchEvent(motionActionDown);
+                editText.dispatchTouchEvent(motionActionUp);
+
+            }
+        }, 100);
+    }
+
+    public static void hideKeyboard(BaseActivity context, View view) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,13 +149,10 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         return DataUtil.isInternetAvailable(getCurrentActivity());
     }
 
-    protected ProgressDialog progressDialog = null;
-
     @Override
     public void showProgressDialog(String msg) {
         showProgressDialog(msg, true);
     }
-
 
     @Override
     public void showProgressDialog(String msg, boolean cancelable) {
@@ -182,7 +202,6 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
             new COReserveQuantityCheckTask<>(getCurrentActivity(), pharmaPrescriptionId).startTask();
         }
     }
-
 
     @Override
     public COReserveQuantity getCOReserveQuantity() {
@@ -315,20 +334,19 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     }
 
     public void showAlertDialog(String title, String msg, final String sourceName, final Object valuePassed) {
-        MaterialDialog.Builder builder = UIUtil.getMaterialDialogBuilder(getCurrentActivity())
-                .title(title == null ? "BigBasket" : title)
-                .content(msg)
-                .positiveText(R.string.ok)
-                .cancelable(false)
-                .callback(new MaterialDialog.ButtonCallback() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getCurrentActivity())
+                .setTitle(title == null ? "BigBasket" : title)
+                .setMessage(msg)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onPositive(MaterialDialog dialog) {
+                    public void onClick(DialogInterface dialog, int which) {
                         onPositiveButtonClicked(dialog, sourceName, valuePassed);
                     }
-                });
+                })
+                .setCancelable(false);
         if (isSuspended())
             return;
-        builder.show();
+        builder.create().show();
     }
 
     public void showAlertDialogFinish(String title, String msg) {
@@ -336,23 +354,22 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
     }
 
     public void showAlertDialogFinish(String title, String msg, final int resultCode) {
-        MaterialDialog.Builder builder = UIUtil.getMaterialDialogBuilder(getCurrentActivity())
-                .title(title == null ? "BigBasket" : title)
-                .content(msg)
-                .cancelable(false)
-                .positiveText(R.string.ok)
-                .callback(new MaterialDialog.ButtonCallback() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getCurrentActivity())
+                .setTitle(title == null ? "BigBasket" : title)
+                .setMessage(msg)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onPositive(MaterialDialog dialog) {
+                    public void onClick(DialogInterface dialog, int which) {
                         if (resultCode > -1) {
                             getCurrentActivity().setResult(resultCode);
                         }
                         getCurrentActivity().finish();
                     }
-                });
+                })
+                .setCancelable(false);
         if (isSuspended())
             return;
-        builder.show();
+        builder.create().show();
     }
 
     public void showAlertDialog(String msg) {
@@ -376,36 +393,37 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
                                 String msg, DialogButton dialogButton,
                                 DialogButton nxtDialogButton, final String sourceName,
                                 final Object passedValue, String positiveBtnText) {
-        MaterialDialog.Builder builder = UIUtil.getMaterialDialogBuilder(getCurrentActivity())
-                .title(title)
-                .content(msg);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getCurrentActivity());
+        builder.setTitle(title);
+        builder.setMessage(msg);
+        builder.setCancelable(false);
         if (dialogButton != null && nxtDialogButton != null) {
             if (dialogButton.equals(DialogButton.YES) || dialogButton.equals(DialogButton.OK)) {
                 if (TextUtils.isEmpty(positiveBtnText)) {
                     int textId = dialogButton.equals(DialogButton.YES) ? R.string.yesTxt : R.string.ok;
                     positiveBtnText = getString(textId);
                 }
-                builder.positiveText(positiveBtnText);
+                builder.setPositiveButton(positiveBtnText, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int id) {
+                        onPositiveButtonClicked(dialogInterface, sourceName, passedValue);
+                    }
+                });
             }
             if (nxtDialogButton.equals(DialogButton.NO) || nxtDialogButton.equals(DialogButton.CANCEL)) {
                 int textId = nxtDialogButton.equals(DialogButton.NO) ? R.string.noTxt : R.string.cancel;
-                builder.negativeText(textId);
+                builder.setNegativeButton(textId, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int id) {
+                        onNegativeButtonClicked(dialogInterface, sourceName);
+                    }
+                });
             }
-            builder.callback(new MaterialDialog.ButtonCallback() {
-                @Override
-                public void onPositive(MaterialDialog dialog) {
-                    onPositiveButtonClicked(dialog, sourceName, passedValue);
-                }
-
-                @Override
-                public void onNegative(MaterialDialog dialog) {
-                    onNegativeButtonClicked(dialog, sourceName);
-                }
-            });
         }
+        AlertDialog alertDialog = builder.create();
         if (isSuspended())
             return;
-        builder.show();
+        alertDialog.show();
     }
 
     public void showAlertDialog(String title,
@@ -496,29 +514,6 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         setResult(resultCode, data);
         getCurrentActivity().finish();
     }
-
-    public static void showKeyboard(final EditText editText) {
-        (new Handler()).postDelayed(new Runnable() {
-
-            public void run() {
-                MotionEvent motionActionDown = MotionEvent.obtain(SystemClock.uptimeMillis(),
-                        SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0);
-                MotionEvent motionActionUp = MotionEvent.obtain(SystemClock.uptimeMillis(),
-                        SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0);
-                if (motionActionDown == null || motionActionUp == null) return;
-                editText.dispatchTouchEvent(motionActionDown);
-                editText.dispatchTouchEvent(motionActionUp);
-
-            }
-        }, 100);
-    }
-
-    public static void hideKeyboard(BaseActivity context, View view) {
-        InputMethodManager imm = (InputMethodManager) context.getSystemService(
-                Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
-
 
     public void setAreaPinCode(String areaName, AreaPinInfoAdapter areaPinInfoAdapter, EditText editTextPincode) {
         if (areaName != null) {
@@ -698,7 +693,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
             intent.putExtra(Constants.HAS_PARENT, true);
             startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         } catch (ActivityNotFoundException e) {
-            Log.e("HomeFragment", "No target found for the pending deep-link");
+
         }
     }
 
@@ -798,28 +793,6 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         });
     }
 
-    private class TncClickListener extends ClickableSpan {
-
-        @Override
-        public void onClick(View widget) {
-            Intent flatPageWebviewActivity = new Intent(getCurrentActivity(), FlatPageWebViewActivity.class);
-            flatPageWebviewActivity.putExtra(Constants.WEBVIEW_URL, MobileApiUrl.DOMAIN + "terms-and-conditions/");
-            flatPageWebviewActivity.putExtra(Constants.WEBVIEW_TITLE, getString(R.string.termsAndCondHeading));
-            startActivityForResult(flatPageWebviewActivity, NavigationCodes.GO_TO_HOME);
-        }
-    }
-
-    private class PrivacyPolicyClickListener extends ClickableSpan {
-
-        @Override
-        public void onClick(View widget) {
-            Intent flatPageWebviewActivity = new Intent(getCurrentActivity(), FlatPageWebViewActivity.class);
-            flatPageWebviewActivity.putExtra(Constants.WEBVIEW_URL, MobileApiUrl.DOMAIN + "privacy-policy/");
-            flatPageWebviewActivity.putExtra(Constants.WEBVIEW_TITLE, getString(R.string.privacyPolicy));
-            startActivityForResult(flatPageWebviewActivity, NavigationCodes.GO_TO_HOME);
-        }
-    }
-
     public void launchLogin(String navigationCtx) {
         launchLogin(navigationCtx, null);
     }
@@ -843,5 +816,27 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         intent.putExtra(Constants.DEEP_LINK, getIntent().getStringExtra(Constants.DEEP_LINK));
         intent.putExtra(Constants.FRAGMENT_CODE, getIntent().getStringExtra(Constants.FRAGMENT_CODE));
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+    }
+
+    private class TncClickListener extends ClickableSpan {
+
+        @Override
+        public void onClick(View widget) {
+            Intent flatPageWebviewActivity = new Intent(getCurrentActivity(), FlatPageWebViewActivity.class);
+            flatPageWebviewActivity.putExtra(Constants.WEBVIEW_URL, MobileApiUrl.DOMAIN + "terms-and-conditions/");
+            flatPageWebviewActivity.putExtra(Constants.WEBVIEW_TITLE, getString(R.string.termsAndCondHeading));
+            startActivityForResult(flatPageWebviewActivity, NavigationCodes.GO_TO_HOME);
+        }
+    }
+
+    private class PrivacyPolicyClickListener extends ClickableSpan {
+
+        @Override
+        public void onClick(View widget) {
+            Intent flatPageWebviewActivity = new Intent(getCurrentActivity(), FlatPageWebViewActivity.class);
+            flatPageWebviewActivity.putExtra(Constants.WEBVIEW_URL, MobileApiUrl.DOMAIN + "privacy-policy/");
+            flatPageWebviewActivity.putExtra(Constants.WEBVIEW_TITLE, getString(R.string.privacyPolicy));
+            startActivityForResult(flatPageWebviewActivity, NavigationCodes.GO_TO_HOME);
+        }
     }
 }

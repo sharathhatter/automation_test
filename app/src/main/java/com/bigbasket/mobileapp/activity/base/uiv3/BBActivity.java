@@ -102,12 +102,12 @@ import java.util.Map;
 public class BBActivity extends SocialLoginActivity implements BasketOperationAware,
         CartInfoAware, HandlerAware {
 
+    protected BigBasketMessageHandler handler;
     private ActionBarDrawerToggle mDrawerToggle;
     private String mDrawerTitle;
     private String mTitle;
     private BasketOperationResponse basketOperationResponse;
     private CartSummary cartInfo = new CartSummary();
-    protected BigBasketMessageHandler handler;
     private BBDrawerLayout mDrawerLayout;
     private String currentFragmentTag;
     private TextView mTextCartCount;
@@ -120,8 +120,10 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         setContentView(getMainLayout());
 
         mNavRecyclerView = (RecyclerView) findViewById(R.id.listNavigation);
-        mNavRecyclerView.setHasFixedSize(false);
-        mNavRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        if (mNavRecyclerView != null) {
+            mNavRecyclerView.setHasFixedSize(false);
+            mNavRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        }
 
         handler = new BigBasketMessageHandler<>(this);
         mTitle = mDrawerTitle = getTitle().toString();
@@ -187,7 +189,9 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         loadNavigationItems();
         Intent intent = getIntent();
@@ -511,9 +515,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 String searchQuery = data.getStringExtra(Constants.SEARCH_QUERY);
                 if (!TextUtils.isEmpty(searchQuery)) {
                     doSearch(searchQuery);
-                    return;
                 }
-
             }
         }
     }
@@ -608,13 +610,13 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     @Override
-    public void setCartInfo(CartSummary cartInfo) {
-        this.cartInfo = cartInfo;
+    public CartSummary getCartInfo() {
+        return cartInfo;
     }
 
     @Override
-    public CartSummary getCartInfo() {
-        return cartInfo;
+    public void setCartInfo(CartSummary cartInfo) {
+        this.cartInfo = cartInfo;
     }
 
     @Override
@@ -814,7 +816,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     private void loadNavigationItems() {
-
+        if (mNavRecyclerView == null) return;
         TextView txtNavSalutation = (TextView) findViewById(R.id.txtNavSalutation);
         txtNavSalutation.setTypeface(faceRobotoRegular);
         AuthParameters authParameters = AuthParameters.getInstance(this);
@@ -878,10 +880,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
     public String getScreenTag() {
         return null;
-    }
-
-    public BBDrawerLayout getDrawerLayout() {
-        return mDrawerLayout;
     }
 
     public Menu getMenu() {

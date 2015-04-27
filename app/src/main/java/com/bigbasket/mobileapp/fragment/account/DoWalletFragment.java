@@ -38,11 +38,11 @@ import retrofit.client.Response;
 
 public class DoWalletFragment extends BaseFragment {
 
+    boolean oneYearBack1 = false, oneYearBack2 = false, oneYearBack3 = false;
     private int numMonth1, numMonth2, numMonth3, maxDays1, maxDays2, maxDays3;
     private int[] maxDayOfMonth = {
             31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
     };
-    boolean oneYearBack1 = false, oneYearBack2 = false, oneYearBack3 = false;
     private String month1 = "", month2 = "", month3 = "", monthClickText;
 
     @Override

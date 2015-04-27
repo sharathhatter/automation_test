@@ -6,7 +6,6 @@
     android:layout_marginLeft="@dimen/margin_mini"
     android:layout_marginRight="@dimen/margin_mini"
     android:background="@color/white"
-    android:paddingRight="@dimen/padding_mini"
     android:paddingTop="@dimen/padding_mini">
 
     <ImageView

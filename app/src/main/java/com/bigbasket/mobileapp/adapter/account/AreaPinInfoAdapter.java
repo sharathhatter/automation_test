@@ -12,20 +12,18 @@ import java.util.ArrayList;
 
 public class AreaPinInfoAdapter {
 
+    public static final String COLUMN_ID = "_Id";
+    public static final String COLUMN_PIN = "pincode";
+    public static final String COLUMN_AREA = "area";
+    public static final String tableName = "areaPinInfo";
+    public static String createTable = String.format("CREATE TABLE IF NOT EXISTS %1$s (%2$s INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "%3$s TEXT , %4$s TEXT );", tableName, COLUMN_ID, COLUMN_PIN, COLUMN_AREA);
     private Context context;
 
     public AreaPinInfoAdapter(Context context) {
         this.context = context;
         open();
     }
-
-    public static final String COLUMN_ID = "_Id";
-    public static final String COLUMN_PIN = "pincode";
-    public static final String COLUMN_AREA = "area";
-    public static final String tableName = "areaPinInfo";
-
-    public static String createTable = String.format("CREATE TABLE IF NOT EXISTS %1$s (%2$s INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            "%3$s TEXT , %4$s TEXT );", tableName, COLUMN_ID, COLUMN_PIN, COLUMN_AREA);
 
     public void open() {
         DatabaseHelper.getInstance(context).open(context);
@@ -70,7 +68,7 @@ public class AreaPinInfoAdapter {
 
     public ArrayList<String> getAreaNameList() {
         Cursor areaNameCursor = null;
-        String areaNameStr = null;
+        String areaNameStr;
         ArrayList<String> result = new ArrayList<>();
         try {
             areaNameCursor = DatabaseHelper.db.query(tableName, new String[]{COLUMN_AREA}

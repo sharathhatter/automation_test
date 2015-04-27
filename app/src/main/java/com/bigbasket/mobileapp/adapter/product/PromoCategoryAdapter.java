@@ -20,14 +20,13 @@ import java.util.List;
 
 public class PromoCategoryAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    public static final int VIEW_TYPE_PROMO = 0;
+    public static final int VIEW_TYPE_CATEGORY = 1;
+    public static final int VIEW_TYPE_SECTION = 2;
     private T context;
     private List<Object> promoConsolidatedList;
     private Typeface typeface;
     private View mSectionView;
-
-    public static final int VIEW_TYPE_PROMO = 0;
-    public static final int VIEW_TYPE_CATEGORY = 1;
-    public static final int VIEW_TYPE_SECTION = 2;
 
     public PromoCategoryAdapter(T context, List<Object> promoConsolidatedList, Typeface typeface,
                                 View sectionView) {

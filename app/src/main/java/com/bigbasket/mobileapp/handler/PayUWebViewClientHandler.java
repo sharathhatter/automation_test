@@ -67,10 +67,4 @@ public class PayUWebViewClientHandler extends WebViewClient {
 
     }
 
-    @Override
-    public void onLoadResource(WebView view, String url) {
-        super.onLoadResource(view, url);
-    }
-
-
 }

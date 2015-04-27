@@ -73,11 +73,6 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
     }
 
     @Override
-    public void onBackResume() {
-        super.onBackResume();
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         if (getCurrentActivity() == null) return;
@@ -432,6 +427,16 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         displayHomePageError(getString(R.string.otherError), R.drawable.ic_report_problem_grey600_48dp);
     }
 
+    @Override
+    public BigBasketMessageHandler getHandler() {
+        return handler;
+    }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.HOME_SCREEN;
+    }
+
     public class HomePageHandler<T> extends BigBasketMessageHandler<T> {
 
         public HomePageHandler(T ctx) {
@@ -442,15 +447,5 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         public void sendOfflineError() {
             displayHomePageError(getString(R.string.lostInternetConnection), R.drawable.empty_no_internet);
         }
-    }
-
-    @Override
-    public BigBasketMessageHandler getHandler() {
-        return handler;
-    }
-
-    @Override
-    public String getScreenTag() {
-        return TrackEventkeys.HOME_SCREEN;
     }
 }

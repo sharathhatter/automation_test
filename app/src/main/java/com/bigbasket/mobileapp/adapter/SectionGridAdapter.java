@@ -185,15 +185,15 @@ public class SectionGridAdapter<T> extends BaseAdapter {
 
         private ViewGroup layoutSection;
 
+        public ViewHolder(View itemView) {
+            this.itemView = itemView;
+        }
+
         public ViewGroup getLayoutSection() {
             if (layoutSection == null) {
                 layoutSection = (ViewGroup) itemView.findViewById(R.id.layoutSection);
             }
             return layoutSection;
-        }
-
-        public ViewHolder(View itemView) {
-            this.itemView = itemView;
         }
 
         public ImageView getImgInRow() {

@@ -69,7 +69,6 @@ import java.util.TimerTask;
  */
 public class SliderLayout extends RelativeLayout {
 
-    private Context mContext;
     /**
      * InfiniteViewPager is extended from ViewPagerEx. As the name says, it can scroll without bounder.
      */
@@ -146,7 +145,6 @@ public class SliderLayout extends RelativeLayout {
     public SliderLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         this.mh = new AutoCycleHandler(this);
-        mContext = context;
         LayoutInflater.from(context).inflate(getLayoutResId(), this, true);
 
         final TypedArray attributes = context.getTheme().obtainStyledAttributes(attrs, R.styleable.SliderLayout,
@@ -162,7 +160,7 @@ public class SliderLayout extends RelativeLayout {
                 break;
             }
         }
-        mSliderAdapter = new SliderAdapter(mContext);
+        mSliderAdapter = new SliderAdapter();
         PagerAdapter wrappedAdapter = new InfinitePagerAdapter(mSliderAdapter);
 
         mViewPager = (InfiniteViewPager) findViewById(R.id.daimajia_slider_viewpager);
@@ -372,9 +370,6 @@ public class SliderLayout extends RelativeLayout {
             return (other != null) && name.equals(other);
         }
     }
-
-    ;
-
 
     /**
      * Set the visibility of the indicators.

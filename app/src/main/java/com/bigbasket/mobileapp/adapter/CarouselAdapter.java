@@ -169,16 +169,16 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
         private ViewGroup sectionLayoutContainer;
         private ViewGroup layoutSection;
 
+        public ViewHolder(View itemView) {
+            super(itemView);
+            itemView.setOnClickListener(this);
+        }
+
         public ViewGroup getLayoutSection() {
             if (layoutSection == null) {
                 layoutSection = (ViewGroup) itemView.findViewById(R.id.layoutSection);
             }
             return layoutSection;
-        }
-
-        public ViewHolder(View itemView) {
-            super(itemView);
-            itemView.setOnClickListener(this);
         }
 
         public ImageView getImgInRow() {

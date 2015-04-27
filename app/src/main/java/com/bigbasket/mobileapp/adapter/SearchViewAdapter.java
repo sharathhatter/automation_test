@@ -38,12 +38,7 @@ public class SearchViewAdapter<T> extends CursorAdapter implements Filterable {
         if (viewType == VIEW_TYPE_ITEM) {
             RowViewHolder rowViewHolder = (RowViewHolder) view.getTag();
             TextView txtTerm = rowViewHolder.getTxtTerm();
-            txtTerm.setText(termString);
-
-//            ImageView imgSearchListIcon = rowViewHolder.getImgSearchListIcon();
-//            imgSearchListIcon.setImageDrawable(getItemLeftIcon(cursor).equals(SearchUtil.SEARCH_LEFT_ICON) ?
-//                    ContextCompat.getDrawable(context, R.drawable.ic_search_grey600_24dp) :
-//                    ContextCompat.getDrawable(context, R.drawable.ic_history_grey600_24dp));
+            txtTerm.setText(termString.trim());
 
 
             ImageView imgRemoveTerm = rowViewHolder.getImgRemoveTerm();
@@ -72,11 +67,48 @@ public class SearchViewAdapter<T> extends CursorAdapter implements Filterable {
         }
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        Cursor cursor = (Cursor) getItem(position);
+        return getItemViewType(cursor);
+    }
+
+    public int getItemViewType(Cursor cursor) {
+        if (cursor.getString(4) == null) {
+            return VIEW_TYPE_HEADER;
+        }
+        return VIEW_TYPE_ITEM;
+    }
+
+    public String getItemRightIcon(Cursor cursor) {
+        return cursor.getString(6);
+    }
+
+    @Override
+    public int getViewTypeCount() {
+        return 2;
+    }
+
+    @Override
+    public View newView(Context context, Cursor cursor, ViewGroup parent) {
+        int viewType = getItemViewType(cursor);
+        if (viewType == VIEW_TYPE_ITEM) {
+            View view = inflater.inflate(R.layout.search_row, parent, false);
+            RowViewHolder rowViewHolder = new RowViewHolder(view);
+            view.setTag(rowViewHolder);
+            return view;
+        } else {
+            View view = inflater.inflate(R.layout.search_row_header, parent, false);
+            HeaderViewHolder headerViewHolder = new HeaderViewHolder(view);
+            view.setTag(headerViewHolder);
+            return view;
+        }
+    }
+
     private class RowViewHolder {
         private TextView txtTerm;
         private View itemRow;
         private ImageView imgRemoveTerm;
-        private ImageView imgSearchListIcon;
 
         private RowViewHolder(View itemRow) {
             this.itemRow = itemRow;
@@ -121,48 +153,6 @@ public class SearchViewAdapter<T> extends CursorAdapter implements Filterable {
                 txtTermHeader.setTypeface(fontHolder.getFaceRobotoRegular());
             }
             return txtTermHeader;
-        }
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        Cursor cursor = (Cursor) getItem(position);
-        return getItemViewType(cursor);
-    }
-
-    public int getItemViewType(Cursor cursor) {
-        if (cursor.getString(4) == null) {
-            return VIEW_TYPE_HEADER;
-        }
-        return VIEW_TYPE_ITEM;
-    }
-
-    public String getItemLeftIcon(Cursor cursor) {
-        return cursor.getString(5);
-    }
-
-    public String getItemRightIcon(Cursor cursor) {
-        return cursor.getString(6);
-    }
-
-    @Override
-    public int getViewTypeCount() {
-        return 2;
-    }
-
-    @Override
-    public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        int viewType = getItemViewType(cursor);
-        if (viewType == VIEW_TYPE_ITEM) {
-            View view = inflater.inflate(R.layout.search_row, parent, false);
-            RowViewHolder rowViewHolder = new RowViewHolder(view);
-            view.setTag(rowViewHolder);
-            return view;
-        } else {
-            View view = inflater.inflate(R.layout.search_row_header, parent, false);
-            HeaderViewHolder headerViewHolder = new HeaderViewHolder(view);
-            view.setTag(headerViewHolder);
-            return view;
         }
     }
 }

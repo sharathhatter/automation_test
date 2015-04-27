@@ -3,6 +3,9 @@
 
     <!-- Specifies how to place the content of an object, both
          on the x- and y-axis, within the object itself. -->
+    <declare-styleable name="ExpandableTextView">
+        <attr name="isExpanded" format="boolean" />
+    </declare-styleable>
     <attr name="gravity">
         <!-- Push object to the top of its container, not changing its size. -->
         <flag name="top" value="0x30" />

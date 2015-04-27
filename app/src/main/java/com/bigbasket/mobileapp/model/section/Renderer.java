@@ -34,29 +34,56 @@ public class Renderer implements Parcelable, Serializable {
     public static final String TITLE_IMG_DESC = "t,i,d";
     public static final String TITLE_DESC_IMG = "t,d,i";
     public static final String IMG_TITLE_DESC = "i,t,d";
+    public static final Parcelable.Creator<Renderer> CREATOR = new Parcelable.Creator<Renderer>() {
+        @Override
+        public Renderer createFromParcel(Parcel source) {
+            return new Renderer(source);
+        }
 
+        @Override
+        public Renderer[] newArray(int size) {
+            return new Renderer[size];
+        }
+    };
     @SerializedName(Constants.TEXT_COLOR)
     private String textColor;
-
     private int nativeTextColor;
-
     @SerializedName(Constants.BACKGROUND_COLOR)
     private String backgroundColor;
-
     private int nativeBkgColor;
-
     @SerializedName(Constants.PADDING)
     private int padding;
-
     @SerializedName(Constants.MARGIN)
     private int margin;
-
     @SerializedName(Constants.ALIGNMENT)
     private int alignment;
-
     private int orientation;
-
     private String ordering;
+
+    public Renderer(Parcel source) {
+        boolean wasTextColorNull = source.readByte() == (byte) 1;
+        if (!wasTextColorNull) {
+            textColor = source.readString();
+        }
+        boolean wasBkgColorNull = source.readByte() == (byte) 1;
+        if (!wasBkgColorNull) {
+            backgroundColor = source.readString();
+        }
+        nativeBkgColor = UIUtil.parseAsNativeColor(backgroundColor);
+        nativeTextColor = UIUtil.parseAsNativeColor(textColor);
+        padding = source.readInt();
+        margin = source.readInt();
+        alignment = source.readInt();
+        boolean wasOrderingNull = source.readByte() == (byte) 1;
+        if (!wasOrderingNull) {
+            ordering = source.readString();
+        }
+    }
+
+    public static int getSafeUnit(int coefficient, int unitValue, int defaultValue, int maxValue) {
+        int value = coefficient > 0 ? coefficient * unitValue : Math.max(defaultValue, 0);
+        return value > maxValue ? defaultValue : value;
+    }
 
     public String getTextColor() {
         return textColor;
@@ -119,38 +146,6 @@ public class Renderer implements Parcelable, Serializable {
         }
     }
 
-    public Renderer(Parcel source) {
-        boolean wasTextColorNull = source.readByte() == (byte) 1;
-        if (!wasTextColorNull) {
-            textColor = source.readString();
-        }
-        boolean wasBkgColorNull = source.readByte() == (byte) 1;
-        if (!wasBkgColorNull) {
-            backgroundColor = source.readString();
-        }
-        nativeBkgColor = UIUtil.parseAsNativeColor(backgroundColor);
-        nativeTextColor = UIUtil.parseAsNativeColor(textColor);
-        padding = source.readInt();
-        margin = source.readInt();
-        alignment = source.readInt();
-        boolean wasOrderingNull = source.readByte() == (byte) 1;
-        if (!wasOrderingNull) {
-            ordering = source.readString();
-        }
-    }
-
-    public static final Parcelable.Creator<Renderer> CREATOR = new Parcelable.Creator<Renderer>() {
-        @Override
-        public Renderer createFromParcel(Parcel source) {
-            return new Renderer(source);
-        }
-
-        @Override
-        public Renderer[] newArray(int size) {
-            return new Renderer[size];
-        }
-    };
-
     public int getMargin() {
         return margin;
     }
@@ -165,11 +160,6 @@ public class Renderer implements Parcelable, Serializable {
 
     public int getSafePadding(int defaultValue) {
         return getSafeUnit(padding, Renderer.PADDING, defaultValue, Renderer.MAX_PADDING);
-    }
-
-    public static int getSafeUnit(int coefficient, int unitValue, int defaultValue, int maxValue) {
-        int value = coefficient > 0 ? coefficient * unitValue : Math.max(defaultValue, 0);
-        return value > maxValue ? defaultValue : value;
     }
 
     public int getAsNativeAlignment() {

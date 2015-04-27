@@ -3,7 +3,6 @@ package com.bigbasket.mobileapp.activity.account.uiv3;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.google.android.gms.common.ConnectionResult;
@@ -20,26 +19,19 @@ public abstract class PlusBaseActivity extends BaseActivity
         implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
-    private static final String TAG = PlusBaseActivity.class.getSimpleName();
-
     // A magic number we will use to know that our sign-in error resolution activity has completed
     private static final int RC_SIGN_IN = 49404;
-
-    // A flag to stop multiple dialogues appearing for the user
-    private boolean mAutoResolveOnFail;
-
     // A flag to track when a connection is already in progress
     public boolean mPlusClientIsConnecting = false;
-
+    protected boolean mIsInLogoutMode;
+    // A flag to stop multiple dialogues appearing for the user
+    private boolean mAutoResolveOnFail;
     // This is the helper object that connects to Google Play Services.
     private GoogleApiClient mGoogleApiClient;
-
     // The saved result from {@link #onConnectionFailed(ConnectionResult)}.  If a connection
     // attempt has been made, this is non-null.
     // If this IS null, then the connect method is still running.
     private ConnectionResult mConnectionResult;
-    protected boolean mIsInLogoutMode;
-
     // A flag to track if connection is being established to revoke access
     private boolean mRevokeAccess;
 
@@ -143,7 +135,6 @@ public abstract class PlusBaseActivity extends BaseActivity
             // process from scratch.
             initiatePlusClientDisconnect();
             onPlusClientSignOut();
-            Log.v(TAG, "Sign out successful!");
         }
 
         updatePlusConnectedButtonState();
@@ -185,10 +176,6 @@ public abstract class PlusBaseActivity extends BaseActivity
     protected void onStop() {
         super.onStop();
         initiatePlusClientDisconnect();
-    }
-
-    public boolean isPlusClientConnecting() {
-        return mPlusClientIsConnecting;
     }
 
     private void setProgressBarVisible(boolean flag) {

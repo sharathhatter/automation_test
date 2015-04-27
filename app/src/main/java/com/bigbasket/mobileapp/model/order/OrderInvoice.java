@@ -14,35 +14,59 @@ import java.util.ArrayList;
 
 public class OrderInvoice implements Parcelable {
 
+    public static final Parcelable.Creator<OrderInvoice> CREATOR = new Parcelable.Creator<OrderInvoice>() {
+        @Override
+        public OrderInvoice createFromParcel(Parcel source) {
+            return new OrderInvoice(source);
+        }
+
+        @Override
+        public OrderInvoice[] newArray(int size) {
+            return new OrderInvoice[size];
+        }
+    };
     @SerializedName(Constants.ORDER_NUMBER)
     private String orderNumber;
-
     @SerializedName(Constants.MEMBER_DETAILS)
     private MemberSummary memberSummary;
-
     @SerializedName(Constants.SLOT_INFO)
     private SlotHeader slot;
-
     @SerializedName(Constants.INVOICE_NUMBER)
     private String invoiceNumber;
-
     @SerializedName(Constants.BASE_IMG_URL)
     private String baseImgUrl;
-
     @SerializedName(Constants.ITEMS)
     private ArrayList<CartItemList> cartItems;
-
     @SerializedName(Constants.ORDER_DETAILS)
     private OrderInvoiceDetails orderInvoiceDetails;
-
     @SerializedName("order_modifications")
     private ArrayList<OrderModification> orderModifications;
-
     @SerializedName(Constants.CREDIT_DETAILS)
     private ArrayList<CreditDetails> creditDetails;
-
     @SerializedName(Constants.FULFILLMENT_INFO)
     private FulfillmentInfo fulfillmentInfo;
+
+    public OrderInvoice(Parcel source) {
+        this.orderNumber = source.readString();
+        this.memberSummary = source.readParcelable(OrderInvoice.class.getClassLoader());
+        this.slot = source.readParcelable(OrderInvoice.class.getClassLoader());
+        this.invoiceNumber = source.readString();
+        boolean _wasBaseImgUrlNull = source.readByte() == (byte) 1;
+        if (!_wasBaseImgUrlNull) {
+            this.baseImgUrl = source.readString();
+        }
+        this.cartItems = new ArrayList<>();
+        source.readTypedList(this.cartItems, CartItemList.CREATOR);
+        this.orderInvoiceDetails = source.readParcelable(OrderInvoice.class.getClassLoader());
+        this.orderModifications = new ArrayList<>();
+        source.readTypedList(this.orderModifications, OrderModification.CREATOR);
+        boolean _wasCreditDetailsNull = source.readByte() == (byte) 1;
+        if (!_wasCreditDetailsNull) {
+            this.creditDetails = new ArrayList<>();
+            source.readTypedList(this.creditDetails, CreditDetails.CREATOR);
+        }
+        this.fulfillmentInfo = source.readParcelable(OrderInvoice.class.getClassLoader());
+    }
 
     @Override
     public int describeContents() {
@@ -70,40 +94,6 @@ public class OrderInvoice implements Parcelable {
         }
         dest.writeParcelable(fulfillmentInfo, flags);
     }
-
-    public OrderInvoice(Parcel source) {
-        this.orderNumber = source.readString();
-        this.memberSummary = source.readParcelable(OrderInvoice.class.getClassLoader());
-        this.slot = source.readParcelable(OrderInvoice.class.getClassLoader());
-        this.invoiceNumber = source.readString();
-        boolean _wasBaseImgUrlNull = source.readByte() == (byte) 1;
-        if (!_wasBaseImgUrlNull) {
-            this.baseImgUrl = source.readString();
-        }
-        this.cartItems = new ArrayList<>();
-        source.readTypedList(this.cartItems, CartItemList.CREATOR);
-        this.orderInvoiceDetails = source.readParcelable(OrderInvoice.class.getClassLoader());
-        this.orderModifications = new ArrayList<>();
-        source.readTypedList(this.orderModifications, OrderModification.CREATOR);
-        boolean _wasCreditDetailsNull = source.readByte() == (byte) 1;
-        if (!_wasCreditDetailsNull) {
-            this.creditDetails = new ArrayList<>();
-            source.readTypedList(this.creditDetails, CreditDetails.CREATOR);
-        }
-        this.fulfillmentInfo = source.readParcelable(OrderInvoice.class.getClassLoader());
-    }
-
-    public static final Parcelable.Creator<OrderInvoice> CREATOR = new Parcelable.Creator<OrderInvoice>() {
-        @Override
-        public OrderInvoice createFromParcel(Parcel source) {
-            return new OrderInvoice(source);
-        }
-
-        @Override
-        public OrderInvoice[] newArray(int size) {
-            return new OrderInvoice[size];
-        }
-    };
 
     public String getOrderNumber() {
         return orderNumber;

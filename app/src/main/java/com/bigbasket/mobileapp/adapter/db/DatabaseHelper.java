@@ -19,6 +19,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static DatabaseHelper dbAdapter = null;
     private static boolean isConnectionOpen = false;
 
+    private DatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+        super(context, name, factory, version);
+    }
+
+    public static DatabaseHelper getInstance(Context context) {
+        if (dbAdapter == null)
+            dbAdapter = new DatabaseHelper(context.getApplicationContext(), DATABASE_NAME, null, DATABASE_VERSION);
+        return dbAdapter;
+    }
+
     public void open(Context context) {
         if (!isConnectionOpen) {
             try {
@@ -36,17 +46,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             isConnectionOpen = false;
         }
     }
-
-    public static DatabaseHelper getInstance(Context context) {
-        if (dbAdapter == null)
-            dbAdapter = new DatabaseHelper(context.getApplicationContext(), DATABASE_NAME, null, DATABASE_VERSION);
-        return dbAdapter;
-    }
-
-    private DatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, name, factory, version);
-    }
-
 
     @Override
     public void onCreate(SQLiteDatabase db) {

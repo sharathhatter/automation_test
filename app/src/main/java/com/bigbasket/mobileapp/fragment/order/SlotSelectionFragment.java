@@ -216,6 +216,47 @@ public class SlotSelectionFragment extends BaseFragment {
         return true;
     }
 
+    public LinearLayout getContentView() {
+        return getView() != null ? (LinearLayout) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
+    }
+
+    @Override
+    public void setTitle() {
+        // Do nothing
+    }
+
+    @Override
+    public String getTitle() {
+        return null;
+    }
+
+    @NonNull
+    @Override
+    public String getFragmentTxnTag() {
+        return SlotSelectionFragment.class.getName();
+    }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.SLOT_SELECTION_SCREEN;
+    }
+
+    public static class SlotHeaderViewHolder {
+        private TextView txtHeaderMsg;
+        private View base;
+
+        public SlotHeaderViewHolder(View base) {
+            this.base = base;
+        }
+
+        public TextView getTxtHeaderMsg() {
+            if (txtHeaderMsg == null) {
+                txtHeaderMsg = (TextView) base.findViewById(R.id.txtHeaderMsg);
+                txtHeaderMsg.setTypeface(faceRobotoRegular);
+            }
+            return txtHeaderMsg;
+        }
+    }
 
     private class SlotListAdapter extends BaseAdapter {
         private List<BaseSlot> flattenedSlotGroupList;
@@ -363,23 +404,6 @@ public class SlotSelectionFragment extends BaseFragment {
         }
     }
 
-    public static class SlotHeaderViewHolder {
-        private TextView txtHeaderMsg;
-        private View base;
-
-        public SlotHeaderViewHolder(View base) {
-            this.base = base;
-        }
-
-        public TextView getTxtHeaderMsg() {
-            if (txtHeaderMsg == null) {
-                txtHeaderMsg = (TextView) base.findViewById(R.id.txtHeaderMsg);
-                txtHeaderMsg.setTypeface(faceRobotoRegular);
-            }
-            return txtHeaderMsg;
-        }
-    }
-
     private class SlotGroupListAdapter extends BaseAdapter {
         @Override
         public Object getItem(int position) {
@@ -394,6 +418,45 @@ public class SlotSelectionFragment extends BaseFragment {
         @Override
         public int getCount() {
             return mSlotGroupList.size();
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View row = convertView;
+            SlotGroupHolder slotGroupHolder;
+            if (row == null) {
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                row = inflater.inflate(R.layout.uiv3_slot_group_card, parent, false);
+                slotGroupHolder = new SlotGroupHolder(row);
+                row.setTag(slotGroupHolder);
+            } else {
+                slotGroupHolder = (SlotGroupHolder) row.getTag();
+            }
+            SlotGroup slotGroup = mSlotGroupList.get(position);
+            TextView txtFulfilledBy = slotGroupHolder.getTxtFulfilledBy();
+            TextView txtFulfillmentDisplayName = slotGroupHolder.getTxtFulfillmentDisplayName();
+            TextView txtSlotSelected = slotGroupHolder.getTxtSlotSelected();
+
+            CheckBox chkIsSlotSelected = slotGroupHolder.getChkIsSlotSelected();
+            if (slotGroup.isSelected()) {
+                chkIsSlotSelected.setVisibility(View.VISIBLE);
+                chkIsSlotSelected.setChecked(true);
+                txtSlotSelected.setVisibility(View.VISIBLE);
+                txtSlotSelected.setText(slotGroup.getSelectedSlot().getFormattedSlotDate()
+                        + ", " + slotGroup.getSelectedSlot().getFormattedDisplayName());
+            } else {
+                txtSlotSelected.setVisibility(View.GONE);
+                chkIsSlotSelected.setVisibility(View.GONE);
+            }
+            FulfillmentInfo fulfillmentInfo = slotGroup.getFulfillmentInfo();
+            txtFulfilledBy.setText(fulfillmentInfo.getFulfilledBy());
+            if (TextUtils.isEmpty(fulfillmentInfo.getDisplayName())) {
+                txtFulfillmentDisplayName.setVisibility(View.GONE);
+            } else {
+                txtFulfillmentDisplayName.setVisibility(View.VISIBLE);
+                txtFulfillmentDisplayName.setText(Html.fromHtml(fulfillmentInfo.getDisplayName()));
+            }
+            return row;
         }
 
         private class SlotGroupHolder {
@@ -438,70 +501,5 @@ public class SlotSelectionFragment extends BaseFragment {
                 return chkIsSlotSelected;
             }
         }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View row = convertView;
-            SlotGroupHolder slotGroupHolder;
-            if (row == null) {
-                LayoutInflater inflater = getActivity().getLayoutInflater();
-                row = inflater.inflate(R.layout.uiv3_slot_group_card, parent, false);
-                slotGroupHolder = new SlotGroupHolder(row);
-                row.setTag(slotGroupHolder);
-            } else {
-                slotGroupHolder = (SlotGroupHolder) row.getTag();
-            }
-            SlotGroup slotGroup = mSlotGroupList.get(position);
-            TextView txtFulfilledBy = slotGroupHolder.getTxtFulfilledBy();
-            TextView txtFulfillmentDisplayName = slotGroupHolder.getTxtFulfillmentDisplayName();
-            TextView txtSlotSelected = slotGroupHolder.getTxtSlotSelected();
-
-            CheckBox chkIsSlotSelected = slotGroupHolder.getChkIsSlotSelected();
-            if (slotGroup.isSelected()) {
-                chkIsSlotSelected.setVisibility(View.VISIBLE);
-                chkIsSlotSelected.setChecked(true);
-                txtSlotSelected.setVisibility(View.VISIBLE);
-                txtSlotSelected.setText(slotGroup.getSelectedSlot().getFormattedSlotDate()
-                        + ", " + slotGroup.getSelectedSlot().getFormattedDisplayName());
-            } else {
-                txtSlotSelected.setVisibility(View.GONE);
-                chkIsSlotSelected.setVisibility(View.GONE);
-            }
-            FulfillmentInfo fulfillmentInfo = slotGroup.getFulfillmentInfo();
-            txtFulfilledBy.setText(fulfillmentInfo.getFulfilledBy());
-            if (TextUtils.isEmpty(fulfillmentInfo.getDisplayName())) {
-                txtFulfillmentDisplayName.setVisibility(View.GONE);
-            } else {
-                txtFulfillmentDisplayName.setVisibility(View.VISIBLE);
-                txtFulfillmentDisplayName.setText(Html.fromHtml(fulfillmentInfo.getDisplayName()));
-            }
-            return row;
-        }
-    }
-
-    public LinearLayout getContentView() {
-        return getView() != null ? (LinearLayout) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
-    }
-
-
-    @Override
-    public void setTitle() {
-        // Do nothing
-    }
-
-    @Override
-    public String getTitle() {
-        return null;
-    }
-
-    @NonNull
-    @Override
-    public String getFragmentTxnTag() {
-        return SlotSelectionFragment.class.getName();
-    }
-
-    @Override
-    public String getScreenTag() {
-        return TrackEventkeys.SLOT_SELECTION_SCREEN;
     }
 }

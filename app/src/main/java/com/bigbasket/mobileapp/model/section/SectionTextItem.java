@@ -9,14 +9,32 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 
 public class SectionTextItem implements Parcelable, Serializable {
-    private String text;
+    public static final Parcelable.Creator<SectionTextItem> CREATOR = new Parcelable.Creator<SectionTextItem>() {
+        @Override
+        public SectionTextItem createFromParcel(Parcel source) {
+            return new SectionTextItem(source);
+        }
 
+        @Override
+        public SectionTextItem[] newArray(int size) {
+            return new SectionTextItem[size];
+        }
+    };
+    private String text;
     @SerializedName(Constants.RENDERING_ID)
     private int renderingId;
 
     public SectionTextItem(String text, int renderingId) {
         this.text = text;
         this.renderingId = renderingId;
+    }
+
+    public SectionTextItem(Parcel source) {
+        boolean wasTextNull = source.readByte() == (byte) 1;
+        if (!wasTextNull) {
+            text = source.readString();
+        }
+        renderingId = source.readInt();
     }
 
     @Override
@@ -34,14 +52,6 @@ public class SectionTextItem implements Parcelable, Serializable {
         dest.writeInt(renderingId);
     }
 
-    public SectionTextItem(Parcel source) {
-        boolean wasTextNull = source.readByte() == (byte) 1;
-        if (!wasTextNull) {
-            text = source.readString();
-        }
-        renderingId = source.readInt();
-    }
-
     public String getText() {
         return text;
     }
@@ -49,16 +59,4 @@ public class SectionTextItem implements Parcelable, Serializable {
     public int getRenderingId() {
         return renderingId;
     }
-
-    public static final Parcelable.Creator<SectionTextItem> CREATOR = new Parcelable.Creator<SectionTextItem>() {
-        @Override
-        public SectionTextItem createFromParcel(Parcel source) {
-            return new SectionTextItem(source);
-        }
-
-        @Override
-        public SectionTextItem[] newArray(int size) {
-            return new SectionTextItem[size];
-        }
-    };
 }

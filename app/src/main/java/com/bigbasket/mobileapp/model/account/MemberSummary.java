@@ -9,20 +9,40 @@ import com.google.gson.annotations.SerializedName;
 
 public class MemberSummary implements Parcelable {
 
+    public static final Parcelable.Creator<MemberSummary> CREATOR = new Parcelable.Creator<MemberSummary>() {
+        @Override
+        public MemberSummary createFromParcel(Parcel source) {
+            return new MemberSummary(source);
+        }
+
+        @Override
+        public MemberSummary[] newArray(int size) {
+            return new MemberSummary[size];
+        }
+    };
     @SerializedName(Constants.MEMBER_NAME)
     private String memberName;
-
     private String address1;
     private String address2;
-
     @SerializedName(Constants.RESIDENTIAL_COMPLEX)
     private String residentialComplex;
-
     private String landmark;
     private String area;
     private String zipcode;
     private String mobile;
     private String city;
+
+    MemberSummary(Parcel source) {
+        memberName = source.readString();
+        address1 = source.readString();
+        address2 = source.readString();
+        residentialComplex = source.readString();
+        landmark = source.readString();
+        area = source.readString();
+        zipcode = source.readString();
+        mobile = source.readString();
+        city = source.readString();
+    }
 
     @Override
     public int describeContents() {
@@ -41,30 +61,6 @@ public class MemberSummary implements Parcelable {
         dest.writeString(mobile);
         dest.writeString(city);
     }
-
-    MemberSummary(Parcel source) {
-        memberName = source.readString();
-        address1 = source.readString();
-        address2 = source.readString();
-        residentialComplex = source.readString();
-        landmark = source.readString();
-        area = source.readString();
-        zipcode = source.readString();
-        mobile = source.readString();
-        city = source.readString();
-    }
-
-    public static final Parcelable.Creator<MemberSummary> CREATOR = new Parcelable.Creator<MemberSummary>() {
-        @Override
-        public MemberSummary createFromParcel(Parcel source) {
-            return new MemberSummary(source);
-        }
-
-        @Override
-        public MemberSummary[] newArray(int size) {
-            return new MemberSummary[size];
-        }
-    };
 
     public String getMemberName() {
         return memberName;

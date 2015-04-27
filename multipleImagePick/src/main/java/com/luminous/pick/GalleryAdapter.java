@@ -79,7 +79,7 @@ public class GalleryAdapter extends BaseAdapter {
     }
 
     public ArrayList<CustomGallery> getSelected() {
-        ArrayList<CustomGallery> dataT = new ArrayList<CustomGallery>();
+        ArrayList<CustomGallery> dataT = new ArrayList<>();
 
         for (int i = 0; i < data.size(); i++) {
             if (data.get(i).isSeleted) {

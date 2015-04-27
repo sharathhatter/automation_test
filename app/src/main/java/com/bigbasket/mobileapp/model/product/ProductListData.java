@@ -11,38 +11,81 @@ import java.util.ArrayList;
 
 public class ProductListData implements Parcelable {
 
+    public static final Parcelable.Creator<ProductListData> CREATOR = new Parcelable.Creator<ProductListData>() {
+        @Override
+        public ProductListData createFromParcel(Parcel source) {
+            return new ProductListData(source);
+        }
+
+        @Override
+        public ProductListData[] newArray(int size) {
+            return new ProductListData[size];
+        }
+    };
     @SerializedName(Constants.SORT_ON)
     private String sortedOn;
-
     @SerializedName(Constants.PRODUCT_COUNT)
     private int productCount;
-
     @SerializedName(Constants.CURRENT_PAGE)
     private int currentPage;
-
     @SerializedName(Constants.TOTAL_PAGES)
     private int totalPages;
-
     @SerializedName(Constants.SEARCH_QUERY)
     private String query;
-
     @SerializedName(Constants.PRODUCTS)
     private ArrayList<Product> products;
-
     @SerializedName(Constants.FILTERED_ON)
     private ArrayList<FilteredOn> filteredOn;
-
     @SerializedName(Constants.PRODUCT_SORT_OPTION)
     private ArrayList<Option> sortOptions;
-
     @SerializedName(Constants.FILTER_OPTIONS)
     private ArrayList<FilterOptionCategory> filterOptionItems;
-
     @SerializedName(Constants.BASE_IMG_URL)
     private String baseImgUrl;
-
     @SerializedName(Constants.SECTION_INFO)
     private SectionData sectionData;
+
+    public ProductListData(Parcel source) {
+        boolean isSortedOnNull = source.readByte() == (byte) 1;
+        if (!isSortedOnNull) {
+            sortedOn = source.readString();
+        }
+        productCount = source.readInt();
+        currentPage = source.readInt();
+        totalPages = source.readInt();
+        boolean isQueryNull = source.readByte() == (byte) 1;
+        if (!isQueryNull) {
+            query = source.readString();
+        }
+        boolean isProductsNull = source.readByte() == (byte) 1;
+        if (!isProductsNull) {
+            products = new ArrayList<>();
+            source.readTypedList(products, Product.CREATOR);
+        }
+        boolean isFilteredOnNull = source.readByte() == (byte) 1;
+        if (!isFilteredOnNull) {
+            filteredOn = new ArrayList<>();
+            source.readTypedList(filteredOn, FilteredOn.CREATOR);
+        }
+        boolean isSortOptionsNull = source.readByte() == (byte) 1;
+        if (!isSortOptionsNull) {
+            sortOptions = new ArrayList<>();
+            source.readTypedList(sortOptions, Option.CREATOR);
+        }
+        boolean isFilterOptionCategoryNull = source.readByte() == (byte) 1;
+        if (!isFilterOptionCategoryNull) {
+            filterOptionItems = new ArrayList<>();
+            source.readTypedList(filterOptionItems, FilterOptionCategory.CREATOR);
+        }
+        boolean isBaseImgUrlNull = source.readByte() == (byte) 1;
+        if (!isBaseImgUrlNull) {
+            baseImgUrl = source.readString();
+        }
+        boolean isSectionNull = source.readByte() == (byte) 1;
+        if (!isSectionNull) {
+            sectionData = source.readParcelable(ProductListData.class.getClassLoader());
+        }
+    }
 
     @Override
     public int describeContents() {
@@ -95,60 +138,6 @@ public class ProductListData implements Parcelable {
             dest.writeParcelable(sectionData, flags);
         }
     }
-
-    public ProductListData(Parcel source) {
-        boolean isSortedOnNull = source.readByte() == (byte) 1;
-        if (!isSortedOnNull) {
-            sortedOn = source.readString();
-        }
-        productCount = source.readInt();
-        currentPage = source.readInt();
-        totalPages = source.readInt();
-        boolean isQueryNull = source.readByte() == (byte) 1;
-        if (!isQueryNull) {
-            query = source.readString();
-        }
-        boolean isProductsNull = source.readByte() == (byte) 1;
-        if (!isProductsNull) {
-            products = new ArrayList<>();
-            source.readTypedList(products, Product.CREATOR);
-        }
-        boolean isFilteredOnNull = source.readByte() == (byte) 1;
-        if (!isFilteredOnNull) {
-            filteredOn = new ArrayList<>();
-            source.readTypedList(filteredOn, FilteredOn.CREATOR);
-        }
-        boolean isSortOptionsNull = source.readByte() == (byte) 1;
-        if (!isSortOptionsNull) {
-            sortOptions = new ArrayList<>();
-            source.readTypedList(sortOptions, Option.CREATOR);
-        }
-        boolean isFilterOptionCategoryNull = source.readByte() == (byte) 1;
-        if (!isFilterOptionCategoryNull) {
-            filterOptionItems = new ArrayList<>();
-            source.readTypedList(filterOptionItems, FilterOptionCategory.CREATOR);
-        }
-        boolean isBaseImgUrlNull = source.readByte() == (byte) 1;
-        if (!isBaseImgUrlNull) {
-            baseImgUrl = source.readString();
-        }
-        boolean isSectionNull = source.readByte() == (byte) 1;
-        if (!isSectionNull) {
-            sectionData = source.readParcelable(ProductListData.class.getClassLoader());
-        }
-    }
-
-    public static final Parcelable.Creator<ProductListData> CREATOR = new Parcelable.Creator<ProductListData>() {
-        @Override
-        public ProductListData createFromParcel(Parcel source) {
-            return new ProductListData(source);
-        }
-
-        @Override
-        public ProductListData[] newArray(int size) {
-            return new ProductListData[size];
-        }
-    };
 
     public String getSortedOn() {
         return sortedOn;

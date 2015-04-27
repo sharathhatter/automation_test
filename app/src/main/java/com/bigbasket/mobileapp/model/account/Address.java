@@ -10,51 +10,47 @@ import com.google.gson.annotations.SerializedName;
 
 public class Address implements Parcelable {
 
+    public static final Parcelable.Creator<Address> CREATOR = new Parcelable.Creator<Address>() {
+        @Override
+        public Address createFromParcel(Parcel source) {
+            return new Address(source);
+        }
+
+        @Override
+        public Address[] newArray(int size) {
+            return new Address[size];
+        }
+    };
     @SerializedName(Constants.IS_DEFAULT)
     private boolean isDefault;
-
     @SerializedName(Constants.ID)
     private String id;
-
     @SerializedName(Constants.CONTACT_NUM)
     private String contactNum;
-
     @SerializedName(Constants.ADDR_NICK)
     private String addressNickName;
-
     @SerializedName(Constants.FIRSTNAME)
     private String firstName;
-
     @SerializedName(Constants.LASTNAME)
     private String lastName;
-
     @SerializedName(Constants.HOUSE_NO)
     private String houseNumber;
-
     @SerializedName(Constants.STREET)
     private String street;
-
     @SerializedName(Constants.RES_CMPLX)
     private String residentialComplex;
-
     @SerializedName(Constants.LANDMARK)
     private String landmark;
-
     @SerializedName(Constants.AREA)
     private String area;
-
     @SerializedName(Constants.CITY_NAME)
     private String cityName;
-
     @SerializedName(Constants.PIN)
     private String pincode;
-
     @SerializedName(Constants.IS_MAPPED)
     private boolean isMapped;
-
     @SerializedName(Constants.LAT)
     private double latitude;
-
     @SerializedName(Constants.LNG)
     private double longitude;
 
@@ -102,18 +98,6 @@ public class Address implements Parcelable {
     public int describeContents() {
         return 0;
     }
-
-    public static final Parcelable.Creator<Address> CREATOR = new Parcelable.Creator<Address>() {
-        @Override
-        public Address createFromParcel(Parcel source) {
-            return new Address(source);
-        }
-
-        @Override
-        public Address[] newArray(int size) {
-            return new Address[size];
-        }
-    };
 
     public boolean isDefault() {
         return isDefault;

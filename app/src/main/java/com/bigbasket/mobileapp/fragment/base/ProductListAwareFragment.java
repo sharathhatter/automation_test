@@ -1,9 +1,9 @@
 package com.bigbasket.mobileapp.fragment.base;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -20,9 +20,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.product.ProductListActivity;
+import com.bigbasket.mobileapp.activity.product.SortFilterActivity;
 import com.bigbasket.mobileapp.adapter.product.ProductListRecyclerAdapter;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
-import com.bigbasket.mobileapp.interfaces.FilterDisplayAware;
 import com.bigbasket.mobileapp.interfaces.InfiniteProductListAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
@@ -40,11 +41,12 @@ import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
 import com.bigbasket.mobileapp.task.uiv3.ProductListTask;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListDoAddDeleteTask;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.ShoppingListNamesDialog;
-import com.bigbasket.mobileapp.view.uiv3.SortProductDialog;
 import com.google.gson.Gson;
+import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,11 +62,6 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
     private ProductListRecyclerAdapter mProductListRecyclerAdapter;
     private View mFooterView;
     private boolean mIsNextPageLoading;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -146,13 +143,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
     public void onBackResume() {
         super.onBackResume();
 
-        if (getActivity() != null && getActivity() instanceof FilterDisplayAware) {
-            if (productListData != null) {
-                ((FilterDisplayAware) getActivity()).setFilterView(productListData.getFilterOptions(),
-                        productListData.getFilteredOn(), getFragmentTxnTag());
-            } else {
-                ((FilterDisplayAware) getActivity()).setFilterView(null, null, getFragmentTxnTag());
-            }
+        if (getActivity() != null && getActivity() instanceof ProductListActivity) {
             displayProductCount();
         }
     }
@@ -166,77 +157,64 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         final View sectionView = getSectionView();
         displayProductCount();
 
-        if (productListData != null && productListData.getProductCount() > 0) {
+        if (productListData != null) {
+            View base = getActivity().getLayoutInflater().inflate(R.layout.uiv3_fab_recycler_view, contentView, false);
+            RecyclerView productRecyclerView = (RecyclerView) base.findViewById(R.id.fabRecyclerView);
+            UIUtil.configureRecyclerView(productRecyclerView, getActivity(), 1, 1);
 
-            // Set product-list header view
-            final View headerView = getActivity().getLayoutInflater().inflate(R.layout.uiv3_product_list_header, contentView, false);
+            FloatingActionButton fabFilterSort = (FloatingActionButton) base.findViewById(R.id.btnFab);
+            fabFilterSort.setImageResource(R.drawable.filter_white);
 
-            TextView txtFilterBy = (TextView) headerView.findViewById(R.id.txtFilterBy);
-            TextView txtSortBy = (TextView) headerView.findViewById(R.id.txtSortBy);
-
-            txtSortBy.setTypeface(faceRobotoRegular);
-            txtFilterBy.setTypeface(faceRobotoRegular);
-            if (productListData.getFilterOptions() != null && productListData.getFilterOptions().size() > 0) {
-                txtFilterBy.setVisibility(View.VISIBLE);
-                txtFilterBy.setOnClickListener(new View.OnClickListener() {
+            if ((productListData.getFilterOptions() != null && productListData.getFilterOptions().size() > 0)
+                    || (productListData.getSortOptions().size() > 0)) {
+                fabFilterSort.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        ((FilterDisplayAware) getActivity()).showFilters();
-                    }
-                });
-                int filterDrawableId = productListData.getFilteredOn() != null && productListData.getFilteredOn().size() > 0 ?
-                        R.drawable.filter_applied : R.drawable.filter;
-                txtFilterBy.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(getActivity(), filterDrawableId),
-                        null, null, null);
-            } else {
-                txtFilterBy.setVisibility(View.GONE);
-            }
-
-            if (productListData.getSortOptions().size() > 0) {
-                txtSortBy.setVisibility(View.VISIBLE);
-                txtSortBy.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ((FilterDisplayAware) getActivity()).showSortOptions();
+                        onSortFilterScreenRequested();
                     }
                 });
             } else {
-                txtSortBy.setVisibility(View.GONE);
+                fabFilterSort.setVisibility(View.GONE);
             }
-
-            RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, contentView);
 
             // Set product-list data
-            AuthParameters authParameters = AuthParameters.getInstance(getActivity());
-            ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
-                    .setCommonTypeface(faceRobotoRegular)
-                    .setRupeeTypeface(faceRupee)
-                    .setHandler(handler)
-                    .setLoggedInMember(!authParameters.isAuthTokenEmpty())
-                    .setShowShoppingListBtn(true)
-                    .setShowBasketBtn(true)
-                    .setShowShopListDeleteBtn(false)
-                    .build();
-            mProductListRecyclerAdapter = new ProductListRecyclerAdapter(productListData.getProducts(), productListData.getBaseImgUrl(),
-                    productViewDisplayDataHolder, this, productListData.getProductCount(),
-                    getNavigationCtx());
+            if (productListData.getProducts() != null && productListData.getProducts().size() > 0) {
+                base.findViewById(R.id.noDeliveryAddLayout).setVisibility(View.GONE);
+                AuthParameters authParameters = AuthParameters.getInstance(getActivity());
+                ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
+                        .setCommonTypeface(faceRobotoRegular)
+                        .setRupeeTypeface(faceRupee)
+                        .setHandler(handler)
+                        .setLoggedInMember(!authParameters.isAuthTokenEmpty())
+                        .setShowShoppingListBtn(true)
+                        .setShowBasketBtn(true)
+                        .setShowShopListDeleteBtn(false)
+                        .build();
+                mProductListRecyclerAdapter = new ProductListRecyclerAdapter(productListData.getProducts(), productListData.getBaseImgUrl(),
+                        productViewDisplayDataHolder, this, productListData.getProductCount(),
+                        getNavigationCtx());
 
-            productRecyclerView.setAdapter(mProductListRecyclerAdapter);
+                productRecyclerView.setAdapter(mProductListRecyclerAdapter);
+            } else {
+                productRecyclerView.setVisibility(View.GONE);
+                View emptyPageLayout = base.findViewById(R.id.noDeliveryAddLayout);
+                showNoProductsFoundView(emptyPageLayout);
+            }
 
             if (sectionView != null) {
                 contentView.addView(sectionView);
             }
-            contentView.addView(headerView);
-            contentView.addView(productRecyclerView);
+            contentView.addView(base);
 
-            ((FilterDisplayAware) getActivity()).setFilterView(productListData.getFilterOptions(),
-                    productListData.getFilteredOn(), getFragmentTxnTag());
         } else if (sectionView != null) {
             addSectionToScrollView(contentView, sectionView);
         }
 
-        if (sectionView == null && (productListData == null || productListData.getProductCount() == 0)) {
-            showNoProductsFoundView(contentView);
+        if (sectionView == null && productListData == null) {
+            LayoutInflater inflater = getActivity().getLayoutInflater();
+            View emptyPageView = inflater.inflate(R.layout.uiv3_empty_data_text, contentView, false);
+            showNoProductsFoundView(emptyPageView);
+            contentView.addView(emptyPageView);
         }
     }
 
@@ -249,7 +227,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
     private void displayProductCount() {
         if (productListData != null && productListData.getProductCount() > 0) {
             String productsStr = productListData.getProductCount() > 1 ? " Products" : " Product";
-            if (getCurrentActivity() instanceof FilterDisplayAware) {
+            if (getCurrentActivity() instanceof ProductListActivity) {
                 SpannableString productCountSpannable =
                         new SpannableString(productListData.getProductCount() + productsStr);
                 productCountSpannable.setSpan(new CustomTypefaceSpan("", faceRobotoLight), 0, productCountSpannable.length(),
@@ -259,20 +237,17 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                 getCurrentActivity().getSupportActionBar().setSubtitle(productCountSpannable);
             }
         } else {
-            if (getCurrentActivity() instanceof FilterDisplayAware) {
+            if (getCurrentActivity() instanceof ProductListActivity) {
                 getCurrentActivity().getSupportActionBar().setSubtitle(null);
             }
         }
     }
 
-    protected void showNoProductsFoundView(LinearLayout contentView) {
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        contentView.removeAllViews();
-        View emptyPageView = inflater.inflate(R.layout.uiv3_empty_data_text, contentView, false);
+    private void showNoProductsFoundView(View emptyPageView) {
         ImageView imgEmptyPage = (ImageView) emptyPageView.findViewById(R.id.imgEmptyPage);
         imgEmptyPage.setVisibility(View.INVISIBLE);
         TextView txtEmptyMsg1 = (TextView) emptyPageView.findViewById(R.id.txtEmptyMsg1);
-        txtEmptyMsg1.setText(R.string.noProducts);
+        txtEmptyMsg1.setText(getEmptyPageText());
         TextView txtEmptyMsg2 = (TextView) emptyPageView.findViewById(R.id.txtEmptyMsg2);
         txtEmptyMsg2.setVisibility(View.GONE);
         Button btnBlankPage = (Button) emptyPageView.findViewById(R.id.btnBlankPage);
@@ -284,9 +259,11 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                 getCurrentActivity().goToHome(false);
             }
         });
-        contentView.addView(emptyPageView);
     }
 
+    protected String getEmptyPageText() {
+        return getString(R.string.noProducts);
+    }
 
     @Override
     public void updateProductList(List<Product> nextPageProducts) {
@@ -442,34 +419,26 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         shoppingListDoAddDeleteTask.startTask();
     }
 
-    public void onFilterApplied(ArrayList<FilteredOn> filteredOn) {
-        if (productListData != null) {
-            productListData.setFilteredOn(filteredOn);
-            loadProducts();
-        }
-        trackFilterAppliedEvent(filteredOn);
-    }
-
     private void trackFilterAppliedEvent(ArrayList<FilteredOn> filteredOnArrayList) {
-        if (filteredOnArrayList == null || filteredOnArrayList.size() == 0) return;
-        Map<String, String> eventAttribs = new HashMap<>();
-        for (FilteredOn filteredOn : filteredOnArrayList) {
-            eventAttribs.put(TrackEventkeys.FILTER_NAME, filteredOn.getFilterSlug());
-            eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNavigationCtx());
-            trackEvent(TrackingAware.FILTER_APPLIED, eventAttribs, getNavigationCtx(), null, false);
+        if (filteredOnArrayList == null || filteredOnArrayList.size() == 0) {
+            trackEvent(TrackingAware.FILTER_CLEARED, null);
+        } else {
+            Map<String, String> eventAttribs = new HashMap<>();
+            for (FilteredOn filteredOn : filteredOnArrayList) {
+                eventAttribs.put(TrackEventkeys.FILTER_NAME, filteredOn.getFilterSlug());
+                eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNavigationCtx());
+                trackEvent(TrackingAware.FILTER_APPLIED, eventAttribs, getNavigationCtx(), null, false);
+            }
         }
     }
 
-    public void onSortViewRequested() {
-        if (productListData == null || productListData.getSortOptions() == null ||
-                productListData.getSortOptions().size() == 0) {
-            Toast.makeText(getActivity(), getString(R.string.noSortOptions), Toast.LENGTH_SHORT).show();
-            return;
-        }
-        SortProductDialog sortProductDialog = SortProductDialog.newInstance(productListData.getSortedOn(),
-                productListData.getSortOptions());
-        sortProductDialog.setTargetFragment(getFragment(), 0);
-        sortProductDialog.show(getFragmentManager(), Constants.SORT_ON);
+    private void onSortFilterScreenRequested() {
+        Intent sortFilterIntent = new Intent(getActivity(), SortFilterActivity.class);
+        sortFilterIntent.putExtra(Constants.FILTER_OPTIONS, productListData.getFilterOptions());
+        sortFilterIntent.putExtra(Constants.FILTERED_ON, productListData.getFilteredOn());
+        sortFilterIntent.putExtra(Constants.PRODUCT_SORT_OPTION, productListData.getSortOptions());
+        sortFilterIntent.putExtra(Constants.SORT_ON, productListData.getSortedOn());
+        startActivityForResult(sortFilterIntent, NavigationCodes.FILTER_APPLIED);
     }
 
     @Override
@@ -483,14 +452,33 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
             syncBasket();
         }
 
-        if (getActivity() != null && getActivity() instanceof FilterDisplayAware) {
-            if (productListData != null) {
-                ((FilterDisplayAware) getActivity()).setFilterView(productListData.getFilterOptions(),
-                        productListData.getFilteredOn(), getFragmentTxnTag());
-            } else {
-                ((FilterDisplayAware) getActivity()).setFilterView(null, null, getFragmentTxnTag());
-            }
+        if (getActivity() != null && getActivity() instanceof ProductListActivity) {
             displayProductCount();
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        setSuspended(false);
+        if (resultCode == NavigationCodes.FILTER_APPLIED) {
+            ArrayList<FilteredOn> filteredOns = null;
+            String sortedOn = null;
+            if (data != null) {
+                sortedOn = data.getStringExtra(Constants.SORT_ON);
+                filteredOns = data.getParcelableArrayListExtra(Constants.FILTERED_ON);
+            }
+            applySortAndFilter(sortedOn, filteredOns);
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    private void applySortAndFilter(String sortedOn, ArrayList<FilteredOn> filteredOns) {
+        if (productListData != null) {
+            productListData.setSortedOn(sortedOn);
+            productListData.setFilteredOn(filteredOns);
+            trackFilterAppliedEvent(filteredOns);
+            loadProducts();
         }
     }
 

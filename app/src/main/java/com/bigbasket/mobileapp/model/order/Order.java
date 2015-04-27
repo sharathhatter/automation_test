@@ -10,36 +10,37 @@ import com.google.gson.annotations.SerializedName;
 
 public class Order implements Parcelable {
 
+    public static final Parcelable.Creator<Order> CREATOR = new Parcelable.Creator<Order>() {
+        @Override
+        public Order[] newArray(int size) {
+            return new Order[size];
+        }
+
+        @Override
+        public Order createFromParcel(Parcel source) {
+            return new Order(source);
+        }
+    };
     @SerializedName(Constants.ORDER_ID)
     private String orderId;
-
     @SerializedName(Constants.ORDER_NUMBER)
     private String orderNumber;
-
     @SerializedName(Constants.DELIVERY_DATE)
     private String deliveryDate;
-
     @SerializedName(Constants.ITEMS_COUNT)
     private int itemsCount;
-
     @SerializedName(Constants.ORDER_STATUS)
     private String orderStatus;
-
     @SerializedName(Constants.ORDER_VALUE)
     private String orderValue;
-
     @SerializedName(Constants.FULFILLMENT_INFO)
     private FulfillmentInfo fulfillmentInfo;
-
     @SerializedName(Constants.ORDER_TYPE)
     private String orderType;
-
     @SerializedName(Constants.VOUCHER)
     private String voucher;
-
     @SerializedName(Constants.PAYMENT_METHOD)
     private String paymentMethod;
-
     private Address address;
 
     public Order(Parcel parcel) {
@@ -87,18 +88,6 @@ public class Order implements Parcelable {
     public int describeContents() {
         return 0;
     }
-
-    public static final Parcelable.Creator<Order> CREATOR = new Parcelable.Creator<Order>() {
-        @Override
-        public Order[] newArray(int size) {
-            return new Order[size];
-        }
-
-        @Override
-        public Order createFromParcel(Parcel source) {
-            return new Order(source);
-        }
-    };
 
     public String getOrderId() {
         return orderId;

@@ -11,14 +11,17 @@ import java.util.ArrayList;
 public class SocialAccount implements Parcelable {
     public static final String FB = "fb";
     public static final String GP = "gp";
+    public static final Parcelable.Creator<SocialAccount> CREATOR = new Parcelable.Creator<SocialAccount>() {
+        @Override
+        public SocialAccount createFromParcel(Parcel source) {
+            return new SocialAccount(source);
+        }
 
-    public static ArrayList<String> getSocialLoginTypes() {
-        ArrayList<String> socialAccountTypes = new ArrayList<>();
-        socialAccountTypes.add(FB);
-        socialAccountTypes.add(GP);
-        return socialAccountTypes;
-    }
-
+        @Override
+        public SocialAccount[] newArray(int size) {
+            return new SocialAccount[size];
+        }
+    };
     private String email;
     private String displayName;
     private String gender;
@@ -47,6 +50,50 @@ public class SocialAccount implements Parcelable {
         this.firstName = firstName;
         this.lastName = lastName;
         this.photo = photo;
+    }
+
+    public SocialAccount(Parcel source) {
+        email = source.readString();
+        displayName = source.readString();
+
+        boolean wasGenderNull = source.readByte() == (byte) 1;
+        if (!wasGenderNull) {
+            gender = source.readString();
+        }
+
+        boolean wasLinkNull = source.readByte() == (byte) 1;
+        if (!wasLinkNull) {
+            link = source.readString();
+        }
+
+        boolean wasIdNull = source.readByte() == (byte) 1;
+        if (!wasIdNull) {
+            id = source.readString();
+        }
+
+        verified = source.readByte() == (byte) 1;
+
+        boolean wasFirstNameNull = source.readByte() == (byte) 1;
+        if (!wasFirstNameNull) {
+            firstName = source.readString();
+        }
+
+        boolean wasLastNameNull = source.readByte() == (byte) 1;
+        if (!wasLastNameNull) {
+            lastName = source.readString();
+        }
+
+        boolean wasPhotoNull = source.readByte() == (byte) 1;
+        if (!wasPhotoNull) {
+            photo = source.readString();
+        }
+    }
+
+    public static ArrayList<String> getSocialLoginTypes() {
+        ArrayList<String> socialAccountTypes = new ArrayList<>();
+        socialAccountTypes.add(FB);
+        socialAccountTypes.add(GP);
+        return socialAccountTypes;
     }
 
     public String getEmail() {
@@ -133,53 +180,4 @@ public class SocialAccount implements Parcelable {
             dest.writeString(photo);
         }
     }
-
-    public SocialAccount(Parcel source) {
-        email = source.readString();
-        displayName = source.readString();
-
-        boolean wasGenderNull = source.readByte() == (byte) 1;
-        if (!wasGenderNull) {
-            gender = source.readString();
-        }
-
-        boolean wasLinkNull = source.readByte() == (byte) 1;
-        if (!wasLinkNull) {
-            link = source.readString();
-        }
-
-        boolean wasIdNull = source.readByte() == (byte) 1;
-        if (!wasIdNull) {
-            id = source.readString();
-        }
-
-        verified = source.readByte() == (byte) 1;
-
-        boolean wasFirstNameNull = source.readByte() == (byte) 1;
-        if (!wasFirstNameNull) {
-            firstName = source.readString();
-        }
-
-        boolean wasLastNameNull = source.readByte() == (byte) 1;
-        if (!wasLastNameNull) {
-            lastName = source.readString();
-        }
-
-        boolean wasPhotoNull = source.readByte() == (byte) 1;
-        if (!wasPhotoNull) {
-            photo = source.readString();
-        }
-    }
-
-    public static final Parcelable.Creator<SocialAccount> CREATOR = new Parcelable.Creator<SocialAccount>() {
-        @Override
-        public SocialAccount createFromParcel(Parcel source) {
-            return new SocialAccount(source);
-        }
-
-        @Override
-        public SocialAccount[] newArray(int size) {
-            return new SocialAccount[size];
-        }
-    };
 }

@@ -5,6 +5,18 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class SlotHeader extends BaseSlot implements Parcelable {
+    public static final Parcelable.Creator<SlotHeader> CREATOR = new Parcelable.Creator<SlotHeader>() {
+        @Override
+        public SlotHeader createFromParcel(Parcel source) {
+            return new SlotHeader(source);
+        }
+
+        @Override
+        public SlotHeader[] newArray(int size) {
+            return new SlotHeader[size];
+        }
+    };
+
     public SlotHeader(String displayName) {
         super(displayName);
     }
@@ -28,16 +40,4 @@ public class SlotHeader extends BaseSlot implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.displayName);
     }
-
-    public static final Parcelable.Creator<SlotHeader> CREATOR = new Parcelable.Creator<SlotHeader>() {
-        @Override
-        public SlotHeader createFromParcel(Parcel source) {
-            return new SlotHeader(source);
-        }
-
-        @Override
-        public SlotHeader[] newArray(int size) {
-            return new SlotHeader[size];
-        }
-    };
 }

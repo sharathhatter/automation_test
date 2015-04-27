@@ -119,6 +119,11 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
         finish();
     }
 
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.APPLY_EVOUCHER_SCREEN;
+    }
+
     private class ActiveVoucherListAdapter extends BaseAdapter {
         private ArrayList<ActiveVouchers> activeVouchersList;
 
@@ -139,6 +144,42 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
         @Override
         public long getItemId(int position) {
             return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View row = convertView;
+            ActiveVoucherViewHolder activeVoucherViewHolder;
+            final ActiveVouchers activeVouchers = activeVouchersList.get(position);
+            if (row == null) {
+                LayoutInflater inflater = (LayoutInflater) getCurrentActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                row = inflater.inflate(R.layout.uiv3_active_voucher_list_row, parent, false);
+                activeVoucherViewHolder = new ActiveVoucherViewHolder(row);
+                row.setTag(activeVoucherViewHolder);
+            } else {
+                activeVoucherViewHolder = (ActiveVoucherViewHolder) row.getTag();
+            }
+            TextView txtVoucherCode = activeVoucherViewHolder.getTxtVoucherCode();
+            TextView txtVoucherDesc = activeVoucherViewHolder.getTxtVoucherDesc();
+            TextView txtVoucherValidity = activeVoucherViewHolder.getTxtVoucherValidity();
+            TextView txtVoucherMsg = activeVoucherViewHolder.getTxtVoucherMsg();
+            CheckedTextView rbtnApplyVoucher = activeVoucherViewHolder.getRbtnApplyVoucher();
+
+            if (activeVouchers.canApply()) {
+                rbtnApplyVoucher.setVisibility(View.VISIBLE);
+                txtVoucherMsg.setTextColor(getResources().getColor(R.color.uiv3_secondary_text_color));
+            } else {
+                rbtnApplyVoucher.setVisibility(View.GONE);
+                txtVoucherMsg.setTextColor(getResources().getColor(R.color.dark_red));
+            }
+
+            txtVoucherCode.setText(activeVouchers.getCode());
+            txtVoucherCode.setBackgroundColor(randomColor());
+            txtVoucherDesc.setText(activeVouchers.getCustomerDesc());
+            txtVoucherMsg.setText(activeVouchers.getMessage());
+            txtVoucherValidity.setText(getString(R.string.pleaseNote) + " " +
+                    activeVouchers.getValidity());
+            return row;
         }
 
         private class ActiveVoucherViewHolder {
@@ -192,46 +233,5 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
                 return rbtnApplyVoucher;
             }
         }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View row = convertView;
-            ActiveVoucherViewHolder activeVoucherViewHolder;
-            final ActiveVouchers activeVouchers = activeVouchersList.get(position);
-            if (row == null) {
-                LayoutInflater inflater = (LayoutInflater) getCurrentActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                row = inflater.inflate(R.layout.uiv3_active_voucher_list_row, parent, false);
-                activeVoucherViewHolder = new ActiveVoucherViewHolder(row);
-                row.setTag(activeVoucherViewHolder);
-            } else {
-                activeVoucherViewHolder = (ActiveVoucherViewHolder) row.getTag();
-            }
-            TextView txtVoucherCode = activeVoucherViewHolder.getTxtVoucherCode();
-            TextView txtVoucherDesc = activeVoucherViewHolder.getTxtVoucherDesc();
-            TextView txtVoucherValidity = activeVoucherViewHolder.getTxtVoucherValidity();
-            TextView txtVoucherMsg = activeVoucherViewHolder.getTxtVoucherMsg();
-            CheckedTextView rbtnApplyVoucher = activeVoucherViewHolder.getRbtnApplyVoucher();
-
-            if (activeVouchers.canApply()) {
-                rbtnApplyVoucher.setVisibility(View.VISIBLE);
-                txtVoucherMsg.setTextColor(getResources().getColor(R.color.uiv3_secondary_text_color));
-            } else {
-                rbtnApplyVoucher.setVisibility(View.GONE);
-                txtVoucherMsg.setTextColor(getResources().getColor(R.color.dark_red));
-            }
-
-            txtVoucherCode.setText(activeVouchers.getCode());
-            txtVoucherCode.setBackgroundColor(randomColor());
-            txtVoucherDesc.setText(activeVouchers.getCustomerDesc());
-            txtVoucherMsg.setText(activeVouchers.getMessage());
-            txtVoucherValidity.setText(getString(R.string.pleaseNote) + " " +
-                    activeVouchers.getValidity());
-            return row;
-        }
-    }
-
-    @Override
-    public String getScreenTag() {
-        return TrackEventkeys.APPLY_EVOUCHER_SCREEN;
     }
 }

@@ -10,15 +10,23 @@ import java.util.ArrayList;
 
 public class CartItemList implements Parcelable {
 
+    public static final Parcelable.Creator<CartItemList> CREATOR = new Parcelable.Creator<CartItemList>() {
+        @Override
+        public CartItemList createFromParcel(Parcel source) {
+            return new CartItemList(source);
+        }
+
+        @Override
+        public CartItemList[] newArray(int size) {
+            return new CartItemList[size];
+        }
+    };
     @SerializedName(Constants.LINE_ITEMS)
     private ArrayList<CartItem> cartItems;
-
     @SerializedName(Constants.TLC_NAME)
     private String topCatName;
-
     @SerializedName(Constants.TLC_TOTAL)
     private double topCatTotal;
-
     @SerializedName(Constants.TLC_NUM_ITEMS)
     private int topCatItems;
 
@@ -33,6 +41,14 @@ public class CartItemList implements Parcelable {
         this.topCatItems = topCatItems;
     }
 
+    CartItemList(Parcel source) {
+        cartItems = new ArrayList<>();
+        source.readTypedList(cartItems, CartItem.CREATOR);
+        topCatName = source.readString();
+        topCatTotal = source.readDouble();
+        topCatItems = source.readInt();
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -45,26 +61,6 @@ public class CartItemList implements Parcelable {
         dest.writeDouble(topCatTotal);
         dest.writeInt(topCatItems);
     }
-
-    CartItemList(Parcel source) {
-        cartItems = new ArrayList<>();
-        source.readTypedList(cartItems, CartItem.CREATOR);
-        topCatName = source.readString();
-        topCatTotal = source.readDouble();
-        topCatItems = source.readInt();
-    }
-
-    public static final Parcelable.Creator<CartItemList> CREATOR = new Parcelable.Creator<CartItemList>() {
-        @Override
-        public CartItemList createFromParcel(Parcel source) {
-            return new CartItemList(source);
-        }
-
-        @Override
-        public CartItemList[] newArray(int size) {
-            return new CartItemList[size];
-        }
-    };
 
     public ArrayList<CartItem> getCartItems() {
         return cartItems;

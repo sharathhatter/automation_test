@@ -1,126 +1,55 @@
 package com.bigbasket.mobileapp.activity.account.uiv3;
 
 import android.content.Intent;
-import android.os.Bundle;
 
-import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.facebook.Session;
-import com.facebook.SessionState;
-import com.facebook.UiLifecycleHelper;
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
 
 import java.util.Arrays;
-import java.util.List;
 
 public abstract class FacebookAndGPlusSigninBaseActivity extends PlusBaseActivity {
 
-    private UiLifecycleHelper mFacebookUiLifeCycleHelper;
-    private Session.StatusCallback mFacebookSessionCallback;
+    private CallbackManager mCallbackManager;
 
     public void initializeFacebookLogin() {
-        if (mFacebookSessionCallback != null || mFacebookUiLifeCycleHelper != null) return;
-        mFacebookSessionCallback = new Session.StatusCallback() {
+
+        mCallbackManager = CallbackManager.Factory.create();
+        LoginManager loginManager = LoginManager.getInstance();
+        loginManager.logInWithReadPermissions(getCurrentActivity(), Arrays.asList("public_profile", "email"));
+        loginManager.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
-            public void call(Session session, SessionState state, Exception exception) {
-                onFacebookSessionStateChanged(session, state, exception);
+            public void onSuccess(LoginResult loginResult) {
+                onFacebookSignIn(loginResult.getAccessToken());
             }
-        };
-        openActiveSession(true, Arrays.asList("public_profile", "email"), mFacebookSessionCallback);
 
-        mFacebookUiLifeCycleHelper = new UiLifecycleHelper(this, mFacebookSessionCallback);
-    }
+            @Override
+            public void onCancel() {
 
-    private Session openActiveSession(boolean allowLoginUi, List<String> permissions, Session.StatusCallback callback) {
-        Session.OpenRequest openRequest = new Session.OpenRequest(getCurrentActivity()).
-                setPermissions(permissions).setCallback(callback);
-        Session session = new Session.Builder(getCurrentActivity()).build();
-        if (SessionState.CREATED_TOKEN_LOADED.equals(session.getState()) || allowLoginUi) {
-            Session.setActiveSession(session);
-            session.openForRead(openRequest);
-            return session;
-        }
-        return null;
-    }
-
-    private void onFacebookSessionStateChanged(Session session, SessionState sessionState,
-                                               Exception exception) {
-        if (exception != null) {
-            showToast(exception.getMessage());
-            return;
-        }
-
-        if (sessionState != null && sessionState.isClosed()) {
-            return;
-        }
-        AuthParameters authParameters = AuthParameters.getInstance(this);
-        if (session.isOpened()) {
-            if (authParameters.isAuthTokenEmpty()) {
-                onFacebookSignIn(session);
             }
-        } else if (session.isClosed()) {
-            if (!authParameters.isAuthTokenEmpty()) {
-                onFacebookSignOut();
+
+            @Override
+            public void onError(FacebookException e) {
+
             }
-        }
+        });
     }
 
-    public abstract void onFacebookSignIn(Session facebookSession);
-
-    public abstract void onFacebookSignOut();
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Session facebookSession = Session.getActiveSession();
-        if (mFacebookSessionCallback == null &&
-                facebookSession != null && (facebookSession.isOpened() || facebookSession.isClosed())) {
-            onFacebookSessionStateChanged(facebookSession, facebookSession.getState(), null);
-        }
-        if (mFacebookUiLifeCycleHelper != null) {
-            mFacebookUiLifeCycleHelper.onResume();
-        }
-    }
+    public abstract void onFacebookSignIn(AccessToken accessToken);
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         setSuspended(false);
-        Session activeSession = Session.getActiveSession();
-        if (activeSession != null) {
-            activeSession.onActivityResult(getCurrentActivity(), requestCode, resultCode, data);
-        }
-        if (mFacebookUiLifeCycleHelper != null) {
-            mFacebookUiLifeCycleHelper.onActivityResult(requestCode, resultCode, data);
-        }
         super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (mFacebookUiLifeCycleHelper != null) {
-            mFacebookUiLifeCycleHelper.onPause();
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mFacebookUiLifeCycleHelper != null) {
-            mFacebookUiLifeCycleHelper.onDestroy();
-        }
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if (mFacebookUiLifeCycleHelper != null) {
-            mFacebookUiLifeCycleHelper.onSaveInstanceState(outState);
+        if (mCallbackManager != null) {
+            mCallbackManager.onActivityResult(requestCode, resultCode, data);
         }
     }
 
     public void revokeFbAccess() {
-        Session facebookSession = Session.getActiveSession();
-        if (facebookSession != null && facebookSession.isOpened()) {
-            facebookSession.closeAndClearTokenInformation();
-        }
+        LoginManager.getInstance().logOut();
     }
 }

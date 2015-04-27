@@ -177,7 +177,7 @@ public class UpdatePinFragment extends BaseFragment {
 
                 } else {
                     showErrorMsg(msg);
-                    HashMap<String, String> map = new HashMap<String, String>();
+                    HashMap<String, String> map = new HashMap<>();
                     map.put(TrackEventkeys.FAILURE_REASON, ApiResponse.message);
                     trackEvent(TrackingAware.UPDATE_PIN_CLICKED, map);
                 }
@@ -186,7 +186,7 @@ public class UpdatePinFragment extends BaseFragment {
             @Override
             public void failure(RetrofitError error) {
                 hideProgressDialog();
-                HashMap<String, String> map = new HashMap<String, String>();
+                HashMap<String, String> map = new HashMap<>();
                 map.put(TrackEventkeys.FAILURE_REASON, error.toString());
                 trackEvent(TrackingAware.UPDATE_PIN_CLICKED, map);
             }

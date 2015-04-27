@@ -50,10 +50,10 @@ import java.util.Locale;
 public class SearchableActivity extends BackButtonActivity
         implements SearchView.OnQueryTextListener, SearchTermRemoveAware {
 
+    private final int REQ_CODE_SPEECH_INPUT = 100;
     private ListView searchList;
     private SearchView mSearchView;
     private SearchViewAdapter mSearchListAdapter;
-    private final int REQ_CODE_SPEECH_INPUT = 100;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -9,15 +9,23 @@ import com.google.gson.annotations.SerializedName;
 
 public class ShoppingListName implements Parcelable {
 
+    public static final Parcelable.Creator<ShoppingListName> CREATOR = new Parcelable.Creator<ShoppingListName>() {
+        @Override
+        public ShoppingListName createFromParcel(Parcel source) {
+            return new ShoppingListName(source);
+        }
+
+        @Override
+        public ShoppingListName[] newArray(int size) {
+            return new ShoppingListName[size];
+        }
+    };
     @SerializedName(Constants.SHOPPING_LIST_NAME)
     private String name;
-
     @SerializedName(Constants.SHOPPING_LIST_SLUG)
     private String slug;
-
     @SerializedName(Constants.SHOPPING_LIST_IS_SYSTEM)
     private int isSystem;
-
     @SerializedName(Constants.SHOPPING_LIST_DESC)
     private String description;
 
@@ -96,16 +104,4 @@ public class ShoppingListName implements Parcelable {
             dest.writeString(description);
         }
     }
-
-    public static final Parcelable.Creator<ShoppingListName> CREATOR = new Parcelable.Creator<ShoppingListName>() {
-        @Override
-        public ShoppingListName createFromParcel(Parcel source) {
-            return new ShoppingListName(source);
-        }
-
-        @Override
-        public ShoppingListName[] newArray(int size) {
-            return new ShoppingListName[size];
-        }
-    };
 }

@@ -7,7 +7,6 @@
     <dimen name="secondary_text_size">16sp</dimen>
     <dimen name="small_text_size">14sp</dimen>
     <dimen name="card_img_content_margin">16dp</dimen>
-    <dimen name="bar_chart_height">500dp</dimen>
     <dimen name="grid_width">160dp</dimen>
     <dimen name="vertical_tile_with_img_min_height">220dp</dimen>
     <integer name="numGridCols">3</integer>

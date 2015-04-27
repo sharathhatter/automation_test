@@ -6,64 +6,7 @@ import android.os.Parcelable;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
-/**
- * Created by jugal on 16/7/14.
- */
 public class SavedPrescription implements Parcelable {
-
-    @SerializedName(Constants.DATE_CREATED)
-    private String dateCreated;
-
-    @SerializedName(Constants.PATIENT_NAME)
-    private String patientName;
-
-    @SerializedName(Constants.DOCTOR_NAME)
-    private String doctorName;
-
-    @SerializedName(Constants.PHARMA_PRESCRIPTION_ID)
-    private int pharmaPrescriptionId;
-
-//    @SerializedName(Constants.PRESCRIPTION_IMG_URL)
-//    private String prescriptionImageUrl;
-
-    @SerializedName(Constants.PRESCRIPTION_NAME)
-    private String prescriptionName;
-
-    public SavedPrescription(String dateCreated, String patientName,
-                             String doctorName, int pharmaPrescriptionId,
-                             String prescriptionImageUrl, String prescriptionName) {
-        this.dateCreated = dateCreated;
-        this.patientName = patientName;
-        this.doctorName = doctorName;
-        this.pharmaPrescriptionId = pharmaPrescriptionId;
-        //this.prescriptionImageUrl = prescriptionImageUrl;
-        this.prescriptionName = prescriptionName;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    SavedPrescription(Parcel source) {
-        this.dateCreated = source.readString();
-        this.patientName = source.readString();
-        this.doctorName = source.readString();
-        this.pharmaPrescriptionId = source.readInt();
-        //this.prescriptionImageUrl = source.readString();
-        this.prescriptionName = source.readString();
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.dateCreated);
-        dest.writeString(this.patientName);
-        dest.writeString(this.doctorName);
-        dest.writeInt(this.pharmaPrescriptionId);
-        //dest.writeString(this.prescriptionImageUrl);
-        dest.writeString(this.prescriptionName);
-
-    }
 
     public static final Parcelable.Creator<SavedPrescription> CREATOR = new Parcelable.Creator<SavedPrescription>() {
         @Override
@@ -76,6 +19,44 @@ public class SavedPrescription implements Parcelable {
             return new SavedPrescription[size];
         }
     };
+    @SerializedName(Constants.DATE_CREATED)
+    private String dateCreated;
+    @SerializedName(Constants.PATIENT_NAME)
+    private String patientName;
+    @SerializedName(Constants.DOCTOR_NAME)
+    private String doctorName;
+
+//    @SerializedName(Constants.PRESCRIPTION_IMG_URL)
+//    private String prescriptionImageUrl;
+    @SerializedName(Constants.PHARMA_PRESCRIPTION_ID)
+    private int pharmaPrescriptionId;
+    @SerializedName(Constants.PRESCRIPTION_NAME)
+    private String prescriptionName;
+
+    SavedPrescription(Parcel source) {
+        this.dateCreated = source.readString();
+        this.patientName = source.readString();
+        this.doctorName = source.readString();
+        this.pharmaPrescriptionId = source.readInt();
+        //this.prescriptionImageUrl = source.readString();
+        this.prescriptionName = source.readString();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.dateCreated);
+        dest.writeString(this.patientName);
+        dest.writeString(this.doctorName);
+        dest.writeInt(this.pharmaPrescriptionId);
+        //dest.writeString(this.prescriptionImageUrl);
+        dest.writeString(this.prescriptionName);
+
+    }
 
     public String getDateCreated() {
         return dateCreated;

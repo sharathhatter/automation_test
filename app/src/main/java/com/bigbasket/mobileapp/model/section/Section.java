@@ -25,13 +25,21 @@ public class Section extends BaseSectionTextItem implements Parcelable, Serializ
     public static final String GRID = "grid";
 
     public static final int SECTION_TIMEOUT_IN_MINUTES = 15;
+    public static final Parcelable.Creator<Section> CREATOR = new Parcelable.Creator<Section>() {
+        @Override
+        public Section createFromParcel(Parcel source) {
+            return new Section(source);
+        }
 
+        @Override
+        public Section[] newArray(int size) {
+            return new Section[size];
+        }
+    };
     @SerializedName(Constants.SECTION_TYPE)
     private String sectionType;
-
     @SerializedName(Constants.ITEMS)
     private ArrayList<SectionItem> sectionItems;
-
     @SerializedName(Constants.MORE)
     private SectionItem moreSectionItem;
 
@@ -41,6 +49,20 @@ public class Section extends BaseSectionTextItem implements Parcelable, Serializ
         this.sectionType = sectionType;
         this.sectionItems = sectionItems;
         this.moreSectionItem = moreSectionItem;
+    }
+
+    public Section(Parcel source) {
+        super(source);
+        sectionType = source.readString();
+        boolean _wasSectionItemsNull = source.readByte() == (byte) 1;
+        if (!_wasSectionItemsNull) {
+            sectionItems = new ArrayList<>();
+            source.readTypedList(sectionItems, SectionItem.CREATOR);
+        }
+        boolean _wasMoreSectionItemNull = source.readByte() == (byte) 1;
+        if (!_wasMoreSectionItemNull) {
+            moreSectionItem = source.readParcelable(Section.class.getClassLoader());
+        }
     }
 
     public String getSectionType() {
@@ -77,20 +99,6 @@ public class Section extends BaseSectionTextItem implements Parcelable, Serializ
 
     }
 
-    public Section(Parcel source) {
-        super(source);
-        sectionType = source.readString();
-        boolean _wasSectionItemsNull = source.readByte() == (byte) 1;
-        if (!_wasSectionItemsNull) {
-            sectionItems = new ArrayList<>();
-            source.readTypedList(sectionItems, SectionItem.CREATOR);
-        }
-        boolean _wasMoreSectionItemNull = source.readByte() == (byte) 1;
-        if (!_wasMoreSectionItemNull) {
-            moreSectionItem = source.readParcelable(Section.class.getClassLoader());
-        }
-    }
-
     public int getCarouselHeight(Context context, HashMap<Integer, Renderer> rendererHashMap) {
         if (sectionItems == null) return 0;
         int maxHeight = 0;
@@ -101,17 +109,4 @@ public class Section extends BaseSectionTextItem implements Parcelable, Serializ
         }
         return maxHeight;
     }
-
-
-    public static final Parcelable.Creator<Section> CREATOR = new Parcelable.Creator<Section>() {
-        @Override
-        public Section createFromParcel(Parcel source) {
-            return new Section(source);
-        }
-
-        @Override
-        public Section[] newArray(int size) {
-            return new Section[size];
-        }
-    };
 }

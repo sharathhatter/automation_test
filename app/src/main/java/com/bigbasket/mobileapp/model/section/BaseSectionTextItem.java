@@ -8,12 +8,34 @@ import java.io.Serializable;
 
 public class BaseSectionTextItem implements Parcelable, Serializable {
 
+    public static final Parcelable.Creator<BaseSectionTextItem> CREATOR = new Parcelable.Creator<BaseSectionTextItem>() {
+        @Override
+        public BaseSectionTextItem createFromParcel(Parcel source) {
+            return new BaseSectionTextItem(source);
+        }
+
+        @Override
+        public BaseSectionTextItem[] newArray(int size) {
+            return new BaseSectionTextItem[size];
+        }
+    };
     private SectionTextItem title;
     private SectionTextItem description;
 
     public BaseSectionTextItem(SectionTextItem title, SectionTextItem description) {
         this.title = title;
         this.description = description;
+    }
+
+    public BaseSectionTextItem(Parcel source) {
+        boolean wasTitleNull = source.readByte() == (byte) 1;
+        if (!wasTitleNull) {
+            title = source.readParcelable(BaseSectionTextItem.class.getClassLoader());
+        }
+        boolean wasDescNull = source.readByte() == (byte) 1;
+        if (!wasDescNull) {
+            description = source.readParcelable(BaseSectionTextItem.class.getClassLoader());
+        }
     }
 
     @Nullable
@@ -44,27 +66,4 @@ public class BaseSectionTextItem implements Parcelable, Serializable {
             dest.writeParcelable(description, flags);
         }
     }
-
-    public BaseSectionTextItem(Parcel source) {
-        boolean wasTitleNull = source.readByte() == (byte) 1;
-        if (!wasTitleNull) {
-            title = source.readParcelable(BaseSectionTextItem.class.getClassLoader());
-        }
-        boolean wasDescNull = source.readByte() == (byte) 1;
-        if (!wasDescNull) {
-            description = source.readParcelable(BaseSectionTextItem.class.getClassLoader());
-        }
-    }
-
-    public static final Parcelable.Creator<BaseSectionTextItem> CREATOR = new Parcelable.Creator<BaseSectionTextItem>() {
-        @Override
-        public BaseSectionTextItem createFromParcel(Parcel source) {
-            return new BaseSectionTextItem(source);
-        }
-
-        @Override
-        public BaseSectionTextItem[] newArray(int size) {
-            return new BaseSectionTextItem[size];
-        }
-    };
 }

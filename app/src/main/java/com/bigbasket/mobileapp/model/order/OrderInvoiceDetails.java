@@ -8,21 +8,27 @@ import com.google.gson.annotations.SerializedName;
 
 public class OrderInvoiceDetails extends OrderDetails implements Parcelable {
 
+    public static final Parcelable.Creator<OrderInvoiceDetails> CREATOR = new Parcelable.Creator<OrderInvoiceDetails>() {
+        @Override
+        public OrderInvoiceDetails createFromParcel(Parcel source) {
+            return new OrderInvoiceDetails(source);
+        }
+
+        @Override
+        public OrderInvoiceDetails[] newArray(int size) {
+            return new OrderInvoiceDetails[size];
+        }
+    };
     @SerializedName("food_value")
     private double foodValue;
-
     @SerializedName(Constants.DELIVERY_CHARGES)
     private double deliveryCharge;
-
     @SerializedName("total")
     private double total;
-
     @SerializedName("total_savings")
     private double totalSavings;
-
     @SerializedName("vat_info")
     private double vatValue;
-
     @SerializedName("order_status")
     private String orderStatus;
 
@@ -63,7 +69,7 @@ public class OrderInvoiceDetails extends OrderDetails implements Parcelable {
 
     @Override
     public int describeContents() {
-        return super.describeContents();
+        return 0;
     }
 
     @Override
@@ -76,16 +82,4 @@ public class OrderInvoiceDetails extends OrderDetails implements Parcelable {
         dest.writeDouble(vatValue);
         dest.writeString(orderStatus);
     }
-
-    public static final Parcelable.Creator<OrderInvoiceDetails> CREATOR = new Parcelable.Creator<OrderInvoiceDetails>() {
-        @Override
-        public OrderInvoiceDetails createFromParcel(Parcel source) {
-            return new OrderInvoiceDetails(source);
-        }
-
-        @Override
-        public OrderInvoiceDetails[] newArray(int size) {
-            return new OrderInvoiceDetails[size];
-        }
-    };
 }

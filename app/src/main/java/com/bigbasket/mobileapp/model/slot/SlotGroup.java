@@ -13,18 +13,25 @@ import java.util.List;
 
 public class SlotGroup implements Parcelable {
 
+    public static final Parcelable.Creator<SlotGroup> CREATOR = new Parcelable.Creator<SlotGroup>() {
+        @Override
+        public SlotGroup createFromParcel(Parcel source) {
+            return new SlotGroup(source);
+        }
+
+        @Override
+        public SlotGroup[] newArray(int size) {
+            return new SlotGroup[size];
+        }
+    };
     @SerializedName(Constants.FULFILLMENT_INFO)
     private FulfillmentInfo fulfillmentInfo;
-
     @SerializedName(Constants.SLOTS)
     private List<Slot> slotList;
-
     @SerializedName(Constants.SLOT)
     private Slot selectedSlot;
-
     @SerializedName(Constants.NEXT_AVAILABLE_SLOT)
     private Slot nextAvailableSlot;
-
     private boolean _wasSlotListNull;
     private boolean _wasSlotNull;
     private boolean _wasNextSlotNull;
@@ -86,18 +93,6 @@ public class SlotGroup implements Parcelable {
     public int describeContents() {
         return 0;
     }
-
-    public static final Parcelable.Creator<SlotGroup> CREATOR = new Parcelable.Creator<SlotGroup>() {
-        @Override
-        public SlotGroup createFromParcel(Parcel source) {
-            return new SlotGroup(source);
-        }
-
-        @Override
-        public SlotGroup[] newArray(int size) {
-            return new SlotGroup[size];
-        }
-    };
 
     public Slot getSelectedSlot() {
         return selectedSlot;

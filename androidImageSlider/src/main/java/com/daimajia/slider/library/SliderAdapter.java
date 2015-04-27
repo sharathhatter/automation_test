@@ -1,6 +1,5 @@
 package com.daimajia.slider.library;
 
-import android.content.Context;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,17 +11,15 @@ import java.util.ArrayList;
 /**
  * A slider adapter
  */
-public class SliderAdapter extends PagerAdapter implements BaseSliderView.ImageLoadListener{
+public class SliderAdapter extends PagerAdapter implements BaseSliderView.ImageLoadListener {
 
-    private Context mContext;
     private ArrayList<BaseSliderView> mImageContents;
 
-    public SliderAdapter(Context context){
-        mContext = context;
-        mImageContents = new ArrayList<BaseSliderView>();
+    public SliderAdapter() {
+        mImageContents = new ArrayList<>();
     }
 
-    public <T extends BaseSliderView> void addSlider(T slider){
+    public <T extends BaseSliderView> void addSlider(T slider) {
         slider.setOnImageLoadListener(this);
         mImageContents.add(slider);
         notifyDataSetChanged();
@@ -33,8 +30,8 @@ public class SliderAdapter extends PagerAdapter implements BaseSliderView.ImageL
         return POSITION_NONE;
     }
 
-    public <T extends BaseSliderView> void removeSlider(T slider){
-        if(mImageContents.contains(slider)){
+    public <T extends BaseSliderView> void removeSlider(T slider) {
+        if (mImageContents.contains(slider)) {
             mImageContents.remove(slider);
             notifyDataSetChanged();
         }
@@ -47,7 +44,7 @@ public class SliderAdapter extends PagerAdapter implements BaseSliderView.ImageL
 
     @Override
     public boolean isViewFromObject(View view, Object object) {
-        return view==object;
+        return view == object;
     }
 
     @Override
@@ -70,16 +67,14 @@ public class SliderAdapter extends PagerAdapter implements BaseSliderView.ImageL
 
     /**
      * When image download error, then remove.
-     * @param result
-     * @param target
      */
     @Override
     public void onEnd(boolean result, BaseSliderView target) {
-        if(target.isErrorDisappear() == false || result == true){
+        if (!target.isErrorDisappear() || result) {
             return;
         }
-        for (BaseSliderView slider: mImageContents){
-            if(slider.equals(target)){
+        for (BaseSliderView slider : mImageContents) {
+            if (slider.equals(target)) {
                 removeSlider(target);
                 break;
             }

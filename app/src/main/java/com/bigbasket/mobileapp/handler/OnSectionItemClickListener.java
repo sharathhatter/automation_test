@@ -292,10 +292,20 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                 case DestinationInfo.HOME:
                     ((ActivityAware) context).getCurrentActivity().goToHome(false);
                     break;
-                case DestinationInfo.SHOPPING_LIST:
-                    intent = new Intent(((ActivityAware) context).getCurrentActivity(), BBActivity.class);
-                    intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_LANDING);
-                    ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                case DestinationInfo.COMMUNICATION_HUB:
+                    ((ActivityAware) context).getCurrentActivity().launchKonotor();
+                    break;
+                case DestinationInfo.CALL:
+                    if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
+                        try {
+                            String uri = "tel:" + destinationInfo.getDestinationSlug();
+                            intent = new Intent(Intent.ACTION_DIAL);
+                            intent.setData(Uri.parse(uri));
+                            ((ActivityAware) context).getCurrentActivity().startActivity(intent);
+                        } catch (ActivityNotFoundException e) {
+
+                        }
+                    }
                     break;
 //                default:
 //                    showDefaultError();

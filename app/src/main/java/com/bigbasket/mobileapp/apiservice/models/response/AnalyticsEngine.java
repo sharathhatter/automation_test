@@ -9,39 +9,6 @@ import com.google.gson.annotations.SerializedName;
 
 public class AnalyticsEngine implements Parcelable {
 
-    @SerializedName(Constants.ENABLE_MOENGAGE)
-    private boolean isMoEngageEnabled;
-
-    @SerializedName(Constants.ENABLE_LOCALYTICS)
-    private boolean isAnalyticsEnabled;
-
-    @SerializedName(Constants.ENABLE_KONOTOR)
-    private boolean isKonotorEnabled;
-
-    @SerializedName(Constants.ENABLE_FB_LOGGER)
-    private boolean isFBLoggerEnabled;
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeByte(isMoEngageEnabled ? (byte) 1 : (byte) 0);
-        dest.writeByte(isAnalyticsEnabled ? (byte) 1 : (byte) 0);
-        dest.writeByte(isKonotorEnabled ? (byte) 1 : (byte) 0);
-        dest.writeByte(isFBLoggerEnabled ? (byte) 1 : (byte) 0);
-    }
-
-    public AnalyticsEngine(Parcel source) {
-        isMoEngageEnabled = source.readByte() == (byte) 1;
-        isAnalyticsEnabled = source.readByte() == (byte) 1;
-        isKonotorEnabled = source.readByte() == (byte) 1;
-        isFBLoggerEnabled = source.readByte() == (byte) 1;
-    }
-
     public static final Parcelable.Creator<AnalyticsEngine> CREATOR = new Parcelable.Creator<AnalyticsEngine>() {
         @Override
         public AnalyticsEngine createFromParcel(Parcel source) {
@@ -53,6 +20,35 @@ public class AnalyticsEngine implements Parcelable {
             return new AnalyticsEngine[size];
         }
     };
+    @SerializedName(Constants.ENABLE_MOENGAGE)
+    private boolean isMoEngageEnabled;
+    @SerializedName(Constants.ENABLE_LOCALYTICS)
+    private boolean isAnalyticsEnabled;
+    @SerializedName(Constants.ENABLE_KONOTOR)
+    private boolean isKonotorEnabled;
+    @SerializedName(Constants.ENABLE_FB_LOGGER)
+    private boolean isFBLoggerEnabled;
+
+
+    public AnalyticsEngine(Parcel source) {
+        isMoEngageEnabled = source.readByte() == (byte) 1;
+        isAnalyticsEnabled = source.readByte() == (byte) 1;
+        isKonotorEnabled = source.readByte() == (byte) 1;
+        isFBLoggerEnabled = source.readByte() == (byte) 1;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeByte(isMoEngageEnabled ? (byte) 1 : (byte) 0);
+        dest.writeByte(isAnalyticsEnabled ? (byte) 1 : (byte) 0);
+        dest.writeByte(isKonotorEnabled ? (byte) 1 : (byte) 0);
+        dest.writeByte(isFBLoggerEnabled ? (byte) 1 : (byte) 0);
+    }
 
     public boolean isMoEngageEnabled() {
         return isMoEngageEnabled;

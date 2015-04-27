@@ -15,13 +15,6 @@ import java.util.ArrayList;
  */
 public class PrescriptionImageAdapter {
 
-    private Context context;
-
-    public PrescriptionImageAdapter(Context context) {
-        this.context = context;
-        open();
-    }
-
     public static final String COLUMN_ID = "_Id";
     public static final String COLUMN_PRESCRIPTION_ID = "pharma_prescription_id";
     public static final String COLUMN_CHUNK_NUMBER = "chunk_number";
@@ -29,12 +22,16 @@ public class PrescriptionImageAdapter {
     public static final String COLUMN_PRESCRIPTION_IMAGE_CHUNK = "prescription_image_chunk";
     public static final String COLUMN_IMAGE_SEQUENCE = "image_sequence";
     public static final String tableName = "prescriptionImage";
-
     public static String createTable = String.format("CREATE TABLE IF NOT EXISTS %1$s (%2$s INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "%3$s TEXT NOT NULL, %4$s TEXT NOT NULL, %5$s TEXT, %6$s TEXT, %7$s TEXT NOT NULL );", tableName, COLUMN_ID,
             COLUMN_PRESCRIPTION_ID, COLUMN_CHUNK_NUMBER, COLUMN_MAX_CHUNKS, COLUMN_PRESCRIPTION_IMAGE_CHUNK, COLUMN_IMAGE_SEQUENCE
     );
+    private Context context;
 
+    public PrescriptionImageAdapter(Context context) {
+        this.context = context;
+        open();
+    }
 
     public void open() {
         DatabaseHelper.getInstance(context).open(context);

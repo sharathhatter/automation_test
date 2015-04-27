@@ -3,7 +3,6 @@ package com.bigbasket.mobileapp.task;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -36,7 +35,6 @@ import retrofit.client.Response;
 
 public class BasketOperationTask<T> {
 
-    private static final String TAG = BasketOperationTask.class.getName();
     private T context;
     private Product product;
     private BasketOperation basketOperation;
@@ -105,6 +103,20 @@ public class BasketOperationTask<T> {
         }
     }
 
+    private void logBasketEvent(String eventName, Product product, String navigationCtx) {
+        Map<String, String> eventAttribs = new HashMap<>();
+        eventAttribs.put(TrackEventkeys.PRODUCT_ID, product.getSku());
+        eventAttribs.put(TrackEventkeys.PRODUCT_BRAND, product.getBrand());
+        String desc = product.getDescription();
+        if (!TextUtils.isEmpty(product.getPackageDescription()))
+            desc = " " + product.getWeightAndPackDesc();
+        eventAttribs.put(TrackEventkeys.PRODUCT_DESC, desc);
+        eventAttribs.put(TrackEventkeys.PRODUCT_TOP_CAT, product.getTopLevelCategoryName());
+        eventAttribs.put(TrackEventkeys.PRODUCT_CAT, product.getProductCategoryName());
+        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, navigationCtx);
+        ((TrackingAware) context).trackEvent(eventName, eventAttribs, navigationCtx, null, false);
+    }
+
     private class CartOperationApiResponseCallback implements Callback<CartOperationApiResponse> {
 
         @Override
@@ -133,12 +145,10 @@ public class BasketOperationTask<T> {
                         case Constants.PRODUCT_ID_NOT_FOUND:
                             ((HandlerAware) context).getHandler().
                                     sendEmptyMessage(ApiErrorCodes.BASKET_EMPTY, null);
-                            Log.d(TAG, "Sending message: MessageCode.BASKET_EMPTY");
                             break;
                         default:
                             ((HandlerAware) context).getHandler().sendEmptyMessage(cartOperationApiResponse.getErrorTypeAsInt(),
                                     cartOperationApiResponse.message);
-                            Log.d(TAG, "Sending message: ApiErrorCodes.SERVER_ERROR");
                             break;
                     }
                     ((BasketOperationAware) context).updateUIAfterBasketOperationFailed(basketOperation,
@@ -161,19 +171,5 @@ public class BasketOperationTask<T> {
             }
             ((HandlerAware) context).getHandler().handleRetrofitError(error);
         }
-    }
-
-    private void logBasketEvent(String eventName, Product product, String navigationCtx) {
-        Map<String, String> eventAttribs = new HashMap<>();
-        eventAttribs.put(TrackEventkeys.PRODUCT_ID, product.getSku());
-        eventAttribs.put(TrackEventkeys.PRODUCT_BRAND, product.getBrand());
-        String desc = product.getDescription();
-        if (!TextUtils.isEmpty(product.getPackageDescription()))
-            desc = " " + product.getWeightAndPackDesc();
-        eventAttribs.put(TrackEventkeys.PRODUCT_DESC, desc);
-        eventAttribs.put(TrackEventkeys.PRODUCT_TOP_CAT, product.getTopLevelCategoryName());
-        eventAttribs.put(TrackEventkeys.PRODUCT_CAT, product.getProductCategoryName());
-        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, navigationCtx);
-        ((TrackingAware) context).trackEvent(eventName, eventAttribs, navigationCtx, null, false);
     }
 }

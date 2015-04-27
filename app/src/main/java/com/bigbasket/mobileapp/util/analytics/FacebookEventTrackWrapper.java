@@ -3,11 +3,8 @@ package com.bigbasket.mobileapp.util.analytics;
 import android.content.Context;
 import android.os.Bundle;
 
-import com.facebook.AppEventsLogger;
+import com.facebook.appevents.AppEventsLogger;
 
-/**
- * Created by jugal on 30/3/15.
- */
 public class FacebookEventTrackWrapper {
 
     public static void activateApp(Context context) {

@@ -8,11 +8,26 @@ import com.google.gson.annotations.SerializedName;
 
 public class OrderModification implements Parcelable {
 
+    public static final Parcelable.Creator<OrderModification> CREATOR = new Parcelable.Creator<OrderModification>() {
+        @Override
+        public OrderModification createFromParcel(Parcel source) {
+            return new OrderModification(source);
+        }
+
+        @Override
+        public OrderModification[] newArray(int size) {
+            return new OrderModification[size];
+        }
+    };
     @SerializedName(Constants.TYPE)
     private String type;
-
     @SerializedName(Constants.MESSAGE)
     private String message;
+
+    public OrderModification(Parcel source) {
+        this.type = source.readString();
+        this.message = source.readString();
+    }
 
     public String getType() {
         return type;
@@ -32,21 +47,4 @@ public class OrderModification implements Parcelable {
         dest.writeString(type);
         dest.writeString(message);
     }
-
-    public OrderModification(Parcel source) {
-        this.type = source.readString();
-        this.message = source.readString();
-    }
-
-    public static final Parcelable.Creator<OrderModification> CREATOR = new Parcelable.Creator<OrderModification>() {
-        @Override
-        public OrderModification createFromParcel(Parcel source) {
-            return new OrderModification(source);
-        }
-
-        @Override
-        public OrderModification[] newArray(int size) {
-            return new OrderModification[size];
-        }
-    };
 }

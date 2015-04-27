@@ -10,14 +10,35 @@ import java.util.ArrayList;
 
 public class OrderMonthRange implements Parcelable {
 
-    private int value;
+    public static final Parcelable.Creator<OrderMonthRange> CREATOR = new Parcelable.Creator<OrderMonthRange>() {
+        @Override
+        public OrderMonthRange createFromParcel(Parcel source) {
+            return new OrderMonthRange(source);
+        }
 
+        @Override
+        public OrderMonthRange[] newArray(int size) {
+            return new OrderMonthRange[size];
+        }
+    };
+    private int value;
     @SerializedName(Constants.DISPLAY_VALUE)
     private String displayValue;
 
-    public OrderMonthRange(int value, String displayValue) {
-        this.value = value;
-        this.displayValue = displayValue;
+    public OrderMonthRange(Parcel source) {
+        value = source.readInt();
+        displayValue = source.readString();
+    }
+
+    public static int getSelectedIndex(ArrayList<OrderMonthRange> orderMonthRanges, int selectedValue) {
+        int idx = 0;
+        if (orderMonthRanges == null || orderMonthRanges.size() == 0) return idx;
+        for (int i = 0; i < orderMonthRanges.size(); i++) {
+            if (orderMonthRanges.get(i).getValue() == selectedValue) {
+                return i;
+            }
+        }
+        return idx;
     }
 
     @Override
@@ -30,23 +51,6 @@ public class OrderMonthRange implements Parcelable {
         dest.writeInt(value);
         dest.writeString(displayValue);
     }
-
-    public OrderMonthRange(Parcel source) {
-        value = source.readInt();
-        displayValue = source.readString();
-    }
-
-    public static final Parcelable.Creator<OrderMonthRange> CREATOR = new Parcelable.Creator<OrderMonthRange>() {
-        @Override
-        public OrderMonthRange createFromParcel(Parcel source) {
-            return new OrderMonthRange(source);
-        }
-
-        @Override
-        public OrderMonthRange[] newArray(int size) {
-            return new OrderMonthRange[size];
-        }
-    };
 
     public int getValue() {
         return value;
@@ -63,16 +67,5 @@ public class OrderMonthRange implements Parcelable {
     @Override
     public String toString() {
         return this.displayValue;
-    }
-
-    public static int getSelectedIndex(ArrayList<OrderMonthRange> orderMonthRanges, int selectedValue) {
-        int idx = 0;
-        if (orderMonthRanges == null || orderMonthRanges.size() == 0) return idx;
-        for (int i = 0; i < orderMonthRanges.size(); i++) {
-            if (orderMonthRanges.get(i).getValue() == selectedValue) {
-                return i;
-            }
-        }
-        return idx;
     }
 }

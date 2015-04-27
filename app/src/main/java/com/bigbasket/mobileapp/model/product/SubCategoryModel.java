@@ -12,12 +12,21 @@ import java.util.ArrayList;
 
 public class SubCategoryModel implements Parcelable, Serializable {
 
+    public static final Parcelable.Creator<SubCategoryModel> CREATOR = new Parcelable.Creator<SubCategoryModel>() {
+        @Override
+        public SubCategoryModel createFromParcel(Parcel source) {
+            return new SubCategoryModel(source);
+        }
+
+        @Override
+        public SubCategoryModel[] newArray(int size) {
+            return new SubCategoryModel[size];
+        }
+    };
     @SerializedName(Constants.SLUG_NAME)
     private String slug;
-
     @SerializedName(Constants.DISPLAY_NAME)
     private String name;
-
     @SerializedName(Constants.SUB_CATS)
     private ArrayList<Category> category;
 
@@ -69,16 +78,4 @@ public class SubCategoryModel implements Parcelable, Serializable {
     public void setCategory(ArrayList<Category> category) {
         this.category = category;
     }
-
-    public static final Parcelable.Creator<SubCategoryModel> CREATOR = new Parcelable.Creator<SubCategoryModel>() {
-        @Override
-        public SubCategoryModel createFromParcel(Parcel source) {
-            return new SubCategoryModel(source);
-        }
-
-        @Override
-        public SubCategoryModel[] newArray(int size) {
-            return new SubCategoryModel[size];
-        }
-    };
 }
