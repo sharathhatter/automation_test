@@ -50,6 +50,8 @@ import retrofit.client.Response;
 
 public class SplashActivity extends SocialLoginActivity implements DynamicScreenAware {
 
+    private boolean mIsFromActivityResult;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,9 +71,6 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
             MoEHelper moEHelper = new MoEHelper(this);
             moEHelper.initialize(Constants.MO_SENDER_ID, Constants.MO_APP_ID);
             moEHelper.Register(R.drawable.ic_launcher);
-            startSplashScreen();
-        } else {
-            showNoInternetConnectionView(getString(R.string.lostInternetConnection));
         }
     }
 
@@ -117,8 +116,14 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
     @Override
     protected void onResume() {
         super.onResume();
+        if (mIsFromActivityResult) return;
+
         FacebookEventTrackWrapper.activateApp(getCurrentActivity());
-//        startSplashScreen();
+        if (checkInternetConnection()) {
+            startSplashScreen();
+        } else {
+            showNoInternetConnectionView(getString(R.string.lostInternetConnection));
+        }
     }
 
     @Override
@@ -242,6 +247,7 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         setSuspended(false);
+        mIsFromActivityResult = true;
         if (resultCode == NavigationCodes.GO_TO_HOME || resultCode == NavigationCodes.CITY_CHANGED) {
             removePendingGoToHome();
             if ((data != null && data.getBooleanExtra(Constants.RELOAD_APP, false))
