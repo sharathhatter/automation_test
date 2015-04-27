@@ -28,7 +28,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -93,6 +92,7 @@ import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
+import com.bigbasket.mobileapp.view.uiv3.AnimatedLinearLayout;
 import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
 
 import java.util.ArrayList;
@@ -880,7 +880,9 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         ArrayList<SectionItem> subNavigationSectionItems = sectionItem.getSubSectionItems();
         if (subNavigationSectionItems == null) return;
 
-        final ViewGroup layoutSubNavigationItems = (ViewGroup) findViewById(R.id.layoutSubNavigationItems);
+        final AnimatedLinearLayout layoutSubNavigationItems =
+                (AnimatedLinearLayout) findViewById(R.id.layoutSubNavigationItems);
+
         layoutSubNavigationItems.setVisibility(View.VISIBLE);
         final RecyclerView listSubNavigation = (RecyclerView) findViewById(R.id.listSubNavigation);
 
