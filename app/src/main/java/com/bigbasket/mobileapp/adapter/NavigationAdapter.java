@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.handler.OnSectionItemClickListener;
+import com.bigbasket.mobileapp.interfaces.SubNavigationAware;
 import com.bigbasket.mobileapp.model.navigation.SectionNavigationItem;
 
 import java.util.ArrayList;
@@ -153,8 +154,14 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         public void onClick(View v) {
             SectionNavigationItem sectionNavigationItem = sectionNavigationItems.get(getPosition());
             if (!sectionNavigationItem.isHeader()) {
-                new OnSectionItemClickListener<>(context, sectionNavigationItem.getSection(),
-                        sectionNavigationItem.getSectionItem(), screenName).onClick(v);
+                if (sectionNavigationItem.getSectionItem() != null && sectionNavigationItem.getSectionItem().getSubSectionItems() != null
+                        && sectionNavigationItem.getSectionItem().getSubSectionItems().size() > 0) {
+                    ((SubNavigationAware) context).onSubNavigationRequested(sectionNavigationItem.getSection(),
+                            sectionNavigationItem.getSectionItem());
+                } else {
+                    new OnSectionItemClickListener<>(context, sectionNavigationItem.getSection(),
+                            sectionNavigationItem.getSectionItem(), screenName).onClick(v);
+                }
             }
         }
     }

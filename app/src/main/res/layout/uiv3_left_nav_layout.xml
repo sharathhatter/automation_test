@@ -1,18 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/left_drawer"
     style="@style/NavDrawer"
     android:layout_height="match_parent"
     android:layout_gravity="left"
     android:background="@color/white"
-    android:clickable="true"
-    android:orientation="vertical">
+    android:clickable="true">
 
-    <include layout="@layout/uiv3_left_nav_header" />
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/listNavigation"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-</LinearLayout>
+        <include layout="@layout/uiv3_left_nav_header" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/listNavigation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layoutSubNavigationItems"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/txtNavMainItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_arrow_back_grey600_24dp"
+            android:drawablePadding="@dimen/padding_normal"
+            android:gravity="center"
+            android:padding="@dimen/padding_normal"
+            android:textColor="@color/uiv3_secondary_text_color"
+            android:textSize="@dimen/primary_text_size" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/uiv3_divider_color" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/listSubNavigation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+</FrameLayout>

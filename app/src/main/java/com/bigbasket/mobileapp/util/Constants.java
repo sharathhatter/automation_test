@@ -183,6 +183,7 @@ public class Constants {
 
     public static final String CART_ITEMS = "c_items";
     public static final String ITEMS = "items";
+    public static final String SUB_ITEMS = "sub_items";
     public static final String PRODUCT_DETAILS = "product_details";
     public static final String ORDER_ID = "order_id";
     public static final String GET_CART = "getcart";

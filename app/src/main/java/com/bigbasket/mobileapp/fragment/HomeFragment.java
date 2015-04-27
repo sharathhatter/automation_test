@@ -196,7 +196,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                 displayHomePageError(getString(R.string.communicationError), R.drawable.empty_no_internet);
                 break;
             default:
-                displayHomePageError(getString(R.string.otherError), R.drawable.ic_report_problem_grey600_48dp); //todo image change
+                displayHomePageError(getString(R.string.otherError), R.drawable.ic_report_problem_grey600_48dp);
                 break;
         }
     }
