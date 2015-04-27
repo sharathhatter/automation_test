@@ -4,6 +4,7 @@ public class Constants {
 
     // connection parameters
     public static final String MO_APP_ID = "YSD6Y5AVT60X4AWNLL35EIDJ";
+    public static final String APP_FLYER_ID = "5uD68XCLk3KJXJQkW24KrK";
     public static final String MO_SENDER_ID = "551288451469";
     public static final String DEEP_LINK = "deepLink";
     public static final String HAS_PARENT = "hasParent";

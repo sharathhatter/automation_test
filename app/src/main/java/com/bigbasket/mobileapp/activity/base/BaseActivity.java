@@ -118,7 +118,7 @@ public abstract class BaseActivity extends ActionBarActivity implements COMarket
         faceRobotoItalic = FontHolder.getInstance(this).getFaceRobotoItalic();
         moEHelper = MoEngageWrapper.getMoHelperObj(getCurrentActivity());
         LocalyticsWrapper.integrate(this);
-        fbLogger = AppEventsLogger.newLogger(getCurrentActivity());
+        fbLogger = AppEventsLogger.newLogger(getApplicationContext());
     }
 
     @Override

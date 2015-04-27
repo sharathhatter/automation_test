@@ -14,7 +14,6 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.daimajia.slider.library.LightSliderLayout;
 import com.daimajia.slider.library.SliderTypes.TransparentSliderView;
-import com.facebook.AppEventsLogger;
 
 
 public class LandingPageActivity extends SocialLoginActivity {
@@ -42,7 +41,6 @@ public class LandingPageActivity extends SocialLoginActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        AppEventsLogger.activateApp(this);
     }
 
     public void onLandingPageButtonClicked(View view) {

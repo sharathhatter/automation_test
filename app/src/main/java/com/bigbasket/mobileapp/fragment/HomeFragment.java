@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.fragment;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Trace;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -220,10 +221,12 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                 ViewGroup.LayoutParams.MATCH_PARENT);
         contentScrollView.setLayoutParams(layoutParams);
 
+        //Trace.beginSection("Home page section rendering begin");
         View sectionView = getSectionView();
         if (sectionView != null) {
             contentScrollView.addView(sectionView);
         }
+        //Trace.beginSection("Home page section rendering end");
 
         contentView.removeAllViews();
         contentView.addView(contentScrollView);

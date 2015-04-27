@@ -58,6 +58,7 @@ public class AccountSettingFragment extends BaseFragment {
                     case 0:
                         Intent orderListIntent = new Intent(getActivity(), OrderListActivity.class);
                         orderListIntent.putExtra(Constants.ORDER, getString(R.string.active_label));
+                        orderListIntent.putExtra(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_MY_ACCOUNT);
                         startActivityForResult(orderListIntent, NavigationCodes.GO_TO_HOME);
                         trackEvent(TrackingAware.MY_ACCOUNT_ACTIVE_ORDER_CLICKED, null);
                         break;

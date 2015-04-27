@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.appsflyer.AppsFlyerLib;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
@@ -37,7 +38,6 @@ import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.analytics.FacebookEventTrackWrapper;
-import com.facebook.AppEventsLogger;
 import com.moe.pushlibrary.MoEHelper;
 import com.newrelic.agent.android.NewRelic;
 
@@ -54,6 +54,10 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        AppsFlyerLib.setAppsFlyerKey(Constants.APP_FLYER_ID);
+        AppsFlyerLib.setUseHTTPFalback(true);
+        AppsFlyerLib.sendTracking(getApplicationContext()); //detects installation, session and updates
 
         // Defensive fix
         removePendingCodes();
@@ -117,14 +121,13 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
 
     @Override
     protected void onResume() {
-        super.onResume();
-        FacebookEventTrackWrapper.activateApp(getCurrentActivity());
+        super.onResume();//todo facebook event tracking
+        //FacebookEventTrackWrapper.activateApp(getApplicationContext());
 //        startSplashScreen();
     }
 
     @Override
     public void onDestroy() {
-        FacebookEventTrackWrapper.deactivateApp(getCurrentActivity());
         super.onDestroy();
     }
 
@@ -273,8 +276,8 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
 
     @Override
     protected void onPause() {
-        super.onPause();
-        AppEventsLogger.deactivateApp(this);
+        super.onPause(); //todo facebook event tracking
+        //FacebookEventTrackWrapper.deactivateApp(getApplicationContext());
     }
 
     @Override
