@@ -21,7 +21,7 @@
 
     </LinearLayout>
 
-    <LinearLayout
+    <com.bigbasket.mobileapp.view.uiv3.AnimatedLinearLayout
         android:id="@+id/layoutSubNavigationItems"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -49,5 +49,5 @@
             android:id="@+id/listSubNavigation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-    </LinearLayout>
+    </com.bigbasket.mobileapp.view.uiv3.AnimatedLinearLayout>
 </FrameLayout>
