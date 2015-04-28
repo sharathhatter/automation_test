@@ -23,6 +23,7 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
     public static final int VIEW_TYPE_LOADING = 0;
     public static final int VIEW_TYPE_DATA = 1;
     public static final int VIEW_TYPE_EMPTY = 2;
+    public static final int DELTA_FOR_NEXT_PAGE_LOAD = 5;
     protected int serverListSize = -1;
     private String baseImgUrl;
     private ProductViewDisplayDataHolder productViewDisplayDataHolder;
@@ -74,8 +75,12 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
                     new ProductDetailOnClickListener(product.getSku(), activityAware),
                     productViewDisplayDataHolder,
                     false, activityAware, navigationCtx);
-        } else if (getItemViewType(position) == VIEW_TYPE_LOADING) {
-            ((InfiniteProductListAware) activityAware).loadMoreProducts();
+
+            int positionToCheckForNextPageLoad = position + DELTA_FOR_NEXT_PAGE_LOAD;
+            if (positionToCheckForNextPageLoad <= serverListSize && serverListSize > 0 &&
+                    positionToCheckForNextPageLoad > products.size()) {
+                ((InfiniteProductListAware) activityAware).loadMoreProducts();
+            }
         }
     }
 

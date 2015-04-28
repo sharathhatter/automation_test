@@ -584,5 +584,5 @@ public class Constants {
     public static final String ERR_RES_DESC = "err_res_desc";
     public static final String FIXED_COMBO_PRODUCTS = "fixed_combo_products";
     public static final String FREE_PRODUCTS = "free_products";
-    public static final String MODE_HDFC_PAY = "MODE_HDFC_PAY";
+    public static final String MODE_HDFC_PAY = "restrict_payment_to_wibmo_iap";
 }
