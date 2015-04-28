@@ -24,34 +24,6 @@ public class SearchUtil {
     public static Cursor searchQueryCall(String query, Context context) {
         if (TextUtils.isEmpty(query.trim()) || (query.trim().length() < 3)) return null;
 
-        /*
-        SearchSuggestionAdapter searchSuggestionAdapter = new SearchSuggestionAdapter(context);
-        AutoSearchResponse autoSearchResponse = searchSuggestionAdapter.getStoredResponse(query);
-
-        // If not present in local db or is older than a daywrap_content
-        if (autoSearchResponse == null || autoSearchResponse.isStale()) {
-
-            // Present in local db, but as it is stale, hence, remove it
-            if (autoSearchResponse != null) {
-                searchSuggestionAdapter.delete(autoSearchResponse);
-                autoSearchResponse = null;
-            }
-
-            // Get the results by querying server
-            if (DataUtil.isInternetAvailable(context)) {
-                BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(context);
-                ApiResponse<AutoSearchApiResponseContent> autoSearchApiResponse = bigBasketApiService.autoSearch(query);
-                switch (autoSearchApiResponse.status) {
-                    case 0:
-                        autoSearchResponse = autoSearchApiResponse.apiResponseContent.autoSearchResponse;
-                        searchSuggestionAdapter.insert(autoSearchResponse);
-                        break;
-                }
-            }
-        }
-
-        */
-
         AutoSearchResponse autoSearchResponse = null;
         if (DataUtil.isInternetAvailable(context)) {
             BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(context);
@@ -75,9 +47,6 @@ public class SearchUtil {
             } else if (suggestedTermsArray != null && suggestedTermsArray.length > 0) {
                 matrixCursor = getMatrixCursorForArray(autoSearchResponse.getSuggestedTerm(), "Suggestion", false);
             }
-//            else if (topSearchesArray != null && topSearchesArray.length > 0) {
-//                matrixCursor = getMatrixCursorForArray(autoSearchResponse.getTopSearches(), "POPULAR SEARCHES", true);
-//            }
         }
         populateTopSearch(matrixCursor, context);
         return matrixCursor;
