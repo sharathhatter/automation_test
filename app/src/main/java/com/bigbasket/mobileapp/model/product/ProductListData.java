@@ -151,10 +151,6 @@ public class ProductListData implements Parcelable {
         return productCount;
     }
 
-    public void setProductCount(int productCount) {
-        this.productCount = productCount;
-    }
-
     public int getCurrentPage() {
         return currentPage;
     }
@@ -167,10 +163,6 @@ public class ProductListData implements Parcelable {
         return totalPages;
     }
 
-    public void setTotalPages(int totalPages) {
-        this.totalPages = totalPages;
-    }
-
     public String getQuery() {
         return query;
     }
@@ -181,10 +173,6 @@ public class ProductListData implements Parcelable {
 
     public ArrayList<FilterOptionCategory> getFilterOptions() {
         return filterOptionItems;
-    }
-
-    public void setFilterOptions(ArrayList<FilterOptionCategory> filterOptions) {
-        this.filterOptionItems = filterOptions;
     }
 
     public ArrayList<Product> getProducts() {
@@ -207,27 +195,7 @@ public class ProductListData implements Parcelable {
         return sortOptions;
     }
 
-    public void setSortOptions(ArrayList<Option> sortOptions) {
-        this.sortOptions = sortOptions;
-    }
-
-    public boolean isSortSelected() {
-        return sortedOn != null;
-    }
-
     public String getBaseImgUrl() {
         return baseImgUrl;
-    }
-
-    public boolean areFiltersEmpty() {
-        if (filterOptionItems == null || filterOptionItems.size() == 0) return true;
-
-        for (FilterOptionCategory filterOptionCategory : filterOptionItems) {
-            if (filterOptionCategory.getFilterOptionItems() != null
-                    && filterOptionCategory.getFilterOptionItems().size() > 0) {
-                return false;
-            }
-        }
-        return true;
     }
 }

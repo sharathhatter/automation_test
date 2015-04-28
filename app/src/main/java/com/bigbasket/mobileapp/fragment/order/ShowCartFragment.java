@@ -120,7 +120,6 @@ public class ShowCartFragment extends BaseFragment {
             int cartItemsSize = cartItemInfoArray.getCartItems().size();
             ArrayList<CartItem> cartItems = cartItemInfoArray.getCartItems();
             for (int i = 0; i < cartItemsSize; i++) {
-                cartItems.get(i).setIndex(i);
                 cartItemHeaderList.add(cartItems.get(i));
                 if (cartItems.get(i).getPromoAppliedType() == 2 ||
                         cartItems.get(i).getPromoAppliedType() == 3) {

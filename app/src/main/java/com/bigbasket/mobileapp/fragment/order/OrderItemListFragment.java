@@ -65,7 +65,6 @@ public class OrderItemListFragment extends BaseFragment {
             ArrayList<CartItem> cartItems = cartItemList.getCartItems();
             for (int i = 0; i < numCartItems; i++) {
                 CartItem cartItem = cartItems.get(i);
-                cartItem.setIndex(i);
                 cartItemConsolidatedList.add(cartItem);
                 if (!TextUtils.isEmpty(cartItem.getFulfillmentId())) {
                     fulfillmentInfoIdAndIconHashMap.put(cartItem.getFulfillmentId(), "");

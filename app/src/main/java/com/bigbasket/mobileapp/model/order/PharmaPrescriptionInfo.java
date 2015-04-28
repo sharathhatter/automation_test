@@ -24,10 +24,6 @@ public class PharmaPrescriptionInfo implements Parcelable {
     @SerializedName(Constants.MESSAGE_OBJ)
     private MessageInfo msgInfo;
 
-    public PharmaPrescriptionInfo(MessageInfo msgInfo) {
-        this.msgInfo = msgInfo;
-    }
-
 
     public PharmaPrescriptionInfo(Parcel parcel) {
         msgInfo = parcel.readParcelable(PharmaPrescriptionInfo.class.getClassLoader());
@@ -45,10 +41,6 @@ public class PharmaPrescriptionInfo implements Parcelable {
 
     public MessageInfo getMsgInfo() {
         return msgInfo;
-    }
-
-    public void setMsgInfo(MessageInfo msgInfo) {
-        this.msgInfo = msgInfo;
     }
 
 }

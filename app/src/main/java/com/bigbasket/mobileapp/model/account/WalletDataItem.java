@@ -78,28 +78,12 @@ public class WalletDataItem implements Parcelable {
         return orderNumber;
     }
 
-    public void setOrderNumber(String orderNumber) {
-        this.orderNumber = orderNumber;
-    }
-
     public String getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
-    }
-
     public double getEndingBalance() {
         return endingBalance;
-    }
-
-    public void setEndingBalance(double endingBalance) {
-        this.endingBalance = endingBalance;
-    }
-
-    public void setStartingBalance(double startingBalance) {
-        this.startingBalance = startingBalance;
     }
 
     public String getDate() {
@@ -122,16 +106,8 @@ public class WalletDataItem implements Parcelable {
         return primary_reason;
     }
 
-    public void setPrimary_reason(String primary_reason) {
-        this.primary_reason = primary_reason;
-    }
-
     public String getSecondary_reason() {
         return secondary_reason;
-    }
-
-    public void setSecondary_reason(String secondary_reason) {
-        this.secondary_reason = secondary_reason;
     }
 
     public String getType() {

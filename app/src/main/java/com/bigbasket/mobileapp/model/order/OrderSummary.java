@@ -40,13 +40,6 @@ public class OrderSummary implements Parcelable {
     @SerializedName(Constants.ANNOTATION_INFO)
     private ArrayList<AnnotationInfo> annotationInfos;
 
-    public OrderSummary() {
-        cartItems = new ArrayList<>();
-        slotGroups = new ArrayList<>();
-        creditDetails = new ArrayList<>();
-        annotationInfos = new ArrayList<>();
-    }
-
     OrderSummary(Parcel source) {
         memberSummary = source.readParcelable(OrderSummary.class.getClassLoader());
         boolean _wasBaseImgUrlNull = source.readByte() == (byte) 1;

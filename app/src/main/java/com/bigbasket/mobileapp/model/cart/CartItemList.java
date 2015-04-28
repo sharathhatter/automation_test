@@ -30,17 +30,6 @@ public class CartItemList implements Parcelable {
     @SerializedName(Constants.TLC_NUM_ITEMS)
     private int topCatItems;
 
-    public CartItemList() {
-        cartItems = new ArrayList<>();
-    }
-
-    public CartItemList(ArrayList<CartItem> cartItems, String topCatName, double topCatTotal, int topCatItems) {
-        this.cartItems = cartItems;
-        this.topCatName = topCatName;
-        this.topCatTotal = topCatTotal;
-        this.topCatItems = topCatItems;
-    }
-
     CartItemList(Parcel source) {
         cartItems = new ArrayList<>();
         source.readTypedList(cartItems, CartItem.CREATOR);

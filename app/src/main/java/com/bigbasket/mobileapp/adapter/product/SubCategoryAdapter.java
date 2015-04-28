@@ -31,17 +31,8 @@ public class SubCategoryAdapter {
         open();
     }
 
-    public static Cursor getCursorForAllRows() {
-        return DatabaseHelper.db.query(tableName, new String[]{COLUMN_VERSION, COLUMN_BLOB}
-                , null, null, null, null, null);
-    }
-
     public void open() {
         DatabaseHelper.getInstance(context).open(context);
-    }
-
-    public void close() {
-        DatabaseHelper.getInstance(context).close();
     }
 
     public void insert(SubCategoryModel subCategoryModel, String version, SectionData sectionData, String slug) {

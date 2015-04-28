@@ -58,16 +58,8 @@ public class CartSummary implements Parcelable {
         return total;
     }
 
-    public void setTotal(double total) {
-        this.total = total;
-    }
-
     public double getSavings() {
         return savings;
-    }
-
-    public void setSavings(double savings) {
-        this.savings = savings;
     }
 
     public int getNoOfItems() {

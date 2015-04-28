@@ -98,12 +98,4 @@ public class VoucherApplied implements Parcelable {
     public String getVoucherCode() {
         return voucherCode;
     }
-
-    public boolean isApplied() {
-        return isApplied;
-    }
-
-    public void setApplied(boolean isApplied) {
-        this.isApplied = isApplied;
-    }
 }

@@ -29,14 +29,6 @@ public class MessageParamInfo implements Parcelable {
     @SerializedName(Constants.INTERNAL_VALUE)
     private String internalValue;
 
-
-    public MessageParamInfo(String type, String displayName, String extraInfo, String internalValue) {
-        this.type = type;
-        this.displayName = displayName;
-        this.extraInfo = extraInfo;
-        this.internalValue = internalValue;
-    }
-
     public MessageParamInfo(Parcel parcel) {
         this.type = parcel.readString();
         this.displayName = parcel.readString();
@@ -61,32 +53,16 @@ public class MessageParamInfo implements Parcelable {
         return type;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public String getDisplayName() {
         return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
     }
 
     public String getExtraInfo() {
         return extraInfo;
     }
 
-    public void setExtraInfo(String extraInfo) {
-        this.extraInfo = extraInfo;
-    }
-
     public String getInternalValue() {
         return internalValue;
-    }
-
-    public void setInternalValue(String internalValue) {
-        this.internalValue = internalValue;
     }
 
 }

@@ -37,23 +37,6 @@ public class MarketPlaceItems implements Parcelable {
     private String productCategoryName;
     @SerializedName(Constants.PRODUCT_BRAND)
     private String productBrand;
-    private int ruleValidationArrayIndex;
-    private int itemIndex;
-
-
-    public MarketPlaceItems(String imageUrl, String desc, int itemInCart,
-                            float totalQty, String sku, float salePrice, String topLevelCategoryName,
-                            String productCategoryName, String productBrand) {
-        this.imageUrl = imageUrl;
-        this.desc = desc;
-        this.itemInCart = itemInCart;
-        this.totalQty = totalQty;
-        this.sku = sku;
-        this.salePrice = salePrice;
-        this.topLevelCategoryName = topLevelCategoryName;
-        this.productCategoryName = productCategoryName;
-        this.productBrand = productBrand;
-    }
 
     public MarketPlaceItems(Parcel source) {
         imageUrl = source.readString();
@@ -85,32 +68,12 @@ public class MarketPlaceItems implements Parcelable {
         dest.writeString(productBrand);
     }
 
-    public int getRuleValidationArrayIndex() {
-        return ruleValidationArrayIndex;
-    }
-
-    public void setRuleValidationArrayIndex(int ruleValidationArrayIndex) {
-        this.ruleValidationArrayIndex = ruleValidationArrayIndex;
-    }
-
-    public int getItemIndex() {
-        return itemIndex;
-    }
-
-    public void setItemIndex(int itemIndex) {
-        this.itemIndex = itemIndex;
-    }
-
     public double getSalePrice() {
         return salePrice;
     }
 
     public String getSku() {
         return sku;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
     }
 
     public String getDesc() {
@@ -129,23 +92,11 @@ public class MarketPlaceItems implements Parcelable {
         return topLevelCategoryName;
     }
 
-    public void setTopLevelCategoryName(String topLevelCategoryName) {
-        this.topLevelCategoryName = topLevelCategoryName;
-    }
-
     public String getProductCategoryName() {
         return productCategoryName;
     }
 
-    public void setProductCategoryName(String productCategoryName) {
-        this.productCategoryName = productCategoryName;
-    }
-
     public String getProductBrand() {
         return productBrand;
-    }
-
-    public void setProductBrand(String productBrand) {
-        this.productBrand = productBrand;
     }
 }

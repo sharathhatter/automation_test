@@ -34,16 +34,6 @@ public class AnnotationInfo implements Parcelable {
     @SerializedName(Constants.MESSAGE_OBJ)
     private MessageInfo msgInfo;
 
-    public AnnotationInfo(String displayName, String annotationId,
-                          String description, String infoPage, String iconUrl, MessageInfo msgInfo) {
-        this.displayName = displayName;
-        this.annotationId = annotationId;
-        this.description = description;
-        this.infoPage = infoPage;
-        this.iconUrl = iconUrl;
-        this.msgInfo = msgInfo;
-    }
-
     public AnnotationInfo(Parcel parcel) {
         this.displayName = parcel.readString();
         this.annotationId = parcel.readString();
@@ -73,10 +63,6 @@ public class AnnotationInfo implements Parcelable {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public String getIconUrl() {
         return iconUrl;
     }
@@ -85,19 +71,11 @@ public class AnnotationInfo implements Parcelable {
         return displayName;
     }
 
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-
     public String getAnnotationId() {
         return annotationId;
     }
 
     public MessageInfo getMsgInfo() {
         return msgInfo;
-    }
-
-    public String getInfoPage() {
-        return infoPage;
     }
 }

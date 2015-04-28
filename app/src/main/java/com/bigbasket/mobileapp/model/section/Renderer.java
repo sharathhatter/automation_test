@@ -146,10 +146,6 @@ public class Renderer implements Parcelable, Serializable {
         }
     }
 
-    public int getMargin() {
-        return margin;
-    }
-
     public int getPadding() {
         return padding;
     }

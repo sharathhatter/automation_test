@@ -47,23 +47,11 @@ public class CreditDetails implements Parcelable {
         return type;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public String getCreditValue() {
         return creditValue;
     }
 
-    public void setCreditValue(String creditValue) {
-        this.creditValue = creditValue;
-    }
-
     public String getMessage() {
         return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
     }
 }

@@ -36,12 +36,6 @@ public class FilterOptionCategory implements Parcelable {
         source.readTypedList(filterOptionItems, FilterOptionItem.CREATOR);
     }
 
-    public FilterOptionCategory(String filterName, String filterSlug, List<FilterOptionItem> filterOptionItems) {
-        this.filterSlug = filterSlug;
-        this.filterName = filterName;
-        this.filterOptionItems = filterOptionItems;
-    }
-
     @Override
     public int describeContents() {
         return 0;

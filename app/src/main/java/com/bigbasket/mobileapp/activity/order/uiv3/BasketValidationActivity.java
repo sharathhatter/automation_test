@@ -137,8 +137,7 @@ public class BasketValidationActivity extends BackButtonActivity {
                 final TextView txtInBasket = (TextView) addRemoveLinearLayout.findViewById(R.id.txtInBasket);
                 TextView txtTotalPrice = (TextView) addRemoveLinearLayout.findViewById(R.id.txtTotalPrice);
                 final ImageView imgRemove = (ImageView) addRemoveLinearLayout.findViewById(R.id.imgRemove);
-                marketPlaceItems.setRuleValidationArrayIndex(i);
-                marketPlaceItems.setItemIndex(j);
+
                 final TextView txtIncBasketQty = (TextView) addRemoveLinearLayout.findViewById(R.id.txtIncBasketQty);
                 final TextView txtDecBasketQty = (TextView) addRemoveLinearLayout.findViewById(R.id.txtDecBasketQty);
 

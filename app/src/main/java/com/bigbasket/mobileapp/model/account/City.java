@@ -3,8 +3,6 @@ package com.bigbasket.mobileapp.model.account;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.ArrayList;
-
 public class City implements Parcelable {
     public static final Parcelable.Creator<City> CREATOR = new Parcelable.Creator<City>() {
         @Override
@@ -28,15 +26,6 @@ public class City implements Parcelable {
     public City(Parcel source) {
         name = source.readString();
         id = source.readInt();
-    }
-
-    public static int getCurrentCityIndex(ArrayList<City> cities, String currentCityName) {
-        for (int i = 0; i < cities.size(); i++) {
-            if (cities.get(i).getName().equals(currentCityName)) {
-                return i;
-            }
-        }
-        return 0;
     }
 
     public String getName() {

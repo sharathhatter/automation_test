@@ -134,16 +134,8 @@ public class UpdateProfileModel implements Parcelable {
         return street;
     }
 
-    public void setStreet(String street) {
-        this.street = street;
-    }
-
     public String getHouseNumber() {
         return houseNumber;
-    }
-
-    public void setHouseNumber(String houseNumber) {
-        this.houseNumber = houseNumber;
     }
 
     public String getEmail() {
@@ -174,40 +166,20 @@ public class UpdateProfileModel implements Parcelable {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(String dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-
     public String getMobileNumber() {
         return mobileNumber;
-    }
-
-    public void setMobileNumber(String mobileNumber) {
-        this.mobileNumber = mobileNumber;
     }
 
     public String getTelephoneNumber() {
         return telephoneNumber;
     }
 
-    public void setTelephoneNumber(String telephoneNumber) {
-        this.telephoneNumber = telephoneNumber;
-    }
-
     public String getResidentialComplex() {
         return residentialComplex;
     }
 
-    public void setResidentialComplex(String residentialComplex) {
-        this.residentialComplex = residentialComplex;
-    }
-
     public String getLandmark() {
         return landmark;
-    }
-
-    public void setLandmark(String landmark) {
-        this.landmark = landmark;
     }
 
     public String getArea() {
@@ -222,23 +194,7 @@ public class UpdateProfileModel implements Parcelable {
         return cityName;
     }
 
-    public void setCityName(String cityName) {
-        this.cityName = cityName;
-    }
-
     public String getPincode() {
         return pincode;
-    }
-
-    public void setPincode(String pincode) {
-        this.pincode = pincode;
-    }
-
-    public String getNewPaperSubscription() {
-        return newPaperSubscription;
-    }
-
-    public void setNewPaperSubscription(String newPaperSubscription) {
-        this.newPaperSubscription = newPaperSubscription;
     }
 }

@@ -54,16 +54,6 @@ public class PromoCategory implements Parcelable {
         this.icon = promoCategory.getIcon();
     }
 
-    public PromoCategory(String description, int id, String name,
-                         String icon, ArrayList<Promo> promos) {
-
-        this.description = description;
-        this.id = id;
-        this.name = name;
-        this.icon = icon;
-        this.promos = promos;
-    }
-
     @Override
     public int describeContents() {
         return 0;
