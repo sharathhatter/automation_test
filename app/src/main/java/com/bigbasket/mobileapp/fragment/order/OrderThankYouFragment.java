@@ -63,7 +63,7 @@ public class OrderThankYouFragment extends BaseFragment implements InvoiceDataAw
         if (contentView == null) return;
 
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        RelativeLayout base = (RelativeLayout) inflater.inflate(R.layout.uiv3_multiple_order_invoice_layout, contentView, false);
+        ViewGroup base = (ViewGroup) inflater.inflate(R.layout.uiv3_multiple_order_invoice_layout, contentView, false);
         AbsListView orderAbsListView = (AbsListView) base.findViewById(R.id.listOrders);
         OrderListAdapter orderListAdapter = new OrderListAdapter(getActivity(), faceRobotoRegular, faceRupee, orders,
                 true, false);
