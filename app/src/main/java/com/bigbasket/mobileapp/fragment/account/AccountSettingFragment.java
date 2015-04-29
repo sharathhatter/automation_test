@@ -3,13 +3,13 @@ package com.bigbasket.mobileapp.fragment.account;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -42,7 +42,7 @@ public class AccountSettingFragment extends BaseFragment {
 
     private void loadMyAccount() {
         if (getActivity() == null) return;
-        LinearLayout contentView = getContentView();
+        ViewGroup contentView = getContentView();
         if (contentView == null) return;
 
         ListView lstMyAccount = new ListView(getActivity());
@@ -106,8 +106,9 @@ public class AccountSettingFragment extends BaseFragment {
         trackEvent(TrackingAware.MY_ACCOUNT_SHOWN, null);
     }
 
-    public LinearLayout getContentView() {
-        return getView() != null ? (LinearLayout) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
+    @Nullable
+    public ViewGroup getContentView() {
+        return getView() != null ? (ViewGroup) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
     }
 
     @Override

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -117,7 +118,7 @@ public class CategoryLandingFragment extends BaseSectionFragment {
 
         if (getActivity() == null) return;
 
-        LinearLayout contentView = getContentView();
+        ViewGroup contentView = getContentView();
         if (contentView == null) return;
 
         SubCategoryAdapter subCategoryAdapter = new SubCategoryAdapter(getActivity());
@@ -207,8 +208,9 @@ public class CategoryLandingFragment extends BaseSectionFragment {
         contentView.addView(subCategoryPageLayout);
     }
 
-    public LinearLayout getContentView() {
-        return getView() != null ? (LinearLayout) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
+    @Nullable
+    public ViewGroup getContentView() {
+        return getView() != null ? (ViewGroup) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
     }
 
     @Override

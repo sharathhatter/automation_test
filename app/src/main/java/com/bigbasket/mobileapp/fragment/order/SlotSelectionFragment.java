@@ -19,7 +19,6 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -70,7 +69,7 @@ public class SlotSelectionFragment extends BaseFragment {
     private void displaySlotGroups(String slotMsg) {
         if (getActivity() == null) return;
 
-        LinearLayout contentView = getContentView();
+        ViewGroup contentView = getContentView();
         if (contentView == null) return;
 
         // Set default selected slot
@@ -216,8 +215,8 @@ public class SlotSelectionFragment extends BaseFragment {
         return true;
     }
 
-    public LinearLayout getContentView() {
-        return getView() != null ? (LinearLayout) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
+    public ViewGroup getContentView() {
+        return getView() != null ? (ViewGroup) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
     }
 
     @Override

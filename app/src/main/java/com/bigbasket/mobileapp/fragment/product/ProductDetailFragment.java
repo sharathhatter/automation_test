@@ -179,7 +179,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
     }
 
     @Override
-    public LinearLayout getContentView() {
+    public ViewGroup getContentView() {
         return null;
     }
 

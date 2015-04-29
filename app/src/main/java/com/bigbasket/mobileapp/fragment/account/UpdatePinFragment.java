@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -65,7 +64,7 @@ public class UpdatePinFragment extends BaseFragment {
 
     private void clickEventHandler() {
         if (getActivity() == null) return;
-        LinearLayout view = getContentView();
+        ViewGroup view = getContentView();
         if (view == null) return;
         ImageView imgEditPin = (ImageView) view.findViewById(R.id.imgEditPin);
         imgEditPin.setOnClickListener(new View.OnClickListener() {
@@ -195,7 +194,7 @@ public class UpdatePinFragment extends BaseFragment {
 
     private void renderCurrentMemberPin() {
         if (getActivity() == null) return;
-        LinearLayout view = getContentView();
+        ViewGroup view = getContentView();
         if (view == null) return;
 
         layoutCurrentPin = (ViewGroup) view.findViewById(R.id.layoutCurrentPin);
@@ -223,8 +222,8 @@ public class UpdatePinFragment extends BaseFragment {
     }
 
     @Override
-    public LinearLayout getContentView() {
-        return getView() != null ? (LinearLayout) getView().findViewById(R.id.layoutUpdatePin) : null;
+    public ViewGroup getContentView() {
+        return getView() != null ? (ViewGroup) getView().findViewById(R.id.layoutUpdatePin) : null;
     }
 
     @Override

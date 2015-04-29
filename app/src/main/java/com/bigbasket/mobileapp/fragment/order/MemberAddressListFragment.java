@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -148,7 +147,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
 
     private void renderAddressList() {
         if (getActivity() == null) return;
-        LinearLayout contentView = getContentView();
+        ViewGroup contentView = getContentView();
         if (contentView == null) return;
         contentView.removeAllViews();
         LayoutInflater layoutInflater = (LayoutInflater) getActivity().
@@ -239,8 +238,8 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
-    public LinearLayout getContentView() {
-        return getView() != null ? (LinearLayout) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
+    public ViewGroup getContentView() {
+        return getView() != null ? (ViewGroup) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
     }
 
     @Override

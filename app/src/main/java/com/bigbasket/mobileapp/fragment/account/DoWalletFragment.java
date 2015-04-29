@@ -135,7 +135,7 @@ public class DoWalletFragment extends BaseFragment {
 
     private void renderWalletMonthActivity(float currentBalance, WalletRule walletRule) {
         if (getActivity() == null) return;
-        LinearLayout contentView = getContentView();
+        ViewGroup contentView = getContentView();
         if (contentView == null) return;
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -371,8 +371,8 @@ public class DoWalletFragment extends BaseFragment {
     }
 
     @Override
-    public LinearLayout getContentView() {
-        return getView() != null ? (LinearLayout) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
+    public ViewGroup getContentView() {
+        return getView() != null ? (ViewGroup) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
     }
 
 //    @Override

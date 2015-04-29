@@ -127,7 +127,7 @@ public class PromoDetailFragment extends BaseFragment {
 
     public void renderPromoDetail() {
         if (getActivity() == null) return;
-        LinearLayout contentView = getContentView();
+        ViewGroup contentView = getContentView();
         if (contentView == null) return;
 
         setTitle(mPromoDetail.getPromoName());
@@ -439,8 +439,8 @@ public class PromoDetailFragment extends BaseFragment {
     }
 
     @Override
-    public LinearLayout getContentView() {
-        return getView() != null ? (LinearLayout) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
+    public ViewGroup getContentView() {
+        return getView() != null ? (ViewGroup) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
     }
 
     @Override

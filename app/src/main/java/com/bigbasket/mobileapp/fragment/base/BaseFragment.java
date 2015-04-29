@@ -14,9 +14,9 @@ import android.text.Spannable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -96,7 +96,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
 
     public void showProgressView() {
         if (getActivity() == null) return;
-        LinearLayout view = getContentView();
+        ViewGroup view = getContentView();
         if (view == null) return;
         view.removeAllViews();
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -106,7 +106,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
 
     public void hideProgressView() {
         if (getActivity() == null) return;
-        LinearLayout view = getContentView();
+        ViewGroup view = getContentView();
         if (view == null) return;
         view.removeAllViews();
     }
@@ -176,7 +176,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     }
 
     @Nullable
-    public abstract LinearLayout getContentView();
+    public abstract ViewGroup getContentView();
 
     @Nullable
     public BaseActivity getCurrentActivity() {

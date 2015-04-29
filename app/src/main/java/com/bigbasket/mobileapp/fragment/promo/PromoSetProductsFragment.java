@@ -254,7 +254,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
     private void displayProductList(ArrayList<Product> products, String baseImgUrl) {
         if (getActivity() == null) return;
 
-        LinearLayout contentView = getContentView();
+        ViewGroup contentView = getContentView();
         if (contentView == null) return;
 
         showProgressDialog(getString(R.string.please_wait));
@@ -316,7 +316,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
     private View getPromoSummaryView() {
         if (promoSummaryView == null) {
 
-            LinearLayout contentView = getContentView();
+            ViewGroup contentView = getContentView();
             if (contentView == null) return null;
 
             LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -339,8 +339,8 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
     }
 
     @Override
-    public LinearLayout getContentView() {
-        return getView() != null ? (LinearLayout) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
+    public ViewGroup getContentView() {
+        return getView() != null ? (ViewGroup) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
     }
 
     @Override
