@@ -69,6 +69,7 @@ import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
+import com.bigbasket.mobileapp.interfaces.SubNavigationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.SectionManager;
@@ -91,6 +92,7 @@ import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
+import com.bigbasket.mobileapp.view.uiv3.AnimatedLinearLayout;
 import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
 
 import java.util.ArrayList;
@@ -100,7 +102,7 @@ import java.util.Map;
 
 
 public class BBActivity extends SocialLoginActivity implements BasketOperationAware,
-        CartInfoAware, HandlerAware {
+        CartInfoAware, HandlerAware, SubNavigationAware {
 
     protected BigBasketMessageHandler handler;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -847,14 +849,21 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 if (section.getTitle() != null && !TextUtils.isEmpty(section.getTitle().getText())) {
                     sectionNavigationItems.add(new SectionNavigationItem(section));
                 }
-                for (SectionItem sectionItem : section.getSectionItems()) {
-                    if (sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
-                        sectionNavigationItems.add(new SectionNavigationItem(section, sectionItem));
-                    }
-                }
+                setSectionNavigationItemList(sectionNavigationItems, section.getSectionItems(),
+                        section);
             }
         }
         return sectionNavigationItems;
+    }
+
+    private void setSectionNavigationItemList(ArrayList<SectionNavigationItem> sectionNavigationItems,
+                                              ArrayList<SectionItem> sectionItems,
+                                              Section section) {
+        for (SectionItem sectionItem : sectionItems) {
+            if (sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
+                sectionNavigationItems.add(new SectionNavigationItem(section, sectionItem));
+            }
+        }
     }
 
     private SectionNavigationItem getHomeSectionNavItem() {
@@ -864,6 +873,39 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         sectionItems.add(homeSectionItem);
         Section section = new Section(null, null, Section.MSG, sectionItems, null);
         return new SectionNavigationItem(section, homeSectionItem);
+    }
+
+    @Override
+    public void onSubNavigationRequested(Section section, SectionItem sectionItem) {
+        ArrayList<SectionItem> subNavigationSectionItems = sectionItem.getSubSectionItems();
+        if (subNavigationSectionItems == null) return;
+
+        final AnimatedLinearLayout layoutSubNavigationItems =
+                (AnimatedLinearLayout) findViewById(R.id.layoutSubNavigationItems);
+
+        layoutSubNavigationItems.setVisibility(View.VISIBLE);
+        final RecyclerView listSubNavigation = (RecyclerView) findViewById(R.id.listSubNavigation);
+
+        TextView txtNavMainItem = (TextView) findViewById(R.id.txtNavMainItem);
+        txtNavMainItem.setTypeface(faceRobotoLight);
+        txtNavMainItem.setText(sectionItem.getTitle() != null ?
+                sectionItem.getTitle().getText() : "");
+        txtNavMainItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listSubNavigation.setAdapter(null);
+                layoutSubNavigationItems.setVisibility(View.GONE);
+            }
+        });
+
+        listSubNavigation.setHasFixedSize(false);
+        listSubNavigation.setLayoutManager(new LinearLayoutManager(this));
+
+        ArrayList<SectionNavigationItem> sectionNavigationItems = new ArrayList<>();
+        setSectionNavigationItemList(sectionNavigationItems, subNavigationSectionItems, section);
+        NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoLight, sectionNavigationItems,
+                SectionManager.MAIN_MENU);
+        listSubNavigation.setAdapter(navigationAdapter);
     }
 
     @Override

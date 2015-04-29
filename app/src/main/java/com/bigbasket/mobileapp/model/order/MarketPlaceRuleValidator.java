@@ -35,21 +35,6 @@ public class MarketPlaceRuleValidator implements Parcelable {
     private ArrayList<MarketPlaceItems> items;
     @SerializedName(Constants.RULE_MAX_WEIGHT_LIMIT)
     private double ruleMaxWeightLimit;
-    //private int totalRuleNoOfItems;
-    private boolean noRuleError;
-
-
-    public MarketPlaceRuleValidator(String ruleName, String ruleDesc, String weightLabel, float ruleTotalQty,
-                                    float ruleTotalPrice,
-                                    ArrayList<MarketPlaceItems> items, float ruleMaxWeightLimit) {
-        this.ruleName = ruleName;
-        this.ruleDesc = ruleDesc;
-        this.weightLabel = weightLabel;
-        this.ruleTotalQty = ruleTotalQty;
-        this.ruleTotalPrice = ruleTotalPrice;
-        this.items = items;
-        this.ruleMaxWeightLimit = ruleMaxWeightLimit;
-    }
 
     public MarketPlaceRuleValidator(Parcel source) {
         ruleName = source.readString();
@@ -91,14 +76,6 @@ public class MarketPlaceRuleValidator implements Parcelable {
 
     public double getRuleTotalPrice() {
         return ruleTotalPrice;
-    }
-
-    public boolean isNoRuleError() {
-        return noRuleError;
-    }
-
-    public double getRuleMaxWeightLimit() {
-        return ruleMaxWeightLimit;
     }
 
     public double getRuleTotalQty() {

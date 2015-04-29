@@ -1,11 +1,9 @@
 package com.bigbasket.mobileapp.model.product;
 
 
-import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.bigbasket.mobileapp.adapter.product.CategoryAdapter;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
@@ -33,34 +31,6 @@ public class TopCategoryModel implements Parcelable, Serializable {
     private String imagePath;
     @SerializedName(Constants.FLAT_PAGE)
     private String flatPage;
-
-    public TopCategoryModel() {
-
-    }
-
-    public TopCategoryModel(Cursor cursor) {
-        this.slug = cursor.getString(cursor.getColumnIndex(CategoryAdapter.COLUMN_SLUG));
-        this.version = cursor.getString(cursor.getColumnIndex(CategoryAdapter.COLUMN_VERSION));
-        this.name = cursor.getString(cursor.getColumnIndex(CategoryAdapter.COLUMN_NAME));
-        this.imagePath = cursor.getString(cursor.getColumnIndex(CategoryAdapter.COLUMN_IMAGE_PATH));
-        this.flatPage = cursor.getString(cursor.getColumnIndex(CategoryAdapter.COLUMN_FLAT_PAGE));
-
-    }
-
-    public TopCategoryModel(String name, String slug, String version, String imagePath, String flatPage) {
-        this.name = name;
-        this.slug = slug;
-        this.version = version;
-        this.imagePath = imagePath;
-        this.flatPage = flatPage;
-    }
-
-//    public TopCategoryModel(String name, String slug, String version, String imagePath) {
-//        this.name = name;
-//        this.slug = slug;
-//        this.version = version;
-//        this.imagePath = imagePath;
-//    }
 
     public TopCategoryModel(Parcel source) {
         this.name = source.readString();
@@ -97,10 +67,6 @@ public class TopCategoryModel implements Parcelable, Serializable {
         return imagePath;
     }
 
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
-    }
-
     @Override
     public int describeContents() {
         return 0;
@@ -116,9 +82,5 @@ public class TopCategoryModel implements Parcelable, Serializable {
 
     public String getFlatPage() {
         return flatPage;
-    }
-
-    public void setFlatPage(String flatPage) {
-        this.flatPage = flatPage;
     }
 }

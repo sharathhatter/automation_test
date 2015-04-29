@@ -27,11 +27,9 @@ import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.interfaces.InfiniteProductListAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
-import com.bigbasket.mobileapp.interfaces.SortAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.product.FilteredOn;
-import com.bigbasket.mobileapp.model.product.Option;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductListData;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
@@ -55,7 +53,7 @@ import java.util.Map;
 
 
 public abstract class ProductListAwareFragment extends BaseSectionFragment implements ProductListDataAware,
-        ShoppingListNamesAware, SortAware, InfiniteProductListAware {
+        ShoppingListNamesAware, InfiniteProductListAware {
 
     protected ProductListData productListData;
     private String selectedProductId;
@@ -225,6 +223,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
     }
 
     private void displayProductCount() {
+        if (getCurrentActivity() == null) return;
         if (productListData != null && productListData.getProductCount() > 0) {
             String productsStr = productListData.getProductCount() > 1 ? " Products" : " Product";
             if (getCurrentActivity() instanceof ProductListActivity) {
@@ -234,10 +233,13 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                         Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
                 productCountSpannable.setSpan(new RelativeSizeSpan(0.8f),
                         0, productCountSpannable.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-                getCurrentActivity().getSupportActionBar().setSubtitle(productCountSpannable);
+                if (getCurrentActivity().getSupportActionBar() != null) {
+                    getCurrentActivity().getSupportActionBar().setSubtitle(productCountSpannable);
+                }
             }
         } else {
-            if (getCurrentActivity() instanceof ProductListActivity) {
+            if (getCurrentActivity() instanceof ProductListActivity
+                    && getCurrentActivity().getSupportActionBar() != null) {
                 getCurrentActivity().getSupportActionBar().setSubtitle(null);
             }
         }
@@ -353,29 +355,6 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
     @Nullable
     public LinearLayout getContentView() {
         return getView() != null ? (LinearLayout) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
-    }
-
-    @Override
-    public List<Option> getSortOptions() {
-        return productListData.getSortOptions();
-    }
-
-    @Override
-    public String getSortedOn() {
-        return productListData.getSortedOn();
-    }
-
-    @Override
-    public void setSortedOn(String sortedOn) {
-        this.productListData.setSortedOn(sortedOn);
-        logSortByEvent(sortedOn);
-    }
-
-    private void logSortByEvent(String sortedOn) {
-        HashMap<String, String> map = new HashMap<>();
-        map.put(TrackEventkeys.TYPE, sortedOn);
-        map.put(TrackEventkeys.NAVIGATION_CTX, getNavigationCtx());
-        trackEvent(TrackingAware.SORT_BY, map);
     }
 
     @Override

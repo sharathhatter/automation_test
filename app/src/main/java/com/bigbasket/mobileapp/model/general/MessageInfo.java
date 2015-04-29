@@ -26,12 +26,6 @@ public class MessageInfo implements Parcelable {
     private String messageStr;
     @SerializedName(Constants.PARAMS)
     private ArrayList<MessageParamInfo> params;
-
-    public MessageInfo(String messageStr, ArrayList<MessageParamInfo> params) {
-        this.messageStr = messageStr;
-        this.params = params;
-    }
-
     public MessageInfo(Parcel parcel) {
         this.messageStr = parcel.readString();
         boolean isParamsNull = parcel.readByte() == (byte) 1;
@@ -60,15 +54,7 @@ public class MessageInfo implements Parcelable {
         return messageStr;
     }
 
-    public void setMessageStr(String messageStr) {
-        this.messageStr = messageStr;
-    }
-
     public ArrayList<MessageParamInfo> getParams() {
         return params;
-    }
-
-    public void setParams(ArrayList<MessageParamInfo> params) {
-        this.params = params;
     }
 }

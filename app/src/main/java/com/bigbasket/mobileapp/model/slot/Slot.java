@@ -35,20 +35,6 @@ public class Slot extends BaseSlot implements Parcelable {
     @SerializedName(Constants.SLOT_ID)
     private String slotId;
 
-    public Slot(String displayName, boolean available, String slotDate, String slotId) {
-        super(displayName);
-        this.available = available;
-        this.slotDate = slotDate;
-        this.slotId = slotId;
-    }
-
-    public Slot(JSONObject jsonObject) throws JSONException {
-        super(jsonObject);
-        this.available = jsonObject.optBoolean(Constants.AVAILABLE, true);
-        this.slotDate = jsonObject.getString(Constants.SLOT_DATE);
-        this.slotId = jsonObject.getString(Constants.SLOT_ID);
-    }
-
     public Slot(Parcel source) {
         super(source.readString());
         this.available = source.readByte() == (byte) 1;
@@ -104,16 +90,8 @@ public class Slot extends BaseSlot implements Parcelable {
         return slotDate;
     }
 
-    public void setSlotDate(String slotDate) {
-        this.slotDate = slotDate;
-    }
-
     public String getSlotId() {
         return slotId;
-    }
-
-    public void setSlotId(String slotId) {
-        this.slotId = slotId;
     }
 
     public String getFormattedSlotDate() {

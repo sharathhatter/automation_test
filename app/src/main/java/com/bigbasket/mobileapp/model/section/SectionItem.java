@@ -18,6 +18,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Map;
 
 public class SectionItem extends BaseSectionTextItem implements Parcelable, Serializable {
@@ -54,7 +55,11 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
     @SerializedName(Constants.DESTINATION)
     private DestinationInfo destinationInfo;
 
-    public SectionItem(SectionTextItem title, SectionTextItem description, String image, int renderingId, DestinationInfo destinationInfo) {
+    @SerializedName(Constants.SUB_ITEMS)
+    private ArrayList<SectionItem> subSectionItems;
+
+    public SectionItem(SectionTextItem title, SectionTextItem description, String image,
+                       int renderingId, DestinationInfo destinationInfo) {
         super(title, description);
         this.image = image;
         this.renderingId = renderingId;
@@ -71,6 +76,11 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
         boolean wasDestNull = source.readByte() == (byte) 1;
         if (!wasDestNull) {
             destinationInfo = source.readParcelable(SectionItem.class.getClassLoader());
+        }
+        boolean wasSubSectionItemNull = source.readByte() == (byte) 1;
+        if (!wasSubSectionItemNull) {
+            subSectionItems = new ArrayList<>();
+            source.readTypedList(subSectionItems, SectionItem.CREATOR);
         }
     }
 
@@ -123,6 +133,10 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
         return destinationInfo;
     }
 
+    public ArrayList<SectionItem> getSubSectionItems() {
+        return subSectionItems;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -141,6 +155,11 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
         dest.writeByte(wasDestNull ? (byte) 1 : (byte) 0);
         if (!wasDestNull) {
             dest.writeParcelable(destinationInfo, flags);
+        }
+        boolean wasSubSectionItemNull = subSectionItems == null;
+        dest.writeByte(wasSubSectionItemNull ? (byte) 1 : (byte) 0);
+        if (!wasSubSectionItemNull) {
+            dest.writeTypedList(subSectionItems);
         }
     }
 

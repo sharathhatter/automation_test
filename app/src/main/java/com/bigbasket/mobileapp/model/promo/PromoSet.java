@@ -8,9 +8,6 @@ import com.google.gson.annotations.SerializedName;
 
 public class PromoSet implements Parcelable {
 
-    public static final String QTY = "quantity";
-    public static final String AMOUNT = "amount";
-
     public static final String CRITERIA = "criteria";
     public static final String PROMO_PRODUCT = "promo_product";
     public static final Parcelable.Creator<PromoSet> CREATOR = new Parcelable.Creator<PromoSet>() {

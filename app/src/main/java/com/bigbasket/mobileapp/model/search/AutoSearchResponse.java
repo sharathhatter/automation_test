@@ -68,10 +68,6 @@ public class AutoSearchResponse {
         return suggestedTerm;
     }
 
-//    public String[] getTopSearches() {
-//        return topSearches;
-//    }
-
     public boolean isStale() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
         try {

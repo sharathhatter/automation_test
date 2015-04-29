@@ -14,16 +14,6 @@ public class PrescriptionImageModel {
     private String prescriptionImageChunk;
     private String imageSequence;
 
-    public PrescriptionImageModel(String pharmaPrescriptionId, String chunkNumber,
-                                  String maxChunks, String prescriptionImageChunk,
-                                  String imageSequence) {
-        this.pharmaPrescriptionId = pharmaPrescriptionId;
-        this.chunkNumber = chunkNumber;
-        this.maxChunks = maxChunks;
-        this.prescriptionImageChunk = prescriptionImageChunk;
-        this.imageSequence = imageSequence;
-    }
-
     public PrescriptionImageModel(Cursor cursor) {
         pharmaPrescriptionId = cursor.getString(cursor.getColumnIndex(PrescriptionImageAdapter.COLUMN_PRESCRIPTION_ID));
         chunkNumber = cursor.getString(cursor.getColumnIndex(PrescriptionImageAdapter.COLUMN_CHUNK_NUMBER));

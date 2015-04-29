@@ -55,20 +55,12 @@ public class ActiveVouchers implements Parcelable {
         return code;
     }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
-
     public String getCustomerDesc() {
         return customerDesc;
     }
 
     public String getMessage() {
         return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
     }
 
     public String getValidity() {

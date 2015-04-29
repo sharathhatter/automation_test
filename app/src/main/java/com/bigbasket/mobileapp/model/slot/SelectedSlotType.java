@@ -49,16 +49,4 @@ public class SelectedSlotType implements Parcelable {
         dest.writeString(this.slotId);
         dest.writeString(this.slotDate);
     }
-
-    public String getFulfillmentId() {
-        return fulfillmentId;
-    }
-
-    public String getSlotId() {
-        return slotId;
-    }
-
-    public String getSlotDate() {
-        return slotDate;
-    }
 }

@@ -14,8 +14,6 @@ import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 
-import org.apache.http.HttpStatus;
-
 import java.net.HttpURLConnection;
 
 import retrofit.RetrofitError;
@@ -183,12 +181,17 @@ public class BigBasketMessageHandler<T> {
     }
 
     public void handleHttpError(int errorCode, String reasonPhrase, String sourceName, boolean finish) {
-        if (errorCode == HttpURLConnection.HTTP_BAD_GATEWAY || errorCode == HttpURLConnection.HTTP_UNAVAILABLE
-                || errorCode == HttpURLConnection.HTTP_INTERNAL_ERROR) {
+        if (errorCode == HttpURLConnection.HTTP_UNAVAILABLE) {
             if (!finish) {
                 ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.weAreDown), getString(R.string.serviceUnavailable), sourceName, null);
             } else {
                 ((ActivityAware) ctx).getCurrentActivity().showAlertDialogFinish(getString(R.string.weAreDown), getString(R.string.serviceUnavailable));
+            }
+        } else if (errorCode == HttpURLConnection.HTTP_BAD_GATEWAY || errorCode == HttpURLConnection.HTTP_INTERNAL_ERROR) {
+            if (!finish) {
+                ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.weAreOverloaded), getString(R.string.weAreOverloadedDesc), sourceName, null);
+            } else {
+                ((ActivityAware) ctx).getCurrentActivity().showAlertDialogFinish(getString(R.string.weAreOverloaded), getString(R.string.weAreOverloadedDesc));
             }
         } else if (errorCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
             showUnauthorised();

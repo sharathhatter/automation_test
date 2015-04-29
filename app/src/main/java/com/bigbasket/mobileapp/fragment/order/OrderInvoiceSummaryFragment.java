@@ -31,9 +31,7 @@ public class OrderInvoiceSummaryFragment extends AbstractOrderSummaryFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.uiv3_list_container, container, false);
-        view.setBackgroundColor(getResources().getColor(R.color.white));
-        return view;
+        return inflater.inflate(R.layout.uiv3_list_container, container, false);
     }
 
     @Override

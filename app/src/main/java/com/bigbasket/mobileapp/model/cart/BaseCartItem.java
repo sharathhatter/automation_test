@@ -32,12 +32,6 @@ public class BaseCartItem implements Parcelable {
         salePrice = source.readDouble();
     }
 
-    protected BaseCartItem(double saving, double mrp, double salePrice) {
-        this.saving = saving;
-        this.mrp = mrp;
-        this.salePrice = salePrice;
-    }
-
     @Override
     public int describeContents() {
         return 0;

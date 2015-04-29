@@ -44,7 +44,6 @@ public class CartItem extends BaseCartItem {
     private String topCategoryName;
     @SerializedName(Constants.PRODUCT_CATEGORY_NAME)
     private String productCategoryName;
-    private int index;
 
     CartItem(Parcel source) {
         super(source);
@@ -97,10 +96,6 @@ public class CartItem extends BaseCartItem {
         return fulfillmentId;
     }
 
-    public void setIndex(int index) {
-        this.index = index;
-    }
-
     public int getSkuId() {
         return skuId;
     }
@@ -137,15 +132,7 @@ public class CartItem extends BaseCartItem {
         return topCategoryName;
     }
 
-    public void setTopCategoryName(String topCategoryName) {
-        this.topCategoryName = topCategoryName;
-    }
-
     public String getProductCategoryName() {
         return productCategoryName;
-    }
-
-    public void setProductCategoryName(String productCategoryName) {
-        this.productCategoryName = productCategoryName;
     }
 }

@@ -100,6 +100,7 @@ public final class ProductView {
         Button btnMorePackSizes = productViewHolder.getBtnMorePackSizes();
         btnMorePackSizes.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
         if (hasChildren) {
+            btnMorePackSizes.setText("+ " + childProducts.size() + " More");
             btnMorePackSizes.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

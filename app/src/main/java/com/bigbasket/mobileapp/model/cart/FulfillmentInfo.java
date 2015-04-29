@@ -6,9 +6,6 @@ import android.os.Parcelable;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 
 public class FulfillmentInfo implements Parcelable {
 
@@ -37,31 +34,6 @@ public class FulfillmentInfo implements Parcelable {
     private String tc1;
     @SerializedName(Constants.ICON_URL)
     private String icon;
-
-    public FulfillmentInfo(String displayName, String tc2, String fulfilledBy, String fulfillmentId,
-                           String fulfilledByInfoPage, String tc1, String icon) {
-        this.displayName = displayName;
-        this.tc2 = tc2;
-        this.fulfilledBy = fulfilledBy;
-        this.fulfillmentId = fulfillmentId;
-        this.fulfilledByInfoPage = fulfilledByInfoPage;
-        this.tc1 = tc1;
-        this.icon = icon;
-    }
-
-    public FulfillmentInfo() {
-    }
-
-    public FulfillmentInfo(JSONObject jsonObject) throws JSONException {
-
-        this.displayName = jsonObject.getString(Constants.DISPLAY_NAME);
-        this.tc1 = jsonObject.getString(Constants.TC1);
-        this.tc2 = jsonObject.getString(Constants.TC2);
-        this.fulfilledBy = jsonObject.getString(Constants.FULFILLED_BY);
-        this.fulfillmentId = jsonObject.getString(Constants.FULFILLMENT_ID);
-        this.fulfilledByInfoPage = jsonObject.getString(Constants.FULFILLED_BY_INFO_PAGE);
-        this.icon = jsonObject.getString(Constants.ICON_URL);
-    }
 
     public FulfillmentInfo(Parcel parcel) {
 
@@ -154,10 +126,6 @@ public class FulfillmentInfo implements Parcelable {
         return displayName;
     }
 
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-
     public String getTc2() {
         return tc2;
     }
@@ -180,9 +148,5 @@ public class FulfillmentInfo implements Parcelable {
 
     public String getIcon() {
         return icon;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon;
     }
 }

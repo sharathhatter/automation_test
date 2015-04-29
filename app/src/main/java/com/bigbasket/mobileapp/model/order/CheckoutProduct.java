@@ -97,14 +97,9 @@ public class CheckoutProduct implements Parcelable {
         this.spprice = spprice;
     }
 
-    public String getMrp() {
-        return mrp;
-    }
-
     public void setMrp(String mrp) {
         this.mrp = mrp;
     }
-
 
     public String getBrand() {
         return brand;
@@ -113,7 +108,6 @@ public class CheckoutProduct implements Parcelable {
     public void setBrand(String brand) {
         this.brand = brand;
     }
-
 
     public String getDiscountValue() {
         return discountValue;
@@ -138,7 +132,6 @@ public class CheckoutProduct implements Parcelable {
     public void setWeight(String weight) {
         this.weight = weight;
     }
-
 
     public String getCategoryName() {
         return categoryName;

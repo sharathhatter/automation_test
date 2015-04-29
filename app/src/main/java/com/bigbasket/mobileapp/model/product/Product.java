@@ -186,16 +186,8 @@ public class Product implements Parcelable {
         return bbyProduct;
     }
 
-    public void setBbyProduct(boolean bbyProduct) {
-        this.bbyProduct = bbyProduct;
-    }
-
     public boolean isNewProduct() {
         return newProduct;
-    }
-
-    public void setNewProduct(boolean newProduct) {
-        this.newProduct = newProduct;
     }
 
     public String getDescription() {
@@ -210,48 +202,20 @@ public class Product implements Parcelable {
         return sellPrice;
     }
 
-    public void setSellPrice(String sellPrice) {
-        this.sellPrice = sellPrice;
-    }
-
     public String getBrand() {
         return brand;
-    }
-
-    public void setBrand(String brand) {
-        this.brand = brand;
     }
 
     public String getMrp() {
         return mrp;
     }
 
-    public void setMrp(String mrp) {
-        this.mrp = mrp;
-    }
-
     public String getDiscountValue() {
         return discountValue;
     }
 
-    public void setDiscountValue(String discountValue) {
-        this.discountValue = discountValue;
-    }
-
-    public String getDiscountType() {
-        return discountType;
-    }
-
-    public void setDiscountType(String discountType) {
-        this.discountType = discountType;
-    }
-
     public String getPackageDescription() {
         return packageDescription;
-    }
-
-    public void setPackageDescription(String packageDescription) {
-        this.packageDescription = packageDescription;
     }
 
     public int getNoOfItemsInCart() {
@@ -266,16 +230,8 @@ public class Product implements Parcelable {
         return sku;
     }
 
-    public void setSku(String sku) {
-        this.sku = sku;
-    }
-
     public String getWeight() {
         return weight;
-    }
-
-    public void setWeight(String weight) {
-        this.weight = weight;
     }
 
     public String getWeightAndPackDesc() {
@@ -286,56 +242,28 @@ public class Product implements Parcelable {
         return imageUrl;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
     public String getTopLevelCategorySlug() {
         return topLevelCategorySlug;
-    }
-
-    public void setTopLevelCategorySlug(String topLevelCategorySlug) {
-        this.topLevelCategorySlug = topLevelCategorySlug;
     }
 
     public String getTopLevelCategoryName() {
         return topLevelCategoryName;
     }
 
-    public void setTopLevelCategoryName(String topLevelCategoryName) {
-        this.topLevelCategoryName = topLevelCategoryName;
-    }
-
     public String getProductCategoryName() {
         return productCategoryName;
-    }
-
-    public void setProductCategoryName(String productCategoryName) {
-        this.productCategoryName = productCategoryName;
     }
 
     public String getProductStatus() {
         return productStatus;
     }
 
-    public void setProductStatus(String productStatus) {
-        this.productStatus = productStatus;
-    }
-
     public List<Product> getAllProducts() {
         return allProducts;
     }
 
-    public void setAllProducts(List<Product> allProducts) {
-        this.allProducts = allProducts;
-    }
-
     public ProductPromoInfo getProductPromoInfo() {
         return productPromoInfo;
-    }
-
-    public void setProductPromoInfo(ProductPromoInfo productPromoInfo) {
-        this.productPromoInfo = productPromoInfo;
     }
 
     public double getActualDiscount() {

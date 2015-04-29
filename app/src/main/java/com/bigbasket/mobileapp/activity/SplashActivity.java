@@ -51,6 +51,8 @@ import retrofit.client.Response;
 
 public class SplashActivity extends SocialLoginActivity implements DynamicScreenAware {
 
+    private boolean mIsFromActivityResult;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,9 +76,6 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
             MoEHelper moEHelper = new MoEHelper(this);
             moEHelper.initialize(Constants.MO_SENDER_ID, Constants.MO_APP_ID);
             moEHelper.Register(R.drawable.ic_launcher);
-            startSplashScreen();
-        } else {
-            showNoInternetConnectionView();
         }
     }
 
@@ -94,7 +93,7 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
         trackEvent(TrackingAware.ENTRY_PAGE_SHOWN, null);
     }
 
-    private void showNoInternetConnectionView() {
+    private void showNoInternetConnectionView(String msg) {
         setContentView(R.layout.layout_no_internet);
 
         TextView txtHeader = (TextView) findViewById(R.id.txtHeader);
@@ -104,7 +103,7 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
         imgEmptyPage.setImageResource(R.drawable.empty_no_internet);
 
         TextView txtEmptyMsg1 = (TextView) findViewById(R.id.txtEmptyMsg1);
-        txtEmptyMsg1.setText(R.string.lostInternetConnection);
+        txtEmptyMsg1.setText(msg);
 
         ImageView imgViewRetry = (ImageView) findViewById(R.id.imgViewRetry);
         imgViewRetry.setImageResource(R.drawable.empty_retry);
@@ -121,9 +120,14 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
 
     @Override
     protected void onResume() {
-        super.onResume();//todo facebook event tracking
-        //FacebookEventTrackWrapper.activateApp(getApplicationContext());
-//        startSplashScreen();
+        super.onResume();
+        if (mIsFromActivityResult) return;
+        //FacebookEventTrackWrapper.activateApp(getCurrentActivity());//todo facebook event tracking
+        if (checkInternetConnection()) {
+            startSplashScreen();
+        } else {
+            showNoInternetConnectionView(getString(R.string.lostInternetConnection));
+        }
     }
 
     @Override
@@ -152,7 +156,7 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
 
     private void doRegisterDevice(final City city) {
         if (!checkInternetConnection()) {
-            showNoInternetConnectionView();
+            showNoInternetConnectionView(getString(R.string.lostInternetConnection));
             return;
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
@@ -217,7 +221,14 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
                         } catch (IllegalArgumentException e) {
                             return;
                         }
-                        handler.handleRetrofitError(error, true);
+                        switch (error.getKind()) {
+                            case NETWORK:
+                                showNoInternetConnectionView(getString(R.string.networkError));
+                                break;
+                            default:
+                                handler.handleRetrofitError(error, true);
+                                break;
+                        }
                     }
                 });
     }
@@ -240,6 +251,7 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         setSuspended(false);
+        mIsFromActivityResult = true;
         if (resultCode == NavigationCodes.GO_TO_HOME || resultCode == NavigationCodes.CITY_CHANGED) {
             removePendingGoToHome();
             if ((data != null && data.getBooleanExtra(Constants.RELOAD_APP, false))
