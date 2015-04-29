@@ -282,6 +282,7 @@ public abstract class BaseActivity extends AppCompatActivity implements COMarket
         if (!authParameters.isAuthTokenEmpty()) {
             Konotor.getInstance(getApplicationContext()).launchFeedbackScreen(this);
         } else {
+            showToast(getString(R.string.loginToContinue));
             launchLogin(TrackEventkeys.NAVIGATION_CTX_SHOW_BASKET, FragmentCodes.START_COMMUNICATION_HUB);
         }
 

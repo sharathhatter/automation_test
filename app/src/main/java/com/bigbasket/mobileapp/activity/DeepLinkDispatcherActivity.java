@@ -51,9 +51,6 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
             return;
         }
         switch (uri.getHost()) {
-            case Constants.HOME:
-                navigateToHome(true);
-                break;
             case Constants.PROMO:
                 String id = uri.getQueryParameter(Constants.ID);
                 if (!TextUtils.isEmpty(id) && TextUtils.isDigitsOnly(id)) {
@@ -217,27 +214,7 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
     @Override
     protected void onRestart() {
         super.onRestart();
-        navigateToHome(false);
-    }
-
-    private void navigateToHome(boolean setHomeNavCode) {
-        if (!getIntent().getBooleanExtra(Constants.HAS_PARENT, false)) {
-            Intent intent = new Intent(this, SplashActivity.class);
-            startActivity(intent);
-            finish();
-        } else if (setHomeNavCode) {
-            goToHome(false);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        setSuspended(false);
-        if (resultCode == NavigationCodes.GO_TO_HOME) {
-            navigateToHome(true);
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
+        finish();
     }
 
     @Override

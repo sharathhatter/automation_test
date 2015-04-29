@@ -354,6 +354,7 @@
     <string name="noSmartBasketProducts">It will be updated 3 days after your first order is delivered! Enjoy awesome grocery shopping experience with BigBasket Mobile app!</string>
     <string name="skipWithArrow">SKIP &gt;</string>
     <string name="signinAndStart">Login and Get Started</string>
+    <string name="loginToContinue">Please login to continue</string>
     <string name="byLoggingIn">By logging in, you agree to BigBasket\'s\u00A0</string>
     <string name="byRegistering">By signing up, you agree to BigBasket\'s\u00A0</string>
     <string name="authFooterSeparator">, and\u00A0</string>
