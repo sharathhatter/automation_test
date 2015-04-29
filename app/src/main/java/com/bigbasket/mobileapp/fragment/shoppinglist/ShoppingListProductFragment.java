@@ -8,8 +8,8 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -85,7 +85,7 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
     private void renderShoppingListItems(final ShoppingListSummary shoppingListSummary,
                                          String baseImgUrl) {
         if (getActivity() == null) return;
-        LinearLayout contentView = getContentView();
+        ViewGroup contentView = getContentView();
         if (contentView == null) return;
 
         contentView.removeAllViews();
@@ -194,7 +194,7 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
 
     private void renderProducts(ShoppingListSummary shoppingListSummary, String baseImgUrl) {
         if (getActivity() == null) return;
-        LinearLayout contentView = getContentView();
+        ViewGroup contentView = getContentView();
         if (contentView == null) return;
 
         RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, contentView);
@@ -219,8 +219,8 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
     }
 
     @Override
-    public LinearLayout getContentView() {
-        return getView() != null ? (LinearLayout) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
+    public ViewGroup getContentView() {
+        return getView() != null ? (ViewGroup) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
     }
 
     @Override

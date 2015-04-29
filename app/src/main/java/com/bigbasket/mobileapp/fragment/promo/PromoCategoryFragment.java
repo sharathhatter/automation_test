@@ -6,7 +6,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.product.PromoCategoryAdapter;
@@ -112,7 +111,7 @@ public class PromoCategoryFragment extends BaseSectionFragment implements PromoD
 
     private void renderPromoCategories() {
         if (getActivity() == null) return;
-        LinearLayout contentView = getContentView();
+        ViewGroup contentView = getContentView();
         if (contentView == null) return;
         contentView.removeAllViews();
         final List<Object> promoConsolidatedList = new ArrayList<>();
@@ -145,8 +144,8 @@ public class PromoCategoryFragment extends BaseSectionFragment implements PromoD
     }
 
     @Override
-    public LinearLayout getContentView() {
-        return getView() != null ? (LinearLayout) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
+    public ViewGroup getContentView() {
+        return getView() != null ? (ViewGroup) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
     }
 
     @Override

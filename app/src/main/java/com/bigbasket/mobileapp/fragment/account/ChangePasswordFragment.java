@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.bigbasket.mobileapp.R;
@@ -235,8 +234,8 @@ public class ChangePasswordFragment extends BaseFragment {
     }
 
     @Override
-    public LinearLayout getContentView() {
-        return getView() != null ? (LinearLayout) getView().findViewById(R.id.changePasswordLayout) : null;
+    public ViewGroup getContentView() {
+        return getView() != null ? (ViewGroup) getView().findViewById(R.id.changePasswordLayout) : null;
     }
 
     @Override

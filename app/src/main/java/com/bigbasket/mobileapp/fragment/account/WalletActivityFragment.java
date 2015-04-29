@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.bigbasket.mobileapp.R;
@@ -63,7 +62,7 @@ public class WalletActivityFragment extends BaseFragment implements InvoiceDataA
 
     private void renderWalletActivityList(final ArrayList<WalletDataItem> walletActivityData) {
         if (getActivity() == null) return;
-        LinearLayout view = getContentView();
+        ViewGroup view = getContentView();
         if (view == null) return;
 
         ListView walletActivityList = new ListView(getActivity());
@@ -108,8 +107,8 @@ public class WalletActivityFragment extends BaseFragment implements InvoiceDataA
 
 
     @Override
-    public LinearLayout getContentView() {
-        return getView() != null ? (LinearLayout) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
+    public ViewGroup getContentView() {
+        return getView() != null ? (ViewGroup) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
     }
 
     @Override

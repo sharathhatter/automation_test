@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -43,7 +42,7 @@ public class OrderModificationFragment extends BaseFragment {
     private void renderOrderModifications(ArrayList<OrderModification> orderModifications) {
         if (getActivity() == null) return;
 
-        LinearLayout contentView = getContentView();
+        ViewGroup contentView = getContentView();
         if (contentView == null) return;
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -64,8 +63,8 @@ public class OrderModificationFragment extends BaseFragment {
     }
 
     @Override
-    public LinearLayout getContentView() {
-        return getView() != null ? (LinearLayout) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
+    public ViewGroup getContentView() {
+        return getView() != null ? (ViewGroup) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
     }
 
     @NonNull

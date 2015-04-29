@@ -74,6 +74,7 @@ public class Renderer implements Parcelable, Serializable {
         padding = source.readInt();
         margin = source.readInt();
         alignment = source.readInt();
+        orientation = source.readInt();
         boolean wasOrderingNull = source.readByte() == (byte) 1;
         if (!wasOrderingNull) {
             ordering = source.readString();

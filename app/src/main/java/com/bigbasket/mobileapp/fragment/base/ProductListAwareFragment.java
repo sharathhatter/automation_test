@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -148,7 +147,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
 
     private void setProductListView() {
         if (getActivity() == null) return;
-        LinearLayout contentView = getContentView();
+        ViewGroup contentView = getContentView();
         if (contentView == null) return;
         contentView.removeAllViews();
 
@@ -353,8 +352,8 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
     }
 
     @Nullable
-    public LinearLayout getContentView() {
-        return getView() != null ? (LinearLayout) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
+    public ViewGroup getContentView() {
+        return getView() != null ? (ViewGroup) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
     }
 
     @Override

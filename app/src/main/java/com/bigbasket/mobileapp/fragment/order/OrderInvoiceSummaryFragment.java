@@ -52,7 +52,7 @@ public class OrderInvoiceSummaryFragment extends AbstractOrderSummaryFragment {
     private void renderOrderInvoice(final OrderInvoice orderInvoice) {
         if (getActivity() == null) return;
 
-        LinearLayout contentView = getContentView();
+        ViewGroup contentView = getContentView();
         if (contentView == null) return;
 
         showProgressView();
@@ -175,8 +175,8 @@ public class OrderInvoiceSummaryFragment extends AbstractOrderSummaryFragment {
     }
 
     @Override
-    public LinearLayout getContentView() {
-        return getView() != null ? (LinearLayout) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
+    public ViewGroup getContentView() {
+        return getView() != null ? (ViewGroup) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
     }
 
     @NonNull

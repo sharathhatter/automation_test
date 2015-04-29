@@ -42,7 +42,7 @@ public class DynamicScreenFragment extends BaseSectionFragment implements Dynami
     }
 
     private void loadDynamicScreen() {
-        LinearLayout contentView = getContentView();
+        ViewGroup contentView = getContentView();
         SectionData sectionData = getSectionData();
         if (contentView == null || sectionData == null || sectionData.getSections() == null
                 || sectionData.getSections().size() == 0) return;
@@ -71,8 +71,8 @@ public class DynamicScreenFragment extends BaseSectionFragment implements Dynami
 
     @Nullable
     @Override
-    public LinearLayout getContentView() {
-        return getView() != null ? (LinearLayout) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
+    public ViewGroup getContentView() {
+        return getView() != null ? (ViewGroup) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
     }
 
     @Override
