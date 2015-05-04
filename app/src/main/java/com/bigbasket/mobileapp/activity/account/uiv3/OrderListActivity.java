@@ -231,7 +231,7 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
         logOrderEvent(mOrderType.equals(getString(R.string.active_label)) ?
                         TrackingAware.ORDER_ACTIVE_ORDERS_SHOWN : TrackingAware.ORDER_PAST_ORDERS_SHOWN,
                 TrackEventkeys.NAVIGATION_CTX,
-                TrackEventkeys.NAVIGATION_CTX_MY_ACCOUNT);
+                getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX));
     }
 
     private void showInvoice(Order order) {

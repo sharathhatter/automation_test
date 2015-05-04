@@ -215,10 +215,12 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                 ViewGroup.LayoutParams.MATCH_PARENT);
         contentScrollView.setLayoutParams(layoutParams);
 
+        //Trace.beginSection("Home page section rendering begin");
         View sectionView = getSectionView();
         if (sectionView != null) {
             contentScrollView.addView(sectionView);
         }
+        //Trace.beginSection("Home page section rendering end");
 
         contentView.removeAllViews();
         contentView.addView(contentScrollView);

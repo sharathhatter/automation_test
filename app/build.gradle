@@ -94,4 +94,6 @@ dependencies {
     compile project(':moEngageSDKv420')
     compile project(':wibmoSDK')
     compile project(':floatingActionButton')
+    compile files('libs/AF-Android-SDK-v2.3.1.17.jar')
+    //compile 'com.facebook.android:facebook-android-sdk:4.0.0'
 }
