@@ -66,6 +66,16 @@
             </intent-filter>
         </activity>
 
+        <!-- Please make sure that appFlyer receiver must be at the top of all other receivers
+         The AppsFlyer Install Receiver is first and will broadcast to all receivers placed below it-->
+
+        <receiver android:name="com.appsflyer.MultipleInstallBroadcastReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.android.vending.INSTALL_REFERRER"/>
+            </intent-filter>
+        </receiver>
+
         <service android:name=".GCMIntentService" />
 
         <receiver
@@ -410,9 +420,7 @@
             android:windowSoftInputMode="stateVisible|adjustResize"
             android:screenOrientation="portrait" />
 
-        <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
+
 
         <!-- MOEngage -->
         <receiver
@@ -458,6 +466,10 @@
         <meta-data
             android:name="com.crashlytics.ApiKey"
             android:value="d2ddc47cb01fb54a209f0ff02a2aecfec7b4d827" />
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
     </application>
 
 </manifest>

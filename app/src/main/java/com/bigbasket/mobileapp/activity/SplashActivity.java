@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.appsflyer.AppsFlyerLib;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
@@ -55,6 +56,10 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        AppsFlyerLib.setAppsFlyerKey(Constants.APP_FLYER_ID);
+        AppsFlyerLib.setUseHTTPFalback(true);
+        AppsFlyerLib.sendTracking(getApplicationContext()); //detects installation, session and updates
 
         // Defensive fix
         removePendingCodes();
@@ -117,8 +122,7 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
     protected void onResume() {
         super.onResume();
         if (mIsFromActivityResult) return;
-
-        FacebookEventTrackWrapper.activateApp(getCurrentActivity());
+        //FacebookEventTrackWrapper.activateApp(getCurrentActivity());//todo facebook event tracking
         if (checkInternetConnection()) {
             startSplashScreen();
         } else {
@@ -284,8 +288,8 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
 
     @Override
     protected void onPause() {
-        super.onPause();
-        FacebookEventTrackWrapper.deactivateApp(getCurrentActivity());
+        super.onPause(); //todo facebook event tracking
+        //FacebookEventTrackWrapper.deactivateApp(getApplicationContext());
     }
 
     @Override
