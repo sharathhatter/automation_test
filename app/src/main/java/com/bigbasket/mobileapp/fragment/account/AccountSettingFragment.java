@@ -25,7 +25,6 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 public class AccountSettingFragment extends BaseFragment {
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.uiv3_list_container, container, false);

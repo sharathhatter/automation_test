@@ -34,7 +34,8 @@
         android:layout_marginLeft="@dimen/margin_small"
         android:layout_marginRight="@dimen/margin_small"
         android:layout_marginTop="@dimen/margin_small"
-        android:gravity="bottom"
+        android:drawableRight="@drawable/ic_arrow_drop_down_white_24dp"
+        android:gravity="center_vertical"
         android:textColor="@color/white"
         android:textSize="@dimen/primary_text_size"
         android:textStyle="bold" />

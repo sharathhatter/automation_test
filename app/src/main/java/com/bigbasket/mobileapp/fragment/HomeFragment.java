@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -76,20 +75,6 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         super.onResume();
         if (getCurrentActivity() == null) return;
         getCurrentActivity().removePharmaPrescriptionId();
-
-        if (!(getCurrentActivity() instanceof BBActivity)) return;
-        Menu menu = ((BBActivity) getCurrentActivity()).getMenu();
-        if (menu != null) {
-            if (menu.findItem(R.id.action_logout) != null &&
-                    menu.findItem(R.id.action_logout).isVisible() &&
-                    AuthParameters.getInstance(getActivity()).isAuthTokenEmpty()) {
-                getCurrentActivity().goToHome(true);
-            } else if (menu.findItem(R.id.action_login) != null &&
-                    menu.findItem(R.id.action_login).isVisible() &&
-                    !AuthParameters.getInstance(getActivity()).isAuthTokenEmpty()) {
-                getCurrentActivity().goToHome(true);
-            }
-        }
     }
 
     private boolean isVisitorUpdateNeeded() {

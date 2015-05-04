@@ -1,7 +1,6 @@
 package com.bigbasket.mobileapp.activity.base.uiv3;
 
 import android.app.SearchManager;
-import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -31,23 +30,23 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.account.uiv3.ChangeCityActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.ShopFromOrderFragment;
 import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.SearchableActivity;
 import com.bigbasket.mobileapp.activity.product.ProductListActivity;
-import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
 import com.bigbasket.mobileapp.adapter.NavigationAdapter;
 import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.DynamicScreenFragment;
 import com.bigbasket.mobileapp.fragment.HomeFragment;
 import com.bigbasket.mobileapp.fragment.account.AccountSettingFragment;
+import com.bigbasket.mobileapp.fragment.account.AccountView;
 import com.bigbasket.mobileapp.fragment.account.ChangePasswordFragment;
 import com.bigbasket.mobileapp.fragment.account.DoWalletFragment;
 import com.bigbasket.mobileapp.fragment.account.UpdatePinFragment;
@@ -85,7 +84,6 @@ import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.model.section.SectionItem;
 import com.bigbasket.mobileapp.model.section.SectionTextItem;
-import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.task.GetCartCountTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
@@ -234,12 +232,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     protected void setOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.action_menu, menu);
-
-        if (AuthParameters.getInstance(this).isAuthTokenEmpty()) {
-            hideMemberMenuItems(menu);
-        } else {
-            hideGuestMenuItems(menu);
-        }
     }
 
     public void initializeCartCountTextView(Menu menu) {
@@ -436,52 +428,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             case android.R.id.home:
                 finish();
                 return true;
-            case R.id.action_user_info:
-                launchMyAccount();
-                return true;
-            case R.id.action_communication_hub:
-                launchKonotor();
-                return true;
-            case R.id.action_shopping_list:
-                if (AuthParameters.getInstance(getCurrentActivity()).isAuthTokenEmpty()) {
-                    showAlertDialog(null,
-                            "Please sign-in to view your shopping lists", NavigationCodes.GO_TO_LOGIN);
-                } else {
-                    addToMainLayout(new ShoppingListFragment());
-                }
-                logHomeScreenEvent(TrackingAware.SHOPPING_LIST_ICON_CLICKED, TrackEventkeys.NAVIGATION_CTX,
-                        TrackEventkeys.NAVIGATION_CTX_TOPNAV);
-                return true;
-            case R.id.action_smart_basket:
-                if (AuthParameters.getInstance(getCurrentActivity()).isAuthTokenEmpty()) {
-                    showAlertDialog(null,
-                            "Please sign-in to view your smart basket", NavigationCodes.GO_TO_LOGIN);
-                } else {
-                    ShoppingListName shoppingListName = new ShoppingListName(Constants.SMART_BASKET,
-                            Constants.SMART_BASKET_SLUG, true);
-                    Intent intent = new Intent(getCurrentActivity(), ShoppingListSummaryActivity.class);
-                    intent.putExtra(Constants.SHOPPING_LIST_NAME, shoppingListName);
-                    startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                }
-                logHomeScreenEvent(TrackingAware.SMART_BASKET_ICON_CLICKED, TrackEventkeys.NAVIGATION_CTX,
-                        TrackEventkeys.NAVIGATION_CTX_TOPNAV);
-                return true;
-            case R.id.action_rate_app:
-                logHomeScreenEvent(TrackingAware.RATE_APP_CLICKED, TrackEventkeys.NAVIGATION_CTX,
-                        TrackEventkeys.NAVIGATION_CTX_TOPNAV);
-                try {
-                    startActivity(new Intent(Intent.ACTION_VIEW,
-                            Uri.parse("market://details?id=" + Constants.BASE_PKG_NAME)));
-                } catch (ActivityNotFoundException e) {
-                    startActivity(new Intent(Intent.ACTION_VIEW,
-                            Uri.parse("https://play.google.com/store/apps/details?id=" + Constants.BASE_PKG_NAME)));
-                }
-                return true;
-            case R.id.action_login:
-                logHomeScreenEvent(TrackingAware.LOGIN_CLICKED, TrackEventkeys.NAVIGATION_CTX,
-                        TrackEventkeys.NAVIGATION_CTX_TOPNAV);
-                launchLogin(TrackEventkeys.NAVIGATION_CTX_TOPNAV);
-                return true;
             case R.id.action_signup:
                 logHomeScreenEvent(TrackingAware.REGISTRATION_CLICKED, TrackEventkeys.NAVIGATION_CTX,
                         TrackEventkeys.NAVIGATION_CTX_TOPNAV);
@@ -489,12 +435,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 return true;
             case R.id.action_view_basket:
                 showViewBasketFragment();
-                return true;
-            case R.id.action_logout:
-                launchLogout(TrackEventkeys.NAVIGATION_CTX_TOPNAV);
-                return true;
-            case R.id.action_change_city:
-                launchChangeCity(TrackEventkeys.NAVIGATION_CTX_TOPNAV);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -730,36 +670,11 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         addToMainLayout(categoryProductsFragment);
     }
 
-    private void launchMyAccount() {
-        if (AuthParameters.getInstance(getCurrentActivity()).isAuthTokenEmpty()) {
-            showAlertDialog(null, "Please sign in to view/edit your Account",
-                    NavigationCodes.GO_TO_LOGIN);
-        } else {
-            Intent intent = new Intent(this, BackButtonActivity.class);
-            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ACCOUNT_SETTING);
-            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-        }
-        trackEvent(TrackingAware.MY_ACCOUNT_CLICKED, null);
-    }
-
     private void logHomeScreenEvent(String trackAwareName, String eventKeyName,
                                     String navigationCtx) {
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(eventKeyName, navigationCtx);
         trackEvent(trackAwareName, eventAttribs);
-    }
-
-    private void launchChangeCity(String navigationCtx) {
-        logHomeScreenEvent(TrackingAware.HOME_CHANGE_CITY, TrackEventkeys.NAVIGATION_CTX,
-                navigationCtx);
-        Intent intent = new Intent(getCurrentActivity(), ChangeCityActivity.class);
-        startActivityForResult(intent, NavigationCodes.CITY_CHANGED);
-    }
-
-    private void launchLogout(String navigationCtx) {
-        logHomeScreenEvent(TrackingAware.LOG_OUT_ICON_CLICKED, TrackEventkeys.NAVIGATION_CTX,
-                navigationCtx);
-        onLogoutRequested();
     }
 
     public void doSearch(String searchQuery) {
@@ -788,19 +703,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         return spannableString;
     }
 
-    private void hideGuestMenuItems(Menu menu) {
-        menu.findItem(R.id.action_login).setVisible(false);
-        menu.findItem(R.id.action_change_city).setVisible(false);
-    }
-
-    private void hideMemberMenuItems(Menu menu) {
-        menu.findItem(R.id.action_user_info).setVisible(false);
-        menu.findItem(R.id.action_logout).setVisible(false);
-        menu.findItem(R.id.action_shopping_list).setVisible(false);
-        menu.findItem(R.id.action_smart_basket).setVisible(false);
-        //MenuItem referFriendsMenuItem = menu.findItem(R.id.action_member_referral);
-    }
-
     @Override
     protected void onPositiveButtonClicked(DialogInterface dialogInterface, String sourceName, Object valuePassed) {
         if (!TextUtils.isEmpty(sourceName)) {
@@ -822,18 +724,40 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         TextView txtNavSalutation = (TextView) findViewById(R.id.txtNavSalutation);
         txtNavSalutation.setTypeface(faceRobotoRegular);
         AuthParameters authParameters = AuthParameters.getInstance(this);
+
         if (!authParameters.isAuthTokenEmpty()) {
             txtNavSalutation.setText("Welcome " + authParameters.getMemberFullName().split(" ")[0]);
-
         } else {
             txtNavSalutation.setText("Welcome BigBasketeer");
         }
+        txtNavSalutation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleNavigationArea();
+            }
+        });
 
         ArrayList<SectionNavigationItem> sectionNavigationItems = getSectionNavigationItems();
 
+        ListView lstMyAccount = (ListView) findViewById(R.id.lstMyAccount);
+        new AccountView<>(this, lstMyAccount);
         NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoLight, sectionNavigationItems,
                 SectionManager.MAIN_MENU);
         mNavRecyclerView.setAdapter(navigationAdapter);
+    }
+
+    private void toggleNavigationArea() {
+        if (mNavRecyclerView == null) return;
+
+        ListView lstMyAccount = (ListView) findViewById(R.id.lstMyAccount);
+
+        if (mNavRecyclerView.getVisibility() == View.VISIBLE) {
+            mNavRecyclerView.setVisibility(View.GONE);
+            lstMyAccount.setVisibility(View.VISIBLE);
+        } else {
+            lstMyAccount.setVisibility(View.GONE);
+            mNavRecyclerView.setVisibility(View.VISIBLE);
+        }
     }
 
     private ArrayList<SectionNavigationItem> getSectionNavigationItems() {
