@@ -25,6 +25,8 @@ import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 import android.widget.AbsListView;
 import android.widget.ImageButton;
@@ -58,6 +60,8 @@ public class FloatingActionButton extends ImageButton {
     private int mScrollThreshold;
 
     private boolean mMarginsSet;
+    private Animation mPreHoneyCombSlideUpAnimation;
+    private Animation mPreHoneyCombSlideDownAnimation;
 
     private final Interpolator mInterpolator = new AccelerateDecelerateInterpolator();
 
@@ -275,6 +279,8 @@ public class FloatingActionButton extends ImageButton {
                     animate().setInterpolator(mInterpolator)
                             .setDuration(TRANSLATE_DURATION_MILLIS)
                             .translationY(translationY);
+                } else {
+                    doTranslateAnimationForPreHoneycomb();
                 }
             } else {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
@@ -286,6 +292,22 @@ public class FloatingActionButton extends ImageButton {
             if (!hasHoneycombApi()) {
                 setClickable(visible);
             }
+        }
+    }
+
+    public void doTranslateAnimationForPreHoneycomb() {
+        if (mVisible) {
+            setVisibility(View.VISIBLE);
+            if (mPreHoneyCombSlideUpAnimation == null) {
+                mPreHoneyCombSlideUpAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.slide_up);
+            }
+            startAnimation(mPreHoneyCombSlideUpAnimation);
+        } else {
+            setVisibility(View.GONE);
+            if (mPreHoneyCombSlideDownAnimation == null) {
+                mPreHoneyCombSlideDownAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.slide_down);
+            }
+            startAnimation(mPreHoneyCombSlideDownAnimation);
         }
     }
 
