@@ -92,7 +92,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.view.uiv3.AnimatedLinearLayout;
 import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
-import com.melnykov.fab.FloatingActionButton;
+import com.melnykov.fab.FloatingBadgeCountView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -113,7 +113,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     private String currentFragmentTag;
     private RecyclerView mNavRecyclerView;
     private Menu mMenu;
-    private FloatingActionButton mBtnViewBasket;
+    private FloatingBadgeCountView mBtnViewBasket;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -143,7 +143,9 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                     } else {
                         Fragment currFragment = fragmentManager.getFragments().get(backStackEntryCount - 1);
                         if (currFragment instanceof AbstractFragment) {
-                            setViewBasketButtonStateOnActivityResume();
+                            if (!(currFragment instanceof ShowCartFragment)) {
+                                setViewBasketButtonStateOnActivityResume();
+                            }
                             currentFragmentTag = ((AbstractFragment) currFragment).getFragmentTxnTag();
                             ((AbstractFragment) currFragment).onBackStateChanged();
                         }
@@ -160,8 +162,12 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     public void setViewBasketFloatingButton() {
-        FloatingActionButton btnViewBasket = getViewBasketFloatingButton();
+        FloatingBadgeCountView btnViewBasket = getViewBasketFloatingButton();
         if (btnViewBasket != null) {
+            btnViewBasket.setImg(R.drawable.ic_shopping_cart_white_24dp);
+            btnViewBasket.setText(null);
+            syncCartInfoFromPreference();
+            updateCartCountHeaderTextView();
             btnViewBasket.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -172,17 +178,21 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     @Nullable
-    public FloatingActionButton getViewBasketFloatingButton() {
+    @Override
+    public FloatingBadgeCountView getViewBasketFloatingButton() {
         if (mBtnViewBasket == null) {
-            mBtnViewBasket = (FloatingActionButton) findViewById(R.id.btnViewBasket);
+            mBtnViewBasket = (FloatingBadgeCountView) findViewById(R.id.btnViewBasket);
         }
         return mBtnViewBasket;
     }
 
     @Override
     public void setViewBasketButtonStateOnActivityResume() {
-        FloatingActionButton btnViewBasket = getViewBasketFloatingButton();
+        FloatingBadgeCountView btnViewBasket = getViewBasketFloatingButton();
         if (btnViewBasket != null) {
+            if (btnViewBasket.getVisibility() != View.VISIBLE) {
+                btnViewBasket.setVisibility(View.VISIBLE);
+            }
             btnViewBasket.show();
         }
     }
@@ -596,14 +606,14 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     private void updateCartCountHeaderTextView() {
-//        if (cartInfo != null && mTextCartCount != null) {
-//            if (cartInfo.getNoOfItems() <= 0) {
-//                mTextCartCount.setVisibility(View.GONE);
-//            } else {
-//                mTextCartCount.setVisibility(View.VISIBLE);
-//                mTextCartCount.setText(String.valueOf(cartInfo.getNoOfItems()));
-//            }
-//        }
+        FloatingBadgeCountView btnViewBasket = getViewBasketFloatingButton();
+        if (cartInfo != null && btnViewBasket != null) {
+            if (cartInfo.getNoOfItems() <= 0) {
+                btnViewBasket.setText(null);
+            } else {
+                btnViewBasket.setText(String.valueOf(cartInfo.getNoOfItems()));
+            }
+        }
     }
 
     @Override
@@ -879,13 +889,17 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         if (isBasketDirty()) {
             syncBasket();
         } else {
-            if (cartInfo != null && cartInfo.getNoOfItems() == 0) {
-                // Update from preference
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
-                String cartCountStr = preferences.getString(Constants.GET_CART, null);
-                if (!TextUtils.isEmpty(cartCountStr) && TextUtils.isDigitsOnly(cartCountStr)) {
-                    cartInfo.setNoOfItems(Integer.parseInt(cartCountStr));
-                }
+            syncCartInfoFromPreference();
+        }
+    }
+
+    private void syncCartInfoFromPreference() {
+        if (cartInfo != null && cartInfo.getNoOfItems() == 0) {
+            // Update from preference
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
+            String cartCountStr = preferences.getString(Constants.GET_CART, null);
+            if (!TextUtils.isEmpty(cartCountStr) && TextUtils.isDigitsOnly(cartCountStr)) {
+                cartInfo.setNoOfItems(Integer.parseInt(cartCountStr));
             }
         }
     }

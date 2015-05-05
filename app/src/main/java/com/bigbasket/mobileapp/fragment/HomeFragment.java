@@ -38,7 +38,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.AppNotSupportedDialog;
 import com.bigbasket.mobileapp.view.uiv2.UpgradeAppDialog;
-import com.melnykov.fab.FloatingActionButton;
+import com.melnykov.fab.FloatingBadgeCountView;
 import com.melnykov.fab.ObservableScrollView;
 
 import java.util.ArrayList;
@@ -214,7 +214,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
 
         if (getActivity() instanceof FloatingBasketUIAware) {
 
-            FloatingActionButton btnViewBasket = ((FloatingBasketUIAware) getActivity()).getViewBasketFloatingButton();
+            FloatingBadgeCountView btnViewBasket = ((FloatingBasketUIAware) getActivity()).getViewBasketFloatingButton();
             if (btnViewBasket != null) {
                 btnViewBasket.attachToScrollView(contentScrollView);
             }

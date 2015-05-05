@@ -10,13 +10,13 @@ import android.view.View;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
-import com.melnykov.fab.FloatingActionButton;
+import com.melnykov.fab.FloatingBadgeCountView;
 
 public class BackButtonActivity extends BBActivity {
 
     @Override
     public void setViewBasketFloatingButton() {
-        FloatingActionButton btnViewBasket = getViewBasketFloatingButton();
+        FloatingBadgeCountView btnViewBasket = getViewBasketFloatingButton();
         if (btnViewBasket != null) {
             btnViewBasket.setVisibility(View.GONE);
         }
