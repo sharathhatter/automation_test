@@ -143,6 +143,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                     } else {
                         Fragment currFragment = fragmentManager.getFragments().get(backStackEntryCount - 1);
                         if (currFragment instanceof AbstractFragment) {
+                            setViewBasketButtonStateOnActivityResume();
                             currentFragmentTag = ((AbstractFragment) currFragment).getFragmentTxnTag();
                             ((AbstractFragment) currFragment).onBackStateChanged();
                         }
@@ -176,6 +177,14 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             mBtnViewBasket = (FloatingActionButton) findViewById(R.id.btnViewBasket);
         }
         return mBtnViewBasket;
+    }
+
+    @Override
+    public void setViewBasketButtonStateOnActivityResume() {
+        FloatingActionButton btnViewBasket = getViewBasketFloatingButton();
+        if (btnViewBasket != null) {
+            btnViewBasket.show();
+        }
     }
 
     protected View getToolbarLayout() {
@@ -232,6 +241,9 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     public void addToMainLayout(AbstractFragment fragment, String tag) {
 
         FragmentManager fm = getSupportFragmentManager();
+        if (fm.getBackStackEntryCount() > 0) {
+            setViewBasketButtonStateOnActivityResume();
+        }
         FragmentTransaction ft = fm.beginTransaction();
         String ftTag = TextUtils.isEmpty(tag) ? fragment.getFragmentTxnTag() : tag;
         this.currentFragmentTag = ftTag;
@@ -848,6 +860,12 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
     public Menu getMenu() {
         return mMenu;
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        setViewBasketButtonStateOnActivityResume();
     }
 
     @Override

@@ -9,4 +9,6 @@ public interface FloatingBasketUIAware {
 
     @Nullable
     FloatingActionButton getViewBasketFloatingButton();
+
+    void setViewBasketButtonStateOnActivityResume();
 }

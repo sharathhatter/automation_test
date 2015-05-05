@@ -23,6 +23,11 @@ public class BackButtonActivity extends BBActivity {
     }
 
     @Override
+    public void setViewBasketButtonStateOnActivityResume() {
+        // Do nothing
+    }
+
+    @Override
     public void setNavDrawer(Toolbar toolbar, Bundle savedInstanceState) {
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {

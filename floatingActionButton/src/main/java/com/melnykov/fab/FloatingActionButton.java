@@ -285,6 +285,8 @@ public class FloatingActionButton extends ImageButton {
             } else {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
                     setTranslationY(translationY);
+                } else {
+                    setVisibility(mVisible ? View.VISIBLE : View.GONE);
                 }
             }
 
