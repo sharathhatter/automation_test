@@ -44,10 +44,10 @@
     <application
         android:name=".application.BaseApplication"
         android:allowBackup="false"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/BBAppTheme"
-        tools:replace="android:allowBackup,android:theme">
+        tools:replace="android:allowBackup,android:theme,android:icon">
         <meta-data
             android:name="android.app.default_searchable"
             android:value=".activity.product.ProductListActivity" />
