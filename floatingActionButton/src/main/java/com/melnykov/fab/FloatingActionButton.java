@@ -28,6 +28,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.AbsListView;
 import android.widget.ImageButton;
+import android.widget.ScrollView;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -435,6 +436,59 @@ public class FloatingActionButton extends ImageButton {
             }
 
             super.onScrollStateChanged(recyclerView, newState);
+        }
+    }
+
+    public void attachToScrollView(@NonNull ObservableScrollView scrollView) {
+        attachToScrollView(scrollView, null, null);
+    }
+
+    public void attachToScrollView(@NonNull ObservableScrollView scrollView,
+                                   ScrollDirectionListener scrollDirectionListener,
+                                   ObservableScrollView.OnScrollChangedListener onScrollChangedListener) {
+        ScrollViewScrollDetectorImpl scrollDetector = new ScrollViewScrollDetectorImpl();
+        scrollDetector.setScrollDirectionListener(scrollDirectionListener);
+        scrollDetector.setOnScrollChangedListener(onScrollChangedListener);
+        scrollDetector.setScrollThreshold(mScrollThreshold);
+        scrollView.setOnScrollChangedListener(scrollDetector);
+    }
+
+    private class ScrollViewScrollDetectorImpl extends ScrollViewScrollDetector {
+        private ScrollDirectionListener mScrollDirectionListener;
+
+        private ObservableScrollView.OnScrollChangedListener mOnScrollChangedListener;
+
+        private void setScrollDirectionListener(ScrollDirectionListener scrollDirectionListener) {
+            mScrollDirectionListener = scrollDirectionListener;
+        }
+
+        public void setOnScrollChangedListener(ObservableScrollView.OnScrollChangedListener onScrollChangedListener) {
+            mOnScrollChangedListener = onScrollChangedListener;
+        }
+
+        @Override
+        public void onScrollDown() {
+            show();
+            if (mScrollDirectionListener != null) {
+                mScrollDirectionListener.onScrollDown();
+            }
+        }
+
+        @Override
+        public void onScrollUp() {
+            hide();
+            if (mScrollDirectionListener != null) {
+                mScrollDirectionListener.onScrollUp();
+            }
+        }
+
+        @Override
+        public void onScrollChanged(ScrollView who, int l, int t, int oldl, int oldt) {
+            if (mOnScrollChangedListener != null) {
+                mOnScrollChangedListener.onScrollChanged(who, l, t, oldl, oldt);
+            }
+
+            super.onScrollChanged(who, l, t, oldl, oldt);
         }
     }
 }

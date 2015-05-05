@@ -14,7 +14,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -67,6 +66,7 @@ import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
+import com.bigbasket.mobileapp.interfaces.FloatingBasketUIAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.SubNavigationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
@@ -92,6 +92,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.view.uiv3.AnimatedLinearLayout;
 import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
+import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -100,7 +101,7 @@ import java.util.Map;
 
 
 public class BBActivity extends SocialLoginActivity implements BasketOperationAware,
-        CartInfoAware, HandlerAware, SubNavigationAware {
+        CartInfoAware, HandlerAware, SubNavigationAware, FloatingBasketUIAware {
 
     protected BigBasketMessageHandler handler;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -110,9 +111,9 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     private CartSummary cartInfo = new CartSummary();
     private BBDrawerLayout mDrawerLayout;
     private String currentFragmentTag;
-    private TextView mTextCartCount;
     private RecyclerView mNavRecyclerView;
     private Menu mMenu;
+    private FloatingActionButton mBtnViewBasket;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -150,10 +151,31 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             }
         });
         setNavDrawer(toolbar, savedInstanceState);
+        setViewBasketFloatingButton();
     }
 
     public int getMainLayout() {
         return R.layout.uiv3_main_layout;
+    }
+
+    public void setViewBasketFloatingButton() {
+        FloatingActionButton btnViewBasket = getViewBasketFloatingButton();
+        if (btnViewBasket != null) {
+            btnViewBasket.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showViewBasketFragment();
+                }
+            });
+        }
+    }
+
+    @Nullable
+    public FloatingActionButton getViewBasketFloatingButton() {
+        if (mBtnViewBasket == null) {
+            mBtnViewBasket = (FloatingActionButton) findViewById(R.id.btnViewBasket);
+        }
+        return mBtnViewBasket;
     }
 
     protected View getToolbarLayout() {
@@ -224,7 +246,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         setOptionsMenu(menu);
-        initializeCartCountTextView(menu);
         mMenu = menu;
         return super.onCreateOptionsMenu(menu);
     }
@@ -232,26 +253,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     protected void setOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.action_menu, menu);
-    }
-
-    public void initializeCartCountTextView(Menu menu) {
-        MenuItem menuItemViewBasket = menu.findItem(R.id.action_view_basket);
-        if (menuItemViewBasket == null) return;
-        MenuItemCompat.setActionView(menuItemViewBasket, R.layout.uiv3_basket_count_icon);
-        View basketCountView = MenuItemCompat.getActionView(menuItemViewBasket);
-        if (basketCountView != null) {
-            basketCountView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    showViewBasketFragment();
-                }
-            });
-            mTextCartCount = (TextView) basketCountView.findViewById(R.id.txtNumItemsInBasket);
-            if (mTextCartCount != null) {
-                mTextCartCount.setTypeface(faceRobotoRegular);
-                updateCartCountHeaderTextView();
-            }
-        }
     }
 
     @Override
@@ -433,9 +434,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                         TrackEventkeys.NAVIGATION_CTX_TOPNAV);
                 launchRegistrationPage();
                 return true;
-            case R.id.action_view_basket:
-                showViewBasketFragment();
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -586,14 +584,14 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     private void updateCartCountHeaderTextView() {
-        if (cartInfo != null && mTextCartCount != null) {
-            if (cartInfo.getNoOfItems() <= 0) {
-                mTextCartCount.setVisibility(View.GONE);
-            } else {
-                mTextCartCount.setVisibility(View.VISIBLE);
-                mTextCartCount.setText(String.valueOf(cartInfo.getNoOfItems()));
-            }
-        }
+//        if (cartInfo != null && mTextCartCount != null) {
+//            if (cartInfo.getNoOfItems() <= 0) {
+//                mTextCartCount.setVisibility(View.GONE);
+//            } else {
+//                mTextCartCount.setVisibility(View.VISIBLE);
+//                mTextCartCount.setText(String.valueOf(cartInfo.getNoOfItems()));
+//            }
+//        }
     }
 
     @Override

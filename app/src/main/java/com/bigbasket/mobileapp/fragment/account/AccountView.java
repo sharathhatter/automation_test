@@ -17,9 +17,12 @@ import com.bigbasket.mobileapp.activity.account.uiv3.ChangeCityActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
+import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
+import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListFragment;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
+import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.FragmentCodes;
@@ -94,6 +97,16 @@ public class AccountView<T> {
                     ctx.launchKonotor();
                     break;
                 case 2:
+                    ctx.onChangeFragment(new ShoppingListFragment());
+                    break;
+                case 3:
+                    ShoppingListName shoppingListName = new ShoppingListName(Constants.SMART_BASKET,
+                            Constants.SMART_BASKET_SLUG, true);
+                    intent = new Intent(ctx, ShoppingListSummaryActivity.class);
+                    intent.putExtra(Constants.SHOPPING_LIST_NAME, shoppingListName);
+                    ctx.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                    break;
+                case 4:
                     Map<String, String> eventAttribs = new HashMap<>();
                     eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_LEFTNAV);
                     ctx.trackEvent(TrackingAware.RATE_APP_CLICKED, eventAttribs);
@@ -105,7 +118,7 @@ public class AccountView<T> {
                                 Uri.parse("https://play.google.com/store/apps/details?id=" + Constants.BASE_PKG_NAME)));
                     }
                     break;
-                case 3:
+                case 5:
                     eventAttribs = new HashMap<>();
                     eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_LEFTNAV);
                     ctx.trackEvent(TrackingAware.LOG_OUT_ICON_CLICKED, eventAttribs);

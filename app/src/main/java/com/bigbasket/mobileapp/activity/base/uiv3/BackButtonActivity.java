@@ -6,11 +6,21 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.View;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
+import com.melnykov.fab.FloatingActionButton;
 
 public class BackButtonActivity extends BBActivity {
+
+    @Override
+    public void setViewBasketFloatingButton() {
+        FloatingActionButton btnViewBasket = getViewBasketFloatingButton();
+        if (btnViewBasket != null) {
+            btnViewBasket.setVisibility(View.GONE);
+        }
+    }
 
     @Override
     public void setNavDrawer(Toolbar toolbar, Bundle savedInstanceState) {

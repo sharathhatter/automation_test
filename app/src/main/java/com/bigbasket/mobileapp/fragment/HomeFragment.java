@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -28,6 +27,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.UpdateVersionInfoApiRe
 import com.bigbasket.mobileapp.fragment.base.BaseSectionFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
+import com.bigbasket.mobileapp.interfaces.FloatingBasketUIAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.section.SectionData;
@@ -38,6 +38,8 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.AppNotSupportedDialog;
 import com.bigbasket.mobileapp.view.uiv2.UpgradeAppDialog;
+import com.melnykov.fab.FloatingActionButton;
+import com.melnykov.fab.ObservableScrollView;
 
 import java.util.ArrayList;
 
@@ -195,7 +197,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         // Render sections
         showProgressView();
 
-        ScrollView contentScrollView = new ScrollView(getActivity());
+        ObservableScrollView contentScrollView = new ObservableScrollView(getActivity());
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
         contentScrollView.setLayoutParams(layoutParams);
@@ -209,6 +211,14 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
 
         contentView.removeAllViews();
         contentView.addView(contentScrollView);
+
+        if (getActivity() instanceof FloatingBasketUIAware) {
+
+            FloatingActionButton btnViewBasket = ((FloatingBasketUIAware) getActivity()).getViewBasketFloatingButton();
+            if (btnViewBasket != null) {
+                btnViewBasket.attachToScrollView(contentScrollView);
+            }
+        }
 
         // Check if any deep-link needs to be opened
         processPendingDeepLink();
