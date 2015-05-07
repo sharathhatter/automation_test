@@ -12,7 +12,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.astuetz.PagerSlidingTabStrip;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.adapter.TabPagerAdapter;
@@ -25,6 +24,7 @@ import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListSummary;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
+import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import java.util.ArrayList;
 
@@ -149,7 +149,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
                     getTabs(shoppingListSummaries, shoppingListName, baseImgUrl));
             viewPager.setAdapter(fragmentStatePagerAdapter);
 
-            PagerSlidingTabStrip pagerSlidingTabStrip = (PagerSlidingTabStrip) base.findViewById(R.id.slidingTabs);
+            SmartTabLayout pagerSlidingTabStrip = (SmartTabLayout) base.findViewById(R.id.slidingTabs);
             pagerSlidingTabStrip.setViewPager(viewPager);
 
             contentFrame.addView(base);

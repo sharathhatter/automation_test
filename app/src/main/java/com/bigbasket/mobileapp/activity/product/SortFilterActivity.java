@@ -18,7 +18,6 @@ import android.widget.CheckedTextView;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import com.astuetz.PagerSlidingTabStrip;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.adapter.BBCheckedListAdapter;
@@ -29,6 +28,7 @@ import com.bigbasket.mobileapp.model.product.Option;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.view.uiv3.ExpandableTextView;
+import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,7 +96,7 @@ public class SortFilterActivity extends BackButtonActivity {
 
     private void renderFilterOptions(ArrayList<FilterOptionCategory> filterOptionCategories) {
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
-        PagerSlidingTabStrip pagerSlidingTabStrip = (PagerSlidingTabStrip) findViewById(R.id.slidingTabs);
+        SmartTabLayout pagerSlidingTabStrip = (SmartTabLayout) findViewById(R.id.slidingTabs);
         pagerSlidingTabStrip.setBackgroundColor(getResources().getColor(R.color.white));
 
         if (filterOptionCategories == null || filterOptionCategories.size() == 0) {

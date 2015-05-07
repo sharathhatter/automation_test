@@ -15,7 +15,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 
-import com.astuetz.PagerSlidingTabStrip;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.adapter.TabPagerAdapter;
@@ -51,6 +50,7 @@ import com.enstage.wibmo.sdk.inapp.pojo.MerchantInfo;
 import com.enstage.wibmo.sdk.inapp.pojo.TransactionInfo;
 import com.enstage.wibmo.sdk.inapp.pojo.WPayInitRequest;
 import com.enstage.wibmo.sdk.inapp.pojo.WPayResponse;
+import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -118,7 +118,7 @@ public class PlaceOrderActivity extends BackButtonActivity {
                 TabPagerAdapter(getCurrentActivity(), getSupportFragmentManager(), bbTabs);
         viewPager.setAdapter(fragmentStatePagerAdapter);
 
-        PagerSlidingTabStrip pagerSlidingTabStrip = (PagerSlidingTabStrip) base.findViewById(R.id.slidingTabs);
+        SmartTabLayout pagerSlidingTabStrip = (SmartTabLayout) base.findViewById(R.id.slidingTabs);
         contentView.addView(base);
         pagerSlidingTabStrip.setViewPager(viewPager);
 

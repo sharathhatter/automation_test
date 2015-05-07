@@ -7,10 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.astuetz.PagerSlidingTabStrip;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.TabPagerAdapter;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
+import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import java.util.ArrayList;
 
@@ -42,7 +42,7 @@ public abstract class TabActivity extends BackButtonActivity {
                 TabPagerAdapter(getCurrentActivity(), getSupportFragmentManager(), bbTabs);
         viewPager.setAdapter(fragmentStatePagerAdapter);
 
-        PagerSlidingTabStrip pagerSlidingTabStrip = (PagerSlidingTabStrip) base.findViewById(R.id.slidingTabs);
+        SmartTabLayout pagerSlidingTabStrip = (SmartTabLayout) base.findViewById(R.id.slidingTabs);
         pagerSlidingTabStrip.setViewPager(viewPager);
     }
 

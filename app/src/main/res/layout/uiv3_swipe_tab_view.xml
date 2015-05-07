@@ -2,20 +2,20 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layoutSwipeTabContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/layoutSwipeTabContainer"
     android:orientation="vertical">
 
-    <com.astuetz.PagerSlidingTabStrip
+    <com.ogaclejapan.smarttablayout.SmartTabLayout
         android:id="@+id/slidingTabs"
         android:layout_width="match_parent"
         android:layout_height="48dip"
-        app:pstsIndicatorColor="@color/uiv3_action_bar_background"
-        app:pstsIndicatorHeight="4dp"
-        android:textColor="@color/uiv3_action_bar_background"
-        app:pstsShouldExpand="true"
-        android:background="@color/uiv3_list_bkg_color" />
+        android:background="@color/uiv3_list_bkg_color"
+        app:stl_defaultTabTextColor="@color/uiv3_action_bar_background"
+        app:stl_distributeEvenly="true"
+        app:stl_indicatorColor="@color/uiv3_action_bar_background"
+        app:stl_indicatorThickness="4dp" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"

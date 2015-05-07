@@ -10,7 +10,6 @@ import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.Spinner;
 
-import com.astuetz.PagerSlidingTabStrip;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.adapter.TabPagerAdapter;
@@ -28,6 +27,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.uiv3.BBArrayAdapter;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
+import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -98,7 +98,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                     new TabPagerAdapter(this, getSupportFragmentManager(), bbTabs);
             viewPager.setAdapter(statePagerAdapter);
 
-            PagerSlidingTabStrip pagerSlidingTabStrip = (PagerSlidingTabStrip) base.findViewById(R.id.slidingTabs);
+            SmartTabLayout pagerSlidingTabStrip = (SmartTabLayout) base.findViewById(R.id.slidingTabs);
             pagerSlidingTabStrip.setViewPager(viewPager);
             contentFrame.addView(base);
             renderHeaderDropDown(productTabData.getHeaderSection());

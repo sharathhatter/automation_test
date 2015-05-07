@@ -15,7 +15,6 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
-import com.astuetz.PagerSlidingTabStrip;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.adapter.TabPagerAdapter;
@@ -48,6 +47,7 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
 import com.google.gson.Gson;
+import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -212,7 +212,7 @@ public class SlotPaymentSelectionActivity extends BackButtonActivity
         }
 
         contentView.addView(base);
-        final PagerSlidingTabStrip slidingTabStrip = (PagerSlidingTabStrip) base.findViewById(R.id.slidingTabs);
+        final SmartTabLayout slidingTabStrip = (SmartTabLayout) base.findViewById(R.id.slidingTabs);
         slidingTabStrip.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
