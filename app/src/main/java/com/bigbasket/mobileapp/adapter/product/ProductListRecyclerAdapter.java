@@ -50,6 +50,10 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         return position >= products.size() ? VIEW_TYPE_LOADING : VIEW_TYPE_DATA;
     }
 
+    public List<Product> getProducts() {
+        return products;
+    }
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         LayoutInflater inflater = (LayoutInflater) activityAware.getCurrentActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);

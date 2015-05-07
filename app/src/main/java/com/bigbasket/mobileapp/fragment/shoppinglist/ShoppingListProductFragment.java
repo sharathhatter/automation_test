@@ -1,7 +1,6 @@
 package com.bigbasket.mobileapp.fragment.shoppinglist;
 
 import android.content.DialogInterface;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -50,10 +49,6 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
         // Do nothing
     }
 
-    @Override
-    public void updateData() {
-        // Do nothing
-    }
 
     @Override
     public String getNavigationCtx() {
@@ -63,11 +58,6 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
             return TrackEventkeys.NAVIGATION_CTX_SMART_BASKET;
         else
             return TrackEventkeys.NAVIGATION_CTX_SHOPPING_LIST;
-    }
-
-    @Override
-    public void restoreProductList(Bundle savedInstanceState) {
-        loadProducts();
     }
 
     @Nullable

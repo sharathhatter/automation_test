@@ -283,4 +283,9 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
     public boolean hasDescription() {
         return getDescription() != null && !TextUtils.isEmpty(getDescription().getText());
     }
+
+    @Override
+    public String toString() {
+        return getTitle() != null ? (TextUtils.isEmpty(getTitle().getText()) ? "" : getTitle().getText()) : "";
+    }
 }

@@ -8,6 +8,7 @@ public interface NavigationCodes {
     public static final int GO_TO_QC = 1345;
     public static final String GO_TO_LOGIN = "goToLogin";
     public static final int FILTER_APPLIED = 1346;
+    public static final int START_SEARCH = 1347;
 
     public static final int CO_RESERVE_QUANTITY_CHECK_OK = 102;
     public static final int ADD_TO_SHOPPINGLIST_OK = 1221;

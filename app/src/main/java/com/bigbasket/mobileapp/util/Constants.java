@@ -114,6 +114,7 @@ public class Constants {
     //Error codes
     public static final String PRODUCT_ID_NOT_FOUND = "101";
     public static final String PRODUCT_INFO = "product_info";
+    public static final String PRODUCT_MAP = "product_map";
 
     public static final String PROMO = "promo";
     public static final String SHOP_LST = "shoplist";
@@ -586,4 +587,10 @@ public class Constants {
     public static final String FIXED_COMBO_PRODUCTS = "fixed_combo_products";
     public static final String FREE_PRODUCTS = "free_products";
     public static final String MODE_HDFC_PAY = "restrict_payment_to_wibmo_iap";
+    public static final String TAB_TYPE = "tab_type";
+    public static final String HEADER_SECTION = "header_section";
+    public static final String TAB_INFO = "tab_info";
+    public static final String TAB_NAME = "tab_name";
+    public static final String CONTENT_SECTION = "content_section";
+    public static final String CART_INFO = "cart_info";
 }

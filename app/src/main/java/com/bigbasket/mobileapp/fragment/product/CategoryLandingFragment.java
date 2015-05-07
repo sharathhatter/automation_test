@@ -22,12 +22,13 @@ import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.SubCategoryApiResponse;
 import com.bigbasket.mobileapp.fragment.base.BaseSectionFragment;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.product.Category;
 import com.bigbasket.mobileapp.model.product.SubCategoryModel;
+import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
-import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
@@ -180,13 +181,16 @@ public class CategoryLandingFragment extends BaseSectionFragment {
                         categoryArrayList.get(groupPosition).getCategory().size() > 0) {
                 } else {
                     Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
-                    intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PRODUCT_CATEGORY);
-                    if (categoryArrayList.get(groupPosition).getFilter() != null)
-                        intent.putExtra(Constants.FILTER, categoryArrayList.get(groupPosition).getFilter());
-                    if (categoryArrayList.get(groupPosition).getSortBy() != null)
-                        intent.putExtra(Constants.SORT_BY, categoryArrayList.get(groupPosition).getSortBy());
-                    intent.putExtra(Constants.CATEGORY_SLUG, categoryArrayList.get(groupPosition).getSlug());
-                    intent.putExtra(Constants.CATEGORY_TITLE, categoryArrayList.get(groupPosition).getName());
+                    ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
+                    nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.CATEGORY.get()));
+                    nameValuePairs.add(new NameValuePair(Constants.SLUG, categoryArrayList.get(groupPosition).getSlug()));
+                    if (categoryArrayList.get(groupPosition).getFilter() != null) {
+                        nameValuePairs.add(new NameValuePair(Constants.FILTER_ON, categoryArrayList.get(groupPosition).getFilter()));
+                    }
+                    if (categoryArrayList.get(groupPosition).getSortBy() != null) {
+                        nameValuePairs.add(new NameValuePair(Constants.SORT_ON, categoryArrayList.get(groupPosition).getSortBy()));
+                    }
+                    intent.putParcelableArrayListExtra(Constants.PRODUCT_QUERY, nameValuePairs);
                     startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 }
                 return false;
@@ -197,9 +201,10 @@ public class CategoryLandingFragment extends BaseSectionFragment {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
                 Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
-                intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PRODUCT_CATEGORY);
-                intent.putExtra(Constants.CATEGORY_TITLE, categoryArrayList.get(groupPosition).getCategory().get(childPosition).getName());
-                intent.putExtra(Constants.CATEGORY_SLUG, categoryArrayList.get(groupPosition).getCategory().get(childPosition).getSlug());
+                ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
+                nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.CATEGORY.get()));
+                nameValuePairs.add(new NameValuePair(Constants.SLUG, categoryArrayList.get(groupPosition).getCategory().get(childPosition).getSlug()));
+                intent.putParcelableArrayListExtra(Constants.PRODUCT_QUERY, nameValuePairs);
                 startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 return false;
             }

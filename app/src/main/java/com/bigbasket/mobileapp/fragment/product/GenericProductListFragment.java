@@ -27,11 +27,7 @@ public class GenericProductListFragment extends ProductListAwareFragment {
 
     @Override
     public String getTitle() {
-        String title = getArguments().getString(Constants.TITLE);
-        if (TextUtils.isEmpty(title)) {
-            title = getString(R.string.viewProducts);
-        }
-        return title;
+        return null;
     }
 
     @NonNull

@@ -262,7 +262,6 @@
     <string name="profileUpdated">Profile updated successfully!</string>
 
     <!-- main nav -->
-    <string name="viewProducts">View Products</string>
     <string name="shoppingList">Shopping Lists</string>
     <string name="sortBy">Sort By</string>
     <string name="filterBy">Filter By</string>
@@ -314,8 +313,8 @@
     <string name="msgNetworkError">A network error occurred while communicating with the server.\nPlease check your internet connection!</string>
     <string name="serviceUnavailable">Service is temporarily unavailable. Please come back after sometime!</string>
     <string name="weAreDown">We are down for maintenance!</string>
-    <string name="weAreOverloaded">Our servers are overloaded</string>
-    <string name="weAreOverloadedDesc">Due to too much traffic over servers are currently having trouble in serving your request.\nPlease try again after few minutes.</string>
+    <string name="weAreOverloaded">Our servers are overloaded!</string>
+    <string name="weAreOverloadedDesc">Due to too much traffic over servers are currently having trouble in serving your request. Please try again after few minutes.</string>
     <string name="bbMail">Send mail</string>
 
     <string name="networkError">Network Error</string>

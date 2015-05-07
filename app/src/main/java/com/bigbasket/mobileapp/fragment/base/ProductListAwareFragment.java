@@ -1,64 +1,57 @@
 package com.bigbasket.mobileapp.fragment.base;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.TextUtils;
-import android.text.style.RelativeSizeSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.ScrollView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.product.ProductListActivity;
-import com.bigbasket.mobileapp.activity.product.SortFilterActivity;
 import com.bigbasket.mobileapp.adapter.product.ProductListRecyclerAdapter;
-import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.ProductNextPageResponse;
 import com.bigbasket.mobileapp.interfaces.InfiniteProductListAware;
-import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.product.FilteredOn;
 import com.bigbasket.mobileapp.model.product.Product;
-import com.bigbasket.mobileapp.model.product.ProductListData;
+import com.bigbasket.mobileapp.model.product.ProductInfo;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
-import com.bigbasket.mobileapp.task.uiv3.ProductListTask;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListDoAddDeleteTask;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.ShoppingListNamesDialog;
 import com.google.gson.Gson;
-import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
-public abstract class ProductListAwareFragment extends BaseSectionFragment implements ProductListDataAware,
+
+public abstract class ProductListAwareFragment extends BaseSectionFragment implements
         ShoppingListNamesAware, InfiniteProductListAware {
 
-    protected ProductListData productListData;
     private String selectedProductId;
     private ProductListRecyclerAdapter mProductListRecyclerAdapter;
-    private View mFooterView;
+    private HashMap<String, String> mNameValuePairs;
     private boolean mIsNextPageLoading;
+    private int mCurrentPage;
+    private int mTotalPages;
+    private String mTabType;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -68,7 +61,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        restoreProductList(savedInstanceState);
+        loadProducts();
         logProductListingEvent();
     }
 
@@ -78,203 +71,191 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         trackEvent(TrackingAware.PRODUCT_LIST_SHOWN, map);
     }
 
-    /**
-     * This method is called by onActivityCreated and can be used to load products on fresh start or restore state,
-     * when screen is rotated
-     *
-     * @param savedInstanceState Bundle containing parceled data, when the screen was rotated
-     */
-    public void restoreProductList(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            productListData = savedInstanceState.getParcelable(Constants.PRODUCTS);
-            tryRestoreSectionState(savedInstanceState);
-            updateData();
-        } else {
-            loadProducts();
-        }
-    }
-
     public void loadProducts() {
-        getProductListAsyncTask().startTask();
+        if (getArguments() != null) {
+            ProductInfo productInfo = getArguments().getParcelable(Constants.PRODUCT_INFO);
+            String baseImgUrl = getArguments().getString(Constants.BASE_IMG_URL);
+            ArrayList<NameValuePair> nameValuePairs = getArguments().getParcelableArrayList(Constants.PRODUCT_QUERY);
+            mNameValuePairs = NameValuePair.toMap(nameValuePairs);
+            mTotalPages = productInfo.getTotalPages();
+            mCurrentPage = productInfo.getCurrentPage();
+            mTabType = getArguments().getString(Constants.TAB_TYPE);
+            setProductListView(productInfo, baseImgUrl);
+        }
     }
 
     public void loadMoreProducts() {
-        if (isNextPageLoading()) return;
-        int nextPage = productListData.getCurrentPage() + 1;
-        if (nextPage <= productListData.getTotalPages()) {
+        if (isNextPageLoading() || getCurrentActivity() == null) return;
+        int nextPage = Math.max(mCurrentPage, 1) + 1;
+
+        if (nextPage <= mTotalPages) {
             setNextPageLoading(true);
-            if (mFooterView == null) {
-                LayoutInflater inflater = getActivity().getLayoutInflater();
-                mFooterView = inflater.inflate(R.layout.uiv3_list_loading_footer, null);
-            }
-            getProductListAsyncTask(nextPage).startTask();
+            mNameValuePairs.put(Constants.CURRENT_PAGE, String.valueOf(nextPage));
+            mNameValuePairs.put(Constants.TAB_TYPE, new Gson().toJson(new String[]{mTabType}));
+
+            BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
+            bigBasketApiService.productNextPage(mNameValuePairs, new Callback<ApiResponse<ProductNextPageResponse>>() {
+                @Override
+                public void success(ApiResponse<ProductNextPageResponse> productNextPageApiResponse, Response response) {
+                    if (isSuspended()) return;
+                    if (productNextPageApiResponse.status == 0) {
+                        HashMap<String, ArrayList<Product>> productMap = productNextPageApiResponse.apiResponseContent.productListMap;
+                        if (productMap != null && productMap.size() > 0) {
+                            updateProductList(productMap.get(mTabType));
+                        } else {
+                            // Add some code
+                        }
+                    }
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+
+                }
+            });
         }
     }
 
-    public ProductListTask<ProductListAwareFragment> getProductListAsyncTask() {
-        ArrayList<NameValuePair> nameValuePairs = getProductQueryParams();
-        HashMap<String, String> paramMap = NameValuePair.toMap(nameValuePairs);
-        return new ProductListTask<>(this, paramMap);
+    private void updateProductList(ArrayList<Product> products) {
+        if (products == null || products.size() == 0) return;
+        List<Product> existingProductList = mProductListRecyclerAdapter.getProducts();
+        int insertedAt = existingProductList.size();
+        existingProductList.addAll(products);
+        mProductListRecyclerAdapter.notifyItemRangeInserted(insertedAt, products.size());
     }
 
-    public ProductListTask<ProductListAwareFragment> getProductListAsyncTask(int page) {
-        ArrayList<NameValuePair> nameValuePairs = getProductQueryParams();
-        HashMap<String, String> paramMap = NameValuePair.toMap(nameValuePairs);
-        return new ProductListTask<>(page, this, paramMap);
-    }
+//    @Override
+//    public void onBackResume() {
+//        super.onBackResume();
+//
+//        if (getActivity() != null && getActivity() instanceof ProductListActivity) {
+//            displayProductCount();
+//        }
+//    }
 
-    public ProductListData getProductListData() {
-        return productListData;
-    }
-
-    public void setProductListData(ProductListData productListData) {
-        this.productListData = productListData;
-    }
-
-    @Override
-    public void updateData() {
-        setProductListView();
-    }
-
-    @Override
-    public void onBackResume() {
-        super.onBackResume();
-
-        if (getActivity() != null && getActivity() instanceof ProductListActivity) {
-            displayProductCount();
-        }
-    }
-
-    private void setProductListView() {
+    public void setProductListView(ProductInfo productInfo, String baseImgUrl) {
         if (getActivity() == null) return;
         ViewGroup contentView = getContentView();
         if (contentView == null) return;
         contentView.removeAllViews();
 
-        final View sectionView = getSectionView();
-        displayProductCount();
+        ArrayList<Product> products = productInfo != null ? productInfo.getProducts() : null;
+        if (products != null && products.size() > 0) {
+            //View base = getActivity().getLayoutInflater().inflate(R.layout.uiv3_fab_recycler_view, contentView, false);
+            RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, contentView);
 
-        if (productListData != null) {
-            View base = getActivity().getLayoutInflater().inflate(R.layout.uiv3_fab_recycler_view, contentView, false);
-            RecyclerView productRecyclerView = (RecyclerView) base.findViewById(R.id.fabRecyclerView);
-            UIUtil.configureRecyclerView(productRecyclerView, getActivity(), 1, 1);
-
-            FloatingActionButton fabFilterSort = (FloatingActionButton) base.findViewById(R.id.btnFab);
-            fabFilterSort.setImageResource(R.drawable.filter_white);
-
-            if ((productListData.getFilterOptions() != null && productListData.getFilterOptions().size() > 0)
-                    || (productListData.getSortOptions().size() > 0)) {
-                fabFilterSort.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        onSortFilterScreenRequested();
-                    }
-                });
-            } else {
-                fabFilterSort.setVisibility(View.GONE);
-            }
+//            FloatingActionButton fabFilterSort = (FloatingActionButton) base.findViewById(R.id.btnFab);
+//            fabFilterSort.setImageResource(R.drawable.filter_white);
+//
+//            if ((productInfo.getFilterOptions() != null && productInfo.getFilterOptions().size() > 0)
+//                    || (productInfo.getSortOptions().size() > 0)) {
+//                fabFilterSort.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        onSortFilterScreenRequested();
+//                    }
+//                });
+//            } else {
+//                fabFilterSort.setVisibility(View.GONE);
+//            }
 
             // Set product-list data
-            if (productListData.getProducts() != null && productListData.getProducts().size() > 0) {
-                base.findViewById(R.id.noDeliveryAddLayout).setVisibility(View.GONE);
-                AuthParameters authParameters = AuthParameters.getInstance(getActivity());
-                ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
-                        .setCommonTypeface(faceRobotoRegular)
-                        .setRupeeTypeface(faceRupee)
-                        .setHandler(handler)
-                        .setLoggedInMember(!authParameters.isAuthTokenEmpty())
-                        .setShowShoppingListBtn(true)
-                        .setShowBasketBtn(true)
-                        .setShowShopListDeleteBtn(false)
-                        .build();
-                mProductListRecyclerAdapter = new ProductListRecyclerAdapter(productListData.getProducts(), productListData.getBaseImgUrl(),
-                        productViewDisplayDataHolder, this, productListData.getProductCount(),
-                        getNavigationCtx());
+            AuthParameters authParameters = AuthParameters.getInstance(getActivity());
+            ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
+                    .setCommonTypeface(faceRobotoRegular)
+                    .setRupeeTypeface(faceRupee)
+                    .setHandler(handler)
+                    .setLoggedInMember(!authParameters.isAuthTokenEmpty())
+                    .setShowShoppingListBtn(true)
+                    .setShowBasketBtn(true)
+                    .setShowShopListDeleteBtn(false)
+                    .build();
+            mProductListRecyclerAdapter = new ProductListRecyclerAdapter(products, baseImgUrl,
+                    productViewDisplayDataHolder, this, productInfo.getProductCount(),
+                    getNavigationCtx());
 
-                productRecyclerView.setAdapter(mProductListRecyclerAdapter);
-            } else {
-                productRecyclerView.setVisibility(View.GONE);
-                View emptyPageLayout = base.findViewById(R.id.noDeliveryAddLayout);
-                showNoProductsFoundView(emptyPageLayout);
-            }
-
-            if (sectionView != null) {
-                contentView.addView(sectionView);
-            }
-            contentView.addView(base);
-
-        } else if (sectionView != null) {
-            addSectionToScrollView(contentView, sectionView);
-        }
-
-        if (sectionView == null && productListData == null) {
-            LayoutInflater inflater = getActivity().getLayoutInflater();
-            View emptyPageView = inflater.inflate(R.layout.uiv3_empty_data_text, contentView, false);
-            showNoProductsFoundView(emptyPageView);
-            contentView.addView(emptyPageView);
-        }
-    }
-
-    private void addSectionToScrollView(ViewGroup contentView, View sectionView) {
-        ScrollView scrollView = new ScrollView(getActivity());
-        scrollView.addView(sectionView);
-        contentView.addView(scrollView);
-    }
-
-    private void displayProductCount() {
-        if (getCurrentActivity() == null) return;
-        if (productListData != null && productListData.getProductCount() > 0) {
-            String productsStr = productListData.getProductCount() > 1 ? " Products" : " Product";
-            if (getCurrentActivity() instanceof ProductListActivity) {
-                SpannableString productCountSpannable =
-                        new SpannableString(productListData.getProductCount() + productsStr);
-                productCountSpannable.setSpan(new CustomTypefaceSpan("", faceRobotoLight), 0, productCountSpannable.length(),
-                        Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-                productCountSpannable.setSpan(new RelativeSizeSpan(0.8f),
-                        0, productCountSpannable.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-                if (getCurrentActivity().getSupportActionBar() != null) {
-                    getCurrentActivity().getSupportActionBar().setSubtitle(productCountSpannable);
-                }
-            }
+            productRecyclerView.setAdapter(mProductListRecyclerAdapter);
+            contentView.addView(productRecyclerView);
         } else {
-            if (getCurrentActivity() instanceof ProductListActivity
-                    && getCurrentActivity().getSupportActionBar() != null) {
-                getCurrentActivity().getSupportActionBar().setSubtitle(null);
-            }
+//            productRecyclerView.setVisibility(View.GONE);
+//            View emptyPageLayout = base.findViewById(R.id.noDeliveryAddLayout);
+//            showNoProductsFoundView(emptyPageLayout);
         }
+
+//        if (sectionView != null) {
+//            contentView.addView(sectionView);
+//        }
+//        contentView.addView(base);
+//
+//
+//        if (sectionView == null && productInfo == null) {
+//            LayoutInflater inflater = getActivity().getLayoutInflater();
+//            View emptyPageView = inflater.inflate(R.layout.uiv3_empty_data_text, contentView, false);
+//            showNoProductsFoundView(emptyPageView);
+//            contentView.addView(emptyPageView);
+//        }
     }
 
-    private void showNoProductsFoundView(View emptyPageView) {
-        ImageView imgEmptyPage = (ImageView) emptyPageView.findViewById(R.id.imgEmptyPage);
-        imgEmptyPage.setVisibility(View.INVISIBLE);
-        TextView txtEmptyMsg1 = (TextView) emptyPageView.findViewById(R.id.txtEmptyMsg1);
-        txtEmptyMsg1.setText(getEmptyPageText());
-        TextView txtEmptyMsg2 = (TextView) emptyPageView.findViewById(R.id.txtEmptyMsg2);
-        txtEmptyMsg2.setVisibility(View.GONE);
-        Button btnBlankPage = (Button) emptyPageView.findViewById(R.id.btnBlankPage);
-        btnBlankPage.setText(R.string.continue_shopping_txt);
-        btnBlankPage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (getCurrentActivity() == null) return;
-                getCurrentActivity().goToHome(false);
-            }
-        });
-    }
+//    private void addSectionToScrollView(ViewGroup contentView, View sectionView) {
+//        ScrollView scrollView = new ScrollView(getActivity());
+//        scrollView.addView(sectionView);
+//        contentView.addView(scrollView);
+//    }
+//
+//    private void displayProductCount() {
+//        if (getCurrentActivity() == null) return;
+//        if (productInfo != null && productInfo.getProductCount() > 0) {
+//            String productsStr = productInfo.getProductCount() > 1 ? " Products" : " Product";
+//            if (getCurrentActivity() instanceof ProductListActivity) {
+//                SpannableString productCountSpannable =
+//                        new SpannableString(productInfo.getProductCount() + productsStr);
+//                productCountSpannable.setSpan(new CustomTypefaceSpan("", faceRobotoLight), 0, productCountSpannable.length(),
+//                        Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+//                productCountSpannable.setSpan(new RelativeSizeSpan(0.8f),
+//                        0, productCountSpannable.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+//                if (getCurrentActivity().getSupportActionBar() != null) {
+//                    getCurrentActivity().getSupportActionBar().setSubtitle(productCountSpannable);
+//                }
+//            }
+//        } else {
+//            if (getCurrentActivity() instanceof ProductListActivity
+//                    && getCurrentActivity().getSupportActionBar() != null) {
+//                getCurrentActivity().getSupportActionBar().setSubtitle(null);
+//            }
+//        }
+//    }
 
-    protected String getEmptyPageText() {
-        return getString(R.string.noProducts);
-    }
+//    private void showNoProductsFoundView(View emptyPageView) {
+//        ImageView imgEmptyPage = (ImageView) emptyPageView.findViewById(R.id.imgEmptyPage);
+//        imgEmptyPage.setVisibility(View.INVISIBLE);
+//        TextView txtEmptyMsg1 = (TextView) emptyPageView.findViewById(R.id.txtEmptyMsg1);
+//        txtEmptyMsg1.setText(getEmptyPageText());
+//        TextView txtEmptyMsg2 = (TextView) emptyPageView.findViewById(R.id.txtEmptyMsg2);
+//        txtEmptyMsg2.setVisibility(View.GONE);
+//        Button btnBlankPage = (Button) emptyPageView.findViewById(R.id.btnBlankPage);
+//        btnBlankPage.setText(R.string.continue_shopping_txt);
+//        btnBlankPage.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (getCurrentActivity() == null) return;
+//                getCurrentActivity().goToHome(false);
+//            }
+//        });
+//    }
 
-    @Override
-    public void updateProductList(List<Product> nextPageProducts) {
-        if (productListData == null || mProductListRecyclerAdapter == null) return;
-        setNextPageLoading(false);
-        List<Product> currentProducts = productListData.getProducts();
-        int insertedAt = productListData.getProducts().size();
-        currentProducts.addAll(nextPageProducts);
-        mProductListRecyclerAdapter.notifyItemRangeInserted(insertedAt, nextPageProducts.size());
-    }
+//    protected String getEmptyPageText() {
+//        return getString(R.string.noProducts);
+//    }
+//
+//    @Override
+//    public void updateProductList(List<Product> nextPageProducts) {
+//        if (productInfo == null || mProductListRecyclerAdapter == null) return;
+//        setNextPageLoading(false);
+//        List<Product> currentProducts = productInfo.getProducts();
+//        int insertedAt = productInfo.getProducts().size();
+//        currentProducts.addAll(nextPageProducts);
+//        mProductListRecyclerAdapter.notifyItemRangeInserted(insertedAt, nextPageProducts.size());
+//    }
 
     public abstract String getNavigationCtx();
 
@@ -287,38 +268,6 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
 
     protected String getProductRefinedBySortedOn() {
         return null;
-    }
-
-    @NonNull
-    @Override
-    public ArrayList<NameValuePair> getProductQueryParams() {
-        ArrayList<FilteredOn> filteredOnArrayList = null;
-        String sortedOn = null;
-        ProductListData productListData = getProductListData();
-        if (productListData != null) {
-            filteredOnArrayList = productListData.getFilteredOn();
-            sortedOn = productListData.getSortedOn();
-        }
-        if (TextUtils.isEmpty(sortedOn)) {
-            sortedOn = getProductRefinedBySortedOn();
-        }
-        if (filteredOnArrayList == null || filteredOnArrayList.size() == 0) {
-            filteredOnArrayList = getProductRefinedByFilter();
-        }
-
-        ArrayList<NameValuePair> nameValuePairs = getInputForApi();
-        if (nameValuePairs == null) {
-            nameValuePairs = new ArrayList<>();
-        }
-        if (!TextUtils.isEmpty(sortedOn)) {
-            nameValuePairs.add(new NameValuePair(Constants.SORT_ON, sortedOn));
-        }
-        if (filteredOnArrayList != null && !filteredOnArrayList.isEmpty()) {
-            Gson gson = new Gson();
-            String filteredOn = gson.toJson(filteredOnArrayList);
-            nameValuePairs.add(new NameValuePair(Constants.FILTER_ON, filteredOn));
-        }
-        return nameValuePairs;
     }
 
     @Override
@@ -356,24 +305,25 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         return getView() != null ? (ViewGroup) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        parcelProductList(outState);
-        super.onSaveInstanceState(outState);
-    }
-
-    /**
-     * This method is called, just before the activity is destroyed, to parcel ProductListData,
-     * which is reused, when screen rotation takes place
-     *
-     * @param outState Bundle that stores the product list
-     */
-    public void parcelProductList(Bundle outState) {
-        if (productListData != null) {
-            outState.putParcelable(Constants.PRODUCTS, productListData);
-            retainSectionState(outState);
-        }
-    }
+//    @Override
+//    public void onSaveInstanceState(Bundle outState) {
+//        parcelProductList(outState);
+//        super.onSaveInstanceState(outState);
+//    }
+//
+//    /**
+//     * This method is called, just before the activity is destroyed, to parcel ProductListData,
+//     * which is reused, when screen rotation takes place
+//     *
+//     * @param outState Bundle that stores the product list
+//     */
+//    public void parcelProductList(Bundle outState) {
+//        if (productInfo != null) {
+//            outState.putParcelable(Constants.PRODUCTS, productInfo);
+//            retainSectionState(outState);
+//        }
+//    }
+//
 
     @Override
     public boolean isNextPageLoading() {
@@ -410,14 +360,14 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         }
     }
 
-    private void onSortFilterScreenRequested() {
-        Intent sortFilterIntent = new Intent(getActivity(), SortFilterActivity.class);
-        sortFilterIntent.putExtra(Constants.FILTER_OPTIONS, productListData.getFilterOptions());
-        sortFilterIntent.putExtra(Constants.FILTERED_ON, productListData.getFilteredOn());
-        sortFilterIntent.putExtra(Constants.PRODUCT_SORT_OPTION, productListData.getSortOptions());
-        sortFilterIntent.putExtra(Constants.SORT_ON, productListData.getSortedOn());
-        startActivityForResult(sortFilterIntent, NavigationCodes.FILTER_APPLIED);
-    }
+//    private void onSortFilterScreenRequested() {
+//        Intent sortFilterIntent = new Intent(getActivity(), SortFilterActivity.class);
+//        sortFilterIntent.putExtra(Constants.FILTER_OPTIONS, productInfo.getFilterOptions());
+//        sortFilterIntent.putExtra(Constants.FILTERED_ON, productInfo.getFilteredOn());
+//        sortFilterIntent.putExtra(Constants.PRODUCT_SORT_OPTION, productInfo.getSortOptions());
+//        sortFilterIntent.putExtra(Constants.SORT_ON, productInfo.getSortedOn());
+//        startActivityForResult(sortFilterIntent, NavigationCodes.FILTER_APPLIED);
+//    }
 
     @Override
     public String getScreenTag() {
@@ -429,39 +379,39 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         if (getCurrentActivity() != null && getCurrentActivity().isBasketDirty()) {
             syncBasket();
         }
-
-        if (getActivity() != null && getActivity() instanceof ProductListActivity) {
-            displayProductCount();
-        }
+//
+//        if (getActivity() != null && getActivity() instanceof ProductListActivity) {
+//            displayProductCount();
+//        }
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        setSuspended(false);
-        if (resultCode == NavigationCodes.FILTER_APPLIED) {
-            ArrayList<FilteredOn> filteredOns = null;
-            String sortedOn = null;
-            if (data != null) {
-                sortedOn = data.getStringExtra(Constants.SORT_ON);
-                filteredOns = data.getParcelableArrayListExtra(Constants.FILTERED_ON);
-            }
-            applySortAndFilter(sortedOn, filteredOns);
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        setSuspended(false);
+//        if (resultCode == NavigationCodes.FILTER_APPLIED) {
+//            ArrayList<FilteredOn> filteredOns = null;
+//            String sortedOn = null;
+//            if (data != null) {
+//                sortedOn = data.getStringExtra(Constants.SORT_ON);
+//                filteredOns = data.getParcelableArrayListExtra(Constants.FILTERED_ON);
+//            }
+//            applySortAndFilter(sortedOn, filteredOns);
+//        } else {
+//            super.onActivityResult(requestCode, resultCode, data);
+//        }
+//    }
 
-    private void applySortAndFilter(String sortedOn, ArrayList<FilteredOn> filteredOns) {
-        if (productListData != null) {
-            productListData.setSortedOn(sortedOn);
-            productListData.setFilteredOn(filteredOns);
-            trackFilterAppliedEvent(filteredOns);
-            loadProducts();
-        }
-    }
-
-    @Override
-    public void syncBasket() {
-        restoreProductList(null);
-    }
+//    private void applySortAndFilter(String sortedOn, ArrayList<FilteredOn> filteredOns) {
+//        if (productInfo != null) {
+//            productInfo.setSortedOn(sortedOn);
+//            productInfo.setFilteredOn(filteredOns);
+//            trackFilterAppliedEvent(filteredOns);
+//            loadProducts();
+//        }
+//    }
+//
+//    @Override
+//    public void syncBasket() {
+//        restoreProductList(null);
+//    }
 }

@@ -22,6 +22,7 @@ import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.SectionManager;
+import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
 import com.bigbasket.mobileapp.model.section.DestinationInfo;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionItem;
@@ -102,10 +103,12 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                     break;
                 case DestinationInfo.PRODUCT_CATEGORY:
                     if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
+                        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
+                        nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.CATEGORY.get()));
+                        nameValuePairs.add(new NameValuePair(Constants.SLUG, destinationInfo.getDestinationSlug()));
                         intent = new Intent(((ActivityAware) context).getCurrentActivity(), ProductListActivity.class);
-                        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PRODUCT_CATEGORY);
-                        intent.putExtra(Constants.CATEGORY_SLUG, destinationInfo.getDestinationSlug());
-                        intent.putExtra(Constants.CATEGORY_TITLE, sectionItem.getTitle() != null ? sectionItem.getTitle().getText() :
+                        intent.putParcelableArrayListExtra(Constants.PRODUCT_QUERY, nameValuePairs);
+                        intent.putExtra(Constants.TITLE, sectionItem.getTitle() != null ? sectionItem.getTitle().getText() :
                                 section.getTitle() != null ? section.getTitle().getText() : "");
                         ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     }
@@ -165,10 +168,10 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                     break;
                 case DestinationInfo.SEARCH:
                     if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
-                        intent = new Intent(((ActivityAware) context).getCurrentActivity(), ProductListActivity.class);
-                        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SEARCH);
-                        intent.putExtra(Constants.SEARCH_QUERY, destinationInfo.getDestinationSlug());
-                        ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
+                        nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.SEARCH.get()));
+                        nameValuePairs.add(new NameValuePair(Constants.SLUG, destinationInfo.getDestinationSlug().trim()));
+                        launchProductList(nameValuePairs);
                     }
                     break;
                 case DestinationInfo.PRODUCT_LIST:
@@ -219,9 +222,12 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
 
     private void launchProductList(DestinationInfo destinationInfo) {
         ArrayList<NameValuePair> nameValuePairs = destinationInfo.getProductQueryParams();
+        launchProductList(nameValuePairs);
+    }
+
+    private void launchProductList(ArrayList<NameValuePair> nameValuePairs) {
         if (nameValuePairs != null && nameValuePairs.size() > 0) {
             Intent intent = new Intent(((ActivityAware) context).getCurrentActivity(), ProductListActivity.class);
-            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_GENERIC_PRODUCT_LIST);
             intent.putParcelableArrayListExtra(Constants.PRODUCT_QUERY, nameValuePairs);
             if (!TextUtils.isEmpty(getSectionName()) || !TextUtils.isEmpty(getSectionItemName()))
                 intent.putExtra(TrackEventkeys.NAVIGATION_CTX, getSectionName() + "." + getSectionItemName());//todo Check with sid

@@ -56,14 +56,7 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
     }
 
     @Override
-    public void restoreProductList(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            mProducts = savedInstanceState.getParcelableArrayList(Constants.PRODUCTS);
-            if (mProducts != null) {
-                loadProducts();
-                return;
-            }
-        }
+    public void loadProducts() {
         mOrderId = getArguments().getString(Constants.ORDER_ID);
         if (TextUtils.isEmpty(mOrderId)) {
             return;
@@ -86,7 +79,7 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
                 switch (getProductsForOrderApiResponse.status) {
                     case 0:
                         mProducts = getProductsForOrderApiResponse.apiResponseContent.products;
-                        loadProducts();
+                        displayProducts();
                         break;
                     default:
                         handler.sendEmptyMessage(getProductsForOrderApiResponse.status, getProductsForOrderApiResponse.message,
@@ -108,8 +101,7 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
         });
     }
 
-    @Override
-    public void loadProducts() {
+    public void displayProducts() {
         if (getActivity() == null) return;
         ViewGroup contentView = getContentView();
         if (contentView == null) return;
@@ -188,7 +180,7 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
                             case Constants.OK:
                                 setCartInfo(addAllToBasketPastOrdersCallBack.apiResponseContent);
                                 updateUIForCartInfo();
-                                restoreProductList(null);
+                                loadProducts();
                                 break;
                             case Constants.ERROR:
                                 handler.sendEmptyMessage(addAllToBasketPastOrdersCallBack.getErrorTypeAsInt(),

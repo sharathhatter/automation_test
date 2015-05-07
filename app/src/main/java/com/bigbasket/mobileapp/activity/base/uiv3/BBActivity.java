@@ -56,8 +56,6 @@ import com.bigbasket.mobileapp.fragment.order.OrderThankYouFragment;
 import com.bigbasket.mobileapp.fragment.order.ShowCartFragment;
 import com.bigbasket.mobileapp.fragment.order.SlotSelectionFragment;
 import com.bigbasket.mobileapp.fragment.product.CategoryLandingFragment;
-import com.bigbasket.mobileapp.fragment.product.CategoryProductsFragment;
-import com.bigbasket.mobileapp.fragment.product.GenericProductListFragment;
 import com.bigbasket.mobileapp.fragment.product.ProductDetailFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoCategoryFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoDetailFragment;
@@ -78,6 +76,7 @@ import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.navigation.SectionNavigationItem;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.product.Product;
+import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.section.DestinationInfo;
 import com.bigbasket.mobileapp.model.section.Section;
@@ -391,34 +390,28 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 shopFromOrderFragment.setArguments(orderProductListBundle);
                 addToMainLayout(shopFromOrderFragment);
                 break;
-            case FragmentCodes.START_PRODUCT_CATEGORY:
-                launchProductCategoryFragment(getIntent().getStringExtra(Constants.CATEGORY_SLUG),
-                        getIntent().getStringExtra(Constants.FILTER),
-                        getIntent().getStringExtra(Constants.SORT_BY),
-                        getIntent().getStringExtra(Constants.CATEGORY_TITLE));
-                break;
             case FragmentCodes.START_SHOPPING_LIST_LANDING:
                 addToMainLayout(new ShoppingListFragment());
                 break;
-            case FragmentCodes.START_SEARCH:
-                doSearch(getIntent().getStringExtra(Constants.SEARCH_QUERY));
-                break;
-            case FragmentCodes.START_GENERIC_PRODUCT_LIST:
-                ArrayList<NameValuePair> nameValuePairs = getIntent().getParcelableArrayListExtra(Constants.PRODUCT_QUERY);
-                String title = getIntent().getStringExtra(Constants.TITLE);
-                if (nameValuePairs != null && !nameValuePairs.isEmpty()) {
-                    GenericProductListFragment productListFragment = new GenericProductListFragment();
-                    Bundle productListArgs = new Bundle();
-                    productListArgs.putString(TrackEventkeys.NAVIGATION_CTX,
-                            getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX));
-                    productListArgs.putParcelableArrayList(Constants.PRODUCT_QUERY, nameValuePairs);
-                    if (!TextUtils.isEmpty(title)) {
-                        productListArgs.putString(Constants.TITLE, title);
-                    }
-                    productListFragment.setArguments(productListArgs);
-                    addToMainLayout(productListFragment);
-                }
-                break;
+//            case FragmentCodes.START_SEARCH:
+//                doSearch(getIntent().getStringExtra(Constants.SEARCH_QUERY));
+//                break;
+//            case FragmentCodes.START_GENERIC_PRODUCT_LIST:
+//                ArrayList<NameValuePair> nameValuePairs = getIntent().getParcelableArrayListExtra(Constants.PRODUCT_QUERY);
+//                String title = getIntent().getStringExtra(Constants.TITLE);
+//                if (nameValuePairs != null && !nameValuePairs.isEmpty()) {
+//                    GenericProductListFragment productListFragment = new GenericProductListFragment();
+//                    Bundle productListArgs = new Bundle();
+//                    productListArgs.putString(TrackEventkeys.NAVIGATION_CTX,
+//                            getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX));
+//                    productListArgs.putParcelableArrayList(Constants.PRODUCT_QUERY, nameValuePairs);
+//                    if (!TextUtils.isEmpty(title)) {
+//                        productListArgs.putString(Constants.TITLE, title);
+//                    }
+//                    productListFragment.setArguments(productListArgs);
+//                    addToMainLayout(productListFragment);
+//                }
+//                break;
             case FragmentCodes.START_PROMO_CATEGORY:
                 addToMainLayout(new PromoCategoryFragment());
                 break;
@@ -446,7 +439,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         switch (item.getItemId()) {
             case R.id.action_search:
                 Intent searchIntent = new Intent(this, SearchableActivity.class);
-                startActivityForResult(searchIntent, FragmentCodes.START_SEARCH);
+                startActivityForResult(searchIntent, NavigationCodes.START_SEARCH);
                 return false;
             case android.R.id.home:
                 finish();
@@ -472,7 +465,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == FragmentCodes.START_SEARCH) {
+        if (resultCode == NavigationCodes.START_SEARCH) {
             if (data != null) {
                 String searchQuery = data.getStringExtra(Constants.SEARCH_QUERY);
                 if (!TextUtils.isEmpty(searchQuery)) {
@@ -673,22 +666,35 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                                         String categorySlug) {
         MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(this);
         mostSearchesAdapter.update(categoryName, categoryUrl);
-        launchProductCategoryFragment(categorySlug, null, null, categoryName);
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
+        nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.CATEGORY.get()));
+        nameValuePairs.add(new NameValuePair(Constants.SLUG, categorySlug));
+        Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
+        intent.putParcelableArrayListExtra(Constants.PRODUCT_QUERY, nameValuePairs);
+        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
-    private void launchProductCategoryFragment(String categorySlug, String filter,
-                                               String sortOn, String title) {
-        Bundle bundle = new Bundle();
-        bundle.putString(Constants.SLUG_NAME_CATEGORY, categorySlug);
-        if (!TextUtils.isEmpty(filter))
-            bundle.putString(Constants.FILTER, filter);
-        if (!TextUtils.isEmpty(sortOn))
-            bundle.putString(Constants.SORT_BY, sortOn);
-        bundle.putString(Constants.CATEGORY_TITLE, title);
-        CategoryProductsFragment categoryProductsFragment = new CategoryProductsFragment();
-        categoryProductsFragment.setArguments(bundle);
-        addToMainLayout(categoryProductsFragment);
-    }
+//    private void launchProductCategoryFragment(String categorySlug, String filter,
+//                                               String sortOn, String title) {
+//        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
+//        nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.CATEGORY.get()));
+//        nameValuePairs.add(new NameValuePair(Constants.SLUG, categorySlug));
+//        nameValuePairs.add(new NameValuePair(Constants.SORT_ON, sortOn));
+//        nameValuePairs.add(new NameValuePair(Constants.FILTER_ON, filter));
+//        Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
+//        intent.putExtra(Constants.PRODUCT_QUERY, nameValuePairs);
+//        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+//        Bundle bundle = new Bundle();
+//        bundle.putString(Constants.SLUG_NAME_CATEGORY, categorySlug);
+//        if (!TextUtils.isEmpty(filter))
+//            bundle.putString(Constants.FILTER, filter);
+//        if (!TextUtils.isEmpty(sortOn))
+//            bundle.putString(Constants.SORT_BY, sortOn);
+//        bundle.putString(Constants.CATEGORY_TITLE, title);
+//        CategoryProductsFragment categoryProductsFragment = new CategoryProductsFragment();
+//        categoryProductsFragment.setArguments(bundle);
+//        addToMainLayout(categoryProductsFragment);
+//    }
 
     private void logHomeScreenEvent(String trackAwareName, String eventKeyName,
                                     String navigationCtx) {
@@ -699,8 +705,10 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
     public void doSearch(String searchQuery) {
         Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
-        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SEARCH);
-        intent.putExtra(Constants.SEARCH_QUERY, searchQuery);
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
+        nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.SEARCH.get()));
+        nameValuePairs.add(new NameValuePair(Constants.SLUG, searchQuery.trim()));
+        intent.putParcelableArrayListExtra(Constants.PRODUCT_QUERY, nameValuePairs);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 

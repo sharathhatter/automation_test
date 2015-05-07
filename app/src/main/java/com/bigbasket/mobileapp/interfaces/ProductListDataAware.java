@@ -1,27 +1,11 @@
 package com.bigbasket.mobileapp.interfaces;
 
-import android.support.annotation.NonNull;
-
-import com.bigbasket.mobileapp.model.NameValuePair;
-import com.bigbasket.mobileapp.model.product.Product;
-import com.bigbasket.mobileapp.model.product.ProductListData;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.bigbasket.mobileapp.model.product.ProductTabData;
 
 public interface ProductListDataAware {
-    public ProductListData getProductListData();
+    void setProductTabData(ProductTabData productTabData);
 
-    public void setProductListData(ProductListData productListData);
+    boolean isNextPageLoading();
 
-    public void updateData();
-
-    public void updateProductList(List<Product> nextPageProducts);
-
-    public boolean isNextPageLoading();
-
-    public void setNextPageLoading(boolean isNextPageLoading);
-
-    @NonNull
-    public ArrayList<NameValuePair> getProductQueryParams();
+    void setNextPageLoading(boolean isNextPageLoading);
 }

@@ -61,7 +61,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
     }
 
     @Override
-    public void restoreProductList(Bundle savedInstanceState) {
+    public void loadProducts() {
         Bundle bundle = getArguments();
 
         promoId = bundle.getInt(Constants.PROMO_ID);
@@ -76,11 +76,6 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
 
         displayPromoSummary(promoInfoMsg, criteriaMsgs, saving, numPromoCompletedInBasket);
         renderPromoSet(setId, products, baseImgUrl);
-    }
-
-    @Override
-    public void loadProducts() {
-        // Not using the product-list API
     }
 
     @Override
@@ -341,11 +336,6 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
     @Override
     public ViewGroup getContentView() {
         return getView() != null ? (ViewGroup) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
-    }
-
-    @Override
-    public void parcelProductList(Bundle outState) {
-        // Not doing anything
     }
 
     @Override

@@ -22,7 +22,7 @@
         android:background="@drawable/logo_translucent_bkg"
         android:contentDescription="@string/app_name"
         android:padding="@dimen/padding_mini"
-        android:src="@drawable/ic_launcher" />
+        android:src="@mipmap/ic_launcher" />
 
     <TextView
         android:id="@+id/txtNavSalutation"

@@ -30,6 +30,8 @@ import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.adapter.SearchViewAdapter;
 import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
 import com.bigbasket.mobileapp.interfaces.SearchTermRemoveAware;
+import com.bigbasket.mobileapp.model.NameValuePair;
+import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
 import com.bigbasket.mobileapp.model.search.MostSearchedItem;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
@@ -137,10 +139,11 @@ public class SearchableActivity extends BackButtonActivity
         MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(this);
         mostSearchesAdapter.update(categoryName, categoryUrl);
 
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
+        nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.CATEGORY.get()));
+        nameValuePairs.add(new NameValuePair(Constants.SLUG, categorySlug));
         Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
-        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PRODUCT_CATEGORY);
-        intent.putExtra(Constants.CATEGORY_TITLE, categoryName);
-        intent.putExtra(Constants.CATEGORY_SLUG, categorySlug);
+        intent.putExtra(Constants.PRODUCT_QUERY, nameValuePairs);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         finish();
     }
@@ -172,7 +175,7 @@ public class SearchableActivity extends BackButtonActivity
     public void doSearch(String searchQuery) {
         Intent data = new Intent();
         data.putExtra(Constants.SEARCH_QUERY, searchQuery);
-        setResult(FragmentCodes.START_SEARCH, data);
+        setResult(NavigationCodes.START_SEARCH, data);
         finish();
     }
 

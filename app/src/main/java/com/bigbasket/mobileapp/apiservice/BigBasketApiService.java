@@ -28,7 +28,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.PostPrepaidPaymentResp
 import com.bigbasket.mobileapp.apiservice.models.response.PostVoucherApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PrescriptionImageUrls;
 import com.bigbasket.mobileapp.apiservice.models.response.ProductDetailApiResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.ProductListApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.ProductNextPageResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PromoDetailApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PromoSetProductsApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PromoSummaryApiResponseContent;
@@ -48,6 +48,7 @@ import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.model.order.OrderSummary;
 import com.bigbasket.mobileapp.model.order.PrescriptionId;
+import com.bigbasket.mobileapp.model.product.ProductTabData;
 import com.bigbasket.mobileapp.util.Constants;
 
 import java.util.ArrayList;
@@ -92,8 +93,11 @@ public interface BigBasketApiService {
     @POST("/c-empty/")
     void emptyCart(Callback<BaseApiResponse> cartEmptyApiResponseCallback);
 
-    @GET("/product-list/")
-    void productListUrl(@QueryMap Map<String, String> productQueryMap, Callback<ApiResponse<ProductListApiResponse>> productListApiCallback);
+    @GET("/product-list-mock/")
+    void productList(@QueryMap Map<String, String> productQueryMap, Callback<ApiResponse<ProductTabData>> productListApiCallback);
+
+    @GET("/product-next-page-mock/")
+    void productNextPage(@QueryMap Map<String, String> productQueryMap, Callback<ApiResponse<ProductNextPageResponse>> productNextPageApi);
 
     @GET("/browse-promo-cat/")
     void browsePromoCategory(Callback<ApiResponse<BrowsePromoCategoryApiResponseContent>> browsePromoCategoryApiResponseCallback);
