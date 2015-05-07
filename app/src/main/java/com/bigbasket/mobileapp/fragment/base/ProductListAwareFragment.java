@@ -15,6 +15,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.ProductNextPageResponse;
 import com.bigbasket.mobileapp.interfaces.InfiniteProductListAware;
+import com.bigbasket.mobileapp.interfaces.LazyProductListAware;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
@@ -134,6 +135,8 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
 //    }
 
     public void insertProductList(ArrayList<Product> products) {
+        if (mProductInfo == null) return;
+        hideProgressView();
         mProductInfo.setProducts(products);
         setProductListView();
     }
@@ -145,6 +148,9 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         contentView.removeAllViews();
 
         ArrayList<Product> products = mProductInfo != null ? mProductInfo.getProducts() : null;
+        if (products == null || products.size() == 0) {
+            products = ((LazyProductListAware) getActivity()).provideProductsIfAvailable(mTabType);
+        }
         if (products != null && products.size() > 0) {
             //View base = getActivity().getLayoutInflater().inflate(R.layout.uiv3_fab_recycler_view, contentView, false);
             RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, contentView);
@@ -182,6 +188,9 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
             productRecyclerView.setAdapter(mProductListRecyclerAdapter);
             contentView.addView(productRecyclerView);
         } else {
+            if (mProductInfo != null && mProductInfo.getCurrentPage() == -1) {
+                showProgressView();
+            }
 //            productRecyclerView.setVisibility(View.GONE);
 //            View emptyPageLayout = base.findViewById(R.id.noDeliveryAddLayout);
 //            showNoProductsFoundView(emptyPageLayout);
