@@ -3,7 +3,6 @@ package com.bigbasket.mobileapp.activity.account.uiv3;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -21,7 +20,6 @@ import com.bigbasket.mobileapp.apiservice.models.response.GetProductsForOrderApi
 import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
-import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
@@ -214,12 +212,6 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
     @Override
     public String getNavigationCtx() {
         return TrackEventkeys.NAVIGATION_CTX_SHOP_FROM_ORDER;
-    }
-
-    @Nullable
-    @Override
-    public ArrayList<NameValuePair> getInputForApi() {
-        return null;
     }
 
     @Override

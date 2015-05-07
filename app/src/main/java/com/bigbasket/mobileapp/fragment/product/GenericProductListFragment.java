@@ -19,12 +19,6 @@ public class GenericProductListFragment extends ProductListAwareFragment {
         return getArguments().getString(TrackEventkeys.NAVIGATION_CTX);
     }
 
-    @Nullable
-    @Override
-    public ArrayList<NameValuePair> getInputForApi() {
-        return getArguments().getParcelableArrayList(Constants.PRODUCT_QUERY);
-    }
-
     @Override
     public String getTitle() {
         return null;

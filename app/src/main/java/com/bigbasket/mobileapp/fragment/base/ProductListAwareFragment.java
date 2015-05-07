@@ -49,8 +49,8 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
     private ProductListRecyclerAdapter mProductListRecyclerAdapter;
     private HashMap<String, String> mNameValuePairs;
     private boolean mIsNextPageLoading;
-    private int mCurrentPage;
-    private int mTotalPages;
+    private ProductInfo mProductInfo;
+    private String mBaseImgUrl;
     private String mTabType;
 
     @Override
@@ -73,22 +73,20 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
 
     public void loadProducts() {
         if (getArguments() != null) {
-            ProductInfo productInfo = getArguments().getParcelable(Constants.PRODUCT_INFO);
-            String baseImgUrl = getArguments().getString(Constants.BASE_IMG_URL);
+            mProductInfo = getArguments().getParcelable(Constants.PRODUCT_INFO);
+            mBaseImgUrl = getArguments().getString(Constants.BASE_IMG_URL);
             ArrayList<NameValuePair> nameValuePairs = getArguments().getParcelableArrayList(Constants.PRODUCT_QUERY);
             mNameValuePairs = NameValuePair.toMap(nameValuePairs);
-            mTotalPages = productInfo.getTotalPages();
-            mCurrentPage = productInfo.getCurrentPage();
             mTabType = getArguments().getString(Constants.TAB_TYPE);
-            setProductListView(productInfo, baseImgUrl);
+            setProductListView();
         }
     }
 
     public void loadMoreProducts() {
         if (isNextPageLoading() || getCurrentActivity() == null) return;
-        int nextPage = Math.max(mCurrentPage, 1) + 1;
+        final int nextPage = Math.max(mProductInfo.getCurrentPage(), 1) + 1;
 
-        if (nextPage <= mTotalPages) {
+        if (nextPage <= mProductInfo.getTotalPages()) {
             setNextPageLoading(true);
             mNameValuePairs.put(Constants.CURRENT_PAGE, String.valueOf(nextPage));
             mNameValuePairs.put(Constants.TAB_TYPE, new Gson().toJson(new String[]{mTabType}));
@@ -97,8 +95,10 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
             bigBasketApiService.productNextPage(mNameValuePairs, new Callback<ApiResponse<ProductNextPageResponse>>() {
                 @Override
                 public void success(ApiResponse<ProductNextPageResponse> productNextPageApiResponse, Response response) {
+                    setNextPageLoading(false);
                     if (isSuspended()) return;
                     if (productNextPageApiResponse.status == 0) {
+                        mProductInfo.setCurrentPage(nextPage);
                         HashMap<String, ArrayList<Product>> productMap = productNextPageApiResponse.apiResponseContent.productListMap;
                         if (productMap != null && productMap.size() > 0) {
                             updateProductList(productMap.get(mTabType));
@@ -110,7 +110,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
 
                 @Override
                 public void failure(RetrofitError error) {
-
+                    setNextPageLoading(false);
                 }
             });
         }
@@ -133,13 +133,18 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
 //        }
 //    }
 
-    public void setProductListView(ProductInfo productInfo, String baseImgUrl) {
+    public void insertProductList(ArrayList<Product> products) {
+        mProductInfo.setProducts(products);
+        setProductListView();
+    }
+
+    private void setProductListView() {
         if (getActivity() == null) return;
         ViewGroup contentView = getContentView();
         if (contentView == null) return;
         contentView.removeAllViews();
 
-        ArrayList<Product> products = productInfo != null ? productInfo.getProducts() : null;
+        ArrayList<Product> products = mProductInfo != null ? mProductInfo.getProducts() : null;
         if (products != null && products.size() > 0) {
             //View base = getActivity().getLayoutInflater().inflate(R.layout.uiv3_fab_recycler_view, contentView, false);
             RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, contentView);
@@ -170,8 +175,8 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                     .setShowBasketBtn(true)
                     .setShowShopListDeleteBtn(false)
                     .build();
-            mProductListRecyclerAdapter = new ProductListRecyclerAdapter(products, baseImgUrl,
-                    productViewDisplayDataHolder, this, productInfo.getProductCount(),
+            mProductListRecyclerAdapter = new ProductListRecyclerAdapter(products, mBaseImgUrl,
+                    productViewDisplayDataHolder, this, mProductInfo.getProductCount(),
                     getNavigationCtx());
 
             productRecyclerView.setAdapter(mProductListRecyclerAdapter);
@@ -258,17 +263,6 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
 //    }
 
     public abstract String getNavigationCtx();
-
-    @Nullable
-    public abstract ArrayList<NameValuePair> getInputForApi();
-
-    protected ArrayList<FilteredOn> getProductRefinedByFilter() {
-        return null;
-    }
-
-    protected String getProductRefinedBySortedOn() {
-        return null;
-    }
 
     @Override
     public void onShoppingListFetched(ArrayList<ShoppingListName> shoppingListNames) {

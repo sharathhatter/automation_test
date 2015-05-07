@@ -2,7 +2,6 @@ package com.bigbasket.mobileapp.fragment.shoppinglist;
 
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -19,7 +18,6 @@ import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
-import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
@@ -29,8 +27,6 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
-
-import java.util.ArrayList;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -58,12 +54,6 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
             return TrackEventkeys.NAVIGATION_CTX_SMART_BASKET;
         else
             return TrackEventkeys.NAVIGATION_CTX_SHOPPING_LIST;
-    }
-
-    @Nullable
-    @Override
-    public ArrayList<NameValuePair> getInputForApi() {
-        return null;
     }
 
     private void loadShoppingListProducts() {

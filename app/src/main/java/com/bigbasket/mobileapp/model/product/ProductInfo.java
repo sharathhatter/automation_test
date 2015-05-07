@@ -68,6 +68,10 @@ public class ProductInfo implements Parcelable {
         this.currentPage = currentPage;
     }
 
+    public void setProducts(ArrayList<Product> products) {
+        this.products = products;
+    }
+
     public int getProductCount() {
         return productCount;
     }
