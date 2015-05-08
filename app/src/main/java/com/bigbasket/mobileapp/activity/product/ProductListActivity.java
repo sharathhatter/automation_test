@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.activity.product;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -9,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 
 import com.bigbasket.mobileapp.R;
@@ -33,6 +35,7 @@ import com.bigbasket.mobileapp.task.GetCartCountTask;
 import com.bigbasket.mobileapp.task.uiv3.ProductListTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
+import com.bigbasket.mobileapp.view.SectionView;
 import com.bigbasket.mobileapp.view.uiv3.BBArrayAdapter;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
 import com.google.gson.Gson;
@@ -60,6 +63,17 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         setTitle("");
         mNameValuePairs = getIntent().getParcelableArrayListExtra(Constants.PRODUCT_QUERY);
         loadProductTabs();
+    }
+
+    @Override
+    public void onNoFragmentsInLayout() {
+        // Don't finish, as the product view-pager is still active.
+    }
+
+    @Override
+    @LayoutRes
+    public int getMainLayout() {
+        return R.layout.uiv3_product_list_layout;
     }
 
     private void loadProductTabs() {
@@ -126,7 +140,18 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
             SmartTabLayout pagerSlidingTabStrip = (SmartTabLayout) base.findViewById(R.id.slidingTabs);
             pagerSlidingTabStrip.setViewPager(viewPager);
-            contentFrame.addView(base);
+            if (productTabData.getContentSectionData() != null) {
+                LinearLayout layoutProducts = new LinearLayout(this);
+                layoutProducts.setOrientation(LinearLayout.VERTICAL);
+                View sectionView = new SectionView(this, faceRobotoRegular, productTabData.getContentSectionData(), "Product List").getView();
+                if (sectionView != null) {
+                    layoutProducts.addView(sectionView);
+                }
+                layoutProducts.addView(base);
+                contentFrame.addView(layoutProducts);
+            } else {
+                contentFrame.addView(base);
+            }
             renderHeaderDropDown(productTabData.getHeaderSection());
 
             if (tabTypeWithNoProducts.size() > 0) {

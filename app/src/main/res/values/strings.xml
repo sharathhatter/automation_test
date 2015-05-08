@@ -265,6 +265,8 @@
     <string name="shoppingList">Shopping Lists</string>
     <string name="sortBy">Sort By</string>
     <string name="filterBy">Filter By</string>
+    <string name="filter">Filter</string>
+    <string name="sort">Sort</string>
     <string name="voice">Voice</string>
     <string name="scan">Scan</string>
     <string name="voicePrompt">Speak Now</string>

@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -138,7 +139,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 if (fragmentManager != null) {
                     int backStackEntryCount = fragmentManager.getBackStackEntryCount();
                     if (backStackEntryCount == 0) {
-                        finish();
+                        onNoFragmentsInLayout();
                     } else {
                         Fragment currFragment = fragmentManager.getFragments().get(backStackEntryCount - 1);
                         if (currFragment instanceof AbstractFragment) {
@@ -156,6 +157,11 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         setViewBasketFloatingButton();
     }
 
+    public void onNoFragmentsInLayout() {
+        finish();
+    }
+
+    @LayoutRes
     public int getMainLayout() {
         return R.layout.uiv3_main_layout;
     }
