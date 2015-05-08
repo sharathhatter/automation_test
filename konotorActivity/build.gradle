@@ -22,7 +22,7 @@ android {
 }
 
 dependencies {
-    provided 'com.android.support:support-v4:18.+'
+    provided 'com.android.support:support-v4:22.1.1'
     compile files('libs/KonotorApi.jar')
     compile files('libs/gson-d-2.2.1.jar')
 }

@@ -16,3 +16,8 @@
 #   public *;
 #}
 -dontwarn com.squareup.okhttp.**
+-keep class com.enstage.wibmo.sdk.** { *; }
+-keepclassmembers class com.enstage.wibmo.sdk.inapp.pojo.** { *; }
+-keep class com.enstage.wibmo.sdk.inapp.InAppBrowserActivity$* {
+*; }
+-keep class com.enstage.wibmo.util.** { *; }
