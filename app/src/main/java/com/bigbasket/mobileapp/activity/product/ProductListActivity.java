@@ -137,13 +137,18 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                     @Override
                     public void success(ApiResponse<ProductNextPageResponse> productNextPageApiResponse, Response response) {
                         if (isSuspended()) return;
-                        mMapForTabWithNoProducts = productNextPageApiResponse.apiResponseContent.productListMap;
-                        setUpProductsInEmptyFragments();
+                        if (productNextPageApiResponse.status == 0) {
+                            mMapForTabWithNoProducts = productNextPageApiResponse.apiResponseContent.productListMap;
+                            setUpProductsInEmptyFragments();
+                        } else {
+                            notifyEmptyFragmentAboutFailure();
+                        }
                     }
 
                     @Override
                     public void failure(RetrofitError error) {
-
+                        if (isSuspended()) return;
+                        notifyEmptyFragmentAboutFailure();
                     }
                 });
             }
@@ -152,19 +157,28 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         }
     }
 
-    private void setUpProductsInEmptyFragments() {
-        if (mMapForTabWithNoProducts != null) {
-            for (Map.Entry<String, ArrayList<Product>> entry : mMapForTabWithNoProducts.entrySet()) {
-                int fragmentPositionInViewPager = mArrayTabTypeAndFragmentPosition.get(entry.getKey());
-                Fragment fragment = mStatePagerAdapter.getItem(fragmentPositionInViewPager);
+    private void notifyEmptyFragmentAboutFailure() {
+        if (mArrayTabTypeAndFragmentPosition != null) {
+            for (Map.Entry<String, Integer> entry : mArrayTabTypeAndFragmentPosition.entrySet()) {
+                Fragment fragment = mStatePagerAdapter.getItem(entry.getValue());
                 if (fragment != null) {
-                    ArrayList<Product> products = entry.getValue();
-                    if (products != null && products.size() > 0) {
-                        if (fragment.isVisible()) {
-                            ((ProductListAwareFragment) fragment).insertProductList(products);
-                        }
+                    ((ProductListAwareFragment) fragment).setLazyProductLoadingFailure();
+                }
+            }
+        }
+    }
+
+    private void setUpProductsInEmptyFragments() {
+        if (mArrayTabTypeAndFragmentPosition != null) {
+            for (Map.Entry<String, Integer> entry : mArrayTabTypeAndFragmentPosition.entrySet()) {
+                Fragment fragment = mStatePagerAdapter.getItem(entry.getValue());
+                if (fragment != null) {
+                    ArrayList<Product> products = mMapForTabWithNoProducts != null ?
+                            mMapForTabWithNoProducts.get(entry.getKey()) : null;
+                    if (products != null) {
+                        ((ProductListAwareFragment) fragment).insertProductList(products);
                     } else {
-                        // TODO: Set empty data
+                        ((ProductListAwareFragment) fragment).insertProductList(null);
                     }
                 }
             }
@@ -193,7 +207,8 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     if (position != Spinner.INVALID_POSITION) {
-                        new OnSectionItemClickListener<>(getCurrentActivity(), headSection, headSection.getSectionItems().get(position), "").onClick(view);
+                        new OnSectionItemClickListener<>(getCurrentActivity(), headSection,
+                                headSection.getSectionItems().get(position), "").onClick(view);
                     }
                 }
 

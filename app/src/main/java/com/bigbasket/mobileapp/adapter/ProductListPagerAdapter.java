@@ -29,7 +29,7 @@ public class ProductListPagerAdapter extends TabPagerAdapter {
         }
         fragment = super.getItem(i);
         if (i >= fragments.size()) {
-            fragments.add(i, new WeakReference<>(fragment));
+            fragments.add(new WeakReference<>(fragment));
         } else {
             fragments.set(i, new WeakReference<>(fragment));
         }

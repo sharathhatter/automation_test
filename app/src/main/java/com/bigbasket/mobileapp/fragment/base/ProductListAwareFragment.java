@@ -6,6 +6,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
@@ -53,6 +55,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
     private ProductInfo mProductInfo;
     private String mBaseImgUrl;
     private String mTabType;
+    private boolean mHasProductLoadingFailed;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -134,10 +137,16 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
 //        }
 //    }
 
-    public void insertProductList(ArrayList<Product> products) {
+    public void insertProductList(@Nullable ArrayList<Product> products) {
         if (mProductInfo == null) return;
         hideProgressView();
+        mProductInfo.setCurrentPage(1);
         mProductInfo.setProducts(products);
+        setProductListView();
+    }
+
+    public void setLazyProductLoadingFailure() {
+        mHasProductLoadingFailed = true;
         setProductListView();
     }
 
@@ -188,26 +197,20 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
             productRecyclerView.setAdapter(mProductListRecyclerAdapter);
             contentView.addView(productRecyclerView);
         } else {
-            if (mProductInfo != null && mProductInfo.getCurrentPage() == -1) {
-                showProgressView();
+            if (mHasProductLoadingFailed) {
+                showProductsFailureMsg(contentView);
+            } else {
+                if (mProductInfo != null) {
+                    if (mProductInfo.getCurrentPage() == -1) {
+                        showProgressView();
+                    } else {
+                        showNoProductsFoundTabView(contentView);
+                    }
+                } else {
+                    showNoProductsFoundTabView(contentView);
+                }
             }
-//            productRecyclerView.setVisibility(View.GONE);
-//            View emptyPageLayout = base.findViewById(R.id.noDeliveryAddLayout);
-//            showNoProductsFoundView(emptyPageLayout);
         }
-
-//        if (sectionView != null) {
-//            contentView.addView(sectionView);
-//        }
-//        contentView.addView(base);
-//
-//
-//        if (sectionView == null && productInfo == null) {
-//            LayoutInflater inflater = getActivity().getLayoutInflater();
-//            View emptyPageView = inflater.inflate(R.layout.uiv3_empty_data_text, contentView, false);
-//            showNoProductsFoundView(emptyPageView);
-//            contentView.addView(emptyPageView);
-//        }
     }
 
 //    private void addSectionToScrollView(ViewGroup contentView, View sectionView) {
@@ -239,27 +242,35 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
 //        }
 //    }
 
-//    private void showNoProductsFoundView(View emptyPageView) {
-//        ImageView imgEmptyPage = (ImageView) emptyPageView.findViewById(R.id.imgEmptyPage);
-//        imgEmptyPage.setVisibility(View.INVISIBLE);
-//        TextView txtEmptyMsg1 = (TextView) emptyPageView.findViewById(R.id.txtEmptyMsg1);
-//        txtEmptyMsg1.setText(getEmptyPageText());
-//        TextView txtEmptyMsg2 = (TextView) emptyPageView.findViewById(R.id.txtEmptyMsg2);
-//        txtEmptyMsg2.setVisibility(View.GONE);
-//        Button btnBlankPage = (Button) emptyPageView.findViewById(R.id.btnBlankPage);
-//        btnBlankPage.setText(R.string.continue_shopping_txt);
-//        btnBlankPage.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (getCurrentActivity() == null) return;
-//                getCurrentActivity().goToHome(false);
-//            }
-//        });
-//    }
+    private void showProductsFailureMsg(ViewGroup parent) {
+        View emptyPageView = getActivity().getLayoutInflater()
+                .inflate(R.layout.uiv3_empty_data_text, parent, false);
+        ImageView imgEmptyPage = (ImageView) emptyPageView.findViewById(R.id.imgEmptyPage);
+        imgEmptyPage.setImageResource(R.drawable.ic_error_red_36dp);
+        TextView txtEmptyMsg1 = (TextView) emptyPageView.findViewById(R.id.txtEmptyMsg1);
+        txtEmptyMsg1.setText(getString(R.string.productTabErrorMsg));
+        TextView txtEmptyMsg2 = (TextView) emptyPageView.findViewById(R.id.txtEmptyMsg2);
+        txtEmptyMsg2.setVisibility(View.GONE);
+        emptyPageView.findViewById(R.id.btnBlankPage).setVisibility(View.GONE);
+        parent.addView(emptyPageView);
+    }
 
-//    protected String getEmptyPageText() {
-//        return getString(R.string.noProducts);
-//    }
+    private void showNoProductsFoundTabView(ViewGroup parent) {
+        View emptyPageView = getActivity().getLayoutInflater()
+                .inflate(R.layout.uiv3_empty_data_text, parent, false);
+        ImageView imgEmptyPage = (ImageView) emptyPageView.findViewById(R.id.imgEmptyPage);
+        imgEmptyPage.setImageResource(R.drawable.empty_smart_basket);
+        TextView txtEmptyMsg1 = (TextView) emptyPageView.findViewById(R.id.txtEmptyMsg1);
+        txtEmptyMsg1.setText(getEmptyPageText());
+        TextView txtEmptyMsg2 = (TextView) emptyPageView.findViewById(R.id.txtEmptyMsg2);
+        txtEmptyMsg2.setVisibility(View.GONE);
+        emptyPageView.findViewById(R.id.btnBlankPage).setVisibility(View.GONE);
+        parent.addView(emptyPageView);
+    }
+
+    protected String getEmptyPageText() {
+        return getString(R.string.noProducts);
+    }
 //
 //    @Override
 //    public void updateProductList(List<Product> nextPageProducts) {
