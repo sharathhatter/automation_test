@@ -36,7 +36,7 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'konotor-proguard-conf.txt', 'proguard-rules.pro'
         }
     }
