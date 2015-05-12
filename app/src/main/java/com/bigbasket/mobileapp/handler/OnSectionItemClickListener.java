@@ -14,6 +14,7 @@ import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
+import com.bigbasket.mobileapp.fragment.DynamicScreenFragment;
 import com.bigbasket.mobileapp.fragment.product.CategoryLandingFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoCategoryFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoDetailFragment;
@@ -214,6 +215,15 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                         } catch (ActivityNotFoundException e) {
                             // Do nothing
                         }
+                    }
+                    break;
+                case DestinationInfo.DYNAMIC_PAGE:
+                    if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString(Constants.SCREEN, destinationInfo.getDestinationSlug());
+                        DynamicScreenFragment dynamicScreenFragment = new DynamicScreenFragment();
+                        dynamicScreenFragment.setArguments(bundle);
+                        ((ActivityAware) context).getCurrentActivity().onChangeFragment(dynamicScreenFragment);
                     }
                     break;
             }
