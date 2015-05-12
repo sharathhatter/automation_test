@@ -23,6 +23,7 @@ import android.text.style.BulletSpan;
 import android.text.style.ForegroundColorSpan;
 import android.util.Patterns;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
@@ -392,5 +393,18 @@ public class UIUtil {
                 .placeholder(R.drawable.loading)
                 .error(R.drawable.noimage)
                 .into(imageView);
+    }
+
+    public static void showEmptyProductsView(Context context, ViewGroup parent) {
+        View emptyPageView = LayoutInflater.from(context)
+                .inflate(R.layout.uiv3_empty_data_text, parent, false);
+        ImageView imgEmptyPage = (ImageView) emptyPageView.findViewById(R.id.imgEmptyPage);
+        imgEmptyPage.setImageResource(R.drawable.ic_error_red_36dp);
+        TextView txtEmptyMsg1 = (TextView) emptyPageView.findViewById(R.id.txtEmptyMsg1);
+        txtEmptyMsg1.setText(context.getString(R.string.productTabErrorMsg));
+        TextView txtEmptyMsg2 = (TextView) emptyPageView.findViewById(R.id.txtEmptyMsg2);
+        txtEmptyMsg2.setVisibility(View.GONE);
+        emptyPageView.findViewById(R.id.btnBlankPage).setVisibility(View.GONE);
+        parent.addView(emptyPageView);
     }
 }

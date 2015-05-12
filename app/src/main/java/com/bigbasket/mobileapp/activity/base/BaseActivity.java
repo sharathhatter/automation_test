@@ -364,6 +364,7 @@ public abstract class BaseActivity extends AppCompatActivity implements COMarket
                         if (resultCode > -1) {
                             getCurrentActivity().setResult(resultCode);
                         }
+                        dialog.dismiss();
                         getCurrentActivity().finish();
                     }
                 })

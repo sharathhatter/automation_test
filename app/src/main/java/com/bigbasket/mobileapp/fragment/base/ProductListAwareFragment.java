@@ -107,7 +107,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                         if (productMap != null && productMap.size() > 0) {
                             updateProductList(productMap.get(mTabType));
                         } else {
-                            // Add some code
+                            // TODO : Add some code
                         }
                     }
                 }
@@ -204,10 +204,10 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                     if (mProductInfo.getCurrentPage() == -1) {
                         showProgressView();
                     } else {
-                        showNoProductsFoundTabView(contentView);
+                        UIUtil.showEmptyProductsView(getCurrentActivity(), contentView);
                     }
                 } else {
-                    showNoProductsFoundTabView(contentView);
+                    UIUtil.showEmptyProductsView(getCurrentActivity(), contentView);
                 }
             }
         }
@@ -255,22 +255,6 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         parent.addView(emptyPageView);
     }
 
-    private void showNoProductsFoundTabView(ViewGroup parent) {
-        View emptyPageView = getActivity().getLayoutInflater()
-                .inflate(R.layout.uiv3_empty_data_text, parent, false);
-        ImageView imgEmptyPage = (ImageView) emptyPageView.findViewById(R.id.imgEmptyPage);
-        imgEmptyPage.setImageResource(R.drawable.empty_smart_basket);
-        TextView txtEmptyMsg1 = (TextView) emptyPageView.findViewById(R.id.txtEmptyMsg1);
-        txtEmptyMsg1.setText(getEmptyPageText());
-        TextView txtEmptyMsg2 = (TextView) emptyPageView.findViewById(R.id.txtEmptyMsg2);
-        txtEmptyMsg2.setVisibility(View.GONE);
-        emptyPageView.findViewById(R.id.btnBlankPage).setVisibility(View.GONE);
-        parent.addView(emptyPageView);
-    }
-
-    protected String getEmptyPageText() {
-        return getString(R.string.noProducts);
-    }
 //
 //    @Override
 //    public void updateProductList(List<Product> nextPageProducts) {
