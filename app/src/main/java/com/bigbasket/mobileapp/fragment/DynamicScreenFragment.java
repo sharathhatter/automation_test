@@ -62,11 +62,14 @@ public class DynamicScreenFragment extends BaseSectionFragment implements Dynami
 
         contentView.removeAllViews();
         contentView.addView(contentScrollView);
+        if (!TextUtils.isEmpty(sectionData.getScreenName())) {
+            setTitle(sectionData.getScreenName());
+        }
     }
 
     @Override
     public String getTitle() {
-        return null;
+        return getSectionData() != null ? getSectionData().getScreenName() : null;
     }
 
     @Nullable

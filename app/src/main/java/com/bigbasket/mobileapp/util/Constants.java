@@ -91,6 +91,7 @@ public class Constants {
     public static final String ORDER_TYPE = "order_type";
     public static final String VERSION = "version";
     public static final String SCREEN = "screen";
+    public static final String SCREEN_NAME = "screen_name";
     public static final String A_OK = "a_ok";
     public static final String EXTRA_ATTR = "extra_attr";
     public static final String INTERNAL_VALUE = "internal_value";

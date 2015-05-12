@@ -27,6 +27,8 @@ public class SectionData implements Parcelable, Serializable {
     private ArrayList<Section> sections;
     @SerializedName(Constants.RENDERERS)
     private HashMap<Integer, Renderer> renderersMap;
+    @SerializedName(Constants.SCREEN_NAME)
+    private String screenName;
 
     public SectionData(Parcel source) {
         boolean wasSectionsNull = source.readByte() == (byte) 1;
@@ -43,6 +45,10 @@ public class SectionData implements Parcelable, Serializable {
                 Renderer renderer = source.readParcelable(Section.class.getClassLoader());
                 renderersMap.put(rendererId, renderer);
             }
+        }
+        boolean wasScreenNameNull = source.readByte() == (byte) 1;
+        if (!wasScreenNameNull) {
+            screenName = source.readString();
         }
     }
 
@@ -67,6 +73,11 @@ public class SectionData implements Parcelable, Serializable {
                 dest.writeParcelable(rendererEntry.getValue(), flags);
             }
         }
+        boolean wasScreenNameNull = screenName == null;
+        dest.writeByte(wasScreenNameNull ? (byte) 1 : (byte) 0);
+        if (!wasScreenNameNull) {
+            dest.writeString(screenName);
+        }
     }
 
     public ArrayList<Section> getSections() {
@@ -75,5 +86,9 @@ public class SectionData implements Parcelable, Serializable {
 
     public HashMap<Integer, Renderer> getRenderersMap() {
         return renderersMap;
+    }
+
+    public String getScreenName() {
+        return screenName;
     }
 }

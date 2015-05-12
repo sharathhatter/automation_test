@@ -276,6 +276,10 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
         return 0;
     }
 
+    public boolean doesViewRequireMinHeight(int viewType) {
+        return viewType != VIEW_IMG;
+    }
+
     public boolean hasTitle() {
         return getTitle() != null && !TextUtils.isEmpty(getTitle().getText());
     }

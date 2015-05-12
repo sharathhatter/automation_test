@@ -471,7 +471,7 @@ public class SectionView {
             }
 
             ViewGroup layoutSection = (ViewGroup) view.findViewById(R.id.layoutSection);
-            if (layoutSection != null) {
+            if (layoutSection != null && sectionItem.doesViewRequireMinHeight(viewType)) {
                 int minHeight = sectionItem.getHeight(context, renderer);
                 layoutSection.setMinimumHeight(minHeight);
             }
