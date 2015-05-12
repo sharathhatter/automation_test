@@ -254,6 +254,10 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     public void addToMainLayout(AbstractFragment fragment, String tag) {
+        addToMainLayout(fragment, tag, false);
+    }
+
+    public void addToMainLayout(AbstractFragment fragment, String tag, boolean stateLess) {
 
         FragmentManager fm = getSupportFragmentManager();
         if (fm.getBackStackEntryCount() > 0) {
@@ -264,7 +268,11 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         this.currentFragmentTag = ftTag;
         ft.add(R.id.content_frame, fragment, ftTag);
         ft.addToBackStack(ftTag);
-        ft.commit();
+        if (stateLess) {
+            ft.commitAllowingStateLoss();
+        } else {
+            ft.commit();
+        }
         if (mDrawerLayout != null) {
             mDrawerLayout.closeDrawers();
         }
@@ -470,14 +478,26 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == NavigationCodes.START_SEARCH) {
             if (data != null) {
                 String searchQuery = data.getStringExtra(Constants.SEARCH_QUERY);
                 if (!TextUtils.isEmpty(searchQuery)) {
                     doSearch(searchQuery);
+                    return;
                 }
             }
+        } else if (resultCode == NavigationCodes.LAUNCH_FRAGMENT && data != null) {
+            createFragmentFromName(data.getStringExtra(Constants.FRAGMENT_CLASS_NAME), data.getExtras(),
+                    data.getStringExtra(Constants.FRAGMENT_TAG));
+            return;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void createFragmentFromName(String fragmentClassName, Bundle fragmentArgs, String tag) {
+        Fragment newFragment = Fragment.instantiate(getCurrentActivity(), fragmentClassName, fragmentArgs);
+        if (newFragment instanceof AbstractFragment) {
+            addToMainLayout((AbstractFragment) newFragment, tag, true);
         }
     }
 

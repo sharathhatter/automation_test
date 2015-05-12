@@ -92,6 +92,7 @@ public class Constants {
     public static final String VERSION = "version";
     public static final String SCREEN = "screen";
     public static final String SCREEN_NAME = "screen_name";
+    public static final String FRAGMENT_CLASS_NAME = "fcn";
     public static final String A_OK = "a_ok";
     public static final String EXTRA_ATTR = "extra_attr";
     public static final String INTERNAL_VALUE = "internal_value";

@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.activity.product;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
@@ -7,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
@@ -20,6 +22,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.ProductNextPageResponse;
+import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.fragment.product.GenericProductListFragment;
 import com.bigbasket.mobileapp.handler.OnSectionItemClickListener;
@@ -34,6 +37,7 @@ import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.task.GetCartCountTask;
 import com.bigbasket.mobileapp.task.uiv3.ProductListTask;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.SectionView;
 import com.bigbasket.mobileapp.view.uiv3.BBArrayAdapter;
@@ -100,6 +104,28 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         if (getSupportActionBar() != null) {
             getSupportActionBar().setSubtitle(null);
         }
+    }
+
+    @Override
+    public void onChangeFragment(AbstractFragment newFragment) {
+        handleFragmentChange(newFragment.getClass().getName(), newFragment.getArguments(), null);
+    }
+
+    @Override
+    public void addToMainLayout(AbstractFragment newFragment, String tag) {
+        handleFragmentChange(newFragment.getClass().getName(), newFragment.getArguments(), tag);
+    }
+
+    private void handleFragmentChange(String fragmentClassName, Bundle fragmentArgs, String tag) {
+        if (TextUtils.isEmpty(fragmentClassName)) return;
+        Intent data = new Intent();
+        if (fragmentArgs != null) {
+            data.putExtras(fragmentArgs);
+        }
+        data.putExtra(Constants.FRAGMENT_CLASS_NAME, fragmentClassName);
+        data.putExtra(Constants.FRAGMENT_TAG, tag);
+        setResult(NavigationCodes.LAUNCH_FRAGMENT, data);
+        finish();
     }
 
     @Override
