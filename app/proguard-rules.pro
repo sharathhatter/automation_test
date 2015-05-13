@@ -15,9 +15,126 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
--dontwarn com.squareup.okhttp.**
+
+-keepattributes *Annotation*,EnclosingMethod
+-keepattributes Exceptions, Signature, InnerClasses
+-keepattributes SourceFile,LineNumberTable
+
+#Project
+-keep class com.bigbasket.mobileapp.BuildConfig { *; }
+-keep class com.bigbasket.mobileapp.model.** { *; }
+-keep class com.bigbasket.mobileapp.apiservice.models.response.** { *; }
+
+# Wibmo
 -keep class com.enstage.wibmo.sdk.** { *; }
--keepclassmembers class com.enstage.wibmo.sdk.inapp.pojo.** { *; }
--keep class com.enstage.wibmo.sdk.inapp.InAppBrowserActivity$* {
-*; }
+-keep class com.enstage.wibmo.sdk.inapp.InAppBrowserActivity$* { *; }
 -keep class com.enstage.wibmo.util.** { *; }
+-keepclassmembers class com.enstage.wibmo.sdk.inapp.pojo.** { *; }
+
+# New Relic
+-keep class com.newrelic.** { *; }
+-dontwarn com.newrelic.**
+
+# Crashlytics
+-keep class com.crashlytics.** { *; }
+
+# Support library
+-keep class android.support.v4.app.** { *; }
+-keep class android.support.v7.app.** { *; }
+-keep interface android.support.v4.app.** { *; }
+-keep interface android.support.v7.app.** { *; }
+-keep public class android.support.v7.widget.** { *; }
+-keep public class android.support.v7.internal.widget.** { *; }
+-keep public class android.support.v7.internal.view.menu.** { *; }
+-keep public class * extends android.support.v4.view.ActionProvider {
+    public <init>(android.content.Context);
+}
+-keep class android.support.v7.widget.RoundRectDrawable { *; }
+
+# Retrofit & OkHttp
+-keep class retrofit.** { *; }
+-keep class com.squareup.okhttp.** { *; }
+-keep interface com.squareup.okhttp.** { *; }
+-keepclasseswithmembers class * {
+    @retrofit.http.* <methods>;
+}
+-dontwarn rx.**
+-dontwarn retrofit.appengine.**
+-dontwarn com.moe.pushlibrary.**
+-dontwarn okio.**
+-dontwarn com.squareup.okhttp.**
+
+# Facebook
+-keep class com.facebook.** { *; }
+-keep class sun.misc.Unsafe { *; }
+
+# Gson
+-keep class com.google.gson.stream.** { *; }
+
+# Moengage
+
+# Google Play Services (For 4.3.23, but still keeping it :) )
+-keep class * extends java.util.ListResourceBundle {
+    protected Object[][] getContents();
+}
+-keep public class com.google.android.gms.common.internal.safeparcel.SafeParcelable {
+    public static final *** NULL;
+}
+-keepnames @com.google.android.gms.common.annotation.KeepName class *
+-keepclassmembernames class * {
+    @com.google.android.gms.common.annotation.KeepName *;
+}
+-keepnames class * implements android.os.Parcelable {
+    public static final ** CREATOR;
+}
+
+# Google licensing files
+-keep public class com.google.vending.licensing.ILicensingService
+-keep public class com.android.vending.licensing.ILicensingService
+
+# Konotor
+# Application classes that will be serialized/deserialized over Gson
+-keep class com.google.gson.demach.** {
+    <fields>;
+    <methods>;
+}
+
+# Http classes
+-keep class org.apache.http.entity.** {
+    <fields>;
+    <methods>;
+}
+
+# Demach GSON files
+-keep,allowshrinking class com.google.gson.demach.** {
+    <fields>;
+    <methods>;
+}
+
+# Demach model
+-keep,allowshrinking class com.demach.konotor.model.** {
+ <fields>;
+ <methods>;
+}
+
+# Konotor MAIN class
+-keep,allowshrinking class com.demach.konotor.Konotor {
+ <fields>;
+ <methods>;
+}
+
+# Also keep - Enumerations. Keep the special static methods that are required in
+# enumeration classes.
+-keepclassmembers enum  * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
+
+# Keep names - Native method names. Keep all native class/method names.
+-keepclasseswithmembers,allowshrinking class * {
+    native <methods>;
+}
+
+# Sqlite
+-keep class org.sqlite.** { *; }
+-keep class org.sqlite.database.** { *; }

@@ -93,10 +93,10 @@ public interface BigBasketApiService {
     @POST("/c-empty/")
     void emptyCart(Callback<BaseApiResponse> cartEmptyApiResponseCallback);
 
-    @GET("/product-list-mock/")
+    @GET("/product-list/")
     void productList(@QueryMap Map<String, String> productQueryMap, Callback<ApiResponse<ProductTabData>> productListApiCallback);
 
-    @GET("/product-next-page-mock/")
+    @GET("/product-next-page/")
     void productNextPage(@QueryMap Map<String, String> productQueryMap, Callback<ApiResponse<ProductNextPageResponse>> productNextPageApi);
 
     @GET("/browse-promo-cat/")
