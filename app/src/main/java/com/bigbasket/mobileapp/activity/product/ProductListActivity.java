@@ -37,6 +37,7 @@ import com.bigbasket.mobileapp.model.product.ProductTabData;
 import com.bigbasket.mobileapp.model.product.ProductTabInfo;
 import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
 import com.bigbasket.mobileapp.model.section.Section;
+import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.task.GetCartCountTask;
 import com.bigbasket.mobileapp.task.uiv3.ProductListTask;
 import com.bigbasket.mobileapp.util.Constants;
@@ -65,6 +66,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     private SparseArray<String> mArrayTabTypeAndFragmentPosition;
     private String mTitle;
     private Spinner mHeaderSpinner;
+    private int mHeaderSpinnerSelectedIdx;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -146,8 +148,18 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         if (getDrawerLayout() != null) {
             getDrawerLayout().closeDrawers();
         }
+        mHeaderSpinnerSelectedIdx = productTabData.getHeaderSelectedIndex();
         FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
         contentFrame.removeAllViews();
+
+        SectionData sectionData = productTabData.getContentSectionData();
+        View contentSectionView = null;
+        if (sectionData != null) {
+            contentSectionView = new SectionView(this, faceRobotoRegular, sectionData, "Product List").getView();
+            if (contentSectionView != null) {
+                contentFrame.addView(contentSectionView);
+            }
+        }
         if (productTabData.getProductTabInfos() != null &&
                 productTabData.getProductTabInfos().size() > 0) {
             if (productTabData.getProductTabInfos().size() > 1) {
@@ -168,7 +180,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                 mTitle = productTabInfo.getTabName();
                 setTitle(mTitle);
             }
-        } else {
+        } else if (contentSectionView == null) {
             UIUtil.showEmptyProductsView(this, contentFrame);
         }
     }
@@ -198,7 +210,8 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
             }
         }
 
-        ProductListPagerAdapter statePagerAdapter = new ProductListPagerAdapter(this, getSupportFragmentManager(), bbTabs);
+        ProductListPagerAdapter statePagerAdapter =
+                new ProductListPagerAdapter(this, getSupportFragmentManager(), bbTabs);
         mViewPager.setAdapter(statePagerAdapter);
 
         SmartTabLayout pagerSlidingTabStrip = (SmartTabLayout) base.findViewById(R.id.slidingTabs);
@@ -206,7 +219,8 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         if (productTabData.getContentSectionData() != null) {
             LinearLayout layoutProducts = new LinearLayout(this);
             layoutProducts.setOrientation(LinearLayout.VERTICAL);
-            View sectionView = new SectionView(this, faceRobotoRegular, productTabData.getContentSectionData(), "Product List").getView();
+            View sectionView = new SectionView(this, faceRobotoRegular,
+                    productTabData.getContentSectionData(), "Product List").getView();
             if (sectionView != null) {
                 layoutProducts.addView(sectionView);
             }
@@ -331,11 +345,15 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                     faceRobotoRegular, Color.WHITE, getResources().getColor(R.color.uiv3_primary_text_color));
             bbArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             mHeaderSpinner.setAdapter(bbArrayAdapter);
-            mHeaderSpinner.setSelection(0, false);
+            if (mHeaderSpinnerSelectedIdx >= headSection.getSectionItems().size()) {
+                // Defensive check
+                mHeaderSpinnerSelectedIdx = 0;
+            }
+            mHeaderSpinner.setSelection(mHeaderSpinnerSelectedIdx, false);
             mHeaderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    if (position != Spinner.INVALID_POSITION) {
+                    if (position != Spinner.INVALID_POSITION && position != mHeaderSpinnerSelectedIdx) {
                         new OnSectionItemClickListener<>(getCurrentActivity(), headSection,
                                 headSection.getSectionItems().get(position), "").onClick(view);
                     }
@@ -363,7 +381,8 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     }
 
     @Override
-    public void launchProductList(ArrayList<NameValuePair> nameValuePairs, @Nullable String sectionName, @Nullable String sectionItemName) {
+    public void launchProductList(ArrayList<NameValuePair> nameValuePairs,
+                                  @Nullable String sectionName, @Nullable String sectionItemName) {
         mNameValuePairs = nameValuePairs;
         loadProductTabs();
         // TODO : Jugal Plugin analytics

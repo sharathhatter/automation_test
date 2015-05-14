@@ -17,6 +17,9 @@ public class ProductTabData implements Parcelable {
     @SerializedName(Constants.HEADER_SECTION)
     private Section headerSection;
 
+    @SerializedName(Constants.HEADER_SEL)
+    private int headerSelectedIndex;
+
     @SerializedName(Constants.SORT_ON)
     private String sortedOn;
 
@@ -84,6 +87,7 @@ public class ProductTabData implements Parcelable {
             productTabInfos = new ArrayList<>();
             source.readTypedList(productTabInfos, ProductTabInfo.CREATOR);
         }
+        headerSelectedIndex = source.readInt();
     }
 
     @Override
@@ -138,6 +142,7 @@ public class ProductTabData implements Parcelable {
         if (!isProductTabInfoNull) {
             dest.writeTypedList(productTabInfos);
         }
+        dest.writeInt(headerSelectedIndex);
     }
 
     public static final Parcelable.Creator<ProductTabData> CREATOR = new Parcelable.Creator<ProductTabData>() {
@@ -198,5 +203,9 @@ public class ProductTabData implements Parcelable {
 
     public ArrayList<ProductTabInfo> getProductTabInfos() {
         return productTabInfos;
+    }
+
+    public int getHeaderSelectedIndex() {
+        return headerSelectedIndex;
     }
 }

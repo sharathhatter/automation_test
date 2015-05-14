@@ -941,4 +941,13 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             }
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        if (mDrawerLayout != null && mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout.closeDrawers();
+        } else {
+            super.onBackPressed();
+        }
+    }
 }
