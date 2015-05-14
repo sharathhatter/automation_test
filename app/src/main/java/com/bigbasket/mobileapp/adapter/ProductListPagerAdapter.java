@@ -1,8 +1,11 @@
 package com.bigbasket.mobileapp.adapter;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.SparseArray;
+import android.view.ViewGroup;
 
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
 
@@ -11,28 +14,28 @@ import java.util.ArrayList;
 
 public class ProductListPagerAdapter extends TabPagerAdapter {
 
-    private ArrayList<WeakReference<Fragment>> fragments;
+    private SparseArray<WeakReference<Fragment>> registeredfragments;
 
     public ProductListPagerAdapter(Context ctx, FragmentManager fm, ArrayList<BBTab> bbTabs) {
         super(ctx, fm, bbTabs);
-        this.fragments = new ArrayList<>();
+        this.registeredfragments = new SparseArray<>();
     }
 
     @Override
-    public Fragment getItem(int i) {
-        Fragment fragment = null;
-        if (i < fragments.size()) {
-            fragment = fragments.get(i).get();
-        }
-        if (fragment != null) {
-            return fragment;
-        }
-        fragment = super.getItem(i);
-        if (i >= fragments.size()) {
-            fragments.add(new WeakReference<>(fragment));
-        } else {
-            fragments.set(i, new WeakReference<>(fragment));
-        }
+    public Object instantiateItem(ViewGroup container, int position) {
+        Fragment fragment = (Fragment) super.instantiateItem(container, position);
+        registeredfragments.put(position, new WeakReference<>(fragment));
         return fragment;
+    }
+
+    @Override
+    public void destroyItem(ViewGroup container, int position, Object object) {
+        registeredfragments.remove(position);
+        super.destroyItem(container, position, object);
+    }
+
+    @Nullable
+    public Fragment getRegisteredFragment(int position) {
+        return registeredfragments.get(position).get();
     }
 }

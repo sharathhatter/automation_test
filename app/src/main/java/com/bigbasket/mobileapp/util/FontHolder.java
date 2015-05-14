@@ -9,6 +9,7 @@ public class FontHolder {
     private Typeface faceRobotoRegular;
     private Typeface faceRobotoLight;
     private Typeface faceRobotoItalic;
+
     private FontHolder(Context context) {
         faceRupee = Typeface.createFromAsset(context.getAssets(), "Rupee.ttf");
         faceRobotoRegular = Typeface.createFromAsset(context.getAssets(), "Roboto-Regular.ttf");

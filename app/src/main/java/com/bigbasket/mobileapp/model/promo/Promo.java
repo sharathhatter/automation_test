@@ -154,6 +154,7 @@ public class Promo implements Parcelable {
         public static final String DISCOUNTED_BIN = "discounted_bin";
         public static final String FIXED_FREE_COMBO = "fixed_free_combo";
         public static final String MEMBER_REFERRAL = "member_referral";
+
         private PromoType() {
         }
 

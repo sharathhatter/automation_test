@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -34,6 +35,7 @@ import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductInfo;
 import com.bigbasket.mobileapp.model.product.ProductTabData;
 import com.bigbasket.mobileapp.model.product.ProductTabInfo;
+import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.task.GetCartCountTask;
 import com.bigbasket.mobileapp.task.uiv3.ProductListTask;
@@ -49,7 +51,6 @@ import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -59,10 +60,11 @@ import retrofit.client.Response;
 public class ProductListActivity extends BBActivity implements ProductListDataAware, LazyProductListAware {
 
     private ArrayList<NameValuePair> mNameValuePairs;
-    private ProductListPagerAdapter mStatePagerAdapter;
+    private ViewPager mViewPager;
     private HashMap<String, ArrayList<Product>> mMapForTabWithNoProducts;
-    private HashMap<String, Integer> mArrayTabTypeAndFragmentPosition;
+    private SparseArray<String> mArrayTabTypeAndFragmentPosition;
     private String mTitle;
+    private Spinner mHeaderSpinner;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,13 +74,13 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         loadProductTabs();
     }
 
-    @Override
-    public void onNoFragmentsInLayout() {
-        // Finish only if the product view-pager is still active.
-        if (findViewById(R.id.layoutSwipeTabContainer) == null) {
-            finish();
-        }
-    }
+//    @Override
+//    public void onNoFragmentsInLayout() {
+//        // Finish only if the product view-pager is still active.
+//        if (findViewById(R.id.layoutSwipeTabContainer) == null) {
+//            finish();
+//        }
+//    }
 
     @Override
     @LayoutRes
@@ -90,6 +92,11 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         if (mNameValuePairs == null || mNameValuePairs.size() == 0) {
             return;
         }
+        // Reset all Globals
+        mViewPager = null;
+        mMapForTabWithNoProducts = null;
+        mArrayTabTypeAndFragmentPosition = null;
+
         HashMap<String, String> paramMap = NameValuePair.toMap(mNameValuePairs);
         new ProductListTask<>(this, paramMap).startTask();
     }
@@ -136,6 +143,9 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
     @Override
     public void setProductTabData(ProductTabData productTabData) {
+        if (getDrawerLayout() != null) {
+            getDrawerLayout().closeDrawers();
+        }
         FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
         contentFrame.removeAllViews();
         if (productTabData.getProductTabInfos() != null &&
@@ -165,7 +175,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
     private void displayProductTabs(ProductTabData productTabData, ViewGroup contentFrame) {
         View base = getLayoutInflater().inflate(R.layout.uiv3_swipe_tab_view, contentFrame, false);
-        ViewPager viewPager = (ViewPager) base.findViewById(R.id.pager);
+        mViewPager = (ViewPager) base.findViewById(R.id.pager);
 
         ArrayList<BBTab> bbTabs = new ArrayList<>();
         ArrayList<String> tabTypeWithNoProducts = new ArrayList<>();
@@ -180,19 +190,19 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                         GenericProductListFragment.class, bundle));
                 if (productInfo.getCurrentPage() == -1) {
                     if (mArrayTabTypeAndFragmentPosition == null) {
-                        mArrayTabTypeAndFragmentPosition = new HashMap<>();
+                        mArrayTabTypeAndFragmentPosition = new SparseArray<>();
                     }
-                    mArrayTabTypeAndFragmentPosition.put(productTabInfo.getTabType(), i);
+                    mArrayTabTypeAndFragmentPosition.put(i, productTabInfo.getTabType());
                     tabTypeWithNoProducts.add(productTabInfo.getTabType());
                 }
             }
         }
 
-        mStatePagerAdapter = new ProductListPagerAdapter(this, getSupportFragmentManager(), bbTabs);
-        viewPager.setAdapter(mStatePagerAdapter);
+        ProductListPagerAdapter statePagerAdapter = new ProductListPagerAdapter(this, getSupportFragmentManager(), bbTabs);
+        mViewPager.setAdapter(statePagerAdapter);
 
         SmartTabLayout pagerSlidingTabStrip = (SmartTabLayout) base.findViewById(R.id.slidingTabs);
-        pagerSlidingTabStrip.setViewPager(viewPager);
+        pagerSlidingTabStrip.setViewPager(mViewPager);
         if (productTabData.getContentSectionData() != null) {
             LinearLayout layoutProducts = new LinearLayout(this);
             layoutProducts.setOrientation(LinearLayout.VERTICAL);
@@ -245,51 +255,84 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
     private void notifyEmptyFragmentAboutFailure() {
         if (mArrayTabTypeAndFragmentPosition != null) {
-            for (Map.Entry<String, Integer> entry : mArrayTabTypeAndFragmentPosition.entrySet()) {
-                Fragment fragment = mStatePagerAdapter.getItem(entry.getValue());
-                if (fragment != null) {
-                    ((ProductListAwareFragment) fragment).setLazyProductLoadingFailure();
-                }
+            for (int i = 0; i < mArrayTabTypeAndFragmentPosition.size(); i++) {
+                notifyFragmentAtPositionAboutFailure(i);
             }
         }
     }
 
     private void setUpProductsInEmptyFragments() {
         if (mArrayTabTypeAndFragmentPosition != null) {
-            for (Map.Entry<String, Integer> entry : mArrayTabTypeAndFragmentPosition.entrySet()) {
-                Fragment fragment = mStatePagerAdapter.getItem(entry.getValue());
-                if (fragment != null) {
-                    ArrayList<Product> products = mMapForTabWithNoProducts != null ?
-                            mMapForTabWithNoProducts.get(entry.getKey()) : null;
-                    if (products != null) {
-                        ((ProductListAwareFragment) fragment).insertProductList(products);
-                    } else {
-                        ((ProductListAwareFragment) fragment).insertProductList(null);
-                    }
-                }
+            int currentPosition = mViewPager.getCurrentItem();
+            setProductListForFragmentAtPosition(currentPosition);
+            setProductListForFragmentAtPosition(currentPosition + 1);
+            setProductListForFragmentAtPosition(currentPosition - 1);
+        }
+    }
+
+    private void setProductListForFragmentAtPosition(int position) {
+        String tabType = mArrayTabTypeAndFragmentPosition.get(position);
+        if (tabType == null) return;
+        Fragment fragment = ((ProductListPagerAdapter) mViewPager.getAdapter()).getRegisteredFragment(position);
+        if (fragment != null) {
+            ArrayList<Product> products = mMapForTabWithNoProducts != null ?
+                    mMapForTabWithNoProducts.get(tabType) : null;
+            if (products != null) {
+                ((ProductListAwareFragment) fragment).insertProductList(products);
+            } else {
+                ((ProductListAwareFragment) fragment).insertProductList(null);
             }
         }
+    }
+
+    private void notifyFragmentAtPositionAboutFailure(int position) {
+        String tabType = mArrayTabTypeAndFragmentPosition.get(position);
+        if (tabType == null) return;
+        Fragment fragment = ((ProductListPagerAdapter) mViewPager.getAdapter()).getRegisteredFragment(position);
+        if (fragment != null) {
+            ((ProductListAwareFragment) fragment).setLazyProductLoadingFailure();
+            ((ProductListAwareFragment) fragment).setProductListView();
+        }
+    }
+
+    @Nullable
+    private Fragment getCurrentFragment() {
+        int currentPosition = mViewPager.getCurrentItem();
+        return ((ProductListPagerAdapter) mViewPager.getAdapter()).getRegisteredFragment(currentPosition);
     }
 
     @Override
     @Nullable
     public ArrayList<Product> provideProductsIfAvailable(String tabType) {
         if (mMapForTabWithNoProducts != null) {
-            return mMapForTabWithNoProducts.get(tabType);
+            // This means product has been downloaded
+            ArrayList<Product> products = mMapForTabWithNoProducts.get(tabType);
+            if (products != null) {
+                return products;
+            } else {
+                Fragment currentFragment = getCurrentFragment();
+                if (currentFragment != null) {
+                    ((ProductListAwareFragment) getCurrentFragment()).setLazyProductLoadingFailure();
+                }
+            }
         }
         return null;
     }
 
     private void renderHeaderDropDown(final Section headSection) {
+        Toolbar toolbar = getToolbar();
         if (headSection != null && headSection.getSectionItems() != null
                 && headSection.getSectionItems().size() > 0) {
-            Spinner spinner = new Spinner(this);
+            if (mHeaderSpinner == null) {
+                mHeaderSpinner = new Spinner(this);
+                toolbar.addView(mHeaderSpinner);
+            }
             BBArrayAdapter bbArrayAdapter = new BBArrayAdapter<>(this, android.R.layout.simple_spinner_item, headSection.getSectionItems(),
                     faceRobotoRegular, Color.WHITE, getResources().getColor(R.color.uiv3_primary_text_color));
             bbArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spinner.setAdapter(bbArrayAdapter);
-            spinner.setSelection(0, false);
-            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            mHeaderSpinner.setAdapter(bbArrayAdapter);
+            mHeaderSpinner.setSelection(0, false);
+            mHeaderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     if (position != Spinner.INVALID_POSITION) {
@@ -303,8 +346,9 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
                 }
             });
-            Toolbar toolbar = getToolbar();
-            toolbar.addView(spinner);
+        } else if (mHeaderSpinner != null) {
+            toolbar.removeView(mHeaderSpinner);
+            mHeaderSpinner = null;
         }
     }
 
@@ -316,5 +360,22 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     @Override
     public void setNextPageLoading(boolean isNextPageLoading) {
 
+    }
+
+    @Override
+    public void launchProductList(ArrayList<NameValuePair> nameValuePairs, @Nullable String sectionName, @Nullable String sectionItemName) {
+        mNameValuePairs = nameValuePairs;
+        loadProductTabs();
+        // TODO : Jugal Plugin analytics
+    }
+
+    @Override
+    public void doSearch(String searchQuery) {
+        if (!TextUtils.isEmpty(searchQuery)) {
+            mNameValuePairs = new ArrayList<>();
+            mNameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.SEARCH.get()));
+            mNameValuePairs.add(new NameValuePair(Constants.SLUG, searchQuery));
+            loadProductTabs();
+        }
     }
 }

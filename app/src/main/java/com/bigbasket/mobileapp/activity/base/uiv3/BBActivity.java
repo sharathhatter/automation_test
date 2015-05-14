@@ -278,6 +278,10 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         }
     }
 
+    public BBDrawerLayout getDrawerLayout() {
+        return mDrawerLayout;
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         setOptionsMenu(menu);

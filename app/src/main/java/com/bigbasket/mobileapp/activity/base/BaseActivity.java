@@ -44,6 +44,7 @@ import com.bigbasket.mobileapp.activity.account.uiv3.SignupActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.AgeValidationActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.BasketValidationActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.CheckoutQCActivity;
+import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 import com.bigbasket.mobileapp.adapter.order.PrescriptionImageAdapter;
@@ -57,8 +58,10 @@ import com.bigbasket.mobileapp.interfaces.COReserveQuantityCheckAware;
 import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.EmailAddressAware;
+import com.bigbasket.mobileapp.interfaces.LaunchProductListAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.order.COReserveQuantity;
 import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -96,7 +99,8 @@ import java.util.Random;
 
 public abstract class BaseActivity extends AppCompatActivity implements COMarketPlaceAware,
         COReserveQuantityCheckAware, CancelableAware, ProgressIndicationAware, ActivityAware,
-        ConnectivityAware, TrackingAware, ApiErrorAware, EmailAddressAware {
+        ConnectivityAware, TrackingAware, ApiErrorAware, EmailAddressAware,
+        LaunchProductListAware {
 
     public static Typeface faceRupee;
     public static Typeface faceRobotoRegular, faceRobotoLight, faceRobotoItalic;
@@ -839,6 +843,21 @@ public abstract class BaseActivity extends AppCompatActivity implements COMarket
             flatPageWebviewActivity.putExtra(Constants.WEBVIEW_URL, MobileApiUrl.DOMAIN + "privacy-policy/");
             flatPageWebviewActivity.putExtra(Constants.WEBVIEW_TITLE, getString(R.string.privacyPolicy));
             startActivityForResult(flatPageWebviewActivity, NavigationCodes.GO_TO_HOME);
+        }
+    }
+
+    @Override
+    public void launchProductList(ArrayList<NameValuePair> nameValuePairs, @Nullable String sectionName, @Nullable String sectionItemName) {
+        if (nameValuePairs != null && nameValuePairs.size() > 0) {
+            Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
+            intent.putParcelableArrayListExtra(Constants.PRODUCT_QUERY, nameValuePairs);
+            if (!TextUtils.isEmpty(sectionName) || !TextUtils.isEmpty(sectionItemName))
+                intent.putExtra(TrackEventkeys.NAVIGATION_CTX, sectionName + "." + sectionItemName);
+            String title = sectionItemName != null ? sectionItemName : null;
+            if (!TextUtils.isEmpty(title)) {
+                intent.putExtra(Constants.TITLE, title);
+            }
+            getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         }
     }
 }

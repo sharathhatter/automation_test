@@ -11,7 +11,6 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.OrderListActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
-import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
 import com.bigbasket.mobileapp.fragment.DynamicScreenFragment;
@@ -20,6 +19,7 @@ import com.bigbasket.mobileapp.fragment.promo.PromoCategoryFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoDetailFragment;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.CancelableAware;
+import com.bigbasket.mobileapp.interfaces.LaunchProductListAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.SectionManager;
@@ -102,18 +102,6 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                     intent.putExtra(Constants.SHOP_FROM_PREVIOUS_ORDER, true);
                     ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     break;
-                case DestinationInfo.PRODUCT_CATEGORY:
-                    if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
-                        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-                        nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.CATEGORY.get()));
-                        nameValuePairs.add(new NameValuePair(Constants.SLUG, destinationInfo.getDestinationSlug()));
-                        intent = new Intent(((ActivityAware) context).getCurrentActivity(), ProductListActivity.class);
-                        intent.putParcelableArrayListExtra(Constants.PRODUCT_QUERY, nameValuePairs);
-                        intent.putExtra(Constants.TITLE, sectionItem.getTitle() != null ? sectionItem.getTitle().getText() :
-                                section.getTitle() != null ? section.getTitle().getText() : "");
-                        ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                    }
-                    break;
                 case DestinationInfo.PRODUCT_DETAIL:
                     if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
                         intent = new Intent(((ActivityAware) context).getCurrentActivity(), BackButtonActivity.class);
@@ -172,6 +160,14 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
                         nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.SEARCH.get()));
                         nameValuePairs.add(new NameValuePair(Constants.SLUG, destinationInfo.getDestinationSlug().trim()));
+                        launchProductList(nameValuePairs);
+                    }
+                    break;
+                case DestinationInfo.PRODUCT_CATEGORY:
+                    if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
+                        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
+                        nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.CATEGORY.get()));
+                        nameValuePairs.add(new NameValuePair(Constants.SLUG, destinationInfo.getDestinationSlug()));
                         launchProductList(nameValuePairs);
                     }
                     break;
@@ -236,17 +232,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
     }
 
     private void launchProductList(ArrayList<NameValuePair> nameValuePairs) {
-        if (nameValuePairs != null && nameValuePairs.size() > 0) {
-            Intent intent = new Intent(((ActivityAware) context).getCurrentActivity(), ProductListActivity.class);
-            intent.putParcelableArrayListExtra(Constants.PRODUCT_QUERY, nameValuePairs);
-            if (!TextUtils.isEmpty(getSectionName()) || !TextUtils.isEmpty(getSectionItemName()))
-                intent.putExtra(TrackEventkeys.NAVIGATION_CTX, getSectionName() + "." + getSectionItemName());//todo Check with sid
-            String title = sectionItem.getTitle() != null ? sectionItem.getTitle().getText() : null;
-            if (!TextUtils.isEmpty(title)) {
-                intent.putExtra(Constants.TITLE, title);
-            }
-            ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-        }
+        ((LaunchProductListAware) context).launchProductList(nameValuePairs, getSectionName(), getSectionItemName());
     }
 
     private void logClickEvent() {

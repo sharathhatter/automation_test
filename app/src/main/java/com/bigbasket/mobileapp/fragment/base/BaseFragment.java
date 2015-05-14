@@ -31,8 +31,10 @@ import com.bigbasket.mobileapp.interfaces.COReserveQuantityCheckAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
+import com.bigbasket.mobileapp.interfaces.LaunchProductListAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.cart.BasketOperationResponse;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
@@ -45,12 +47,13 @@ import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Map;
 
 
 public abstract class BaseFragment extends AbstractFragment implements HandlerAware,
         CartInfoAware, BasketOperationAware, COReserveQuantityCheckAware, ProgressIndicationAware,
-        ConnectivityAware, TrackingAware, ApiErrorAware {
+        ConnectivityAware, TrackingAware, ApiErrorAware, LaunchProductListAware {
 
     protected BigBasketMessageHandler handler;
     protected COReserveQuantity coReserveQuantity;
@@ -468,5 +471,14 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         super.onResume();
         setTitle();
         LocalyticsWrapper.onResume(getScreenTag());
+    }
+
+    @Override
+    public void launchProductList(ArrayList<NameValuePair> nameValuePairs,
+                                  @Nullable String sectionName, @Nullable String sectionItemName) {
+        if (getActivity() != null) {
+            ((LaunchProductListAware) getActivity()).
+                    launchProductList(nameValuePairs, sectionName, sectionItemName);
+        }
     }
 }

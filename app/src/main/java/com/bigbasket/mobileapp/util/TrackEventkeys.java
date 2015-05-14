@@ -131,6 +131,7 @@ public final class TrackEventkeys {
     public static final String BB_REFERRAL_MAIL_SCREEN = "offer";
     public static final String CONTACT_REFERRAL_SCREEN = "offer";
     public static final String REFERRAL_SCREEN = "offer";
+
     private TrackEventkeys() {
     }
 }

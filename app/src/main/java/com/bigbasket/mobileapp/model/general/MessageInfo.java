@@ -26,6 +26,7 @@ public class MessageInfo implements Parcelable {
     private String messageStr;
     @SerializedName(Constants.PARAMS)
     private ArrayList<MessageParamInfo> params;
+
     public MessageInfo(Parcel parcel) {
         this.messageStr = parcel.readString();
         boolean isParamsNull = parcel.readByte() == (byte) 1;

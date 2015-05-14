@@ -147,10 +147,9 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
 
     public void setLazyProductLoadingFailure() {
         mHasProductLoadingFailed = true;
-        setProductListView();
     }
 
-    private void setProductListView() {
+    public void setProductListView() {
         if (getActivity() == null) return;
         ViewGroup contentView = getContentView();
         if (contentView == null) return;
