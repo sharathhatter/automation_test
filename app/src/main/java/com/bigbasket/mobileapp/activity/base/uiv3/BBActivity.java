@@ -89,6 +89,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
+import com.bigbasket.mobileapp.util.Tuple;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.view.uiv3.AnimatedLinearLayout;
 import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
@@ -796,12 +797,14 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             }
         });
 
-        ArrayList<SectionNavigationItem> sectionNavigationItems = getSectionNavigationItems();
+        Tuple<ArrayList<SectionNavigationItem>, String> data = getSectionNavigationItems();
+        ArrayList<SectionNavigationItem> sectionNavigationItems = data.x;
+        String baseImgUrl = data.y;
 
         ListView lstMyAccount = (ListView) findViewById(R.id.lstMyAccount);
         new AccountView<>(this, lstMyAccount);
-        NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoLight, sectionNavigationItems,
-                SectionManager.MAIN_MENU);
+        NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoLight,
+                sectionNavigationItems, SectionManager.MAIN_MENU, baseImgUrl);
         mNavRecyclerView.setAdapter(navigationAdapter);
     }
 
@@ -819,7 +822,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         }
     }
 
-    private ArrayList<SectionNavigationItem> getSectionNavigationItems() {
+    private Tuple<ArrayList<SectionNavigationItem>, String> getSectionNavigationItems() {
         ArrayList<SectionNavigationItem> sectionNavigationItems = new ArrayList<>();
         sectionNavigationItems.add(getHomeSectionNavItem());
 
@@ -836,7 +839,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                         section);
             }
         }
-        return sectionNavigationItems;
+        return new Tuple<>(sectionNavigationItems, sectionData != null ? sectionData.getBaseImgUrl(): null);
     }
 
     private void setSectionNavigationItemList(ArrayList<SectionNavigationItem> sectionNavigationItems,
@@ -887,7 +890,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         ArrayList<SectionNavigationItem> sectionNavigationItems = new ArrayList<>();
         setSectionNavigationItemList(sectionNavigationItems, subNavigationSectionItems, section);
         NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoLight, sectionNavigationItems,
-                SectionManager.MAIN_MENU);
+                SectionManager.MAIN_MENU, null);
         listSubNavigation.setAdapter(navigationAdapter);
     }
 

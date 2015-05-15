@@ -21,6 +21,7 @@ import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.BulletSpan;
 import android.text.style.ForegroundColorSpan;
+import android.util.DisplayMetrics;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -406,5 +407,31 @@ public class UIUtil {
         txtEmptyMsg2.setVisibility(View.GONE);
         emptyPageView.findViewById(R.id.btnBlankPage).setVisibility(View.GONE);
         parent.addView(emptyPageView);
+    }
+
+    public static String getScreenDensity(Context context) {
+        switch (context.getResources().getDisplayMetrics().densityDpi) {
+            case DisplayMetrics.DENSITY_LOW:
+                return "mdpi";
+            case DisplayMetrics.DENSITY_MEDIUM:
+                return "mdpi";
+            case DisplayMetrics.DENSITY_HIGH:
+                return "hdpi";
+            case DisplayMetrics.DENSITY_TV:
+                return "hdpi";
+            case DisplayMetrics.DENSITY_XHIGH:
+                return "xhdpi";
+            case DisplayMetrics.DENSITY_XXHIGH:
+                return "xxhdpi";
+            case DisplayMetrics.DENSITY_XXXHIGH:
+                return "xxhdpi";
+            case DisplayMetrics.DENSITY_280:
+                return "hdpi";
+            case DisplayMetrics.DENSITY_400:
+                return "xhdpi";
+            case DisplayMetrics.DENSITY_560:
+                return "xxhdpi";
+        }
+        return "hdpi";
     }
 }

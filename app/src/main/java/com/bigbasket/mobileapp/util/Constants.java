@@ -519,6 +519,8 @@ public class Constants {
     public static final String DESTINATION_TYPE = "dest_type";
     public static final String DESTINATION_SLUG = "dest_slug";
     public static final String RENDERING_ID = "rendering_id";
+    public static final String IMAGE_NAME = "image_name";
+    public static final String IMAGE_PARAMS = "image_params";
     public static final String TEXT_COLOR = "text_color";
     public static final String BACKGROUND_COLOR = "background_color";
     public static final String PADDING = "padding";

@@ -30,8 +30,9 @@ public class SectionGridAdapter<T> extends BaseAdapter {
     private int numItems;
     private int fourDp;
     private int eightDp;
+    private String baseImgUrl;
 
-    public SectionGridAdapter(T context, Section section,
+    public SectionGridAdapter(T context, Section section, String baseImgUrl,
                               HashMap<Integer, Renderer> rendererHashMap, Typeface typeface, String screenName) {
         this.section = section;
         this.context = context;
@@ -43,6 +44,7 @@ public class SectionGridAdapter<T> extends BaseAdapter {
         Context ctx = ((ActivityAware) context).getCurrentActivity();
         this.fourDp = (int) ctx.getResources().getDimension(R.dimen.margin_mini);
         this.eightDp = (int) ctx.getResources().getDimension(R.dimen.padding_small);
+        this.baseImgUrl = baseImgUrl;
     }
 
     @Override
@@ -143,9 +145,10 @@ public class SectionGridAdapter<T> extends BaseAdapter {
             }
 
             if (imgInRow != null) {
-                if (!TextUtils.isEmpty(sectionItem.getImage())) {
+                if (sectionItem.hasImage()) {
                     imgInRow.setVisibility(View.VISIBLE);
-                    sectionItem.displayImage(imgInRow);
+                    sectionItem.displayImage(((ActivityAware) context).getCurrentActivity(),
+                            baseImgUrl, imgInRow);
                 } else {
                     imgInRow.setVisibility(View.GONE);
                 }

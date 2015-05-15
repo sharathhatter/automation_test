@@ -133,10 +133,11 @@ public class SectionView {
         View baseSlider = inflater.inflate(R.layout.uiv3_image_slider, parent, false);
         SliderLayout bannerSlider = (SliderLayout) baseSlider.findViewById(R.id.imgSlider);
         for (SectionItem sectionItem : section.getSectionItems()) {
-            if (!TextUtils.isEmpty(sectionItem.getImage())) {
+            if (sectionItem.hasImage()) {
                 DefaultSliderView defaultSliderView = new DefaultSliderView(context);
                 defaultSliderView.setScaleType(BaseSliderView.ScaleType.CenterInside);
-                defaultSliderView.image(sectionItem.getImage());
+                //defaultSliderView.image(sectionItem.hasImage());
+                // TODO : implement Image
                 defaultSliderView.setOnSliderClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
                 bannerSlider.addSlider(defaultSliderView);
             }
@@ -186,9 +187,9 @@ public class SectionView {
                 txtSalutationItem.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
                 layoutSalutationItem.setVisibility(View.VISIBLE);
             }
-            if (!TextUtils.isEmpty(sectionItem.getImage())) {
+            if (sectionItem.hasImage()) {
                 layoutSalutationItem.setVisibility(View.VISIBLE);
-                sectionItem.displayImage(imgSalutationItem);
+                sectionItem.displayImage(context, mSectionData.getBaseImgUrl(), imgSalutationItem);
                 imgSalutationItem.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
             }
         }
@@ -210,8 +211,8 @@ public class SectionView {
         horizontalRecyclerView.setLayoutManager(linearLayoutManager);
         horizontalRecyclerView.setHasFixedSize(false);
 
-        CarouselAdapter carouselAdapter = new CarouselAdapter<>(context, section, mSectionData.getRenderersMap(),
-                faceRobotoRegular, screenName);
+        CarouselAdapter carouselAdapter = new CarouselAdapter<>(context, section, mSectionData.getBaseImgUrl(),
+                mSectionData.getRenderersMap(), faceRobotoRegular, screenName);
         horizontalRecyclerView.setAdapter(carouselAdapter);
         return baseProductCarousel;
     }
@@ -249,7 +250,7 @@ public class SectionView {
         linearLayout.setLayoutParams(baseLayoutParams);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
         for (SectionItem sectionItem : section.getSectionItems()) {
-            if (TextUtils.isEmpty(sectionItem.getImage()))
+            if (!sectionItem.hasImage())
                 continue;
             ImageView imageView = new ImageView(context);
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
@@ -261,7 +262,7 @@ public class SectionView {
             }
             imageView.setLayoutParams(layoutParams);
             imageView.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
-            sectionItem.displayImage(imageView);
+            sectionItem.displayImage(context, mSectionData.getBaseImgUrl(), imageView);
         }
         return linearLayout;
     }
@@ -347,8 +348,8 @@ public class SectionView {
             int layoutMenuTxtPadding = sectionItem.hasDescription() && sectionItem.hasTitle() ? eightDp : sixteenDp;
             layoutMenuTxt.setPadding(sixteenDp, layoutMenuTxtPadding, layoutMenuTxtPadding, layoutMenuTxtPadding);
 
-            if (!TextUtils.isEmpty(sectionItem.getImage())) {
-                sectionItem.displayImage(imgInRow);
+            if (sectionItem.hasImage()) {
+                sectionItem.displayImage(context, mSectionData.getBaseImgUrl(), imgInRow);
             } else {
                 imgInRow.setVisibility(View.GONE);
             }
@@ -379,8 +380,8 @@ public class SectionView {
 
         ExpandableHeightGridView layoutGrid = (ExpandableHeightGridView) base.findViewById(R.id.layoutGrid);
         layoutGrid.setExpanded(true);
-        SectionGridAdapter sectionGridAdapter = new SectionGridAdapter<>(context, section, mSectionData.getRenderersMap(),
-                faceRobotoRegular, screenName);
+        SectionGridAdapter sectionGridAdapter = new SectionGridAdapter<>(context, section, mSectionData.getBaseImgUrl(),
+                mSectionData.getRenderersMap(), faceRobotoRegular, screenName);
         layoutGrid.setAdapter(sectionGridAdapter);
         layoutGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -463,8 +464,8 @@ public class SectionView {
             }
 
             if (imgInRow != null) {
-                if (!TextUtils.isEmpty(sectionItem.getImage())) {
-                    sectionItem.displayImage(imgInRow);
+                if (sectionItem.hasImage()) {
+                    sectionItem.displayImage(context, mSectionData.getBaseImgUrl(), imgInRow);
                 } else {
                     imgInRow.setVisibility(View.GONE);
                 }

@@ -33,8 +33,9 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
     private int fourDp;
     private int eightDp;
     private int columnWidth;
+    private String baseImgUrl;
 
-    public CarouselAdapter(T context, Section section,
+    public CarouselAdapter(T context, Section section, String baseImgUrl,
                            HashMap<Integer, Renderer> rendererHashMap, Typeface typeface, String screenName) {
         this.section = section;
         this.context = context;
@@ -47,6 +48,7 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
         this.fourDp = (int) ctx.getResources().getDimension(R.dimen.margin_mini);
         this.eightDp = (int) ctx.getResources().getDimension(R.dimen.padding_small);
         this.columnWidth = (int) ctx.getResources().getDimension(R.dimen.grid_width);
+        this.baseImgUrl = baseImgUrl;
     }
 
     @Override
@@ -128,9 +130,10 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
 
         if (imgInRow != null) {
-            if (!TextUtils.isEmpty(sectionItem.getImage())) {
+            if (sectionItem.hasImage()) {
                 imgInRow.setVisibility(View.VISIBLE);
-                sectionItem.displayImage(imgInRow);
+                sectionItem.displayImage(((ActivityAware) context).getCurrentActivity(),
+                        baseImgUrl, imgInRow);
             } else {
                 imgInRow.setVisibility(View.GONE);
             }

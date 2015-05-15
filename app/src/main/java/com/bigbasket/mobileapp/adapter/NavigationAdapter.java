@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.adapter;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -26,13 +27,15 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private Typeface typeface;
     private ArrayList<SectionNavigationItem> sectionNavigationItems;
     private String screenName;
+    private String baseImgUrl;
 
     public NavigationAdapter(Context context, Typeface typeface, ArrayList<SectionNavigationItem>
-            sectionNavigationItems, String screenName) {
+            sectionNavigationItems, String screenName, @Nullable String baseImgUrl) {
         this.context = context;
         this.typeface = typeface;
         this.sectionNavigationItems = sectionNavigationItems;
         this.screenName = screenName;
+        this.baseImgUrl = baseImgUrl;
     }
 
     @Override
@@ -62,9 +65,9 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             } else {
                 txtNavListRow.setText("");
             }
-            if (!TextUtils.isEmpty(sectionNavigationItem.getSectionItem().getImage())) {
+            if (sectionNavigationItem.getSectionItem().hasImage()) {
                 imgNavItem.setVisibility(View.VISIBLE);
-                sectionNavigationItem.getSectionItem().displayImage(imgNavItem);
+                sectionNavigationItem.getSectionItem().displayImage(context, baseImgUrl, imgNavItem);
             } else {
                 imgNavItem.setVisibility(View.GONE);
             }

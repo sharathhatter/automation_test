@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.LayoutRes;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -49,6 +50,9 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
     };
     private String image;
 
+    @SerializedName(Constants.IMAGE_NAME)
+    private String imageName;
+
     @SerializedName(Constants.RENDERING_ID)
     private int renderingId;
 
@@ -57,6 +61,9 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
 
     @SerializedName(Constants.SUB_ITEMS)
     private ArrayList<SectionItem> subSectionItems;
+
+    @SerializedName(Constants.IMAGE_PARAMS)
+    private ImageParams imageParams;
 
     public SectionItem(SectionTextItem title, SectionTextItem description, String image,
                        int renderingId, DestinationInfo destinationInfo) {
@@ -81,6 +88,14 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
         if (!wasSubSectionItemNull) {
             subSectionItems = new ArrayList<>();
             source.readTypedList(subSectionItems, SectionItem.CREATOR);
+        }
+        boolean wasImgNameNull = source.readByte() == (byte) 1;
+        if (!wasImgNameNull) {
+            imageName = source.readString();
+        }
+        boolean wasImgParamsNull = source.readByte() == (byte) 1;
+        if (!wasImgParamsNull) {
+            imageParams = source.readParcelable(SectionItem.class.getClassLoader());
         }
     }
 
@@ -121,8 +136,8 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
         }
     }
 
-    public String getImage() {
-        return image;
+    public boolean hasImage() {
+        return !TextUtils.isEmpty(imageName) || !TextUtils.isEmpty(image);
     }
 
     public int getRenderingId() {
@@ -161,32 +176,45 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
         if (!wasSubSectionItemNull) {
             dest.writeTypedList(subSectionItems);
         }
+        boolean wasImageNameNull = imageName == null;
+        dest.writeByte(wasImageNameNull ? (byte) 1 : (byte) 0);
+        if (!wasImageNameNull) {
+            dest.writeString(imageName);
+        }
+        boolean wasImageParamsNull = imageParams == null;
+        dest.writeByte(wasImageParamsNull ? (byte) 1 : (byte) 0);
+        if (!wasImageParamsNull) {
+            dest.writeParcelable(imageParams, flags);
+        }
     }
 
-    public void displayImage(ImageView imageView) {
+    public void displayImage(Context context, @Nullable String baseImgUrl, ImageView imageView) {
         imageView.setVisibility(View.VISIBLE);
-        if (TextUtils.isEmpty(image)) {
+        if (!TextUtils.isEmpty(image)) {
+            if (image.startsWith(Constants.LOCAL_RES_PREFIX)) {
+                try {
+                    URI uri = new URI(image);
+                    Map<String, String> queryMap = PayuResponse.getQueryMap(uri.getQuery());
+                    String name = queryMap.get(Constants.NAME);
+                    if (!TextUtils.isEmpty(name)) {
+                        Class res = R.drawable.class;
+                        Field field = res.getField(name);
+                        int drawableId = field.getInt(null);
+                        imageView.setImageResource(drawableId);
+                    }
+                } catch (URISyntaxException | NoSuchFieldException | IllegalAccessException e) {
+                    imageView.setImageDrawable(null);
+                    imageView.setVisibility(View.GONE);
+                }
+            } else {
+                UIUtil.displayAsyncImage(imageView, image);
+            }
+        } else if (!TextUtils.isEmpty(imageName) && !TextUtils.isEmpty(baseImgUrl)) {
+            UIUtil.displayAsyncImage(imageView,
+                    baseImgUrl + UIUtil.getScreenDensity(context) + "/" + imageName);
+        } else {
             imageView.setImageDrawable(null);
             imageView.setVisibility(View.GONE);
-            return;
-        }
-        if (image.startsWith(Constants.LOCAL_RES_PREFIX)) {
-            try {
-                URI uri = new URI(image);
-                Map<String, String> queryMap = PayuResponse.getQueryMap(uri.getQuery());
-                String name = queryMap.get(Constants.NAME);
-                if (!TextUtils.isEmpty(name)) {
-                    Class res = R.drawable.class;
-                    Field field = res.getField(name);
-                    int drawableId = field.getInt(null);
-                    imageView.setImageResource(drawableId);
-                }
-            } catch (URISyntaxException | NoSuchFieldException | IllegalAccessException e) {
-                imageView.setImageDrawable(null);
-                imageView.setVisibility(View.GONE);
-            }
-        } else {
-            UIUtil.displayAsyncImage(imageView, image);
         }
     }
 
