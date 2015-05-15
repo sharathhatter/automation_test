@@ -64,25 +64,18 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     private ViewPager mViewPager;
     private HashMap<String, ArrayList<Product>> mMapForTabWithNoProducts;
     private SparseArray<String> mArrayTabTypeAndFragmentPosition;
-    private String mTitle;
+    private String mTitlePassedViaIntent;
     private Spinner mHeaderSpinner;
     private int mHeaderSpinnerSelectedIdx;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle(mTitle);
+        mTitlePassedViaIntent = getIntent().getStringExtra(Constants.TITLE);
+        setTitle(mTitlePassedViaIntent);
         mNameValuePairs = getIntent().getParcelableArrayListExtra(Constants.PRODUCT_QUERY);
         loadProductTabs();
     }
-
-//    @Override
-//    public void onNoFragmentsInLayout() {
-//        // Finish only if the product view-pager is still active.
-//        if (findViewById(R.id.layoutSwipeTabContainer) == null) {
-//            finish();
-//        }
-//    }
 
     @Override
     @LayoutRes
@@ -164,8 +157,13 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                 productTabData.getProductTabInfos().size() > 0) {
             if (productTabData.getProductTabInfos().size() > 1) {
                 displayProductTabs(productTabData, contentFrame);
-                mTitle = null;
-                setTitle(null);
+                if (productTabData.getHeaderSection() != null &&
+                        productTabData.getHeaderSection().getSectionItems() != null &&
+                        productTabData.getHeaderSection().getSectionItems().size() > 0) {
+                    setTitle(null);
+                } else if (!TextUtils.isEmpty(mTitlePassedViaIntent)) {
+                    setTitle(mTitlePassedViaIntent);
+                }
             } else {
                 // When only one product tab
                 ProductTabInfo productTabInfo = productTabData.getProductTabInfos().get(0);
@@ -182,11 +180,11 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                 if (productTabData.getHeaderSection() != null &&
                         productTabData.getHeaderSection().getSectionItems() != null &&
                         productTabData.getHeaderSection().getSectionItems().size() > 0) {
-                    mTitle = null;
                     setTitle(null);
                 } else {
-                    mTitle = productTabInfo.getTabName();
-                    setTitle(mTitle);
+                    String title = TextUtils.isEmpty(mTitlePassedViaIntent) ?
+                            productTabInfo.getTabName() : mTitlePassedViaIntent;
+                    setTitle(title);
                 }
             }
         } else if (contentSectionView == null) {
@@ -400,6 +398,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     @Override
     public void doSearch(String searchQuery) {
         if (!TextUtils.isEmpty(searchQuery)) {
+            mTitlePassedViaIntent = searchQuery;
             mNameValuePairs = new ArrayList<>();
             mNameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.SEARCH.get()));
             mNameValuePairs.add(new NameValuePair(Constants.SLUG, searchQuery));

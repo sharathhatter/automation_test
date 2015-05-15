@@ -123,7 +123,7 @@ public class SearchableActivity extends BackButtonActivity
                         doSearchByCategory(cursor.getString(1), cursor.getString(4),
                                 getCategorySlug(cursor.getString(4)));
                     else
-                        doSearch(cursor.getString(4));
+                        doSearch(cursor.getString(4).trim());
                 }
             }
         });
@@ -266,7 +266,7 @@ public class SearchableActivity extends BackButtonActivity
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        doSearch(query);
+        doSearch(query.trim());
         return false;
     }
 
@@ -295,7 +295,7 @@ public class SearchableActivity extends BackButtonActivity
         if (requestCode == REQ_CODE_SPEECH_INPUT && resultCode == RESULT_OK && data != null) {
             ArrayList<String> items = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
             if (items != null && items.size() > 0) {
-                doSearch(items.get(0));
+                doSearch(items.get(0).trim());
                 return;
             }
         }
