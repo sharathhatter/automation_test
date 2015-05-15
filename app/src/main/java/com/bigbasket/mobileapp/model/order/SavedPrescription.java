@@ -26,7 +26,7 @@ public class SavedPrescription implements Parcelable {
     @SerializedName(Constants.DOCTOR_NAME)
     private String doctorName;
 
-//    @SerializedName(Constants.PRESCRIPTION_IMG_URL)
+    //    @SerializedName(Constants.PRESCRIPTION_IMG_URL)
 //    private String prescriptionImageUrl;
     @SerializedName(Constants.PHARMA_PRESCRIPTION_ID)
     private int pharmaPrescriptionId;

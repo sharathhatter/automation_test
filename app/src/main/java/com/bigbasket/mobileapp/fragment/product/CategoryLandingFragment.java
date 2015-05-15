@@ -1,19 +1,15 @@
 package com.bigbasket.mobileapp.fragment.product;
 
-import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ExpandableListView;
-import android.widget.LinearLayout;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.adapter.product.SubCategoryAdapter;
 import com.bigbasket.mobileapp.adapter.product.SubCategoryListAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
@@ -22,15 +18,13 @@ import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.SubCategoryApiResponse;
 import com.bigbasket.mobileapp.fragment.base.BaseSectionFragment;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
-import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.product.Category;
 import com.bigbasket.mobileapp.model.product.SubCategoryModel;
-import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
-import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
+import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -136,10 +130,6 @@ public class CategoryLandingFragment extends BaseSectionFragment {
             }
         }
 
-        //display section
-        LinearLayout subCategoryPageLayout = new LinearLayout(getActivity());
-        subCategoryPageLayout.setOrientation(LinearLayout.VERTICAL);
-
         final List<Category> categoryArrayList = new ArrayList<>();
 
         Category allCategories = new Category("All " + topCatName.trim(), topCatSlug);
@@ -148,69 +138,16 @@ public class CategoryLandingFragment extends BaseSectionFragment {
         if (subCategoryModel != null && subCategoryModel.getCategory() != null) {
             for (int i = 0; i < subCategoryModel.getCategory().size(); i++) {
                 Category subCat = subCategoryModel.getCategory().get(i);
-                if (subCat.getCategory() != null && subCat.getCategory().size() > 0) {
-                    Category allSubCatProductList = new Category("All " + subCat.getName(), subCat.getSlug());
-                    subCat.getCategory().add(0, allSubCatProductList);
-                }
                 categoryArrayList.add(subCat);
             }
         }
 
-        if (getSectionData() != null) {
-            View sectionView = getSectionView();
-            if (sectionView != null) {
-                subCategoryPageLayout.addView(sectionView);
-            }
-        }
+        RecyclerView subCategoryRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, contentView);
 
-        final ExpandableListView subCategoryExpandableView = new ExpandableListView(getActivity());
-        subCategoryExpandableView.setGroupIndicator(null);
-        subCategoryExpandableView.setDivider(new ColorDrawable(getResources().getColor(R.color.uiv3_divider_color)));
-        subCategoryExpandableView.setDividerHeight(1);
-        subCategoryExpandableView.setLayoutParams(new
-                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        SubCategoryListAdapter subCategoryListAdapter = new SubCategoryListAdapter<>(this, categoryArrayList, getSectionView());
+        subCategoryRecyclerView.setAdapter(subCategoryListAdapter);
 
-
-        SubCategoryListAdapter subCategoryListAdapter = new SubCategoryListAdapter<>(this, categoryArrayList, getActivity());
-        subCategoryExpandableView.setAdapter(subCategoryListAdapter);
-
-        subCategoryExpandableView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-            @Override
-            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-                if (categoryArrayList.get(groupPosition).getCategory() != null &&
-                        categoryArrayList.get(groupPosition).getCategory().size() > 0) {
-                } else {
-                    Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
-                    ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-                    nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.CATEGORY.get()));
-                    nameValuePairs.add(new NameValuePair(Constants.SLUG, categoryArrayList.get(groupPosition).getSlug()));
-                    if (categoryArrayList.get(groupPosition).getFilter() != null) {
-                        nameValuePairs.add(new NameValuePair(Constants.FILTER_ON, categoryArrayList.get(groupPosition).getFilter()));
-                    }
-                    if (categoryArrayList.get(groupPosition).getSortBy() != null) {
-                        nameValuePairs.add(new NameValuePair(Constants.SORT_ON, categoryArrayList.get(groupPosition).getSortBy()));
-                    }
-                    intent.putParcelableArrayListExtra(Constants.PRODUCT_QUERY, nameValuePairs);
-                    startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                }
-                return false;
-            }
-        });
-
-        subCategoryExpandableView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-            @Override
-            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
-                ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-                nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.CATEGORY.get()));
-                nameValuePairs.add(new NameValuePair(Constants.SLUG, categoryArrayList.get(groupPosition).getCategory().get(childPosition).getSlug()));
-                intent.putParcelableArrayListExtra(Constants.PRODUCT_QUERY, nameValuePairs);
-                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                return false;
-            }
-        });
-        subCategoryPageLayout.addView(subCategoryExpandableView);
-        contentView.addView(subCategoryPageLayout);
+        contentView.addView(subCategoryRecyclerView);
     }
 
     @Nullable

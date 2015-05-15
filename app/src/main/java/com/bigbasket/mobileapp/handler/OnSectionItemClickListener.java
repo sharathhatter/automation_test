@@ -77,6 +77,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                             Bundle subCatBundle = new Bundle();
                             subCatBundle.putString(Constants.TOP_CATEGORY_SLUG, destinationInfo.getDestinationSlug());
                             subCatBundle.putString(Constants.TOP_CATEGORY_NAME, title);
+                            subCatBundle.putString(Constants.TOP_CATEGORY_VERSION, destinationInfo.getCacheVersion());
                             categoryLandingFragment.setArguments(subCatBundle);
                             ((BBActivity) context).onChangeFragment(categoryLandingFragment);
                         } else {
@@ -84,6 +85,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                             intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_CATEGORY_LANDING);
                             intent.putExtra(Constants.TOP_CATEGORY_SLUG, destinationInfo.getDestinationSlug());
                             intent.putExtra(Constants.TOP_CATEGORY_NAME, title);
+                            intent.putExtra(Constants.TOP_CATEGORY_VERSION, destinationInfo.getCacheVersion());
                             ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                         }
                     }

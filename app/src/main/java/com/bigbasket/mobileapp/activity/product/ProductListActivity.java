@@ -164,6 +164,8 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                 productTabData.getProductTabInfos().size() > 0) {
             if (productTabData.getProductTabInfos().size() > 1) {
                 displayProductTabs(productTabData, contentFrame);
+                mTitle = null;
+                setTitle(null);
             } else {
                 // When only one product tab
                 ProductTabInfo productTabInfo = productTabData.getProductTabInfos().get(0);
@@ -177,8 +179,15 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                         .add(R.id.content_frame, genericProductListFragment, genericProductListFragment.getFragmentTxnTag())
                         .addToBackStack(genericProductListFragment.getFragmentTxnTag())
                         .commit();
-                mTitle = productTabInfo.getTabName();
-                setTitle(mTitle);
+                if (productTabData.getHeaderSection() != null &&
+                        productTabData.getHeaderSection().getSectionItems() != null &&
+                        productTabData.getHeaderSection().getSectionItems().size() > 0) {
+                    mTitle = null;
+                    setTitle(null);
+                } else {
+                    mTitle = productTabInfo.getTabName();
+                    setTitle(mTitle);
+                }
             }
         } else if (contentSectionView == null) {
             UIUtil.showEmptyProductsView(this, contentFrame);

@@ -14,7 +14,7 @@ import com.bigbasket.mobileapp.adapter.product.SubCategoryAdapter;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "bigbasket.db";
-    protected static final int DATABASE_VERSION = 11;
+    protected static final int DATABASE_VERSION = 13;
     public static SQLiteDatabase db = null;
     private static DatabaseHelper dbAdapter = null;
     private static boolean isConnectionOpen = false;
@@ -54,6 +54,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DELETE FROM " + CategoryAdapter.tableName);
+        db.execSQL("DROP TABLE " + CategoryAdapter.tableName);
+        db.execSQL("DELETE FROM " + SubCategoryAdapter.tableName);
+        db.execSQL("DROP TABLE " + SubCategoryAdapter.tableName);
     }
 
     @Override
