@@ -65,7 +65,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     private HashMap<String, ArrayList<Product>> mMapForTabWithNoProducts;
     private SparseArray<String> mArrayTabTypeAndFragmentPosition;
     private String mTitlePassedViaIntent;
-    private Spinner mHeaderSpinner;
+    private View mSpinnerBase;
     private int mHeaderSpinnerSelectedIdx;
 
     @Override
@@ -186,9 +186,11 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                             productTabInfo.getTabName() : mTitlePassedViaIntent;
                     setTitle(title);
                 }
+                renderHeaderDropDown(productTabData.getHeaderSection());
             }
         } else if (contentSectionView == null) {
             UIUtil.showEmptyProductsView(this, contentFrame);
+            renderHeaderDropDown(null);
         }
     }
 
@@ -340,24 +342,26 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         return null;
     }
 
-    private void renderHeaderDropDown(final Section headSection) {
+    private void renderHeaderDropDown(@Nullable final Section headSection) {
         Toolbar toolbar = getToolbar();
         if (headSection != null && headSection.getSectionItems() != null
                 && headSection.getSectionItems().size() > 0) {
-            if (mHeaderSpinner == null) {
-                mHeaderSpinner = new Spinner(this);
-                toolbar.addView(mHeaderSpinner);
+            Spinner spinner;
+            if (mSpinnerBase == null) {
+                mSpinnerBase = getLayoutInflater().inflate(R.layout.toolbar_spinner, toolbar, false);
+                toolbar.addView(mSpinnerBase);
             }
+            spinner = (Spinner) mSpinnerBase.findViewById(R.id.toolbarSpinner);
             BBArrayAdapter bbArrayAdapter = new BBArrayAdapter<>(this, android.R.layout.simple_spinner_item, headSection.getSectionItems(),
                     faceRobotoRegular, Color.WHITE, getResources().getColor(R.color.uiv3_primary_text_color));
             bbArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            mHeaderSpinner.setAdapter(bbArrayAdapter);
+            spinner.setAdapter(bbArrayAdapter);
             if (mHeaderSpinnerSelectedIdx >= headSection.getSectionItems().size()) {
                 // Defensive check
                 mHeaderSpinnerSelectedIdx = 0;
             }
-            mHeaderSpinner.setSelection(mHeaderSpinnerSelectedIdx, false);
-            mHeaderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            spinner.setSelection(mHeaderSpinnerSelectedIdx, false);
+            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     if (position != Spinner.INVALID_POSITION && position != mHeaderSpinnerSelectedIdx) {
@@ -371,9 +375,9 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
                 }
             });
-        } else if (mHeaderSpinner != null) {
-            toolbar.removeView(mHeaderSpinner);
-            mHeaderSpinner = null;
+        } else if (mSpinnerBase != null) {
+            toolbar.removeView(mSpinnerBase);
+            mSpinnerBase = null;
         }
     }
 

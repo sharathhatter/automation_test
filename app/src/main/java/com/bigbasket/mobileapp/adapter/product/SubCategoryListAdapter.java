@@ -113,6 +113,7 @@ public class SubCategoryListAdapter<T> extends RecyclerView.Adapter<RecyclerView
                 nameValuePairs.add(new NameValuePair(Constants.SORT_ON, categoryList.get(position).getSortBy()));
             }
             intent.putParcelableArrayListExtra(Constants.PRODUCT_QUERY, nameValuePairs);
+            intent.putExtra(Constants.TITLE, categoryList.get(position).getName());
             ((ActivityAware) ctx).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         }
     }

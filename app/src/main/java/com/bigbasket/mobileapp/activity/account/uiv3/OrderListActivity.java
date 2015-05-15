@@ -138,14 +138,15 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
         if (mOrderMonthRanges != null && mOrderMonthRanges.size() > 0) {
             BBArrayAdapter<OrderMonthRange> spinnerDateRangeArrayAdapter;
             if (mOrderDurationSpinner == null) {
-                mOrderDurationSpinner = new Spinner(this);
-                spinnerDateRangeArrayAdapter =
-                        new BBArrayAdapter<>(this, android.R.layout.simple_spinner_item, mOrderMonthRanges,
-                                faceRobotoRegular, Color.WHITE, getResources().getColor(R.color.uiv3_primary_text_color));
-                spinnerDateRangeArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                mOrderDurationSpinner.setAdapter(spinnerDateRangeArrayAdapter);
                 Toolbar toolbar = getToolbar();
-                toolbar.addView(mOrderDurationSpinner);
+                View spinnerBaseView = getLayoutInflater().inflate(R.layout.toolbar_spinner, toolbar, false);
+                mOrderDurationSpinner = (Spinner) spinnerBaseView.findViewById(R.id.toolbarSpinner);
+                spinnerDateRangeArrayAdapter =
+                        new BBArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, mOrderMonthRanges,
+                                faceRobotoRegular, Color.WHITE, getResources().getColor(R.color.uiv3_primary_text_color));
+                spinnerDateRangeArrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+                mOrderDurationSpinner.setAdapter(spinnerDateRangeArrayAdapter);
+                toolbar.addView(spinnerBaseView);
                 if (getSupportActionBar() != null) {
                     getSupportActionBar().setDisplayShowTitleEnabled(false);
                 }
