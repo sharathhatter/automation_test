@@ -136,8 +136,14 @@ public class SectionView {
             if (sectionItem.hasImage()) {
                 DefaultSliderView defaultSliderView = new DefaultSliderView(context);
                 defaultSliderView.setScaleType(BaseSliderView.ScaleType.CenterInside);
-                //defaultSliderView.image(sectionItem.hasImage());
-                // TODO : implement Image
+                if (!TextUtils.isEmpty(sectionItem.getImage())) {
+                    defaultSliderView.image(sectionItem.getImage());
+                } else if (!TextUtils.isEmpty(sectionItem.getImage())) {
+                    defaultSliderView.image(mSectionData.getBaseImgUrl() +
+                            UIUtil.getScreenDensity(context) + "/" + sectionItem.getImageName());
+                } else {
+                    continue;
+                }
                 defaultSliderView.setOnSliderClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
                 bannerSlider.addSlider(defaultSliderView);
             }

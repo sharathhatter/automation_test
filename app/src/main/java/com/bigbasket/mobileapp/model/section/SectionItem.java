@@ -136,6 +136,14 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
         }
     }
 
+    public String getImage() {
+        return image;
+    }
+
+    public String getImageName() {
+        return imageName;
+    }
+
     public boolean hasImage() {
         return !TextUtils.isEmpty(imageName) || !TextUtils.isEmpty(image);
     }
@@ -221,7 +229,7 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
     public int getItemViewType(Renderer renderer, String sectionType) {
         if (renderer != null) {
             if (renderer.getOrientation() == Renderer.VERTICAL) {
-                if (TextUtils.isEmpty(image)) {
+                if (!hasImage()) {
                     return VIEW_TITLE_DESC_VERTICAL;
                 } else if ((getTitle() == null || TextUtils.isEmpty(getTitle().getText())) &&
                         (getDescription() == null || TextUtils.isEmpty(getDescription().getText()))) {
@@ -243,7 +251,7 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
                                 VIEW_TITLE_IMG_DESC_VERTICAL : VIEW_TITLE_IMG_DESC_VERTICAL_OVERLAY;
                 }
             } else if (renderer.getOrientation() == Renderer.HORIZONTAL) {
-                if (TextUtils.isEmpty(image)) {
+                if (!hasImage()) {
                     return VIEW_TITLE_DESC_HORIZONTAL;
                 } else if ((getTitle() == null || TextUtils.isEmpty(getTitle().getText())) &&
                         (getDescription() == null || TextUtils.isEmpty(getDescription().getText()))) {
@@ -262,7 +270,7 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
                 }
             }
         } else {
-            if (TextUtils.isEmpty(image)) {
+            if (!hasImage()) {
                 return VIEW_TITLE_DESC_VERTICAL;
             } else if ((getTitle() == null || TextUtils.isEmpty(getTitle().getText())) &&
                     (getDescription() == null || TextUtils.isEmpty(getDescription().getText()))) {
