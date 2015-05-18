@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/toolbarMain"
+        layout="@layout/uiv3_tool_layout" />
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/uiv3LayoutListContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbarMain"
+        android:background="@color/uiv3_list_bkg_color"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/layoutName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_normal"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/layoutProfilePicture"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+            <TextView
+                android:id="@+id/txtMemberName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:layout_weight="1"
+                android:textColor="@color/uiv3_primary_text_color"
+                android:textSize="@dimen/primary_text_size" />
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/lstMyAccount"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/layoutName"
+            android:divider="@null"
+            android:dividerHeight="0dp" />
+    </RelativeLayout>
+</RelativeLayout>

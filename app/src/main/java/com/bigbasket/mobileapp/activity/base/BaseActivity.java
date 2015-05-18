@@ -244,6 +244,9 @@ public abstract class BaseActivity extends AppCompatActivity implements COMarket
         isActivitySuspended = true;
         MoEngageWrapper.onPause(moEHelper, getCurrentActivity());
         LocalyticsWrapper.onPause();
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
     }
 
     @Override

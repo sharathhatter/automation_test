@@ -14,9 +14,9 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.ChangeCityActivity;
+import com.bigbasket.mobileapp.activity.account.uiv3.MyAccountActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
-import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
 import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListFragment;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
@@ -25,7 +25,6 @@ import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FontHolder;
-import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
@@ -88,10 +87,8 @@ public class AccountView<T> {
             switch (position) {
                 case 0:
                     ctx.trackEvent(TrackingAware.MY_ACCOUNT_CLICKED, null);
-                    Intent intent = new Intent(ctx, BackButtonActivity.class);
-                    intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ACCOUNT_SETTING);
+                    Intent intent = new Intent(ctx, MyAccountActivity.class);
                     ctx.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                    ((TrackingAware) context).trackEvent(TrackingAware.MY_ACCOUNT_CLICKED, null);
                     break;
                 case 1:
                     ctx.launchKonotor();

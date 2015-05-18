@@ -4,8 +4,7 @@
     android:id="@+id/layoutRow"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/margin_small"
-    android:background="@color/uiv3_list_bkg_light_color">
+    android:layout_marginBottom="@dimen/margin_small">
 
     <LinearLayout
         android:id="@+id/layoutImage"

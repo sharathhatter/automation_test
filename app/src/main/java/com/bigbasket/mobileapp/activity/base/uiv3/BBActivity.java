@@ -45,7 +45,6 @@ import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.DynamicScreenFragment;
 import com.bigbasket.mobileapp.fragment.HomeFragment;
-import com.bigbasket.mobileapp.fragment.account.AccountSettingFragment;
 import com.bigbasket.mobileapp.fragment.account.AccountView;
 import com.bigbasket.mobileapp.fragment.account.ChangePasswordFragment;
 import com.bigbasket.mobileapp.fragment.account.DoWalletFragment;
@@ -113,6 +112,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     private BBDrawerLayout mDrawerLayout;
     private String currentFragmentTag;
     private RecyclerView mNavRecyclerView;
+    private AnimatedLinearLayout mSubNavLayout;
     private Menu mMenu;
     private FloatingBadgeCountView mBtnViewBasket;
 
@@ -348,9 +348,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 break;
             case FragmentCodes.START_SLOT_SELECTION:
                 addToMainLayout(new SlotSelectionFragment());
-                break;
-            case FragmentCodes.START_ACCOUNT_SETTING:
-                addToMainLayout(new AccountSettingFragment());
                 break;
             case FragmentCodes.START_WALLET_FRAGMENT:
                 addToMainLayout(new DoWalletFragment());
@@ -790,9 +787,10 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         AuthParameters authParameters = AuthParameters.getInstance(this);
 
         if (!authParameters.isAuthTokenEmpty()) {
-            txtNavSalutation.setText("Welcome " + authParameters.getMemberFullName().split(" ")[0]);
+            txtNavSalutation.setText(getString(R.string.welcome) + " " +
+                    authParameters.getMemberFullName().split(" ")[0]);
         } else {
-            txtNavSalutation.setText("Welcome BigBasketeer");
+            txtNavSalutation.setText(getString(R.string.welcomeGuest));
         }
         txtNavSalutation.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -843,7 +841,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                         section);
             }
         }
-        return new Tuple<>(sectionNavigationItems, sectionData != null ? sectionData.getBaseImgUrl(): null);
+        return new Tuple<>(sectionNavigationItems, sectionData != null ? sectionData.getBaseImgUrl() : null);
     }
 
     private void setSectionNavigationItemList(ArrayList<SectionNavigationItem> sectionNavigationItems,
@@ -870,10 +868,11 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         ArrayList<SectionItem> subNavigationSectionItems = sectionItem.getSubSectionItems();
         if (subNavigationSectionItems == null) return;
 
-        final AnimatedLinearLayout layoutSubNavigationItems =
-                (AnimatedLinearLayout) findViewById(R.id.layoutSubNavigationItems);
+        if (mSubNavLayout == null) {
+            mSubNavLayout = (AnimatedLinearLayout) findViewById(R.id.layoutSubNavigationItems);
+        }
 
-        layoutSubNavigationItems.setVisibility(View.VISIBLE);
+        mSubNavLayout.setVisibility(View.VISIBLE);
         final RecyclerView listSubNavigation = (RecyclerView) findViewById(R.id.listSubNavigation);
 
         TextView txtNavMainItem = (TextView) findViewById(R.id.txtNavMainItem);
@@ -884,7 +883,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             @Override
             public void onClick(View v) {
                 listSubNavigation.setAdapter(null);
-                layoutSubNavigationItems.setVisibility(View.GONE);
+                mSubNavLayout.setVisibility(View.GONE);
             }
         });
 
@@ -953,7 +952,11 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     @Override
     public void onBackPressed() {
         if (mDrawerLayout != null && mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-            mDrawerLayout.closeDrawers();
+            if (mSubNavLayout != null && mSubNavLayout.getVisibility() == View.VISIBLE) {
+                mSubNavLayout.setVisibility(View.GONE);
+            } else {
+                mDrawerLayout.closeDrawers();
+            }
         } else {
             super.onBackPressed();
         }

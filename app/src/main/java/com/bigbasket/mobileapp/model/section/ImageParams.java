@@ -3,7 +3,9 @@ package com.bigbasket.mobileapp.model.section;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class ImageParams implements Parcelable {
+import java.io.Serializable;
+
+public class ImageParams implements Parcelable, Serializable {
     private int width;
     private int height;
 
