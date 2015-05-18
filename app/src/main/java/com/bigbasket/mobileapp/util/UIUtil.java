@@ -434,4 +434,18 @@ public class UIUtil {
         }
         return "hdpi";
     }
+
+    public static double getDpiCoefficient(Context context) {
+        String dpi = getScreenDensity(context);
+        switch (dpi) {
+            case "mdpi":
+                return .33;
+            case "hdpi":
+                return .5;
+            case "xhdpi":
+                return .33;
+            default:
+                return 1;
+        }
+    }
 }

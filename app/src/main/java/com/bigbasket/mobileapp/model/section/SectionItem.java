@@ -287,9 +287,9 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
                 viewType == VIEW_TITLE_DESC_IMG_VERTICAL_OVERLAY;
     }
 
-    private int getActualHeight() {
+    private int getActualHeight(Context context) {
         if (imageParams != null) {
-            return imageParams.getHeight();
+            return (int) (imageParams.getHeight() * UIUtil.getDpiCoefficient(context));
         }
         return 0;
     }
@@ -320,7 +320,7 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
     }
 
     public int getHeight(Context context, Renderer renderer) {
-        int height = getActualHeight();
+        int height = getActualHeight(context);
         if (height <= 0) {
             height = getEstimatedHeight(context, renderer);
         }
