@@ -487,6 +487,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             if (data != null) {
                 String searchQuery = data.getStringExtra(Constants.SEARCH_QUERY);
                 if (!TextUtils.isEmpty(searchQuery)) {
+                    logSearchEvent(searchQuery.trim());
                     doSearch(searchQuery.trim());
                     return;
                 }
@@ -660,8 +661,8 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             // User has entered something in search, and pressed enter and this is not due to a screen rotation
             String query = intent.getStringExtra(SearchManager.QUERY);
             if (!TextUtils.isEmpty(query)) {
-                doSearch(query.trim());
                 logSearchEvent(query.trim());
+                doSearch(query.trim());
             }
         } else if (Intent.ACTION_VIEW.equals(intent.getAction()) && savedInstanceState == null) {
             // User has selected a suggestion and this is not due to a screen rotation
@@ -674,6 +675,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                     String slug = categoryUrlElements[categoryUrlElements.length - 1];
                     launchCategoryProducts(query, categoryUrl, slug);
                 } else {
+                    logSearchEvent(query.trim());
                     doSearch(query.trim());
                 }
             }
@@ -687,6 +689,8 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     private void logSearchEvent(String query) {
+        MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(this);
+        mostSearchesAdapter.update(query);
         HashMap<String, String> map = new HashMap<>();
         map.put(TrackEventkeys.QUERY, query);
         map.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_TOPNAV);

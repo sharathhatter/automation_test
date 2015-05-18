@@ -29,33 +29,12 @@ public class MostSearchesAdapter {
         open();
     }
 
-    public List<MostSearchedItem> getMostSearchedItems(int limit) {
-        Cursor cursor = null;
-        List<MostSearchedItem> mostSearchedItems = null;
-        try {
-            cursor = DatabaseHelper.db.query(tableName, new String[]{COLUMN_QUERY, COLUMN_URL, COLUMN_COUNT},
-                    null, null, null, null, COLUMN_COUNT + " ASC", String.valueOf(limit));
-            if (cursor.moveToFirst()) {
-                mostSearchedItems = new ArrayList<>();
-                do {
-                    mostSearchedItems.add(new MostSearchedItem(cursor));
-                } while (cursor.moveToNext());
-            }
-        } catch (SQLiteException e) {
-            e.printStackTrace();
-        } finally {
-            if (cursor != null && !cursor.isClosed()) {
-                cursor.close();
-            }
-        }
-        return mostSearchedItems;
-    }
-
     public List<MostSearchedItem> getRecentSearchedItems(int limit) {
         Cursor cursor = null;
         List<MostSearchedItem> mostSearchedItems = null;
         try {
-            cursor = DatabaseHelper.db.rawQuery("SELECT * FROM " + tableName + " ORDER BY " + COLUMN_ID + " DESC LIMIT " + limit, null);
+            cursor = DatabaseHelper.db.query(tableName, new String[]{COLUMN_QUERY, COLUMN_URL},
+                    null, null, null, null, COLUMN_ID + " DESC", String.valueOf(limit));
             if (cursor.moveToFirst()) {
                 mostSearchedItems = new ArrayList<>();
                 do {
@@ -126,9 +105,5 @@ public class MostSearchesAdapter {
 
     public void open() {
         DatabaseHelper.getInstance(context).open(context);
-    }
-
-    public void close() {
-        DatabaseHelper.getInstance(context).close();
     }
 }
