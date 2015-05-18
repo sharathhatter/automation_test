@@ -132,13 +132,18 @@ public class SectionView {
     private View getBannerView(Section section, LayoutInflater inflater, ViewGroup parent) {
         View baseSlider = inflater.inflate(R.layout.uiv3_image_slider, parent, false);
         SliderLayout bannerSlider = (SliderLayout) baseSlider.findViewById(R.id.imgSlider);
+        ViewGroup.LayoutParams bannerLayoutParams = bannerSlider.getLayoutParams();
+        if (bannerLayoutParams != null) {
+            bannerLayoutParams.height = section.getWidgetHeight(context, mSectionData.getRenderersMap());
+            bannerSlider.setLayoutParams(bannerLayoutParams);
+        }
         for (SectionItem sectionItem : section.getSectionItems()) {
             if (sectionItem.hasImage()) {
                 DefaultSliderView defaultSliderView = new DefaultSliderView(context);
                 defaultSliderView.setScaleType(BaseSliderView.ScaleType.CenterInside);
                 if (!TextUtils.isEmpty(sectionItem.getImage())) {
                     defaultSliderView.image(sectionItem.getImage());
-                } else if (!TextUtils.isEmpty(sectionItem.getImage())) {
+                } else if (!TextUtils.isEmpty(sectionItem.getImageName())) {
                     defaultSliderView.image(mSectionData.getBaseImgUrl() +
                             UIUtil.getScreenDensity(context) + "/" + sectionItem.getImageName());
                 } else {
@@ -208,7 +213,7 @@ public class SectionView {
         setViewMoreBehaviour(baseProductCarousel.findViewById(R.id.btnMore), section, section.getMoreSectionItem());
 
         RecyclerView horizontalRecyclerView = (RecyclerView) baseProductCarousel.findViewById(R.id.horizontalRecyclerView);
-        int carouselHeight = section.getCarouselHeight(context, mSectionData.getRenderersMap());
+        int carouselHeight = section.getWidgetHeight(context, mSectionData.getRenderersMap());
         ViewGroup.LayoutParams layoutParams = horizontalRecyclerView.getLayoutParams();
         layoutParams.height = carouselHeight;
         horizontalRecyclerView.setLayoutParams(layoutParams);

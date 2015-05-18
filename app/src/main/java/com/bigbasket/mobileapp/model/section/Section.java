@@ -99,7 +99,7 @@ public class Section extends BaseSectionTextItem implements Parcelable, Serializ
 
     }
 
-    public int getCarouselHeight(Context context, HashMap<Integer, Renderer> rendererHashMap) {
+    public int getWidgetHeight(Context context, HashMap<Integer, Renderer> rendererHashMap) {
         if (sectionItems == null) return 0;
         int maxHeight = 0;
         for (SectionItem sectionItem : sectionItems) {
