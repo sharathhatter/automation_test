@@ -389,4 +389,9 @@ public interface BigBasketApiService {
                             @Field(Constants.PAYMENT_TYPE) String paymentType, @Field(Constants.STATUS) String status,
                             @Field(Constants.ERR_RES_CODE) String errResCode, @Field(Constants.ERR_RES_DESC) String errResDesc,
                             Callback<ApiResponse<PostPrepaidPaymentResponse>> postPrepaidPaymentApiResponseCallback);
+
+    @GET("/utm-params/")
+    BaseApiResponse postUtmParams(@Query(Constants.UTM_SOURCE) String source, @Query(Constants.UTM_MEDIUM) String medium,
+                                  @Query(Constants.UTM_TERM) String term, @Query(Constants.CONTENT) String content,
+                                  @Query(Constants.UTM_CAMPAIGN) String campaign);
 }
