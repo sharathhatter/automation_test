@@ -9,6 +9,7 @@ import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.text.TextUtils;
 
+import com.bigbasket.mobileapp.adapter.db.SearchSuggestionAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
@@ -24,14 +25,22 @@ public class SearchUtil {
     public static Cursor searchQueryCall(String query, Context context) {
         if (TextUtils.isEmpty(query.trim()) || (query.trim().length() < 3)) return null;
 
-        AutoSearchResponse autoSearchResponse = null;
-        if (DataUtil.isInternetAvailable(context)) {
-            BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(context);
-            ApiResponse<AutoSearchApiResponseContent> autoSearchApiResponse = bigBasketApiService.autoSearch(query);
-            switch (autoSearchApiResponse.status) {
-                case 0:
-                    autoSearchResponse = autoSearchApiResponse.apiResponseContent.autoSearchResponse;
-                    break;
+        SearchSuggestionAdapter searchSuggestionAdapter = new SearchSuggestionAdapter(context);
+        AutoSearchResponse autoSearchResponse = searchSuggestionAdapter.getStoredResponse(query);
+
+        // If not present in local db or is older than a day
+        if (autoSearchResponse == null || autoSearchResponse.isStale()) {
+
+            // Get the results by querying server
+            if (DataUtil.isInternetAvailable(context)) {
+                BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(context);
+                ApiResponse<AutoSearchApiResponseContent> autoSearchApiResponse = bigBasketApiService.autoSearch(query);
+                switch (autoSearchApiResponse.status) {
+                    case 0:
+                        autoSearchResponse = autoSearchApiResponse.apiResponseContent.autoSearchResponse;
+                        searchSuggestionAdapter.insertAsync(autoSearchResponse);
+                        break;
+                }
             }
         }
 
@@ -47,6 +56,10 @@ public class SearchUtil {
             } else if (suggestedTermsArray != null && suggestedTermsArray.length > 0) {
                 matrixCursor = getMatrixCursorForArray(autoSearchResponse.getSuggestedTerm(), "Suggestion", false);
             }
+        }
+        if (matrixCursor == null) {
+            // When no products found so that top-searches can be shown
+            matrixCursor = instantiateMatrixCursor();
         }
         populateTopSearch(matrixCursor, context);
         return matrixCursor;
@@ -74,10 +87,7 @@ public class SearchUtil {
     }
 
     private static MatrixCursor getMatrixCursorForArray(String[] array, String heading, boolean isPopularSearcher) {
-        MatrixCursor matrixCursor = new MatrixCursor(new String[]{BaseColumns._ID,
-                SearchManager.SUGGEST_COLUMN_TEXT_1, SearchManager.SUGGEST_COLUMN_TEXT_2,
-                SearchManager.SUGGEST_COLUMN_INTENT_EXTRA_DATA, SearchManager.SUGGEST_COLUMN_INTENT_DATA_ID,
-                SearchManager.SUGGEST_COLUMN_ICON_1, SearchManager.SUGGEST_COLUMN_ICON_2});
+        MatrixCursor matrixCursor = instantiateMatrixCursor();
         //last two column are for left and right icon for a row
         int startVal = 0;
         if (isPopularSearcher)
@@ -89,12 +99,16 @@ public class SearchUtil {
         return matrixCursor;
     }
 
-    private static MatrixCursor getMatrixCursorForArray(String[] termsArray, String[] categoriesArray,
-                                                        String[] categoryUrlArray) {
-        MatrixCursor matrixCursor = new MatrixCursor(new String[]{BaseColumns._ID, SearchManager.SUGGEST_COLUMN_TEXT_1,
+    private static MatrixCursor instantiateMatrixCursor() {
+        return new MatrixCursor(new String[]{BaseColumns._ID, SearchManager.SUGGEST_COLUMN_TEXT_1,
                 SearchManager.SUGGEST_COLUMN_TEXT_2, SearchManager.SUGGEST_COLUMN_INTENT_EXTRA_DATA,
                 SearchManager.SUGGEST_COLUMN_INTENT_DATA_ID,
                 SearchManager.SUGGEST_COLUMN_ICON_1, SearchManager.SUGGEST_COLUMN_ICON_2});
+    }
+
+    private static MatrixCursor getMatrixCursorForArray(String[] termsArray, String[] categoriesArray,
+                                                        String[] categoryUrlArray) {
+        MatrixCursor matrixCursor = instantiateMatrixCursor();
         int i = 0;
         if (termsArray != null && termsArray.length > 0) {
             for (i = 0; i < termsArray.length; i++) {
