@@ -16,14 +16,16 @@ public class BBArrayAdapter<T> extends ArrayAdapter<T> {
     private int itemColor;
     private int dropDownItemColor;
 
-    public BBArrayAdapter(Context context, int resource, Typeface typeface, int itemColor, int dropDownItemColor) {
+    public BBArrayAdapter(Context context, int resource, Typeface typeface,
+                          int itemColor, int dropDownItemColor) {
         super(context, resource);
         this.typeface = typeface;
         this.itemColor = itemColor;
         this.dropDownItemColor = dropDownItemColor;
     }
 
-    public BBArrayAdapter(Context context, int resource, int textViewResourceId, Typeface typeface, int itemColor, int dropDownItemColor) {
+    public BBArrayAdapter(Context context, int resource, int textViewResourceId,
+                          Typeface typeface, int itemColor, int dropDownItemColor) {
         super(context, resource, textViewResourceId);
         this.typeface = typeface;
         this.itemColor = itemColor;
@@ -34,21 +36,24 @@ public class BBArrayAdapter<T> extends ArrayAdapter<T> {
         super(context, resource, objects);
     }
 
-    public BBArrayAdapter(Context context, int resource, int textViewResourceId, T[] objects, Typeface typeface, int itemColor, int dropDownItemColor) {
+    public BBArrayAdapter(Context context, int resource, int textViewResourceId,
+                          T[] objects, Typeface typeface, int itemColor, int dropDownItemColor) {
         super(context, resource, textViewResourceId, objects);
         this.typeface = typeface;
         this.itemColor = itemColor;
         this.dropDownItemColor = dropDownItemColor;
     }
 
-    public BBArrayAdapter(Context context, int resource, List<T> objects, Typeface typeface, int itemColor, int dropDownItemColor) {
+    public BBArrayAdapter(Context context, int resource, List<T> objects, Typeface typeface,
+                          int itemColor, int dropDownItemColor) {
         super(context, resource, objects);
         this.typeface = typeface;
         this.itemColor = itemColor;
         this.dropDownItemColor = dropDownItemColor;
     }
 
-    public BBArrayAdapter(Context context, int resource, int textViewResourceId, List<T> objects, Typeface typeface, int itemColor, int dropDownItemColor) {
+    public BBArrayAdapter(Context context, int resource, int textViewResourceId, List<T> objects,
+                          Typeface typeface, int itemColor, int dropDownItemColor) {
         super(context, resource, textViewResourceId, objects);
         this.typeface = typeface;
         this.itemColor = itemColor;

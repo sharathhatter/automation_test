@@ -59,4 +59,9 @@ public class FilterOptionCategory implements Parcelable {
     public List<FilterOptionItem> getFilterOptionItems() {
         return filterOptionItems;
     }
+
+    @Override
+    public String toString() {
+        return filterName;
+    }
 }
