@@ -20,6 +20,8 @@
 
     <style name="BBAppTheme" parent="BaseAppTheme" />
 
+    <style name="BBAppTheme.SearchViewTheme" parent="BBAppTheme" />
+
     <!-- Nav drawer style to set width specified by Material Design specification -->
     <style name="NavDrawer">
         <item name="android:layout_width">match_parent</item>
@@ -30,6 +32,7 @@
         <item name="colorControlNormal">@android:color/white</item>
         <item name="colorControlHighlight">#88FFFFFF</item>
     </style>
+
     <style name="ToolbarSpinnerStyle" parent="Widget.AppCompat.Light.Spinner.DropDown.ActionBar">
         <item name="android:theme">@style/BBAppTheme.ToolbarSpinnerTheme</item>
     </style>
