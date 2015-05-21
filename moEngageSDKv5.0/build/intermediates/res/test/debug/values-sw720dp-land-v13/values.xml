@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/home/jugal/mobile-app/mobile-app/moEngageSDKv5.0/build/intermediates/bundles/debug/res/values-sw720dp-land-v13/values.xml -->
+    <eat-comment/>
+    <dimen name="horizontal_margin">128dp</dimen>
+</resources>

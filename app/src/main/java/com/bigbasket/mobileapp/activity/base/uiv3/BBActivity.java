@@ -93,6 +93,7 @@ import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.view.uiv3.AnimatedLinearLayout;
 import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
 import com.melnykov.fab.FloatingBadgeCountView;
+import com.moengage.addon.ubox.UnifiedInboxActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -456,6 +457,10 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             case R.id.action_search:
                 Intent searchIntent = new Intent(this, SearchableActivity.class);
                 startActivityForResult(searchIntent, NavigationCodes.START_SEARCH);
+                return false;
+            case R.id.action_moengage_ubox_hub:
+                Intent communicationHunIntent = new Intent(this, UnifiedInboxActivity.class);
+                startActivity(communicationHunIntent);
                 return false;
             case android.R.id.home:
                 finish();

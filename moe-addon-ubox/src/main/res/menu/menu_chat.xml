@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:yourapp="http://schemas.android.com/apk/res-auto" >
+
+    <!-- Search, should appear as action button -->
+    <item
+        android:id="@+id/action_attach"
+        android:icon="@drawable/ic_menu_attach"
+        android:showAsAction="ifRoom"
+        android:title="@string/lbl_menu_attach">
+        <menu>
+            <item
+                android:id="@+id/newImage"
+                android:icon="@android:drawable/ic_menu_camera"
+                android:title="@string/lbl_attach_new_image"/>
+            <item
+                android:id="@+id/storedImage"
+                android:icon="@android:drawable/ic_menu_gallery"
+                android:title="@string/lbl_attach_captured"/>
+        </menu>
+    </item>
+
+</menu>

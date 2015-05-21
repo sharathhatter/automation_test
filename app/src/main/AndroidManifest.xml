@@ -19,6 +19,9 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <!-- AppsFlyer -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    
+    <!-- MOEngage UBox-->
+    <uses-permission android:name="ANDROID.PERMISSION.CAMERA"/>
 
     <uses-feature
         android:glEsVersion="0x00020000"
@@ -442,13 +445,14 @@
             </intent-filter>
         </receiver>
 
-        <service android:name="com.moe.pushlibrary.PushGCMIntentService" />
+        <!-- MOENGAGE RECEIVER FOR RECEIVING INSTALLATION INTENT -->
+        <receiver android:name="com.moe.pushlibrary.InstallReceiver" >
+            <intent-filter>
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
+            </intent-filter>
+        </receiver>
 
-        <receiver android:name="com.moe.pushlibrary.PushGcmRegister" />
-        <receiver android:name="com.moe.pushlibrary.SendReport" />
-
-        <!-- on app upgrade, gcm registration id refresh -->
-        <receiver android:name="com.moe.pushlibrary.PushUpdateReceiver">
+        <receiver android:name="com.moe.pushlibrary.AppUpdateReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_REPLACED" />
 
@@ -457,7 +461,20 @@
                     android:scheme="package" />
             </intent-filter>
         </receiver>
-        <!-- push notification landing page -->
+
+        <service
+            android:name="com.moe.pushlibrary.internal.MoEService" android:exported="false" />
+        <service
+            android:name="com.moe.pushlibrary.MoEWorker" android:exported="false" />
+        <service
+            android:name="com.moe.pushlibrary.GeofenceIntentService" android:exported="false" />
+
+        <provider
+            android:name="com.moe.pushlibrary.providers.MoEProvider"
+            android:authorities="com.bigbasket.mobileapp.moengage.provider"
+            android:exported="false" />
+
+        <!-- push notification landing page Need to change parent Activity-->
         <activity
             android:name="com.moe.pushlibrary.activities.MoEActivity"
             android:parentActivityName=".activity.SplashActivity"
@@ -466,6 +483,33 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.SplashActivity" />
         </activity>
+
+        <!-- MANDATORY FIELD: APP ID AS SEEN ON MOENGAGE DASHBOARD APP SETTINGS PAGE -->
+        <meta-data
+            android:name="APP_ID"
+            android:value="YSD6Y5AVT60X4AWNLL35EIDJ" />
+
+        <!-- MANDATORY FIELD: SENDER ID , i.e. THE PROJECT NUMBER AS MENTIONED ON GOOGLE CLOUD CONSOLE PROJECTS PAGE -->
+        <meta-data
+            android:name="SENDER_ID"
+            android:value="id:551288451469" />
+
+        <!-- MANDATORY FIELD: THE NOTIFICATION ICON WHICH WILL BE USED TO SET TO NOTIFICATIONS POSTED -->
+        <meta-data
+            android:name="NOTIFICATION_ICON"
+            android:value="@mipmap/ic_launcher" />
+
+        <!-- moEngage UBox -->
+        <activity
+            android:name="com.moengage.addon.ubox.UnifiedInboxActivity"
+            android:theme="@android:style/Theme.Light"
+            android:label="Communication Hub" >
+        </activity>
+
+        <service
+            android:name="com.moengage.addon.ubox.UBoxMessenger"
+            android:exported="false" />
+
 
         <meta-data
             android:name="LOCALYTICS_APP_KEY"
