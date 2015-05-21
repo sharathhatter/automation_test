@@ -36,6 +36,15 @@ public class SearchSuggestionAdapter {
         open();
     }
 
+    public void insertAsync(final AutoSearchResponse autoSearchResponse) {
+        new Thread() {
+            @Override
+            public void run() {
+                insert(autoSearchResponse);
+            }
+        }.start();
+    }
+
     public void insert(AutoSearchResponse autoSearchResponse) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(COLUMN_QUERY, DatabaseUtils.sqlEscapeString(autoSearchResponse.getQuery()));
@@ -85,10 +94,6 @@ public class SearchSuggestionAdapter {
             }
         }
         return autoSearchResponse;
-    }
-
-    public void delete(AutoSearchResponse autoSearchResponse) {
-        DatabaseHelper.db.delete(tableName, COLUMN_QUERY + " = \"" + autoSearchResponse.getQuery() + "\"", null);
     }
 
     public boolean hasElement(String value, String columnName) {

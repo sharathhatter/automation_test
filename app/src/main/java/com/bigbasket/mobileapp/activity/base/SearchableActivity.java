@@ -2,7 +2,6 @@ package com.bigbasket.mobileapp.activity.base;
 
 import android.app.SearchManager;
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -14,12 +13,10 @@ import android.provider.BaseColumns;
 import android.speech.RecognizerIntent;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.FilterQueryProvider;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -62,20 +59,11 @@ public class SearchableActivity extends BackButtonActivity
         if (contentLayout == null) return;
         contentLayout.removeAllViews();
         contentLayout.setBackgroundColor(getResources().getColor(R.color.uiv3_list_bkg_color));
-        getToolbarLayout().setVisibility(View.GONE);
 
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View base = inflater.inflate(R.layout.search_list, contentLayout, false);
+        mSearchView = (SearchView) getLayoutInflater().inflate(R.layout.search_input_view, getToolbar(), false);
+        getToolbar().addView(mSearchView);
 
-        searchList = (ListView) base.findViewById(R.id.searchList);
-        mSearchView = (SearchView) base.findViewById(R.id.search_view);
-        ImageView imgBckBtn = (ImageView) base.findViewById(R.id.imgBckBtn);
-        imgBckBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getCurrentActivity().finish();
-            }
-        });
+        searchList = (ListView) getLayoutInflater().inflate(R.layout.search_list, contentLayout, false);
 
         View searchListHeaderView = getLayoutInflater().inflate(R.layout.search_list_header, searchList, false);
 
@@ -128,9 +116,7 @@ public class SearchableActivity extends BackButtonActivity
             }
         });
 
-        //set animation
-        //setAnimator(searchList);
-        contentLayout.addView(base);
+        contentLayout.addView(searchList);
 
     }
 

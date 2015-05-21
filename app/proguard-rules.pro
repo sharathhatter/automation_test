@@ -73,21 +73,6 @@
 
 # Moengage
 
-# Google Play Services (For 4.3.23, but still keeping it :) )
--keep class * extends java.util.ListResourceBundle {
-    protected Object[][] getContents();
-}
--keep public class com.google.android.gms.common.internal.safeparcel.SafeParcelable {
-    public static final *** NULL;
-}
--keepnames @com.google.android.gms.common.annotation.KeepName class *
--keepclassmembernames class * {
-    @com.google.android.gms.common.annotation.KeepName *;
-}
--keepnames class * implements android.os.Parcelable {
-    public static final ** CREATOR;
-}
-
 # Google licensing files
 -keep public class com.google.vending.licensing.ILicensingService
 -keep public class com.android.vending.licensing.ILicensingService
@@ -138,3 +123,13 @@
 # Sqlite
 -keep class org.sqlite.** { *; }
 -keep class org.sqlite.database.** { *; }
+
+# Disable logging
+-assumenosideeffects class android.util.Log {
+    public static boolean isLoggable(java.lang.String, int);
+    public static int v(...);
+    public static int i(...);
+    public static int w(...);
+    public static int d(...);
+    public static int e(...);
+}

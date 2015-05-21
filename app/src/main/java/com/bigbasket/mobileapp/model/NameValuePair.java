@@ -48,6 +48,10 @@ public class NameValuePair implements Parcelable {
         return value;
     }
 
+    public void setValue(String value) {
+        this.value = value;
+    }
+
     @Override
     public int describeContents() {
         return 0;

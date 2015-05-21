@@ -598,4 +598,10 @@ public class Constants {
     public static final String TAB_NAME = "tab_name";
     public static final String CONTENT_SECTION = "content_section";
     public static final String CART_INFO = "cart_info";
+
+    public static final String UTM_SOURCE = "utm_source";
+    public static final String UTM_MEDIUM = "utm_medium";
+    public static final String UTM_TERM = "utm_term";
+    public static final String UTM_CONTENT = "utm_content";
+    public static final String UTM_CAMPAIGN = "utm_campaign";
 }

@@ -292,7 +292,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.product.SortFilterActivity"
+            android:name=".activity.product.FilterActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" />
@@ -430,6 +430,7 @@
             android:name=".activity.base.SearchableActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
+            android:theme="@style/BBAppTheme.SearchViewTheme"
             android:windowSoftInputMode="stateVisible|adjustResize" />
 
 

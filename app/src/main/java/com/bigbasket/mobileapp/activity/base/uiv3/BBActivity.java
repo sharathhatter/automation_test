@@ -17,6 +17,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.internal.VersionUtils;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -133,6 +134,9 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
         Toolbar toolbar = getToolbar();
         setSupportActionBar(toolbar);
+        if (VersionUtils.isAtLeastL() && getSupportActionBar() != null) {
+            getSupportActionBar().setElevation(25);
+        }
 
         getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
             @Override

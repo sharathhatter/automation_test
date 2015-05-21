@@ -443,7 +443,7 @@ public class UIUtil {
             case "hdpi":
                 return .5;
             case "xhdpi":
-                return .33;
+                return .66;
             default:
                 return 1;
         }

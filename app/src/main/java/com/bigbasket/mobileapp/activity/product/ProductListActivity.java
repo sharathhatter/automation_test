@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.activity.product;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.SparseArray;
@@ -15,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Spinner;
 
 import com.bigbasket.mobileapp.R;
@@ -30,7 +33,11 @@ import com.bigbasket.mobileapp.fragment.product.GenericProductListFragment;
 import com.bigbasket.mobileapp.handler.OnSectionItemClickListener;
 import com.bigbasket.mobileapp.interfaces.LazyProductListAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
+import com.bigbasket.mobileapp.model.product.FilterOptionCategory;
+import com.bigbasket.mobileapp.model.product.FilteredOn;
+import com.bigbasket.mobileapp.model.product.Option;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductInfo;
 import com.bigbasket.mobileapp.model.product.ProductTabData;
@@ -52,6 +59,7 @@ import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -67,6 +75,10 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     private String mTitlePassedViaIntent;
     private View mSpinnerBase;
     private int mHeaderSpinnerSelectedIdx;
+    private ArrayList<FilteredOn> mFilteredOns;
+    private ArrayList<FilterOptionCategory> mFilterOptionCategories;
+    private String mSortedOn;
+    private ArrayList<Option> mSortOptions;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -144,6 +156,11 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         mHeaderSpinnerSelectedIdx = productTabData.getHeaderSelectedIndex();
         FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
         contentFrame.removeAllViews();
+
+        mFilteredOns = productTabData.getFilteredOn();
+        mFilterOptionCategories = productTabData.getFilterOptionItems();
+        mSortedOn = productTabData.getSortedOn();
+        mSortOptions = productTabData.getSortOptions();
 
         SectionData sectionData = productTabData.getContentSectionData();
         View contentSectionView = null;
@@ -409,4 +426,144 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
             loadProductTabs();
         }
     }
+
+    public void onFooterViewClicked(View v) {
+        switch (v.getId()) {
+            case R.id.txtFilter:
+                onFilterScreenRequested();
+                break;
+            case R.id.txtSort:
+                onSortRequested();
+                break;
+        }
+    }
+
+    private void onSortRequested() {
+        if (mSortOptions == null || mSortOptions.size() == 0) return;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        int checkedItem = 0;
+        String[] sortOptnsArr = new String[mSortOptions.size()];
+        for (int i = 0; i < mSortOptions.size(); i++) {
+            sortOptnsArr[i] = mSortOptions.get(i).getSortName();
+            if (mSortedOn != null && mSortOptions.get(i).getSortSlug().equals(mSortedOn)) {
+                checkedItem = i;
+            }
+        }
+        builder.setTitle(R.string.sortBy)
+                .setSingleChoiceItems(sortOptnsArr, checkedItem, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .setPositiveButton(R.string.sort, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        int selectedPosition = ((AlertDialog) dialog).getListView().getCheckedItemPosition();
+                        if (selectedPosition != ListView.INVALID_POSITION) {
+                            applySort(mSortOptions.get(selectedPosition).getSortSlug());
+                        }
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .setCancelable(false);
+        builder.create().show();
+    }
+
+    private void onFilterScreenRequested() {
+        Intent sortFilterIntent = new Intent(this, FilterActivity.class);
+        sortFilterIntent.putExtra(Constants.FILTER_OPTIONS, mFilterOptionCategories);
+        sortFilterIntent.putExtra(Constants.FILTERED_ON, mFilteredOns);
+        startActivityForResult(sortFilterIntent, NavigationCodes.FILTER_APPLIED);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        setSuspended(false);
+        if (resultCode == NavigationCodes.FILTER_APPLIED) {
+            ArrayList<FilteredOn> filteredOns = null;
+            if (data != null) {
+                filteredOns = data.getParcelableArrayListExtra(Constants.FILTERED_ON);
+            }
+            applyFilter(filteredOns);
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    private void applyFilter(@Nullable ArrayList<FilteredOn> filteredOns) {
+        if (mNameValuePairs == null) return;
+        NameValuePair filterOnNameValuePair = getFilterOnNameValuePair();
+        if (filterOnNameValuePair == null) {
+            if (filteredOns != null) {
+                filterOnNameValuePair = new NameValuePair(Constants.FILTER_ON,
+                        new Gson().toJson(filteredOns));
+                mNameValuePairs.add(filterOnNameValuePair);
+                trackFilterAppliedEvent(filteredOns);
+            }
+        } else {
+            if (filteredOns != null) {
+                filterOnNameValuePair.setValue(new Gson().toJson(filteredOns));
+                trackFilterAppliedEvent(filteredOns);
+            } else {
+                mNameValuePairs.remove(filterOnNameValuePair);
+            }
+        }
+        loadProductTabs();
+    }
+
+    private void applySort(String sortedOn) {
+        if (sortedOn == null || sortedOn.equals(mSortedOn)) return;
+        NameValuePair sortedOnNameValuePair = getSortedOnNameValuePair();
+        if (sortedOnNameValuePair == null) {
+            sortedOnNameValuePair = new NameValuePair(Constants.SORT_ON, sortedOn);
+            mNameValuePairs.add(sortedOnNameValuePair);
+        } else {
+            sortedOnNameValuePair.setValue(sortedOn);
+        }
+        loadProductTabs();
+    }
+
+    @Nullable
+    private NameValuePair getSortedOnNameValuePair() {
+        for (NameValuePair nameValuePair : mNameValuePairs) {
+            if (nameValuePair.getName().equals(Constants.SORT_ON)) {
+                return nameValuePair;
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    private NameValuePair getFilterOnNameValuePair() {
+        for (NameValuePair nameValuePair : mNameValuePairs) {
+            if (nameValuePair.getName().equals(Constants.FILTER_ON)) {
+                return nameValuePair;
+            }
+        }
+        return null;
+    }
+
+    private void trackFilterAppliedEvent(ArrayList<FilteredOn> filteredOnArrayList) {
+        if (filteredOnArrayList == null || filteredOnArrayList.size() == 0) {
+            trackEvent(TrackingAware.FILTER_CLEARED, null);
+        } else {
+            Map<String, String> eventAttribs = new HashMap<>();
+            for (FilteredOn filteredOn : filteredOnArrayList) {
+                // TODO : Plugin analytics
+                eventAttribs.put(TrackEventkeys.FILTER_NAME, filteredOn.getFilterSlug());
+//                eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNavigationCtx());
+//                trackEvent(TrackingAware.FILTER_APPLIED, eventAttribs, getNavigationCtx(), null, false);
+            }
+        }
+    }
+
+
 }
