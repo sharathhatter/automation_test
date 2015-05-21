@@ -63,7 +63,8 @@ public class SearchableActivity extends BackButtonActivity
         mSearchView = (SearchView) getLayoutInflater().inflate(R.layout.search_input_view, getToolbar(), false);
         getToolbar().addView(mSearchView);
 
-        searchList = (ListView) getLayoutInflater().inflate(R.layout.search_list, contentLayout, false);
+        View searchListContainer = getLayoutInflater().inflate(R.layout.search_list, contentLayout, false);
+        searchList = (ListView) searchListContainer.findViewById(R.id.searchList);
 
         View searchListHeaderView = getLayoutInflater().inflate(R.layout.search_list_header, searchList, false);
 
@@ -116,7 +117,7 @@ public class SearchableActivity extends BackButtonActivity
             }
         });
 
-        contentLayout.addView(searchList);
+        contentLayout.addView(searchListContainer);
 
     }
 

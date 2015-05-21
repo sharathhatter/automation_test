@@ -134,7 +134,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         Toolbar toolbar = getToolbar();
         setSupportActionBar(toolbar);
         if (VersionUtils.isAtLeastL() && getSupportActionBar() != null) {
-            getSupportActionBar().setElevation(25);
+            getSupportActionBar().setElevation(20);
         }
 
         getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
@@ -205,10 +205,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             }
             btnViewBasket.show();
         }
-    }
-
-    protected View getToolbarLayout() {
-        return findViewById(R.id.toolbarMain);
     }
 
     public Toolbar getToolbar() {

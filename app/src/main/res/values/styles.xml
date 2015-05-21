@@ -11,11 +11,16 @@
         <item name="closeIcon">@drawable/ic_clear_white_24dp</item>
     </style>
 
+    <style name="BaseAppTheme.AlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorAccent">@color/uiv3_action_bar_background</item>
+    </style>
+
     <style name="BaseAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/uiv3_action_bar_background</item>
         <item name="colorPrimaryDark">@color/uiv3_status_bar_background</item>
         <item name="colorAccent">@color/uiv3_action_bar_background</item>
         <item name="searchViewStyle">@style/BaseAppTheme.SearchViewStyle</item>
+        <item name="alertDialogTheme">@style/BaseAppTheme.AlertDialogStyle</item>
     </style>
 
     <style name="BBAppTheme" parent="BaseAppTheme" />
