@@ -95,6 +95,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/layoutPackageDesc"
         android:layout_marginLeft="@dimen/margin_mini"
+        android:layout_marginRight="@dimen/margin_small"
         android:layout_marginTop="@dimen/margin_normal"
         android:layout_toRightOf="@id/imgProduct"
         android:baselineAligned="false"
@@ -126,8 +127,6 @@
             android:id="@+id/txtOutOfStockORNotForSale"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/margin_mini"
-            android:layout_marginRight="@dimen/margin_normal"
             android:text="@string/outOfStock"
             android:textColor="@color/red"
             android:textSize="@dimen/primary_text_size"
@@ -151,7 +150,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/layoutProductPrice"
         android:layout_marginLeft="@dimen/margin_small"
-        android:layout_marginRight="@dimen/margin_mini"
+        android:layout_marginRight="@dimen/margin_small"
         android:layout_marginTop="@dimen/margin_mini"
         android:layout_toRightOf="@id/imgPromoStar"
         android:text="Save Rs. 22"
@@ -164,12 +163,12 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/txtPromoAddSavings"
         android:layout_marginLeft="@dimen/margin_small"
-        android:layout_marginRight="@dimen/margin_mini"
+        android:layout_marginRight="@dimen/margin_small"
         android:layout_marginTop="@dimen/margin_small"
         android:layout_toRightOf="@id/imgPromoStar"
         android:text="Buy 1 get 1 free"
         android:textColor="@color/promoDescColor"
-        android:textSize="@dimen/secondary_text_size" />
+        android:textSize="@dimen/primary_text_size" />
 
     <View
         android:id="@+id/viewSeparator"
