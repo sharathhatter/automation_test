@@ -51,6 +51,7 @@ import com.bigbasket.mobileapp.adapter.order.PrescriptionImageAdapter;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.order.ShowCartFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
+import com.bigbasket.mobileapp.handler.OnDialogShowListener;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
 import com.bigbasket.mobileapp.interfaces.COMarketPlaceAware;
@@ -432,6 +433,7 @@ public abstract class BaseActivity extends AppCompatActivity implements COMarket
         AlertDialog alertDialog = builder.create();
         if (isSuspended())
             return;
+        alertDialog.setOnShowListener(new OnDialogShowListener());
         alertDialog.show();
     }
 

@@ -8,6 +8,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.handler.OnDialogShowListener;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.util.Constants;
@@ -71,6 +72,9 @@ public class ShoppingListNamesDialog extends DialogFragment {
 
                     }
                 });
-        return builder.create();
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.setOnShowListener(new OnDialogShowListener());
+        return alertDialog;
     }
 }

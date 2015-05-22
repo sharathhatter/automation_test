@@ -30,6 +30,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.fragment.order.SlotSelectionFragment;
+import com.bigbasket.mobileapp.handler.OnDialogShowListener;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -170,7 +171,9 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
 
                     }
                 });
-        builder.create().show();
+        AlertDialog alertDialog = builder.create();
+        alertDialog.setOnShowListener(new OnDialogShowListener());
+        alertDialog.show();
     }
 
     private void showNoShoppingListView(View base) {
@@ -295,7 +298,10 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
 
                     }
                 });
-        builder.create().show();
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.setOnShowListener(new OnDialogShowListener());
+        alertDialog.show();
     }
 
     private void showDeleteShoppingListDialog(final ShoppingListName shoppingListName) {
@@ -321,7 +327,11 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
 
                     }
                 });
-        builder.create().show();
+        AlertDialog alertDialog = builder.create();
+        if (isSuspended())
+            return;
+        alertDialog.setOnShowListener(new OnDialogShowListener());
+        alertDialog.show();
     }
 
     public void editShoppingListName(ShoppingListName shoppingListName, String newName) {

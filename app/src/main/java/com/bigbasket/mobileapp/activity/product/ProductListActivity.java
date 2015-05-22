@@ -30,6 +30,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.ProductNextPageRespons
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.fragment.product.GenericProductListFragment;
+import com.bigbasket.mobileapp.handler.OnDialogShowListener;
 import com.bigbasket.mobileapp.handler.OnSectionItemClickListener;
 import com.bigbasket.mobileapp.interfaces.LazyProductListAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
@@ -474,7 +475,9 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                     }
                 })
                 .setCancelable(false);
-        builder.create().show();
+        AlertDialog alertDialog = builder.create();
+        alertDialog.setOnShowListener(new OnDialogShowListener());
+        alertDialog.show();
     }
 
     private void onFilterScreenRequested() {

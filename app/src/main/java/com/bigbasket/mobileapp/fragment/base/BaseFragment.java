@@ -25,6 +25,7 @@ import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.CheckoutQCActivity;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
+import com.bigbasket.mobileapp.handler.OnDialogShowListener;
 import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
 import com.bigbasket.mobileapp.interfaces.COReserveQuantityCheckAware;
@@ -353,6 +354,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         AlertDialog alertDialog = builder.create();
         if (isSuspended())
             return;
+        alertDialog.setOnShowListener(new OnDialogShowListener());
         alertDialog.show();
     }
 

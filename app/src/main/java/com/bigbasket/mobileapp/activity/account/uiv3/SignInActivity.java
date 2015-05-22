@@ -26,6 +26,7 @@ import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
+import com.bigbasket.mobileapp.handler.OnDialogShowListener;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
@@ -249,7 +250,9 @@ public class SignInActivity extends BackButtonActivity {
                 })
                 .setTitle(R.string.forgotPasswd)
                 .setView(base);
-        builder.create().show();
+        AlertDialog alertDialog = builder.create();
+        alertDialog.setOnShowListener(new OnDialogShowListener());
+        alertDialog.show();
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_LOGIN_PAGE);
         trackEvent(TrackingAware.FORGOT_PASSWORD_DIALOG_SHOWN, eventAttribs);
