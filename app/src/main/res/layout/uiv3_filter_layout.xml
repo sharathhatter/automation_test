@@ -64,6 +64,7 @@
                 android:id="@+id/lstFilterItems"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:cacheColorHint="@color/white"
                 android:divider="@null"
                 android:dividerHeight="0dp" />
         </LinearLayout>
