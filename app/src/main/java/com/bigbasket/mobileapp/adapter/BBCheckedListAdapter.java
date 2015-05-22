@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.adapter;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.support.annotation.ColorRes;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import java.util.List;
 
 public class BBCheckedListAdapter<T> extends ArrayAdapter<T> {
 
+    private Typeface typeface;
     private int textColor;
     private int dp16;
     private int dp8;
@@ -21,15 +23,17 @@ public class BBCheckedListAdapter<T> extends ArrayAdapter<T> {
     public BBCheckedListAdapter(Context context, int resource, List<T> objects) {
         super(context, resource, objects);
 
+        this.typeface = FontHolder.getInstance(getContext()).getFaceRobotoLight();
         this.textColor = context.getResources().getColor(R.color.uiv3_primary_text_color);
         this.dp16 = (int) context.getResources().getDimension(R.dimen.padding_normal);
         this.dp8 = (int) context.getResources().getDimension(R.dimen.padding_small);
     }
 
     public BBCheckedListAdapter(Context context, int resource, List<T> objects,
-                                @ColorRes int textColor) {
+                                @ColorRes int textColor, Typeface typeface) {
         super(context, resource, objects);
 
+        this.typeface = typeface;
         this.textColor = context.getResources().getColor(textColor);
         this.dp16 = (int) context.getResources().getDimension(R.dimen.padding_normal);
         this.dp8 = (int) context.getResources().getDimension(R.dimen.padding_small);
@@ -42,7 +46,7 @@ public class BBCheckedListAdapter<T> extends ArrayAdapter<T> {
             CheckedTextView checkedTextView = (CheckedTextView) convertView.findViewById(android.R.id.text1);
             checkedTextView.setCheckMarkDrawable(R.drawable.large_radio_button);
             checkedTextView.setTextColor(textColor);
-            checkedTextView.setTypeface(FontHolder.getInstance(getContext()).getFaceRobotoLight());
+            checkedTextView.setTypeface(typeface);
             checkedTextView.setPadding(dp16, dp8, dp8, dp8);
             return convertView;
         } else {

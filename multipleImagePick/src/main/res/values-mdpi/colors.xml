@@ -14,7 +14,7 @@
     <color name="dialog_bg">#f0f0f0</color>
     <color name="light_grey_text">#4D4D4D</color>
 
-    <color name="uiv3_primary_text_color">#212121</color>
+    <color name="uiv3_primary_text_color">#5f5f5f</color>
     <color name="uiv3_action_bar_background">#F44336</color>
     <color name="dark_black">#000000</color>
     <color name="white">#ffffff</color>

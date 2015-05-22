@@ -12,8 +12,6 @@ import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -138,8 +136,8 @@ public class BasketValidationActivity extends BackButtonActivity {
                 TextView txtTotalPrice = (TextView) addRemoveLinearLayout.findViewById(R.id.txtTotalPrice);
                 final ImageView imgRemove = (ImageView) addRemoveLinearLayout.findViewById(R.id.imgRemove);
 
-                final TextView txtIncBasketQty = (TextView) addRemoveLinearLayout.findViewById(R.id.txtIncBasketQty);
-                final TextView txtDecBasketQty = (TextView) addRemoveLinearLayout.findViewById(R.id.txtDecBasketQty);
+                final View txtIncBasketQty = addRemoveLinearLayout.findViewById(R.id.viewIncBasketQty);
+                final View txtDecBasketQty = addRemoveLinearLayout.findViewById(R.id.viewDecBasketQty);
 
                 double itemTotalVolume = marketPlaceItems.getTotalQty();
                 txtIndex.setText(String.valueOf(j + 1) + ".");
@@ -176,7 +174,7 @@ public class BasketValidationActivity extends BackButtonActivity {
                                         marketPlaceItems.getTopLevelCategoryName(), marketPlaceItems.getTopLevelCategoryName());
                                 BasketOperationTask<BaseActivity> basketOperationTask = new BasketOperationTask<>(getCurrentActivity(),
                                         BasketOperation.DEC, product,
-                                        null, null, null, null, null, TrackingAware.BASKET_DECREMENT, getNavigationCtx(), null);
+                                        null, null, null, null, TrackingAware.BASKET_DECREMENT, getNavigationCtx(), null);
                                 basketOperationTask.startTask();
                             } else {
                                 Toast toast = Toast.makeText(getCurrentActivity(), "Unable to connect to Internet", Toast.LENGTH_LONG);
@@ -195,7 +193,7 @@ public class BasketValidationActivity extends BackButtonActivity {
                                         marketPlaceItems.getTopLevelCategoryName(), marketPlaceItems.getProductCategoryName());
                                 BasketOperationTask<BaseActivity> basketOperationTask = new BasketOperationTask<>(getCurrentActivity(),
                                         BasketOperation.INC, product,
-                                        null, null, null, null, null, TrackingAware.BASKET_INCREMENT, getNavigationCtx(), null);
+                                        null, null, null, null, TrackingAware.BASKET_INCREMENT, getNavigationCtx(), null);
                                 basketOperationTask.startTask();
                             } else {
                                 Toast toast = Toast.makeText(getCurrentActivity(), "Unable to connect to Internet", Toast.LENGTH_LONG);
@@ -213,7 +211,7 @@ public class BasketValidationActivity extends BackButtonActivity {
                                         marketPlaceItems.getTopLevelCategoryName(), marketPlaceItems.getProductCategoryName());
                                 BasketOperationTask basketOperationTask = new BasketOperationTask<>(getCurrentActivity(),
                                         BasketOperation.EMPTY,
-                                        product, txtInBasket, null, null, null, null, "0",
+                                        product, txtInBasket, null, null, null, "0",
                                         TrackingAware.BASKET_REMOVE, getNavigationCtx(), null);
                                 basketOperationTask.startTask();
                             } else {
@@ -233,10 +231,10 @@ public class BasketValidationActivity extends BackButtonActivity {
 
     @Override
     public void updateUIAfterBasketOperationSuccess(BasketOperation basketOperation, TextView basketCountTextView, View viewDecQty,
-                                                    View viewIncQty, Button btnAddToBasket, EditText editTextQty,
+                                                    View viewIncQty, View btnAddToBasket,
                                                     Product product, String qty, @Nullable View productView) {
         super.updateUIAfterBasketOperationSuccess(basketOperation,
-                basketCountTextView, viewDecQty, viewIncQty, btnAddToBasket, editTextQty, product, qty,
+                basketCountTextView, viewDecQty, viewIncQty, btnAddToBasket, product, qty,
                 productView);
         new COMarketPlaceCheckTask<>(getCurrentActivity()).startTask();
     }

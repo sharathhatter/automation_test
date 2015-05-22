@@ -11,8 +11,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -319,10 +317,10 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
 
     @Override
     public void updateUIAfterBasketOperationSuccess(BasketOperation basketOperation, TextView basketCountTextView, View viewDecQty,
-                                                    View viewIncQty, Button btnAddToBasket, EditText editTextQty, Product product, String qty,
+                                                    View viewIncQty, View btnAddToBasket, Product product, String qty,
                                                     @Nullable View productView) {
         super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextView, viewDecQty,
-                viewIncQty, btnAddToBasket, editTextQty, product, qty, productView);
+                viewIncQty, btnAddToBasket, product, qty, productView);
         getPromoSummary();
     }
 

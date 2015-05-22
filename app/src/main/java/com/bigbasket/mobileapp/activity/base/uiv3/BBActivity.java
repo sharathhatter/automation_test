@@ -28,8 +28,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -516,21 +514,18 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
     @Override
     public void updateUIAfterBasketOperationFailed(BasketOperation basketOperation, TextView basketCountTextView,
-                                                   View viewDecQty, View viewIncQty, Button btnAddToBasket,
-                                                   EditText editTextQty, Product product, String qty,
+                                                   View viewDecQty, View viewIncQty, View btnAddToBasket,
+                                                   Product product, String qty,
                                                    String errorType, @Nullable View productView) {
         if (errorType.equals(Constants.PRODUCT_ID_NOT_FOUND)) {
             Toast.makeText(this, "0 added to basket.", Toast.LENGTH_SHORT).show();
-        }
-        if (editTextQty != null && !isSuspended()) {
-            hideKeyboard(getCurrentActivity(), editTextQty);
         }
     }
 
     @Override
     public void updateUIAfterBasketOperationSuccess(BasketOperation basketOperation, TextView basketCountTextView,
-                                                    View viewDecQty, View viewIncQty, Button btnAddToBasket,
-                                                    EditText editTextQty, Product product, String qty,
+                                                    View viewDecQty, View viewIncQty, View btnAddToBasket,
+                                                    Product product, String qty,
                                                     @Nullable View productView) {
 
 
@@ -550,10 +545,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             if (btnAddToBasket != null) {
                 btnAddToBasket.setVisibility(View.VISIBLE);
             }
-            if (editTextQty != null) {
-                editTextQty.setText("1");
-                editTextQty.setVisibility(View.VISIBLE);
-            }
             if (basketCountTextView != null) {
                 basketCountTextView.setVisibility(View.GONE);
             }
@@ -570,17 +561,10 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             if (btnAddToBasket != null) {
                 btnAddToBasket.setVisibility(View.GONE);
             }
-            if (editTextQty != null) {
-                editTextQty.setVisibility(View.GONE);
-            }
             if (basketCountTextView != null) {
                 basketCountTextView.setText(String.valueOf(productQtyInBasket));
                 basketCountTextView.setVisibility(View.VISIBLE);
             }
-        }
-
-        if (editTextQty != null && !isSuspended()) {
-            hideKeyboard(getCurrentActivity(), editTextQty);
         }
 
         if (product != null) {

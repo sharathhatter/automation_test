@@ -40,12 +40,12 @@
     <color name="uiv3_secondary_btn_pressed_bkg">#8837474f</color>
     <color name="uiv3_status_bar_background">#bd1c24</color>
     <color name="uiv3_action_bar_background_pressed">#32FF0000</color>
-    <color name="uiv3_primary_text_color">#212121</color>
+    <color name="uiv3_primary_text_color">#5f5f5f</color>
     <color name="overlay_bkg">#AA000000</color>
     <color name="uiv3_divider_color">#B6B6B6</color>
     <color name="uiv3_list_bkg_color">#EDEDED</color>
     <color name="uiv3_list_bkg_light_color">#F9F9F9</color>
-    <color name="uiv3_secondary_text_color">#727272</color>
+    <color name="uiv3_secondary_text_color">#929292</color>
     <color name="uiv3_ok_label_color">#FF9100</color>
     <color name="uiv3_link_color">#66009688</color>
     <color name="uiv3_dark_bkg">#333333</color>

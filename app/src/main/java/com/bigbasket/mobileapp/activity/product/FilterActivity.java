@@ -90,7 +90,7 @@ public class FilterActivity extends BackButtonActivity {
         List<FilterOptionItem> filterOptionItems = filterOptionCategory.getFilterOptionItems();
         mFilterByAdapter = new BBCheckedListAdapter<>
                 (getCurrentActivity(), android.R.layout.simple_list_item_multiple_choice,
-                        filterOptionItems, R.color.uiv3_secondary_text_color);
+                        filterOptionItems, R.color.uiv3_primary_text_color, faceRobotoRegular);
 
         editTextFilter.setTypeface(faceRobotoRegular);
         editTextFilter.setHint(getString(R.string.search) + " " +

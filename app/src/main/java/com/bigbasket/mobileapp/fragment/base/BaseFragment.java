@@ -15,8 +15,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -206,21 +204,18 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
 
     @Override
     public void updateUIAfterBasketOperationFailed(BasketOperation basketOperation, TextView basketCountTextView,
-                                                   View viewDecQty, View viewIncQty, Button btnAddToBasket,
-                                                   EditText editTextQty, Product product, String qty, String errorType,
+                                                   View viewDecQty, View viewIncQty, View btnAddToBasket,
+                                                   Product product, String qty, String errorType,
                                                    @Nullable View productView) {
         if (errorType.equals(Constants.PRODUCT_ID_NOT_FOUND)) {
             Toast.makeText(getActivity(), "0 added to basket.", Toast.LENGTH_SHORT).show();
-        }
-        if (editTextQty != null && !isSuspended() && getCurrentActivity() != null) {
-            BaseActivity.hideKeyboard(getCurrentActivity(), editTextQty);
         }
     }
 
     @Override
     public void updateUIAfterBasketOperationSuccess(BasketOperation basketOperation, TextView basketCountTextView,
-                                                    View viewDecQty, View viewIncQty, Button btnAddToBasket,
-                                                    EditText editTextQty, Product product, String qty,
+                                                    View viewDecQty, View viewIncQty, View btnAddToBasket,
+                                                    Product product, String qty,
                                                     @Nullable View productView) {
 
         int productQtyInBasket = 0;
@@ -239,10 +234,6 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
             if (btnAddToBasket != null) {
                 btnAddToBasket.setVisibility(View.VISIBLE);
             }
-            if (editTextQty != null) {
-                editTextQty.setText("1");
-                editTextQty.setVisibility(View.VISIBLE);
-            }
             if (basketCountTextView != null) {
                 basketCountTextView.setVisibility(View.GONE);
             }
@@ -259,19 +250,11 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
             if (btnAddToBasket != null) {
                 btnAddToBasket.setVisibility(View.GONE);
             }
-            if (editTextQty != null) {
-                editTextQty.setVisibility(View.GONE);
-            }
             if (basketCountTextView != null) {
                 basketCountTextView.setText(String.valueOf(productQtyInBasket));
                 basketCountTextView.setVisibility(View.VISIBLE);
             }
         }
-
-        if (editTextQty != null && getCurrentActivity() != null && !isSuspended()) {
-            BaseActivity.hideKeyboard(getCurrentActivity(), editTextQty);
-        }
-
         if (product != null) {
             product.setNoOfItemsInCart(productQtyInBasket);
         }
