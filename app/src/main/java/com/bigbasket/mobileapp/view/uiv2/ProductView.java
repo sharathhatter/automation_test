@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.view.uiv2;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -43,6 +44,7 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public final class ProductView {
@@ -52,6 +54,17 @@ public final class ProductView {
                                           ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                           final boolean skipChildDropDownRendering,
                                           final T productDataAware, String navigationCtx) {
+        setProductView(productViewHolder, product, baseImgUrl, productDetailOnClickListener,
+                productViewDisplayDataHolder, skipChildDropDownRendering, productDataAware, navigationCtx,
+                null);
+    }
+
+    public static <T> void setProductView(final ProductViewHolder productViewHolder, final Product product, String baseImgUrl,
+                                          ProductDetailOnClickListener productDetailOnClickListener,
+                                          ProductViewDisplayDataHolder productViewDisplayDataHolder,
+                                          final boolean skipChildDropDownRendering,
+                                          final T productDataAware, String navigationCtx,
+                                          @Nullable HashMap<String, Integer> cartInfo) {
         setProductImage(productViewHolder, product, baseImgUrl, productDetailOnClickListener);
         if (!skipChildDropDownRendering) {
             setChildProducts(productViewHolder, product, baseImgUrl, productViewDisplayDataHolder,
@@ -62,7 +75,7 @@ public final class ProductView {
         setPromo(productViewHolder, product, productViewDisplayDataHolder, productDataAware);
         setProductAdditionalActionMenu(productViewHolder, product, productViewDisplayDataHolder, productDataAware);
         setBasketAndAvailabilityViews(productViewHolder, product, productViewDisplayDataHolder,
-                productDataAware, navigationCtx);
+                productDataAware, navigationCtx, cartInfo);
     }
 
     private static void setProductImage(ProductViewHolder productViewHolder, Product product, String baseImgUrl,
@@ -294,7 +307,8 @@ public final class ProductView {
 
     private static <T> void setBasketAndAvailabilityViews(final ProductViewHolder productViewHolder, final Product product,
                                                           final ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                                          final T basketOperationAware, final String navigationCtx) {
+                                                          final T basketOperationAware, final String navigationCtx,
+                                                          @Nullable HashMap<String, Integer> cartInfo) {
         final ImageView imgAddToBasket = productViewHolder.getImgAddToBasket();
         final View viewDecBasketQty = productViewHolder.getViewDecBasketQty();
         final TextView txtInBasket = productViewHolder.getTxtInBasket();
@@ -304,7 +318,13 @@ public final class ProductView {
 
         if (productViewDisplayDataHolder.isShowBasketBtn()) {
             if (product.getProductStatus().equalsIgnoreCase("A")) {
-                int noOfItemsInCart = product.getNoOfItemsInCart();
+                int noOfItemsInCart;
+                if (cartInfo != null) {
+                    noOfItemsInCart = cartInfo.containsKey(product.getSku()) ?
+                            cartInfo.get(product.getSku()) : 0;
+                } else {
+                    noOfItemsInCart = product.getNoOfItemsInCart();
+                }
 
                 if (noOfItemsInCart > 0) {
                     txtInBasket.setText(String.valueOf(noOfItemsInCart));

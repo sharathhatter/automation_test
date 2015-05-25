@@ -33,7 +33,9 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.ShoppingListNamesDialog;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -54,6 +56,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
     private String mBaseImgUrl;
     private String mTabType;
     private boolean mHasProductLoadingFailed;
+    private HashMap<String, Integer> mCartInfo;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -80,6 +83,12 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
             ArrayList<NameValuePair> nameValuePairs = getArguments().getParcelableArrayList(Constants.PRODUCT_QUERY);
             mNameValuePairs = NameValuePair.toMap(nameValuePairs);
             mTabType = getArguments().getString(Constants.TAB_TYPE);
+            String cartInfoJson = getArguments().getString(Constants.CART_INFO);
+            if (cartInfoJson != null) {
+                Type collectionType = new TypeToken<HashMap<String, Integer>>() {
+                }.getType();
+                mCartInfo = new Gson().fromJson(cartInfoJson, collectionType);
+            }
             setProductListView();
         }
     }
@@ -164,7 +173,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                     .build();
             mProductListRecyclerAdapter = new ProductListRecyclerAdapter(products, mBaseImgUrl,
                     productViewDisplayDataHolder, this, mProductInfo.getProductCount(),
-                    getNavigationCtx());
+                    getNavigationCtx(), mCartInfo);
 
             productRecyclerView.setAdapter(mProductListRecyclerAdapter);
             contentView.addView(productRecyclerView);

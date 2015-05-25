@@ -187,7 +187,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                 ProductTabInfo productTabInfo = productTabData.getProductTabInfos().get(0);
                 ProductInfo productInfo = productTabInfo.getProductInfo();
                 Bundle bundle = getBundleForProductListFragment(productTabInfo, productInfo,
-                        productTabData.getBaseImgUrl());
+                        productTabData.getBaseImgUrl(), productTabData.getCartInfo());
                 GenericProductListFragment genericProductListFragment = new GenericProductListFragment();
                 genericProductListFragment.setArguments(bundle);
                 // Not using onChangeFragment/addToMainLayout since their implementation has been changed in this class
@@ -224,7 +224,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
             ProductInfo productInfo = productTabInfo.getProductInfo();
             if (productInfo != null) {
                 Bundle bundle = getBundleForProductListFragment(productTabInfo,
-                        productInfo, productTabData.getBaseImgUrl());
+                        productInfo, productTabData.getBaseImgUrl(), productTabData.getCartInfo());
                 bbTabs.add(new BBTab<>(productTabInfo.getTabName() + " (" + productInfo.getProductCount() + ")",
                         GenericProductListFragment.class, bundle));
                 if (productInfo.getCurrentPage() == -1) {
@@ -285,12 +285,15 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
     private Bundle getBundleForProductListFragment(ProductTabInfo productTabInfo,
                                                    ProductInfo productInfo,
-                                                   String baseImgUrl) {
+                                                   String baseImgUrl,
+                                                   HashMap<String, Integer> cartInfo) {
         Bundle bundle = new Bundle();
         bundle.putParcelable(Constants.PRODUCT_INFO, productInfo);
         bundle.putString(Constants.BASE_IMG_URL, baseImgUrl);
         bundle.putParcelableArrayList(Constants.PRODUCT_QUERY, mNameValuePairs);
         bundle.putString(Constants.TAB_TYPE, productTabInfo.getTabType());
+        bundle.putString(Constants.CART_INFO, cartInfo != null ?
+                new Gson().toJson(cartInfo) : null);
         return bundle;
     }
 
