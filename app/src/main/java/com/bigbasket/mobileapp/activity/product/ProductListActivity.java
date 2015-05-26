@@ -492,10 +492,10 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
     public void onFooterViewClicked(View v) {
         switch (v.getId()) {
-            case R.id.txtFilter:
+            case R.id.layoutFilter:
                 onFilterScreenRequested();
                 break;
-            case R.id.txtSort:
+            case R.id.layoutSort:
                 onSortRequested();
                 break;
         }

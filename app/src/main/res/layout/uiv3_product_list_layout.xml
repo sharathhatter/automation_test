@@ -14,7 +14,7 @@
         <!-- As the main content view, the view below consumes the entire
              space available using match_parent in both dimensions. -->
 
-        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
@@ -28,45 +28,58 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:background="@color/lighter_grey"
+                android:layout_margin="0dp"
+                android:background="@color/uiv3_product_list_footer_bkg"
+                android:baselineAligned="false"
                 android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/txtFilter"
+                <LinearLayout
+                    android:id="@+id/layoutFilter"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_margin="0dp"
                     android:layout_weight="1"
                     android:clickable="true"
                     android:gravity="center"
                     android:onClick="onFooterViewClicked"
-                    android:paddingBottom="@dimen/padding_small"
-                    android:paddingTop="@dimen/padding_small"
-                    android:text="@string/filter"
-                    android:textColor="@color/uiv3_primary_text_color"
-                    android:textSize="@dimen/primary_text_size" />
+                    android:orientation="horizontal">
 
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="@color/uiv3_divider_color" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="0dp"
+                        android:drawableLeft="@drawable/filter"
+                        android:drawablePadding="@dimen/padding_small"
+                        android:gravity="center"
+                        android:paddingBottom="@dimen/padding_small"
+                        android:paddingTop="@dimen/padding_small"
+                        android:text="@string/filter"
+                        android:textColor="@color/uiv3_product_list_footer_txt_color"
+                        android:textSize="@dimen/primary_text_size" />
+                </LinearLayout>
 
-                <TextView
-                    android:id="@+id/txtSort"
+                <LinearLayout
+                    android:id="@+id/layoutSort"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_margin="0dp"
                     android:layout_weight="1"
                     android:clickable="true"
                     android:gravity="center"
-                    android:minHeight="0dp"
-                    android:minWidth="0dp"
                     android:onClick="onFooterViewClicked"
-                    android:paddingBottom="@dimen/padding_small"
-                    android:paddingTop="@dimen/padding_small"
-                    android:text="@string/sort"
-                    android:textColor="@color/uiv3_primary_text_color"
-                    android:textSize="@dimen/primary_text_size" />
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="0dp"
+                        android:drawableLeft="@drawable/sort"
+                        android:drawablePadding="@dimen/padding_small"
+                        android:gravity="center"
+                        android:paddingBottom="@dimen/padding_small"
+                        android:paddingTop="@dimen/padding_small"
+                        android:text="@string/sort"
+                        android:textColor="@color/uiv3_product_list_footer_txt_color"
+                        android:textSize="@dimen/primary_text_size" />
+                </LinearLayout>
             </LinearLayout>
 
             <FrameLayout
@@ -84,7 +97,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginBottom="@dimen/margin_normal"
                 android:layout_marginRight="@dimen/margin_small"
-                android:src="@drawable/ic_shopping_cart_white_24dp"
+                android:src="@drawable/view_basket"
                 app:fab_colorNormal="@color/uiv3_action_bar_background"
                 app:fab_colorPressed="@color/uiv3_action_bar_background_pressed" />
 
