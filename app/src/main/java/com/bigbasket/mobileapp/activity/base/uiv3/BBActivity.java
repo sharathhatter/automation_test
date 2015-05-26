@@ -173,7 +173,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     public void setViewBasketFloatingButton() {
         FloatingBadgeCountView btnViewBasket = getViewBasketFloatingButton();
         if (btnViewBasket != null) {
-            btnViewBasket.setImg(R.drawable.ic_shopping_cart_white_24dp);
+            btnViewBasket.setImg(R.drawable.view_basket);
             btnViewBasket.setText(null);
             syncCartInfoFromPreference();
             updateCartCountHeaderTextView();
