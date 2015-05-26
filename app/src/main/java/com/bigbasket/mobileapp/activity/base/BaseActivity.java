@@ -104,7 +104,7 @@ public abstract class BaseActivity extends AppCompatActivity implements COMarket
         LaunchProductListAware {
 
     public static Typeface faceRupee;
-    public static Typeface faceRobotoRegular, faceRobotoLight, faceRobotoItalic, faceRobotoMedium;
+    public static Typeface faceRobotoRegular, faceRobotoLight, faceRobotoMedium;
     protected BigBasketMessageHandler handler;
     protected boolean isActivitySuspended;
     protected COReserveQuantity coReserveQuantity;
@@ -142,8 +142,6 @@ public abstract class BaseActivity extends AppCompatActivity implements COMarket
 
         faceRupee = FontHolder.getInstance(this).getFaceRupee();
         faceRobotoRegular = FontHolder.getInstance(this).getFaceRobotoRegular();
-        faceRobotoLight = FontHolder.getInstance(this).getFaceRobotoLight();
-        faceRobotoItalic = FontHolder.getInstance(this).getFaceRobotoItalic();
         faceRobotoMedium = FontHolder.getInstance(this).getFaceRobotoMedium();
         moEHelper = MoEngageWrapper.getMoHelperObj(getCurrentActivity());
         LocalyticsWrapper.integrate(this);
