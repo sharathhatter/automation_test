@@ -74,10 +74,7 @@ public class BBArrayAdapter<T> extends ArrayAdapter<T> {
     @Override
     public View getDropDownView(int position, View convertView, ViewGroup parent) {
         View view = super.getDropDownView(position, convertView, parent);
-        if (view instanceof CheckedTextView) {
-            ((CheckedTextView) view).setTypeface(typeface);
-            ((CheckedTextView) view).setTextColor(dropDownItemColor);
-        } else if (view instanceof TextView) {
+        if (view instanceof TextView) {
             ((TextView) view).setTypeface(typeface);
             ((TextView) view).setTextColor(dropDownItemColor);
         }

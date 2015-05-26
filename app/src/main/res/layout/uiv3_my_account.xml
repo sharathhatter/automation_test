@@ -1,52 +1,250 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:orientation="vertical">
 
-    <include
-        android:id="@+id/toolbarMain"
-        layout="@layout/uiv3_tool_layout" />
+        <include layout="@layout/uiv3_tool_layout" />
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/uiv3LayoutListContainer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/toolbarMain"
-        android:background="@color/uiv3_list_bkg_color"
-        android:orientation="vertical">
-
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/layoutName"
+            android:layout_marginTop="@dimen/margin_normal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_normal"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content">
 
-            <LinearLayout
-                android:id="@+id/layoutProfilePicture"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" />
+            <com.bigbasket.mobileapp.view.uiv3.ImageViewCircular
+                android:layout_width="70dp"
+                android:id="@+id/circularImageView"
+                android:layout_marginLeft="@dimen/margin_small"
+                android:layout_height="70dp"/>
 
             <TextView
                 android:id="@+id/txtMemberName"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
+                android:layout_marginTop="@dimen/margin_normal"
+                android:text="Jugal joshi"
+                android:layout_alignBaseline="@id/circularImageView"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
+                android:layout_toRightOf="@id/circularImageView"
+                android:layout_marginRight="@dimen/margin_small"
                 android:layout_marginLeft="@dimen/margin_normal"
-                android:layout_weight="1"
                 android:textColor="@color/uiv3_primary_text_color"
-                android:textSize="@dimen/primary_text_size" />
-        </LinearLayout>
+                android:textSize="@dimen/large_text_size" />
 
-        <ListView
-            android:id="@+id/lstMyAccount"
+            <TextView
+                android:id="@+id/txtEmailId"
+                android:layout_width="wrap_content"
+                android:text="jugal.joshi1735@gmail.gmail.com"
+                android:layout_below="@id/txtMemberName"
+                android:layout_toRightOf="@id/circularImageView"
+                android:textColor="@color/text_color_myaccount"
+                android:layout_marginRight="@dimen/margin_small"
+                android:textSize="@dimen/primary_text_size"
+                android:textStyle="italic"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:layout_height="wrap_content" />
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:id="@+id/line1"
+                android:layout_marginTop="@dimen/margin_normal"
+                android:layout_below="@id/circularImageView"
+                android:background="@color/separator_line_color"/>
+        </RelativeLayout>
+
+
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/layoutName"
-            android:divider="@null"
-            android:dividerHeight="0dp" />
-    </RelativeLayout>
-</RelativeLayout>
+            android:id="@+id/layoutPhoneNumber"
+            android:layout_marginTop="@dimen/margin_normal"
+            android:layout_height="wrap_content">
+
+
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/txtPhoneLabel"
+                android:layout_marginLeft="@dimen/margin_large"
+                android:textSize="@dimen/primary_text_size"
+                android:textColor="@color/uiv3_secondary_text_color"
+                android:text="@string/phone"/>
+
+            <ImageView
+                android:id="@+id/imgPhone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_small"
+                android:layout_below="@id/txtPhoneLabel"
+                android:layout_marginLeft="@dimen/margin_xlarge_account"
+                android:src="@drawable/phone_icon"/>
+
+            <TextView
+                android:id="@+id/txtPhone"
+                android:clickable="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_large"
+                android:layout_marginTop="@dimen/margin_small"
+                android:layout_below="@id/txtPhoneLabel"
+                android:textSize="@dimen/primary_text_size"
+                android:textColor="@color/uiv3_primary_text_color"
+                android:layout_toRightOf="@+id/imgPhone"
+                android:onClick="TextViewClicked"
+                android:text="9900965282" />
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:id="@+id/line2"
+                android:layout_marginTop="@dimen/margin_normal"
+                android:layout_below="@id/txtPhone"
+                android:background="@color/separator_line_color"/>
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:id="@+id/layoutBirthday"
+            android:layout_marginTop="@dimen/margin_normal"
+            android:layout_height="wrap_content">
+
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/txtBirthdayLabel"
+                android:layout_marginLeft="@dimen/margin_large"
+                android:textSize="@dimen/primary_text_size"
+                android:textColor="@color/uiv3_secondary_text_color"
+                android:text="@string/birthday"/>
+
+            <ImageView
+                android:id="@+id/imgBirthday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_small"
+                android:layout_below="@id/txtBirthdayLabel"
+                android:layout_marginLeft="@dimen/margin_xlarge_account"
+                android:src="@drawable/cake"/>
+
+            <TextView
+                android:id="@+id/txtBirthday"
+                android:layout_marginLeft="@dimen/margin_large"
+                android:layout_marginTop="@dimen/margin_small"
+                android:layout_below="@id/txtBirthdayLabel"
+                android:text="11 Sept 1990"
+                android:layout_toRightOf="@id/imgBirthday"
+                android:textSize="@dimen/primary_text_size"
+                android:textColor="@color/uiv3_primary_text_color"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:id="@+id/line3"
+                android:layout_marginTop="@dimen/margin_normal"
+                android:layout_below="@id/txtBirthday"
+                android:background="@color/separator_line_color"/>
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/layoutAddress"
+            android:layout_width="match_parent"
+            android:paddingBottom="@dimen/padding_small"
+            android:layout_height="wrap_content">
+
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/txtAddressLabel"
+                android:layout_marginTop="@dimen/margin_normal"
+                android:layout_marginLeft="@dimen/margin_large"
+                android:textSize="@dimen/primary_text_size"
+                android:textColor="@color/uiv3_secondary_text_color"
+                android:text="@string/address"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:id="@+id/txtViewAll"
+                android:text="@string/viewAll"
+                android:layout_alignParentRight="true"
+                android:paddingTop="@dimen/margin_mini"
+                android:paddingLeft="@dimen/margin_small"
+                android:paddingRight="@dimen/margin_small"
+                android:paddingBottom="@dimen/margin_small"
+                android:layout_marginRight="@dimen/margin_small"
+                android:layout_marginTop="@dimen/margin_small"
+                android:clickable="true"
+                android:onClick="renderAddressActivity"
+                android:textSize="@dimen/primary_text_size"
+                android:textColor="@color/text_color_myaccount"
+                android:layout_height="wrap_content" />
+
+            <ImageView
+                android:id="@+id/imgAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_small"
+                android:layout_below="@id/txtAddressLabel"
+                android:layout_marginLeft="@dimen/margin_xlarge_account"
+                android:src="@drawable/address"/>
+
+            <TextView
+                android:id="@+id/txtAddress"
+                android:layout_marginLeft="@dimen/margin_large"
+                android:layout_marginTop="@dimen/margin_small"
+                android:layout_below="@id/txtAddressLabel"
+                android:text="11 Sept 1990 asdf asdfasdf asdfasdf"
+                android:layout_toLeftOf="@id/txtViewAll"
+                android:layout_toRightOf="@id/imgAddress"
+                android:layout_width="wrap_content"
+                android:textSize="@dimen/primary_text_size"
+                android:textColor="@color/uiv3_primary_text_color"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:id="@+id/layoutEmptyAddress"
+            android:visibility="gone"
+            android:paddingBottom="@dimen/padding_small"
+            android:layout_height="wrap_content">
+
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/txtEmptyAddressLabel"
+                android:layout_marginTop="@dimen/margin_normal"
+                android:layout_marginLeft="@dimen/margin_large"
+                android:textSize="@dimen/primary_text_size"
+                android:textColor="@color/uiv3_secondary_text_color"
+                android:text="@string/address"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:id="@+id/txtAddAddress"
+                android:text="@string/addAddress"
+                android:layout_alignParentRight="true"
+                android:paddingTop="@dimen/margin_mini"
+                android:paddingLeft="@dimen/margin_small"
+                android:paddingRight="@dimen/margin_small"
+                android:paddingBottom="@dimen/margin_small"
+                android:layout_marginRight="@dimen/margin_small"
+                android:layout_marginTop="@dimen/margin_small"
+                android:clickable="true"
+                android:onClick="renderAddressActivity"
+                android:textSize="@dimen/primary_text_size"
+                android:textColor="@color/text_color_myaccount"
+                android:layout_height="wrap_content" />
+
+
+        </RelativeLayout>
+
+</LinearLayout>

@@ -604,4 +604,8 @@ public class Constants {
     public static final String UTM_TERM = "utm_term";
     public static final String UTM_CONTENT = "utm_content";
     public static final String UTM_CAMPAIGN = "utm_campaign";
+
+
+    public static final String UPDATE_PROFILE_OBJ = "updateProfileObj";
+    public static final String UPDATE_PROFILE_IMG_URL = "profilePicUrl";
 }

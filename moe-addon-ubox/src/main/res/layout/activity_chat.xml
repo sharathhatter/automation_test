@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp"
+    tools:context="com.moe.pushlibrary.activities.MoEChatActivity" >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:background="@android:color/white"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/red"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:id="@+id/messageNote"
+        android:gravity="center"
+        android:padding="2dp"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <ListView
+        android:id="@+id/listChat"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/messageNote"
+        android:layout_above="@+id/chatInput"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="5dp"
+        android:stackFromBottom="true"
+        android:transcriptMode="alwaysScroll"
+        android:visibility="gone" >
+    </ListView>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
+        android:indeterminate="true" />
+
+    <TextView
+        android:id="@+id/helperText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/progressBar"
+        android:gravity="center_horizontal"
+        android:text="@string/txt_loading" />
+
+    <RelativeLayout
+        android:id="@+id/chatInput"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:paddingLeft="5dp"
+        android:paddingTop="10dp" >
+
+        <ImageButton
+            android:id="@+id/btnSend"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:contentDescription="@string/content_desc_send"
+            android:src="@android:drawable/ic_menu_send" />
+
+        <EditText
+            android:id="@+id/inputMsg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignBottom="@+id/btnSend"
+            android:layout_alignTop="@+id/btnSend"
+            android:layout_toLeftOf="@+id/btnSend"
+            android:gravity="bottom"
+            android:hint="@string/hint_input_chat" />
+    </RelativeLayout>
+
+</RelativeLayout>

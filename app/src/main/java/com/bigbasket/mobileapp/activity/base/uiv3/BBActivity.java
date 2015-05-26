@@ -92,6 +92,7 @@ import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.view.uiv3.AnimatedLinearLayout;
 import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
 import com.melnykov.fab.FloatingBadgeCountView;
+import com.moengage.addon.ubox.UnifiedInboxActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -325,7 +326,12 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 addToMainLayout(new HomeFragment(), Constants.HOME);
                 break;
             case FragmentCodes.START_UPDATE_PROFILE:
-                addToMainLayout(new UpdateProfileFragment());
+                UpdateProfileFragment updateProfileFragment = new UpdateProfileFragment();
+                Bundle updateProfileBundle = new Bundle();
+                updateProfileBundle.putParcelable(Constants.UPDATE_PROFILE_OBJ,
+                        getIntent().getParcelableExtra(Constants.UPDATE_PROFILE_OBJ));
+                updateProfileFragment.setArguments(updateProfileBundle);
+                addToMainLayout(updateProfileFragment);
                 break;
             case FragmentCodes.START_CHANGE_PASSWD:
                 addToMainLayout(new ChangePasswordFragment());
@@ -454,6 +460,10 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             case R.id.action_search:
                 Intent searchIntent = new Intent(this, SearchableActivity.class);
                 startActivityForResult(searchIntent, NavigationCodes.START_SEARCH);
+                return false;
+            case R.id.action_moengage_ubox_hub:
+                Intent communicationHunIntent = new Intent(this, UnifiedInboxActivity.class);
+                startActivity(communicationHunIntent);
                 return false;
             case android.R.id.home:
                 finish();

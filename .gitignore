@@ -27,3 +27,5 @@ app/manifest-merger-release-report.txt
 moEngageSDKv420/build/*
 wibmoSDK/build/*
 wibmosdklib/build/*
+moEngageSDKv5.0/build/*
+captures/*
