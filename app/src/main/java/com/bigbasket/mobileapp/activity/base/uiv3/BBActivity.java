@@ -332,7 +332,12 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 addToMainLayout(new HomeFragment(), Constants.HOME);
                 break;
             case FragmentCodes.START_UPDATE_PROFILE:
-                addToMainLayout(new UpdateProfileFragment());
+                UpdateProfileFragment updateProfileFragment = new UpdateProfileFragment();
+                Bundle updateProfileBundle = new Bundle();
+                updateProfileBundle.putParcelable(Constants.UPDATE_PROFILE_OBJ,
+                        getIntent().getParcelableExtra(Constants.UPDATE_PROFILE_OBJ));
+                updateProfileFragment.setArguments(updateProfileBundle);
+                addToMainLayout(updateProfileFragment);
                 break;
             case FragmentCodes.START_CHANGE_PASSWD:
                 addToMainLayout(new ChangePasswordFragment());

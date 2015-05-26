@@ -215,8 +215,9 @@
     <string name="toAddToList">to add to the list</string>
 
     <!-- account -->
-    <string name="active_order_label">Active Orders</string>
-    <string name="past_order_label">View Order History</string>
+    <string name="my_order_label">My Orders</string>
+    <!--<string name="active_order_label">Active Orders</string>-->
+    <!--<string name="past_order_label">View Order History</string>-->
     <string name="update_my_profile">Update My Profile</string>
     <string name="change_password">Change Password</string>
     <string name="wallet_activity">My Wallet</string>
@@ -370,4 +371,12 @@
     <string name="productTabErrorMsg">Sorry, but an error occurred</string>
     <string name="welcome">Welcome</string>
     <string name="welcomeGuest">Welcome BigBasketeer</string>
+
+
+    <!-- myaccount -->
+    <string name="phone">Phone</string>
+    <string name="birthday">Birthday</string>
+    <string name="address">Address</string>
+    <string name="viewAll">View All</string>
+    <string name="addAddress">+ Add</string>
 </resources>

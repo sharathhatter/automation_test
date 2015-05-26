@@ -78,4 +78,8 @@
     <color name="see_thru_white_transparent_bkg">#22FFFFFF</color>
     <color name="skip_btn_bkg">#77000000</color>
     <color name="landing_page_item_bkg">#BB000000</color>
+
+    <color name="separator_line_color">#afafaf</color>
+    <color name="text_color_myaccount">#df212a</color>
+
 </resources>

@@ -135,4 +135,10 @@
         <attr name="shadowHeight" format="dimension" />
         <attr name="cornerRadius" format="dimension" />
     </declare-styleable>
+
+    <declare-styleable name="ImageViewCircle">
+        <attr name="border_width" format="dimension" />
+        <attr name="border_color" format="color" />
+        <attr name="border_overlay" format="boolean" />
+    </declare-styleable>
 </resources>

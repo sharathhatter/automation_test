@@ -62,55 +62,70 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware,
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        initiateUpdateProfileActivity();
+        UpdateProfileModel  updateProfileModel = getArguments().getParcelable(Constants.UPDATE_PROFILE_OBJ);
+        if(updateProfileModel==null) return;
+        initiateUpdateProfileActivity(updateProfileModel);
     }
 
 
-    public void initiateUpdateProfileActivity() {
+    public void initiateUpdateProfileActivity(UpdateProfileModel  updateProfileModel) {
         final View view = getContentView();
         if (view == null) return;
         editTextEmail = (EditText) view.findViewById(R.id.editTextEmail);
         editTextEmail.setTypeface(faceRobotoRegular);
+        editTextEmail.setText(updateProfileModel.getEmail());
 
         editTextFirstName = (EditText) view.findViewById(R.id.editTextFirstName);
         editTextFirstName.setTypeface(faceRobotoRegular);
         editTextFirstName.setNextFocusDownId(R.id.editTextLastName);
+        editTextFirstName.setText(updateProfileModel.getFirstName());
 
         editTextLastName = (EditText) view.findViewById(R.id.editTextLastName);
         editTextLastName.setTypeface(faceRobotoRegular);
+        editTextLastName.setText(updateProfileModel.getLastName());
 
         editTextDob = (EditText) view.findViewById(R.id.editTextDob);
         editTextDob.setTypeface(faceRobotoRegular);
+        editTextDob.setText(updateProfileModel.getDateOfBirth());
 
         editTextHouseAndDetails = (EditText) view.findViewById(R.id.editTextHouseAndDetails);
         editTextHouseAndDetails.setTypeface(faceRobotoRegular);
+        editTextHouseAndDetails.setText(updateProfileModel.getHouseNumber());
 
         editTextStreetDetails = (EditText) view.findViewById(R.id.editTextStreetDetails);
         editTextStreetDetails.setTypeface(faceRobotoRegular);
+        editTextStreetDetails.setText(updateProfileModel.getStreet());
 
         editTextArea = (AutoCompleteTextView) view.findViewById(R.id.editTextArea);
         editTextArea.setTypeface(faceRobotoRegular);
+        editTextArea.setText(updateProfileModel.getArea());
 
         editTextCity = (EditText) view.findViewById(R.id.editTextCity);
         editTextCity.setTypeface(faceRobotoRegular);
+        editTextCity.setText(updateProfileModel.getCityName());
 
         editTextMobileNumber = (EditText) view.findViewById(R.id.editTextMobileNumber);
         editTextMobileNumber.setTypeface(faceRobotoRegular);
+        editTextMobileNumber.setText(updateProfileModel.getMobileNumber());
 
         InputFilter maxLengthFilter = new InputFilter.LengthFilter(10);
         editTextMobileNumber.setFilters(new InputFilter[]{maxLengthFilter});
 
         editTextTelNumber = (EditText) view.findViewById(R.id.editTextTelNumber);
         editTextTelNumber.setTypeface(faceRobotoRegular);
+        editTextTelNumber.setText(updateProfileModel.getTelephoneNumber());
 
         editTextResAndComplex = (EditText) view.findViewById(R.id.editTextResAndComplex);
         editTextResAndComplex.setTypeface(faceRobotoRegular);
+        editTextResAndComplex.setText(updateProfileModel.getResidentialComplex());
 
         editTextLandmark = (EditText) view.findViewById(R.id.editTextLandmark);
         editTextLandmark.setTypeface(faceRobotoRegular);
+        editTextLandmark.setText(updateProfileModel.getLandmark());
 
         editTextPinCode = (EditText) view.findViewById(R.id.editTextPinCode);
         editTextPinCode.setTypeface(faceRobotoRegular);
+        editTextPinCode.setText(updateProfileModel.getPincode());
 
         chkReceivePromos = (CheckBox) view.findViewById(R.id.chkReceivePromos);
 
@@ -132,8 +147,6 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware,
 
         if (((BaseActivity) getActivity()).getSystemAreaInfo()) {
             getAreaInfo();
-        } else {
-            loadMemberDetails();
         }
         trackEvent(TrackingAware.UPDATE_PROFILE_SHOWN, null);
     }
@@ -146,6 +159,9 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware,
         showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.getAreaInfo(new CallbackGetAreaInfo<>(this));
     }
+
+
+    /**
 
     private void loadMemberDetails() {
         if (!DataUtil.isInternetAvailable(getActivity())) {
@@ -187,6 +203,8 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware,
         });
     }
 
+     **/
+
     public void showDatePickerDialog(View view) {
         DialogFragment newFragment = new DatePickerFragment(view);
         newFragment.show(getFragmentManager(), Constants.DATE_PICKER);
@@ -208,14 +226,14 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware,
 
     @Override
     public void onPinCodeFetchSuccess() {
-        loadMemberDetails();
+        //loadMemberDetails();
         ((BaseActivity) getActivity()).setAdapterArea(editTextArea, editTextPinCode);
         //initiateUpdateProfileActivity();
     }
 
     @Override
     public void onPinCodeFetchFailure() {
-        loadMemberDetails();
+        //loadMemberDetails();
         ((BaseActivity) getActivity()).setAdapterArea(editTextArea, editTextPinCode);
         //initiateUpdateProfileActivity();
     }
@@ -257,6 +275,7 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware,
         finish();
     }
 
+    /**
     private void fillUpdateProfileData(UpdateProfileModel updateProfileModel) {
         editTextEmail.setText(updateProfileModel.getEmail());
         editTextFirstName.setText(updateProfileModel.getFirstName());
@@ -273,6 +292,8 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware,
         editTextArea.setText(updateProfileModel.getArea());
         ((BaseActivity) getActivity()).setAdapterArea(editTextArea, editTextPinCode);
     }
+
+     **/
 
     @Override
     public void validateOtp(String otpCode) {

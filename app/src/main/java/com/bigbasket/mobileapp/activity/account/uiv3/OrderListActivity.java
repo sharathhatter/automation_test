@@ -64,8 +64,7 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
         mOrderType = getIntent().getStringExtra(Constants.ORDER);
         mIsInShopFromPreviousOrderMode = getIntent().getBooleanExtra(Constants.SHOP_FROM_PREVIOUS_ORDER, false);
         setTitle(mIsInShopFromPreviousOrderMode ? getString(R.string.shopFromPreviousOrder) :
-                mOrderType.equals(getString(R.string.active_label)) ? getString(R.string.active_order_label) :
-                        getString(R.string.past_order_title));
+                getString(R.string.my_order_label));
         if (savedInstanceState != null) {
             mOrders = savedInstanceState.getParcelableArrayList(Constants.ORDERS);
             if (mOrders != null) {
