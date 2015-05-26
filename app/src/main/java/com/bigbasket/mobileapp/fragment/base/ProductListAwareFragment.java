@@ -164,6 +164,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
             AuthParameters authParameters = AuthParameters.getInstance(getActivity());
             ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
                     .setCommonTypeface(faceRobotoRegular)
+                    .setSansSerifMediumTypeface(faceRobotoMedium)
                     .setRupeeTypeface(faceRupee)
                     .setHandler(handler)
                     .setLoggedInMember(!authParameters.isAuthTokenEmpty())

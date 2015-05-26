@@ -144,7 +144,6 @@ public abstract class BaseActivity extends AppCompatActivity implements COMarket
         faceRobotoRegular = FontHolder.getInstance(this).getFaceRobotoRegular();
         faceRobotoLight = FontHolder.getInstance(this).getFaceRobotoLight();
         faceRobotoItalic = FontHolder.getInstance(this).getFaceRobotoItalic();
-        faceRobotoMedium = FontHolder.getInstance(this).getFaceRobotoItalic();
         faceRobotoMedium = FontHolder.getInstance(this).getFaceRobotoMedium();
         moEHelper = MoEngageWrapper.getMoHelperObj(getCurrentActivity());
         LocalyticsWrapper.integrate(this);

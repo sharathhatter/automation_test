@@ -90,47 +90,21 @@ public final class ProductView {
         imgProduct.setOnClickListener(productDetailOnClickListener);
     }
 
-    private static <T> void setChildProducts(final ProductViewHolder productViewHolder, Product product,
+    private static <T> void setChildProducts(final ProductViewHolder productViewHolder, final Product product,
                                              final String baseImgUrl,
                                              final ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                              final T productDataAware, final String navigationCtx) {
         final List<Product> childProducts = product.getAllProducts();
         boolean hasChildren = childProducts != null && childProducts.size() > 0;
         final Button btnMorePackSizes = productViewHolder.getBtnMorePackSizes();
-        btnMorePackSizes.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
+        btnMorePackSizes.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
         TextView txtPackageDesc = productViewHolder.getTxtPackageDesc();
-        txtPackageDesc.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
+        txtPackageDesc.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
         if (hasChildren) {
             btnMorePackSizes.setText(product.getWeightAndPackDesc());
-            btnMorePackSizes.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(((ActivityAware) productDataAware).getCurrentActivity());
-                    final AlertDialog dialog = builder.create();
-                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                    ListView listView = new ListView(((ActivityAware) productDataAware).getCurrentActivity());
-
-                    ProductListSpinnerAdapter productListSpinnerAdapter = new ProductListSpinnerAdapter(((ActivityAware) productDataAware).getCurrentActivity(),
-                            childProducts, productViewDisplayDataHolder.getSansSerifMediumTypeface(),
-                            productViewDisplayDataHolder.getRupeeTypeface());
-                    listView.setAdapter(productListSpinnerAdapter);
-                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            Product childProduct = childProducts.get(position);
-                            btnMorePackSizes.setText(childProduct.getWeightAndPackDesc());
-                            setProductView(productViewHolder, childProduct, baseImgUrl,
-                                    new ProductDetailOnClickListener(childProduct.getSku(), (ActivityAware) productDataAware),
-                                    productViewDisplayDataHolder, true, productDataAware, navigationCtx);
-                            if (dialog.isShowing()) {
-                                dialog.dismiss();
-                            }
-                        }
-                    });
-                    dialog.setView(listView, 0, 0, 0, 0);
-                    dialog.show();
-                }
-            });
+            btnMorePackSizes.setOnClickListener(
+                    new OnShowChildProductDropdownClickListener<>(productDataAware, productViewDisplayDataHolder,
+                            product, productViewHolder, baseImgUrl, navigationCtx));
             btnMorePackSizes.setVisibility(View.VISIBLE);
             txtPackageDesc.setVisibility(View.GONE);
         } else {
@@ -165,10 +139,10 @@ public final class ProductView {
                                  ProductViewDisplayDataHolder productViewDisplayDataHolder) {
         TextView txtSalePrice = productViewHolder.getTxtSalePrice();
         boolean hasSavings = product.hasSavings();
-        txtSalePrice.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
+        txtSalePrice.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
 
         TextView txtMrp = productViewHolder.getTxtMrp();
-        txtMrp.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
+        txtMrp.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
 
         if (hasSavings && !TextUtils.isEmpty(product.getMrp())) {
             String prefix = "`";
@@ -210,7 +184,7 @@ public final class ProductView {
                         labelLength, Spannable.SPAN_EXCLUSIVE_INCLUSIVE
                 );
                 txtPromoAddSavings.setVisibility(View.VISIBLE);
-                txtPromoAddSavings.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
+                txtPromoAddSavings.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
                 txtPromoAddSavings.setText(savingSpannable);
             } else {
                 txtPromoAddSavings.setVisibility(View.GONE);
@@ -221,7 +195,7 @@ public final class ProductView {
 
             //Show Promo Name
             String promoDesc = product.getProductPromoInfo().getPromoDesc();
-            txtPromoDesc.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
+            txtPromoDesc.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
             txtPromoDesc.setVisibility(View.VISIBLE);
             txtPromoDesc.setText(promoDesc);
             final int promoId = product.getProductPromoInfo().getId();
@@ -413,6 +387,67 @@ public final class ProductView {
             viewIncBasketQty.setVisibility(View.GONE);
             imgAddToBasket.setVisibility(View.GONE);
             //productViewHolder.itemView.setBackgroundColor(Color.WHITE);
+        }
+    }
+
+    public static class OnShowChildProductDropdownClickListener<T> implements View.OnClickListener {
+
+        private T productDataAware;
+        private ProductViewDisplayDataHolder productViewDisplayDataHolder;
+        private Product product;
+        private List<Product> childProducts;
+        private ProductViewHolder productViewHolder;
+        private String baseImgUrl;
+        private String navigationCtx;
+        private Product currentProduct;
+
+        public OnShowChildProductDropdownClickListener(T productDataAware, ProductViewDisplayDataHolder productViewDisplayDataHolder,
+                                                       Product product, ProductViewHolder productViewHolder, String baseImgUrl, String navigationCtx) {
+            this.productDataAware = productDataAware;
+            this.productViewDisplayDataHolder = productViewDisplayDataHolder;
+            this.product = product;
+            this.currentProduct = product;
+            this.productViewHolder = productViewHolder;
+            this.baseImgUrl = baseImgUrl;
+            this.navigationCtx = navigationCtx;
+            this.childProducts = product.getAllProducts();
+        }
+
+        @Override
+        public void onClick(View v) {
+            final Button btnMorePackSizes = (Button) v;
+            AlertDialog.Builder builder = new AlertDialog.Builder(((ActivityAware) productDataAware).getCurrentActivity());
+            final AlertDialog dialog = builder.create();
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            View childDropdown = ((ActivityAware) productDataAware).getCurrentActivity().getLayoutInflater()
+                    .inflate(R.layout.uiv3_child_product_dialog, null);
+            ListView listView = (ListView) childDropdown.findViewById(R.id.lstChildProducts);
+
+            TextView txtChildDropdownTitle = (TextView) childDropdown.findViewById(R.id.txtChildDropdownTitle);
+            txtChildDropdownTitle.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
+            txtChildDropdownTitle.setText("Select Quantity");
+
+            final ProductListSpinnerAdapter productListSpinnerAdapter = new ProductListSpinnerAdapter(((ActivityAware) productDataAware).getCurrentActivity(),
+                    childProducts, productViewDisplayDataHolder.getSerifTypeface(),
+                    productViewDisplayDataHolder.getRupeeTypeface(), product);
+            productListSpinnerAdapter.setCurrentProduct(currentProduct);
+            listView.setAdapter(productListSpinnerAdapter);
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Product childProduct = childProducts.get(position);
+                    btnMorePackSizes.setText(childProduct.getWeightAndPackDesc());
+                    currentProduct = childProduct;
+                    setProductView(productViewHolder, childProduct, baseImgUrl,
+                            new ProductDetailOnClickListener(childProduct.getSku(), (ActivityAware) productDataAware),
+                            productViewDisplayDataHolder, true, productDataAware, navigationCtx);
+                    if (dialog.isShowing()) {
+                        dialog.dismiss();
+                    }
+                }
+            });
+            dialog.setView(childDropdown, 0, 0, 0, 0);
+            dialog.show();
         }
     }
 }

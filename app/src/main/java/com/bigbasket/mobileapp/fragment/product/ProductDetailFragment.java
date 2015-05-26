@@ -130,6 +130,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
                 ? mProduct.getDescription() : getTitle());
         ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
                 .setCommonTypeface(faceRobotoRegular)
+                .setSansSerifMediumTypeface(faceRobotoMedium)
                 .setRupeeTypeface(faceRupee)
                 .setHandler(handler)
                 .setLoggedInMember(!AuthParameters.getInstance(getActivity()).isAuthTokenEmpty())

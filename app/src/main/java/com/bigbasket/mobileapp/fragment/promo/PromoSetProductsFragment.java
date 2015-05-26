@@ -248,6 +248,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
 
         ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
                 .setCommonTypeface(faceRobotoRegular)
+                .setSansSerifMediumTypeface(faceRobotoMedium)
                 .setRupeeTypeface(faceRupee)
                 .setHandler(handler)
                 .setLoggedInMember(!AuthParameters.getInstance(getActivity()).isAuthTokenEmpty())

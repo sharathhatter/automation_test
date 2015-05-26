@@ -181,6 +181,7 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
 
         ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
                 .setCommonTypeface(faceRobotoRegular)
+                .setSansSerifMediumTypeface(faceRobotoMedium)
                 .setHandler(new BigBasketMessageHandler<>(getCurrentActivity()))
                 .setLoggedInMember(!AuthParameters.getInstance(getActivity()).isAuthTokenEmpty())
                 .setShowShoppingListBtn(false)
