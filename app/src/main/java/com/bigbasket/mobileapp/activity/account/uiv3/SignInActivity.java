@@ -8,7 +8,6 @@ import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -18,7 +17,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -50,21 +48,16 @@ public class SignInActivity extends BackButtonActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        FrameLayout contentView = (FrameLayout) findViewById(R.id.content_frame);
-        LayoutInflater inflater = getLayoutInflater();
-        View baseView = inflater.inflate(R.layout.uiv3_login, contentView, false);
-        contentView.addView(baseView);
-
         setTitle(getString(R.string.signIn));
 
-        setUpSocialButtons((Button) baseView.findViewById(R.id.plus_sign_in_button),
-                (Button) baseView.findViewById(R.id.btnFBLogin));
+        setUpSocialButtons(findViewById(R.id.plus_sign_in_button),
+                findViewById(R.id.btnFBLogin));
 
         // Set up the login form.
-        mEmailView = (AutoCompleteTextView) baseView.findViewById(R.id.emailInput);
+        mEmailView = (AutoCompleteTextView) findViewById(R.id.emailInput);
         populateAutoComplete(mEmailView);
 
-        mPasswordView = (EditText) baseView.findViewById(R.id.editTextPasswd);
+        mPasswordView = (EditText) findViewById(R.id.editTextPasswd);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
@@ -77,7 +70,7 @@ public class SignInActivity extends BackButtonActivity {
             }
         });
 
-        Button mEmailSignInButton = (Button) baseView.findViewById(R.id.btnLogin);
+        Button mEmailSignInButton = (Button) findViewById(R.id.btnLogin);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -87,7 +80,7 @@ public class SignInActivity extends BackButtonActivity {
         });
         mEmailSignInButton.setTypeface(faceRobotoRegular);
 
-        TextView txtForgotPasswd = (TextView) baseView.findViewById(R.id.txtForgotPasswd);
+        TextView txtForgotPasswd = (TextView) findViewById(R.id.txtForgotPasswd);
         txtForgotPasswd.setTypeface(faceRobotoRegular);
         txtForgotPasswd.setOnClickListener(new OnClickListener() {
             @Override
@@ -97,12 +90,12 @@ public class SignInActivity extends BackButtonActivity {
             }
         });
 
-        mChkRememberMe = (CheckBox) baseView.findViewById(R.id.chkRememberMe);
+        mChkRememberMe = (CheckBox) findViewById(R.id.chkRememberMe);
         mChkRememberMe.setTypeface(faceRobotoRegular);
 
         initializeRememberedDataForLoginInput();
 
-        CheckBox chkShowPassword = (CheckBox) baseView.findViewById(R.id.chkShowPasswd);
+        CheckBox chkShowPassword = (CheckBox) findViewById(R.id.chkShowPasswd);
         chkShowPassword.setTypeface(faceRobotoRegular);
         chkShowPassword.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -123,8 +116,13 @@ public class SignInActivity extends BackButtonActivity {
             eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX));
             trackEvent(TrackingAware.LOGIN_SHOWN, eventAttribs);
         }
-        setTermsAndCondition((TextView) baseView.findViewById(R.id.txtSigninTermsAndCond), getString(R.string.byLoggingIn),
+        setTermsAndCondition((TextView) findViewById(R.id.txtSigninTermsAndCond), getString(R.string.byLoggingIn),
                 getString(R.string.termsAndCondHeading), getString(R.string.authFooterSeparator), getString(R.string.privacyPolicy));
+    }
+
+    @Override
+    public int getMainLayout() {
+        return R.layout.uiv3_login;
     }
 
     @Override

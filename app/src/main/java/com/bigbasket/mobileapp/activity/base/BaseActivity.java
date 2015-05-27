@@ -778,7 +778,7 @@ public abstract class BaseActivity extends AppCompatActivity implements COMarket
                 Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
         spannableString.setSpan(new TncClickListener(), prefix.length(), prefix.length() + tncText.length(),
                 Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-        spannableString.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.uiv3_secondary_text_color)), prefix.length(), prefix.length() + tncText.length(),
+        spannableString.setSpan(new ForegroundColorSpan(Color.WHITE), prefix.length(), prefix.length() + tncText.length(),
                 Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
 
         spannableString.setSpan(new UnderlineSpan(), prefix.length() + tncText.length() + separator.length(),
@@ -787,7 +787,7 @@ public abstract class BaseActivity extends AppCompatActivity implements COMarket
         spannableString.setSpan(new PrivacyPolicyClickListener(), prefix.length() + tncText.length() + separator.length(),
                 prefix.length() + tncText.length() + separator.length() + privacyPolicyTxt.length(),
                 Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-        spannableString.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.uiv3_secondary_text_color)), prefix.length() + tncText.length() + separator.length(),
+        spannableString.setSpan(new ForegroundColorSpan(Color.WHITE), prefix.length() + tncText.length() + separator.length(),
                 prefix.length() + tncText.length() + separator.length() + privacyPolicyTxt.length(),
                 Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
         txtVw.setText(spannableString);

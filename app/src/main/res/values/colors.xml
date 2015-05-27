@@ -13,6 +13,7 @@
     <color name="dark_red">#9A2722</color>
     <color name="dark_green">#ff14a209</color>
     <color name="white">#ffffff</color>
+    <color name="translucent_white">#66ffffff</color>
     <color name="footer_background">#555555</color>
     <color name="heading">#f4f3f2</color>
     <color name="strokeLine">#d1d2d3</color>
@@ -52,10 +53,11 @@
     <color name="uiv3_link_color">#66009688</color>
     <color name="uiv3_dark_bkg">#333333</color>
     <color name="uiv3_orange">#E7685D</color>
-    <color name="gplus_red">#9b1b0c</color>
+    <color name="gplus_red">#ce2621</color>
     <color name="uiv3_grey_status_bar_color">#bdbdbd</color>
     <color name="uiv3_dialog_header_text_bkg">#df212a</color>
     <color name="uiv3_expandable_row_header_bkg">#EEEEEE</color>
+    <color name="uiv3_rounded_btn_bkg">#e73937</color>
 
     <!-- LetterImageViewColor -->
     <string-array name="letterImageViewColors" translatable="false">
@@ -77,11 +79,11 @@
     </string-array>
 
     <color name="fbutton_color_asbestos">#7f8c8d</color>
-    <color name="fb_btn_color">#0e2c70</color>
+    <color name="fb_btn_color">#2f4589</color>
     <color name="see_thru_transparent_bkg">#33727272</color>
     <color name="see_thru_white_transparent_bkg">#22FFFFFF</color>
     <color name="skip_btn_bkg">#77000000</color>
-    <color name="landing_page_item_bkg">#BB000000</color>
+    <color name="landing_page_header_bkg">#66000000</color>
 
     <color name="separator_line_color">#afafaf</color>
     <color name="text_color_myaccount">#df212a</color>

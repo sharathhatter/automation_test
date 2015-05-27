@@ -83,6 +83,8 @@
     <string name="signOut">Logout</string>
     <string name="signIn">Login</string>
     <string name="signUp">Sign Up</string>
+    <string name="signUpCaps">SIGN UP</string>
+    <string name="signInCaps">LOG IN</string>
     <string name="HNDetails">House No &amp; Details</string>
     <string name="addressNick">Address nickname (Optional)</string>
     <string name="contactFirstName">Contact first name</string>
@@ -355,7 +357,7 @@
     <string name="nowShoppingListMsg1">You have not created any shopping list yet.</string>
     <string name="nowShoppingListMsg2">Start creating now for easy shopping.</string>
     <string name="noSmartBasketProducts">It will be updated 3 days after your first order is delivered! Enjoy awesome grocery shopping experience with BigBasket Mobile app!</string>
-    <string name="skipWithArrow">SKIP &gt;</string>
+    <string name="skip">SKIP</string>
     <string name="signinAndStart">Login and Get Started</string>
     <string name="loginToContinue">Please login to continue</string>
     <string name="byLoggingIn">By logging in, you agree to BigBasket\'s\u00A0</string>
