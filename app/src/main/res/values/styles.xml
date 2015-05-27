@@ -24,11 +24,10 @@
     </style>
 
     <style name="LandingPageTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimaryDark">#44000000</item>
         <item name="colorControlNormal">@color/white</item>
         <item name="colorControlHighlight">@color/white</item>
         <item name="colorControlActivated">@color/white</item>
-        <item name="alertDialogTheme">@style/Theme.AppCompat.Light.Dialog.Alert</item>
+        <item name="alertDialogTheme">@style/BaseAppTheme.AlertDialogStyle</item>
     </style>
 
     <style name="BBAppTheme" parent="BaseAppTheme" />
