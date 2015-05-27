@@ -6,8 +6,6 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -16,6 +14,7 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.handler.OnRightCompoundDrawableClicked;
 import com.bigbasket.mobileapp.interfaces.CityListDisplayAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.City;
@@ -37,6 +36,7 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
     private EditText mLastNameView;
     private Spinner mCitySpinner;
     private AutoCompleteTextView mEmailView;
+    private boolean mIsPasswordVisible;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -71,11 +71,11 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
         });
         btnSignUp.setTypeface(faceRobotoRegular);
 
-        CheckBox chkShowPassword = (CheckBox) findViewById(R.id.chkShowPasswd);
-        chkShowPassword.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        mPasswordView.setOnTouchListener(new OnRightCompoundDrawableClicked() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                togglePasswordView(mPasswordView, isChecked);
+            public void onRightDrawableClicked() {
+                mIsPasswordVisible = !mIsPasswordVisible;
+                togglePasswordView(mPasswordView, mIsPasswordVisible);
             }
         });
 

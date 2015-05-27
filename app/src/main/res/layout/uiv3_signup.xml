@@ -155,6 +155,8 @@
                 android:id="@+id/editTextPasswd"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:drawablePadding="@dimen/padding_mini"
+                android:drawableRight="@drawable/ic_visibility_white_18dp"
                 android:ems="10"
                 android:hint="@string/password"
                 android:imeActionLabel="@string/action_sign_in_short"
@@ -173,14 +175,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="1dp"
                 android:background="@android:color/transparent" />
-
-            <CheckBox
-                android:id="@+id/chkShowPasswd"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/showPassword"
-                android:textColor="@color/white"
-                android:textSize="@dimen/secondary_text_size" />
 
             <Button
                 android:id="@+id/btnRegister"

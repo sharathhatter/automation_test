@@ -25,6 +25,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
+import com.bigbasket.mobileapp.handler.OnRightCompoundDrawableClicked;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
@@ -43,6 +44,7 @@ public class SignInActivity extends BackButtonActivity {
     private EditText mPasswordView;
     private CheckBox mChkRememberMe;
     private AutoCompleteTextView mEmailView;
+    private boolean mIsPasswordVisible;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -67,6 +69,13 @@ public class SignInActivity extends BackButtonActivity {
                     hideKeyboard(getCurrentActivity(), mPasswordView);
                 }
                 return false;
+            }
+        });
+        mPasswordView.setOnTouchListener(new OnRightCompoundDrawableClicked() {
+            @Override
+            public void onRightDrawableClicked() {
+                mIsPasswordVisible = !mIsPasswordVisible;
+                togglePasswordView(mPasswordView, mIsPasswordVisible);
             }
         });
 
@@ -94,15 +103,6 @@ public class SignInActivity extends BackButtonActivity {
         mChkRememberMe.setTypeface(faceRobotoRegular);
 
         initializeRememberedDataForLoginInput();
-
-        CheckBox chkShowPassword = (CheckBox) findViewById(R.id.chkShowPasswd);
-        chkShowPassword.setTypeface(faceRobotoRegular);
-        chkShowPassword.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                togglePasswordView(mPasswordView, isChecked);
-            }
-        });
 
         mChkRememberMe.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

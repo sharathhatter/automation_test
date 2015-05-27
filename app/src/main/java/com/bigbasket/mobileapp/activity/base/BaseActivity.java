@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableString;
@@ -755,13 +757,20 @@ public abstract class BaseActivity extends AppCompatActivity implements COMarket
     }
 
     public void togglePasswordView(EditText passwordEditText, boolean show) {
+        Drawable rightDrawable;
         if (!show) {
+            rightDrawable = ContextCompat.getDrawable(getCurrentActivity(),
+                    R.drawable.ic_visibility_white_18dp);
             passwordEditText.setTransformationMethod(PasswordTransformationMethod.getInstance());
+            passwordEditText.setCompoundDrawablesWithIntrinsicBounds(null, null, rightDrawable, null);
             logShowPasswordEnabled(TrackEventkeys.YES, TrackEventkeys.NAVIGATION_CTX_LOGIN_PAGE);
         } else {
+            rightDrawable = ContextCompat.getDrawable(getCurrentActivity(),
+                    R.drawable.ic_visibility_off_white_18dp);
             passwordEditText.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
             logShowPasswordEnabled(TrackEventkeys.NO, TrackEventkeys.NAVIGATION_CTX_LOGIN_PAGE);
         }
+        passwordEditText.setCompoundDrawablesWithIntrinsicBounds(null, null, rightDrawable, null);
     }
 
     private void logShowPasswordEnabled(String enabled, String navigationCtx) {
