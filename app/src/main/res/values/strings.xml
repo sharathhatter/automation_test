@@ -161,6 +161,7 @@
     <string name="password">Password</string>
     <string name="editPin">Edit</string>
     <string name="edit">Edit</string>
+    <string name="renameShoppingList">Rename Shopping List</string>
     <string name="remember">Remember Me</string>
     <string name="showPassword">Show Password</string>
     <string name="forgotPasswd">Forgot Password?</string>
@@ -228,7 +229,6 @@
     <string name="view_edit_pin_label">Delivery Pin</string>
     <string name="active_label">active</string>
     <string name="past_label">past</string>
-    <string name="editShoppingList">Edit Shopping List</string>
     <string name="deleteShoppingList">Delete Shopping List</string>
     <string name="past_order_title">Past Orders</string>
 
@@ -351,6 +351,7 @@
     <string name="minus">&#x2013;</string>
     <string name="plus">&#43;</string>
     <string name="addAllProducts">Are you sure you want to add all products to the basket?</string>
+    <string name="addAllProductsDisplay">ADD ALL ITEMS TO THE BASKET</string>
     <string name="noAddressMsg1">You have not told us your delivery address.</string>
     <string name="noAddressMsg2">Add one now to shop easy.</string>
     <string name="nowShoppingListMsg1">You have not created any shopping list yet.</string>

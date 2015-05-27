@@ -10,6 +10,7 @@ public interface NavigationCodes {
     int FILTER_APPLIED = 1346;
     int START_SEARCH = 1347;
     int LAUNCH_FRAGMENT = 1348;
+    int SHOPPING_LIST_CHANGED = 1349;
 
     int CO_RESERVE_QUANTITY_CHECK_OK = 102;
     int ADD_TO_SHOPPINGLIST_OK = 1221;

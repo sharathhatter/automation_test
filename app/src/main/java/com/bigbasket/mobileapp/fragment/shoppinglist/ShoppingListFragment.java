@@ -1,11 +1,9 @@
 package com.bigbasket.mobileapp.fragment.shoppinglist;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,16 +15,11 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
-import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
-import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
-import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.fragment.order.SlotSelectionFragment;
-import com.bigbasket.mobileapp.handler.OnDialogShowListener;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -34,17 +27,12 @@ import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.task.uiv3.CreateShoppingListTask;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListNamesTask;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.InputDialog;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 
 public class ShoppingListFragment extends BaseFragment implements ShoppingListNamesAware {
@@ -155,7 +143,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
     private void launchShoppingListSummary(ShoppingListName shoppingListName) {
         Intent intent = new Intent(getActivity(), ShoppingListSummaryActivity.class);
         intent.putExtra(Constants.SHOPPING_LIST_NAME, shoppingListName);
-        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+        startActivityForResult(intent, NavigationCodes.SHOPPING_LIST_CHANGED);
     }
 
     @Override
@@ -198,132 +186,6 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
     @Override
     public void onNewShoppingListCreated(String listName) {
         loadShoppingLists();
-    }
-
-    private void showEditShoppingListDialog(final ShoppingListName shoppingListName) {
-        if (shoppingListName.isSystem()) {
-            if (getCurrentActivity() != null) {
-                getCurrentActivity().showAlertDialog(null, getString(R.string.isSystemShoppingListMsg));
-            }
-            return;
-        }
-        new InputDialog<ShoppingListFragment>(this, R.string.change, R.string.cancel,
-                R.string.changeShoppingListName, R.string.shoppingListNameDialogTextHint,
-                shoppingListName.getName()) {
-            @Override
-            public void onPositiveButtonClicked(String inputText) {
-                if (getCurrentActivity() == null) return;
-                editShoppingListName(shoppingListName, inputText);
-            }
-        }.show();
-    }
-
-    private void showDeleteShoppingListDialog(final ShoppingListName shoppingListName) {
-        if (shoppingListName.isSystem()) {
-            if (getCurrentActivity() != null) {
-                getCurrentActivity().showAlertDialog(null, getString(R.string.isSystemShoppingListMsg));
-            }
-            return;
-        }
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.deleteQuestion)
-                .setMessage(R.string.deleteShoppingListText)
-                .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        deleteShoppingList(shoppingListName);
-                    }
-                })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-        AlertDialog alertDialog = builder.create();
-        if (isSuspended())
-            return;
-        alertDialog.setOnShowListener(new OnDialogShowListener());
-        alertDialog.show();
-    }
-
-    public void editShoppingListName(ShoppingListName shoppingListName, String newName) {
-        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
-        showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.editShoppingList(shoppingListName.getSlug(), newName, new Callback<OldBaseApiResponse>() {
-            @Override
-            public void success(OldBaseApiResponse oldBaseApiResponse, Response response) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
-                switch (oldBaseApiResponse.status) {
-                    case Constants.OK:
-                        Toast.makeText(getActivity(), getString(R.string.shoppingListUpdated),
-                                Toast.LENGTH_LONG).show();
-                        trackEvent(TrackingAware.SHOP_LST_NAME_CHANGED, null);
-                        loadShoppingLists();
-                        break;
-                    default:
-                        handler.sendEmptyMessage(oldBaseApiResponse.getErrorTypeAsInt(),
-                                oldBaseApiResponse.message);
-                        break;
-                }
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
-                handler.handleRetrofitError(error);
-            }
-        });
-    }
-
-    public void deleteShoppingList(final ShoppingListName shoppingListName) {
-        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
-        showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.deleteShoppingList(shoppingListName.getSlug(), new Callback<OldBaseApiResponse>() {
-            @Override
-            public void success(OldBaseApiResponse oldBaseApiResponse, Response response) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
-                switch (oldBaseApiResponse.status) {
-                    case Constants.OK:
-                        String msg = "\"" + shoppingListName.getName() + "\" was deleted successfully";
-                        Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
-                        trackEvent(TrackingAware.SHOP_LST_DELETED, null);
-                        loadShoppingLists();
-                        break;
-                    default:
-                        handler.sendEmptyMessage(oldBaseApiResponse.getErrorTypeAsInt(),
-                                oldBaseApiResponse.message);
-                        break;
-                }
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
-                handler.handleRetrofitError(error);
-            }
-        });
     }
 
     @Override
@@ -422,64 +284,6 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
 
                 convertView.setPadding(convertView.getPaddingLeft(), position == 0 ? dp16 : dp8,
                         convertView.getPaddingRight(), position == getCount() - 1 ? dp16 : dp8);
-
-//                if (shoppingListName.isSystem()) {
-//                    ImageView imgShoppingListAdditionalAction = shoppingListViewHolder.getImgShoppingListAdditionalAction();
-//                    if (imgShoppingListAdditionalAction != null) {
-//                        imgShoppingListAdditionalAction.setVisibility(View.GONE);
-//                    } else {
-//                        ImageView imgEditShopList = shoppingListViewHolder.getImgEditShopList();
-//                        ImageView imgDeleteShoppingList = shoppingListViewHolder.getImgDeleteShoppingList();
-//                        imgEditShopList.setVisibility(View.GONE);
-//                        imgDeleteShoppingList.setVisibility(View.GONE);
-//                    }
-//                } else {
-//                    ImageView imgShoppingListAdditionalAction = shoppingListViewHolder.getImgShoppingListAdditionalAction();
-//                    if (imgShoppingListAdditionalAction != null) {
-//                        imgShoppingListAdditionalAction.setVisibility(View.VISIBLE);
-//                        imgShoppingListAdditionalAction.setOnClickListener(new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View v) {
-//                                PopupMenu popupMenu = new PopupMenu(getActivity(), v);
-//                                MenuInflater menuInflater = popupMenu.getMenuInflater();
-//                                menuInflater.inflate(R.menu.shopping_list_item_menu, popupMenu.getMenu());
-//                                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-//                                    @Override
-//                                    public boolean onMenuItemClick(MenuItem menuItem) {
-//                                        switch (menuItem.getItemId()) {
-//                                            case R.id.menuEditShoppingList:
-//                                                showEditShoppingListDialog(shoppingListName);
-//                                                return true;
-//                                            case R.id.menuDeleteShoppingList:
-//                                                showDeleteShoppingListDialog(shoppingListName);
-//                                                return true;
-//                                        }
-//                                        return false;
-//                                    }
-//                                });
-//                                popupMenu.show();
-//                            }
-//                        });
-//                    } else {
-//                        ImageView imgEditShopList = shoppingListViewHolder.getImgEditShopList();
-//                        imgEditShopList.setVisibility(View.VISIBLE);
-//                        imgEditShopList.setOnClickListener(new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View v) {
-//                                showEditShoppingListDialog(shoppingListName);
-//                            }
-//                        });
-//
-//                        ImageView imgDeleteShoppingList = shoppingListViewHolder.getImgDeleteShoppingList();
-//                        imgDeleteShoppingList.setVisibility(View.VISIBLE);
-//                        imgDeleteShoppingList.setOnClickListener(new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View v) {
-//                                showDeleteShoppingListDialog(shoppingListName);
-//                            }
-//                        });
-//                    }
-//                }
             } else {
                 String headerText = shoppingListNames.get(position).toString();
                 SlotSelectionFragment.SlotHeaderViewHolder holder;
@@ -521,6 +325,16 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
                 }
                 return txtShopLstDesc;
             }
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        setSuspended(false);
+        if (resultCode == NavigationCodes.SHOPPING_LIST_CHANGED) {
+            loadShoppingLists();
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 }

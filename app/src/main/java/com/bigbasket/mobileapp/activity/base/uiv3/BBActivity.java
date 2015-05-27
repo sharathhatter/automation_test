@@ -113,7 +113,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     private String currentFragmentTag;
     private RecyclerView mNavRecyclerView;
     private AnimatedLinearLayout mSubNavLayout;
-    private Menu mMenu;
     private FloatingBadgeCountView mBtnViewBasket;
 
     @Override
@@ -285,13 +284,11 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         setOptionsMenu(menu);
-        mMenu = menu;
         return super.onCreateOptionsMenu(menu);
     }
 
     protected void setOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.action_menu, menu);
+        getMenuInflater().inflate(R.menu.action_menu, menu);
     }
 
     @Override
@@ -905,10 +902,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
     public String getScreenTag() {
         return null;
-    }
-
-    public Menu getMenu() {
-        return mMenu;
     }
 
     @Override
