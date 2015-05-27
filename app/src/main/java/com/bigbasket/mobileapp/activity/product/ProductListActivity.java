@@ -373,7 +373,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         Toolbar toolbar = getToolbar();
         ViewGroup layoutChildToolbarContainer = (ViewGroup) findViewById(R.id.layoutChildToolbarContainer);
         ListView listChildProducts = (ListView) findViewById(R.id.listChildProducts);
-        TextView txtChildDropdownTitle = (TextView) findViewById(R.id.txtChildDropdownTitle);
+        TextView txtChildDropdownTitle = (TextView) findViewById(R.id.txtListDialogTitle);
         if (headSection != null && headSection.getSectionItems() != null
                 && headSection.getSectionItems().size() > 0) {
 

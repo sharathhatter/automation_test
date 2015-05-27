@@ -22,7 +22,7 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/txtChildDropdownTitle"
+            android:id="@+id/txtListDialogTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableRight="@drawable/ic_arrow_drop_down_grey600_24dp"

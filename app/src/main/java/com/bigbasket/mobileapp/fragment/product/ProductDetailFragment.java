@@ -25,6 +25,7 @@ import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
+import com.bigbasket.mobileapp.task.uiv3.CreateShoppingListTask;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListDoAddDeleteTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FontHolder;
@@ -221,6 +222,19 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
                 new ShoppingListDoAddDeleteTask<>(this, selectedShoppingListNames,
                         ShoppingListOption.ADD_TO_LIST);
         shoppingListDoAddDeleteTask.startTask();
+    }
+
+    @Override
+    public void createNewShoppingList() {
+        new CreateShoppingListTask<>(this).showDialog();
+    }
+
+    @Override
+    public void onNewShoppingListCreated(String listName) {
+        if (getCurrentActivity() == null) return;
+        Toast.makeText(getCurrentActivity(),
+                "List \"" + listName
+                        + "\" was created successfully", Toast.LENGTH_LONG).show();
     }
 
     @Override

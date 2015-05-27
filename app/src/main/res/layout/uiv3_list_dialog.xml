@@ -5,7 +5,7 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/txtChildDropdownTitle"
+        android:id="@+id/txtListDialogTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/uiv3_dialog_header_text_bkg"
@@ -18,7 +18,7 @@
         android:textStyle="bold" />
 
     <ListView
-        android:id="@+id/lstChildProducts"
+        android:id="@+id/lstDialog"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:divider="@null"

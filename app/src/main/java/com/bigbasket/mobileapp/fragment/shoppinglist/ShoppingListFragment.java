@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -35,8 +34,10 @@ import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
+import com.bigbasket.mobileapp.task.uiv3.CreateShoppingListTask;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListNamesTask;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.InputDialog;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.melnykov.fab.FloatingActionButton;
@@ -143,37 +144,11 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
         fabCreateShoppingList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showCreateShoppingListDialog();
+                createNewShoppingList();
             }
         });
         contentView.removeAllViews();
         contentView.addView(base);
-    }
-
-    private void showCreateShoppingListDialog() {
-        View base = getActivity().getLayoutInflater().inflate(R.layout.uiv3_editable_dialog, null);
-        final EditText editTextDialog = (EditText) base.findViewById(R.id.editTextDialog);
-        editTextDialog.setHint(getString(R.string.shoppingListNameDialogTextHint));
-        editTextDialog.setTypeface(faceRobotoRegular);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.createShoppingList)
-                .setView(base)
-                .setPositiveButton(R.string.createList, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        createShoppingList(editTextDialog.getText() != null ? editTextDialog.getText().toString() : "");
-                    }
-                })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-        AlertDialog alertDialog = builder.create();
-        alertDialog.setOnShowListener(new OnDialogShowListener());
-        alertDialog.show();
     }
 
     private void showNoShoppingListView(View base) {
@@ -186,50 +161,6 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
         txtEmptyMsg2.setText(R.string.nowShoppingListMsg2);
         Button btnBlankPage = (Button) base.findViewById(R.id.btnBlankPage);
         btnBlankPage.setVisibility(View.GONE);
-    }
-
-    public void createShoppingList(final String shoppingListName) {
-        if (TextUtils.isEmpty(shoppingListName)) {
-            Toast.makeText(getActivity(), "Please enter a valid name", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
-        showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.createShoppingList(shoppingListName, "1", new Callback<OldBaseApiResponse>() {
-            @Override
-            public void success(OldBaseApiResponse oldBaseApiResponse, Response response) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
-                switch (oldBaseApiResponse.status) {
-                    case Constants.OK:
-                        Toast.makeText(getActivity(),
-                                "List \"" + shoppingListName
-                                        + "\" was created successfully", Toast.LENGTH_LONG).show();
-                        trackEvent(TrackingAware.SHOP_LST_CREATED, null);
-                        loadShoppingLists();
-                        break;
-                    default:
-                        handler.sendEmptyMessage(oldBaseApiResponse.getErrorTypeAsInt(),
-                                oldBaseApiResponse.message, true);
-                        break;
-                }
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                if (isSuspended()) return;
-                try {
-                    hideProgressDialog();
-                } catch (IllegalArgumentException e) {
-                    return;
-                }
-                handler.handleRetrofitError(error, true);
-            }
-        });
     }
 
     private void launchShoppingListSummary(ShoppingListName shoppingListName) {
@@ -270,6 +201,16 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
 
     }
 
+    @Override
+    public void createNewShoppingList() {
+        new CreateShoppingListTask<>(this).showDialog();
+    }
+
+    @Override
+    public void onNewShoppingListCreated(String listName) {
+        loadShoppingLists();
+    }
+
     private void showEditShoppingListDialog(final ShoppingListName shoppingListName) {
         if (shoppingListName.isSystem()) {
             if (getCurrentActivity() != null) {
@@ -277,31 +218,15 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
             }
             return;
         }
-        View base = getActivity().getLayoutInflater().inflate(R.layout.uiv3_editable_dialog, null);
-        final EditText editTextDialog = (EditText) base.findViewById(R.id.editTextDialog);
-        editTextDialog.setHint(getString(R.string.shoppingListNameDialogTextHint));
-        editTextDialog.setTypeface(faceRobotoRegular);
-        editTextDialog.setText(shoppingListName.getName());
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.changeShoppingListName)
-                .setView(base)
-                .setPositiveButton(R.string.change, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        editShoppingListName(shoppingListName, editTextDialog.getText().toString().trim());
-                    }
-                })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-
-        AlertDialog alertDialog = builder.create();
-        alertDialog.setOnShowListener(new OnDialogShowListener());
-        alertDialog.show();
+        new InputDialog<ShoppingListFragment>(this, R.string.change, R.string.cancel,
+                R.string.changeShoppingListName, R.string.shoppingListNameDialogTextHint,
+                shoppingListName.getName()) {
+            @Override
+            public void onPositiveButtonClicked(String inputText) {
+                if (getCurrentActivity() == null) return;
+                editShoppingListName(shoppingListName, inputText);
+            }
+        }.show();
     }
 
     private void showDeleteShoppingListDialog(final ShoppingListName shoppingListName) {

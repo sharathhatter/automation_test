@@ -1,10 +1,8 @@
 package com.bigbasket.mobileapp.activity.account.uiv3;
 
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -24,10 +22,10 @@ import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
-import com.bigbasket.mobileapp.handler.OnDialogShowListener;
 import com.bigbasket.mobileapp.handler.OnRightCompoundDrawableClicked;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.InputDialog;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
@@ -217,40 +215,21 @@ public class SignInActivity extends BackButtonActivity {
     }
 
     private void showForgotPasswordDialog() {
-        View base = getLayoutInflater().inflate(R.layout.uiv3_editable_dialog, null);
-
-        final EditText editTextDialog = (EditText) base.findViewById(R.id.editTextDialog);
-        editTextDialog.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-        editTextDialog.setHint(getString(R.string.email));
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                .setPositiveButton(R.string.emailNewPassword, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String inputEmail = editTextDialog.getText() != null ?
-                                editTextDialog.getText().toString() : "";
-                        if (TextUtils.isEmpty(inputEmail)) {
-                            showToast("Please enter an email address");
-                            return;
-                        }
-                        if (!UIUtil.isValidEmail(inputEmail)) {
-                            showToast(getString(R.string.error_invalid_email));
-                            return;
-                        }
-                        requestNewPassword(inputEmail);
-                    }
-                })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                })
-                .setTitle(R.string.forgotPasswd)
-                .setView(base);
-        AlertDialog alertDialog = builder.create();
-        alertDialog.setOnShowListener(new OnDialogShowListener());
-        alertDialog.show();
+        new InputDialog<SignInActivity>(this, R.string.emailNewPassword, R.string.cancel,
+                R.string.forgotPasswd, R.string.email, InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS) {
+            @Override
+            public void onPositiveButtonClicked(String inputEmail) {
+                if (TextUtils.isEmpty(inputEmail)) {
+                    showToast("Please enter an email address");
+                    return;
+                }
+                if (!UIUtil.isValidEmail(inputEmail)) {
+                    showToast(getString(R.string.error_invalid_email));
+                    return;
+                }
+                requestNewPassword(inputEmail);
+            }
+        }.show();
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_LOGIN_PAGE);
         trackEvent(TrackingAware.FORGOT_PASSWORD_DIALOG_SHOWN, eventAttribs);

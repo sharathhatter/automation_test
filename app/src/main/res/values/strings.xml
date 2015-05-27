@@ -372,7 +372,7 @@
     <string name="productTabErrorMsg">Sorry, but an error occurred</string>
     <string name="welcome">Welcome</string>
     <string name="welcomeGuest">Welcome BigBasketeer</string>
-
+    <string name="createNewList">Create New List</string>
 
     <!-- myaccount -->
     <string name="phone">Phone</string>

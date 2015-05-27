@@ -27,6 +27,7 @@ import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
+import com.bigbasket.mobileapp.task.uiv3.CreateShoppingListTask;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListDoAddDeleteTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
@@ -212,13 +213,12 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
 
     @Override
     public void onShoppingListFetched(ArrayList<ShoppingListName> shoppingListNames) {
-        if (shoppingListNames == null || shoppingListNames.size() == 0) {
-            Toast.makeText(getActivity(), getString(R.string.createAShoppingList), Toast.LENGTH_SHORT).show();
-        } else {
-            ShoppingListNamesDialog shoppingListNamesDialog = ShoppingListNamesDialog.newInstance(shoppingListNames);
-            shoppingListNamesDialog.setTargetFragment(getFragment(), 0);
-            shoppingListNamesDialog.show(getFragment().getFragmentManager(), Constants.SHOP_LST);
+        if (shoppingListNames == null) {
+            shoppingListNames = new ArrayList<>();
         }
+        ShoppingListNamesDialog shoppingListNamesDialog = ShoppingListNamesDialog.newInstance(shoppingListNames);
+        shoppingListNamesDialog.setTargetFragment(getFragment(), 0);
+        shoppingListNamesDialog.show(getFragment().getFragmentManager(), Constants.SHOP_LST);
     }
 
     @Override
@@ -265,6 +265,19 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         ShoppingListDoAddDeleteTask shoppingListDoAddDeleteTask =
                 new ShoppingListDoAddDeleteTask<>(this, selectedShoppingListNames, ShoppingListOption.ADD_TO_LIST);
         shoppingListDoAddDeleteTask.startTask();
+    }
+
+    @Override
+    public void createNewShoppingList() {
+        new CreateShoppingListTask<>(this).showDialog();
+    }
+
+    @Override
+    public void onNewShoppingListCreated(String listName) {
+        if (getCurrentActivity() == null) return;
+        Toast.makeText(getCurrentActivity(),
+                "List \"" + listName
+                        + "\" was created successfully", Toast.LENGTH_LONG).show();
     }
 
     @Override

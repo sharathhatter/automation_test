@@ -420,10 +420,10 @@ public final class ProductView {
             final AlertDialog dialog = builder.create();
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
             View childDropdown = ((ActivityAware) productDataAware).getCurrentActivity().getLayoutInflater()
-                    .inflate(R.layout.uiv3_child_product_dialog, null);
-            ListView listView = (ListView) childDropdown.findViewById(R.id.lstChildProducts);
+                    .inflate(R.layout.uiv3_list_dialog, null);
+            ListView listView = (ListView) childDropdown.findViewById(R.id.lstDialog);
 
-            TextView txtChildDropdownTitle = (TextView) childDropdown.findViewById(R.id.txtChildDropdownTitle);
+            TextView txtChildDropdownTitle = (TextView) childDropdown.findViewById(R.id.txtListDialogTitle);
             txtChildDropdownTitle.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
             txtChildDropdownTitle.setText("Select Quantity");
 
