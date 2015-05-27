@@ -50,7 +50,7 @@ public class SignInActivity extends BackButtonActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setTitle(getString(R.string.signIn));
+        setTitle(getString(R.string.signInCaps));
 
         setUpSocialButtons(findViewById(R.id.plus_sign_in_button),
                 findViewById(R.id.btnFBLogin));

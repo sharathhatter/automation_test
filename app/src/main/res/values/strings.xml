@@ -82,7 +82,6 @@
     <string name="myAccount">My Account</string>
     <string name="signOut">Logout</string>
     <string name="signIn">Login</string>
-    <string name="signUp">Sign Up</string>
     <string name="signUpCaps">SIGN UP</string>
     <string name="signInCaps">LOG IN</string>
     <string name="HNDetails">House No &amp; Details</string>

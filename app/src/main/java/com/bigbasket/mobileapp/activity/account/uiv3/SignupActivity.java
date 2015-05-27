@@ -53,7 +53,7 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
     public void onReadyToDisplayCity(ArrayList<City> cities) {
         mCities = cities;
 
-        setTitle(getString(R.string.signUp));
+        setTitle(getString(R.string.signUpCaps));
 
         mPasswordView = (EditText) findViewById(R.id.editTextPasswd);
         mFirstNameView = (EditText) findViewById(R.id.editTextFirstName);
