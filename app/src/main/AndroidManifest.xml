@@ -327,6 +327,11 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
+            android:name=".activity.shoppinglist.ShoppingListActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+        <activity
             android:name=".activity.shoppinglist.ShoppingListSummaryActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"

@@ -12,6 +12,7 @@ import com.bigbasket.mobileapp.activity.account.uiv3.OrderListActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
+import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
 import com.bigbasket.mobileapp.fragment.DynamicScreenFragment;
 import com.bigbasket.mobileapp.fragment.product.CategoryLandingFragment;
@@ -151,7 +152,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                     }
                     break;
                 case DestinationInfo.SHOPPING_LIST_LANDING:
-                    intent = new Intent(((ActivityAware) context).getCurrentActivity(), BBActivity.class);
+                    intent = new Intent(((ActivityAware) context).getCurrentActivity(), ShoppingListActivity.class);
                     intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_LANDING);
                     ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     logMainMenuEvent(TrackingAware.SHOPPING_LIST_ICON_CLICKED, TrackEventkeys.NAVIGATION_CTX,

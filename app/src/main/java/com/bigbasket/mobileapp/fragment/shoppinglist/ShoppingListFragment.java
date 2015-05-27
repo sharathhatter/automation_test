@@ -6,11 +6,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.PopupMenu;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -55,14 +52,10 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
     private ArrayList<ShoppingListName> mShoppingListNames;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.uiv3_list_container, container, false);
+        View view = inflater.inflate(R.layout.uiv3_list_container, container, false);
+        view.setBackgroundColor(Color.WHITE);
+        return view;
     }
 
     @Override
@@ -94,8 +87,10 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
         ViewGroup contentView = getContentView();
         if (contentView == null) return;
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View base = inflater.inflate(R.layout.uiv3_fab_list_view, contentView, false);
+        ViewGroup base = (ViewGroup) inflater.inflate(R.layout.uiv3_fab_list_view, contentView, false);
         ListView shoppingNameListView = (ListView) base.findViewById(R.id.fabListView);
+        shoppingNameListView.setDivider(null);
+        shoppingNameListView.setDividerHeight(0);
         RelativeLayout noDeliveryAddLayout = (RelativeLayout) base.findViewById(R.id.noDeliveryAddLayout);
 
         if (mShoppingListNames != null && mShoppingListNames.size() > 0) {
@@ -140,13 +135,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
         }
 
         FloatingActionButton fabCreateShoppingList = (FloatingActionButton) base.findViewById(R.id.btnFab);
-        fabCreateShoppingList.attachToListView(shoppingNameListView);
-        fabCreateShoppingList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                createNewShoppingList();
-            }
-        });
+        base.removeView(fabCreateShoppingList);
         contentView.removeAllViews();
         contentView.addView(base);
     }
@@ -365,9 +354,13 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
         private int VIEW_TYPE_HEADER = 0;
         private int VIEW_TYPE_ITEM = 1;
         private List<Object> shoppingListNames;
+        private int dp8;
+        private int dp16;
 
         public ShoppingListAdapter(List<Object> shoppingListNames) {
             this.shoppingListNames = shoppingListNames;
+            this.dp8 = (int) getResources().getDimension(R.dimen.padding_small);
+            this.dp16 = (int) getResources().getDimension(R.dimen.padding_normal);
         }
 
         @Override
@@ -397,6 +390,11 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
         }
 
         @Override
+        public boolean isEnabled(int position) {
+            return getItemViewType(position) != VIEW_TYPE_HEADER && super.isEnabled(position);
+        }
+
+        @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (getItemViewType(position) == VIEW_TYPE_ITEM) {
                 final ShoppingListName shoppingListName = (ShoppingListName)
@@ -404,7 +402,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
                 ShoppingListViewHolder shoppingListViewHolder;
                 if (convertView == null) {
                     LayoutInflater inflater = getActivity().getLayoutInflater();
-                    convertView = inflater.inflate(R.layout.uiv3_shopping_list_name_row, parent, false);
+                    convertView = inflater.inflate(R.layout.uiv3_shopping_list_row, parent, false);
                     shoppingListViewHolder = new ShoppingListViewHolder(convertView);
                     convertView.setTag(shoppingListViewHolder);
                 } else {
@@ -422,63 +420,66 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
                     txtShopLstDesc.setText(shoppingListName.getDescription());
                 }
 
-                if (shoppingListName.isSystem()) {
-                    ImageView imgShoppingListAdditionalAction = shoppingListViewHolder.getImgShoppingListAdditionalAction();
-                    if (imgShoppingListAdditionalAction != null) {
-                        imgShoppingListAdditionalAction.setVisibility(View.GONE);
-                    } else {
-                        ImageView imgEditShopList = shoppingListViewHolder.getImgEditShopList();
-                        ImageView imgDeleteShoppingList = shoppingListViewHolder.getImgDeleteShoppingList();
-                        imgEditShopList.setVisibility(View.GONE);
-                        imgDeleteShoppingList.setVisibility(View.GONE);
-                    }
-                } else {
-                    ImageView imgShoppingListAdditionalAction = shoppingListViewHolder.getImgShoppingListAdditionalAction();
-                    if (imgShoppingListAdditionalAction != null) {
-                        imgShoppingListAdditionalAction.setVisibility(View.VISIBLE);
-                        imgShoppingListAdditionalAction.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                PopupMenu popupMenu = new PopupMenu(getActivity(), v);
-                                MenuInflater menuInflater = popupMenu.getMenuInflater();
-                                menuInflater.inflate(R.menu.shopping_list_item_menu, popupMenu.getMenu());
-                                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                                    @Override
-                                    public boolean onMenuItemClick(MenuItem menuItem) {
-                                        switch (menuItem.getItemId()) {
-                                            case R.id.menuEditShoppingList:
-                                                showEditShoppingListDialog(shoppingListName);
-                                                return true;
-                                            case R.id.menuDeleteShoppingList:
-                                                showDeleteShoppingListDialog(shoppingListName);
-                                                return true;
-                                        }
-                                        return false;
-                                    }
-                                });
-                                popupMenu.show();
-                            }
-                        });
-                    } else {
-                        ImageView imgEditShopList = shoppingListViewHolder.getImgEditShopList();
-                        imgEditShopList.setVisibility(View.VISIBLE);
-                        imgEditShopList.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                showEditShoppingListDialog(shoppingListName);
-                            }
-                        });
+                convertView.setPadding(convertView.getPaddingLeft(), position == 0 ? dp16 : dp8,
+                        convertView.getPaddingRight(), position == getCount() - 1 ? dp16 : dp8);
 
-                        ImageView imgDeleteShoppingList = shoppingListViewHolder.getImgDeleteShoppingList();
-                        imgDeleteShoppingList.setVisibility(View.VISIBLE);
-                        imgDeleteShoppingList.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                showDeleteShoppingListDialog(shoppingListName);
-                            }
-                        });
-                    }
-                }
+//                if (shoppingListName.isSystem()) {
+//                    ImageView imgShoppingListAdditionalAction = shoppingListViewHolder.getImgShoppingListAdditionalAction();
+//                    if (imgShoppingListAdditionalAction != null) {
+//                        imgShoppingListAdditionalAction.setVisibility(View.GONE);
+//                    } else {
+//                        ImageView imgEditShopList = shoppingListViewHolder.getImgEditShopList();
+//                        ImageView imgDeleteShoppingList = shoppingListViewHolder.getImgDeleteShoppingList();
+//                        imgEditShopList.setVisibility(View.GONE);
+//                        imgDeleteShoppingList.setVisibility(View.GONE);
+//                    }
+//                } else {
+//                    ImageView imgShoppingListAdditionalAction = shoppingListViewHolder.getImgShoppingListAdditionalAction();
+//                    if (imgShoppingListAdditionalAction != null) {
+//                        imgShoppingListAdditionalAction.setVisibility(View.VISIBLE);
+//                        imgShoppingListAdditionalAction.setOnClickListener(new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                PopupMenu popupMenu = new PopupMenu(getActivity(), v);
+//                                MenuInflater menuInflater = popupMenu.getMenuInflater();
+//                                menuInflater.inflate(R.menu.shopping_list_item_menu, popupMenu.getMenu());
+//                                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+//                                    @Override
+//                                    public boolean onMenuItemClick(MenuItem menuItem) {
+//                                        switch (menuItem.getItemId()) {
+//                                            case R.id.menuEditShoppingList:
+//                                                showEditShoppingListDialog(shoppingListName);
+//                                                return true;
+//                                            case R.id.menuDeleteShoppingList:
+//                                                showDeleteShoppingListDialog(shoppingListName);
+//                                                return true;
+//                                        }
+//                                        return false;
+//                                    }
+//                                });
+//                                popupMenu.show();
+//                            }
+//                        });
+//                    } else {
+//                        ImageView imgEditShopList = shoppingListViewHolder.getImgEditShopList();
+//                        imgEditShopList.setVisibility(View.VISIBLE);
+//                        imgEditShopList.setOnClickListener(new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                showEditShoppingListDialog(shoppingListName);
+//                            }
+//                        });
+//
+//                        ImageView imgDeleteShoppingList = shoppingListViewHolder.getImgDeleteShoppingList();
+//                        imgDeleteShoppingList.setVisibility(View.VISIBLE);
+//                        imgDeleteShoppingList.setOnClickListener(new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                showDeleteShoppingListDialog(shoppingListName);
+//                            }
+//                        });
+//                    }
+//                }
             } else {
                 String headerText = shoppingListNames.get(position).toString();
                 SlotSelectionFragment.SlotHeaderViewHolder holder;
@@ -490,11 +491,8 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
                 } else {
                     holder = (SlotSelectionFragment.SlotHeaderViewHolder) convertView.getTag();
                 }
-                int padding = (int) getResources().getDimension(R.dimen.padding_small);
+
                 TextView txtHeaderMsg = holder.getTxtHeaderMsg();
-                txtHeaderMsg.setPadding(txtHeaderMsg.getPaddingLeft(), padding,
-                        txtHeaderMsg.getPaddingRight(), padding);
-                txtHeaderMsg.setBackgroundColor(Color.TRANSPARENT);
                 txtHeaderMsg.setText(headerText);
             }
             return convertView;
@@ -503,9 +501,6 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
         private class ShoppingListViewHolder {
             private View itemView;
             private TextView txtShopLstName;
-            private ImageView imgEditShopList;
-            private ImageView imgDeleteShoppingList;
-            private ImageView imgShoppingListAdditionalAction;
             private TextView txtShopLstDesc;
 
             private ShoppingListViewHolder(View itemView) {
@@ -518,27 +513,6 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
                     txtShopLstName.setTypeface(faceRobotoRegular);
                 }
                 return txtShopLstName;
-            }
-
-            public ImageView getImgEditShopList() {
-                if (imgEditShopList == null) {
-                    imgEditShopList = (ImageView) itemView.findViewById(R.id.imgEditShopList);
-                }
-                return imgEditShopList;
-            }
-
-            public ImageView getImgDeleteShoppingList() {
-                if (imgDeleteShoppingList == null) {
-                    imgDeleteShoppingList = (ImageView) itemView.findViewById(R.id.imgDeleteShoppingList);
-                }
-                return imgDeleteShoppingList;
-            }
-
-            public ImageView getImgShoppingListAdditionalAction() {
-                if (imgShoppingListAdditionalAction == null) {
-                    imgShoppingListAdditionalAction = (ImageView) itemView.findViewById(R.id.imgShoppingListAdditionalAction);
-                }
-                return imgShoppingListAdditionalAction;
             }
 
             public TextView getTxtShopLstDesc() {
