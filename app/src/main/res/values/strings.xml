@@ -373,6 +373,8 @@
     <string name="productTabErrorMsg">Sorry, but an error occurred</string>
     <string name="welcome">Welcome</string>
     <string name="welcomeGuest">Welcome BigBasketeer</string>
+    <string name="productFound">product found</string>
+    <string name="productFoundPlural">products found</string>
     <string name="createNewList">Create New List</string>
 
     <!-- myaccount -->

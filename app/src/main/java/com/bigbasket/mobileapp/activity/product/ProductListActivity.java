@@ -231,7 +231,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
             if (productInfo != null) {
                 Bundle bundle = getBundleForProductListFragment(productTabInfo,
                         productInfo, productTabData.getBaseImgUrl(), productTabData.getCartInfo());
-                bbTabs.add(new BBTab<>(productTabInfo.getTabName() + " (" + productInfo.getProductCount() + ")",
+                bbTabs.add(new BBTab<>(productTabInfo.getTabName(),
                         GenericProductListFragment.class, bundle));
                 if (productInfo.getCurrentPage() == -1) {
                     if (mArrayTabTypeAndFragmentPosition == null) {

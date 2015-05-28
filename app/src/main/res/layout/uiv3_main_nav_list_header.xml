@@ -7,7 +7,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="#f2f2f2" />
+        android:background="@color/uiv3_large_divider_color" />
 
     <TextView
         android:id="@+id/txtNavListRowHeader"
