@@ -2,21 +2,15 @@ package com.bigbasket.mobileapp.activity.account.uiv3;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -26,18 +20,19 @@ import com.bigbasket.mobileapp.adapter.order.OrderListAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.callbacks.CallbackOrderInvoice;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OrderListApiResponse;
+import com.bigbasket.mobileapp.interfaces.GetMoreOrderAware;
 import com.bigbasket.mobileapp.interfaces.InvoiceDataAware;
+import com.bigbasket.mobileapp.interfaces.OrderItemClickAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
-import com.bigbasket.mobileapp.model.order.OrderMonthRange;
-import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
-import com.bigbasket.mobileapp.view.uiv3.BBArrayAdapter;
+import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,14 +43,14 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class OrderListActivity extends BackButtonActivity implements InvoiceDataAware {
+public class OrderListActivity extends BackButtonActivity implements InvoiceDataAware,
+        GetMoreOrderAware, OrderItemClickAware {
 
-    private Spinner mOrderDurationSpinner;
     private String mOrderType;
-    private ArrayList<Order> mOrders;
-    private ArrayList<OrderMonthRange> mOrderMonthRanges;
-    private int mSelectedMonth = -1;
     private boolean mIsInShopFromPreviousOrderMode;
+    private int currentPage = 1;
+    private int totalPages;
+    private OrderListAdapter orderListAdapter = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -65,50 +60,34 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
         mIsInShopFromPreviousOrderMode = getIntent().getBooleanExtra(Constants.SHOP_FROM_PREVIOUS_ORDER, false);
         setTitle(mIsInShopFromPreviousOrderMode ? getString(R.string.shopFromPreviousOrder) :
                 getString(R.string.my_order_label));
-        if (savedInstanceState != null) {
-            mOrders = savedInstanceState.getParcelableArrayList(Constants.ORDERS);
-            if (mOrders != null) {
-                mOrderMonthRanges = savedInstanceState.getParcelableArrayList(Constants.ORDER_MONTH_RANGE);
-                mSelectedMonth = savedInstanceState.getInt(Constants.ORDER_RANGE);
-            }
-            renderOrderList();
-            return;
-        }
-        loadOrders();
+        loadOrders(currentPage);
     }
 
-    private void loadOrders() {
-        loadOrders(-1);
+    @Override
+    public void getMoreOrders() {
+        loadOrders(++currentPage);
     }
 
-    private void loadOrders(int orderRange) {
+    private void loadOrders(int page) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
-        showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.getOrders(mOrderType, orderRange > 0 ? String.valueOf(orderRange) : null,
-                new Callback<OrderListApiResponse>() {
+        if(page==1)
+            showProgressView();
+        bigBasketApiService.getOrders(mOrderType, String.valueOf(page),
+                new Callback<ApiResponse<OrderListApiResponse>>() {
                     @Override
-                    public void success(OrderListApiResponse orderListApiResponse, Response response) {
+                    public void success(ApiResponse<OrderListApiResponse> orderListApiResponse, Response response) {
                         if (isSuspended()) return;
                         try {
-                            hideProgressDialog();
+                            hideProgressView();
                         } catch (IllegalArgumentException e) {
                             return;
                         }
-                        switch (orderListApiResponse.status) {
-                            case Constants.OK:
-                                mOrders = orderListApiResponse.orders;
-                                mOrderMonthRanges = orderListApiResponse.orderMonthRanges;
-                                mSelectedMonth = orderListApiResponse.selectedMonth;
-                                renderOrderList();
-                                break;
-                            default:
-                                if (orderListApiResponse.errorType.equals(String.valueOf(ApiErrorCodes.INVALID_FIELD))) {
-                                    showApiErrorDialog(null, "This is not a valid order number");
-                                } else {
-                                    handler.sendEmptyMessage(Integer.parseInt(orderListApiResponse.errorType),
-                                            orderListApiResponse.message);
-                                }
-                                break;
+                        if (orderListApiResponse.status == 0) {
+                            totalPages = orderListApiResponse.apiResponseContent.totalPages;
+                            renderOrderList(orderListApiResponse.apiResponseContent.orders);
+                        } else {
+                            handler.sendEmptyMessage(orderListApiResponse.status,
+                                    orderListApiResponse.message, true);
                         }
                     }
 
@@ -116,7 +95,7 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
                     public void failure(RetrofitError error) {
                         if (isSuspended()) return;
                         try {
-                            hideProgressDialog();
+                            hideProgressView();
                         } catch (IllegalArgumentException e) {
                             return;
                         }
@@ -125,107 +104,54 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
                 });
     }
 
-    private void renderOrderList() {
+    private void showEmptyPage(LayoutInflater inflater, FrameLayout contentLayout){
+        View emptyPageView = inflater.inflate(R.layout.uiv3_empty_data_text, contentLayout, false);
+        ImageView imgEmptyPage = (ImageView) emptyPageView.findViewById(R.id.imgEmptyPage);
+        TextView txtEmptyMsg1 = (TextView) emptyPageView.findViewById(R.id.txtEmptyMsg1);
+        TextView txtEmptyMsg2 = (TextView) emptyPageView.findViewById(R.id.txtEmptyMsg2);
+        txtEmptyMsg2.setVisibility(View.GONE);
+
+        Button btnBlankPage = (Button) emptyPageView.findViewById(R.id.btnBlankPage);
+        btnBlankPage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goToHome(false);
+            }
+        });
+
+        imgEmptyPage.setImageResource(R.drawable.empty_order_history);
+        txtEmptyMsg1.setText(getString(R.string.noOrdersPlaced));
+        contentLayout.removeAllViews();
+        contentLayout.addView(emptyPageView);
+    }
+
+    private void renderOrderList(final ArrayList<Order> mOrders) {
 
         FrameLayout contentLayout = (FrameLayout) findViewById(R.id.content_frame);
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         RelativeLayout base = (RelativeLayout) inflater.inflate(R.layout.uiv3_order_list, contentLayout, false);
 
-        AbsListView orderAbsListView = (AbsListView) base.findViewById(R.id.listOrders);
-        int spinnerSelectedIdx = OrderMonthRange.getSelectedIndex(mOrderMonthRanges, mSelectedMonth);
+        RecyclerView orderListView = (RecyclerView) base.findViewById(R.id.listOrders);
 
-        if (mOrderMonthRanges != null && mOrderMonthRanges.size() > 0) {
-            BBArrayAdapter<OrderMonthRange> spinnerDateRangeArrayAdapter;
-            if (mOrderDurationSpinner == null) {
-                Toolbar toolbar = getToolbar();
-                View spinnerBaseView = getLayoutInflater().inflate(R.layout.toolbar_spinner, toolbar, false);
-                mOrderDurationSpinner = (Spinner) spinnerBaseView.findViewById(R.id.toolbarSpinner);
-                spinnerDateRangeArrayAdapter =
-                        new BBArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, mOrderMonthRanges,
-                                faceRobotoRegular, Color.WHITE, getResources().getColor(R.color.uiv3_primary_text_color));
-                spinnerDateRangeArrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-                mOrderDurationSpinner.setAdapter(spinnerDateRangeArrayAdapter);
-                toolbar.addView(spinnerBaseView);
-                if (getSupportActionBar() != null) {
-                    getSupportActionBar().setDisplayShowTitleEnabled(false);
-                }
-            } else {
-                spinnerDateRangeArrayAdapter = (BBArrayAdapter<OrderMonthRange>) mOrderDurationSpinner.getAdapter();
-            }
-
-            mOrderDurationSpinner.setSelection(spinnerSelectedIdx);
-            mOrderDurationSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    OrderMonthRange orderMonthRange = mOrderMonthRanges.get(position);
-                    if (orderMonthRange.getValue() != mSelectedMonth) {
-                        loadOrders(orderMonthRange.getValue());
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-
-                }
-            });
-            spinnerDateRangeArrayAdapter.notifyDataSetChanged();
-        }
-
-        if (mOrders == null || mOrders.size() == 0) {
-            View emptyPageView = inflater.inflate(R.layout.uiv3_empty_data_text, contentLayout, false);
-            ImageView imgEmptyPage = (ImageView) emptyPageView.findViewById(R.id.imgEmptyPage);
-            TextView txtEmptyMsg1 = (TextView) emptyPageView.findViewById(R.id.txtEmptyMsg1);
-            TextView txtEmptyMsg2 = (TextView) emptyPageView.findViewById(R.id.txtEmptyMsg2);
-            txtEmptyMsg2.setVisibility(View.GONE);
-
-            Button btnBlankPage = (Button) emptyPageView.findViewById(R.id.btnBlankPage);
-            btnBlankPage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    goToHome(false);
-                }
-            });
-            if (mOrderType.equals(getString(R.string.active_label))) {
-                imgEmptyPage.setImageResource(R.drawable.empty_active_orders);
-                txtEmptyMsg1.setText(getString(R.string.noActiveOrders));
-                base.removeView(orderAbsListView);
-            } else if (mOrderMonthRanges != null && mOrderMonthRanges.size() > 0) {
-                txtEmptyMsg1.setText(getString(R.string.noOrders) + " " +
-                        mOrderMonthRanges.get(spinnerSelectedIdx).getDisplayValue().toLowerCase());
-                base.removeView(orderAbsListView);
-            } else {
-                imgEmptyPage.setImageResource(R.drawable.empty_order_history);
-                txtEmptyMsg1.setText(getString(R.string.noOrdersPlaced));
-            }
-            contentLayout.removeAllViews();
-            contentLayout.addView(emptyPageView);
+        UIUtil.configureRecyclerView(orderListView, this, 1, 1);
+        if (currentPage ==1 && (mOrders == null || mOrders.size() == 0)) {
+            showEmptyPage(inflater, contentLayout);
 
         } else {
-            OrderListAdapter orderListAdapter = new OrderListAdapter(this, faceRobotoRegular,
-                    faceRupee, mOrders, false, mIsInShopFromPreviousOrderMode);
-
-            if (orderAbsListView instanceof ListView) {
-                ((ListView) orderAbsListView).setAdapter(orderListAdapter);
-                if (mIsInShopFromPreviousOrderMode) {
-                    ((ListView) orderAbsListView).setDivider(new ColorDrawable(getResources().getColor(R.color.uiv3_divider_color)));
-                    ((ListView) orderAbsListView).setDividerHeight(1);
-                }
-            } else if (orderAbsListView instanceof GridView) {
-                ((GridView) orderAbsListView).setAdapter(orderListAdapter);
+            if(orderListAdapter==null) {
+                orderListAdapter = new OrderListAdapter(this, mOrders, totalPages);
+                orderListAdapter.setCurrentPage(currentPage);
             }
-            orderAbsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Order order = mOrders.get(position);
-                    if (mIsInShopFromPreviousOrderMode) {
-                        onShopFromThisOrder(order.getOrderNumber());
-                    } else {
-                        showInvoice(order);
-                    }
-                }
-            });
-            contentLayout.removeAllViews();
-            contentLayout.addView(base);
+
+            ArrayList<Order> olderOrderList = orderListAdapter.getOrders();
+            if(currentPage >1 && olderOrderList!=null && olderOrderList.size()>0
+                    && mOrders!=null && mOrders.size()>0){
+               updateOrderList(olderOrderList, mOrders);
+            }else {
+                orderListView.setAdapter(orderListAdapter);
+                contentLayout.removeAllViews();
+                contentLayout.addView(base);
+            }
         }
 
         logOrderEvent(mOrderType.equals(getString(R.string.active_label)) ?
@@ -234,22 +160,27 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
                 getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX));
     }
 
+    @Override
+    public void onOrderItemClicked(Order order){
+        if (mIsInShopFromPreviousOrderMode) {
+            onShopFromThisOrder(order.getOrderNumber());
+        } else {
+            showInvoice(order);
+        }
+    }
+
+
+    private void updateOrderList(ArrayList<Order> olderOrderList, ArrayList<Order> newOrderList){
+        int insertedAt = olderOrderList.size();
+        olderOrderList.addAll(newOrderList);
+        orderListAdapter.setCurrentPage(currentPage);
+        orderListAdapter.notifyItemRangeInserted(insertedAt, newOrderList.size());
+    }
+
     private void showInvoice(Order order) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.getInvoice(order.getOrderId(), new CallbackOrderInvoice<>(this));
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        if (mOrders != null) {
-            outState.putParcelableArrayList(Constants.ORDERS, mOrders);
-            if (mOrderMonthRanges != null) {
-                outState.putParcelableArrayList(Constants.ORDER_MONTH_RANGE, mOrderMonthRanges);
-            }
-            outState.putInt(Constants.ORDER_RANGE, mSelectedMonth);
-        }
-        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -277,7 +208,7 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
     }
 
     @Override
-    public String getScreenTag() {
+    public String getScreenTag() { //todo change
         return mOrderType.equals(getString(R.string.active_label)) ?
                 TrackEventkeys.ACCOUNT_VIEW_ACTIVE_ORDER_SCREEN : TrackEventkeys.ACCOUNT_VIEW_PAST_ORDER_PAGE;
     }

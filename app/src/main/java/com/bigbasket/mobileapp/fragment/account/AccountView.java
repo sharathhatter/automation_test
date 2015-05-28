@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.ChangeCityActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.MyAccountActivity;
+import com.bigbasket.mobileapp.activity.account.uiv3.OrderListActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
@@ -62,12 +63,14 @@ public class AccountView<T> {
         } else {
             final String[] itemDetails = {
                     ctx.getResources().getString(R.string.myAccount),
+                    ctx.getResources().getString(R.string.my_orders),
                     ctx.getResources().getString(R.string.bbCommHub),
                     ctx.getResources().getString(R.string.shoppingList),
                     ctx.getResources().getString(R.string.smartBasket),
                     ctx.getResources().getString(R.string.rateTheApp),
                     ctx.getResources().getString(R.string.signOut)};
             int[] imageArray = {
+                    R.drawable.nav_user,
                     R.drawable.nav_user,
                     R.drawable.nav_communication_hub,
                     R.drawable.nav_shoppinglist,
@@ -91,19 +94,25 @@ public class AccountView<T> {
                     ctx.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     break;
                 case 1:
-                    ctx.launchKonotor();
+                    ctx.trackEvent(TrackingAware.MY_ACCOUNT_CLICKED, null);
+                    intent = new Intent(ctx, OrderListActivity.class);
+                    intent.putExtra(Constants.ORDER, "all");
+                    ctx.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     break;
                 case 2:
-                    ctx.onChangeFragment(new ShoppingListFragment());
+                    ctx.launchKonotor();
                     break;
                 case 3:
+                    ctx.onChangeFragment(new ShoppingListFragment());
+                    break;
+                case 4:
                     ShoppingListName shoppingListName = new ShoppingListName(Constants.SMART_BASKET,
                             Constants.SMART_BASKET_SLUG, true);
                     intent = new Intent(ctx, ShoppingListSummaryActivity.class);
                     intent.putExtra(Constants.SHOPPING_LIST_NAME, shoppingListName);
                     ctx.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     break;
-                case 4:
+                case 5:
                     Map<String, String> eventAttribs = new HashMap<>();
                     eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_LEFTNAV);
                     ctx.trackEvent(TrackingAware.RATE_APP_CLICKED, eventAttribs);
@@ -111,11 +120,15 @@ public class AccountView<T> {
                         ctx.startActivity(new Intent(Intent.ACTION_VIEW,
                                 Uri.parse("market://details?id=" + Constants.BASE_PKG_NAME)));
                     } catch (ActivityNotFoundException e) {
+
+
+
+
                         ctx.startActivity(new Intent(Intent.ACTION_VIEW,
                                 Uri.parse("https://play.google.com/store/apps/details?id=" + Constants.BASE_PKG_NAME)));
                     }
                     break;
-                case 5:
+                case 6:
                     eventAttribs = new HashMap<>();
                     eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_LEFTNAV);
                     ctx.trackEvent(TrackingAware.LOG_OUT_ICON_CLICKED, eventAttribs);

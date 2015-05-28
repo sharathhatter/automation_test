@@ -1,144 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:background="@color/uiv3_list_bkg_light_color"
-    android:paddingLeft="@dimen/padding_normal">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <View
-        android:layout_width="1dp"
-        android:layout_height="match_parent"
-        android:background="#FF0000FF" />
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:contentDescription="@string/delivery_van"
-        android:id="@+id/imgDeliveryVan"
-        android:src="@drawable/delivery_van" />
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:id="@+id/imgOrderType"
+        android:layout_marginTop="@dimen/margin_22"
+        android:layout_marginLeft="@dimen/margin_small"
+        android:src="@drawable/active_order"
+        android:scaleType="centerInside"/>
 
-    <RelativeLayout
+    <LinearLayout
+        android:id="@+id/layoutOrderData"
         android:layout_width="match_parent"
-        android:layout_toRightOf="@+id/imgDeliveryVan"
-        android:layout_alignParentTop="@id/imgDeliveryVan"
-        android:padding="@dimen/margin_normal"
+        android:layout_toRightOf="@+id/imgOrderType"
+        android:layout_marginTop="@dimen/margin_normal"
+        android:padding="@dimen/padding_small"
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_marginRight="@dimen/margin_normal"
+        android:orientation="vertical"
         android:layout_height="wrap_content">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tue 30 Sep 2014"
+            android:textSize="@dimen/primary_text_size"
+            android:id="@+id/txtSlotDate"
+            android:textColor="@color/uiv3_primary_text_color" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="7:30 PM to 10:00PM"
+            android:textSize="@dimen/secondary_text_size"
+            android:id="@+id/txtSlotTime"
+            android:textColor="@color/uiv3_primary_text_color" />
 
 
-
-    </RelativeLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_small"
-        android:paddingRight="6dp"
-        android:paddingBottom="2dp"
-        android:paddingTop="2dp"
-        android:paddingLeft="6dp"
-        android:layout_alignParentRight="true"
-        android:text="In Process"
-        android:textSize="@dimen/small_text_size"
-        android:background="@color/dark_green"
-        android:id="@+id/txtOrderStatus"
-        android:textColor="@color/white" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="ID : BBO-130440-240914"
+            android:textSize="@dimen/secondary_text_size"
+            android:id="@+id/txtOrderId"
+            android:textColor="@color/uiv3_primary_text_color" />
 
 
-    <TextView
-        android:id="@+id/txtDisplayName"
-        android:layout_width="wrap_content"
-        android:text="Display name"
-        android:textSize="@dimen/primary_text_size"
-        android:layout_marginTop="@dimen/margin_small"
-        android:layout_marginLeft="@dimen/margin_normal"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/imgDeliveryVan"
-        android:textColor="@color/uiv3_primary_text_color" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2 Items"
+            android:textSize="@dimen/secondary_text_size"
+            android:id="@+id/txtNumItems"
+            android:textColor="@color/uiv3_secondary_text_color" />
 
 
-    <TextView
-        android:id="@+id/txtFulfilledBy"
-        android:layout_width="wrap_content"
-        android:layout_toRightOf="@id/imgDeliveryVan"
-        android:textSize="@dimen/primary_text_size"
-        android:layout_below="@id/txtDisplayName"
-        android:layout_marginTop="2dp"
-        android:layout_marginLeft="@dimen/margin_normal"
-        android:text="sold and fulfilled by"
-        android:textColor="@color/uiv3_primary_text_color"
-        android:layout_height="wrap_content" />
+    </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/margin_normal"
-        android:layout_below="@id/txtFulfilledBy"
-        android:layout_marginTop="2dp"
-        android:layout_toRightOf="@id/imgDeliveryVan"
-        android:text="Tue 30 Sep 2014"
-        android:textSize="@dimen/primary_text_size"
-        android:id="@+id/txtSlotDate"
-        android:textColor="@color/uiv3_primary_text_color" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/margin_normal"
-        android:layout_marginTop="2dp"
-        android:layout_toRightOf="@id/imgDeliveryVan"
-        android:text="7:30 PM to 10:00PM"
-        android:textSize="@dimen/secondary_text_size"
-        android:layout_below="@id/txtSlotDate"
-        android:id="@+id/txtSlotTime"
-        android:textColor="@color/uiv3_primary_text_color" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/margin_normal"
-        android:layout_marginTop="2dp"
-        android:layout_toRightOf="@id/imgDeliveryVan"
-        android:text="ID : BBO-130440-240914"
-        android:textSize="@dimen/secondary_text_size"
-        android:layout_below="@id/txtSlotTime"
-        android:id="@+id/txtOrderId"
-        android:textColor="@color/uiv3_primary_text_color" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/margin_normal"
-        android:layout_marginTop="2dp"
-        android:layout_toRightOf="@id/imgDeliveryVan"
-        android:text="2 Items"
-        android:textSize="@dimen/secondary_text_size"
-        android:id="@+id/txtNumItems"
-        android:layout_below="@id/txtOrderId"
-        android:textColor="@color/uiv3_secondary_text_color" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingRight="@dimen/margin_small"
-        android:layout_marginTop="2dp"
-        android:text="Rs. 200"
-        android:textSize="@dimen/secondary_text_size"
-        android:id="@+id/txtOrderTotal"
-        android:layout_below="@id/txtOrderId"
-        android:layout_alignParentRight="true"
-        android:textColor="@color/uiv3_secondary_text_color" />
-
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/uiv3_divider_color"
-        android:layout_toRightOf="@id/imgDeliveryVan"
-        android:layout_below="@id/txtNumItems"
-        android:layout_marginTop="@dimen/margin_normal"
-        android:layout_marginLeft="@dimen/margin_normal" />
 </RelativeLayout>

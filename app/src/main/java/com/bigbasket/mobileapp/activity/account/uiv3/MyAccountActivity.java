@@ -6,11 +6,14 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -47,8 +50,7 @@ public class MyAccountActivity extends BackButtonActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle(getString(R.string.myAccount));
-        circularImageView = (ImageViewCircular) findViewById(R.id.circularImageView);
+        setTitle("My Account");
         getMemberDetails();
     }
 
@@ -110,7 +112,15 @@ public class MyAccountActivity extends BackButtonActivity {
 
     private void renderProfileData(UpdateProfileModel updateProfileModel) {
         if (updateProfileModel == null) return;
-        TextView txtMemberName = (TextView) findViewById(R.id.txtMemberName);
+
+        FrameLayout contentLayout = (FrameLayout) findViewById(R.id.content_frame);
+        contentLayout.removeAllViews();
+
+        LayoutInflater inflater = LayoutInflater.from(getCurrentActivity());
+        View view = inflater.inflate(R.layout.uiv3_my_account, contentLayout, false);
+
+        circularImageView = (ImageViewCircular) view.findViewById(R.id.circularImageView);
+        TextView txtMemberName = (TextView) view.findViewById(R.id.txtMemberName);
         txtMemberName.setTypeface(faceRobotoMedium);
         txtMemberName.setText(updateProfileModel.getFirstName() + " " + updateProfileModel.getLastName());
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
@@ -121,53 +131,54 @@ public class MyAccountActivity extends BackButtonActivity {
             renderProfileImage(profileImageUrl);
 
 
-        TextView txtEmailId = (TextView) findViewById(R.id.txtEmailId);
-        txtEmailId.setPaintFlags(txtEmailId.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        TextView txtEmailId = (TextView) view.findViewById(R.id.txtEmailId);
+        //txtEmailId.setPaintFlags(txtEmailId.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         txtEmailId.setText(updateProfileModel.getEmail());
 
 
-        RelativeLayout layoutPhoneNumber = (RelativeLayout) findViewById(R.id.layoutPhoneNumber);
+        RelativeLayout layoutPhoneNumber = (RelativeLayout) view.findViewById(R.id.layoutPhoneNumber);
         if (!TextUtils.isEmpty(updateProfileModel.getMobileNumber())) {
-            TextView txtPhoneLabel = (TextView) findViewById(R.id.txtPhoneLabel);
+            TextView txtPhoneLabel = (TextView) view.findViewById(R.id.txtPhoneLabel);
             txtPhoneLabel.setTypeface(faceRobotoRegular);
 
-            TextView txtPhone = (TextView) findViewById(R.id.txtPhone);
+            TextView txtPhone = (TextView) view.findViewById(R.id.txtPhone);
             txtPhone.setTypeface(faceRobotoMedium);
             txtPhone.setText(updateProfileModel.getMobileNumber());
         } else {
             layoutPhoneNumber.setVisibility(View.GONE);
         }
 
-        RelativeLayout layoutBirthday = (RelativeLayout) findViewById(R.id.layoutBirthday);
+        RelativeLayout layoutBirthday = (RelativeLayout) view.findViewById(R.id.layoutBirthday);
         if (!TextUtils.isEmpty(updateProfileModel.getDateOfBirth())) {
-            TextView txtBirthdayLabel = (TextView) findViewById(R.id.txtBirthdayLabel);
+            TextView txtBirthdayLabel = (TextView) view.findViewById(R.id.txtBirthdayLabel);
             txtBirthdayLabel.setTypeface(faceRobotoRegular);
 
-            TextView txtBirthday = (TextView) findViewById(R.id.txtBirthday);
+            TextView txtBirthday = (TextView) view.findViewById(R.id.txtBirthday);
             txtBirthday.setTypeface(faceRobotoMedium);
             txtBirthday.setText(updateProfileModel.getDateOfBirth());
         } else {
             layoutBirthday.setVisibility(View.GONE);
         }
 
-        RelativeLayout layoutAddress = (RelativeLayout) findViewById(R.id.layoutAddress);
+        RelativeLayout layoutAddress = (RelativeLayout) view.findViewById(R.id.layoutAddress);
         String address = getAddress(updateProfileModel);
         if (!TextUtils.isEmpty(address)) {
-            TextView txtAddressLabel = (TextView) findViewById(R.id.txtAddressLabel);
+            TextView txtAddressLabel = (TextView) view.findViewById(R.id.txtAddressLabel);
             txtAddressLabel.setTypeface(faceRobotoRegular);
 
             address += updateProfileModel.getCityName();
             if (!TextUtils.isEmpty(updateProfileModel.getPincode()))
                 address += " - " + updateProfileModel.getPincode();
-            TextView txtAddress = (TextView) findViewById(R.id.txtAddress);
+            TextView txtAddress = (TextView) view.findViewById(R.id.txtAddress);
             txtAddress.setTypeface(faceRobotoMedium);
             txtAddress.setText(address);
         } else {
             layoutAddress.setVisibility(View.GONE);
-            RelativeLayout layoutEmptyAddress = (RelativeLayout) findViewById(R.id.layoutEmptyAddress);
+            RelativeLayout layoutEmptyAddress = (RelativeLayout) view.findViewById(R.id.layoutEmptyAddress);
             layoutEmptyAddress.setVisibility(View.VISIBLE);
         }
 
+        contentLayout.addView(view);
         trackEvent(TrackingAware.MY_ACCOUNT_SHOWN, null);
     }
 
@@ -276,9 +287,9 @@ public class MyAccountActivity extends BackButtonActivity {
         return TrackEventkeys.ACCOUNT_SCREEN;
     }
 
-
-    @Override
-    public int getMainLayout() {
-        return R.layout.uiv3_my_account;
-    }
+//
+//    @Override
+//    public int getMainLayout() {
+//        return R.layout.uiv3_my_account;
+//    }
 }

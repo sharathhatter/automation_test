@@ -40,4 +40,5 @@
     <dimen name="retry_Btn_dimen">70dp</dimen>
     <dimen name="product_row_item_margin_small">4dp</dimen>
     <dimen name="margin_xlarge_account">56dp</dimen>
+    <dimen name="margin_22">22dp</dimen>
 </resources>

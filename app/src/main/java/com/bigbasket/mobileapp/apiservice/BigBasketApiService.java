@@ -250,8 +250,8 @@ public interface BigBasketApiService {
                        Callback<ApiResponse<CreateUpdateAddressApiResponseContent>> createUpdateAddressApiResponseCallback);
 
     @GET("/get-orders/")
-    void getOrders(@Query(Constants.ORDER_TYPE) String orderType, @Query(Constants.ORDER_RANGE) String orderRange,
-                   Callback<OrderListApiResponse> orderListApiResponseCallback);
+    void getOrders(@Query(Constants.ORDER_TYPE) String orderType, @Query(Constants.CURRENT_PAGE) String page,
+                   Callback<ApiResponse<OrderListApiResponse>> orderListApiResponseCallback);
 
     @GET("/get-invoice/")
     void getInvoice(@Query(Constants.ORDER_ID) String orderId, Callback<ApiResponse<OrderInvoice>> getInvoiceApiResponseCallback);
