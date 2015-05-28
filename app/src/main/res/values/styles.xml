@@ -164,7 +164,7 @@
         <item name="android:layout_marginRight">@dimen/margin_normal</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:textSize">@dimen/primary_text_size</item>
-        <item name="android:textColor">@color/uiv3_primary_text_color</item>
+        <item name="android:textColor">@color/nav_text_color</item>
     </style>
 
     <style name="NavSubTitleStyle">
@@ -175,7 +175,7 @@
         <item name="android:layout_marginRight">@dimen/margin_normal</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:textSize">@dimen/secondary_text_size</item>
-        <item name="android:textColor">@color/uiv3_secondary_text_color</item>
+        <item name="android:textColor">@color/nav_text_color</item>
     </style>
 
     <style name="SectionHeaderTextStyle">

@@ -25,7 +25,6 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -796,7 +795,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
         ListView lstMyAccount = (ListView) findViewById(R.id.lstMyAccount);
         new AccountView<>(this, lstMyAccount);
-        NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoLight,
+        NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoRegular,
                 sectionNavigationItems, SectionManager.MAIN_MENU, baseImgUrl);
         mNavRecyclerView.setAdapter(navigationAdapter);
     }

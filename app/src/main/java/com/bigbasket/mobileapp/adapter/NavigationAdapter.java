@@ -58,6 +58,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         if (getItemViewType(position) == VIEW_TYPE_SECTION_ITEM) {
             TextView txtNavListRow = ((NavViewHolder) holder).getTxtNavListRow();
             ImageView imgNavItem = ((NavViewHolder) holder).getImgNavItem();
+            ImageView imgNavItemExpand = ((NavViewHolder) holder).getImgNavItemExpand();
             TextView txtNavListRowSubTitle = ((NavViewHolder) holder).getTxtNavListRowSubTitle();
             if (sectionNavigationItem.getSectionItem().getTitle() != null &&
                     !TextUtils.isEmpty(sectionNavigationItem.getSectionItem().getTitle().getText())) {
@@ -77,6 +78,12 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 txtNavListRowSubTitle.setText(sectionNavigationItem.getSectionItem().getDescription().getText());
             } else {
                 txtNavListRowSubTitle.setVisibility(View.GONE);
+            }
+            if (sectionNavigationItem.getSectionItem().getSubSectionItems() != null
+                    && sectionNavigationItem.getSectionItem().getSubSectionItems().size() > 0) {
+                imgNavItemExpand.setVisibility(View.VISIBLE);
+            } else {
+                imgNavItemExpand.setVisibility(View.GONE);
             }
         } else {
             TextView txtNavListRowHeader = ((NavViewHeaderHolder) holder).getTxtNavListRowHeader();
@@ -124,6 +131,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         private ImageView imgNavItem;
         private TextView txtNavListRow;
         private TextView txtNavListRowSubTitle;
+        private ImageView imgNavItemExpand;
 
         public NavViewHolder(View itemView) {
             super(itemView);
@@ -151,6 +159,13 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 txtNavListRowSubTitle.setTypeface(typeface);
             }
             return txtNavListRowSubTitle;
+        }
+
+        public ImageView getImgNavItemExpand() {
+            if (imgNavItemExpand == null) {
+                imgNavItemExpand = (ImageView) itemView.findViewById(R.id.imgNavItemExpand);
+            }
+            return imgNavItemExpand;
         }
 
         @Override

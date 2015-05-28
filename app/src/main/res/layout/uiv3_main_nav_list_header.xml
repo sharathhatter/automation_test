@@ -4,16 +4,16 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#f2f2f2" />
+
     <TextView
         android:id="@+id/txtNavListRowHeader"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/uiv3_list_bkg_color"
-        android:paddingBottom="@dimen/padding_mini"
-        android:paddingLeft="@dimen/padding_small"
-        android:paddingRight="@dimen/padding_small"
-        android:paddingTop="@dimen/padding_mini"
-        android:textColor="@color/secondary_text_default_material_light"
-        android:textSize="@dimen/secondary_text_size" />
+        style="@style/NavTxtStyle"
+        android:layout_marginBottom="@dimen/margin_small"
+        android:layout_marginTop="@dimen/margin_small"
+        android:textColor="@color/uiv3_main_nav_header_color" />
 
 </LinearLayout>
