@@ -42,11 +42,7 @@ public class DeepLinkHandler {
         if (getLoginRequiredUrls().contains(uri.getHost()) && authParameters.isAuthTokenEmpty()) {
             return LOGIN_REQUIRED;
         }
-        UtmHandler.postUtm(context.getCurrentActivity(), uri.getQueryParameter(Constants.UTM_SOURCE),
-                uri.getQueryParameter(Constants.UTM_MEDIUM),
-                uri.getQueryParameter(Constants.UTM_TERM),
-                uri.getQueryParameter(Constants.UTM_CONTENT),
-                uri.getQueryParameter(Constants.UTM_CAMPAIGN));
+        UtmHandler.postUtm(context.getCurrentActivity(), uri);
         switch (uri.getHost()) {
             case Constants.PROMO:
                 String id = uri.getQueryParameter(Constants.ID);
