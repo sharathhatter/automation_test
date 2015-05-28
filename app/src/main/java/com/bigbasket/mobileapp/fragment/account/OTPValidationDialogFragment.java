@@ -69,7 +69,7 @@ public class OTPValidationDialogFragment extends AbstractDialogFragment {
         View view = getView();
         if (view != null) {
             TextView txtDialogTitle = (TextView) view.findViewById(R.id.txtDialogTitle);
-            txtDialogTitle.setTypeface(BaseActivity.faceRobotoRegular, Typeface.BOLD);
+            txtDialogTitle.setTypeface(FontHolder.getInstance(getActivity()).getFaceRobotoRegular(), Typeface.BOLD);
             TextView txtHeaderMsg = (TextView) view.findViewById(R.id.txtHeaderMsg);
             final EditText editTextMobileCode = (EditText) view.findViewById(R.id.editTextMobileCode);
             editTextMobileCode.setTypeface(FontHolder.getInstance(getActivity()).getFaceRobotoRegular());
@@ -77,9 +77,9 @@ public class OTPValidationDialogFragment extends AbstractDialogFragment {
             txtHeaderMsg.setTypeface(FontHolder.getInstance(getActivity()).getFaceRobotoRegular());
             BaseActivity.showKeyboard(editTextMobileCode);
             txtErrorValidateNumber = (TextView) view.findViewById(R.id.txtErrorValidateNumber);
-            txtErrorValidateNumber.setTypeface(BaseActivity.faceRobotoRegular);
+            txtErrorValidateNumber.setTypeface(FontHolder.getInstance(getActivity()).getFaceRobotoRegular());
             txtResendNumber = (TextView) view.findViewById(R.id.txtResendNumber);
-            txtResendNumber.setTypeface(BaseActivity.faceRobotoRegular);
+            txtResendNumber.setTypeface(FontHolder.getInstance(getActivity()).getFaceRobotoRegular());
             TextView txtResendCode = (TextView) view.findViewById(R.id.txtResendCode);
             txtResendCode.setOnClickListener(new View.OnClickListener() {
                 @Override

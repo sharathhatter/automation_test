@@ -11,11 +11,23 @@
         <item name="closeIcon">@drawable/ic_clear_white_24dp</item>
     </style>
 
+    <style name="BaseAppTheme.AlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorAccent">@color/uiv3_action_bar_background</item>
+    </style>
+
     <style name="BaseAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/uiv3_action_bar_background</item>
         <item name="colorPrimaryDark">@color/uiv3_status_bar_background</item>
         <item name="colorAccent">@color/uiv3_action_bar_background</item>
         <item name="searchViewStyle">@style/BaseAppTheme.SearchViewStyle</item>
+        <item name="alertDialogTheme">@style/BaseAppTheme.AlertDialogStyle</item>
+    </style>
+
+    <style name="LandingPageTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorControlNormal">@color/white</item>
+        <item name="colorControlHighlight">@color/white</item>
+        <item name="colorControlActivated">@color/white</item>
+        <item name="alertDialogTheme">@style/BaseAppTheme.AlertDialogStyle</item>
     </style>
 
     <style name="BBAppTheme" parent="BaseAppTheme" />
@@ -152,7 +164,7 @@
         <item name="android:layout_marginRight">@dimen/margin_normal</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:textSize">@dimen/primary_text_size</item>
-        <item name="android:textColor">@color/uiv3_primary_text_color</item>
+        <item name="android:textColor">@color/nav_text_color</item>
     </style>
 
     <style name="NavSubTitleStyle">
@@ -163,7 +175,7 @@
         <item name="android:layout_marginRight">@dimen/margin_normal</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:textSize">@dimen/secondary_text_size</item>
-        <item name="android:textColor">@color/uiv3_secondary_text_color</item>
+        <item name="android:textColor">@color/nav_text_color</item>
     </style>
 
     <style name="SectionHeaderTextStyle">
@@ -192,10 +204,9 @@
     </style>
 
     <style name="BasketOperationTxtStyle">
-        <item name="android:paddingLeft">12dp</item>
-        <item name="android:paddingRight">12dp</item>
         <item name="android:gravity">center</item>
-        <item name="android:textColor">@color/uiv3_primary_btn_bkg</item>
+        <item name="android:textColor">@color/uiv3_primary_text_color</item>
+        <item name="android:textSize">@dimen/large_text_size</item>
     </style>
 
 
@@ -213,26 +224,17 @@
         <item name="android:layout_gravity">center</item>
     </style>
 
-    <style name="BBAppTheme.SocialButton" parent="DefaultButtonStyle">
-        <item name="android:layout_width">match_parent</item>
+    <style name="BBAppTheme.SocialButton">
+        <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">@dimen/primary_text_size</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:paddingLeft">@dimen/padding_normal</item>
-        <!--<item name="android:drawablePadding">@dimen/padding_small</item>-->
-        <!--<item name="android:gravity">center_vertical|left</item>-->
     </style>
 
     <style name="BBAppTheme.FacebookButton" parent="BBAppTheme.SocialButton">
-        <item name="android:drawableLeft">@drawable/fb_logo</item>
-        <item name="android:drawablePadding">-32dp</item>
-        <item name="android:background">@color/fb_btn_color</item>
+        <item name="android:src">@drawable/fb_btn_img</item>
     </style>
 
     <style name="BBAppTheme.GoogleButton" parent="BBAppTheme.SocialButton">
-        <item name="android:drawableLeft">@drawable/gplus_logo</item>
-        <item name="android:drawablePadding">-32dp</item>
-        <item name="android:background">@color/gplus_red</item>
+        <item name="android:src">@drawable/gplus_btn_img</item>
     </style>
 
     <style name="SpinnerDialogMode" />

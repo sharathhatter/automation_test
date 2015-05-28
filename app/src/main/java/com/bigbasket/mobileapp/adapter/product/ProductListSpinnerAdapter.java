@@ -11,7 +11,6 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.util.UIUtil;
@@ -21,20 +20,27 @@ import java.util.List;
 
 public class ProductListSpinnerAdapter extends BaseAdapter {
     List<Product> productArrayList;
-    private BaseActivity ctx;
+    private Context ctx;
     private Typeface typeface;
     private Typeface faceRupee;
-    private int eightDp;
-    private int fourDp;
+    private int dp16;
+    private int dp32;
+    private Product currentProduct;
+    private int unSelectedTextColor;
+    private int selectedTextColor;
 
-    public ProductListSpinnerAdapter(BaseActivity ctx, List<Product> productArrayList,
-                                     Typeface typeface, Typeface faceRupee) {
+    public ProductListSpinnerAdapter(Context ctx, List<Product> productArrayList,
+                                     Typeface typeface, Typeface faceRupee,
+                                     Product currentProduct) {
         this.ctx = ctx;
         this.productArrayList = productArrayList;
         this.typeface = typeface;
         this.faceRupee = faceRupee;
-        this.eightDp = (int) ctx.getResources().getDimension(R.dimen.padding_small);
-        this.fourDp = (int) ctx.getResources().getDimension(R.dimen.padding_mini);
+        this.dp16 = (int) ctx.getResources().getDimension(R.dimen.padding_normal);
+        this.dp32 = (int) ctx.getResources().getDimension(R.dimen.padding_large);
+        this.currentProduct = currentProduct;
+        this.unSelectedTextColor = ctx.getResources().getColor(R.color.uiv3_secondary_text_color);
+        this.selectedTextColor = ctx.getResources().getColor(R.color.uiv3_dialog_header_text_bkg);
     }
 
     @Override
@@ -69,7 +75,14 @@ public class ProductListSpinnerAdapter extends BaseAdapter {
         TextView txtProductSellPrice = spinnerDropDownViewHolder.getTxtProductSellPrice();
         txtProductPkgDesc.setText(product.getWeightAndPackDesc());
 
-        row.setPadding(fourDp, eightDp, eightDp, eightDp);
+        row.setPadding(dp32, position == 0 ? dp32 : dp16, dp32,
+                position == getCount() - 1 ? dp32 : dp16);
+
+        if (currentProduct.getWeightAndPackDesc().equals(product.getWeightAndPackDesc())) {
+            txtProductPkgDesc.setTextColor(selectedTextColor);
+        } else {
+            txtProductPkgDesc.setTextColor(unSelectedTextColor);
+        }
         String rupeeSymbol = "`";
         String sellPrice = UIUtil.formatAsMoney(Double.parseDouble(product.getSellPrice())) + "";
         SpannableString spannableString = new SpannableString(rupeeSymbol + sellPrice);
@@ -108,6 +121,10 @@ public class ProductListSpinnerAdapter extends BaseAdapter {
             }
             return txtProductSellPrice;
         }
+    }
+
+    public void setCurrentProduct(Product currentProduct) {
+        this.currentProduct = currentProduct;
     }
 }
 

@@ -1,14 +1,11 @@
 package com.bigbasket.mobileapp.activity.account.uiv3;
 
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -18,7 +15,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -26,8 +22,10 @@ import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
+import com.bigbasket.mobileapp.handler.OnRightCompoundDrawableClicked;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.InputDialog;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
@@ -44,26 +42,22 @@ public class SignInActivity extends BackButtonActivity {
     private EditText mPasswordView;
     private CheckBox mChkRememberMe;
     private AutoCompleteTextView mEmailView;
+    private boolean mIsPasswordVisible;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        FrameLayout contentView = (FrameLayout) findViewById(R.id.content_frame);
-        LayoutInflater inflater = getLayoutInflater();
-        View baseView = inflater.inflate(R.layout.uiv3_login, contentView, false);
-        contentView.addView(baseView);
+        setTitle(getString(R.string.signInCaps));
 
-        setTitle(getString(R.string.signIn));
-
-        setUpSocialButtons((Button) baseView.findViewById(R.id.plus_sign_in_button),
-                (Button) baseView.findViewById(R.id.btnFBLogin));
+        setUpSocialButtons(findViewById(R.id.plus_sign_in_button),
+                findViewById(R.id.btnFBLogin));
 
         // Set up the login form.
-        mEmailView = (AutoCompleteTextView) baseView.findViewById(R.id.emailInput);
+        mEmailView = (AutoCompleteTextView) findViewById(R.id.emailInput);
         populateAutoComplete(mEmailView);
 
-        mPasswordView = (EditText) baseView.findViewById(R.id.editTextPasswd);
+        mPasswordView = (EditText) findViewById(R.id.editTextPasswd);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
@@ -75,8 +69,15 @@ public class SignInActivity extends BackButtonActivity {
                 return false;
             }
         });
+        mPasswordView.setOnTouchListener(new OnRightCompoundDrawableClicked() {
+            @Override
+            public void onRightDrawableClicked() {
+                mIsPasswordVisible = !mIsPasswordVisible;
+                togglePasswordView(mPasswordView, mIsPasswordVisible);
+            }
+        });
 
-        Button mEmailSignInButton = (Button) baseView.findViewById(R.id.btnLogin);
+        Button mEmailSignInButton = (Button) findViewById(R.id.btnLogin);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -86,7 +87,7 @@ public class SignInActivity extends BackButtonActivity {
         });
         mEmailSignInButton.setTypeface(faceRobotoRegular);
 
-        TextView txtForgotPasswd = (TextView) baseView.findViewById(R.id.txtForgotPasswd);
+        TextView txtForgotPasswd = (TextView) findViewById(R.id.txtForgotPasswd);
         txtForgotPasswd.setTypeface(faceRobotoRegular);
         txtForgotPasswd.setOnClickListener(new OnClickListener() {
             @Override
@@ -96,19 +97,10 @@ public class SignInActivity extends BackButtonActivity {
             }
         });
 
-        mChkRememberMe = (CheckBox) baseView.findViewById(R.id.chkRememberMe);
+        mChkRememberMe = (CheckBox) findViewById(R.id.chkRememberMe);
         mChkRememberMe.setTypeface(faceRobotoRegular);
 
         initializeRememberedDataForLoginInput();
-
-        CheckBox chkShowPassword = (CheckBox) baseView.findViewById(R.id.chkShowPasswd);
-        chkShowPassword.setTypeface(faceRobotoRegular);
-        chkShowPassword.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                togglePasswordView(mPasswordView, isChecked);
-            }
-        });
 
         mChkRememberMe.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -122,8 +114,13 @@ public class SignInActivity extends BackButtonActivity {
             eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX));
             trackEvent(TrackingAware.LOGIN_SHOWN, eventAttribs);
         }
-        setTermsAndCondition((TextView) baseView.findViewById(R.id.txtSigninTermsAndCond), getString(R.string.byLoggingIn),
+        setTermsAndCondition((TextView) findViewById(R.id.txtSigninTermsAndCond), getString(R.string.byLoggingIn),
                 getString(R.string.termsAndCondHeading), getString(R.string.authFooterSeparator), getString(R.string.privacyPolicy));
+    }
+
+    @Override
+    public int getMainLayout() {
+        return R.layout.uiv3_login;
     }
 
     @Override
@@ -218,38 +215,21 @@ public class SignInActivity extends BackButtonActivity {
     }
 
     private void showForgotPasswordDialog() {
-        View base = getLayoutInflater().inflate(R.layout.uiv3_editable_dialog, null);
-
-        final EditText editTextDialog = (EditText) base.findViewById(R.id.editTextDialog);
-        editTextDialog.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-        editTextDialog.setHint(getString(R.string.email));
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                .setPositiveButton(R.string.emailNewPassword, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String inputEmail = editTextDialog.getText() != null ?
-                                editTextDialog.getText().toString() : "";
-                        if (TextUtils.isEmpty(inputEmail)) {
-                            showToast("Please enter an email address");
-                            return;
-                        }
-                        if (!UIUtil.isValidEmail(inputEmail)) {
-                            showToast(getString(R.string.error_invalid_email));
-                            return;
-                        }
-                        requestNewPassword(inputEmail);
-                    }
-                })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                })
-                .setTitle(R.string.forgotPasswd)
-                .setView(base);
-        builder.create().show();
+        new InputDialog<SignInActivity>(this, R.string.emailNewPassword, R.string.cancel,
+                R.string.forgotPasswd, R.string.email, InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS) {
+            @Override
+            public void onPositiveButtonClicked(String inputEmail) {
+                if (TextUtils.isEmpty(inputEmail)) {
+                    showToast("Please enter an email address");
+                    return;
+                }
+                if (!UIUtil.isValidEmail(inputEmail)) {
+                    showToast(getString(R.string.error_invalid_email));
+                    return;
+                }
+                requestNewPassword(inputEmail);
+            }
+        }.show();
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_LOGIN_PAGE);
         trackEvent(TrackingAware.FORGOT_PASSWORD_DIALOG_SHOWN, eventAttribs);

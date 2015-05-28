@@ -390,8 +390,6 @@ public interface BigBasketApiService {
                             @Field(Constants.ERR_RES_CODE) String errResCode, @Field(Constants.ERR_RES_DESC) String errResDesc,
                             Callback<ApiResponse<PostPrepaidPaymentResponse>> postPrepaidPaymentApiResponseCallback);
 
-    @GET("/utm-params/")
-    BaseApiResponse postUtmParams(@Query(Constants.UTM_SOURCE) String source, @Query(Constants.UTM_MEDIUM) String medium,
-                                  @Query(Constants.UTM_TERM) String term, @Query(Constants.CONTENT) String content,
-                                  @Query(Constants.UTM_CAMPAIGN) String campaign);
+    @GET("/register-utm-params/")
+    BaseApiResponse postUtmParams(@QueryMap Map<String, String> utmQueryMap);
 }

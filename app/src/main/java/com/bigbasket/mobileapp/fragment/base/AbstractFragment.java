@@ -17,6 +17,7 @@ public abstract class AbstractFragment extends Fragment implements CancelableAwa
 
     public static Typeface faceRupee;
     public static Typeface faceRobotoRegular;
+    public static Typeface faceRobotoMedium;
     public static Typeface faceRobotoLight;
 
     private boolean mAlreadyLoaded = false;
@@ -64,6 +65,7 @@ public abstract class AbstractFragment extends Fragment implements CancelableAwa
         faceRupee = FontHolder.getInstance(getActivity()).getFaceRupee();
         faceRobotoRegular = FontHolder.getInstance(getActivity()).getFaceRobotoRegular();
         faceRobotoLight = FontHolder.getInstance(getActivity()).getFaceRobotoLight();
+        faceRobotoMedium = FontHolder.getInstance(getActivity()).getFaceRobotoMedium();
     }
 
     @Override

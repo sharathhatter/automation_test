@@ -89,6 +89,11 @@ public class ProductViewDisplayDataHolder {
             return this;
         }
 
+        public Builder setSansSerifMediumTypeface(Typeface sansSerifMediumTypeface) {
+            this.sansSerifMediumTypeface = sansSerifMediumTypeface;
+            return this;
+        }
+
         public Builder setRupeeTypeface(Typeface rupeeTypeface) {
             this.rupeeTypeface = rupeeTypeface;
             return this;

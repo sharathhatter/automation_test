@@ -213,7 +213,7 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
             public TextView getTxtVoucherValidity() {
                 if (txtVoucherValidity == null) {
                     txtVoucherValidity = (TextView) base.findViewById(R.id.txtVoucherValidity);
-                    txtVoucherValidity.setTypeface(faceRobotoItalic);
+                    txtVoucherValidity.setTypeface(faceRobotoRegular);
                 }
                 return txtVoucherValidity;
             }

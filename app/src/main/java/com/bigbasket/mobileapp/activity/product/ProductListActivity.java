@@ -3,7 +3,9 @@ package com.bigbasket.mobileapp.activity.product;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.ColorRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,11 +16,14 @@ import android.text.TextUtils;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
@@ -30,6 +35,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.ProductNextPageRespons
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.fragment.product.GenericProductListFragment;
+import com.bigbasket.mobileapp.handler.OnDialogShowListener;
 import com.bigbasket.mobileapp.handler.OnSectionItemClickListener;
 import com.bigbasket.mobileapp.interfaces.LazyProductListAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
@@ -45,6 +51,7 @@ import com.bigbasket.mobileapp.model.product.ProductTabInfo;
 import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
+import com.bigbasket.mobileapp.model.section.SectionTextItem;
 import com.bigbasket.mobileapp.task.GetCartCountTask;
 import com.bigbasket.mobileapp.task.uiv3.ProductListTask;
 import com.bigbasket.mobileapp.util.Constants;
@@ -73,8 +80,8 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     private HashMap<String, ArrayList<Product>> mMapForTabWithNoProducts;
     private SparseArray<String> mArrayTabTypeAndFragmentPosition;
     private String mTitlePassedViaIntent;
-    private View mSpinnerBase;
-    private int mHeaderSpinnerSelectedIdx;
+    private TextView mToolbarTextDropdown;
+    private int mHeaderSelectedIdx;
     private ArrayList<FilteredOn> mFilteredOns;
     private ArrayList<FilterOptionCategory> mFilterOptionCategories;
     private String mSortedOn;
@@ -153,7 +160,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         if (getDrawerLayout() != null) {
             getDrawerLayout().closeDrawers();
         }
-        mHeaderSpinnerSelectedIdx = productTabData.getHeaderSelectedIndex();
+        mHeaderSelectedIdx = productTabData.getHeaderSelectedIndex();
         FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
         contentFrame.removeAllViews();
 
@@ -186,7 +193,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                 ProductTabInfo productTabInfo = productTabData.getProductTabInfos().get(0);
                 ProductInfo productInfo = productTabInfo.getProductInfo();
                 Bundle bundle = getBundleForProductListFragment(productTabInfo, productInfo,
-                        productTabData.getBaseImgUrl());
+                        productTabData.getBaseImgUrl(), productTabData.getCartInfo());
                 GenericProductListFragment genericProductListFragment = new GenericProductListFragment();
                 genericProductListFragment.setArguments(bundle);
                 // Not using onChangeFragment/addToMainLayout since their implementation has been changed in this class
@@ -223,7 +230,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
             ProductInfo productInfo = productTabInfo.getProductInfo();
             if (productInfo != null) {
                 Bundle bundle = getBundleForProductListFragment(productTabInfo,
-                        productInfo, productTabData.getBaseImgUrl());
+                        productInfo, productTabData.getBaseImgUrl(), productTabData.getCartInfo());
                 bbTabs.add(new BBTab<>(productTabInfo.getTabName() + " (" + productInfo.getProductCount() + ")",
                         GenericProductListFragment.class, bundle));
                 if (productInfo.getCurrentPage() == -1) {
@@ -284,12 +291,15 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
     private Bundle getBundleForProductListFragment(ProductTabInfo productTabInfo,
                                                    ProductInfo productInfo,
-                                                   String baseImgUrl) {
+                                                   String baseImgUrl,
+                                                   HashMap<String, Integer> cartInfo) {
         Bundle bundle = new Bundle();
         bundle.putParcelable(Constants.PRODUCT_INFO, productInfo);
         bundle.putString(Constants.BASE_IMG_URL, baseImgUrl);
         bundle.putParcelableArrayList(Constants.PRODUCT_QUERY, mNameValuePairs);
         bundle.putString(Constants.TAB_TYPE, productTabInfo.getTabType());
+        bundle.putString(Constants.CART_INFO, cartInfo != null ?
+                new Gson().toJson(cartInfo) : null);
         return bundle;
     }
 
@@ -361,40 +371,91 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
     private void renderHeaderDropDown(@Nullable final Section headSection) {
         Toolbar toolbar = getToolbar();
+        ViewGroup layoutChildToolbarContainer = (ViewGroup) findViewById(R.id.layoutChildToolbarContainer);
+        ListView listChildProducts = (ListView) findViewById(R.id.listChildProducts);
+        TextView txtChildDropdownTitle = (TextView) findViewById(R.id.txtListDialogTitle);
         if (headSection != null && headSection.getSectionItems() != null
                 && headSection.getSectionItems().size() > 0) {
-            Spinner spinner;
-            if (mSpinnerBase == null) {
-                mSpinnerBase = getLayoutInflater().inflate(R.layout.toolbar_spinner, toolbar, false);
-                toolbar.addView(mSpinnerBase);
+
+            final OnChildDropdownRequested onChildDropdownRequested = new OnChildDropdownRequested(layoutChildToolbarContainer);
+            if (mToolbarTextDropdown == null) {
+                mToolbarTextDropdown = (TextView) getLayoutInflater().inflate(R.layout.uiv3_product_header_text, toolbar, false);
+                mToolbarTextDropdown.setTypeface(faceRobotoRegular);
+                toolbar.addView(mToolbarTextDropdown);
+                mToolbarTextDropdown.setOnClickListener(onChildDropdownRequested);
             }
-            spinner = (Spinner) mSpinnerBase.findViewById(R.id.toolbarSpinner);
-            BBArrayAdapter bbArrayAdapter = new BBArrayAdapter<>(this, android.R.layout.simple_spinner_item, headSection.getSectionItems(),
-                    faceRobotoRegular, Color.WHITE, getResources().getColor(R.color.uiv3_primary_text_color));
-            bbArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spinner.setAdapter(bbArrayAdapter);
-            if (mHeaderSpinnerSelectedIdx >= headSection.getSectionItems().size()) {
+            findViewById(R.id.imgCloseChildDropdown).setOnClickListener(onChildDropdownRequested);
+
+            if (mHeaderSelectedIdx >= headSection.getSectionItems().size()) {
                 // Defensive check
-                mHeaderSpinnerSelectedIdx = 0;
+                mHeaderSelectedIdx = 0;
             }
-            spinner.setSelection(mHeaderSpinnerSelectedIdx, false);
-            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            SectionTextItem title = headSection.getSectionItems().get(mHeaderSelectedIdx).getTitle();
+            mToolbarTextDropdown.setText(title != null ? title.getText() : "");
+            txtChildDropdownTitle.setTypeface(faceRobotoRegular);
+            txtChildDropdownTitle.setText(title != null ? title.getText() : "");
+            txtChildDropdownTitle.setOnClickListener(onChildDropdownRequested);
+
+            BBArrayAdapter bbArrayAdapter = new BBArrayAdapter<>(this, R.layout.uiv3_product_header_list_item, headSection.getSectionItems(),
+                    faceRobotoRegular, getResources().getColor(R.color.uiv3_primary_text_color), Color.WHITE);
+            bbArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            listChildProducts.setAdapter(bbArrayAdapter);
+
+            listChildProducts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    if (position != Spinner.INVALID_POSITION && position != mHeaderSpinnerSelectedIdx) {
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    if (position != Spinner.INVALID_POSITION && position != mHeaderSelectedIdx) {
                         new OnSectionItemClickListener<>(getCurrentActivity(), headSection,
                                 headSection.getSectionItems().get(position), "").onClick(view);
+                        onChildDropdownRequested.onClick(view);  // Manually simulate click to hide dropdown
                     }
                 }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-
-                }
             });
-        } else if (mSpinnerBase != null) {
-            toolbar.removeView(mSpinnerBase);
-            mSpinnerBase = null;
+
+        } else {
+            layoutChildToolbarContainer.setVisibility(View.GONE);
+            listChildProducts.setAdapter(null);
+            toolbar.setTitle(mTitlePassedViaIntent);
+            if (mToolbarTextDropdown != null) {
+                mToolbarTextDropdown.setOnClickListener(null);
+                toolbar.removeView(mToolbarTextDropdown);
+            }
+        }
+    }
+
+    private class OnChildDropdownRequested implements View.OnClickListener {
+
+        private ViewGroup layoutChildToolbarContainer;
+
+        public OnChildDropdownRequested(ViewGroup layoutChildToolbarContainer) {
+            this.layoutChildToolbarContainer = layoutChildToolbarContainer;
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (layoutChildToolbarContainer.getVisibility() == View.VISIBLE) {
+                layoutChildToolbarContainer.setVisibility(View.GONE);
+                changeStatusBarColor(R.color.uiv3_status_bar_background);
+                if (getSupportActionBar() != null) {
+                    getSupportActionBar().show();
+                }
+            } else {
+                layoutChildToolbarContainer.setVisibility(View.VISIBLE);
+                changeStatusBarColor(R.color.uiv3_grey_status_bar_color);
+                if (getSupportActionBar() != null) {
+                    getSupportActionBar().hide();
+                }
+            }
+        }
+
+        private void changeStatusBarColor(@ColorRes int color) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                Window window = getCurrentActivity().getWindow();
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                window.setStatusBarColor(getCurrentActivity().getResources().getColor(color));
+            }
         }
     }
 
@@ -412,8 +473,10 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     public void launchProductList(ArrayList<NameValuePair> nameValuePairs,
                                   @Nullable String sectionName, @Nullable String sectionItemName) {
         mNameValuePairs = nameValuePairs;
+        if (!TextUtils.isEmpty(sectionItemName)) {
+            mTitlePassedViaIntent = sectionItemName;
+        }
         loadProductTabs();
-        // TODO : Jugal Plugin analytics
     }
 
     @Override
@@ -429,10 +492,10 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
     public void onFooterViewClicked(View v) {
         switch (v.getId()) {
-            case R.id.txtFilter:
+            case R.id.layoutFilter:
                 onFilterScreenRequested();
                 break;
-            case R.id.txtSort:
+            case R.id.layoutSort:
                 onSortRequested();
                 break;
         }
@@ -474,7 +537,9 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                     }
                 })
                 .setCancelable(false);
-        builder.create().show();
+        AlertDialog alertDialog = builder.create();
+        alertDialog.setOnShowListener(new OnDialogShowListener());
+        alertDialog.show();
     }
 
     private void onFilterScreenRequested() {

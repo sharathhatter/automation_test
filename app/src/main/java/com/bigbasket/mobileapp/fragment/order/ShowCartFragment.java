@@ -15,7 +15,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -392,11 +391,11 @@ public class ShowCartFragment extends BaseFragment {
 
     @Override
     public void updateUIAfterBasketOperationSuccess(BasketOperation basketOperation, TextView basketCountTextView,
-                                                    View viewDecQty, View viewIncQty, Button btnAddToBasket,
-                                                    EditText editTextQty, Product product, String qty,
+                                                    View viewDecQty, View viewIncQty, View btnAddToBasket,
+                                                    Product product, String qty,
                                                     @Nullable View productView) {
         super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextView, viewDecQty, viewIncQty,
-                btnAddToBasket, editTextQty, product, qty, productView);
+                btnAddToBasket, product, qty, productView);
         getCartItems(null);
     }
 

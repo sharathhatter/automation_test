@@ -16,6 +16,7 @@ import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.view.uiv2.ProductView;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -30,6 +31,7 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
     private ActivityAware activityAware;
     private List<Product> products;
     private String navigationCtx;
+    private HashMap<String, Integer> cartInfo;
 
     public ProductListRecyclerAdapter(List<Product> products, String baseImgUrl,
                                       ProductViewDisplayDataHolder productViewDisplayDataHolder,
@@ -40,6 +42,15 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         this.products = products;
         this.serverListSize = productCount;
         this.navigationCtx = navigationCtx;
+    }
+
+    public ProductListRecyclerAdapter(List<Product> products, String baseImgUrl,
+                                      ProductViewDisplayDataHolder productViewDisplayDataHolder,
+                                      ActivityAware activityAware, int productCount, String navigationCtx,
+                                      HashMap<String, Integer> cartInfo) {
+        this(products, baseImgUrl, productViewDisplayDataHolder, activityAware, productCount,
+                navigationCtx);
+        this.cartInfo = cartInfo;
     }
 
     @Override
@@ -78,7 +89,7 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
             ProductView.setProductView((ProductViewHolder) viewHolder, product, baseImgUrl,
                     new ProductDetailOnClickListener(product.getSku(), activityAware),
                     productViewDisplayDataHolder,
-                    false, activityAware, navigationCtx);
+                    false, activityAware, navigationCtx, cartInfo);
 
             int positionToCheckForNextPageLoad = position + DELTA_FOR_NEXT_PAGE_LOAD;
             if (positionToCheckForNextPageLoad <= serverListSize && serverListSize > 0 &&

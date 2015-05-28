@@ -9,11 +9,9 @@
         android:id="@+id/txtHeaderMsg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/uiv3_list_bkg_light_color"
         android:gravity="center_vertical"
-        android:paddingBottom="@dimen/padding_small"
-        android:paddingLeft="@dimen/padding_normal"
-        android:paddingTop="@dimen/padding_normal"
+        android:paddingLeft="@dimen/padding_large"
+        android:paddingTop="@dimen/padding_large"
         android:textColor="@color/uiv3_secondary_text_color"
         android:textSize="@dimen/secondary_text_size" />
 </LinearLayout>

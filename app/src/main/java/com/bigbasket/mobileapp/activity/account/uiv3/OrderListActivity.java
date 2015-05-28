@@ -154,14 +154,12 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
             }
         }
 
-        logOrderEvent(mOrderType.equals(getString(R.string.active_label)) ?
-                        TrackingAware.ORDER_ACTIVE_ORDERS_SHOWN : TrackingAware.ORDER_PAST_ORDERS_SHOWN,
-                TrackEventkeys.NAVIGATION_CTX,
-                getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX));
+        trackEvent(TrackingAware.MY_ORDER_SHOWN, null);
     }
 
     @Override
     public void onOrderItemClicked(Order order){
+        trackEvent(TrackingAware.MY_ORDER_ITEM_CLICKED, null);
         if (mIsInShopFromPreviousOrderMode) {
             onShopFromThisOrder(order.getOrderNumber());
         } else {

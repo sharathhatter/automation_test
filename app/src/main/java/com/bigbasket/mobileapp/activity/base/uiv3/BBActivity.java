@@ -25,11 +25,8 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -115,7 +112,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     private String currentFragmentTag;
     private RecyclerView mNavRecyclerView;
     private AnimatedLinearLayout mSubNavLayout;
-    private Menu mMenu;
     private FloatingBadgeCountView mBtnViewBasket;
 
     @Override
@@ -135,7 +131,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         Toolbar toolbar = getToolbar();
         setSupportActionBar(toolbar);
         if (VersionUtils.isAtLeastL() && getSupportActionBar() != null) {
-            getSupportActionBar().setElevation(25);
+            getSupportActionBar().setElevation(20);
         }
 
         getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
@@ -175,7 +171,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     public void setViewBasketFloatingButton() {
         FloatingBadgeCountView btnViewBasket = getViewBasketFloatingButton();
         if (btnViewBasket != null) {
-            btnViewBasket.setImg(R.drawable.ic_shopping_cart_white_24dp);
+            btnViewBasket.setImg(R.drawable.view_basket);
             btnViewBasket.setText(null);
             syncCartInfoFromPreference();
             updateCartCountHeaderTextView();
@@ -206,10 +202,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             }
             btnViewBasket.show();
         }
-    }
-
-    protected View getToolbarLayout() {
-        return findViewById(R.id.toolbarMain);
     }
 
     public Toolbar getToolbar() {
@@ -291,13 +283,11 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         setOptionsMenu(menu);
-        mMenu = menu;
         return super.onCreateOptionsMenu(menu);
     }
 
     protected void setOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.action_menu, menu);
+        getMenuInflater().inflate(R.menu.action_menu, menu);
     }
 
     @Override
@@ -530,21 +520,18 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
     @Override
     public void updateUIAfterBasketOperationFailed(BasketOperation basketOperation, TextView basketCountTextView,
-                                                   View viewDecQty, View viewIncQty, Button btnAddToBasket,
-                                                   EditText editTextQty, Product product, String qty,
+                                                   View viewDecQty, View viewIncQty, View btnAddToBasket,
+                                                   Product product, String qty,
                                                    String errorType, @Nullable View productView) {
         if (errorType.equals(Constants.PRODUCT_ID_NOT_FOUND)) {
             Toast.makeText(this, "0 added to basket.", Toast.LENGTH_SHORT).show();
-        }
-        if (editTextQty != null && !isSuspended()) {
-            hideKeyboard(getCurrentActivity(), editTextQty);
         }
     }
 
     @Override
     public void updateUIAfterBasketOperationSuccess(BasketOperation basketOperation, TextView basketCountTextView,
-                                                    View viewDecQty, View viewIncQty, Button btnAddToBasket,
-                                                    EditText editTextQty, Product product, String qty,
+                                                    View viewDecQty, View viewIncQty, View btnAddToBasket,
+                                                    Product product, String qty,
                                                     @Nullable View productView) {
 
 
@@ -564,10 +551,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             if (btnAddToBasket != null) {
                 btnAddToBasket.setVisibility(View.VISIBLE);
             }
-            if (editTextQty != null) {
-                editTextQty.setText("1");
-                editTextQty.setVisibility(View.VISIBLE);
-            }
             if (basketCountTextView != null) {
                 basketCountTextView.setVisibility(View.GONE);
             }
@@ -584,17 +567,10 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             if (btnAddToBasket != null) {
                 btnAddToBasket.setVisibility(View.GONE);
             }
-            if (editTextQty != null) {
-                editTextQty.setVisibility(View.GONE);
-            }
             if (basketCountTextView != null) {
                 basketCountTextView.setText(String.valueOf(productQtyInBasket));
                 basketCountTextView.setVisibility(View.VISIBLE);
             }
-        }
-
-        if (editTextQty != null && !isSuspended()) {
-            hideKeyboard(getCurrentActivity(), editTextQty);
         }
 
         if (product != null) {
@@ -819,7 +795,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
         ListView lstMyAccount = (ListView) findViewById(R.id.lstMyAccount);
         new AccountView<>(this, lstMyAccount);
-        NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoLight,
+        NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoRegular,
                 sectionNavigationItems, SectionManager.MAIN_MENU, baseImgUrl);
         mNavRecyclerView.setAdapter(navigationAdapter);
     }
@@ -925,10 +901,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
     public String getScreenTag() {
         return null;
-    }
-
-    public Menu getMenu() {
-        return mMenu;
     }
 
     @Override

@@ -9,6 +9,7 @@ import com.bigbasket.mobileapp.activity.CustomerFeedbackActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
+import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
@@ -41,11 +42,7 @@ public class DeepLinkHandler {
         if (getLoginRequiredUrls().contains(uri.getHost()) && authParameters.isAuthTokenEmpty()) {
             return LOGIN_REQUIRED;
         }
-        UtmHandler.postUtm(context.getCurrentActivity(), uri.getQueryParameter(Constants.UTM_SOURCE),
-                uri.getQueryParameter(Constants.UTM_MEDIUM),
-                uri.getQueryParameter(Constants.UTM_TERM),
-                uri.getQueryParameter(Constants.UTM_CONTENT),
-                uri.getQueryParameter(Constants.UTM_CAMPAIGN));
+        UtmHandler.postUtm(context.getCurrentActivity(), uri);
         switch (uri.getHost()) {
             case Constants.PROMO:
                 String id = uri.getQueryParameter(Constants.ID);
@@ -116,7 +113,7 @@ public class DeepLinkHandler {
             case Constants.ALL_SL:
                 id = uri.getQueryParameter(Constants.ID);
                 if (!TextUtils.isEmpty(id)) {
-                    intent = new Intent(context.getCurrentActivity(), BBActivity.class);
+                    intent = new Intent(context.getCurrentActivity(), ShoppingListActivity.class);
                     intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_LANDING);
                     context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     return SUCCESS;

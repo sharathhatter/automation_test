@@ -134,6 +134,7 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
         AuthParameters authParameters = AuthParameters.getInstance(getActivity());
         ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
                 .setCommonTypeface(faceRobotoRegular)
+                .setSansSerifMediumTypeface(faceRobotoMedium)
                 .setRupeeTypeface(faceRupee)
                 .setHandler(handler)
                 .setLoggedInMember(!authParameters.isAuthTokenEmpty())

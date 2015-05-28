@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.Button;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
@@ -45,9 +44,7 @@ import retrofit.RetrofitError;
 
 public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActivity {
 
-    public void setUpSocialButtons(Button btnGoogleLogin, Button btnFacebookLoginButton) {
-        btnGoogleLogin.setTypeface(faceRobotoRegular);
-        btnFacebookLoginButton.setTypeface(faceRobotoRegular);
+    public void setUpSocialButtons(View btnGoogleLogin, View btnFacebookLoginButton) {
         btnGoogleLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -12,8 +12,10 @@
         android:layout_width="match_parent"
         android:layout_height="48dip"
         android:background="@color/uiv3_list_bkg_color"
-        app:stl_defaultTabTextColor="@color/uiv3_action_bar_background"
+        app:stl_customTabTextLayoutId="@layout/tab_text"
+        app:stl_customTabTextViewId="@id/txtTab"
         app:stl_distributeEvenly="true"
+        app:stl_dividerColor="@android:color/transparent"
         app:stl_indicatorColor="@color/uiv3_action_bar_background"
         app:stl_indicatorThickness="4dp" />
 

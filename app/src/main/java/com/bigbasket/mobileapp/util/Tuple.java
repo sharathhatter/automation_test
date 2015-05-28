@@ -1,6 +1,6 @@
 package com.bigbasket.mobileapp.util;
 
-public class Tuple<X,Y> {
+public class Tuple<X, Y> {
     public X x;
     public Y y;
 

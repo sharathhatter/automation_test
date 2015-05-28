@@ -3,14 +3,10 @@ package com.bigbasket.mobileapp.activity.account.uiv3;
 
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -18,6 +14,7 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.handler.OnRightCompoundDrawableClicked;
 import com.bigbasket.mobileapp.interfaces.CityListDisplayAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.City;
@@ -39,6 +36,7 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
     private EditText mLastNameView;
     private Spinner mCitySpinner;
     private AutoCompleteTextView mEmailView;
+    private boolean mIsPasswordVisible;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,24 +45,24 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
     }
 
     @Override
+    public int getMainLayout() {
+        return R.layout.uiv3_signup;
+    }
+
+    @Override
     public void onReadyToDisplayCity(ArrayList<City> cities) {
         mCities = cities;
 
-        FrameLayout contentView = (FrameLayout) findViewById(R.id.content_frame);
-        LayoutInflater inflater = getLayoutInflater();
+        setTitle(getString(R.string.signUpCaps));
 
-        View base = inflater.inflate(R.layout.uiv3_signup, contentView, false);
-        setTitle(getString(R.string.signUp));
-        contentView.addView(base);
-
-        mPasswordView = (EditText) base.findViewById(R.id.editTextPasswd);
-        mFirstNameView = (EditText) base.findViewById(R.id.editTextFirstName);
+        mPasswordView = (EditText) findViewById(R.id.editTextPasswd);
+        mFirstNameView = (EditText) findViewById(R.id.editTextFirstName);
         mFirstNameView.setNextFocusDownId(R.id.editTextLastName);
-        mLastNameView = (EditText) base.findViewById(R.id.editTextLastName);
+        mLastNameView = (EditText) findViewById(R.id.editTextLastName);
 //        mRefCodeView = (EditText) base.findViewById(R.id.editTextRefCode);
-        mEmailView = (AutoCompleteTextView) base.findViewById(R.id.emailInput);
+        mEmailView = (AutoCompleteTextView) findViewById(R.id.emailInput);
 
-        Button btnSignUp = (Button) base.findViewById(R.id.btnRegister);
+        Button btnSignUp = (Button) findViewById(R.id.btnRegister);
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,24 +71,24 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
         });
         btnSignUp.setTypeface(faceRobotoRegular);
 
-        CheckBox chkShowPassword = (CheckBox) base.findViewById(R.id.chkShowPasswd);
-        chkShowPassword.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        mPasswordView.setOnTouchListener(new OnRightCompoundDrawableClicked() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                togglePasswordView(mPasswordView, isChecked);
+            public void onRightDrawableClicked() {
+                mIsPasswordVisible = !mIsPasswordVisible;
+                togglePasswordView(mPasswordView, mIsPasswordVisible);
             }
         });
 
-        mCitySpinner = (Spinner) base.findViewById(R.id.spinnerCity);
+        mCitySpinner = (Spinner) findViewById(R.id.spinnerCity);
         CityDropDownAdapter<City> cityDropDownAdapter =
                 new CityDropDownAdapter<>(this, android.R.layout.simple_spinner_item, cities);
         cityDropDownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mCitySpinner.setAdapter(cityDropDownAdapter);
 
-        setUpSocialButtons((Button) base.findViewById(R.id.plus_sign_in_button),
-                (Button) base.findViewById(R.id.btnFBLogin));
+        setUpSocialButtons(findViewById(R.id.plus_sign_in_button),
+                findViewById(R.id.btnFBLogin));
 
-        setTermsAndCondition((TextView) base.findViewById(R.id.txtSigninTermsAndCond), getString(R.string.byRegistering),
+        setTermsAndCondition((TextView) findViewById(R.id.txtSigninTermsAndCond), getString(R.string.byRegistering),
                 getString(R.string.termsAndCondHeading), getString(R.string.authFooterSeparator), getString(R.string.privacyPolicy));
         populateAutoComplete(mEmailView);
         trackEvent(TrackingAware.REGISTRATION_PAGE_SHOWN, null);

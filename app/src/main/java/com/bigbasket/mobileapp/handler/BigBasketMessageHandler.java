@@ -113,13 +113,13 @@ public class BigBasketMessageHandler<T> {
             case NavigationCodes.ADD_TO_SHOPPINGLIST_OK:
                 if (((ActivityAware) ctx).getCurrentActivity() != null) {
                     Toast.makeText(((ActivityAware) ctx).getCurrentActivity(),
-                            "Product successfully added to lists", Toast.LENGTH_SHORT).show();
+                            "Added successfully", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case NavigationCodes.DELETE_FROM_SHOPPING_LIST_OK:
                 if (((ActivityAware) ctx).getCurrentActivity() != null) {
                     Toast.makeText(((ActivityAware) ctx).getCurrentActivity(),
-                            "Product successfully deleted from list", Toast.LENGTH_SHORT).show();
+                            "Successfully deleted!", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case NavigationCodes.CO_RESERVE_QUANTITY_CHECK_OK:

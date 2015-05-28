@@ -12,8 +12,6 @@ import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
-import com.daimajia.slider.library.LightSliderLayout;
-import com.daimajia.slider.library.SliderTypes.TransparentSliderView;
 
 
 public class LandingPageActivity extends SocialLoginActivity {
@@ -23,19 +21,9 @@ public class LandingPageActivity extends SocialLoginActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.landing_page);
 
-        setUpSocialButtons((Button) findViewById(R.id.plus_sign_in_button),
-                (Button) findViewById(R.id.btnFBLogin));
         ((Button) findViewById(R.id.btnLogin)).setTypeface(faceRobotoRegular);
         ((Button) findViewById(R.id.btnRegister)).setTypeface(faceRobotoRegular);
         ((Button) findViewById(R.id.btnSkip)).setTypeface(faceRobotoRegular);
-
-        LightSliderLayout sliderLayout = (LightSliderLayout) findViewById(R.id.imgSlider);
-        int[] images = new int[]{R.drawable.slider_largest_grocery, R.drawable.slider_quality, R.drawable.slider_shop_from_products};
-        for (int imageResId : images) {
-            TransparentSliderView transparentSliderView = new TransparentSliderView(this);
-            transparentSliderView.image(imageResId);
-            sliderLayout.addSlider(transparentSliderView);
-        }
     }
 
     @Override

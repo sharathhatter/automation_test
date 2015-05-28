@@ -38,7 +38,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -62,13 +61,13 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware,
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        UpdateProfileModel  updateProfileModel = getArguments().getParcelable(Constants.UPDATE_PROFILE_OBJ);
-        if(updateProfileModel==null) return;
+        UpdateProfileModel updateProfileModel = getArguments().getParcelable(Constants.UPDATE_PROFILE_OBJ);
+        if (updateProfileModel == null) return;
         initiateUpdateProfileActivity(updateProfileModel);
     }
 
 
-    public void initiateUpdateProfileActivity(UpdateProfileModel  updateProfileModel) {
+    public void initiateUpdateProfileActivity(UpdateProfileModel updateProfileModel) {
         final View view = getContentView();
         if (view == null) return;
         editTextEmail = (EditText) view.findViewById(R.id.editTextEmail);
@@ -162,48 +161,44 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware,
 
 
     /**
-
-    private void loadMemberDetails() {
-        if (!DataUtil.isInternetAvailable(getActivity())) {
-            return;
-        }
-        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
-        showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.getMemberProfileData(new Callback<UpdateProfileOldApiResponse>() {
-            @Override
-            public void success(UpdateProfileOldApiResponse memberProfileDataCallback, Response response) {
-                hideProgressDialog();
-                if (memberProfileDataCallback.status.equals(Constants.OK)) {
-                    UpdateProfileModel updateProfileModel = memberProfileDataCallback.memberDetails;
-                    fillUpdateProfileData(updateProfileModel);
-                } else {
-                    int errorType = Integer.parseInt(memberProfileDataCallback.errorType);
-                    switch (errorType) {
-                        case ApiErrorCodes.INVALID_USER_PASSED:
-                            showErrorMsg(getString(R.string.OLD_PASS_NOT_CORRECT));
-                            break;
-                        default:
-                            handler.sendEmptyMessage(errorType, memberProfileDataCallback.message, true);
-                            Map<String, String> eventAttribs = new HashMap<>();
-                            eventAttribs.put(TrackEventkeys.FAILURE_REASON, memberProfileDataCallback.message);
-                            trackEvent(TrackingAware.UPDATE_PROFILE_GET_FAILED, eventAttribs);
-                            break;
-                    }
-                }
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                hideProgressDialog();
-                handler.handleRetrofitError(error, true);
-                Map<String, String> eventAttribs = new HashMap<>();
-                eventAttribs.put(TrackEventkeys.FAILURE_REASON, error.toString());
-                trackEvent(TrackingAware.UPDATE_PROFILE_GET_FAILED, eventAttribs);
-            }
-        });
-    }
-
-     **/
+     * private void loadMemberDetails() {
+     * if (!DataUtil.isInternetAvailable(getActivity())) {
+     * return;
+     * }
+     * BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+     * showProgressDialog(getString(R.string.please_wait));
+     * bigBasketApiService.getMemberProfileData(new Callback<UpdateProfileOldApiResponse>() {
+     *
+     * @Override public void success(UpdateProfileOldApiResponse memberProfileDataCallback, Response response) {
+     * hideProgressDialog();
+     * if (memberProfileDataCallback.status.equals(Constants.OK)) {
+     * UpdateProfileModel updateProfileModel = memberProfileDataCallback.memberDetails;
+     * fillUpdateProfileData(updateProfileModel);
+     * } else {
+     * int errorType = Integer.parseInt(memberProfileDataCallback.errorType);
+     * switch (errorType) {
+     * case ApiErrorCodes.INVALID_USER_PASSED:
+     * showErrorMsg(getString(R.string.OLD_PASS_NOT_CORRECT));
+     * break;
+     * default:
+     * handler.sendEmptyMessage(errorType, memberProfileDataCallback.message, true);
+     * Map<String, String> eventAttribs = new HashMap<>();
+     * eventAttribs.put(TrackEventkeys.FAILURE_REASON, memberProfileDataCallback.message);
+     * trackEvent(TrackingAware.UPDATE_PROFILE_GET_FAILED, eventAttribs);
+     * break;
+     * }
+     * }
+     * }
+     * @Override public void failure(RetrofitError error) {
+     * hideProgressDialog();
+     * handler.handleRetrofitError(error, true);
+     * Map<String, String> eventAttribs = new HashMap<>();
+     * eventAttribs.put(TrackEventkeys.FAILURE_REASON, error.toString());
+     * trackEvent(TrackingAware.UPDATE_PROFILE_GET_FAILED, eventAttribs);
+     * }
+     * });
+     * }
+     */
 
     public void showDatePickerDialog(View view) {
         DialogFragment newFragment = new DatePickerFragment(view);
@@ -276,24 +271,23 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware,
     }
 
     /**
-    private void fillUpdateProfileData(UpdateProfileModel updateProfileModel) {
-        editTextEmail.setText(updateProfileModel.getEmail());
-        editTextFirstName.setText(updateProfileModel.getFirstName());
-        editTextLastName.setText(updateProfileModel.getLastName());
-        editTextDob.setText(updateProfileModel.getDateOfBirth());
-        editTextHouseAndDetails.setText(updateProfileModel.getHouseNumber());
-        editTextStreetDetails.setText(updateProfileModel.getStreet());
-        editTextCity.setText(updateProfileModel.getCityName());
-        editTextMobileNumber.setText(updateProfileModel.getMobileNumber());
-        editTextTelNumber.setText(updateProfileModel.getTelephoneNumber());
-        editTextResAndComplex.setText(updateProfileModel.getResidentialComplex());
-        editTextLandmark.setText(updateProfileModel.getLandmark());
-        editTextPinCode.setText(updateProfileModel.getPincode());
-        editTextArea.setText(updateProfileModel.getArea());
-        ((BaseActivity) getActivity()).setAdapterArea(editTextArea, editTextPinCode);
-    }
-
-     **/
+     * private void fillUpdateProfileData(UpdateProfileModel updateProfileModel) {
+     * editTextEmail.setText(updateProfileModel.getEmail());
+     * editTextFirstName.setText(updateProfileModel.getFirstName());
+     * editTextLastName.setText(updateProfileModel.getLastName());
+     * editTextDob.setText(updateProfileModel.getDateOfBirth());
+     * editTextHouseAndDetails.setText(updateProfileModel.getHouseNumber());
+     * editTextStreetDetails.setText(updateProfileModel.getStreet());
+     * editTextCity.setText(updateProfileModel.getCityName());
+     * editTextMobileNumber.setText(updateProfileModel.getMobileNumber());
+     * editTextTelNumber.setText(updateProfileModel.getTelephoneNumber());
+     * editTextResAndComplex.setText(updateProfileModel.getResidentialComplex());
+     * editTextLandmark.setText(updateProfileModel.getLandmark());
+     * editTextPinCode.setText(updateProfileModel.getPincode());
+     * editTextArea.setText(updateProfileModel.getArea());
+     * ((BaseActivity) getActivity()).setAdapterArea(editTextArea, editTextPinCode);
+     * }
+     */
 
     @Override
     public void validateOtp(String otpCode) {

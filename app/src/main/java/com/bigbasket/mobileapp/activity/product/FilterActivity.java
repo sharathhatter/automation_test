@@ -1,17 +1,22 @@
 package com.bigbasket.mobileapp.activity.product;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.internal.VersionUtils;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckedTextView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
@@ -21,7 +26,6 @@ import com.bigbasket.mobileapp.model.product.FilterOptionItem;
 import com.bigbasket.mobileapp.model.product.FilteredOn;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
-import com.bigbasket.mobileapp.view.uiv3.BBArrayAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,11 +36,15 @@ public class FilterActivity extends BackButtonActivity {
     private ArrayList<FilteredOn> mFilteredOns;
     private BBCheckedListAdapter<FilterOptionItem> mFilterByAdapter;
     private FilterTextWatcher mFilterTextWatcher;
+    private String mCurrentlySelectedFilter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if (VersionUtils.isAtLeastL()) {
+            findViewById(R.id.viewToolbarSeparator).setVisibility(View.GONE);
+        }
         setTitle(getString(R.string.filter));
         ArrayList<FilterOptionCategory> filterOptionCategories =
                 getIntent().getParcelableArrayListExtra(Constants.FILTER_OPTIONS);
@@ -61,16 +69,17 @@ public class FilterActivity extends BackButtonActivity {
     private void renderFilterOptions(final ArrayList<FilterOptionCategory> filterOptionCategories) {
         ListView lstFilterName = (ListView) findViewById(R.id.lstFilterName);
 
-        BBArrayAdapter<FilterOptionCategory> arrayAdapter = new
-                BBArrayAdapter<>(this, android.R.layout.simple_list_item_1, filterOptionCategories,
-                faceRobotoRegular, getResources().getColor(R.color.uiv3_primary_text_color),
-                getResources().getColor(R.color.uiv3_primary_text_color));
-        lstFilterName.setAdapter(arrayAdapter);
+        final FilterNameAdapter filterNameAdapter = new FilterNameAdapter(filterOptionCategories);
+        mCurrentlySelectedFilter = filterOptionCategories.get(0).getFilterSlug();
+        lstFilterName.setAdapter(filterNameAdapter);
         renderFilterItems(filterOptionCategories.get(0));
         lstFilterName.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                renderFilterItems(filterOptionCategories.get(position));
+                FilterOptionCategory filterOptionCategory = filterOptionCategories.get(position);
+                mCurrentlySelectedFilter = filterOptionCategory.getFilterSlug();
+                filterNameAdapter.notifyDataSetChanged();
+                renderFilterItems(filterOptionCategory);
             }
         });
     }
@@ -81,7 +90,7 @@ public class FilterActivity extends BackButtonActivity {
         List<FilterOptionItem> filterOptionItems = filterOptionCategory.getFilterOptionItems();
         mFilterByAdapter = new BBCheckedListAdapter<>
                 (getCurrentActivity(), android.R.layout.simple_list_item_multiple_choice,
-                        filterOptionItems);
+                        filterOptionItems, R.color.uiv3_primary_text_color, faceRobotoRegular);
 
         editTextFilter.setTypeface(faceRobotoRegular);
         editTextFilter.setHint(getString(R.string.search) + " " +
@@ -196,6 +205,65 @@ public class FilterActivity extends BackButtonActivity {
 
             setResult(NavigationCodes.FILTER_APPLIED);
             finish();
+        }
+    }
+
+    private class FilterNameAdapter extends BaseAdapter {
+
+        private static final int VIEW_TYPE_NORMAL = 0;
+        private static final int VIEW_TYPE_SELECTED = 1;
+
+        private ArrayList<FilterOptionCategory> filterOptionCategories;
+
+        public FilterNameAdapter(ArrayList<FilterOptionCategory> filterOptionCategories) {
+            this.filterOptionCategories = filterOptionCategories;
+        }
+
+        @Override
+        public int getCount() {
+            return filterOptionCategories.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return filterOptionCategories.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            FilterOptionCategory filterOptionCategory = filterOptionCategories.get(position);
+            if (convertView == null) {
+                convertView = getLayoutInflater().inflate(android.R.layout.simple_list_item_1, parent, false);
+            }
+
+            TextView text1 = (TextView) convertView;
+            if (getItemViewType(position) == VIEW_TYPE_SELECTED) {
+                text1.setTypeface(faceRobotoRegular);
+                text1.setBackgroundColor(Color.WHITE);
+            } else {
+                text1.setTypeface(faceRobotoLight);
+                text1.setBackgroundColor(Color.TRANSPARENT);
+            }
+            text1.setText(filterOptionCategory.getFilterName());
+            return convertView;
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            if (filterOptionCategories.get(position).getFilterSlug().equals(mCurrentlySelectedFilter)) {
+                return VIEW_TYPE_SELECTED;
+            }
+            return VIEW_TYPE_NORMAL;
+        }
+
+        @Override
+        public int getViewTypeCount() {
+            return 2;
         }
     }
 }

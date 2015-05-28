@@ -36,6 +36,10 @@ public class ProductListPagerAdapter extends TabPagerAdapter {
 
     @Nullable
     public Fragment getRegisteredFragment(int position) {
-        return registeredfragments.get(position).get();
+        WeakReference<Fragment> fragmentWeakReference = registeredfragments.get(position);
+        if (fragmentWeakReference != null) {
+            return fragmentWeakReference.get();
+        }
+        return null;
     }
 }

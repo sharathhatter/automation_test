@@ -2,5 +2,4 @@
 
 <resources>
     <item name="uiv3_promo_detail" type="layout">@layout/uiv3_promo_detail_content</item>
-    <item name="uiv3_shopping_list_name_row" type="layout">@layout/uiv3_shopping_list_row</item>
 </resources>

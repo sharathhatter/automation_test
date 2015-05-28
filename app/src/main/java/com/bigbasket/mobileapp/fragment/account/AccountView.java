@@ -18,6 +18,7 @@ import com.bigbasket.mobileapp.activity.account.uiv3.MyAccountActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.OrderListActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
 import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListFragment;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
@@ -26,6 +27,7 @@ import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FontHolder;
+import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
@@ -94,7 +96,7 @@ public class AccountView<T> {
                     ctx.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     break;
                 case 1:
-                    ctx.trackEvent(TrackingAware.MY_ACCOUNT_CLICKED, null);
+                    ctx.trackEvent(TrackingAware.MY_ORDER_CLICKED, null);
                     intent = new Intent(ctx, OrderListActivity.class);
                     intent.putExtra(Constants.ORDER, "all");
                     ctx.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
@@ -103,6 +105,9 @@ public class AccountView<T> {
                     ctx.launchKonotor();
                     break;
                 case 3:
+                    intent = new Intent(ctx, ShoppingListActivity.class);
+                    intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_LANDING);
+                    ctx.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     ctx.onChangeFragment(new ShoppingListFragment());
                     break;
                 case 4:

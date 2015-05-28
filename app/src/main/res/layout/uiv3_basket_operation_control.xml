@@ -1,50 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
-    <LinearLayout
+    <ImageView
+        android:id="@+id/viewDecBasketQty"
+        style="@style/BasketOperationTxtStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/more_button_bkg"
-        android:orientation="horizontal">
+        android:contentDescription="@string/remove"
+        android:paddingBottom="2dp"
+        android:paddingTop="2dp"
+        android:src="@drawable/basket_minus" />
 
-        <TextView
-            android:id="@+id/txtDecBasketQty"
-            style="@style/BasketOperationTxtStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@drawable/plus_button_bkg"
-            android:paddingBottom="2dp"
-            android:paddingTop="2dp"
-            android:text="@string/minus"
-            android:textSize="@dimen/primary_text_size"
-            android:textStyle="bold" />
+    <TextView
+        android:id="@+id/txtInBasket"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:paddingBottom="4dp"
+        android:paddingLeft="@dimen/padding_small"
+        android:paddingRight="@dimen/padding_small"
+        android:paddingTop="2dp"
+        android:text="10"
+        android:textColor="@color/uiv3_action_bar_background"
+        android:textSize="@dimen/primary_text_size" />
 
-        <TextView
-            android:id="@+id/txtInBasket"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:paddingBottom="4dp"
-            android:paddingLeft="@dimen/padding_normal"
-            android:paddingRight="@dimen/padding_normal"
-            android:paddingTop="4dp"
-            android:text="10"
-            android:textColor="@color/uiv3_primary_text_color"
-            android:textSize="@dimen/secondary_text_size" />
-
-        <TextView
-            android:id="@+id/txtIncBasketQty"
-            style="@style/BasketOperationTxtStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@drawable/minus_button_bkg"
-            android:paddingBottom="2dp"
-            android:paddingTop="2dp"
-            android:text="@string/plus"
-            android:textSize="@dimen/primary_text_size"
-            android:textStyle="bold" />
-    </LinearLayout>
+    <ImageView
+        android:id="@+id/viewIncBasketQty"
+        style="@style/BasketOperationTxtStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/add"
+        android:paddingBottom="2dp"
+        android:paddingTop="2dp"
+        android:src="@drawable/basket_plus" />
 </LinearLayout>

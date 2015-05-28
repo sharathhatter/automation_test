@@ -27,13 +27,16 @@ import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
+import com.bigbasket.mobileapp.task.uiv3.CreateShoppingListTask;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListDoAddDeleteTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.ShoppingListNamesDialog;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -54,6 +57,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
     private String mBaseImgUrl;
     private String mTabType;
     private boolean mHasProductLoadingFailed;
+    private HashMap<String, Integer> mCartInfo;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -80,6 +84,12 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
             ArrayList<NameValuePair> nameValuePairs = getArguments().getParcelableArrayList(Constants.PRODUCT_QUERY);
             mNameValuePairs = NameValuePair.toMap(nameValuePairs);
             mTabType = getArguments().getString(Constants.TAB_TYPE);
+            String cartInfoJson = getArguments().getString(Constants.CART_INFO);
+            if (cartInfoJson != null) {
+                Type collectionType = new TypeToken<HashMap<String, Integer>>() {
+                }.getType();
+                mCartInfo = new Gson().fromJson(cartInfoJson, collectionType);
+            }
             setProductListView();
         }
     }
@@ -155,6 +165,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
             AuthParameters authParameters = AuthParameters.getInstance(getActivity());
             ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
                     .setCommonTypeface(faceRobotoRegular)
+                    .setSansSerifMediumTypeface(faceRobotoMedium)
                     .setRupeeTypeface(faceRupee)
                     .setHandler(handler)
                     .setLoggedInMember(!authParameters.isAuthTokenEmpty())
@@ -164,7 +175,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                     .build();
             mProductListRecyclerAdapter = new ProductListRecyclerAdapter(products, mBaseImgUrl,
                     productViewDisplayDataHolder, this, mProductInfo.getProductCount(),
-                    getNavigationCtx());
+                    getNavigationCtx(), mCartInfo);
 
             productRecyclerView.setAdapter(mProductListRecyclerAdapter);
             contentView.addView(productRecyclerView);
@@ -202,13 +213,12 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
 
     @Override
     public void onShoppingListFetched(ArrayList<ShoppingListName> shoppingListNames) {
-        if (shoppingListNames == null || shoppingListNames.size() == 0) {
-            Toast.makeText(getActivity(), getString(R.string.createAShoppingList), Toast.LENGTH_SHORT).show();
-        } else {
-            ShoppingListNamesDialog shoppingListNamesDialog = ShoppingListNamesDialog.newInstance(shoppingListNames);
-            shoppingListNamesDialog.setTargetFragment(getFragment(), 0);
-            shoppingListNamesDialog.show(getFragment().getFragmentManager(), Constants.SHOP_LST);
+        if (shoppingListNames == null) {
+            shoppingListNames = new ArrayList<>();
         }
+        ShoppingListNamesDialog shoppingListNamesDialog = ShoppingListNamesDialog.newInstance(shoppingListNames);
+        shoppingListNamesDialog.setTargetFragment(getFragment(), 0);
+        shoppingListNamesDialog.show(getFragment().getFragmentManager(), Constants.SHOP_LST);
     }
 
     @Override
@@ -255,6 +265,19 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         ShoppingListDoAddDeleteTask shoppingListDoAddDeleteTask =
                 new ShoppingListDoAddDeleteTask<>(this, selectedShoppingListNames, ShoppingListOption.ADD_TO_LIST);
         shoppingListDoAddDeleteTask.startTask();
+    }
+
+    @Override
+    public void createNewShoppingList() {
+        new CreateShoppingListTask<>(this).showDialog();
+    }
+
+    @Override
+    public void onNewShoppingListCreated(String listName) {
+        if (getCurrentActivity() == null) return;
+        Toast.makeText(getCurrentActivity(),
+                "List \"" + listName
+                        + "\" was created successfully", Toast.LENGTH_LONG).show();
     }
 
     @Override

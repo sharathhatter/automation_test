@@ -9,6 +9,7 @@ import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.handler.OnDialogShowListener;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.UIUtil;
 
@@ -54,6 +55,7 @@ public class UpgradeAppDialog extends DialogFragment {
                 });
 
         AlertDialog alertDialog = builder.create();
+        alertDialog.setOnShowListener(new OnDialogShowListener());
         alertDialog.setCancelable(false);
         alertDialog.setCanceledOnTouchOutside(false);
         return alertDialog;

@@ -4,7 +4,6 @@ package com.bigbasket.mobileapp.common;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -12,22 +11,19 @@ import com.bigbasket.mobileapp.R;
 
 public class ProductViewHolder extends RecyclerView.ViewHolder {
     private ImageView imgProduct;
-    private ImageView imgBby;
-    private TextView txtIsNewProduct;
     private Button btnMorePackSizes;
-    private TextView packageDescTextView;
+    private TextView txtPackageDesc;
     private TextView txtProductDesc;
+    private TextView txtProductBrand;
     private TextView txtSalePrice;
     private TextView txtMrp;
-    private TextView txtSave;
-    private TextView txtPromoLabel;
+    private ImageView imgPromoStar;
     private TextView txtPromoDesc;
     private TextView txtPromoAddSavings;
-    private Button btnAddToBasket;
-    private TextView txtDecBasketQty;
+    private ImageView imgAddToBasket;
+    private View viewDecBasketQty;
     private TextView txtInBasket;
-    private TextView txtIncBasketQty;
-    private EditText editTextQty;
+    private View viewIncBasketQty;
     private TextView txtOutOfStockORNotForSale;
     private ImageView imgProductOverflowAction;
 
@@ -42,18 +38,18 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
         return imgProduct;
     }
 
-    public ImageView getImgBby() {
-        if (imgBby == null) {
-            imgBby = (ImageView) itemView.findViewById(R.id.imgBBY);
+    public TextView getTxtProductBrand() {
+        if (txtProductBrand == null) {
+            txtProductBrand = (TextView) itemView.findViewById(R.id.txtProductBrand);
         }
-        return imgBby;
+        return txtProductBrand;
     }
 
-    public TextView getTxtIsNewProduct() {
-        if (txtIsNewProduct == null) {
-            txtIsNewProduct = (TextView) itemView.findViewById(R.id.imgNew);
+    public ImageView getImgPromoStar() {
+        if (imgPromoStar == null) {
+            imgPromoStar = (ImageView) itemView.findViewById(R.id.imgPromoStar);
         }
-        return txtIsNewProduct;
+        return imgPromoStar;
     }
 
     public Button getBtnMorePackSizes() {
@@ -63,11 +59,11 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
         return btnMorePackSizes;
     }
 
-    public TextView getPackageDescTextView() {
-        if (packageDescTextView == null) {
-            packageDescTextView = (TextView) itemView.findViewById(R.id.txtPackageDesc);
+    public TextView getTxtPackageDesc() {
+        if (txtPackageDesc == null) {
+            txtPackageDesc = (TextView) itemView.findViewById(R.id.txtPackageDesc);
         }
-        return packageDescTextView;
+        return txtPackageDesc;
     }
 
     public TextView getTxtProductDesc() {
@@ -91,20 +87,6 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
         return txtMrp;
     }
 
-    public TextView getTxtSave() {
-        if (txtSave == null) {
-            txtSave = (TextView) itemView.findViewById(R.id.txtSave);
-        }
-        return txtSave;
-    }
-
-    public TextView getTxtPromoLabel() {
-        if (txtPromoLabel == null) {
-            txtPromoLabel = (TextView) itemView.findViewById(R.id.promoLabel);
-        }
-        return txtPromoLabel;
-    }
-
     public TextView getTxtPromoDesc() {
         if (txtPromoDesc == null) {
             txtPromoDesc = (TextView) itemView.findViewById(R.id.txtPromoName);
@@ -119,18 +101,18 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
         return txtPromoAddSavings;
     }
 
-    public Button getBtnAddToBasket() {
-        if (btnAddToBasket == null) {
-            btnAddToBasket = (Button) itemView.findViewById(R.id.btnAddToBasket);
+    public ImageView getImgAddToBasket() {
+        if (imgAddToBasket == null) {
+            imgAddToBasket = (ImageView) itemView.findViewById(R.id.imgAddToBasket);
         }
-        return btnAddToBasket;
+        return imgAddToBasket;
     }
 
-    public TextView getTxtDecBasketQty() {
-        if (txtDecBasketQty == null) {
-            txtDecBasketQty = (TextView) itemView.findViewById(R.id.txtDecBasketQty);
+    public View getViewDecBasketQty() {
+        if (viewDecBasketQty == null) {
+            viewDecBasketQty = itemView.findViewById(R.id.viewDecBasketQty);
         }
-        return txtDecBasketQty;
+        return viewDecBasketQty;
     }
 
     public TextView getTxtInBasket() {
@@ -140,18 +122,11 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
         return txtInBasket;
     }
 
-    public TextView getTxtIncBasketQty() {
-        if (txtIncBasketQty == null) {
-            txtIncBasketQty = (TextView) itemView.findViewById(R.id.txtIncBasketQty);
+    public View getViewIncBasketQty() {
+        if (viewIncBasketQty == null) {
+            viewIncBasketQty = itemView.findViewById(R.id.viewIncBasketQty);
         }
-        return txtIncBasketQty;
-    }
-
-    public EditText getEditTextQty() {
-        if (editTextQty == null) {
-            editTextQty = (EditText) itemView.findViewById(R.id.editTextQty);
-        }
-        return editTextQty;
+        return viewIncBasketQty;
     }
 
     public TextView getTxtOutOfStockORNotForSale() {
