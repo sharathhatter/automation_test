@@ -36,8 +36,8 @@ public class AddToShoppingListAdapter<T> extends BaseAdapter {
         Context context = ((ActivityAware) activityAware).getCurrentActivity();
         textColor = context.getResources().getColor(R.color.uiv3_secondary_text_color);
         drawable = ContextCompat.getDrawable(context, R.drawable.shopping_list);
-        this.dp8 = (int) context.getResources().getDimension(R.dimen.padding_small);
-        this.dp16 = (int) context.getResources().getDimension(R.dimen.padding_normal);
+        this.dp8 = (int) context.getResources().getDimension(R.dimen.padding_normal);
+        this.dp16 = (int) context.getResources().getDimension(R.dimen.padding_large);
         this.typeface = typeface;
     }
 
