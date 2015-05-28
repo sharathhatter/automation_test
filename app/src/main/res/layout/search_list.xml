@@ -12,6 +12,7 @@
         android:layout_marginLeft="@dimen/margin_small"
         android:layout_marginRight="@dimen/margin_small"
         android:background="@color/white"
+        android:cacheColorHint="@color/white"
         android:divider="@null"
         android:dividerHeight="0dp"
         android:scrollbars="none" />

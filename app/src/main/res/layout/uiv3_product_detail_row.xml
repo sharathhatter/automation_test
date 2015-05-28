@@ -10,18 +10,29 @@
 
     <ImageView
         android:id="@+id/imgProduct"
-        android:layout_width="@dimen/product_image_width"
-        android:layout_height="@dimen/product_image_height"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
         android:contentDescription="@string/product_image"
         android:padding="2dp"
         android:scaleType="fitCenter"
         android:src="@drawable/noimage" />
+
+    <View
+        android:id="@+id/viewSeparator"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/imgProduct"
+        android:layout_marginBottom="@dimen/margin_normal"
+        android:layout_marginTop="@dimen/margin_normal"
+        android:background="@color/uiv3_divider_color" />
 
     <ImageView
         android:id="@+id/imgProductOverflowAction"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
+        android:layout_below="@id/viewSeparator"
         android:contentDescription="@string/shoppingList"
         android:paddingRight="@dimen/padding_small"
         android:src="@drawable/add_to_shopping_list" />
@@ -30,10 +41,10 @@
         android:id="@+id/txtProductDesc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/margin_mini"
+        android:layout_below="@id/viewSeparator"
+        android:layout_marginLeft="@dimen/margin_normal"
         android:layout_marginRight="@dimen/margin_small"
         android:layout_toLeftOf="@id/imgProductOverflowAction"
-        android:layout_toRightOf="@id/imgProduct"
         android:text="Tender Coconut"
         android:textColor="@color/uiv3_primary_text_color"
         android:textSize="@dimen/primary_text_size" />
@@ -42,11 +53,11 @@
         android:id="@+id/txtProductBrand"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
         android:layout_below="@id/txtProductDesc"
-        android:layout_marginLeft="@dimen/margin_mini"
+        android:layout_marginLeft="@dimen/margin_normal"
         android:layout_marginRight="@dimen/margin_small"
         android:layout_toLeftOf="@id/imgProductOverflowAction"
-        android:layout_toRightOf="@id/imgProduct"
         android:text="Hampi Organic"
         android:textColor="@color/uiv3_secondary_text_color"
         android:textSize="@dimen/secondary_text_size" />
@@ -56,10 +67,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/txtProductBrand"
-        android:layout_marginLeft="@dimen/margin_mini"
-        android:layout_marginRight="@dimen/margin_normal"
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_marginRight="@dimen/margin_small"
         android:layout_marginTop="@dimen/margin_normal"
-        android:layout_toRightOf="@id/imgProduct"
         android:orientation="vertical">
 
         <TextView
@@ -96,10 +106,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/layoutPackageDesc"
-        android:layout_marginLeft="@dimen/margin_mini"
+        android:layout_marginLeft="@dimen/margin_normal"
         android:layout_marginRight="@dimen/margin_small"
         android:layout_marginTop="@dimen/margin_normal"
-        android:layout_toRightOf="@id/imgProduct"
         android:baselineAligned="false"
         android:gravity="center"
         android:orientation="horizontal">
@@ -135,48 +144,47 @@
             android:visibility="gone" />
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/imgPromoStar"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:id="@+id/layoutPromoInfoBox"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/layoutProductPrice"
-        android:layout_marginLeft="@dimen/margin_mini"
         android:layout_marginTop="@dimen/margin_normal"
-        android:layout_toRightOf="@id/imgProduct"
-        android:contentDescription="@string/promo"
-        android:src="@drawable/promo_star" />
+        android:background="@color/uiv3_list_bkg_color"
+        android:paddingBottom="@dimen/padding_small"
+        android:paddingLeft="@dimen/padding_normal"
+        android:paddingTop="@dimen/padding_small">
 
-    <TextView
-        android:id="@+id/txtPromoAddSavings"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/layoutProductPrice"
-        android:layout_marginLeft="@dimen/margin_small"
-        android:layout_marginRight="@dimen/margin_small"
-        android:layout_marginTop="@dimen/margin_mini"
-        android:layout_toRightOf="@id/imgPromoStar"
-        android:text="Save Rs. 22"
-        android:textColor="@color/uiv3_primary_text_color"
-        android:textSize="@dimen/primary_text_size" />
+        <ImageView
+            android:id="@+id/imgPromoStar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:contentDescription="@string/promo"
+            android:src="@drawable/promo_star" />
 
-    <TextView
-        android:id="@+id/txtPromoName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/txtPromoAddSavings"
-        android:layout_marginLeft="@dimen/margin_small"
-        android:layout_marginRight="@dimen/margin_small"
-        android:layout_marginTop="@dimen/margin_small"
-        android:layout_toRightOf="@id/imgPromoStar"
-        android:text="Buy 1 get 1 free"
-        android:textColor="@color/promoDescColor"
-        android:textSize="@dimen/primary_text_size" />
+        <TextView
+            android:id="@+id/txtPromoAddSavings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_normal"
+            android:layout_marginTop="@dimen/margin_mini"
+            android:layout_toRightOf="@id/imgPromoStar"
+            android:text="Save Rs. 22"
+            android:textColor="@color/uiv3_primary_text_color"
+            android:textSize="@dimen/primary_text_size" />
 
-    <View
-        android:id="@+id/viewSeparator"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_below="@id/txtPromoName"
-        android:layout_marginTop="@dimen/margin_small"
-        android:background="@color/uiv3_divider_color" />
+        <TextView
+            android:id="@+id/txtPromoName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/txtPromoAddSavings"
+            android:layout_marginLeft="@dimen/margin_normal"
+            android:layout_marginRight="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_small"
+            android:layout_toRightOf="@id/imgPromoStar"
+            android:text="Buy 1 get 1 free"
+            android:textColor="@color/promoDescColor"
+            android:textSize="@dimen/primary_text_size" />
+    </RelativeLayout>
 </RelativeLayout>

@@ -22,13 +22,13 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductAdditionalInfo;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
+import com.bigbasket.mobileapp.model.promo.Promo;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
 import com.bigbasket.mobileapp.task.uiv3.CreateShoppingListTask;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListDoAddDeleteTask;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.uiv2.ProductView;
 import com.bigbasket.mobileapp.view.uiv3.ShoppingListNamesDialog;
@@ -140,19 +140,17 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
                 .setShowShopListDeleteBtn(false)
                 .build();
 
-        int eightDp = (int) getResources().getDimension(R.dimen.margin_small);
         LinearLayout layoutProductDetail = (LinearLayout) getView().findViewById(R.id.layoutProductDetail);
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View productRow = inflater.inflate(R.layout.uiv3_product_row, layoutProductDetail, false);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams.setMargins(eightDp, 0, eightDp, 0);
-        productRow.setLayoutParams(layoutParams);
-
-        productRow.findViewById(R.id.viewSeparator).setVisibility(View.GONE);
+        View productRow = inflater.inflate(R.layout.uiv3_product_detail_row, layoutProductDetail, false);
 
         ProductView.setProductView(new ProductViewHolder(productRow), mProduct, null, null, productViewDisplayDataHolder,
                 false, this, getNavigationCtx());
+
+        if (mProduct.getProductPromoInfo() == null ||
+                !Promo.getAllTypes().contains(mProduct.getProductPromoInfo().getPromoType())) {
+            productRow.findViewById(R.id.layoutPromoInfoBox).setVisibility(View.GONE);
+        }
         layoutProductDetail.addView(productRow);
 
         ArrayList<ProductAdditionalInfo> productAdditionalInfos = mProduct.getProductAdditionalInfos();
@@ -161,8 +159,8 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
                 View additionalInfoView = inflater.inflate(R.layout.uiv3_product_add_desc, layoutProductDetail, false);
                 TextView txtProductAddDescTitle = (TextView) additionalInfoView.findViewById(R.id.txtProductAddDescTitle);
                 TextView txtProductAddDescContent = (TextView) additionalInfoView.findViewById(R.id.txtProductAddDescContent);
-                txtProductAddDescContent.setTypeface(FontHolder.getInstance(getCurrentActivity()).getFaceRobotoLight());
-                txtProductAddDescTitle.setTypeface(FontHolder.getInstance(getCurrentActivity()).getFaceRobotoLight());
+                txtProductAddDescContent.setTypeface(faceRobotoRegular);
+                txtProductAddDescTitle.setTypeface(faceRobotoRegular);
                 txtProductAddDescContent.setText(Html.fromHtml(productAdditionalInfo.getContent()));
                 if (!TextUtils.isEmpty(productAdditionalInfo.getTitle())) {
                     txtProductAddDescTitle.setText(Html.fromHtml(productAdditionalInfo.getTitle()));

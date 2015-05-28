@@ -4,10 +4,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="@dimen/margin_small"
-    android:layout_marginRight="@dimen/margin_small"
-    android:layout_marginTop="@dimen/margin_small"
-    android:background="@color/white"
     android:orientation="vertical"
     android:padding="@dimen/padding_normal">
 
@@ -17,13 +13,13 @@
         android:layout_height="wrap_content"
         android:paddingBottom="@dimen/padding_small"
         android:textColor="@color/uiv3_primary_text_color"
-        android:textSize="@dimen/heading_2_text_size" />
+        android:textSize="@dimen/secondary_text_size" />
 
     <TextView
         android:id="@+id/txtProductAddDescContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/uiv3_primary_text_color"
-        android:textSize="@dimen/primary_text_size" />
+        android:textColor="@color/uiv3_secondary_text_color"
+        android:textSize="@dimen/secondary_text_size" />
 
 </LinearLayout>
