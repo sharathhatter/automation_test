@@ -72,6 +72,8 @@
 -keep class com.google.gson.stream.** { *; }
 
 # Moengage
+-keep class com.moe.** { *; }
+-keep class com.moengage.** { *; }
 
 # Google licensing files
 -keep public class com.google.vending.licensing.ILicensingService

@@ -393,6 +393,7 @@ public class UIUtil {
                 .load(url)
                 .placeholder(R.drawable.loading)
                 .error(R.drawable.noimage)
+                .noFade()
                 .into(imageView);
     }
 
