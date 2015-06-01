@@ -112,6 +112,13 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         mArrayTabTypeAndFragmentPosition = null;
 
         HashMap<String, String> paramMap = NameValuePair.toMap(mNameValuePairs);
+
+        if (paramMap != null && paramMap.containsKey(Constants.TYPE)) {
+            Map<String, String> eventAttribs = new HashMap<>();
+            eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, paramMap.get(Constants.TYPE));
+            trackEvent(TrackingAware.PRODUCT_LIST_SHOWN, eventAttribs);
+        }
+
         new ProductListTask<>(this, paramMap).startTask();
     }
 
@@ -224,7 +231,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
         ArrayList<BBTab> bbTabs = new ArrayList<>();
         ArrayList<String> tabTypeWithNoProducts = new ArrayList<>();
-        ArrayList<ProductTabInfo> productTabInfos = productTabData.getProductTabInfos();
+        final ArrayList<ProductTabInfo> productTabInfos = productTabData.getProductTabInfos();
         for (int i = 0; i < productTabInfos.size(); i++) {
             ProductTabInfo productTabInfo = productTabInfos.get(i);
             ProductInfo productInfo = productTabInfo.getProductInfo();
@@ -249,6 +256,24 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
         SmartTabLayout pagerSlidingTabStrip = (SmartTabLayout) base.findViewById(R.id.slidingTabs);
         pagerSlidingTabStrip.setViewPager(mViewPager);
+        pagerSlidingTabStrip.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                HashMap<String, String> eventAttribs = new HashMap<>();
+                eventAttribs.put(Constants.TAB_NAME, productTabInfos.get(position).getTabName());
+                trackEvent(TrackingAware.PRODUCT_LIST_TAB_CHANGED, eventAttribs);
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
         if (productTabData.getContentSectionData() != null) {
             LinearLayout layoutProducts = new LinearLayout(this);
             layoutProducts.setOrientation(LinearLayout.VERTICAL);
@@ -372,7 +397,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     private void renderHeaderDropDown(@Nullable final Section headSection) {
         Toolbar toolbar = getToolbar();
         ViewGroup layoutChildToolbarContainer = (ViewGroup) findViewById(R.id.layoutChildToolbarContainer);
-        ListView listChildProducts = (ListView) findViewById(R.id.listChildProducts);
+        ListView listChildProducts = (ListView) findViewById(R.id.listHeaderDropdown);
         TextView txtChildDropdownTitle = (TextView) findViewById(R.id.txtListDialogTitle);
         if (headSection != null && headSection.getSectionItems() != null
                 && headSection.getSectionItems().size() > 0) {
@@ -407,11 +432,13 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     if (position != Spinner.INVALID_POSITION && position != mHeaderSelectedIdx) {
                         new OnSectionItemClickListener<>(getCurrentActivity(), headSection,
-                                headSection.getSectionItems().get(position), "").onClick(view);
+                                headSection.getSectionItems().get(position),
+                                TrackingAware.PRODUCT_LIST_HEADER).onClick(view);
                         onChildDropdownRequested.onClick(view);  // Manually simulate click to hide dropdown
                     }
                 }
             });
+            findViewById(R.id.layoutListHeader).setOnClickListener(onChildDropdownRequested);
 
         } else {
             layoutChildToolbarContainer.setVisibility(View.GONE);
@@ -567,12 +594,13 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         if (mNameValuePairs == null) return;
         NameValuePair filterOnNameValuePair = getFilterOnNameValuePair();
         if (filterOnNameValuePair == null) {
-            if (filteredOns != null) {
-                filterOnNameValuePair = new NameValuePair(Constants.FILTER_ON,
-                        new Gson().toJson(filteredOns));
-                mNameValuePairs.add(filterOnNameValuePair);
-                trackFilterAppliedEvent(filteredOns);
+            if (filteredOns == null) {
+                return;
             }
+            filterOnNameValuePair = new NameValuePair(Constants.FILTER_ON,
+                    new Gson().toJson(filteredOns));
+            mNameValuePairs.add(filterOnNameValuePair);
+            trackFilterAppliedEvent(filteredOns);
         } else {
             if (filteredOns != null) {
                 filterOnNameValuePair.setValue(new Gson().toJson(filteredOns));
@@ -622,10 +650,10 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         } else {
             Map<String, String> eventAttribs = new HashMap<>();
             for (FilteredOn filteredOn : filteredOnArrayList) {
-                // TODO : Plugin analytics
                 eventAttribs.put(TrackEventkeys.FILTER_NAME, filteredOn.getFilterSlug());
-//                eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNavigationCtx());
-//                trackEvent(TrackingAware.FILTER_APPLIED, eventAttribs, getNavigationCtx(), null, false);
+                eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.PRODUCT_LISTING_SCREEN);
+                trackEvent(TrackingAware.FILTER_APPLIED, eventAttribs,
+                        TrackEventkeys.PRODUCT_LISTING_SCREEN, null, false);
             }
         }
     }

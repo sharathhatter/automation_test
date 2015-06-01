@@ -162,6 +162,11 @@ public class ShoppingListSummaryActivity extends BBActivity {
     private void renderShoppingListSummary(ShoppingListName shoppingListName,
                                            final ArrayList<ShoppingListSummary> shoppingListSummaries,
                                            String baseImgUrl) {
+        if (!shoppingListName.getSlug().equals(Constants.SMART_BASKET_SLUG)) {
+            trackEvent(TrackingAware.SHOP_LST_SUMMARY_SHOWN, null);
+        } else {
+            trackEvent(TrackingAware.SMART_BASKET_SUMMARY_SHOWN, null);
+        }
         FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
         contentFrame.removeAllViews();
         LayoutInflater inflater = getLayoutInflater();

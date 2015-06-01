@@ -10,6 +10,7 @@ import com.bigbasket.mobileapp.activity.account.uiv3.ChangeCityActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
@@ -24,6 +25,7 @@ public class LandingPageActivity extends SocialLoginActivity {
         ((Button) findViewById(R.id.btnLogin)).setTypeface(faceRobotoRegular);
         ((Button) findViewById(R.id.btnRegister)).setTypeface(faceRobotoRegular);
         ((Button) findViewById(R.id.btnSkip)).setTypeface(faceRobotoRegular);
+        trackEvent(TrackingAware.ENTRY_PAGE_SHOWN, null);
     }
 
     @Override
@@ -34,12 +36,15 @@ public class LandingPageActivity extends SocialLoginActivity {
     public void onLandingPageButtonClicked(View view) {
         switch (view.getId()) {
             case R.id.btnLogin:
+                trackEvent(TrackingAware.ENTRY_PAGE_LOGIN_CLICKED, null);
                 launchLogin(TrackEventkeys.NAVIGATION_CTX_LANDING_PAGE);
                 break;
             case R.id.btnRegister:
+                trackEvent(TrackingAware.ENTRY_PAGE_SIGNUP_CLICKED, null);
                 launchRegistrationPage();
                 break;
             case R.id.btnSkip:
+                // Analytics for this is done in onActivityResult of SplashActivity
                 showChangeCity();
                 break;
         }

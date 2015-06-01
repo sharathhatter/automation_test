@@ -6,8 +6,10 @@ public interface TrackingAware {
 
 
     //Start Activity
-    public static final String ENTRY_PAGE_SHOWN = "EntryPage.Shown";
-    public static final String ENTRY_PAGE_START_SHOPPING_BTN_CLICKED = "EntryPage.Start Shopping Clicked";
+    public static final String ENTRY_PAGE_SHOWN = "EntryPage.Shown";  // Done
+    public static final String ENTRY_PAGE_SKIP_BUTTON_CLICKED = "EntryPage.Skip Button Clicked";  // Done
+    String ENTRY_PAGE_LOGIN_CLICKED = "EntryPage.Login Button Clicked";
+    String ENTRY_PAGE_SIGNUP_CLICKED = "EntryPage.Signup Button Clicked";
 
     //Home Screen topnav
     public static final String COMMUNICATION_HUB_CLICKED = "MyAccount.CommunicationHubClicked";
@@ -20,12 +22,15 @@ public interface TrackingAware {
     //change city dialog
     public static final String CHANGE_CITY_POSSITIVE_BTN_CLICKED = "Change Your City. Change City Clicked";
     public static final String CHANGE_CITY_CANCEL_BTN_CLICKED = "Change Your City.Cancel Clicked";
+    String CHANGE_CITY_SHOWN = "Change Your City.Shown";
+    String CHANGE_CITY_CLICKED = "Change Your City.Change City Clicked";
 
     //login and register
     public static final String LOGIN_SHOWN = "Login.Login Page Shown";
     public static final String LOGIN_BTN_CLICKED = "Login.Login Button Clicked";
     public static final String LOGIN_FAILED = "Login.Login Failed";
     public static final String SHOW_PASSWORD_ENABLED = "Show Password Enabled";
+    public static final String LOGIN_REMEMBER_ME_ENABLED = "Login.Remember Me Enabled";
     public static final String FORGOT_PASSWORD_CLICKED = "Login.Forgot PassWord Clicked";
     public static final String NEW_USER_REGISTER_CLICKED = "Login.New User Register Clicked";
     public static final String FORGOT_PASSWORD_DIALOG_SHOWN = "Forgot Password.Dialog Shown";
@@ -77,11 +82,6 @@ public interface TrackingAware {
     public static final String CHANGE_PIN_SHOWN = "MyAccount.Change Pin Page Shown";
     public static final String UPDATE_PIN_CLICKED = "MyAccount.Change Pin Update Clicked";
 
-    //
-    public static final String SPEND_TRENDS_CLICKED = "MyAccount.Spend Trends Clicked";
-    public static final String SPEND_TRENDS_SHOWN = "MyAccount.Spend Trends Shown";
-
-
     //topnav and home page
     public static final String SHOPPING_LIST_ICON_CLICKED = "Shopping Lists Icon Clicked";
     public static final String SMART_BASKET_ICON_CLICKED = "Smart Basket Icon Clicked";
@@ -107,6 +107,9 @@ public interface TrackingAware {
     public static final String MENU_SHOWN = "Menu.Shown";
     public static final String MENU_ITEM_CLICKED = "Menu.Item Clicked";
 
+    // Dynamic Page
+    String ITEM_CLICKED = "Item Clicked";
+
     //Home Page
     public static final String HOME_PAGE_SHOWN = "HomePage.Shown";
     public static final String DYNAMIC_SCREEN_SHOWN = "Dynamic Screen.Shown";
@@ -115,8 +118,10 @@ public interface TrackingAware {
     public static final String SEARCH = "Search";
 
     //product listing page
-    public static final String PRODUCT_LIST_SHOWN = "ProductListing Shown";
-    public static final String PRODUCT_DETAIL_SHOWN = "ProductDetail Shown";
+    public static final String PRODUCT_LIST_SHOWN = "Product Listing.Shown";
+    String PRODUCT_LIST_TAB_CHANGED = "Product List.Tab Changed";
+    String PRODUCT_LIST_HEADER = "Product List Header";
+    public static final String PRODUCT_DETAIL_SHOWN = "Product Detail.Shown";
 
     //promo
     public static final String PROMO_DETAIL_SHOWN = "Promo.Promo Detail Shown";

@@ -914,8 +914,9 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         super.onResume();
         FragmentManager sfm = getSupportFragmentManager();
         if (sfm == null || sfm.getFragments() == null || sfm.getFragments().size() == 0) {
-            LocalyticsWrapper.onResume(getScreenTag());
+            LocalyticsWrapper.tagScreen(getScreenTag());
         }
+        LocalyticsWrapper.onResume();
 
         if (isBasketDirty()) {
             syncBasket();
