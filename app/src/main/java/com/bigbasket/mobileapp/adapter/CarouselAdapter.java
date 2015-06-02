@@ -74,7 +74,6 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
         ViewHolder holder = (ViewHolder) viewHolder;
         SectionItem sectionItem = sectionItems.get(position);
-        boolean applyRight = position != numItems - 1;
         Renderer renderer = rendererHashMap != null ?
                 rendererHashMap.get(sectionItem.getRenderingId()) : null;
 
@@ -144,10 +143,14 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
             if (sectionLayoutContainer != null) {
                 int margin = renderer.getSafeMargin(0);
                 if (margin > 0) {
-                    sectionLayoutContainer.setPadding(margin, 0, applyRight ? margin : 0, 0);
+                    sectionLayoutContainer.setPadding(0, 0, margin, 0);
                 }
             }
-
+        } else {
+            ViewGroup sectionLayoutContainer = holder.getSectionLayoutContainer();
+            if (sectionLayoutContainer != null) {
+                sectionLayoutContainer.setPadding(0, 0, fourDp, 0);
+            }
         }
     }
 
