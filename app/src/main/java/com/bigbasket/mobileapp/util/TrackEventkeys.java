@@ -49,7 +49,7 @@ public final class TrackEventkeys {
     public static final String NAVIGATION_CTX_SHOP_FROM_ORDER = "past_order";
     public static final String NAVIGATION_CTX_DISCOUNT = "discounts";
     public static final String NAVIGATION_CTX_CL_PAGE = "cl_page";
-    public static final String NAVIGATION_CTX_PRODUCT_SEARCH = "search";
+    public static final String NAVIGATION_CTX_PRODUCT_LIST = "product_list";
     public static final String NAVIGATION_CTX_PRODUCT_DETAIL = "product_detail";
     public static final String NAVIGATION_CTX_SHOW_BASKET = "basket";
     public static final String NAVIGATION_CTX_MARKET_PLACE_QC = "mp_qc"; //todo check with hari

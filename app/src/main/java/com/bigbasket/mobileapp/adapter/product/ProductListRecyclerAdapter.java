@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.common.FixedLayoutViewHolder;
@@ -24,6 +25,7 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
     public static final int VIEW_TYPE_LOADING = 0;
     public static final int VIEW_TYPE_DATA = 1;
     public static final int VIEW_TYPE_EMPTY = 2;
+    public static final int VIEW_TYPE_PRODUCT_COUNT = 3;
     public static final int DELTA_FOR_NEXT_PAGE_LOAD = 5;
     protected int serverListSize = -1;
     private String baseImgUrl;
@@ -55,10 +57,16 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
 
     @Override
     public int getItemViewType(int position) {
+        if (position == 0) return VIEW_TYPE_PRODUCT_COUNT;
+        position = getActualPosition(position);
         if (position >= serverListSize && serverListSize > 0) {
             return VIEW_TYPE_EMPTY;
         }
         return position >= products.size() ? VIEW_TYPE_LOADING : VIEW_TYPE_DATA;
+    }
+
+    private int getActualPosition(int position) {
+        return position - 1;
     }
 
     public List<Product> getProducts() {
@@ -78,13 +86,18 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
             case VIEW_TYPE_EMPTY:
                 row = new View(activityAware.getCurrentActivity());
                 return new FixedLayoutViewHolder(row);
+            case VIEW_TYPE_PRODUCT_COUNT:
+                row = inflater.inflate(R.layout.uiv3_product_count_view, viewGroup, false);
+                return new ProductCountViewHolder(row);
         }
         return null;
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
-        if (getItemViewType(position) == VIEW_TYPE_DATA) {
+        int viewType = getItemViewType(position);
+        if (viewType == VIEW_TYPE_DATA) {
+            position = getActualPosition(position);
             Product product = products.get(position);
             ProductView.setProductView((ProductViewHolder) viewHolder, product, baseImgUrl,
                     new ProductDetailOnClickListener(product.getSku(), activityAware),
@@ -96,12 +109,33 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
                     positionToCheckForNextPageLoad > products.size()) {
                 ((InfiniteProductListAware) activityAware).loadMoreProducts();
             }
+        } else if (viewType == VIEW_TYPE_PRODUCT_COUNT) {
+            ProductCountViewHolder productCountViewHolder = (ProductCountViewHolder) viewHolder;
+            int stringResId = serverListSize > 1 ? R.string.productFoundPlural : R.string.productFound;
+            productCountViewHolder.getTxtProductCount().setText(serverListSize + " " +
+                    activityAware.getCurrentActivity().getString(stringResId));
         }
     }
 
     @Override
     public int getItemCount() {
-        return products.size() + 1;
+        return products.size() + 2;  // 1 for infiniteloading view, 1 for product count
+    }
+
+    private class ProductCountViewHolder extends RecyclerView.ViewHolder {
+        private TextView txtProductCount;
+
+        public ProductCountViewHolder(View itemView) {
+            super(itemView);
+        }
+
+        public TextView getTxtProductCount() {
+            if (txtProductCount == null) {
+                txtProductCount = (TextView) itemView.findViewById(R.id.txtProductCount);
+                txtProductCount.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
+            }
+            return txtProductCount;
+        }
     }
 }
 

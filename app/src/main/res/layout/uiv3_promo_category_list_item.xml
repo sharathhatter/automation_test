@@ -17,7 +17,7 @@
         android:layout_marginBottom="@dimen/margin_mini"
         android:layout_marginLeft="@dimen/margin_mini"
         android:contentDescription="@string/promo"
-        android:src="@drawable/image_404" />
+        android:src="@drawable/noimage" />
 
     <TextView
         android:id="@+id/txtPromoName"

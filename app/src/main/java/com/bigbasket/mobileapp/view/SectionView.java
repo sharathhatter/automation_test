@@ -260,20 +260,29 @@ public class SectionView {
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         linearLayout.setLayoutParams(baseLayoutParams);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
-        for (SectionItem sectionItem : section.getSectionItems()) {
+        ArrayList<SectionItem> sectionItems = section.getSectionItems();
+        if (sectionItems == null) return null;
+        for (int i = 0; i < sectionItems.size(); i++) {
+            SectionItem sectionItem = sectionItems.get(i);
             if (!sectionItem.hasImage())
                 continue;
             ImageView imageView = new ImageView(context);
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
+            layoutParams.gravity = Gravity.CENTER_HORIZONTAL;
             Renderer renderer = mSectionData.getRenderersMap() != null ?
                     mSectionData.getRenderersMap().get(sectionItem.getRenderingId()) : null;
             if (renderer != null) {
                 renderer.setRendering(imageView, 0, 0);
+            } else {
+                // Not applying when i == 0 has parent already has a top-margin of 4dp by default
+                layoutParams.setMargins(0, i == 0 ? 0 : fourDp, 0, 0);
             }
             imageView.setLayoutParams(layoutParams);
+            imageView.setAdjustViewBounds(true);
             imageView.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
             sectionItem.displayImage(context, mSectionData.getBaseImgUrl(), imageView);
+            linearLayout.addView(imageView);
         }
         return linearLayout;
     }

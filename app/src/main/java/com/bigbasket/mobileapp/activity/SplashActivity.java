@@ -42,6 +42,9 @@ import com.newrelic.agent.android.NewRelic;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -88,7 +91,6 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
         } else {
             loadNavigation();
         }
-        trackEvent(TrackingAware.ENTRY_PAGE_SHOWN, null);
     }
 
     private void showNoInternetConnectionView(String msg) {
@@ -254,6 +256,7 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
             removePendingGoToHome();
             if ((data != null && data.getBooleanExtra(Constants.RELOAD_APP, false))
                     || resultCode == NavigationCodes.CITY_CHANGED) {
+                trackCity();
                 loadNavigation();
             } else if (data != null && data.getBooleanExtra(Constants.GO_TO_INVOICE, false)) {
                 Intent invoiceIntent = new Intent(this, OrderInvoiceActivity.class);
@@ -266,6 +269,16 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
 
         } else {
             finish();
+        }
+    }
+
+    private void trackCity() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String city = preferences.getString(Constants.CITY, null);
+        if (!TextUtils.isEmpty(city)) {
+            Map<String, String> eventAttribs = new HashMap<>();
+            eventAttribs.put(TrackEventkeys.CITY, city);
+            trackEvent(TrackingAware.ENTRY_PAGE_SKIP_BUTTON_CLICKED, eventAttribs);
         }
     }
 

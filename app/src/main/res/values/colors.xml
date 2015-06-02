@@ -48,6 +48,7 @@
     <color name="uiv3_main_nav_header_color">#CE525252</color>
     <color name="overlay_bkg">#AA000000</color>
     <color name="uiv3_divider_color">#B6B6B6</color>
+    <color name="uiv3_large_divider_color">#f2f2f2</color>
     <color name="uiv3_list_bkg_color">#EDEDED</color>
     <color name="uiv3_list_bkg_light_color">#F9F9F9</color>
     <color name="uiv3_secondary_text_color">#929292</color>

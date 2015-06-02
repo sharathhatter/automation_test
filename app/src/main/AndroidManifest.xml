@@ -19,7 +19,7 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <!-- AppsFlyer -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    
+
     <!-- MOEngage UBox-->
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-feature
@@ -321,9 +321,9 @@
         </activity>
         <activity
             android:name=".activity.product.FilterActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.order.uiv3.PlaceOrderActivity"
@@ -487,13 +487,13 @@
         </receiver>
 
         <!-- MOENGAGE RECEIVER FOR RECEIVING INSTALLATION INTENT -->
-        <receiver android:name="com.moe.pushlibrary.InstallReceiver" >
+        <receiver android:name="com.moe.pushlibrary.InstallReceiver">
             <intent-filter>
                 <action android:name="com.android.vending.INSTALL_REFERRER" />
             </intent-filter>
         </receiver>
 
-        <receiver android:name="com.moe.pushlibrary.AppUpdateReceiver" >
+        <receiver android:name="com.moe.pushlibrary.AppUpdateReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_REPLACED" />
 
@@ -504,11 +504,14 @@
         </receiver>
 
         <service
-            android:name="com.moe.pushlibrary.internal.MoEService" android:exported="false" />
+            android:name="com.moe.pushlibrary.internal.MoEService"
+            android:exported="false" />
         <service
-            android:name="com.moe.pushlibrary.MoEWorker" android:exported="false" />
+            android:name="com.moe.pushlibrary.MoEWorker"
+            android:exported="false" />
         <service
-            android:name="com.moe.pushlibrary.GeofenceIntentService" android:exported="false" />
+            android:name="com.moe.pushlibrary.GeofenceIntentService"
+            android:exported="false" />
 
         <provider
             android:name="com.moe.pushlibrary.providers.MoEProvider"
@@ -528,7 +531,7 @@
         <!-- MANDATORY FIELD: APP ID AS SEEN ON MOENGAGE DASHBOARD APP SETTINGS PAGE -->
         <meta-data
             android:name="APP_ID"
-            android:value="YSD6Y5AVT60X4AWNLL35EIDJ" />
+            android:value="@string/moe_app_id" />
 
         <!-- MANDATORY FIELD: SENDER ID , i.e. THE PROJECT NUMBER AS MENTIONED ON GOOGLE CLOUD CONSOLE PROJECTS PAGE -->
         <meta-data

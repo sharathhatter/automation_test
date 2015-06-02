@@ -26,7 +26,7 @@
                 android:layout_gravity="top"
                 android:contentDescription="@string/alt_placeholder"
                 android:layout_marginRight="@dimen/margin_mini"
-                android:src="@drawable/image_404"
+                android:src="@drawable/noimage"
                 android:id="@+id/imgPromoIcon" />
 
             <LinearLayout

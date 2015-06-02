@@ -1,15 +1,13 @@
 package com.bigbasket.mobileapp.util.analytics;
 
-import android.content.Context;
+import android.app.Application;
 import android.text.TextUtils;
 
 import com.localytics.android.Localytics;
 
 import java.util.Map;
 
-/**
- * Created by jugal on 11/2/15.
- */
+
 public class LocalyticsWrapper {
 
     public static void setIdentifier(String key, String value) {
@@ -20,9 +18,9 @@ public class LocalyticsWrapper {
         }
     }
 
-    public static void integrate(Context context) {
+    public static void integrate(Application application) {
         try {
-            Localytics.integrate(context);
+            Localytics.integrate(application);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -31,31 +29,25 @@ public class LocalyticsWrapper {
     public static void onPause() {
         try {
             Localytics.closeSession();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
             Localytics.upload();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static void onResume(String screenName) {
+    public static void onResume() {
         try {
             Localytics.openSession();
+            Localytics.upload();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
+    public static void tagScreen(String screenName) {
         try {
             if (!TextUtils.isEmpty(screenName))
                 Localytics.tagScreen(screenName);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            Localytics.upload();
         } catch (Exception e) {
             e.printStackTrace();
         }

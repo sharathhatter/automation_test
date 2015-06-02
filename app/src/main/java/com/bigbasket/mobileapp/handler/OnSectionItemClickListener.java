@@ -243,11 +243,18 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
         if (section.getSectionType().equals(Section.BANNER)) {
             logBannerEvent();
         } else if (screenName != null) {
-            if (screenName.equals(SectionManager.HOME_PAGE)) {
-                logItemClickEvent(TrackingAware.HOME_PAGE_ITEM_CLICKED);
-            } else if (screenName.equals(SectionManager.MAIN_MENU)) {
-                logItemClickEvent(TrackingAware.MENU_ITEM_CLICKED);
-            }
+            logItemClickEvent();
+        }
+    }
+
+    private String getAnalyticsFormattedScreeName() {
+        switch (screenName) {
+            case SectionManager.HOME_PAGE:
+                return TrackingAware.HOME_PAGE_ITEM_CLICKED;
+            case SectionManager.MAIN_MENU:
+                return TrackingAware.MENU_ITEM_CLICKED;
+            default:
+                return screenName + "." + TrackingAware.ITEM_CLICKED;
         }
     }
 
@@ -277,7 +284,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
         HashMap<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.BANNER_ID, String.valueOf(index));
         eventAttribs.put(TrackEventkeys.BANNER_SLUG, bannerName);
-        ((TrackingAware) context).trackEvent(TrackingAware.HOME_PAGE_BANNER_CLICKED, eventAttribs);
+        ((TrackingAware) context).trackEvent(getAnalyticsFormattedScreeName(), eventAttribs);
     }
 
     private String getSectionItemName() {
@@ -289,11 +296,11 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                                 sectionItem.getDescription().getText() : "" : "";
     }
 
-    private void logItemClickEvent(String trackAwareName) {
+    private void logItemClickEvent() {
         HashMap<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.SECTION_TYPE, getSectionName());
         eventAttribs.put(TrackEventkeys.SECTION_ITEM, getSectionItemName());
-        ((TrackingAware) context).trackEvent(trackAwareName, eventAttribs);
+        ((TrackingAware) context).trackEvent(getAnalyticsFormattedScreeName(), eventAttribs);
     }
 
     private void logMainMenuEvent(String trackAwareName, String eventKeyName,

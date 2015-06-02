@@ -150,7 +150,6 @@ public abstract class BaseActivity extends AppCompatActivity implements COMarket
         faceRobotoBold = FontHolder.getInstance(this).getFaceRobotoBold();
         faceRobotoLight = FontHolder.getInstance(this).getFaceRobotoLight();
         moEHelper = MoEngageWrapper.getMoHelperObj(getCurrentActivity());
-        LocalyticsWrapper.integrate(this);
         fbLogger = AppEventsLogger.newLogger(getApplicationContext());
     }
 
@@ -653,6 +652,8 @@ public abstract class BaseActivity extends AppCompatActivity implements COMarket
     public void trackEvent(String eventName, Map<String, String> eventAttribs, String source,
                            String sourceValue,
                            boolean isCustomerValueIncrease) {
+        Log.i(getCurrentActivity().getClass().getName(), "Sending event = " + eventName +
+                " eventAttribs = " + eventAttribs);
         AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());
         if (authParameters.isMoEngageEnabled()) {
             JSONObject analyticsJsonObj = new JSONObject();
@@ -789,6 +790,10 @@ public abstract class BaseActivity extends AppCompatActivity implements COMarket
             passwordEditText.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
             logShowPasswordEnabled(TrackEventkeys.NO, TrackEventkeys.NAVIGATION_CTX_LOGIN_PAGE);
         }
+
+        Map<String, String> eventAttribs = new HashMap<>();
+        eventAttribs.put(TrackEventkeys.ENABLED, String.valueOf(show));
+        trackEvent(TrackingAware.SHOW_PASSWORD_ENABLED, eventAttribs);
         passwordEditText.setCompoundDrawablesWithIntrinsicBounds(null, null, rightDrawable, null);
     }
 

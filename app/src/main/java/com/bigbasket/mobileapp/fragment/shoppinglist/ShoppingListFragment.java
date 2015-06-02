@@ -79,6 +79,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
         ListView shoppingNameListView = (ListView) base.findViewById(R.id.fabListView);
         shoppingNameListView.setDivider(null);
         shoppingNameListView.setDividerHeight(0);
+        shoppingNameListView.setCacheColorHint(Color.WHITE);
         RelativeLayout noDeliveryAddLayout = (RelativeLayout) base.findViewById(R.id.noDeliveryAddLayout);
 
         if (mShoppingListNames != null && mShoppingListNames.size() > 0) {

@@ -132,7 +132,7 @@ public class SignInActivity extends BackButtonActivity {
     private void logRememberMeEnabled(String enabled) {
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.ENABLED, enabled);
-        trackEvent(TrackingAware.SHOW_PASSWORD_ENABLED, eventAttribs);
+        trackEvent(TrackingAware.LOGIN_REMEMBER_ME_ENABLED, eventAttribs);
     }
 
     private void initializeRememberedDataForLoginInput() {
@@ -233,7 +233,7 @@ public class SignInActivity extends BackButtonActivity {
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_LOGIN_PAGE);
         trackEvent(TrackingAware.FORGOT_PASSWORD_DIALOG_SHOWN, eventAttribs);
-        LocalyticsWrapper.onResume(TrackEventkeys.FORGOT_PASSWORD_SCREEN);
+        LocalyticsWrapper.tagScreen(TrackEventkeys.FORGOT_PASSWORD_SCREEN);
     }
 
     private void requestNewPassword(String email) {

@@ -21,6 +21,8 @@
         android:id="@+id/lstDialog"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:cacheColorHint="@color/white"
         android:divider="@null"
         android:dividerHeight="0dp" />
 </LinearLayout>

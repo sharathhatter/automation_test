@@ -237,7 +237,7 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
                 }
                 if (TextUtils.isEmpty(renderer.getOrdering())) {
                     return sectionType.equals(Section.PRODUCT_CAROUSEL) ?
-                            VIEW_TITLE_IMG_DESC_VERTICAL : VIEW_TITLE_IMG_DESC_VERTICAL_OVERLAY;
+                            VIEW_TITLE_IMG_DESC_VERTICAL : VIEW_IMG_TITLE_DESC_VERTICAL_OVERLAY;
                 }
                 switch (renderer.getOrdering()) {
                     case Renderer.IMG_TITLE_DESC:
@@ -277,7 +277,7 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
                 return VIEW_IMG;
             }
             return sectionType.equals(Section.PRODUCT_CAROUSEL) ?
-                    VIEW_TITLE_IMG_DESC_VERTICAL : VIEW_TITLE_IMG_DESC_VERTICAL_OVERLAY;
+                    VIEW_TITLE_IMG_DESC_VERTICAL : VIEW_IMG_TITLE_DESC_VERTICAL_OVERLAY;
         }
         return VIEW_UNKNOWN;
     }

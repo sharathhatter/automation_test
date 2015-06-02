@@ -9,7 +9,7 @@ public abstract class AbstractDialogFragment extends DialogFragment {
 
     public void onResume() {
         super.onResume();
-        LocalyticsWrapper.onResume(getScreenTag());
+        LocalyticsWrapper.tagScreen(getScreenTag());
     }
 
     public abstract String getScreenTag();

@@ -46,8 +46,7 @@ public class FilterActivity extends BackButtonActivity {
             findViewById(R.id.viewToolbarSeparator).setVisibility(View.GONE);
         }
         setTitle(getString(R.string.filter));
-        ArrayList<FilterOptionCategory> filterOptionCategories =
-                getIntent().getParcelableArrayListExtra(Constants.FILTER_OPTIONS);
+
         mFilteredOns = getIntent().getParcelableArrayListExtra(Constants.FILTERED_ON);
 
         Button btnClear = (Button) findViewById(R.id.btnClear);
@@ -58,6 +57,12 @@ public class FilterActivity extends BackButtonActivity {
         Button btnApply = (Button) findViewById(R.id.btnApply);
         btnApply.setTypeface(faceRobotoRegular);
         btnApply.setOnClickListener(new OnApplyFilterListener());
+        refreshFilters();
+    }
+
+    private void refreshFilters() {
+        ArrayList<FilterOptionCategory> filterOptionCategories =
+                getIntent().getParcelableArrayListExtra(Constants.FILTER_OPTIONS);
         renderFilterOptions(filterOptionCategories);
     }
 
@@ -202,9 +207,7 @@ public class FilterActivity extends BackButtonActivity {
             if (mFilteredOns != null) {
                 mFilteredOns = null;
             }
-
-            setResult(NavigationCodes.FILTER_APPLIED);
-            finish();
+            refreshFilters();
         }
     }
 

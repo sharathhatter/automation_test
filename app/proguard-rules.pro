@@ -79,6 +79,32 @@
 -keep public class com.google.vending.licensing.ILicensingService
 -keep public class com.android.vending.licensing.ILicensingService
 
+# Localytics
+-keep class com.localytics.android.** { *; }
+
+# Required for attribution
+-keep class com.google.android.gms.ads.** { *; }
+
+# Required for Google Play Services (see http://developer.android.com/google/play-services/setup.html)
+-keep class * extends java.util.ListResourceBundle {
+    protected Object[][] getContents();
+}
+-keep class com.google.android.gms.gcm.**{ *; }
+
+
+-keep public class com.google.android.gms.common.internal.safeparcel.SafeParcelable {
+    public static final *** NULL;
+}
+
+-keepnames @com.google.android.gms.common.annotation.KeepName class *
+-keepclassmembernames class * {
+    @com.google.android.gms.common.annotation.KeepName *;
+}
+
+-keepnames class * implements android.os.Parcelable {
+    public static final ** CREATOR;
+}
+
 # Konotor
 # Application classes that will be serialized/deserialized over Gson
 -keep class com.google.gson.demach.** {

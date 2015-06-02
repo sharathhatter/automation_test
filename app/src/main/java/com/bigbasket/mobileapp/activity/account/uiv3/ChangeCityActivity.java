@@ -39,6 +39,7 @@ public class ChangeCityActivity extends BackButtonActivity implements CityListDi
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle(getString(R.string.chooseCity));
+        trackEvent(TrackingAware.CHANGE_CITY_SHOWN, null);
         loadCities();
     }
 
@@ -139,7 +140,12 @@ public class ChangeCityActivity extends BackButtonActivity implements CityListDi
         editor.putString(Constants.CITY_ID, String.valueOf(city.getId()));
         editor.putBoolean(Constants.HAS_USER_CHOSEN_CITY, true);
         editor.commit();
+
+        Map<String, String> eventAttribs = new HashMap<>();
+        eventAttribs.put(TrackEventkeys.CITY, city.getName());
+        trackEvent(TrackingAware.CHANGE_CITY_CLICKED, eventAttribs);
         setResult(NavigationCodes.CITY_CHANGED);
+
         finish();
     }
 }

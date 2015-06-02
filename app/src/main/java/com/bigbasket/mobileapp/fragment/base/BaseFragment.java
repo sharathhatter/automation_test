@@ -455,7 +455,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     public void onResume() {
         super.onResume();
         setTitle();
-        LocalyticsWrapper.onResume(getScreenTag());
+        LocalyticsWrapper.tagScreen(getScreenTag());
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.application;
 import android.app.Application;
 
 import com.bigbasket.mobileapp.model.request.AuthParameters;
+import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.FacebookSdk;
 import com.moe.pushlibrary.MoEHelper;
@@ -18,6 +19,7 @@ public class BaseApplication extends Application {
         AuthParameters.updateInstance(this);
         FacebookSdk.sdkInitialize(this.getApplicationContext());
         MoEHelper.APP_DEBUG = true;
+        LocalyticsWrapper.integrate(this);
     }
 
 }
