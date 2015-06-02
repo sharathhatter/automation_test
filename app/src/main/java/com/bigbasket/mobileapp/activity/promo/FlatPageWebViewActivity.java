@@ -30,7 +30,9 @@ public class FlatPageWebViewActivity extends BackButtonActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarMain);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         if (!TextUtils.isEmpty(webViewTitle)) {
             getSupportActionBar().setTitle(webViewTitle);
         }
