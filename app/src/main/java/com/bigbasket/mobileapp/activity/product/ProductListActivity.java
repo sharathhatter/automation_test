@@ -22,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -178,14 +179,23 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
         SectionData sectionData = productTabData.getContentSectionData();
         View contentSectionView = null;
+        boolean hasProducts = productTabData.getProductTabInfos() != null &&
+                productTabData.getProductTabInfos().size() > 0;
         if (sectionData != null) {
             contentSectionView = new SectionView(this, faceRobotoRegular, sectionData, "Product List").getView();
             if (contentSectionView != null) {
-                contentFrame.addView(contentSectionView);
+                if (!hasProducts) {
+                    // Use a scrollview as this section can be huge
+                    ScrollView scrollView = new ScrollView(this);
+                    scrollView.addView(contentSectionView);
+                    contentFrame.addView(scrollView);
+                } else {
+                    contentFrame.addView(contentSectionView);
+                }
             }
         }
-        if (productTabData.getProductTabInfos() != null &&
-                productTabData.getProductTabInfos().size() > 0) {
+        toggleFilterSortView(hasProducts);
+        if (hasProducts) {
             if (productTabData.getProductTabInfos().size() > 1) {
                 displayProductTabs(productTabData, contentFrame);
                 if (productTabData.getHeaderSection() != null &&
@@ -223,6 +233,12 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
             UIUtil.showEmptyProductsView(this, contentFrame);
             renderHeaderDropDown(null);
         }
+    }
+
+    private void toggleFilterSortView(boolean isVisible) {
+        int visibility = isVisible ? View.VISIBLE : View.GONE;
+        findViewById(R.id.layoutFilter).setVisibility(visibility);
+        findViewById(R.id.layoutSort).setVisibility(visibility);
     }
 
     private void displayProductTabs(ProductTabData productTabData, ViewGroup contentFrame) {
