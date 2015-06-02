@@ -287,9 +287,4 @@ public class MyAccountActivity extends BackButtonActivity {
         return TrackEventkeys.ACCOUNT_SCREEN;
     }
 
-//
-//    @Override
-//    public int getMainLayout() {
-//        return R.layout.uiv3_my_account;
-//    }
 }

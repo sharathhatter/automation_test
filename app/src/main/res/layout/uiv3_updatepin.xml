@@ -4,165 +4,73 @@
     android:id="@+id/layoutUpdatePin"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/uiv3_list_bkg_color"
+    android:background="@color/white"
     android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/layoutCurrentPin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/margin_small"
-        android:layout_marginRight="@dimen/margin_small"
-        android:layout_marginTop="@dimen/margin_small"
-        android:background="@color/white"
-        android:orientation="vertical"
-        android:paddingBottom="@dimen/padding_small"
-        android:paddingLeft="@dimen/padding_normal"
-        android:paddingRight="@dimen/padding_normal"
-        android:paddingTop="@dimen/padding_small">
+        android:layout_marginLeft="@dimen/margin_large"
+        android:layout_marginRight="@dimen/margin_large"
+        android:layout_marginTop="@dimen/margin_normal"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/textPinLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_mini"
             android:singleLine="false"
             android:text="@string/current_pin"
-            android:textColor="@color/uiv3_primary_text_color"
-            android:textSize="@dimen/large_text_size" />
+            android:textColor="@color/uiv3_secondary_text_color"
+            android:textSize="@dimen/primary_text_size" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.2dp"
-            android:layout_marginTop="@dimen/margin_mini"
-            android:background="@color/strokeLine" />
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_normal">
 
-            <TextView
-                android:id="@+id/txtPinValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_centerInParent="true"
-                android:text="@string/blankPin"
-                android:textSize="@dimen/primary_text_size" />
 
             <ImageView
                 android:id="@+id/imgEditPin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_centerInParent="true"
-                android:layout_marginRight="@dimen/margin_mini"
                 android:clickable="true"
                 android:contentDescription="@string/editPin"
                 android:padding="@dimen/padding_mini"
-                android:src="@drawable/ic_mode_edit_grey600_24dp" />
+                android:src="@drawable/ic_edit" />
 
-            <View
-                android:layout_width="1dp"
-                android:layout_height="25dp"
-                android:layout_centerInParent="true"
-                android:layout_marginRight="10dp"
+
+            <EditText
+                android:id="@+id/editTextNewPin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:textColor="@color/uiv3_dialog_header_text_bkg"
+                android:paddingLeft="@dimen/padding_small"
+                android:paddingTop="@dimen/padding_mini"
+                android:layout_marginRight="@dimen/margin_small"
+                android:layout_alignParentLeft="true"
                 android:layout_toLeftOf="@id/imgEditPin"
-                android:background="@color/strokeLine" />
-
+                android:textSize="@dimen/primary_text_size" />
 
         </RelativeLayout>
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/layoutEditPin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/margin_small"
-        android:layout_marginRight="@dimen/margin_small"
-        android:layout_marginTop="@dimen/margin_small"
-        android:background="@color/white"
-        android:orientation="vertical"
-        android:paddingBottom="@dimen/padding_small"
-        android:paddingLeft="@dimen/padding_normal"
-        android:paddingRight="@dimen/padding_normal"
-        android:paddingTop="@dimen/padding_small"
-        android:visibility="gone">
-
-        <TextView
-            android:id="@+id/textEditPinLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_mini"
-            android:singleLine="false"
-            android:text="@string/new_pin_hint"
-            android:textColor="@color/uiv3_primary_text_color"
-            android:textSize="@dimen/large_text_size" />
-        <!-- current_pin-->
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.2dp"
-            android:layout_marginTop="@dimen/margin_small"
-            android:background="@color/strokeLine" />
-
-        <EditText
-            android:id="@+id/editTextNewPin"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_normal"
-            android:inputType="number"
-            android:paddingLeft="@dimen/padding_normal"
-            android:textSize="@dimen/primary_text_size" />
-        <!--  android:hint="@string/new_pin_hint" -->
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_normal">
-
-            <TextView
-                android:id="@+id/txtCancel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingBottom="@dimen/padding_mini"
-                android:paddingLeft="@dimen/padding_mini"
-                android:paddingRight="@dimen/padding_small"
-                android:paddingTop="@dimen/padding_mini"
-                android:text="@string/CANCEL"
-                android:textSize="@dimen/primary_text_size" />
-
-            <TextView
-                android:id="@+id/txtUpdate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/margin_mini"
-                android:paddingBottom="@dimen/padding_mini"
-                android:paddingLeft="@dimen/padding_small"
-                android:paddingRight="@dimen/padding_small"
-                android:paddingTop="@dimen/padding_mini"
-                android:text="@string/UPDATE"
-                android:textColor="@color/uiv3_ok_label_color"
-                android:textSize="@dimen/primary_text_size" />
-
-        </LinearLayout>
-
-    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/margin_small"
-        android:layout_marginRight="@dimen/margin_small"
-        android:layout_marginTop="@dimen/margin_normal"
+        android:layout_marginLeft="@dimen/margin_large"
+        android:layout_marginRight="@dimen/margin_large"
+        android:layout_marginTop="@dimen/margin_large"
         android:background="@color/white"
         android:orientation="vertical"
         android:paddingBottom="@dimen/padding_small"
-        android:paddingLeft="@dimen/padding_normal"
-        android:paddingRight="@dimen/padding_small"
-        android:paddingTop="@dimen/padding_small">
+        >
 
         <TextView
             android:id="@+id/textUpdatePinInfo1"
@@ -170,7 +78,6 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/margin_mini"
             android:layout_marginRight="@dimen/margin_small"
-            android:layout_marginTop="@dimen/margin_mini"
             android:text="@string/pin_text_para1"
             android:textColor="@color/uiv3_primary_text_color"
             android:textSize="@dimen/secondary_text_size" />
@@ -183,6 +90,28 @@
             android:layout_marginRight="@dimen/margin_small"
             android:layout_marginTop="@dimen/margin_mini"
             android:text="@string/pin_text_para2"
+            android:textColor="@color/uiv3_primary_text_color"
+            android:textSize="@dimen/secondary_text_size" />
+
+        <TextView
+            android:id="@+id/textUpdatePinInfo3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_small"
+            android:layout_marginRight="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_mini"
+            android:text="@string/pin_text_para3"
+            android:textColor="@color/uiv3_primary_text_color"
+            android:textSize="@dimen/secondary_text_size" />
+
+        <TextView
+            android:id="@+id/textUpdatePinInfo4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_small"
+            android:layout_marginRight="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_mini"
+            android:text="@string/pin_text_para4"
             android:textColor="@color/uiv3_primary_text_color"
             android:textSize="@dimen/secondary_text_size" />
 

@@ -44,8 +44,10 @@
     <string name="UPDATE">UPDATE</string>
     <string name="CANCEL">CANCEL</string>
     <string name="cancel">Cancel</string>
-    <string name="pin_text_para1">Delivery Confirmation PIN is a 4 digit number. You can set this to a number of your choice. This PIN is required for acknowledgment of order delivery and to provide feedback for our service. We request you to not share the PIN with delivery person.</string>
-    <string name="pin_text_para2">The PIN will also be sent to you, as part of ready to ship email or SMS for each order.</string>
+    <string name="pin_text_para1">Delivery PIN is a 4-digit number. You can set or change the delivery PIN at your convenience.</string>
+    <string name="pin_text_para2">This PIN is required for acknowledgment of order delivery and to provide feedback for our service.</string>
+    <string name="pin_text_para3">We request you not to share with the delivery person.</string>
+    <string name="pin_text_para4">The PIN will also be sent to you as part of ready-to-ship email or SMS for each order.</string>
     <string name="new_pin_hint">Please enter 4-digit PIN</string>
     <string name="placeorder">Place Order</string>
     <string name="reviewAndPlaceorder">Review &amp; Place Order</string>
@@ -114,6 +116,7 @@
     <string name="ruleTotalPrice">Total Price:</string>
     <string name="ruleTotal">Total</string>
     <string name="my_orders">My Orders</string>
+    <string name="moEngageCommHub">MoEngage Hub</string>
     <string name="bbCommHub">Communication Hub</string>
     <string name="rating">Rating:</string>
     <string name="yourComments">Your comments (optional)</string>

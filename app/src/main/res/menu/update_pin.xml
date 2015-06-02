@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:bb="http://schemas.android.com/apk/res-auto">
-
-    <!-- Search / will display always -->
     <item
-        android:id="@+id/action_search"
-        android:icon="@drawable/ic_search_white_24dp"
+        android:id="@+id/action_submit_pin"
+        android:icon="@drawable/ic_check"
         android:orderInCategory="9999"
-        android:title="@string/search"
+        android:title="@string/view_edit_pin_label"
         bb:showAsAction="always" />
 </menu>

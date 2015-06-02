@@ -86,6 +86,7 @@ import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
 import com.demach.konotor.Konotor;
 import com.facebook.appevents.AppEventsLogger;
 import com.moe.pushlibrary.MoEHelper;
+import com.moengage.addon.ubox.UnifiedInboxActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -293,6 +294,21 @@ public abstract class BaseActivity extends AppCompatActivity implements COMarket
         AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());
         if (!authParameters.isAuthTokenEmpty()) {
             Konotor.getInstance(getApplicationContext()).launchFeedbackScreen(this);
+        } else {
+            showToast(getString(R.string.loginToContinue));
+            launchLogin(TrackEventkeys.NAVIGATION_CTX_SHOW_BASKET, FragmentCodes.START_COMMUNICATION_HUB);
+        }
+
+        Map<String, String> eventAttribs = new HashMap<>();
+        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_TOPNAV);
+        trackEvent(TrackingAware.COMMUNICATION_HUB_CLICKED, eventAttribs);
+    }
+
+    public void launchMoEngageCommunicationHub(){
+        AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());
+        if (!authParameters.isAuthTokenEmpty()) {
+            Intent communicationHunIntent = new Intent(this, UnifiedInboxActivity.class);
+            startActivity(communicationHunIntent);
         } else {
             showToast(getString(R.string.loginToContinue));
             launchLogin(TrackEventkeys.NAVIGATION_CTX_SHOW_BASKET, FragmentCodes.START_COMMUNICATION_HUB);
