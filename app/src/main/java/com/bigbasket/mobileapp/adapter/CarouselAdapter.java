@@ -133,6 +133,7 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
                 imgInRow.setVisibility(View.VISIBLE);
                 sectionItem.displayImage(((ActivityAware) context).getCurrentActivity(),
                         baseImgUrl, imgInRow);
+                imgInRow.setBackgroundColor(((ActivityAware) context).getCurrentActivity().randomColor());
             } else {
                 imgInRow.setVisibility(View.GONE);
             }
