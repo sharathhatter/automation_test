@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -52,12 +51,7 @@ public class AccountView<T> {
                     ctx.getResources().getString(R.string.bbCommHub),
                     ctx.getResources().getString(R.string.changeCityMenuTxt),
                     ctx.getResources().getString(R.string.rateTheApp)};
-            int[] imageArray = {
-                    R.drawable.nav_user,
-                    R.drawable.nav_communication_hub,
-                    R.drawable.nav_place,
-                    R.drawable.nav_ratethisapp};
-            MyAccountListAdapter myAccountListAdapter = new MyAccountListAdapter(itemDetails, imageArray);
+            MyAccountListAdapter myAccountListAdapter = new MyAccountListAdapter(itemDetails);
             lstMyAccount.setAdapter(myAccountListAdapter);
             lstMyAccount.setOnItemClickListener(new onListItemClickedWhenUserIsNOTLoggedIn());
         } else {
@@ -68,14 +62,7 @@ public class AccountView<T> {
                     ctx.getResources().getString(R.string.smartBasket),
                     ctx.getResources().getString(R.string.rateTheApp),
                     ctx.getResources().getString(R.string.signOut)};
-            int[] imageArray = {
-                    R.drawable.nav_user,
-                    R.drawable.nav_communication_hub,
-                    R.drawable.nav_shoppinglist,
-                    R.drawable.nav_smartbasket,
-                    R.drawable.nav_ratethisapp,
-                    R.drawable.nav_logout,};
-            MyAccountListAdapter myAccountListAdapter = new MyAccountListAdapter(itemDetails, imageArray);
+            MyAccountListAdapter myAccountListAdapter = new MyAccountListAdapter(itemDetails);
             lstMyAccount.setAdapter(myAccountListAdapter);
             lstMyAccount.setOnItemClickListener(new onListItemClickedWhenUserIsLoggedIn());
         }
@@ -166,11 +153,9 @@ public class AccountView<T> {
 
     private class MyAccountListAdapter extends BaseAdapter {
         private String[] itemDetails;
-        private int[] imageArray;
 
-        public MyAccountListAdapter(String[] itemDetails, int[] imageArray) {
+        public MyAccountListAdapter(String[] itemDetails) {
             this.itemDetails = itemDetails;
-            this.imageArray = imageArray;
         }
 
         @Override
@@ -196,13 +181,13 @@ public class AccountView<T> {
                 LayoutInflater inflater = ((ActivityAware) context).getCurrentActivity().getLayoutInflater();
                 row = inflater.inflate(R.layout.uiv3_main_nav_list_row, parent, false);
                 row.findViewById(R.id.txtNavListRowSubTitle).setVisibility(View.GONE);
+                row.findViewById(R.id.imgNavItem).setVisibility(View.GONE);
+                row.findViewById(R.id.imgNavItemExpand).setVisibility(View.GONE);
                 viewHolder = new ViewHolder(row);
                 row.setTag(viewHolder);
             } else {
                 viewHolder = (ViewHolder) row.getTag();
             }
-            ImageView accountImageView = viewHolder.getItemImg();
-            accountImageView.setBackgroundResource(imageArray[position]);
 
             final TextView accountTxtView = viewHolder.getItemTitle();
             accountTxtView.setText(itemDetails[position]);
@@ -211,7 +196,6 @@ public class AccountView<T> {
 
         private class ViewHolder {
 
-            private ImageView itemImg;
             private TextView itemTitle;
             private View itemView;
 
@@ -219,18 +203,11 @@ public class AccountView<T> {
                 this.itemView = itemView;
             }
 
-            public ImageView getItemImg() {
-                if (itemImg == null) {
-                    itemImg = (ImageView) itemView.findViewById(R.id.imgNavItem);
-                }
-                return itemImg;
-            }
-
             public TextView getItemTitle() {
                 if (itemTitle == null) {
                     itemTitle = (TextView) itemView.findViewById(R.id.txtNavListRow);
                     itemTitle.setTypeface(FontHolder.getInstance(((ActivityAware) context)
-                            .getCurrentActivity()).getFaceRobotoLight());
+                            .getCurrentActivity()).getFaceRobotoRegular());
                 }
                 return itemTitle;
             }

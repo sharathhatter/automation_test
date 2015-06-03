@@ -13,31 +13,51 @@
         android:src="@drawable/nav_header" />
 
     <ImageView
-        android:id="@+id/imgNavMain"
+        android:id="@+id/imgSwitchNav"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_margin="@dimen/margin_normal"
+        android:contentDescription="@string/myAccount"
+        android:src="@drawable/settings" />
+
+    <TextView
+        android:id="@+id/lblWelcome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
         android:layout_marginBottom="@dimen/margin_small"
-        android:layout_marginLeft="@dimen/margin_small"
-        android:layout_marginTop="@dimen/margin_small"
-        android:background="@drawable/logo_translucent_bkg"
-        android:contentDescription="@string/app_name"
-        android:padding="@dimen/padding_mini"
-        android:src="@mipmap/ic_launcher" />
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_marginTop="18dp"
+        android:layout_toLeftOf="@id/imgSwitchNav"
+        android:text="@string/welcome"
+        android:textColor="@color/white"
+        android:textSize="@dimen/primary_text_size" />
 
     <TextView
         android:id="@+id/txtNavSalutation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/imgNavHeader"
-        android:layout_below="@id/imgNavMain"
+        android:layout_below="@id/lblWelcome"
         android:layout_marginBottom="@dimen/margin_small"
-        android:layout_marginLeft="@dimen/margin_small"
+        android:layout_marginLeft="@dimen/margin_normal"
         android:layout_marginRight="@dimen/margin_small"
-        android:layout_marginTop="@dimen/margin_small"
-        android:drawableRight="@drawable/ic_arrow_drop_down_white_24dp"
         android:gravity="center_vertical"
         android:textColor="@color/white"
-        android:textSize="@dimen/primary_text_size"
+        android:textSize="@dimen/heading_2_text_size"
         android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/txtCityName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/imgNavHeader"
+        android:layout_marginBottom="@dimen/margin_normal"
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_marginRight="@dimen/margin_normal"
+        android:drawableLeft="@drawable/address_white"
+        android:drawablePadding="@dimen/padding_normal"
+        android:textColor="@color/white"
+        android:textSize="@dimen/primary_text_size" />
 
 </RelativeLayout>
