@@ -60,7 +60,8 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
             int layoutId = SectionItem.getLayoutResId(viewType);
             View view = inflater.inflate(layoutId, parent, false);
             ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
-            layoutParams.width = columnWidth;
+            layoutParams.width = viewType == SectionItem.VIEW_IMG ?
+                    ViewGroup.LayoutParams.WRAP_CONTENT : columnWidth;
             view.setLayoutParams(layoutParams);
             return new ViewHolder(view);
         }
@@ -133,7 +134,6 @@ public class CarouselAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHo
                 imgInRow.setVisibility(View.VISIBLE);
                 sectionItem.displayImage(((ActivityAware) context).getCurrentActivity(),
                         baseImgUrl, imgInRow);
-                imgInRow.setBackgroundColor(((ActivityAware) context).getCurrentActivity().randomColor());
             } else {
                 imgInRow.setVisibility(View.GONE);
             }
