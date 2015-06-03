@@ -212,14 +212,6 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         contentView.removeAllViews();
         contentView.addView(contentScrollView);
 
-        if (getActivity() instanceof FloatingBasketUIAware) {
-
-            FloatingBadgeCountView btnViewBasket = ((FloatingBasketUIAware) getActivity()).getViewBasketFloatingButton();
-            if (btnViewBasket != null) {
-                btnViewBasket.attachToScrollView(contentScrollView);
-            }
-        }
-
         // Check if any deep-link needs to be opened
         processPendingDeepLink();
     }

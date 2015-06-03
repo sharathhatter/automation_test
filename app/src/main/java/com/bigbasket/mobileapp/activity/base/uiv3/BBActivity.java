@@ -79,6 +79,7 @@ import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.section.DestinationInfo;
+import com.bigbasket.mobileapp.model.section.Renderer;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.model.section.SectionItem;
@@ -88,9 +89,8 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
-import com.bigbasket.mobileapp.util.Tuple;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
-import com.bigbasket.mobileapp.view.uiv3.AnimatedLinearLayout;
+import com.bigbasket.mobileapp.view.uiv3.AnimatedRelativeLayout;
 import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
 import com.melnykov.fab.FloatingBadgeCountView;
 
@@ -112,7 +112,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     private BBDrawerLayout mDrawerLayout;
     private String currentFragmentTag;
     private RecyclerView mNavRecyclerView;
-    private AnimatedLinearLayout mSubNavLayout;
+    private AnimatedRelativeLayout mSubNavLayout;
     private FloatingBadgeCountView mBtnViewBasket;
 
     @Override
@@ -742,6 +742,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void loadNavigationItems() {
         if (mNavRecyclerView == null) return;
         TextView txtNavSalutation = (TextView) findViewById(R.id.txtNavSalutation);
@@ -775,14 +776,15 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         txtCityName.setText(preferences.getString(Constants.CITY, ""));
 
-        Tuple<ArrayList<SectionNavigationItem>, String> data = getSectionNavigationItems();
-        ArrayList<SectionNavigationItem> sectionNavigationItems = data.x;
-        String baseImgUrl = data.y;
+        Object[] data = getSectionNavigationItems();
+        ArrayList<SectionNavigationItem> sectionNavigationItems = (ArrayList<SectionNavigationItem>) data[0];
+        String baseImgUrl = (String) data[1];
+        HashMap<Integer, Renderer> rendererHashMap = (HashMap<Integer, Renderer>) data[2];
 
         ListView lstMyAccount = (ListView) findViewById(R.id.lstMyAccount);
         new AccountView<>(this, lstMyAccount);
         NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoRegular,
-                sectionNavigationItems, SectionManager.MAIN_MENU, baseImgUrl);
+                sectionNavigationItems, SectionManager.MAIN_MENU, baseImgUrl, rendererHashMap);
         mNavRecyclerView.setAdapter(navigationAdapter);
     }
 
@@ -804,7 +806,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         imgSwitchNav.setImageDrawable(ContextCompat.getDrawable(this, drawableId));
     }
 
-    private Tuple<ArrayList<SectionNavigationItem>, String> getSectionNavigationItems() {
+    private Object[] getSectionNavigationItems() {
         ArrayList<SectionNavigationItem> sectionNavigationItems = new ArrayList<>();
         sectionNavigationItems.add(getHomeSectionNavItem());
 
@@ -821,7 +823,8 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                         section);
             }
         }
-        return new Tuple<>(sectionNavigationItems, sectionData != null ? sectionData.getBaseImgUrl() : null);
+        return new Object[]{sectionNavigationItems, sectionData != null ? sectionData.getBaseImgUrl() : null,
+                sectionData != null ? sectionData.getRenderersMap() : null};
     }
 
     private void setSectionNavigationItemList(ArrayList<SectionNavigationItem> sectionNavigationItems,
@@ -844,37 +847,68 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     @Override
-    public void onSubNavigationRequested(Section section, SectionItem sectionItem) {
+    public void onSubNavigationRequested(Section section, SectionItem sectionItem, String baseImgUrl,
+                                         HashMap<Integer, Renderer> rendererHashMap) {
         ArrayList<SectionItem> subNavigationSectionItems = sectionItem.getSubSectionItems();
         if (subNavigationSectionItems == null) return;
 
         if (mSubNavLayout == null) {
-            mSubNavLayout = (AnimatedLinearLayout) findViewById(R.id.layoutSubNavigationItems);
+            mSubNavLayout = (AnimatedRelativeLayout) findViewById(R.id.layoutSubNavigationItems);
         }
 
         mSubNavLayout.setVisibility(View.VISIBLE);
         final RecyclerView listSubNavigation = (RecyclerView) findViewById(R.id.listSubNavigation);
 
         TextView txtNavMainItem = (TextView) findViewById(R.id.txtNavMainItem);
-        txtNavMainItem.setTypeface(faceRobotoLight);
-        txtNavMainItem.setText(sectionItem.getTitle() != null ?
-                sectionItem.getTitle().getText() : "");
-        txtNavMainItem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listSubNavigation.setAdapter(null);
-                mSubNavLayout.setVisibility(View.GONE);
-            }
-        });
+        TextView txtNavMainItemTransparent = (TextView) findViewById(R.id.txtNavMainItemTransparent);
+        View viewSubMenuHeaderSeparator = findViewById(R.id.viewSubMenuHeaderSeparator);
+
+        OnSubNavigationHeaderClickListener clickListener = new
+                OnSubNavigationHeaderClickListener(listSubNavigation);
+
+        boolean isFirstItemImg = subNavigationSectionItems.get(0).hasImage();
+        if (isFirstItemImg) {
+            txtNavMainItemTransparent.setText(sectionItem.getTitle() != null ?
+                    sectionItem.getTitle().getText() : "");
+            txtNavMainItemTransparent.setTypeface(faceRobotoRegular);
+            txtNavMainItem.setVisibility(View.GONE);
+            viewSubMenuHeaderSeparator.setVisibility(View.GONE);
+            txtNavMainItemTransparent.setOnClickListener(clickListener);
+            txtNavMainItemTransparent.setVisibility(View.VISIBLE);
+        } else {
+            txtNavMainItem.setText(sectionItem.getTitle() != null ?
+                    sectionItem.getTitle().getText() : "");
+            txtNavMainItem.setOnClickListener(clickListener);
+            txtNavMainItem.setTypeface(faceRobotoRegular);
+            txtNavMainItem.setVisibility(View.VISIBLE);
+            viewSubMenuHeaderSeparator.setVisibility(View.VISIBLE);
+            txtNavMainItemTransparent.setVisibility(View.GONE);
+        }
 
         listSubNavigation.setHasFixedSize(false);
         listSubNavigation.setLayoutManager(new LinearLayoutManager(this));
 
         ArrayList<SectionNavigationItem> sectionNavigationItems = new ArrayList<>();
         setSectionNavigationItemList(sectionNavigationItems, subNavigationSectionItems, section);
-        NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoLight, sectionNavigationItems,
-                SectionManager.MAIN_MENU, null);
+        NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoRegular,
+                sectionNavigationItems,
+                SectionManager.MAIN_MENU, baseImgUrl, rendererHashMap);
         listSubNavigation.setAdapter(navigationAdapter);
+    }
+
+    private class OnSubNavigationHeaderClickListener implements View.OnClickListener {
+
+        private RecyclerView listSubNavigation;
+
+        public OnSubNavigationHeaderClickListener(RecyclerView listSubNavigation) {
+            this.listSubNavigation = listSubNavigation;
+        }
+
+        @Override
+        public void onClick(View v) {
+            listSubNavigation.setAdapter(null);
+            mSubNavLayout.setVisibility(View.GONE);
+        }
     }
 
     @Override

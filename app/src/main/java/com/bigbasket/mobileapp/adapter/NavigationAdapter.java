@@ -15,13 +15,17 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.handler.OnSectionItemClickListener;
 import com.bigbasket.mobileapp.interfaces.SubNavigationAware;
 import com.bigbasket.mobileapp.model.navigation.SectionNavigationItem;
+import com.bigbasket.mobileapp.model.section.Renderer;
+import com.bigbasket.mobileapp.model.section.SectionItem;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public static final int VIEW_TYPE_SECTION_ITEM = 0;
     public static final int VIEW_TYPE_HEADER = 1;
+    public static final int VIEW_TYPE_SECTION_ITEM_VERTICAL = 2;
 
     private Context context;
     private Typeface typeface;
@@ -29,13 +33,19 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private String screenName;
     private String baseImgUrl;
 
-    public NavigationAdapter(Context context, Typeface typeface, ArrayList<SectionNavigationItem>
-            sectionNavigationItems, String screenName, @Nullable String baseImgUrl) {
+    @Nullable
+    private HashMap<Integer, Renderer> rendererHashMap;
+
+    public NavigationAdapter(Context context, Typeface typeface,
+                             ArrayList<SectionNavigationItem> sectionNavigationItems,
+                             String screenName, @Nullable String baseImgUrl,
+                             @Nullable HashMap<Integer, Renderer> rendererHashMap) {
         this.context = context;
         this.typeface = typeface;
         this.sectionNavigationItems = sectionNavigationItems;
         this.screenName = screenName;
         this.baseImgUrl = baseImgUrl;
+        this.rendererHashMap = rendererHashMap;
     }
 
     @Override
@@ -48,6 +58,9 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             case VIEW_TYPE_HEADER:
                 row = inflater.inflate(R.layout.uiv3_main_nav_list_header, parent, false);
                 return new NavViewHeaderHolder(row);
+            case VIEW_TYPE_SECTION_ITEM_VERTICAL:
+                row = inflater.inflate(R.layout.uiv3_main_nav_list_vertical_row, parent, false);
+                return new NavViewHolder(row);
         }
         return null;
     }
@@ -55,14 +68,16 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         SectionNavigationItem sectionNavigationItem = sectionNavigationItems.get(position);
-        if (getItemViewType(position) == VIEW_TYPE_SECTION_ITEM) {
+        int viewType = getItemViewType(position);
+        if (viewType == VIEW_TYPE_SECTION_ITEM) {
             TextView txtNavListRow = ((NavViewHolder) holder).getTxtNavListRow();
             ImageView imgNavItem = ((NavViewHolder) holder).getImgNavItem();
             ImageView imgNavItemExpand = ((NavViewHolder) holder).getImgNavItemExpand();
             TextView txtNavListRowSubTitle = ((NavViewHolder) holder).getTxtNavListRowSubTitle();
-            if (sectionNavigationItem.getSectionItem().getTitle() != null &&
-                    !TextUtils.isEmpty(sectionNavigationItem.getSectionItem().getTitle().getText())) {
-                txtNavListRow.setText(sectionNavigationItem.getSectionItem().getTitle().getText());
+            SectionItem sectionItem = sectionNavigationItem.getSectionItem();
+            if (sectionItem.getTitle() != null &&
+                    !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
+                txtNavListRow.setText(sectionItem.getTitle().getText());
             } else {
                 txtNavListRow.setText("");
             }
@@ -72,20 +87,20 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             } else {
                 imgNavItem.setVisibility(View.GONE);
             }
-            if (sectionNavigationItem.getSectionItem().getDescription() != null &&
-                    !TextUtils.isEmpty(sectionNavigationItem.getSectionItem().getDescription().getText())) {
+            if (sectionItem.getDescription() != null &&
+                    !TextUtils.isEmpty(sectionItem.getDescription().getText())) {
                 txtNavListRowSubTitle.setVisibility(View.VISIBLE);
-                txtNavListRowSubTitle.setText(sectionNavigationItem.getSectionItem().getDescription().getText());
+                txtNavListRowSubTitle.setText(sectionItem.getDescription().getText());
             } else {
                 txtNavListRowSubTitle.setVisibility(View.GONE);
             }
-            if (sectionNavigationItem.getSectionItem().getSubSectionItems() != null
-                    && sectionNavigationItem.getSectionItem().getSubSectionItems().size() > 0) {
+            if (sectionItem.getSubSectionItems() != null
+                    && sectionItem.getSubSectionItems().size() > 0) {
                 imgNavItemExpand.setVisibility(View.VISIBLE);
             } else {
                 imgNavItemExpand.setVisibility(View.GONE);
             }
-        } else {
+        } else if (viewType == VIEW_TYPE_HEADER) {
             TextView txtNavListRowHeader = ((NavViewHeaderHolder) holder).getTxtNavListRowHeader();
             if (sectionNavigationItem.getSection().getTitle() != null &&
                     !TextUtils.isEmpty(sectionNavigationItem.getSection().getTitle().getText())) {
@@ -94,6 +109,24 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             } else {
                 txtNavListRowHeader.setVisibility(View.GONE);
             }
+        } else if (viewType == VIEW_TYPE_SECTION_ITEM_VERTICAL) {
+            TextView txtNavListRow = ((NavViewHolder) holder).getTxtNavListRow();
+            ImageView imgNavItem = ((NavViewHolder) holder).getImgNavItem();
+            SectionItem sectionItem = sectionNavigationItem.getSectionItem();
+            if (sectionItem.getTitle() != null &&
+                    !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
+                txtNavListRow.setText(sectionItem.getTitle().getText());
+            } else {
+                txtNavListRow.setText("");
+            }
+            if (sectionItem.hasImage()) {
+                int minHt = sectionItem.getHeight(context, null);
+                imgNavItem.setMinimumHeight(minHt);
+                imgNavItem.setVisibility(View.VISIBLE);
+                sectionNavigationItem.getSectionItem().displayImage(context, baseImgUrl, imgNavItem);
+            } else {
+                imgNavItem.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -101,6 +134,13 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public int getItemViewType(int position) {
         if (sectionNavigationItems.get(position).isHeader()) {
             return VIEW_TYPE_HEADER;
+        } else {
+            SectionNavigationItem sectionNavigationItem = sectionNavigationItems.get(position);
+            SectionItem sectionItem = sectionNavigationItem.getSectionItem();
+            Renderer renderer = rendererHashMap != null ? rendererHashMap.get(sectionItem.getRenderingId()) : null;
+            if (renderer != null && renderer.getOrientation() == Renderer.VERTICAL) {
+                return VIEW_TYPE_SECTION_ITEM_VERTICAL;
+            }
         }
         return VIEW_TYPE_SECTION_ITEM;
     }
@@ -175,7 +215,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 if (sectionNavigationItem.getSectionItem() != null && sectionNavigationItem.getSectionItem().getSubSectionItems() != null
                         && sectionNavigationItem.getSectionItem().getSubSectionItems().size() > 0) {
                     ((SubNavigationAware) context).onSubNavigationRequested(sectionNavigationItem.getSection(),
-                            sectionNavigationItem.getSectionItem());
+                            sectionNavigationItem.getSectionItem(), baseImgUrl, rendererHashMap);
                 } else {
                     new OnSectionItemClickListener<>(context, sectionNavigationItem.getSection(),
                             sectionNavigationItem.getSectionItem(), screenName).onClick(v);

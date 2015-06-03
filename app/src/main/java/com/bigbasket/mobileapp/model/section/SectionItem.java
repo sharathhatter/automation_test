@@ -294,7 +294,7 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
         return 0;
     }
 
-    private int getEstimatedHeight(Context context, Renderer renderer) {
+    private int getEstimatedHeight(Context context, @Nullable Renderer renderer) {
         if (renderer != null) {
             if (renderer.getOrientation() == Renderer.VERTICAL) {
                 if (TextUtils.isEmpty(image)) {
@@ -319,7 +319,7 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
         return 0;
     }
 
-    public int getHeight(Context context, Renderer renderer) {
+    public int getHeight(Context context, @Nullable Renderer renderer) {
         int height = getActualHeight(context);
         if (height <= 0) {
             height = getEstimatedHeight(context, renderer);
