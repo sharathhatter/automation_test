@@ -89,6 +89,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
+import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.view.uiv3.AnimatedRelativeLayout;
 import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
@@ -822,7 +823,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                     sectionNavigationItems.add(new SectionNavigationItem(section));
                 }
                 setSectionNavigationItemList(sectionNavigationItems, section.getSectionItems(),
-                        section);
+                        section, sectionData.getBaseImgUrl());
             }
         }
         return new Object[]{sectionNavigationItems, sectionData != null ? sectionData.getBaseImgUrl() : null,
@@ -831,9 +832,14 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
     private void setSectionNavigationItemList(ArrayList<SectionNavigationItem> sectionNavigationItems,
                                               ArrayList<SectionItem> sectionItems,
-                                              Section section) {
+                                              Section section, String baseImgUrl) {
         for (SectionItem sectionItem : sectionItems) {
             if (sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
+                if (sectionItem.hasImage()) {
+                    UIUtil.preLoadImage(TextUtils.isEmpty(sectionItem.getImage()) ?
+                                    baseImgUrl + sectionItem.getImageName() : sectionItem.getImage(),
+                            this);
+                }
                 sectionNavigationItems.add(new SectionNavigationItem(section, sectionItem));
             }
         }
@@ -852,7 +858,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     public void onSubNavigationRequested(Section section, SectionItem sectionItem, String baseImgUrl,
                                          HashMap<Integer, Renderer> rendererHashMap) {
         ArrayList<SectionItem> subNavigationSectionItems = sectionItem.getSubSectionItems();
-        if (subNavigationSectionItems == null) return;
+        if (subNavigationSectionItems == null || subNavigationSectionItems.size() == 0) return;
 
         if (mSubNavLayout == null) {
             mSubNavLayout = (AnimatedRelativeLayout) findViewById(R.id.layoutSubNavigationItems);
@@ -863,9 +869,9 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             mListSubNavigation.setHasFixedSize(false);
             mListSubNavigation.setLayoutManager(new LinearLayoutManager(this));
         }
-
         ArrayList<SectionNavigationItem> sectionNavigationItems = new ArrayList<>();
-        setSectionNavigationItemList(sectionNavigationItems, subNavigationSectionItems, section);
+        setSectionNavigationItemList(sectionNavigationItems, subNavigationSectionItems, section,
+                baseImgUrl);
         NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoRegular,
                 sectionNavigationItems,
                 SectionManager.MAIN_MENU, baseImgUrl, rendererHashMap, sectionItem);

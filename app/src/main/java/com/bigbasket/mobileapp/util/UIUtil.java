@@ -32,6 +32,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bigbasket.mobileapp.BuildConfig;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginUserDetails;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
@@ -389,12 +390,17 @@ public class UIUtil {
     }
 
     public static void displayAsyncImage(ImageView imageView, String url) {
-        Picasso.with(imageView.getContext())
-                .load(url)
+        Picasso picasso = Picasso.with(imageView.getContext());
+        picasso.setIndicatorsEnabled(BuildConfig.DEBUG);
+        picasso.load(url)
                 .placeholder(R.drawable.loading)
                 .error(R.drawable.noimage)
                 .noFade()
                 .into(imageView);
+    }
+
+    public static void preLoadImage(String url, Context context) {
+        Picasso.with(context).load(url).fetch();
     }
 
     public static void showEmptyProductsView(Context context, ViewGroup parent) {

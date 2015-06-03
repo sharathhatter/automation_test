@@ -17,6 +17,7 @@ import com.bigbasket.mobileapp.interfaces.SubNavigationAware;
 import com.bigbasket.mobileapp.model.navigation.SectionNavigationItem;
 import com.bigbasket.mobileapp.model.section.Renderer;
 import com.bigbasket.mobileapp.model.section.SectionItem;
+import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -120,6 +121,15 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 imgNavItemExpand.setVisibility(View.VISIBLE);
             } else {
                 imgNavItemExpand.setVisibility(View.GONE);
+            }
+            if (sectionItem.getSubSectionItems() != null && sectionItem.getSubSectionItems().size() > 0) {
+                // Preload images
+                SectionItem subSectionItem = sectionItem.getSubSectionItems().get(0);
+                if (subSectionItem.hasImage()) {
+                    UIUtil.preLoadImage(TextUtils.isEmpty(subSectionItem.getImage()) ?
+                            baseImgUrl + subSectionItem.getImageName() : subSectionItem.getImage(),
+                            context);
+                }
             }
         } else if (viewType == VIEW_TYPE_HEADER) {
             TextView txtNavListRowHeader = ((NavViewHeaderHolder) holder).getTxtNavListRowHeader();
