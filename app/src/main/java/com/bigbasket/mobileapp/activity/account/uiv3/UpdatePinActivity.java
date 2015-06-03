@@ -111,18 +111,18 @@ public class UpdatePinActivity extends BackButtonActivity {
                     showToast(getString(R.string.min4digit));
                 } else if (newPin.equals(Constants.FOUR_ZERO)) {
                     showToast(getString(R.string.not0000));
-                }else {
+                } else {
                     updatePinServerCall(newPin);
                 }
             } else {
                 showToast(getString(R.string.enterPin));
             }
-        }else {
+        } else {
             finish();
         }
     }
 
-    private void updateEditTextField(String newPin){
+    private void updateEditTextField(String newPin) {
         currentPin = newPin;
         editTextNewPin.setText(newPin);
         editTextNewPin.setEnabled(false);
@@ -133,17 +133,17 @@ public class UpdatePinActivity extends BackButtonActivity {
         showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.updateCurrentMemberPin(newPin, new Callback<BaseApiResponse>() {
             @Override
-            public void success(BaseApiResponse ApiResponse, Response response) {
+            public void success(BaseApiResponse apiResponse, Response response) {
                 hideProgressDialog();
-                int status = ApiResponse.status;
+                int status = apiResponse.status;
                 if (status == 0) {
                     updateEditTextField(newPin);
                     BaseActivity.hideKeyboard(getCurrentActivity(), editTextNewPin);
                 } else {
-                    showAlertDialog(ApiResponse.message);
                     HashMap<String, String> map = new HashMap<>();
-                    map.put(TrackEventkeys.FAILURE_REASON, ApiResponse.message);
+                    map.put(TrackEventkeys.FAILURE_REASON, apiResponse.message);
                     trackEvent(TrackingAware.UPDATE_PIN_CLICKED, map);
+                    handler.sendEmptyMessage(apiResponse.status, apiResponse.message);
                 }
             }
 

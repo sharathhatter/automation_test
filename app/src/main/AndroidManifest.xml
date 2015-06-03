@@ -543,7 +543,7 @@
             android:name="NOTIFICATION_ICON"
             android:value="notification_icon" />
 
-        <!-- moEngage UBox -->`
+        <!-- moEngage UBox -->
         <activity
             android:name="com.moengage.addon.ubox.UnifiedInboxActivity"
             android:theme="@style/BBAppTheme"

@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -70,7 +69,7 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
 
     private void loadOrders(int page) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
-        if(page==1)
+        if (page == 1)
             showProgressView();
         bigBasketApiService.getOrders(mOrderType, String.valueOf(page),
                 new Callback<ApiResponse<OrderListApiResponse>>() {
@@ -104,7 +103,7 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
                 });
     }
 
-    private void showEmptyPage(LayoutInflater inflater, FrameLayout contentLayout){
+    private void showEmptyPage(LayoutInflater inflater, FrameLayout contentLayout) {
         View emptyPageView = inflater.inflate(R.layout.uiv3_empty_data_text, contentLayout, false);
         ImageView imgEmptyPage = (ImageView) emptyPageView.findViewById(R.id.imgEmptyPage);
         TextView txtEmptyMsg1 = (TextView) emptyPageView.findViewById(R.id.txtEmptyMsg1);
@@ -134,20 +133,20 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
         RecyclerView orderListView = (RecyclerView) base.findViewById(R.id.listOrders);
 
         UIUtil.configureRecyclerView(orderListView, this, 1, 1);
-        if (currentPage ==1 && (mOrders == null || mOrders.size() == 0)) {
+        if (currentPage == 1 && (mOrders == null || mOrders.size() == 0)) {
             showEmptyPage(inflater, contentLayout);
 
         } else {
-            if(orderListAdapter==null) {
+            if (orderListAdapter == null) {
                 orderListAdapter = new OrderListAdapter(this, mOrders, totalPages);
                 orderListAdapter.setCurrentPage(currentPage);
             }
 
             ArrayList<Order> olderOrderList = orderListAdapter.getOrders();
-            if(currentPage >1 && olderOrderList!=null && olderOrderList.size()>0
-                    && mOrders!=null && mOrders.size()>0){
-               updateOrderList(olderOrderList, mOrders);
-            }else {
+            if (currentPage > 1 && olderOrderList != null && olderOrderList.size() > 0
+                    && mOrders != null && mOrders.size() > 0) {
+                updateOrderList(olderOrderList, mOrders);
+            } else {
                 orderListView.setAdapter(orderListAdapter);
                 contentLayout.removeAllViews();
                 contentLayout.addView(base);
@@ -158,7 +157,7 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
     }
 
     @Override
-    public void onOrderItemClicked(Order order){
+    public void onOrderItemClicked(Order order) {
         trackEvent(TrackingAware.MY_ORDER_ITEM_CLICKED, null);
         if (mIsInShopFromPreviousOrderMode) {
             onShopFromThisOrder(order.getOrderNumber());
@@ -168,7 +167,7 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
     }
 
 
-    private void updateOrderList(ArrayList<Order> olderOrderList, ArrayList<Order> newOrderList){
+    private void updateOrderList(ArrayList<Order> olderOrderList, ArrayList<Order> newOrderList) {
         int insertedAt = olderOrderList.size();
         olderOrderList.addAll(newOrderList);
         orderListAdapter.setCurrentPage(currentPage);

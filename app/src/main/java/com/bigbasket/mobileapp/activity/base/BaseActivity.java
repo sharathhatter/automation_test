@@ -108,7 +108,7 @@ public abstract class BaseActivity extends AppCompatActivity implements COMarket
 
     public static Typeface faceRupee;
     public static Typeface faceRobotoRegular, faceRobotoLight, faceRobotoMedium,
-                                        faceRobotoBold;
+            faceRobotoBold;
     protected BigBasketMessageHandler handler;
     protected boolean isActivitySuspended;
     protected COReserveQuantity coReserveQuantity;
@@ -303,7 +303,7 @@ public abstract class BaseActivity extends AppCompatActivity implements COMarket
         trackEvent(TrackingAware.COMMUNICATION_HUB_CLICKED, eventAttribs);
     }
 
-    public void launchMoEngageCommunicationHub(){
+    public void launchMoEngageCommunicationHub() {
         AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());
         if (!authParameters.isAuthTokenEmpty()) {
             Intent communicationHunIntent = new Intent(this, UnifiedInboxActivity.class);

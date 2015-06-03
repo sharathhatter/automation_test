@@ -78,7 +78,7 @@ public class DeepLinkHandler {
                 context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 return SUCCESS;
             case Constants.PRODUCT_LIST:
-               return SUCCESS; //todo
+                return SUCCESS; //todo
             case Constants.CATEGORY_LANDING:
                 String name = uri.getQueryParameter(Constants.NAME);
                 String slug = uri.getQueryParameter(Constants.SLUG);

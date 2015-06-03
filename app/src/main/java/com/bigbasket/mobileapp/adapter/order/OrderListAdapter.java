@@ -75,7 +75,7 @@ public class OrderListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewH
             String[] dateTime = order.getDeliveryDate().split(",");
             TextView txtSlotDate = rowHolder.getTxtSlotDate();
             txtSlotDate.setTypeface(BaseActivity.faceRobotoBold);
-            txtSlotDate.setText(dateTime[0].trim()+", "+dateTime[1].trim());
+            txtSlotDate.setText(dateTime[0].trim() + ", " + dateTime[1].trim());
 
 
             TextView txtSlotTime = rowHolder.getTxtSlotTime();
@@ -101,18 +101,18 @@ public class OrderListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewH
             ImageView imgOrderType = rowHolder.getImgOrderType();
             LinearLayout layoutOrderData = rowHolder.getLayoutOrderData();
             if (order.getOrderState() == 0) { //active order
-                txtSlotTime.setPadding(0,10, 0, 0);
-                txtOrderId.setPadding(0,0, 0, 0);
+                txtSlotTime.setPadding(0, 10, 0, 0);
+                txtOrderId.setPadding(0, 0, 0, 0);
                 layoutOrderData.setBackgroundResource(R.drawable.red_boarder);
                 imgOrderType.setImageResource(R.drawable.active_order);
                 txtSlotTime.setVisibility(View.VISIBLE);
             } else if (order.getOrderState() == 1) { //delivered
-                txtOrderId.setPadding(0,10, 0, 0);
+                txtOrderId.setPadding(0, 10, 0, 0);
                 layoutOrderData.setBackgroundColor(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.past_oder_bck));
                 imgOrderType.setImageResource(R.drawable.complete_order);
                 txtSlotTime.setVisibility(View.GONE);
             } else { //cancel
-                txtOrderId.setPadding(0,10, 0, 0);
+                txtOrderId.setPadding(0, 10, 0, 0);
                 layoutOrderData.setBackgroundColor(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.past_oder_bck));
                 imgOrderType.setImageResource(R.drawable.order_cancel);
                 txtSlotTime.setVisibility(View.GONE);
