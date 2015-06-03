@@ -1,185 +1,196 @@
 package com.bigbasket.mobileapp.adapter.order;
 
-import android.content.Context;
-import android.graphics.Typeface;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.account.uiv3.OrderListActivity;
+import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.bigbasket.mobileapp.common.FixedLayoutViewHolder;
+import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.model.order.Order;
-import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
 
-public class OrderListAdapter extends BaseAdapter {
+public class OrderListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private Context context;
-    private Typeface typeface;
-    private Typeface faceRupee;
+
+    public static final int VIEW_TYPE_LOADING = 0;
+    public static final int VIEW_TYPE_DATA = 1;
+    public static final int VIEW_TYPE_EMPTY = 2;
+
+    private T context;
     private ArrayList<Order> orders;
-    private boolean showFulfillmentInfo;
-    private boolean isInShopFromPreviousOrderMode;
+    private int totalPages, currentPage;
 
-    public OrderListAdapter(Context context, Typeface typeface, Typeface faceRupee,
-                            ArrayList<Order> orders, boolean showFulfillmentInfo,
-                            boolean isInShopFromPreviousOrderMode) {
+    public OrderListAdapter(T context, ArrayList<Order> orders, int
+            totalPages) {
         this.context = context;
-        this.typeface = typeface;
         this.orders = orders;
-        this.faceRupee = faceRupee;
-        this.showFulfillmentInfo = showFulfillmentInfo;
-        this.isInShopFromPreviousOrderMode = isInShopFromPreviousOrderMode;
+        this.totalPages = totalPages;
+    }
+
+    public void setCurrentPage(int currentPage) {
+        this.currentPage = currentPage;
     }
 
     @Override
-    public int getCount() {
-        return orders.size();
+    public int getItemViewType(int position) {
+        if (position >= orders.size() && currentPage == totalPages) return VIEW_TYPE_EMPTY;
+        return position == orders.size() ? VIEW_TYPE_LOADING : VIEW_TYPE_DATA;
     }
 
     @Override
-    public Object getItem(int position) {
-        return orders.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        OrderListRowHolder rowHolder;
-        if (convertView == null) {
-            int layoutId = isInShopFromPreviousOrderMode ? R.layout.uiv3_shop_from_order_list_row : R.layout.uiv3_order_list_row;
-            convertView = LayoutInflater.from(context).inflate(layoutId, parent, false);
-            rowHolder = new OrderListRowHolder(convertView);
-            convertView.setTag(rowHolder);
-        } else {
-            rowHolder = (OrderListRowHolder) convertView.getTag();
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(((ActivityAware) context).getCurrentActivity());
+        switch (viewType) {
+            case VIEW_TYPE_DATA:
+                View row = inflater.inflate(R.layout.uiv3_order_list_row, parent, false);
+                return new OrderListRowHolder(row);
+            case VIEW_TYPE_LOADING:
+                row = inflater.inflate(R.layout.uiv3_list_loading_footer, parent, false);
+                return new FixedLayoutViewHolder(row);
+            case VIEW_TYPE_EMPTY:
+                row = new View(((ActivityAware) context).getCurrentActivity());
+                return new FixedLayoutViewHolder(row);
         }
+        return null;
+    }
 
-        TextView txtOrderId = rowHolder.getTxtOrderId();
-        TextView txtSlotDate = rowHolder.getTxtSlotDate();
-        TextView txtNumItems = rowHolder.getTxtNumItems();
+    public ArrayList<Order> getOrders() {
+        return orders;
+    }
 
-        Order order = orders.get(position);
-        String deliveryDate = order.getDeliveryDate().replace("between", "");
-        if (!isInShopFromPreviousOrderMode) {
-            TextView txtDisplayName = rowHolder.getTxtDisplayName();
-            TextView txtFulfilledBy = rowHolder.getTxtFulfilledBy();
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        if (getItemViewType(position) == VIEW_TYPE_DATA) {
+            OrderListRowHolder rowHolder = (OrderListRowHolder) holder;
+            final Order order = orders.get(position);
+
+            String[] dateTime = order.getDeliveryDate().split(",");
+            TextView txtSlotDate = rowHolder.getTxtSlotDate();
+            txtSlotDate.setTypeface(BaseActivity.faceRobotoBold);
+            txtSlotDate.setText(dateTime[0].trim() + ", " + dateTime[1].trim());
+
+
             TextView txtSlotTime = rowHolder.getTxtSlotTime();
-            TextView txtOrderStatus = rowHolder.getTxtOrderStatus();
-            TextView txtOrderTotal = rowHolder.getTxtOrderTotal();
-            if (showFulfillmentInfo) {
-                txtDisplayName.setText(order.getFulfillmentInfo().getDisplayName());
-                txtFulfilledBy.setText(order.getFulfillmentInfo().getFulfilledBy());
-            } else {
-                txtDisplayName.setVisibility(View.GONE);
-                txtFulfilledBy.setVisibility(View.GONE);
-                txtSlotDate.setPadding(0, 6, 0, 0);
-            }
-            txtSlotTime.setText(deliveryDate.substring(15, deliveryDate.length()).trim());
-            txtOrderTotal.setText(UIUtil.asRupeeSpannable(order.getOrderValue(), faceRupee));
-            String orderStatus = order.getOrderStatus();
-            txtOrderStatus.setText(orderStatus);
-            if (orderStatus.equalsIgnoreCase(Constants.CANCELLED)) {
-                txtOrderStatus.setBackgroundColor(context.getResources().getColor(R.color.dark_red));
-            } else {
-                txtOrderStatus.setBackgroundColor(context.getResources().getColor(R.color.dark_green));
-            }
-        }
+            txtSlotTime.setText(dateTime[2].trim());
+            txtSlotTime.setTypeface(BaseActivity.faceRobotoRegular);
 
-        txtSlotDate.setText(deliveryDate.substring(0, 15).trim());
-        txtOrderId.setText(order.getOrderNumber());
 
-        int numItems = order.getItemsCount();
-        String numItemsStr = numItems + " Item";
-        if (numItems > 1) {
-            numItemsStr += "s";
+            TextView txtOrderId = rowHolder.getTxtOrderId();
+            txtOrderId.setTypeface(BaseActivity.faceRobotoRegular);
+            txtOrderId.setText(order.getOrderNumber());
+
+
+            TextView txtNumItems = rowHolder.getTxtNumItems();
+            txtNumItems.setTypeface(BaseActivity.faceRobotoRegular);
+            int numItems = order.getItemsCount();
+            String numItemsStr = numItems + " Item";
+            if (numItems > 1) {
+                numItemsStr += "s";
+            }
+            txtNumItems.setText(numItemsStr);
+
+
+            ImageView imgOrderType = rowHolder.getImgOrderType();
+            LinearLayout layoutOrderData = rowHolder.getLayoutOrderData();
+            if (order.getOrderState() == 0) { //active order
+                txtSlotTime.setPadding(0, 10, 0, 0);
+                txtOrderId.setPadding(0, 0, 0, 0);
+                layoutOrderData.setBackgroundResource(R.drawable.red_boarder);
+                imgOrderType.setImageResource(R.drawable.active_order);
+                txtSlotTime.setVisibility(View.VISIBLE);
+            } else if (order.getOrderState() == 1) { //delivered
+                txtOrderId.setPadding(0, 10, 0, 0);
+                layoutOrderData.setBackgroundColor(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.past_oder_bck));
+                imgOrderType.setImageResource(R.drawable.complete_order);
+                txtSlotTime.setVisibility(View.GONE);
+            } else { //cancel
+                txtOrderId.setPadding(0, 10, 0, 0);
+                layoutOrderData.setBackgroundColor(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.past_oder_bck));
+                imgOrderType.setImageResource(R.drawable.order_cancel);
+                txtSlotTime.setVisibility(View.GONE);
+            }
+
+            if (orders.size() - 1 == position && currentPage != totalPages && totalPages != 0) {
+                ((OrderListActivity) context).getMoreOrders();
+            }
+
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((OrderListActivity) ((ActivityAware) context).getCurrentActivity()).onOrderItemClicked(order);
+                }
+            });
         }
-        txtNumItems.setText(numItemsStr);
-        return convertView;
     }
 
-    private class OrderListRowHolder {
-        private View base;
+
+    @Override
+    public int getItemCount() {
+        return orders.size() + 1;
+    }
+
+
+    private class OrderListRowHolder extends RecyclerView.ViewHolder {
 
         private TextView txtSlotDate;
         private TextView txtSlotTime;
-        private TextView txtOrderStatus;
         private TextView txtOrderId;
         private TextView txtNumItems;
-        private TextView txtOrderTotal;
-        private TextView txtDisplayName;
-        private TextView txtFulfilledBy;
+        private LinearLayout layoutOrderData;
+        private ImageView imgOrderType;
 
-        private OrderListRowHolder(View base) {
-            this.base = base;
+
+        private OrderListRowHolder(View itemView) {
+            super(itemView);
         }
 
         public TextView getTxtSlotDate() {
             if (txtSlotDate == null) {
-                txtSlotDate = (TextView) base.findViewById(R.id.txtSlotDate);
-                txtSlotDate.setTypeface(typeface);
+                txtSlotDate = (TextView) itemView.findViewById(R.id.txtSlotDate);
             }
             return txtSlotDate;
         }
 
         public TextView getTxtSlotTime() {
             if (txtSlotTime == null) {
-                txtSlotTime = (TextView) base.findViewById(R.id.txtSlotTime);
-                txtSlotTime.setTypeface(typeface);
+                txtSlotTime = (TextView) itemView.findViewById(R.id.txtSlotTime);
             }
             return txtSlotTime;
         }
 
-        public TextView getTxtOrderStatus() {
-            if (txtOrderStatus == null) {
-                txtOrderStatus = (TextView) base.findViewById(R.id.txtOrderStatus);
-                txtOrderStatus.setTypeface(typeface);
-            }
-            return txtOrderStatus;
-        }
-
         public TextView getTxtOrderId() {
             if (txtOrderId == null) {
-                txtOrderId = (TextView) base.findViewById(R.id.txtOrderId);
-                txtOrderId.setTypeface(typeface);
+                txtOrderId = (TextView) itemView.findViewById(R.id.txtOrderId);
             }
             return txtOrderId;
         }
 
         public TextView getTxtNumItems() {
             if (txtNumItems == null) {
-                txtNumItems = (TextView) base.findViewById(R.id.txtNumItems);
-                txtNumItems.setTypeface(typeface);
+                txtNumItems = (TextView) itemView.findViewById(R.id.txtNumItems);
             }
             return txtNumItems;
         }
 
-        public TextView getTxtOrderTotal() {
-            if (txtOrderTotal == null) {
-                txtOrderTotal = (TextView) base.findViewById(R.id.txtOrderTotal);
-            }
-            return txtOrderTotal;
+        public LinearLayout getLayoutOrderData() {
+            if (layoutOrderData == null)
+                layoutOrderData = (LinearLayout) itemView.findViewById(R.id.layoutOrderData);
+            return layoutOrderData;
         }
 
-        public TextView getTxtDisplayName() {
-            if (txtDisplayName == null) {
-                txtDisplayName = (TextView) base.findViewById(R.id.txtDisplayName);
-            }
-            return txtDisplayName;
+        public ImageView getImgOrderType() {
+            if (imgOrderType == null)
+                imgOrderType = (ImageView) itemView.findViewById(R.id.imgOrderType);
+            return imgOrderType;
         }
 
-        public TextView getTxtFulfilledBy() {
-            if (txtFulfilledBy == null) {
-                txtFulfilledBy = (TextView) base.findViewById(R.id.txtFulfilledBy);
-            }
-            return txtFulfilledBy;
-        }
     }
 }

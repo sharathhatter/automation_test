@@ -24,6 +24,7 @@
             android:id="@+id/txt_msg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <ImageView
@@ -36,6 +37,7 @@
             android:id="@+id/txt_timestamp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textSize="12sp" />
 
@@ -43,13 +45,14 @@
             android:id="@+id/txt_failed"
             style="@style/errorMsg"
             android:layout_width="wrap_content"
+            android:textColor="@android:color/black"
             android:layout_height="wrap_content" />
     </LinearLayout>
 
     <ImageView
         android:id="@+id/picUsr"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="23dp"
+        android:layout_height="23dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:background="@drawable/bkgrnd_user"

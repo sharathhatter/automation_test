@@ -88,6 +88,8 @@ public class Constants {
     public static final String MONTHS_DATA = "months_data";
     public static final String ORDER_RANGE = "order_range";
     public static final String ORDER_TYPE = "order_type";
+    public static final String ORDER_STATE = "order_state";
+    public static final String TOTAL_PAGE = "total_pages";
     public static final String VERSION = "version";
     public static final String SCREEN = "screen";
     public static final String SCREEN_NAME = "screen_name";

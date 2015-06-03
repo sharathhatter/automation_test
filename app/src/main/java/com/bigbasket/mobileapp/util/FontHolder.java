@@ -9,12 +9,14 @@ public class FontHolder {
     private Typeface faceRobotoRegular;
     private Typeface faceRobotoLight;
     private Typeface faceRobotoMedium;
+    private Typeface faceRobotoBold;
 
     private FontHolder(Context context) {
         faceRupee = Typeface.createFromAsset(context.getAssets(), "Rupee.ttf");
         faceRobotoRegular = Typeface.createFromAsset(context.getAssets(), "Roboto-Regular.ttf");
         faceRobotoLight = Typeface.createFromAsset(context.getAssets(), "Roboto-Light.ttf");
         faceRobotoMedium = Typeface.createFromAsset(context.getAssets(), "Roboto-Medium.ttf");
+        faceRobotoBold = Typeface.createFromAsset(context.getAssets(), "Roboto-Bold.ttf");
     }
 
     public static FontHolder getInstance(Context context) {
@@ -38,5 +40,9 @@ public class FontHolder {
 
     public Typeface getFaceRobotoMedium() {
         return faceRobotoMedium;
+    }
+
+    public Typeface getFaceRobotoBold() {
+        return faceRobotoBold;
     }
 }

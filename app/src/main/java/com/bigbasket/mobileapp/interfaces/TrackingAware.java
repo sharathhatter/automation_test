@@ -45,8 +45,9 @@ public interface TrackingAware {
     //Account
     public static final String MY_ACCOUNT_CLICKED = "My Account.My Account Clicked";
     public static final String MY_ACCOUNT_SHOWN = "MyAccount.My Account Shown";
-    public static final String MY_ACCOUNT_ACTIVE_ORDER_CLICKED = "MyAccount.Active Orders Clicked";
-    public static final String MY_ACCOUNT_PAST_ORDER_CLICKED = "MyAccount.View Order History Clicked";
+    public static final String MY_ORDER_CLICKED = "My Orders Clicked";
+    public static final String MY_ORDER_SHOWN = "My Orders Shown";
+    public static final String MY_ORDER_ITEM_CLICKED = "My Orders Item Clicked";
     public static final String MY_ACCOUNT_UPDATE_PROFILE_CLICKED = "MyAccount.Update Profile Clicked";
 
 

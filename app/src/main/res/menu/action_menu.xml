@@ -9,13 +9,4 @@
         android:orderInCategory="9999"
         android:title="@string/search"
         bb:showAsAction="always" />
-
-    <item
-        android:id="@+id/action_moengage_ubox_hub"
-        android:icon="@drawable/ic_call_grey600_18dp"
-        android:orderInCategory="9999"
-        android:title="Communication Hub"
-        bb:showAsAction="ifRoom|withText" />
-
-
 </menu>

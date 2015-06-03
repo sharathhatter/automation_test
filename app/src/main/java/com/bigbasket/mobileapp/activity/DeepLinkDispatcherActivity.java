@@ -9,13 +9,15 @@ import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.OrderDetailActivity;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.handler.DeepLinkHandler;
+import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.InvoiceDataAware;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
-public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceDataAware {
+public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceDataAware,
+        HandlerAware {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

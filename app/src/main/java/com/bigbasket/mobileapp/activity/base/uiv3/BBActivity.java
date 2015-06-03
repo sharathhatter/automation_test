@@ -49,7 +49,6 @@ import com.bigbasket.mobileapp.fragment.HomeFragment;
 import com.bigbasket.mobileapp.fragment.account.AccountView;
 import com.bigbasket.mobileapp.fragment.account.ChangePasswordFragment;
 import com.bigbasket.mobileapp.fragment.account.DoWalletFragment;
-import com.bigbasket.mobileapp.fragment.account.UpdatePinFragment;
 import com.bigbasket.mobileapp.fragment.account.UpdateProfileFragment;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.order.MemberAddressListFragment;
@@ -94,7 +93,6 @@ import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.view.uiv3.AnimatedLinearLayout;
 import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
 import com.melnykov.fab.FloatingBadgeCountView;
-import com.moengage.addon.ubox.UnifiedInboxActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -343,9 +341,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 memberAddressListFragment.setArguments(addressbundle);
                 addToMainLayout(memberAddressListFragment);
                 break;
-            case FragmentCodes.START_CHANGE_PIN:
-                addToMainLayout(new UpdatePinFragment());
-                break;
             case FragmentCodes.START_ADDRESS_SELECTION:
                 addToMainLayout(new MemberAddressListFragment());
                 break;
@@ -459,10 +454,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             case R.id.action_search:
                 Intent searchIntent = new Intent(this, SearchableActivity.class);
                 startActivityForResult(searchIntent, NavigationCodes.START_SEARCH);
-                return false;
-            case R.id.action_moengage_ubox_hub:
-                Intent communicationHunIntent = new Intent(this, UnifiedInboxActivity.class);
-                startActivity(communicationHunIntent);
                 return false;
             case android.R.id.home:
                 finish();

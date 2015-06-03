@@ -77,6 +77,8 @@ public class DeepLinkHandler {
                 intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WALLET_FRAGMENT);
                 context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 return SUCCESS;
+            case Constants.PRODUCT_LIST:
+                return SUCCESS; //todo
             case Constants.CATEGORY_LANDING:
                 String name = uri.getQueryParameter(Constants.NAME);
                 String slug = uri.getQueryParameter(Constants.SLUG);

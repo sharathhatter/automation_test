@@ -29,3 +29,5 @@ wibmoSDK/build/*
 wibmosdklib/build/*
 moEngageSDKv5.0/build/*
 captures/*
+moengagesdk/build/*
+moe-addon-ubox/build/*

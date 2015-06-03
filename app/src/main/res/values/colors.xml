@@ -89,6 +89,8 @@
     <color name="landing_page_header_bkg">#66000000</color>
 
     <color name="separator_line_color">#afafaf</color>
+    <color name="red_color">#df212a</color>
     <color name="text_color_myaccount">#df212a</color>
+    <color name="past_oder_bck">#f5f5f5</color>
 
 </resources>

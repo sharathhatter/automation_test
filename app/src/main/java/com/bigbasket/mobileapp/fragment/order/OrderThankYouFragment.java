@@ -9,9 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.GridView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -63,21 +60,20 @@ public class OrderThankYouFragment extends BaseFragment implements InvoiceDataAw
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         ViewGroup base = (ViewGroup) inflater.inflate(R.layout.uiv3_multiple_order_invoice_layout, contentView, false);
         AbsListView orderAbsListView = (AbsListView) base.findViewById(R.id.listOrders);
-        OrderListAdapter orderListAdapter = new OrderListAdapter(getActivity(), faceRobotoRegular, faceRupee, orders,
-                true, false);
+        OrderListAdapter orderListAdapter = new OrderListAdapter(getActivity(), orders, 0);
 
-        if (orderAbsListView instanceof ListView) {
-            ((ListView) orderAbsListView).setAdapter(orderListAdapter);
-        } else if (orderAbsListView instanceof GridView) {
-            ((GridView) orderAbsListView).setAdapter(orderListAdapter);
-        }
-        orderAbsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Order order = orders.get(position);
-                showInvoice(order);
-            }
-        });
+//        if (orderAbsListView instanceof ListView) {
+//            ((ListView) orderAbsListView).setAdapter(orderListAdapter);
+//        } else if (orderAbsListView instanceof GridView) {
+//            ((GridView) orderAbsListView).setAdapter(orderListAdapter);
+//        }
+//        orderAbsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                Order order = orders.get(position);
+//                showInvoice(order);
+//            }
+//        });
 
         TextView lblContinueShopping = (TextView) base.findViewById(R.id.lblContinueShopping);
         lblContinueShopping.setTypeface(faceRobotoRegular);
