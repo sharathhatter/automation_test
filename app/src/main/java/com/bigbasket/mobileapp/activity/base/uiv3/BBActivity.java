@@ -756,7 +756,8 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         AuthParameters authParameters = AuthParameters.getInstance(this);
 
         if (!authParameters.isAuthTokenEmpty()) {
-            txtNavSalutation.setText(authParameters.getMemberFullName());
+            txtNavSalutation.setText(!TextUtils.isEmpty(authParameters.getMemberFullName()) ?
+                    authParameters.getMemberFullName() : authParameters.getMemberEmail());
         } else {
             txtNavSalutation.setText(getString(R.string.bigbasketeer));
             txtCityName.setOnClickListener(new View.OnClickListener() {
