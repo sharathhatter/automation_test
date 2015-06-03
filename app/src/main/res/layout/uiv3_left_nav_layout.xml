@@ -36,41 +36,9 @@
         android:orientation="vertical"
         android:visibility="gone">
 
-        <TextView
-            android:id="@+id/txtNavMainItem"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ic_arrow_back_grey600_24dp"
-            android:gravity="center"
-            android:padding="@dimen/padding_normal"
-            android:textColor="@color/uiv3_primary_text_color"
-            android:textSize="@dimen/primary_text_size" />
-
-        <View
-            android:id="@+id/viewSubMenuHeaderSeparator"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@id/txtNavMainItem"
-            android:background="@color/uiv3_divider_color" />
-
         <android.support.v7.widget.RecyclerView
             android:id="@+id/listSubNavigation"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/viewSubMenuHeaderSeparator" />
-
-        <TextView
-            android:id="@+id/txtNavMainItemTransparent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ic_arrow_back_white_24dp"
-            android:drawablePadding="@dimen/padding_small"
-            android:gravity="left|center_vertical"
-            android:paddingBottom="@dimen/padding_normal"
-            android:paddingLeft="@dimen/padding_small"
-            android:paddingRight="@dimen/padding_normal"
-            android:paddingTop="@dimen/padding_normal"
-            android:textColor="@color/white"
-            android:textSize="@dimen/primary_text_size" />
+            android:layout_height="wrap_content" />
     </com.bigbasket.mobileapp.view.uiv3.AnimatedRelativeLayout>
 </FrameLayout>

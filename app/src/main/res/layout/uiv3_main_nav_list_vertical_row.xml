@@ -8,8 +8,22 @@
         android:id="@+id/imgNavItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scaleType="fitXY"
-        android:contentDescription="@string/alt_placeholder" />
+        android:contentDescription="@string/alt_placeholder"
+        android:scaleType="fitXY" />
+
+    <TextView
+        android:id="@+id/txtNavMainItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_arrow_back_white_24dp"
+        android:drawablePadding="@dimen/padding_small"
+        android:gravity="left|center_vertical"
+        android:paddingBottom="@dimen/padding_normal"
+        android:paddingLeft="@dimen/padding_small"
+        android:paddingRight="@dimen/padding_normal"
+        android:paddingTop="@dimen/padding_normal"
+        android:textColor="@color/white"
+        android:textSize="@dimen/primary_text_size" />
 
     <TextView
         android:id="@+id/txtNavListRow"

@@ -114,6 +114,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     private RecyclerView mNavRecyclerView;
     private AnimatedRelativeLayout mSubNavLayout;
     private FloatingBadgeCountView mBtnViewBasket;
+    private RecyclerView mListSubNavigation;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -856,57 +857,27 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             mSubNavLayout = (AnimatedRelativeLayout) findViewById(R.id.layoutSubNavigationItems);
         }
 
-        mSubNavLayout.setVisibility(View.VISIBLE);
-        final RecyclerView listSubNavigation = (RecyclerView) findViewById(R.id.listSubNavigation);
-
-        TextView txtNavMainItem = (TextView) findViewById(R.id.txtNavMainItem);
-        TextView txtNavMainItemTransparent = (TextView) findViewById(R.id.txtNavMainItemTransparent);
-        View viewSubMenuHeaderSeparator = findViewById(R.id.viewSubMenuHeaderSeparator);
-
-        OnSubNavigationHeaderClickListener clickListener = new
-                OnSubNavigationHeaderClickListener(listSubNavigation);
-
-        boolean isFirstItemImg = subNavigationSectionItems.get(0).hasImage();
-        if (isFirstItemImg) {
-            txtNavMainItemTransparent.setText(sectionItem.getTitle() != null ?
-                    sectionItem.getTitle().getText() : "");
-            txtNavMainItemTransparent.setTypeface(faceRobotoRegular);
-            txtNavMainItem.setVisibility(View.GONE);
-            viewSubMenuHeaderSeparator.setVisibility(View.GONE);
-            txtNavMainItemTransparent.setOnClickListener(clickListener);
-            txtNavMainItemTransparent.setVisibility(View.VISIBLE);
-        } else {
-            txtNavMainItem.setText(sectionItem.getTitle() != null ?
-                    sectionItem.getTitle().getText() : "");
-            txtNavMainItem.setOnClickListener(clickListener);
-            txtNavMainItem.setTypeface(faceRobotoRegular);
-            txtNavMainItem.setVisibility(View.VISIBLE);
-            viewSubMenuHeaderSeparator.setVisibility(View.VISIBLE);
-            txtNavMainItemTransparent.setVisibility(View.GONE);
+        if (mListSubNavigation == null) {
+            mListSubNavigation = (RecyclerView) findViewById(R.id.listSubNavigation);
+            mListSubNavigation.setHasFixedSize(false);
+            mListSubNavigation.setLayoutManager(new LinearLayoutManager(this));
         }
-
-        listSubNavigation.setHasFixedSize(false);
-        listSubNavigation.setLayoutManager(new LinearLayoutManager(this));
 
         ArrayList<SectionNavigationItem> sectionNavigationItems = new ArrayList<>();
         setSectionNavigationItemList(sectionNavigationItems, subNavigationSectionItems, section);
         NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoRegular,
                 sectionNavigationItems,
-                SectionManager.MAIN_MENU, baseImgUrl, rendererHashMap);
-        listSubNavigation.setAdapter(navigationAdapter);
+                SectionManager.MAIN_MENU, baseImgUrl, rendererHashMap, sectionItem);
+        mListSubNavigation.setAdapter(navigationAdapter);
+        mSubNavLayout.setVisibility(View.VISIBLE);
     }
 
-    private class OnSubNavigationHeaderClickListener implements View.OnClickListener {
-
-        private RecyclerView listSubNavigation;
-
-        public OnSubNavigationHeaderClickListener(RecyclerView listSubNavigation) {
-            this.listSubNavigation = listSubNavigation;
+    @Override
+    public void onSubNavigationHideRequested() {
+        if (mListSubNavigation != null) {
+            mListSubNavigation.setAdapter(null);
         }
-
-        @Override
-        public void onClick(View v) {
-            listSubNavigation.setAdapter(null);
+        if (mSubNavLayout != null) {
             mSubNavLayout.setVisibility(View.GONE);
         }
     }

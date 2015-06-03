@@ -9,4 +9,5 @@ import java.util.HashMap;
 public interface SubNavigationAware {
     void onSubNavigationRequested(Section section, SectionItem sectionItem, String baseImgUrl,
                                   HashMap<Integer, Renderer> rendererHashMap);
+    void onSubNavigationHideRequested();
 }
