@@ -82,7 +82,6 @@ public class SectionView {
             if (sectionView == null) {
                 continue;
             }
-            mainLayout.addView(sectionView);
             if (section.getSectionType().equals(Section.SALUTATION))
                 continue;
             ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams)
@@ -96,6 +95,7 @@ public class SectionView {
                 layoutParams.topMargin = marginBetweenWidgets;
                 sectionView.setLayoutParams(layoutParams);
             }
+            mainLayout.addView(sectionView);
         }
         return mainLayout;
     }
