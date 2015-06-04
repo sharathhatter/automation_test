@@ -93,6 +93,7 @@ public class MyAccountActivity extends BackButtonActivity {
 
     @Override
     protected void setOptionsMenu(Menu menu) {
+        super.setOptionsMenu(menu);
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.my_account, menu);
     }
