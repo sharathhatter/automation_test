@@ -1,86 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:id="@+id/layoutPromoInfoBox"
-
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/layoutPromoInfoMsg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:orientation="vertical"
-        android:id="@+id/layoutPromoInfoMsg"
 
         >
 
         <TextView
+            android:id="@+id/txtPromoInfoMsg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="5dp"
-            android:textSize="14sp"
-            android:text="Buy 2 get One free"
-            android:id="@+id/txtPromoInfoMsg"
-            android:textColor="@color/dark_black"
             android:layout_gravity="center_horizontal"
-            android:gravity="center" />
+            android:layout_marginBottom="@dimen/margin_mini"
+            android:layout_marginLeft="@dimen/margin_small"
+            android:layout_marginRight="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_mini"
+            android:gravity="center"
+            android:text="Buy 2 get One free"
+            android:textColor="@color/uiv3_primary_text_color"
+            android:textSize="@dimen/secondary_text_size" />
 
         <LinearLayout
+            android:id="@+id/layoutCriteriaMsg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:id="@+id/layoutCriteriaMsg">
+            android:orientation="vertical">
 
         </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/layoutPromoSavingInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_gravity="center_horizontal"
-        android:id="@+id/layoutPromoSavingInfo">
+        android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/txtNumCompletedOffer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="2dp"
             android:layout_marginRight="3dp"
-            android:textColor="@color/promo_txt_green_color"
-            android:textSize="14sp"
             android:text="testing"
-            android:id="@+id/txtNumCompletedOffer" />
+            android:textColor="@color/promo_txt_green_color"
+            android:textSize="@dimen/secondary_text_size" />
 
         <View
             android:layout_width="1dp"
-            android:layout_height="12dp"
-            android:layout_marginTop="5dp"
+            android:layout_height="@dimen/secondary_text_size"
             android:layout_marginBottom="2dp"
             android:layout_marginLeft="0dp"
             android:layout_marginRight="0dp"
+            android:layout_marginTop="5dp"
             android:background="@color/promo_txt_green_color" />
 
         <TextView
+            android:id="@+id/txtSaving"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="3dp"
             android:layout_marginRight="2dp"
-            android:textColor="@color/promo_txt_green_color"
-            android:textSize="14sp"
             android:text="testing"
-            android:id="@+id/txtSaving" />
+            android:textColor="@color/promo_txt_green_color"
+            android:textSize="@dimen/secondary_text_size" />
     </LinearLayout>
 
     <View
+        android:id="@+id/line"
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:background="@color/strokeLine"
-        android:layout_marginTop="10dp"
-        android:id="@+id/line" />
+        android:layout_marginTop="@dimen/margin_small"
+        android:background="@color/uiv3_divider_color" />
 
 </LinearLayout>

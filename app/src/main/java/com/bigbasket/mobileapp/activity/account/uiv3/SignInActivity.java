@@ -98,7 +98,7 @@ public class SignInActivity extends BackButtonActivity {
         });
 
         mChkRememberMe = (CheckBox) findViewById(R.id.chkRememberMe);
-        mChkRememberMe.setTypeface(faceRobotoRegular);
+        mChkRememberMe.setTypeface(faceRobotoLight);
 
         initializeRememberedDataForLoginInput();
 
@@ -115,7 +115,7 @@ public class SignInActivity extends BackButtonActivity {
             trackEvent(TrackingAware.LOGIN_SHOWN, eventAttribs);
         }
         setTermsAndCondition((TextView) findViewById(R.id.txtSigninTermsAndCond), getString(R.string.byLoggingIn),
-                getString(R.string.termsAndCondHeading), getString(R.string.authFooterSeparator), getString(R.string.privacyPolicy));
+                getString(R.string.tc), getString(R.string.authFooterSeparator), getString(R.string.privacyPolicy));
     }
 
     @Override
@@ -166,17 +166,6 @@ public class SignInActivity extends BackButtonActivity {
         boolean cancel = false;
         View focusView = null;
 
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
-            reportFormInputFieldError(mEmailView, getString(R.string.error_field_required));
-            focusView = mEmailView;
-            cancel = true;
-        } else if (!UIUtil.isValidEmail(email)) {
-            reportFormInputFieldError(mEmailView, getString(R.string.error_invalid_email));
-            focusView = mEmailView;
-            cancel = true;
-        }
-
         // Check for a valid password
         if (TextUtils.isEmpty(password)) {
             reportFormInputFieldError(mPasswordView, "Please enter your password");
@@ -189,6 +178,17 @@ public class SignInActivity extends BackButtonActivity {
             reportFormInputFieldError(mPasswordView,
                     getString(R.string.psswordMst6Digit));
             focusView = mPasswordView;
+            cancel = true;
+        }
+
+        // Check for a valid email address.
+        if (TextUtils.isEmpty(email)) {
+            reportFormInputFieldError(mEmailView, "Please enter your e-mail address");
+            focusView = mEmailView;
+            cancel = true;
+        } else if (!UIUtil.isValidEmail(email)) {
+            reportFormInputFieldError(mEmailView, getString(R.string.error_invalid_email));
+            focusView = mEmailView;
             cancel = true;
         }
 

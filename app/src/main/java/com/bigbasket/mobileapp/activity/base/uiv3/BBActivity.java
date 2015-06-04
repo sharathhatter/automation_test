@@ -97,7 +97,6 @@ import com.melnykov.fab.FloatingBadgeCountView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -148,9 +147,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                     } else {
                         Fragment currFragment = fragmentManager.getFragments().get(backStackEntryCount - 1);
                         if (currFragment instanceof AbstractFragment) {
-                            if (!(currFragment instanceof ShowCartFragment)) {
-                                setViewBasketButtonStateOnActivityResume();
-                            }
                             currentFragmentTag = ((AbstractFragment) currFragment).getFragmentTxnTag();
                             ((AbstractFragment) currFragment).onBackStateChanged();
                         }
@@ -181,7 +177,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             btnViewBasket.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    showViewBasketFragment();
+                    launchViewBasketScreen();
                 }
             });
         }
@@ -194,17 +190,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             mBtnViewBasket = (FloatingBadgeCountView) findViewById(R.id.btnViewBasket);
         }
         return mBtnViewBasket;
-    }
-
-    @Override
-    public void setViewBasketButtonStateOnActivityResume() {
-        FloatingBadgeCountView btnViewBasket = getViewBasketFloatingButton();
-        if (btnViewBasket != null) {
-            if (btnViewBasket.getVisibility() != View.VISIBLE) {
-                btnViewBasket.setVisibility(View.VISIBLE);
-            }
-            btnViewBasket.show();
-        }
     }
 
     public Toolbar getToolbar() {
@@ -223,6 +208,9 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                         TrackEventkeys.NAVIGATION_CTX_TOPNAV); //todo check with sid
                 toolbar.setTitle(formatToolbarTitle(mTitle));
                 invalidateOptionsMenu();
+                if (mSubNavLayout != null && mSubNavLayout.getVisibility() == View.VISIBLE) {
+                    onSubNavigationHideRequested();
+                }
             }
 
             @Override
@@ -261,9 +249,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     public void addToMainLayout(AbstractFragment fragment, String tag, boolean stateLess) {
 
         FragmentManager fm = getSupportFragmentManager();
-        if (fm.getBackStackEntryCount() > 0) {
-            setViewBasketButtonStateOnActivityResume();
-        }
         FragmentTransaction ft = fm.beginTransaction();
         String ftTag = TextUtils.isEmpty(tag) ? fragment.getFragmentTxnTag() : tag;
         this.currentFragmentTag = ftTag;
@@ -353,7 +338,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 addToMainLayout(new DoWalletFragment());
                 break;
             case FragmentCodes.START_VIEW_BASKET:
-                launchViewBasket();
+                showViewBasketFragment();
                 break;
             case FragmentCodes.START_COMMUNICATION_HUB:
                 launchKonotor();
@@ -471,11 +456,11 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     private void showViewBasketFragment() {
-        List<Fragment> fragments = getSupportFragmentManager().getFragments();
-        if (!(fragments != null && fragments.size() > 0 &&
-                fragments.get(fragments.size() - 1) instanceof ShowCartFragment)) {
-            launchViewBasket();
-        }
+        ShowCartFragment showCartFragment = new ShowCartFragment();
+        Bundle cartBundle = new Bundle();
+        cartBundle.putString(Constants.INTERNAL_VALUE, getIntent().getStringExtra(Constants.INTERNAL_VALUE));
+        showCartFragment.setArguments(cartBundle);
+        onChangeFragment(showCartFragment);
     }
 
     @Override
@@ -748,10 +733,10 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     private void loadNavigationItems() {
         if (mNavRecyclerView == null) return;
         TextView txtNavSalutation = (TextView) findViewById(R.id.txtNavSalutation);
-        txtNavSalutation.setTypeface(faceRobotoRegular);
-        ((TextView) findViewById(R.id.lblWelcome)).setTypeface(faceRobotoRegular);
+        txtNavSalutation.setTypeface(faceRobotoMedium);
+        ((TextView) findViewById(R.id.lblWelcome)).setTypeface(faceRobotoMedium);
         TextView txtCityName = (TextView) findViewById(R.id.txtCityName);
-        txtCityName.setTypeface(faceRobotoRegular);
+        txtCityName.setTypeface(faceRobotoMedium);
         ImageView imgSwitchNav = (ImageView) findViewById(R.id.imgSwitchNav);
 
         AuthParameters authParameters = AuthParameters.getInstance(this);
@@ -786,7 +771,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
         ListView lstMyAccount = (ListView) findViewById(R.id.lstMyAccount);
         new AccountView<>(this, lstMyAccount);
-        NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoRegular,
+        NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoMedium,
                 sectionNavigationItems, SectionManager.MAIN_MENU, baseImgUrl, rendererHashMap);
         mNavRecyclerView.setAdapter(navigationAdapter);
     }
@@ -837,7 +822,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             if (sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
                 if (sectionItem.hasImage()) {
                     UIUtil.preLoadImage(TextUtils.isEmpty(sectionItem.getImage()) ?
-                                    baseImgUrl + sectionItem.getImageName() : sectionItem.getImage(),
+                                    sectionItem.constructImageUrl(this, baseImgUrl) : sectionItem.getImage(),
                             this);
                 }
                 sectionNavigationItems.add(new SectionNavigationItem(section, sectionItem));
@@ -872,7 +857,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         ArrayList<SectionNavigationItem> sectionNavigationItems = new ArrayList<>();
         setSectionNavigationItemList(sectionNavigationItems, subNavigationSectionItems, section,
                 baseImgUrl);
-        NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoRegular,
+        NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoMedium,
                 sectionNavigationItems,
                 SectionManager.MAIN_MENU, baseImgUrl, rendererHashMap, sectionItem);
         mListSubNavigation.setAdapter(navigationAdapter);
@@ -903,12 +888,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
     public String getScreenTag() {
         return null;
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        setViewBasketButtonStateOnActivityResume();
     }
 
     @Override

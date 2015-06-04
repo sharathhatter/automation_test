@@ -1,65 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layoutPromoSetLayout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:id="@+id/layoutPromoSetLayout">
+    android:layout_height="wrap_content">
 
     <RelativeLayout
+        android:id="@+id/innerLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="5dp"
-        android:id="@+id/innerLayout">
+        android:padding="@dimen/padding_small">
 
         <ImageView
-            android:layout_width="16dp"
             android:id="@+id/imgTick"
-            android:layout_height="14dp"
-            android:visibility="visible"
-            android:layout_marginTop="4dp"
-            android:src="@drawable/no_bkg_tick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerVertical="true"
             android:contentDescription="@string/alt_placeholder"
-            android:layout_alignParentTop="true" />
+            android:src="@drawable/done_green_24dp"
+            android:visibility="visible" />
 
         <TextView
+            android:id="@+id/txtSetName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
+            android:layout_marginLeft="@dimen/margin_small"
             android:layout_toRightOf="@id/imgTick"
-            android:layout_marginLeft="5dp"
-            android:textColor="@color/dark_black"
-            android:id="@+id/txtSetName"
-            android:text="Slice 1.2 lt" />
+            android:text="Slice 1.2 lt"
+            android:textColor="@color/uiv3_primary_text_color"
+            android:textSize="@dimen/primary_text_size" />
 
         <ImageView
+            android:id="@+id/imgRightArrow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_keyboard_arrow_right_grey600_24dp"
-            android:contentDescription="@string/alt_placeholder"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:id="@+id/imgRightArrow"
-            android:padding="-5dp" />
+            android:contentDescription="@string/alt_placeholder"
+            android:padding="-5dp"
+            android:src="@drawable/ic_keyboard_arrow_right_grey600_24dp" />
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_alignBaseline="@id/txtSetName"
             android:id="@+id/txtValueInBasket"
-            android:textSize="14sp"
-            android:layout_toRightOf="@id/txtSetName"
-            android:text="0 in basket" />
-
-        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="2dp"
+            android:layout_alignBaseline="@id/txtSetName"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@id/txtSetName"
+            android:text="0 in basket"
+            android:textColor="@color/uiv3_secondary_text_color"
+            android:textSize="@dimen/secondary_text_size" />
+
+        <TextView
             android:id="@+id/txtValueNeed"
-            android:textSize="14sp"
-            android:textColor="@color/dark_black"
-            android:layout_below="@id/txtSetName" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/txtSetName"
+            android:layout_marginLeft="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_mini"
+            android:layout_toRightOf="@id/imgTick"
+            android:text="asdasdasd"
+            android:textColor="@color/uiv3_primary_text_color"
+            android:textSize="@dimen/secondary_text_size" />
 
 
     </RelativeLayout>
@@ -67,6 +70,6 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:background="@color/strokeLine"
-        android:layout_below="@id/innerLayout" />
+        android:layout_below="@id/innerLayout"
+        android:background="@color/uiv3_divider_color" />
 </RelativeLayout>

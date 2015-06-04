@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import com.bigbasket.mobileapp.activity.CustomerFeedbackActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonWithBasketButtonActivity;
 import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
@@ -94,7 +95,7 @@ public class DeepLinkHandler {
             case Constants.PRODUCT_DETAIL:
                 id = uri.getQueryParameter(Constants.ID);
                 if (!TextUtils.isEmpty(id)) {
-                    intent = new Intent(context.getCurrentActivity(), BackButtonActivity.class);
+                    intent = new Intent(context.getCurrentActivity(), BackButtonWithBasketButtonActivity.class);
                     intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PRODUCT_DETAIL);
                     intent.putExtra(Constants.SKU_ID, id);
                     context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
@@ -154,9 +155,7 @@ public class DeepLinkHandler {
                 context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 return SUCCESS;
             case Constants.BASKET:
-                intent = new Intent(context.getCurrentActivity(), BackButtonActivity.class);
-                intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_VIEW_BASKET);
-                context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                context.getCurrentActivity().launchViewBasketScreen();
                 return SUCCESS;
             case Constants.FLAT_PAGE:
                 String url = uri.getQueryParameter("url");

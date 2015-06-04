@@ -9,6 +9,4 @@ public interface FloatingBasketUIAware {
 
     @Nullable
     FloatingBadgeCountView getViewBasketFloatingButton();
-
-    void setViewBasketButtonStateOnActivityResume();
 }

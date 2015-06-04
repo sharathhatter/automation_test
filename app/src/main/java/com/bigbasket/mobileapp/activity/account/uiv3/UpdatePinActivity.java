@@ -126,6 +126,7 @@ public class UpdatePinActivity extends BackButtonActivity {
         currentPin = newPin;
         editTextNewPin.setText(newPin);
         editTextNewPin.setEnabled(false);
+        showToast(getString(R.string.pinUpdatedSuccessfully));
     }
 
     private void updatePinServerCall(final String newPin) {

@@ -28,6 +28,7 @@
         android:id="@+id/txtProductDesc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignTop="@id/imgProductOverflowAction"
         android:layout_marginLeft="@dimen/margin_mini"
         android:layout_marginRight="@dimen/margin_small"
         android:layout_toLeftOf="@id/imgProductOverflowAction"
@@ -94,6 +95,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/layoutPackageDesc"
+        android:layout_marginBottom="@dimen/margin_small"
         android:layout_marginLeft="@dimen/margin_mini"
         android:layout_marginRight="@dimen/margin_small"
         android:layout_marginTop="@dimen/margin_normal"
@@ -138,9 +140,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/layoutProductPrice"
-        android:layout_marginLeft="@dimen/margin_mini"
+        android:layout_marginLeft="@dimen/margin_small"
         android:layout_marginTop="@dimen/margin_normal"
-        android:layout_toRightOf="@id/imgProduct"
         android:contentDescription="@string/promo"
         android:src="@drawable/promo_star" />
 
@@ -167,8 +168,8 @@
         android:layout_marginTop="@dimen/margin_small"
         android:layout_toRightOf="@id/imgPromoStar"
         android:text="Buy 1 get 1 free"
-        android:textColor="@color/promoDescColor"
-        android:textSize="@dimen/primary_text_size" />
+        android:textColor="@color/uiv3_secondary_text_color"
+        android:textSize="@dimen/secondary_text_size" />
 
     <View
         android:id="@+id/viewSeparator"

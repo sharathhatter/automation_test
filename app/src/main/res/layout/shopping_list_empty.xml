@@ -48,7 +48,7 @@
         android:layout_marginTop="@dimen/margin_small"
         android:drawableLeft="@drawable/ic_keyboard_arrow_right_grey600_24dp"
         android:drawablePadding="@dimen/padding_small"
-        android:drawableRight="@drawable/ic_more_vert_grey600_36dp"
+        android:drawableRight="@drawable/add_to_shopping_list"
         android:gravity="center_vertical"
         android:text="@string/fromSearchResults"
         android:textColor="@color/uiv3_primary_text_color"

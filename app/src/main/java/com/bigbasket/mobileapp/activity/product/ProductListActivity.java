@@ -194,7 +194,9 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                 }
             }
         }
-        toggleFilterSortView(hasProducts);
+        boolean showFilters = hasProducts && productTabData.getFilterOptionItems() != null
+                && productTabData.getFilterOptionItems().size() > 0;
+        toggleFilterSortView(showFilters);
         if (hasProducts) {
             if (productTabData.getProductTabInfos().size() > 1) {
                 displayProductTabs(productTabData, contentFrame);
@@ -230,7 +232,8 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                 renderHeaderDropDown(productTabData.getHeaderSection());
             }
         } else if (contentSectionView == null) {
-            UIUtil.showEmptyProductsView(this, contentFrame);
+            UIUtil.showEmptyProductsView(this, contentFrame, getString(R.string.noProducts),
+                    R.drawable.empty_smart_basket);
             renderHeaderDropDown(null);
         }
     }

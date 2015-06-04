@@ -219,11 +219,15 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
             }
         } else if (!TextUtils.isEmpty(imageName) && !TextUtils.isEmpty(baseImgUrl)) {
             UIUtil.displayAsyncImage(imageView,
-                    baseImgUrl + UIUtil.getScreenDensity(context) + "/" + imageName);
+                    constructImageUrl(context, baseImgUrl));
         } else {
             imageView.setImageDrawable(null);
             imageView.setVisibility(View.GONE);
         }
+    }
+
+    public String constructImageUrl(Context context, String baseImgUrl) {
+        return baseImgUrl + UIUtil.getScreenDensity(context) + "/" + imageName;
     }
 
     public int getItemViewType(Renderer renderer, String sectionType) {

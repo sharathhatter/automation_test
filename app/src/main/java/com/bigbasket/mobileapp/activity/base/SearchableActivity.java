@@ -23,6 +23,7 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonWithBasketButtonActivity;
 import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.adapter.SearchViewAdapter;
 import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
@@ -296,7 +297,7 @@ public class SearchableActivity extends BackButtonActivity
         if (scanResult != null) {
             String eanCode = scanResult.getContents();
             if (!TextUtils.isEmpty(eanCode)) {
-                Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
+                Intent intent = new Intent(getCurrentActivity(), BackButtonWithBasketButtonActivity.class);
                 intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PRODUCT_DETAIL);
                 intent.putExtra(Constants.EAN_CODE, eanCode);
                 startActivityForResult(intent, NavigationCodes.GO_TO_HOME);

@@ -231,7 +231,7 @@ public class AccountView<T> {
                 if (itemTitle == null) {
                     itemTitle = (TextView) itemView.findViewById(R.id.txtNavListRow);
                     itemTitle.setTypeface(FontHolder.getInstance(((ActivityAware) context)
-                            .getCurrentActivity()).getFaceRobotoRegular());
+                            .getCurrentActivity()).getFaceRobotoMedium());
                 }
                 return itemTitle;
             }

@@ -149,7 +149,7 @@
                 android:checked="true"
                 android:text="@string/remember"
                 android:textColor="@color/white"
-                android:textSize="@dimen/secondary_text_size" />
+                android:textSize="@dimen/small_text_size" />
 
             <Button
                 android:id="@+id/btnLogin"
@@ -168,8 +168,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/margin_large"
+                android:layout_marginTop="@dimen/margin_normal"
                 android:clickable="true"
+                android:padding="@dimen/padding_normal"
                 android:text="@string/forgotPasswd"
                 android:textColor="@color/white"
                 android:textSize="@dimen/secondary_text_size" />

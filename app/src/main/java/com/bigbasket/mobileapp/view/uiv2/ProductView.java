@@ -289,6 +289,7 @@ public final class ProductView {
         final View viewIncBasketQty = productViewHolder.getViewIncBasketQty();
 
         TextView txtOutOfStockORNotForSale = productViewHolder.getTxtOutOfStockORNotForSale();
+        txtInBasket.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
 
         if (productViewDisplayDataHolder.isShowBasketBtn()) {
             if (product.getProductStatus().equalsIgnoreCase("A")) {
@@ -425,11 +426,11 @@ public final class ProductView {
 
             TextView txtChildDropdownTitle = (TextView) childDropdown.findViewById(R.id.txtListDialogTitle);
             txtChildDropdownTitle.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
-            txtChildDropdownTitle.setText("Select Quantity");
+            txtChildDropdownTitle.setText("Select Pack Size");
 
             final ProductListSpinnerAdapter productListSpinnerAdapter = new ProductListSpinnerAdapter(((ActivityAware) productDataAware).getCurrentActivity(),
                     childProducts, productViewDisplayDataHolder.getSerifTypeface(),
-                    productViewDisplayDataHolder.getRupeeTypeface(), product);
+                    productViewDisplayDataHolder.getRupeeTypeface(), product, baseImgUrl);
             productListSpinnerAdapter.setCurrentProduct(currentProduct);
             listView.setAdapter(productListSpinnerAdapter);
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -446,6 +447,8 @@ public final class ProductView {
                     }
                 }
             });
+            dialog.setCancelable(true);
+            dialog.setCanceledOnTouchOutside(true);
             dialog.setView(childDropdown, 0, 0, 0, 0);
             dialog.show();
         }

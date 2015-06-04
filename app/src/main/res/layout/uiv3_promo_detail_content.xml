@@ -39,7 +39,7 @@
                     android:textSize="@dimen/primary_text_size"
                     android:layout_gravity="top"
                     android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/padding_normal"
+                    android:paddingTop="@dimen/padding_small"
                     android:paddingLeft="@dimen/padding_small"
                     android:paddingRight="@dimen/padding_small"
                     android:layout_margin="0dp"

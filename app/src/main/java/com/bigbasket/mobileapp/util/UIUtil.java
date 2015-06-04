@@ -10,6 +10,7 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.annotation.DrawableRes;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -22,6 +23,7 @@ import android.text.style.AbsoluteSizeSpan;
 import android.text.style.BulletSpan;
 import android.text.style.ForegroundColorSpan;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +32,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.BuildConfig;
@@ -45,6 +48,8 @@ import com.moe.pushlibrary.MoEHelper;
 import com.moe.pushlibrary.utils.MoEHelperConstants;
 import com.squareup.picasso.Picasso;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -288,6 +293,9 @@ public class UIUtil {
     }
 
     public static int parseAsNativeColor(String rgbColorCode, int defaultColor) {
+        if (TextUtils.isEmpty(rgbColorCode)) {
+            return defaultColor;
+        }
         try {
             return Color.parseColor(rgbColorCode);
         } catch (IllegalArgumentException e) {
@@ -390,6 +398,7 @@ public class UIUtil {
     }
 
     public static void displayAsyncImage(ImageView imageView, String url) {
+        Log.i(imageView.getContext().getClass().getName(), "Loading image = " + url);
         Picasso picasso = Picasso.with(imageView.getContext());
         picasso.setIndicatorsEnabled(BuildConfig.DEBUG);
         picasso.load(url)
@@ -400,16 +409,18 @@ public class UIUtil {
     }
 
     public static void preLoadImage(String url, Context context) {
+        Log.i(context.getClass().getName(), "Pre loading image = " + url);
         Picasso.with(context).load(url).fetch();
     }
 
-    public static void showEmptyProductsView(Context context, ViewGroup parent) {
+    public static void showEmptyProductsView(Context context, ViewGroup parent, String msg,
+                                             @DrawableRes int drawableId) {
         View emptyPageView = LayoutInflater.from(context)
                 .inflate(R.layout.uiv3_empty_data_text, parent, false);
         ImageView imgEmptyPage = (ImageView) emptyPageView.findViewById(R.id.imgEmptyPage);
-        imgEmptyPage.setImageResource(R.drawable.ic_error_red_36dp);
+        imgEmptyPage.setImageResource(drawableId);
         TextView txtEmptyMsg1 = (TextView) emptyPageView.findViewById(R.id.txtEmptyMsg1);
-        txtEmptyMsg1.setText(context.getString(R.string.productTabErrorMsg));
+        txtEmptyMsg1.setText(msg);
         TextView txtEmptyMsg2 = (TextView) emptyPageView.findViewById(R.id.txtEmptyMsg2);
         txtEmptyMsg2.setVisibility(View.GONE);
         emptyPageView.findViewById(R.id.btnBlankPage).setVisibility(View.GONE);
@@ -453,6 +464,16 @@ public class UIUtil {
                 return .66;
             default:
                 return 1;
+        }
+    }
+
+    public static void hideSpinnerDropdown(Spinner spinner) {
+        try {
+            Method method = Spinner.class.getDeclaredMethod("onDetachedFromWindow");
+            method.setAccessible(true);
+            method.invoke(spinner);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | NullPointerException e) {
+            e.printStackTrace();
         }
     }
 }

@@ -181,32 +181,22 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
             contentView.addView(productRecyclerView);
         } else {
             if (mHasProductLoadingFailed) {
-                showProductsFailureMsg(contentView);
+                UIUtil.showEmptyProductsView(getCurrentActivity(), contentView, getString(R.string.productTabErrorMsg),
+                        R.drawable.ic_error_red_36dp);
             } else {
                 if (mProductInfo != null) {
                     if (mProductInfo.getCurrentPage() == -1) {
                         showProgressView();
                     } else {
-                        UIUtil.showEmptyProductsView(getCurrentActivity(), contentView);
+                        UIUtil.showEmptyProductsView(getCurrentActivity(), contentView, getString(R.string.noProducts),
+                                R.drawable.empty_smart_basket);
                     }
                 } else {
-                    UIUtil.showEmptyProductsView(getCurrentActivity(), contentView);
+                    UIUtil.showEmptyProductsView(getCurrentActivity(), contentView, getString(R.string.noProducts),
+                            R.drawable.empty_smart_basket);
                 }
             }
         }
-    }
-
-    private void showProductsFailureMsg(ViewGroup parent) {
-        View emptyPageView = getActivity().getLayoutInflater()
-                .inflate(R.layout.uiv3_empty_data_text, parent, false);
-        ImageView imgEmptyPage = (ImageView) emptyPageView.findViewById(R.id.imgEmptyPage);
-        imgEmptyPage.setImageResource(R.drawable.ic_error_red_36dp);
-        TextView txtEmptyMsg1 = (TextView) emptyPageView.findViewById(R.id.txtEmptyMsg1);
-        txtEmptyMsg1.setText(getString(R.string.productTabErrorMsg));
-        TextView txtEmptyMsg2 = (TextView) emptyPageView.findViewById(R.id.txtEmptyMsg2);
-        txtEmptyMsg2.setVisibility(View.GONE);
-        emptyPageView.findViewById(R.id.btnBlankPage).setVisibility(View.GONE);
-        parent.addView(emptyPageView);
     }
 
     public abstract String getNavigationCtx();
