@@ -10,8 +10,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:orientation="vertical"
-        android:layout_marginLeft="@dimen/margin_medium_large"
-        android:layout_marginRight="@dimen/margin_medium_large"
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_marginRight="@dimen/margin_normal"
         android:layout_height="wrap_content">
 
         <TextView
@@ -39,7 +39,7 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_marginTop="0dp"
+                android:layout_marginTop="@dimen/margin_mini"
                 android:layout_gravity="center_horizontal"
                 android:layout_height="wrap_content">
 
@@ -49,22 +49,25 @@
                     android:id="@+id/txtResendCode"
                     android:gravity="center_vertical"
                     android:text="@string/txtResendCodeStr"
-                    android:textColor="@color/uiv3_status_bar_background"
+                    android:textColor="@color/dark_green"
                     android:layout_alignParentRight="true"
-                    android:padding="@dimen/padding_mini"
+                    android:paddingBottom="@dimen/padding_small"
+                    android:paddingLeft="@dimen/padding_small"
+                    android:paddingTop="@dimen/padding_small"
                     android:layout_marginTop="@dimen/margin_small"
                     android:textSize="@dimen/primary_text_size"
-                    android:textStyle="bold"
                     android:layout_height="wrap_content" />
 
-                <View
-                    android:layout_width="1dp"
-                    android:background="@color/strokeLine"
-                    android:layout_marginRight="@dimen/margin_small"
-                    android:id="@+id/resendSeparatorLine"
-                    android:layout_marginTop="@dimen/margin_small"
-                    android:layout_toLeftOf="@id/txtResendCode"
-                    android:layout_height="30dp" />
+
+                <!--<View-->
+                    <!--android:layout_width="1dp"-->
+                    <!--android:background="@color/strokeLine"-->
+                    <!--android:layout_marginRight="@dimen/margin_small"-->
+                    <!--android:id="@+id/resendSeparatorLine"-->
+                    <!--android:layout_alignBottom="@+id/txtResendCode"-->
+                    <!--android:layout_marginTop="@dimen/margin_small"-->
+                    <!--android:layout_toLeftOf="@id/txtResendCode"-->
+                    <!--android:layout_height="30dp" />-->
 
 
                 <EditText
@@ -73,12 +76,14 @@
                     android:hint="@string/txtConfirmNumberHint"
                     android:inputType="number"
                     android:layout_marginRight="@dimen/margin_normal"
-                    android:layout_toLeftOf="@id/resendSeparatorLine"
+                    android:layout_toLeftOf="@id/txtResendCode"
                     android:layout_alignBaseline="@id/txtResendCode"
                     android:id="@+id/editTextMobileCode"
                     android:textColor="@color/uiv3_primary_text_color"
                     android:paddingLeft="@dimen/padding_mini"
                     android:paddingRight="@dimen/padding_mini" />
+
+
 
                 <TextView
                     android:layout_width="match_parent"
@@ -87,6 +92,7 @@
                     android:gravity="left"
                     android:textSize="@dimen/small_text_size"
                     android:visibility="gone"
+                    android:layout_marginLeft="@dimen/margin_mini"
                     android:layout_below="@id/editTextMobileCode"
                     android:text="@string/resendOtpMsg"
                     android:layout_height="wrap_content" />
@@ -95,6 +101,7 @@
                     android:layout_width="match_parent"
                     android:id="@+id/txtErrorValidateNumber"
                     android:textSize="@dimen/small_text_size"
+                    android:layout_marginLeft="@dimen/margin_mini"
                     android:visibility="gone"
                     android:layout_below="@id/txtResendNumber"
                     android:textColor="@color/promo_red_color"
@@ -110,7 +117,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_marginTop="@dimen/margin_small"
+        android:layout_marginTop="@dimen/margin_normal"
         android:layout_marginBottom="@dimen/margin_normal"
         android:orientation="horizontal"
         android:gravity="center|right"
@@ -121,12 +128,12 @@
             android:layout_width="wrap_content"
             android:id="@+id/txtCancel"
             android:text="@string/CANCEL"
-            android:paddingRight="@dimen/padding_mini"
-            android:paddingLeft="@dimen/padding_mini"
             android:gravity="center"
+            android:paddingBottom="@dimen/padding_small"
+            android:paddingLeft="@dimen/padding_small"
+            android:paddingTop="@dimen/padding_small"
             android:textSize="@dimen/primary_text_size"
-            android:textColor="@color/dark_black"
-            android:textStyle="bold"
+            android:textColor="@android:color/black"
             android:layout_height="wrap_content" />
 
         <TextView
@@ -134,12 +141,12 @@
             android:id="@+id/txtConfirm"
             android:gravity="center"
             android:layout_marginLeft="@dimen/padding_normal"
-            android:paddingRight="@dimen/padding_mini"
-            android:paddingLeft="@dimen/padding_mini"
+            android:paddingBottom="@dimen/padding_small"
+            android:paddingLeft="@dimen/padding_small"
+            android:paddingTop="@dimen/padding_small"
             android:textSize="@dimen/primary_text_size"
             android:text="@string/txtConfirm"
-            android:textColor="@color/uiv3_ok_label_color"
-            android:textStyle="bold"
+            android:textColor="@color/red_color"
             android:layout_height="wrap_content" />
     </LinearLayout>
 

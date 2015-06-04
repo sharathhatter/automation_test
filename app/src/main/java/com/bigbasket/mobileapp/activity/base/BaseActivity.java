@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.activity.base;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
@@ -130,6 +131,11 @@ public abstract class BaseActivity extends AppCompatActivity implements COMarket
 
             }
         }, 100);
+    }
+
+    public static void hidekeyboard(Context context){
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
 
     public static void hideKeyboard(BaseActivity context, View view) {
@@ -546,25 +552,38 @@ public abstract class BaseActivity extends AppCompatActivity implements COMarket
     }
 
     public void setAreaPinCode(String areaName, AreaPinInfoAdapter areaPinInfoAdapter, EditText editTextPincode) {
-        if (areaName != null) {
+        if (!TextUtils.isEmpty(areaName)) {
             String pinCode = areaPinInfoAdapter.getAreaPin(areaName);
             editTextPincode.setText(pinCode);
         }
-
     }
 
-    public void setAdapterArea(final AutoCompleteTextView editTextArea, final EditText editTextPincode) {
+    public void setAdapterArea(final AutoCompleteTextView editTextArea, final AutoCompleteTextView editTextPincode) {
         final AreaPinInfoAdapter areaPinInfoAdapter = new AreaPinInfoAdapter(getCurrentActivity());
+        ArrayList<String> areaPinArrayList = areaPinInfoAdapter.getPinList();
+        ArrayAdapter<String> pinAdapter = new ArrayAdapter<>(getCurrentActivity(), android.R.layout.select_dialog_item, areaPinArrayList);
+        editTextPincode.setThreshold(1);
+        editTextPincode.setAdapter(pinAdapter);
+        editTextPincode.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                String pinCode = editTextPincode.getText().toString();
+                String areaName = areaPinInfoAdapter.getAreaName(pinCode);
+                if(!TextUtils.isEmpty(pinCode) && !TextUtils.isEmpty(areaName)){
+                    editTextArea.setText(areaName);
+                }
+            }
+        });
+
         ArrayList<String> areaNameArrayList = areaPinInfoAdapter.getAreaNameList();
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getCurrentActivity(), android.R.layout.select_dialog_item, areaNameArrayList);
+        ArrayAdapter<String> areaAdapter = new ArrayAdapter<>(getCurrentActivity(), android.R.layout.select_dialog_item, areaNameArrayList);
         editTextArea.setThreshold(1);
-        editTextArea.setAdapter(adapter);
+        editTextArea.setAdapter(areaAdapter);
         editTextArea.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-                String areaName = editTextArea.getText().toString(); //arg0.getAdapter().getItem(0)
+                String areaName = editTextArea.getText().toString();
                 setAreaPinCode(areaName, areaPinInfoAdapter, editTextPincode);
-
             }
         });
     }

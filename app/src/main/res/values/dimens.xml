@@ -41,4 +41,5 @@
     <dimen name="product_row_item_margin_small">4dp</dimen>
     <dimen name="margin_xlarge_account">56dp</dimen>
     <dimen name="margin_22">22dp</dimen>
+    <dimen name="padding_12">12dp</dimen>
 </resources>

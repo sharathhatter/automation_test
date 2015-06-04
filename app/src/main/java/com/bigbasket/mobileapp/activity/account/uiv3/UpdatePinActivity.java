@@ -138,6 +138,7 @@ public class UpdatePinActivity extends BackButtonActivity {
                 int status = apiResponse.status;
                 if (status == 0) {
                     updateEditTextField(newPin);
+                    showToast(getString(R.string.pinUpdated));
                     BaseActivity.hideKeyboard(getCurrentActivity(), editTextNewPin);
                 } else {
                     HashMap<String, String> map = new HashMap<>();

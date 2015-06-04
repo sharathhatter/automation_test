@@ -108,12 +108,12 @@ public class OrderListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewH
                 txtSlotTime.setVisibility(View.VISIBLE);
             } else if (order.getOrderState() == 1) { //delivered
                 txtOrderId.setPadding(0, 10, 0, 0);
-                layoutOrderData.setBackgroundColor(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.past_oder_bck));
+                layoutOrderData.setBackgroundColor(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.shadow_bck));
                 imgOrderType.setImageResource(R.drawable.complete_order);
                 txtSlotTime.setVisibility(View.GONE);
             } else { //cancel
                 txtOrderId.setPadding(0, 10, 0, 0);
-                layoutOrderData.setBackgroundColor(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.past_oder_bck));
+                layoutOrderData.setBackgroundColor(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.shadow_bck));
                 imgOrderType.setImageResource(R.drawable.order_cancel);
                 txtSlotTime.setVisibility(View.GONE);
             }

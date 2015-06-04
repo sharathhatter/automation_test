@@ -240,6 +240,7 @@
     <string name="min4digit">Pin should be 4 digit number!</string>
     <string name="not0000">Pin should be other than 0000!</string>
     <string name="enterPin">Please enter a pin to update!</string>
+    <string name="pinUpdated">Pin successfully updated!</string>
     <string name="blankPin">****</string>
 
     <!-- wallet activity -->
@@ -387,4 +388,11 @@
     <string name="address">Address</string>
     <string name="viewAll">View All</string>
     <string name="addAddress">+ Add</string>
+
+    <!-- address -->
+    <string name="expressAvailable">Express Delivery is available!</string>
+    <string name="delivery_add">Delivery Address:</string>
+    <string name="other_address">Other Addresses:</string>
+    <string name="addAnAddress"> \u0020 Add an Address</string>
+    <string name="save">SAVE</string>
 </resources>

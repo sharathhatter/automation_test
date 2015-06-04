@@ -4,7 +4,7 @@ import com.bigbasket.mobileapp.model.account.UpdateProfileModel;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
-public class UpdateProfileOldApiResponse extends OldBaseApiResponse {
+public class UpdateProfileApiResponse {
 
     @SerializedName(Constants.MEMBER_DETAILS)
     public UpdateProfileModel memberDetails;

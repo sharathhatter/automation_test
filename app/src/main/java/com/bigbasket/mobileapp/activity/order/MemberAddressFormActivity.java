@@ -10,11 +10,13 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
@@ -48,7 +50,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
     private Address address;
     private View base;
     private String cityName;
-    private EditText editTextPincode;
+    private AutoCompleteTextView editTextPincode;
     private AutoCompleteTextView editTextArea;
     private String mErrorMsg;
     private OTPValidationDialogFragment otpValidationDialogFragment;
@@ -85,21 +87,20 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
         FrameLayout contentLayout = getContentView();
         if (contentLayout == null) return;
         contentLayout.removeAllViews();
+        contentLayout.setBackgroundColor(getResources().getColor(R.color.white));
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         base = inflater.inflate(R.layout.uiv3_member_address_form, contentLayout, false);
         editTextArea = (AutoCompleteTextView) base.findViewById(R.id.editTextArea);
-        editTextPincode = (EditText) base.findViewById(R.id.editTextPincode);
+        editTextPincode = (AutoCompleteTextView) base.findViewById(R.id.editTextPincode);
         if (base == null) {
             finish();
             return;
         }
-        Button btnAddress = (Button) base.findViewById(R.id.btnAddress);
-        btnAddress.setTypeface(faceRobotoRegular);
+        TextView txtSaveAddress = (TextView) base.findViewById(R.id.txtSaveAddress);
+        txtSaveAddress.setTypeface(faceRobotoRegular);
         if (address != null) {
-            btnAddress.setText(getString(R.string.update));
             populateUiFields();
         } else {
-            btnAddress.setText(getString(R.string.add));
             EditText editTextCity = (EditText) base.findViewById(R.id.editTextCity);
             editTextCity.setText(cityName);
         }
