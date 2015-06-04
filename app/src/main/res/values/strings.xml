@@ -390,4 +390,11 @@
     <string name="address">Address</string>
     <string name="viewAll">View All</string>
     <string name="addAddress">+ Add</string>
+
+    <!-- address -->
+    <string name="expressAvailable">Express Delivery is available!</string>
+    <string name="delivery_add">Delivery Address:</string>
+    <string name="other_address">Other Addresses:</string>
+    <string name="addAnAddress"> \u0020 Add an Address</string>
+    <string name="save">SAVE</string>
 </resources>

@@ -19,7 +19,8 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
-import com.bigbasket.mobileapp.apiservice.models.response.UpdateProfileOldApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.UpdateProfileApiResponse;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.SocialAccount;
 import com.bigbasket.mobileapp.model.account.UpdateProfileModel;
@@ -49,6 +50,11 @@ public class MyAccountActivity extends BackButtonActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle(getString(R.string.myAccount));
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
         getMemberDetails();
     }
 
@@ -58,16 +64,15 @@ public class MyAccountActivity extends BackButtonActivity {
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.getMemberProfileData(new Callback<UpdateProfileOldApiResponse>() {
+        bigBasketApiService.getMemberProfileData(new Callback<ApiResponse<UpdateProfileApiResponse>>() {
             @Override
-            public void success(UpdateProfileOldApiResponse memberProfileDataCallback, Response response) {
+            public void success(ApiResponse<UpdateProfileApiResponse> memberProfileDataCallback, Response response) {
                 hideProgressDialog();
-                if (memberProfileDataCallback.status.equals(Constants.OK)) {
-                    updateProfileModel = memberProfileDataCallback.memberDetails;
+                if (memberProfileDataCallback.status == 0) {
+                    updateProfileModel = memberProfileDataCallback.apiResponseContent.memberDetails;
                     renderProfileData(updateProfileModel);
                 } else {
-                    int errorType = Integer.parseInt(memberProfileDataCallback.errorType);
-                    handler.sendEmptyMessage(errorType, memberProfileDataCallback.message, true);
+                    handler.sendEmptyMessage(memberProfileDataCallback.status, memberProfileDataCallback.message, true);
                     Map<String, String> eventAttribs = new HashMap<>();
                     eventAttribs.put(TrackEventkeys.FAILURE_REASON, memberProfileDataCallback.message);
                     trackEvent(TrackingAware.UPDATE_PROFILE_GET_FAILED, eventAttribs);

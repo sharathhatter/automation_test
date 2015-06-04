@@ -2,284 +2,218 @@
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/uiv3_list_bkg_light_color"
-    android:paddingBottom="@dimen/padding_small">
+    android:layout_margin="@dimen/margin_normal"
+    android:background="@color/shadow_bck"
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingLeft="@dimen/padding_normal"
-        android:paddingRight="@dimen/padding_normal"
-        android:paddingTop="@dimen/padding_normal">
+        android:layout_height="wrap_content">
 
-        <TableLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:stretchColumns="1">
+            android:layout_height="wrap_content">
 
-            <TableRow
+            <EditText
+                android:id="@+id/editTextAddressNick"
                 android:layout_width="match_parent"
+                android:paddingLeft="@dimen/padding_small"
+                android:layout_marginTop="@dimen/margin_normal"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:layout_marginRight="@dimen/margin_normal"
+                android:hint="@string/addressNick"
+                android:inputType="textPersonName"
+                android:textColor="@color/uiv3_primary_text_color"
+                android:textSize="@dimen/secondary_text_size" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_below="@id/editTextAddressNick"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:id="@+id/layoutName"
+                android:layout_marginTop="@dimen/margin_small"
+                android:layout_marginRight="@dimen/margin_small"
                 android:layout_height="wrap_content">
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:layout_marginBottom="@dimen/margin_small"
-                    android:contentDescription="@string/addressNick"
-                    android:src="@drawable/ic_mode_edit_grey600_24dp" />
-
                 <EditText
-                    android:id="@+id/editTextAddressNick"
-                    android:layout_width="match_parent"
+                    android:id="@+id/editTextFirstName"
+                    android:layout_width="0dp"
+                    android:layout_below="@id/editTextAddressNick"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/margin_normal"
-                    android:layout_marginRight="@dimen/margin_normal"
-                    android:hint="@string/addressNick"
+                    android:layout_weight="1"
+                    android:hint="@string/firstName"
                     android:inputType="textPersonName"
                     android:textColor="@color/uiv3_primary_text_color"
                     android:textSize="@dimen/secondary_text_size" />
-            </TableRow>
 
-            <TableRow
+                <EditText
+                    android:id="@+id/editTextLastName"
+                    android:layout_width="0dp"
+                    android:layout_below="@id/editTextFirstName"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/lastName"
+                    android:inputType="textPersonName"
+                    android:textColor="@color/uiv3_primary_text_color"
+                    android:textSize="@dimen/secondary_text_size" />
+
+            </LinearLayout>
+
+
+            <EditText
+                android:id="@+id/editTextMobileNumber"
+                android:layout_width="match_parent"
+                android:layout_marginTop="@dimen/margin_small"
+                android:layout_below="@id/layoutName"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:layout_marginRight="@dimen/margin_normal"
+                android:ems="10"
+                android:hint="@string/mobileNumber"
+                android:inputType="numberSigned"
+                android:maxLength="10"
+                android:textColor="@color/uiv3_primary_text_color"
+                android:textSize="@dimen/secondary_text_size" />
+
+            <EditText
+                android:id="@+id/editTextHouseNum"
+                android:layout_below="@id/editTextMobileNumber"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_normal">
+                android:layout_marginTop="@dimen/margin_small"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:layout_marginRight="@dimen/margin_normal"
+                android:ems="10"
+                android:hint="@string/houseNum"
+                android:inputType="textPostalAddress"
+                android:textColor="@color/uiv3_primary_text_color"
+                android:textSize="@dimen/secondary_text_size" />
 
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:layout_marginBottom="@dimen/margin_small"
-                    android:contentDescription="@string/contactFirstName"
-                    android:src="@drawable/ic_person_grey600_24dp" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="@dimen/margin_normal"
-                    android:orientation="horizontal">
 
-                    <EditText
-                        android:id="@+id/editTextFirstName"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/margin_normal"
-                        android:layout_marginRight="@dimen/margin_small"
-                        android:layout_weight="1"
-                        android:hint="@string/firstName"
-                        android:inputType="textPersonName"
-                        android:textColor="@color/uiv3_primary_text_color"
-                        android:textSize="@dimen/secondary_text_size" />
+            <EditText
+                android:id="@+id/editTextStreetName"
+                android:layout_width="match_parent"
+                android:layout_below="@id/editTextHouseNum"
+                android:layout_height="wrap_content"
+                android:layout_column="1"
+                android:layout_marginTop="@dimen/margin_small"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:layout_marginRight="@dimen/margin_normal"
+                android:ems="10"
+                android:hint="@string/streetName"
+                android:inputType="textPostalAddress"
+                android:textColor="@color/uiv3_primary_text_color"
+                android:textSize="@dimen/secondary_text_size" />
 
-                    <EditText
-                        android:id="@+id/editTextLastName"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/margin_mini"
-                        android:layout_weight="1"
-                        android:hint="@string/lastName"
-                        android:inputType="textPersonName"
-                        android:textColor="@color/uiv3_primary_text_color"
-                        android:textSize="@dimen/secondary_text_size" />
-                </LinearLayout>
-            </TableRow>
 
-            <TableRow
+
+            <EditText
+                android:id="@+id/editTextResidentialComplex"
+                android:layout_below="@id/editTextStreetName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_normal">
+                android:layout_column="1"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:layout_marginRight="@dimen/margin_normal"
+                android:layout_marginTop="@dimen/margin_small"
+                android:ems="10"
+                android:hint="@string/residentialComplex"
+                android:inputType="textPostalAddress"
+                android:textColor="@color/uiv3_primary_text_color"
+                android:textSize="@dimen/secondary_text_size" />
 
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:layout_marginBottom="@dimen/margin_small"
-                    android:contentDescription="@string/contactNum"
-                    android:src="@drawable/ic_call_grey600_24dp" />
-
-                <EditText
-                    android:id="@+id/editTextMobileNumber"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/margin_normal"
-                    android:layout_marginRight="@dimen/margin_normal"
-                    android:ems="10"
-                    android:hint="@string/mobileNumber"
-                    android:inputType="numberSigned"
-                    android:maxLength="10"
-                    android:textColor="@color/uiv3_primary_text_color"
-                    android:textSize="@dimen/secondary_text_size" />
-            </TableRow>
-
-
-            <TableRow
+            <EditText
+                android:id="@+id/editTextLandmark"
+                android:layout_below="@id/editTextResidentialComplex"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_normal">
+                android:layout_column="1"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:layout_marginRight="@dimen/margin_normal"
+                android:layout_marginTop="@dimen/margin_small"
+                android:ems="10"
+                android:hint="@string/landmark"
+                android:inputType="textPostalAddress"
+                android:textColor="@color/uiv3_primary_text_color"
+                android:textSize="@dimen/secondary_text_size" />
 
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:layout_marginBottom="@dimen/margin_small"
-                    android:contentDescription="@string/houseNum"
-                    android:src="@drawable/ic_place_grey600_24dp" />
-
-                <EditText
-                    android:id="@+id/editTextHouseNum"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/margin_normal"
-                    android:layout_marginRight="@dimen/margin_normal"
-                    android:ems="10"
-                    android:hint="@string/houseNum"
-                    android:inputType="textPostalAddress"
-                    android:textColor="@color/uiv3_primary_text_color"
-                    android:textSize="@dimen/secondary_text_size" />
-            </TableRow>
-
-            <TableRow
+            <AutoCompleteTextView
+                android:id="@+id/editTextPincode"
+                android:layout_below="@id/editTextLandmark"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_column="1"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:layout_marginRight="@dimen/margin_normal"
+                android:layout_marginTop="@dimen/margin_small"
+                android:ems="10"
+                android:hint="@string/pincode"
+                android:inputType="numberSigned"
+                android:textColor="@color/uiv3_primary_text_color"
+                android:textSize="@dimen/secondary_text_size" />
 
-                <EditText
-                    android:id="@+id/editTextStreetName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_column="1"
-                    android:layout_marginLeft="@dimen/margin_normal"
-                    android:layout_marginRight="@dimen/margin_normal"
-                    android:layout_marginTop="@dimen/margin_small"
-                    android:ems="10"
-                    android:hint="@string/streetName"
-                    android:inputType="textPostalAddress"
-                    android:textColor="@color/uiv3_primary_text_color"
-                    android:textSize="@dimen/secondary_text_size" />
-            </TableRow>
-
-            <TableRow
+            <AutoCompleteTextView
+                android:id="@+id/editTextArea"
+                android:layout_below="@id/editTextPincode"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_column="1"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:layout_marginRight="@dimen/margin_normal"
+                android:layout_marginTop="@dimen/margin_small"
+                android:ems="10"
+                android:hint="@string/area"
+                android:inputType="textPostalAddress"
+                android:textColor="@color/uiv3_primary_text_color"
+                android:textSize="@dimen/secondary_text_size" />
 
-
-                <EditText
-                    android:id="@+id/editTextResidentialComplex"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_column="1"
-                    android:layout_marginLeft="@dimen/margin_normal"
-                    android:layout_marginRight="@dimen/margin_normal"
-                    android:layout_marginTop="@dimen/margin_small"
-                    android:ems="10"
-                    android:hint="@string/residentialComplex"
-                    android:inputType="textPostalAddress"
-                    android:textColor="@color/uiv3_primary_text_color"
-                    android:textSize="@dimen/secondary_text_size" />
-            </TableRow>
-
-            <TableRow
+            <EditText
+                android:id="@+id/editTextCity"
+                style="@style/ReadOnlyEditText"
+                android:layout_below="@id/editTextArea"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_column="1"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:layout_marginRight="@dimen/margin_normal"
+                android:layout_marginTop="@dimen/margin_small"
+                android:hint="@string/city"
+                android:inputType="none"
+                android:textColor="@color/uiv3_primary_text_color"
+                android:textSize="@dimen/secondary_text_size" />
 
 
-                <EditText
-                    android:id="@+id/editTextLandmark"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_column="1"
-                    android:layout_marginLeft="@dimen/margin_normal"
-                    android:layout_marginRight="@dimen/margin_normal"
-                    android:layout_marginTop="@dimen/margin_small"
-                    android:ems="10"
-                    android:hint="@string/landmark"
-                    android:inputType="textPostalAddress"
-                    android:textColor="@color/uiv3_primary_text_color"
-                    android:textSize="@dimen/secondary_text_size" />
-            </TableRow>
+            <CheckBox
+                android:id="@+id/chkIsAddrDefault"
+                android:layout_below="@id/editTextCity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:layout_marginTop="@dimen/margin_small"
+                android:text="@string/makeDefaultAddress"
+                android:textColor="@color/uiv3_primary_text_color"
+                android:textSize="@dimen/secondary_text_size" />
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/txtSaveAddress"
+                android:layout_below="@id/chkIsAddrDefault"
+                android:layout_width="wrap_content"
+                android:layout_marginBottom="@dimen/margin_small"
+                android:layout_marginRight="@dimen/margin_normal"
+                android:layout_alignParentRight="true"
+                android:padding="@dimen/margin_small"
+                android:layout_height="wrap_content"
+                android:text="@string/save"
+                android:textSize="@dimen/primary_text_size"
+                android:layout_marginTop="@dimen/margin_small"
+                android:onClick="OnSubmitButtonClicked" />
 
-                <AutoCompleteTextView
-                    android:id="@+id/editTextArea"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_column="1"
-                    android:layout_marginLeft="@dimen/margin_normal"
-                    android:layout_marginRight="@dimen/margin_normal"
-                    android:layout_marginTop="@dimen/margin_small"
-                    android:ems="10"
-                    android:hint="@string/area"
-                    android:inputType="textPostalAddress"
-                    android:textColor="@color/uiv3_primary_text_color"
-                    android:textSize="@dimen/secondary_text_size" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-
-                <EditText
-                    android:id="@+id/editTextCity"
-                    style="@style/ReadOnlyEditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_column="1"
-                    android:layout_marginLeft="@dimen/margin_normal"
-                    android:layout_marginRight="@dimen/margin_normal"
-                    android:layout_marginTop="@dimen/margin_small"
-                    android:hint="@string/city"
-                    android:inputType="none"
-                    android:textColor="@color/uiv3_primary_text_color"
-                    android:textSize="@dimen/secondary_text_size" />
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:id="@+id/editTextPincode"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_column="1"
-                    android:layout_marginLeft="@dimen/margin_normal"
-                    android:layout_marginRight="@dimen/margin_normal"
-                    android:layout_marginTop="@dimen/margin_small"
-                    android:ems="10"
-                    android:hint="@string/pincode"
-                    android:inputType="numberSigned"
-                    android:textColor="@color/uiv3_primary_text_color"
-                    android:textSize="@dimen/secondary_text_size" />
-
-            </TableRow>
-
-        </TableLayout>
-
-        <CheckBox
-            android:id="@+id/chkIsAddrDefault"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_small"
-            android:text="@string/makeDefaultAddress"
-            android:textColor="@color/uiv3_primary_text_color"
-            android:textSize="@dimen/secondary_text_size" />
-
-        <Button
-            android:id="@+id/btnAddress"
-            style="@style/FormButtonStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_small"
-            android:onClick="OnSubmitButtonClicked" />
+        </RelativeLayout>
 
     </LinearLayout>
+
+
 </ScrollView>

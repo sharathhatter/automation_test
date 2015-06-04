@@ -266,6 +266,7 @@ public class Constants {
     public static final String VOUCHERS = "vouchers";
     public static final String VOUCHER = "voucher";
     public static final String IS_MAPPED = "is_mapped";
+    public static final String IS_EXPRESS = "is_express";
     public static final String LAT = "lat";
     public static final String LNG = "lng";
 
