@@ -218,13 +218,15 @@ public class ShoppingListSummaryActivity extends BBActivity {
             layoutAddAll.setVisibility(View.GONE);
         } else {
             ((TextView) findViewById(R.id.txtAddAll)).setTypeface(faceRobotoRegular);
-            final ViewPager finalViewPager = viewPager;
+            final ShoppingListSummary shoppingListSummary =
+                    shoppingListSummaries.get(viewPager != null ? viewPager.getCurrentItem() : 0);
             layoutAddAll.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    showAlertDialog(null, getString(R.string.addAllProducts),
+                    showAlertDialog(null, getString(R.string.addAllProducts) + " from " + shoppingListSummary.getFacetName()
+                            + " " + getString(R.string.toBasket),
                             DialogButton.YES, DialogButton.CANCEL, Constants.ADD_ALL,
-                            shoppingListSummaries.get(finalViewPager != null ? finalViewPager.getCurrentItem() : 0),
+                            shoppingListSummary,
                             getString(R.string.yesTxt));
                 }
             });

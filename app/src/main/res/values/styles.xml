@@ -32,6 +32,10 @@
 
     <style name="BBAppTheme" parent="BaseAppTheme" />
 
+    <style name="FilterTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorAccent">@color/uiv3_action_bar_background</item>
+    </style>
+
     <style name="BBAppTheme.SearchViewTheme" parent="BBAppTheme" />
 
     <!-- Nav drawer style to set width specified by Material Design specification -->
@@ -163,8 +167,12 @@
         <item name="android:layout_marginLeft">@dimen/margin_normal</item>
         <item name="android:layout_marginRight">@dimen/margin_normal</item>
         <item name="android:gravity">center_vertical</item>
-        <item name="android:textSize">@dimen/primary_text_size</item>
+        <item name="android:textSize">@dimen/secondary_text_size</item>
         <item name="android:textColor">@color/nav_text_color</item>
+    </style>
+
+    <style name="NavHeaderTxtStyle" parent="NavTxtStyle">
+        <item name="android:textColor">@color/uiv3_main_nav_header_color</item>
     </style>
 
     <style name="NavSubTitleStyle">
@@ -182,7 +190,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/uiv3_primary_text_color</item>
-        <item name="android:textSize">@dimen/heading_2_text_size</item>
+        <item name="android:textSize">@dimen/secondary_text_size</item>
         <item name="android:paddingLeft">@dimen/padding_normal</item>
         <item name="android:paddingRight">@dimen/padding_normal</item>
     </style>

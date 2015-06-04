@@ -24,6 +24,7 @@ import com.bigbasket.mobileapp.model.section.Renderer;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.model.section.SectionItem;
+import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.ExpandableHeightGridView;
 import com.daimajia.slider.library.SliderLayout;
@@ -82,7 +83,6 @@ public class SectionView {
             if (sectionView == null) {
                 continue;
             }
-            mainLayout.addView(sectionView);
             if (section.getSectionType().equals(Section.SALUTATION))
                 continue;
             ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams)
@@ -96,6 +96,7 @@ public class SectionView {
                 layoutParams.topMargin = marginBetweenWidgets;
                 sectionView.setLayoutParams(layoutParams);
             }
+            mainLayout.addView(sectionView);
         }
         return mainLayout;
     }
@@ -519,7 +520,7 @@ public class SectionView {
     private void formatSectionTitle(View parent, int txtViewId, Section section) {
         TextView txtVw = (TextView) parent.findViewById(txtViewId);
         if (section.getTitle() != null && !TextUtils.isEmpty(section.getTitle().getText())) {
-            txtVw.setTypeface(faceRobotoRegular);
+            txtVw.setTypeface(FontHolder.getInstance(context).getFaceRobotoMedium());
             txtVw.setText(section.getTitle().getText());
             Renderer renderer = mSectionData.getRenderersMap() != null ?
                     mSectionData.getRenderersMap().get(section.getTitle().getRenderingId()) : null;

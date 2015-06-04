@@ -29,7 +29,6 @@ import com.bigbasket.mobileapp.apiservice.models.response.BaseApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.CartGetApiResponseContent;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
-import com.bigbasket.mobileapp.interfaces.FloatingBasketUIAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.AnnotationInfo;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
@@ -49,7 +48,6 @@ import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.melnykov.fab.FloatingBadgeCountView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -78,10 +76,6 @@ public class ShowCartFragment extends BaseFragment {
         if (getArguments() != null) {
             String fulfillmentIds = getArguments().getString(Constants.INTERNAL_VALUE);
             getCartItems(fulfillmentIds);
-        }
-        FloatingBadgeCountView btnViewBasket = ((FloatingBasketUIAware) getActivity()).getViewBasketFloatingButton();
-        if (btnViewBasket != null) {
-            btnViewBasket.hide();
         }
     }
 

@@ -37,9 +37,11 @@ public class FilteredOn implements Parcelable {
     }
 
     public static FilteredOn getFilteredOn(ArrayList<FilteredOn> filteredOns, String filterSlug) {
-        for (FilteredOn filteredOn : filteredOns) {
-            if (filteredOn.getFilterSlug().equalsIgnoreCase(filterSlug)) {
-                return filteredOn;
+        if (filteredOns != null && filteredOns.size() > 0) {
+            for (FilteredOn filteredOn : filteredOns) {
+                if (filteredOn.getFilterSlug().equalsIgnoreCase(filterSlug)) {
+                    return filteredOn;
+                }
             }
         }
         return null;

@@ -15,6 +15,7 @@ import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.InfiniteProductListAware;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
+import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv2.ProductView;
 
 import java.util.HashMap;
@@ -22,11 +23,14 @@ import java.util.List;
 
 public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    public static final int VIEW_TYPE_LOADING = 0;
-    public static final int VIEW_TYPE_DATA = 1;
-    public static final int VIEW_TYPE_EMPTY = 2;
-    public static final int VIEW_TYPE_PRODUCT_COUNT = 3;
-    public static final int DELTA_FOR_NEXT_PAGE_LOAD = 5;
+    private static final int VIEW_TYPE_LOADING = 0;
+    private static final int VIEW_TYPE_DATA = 1;
+    private static final int VIEW_TYPE_EMPTY = 2;
+    private static final int VIEW_TYPE_PRODUCT_COUNT = 3;
+
+    private static final int DELTA_FOR_NEXT_PAGE_LOAD = 5;
+    private static final int DELTA_FOR_PRELOADING_IMG = 3;
+
     protected int serverListSize = -1;
     private String baseImgUrl;
     private ProductViewDisplayDataHolder productViewDisplayDataHolder;
@@ -104,6 +108,14 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
                     productViewDisplayDataHolder,
                     false, activityAware, navigationCtx, cartInfo);
 
+            int endPosition = position + DELTA_FOR_PRELOADING_IMG;
+            if (endPosition < products.size()) {
+                for (int i = position + 1; i <= endPosition; i++) {
+                    Product nextProduct = products.get(i);
+                    UIUtil.preLoadImage(baseImgUrl != null ? baseImgUrl + nextProduct.getImageUrl() :
+                            nextProduct.getImageUrl(), activityAware.getCurrentActivity());
+                }
+            }
             int positionToCheckForNextPageLoad = position + DELTA_FOR_NEXT_PAGE_LOAD;
             if (positionToCheckForNextPageLoad <= serverListSize && serverListSize > 0 &&
                     positionToCheckForNextPageLoad > products.size()) {

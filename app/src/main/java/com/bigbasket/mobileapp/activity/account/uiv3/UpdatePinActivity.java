@@ -126,6 +126,7 @@ public class UpdatePinActivity extends BackButtonActivity {
         currentPin = newPin;
         editTextNewPin.setText(newPin);
         editTextNewPin.setEnabled(false);
+        showToast(getString(R.string.pinUpdatedSuccessfully));
     }
 
     private void updatePinServerCall(final String newPin) {
@@ -138,7 +139,6 @@ public class UpdatePinActivity extends BackButtonActivity {
                 int status = apiResponse.status;
                 if (status == 0) {
                     updateEditTextField(newPin);
-                    showToast(getString(R.string.pinUpdated));
                     BaseActivity.hideKeyboard(getCurrentActivity(), editTextNewPin);
                 } else {
                     HashMap<String, String> map = new HashMap<>();

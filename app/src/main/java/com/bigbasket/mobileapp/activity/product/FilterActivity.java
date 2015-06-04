@@ -118,6 +118,10 @@ public class FilterActivity extends BackButtonActivity {
         lstFilterItems.setAdapter(mFilterByAdapter);
         for (int i = 0; i < filterOptionItems.size(); i++) {
             FilterOptionItem filterOptionItem = filterOptionItems.get(i);
+            if (mFilteredOns == null) {
+                // RESET Button has been clicked or has no filters
+                filterOptionItem.setSelected(false);
+            }
             if (filterOptionItem.isSelected()) {
                 lstFilterItems.setItemChecked(i, true);
             }
@@ -149,6 +153,9 @@ public class FilterActivity extends BackButtonActivity {
                 filterOptionCategory.getFilterSlug());
         if (filteredOn == null) {
             filteredOn = new FilteredOn(filterOptionCategory.getFilterSlug());
+            if (mFilteredOns == null) {
+                mFilteredOns = new ArrayList<>();
+            }
             mFilteredOns.add(filteredOn);
         }
         ArrayList<String> filterValues = filteredOn.getFilterValues();

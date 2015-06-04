@@ -41,11 +41,11 @@
     <color name="uiv3_secondary_btn_pressed_bkg">#8837474f</color>
     <color name="uiv3_status_bar_background">#bd1c24</color>
     <color name="uiv3_action_bar_background_pressed">#32FF0000</color>
-    <color name="uiv3_primary_text_color">#5f5f5f</color>
+    <color name="uiv3_primary_text_color">#5F5F5F</color>
     <color name="uiv3_product_list_footer_bkg">#f5f5f5</color>
     <color name="uiv3_product_list_footer_txt_color">#757575</color>
-    <color name="uiv3_main_nav_item_color">#FF525252</color>
-    <color name="uiv3_main_nav_header_color">#CE525252</color>
+    <color name="uiv3_main_nav_item_color">#5F5F5F</color>
+    <color name="uiv3_main_nav_header_color">#7D7D7D</color>
     <color name="overlay_bkg">#AA000000</color>
     <color name="uiv3_divider_color">#B6B6B6</color>
     <color name="uiv3_large_divider_color">#f2f2f2</color>
@@ -60,7 +60,8 @@
     <color name="uiv3_grey_status_bar_color">#bdbdbd</color>
     <color name="uiv3_dialog_header_text_bkg">#df212a</color>
     <color name="uiv3_expandable_row_header_bkg">#EEEEEE</color>
-    <color name="uiv3_rounded_btn_bkg">#e73937</color>
+    <!--<color name="uiv3_rounded_btn_bkg">#e73937</color>-->
+    <color name="uiv3_rounded_btn_bkg">@color/uiv3_dialog_header_text_bkg</color>
 
     <!-- LetterImageViewColor -->
     <string-array name="letterImageViewColors" translatable="false">

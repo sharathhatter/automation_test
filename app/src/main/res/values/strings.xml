@@ -240,7 +240,7 @@
     <string name="min4digit">Pin should be 4 digit number!</string>
     <string name="not0000">Pin should be other than 0000!</string>
     <string name="enterPin">Please enter a pin to update!</string>
-    <string name="pinUpdated">Pin successfully updated!</string>
+    <string name="pinUpdatedSuccessfully">Your pin was updated successfully!</string>
     <string name="blankPin">****</string>
 
     <!-- wallet activity -->
@@ -279,7 +279,7 @@
     <string name="scan">Scan</string>
     <string name="voicePrompt">Speak Now</string>
     <string name="speechNotSupported">Sorry! Your device does not support speech input!</string>
-    <string name="clear">CLEAR</string>
+    <string name="clear">RESET</string>
     <string name="noProducts">Sorry! There are no products to display.</string>
     <string name="noProductsSearchMsg">Sorry! There are no products found related to your search term.</string>
 
@@ -337,6 +337,7 @@
     <string name="updateGooglePlayServicesDesc">You are using an outdated version of Google Play Services.\nPlease update it, in order to login with Google.</string>
     <string name="viewTerms">View terms and conditions</string>
     <string name="termsAndCondHeading">Terms and conditions</string>
+    <string name="tc">T&amp;C</string>
     <string name="privacyPolicy">Privacy Policy</string>
     <string name="home">Home</string>
     <string name="transactionFailed">Transaction Failed!</string>
@@ -355,7 +356,8 @@
     <string name="removeVoucherDesc">Are you sure that you want to remove this voucher?</string>
     <string name="minus">&#x2013;</string>
     <string name="plus">&#43;</string>
-    <string name="addAllProducts">Are you sure you want to add all products to the basket?</string>
+    <string name="addAllProducts">Are you sure you want to add all products</string>
+    <string name="toBasket">to the basket?</string>
     <string name="addAllProductsDisplay">ADD ALL ITEMS TO THE BASKET</string>
     <string name="noAddressMsg1">You have not told us your delivery address.</string>
     <string name="noAddressMsg2">Add one now to shop easy.</string>
@@ -365,8 +367,8 @@
     <string name="skip">SKIP</string>
     <string name="signinAndStart">Login and Get Started</string>
     <string name="loginToContinue">Please login to continue</string>
-    <string name="byLoggingIn">By logging in, you agree to BigBasket\'s\u00A0</string>
-    <string name="byRegistering">By signing up, you agree to BigBasket\'s\u00A0</string>
+    <string name="byLoggingIn">I agree to BigBasket\'s\u00A0</string>
+    <string name="byRegistering">I agree to BigBasket\'s\u00A0</string>
     <string name="authFooterSeparator">, and\u00A0</string>
     <string name="citiesWhereWeServe">Cities where we currently serve</string>
     <string name="createAShoppingList">You do not have a shopping list! Please create one to add items</string>

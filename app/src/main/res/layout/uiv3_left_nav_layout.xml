@@ -28,7 +28,7 @@
             android:visibility="gone" />
     </LinearLayout>
 
-    <com.bigbasket.mobileapp.view.uiv3.AnimatedLinearLayout
+    <com.bigbasket.mobileapp.view.uiv3.AnimatedRelativeLayout
         android:id="@+id/layoutSubNavigationItems"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -36,24 +36,9 @@
         android:orientation="vertical"
         android:visibility="gone">
 
-        <TextView
-            android:id="@+id/txtNavMainItem"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ic_arrow_back_grey600_24dp"
-            android:gravity="center"
-            android:padding="@dimen/padding_normal"
-            android:textColor="@color/uiv3_primary_text_color"
-            android:textSize="@dimen/primary_text_size" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/uiv3_divider_color" />
-
         <android.support.v7.widget.RecyclerView
             android:id="@+id/listSubNavigation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-    </com.bigbasket.mobileapp.view.uiv3.AnimatedLinearLayout>
+    </com.bigbasket.mobileapp.view.uiv3.AnimatedRelativeLayout>
 </FrameLayout>

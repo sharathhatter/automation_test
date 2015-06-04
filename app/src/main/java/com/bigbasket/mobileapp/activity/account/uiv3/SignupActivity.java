@@ -84,12 +84,19 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
                 new CityDropDownAdapter<>(this, android.R.layout.simple_spinner_item, cities);
         cityDropDownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mCitySpinner.setAdapter(cityDropDownAdapter);
-
+        mCitySpinner.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    UIUtil.hideSpinnerDropdown(mCitySpinner);
+                }
+            }
+        });
         setUpSocialButtons(findViewById(R.id.plus_sign_in_button),
                 findViewById(R.id.btnFBLogin));
 
         setTermsAndCondition((TextView) findViewById(R.id.txtSigninTermsAndCond), getString(R.string.byRegistering),
-                getString(R.string.termsAndCondHeading), getString(R.string.authFooterSeparator), getString(R.string.privacyPolicy));
+                getString(R.string.tc), getString(R.string.authFooterSeparator), getString(R.string.privacyPolicy));
         populateAutoComplete(mEmailView);
         trackEvent(TrackingAware.REGISTRATION_PAGE_SHOWN, null);
     }
@@ -113,17 +120,6 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
         String lastName = mLastNameView.getText().toString();
 //        String refCode = mRefCodeView.getText().toString().trim();
 
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
-            reportFormInputFieldError(mEmailView, getString(R.string.error_field_required));
-            focusView = mEmailView;
-            cancel = true;
-        } else if (!UIUtil.isValidEmail(email)) {
-            reportFormInputFieldError(mEmailView, getString(R.string.error_invalid_email));
-            focusView = mEmailView;
-            cancel = true;
-        }
-
         // Check for a valid password
         if (TextUtils.isEmpty(password)) {
             reportFormInputFieldError(mPasswordView, "Please enter your password");
@@ -135,10 +131,14 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
             cancel = true;
         }
 
-        // Check for first name
-        if (TextUtils.isEmpty(firstName)) {
-            reportFormInputFieldError(mFirstNameView, "Please provide your first-name");
-            focusView = mFirstNameView;
+        // Check for a valid email address.
+        if (TextUtils.isEmpty(email)) {
+            reportFormInputFieldError(mEmailView, "Please enter your e-mail address");
+            focusView = mEmailView;
+            cancel = true;
+        } else if (!UIUtil.isValidEmail(email)) {
+            reportFormInputFieldError(mEmailView, getString(R.string.error_invalid_email));
+            focusView = mEmailView;
             cancel = true;
         }
 
@@ -146,6 +146,13 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
         if (TextUtils.isEmpty(lastName)) {
             reportFormInputFieldError(mLastNameView, "Please provide your last-name");
             focusView = mLastNameView;
+            cancel = true;
+        }
+
+        // Check for first name
+        if (TextUtils.isEmpty(firstName)) {
+            reportFormInputFieldError(mFirstNameView, "Please provide your first-name");
+            focusView = mFirstNameView;
             cancel = true;
         }
 

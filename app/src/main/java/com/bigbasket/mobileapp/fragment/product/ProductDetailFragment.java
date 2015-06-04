@@ -46,6 +46,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
 
     private String selectedProductId;
     private Product mProduct;
+    private String mTitle;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -127,8 +128,11 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
     private void renderProductDetail() {
         if (getActivity() == null || getView() == null) return;
 
-        setTitle(mProduct != null && !TextUtils.isEmpty(mProduct.getDescription())
-                ? mProduct.getDescription() : getTitle());
+        mTitle = mProduct != null && !TextUtils.isEmpty(mProduct.getDescription())
+                ? mProduct.getDescription() : getTitle();
+        if (!TextUtils.isEmpty(mTitle)) {
+            setTitle(mTitle);
+        }
         ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
                 .setCommonTypeface(faceRobotoRegular)
                 .setSansSerifMediumTypeface(faceRobotoMedium)
@@ -175,7 +179,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
 
     @Override
     public String getTitle() {
-        return "";
+        return TextUtils.isEmpty(mTitle) ? "" : mTitle;
     }
 
     @Override

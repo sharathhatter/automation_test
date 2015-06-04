@@ -79,6 +79,7 @@ import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.section.DestinationInfo;
+import com.bigbasket.mobileapp.model.section.Renderer;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.model.section.SectionItem;
@@ -88,15 +89,14 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
-import com.bigbasket.mobileapp.util.Tuple;
+import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
-import com.bigbasket.mobileapp.view.uiv3.AnimatedLinearLayout;
+import com.bigbasket.mobileapp.view.uiv3.AnimatedRelativeLayout;
 import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
 import com.melnykov.fab.FloatingBadgeCountView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -112,8 +112,9 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     private BBDrawerLayout mDrawerLayout;
     private String currentFragmentTag;
     private RecyclerView mNavRecyclerView;
-    private AnimatedLinearLayout mSubNavLayout;
+    private AnimatedRelativeLayout mSubNavLayout;
     private FloatingBadgeCountView mBtnViewBasket;
+    private RecyclerView mListSubNavigation;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -146,9 +147,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                     } else {
                         Fragment currFragment = fragmentManager.getFragments().get(backStackEntryCount - 1);
                         if (currFragment instanceof AbstractFragment) {
-                            if (!(currFragment instanceof ShowCartFragment)) {
-                                setViewBasketButtonStateOnActivityResume();
-                            }
                             currentFragmentTag = ((AbstractFragment) currFragment).getFragmentTxnTag();
                             ((AbstractFragment) currFragment).onBackStateChanged();
                         }
@@ -179,7 +177,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             btnViewBasket.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    showViewBasketFragment();
+                    launchViewBasketScreen();
                 }
             });
         }
@@ -192,17 +190,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             mBtnViewBasket = (FloatingBadgeCountView) findViewById(R.id.btnViewBasket);
         }
         return mBtnViewBasket;
-    }
-
-    @Override
-    public void setViewBasketButtonStateOnActivityResume() {
-        FloatingBadgeCountView btnViewBasket = getViewBasketFloatingButton();
-        if (btnViewBasket != null) {
-            if (btnViewBasket.getVisibility() != View.VISIBLE) {
-                btnViewBasket.setVisibility(View.VISIBLE);
-            }
-            btnViewBasket.show();
-        }
     }
 
     public Toolbar getToolbar() {
@@ -221,6 +208,9 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                         TrackEventkeys.NAVIGATION_CTX_TOPNAV); //todo check with sid
                 toolbar.setTitle(formatToolbarTitle(mTitle));
                 invalidateOptionsMenu();
+                if (mSubNavLayout != null && mSubNavLayout.getVisibility() == View.VISIBLE) {
+                    onSubNavigationHideRequested();
+                }
             }
 
             @Override
@@ -259,9 +249,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     public void addToMainLayout(AbstractFragment fragment, String tag, boolean stateLess) {
 
         FragmentManager fm = getSupportFragmentManager();
-        if (fm.getBackStackEntryCount() > 0) {
-            setViewBasketButtonStateOnActivityResume();
-        }
         FragmentTransaction ft = fm.beginTransaction();
         String ftTag = TextUtils.isEmpty(tag) ? fragment.getFragmentTxnTag() : tag;
         this.currentFragmentTag = ftTag;
@@ -351,7 +338,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 addToMainLayout(new DoWalletFragment());
                 break;
             case FragmentCodes.START_VIEW_BASKET:
-                launchViewBasket();
+                showViewBasketFragment();
                 break;
             case FragmentCodes.START_COMMUNICATION_HUB:
                 launchKonotor();
@@ -469,11 +456,11 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     private void showViewBasketFragment() {
-        List<Fragment> fragments = getSupportFragmentManager().getFragments();
-        if (!(fragments != null && fragments.size() > 0 &&
-                fragments.get(fragments.size() - 1) instanceof ShowCartFragment)) {
-            launchViewBasket();
-        }
+        ShowCartFragment showCartFragment = new ShowCartFragment();
+        Bundle cartBundle = new Bundle();
+        cartBundle.putString(Constants.INTERNAL_VALUE, getIntent().getStringExtra(Constants.INTERNAL_VALUE));
+        showCartFragment.setArguments(cartBundle);
+        onChangeFragment(showCartFragment);
     }
 
     @Override
@@ -742,19 +729,21 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void loadNavigationItems() {
         if (mNavRecyclerView == null) return;
         TextView txtNavSalutation = (TextView) findViewById(R.id.txtNavSalutation);
-        txtNavSalutation.setTypeface(faceRobotoRegular);
-        ((TextView) findViewById(R.id.lblWelcome)).setTypeface(faceRobotoRegular);
+        txtNavSalutation.setTypeface(faceRobotoMedium);
+        ((TextView) findViewById(R.id.lblWelcome)).setTypeface(faceRobotoMedium);
         TextView txtCityName = (TextView) findViewById(R.id.txtCityName);
-        txtCityName.setTypeface(faceRobotoRegular);
+        txtCityName.setTypeface(faceRobotoMedium);
         ImageView imgSwitchNav = (ImageView) findViewById(R.id.imgSwitchNav);
 
         AuthParameters authParameters = AuthParameters.getInstance(this);
 
         if (!authParameters.isAuthTokenEmpty()) {
-            txtNavSalutation.setText(authParameters.getMemberFullName());
+            txtNavSalutation.setText(!TextUtils.isEmpty(authParameters.getMemberFullName()) ?
+                    authParameters.getMemberFullName() : authParameters.getMemberEmail());
         } else {
             txtNavSalutation.setText(getString(R.string.bigbasketeer));
             txtCityName.setOnClickListener(new View.OnClickListener() {
@@ -775,14 +764,15 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         txtCityName.setText(preferences.getString(Constants.CITY, ""));
 
-        Tuple<ArrayList<SectionNavigationItem>, String> data = getSectionNavigationItems();
-        ArrayList<SectionNavigationItem> sectionNavigationItems = data.x;
-        String baseImgUrl = data.y;
+        Object[] data = getSectionNavigationItems();
+        ArrayList<SectionNavigationItem> sectionNavigationItems = (ArrayList<SectionNavigationItem>) data[0];
+        String baseImgUrl = (String) data[1];
+        HashMap<Integer, Renderer> rendererHashMap = (HashMap<Integer, Renderer>) data[2];
 
         ListView lstMyAccount = (ListView) findViewById(R.id.lstMyAccount);
         new AccountView<>(this, lstMyAccount);
-        NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoRegular,
-                sectionNavigationItems, SectionManager.MAIN_MENU, baseImgUrl);
+        NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoMedium,
+                sectionNavigationItems, SectionManager.MAIN_MENU, baseImgUrl, rendererHashMap);
         mNavRecyclerView.setAdapter(navigationAdapter);
     }
 
@@ -804,7 +794,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         imgSwitchNav.setImageDrawable(ContextCompat.getDrawable(this, drawableId));
     }
 
-    private Tuple<ArrayList<SectionNavigationItem>, String> getSectionNavigationItems() {
+    private Object[] getSectionNavigationItems() {
         ArrayList<SectionNavigationItem> sectionNavigationItems = new ArrayList<>();
         sectionNavigationItems.add(getHomeSectionNavItem());
 
@@ -818,17 +808,23 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                     sectionNavigationItems.add(new SectionNavigationItem(section));
                 }
                 setSectionNavigationItemList(sectionNavigationItems, section.getSectionItems(),
-                        section);
+                        section, sectionData.getBaseImgUrl());
             }
         }
-        return new Tuple<>(sectionNavigationItems, sectionData != null ? sectionData.getBaseImgUrl() : null);
+        return new Object[]{sectionNavigationItems, sectionData != null ? sectionData.getBaseImgUrl() : null,
+                sectionData != null ? sectionData.getRenderersMap() : null};
     }
 
     private void setSectionNavigationItemList(ArrayList<SectionNavigationItem> sectionNavigationItems,
                                               ArrayList<SectionItem> sectionItems,
-                                              Section section) {
+                                              Section section, String baseImgUrl) {
         for (SectionItem sectionItem : sectionItems) {
             if (sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
+                if (sectionItem.hasImage()) {
+                    UIUtil.preLoadImage(TextUtils.isEmpty(sectionItem.getImage()) ?
+                                    sectionItem.constructImageUrl(this, baseImgUrl) : sectionItem.getImage(),
+                            this);
+                }
                 sectionNavigationItems.add(new SectionNavigationItem(section, sectionItem));
             }
         }
@@ -844,37 +840,38 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     @Override
-    public void onSubNavigationRequested(Section section, SectionItem sectionItem) {
+    public void onSubNavigationRequested(Section section, SectionItem sectionItem, String baseImgUrl,
+                                         HashMap<Integer, Renderer> rendererHashMap) {
         ArrayList<SectionItem> subNavigationSectionItems = sectionItem.getSubSectionItems();
-        if (subNavigationSectionItems == null) return;
+        if (subNavigationSectionItems == null || subNavigationSectionItems.size() == 0) return;
 
         if (mSubNavLayout == null) {
-            mSubNavLayout = (AnimatedLinearLayout) findViewById(R.id.layoutSubNavigationItems);
+            mSubNavLayout = (AnimatedRelativeLayout) findViewById(R.id.layoutSubNavigationItems);
         }
 
-        mSubNavLayout.setVisibility(View.VISIBLE);
-        final RecyclerView listSubNavigation = (RecyclerView) findViewById(R.id.listSubNavigation);
-
-        TextView txtNavMainItem = (TextView) findViewById(R.id.txtNavMainItem);
-        txtNavMainItem.setTypeface(faceRobotoLight);
-        txtNavMainItem.setText(sectionItem.getTitle() != null ?
-                sectionItem.getTitle().getText() : "");
-        txtNavMainItem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listSubNavigation.setAdapter(null);
-                mSubNavLayout.setVisibility(View.GONE);
-            }
-        });
-
-        listSubNavigation.setHasFixedSize(false);
-        listSubNavigation.setLayoutManager(new LinearLayoutManager(this));
-
+        if (mListSubNavigation == null) {
+            mListSubNavigation = (RecyclerView) findViewById(R.id.listSubNavigation);
+            mListSubNavigation.setHasFixedSize(false);
+            mListSubNavigation.setLayoutManager(new LinearLayoutManager(this));
+        }
         ArrayList<SectionNavigationItem> sectionNavigationItems = new ArrayList<>();
-        setSectionNavigationItemList(sectionNavigationItems, subNavigationSectionItems, section);
-        NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoLight, sectionNavigationItems,
-                SectionManager.MAIN_MENU, null);
-        listSubNavigation.setAdapter(navigationAdapter);
+        setSectionNavigationItemList(sectionNavigationItems, subNavigationSectionItems, section,
+                baseImgUrl);
+        NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoMedium,
+                sectionNavigationItems,
+                SectionManager.MAIN_MENU, baseImgUrl, rendererHashMap, sectionItem);
+        mListSubNavigation.setAdapter(navigationAdapter);
+        mSubNavLayout.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onSubNavigationHideRequested() {
+        if (mListSubNavigation != null) {
+            mListSubNavigation.setAdapter(null);
+        }
+        if (mSubNavLayout != null) {
+            mSubNavLayout.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -891,12 +888,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
     public String getScreenTag() {
         return null;
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        setViewBasketButtonStateOnActivityResume();
     }
 
     @Override

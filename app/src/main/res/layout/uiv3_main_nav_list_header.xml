@@ -11,9 +11,8 @@
 
     <TextView
         android:id="@+id/txtNavListRowHeader"
-        style="@style/NavTxtStyle"
+        style="@style/NavHeaderTxtStyle"
         android:layout_marginBottom="@dimen/margin_small"
-        android:layout_marginTop="@dimen/margin_small"
-        android:textColor="@color/uiv3_main_nav_header_color" />
+        android:layout_marginTop="@dimen/margin_small" />
 
 </LinearLayout>

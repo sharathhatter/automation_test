@@ -4,20 +4,20 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.bigbasket.mobileapp.R;
 
-public class AnimatedLinearLayout extends LinearLayout {
+public class AnimatedRelativeLayout extends RelativeLayout {
 
     private Animation inAnimation;
     private Animation outAnimation;
 
-    public AnimatedLinearLayout(Context context) {
+    public AnimatedRelativeLayout(Context context) {
         super(context);
     }
 
-    public AnimatedLinearLayout(Context context, AttributeSet attrs) {
+    public AnimatedRelativeLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
@@ -31,7 +31,7 @@ public class AnimatedLinearLayout extends LinearLayout {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                AnimatedLinearLayout.this.clearAnimation();
+                AnimatedRelativeLayout.this.clearAnimation();
             }
 
             @Override
@@ -51,7 +51,7 @@ public class AnimatedLinearLayout extends LinearLayout {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                AnimatedLinearLayout.this.clearAnimation();
+                AnimatedRelativeLayout.this.clearAnimation();
             }
 
             @Override

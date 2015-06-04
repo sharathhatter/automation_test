@@ -389,17 +389,15 @@ public class PromoDetailFragment extends BaseFragment {
         txtValInBasket.setTextColor(getResources().getColor(isRedeemed ?
                 R.color.green_color : R.color.dark_black));
 
+        ImageView imgTick = (ImageView) base.findViewById(R.id.imgTick);
         if (isRedeemed) {
-            txtValNeeded.setVisibility(View.INVISIBLE);
-            ImageView imgTick = (ImageView) base.findViewById(R.id.imgTick);
+            txtValNeeded.setVisibility(View.GONE);
             imgTick.setVisibility(View.VISIBLE);
         } else if (promoSet.getValType().equalsIgnoreCase(PromoSet.PROMO_PRODUCT)) {
-            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                    16, 16);
-            ImageView imgTick = (ImageView) base.findViewById(R.id.imgTick);
-            imgTick.setLayoutParams(layoutParams);
             imgTick.setImageResource(R.drawable.ic_star_outline_grey600_24dp);
             imgTick.setVisibility(View.VISIBLE);
+        } else {
+            imgTick.setVisibility(View.GONE);
         }
         return base;
     }

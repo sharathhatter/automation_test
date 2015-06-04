@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonWithBasketButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.BaseApiResponse;
@@ -234,7 +235,7 @@ public class AgeValidationActivity extends BackButtonActivity {
             ArrayList<Class<?>> activitiesList = new ArrayList<>();
             ArrayList<Integer> fragmentCodeArrayList = new ArrayList<>();
             for (int i = 0; i < msgInfo.getParams().size(); i++) {
-                activitiesList.add(BackButtonActivity.class);
+                activitiesList.add(BackButtonWithBasketButtonActivity.class);
                 fragmentCodeArrayList.add(FragmentCodes.START_VIEW_BASKET);
             }
 

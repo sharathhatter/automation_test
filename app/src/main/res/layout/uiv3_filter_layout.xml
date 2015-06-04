@@ -57,8 +57,12 @@
                 android:drawableLeft="@drawable/ic_search_grey600_24dp"
                 android:drawablePadding="@dimen/padding_small"
                 android:hint="@string/search"
-                android:padding="@dimen/padding_small"
-                android:textColor="@color/uiv3_secondary_text_color" />
+                android:paddingBottom="@dimen/padding_normal"
+                android:paddingLeft="@dimen/padding_small"
+                android:paddingRight="@dimen/padding_small"
+                android:paddingTop="@dimen/padding_normal"
+                android:textColor="@color/uiv3_secondary_text_color"
+                android:textSize="@dimen/primary_text_size" />
 
             <ListView
                 android:id="@+id/lstFilterItems"

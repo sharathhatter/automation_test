@@ -20,7 +20,6 @@ import com.bigbasket.mobileapp.activity.account.uiv3.UpdatePinActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
-import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListFragment;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -106,7 +105,6 @@ public class AccountView<T> {
                     intent = new Intent(ctx, ShoppingListActivity.class);
                     intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_LANDING);
                     ctx.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                    ctx.onChangeFragment(new ShoppingListFragment());
                     break;
                 case 6:
                     ShoppingListName shoppingListName = new ShoppingListName(Constants.SMART_BASKET,
@@ -233,7 +231,7 @@ public class AccountView<T> {
                 if (itemTitle == null) {
                     itemTitle = (TextView) itemView.findViewById(R.id.txtNavListRow);
                     itemTitle.setTypeface(FontHolder.getInstance(((ActivityAware) context)
-                            .getCurrentActivity()).getFaceRobotoRegular());
+                            .getCurrentActivity()).getFaceRobotoMedium());
                 }
                 return itemTitle;
             }
