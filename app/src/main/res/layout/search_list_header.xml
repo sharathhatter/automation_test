@@ -55,7 +55,7 @@
                 android:id="@+id/txtScan"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/ic_mic_grey600_24dp"
+                android:drawableLeft="@drawable/barcode"
                 android:drawablePadding="@dimen/padding_small"
                 android:padding="@dimen/padding_small"
                 android:text="@string/scan"
