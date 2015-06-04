@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_marginLeft="@dimen/margin_normal"
+    android:layout_marginRight="@dimen/margin_normal"
+    android:paddingTop="@dimen/padding_12"
+    android:paddingBottom="@dimen/padding_12"
+    android:paddingRight="@dimen/padding_12"
+    android:paddingLeft="@dimen/padding_normal"
+    android:background="@color/shadow_bck"
+    android:layout_height="wrap_content">
+
+    <RadioButton
+        android:layout_alignParentLeft="true"
+        android:id="@+id/radioBtnSelectedAddress"
+        android:layout_width="wrap_content"
+        android:clickable="false"
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:id="@+id/imgEditIcon"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/ic_edit"
+        android:padding="@dimen/margin_small"
+        android:layout_alignTop="@id/radioBtnSelectedAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/txtAddress"
+        android:layout_toRightOf="@id/radioBtnSelectedAddress"
+        android:layout_width="match_parent"
+        android:maxLines="3"
+        android:layout_alignTop="@id/imgEditIcon"
+        android:layout_marginRight="@dimen/margin_normal"
+        android:layout_toLeftOf="@id/imgEditIcon"
+        android:textSize="@dimen/primary_text_size"
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_centerVertical="true"
+        android:textColor="@color/uiv3_primary_text_color"
+        android:text="asdas asdfasdf asdfasdff asdfasdf asdfasdf"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/txtExpressDelivery"
+        android:layout_width="match_parent"
+        android:paddingTop="@dimen/margin_mini"
+        android:layout_marginRight="@dimen/margin_normal"
+        android:layout_marginLeft="@dimen/margin_normal"
+        android:layout_toLeftOf="@id/imgEditIcon"
+        android:layout_toRightOf="@id/radioBtnSelectedAddress"
+        android:layout_below="@id/txtAddress"
+        android:text="adasd adsfasdf"
+        android:textColor="@color/uiv3_primary_text_color"
+        android:textSize="@dimen/small_text_size"
+        android:layout_height="wrap_content" />
+
+
+
+</RelativeLayout>

@@ -50,6 +50,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
 
     protected ArrayList<Address> mAddressArrayList;
     private boolean mFromAccountPage = false;
+    private String addressId;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -157,11 +158,17 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         RecyclerView addressRecyclerView = (RecyclerView) addressView.findViewById(R.id.fabRecyclerView);
         UIUtil.configureRecyclerView(addressRecyclerView, getActivity(), 1, 3);
         RelativeLayout noDeliveryAddLayout = (RelativeLayout) addressView.findViewById(R.id.noDeliveryAddLayout);
+        ArrayList<Object> addressObjectList = new ArrayList<>();
         if (mAddressArrayList != null && mAddressArrayList.size() > 0) {
             addressRecyclerView.setVisibility(View.VISIBLE);
             noDeliveryAddLayout.setVisibility(View.GONE);
+            addressObjectList.add(getString(R.string.delivery_add));
+            addressObjectList.addAll(mAddressArrayList);
+            addressObjectList.add(2, getString(R.string.other_address));
+            addressObjectList.add(3, getString(R.string.addAnAddress));
+
             MemberAddressListAdapter memberAddressListAdapter =
-                    new MemberAddressListAdapter<>(this, mAddressArrayList, faceRobotoRegular);
+                    new MemberAddressListAdapter<>(this, addressObjectList, mFromAccountPage);
             addressRecyclerView.setAdapter(memberAddressListAdapter);
         } else {
             noDeliveryAddLayout.setVisibility(View.VISIBLE);
@@ -176,25 +183,27 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             btnBlankPage.setVisibility(View.GONE);
         }
 
-        FloatingActionButton floatingActionButton = (FloatingActionButton) addressView.findViewById(R.id.btnFab);
-        if (addressRecyclerView.getVisibility() == View.VISIBLE &&
-                addressRecyclerView.getLayoutManager() instanceof LinearLayoutManager) {
-            floatingActionButton.attachToRecyclerView(addressRecyclerView);
-        }
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+        Button checkoutBtn = (Button) addressView.findViewById(R.id.btnListFooter);
+        if(mFromAccountPage)
+            checkoutBtn.setVisibility(View.GONE);
+        checkoutBtn.setText(getString(R.string.check_out));
+        checkoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showCreateAddressForm();
+                if(addressId!=null)
+                    launchSlotSelection(addressId);
             }
         });
         contentView.addView(addressView);
     }
 
+    @Override
+    public void onAddNewAddressClicked(){
+        showCreateAddressForm();
+    }
+
     protected void showCreateAddressForm() {
-
-
         showAddressForm(null);
-
         HashMap<String, String> map = new HashMap<>();
         if (mFromAccountPage) {
             map.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_MY_ACCOUNT);
@@ -207,6 +216,11 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         }
     }
 
+    @Override
+    public void onEditAddressClicked(Address address){
+        showAddressForm(address);
+    }
+
     protected void showAddressForm(Address address) {
         if (getActivity() == null) return;
         Intent memberAddressFormIntent = new Intent(getActivity(), MemberAddressFormActivity.class);
@@ -217,19 +231,21 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
 
     @Override
     public void onAddressSelected(Address address) {
-        if (!mFromAccountPage) {
-            HashMap<String, String> map = new HashMap<>();
-            map.put(TrackEventkeys.NAVIGATION_CTX, mFromAccountPage ? TrackEventkeys.NAVIGATION_CTX_MY_ACCOUNT :
-                    TrackEventkeys.NAVIGATION_CTX_CHECKOUT_DELIVERY_ADDRESS);
-            if (!mFromAccountPage) {
-                SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
-                map.put(TrackEventkeys.POTENTIAL_ORDER, prefer.getString(Constants.POTENTIAL_ORDER_ID, null));
-            }
-            trackEvent(TrackingAware.ADDRESS_CLICKED, map);
-            launchSlotSelection(address.getId());
-        } else {
-            showAddressForm(address);
-        }
+        this.addressId =address.getId();
+       // if (!mFromAccountPage) {
+//            HashMap<String, String> map = new HashMap<>();
+//            map.put(TrackEventkeys.NAVIGATION_CTX, mFromAccountPage ? TrackEventkeys.NAVIGATION_CTX_MY_ACCOUNT :
+//                    TrackEventkeys.NAVIGATION_CTX_CHECKOUT_DELIVERY_ADDRESS);
+//            if (!mFromAccountPage) {
+//                SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
+//                map.put(TrackEventkeys.POTENTIAL_ORDER, prefer.getString(Constants.POTENTIAL_ORDER_ID, null));
+//            }
+//            trackEvent(TrackingAware.ADDRESS_CLICKED, map);
+//            launchSlotSelection(address.getId());
+        //}
+//        else {
+//            showAddressForm(address);
+//        }
     }
 
     private void launchSlotSelection(String addressId) {

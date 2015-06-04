@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_marginLeft="@dimen/margin_normal"
+    android:layout_marginBottom="@dimen/margin_small"
+    android:layout_marginRight="@dimen/margin_normal"
+    android:padding="@dimen/padding_normal"
+    android:background="@color/shadow_bck"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/txtAddNewAddress"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:drawableLeft="@drawable/add_address"
+        android:layout_width="wrap_content"
+        android:text="@string/addAnAddress"
+        android:layout_centerInParent="true"
+        android:textColor="@color/uiv3_primary_text_color"
+        android:textSize="@dimen/primary_text_size"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>

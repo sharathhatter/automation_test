@@ -49,6 +49,8 @@ public class Address implements Parcelable {
     private String pincode;
     @SerializedName(Constants.IS_MAPPED)
     private boolean isMapped;
+    @SerializedName(Constants.IS_EXPRESS)
+    private boolean isExpress;
 
     public Address(Parcel source) {
         byte isDefaultByteVal = source.readByte();
@@ -66,6 +68,7 @@ public class Address implements Parcelable {
         this.cityName = source.readString();
         this.pincode = source.readString();
         this.isMapped = source.readByte() == (byte) 1;
+        this.isExpress = source.readByte() == (byte) 1;
     }
 
     @Override
@@ -84,6 +87,7 @@ public class Address implements Parcelable {
         dest.writeString(cityName);
         dest.writeString(pincode);
         dest.writeByte(isMapped ? (byte) 1 : (byte) 0);
+        dest.writeByte(isExpress ? (byte) 1 : (byte) 0);
     }
 
     @Override
@@ -157,6 +161,10 @@ public class Address implements Parcelable {
 
     public String getPincode() {
         return pincode;
+    }
+
+    public boolean isExpress() {
+        return isExpress;
     }
 
     @Override

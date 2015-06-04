@@ -10,21 +10,19 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
-import com.bigbasket.mobileapp.apiservice.callbacks.CallbackGetAreaInfo;
-import com.bigbasket.mobileapp.apiservice.models.response.UpdateProfileOldApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.UpdateProfileApiResponse;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.OtpDialogAware;
-import com.bigbasket.mobileapp.interfaces.PinCodeAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.UpdateProfileModel;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -44,12 +42,11 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class UpdateProfileFragment extends BaseFragment implements PinCodeAware, OtpDialogAware {
+public class UpdateProfileFragment extends BaseFragment implements OtpDialogAware {
 
     private EditText editTextEmail, editTextFirstName, editTextLastName, editTextDob,
-            editTextHouseAndDetails, editTextStreetDetails, editTextCity, editTextMobileNumber,
-            editTextTelNumber, editTextResAndComplex, editTextLandmark, editTextPinCode;
-    private AutoCompleteTextView editTextArea;
+            editTextMobileNumber,
+            editTextTelNumber;
     private CheckBox chkReceivePromos;
     private OTPValidationDialogFragment otpValidationDialogFragment;
 
@@ -87,22 +84,6 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware,
         editTextDob.setTypeface(faceRobotoRegular);
         editTextDob.setText(updateProfileModel.getDateOfBirth());
 
-        editTextHouseAndDetails = (EditText) view.findViewById(R.id.editTextHouseAndDetails);
-        editTextHouseAndDetails.setTypeface(faceRobotoRegular);
-        editTextHouseAndDetails.setText(updateProfileModel.getHouseNumber());
-
-        editTextStreetDetails = (EditText) view.findViewById(R.id.editTextStreetDetails);
-        editTextStreetDetails.setTypeface(faceRobotoRegular);
-        editTextStreetDetails.setText(updateProfileModel.getStreet());
-
-        editTextArea = (AutoCompleteTextView) view.findViewById(R.id.editTextArea);
-        editTextArea.setTypeface(faceRobotoRegular);
-        editTextArea.setText(updateProfileModel.getArea());
-
-        editTextCity = (EditText) view.findViewById(R.id.editTextCity);
-        editTextCity.setTypeface(faceRobotoRegular);
-        editTextCity.setText(updateProfileModel.getCityName());
-
         editTextMobileNumber = (EditText) view.findViewById(R.id.editTextMobileNumber);
         editTextMobileNumber.setTypeface(faceRobotoRegular);
         editTextMobileNumber.setText(updateProfileModel.getMobileNumber());
@@ -114,22 +95,11 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware,
         editTextTelNumber.setTypeface(faceRobotoRegular);
         editTextTelNumber.setText(updateProfileModel.getTelephoneNumber());
 
-        editTextResAndComplex = (EditText) view.findViewById(R.id.editTextResAndComplex);
-        editTextResAndComplex.setTypeface(faceRobotoRegular);
-        editTextResAndComplex.setText(updateProfileModel.getResidentialComplex());
-
-        editTextLandmark = (EditText) view.findViewById(R.id.editTextLandmark);
-        editTextLandmark.setTypeface(faceRobotoRegular);
-        editTextLandmark.setText(updateProfileModel.getLandmark());
-
-        editTextPinCode = (EditText) view.findViewById(R.id.editTextPinCode);
-        editTextPinCode.setTypeface(faceRobotoRegular);
-        editTextPinCode.setText(updateProfileModel.getPincode());
-
         chkReceivePromos = (CheckBox) view.findViewById(R.id.chkReceivePromos);
 
-        Button btnUpdate = (Button) view.findViewById(R.id.btnUpdateProfile);
-        btnUpdate.setOnClickListener(new View.OnClickListener() {
+        TextView txtSave = (TextView) view.findViewById(R.id.txtUpdateProfile);
+        txtSave.setTypeface(faceRobotoMedium);
+        txtSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 validateOtp(null);
@@ -143,22 +113,8 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware,
                 showDatePickerDialog(view);
             }
         });
-
-        if (((BaseActivity) getActivity()).getSystemAreaInfo()) {
-            getAreaInfo();
-        }
         trackEvent(TrackingAware.UPDATE_PROFILE_SHOWN, null);
     }
-
-    protected void getAreaInfo() {
-        if (!checkInternetConnection()) {
-            handler.sendOfflineError(true);
-        }
-        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
-        showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.getAreaInfo(new CallbackGetAreaInfo<>(this));
-    }
-
 
     /**
      * private void loadMemberDetails() {
@@ -219,20 +175,6 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware,
         }
     }
 
-    @Override
-    public void onPinCodeFetchSuccess() {
-        //loadMemberDetails();
-        ((BaseActivity) getActivity()).setAdapterArea(editTextArea, editTextPinCode);
-        //initiateUpdateProfileActivity();
-    }
-
-    @Override
-    public void onPinCodeFetchFailure() {
-        //loadMemberDetails();
-        ((BaseActivity) getActivity()).setAdapterArea(editTextArea, editTextPinCode);
-        //initiateUpdateProfileActivity();
-    }
-
     private void validateMobileNumber(boolean txtErrorValidateNumberVisibility, String errorMsg) {
         if (otpValidationDialogFragment == null) {
             otpValidationDialogFragment = OTPValidationDialogFragment.newInstance(true);
@@ -258,10 +200,6 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware,
         editor.putString(Constants.LASTNAME, editTextLastName.getText().toString());
         editor.putString(Constants.DOB_PREF, editTextDob.getText().toString());
         editor.putString(Constants.MOB_NUMBER_PREF, editTextMobileNumber.getText().toString());
-        editor.putString(Constants.HOUSE_NO_PREF, editTextHouseAndDetails.getText().toString());
-        editor.putString(Constants.AREA, editTextArea.getText().toString());
-        editor.putString(Constants.CITY, editTextCity.getText().toString());
-        editor.putString(Constants.PINCODE, editTextPinCode.getText().toString());
         editor.putString(Constants.MEMBER_FULL_NAME_KEY, editTextFirstName.getText().toString() + " " +
                 editTextLastName.getText().toString());
         editor.putString(Constants.NEWS_PREF, String.valueOf(chkReceivePromos.isChecked()));
@@ -298,11 +236,8 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware,
         editTextEmail.setError(null);
         editTextFirstName.setError(null);
         editTextLastName.setError(null);
-        editTextArea.setError(null);
         editTextDob.setError(null);
-        editTextPinCode.setError(null);
         editTextMobileNumber.setError(null);
-        editTextHouseAndDetails.setError(null);
 
         boolean cancel = false;
         View focusView = null;
@@ -343,23 +278,6 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware,
             focusView = editTextMobileNumber;
             cancel = true;
         }
-        if (TextUtils.isEmpty(editTextHouseAndDetails.getText().toString())) {
-            cancel = true;
-            focusView = editTextHouseAndDetails;
-            UIUtil.reportFormInputFieldError(editTextHouseAndDetails, getString(R.string.error_field_required));
-        }
-        if (TextUtils.isEmpty(editTextArea.getText().toString())) {
-            cancel = true;
-            focusView = editTextArea;
-            UIUtil.reportFormInputFieldError(editTextArea, getString(R.string.error_field_required));
-
-        }
-        if (TextUtils.isEmpty(editTextCity.getText().toString())) {
-            cancel = true;
-            focusView = editTextCity;
-            UIUtil.reportFormInputFieldError(editTextCity, getString(R.string.error_field_required));
-
-        }
 
         if (cancel) {
             focusView.requestFocus();
@@ -376,14 +294,7 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware,
                 user_details.put(Constants.DATE_OF_BIRTH, editTextDob.getText().toString());
                 user_details.put(Constants.MOBILE_NUMBER, editTextMobileNumber.getText().toString());
                 user_details.put(Constants.TELEPHONE_NUMBER, editTextTelNumber.getText().toString());
-                user_details.put(Constants.HOUSE_NO, editTextHouseAndDetails.getText().toString());
-                user_details.put(Constants.STREET, editTextStreetDetails.getText().toString());
-                user_details.put(Constants.AREA, editTextArea.getText().toString());
-                user_details.put(Constants.RES_CMPLX, editTextResAndComplex.getText().toString());
-                user_details.put(Constants.LANDMARK, editTextLandmark.getText().toString());
                 user_details.put(Constants.CITY_ID, cityId);
-                user_details.put(Constants.CITY, editTextCity.getText().toString());
-                user_details.put(Constants.PIN_CODE, editTextPinCode.getText().toString());
                 user_details.put(Constants.NEWSPAPER_SUBSCRIPTION, chkReceivePromos.isChecked());
                 if (otpCode != null) {
                     user_details.put(Constants.OTP_CODE, otpCode);
@@ -403,18 +314,18 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware,
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.setUserDetailsData(userDetails, new Callback<UpdateProfileOldApiResponse>() {
+        bigBasketApiService.setUserDetailsData(userDetails, new Callback<ApiResponse<UpdateProfileApiResponse>>() {
             @Override
-            public void success(UpdateProfileOldApiResponse memberProfileDataCallback, Response response) {
+            public void success(ApiResponse<UpdateProfileApiResponse> memberProfileDataCallback, Response response) {
                 hideProgressDialog();
-                if (memberProfileDataCallback.status.equals(Constants.OK)) {
+                if (memberProfileDataCallback.status == 0) {
                     if (otpValidationDialogFragment != null && otpValidationDialogFragment.isVisible()) {
                         otpValidationDialogFragment.dismiss();
-                        BaseActivity.hideKeyboard(((BaseActivity) getActivity()), otpValidationDialogFragment.getView());
+                        BaseActivity.hidekeyboard(getActivity());
                     }
                     updatePreferenceData();
                 } else {
-                    int errorCode = memberProfileDataCallback.getErrorTypeAsInt();
+                    int errorCode = memberProfileDataCallback.status;
                     if (errorCode == ApiErrorCodes.NUMBER_IN_USE ||
                             errorCode == ApiErrorCodes.OTP_NEEDED ||
                             errorCode == ApiErrorCodes.OTP_INVALID) {
@@ -426,6 +337,10 @@ public class UpdateProfileFragment extends BaseFragment implements PinCodeAware,
                         handler.sendEmptyMessage(errorCode, memberProfileDataCallback.message);
                         logUpdateProfileEvent(memberProfileDataCallback.message,
                                 TrackingAware.UPDATE_PROFILE_SUBMIT_BTN_CLICKED);
+                        if (otpValidationDialogFragment != null && otpValidationDialogFragment.isVisible()) {
+                            otpValidationDialogFragment.dismiss();
+                            BaseActivity.hidekeyboard(getActivity());
+                        }
                     }
                 }
             }

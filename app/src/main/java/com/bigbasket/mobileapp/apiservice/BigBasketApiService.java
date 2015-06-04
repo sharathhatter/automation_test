@@ -35,7 +35,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.PromoSummaryApiRespons
 import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.SubCategoryApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateProductQtyResponseModel;
-import com.bigbasket.mobileapp.apiservice.models.response.UpdateProfileOldApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.UpdateProfileApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateReservationResponseModel;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateVersionInfoApiResponseContent;
 import com.bigbasket.mobileapp.model.account.City;
@@ -210,12 +210,12 @@ public interface BigBasketApiService {
                         Callback<OldBaseApiResponse> changePasswordCallback);
 
     @GET("/update-profile/")
-    void getMemberProfileData(Callback<UpdateProfileOldApiResponse> memberProfileDataCallback);
+    void getMemberProfileData(Callback<ApiResponse<UpdateProfileApiResponse>> memberProfileDataCallback);
 
     @FormUrlEncoded
     @POST("/update-profile/")
     void setUserDetailsData(@Field(Constants.USER_DETAILS) String userDetails,
-                            Callback<UpdateProfileOldApiResponse> changePasswordCallback);
+                            Callback<ApiResponse<UpdateProfileApiResponse>> updateProfileCallback);
 
     @FormUrlEncoded
     @POST("/login/")

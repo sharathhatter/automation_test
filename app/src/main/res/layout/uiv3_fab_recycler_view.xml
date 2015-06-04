@@ -6,20 +6,31 @@
     <include layout="@layout/uiv3_empty_data_text"
         android:id="@+id/noDeliveryAddLayout"/>
 
+
+    <Button
+        android:id="@+id/btnListFooter"
+        style="@style/FooterButtonStyle"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/fabRecyclerView"
+        android:background="@color/white"
+        android:layout_above="@id/btnListFooter"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <com.melnykov.fab.FloatingActionButton
-        android:id="@+id/btnFab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="@dimen/margin_normal"
-        android:layout_marginRight="@dimen/margin_normal"
-        android:src="@drawable/ic_action_content_new"
-        fab:fab_colorNormal="@color/uiv3_action_bar_background"
-        fab:fab_colorPressed="@color/uiv3_action_bar_background_pressed" />
+
+
+    <!--<com.melnykov.fab.FloatingActionButton-->
+        <!--android:id="@+id/btnFab"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_marginBottom="@dimen/margin_normal"-->
+        <!--android:layout_marginRight="@dimen/margin_normal"-->
+        <!--android:src="@drawable/ic_action_content_new"-->
+        <!--fab:fab_colorNormal="@color/uiv3_action_bar_background"-->
+        <!--fab:fab_colorPressed="@color/uiv3_action_bar_background_pressed" />-->
 </RelativeLayout>

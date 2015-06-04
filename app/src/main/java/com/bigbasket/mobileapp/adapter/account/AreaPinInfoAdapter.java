@@ -88,4 +88,47 @@ public class AreaPinInfoAdapter {
         }
         return result;
     }
+
+
+    public ArrayList<String> getPinList() {
+        Cursor areaPinCursor = null;
+        String areaNameStr;
+        ArrayList<String> result = new ArrayList<>();
+        try {
+            areaPinCursor = DatabaseHelper.db.query(tableName, new String[]{COLUMN_PIN}
+                    , null, null, null, null, null);
+            if (areaPinCursor != null && areaPinCursor.moveToFirst()) {
+                do {
+                    areaNameStr = areaPinCursor.getString(areaPinCursor.getColumnIndex(AreaPinInfoAdapter.COLUMN_PIN));
+                    result.add(areaNameStr);
+                } while (areaPinCursor.moveToNext());
+            }
+        } catch (SQLiteException ex) {
+            ex.getStackTrace();
+        } finally {
+            if (areaPinCursor != null && !areaPinCursor.isClosed()) {
+                areaPinCursor.close();
+            }
+        }
+        return result;
+    }
+
+    public String getAreaName(String pinCode) {
+        Cursor areaNameCursor = null;
+        String areaName = null;
+        try {
+            areaNameCursor = DatabaseHelper.db.query(tableName, new String[]{COLUMN_AREA}
+                    , COLUMN_PIN + " = " + "\"" + pinCode + "\"", null, null, null, null);
+            if (areaNameCursor != null && areaNameCursor.moveToFirst()) {
+                areaName = areaNameCursor.getString(areaNameCursor.getColumnIndex(AreaPinInfoAdapter.COLUMN_AREA));
+            }
+        } catch (SQLiteException ex) {
+            ex.getStackTrace();
+        } finally {
+            if (areaNameCursor != null && !areaNameCursor.isClosed()) {
+                areaNameCursor.close();
+            }
+        }
+        return areaName;
+    }
 }
