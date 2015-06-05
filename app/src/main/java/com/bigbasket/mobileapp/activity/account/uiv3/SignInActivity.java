@@ -48,7 +48,7 @@ public class SignInActivity extends BackButtonActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setTitle(getString(R.string.signInCaps));
+        setTitle(getString(R.string.signInCapsVerb));
 
         setUpSocialButtons(findViewById(R.id.plus_sign_in_button),
                 findViewById(R.id.btnFBLogin));
@@ -57,6 +57,8 @@ public class SignInActivity extends BackButtonActivity {
         mEmailView = (AutoCompleteTextView) findViewById(R.id.emailInput);
         populateAutoComplete(mEmailView);
 
+        ((TextView) findViewById(R.id.txtOrSeparator)).setTypeface(faceRobotoRegular);
+        ((TextView) findViewById(R.id.lblConnectUsing)).setTypeface(faceRobotoLight);
         mPasswordView = (EditText) findViewById(R.id.editTextPasswd);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -88,7 +90,7 @@ public class SignInActivity extends BackButtonActivity {
         mEmailSignInButton.setTypeface(faceRobotoRegular);
 
         TextView txtForgotPasswd = (TextView) findViewById(R.id.txtForgotPasswd);
-        txtForgotPasswd.setTypeface(faceRobotoRegular);
+        txtForgotPasswd.setTypeface(faceRobotoLight);
         txtForgotPasswd.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -114,8 +116,6 @@ public class SignInActivity extends BackButtonActivity {
             eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX));
             trackEvent(TrackingAware.LOGIN_SHOWN, eventAttribs);
         }
-        setTermsAndCondition((TextView) findViewById(R.id.txtSigninTermsAndCond), getString(R.string.byLoggingIn),
-                getString(R.string.tc), getString(R.string.authFooterSeparator), getString(R.string.privacyPolicy));
     }
 
     @Override

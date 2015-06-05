@@ -4,6 +4,6 @@
     <item
         android:id="@+id/action_signup"
         android:orderInCategory="9999"
-        android:title="@string/signUpCaps"
+        android:title="@string/signUpCapsVerb"
         bb:showAsAction="never" />
 </menu>
