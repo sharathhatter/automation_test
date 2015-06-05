@@ -387,6 +387,7 @@
     <string name="productFoundPlural">products found</string>
     <string name="createNewList">Create New List</string>
     <string name="connectUsing">You can connect using</string>
+    <string name="tutorial">Tutorial</string>
 
     <!-- myaccount -->
     <string name="phone">Phone</string>

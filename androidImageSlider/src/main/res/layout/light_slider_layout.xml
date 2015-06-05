@@ -18,7 +18,7 @@
         android:layout_centerHorizontal="true"
         android:gravity="center"
         android:paddingBottom="10dp"
-        custom:selected_color="#f4ad49"
+        custom:selected_color="#f9c501"
         custom:shape="oval"
         custom:unselected_color="#ffffff" />
 
@@ -31,8 +31,8 @@
         android:gravity="center"
         android:paddingBottom="10dp"
         android:paddingRight="10dp"
-        custom:selected_color="#f4ad49"
-        custom:unselected_color="#ffffff" />
+        custom:selected_color="#f9c501"
+        custom:unselected_color="#88ffffff" />
 
     <com.daimajia.slider.library.Indicators.PagerIndicator
         android:id="@+id/default_bottom_left_indicator"
@@ -43,8 +43,8 @@
         android:gravity="center"
         android:paddingBottom="10dp"
         android:paddingLeft="10dp"
-        custom:selected_color="#f4ad49"
-        custom:unselected_color="#ffffff" />
+        custom:selected_color="#f9c501"
+        custom:unselected_color="#88ffffff" />
 
     <com.daimajia.slider.library.Indicators.PagerIndicator
         android:id="@+id/default_center_top_indicator"
@@ -54,8 +54,8 @@
         android:layout_centerHorizontal="true"
         android:gravity="center"
         android:paddingTop="10dp"
-        custom:selected_color="#f4ad49"
-        custom:unselected_color="#ffffff" />
+        custom:selected_color="#f9c501"
+        custom:unselected_color="#88ffffff" />
 
     <com.daimajia.slider.library.Indicators.PagerIndicator
         android:id="@+id/default_center_top_right_indicator"
@@ -66,8 +66,8 @@
         android:gravity="center"
         android:paddingRight="10dp"
         android:paddingTop="10dp"
-        custom:selected_color="#f4ad49"
-        custom:unselected_color="#ffffff" />
+        custom:selected_color="#f9c501"
+        custom:unselected_color="#88ffffff" />
 
     <com.daimajia.slider.library.Indicators.PagerIndicator
         android:id="@+id/default_center_top_left_indicator"
@@ -78,6 +78,6 @@
         android:gravity="center"
         android:paddingLeft="10dp"
         android:paddingTop="10dp"
-        custom:selected_color="#f4ad49"
-        custom:unselected_color="#ffffff" />
+        custom:selected_color="#f9c501"
+        custom:unselected_color="#88ffffff" />
 </RelativeLayout>

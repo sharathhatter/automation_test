@@ -11,6 +11,10 @@ public interface NavigationCodes {
     int START_SEARCH = 1347;
     int LAUNCH_FRAGMENT = 1348;
     int SHOPPING_LIST_CHANGED = 1349;
+    int TUTORIAL_SEEN = 1350;
+    int LAUNCH_LOGIN = 1351;
+    int LAUNCH_SIGNUP = 1352;
+    int LAUNCH_CITY = 1353;
 
     int CO_RESERVE_QUANTITY_CHECK_OK = 102;
     int ADD_TO_SHOPPINGLIST_OK = 1221;
