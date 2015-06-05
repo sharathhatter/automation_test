@@ -447,7 +447,6 @@ public class Constants {
     public static final String SCREEN_DPI = "screen_dpi";
     public static final String OS_NAME = "os_name";
     public static final String OS_VERSION = "os_version";
-    public static final String LAST_APP_DATA_CALL_TIME = "app_data_call_time";
     public static final String IS_UPDATE_REQUIRED = "is_update_required";
     public static final String CLIENT = "client";
     public static final String CLIENT_NAME = "android";

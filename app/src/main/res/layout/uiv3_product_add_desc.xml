@@ -8,7 +8,7 @@
     android:paddingBottom="@dimen/padding_mini"
     android:paddingLeft="@dimen/padding_normal"
     android:paddingRight="@dimen/padding_normal"
-    android:paddingTop="@dimen/padding_normal">
+    android:paddingTop="@dimen/margin_medium_large">
 
     <TextView
         android:id="@+id/txtProductAddDescTitle"

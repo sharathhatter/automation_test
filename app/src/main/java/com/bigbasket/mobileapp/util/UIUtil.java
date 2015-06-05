@@ -40,6 +40,7 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginUserDetails;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.handler.AnalyticsIdentifierKeys;
+import com.bigbasket.mobileapp.handler.AppDataSyncHandler;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
@@ -358,7 +359,7 @@ public class UIUtil {
         }
 
         if (serverAppExpireDate.compareTo(toDaysData) < 0) {
-            prefer.edit().putLong(Constants.LAST_APP_DATA_CALL_TIME, 0).apply();
+            prefer.edit().putLong(AppDataSyncHandler.LAST_APP_DATA_CALL_TIME, 0).apply();
             return Constants.SHOW_APP_EXPIRE_POPUP;
         }
         int popUpShownTimes = prefer.getInt(Constants.APP_EXPIRE_POPUP_SHOWN_TIMES, 0);
@@ -375,7 +376,7 @@ public class UIUtil {
                 }
             } else return Constants.DONT_SHOW_APP_UPDATE_POPUP;
         } else {
-            prefer.edit().putLong(Constants.LAST_APP_DATA_CALL_TIME, 0).apply();
+            prefer.edit().putLong(AppDataSyncHandler.LAST_APP_DATA_CALL_TIME, 0).apply();
             return Constants.SHOW_APP_EXPIRE_POPUP;
         }
     }
@@ -386,14 +387,6 @@ public class UIUtil {
         editor.putLong(Constants.LAST_POPUP_SHOWN_TIME, lastPopShownTime);
         int popUpShownTimes = prefer.getInt(Constants.APP_EXPIRE_POPUP_SHOWN_TIMES, 0);
         editor.putInt(Constants.APP_EXPIRE_POPUP_SHOWN_TIMES, popUpShownTimes + 1);
-        editor.apply();
-    }
-
-
-    public static void updateLastAppDataCall(Activity activity) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putLong(Constants.LAST_APP_DATA_CALL_TIME, System.currentTimeMillis());
         editor.apply();
     }
 
