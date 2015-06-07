@@ -23,11 +23,16 @@
         <item name="alertDialogTheme">@style/BaseAppTheme.AlertDialogStyle</item>
     </style>
 
+    <style name="LandingPageTheme.DialogTheme" parent="BaseAppTheme.AlertDialogStyle">
+        <item name="colorControlNormal">@color/uiv3_action_bar_background</item>
+        <item name="colorControlHighlight">@color/uiv3_status_bar_background</item>
+        <item name="colorControlActivated">@color/uiv3_status_bar_background</item>
+    </style>
+
     <style name="LandingPageTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorControlNormal">@color/white</item>
+        <item name="colorControlNormal">@color/translucent_white</item>
         <item name="colorControlHighlight">@color/white</item>
         <item name="colorControlActivated">@color/white</item>
-        <item name="alertDialogTheme">@style/BaseAppTheme.AlertDialogStyle</item>
     </style>
 
     <style name="BBAppTheme" parent="BaseAppTheme" />

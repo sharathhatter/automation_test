@@ -1,13 +1,16 @@
 package com.bigbasket.mobileapp.activity.account.uiv3;
 
 
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -22,7 +25,6 @@ import com.bigbasket.mobileapp.task.uiv3.GetCitiesTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.bigbasket.mobileapp.view.uiv3.CityDropDownAdapter;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
@@ -34,7 +36,8 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
     private EditText mPasswordView;
     private EditText mFirstNameView;
     private EditText mLastNameView;
-    private Spinner mCitySpinner;
+    private int mSelectedCityIndx;
+    private EditText mCityView;
     private AutoCompleteTextView mEmailView;
     private boolean mIsPasswordVisible;
 
@@ -53,14 +56,17 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
     public void onReadyToDisplayCity(ArrayList<City> cities) {
         mCities = cities;
 
-        setTitle(getString(R.string.signUpCaps));
+        setTitle(getString(R.string.signUpCapsVerb));
 
+        ((TextView) findViewById(R.id.txtOrSeparator)).setTypeface(faceRobotoRegular);
+        ((TextView) findViewById(R.id.lblConnectUsing)).setTypeface(faceRobotoLight);
         mPasswordView = (EditText) findViewById(R.id.editTextPasswd);
         mFirstNameView = (EditText) findViewById(R.id.editTextFirstName);
         mFirstNameView.setNextFocusDownId(R.id.editTextLastName);
         mLastNameView = (EditText) findViewById(R.id.editTextLastName);
 //        mRefCodeView = (EditText) base.findViewById(R.id.editTextRefCode);
         mEmailView = (AutoCompleteTextView) findViewById(R.id.emailInput);
+        mCityView = (EditText) findViewById(R.id.editTextChooseCity);
 
         Button btnSignUp = (Button) findViewById(R.id.btnRegister);
         btnSignUp.setOnClickListener(new View.OnClickListener() {
@@ -79,26 +85,39 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
             }
         });
 
-        mCitySpinner = (Spinner) findViewById(R.id.spinnerCity);
-        CityDropDownAdapter<City> cityDropDownAdapter =
-                new CityDropDownAdapter<>(this, android.R.layout.simple_spinner_item, cities);
-        cityDropDownAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mCitySpinner.setAdapter(cityDropDownAdapter);
-        mCitySpinner.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        mCityView.setTypeface(faceRobotoRegular);
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String currentCityName = preferences.getString(Constants.CITY, cities.get(0).getName());
+        mCityView.setText(currentCityName);
+        mCityView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    UIUtil.hideSpinnerDropdown(mCitySpinner);
-                }
+            public void onClick(View v) {
+                showChooseCityDialog();
             }
         });
         setUpSocialButtons(findViewById(R.id.plus_sign_in_button),
                 findViewById(R.id.btnFBLogin));
 
-        setTermsAndCondition((TextView) findViewById(R.id.txtSigninTermsAndCond), getString(R.string.byRegistering),
-                getString(R.string.tc), getString(R.string.authFooterSeparator), getString(R.string.privacyPolicy));
         populateAutoComplete(mEmailView);
         trackEvent(TrackingAware.REGISTRATION_PAGE_SHOWN, null);
+    }
+
+    private void showChooseCityDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        String[] cityNames = new String[mCities.size()];
+        for (int i = 0; i < mCities.size(); i++) {
+            cityNames[i] = mCities.get(i).getName();
+        }
+        builder.setTitle(getString(R.string.chooseCity))
+                .setItems(cityNames, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mSelectedCityIndx = which;
+                        mCityView.setText(mCities.get(mSelectedCityIndx).getName());
+                    }
+                });
+        builder.create().show();
     }
 
     public void onRegisterButtonClicked() {
@@ -172,8 +191,7 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
         userDetailsJsonObj.addProperty(Constants.FIRSTNAME, firstName);
         userDetailsJsonObj.addProperty(Constants.LASTNAME, lastName);
         userDetailsJsonObj.addProperty(Constants.PASSWORD, passwd);
-        userDetailsJsonObj.addProperty(Constants.CITY_ID, mCities.get(mCitySpinner
-                .getSelectedItemPosition()).getId());
+        userDetailsJsonObj.addProperty(Constants.CITY_ID, mCities.get(mSelectedCityIndx).getId());
         if (!TextUtils.isEmpty(refCode)) {
             userDetailsJsonObj.addProperty(Constants.REF_CODE, refCode);
         }

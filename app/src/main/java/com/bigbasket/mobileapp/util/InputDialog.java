@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.util;
 
 import android.content.DialogInterface;
 import android.support.annotation.StringRes;
+import android.support.annotation.StyleRes;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -30,6 +31,8 @@ public class InputDialog<T> {
 
     private int inputType;
 
+    private int dialogStyle;
+
     private String text;
 
     public InputDialog(T context, @StringRes int positiveBtnTxt, @StringRes int negativeBtnTxt,
@@ -54,6 +57,13 @@ public class InputDialog<T> {
         this.inputType = inputType;
     }
 
+    public InputDialog(T context, @StringRes int positiveBtnTxt, @StringRes int negativeBtnTxt,
+                       @StringRes int title, @StringRes int hint, int inputType,
+                       @StyleRes int dialogStyle) {
+        this(context, positiveBtnTxt, negativeBtnTxt, title, hint, inputType);
+        this.dialogStyle = dialogStyle;
+    }
+
     public void show() {
         final BaseActivity activity = ((ActivityAware) context).getCurrentActivity();
         View base = activity.getLayoutInflater().inflate(R.layout.uiv3_editable_dialog, null);
@@ -67,8 +77,13 @@ public class InputDialog<T> {
         }
         editTextDialog.setTypeface(FontHolder.getInstance(activity).getFaceRobotoRegular());
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity)
-                .setTitle(title)
+        AlertDialog.Builder builder;
+        if (dialogStyle != 0) {
+            builder = new AlertDialog.Builder(activity, dialogStyle);
+        } else {
+            builder = new AlertDialog.Builder(activity);
+        }
+        builder.setTitle(title)
                 .setView(base)
                 .setPositiveButton(positiveBtnTxt, new DialogInterface.OnClickListener() {
                     @Override

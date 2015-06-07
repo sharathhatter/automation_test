@@ -94,8 +94,8 @@ public class FilterActivity extends BackButtonActivity {
         EditText editTextFilter = (EditText) findViewById(R.id.editTextFilter);
         List<FilterOptionItem> filterOptionItems = filterOptionCategory.getFilterOptionItems();
         mFilterByAdapter = new BBCheckedListAdapter<>
-                (getCurrentActivity(), android.R.layout.simple_list_item_multiple_choice,
-                        filterOptionItems, R.color.uiv3_primary_text_color, faceRobotoRegular);
+                (getCurrentActivity(), R.layout.uiv3_filter_item_layout,
+                        filterOptionItems, R.color.uiv3_primary_text_color, faceRobotoMedium);
 
         editTextFilter.setTypeface(faceRobotoRegular);
         editTextFilter.setHint(getString(R.string.search) + " " +
@@ -247,19 +247,36 @@ public class FilterActivity extends BackButtonActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             FilterOptionCategory filterOptionCategory = filterOptionCategories.get(position);
+            ViewHolder viewHolder;
             if (convertView == null) {
-                convertView = getLayoutInflater().inflate(android.R.layout.simple_list_item_1, parent, false);
+                convertView = getLayoutInflater().inflate(R.layout.uiv3_filter_name_layout, parent, false);
+                viewHolder = new ViewHolder(convertView);
+                convertView.setTag(viewHolder);
+            } else {
+                viewHolder = (ViewHolder) convertView.getTag();
             }
 
-            TextView text1 = (TextView) convertView;
+            TextView textFilterName = viewHolder.getTxtFilterName();
             if (getItemViewType(position) == VIEW_TYPE_SELECTED) {
-                text1.setTypeface(faceRobotoRegular);
-                text1.setBackgroundColor(Color.WHITE);
+                textFilterName.setTypeface(faceRobotoMedium);
+                convertView.setBackgroundColor(Color.WHITE);
             } else {
-                text1.setTypeface(faceRobotoLight);
-                text1.setBackgroundColor(Color.TRANSPARENT);
+                textFilterName.setTypeface(faceRobotoMedium);
+                convertView.setBackgroundColor(Color.TRANSPARENT);
             }
-            text1.setText(filterOptionCategory.getFilterName());
+            textFilterName.setText(filterOptionCategory.getFilterName());
+
+            TextView txtAppliedFilterCount = viewHolder.getTxtAppliedFilterCount();
+            txtAppliedFilterCount.setTypeface(faceRobotoLight);
+
+            FilteredOn filteredOn = FilteredOn.getFilteredOn(mFilteredOns, filterOptionCategory.getFilterSlug());
+            if (filteredOn != null && filteredOn.getFilterValues() != null &&
+                    filteredOn.getFilterValues().size() > 0) {
+                txtAppliedFilterCount.setText(String.valueOf(filteredOn.getFilterValues().size()));
+                txtAppliedFilterCount.setVisibility(View.VISIBLE);
+            } else {
+                txtAppliedFilterCount.setVisibility(View.INVISIBLE);
+            }
             return convertView;
         }
 
@@ -274,6 +291,32 @@ public class FilterActivity extends BackButtonActivity {
         @Override
         public int getViewTypeCount() {
             return 2;
+        }
+
+        private class ViewHolder {
+            private View itemView;
+            private TextView txtFilterName;
+            private TextView txtAppliedFilterCount;
+
+            public ViewHolder(View itemView) {
+                this.itemView = itemView;
+            }
+
+            public TextView getTxtFilterName() {
+                if (txtFilterName == null) {
+                    txtFilterName = (TextView) itemView.findViewById(R.id.txtFilterName);
+                    txtFilterName.setTypeface(faceRobotoMedium);
+                }
+                return txtFilterName;
+            }
+
+            public TextView getTxtAppliedFilterCount() {
+                if (txtAppliedFilterCount == null) {
+                    txtAppliedFilterCount = (TextView) itemView.findViewById(R.id.txtAppliedFilterCount);
+                    txtAppliedFilterCount.setTypeface(faceRobotoLight);
+                }
+                return txtAppliedFilterCount;
+            }
         }
     }
 }

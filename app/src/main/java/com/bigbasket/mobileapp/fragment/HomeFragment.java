@@ -25,9 +25,9 @@ import com.bigbasket.mobileapp.apiservice.models.response.AppDataResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginUserDetails;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateVersionInfoApiResponseContent;
 import com.bigbasket.mobileapp.fragment.base.BaseSectionFragment;
+import com.bigbasket.mobileapp.handler.AppDataSyncHandler;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
-import com.bigbasket.mobileapp.interfaces.FloatingBasketUIAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.section.SectionData;
@@ -38,7 +38,6 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.AppNotSupportedDialog;
 import com.bigbasket.mobileapp.view.uiv2.UpgradeAppDialog;
-import com.melnykov.fab.FloatingBadgeCountView;
 import com.melnykov.fab.ObservableScrollView;
 
 import java.util.ArrayList;
@@ -314,7 +313,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                             return;
                         }
                         if (callbackAppDataResponse.status == 0) {
-                            UIUtil.updateLastAppDataCall(getCurrentActivity());
+                            AppDataSyncHandler.updateLastAppDataCall(getCurrentActivity());
                             String appExpiredBy = callbackAppDataResponse.apiResponseContent.appUpdate.expiryDate;
                             String upgradeMsg = callbackAppDataResponse.apiResponseContent.appUpdate.upgradeMsg;
                             String latestAppVersion = callbackAppDataResponse.apiResponseContent.appUpdate.latestAppVersion;
@@ -379,15 +378,9 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
     }
 
     private void getAppData(Bundle savedInstanceState) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        long lastAppDataCallTime = preferences.getLong(Constants.LAST_APP_DATA_CALL_TIME, 0);
-        if (lastAppDataCallTime == 0 || UIUtil.isMoreThanXHour(lastAppDataCallTime, Constants.SIX_HOUR)) {
-            try {
-                callGetAppData(Constants.CLIENT_NAME, DataUtil.getAppVersion(getCurrentActivity()),
-                        savedInstanceState);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        if (AppDataSyncHandler.isSyncNeeded(getActivity())) {
+            callGetAppData(Constants.CLIENT_NAME, DataUtil.getAppVersion(getCurrentActivity()),
+                    savedInstanceState);
         } else {
             homePageGetter(savedInstanceState);
         }

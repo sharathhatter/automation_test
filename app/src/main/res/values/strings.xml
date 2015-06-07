@@ -86,6 +86,8 @@
     <string name="signIn">Login</string>
     <string name="signUpCaps">SIGN UP</string>
     <string name="signInCaps">LOG IN</string>
+    <string name="signUpCapsVerb">SIGNUP</string>
+    <string name="signInCapsVerb">LOGIN</string>
     <string name="HNDetails">House No &amp; Details</string>
     <string name="addressNick">Address Nickname (Optional)</string>
     <string name="contactFirstName">Contact first name</string>
@@ -95,6 +97,7 @@
     <string name="streetName">Street Name</string>
     <string name="residentialComplex">Location/Area/Zone (Optional)</string>
     <string name="city">City</string>
+    <string name="location">Location</string>
     <string name="pincode">Pincode</string>
     <string name="makeDefaultAddress">Make this my default address.</string>
     <string name="createList">Create list</string>
@@ -383,6 +386,8 @@
     <string name="productFound">product found</string>
     <string name="productFoundPlural">products found</string>
     <string name="createNewList">Create New List</string>
+    <string name="connectUsing">You can connect using</string>
+    <string name="tutorial">Tutorial</string>
 
     <!-- myaccount -->
     <string name="phone">Phone</string>

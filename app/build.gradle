@@ -55,6 +55,7 @@ android {
             compatibleScreens 'small', 'normal', 'large', 'xlarge'
         }
     }
+// Uncomment at the time of deployment
 //    productFlavors {
 //        flavourMdpi {
 //            versionCode calculateVersionCodeFromDpi(160)

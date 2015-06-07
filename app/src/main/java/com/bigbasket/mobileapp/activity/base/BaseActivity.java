@@ -821,38 +821,6 @@ public abstract class BaseActivity extends AppCompatActivity implements COMarket
         trackEvent(TrackingAware.SHOW_PASSWORD_ENABLED, eventAttribs);
     }
 
-    public void setTermsAndCondition(TextView txtVw, String prefix, String tncText, String separator, String privacyPolicyTxt) {
-        txtVw.setTypeface(faceRobotoRegular);
-        SpannableString spannableString = new SpannableString(prefix + tncText + separator + privacyPolicyTxt);
-        spannableString.setSpan(new UnderlineSpan(), prefix.length(), prefix.length() + tncText.length(),
-                Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-        spannableString.setSpan(new TncClickListener(), prefix.length(), prefix.length() + tncText.length(),
-                Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-        spannableString.setSpan(new ForegroundColorSpan(Color.WHITE), prefix.length(), prefix.length() + tncText.length(),
-                Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-
-        spannableString.setSpan(new UnderlineSpan(), prefix.length() + tncText.length() + separator.length(),
-                prefix.length() + tncText.length() + separator.length() + privacyPolicyTxt.length(),
-                Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-        spannableString.setSpan(new PrivacyPolicyClickListener(), prefix.length() + tncText.length() + separator.length(),
-                prefix.length() + tncText.length() + separator.length() + privacyPolicyTxt.length(),
-                Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-        spannableString.setSpan(new ForegroundColorSpan(Color.WHITE), prefix.length() + tncText.length() + separator.length(),
-                prefix.length() + tncText.length() + separator.length() + privacyPolicyTxt.length(),
-                Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-        txtVw.setText(spannableString);
-        txtVw.setClickable(true);
-        txtVw.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent flatPageWebviewActivity = new Intent(getCurrentActivity(), FlatPageWebViewActivity.class);
-                flatPageWebviewActivity.putExtra(Constants.WEBVIEW_URL, MobileApiUrl.DOMAIN + "terms-and-conditions/");
-                flatPageWebviewActivity.putExtra(Constants.WEBVIEW_TITLE, getString(R.string.termsAndCondHeading));
-                startActivityForResult(flatPageWebviewActivity, NavigationCodes.GO_TO_HOME);
-            }
-        });
-    }
-
     public void launchLogin(String navigationCtx) {
         launchLogin(navigationCtx, null);
     }

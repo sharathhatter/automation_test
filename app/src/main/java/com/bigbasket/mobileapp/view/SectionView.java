@@ -78,25 +78,33 @@ public class SectionView {
         ArrayList<Section> sections = mSectionData.getSections();
         int marginBetweenWidgets = (int) context.getResources().getDimension(R.dimen.margin_normal);
         for (int i = 0; i < sections.size(); i++) {
-            Section section = sections.get(i);
-            View sectionView = getViewToRender(section, inflater, mainLayout);
-            if (sectionView == null) {
-                continue;
-            }
-            if (section.getSectionType().equals(Section.SALUTATION))
-                continue;
-            ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams)
-                    sectionView.getLayoutParams();
-            if (i == 0) {
-                if (!section.getSectionType().equals(Section.BANNER)) {
-                    layoutParams.topMargin = fourDp;
+            View sectionView;
+            try {
+                Section section = sections.get(i);
+                sectionView = getViewToRender(section, inflater, mainLayout);
+                if (sectionView == null || sectionView.getLayoutParams() == null) {
+                    continue;
+                }
+                if (section.getSectionType().equals(Section.SALUTATION))
+                    continue;
+                ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams)
+                        sectionView.getLayoutParams();
+                if (i == 0) {
+                    if (!section.getSectionType().equals(Section.BANNER)) {
+                        layoutParams.topMargin = fourDp;
+                        sectionView.setLayoutParams(layoutParams);
+                    }
+                } else {
+                    layoutParams.topMargin = marginBetweenWidgets;
                     sectionView.setLayoutParams(layoutParams);
                 }
-            } else {
-                layoutParams.topMargin = marginBetweenWidgets;
-                sectionView.setLayoutParams(layoutParams);
+            } catch (Exception e) {
+                sectionView = null;
+                e.printStackTrace();
             }
-            mainLayout.addView(sectionView);
+            if (sectionView != null) {
+                mainLayout.addView(sectionView);
+            }
         }
         return mainLayout;
     }

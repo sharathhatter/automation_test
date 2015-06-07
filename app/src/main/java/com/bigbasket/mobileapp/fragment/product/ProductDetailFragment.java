@@ -164,7 +164,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
                 TextView txtProductAddDescTitle = (TextView) additionalInfoView.findViewById(R.id.txtProductAddDescTitle);
                 TextView txtProductAddDescContent = (TextView) additionalInfoView.findViewById(R.id.txtProductAddDescContent);
                 txtProductAddDescContent.setTypeface(faceRobotoRegular);
-                txtProductAddDescTitle.setTypeface(faceRobotoRegular);
+                txtProductAddDescTitle.setTypeface(faceRobotoMedium);
                 txtProductAddDescContent.setText(Html.fromHtml(productAdditionalInfo.getContent()));
                 if (!TextUtils.isEmpty(productAdditionalInfo.getTitle())) {
                     txtProductAddDescTitle.setText(Html.fromHtml(productAdditionalInfo.getTitle()));

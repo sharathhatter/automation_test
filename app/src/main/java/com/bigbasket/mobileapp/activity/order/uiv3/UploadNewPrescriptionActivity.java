@@ -10,7 +10,6 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -35,7 +34,6 @@ import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.ImageUtil;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
-import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
 import com.luminous.pick.Action;
 
 import java.io.ByteArrayOutputStream;
@@ -60,6 +58,7 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
 
     @Override
     protected void setOptionsMenu(Menu menu) {
+        super.setOptionsMenu(menu);
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.prescription_upload_menu, menu);
         final MenuItem choosePrescription = menu.findItem(R.id.action_choose_prescription);
@@ -70,11 +69,6 @@ public class UploadNewPrescriptionActivity extends BackButtonActivity {
                 return true;
             }
         });
-
-        BBDrawerLayout drawerLayout = (BBDrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawerLayout != null) {
-            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-        }
     }
 
     private void renderUploadNewPrescription() {

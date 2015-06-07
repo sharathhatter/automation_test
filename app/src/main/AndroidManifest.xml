@@ -389,7 +389,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/LandingPageTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
-
+        <activity
+            android:name=".activity.TutorialActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.account.uiv3.SignupActivity"
             android:configChanges="orientation|screenSize"

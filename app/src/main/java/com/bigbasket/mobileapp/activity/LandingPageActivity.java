@@ -1,7 +1,9 @@
 package com.bigbasket.mobileapp.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
 
@@ -11,6 +13,7 @@ import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
@@ -28,25 +31,35 @@ public class LandingPageActivity extends SocialLoginActivity {
         trackEvent(TrackingAware.ENTRY_PAGE_SHOWN, null);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
     public void onLandingPageButtonClicked(View view) {
         switch (view.getId()) {
             case R.id.btnLogin:
                 trackEvent(TrackingAware.ENTRY_PAGE_LOGIN_CLICKED, null);
-                launchLogin(TrackEventkeys.NAVIGATION_CTX_LANDING_PAGE);
+                launchTutorial(NavigationCodes.LAUNCH_LOGIN);
                 break;
             case R.id.btnRegister:
                 trackEvent(TrackingAware.ENTRY_PAGE_SIGNUP_CLICKED, null);
-                launchRegistrationPage();
+                launchTutorial(NavigationCodes.LAUNCH_SIGNUP);
                 break;
             case R.id.btnSkip:
                 // Analytics for this is done in onActivityResult of SplashActivity
-                showChangeCity();
+                launchTutorial(NavigationCodes.LAUNCH_CITY);
                 break;
+        }
+    }
+
+    private void launchTutorial(int resultCode) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean isTutorialShown = preferences.getBoolean(Constants.TUTORIAL_SEEN, false);
+        if (isTutorialShown) {
+            handleTutorialResponse(resultCode);
+        } else {
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putBoolean(Constants.TUTORIAL_SEEN, true);
+            editor.apply();
+            Intent intent = new Intent(this, TutorialActivity.class);
+            intent.putExtra(Constants.ACTION_TAB_TAG, resultCode);
+            startActivityForResult(intent, NavigationCodes.TUTORIAL_SEEN);
         }
     }
 
@@ -73,5 +86,29 @@ public class LandingPageActivity extends SocialLoginActivity {
     @Override
     public String getScreenTag() {
         return TrackEventkeys.LANDING_PAGE;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        setSuspended(false);
+        if (requestCode == NavigationCodes.TUTORIAL_SEEN) {
+            handleTutorialResponse(resultCode);
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    private void handleTutorialResponse(int resultCode) {
+        switch (resultCode) {
+            case NavigationCodes.LAUNCH_LOGIN:
+                launchLogin(TrackEventkeys.NAVIGATION_CTX_LANDING_PAGE);
+                break;
+            case NavigationCodes.LAUNCH_CITY:
+                showChangeCity();
+                break;
+            case NavigationCodes.LAUNCH_SIGNUP:
+                launchRegistrationPage();
+                break;
+        }
     }
 }
