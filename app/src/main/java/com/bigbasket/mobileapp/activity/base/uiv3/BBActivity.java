@@ -325,7 +325,9 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 Bundle addressbundle = new Bundle();
                 addressbundle.putBoolean(Constants.FROM_ACCOUNT_PAGE,
                         getIntent().getBooleanExtra(Constants.FROM_ACCOUNT_PAGE, false));
-                memberAddressListFragment.setArguments(addressbundle);
+                addressbundle.putString(Constants.TOTAL_BASKET_VALUE,
+                        getIntent().getStringExtra(Constants.TOTAL_BASKET_VALUE));
+                        memberAddressListFragment.setArguments(addressbundle);
                 addToMainLayout(memberAddressListFragment);
                 break;
             case FragmentCodes.START_ADDRESS_SELECTION:

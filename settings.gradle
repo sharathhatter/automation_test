@@ -1,3 +1,3 @@
-include ':app', ':androidImageSlider', ':wibmosdklib', ':wibmoSDK', ':floatingActionButton', ':moengagesdk', ':moe-addon-ubox'
+include ':app', ':androidImageSlider', ':wibmosdklib', ':wibmoSDK', ':floatingActionButton', ':moe-addon-ubox', ':moengagesdk'
 include ':konotorActivity'
 include ':multipleImagePick'

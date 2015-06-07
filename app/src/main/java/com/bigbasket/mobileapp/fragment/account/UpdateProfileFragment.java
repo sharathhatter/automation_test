@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.fragment.account;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -29,6 +30,7 @@ import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 
@@ -205,6 +207,11 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
         editor.putString(Constants.NEWS_PREF, String.valueOf(chkReceivePromos.isChecked()));
         editor.commit();
         AuthParameters.updateInstance(getActivity());
+        setResultCodeOnProfileUpdate();
+    }
+
+    private void setResultCodeOnProfileUpdate(){
+        getActivity().setResult(NavigationCodes.ACCOUNT_UPDATED, null);
         finish();
     }
 

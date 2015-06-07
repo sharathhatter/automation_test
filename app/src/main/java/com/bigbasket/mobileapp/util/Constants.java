@@ -610,4 +610,7 @@ public class Constants {
 
     public static final String UPDATE_PROFILE_OBJ = "updateProfileObj";
     public static final String UPDATE_PROFILE_IMG_URL = "profilePicUrl";
+
+
+    public static final String TOTAL_BASKET_VALUE = "total_basket_vaule";
 }

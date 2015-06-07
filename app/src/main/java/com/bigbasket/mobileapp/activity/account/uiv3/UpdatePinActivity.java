@@ -39,7 +39,7 @@ public class UpdatePinActivity extends BackButtonActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Delivery Pin");
+        setTitle(getString(R.string.deliveryPin));
         getCurrentMemberPin();
     }
 

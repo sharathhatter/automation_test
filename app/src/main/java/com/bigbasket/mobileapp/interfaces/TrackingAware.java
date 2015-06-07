@@ -70,13 +70,13 @@ public interface TrackingAware {
     public static final String WALLET_ACTIVITY_FOR_MONTH_CLICKED = "MyAccount.Wallet Activity For Month Clicked";
 
     //Address
-    public static final String DELIVERY_ADDRESS_CLICKED = "Delivery Addresses Clicked";
-    public static final String DELIVERY_ADDRESS_SHOWN = "Delivery Addresses Shown";
+    public static final String DELIVERY_ADDRESS_CLICKED = "Delivery Addresses Clicked"; //done
+    public static final String DELIVERY_ADDRESS_SHOWN = "Delivery Addresses Shown"; //done
     public static final String ADDRESS_CLICKED = "Address Clicked";
-    public static final String NEW_ADDRESS_CLICKED = "Address New Clicked";
-    public static final String ENABLE_DEFAULT_ADDRESS = "Make This Default Address Enabled";
-    public static final String NEW_ADDRESS_FAILED = "New Address Add Failed";
-    public static final String UPDATE_ADDRESS_FAILED = "Update Address Failed";
+    public static final String NEW_ADDRESS_CLICKED = "Address New Clicked"; //done
+    public static final String ENABLE_DEFAULT_ADDRESS = "Make This Default Address Enabled"; //done
+    public static final String NEW_ADDRESS_FAILED = "New Address Add Failed"; //done
+    public static final String UPDATE_ADDRESS_FAILED = "Update Address Failed"; //done
 
     //delivery pin
     public static final String CHANGE_PIN_CLICKED = "MyAccount.Change Pin Clicked";

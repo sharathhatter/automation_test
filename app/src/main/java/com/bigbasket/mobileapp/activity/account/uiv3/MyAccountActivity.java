@@ -50,11 +50,6 @@ public class MyAccountActivity extends BackButtonActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle(getString(R.string.myAccount));
-    }
-
-    @Override
-    public void onResume(){
-        super.onResume();
         getMemberDetails();
     }
 
@@ -112,6 +107,15 @@ public class MyAccountActivity extends BackButtonActivity {
         }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        setSuspended(false);
+        if (resultCode == NavigationCodes.ACCOUNT_UPDATED) {
+            getMemberDetails();
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
 
     private void renderProfileData(UpdateProfileModel updateProfileModel) {
         if (updateProfileModel == null) return;

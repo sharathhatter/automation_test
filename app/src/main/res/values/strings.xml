@@ -44,10 +44,10 @@
     <string name="UPDATE">UPDATE</string>
     <string name="CANCEL">CANCEL</string>
     <string name="cancel">Cancel</string>
-    <string name="pin_text_para1">Delivery PIN is a 4-digit number. You can set or change the delivery PIN at your convenience.</string>
-    <string name="pin_text_para2">This PIN is required for acknowledgment of order delivery and to provide feedback for our service.</string>
+    <string name="pin_text_para1">Delivery PIN is a 4-digit number. You can change the PIN to something that can be remembered easily.</string>
+    <string name="pin_text_para2">The PIN is required to acknowledge order delivery.</string>
     <string name="pin_text_para3">We request you not to share with the delivery person.</string>
-    <string name="pin_text_para4">The PIN will also be sent to you as part of ready-to-ship email or SMS for each order.</string>
+    <string name="pin_text_para4">The PIN will also be sent to you as part of the order ready SMS or notification for each order.</string>
     <string name="new_pin_hint">Please enter 4-digit PIN</string>
     <string name="placeorder">Place Order</string>
     <string name="reviewAndPlaceorder">Review &amp; Place Order</string>
@@ -87,13 +87,13 @@
     <string name="signUpCaps">SIGN UP</string>
     <string name="signInCaps">LOG IN</string>
     <string name="HNDetails">House No &amp; Details</string>
-    <string name="addressNick">Address nickname (Optional)</string>
+    <string name="addressNick">Address Nickname (Optional)</string>
     <string name="contactFirstName">Contact first name</string>
     <string name="contactLastName">Contact last name</string>
     <string name="contactNum">Contact number</string>
-    <string name="houseNum">House no</string>
-    <string name="streetName">Street name</string>
-    <string name="residentialComplex">Residential complex (Optional)</string>
+    <string name="houseNum">House No</string>
+    <string name="streetName">Street Name</string>
+    <string name="residentialComplex">Location/Area/Zone (Optional)</string>
     <string name="city">City</string>
     <string name="pincode">Pincode</string>
     <string name="makeDefaultAddress">Make this my default address.</string>
@@ -237,7 +237,7 @@
     <string name="past_order_title">Past Orders</string>
 
     <string name="samePin">New pin should not be same as the current pin!</string>
-    <string name="min4digit">Pin should be 4 digit number!</string>
+    <string name="min4digit">Pin should a 4 digit number!</string>
     <string name="not0000">Pin should be other than 0000!</string>
     <string name="enterPin">Please enter a pin to update!</string>
     <string name="pinUpdatedSuccessfully">Your pin was updated successfully!</string>
@@ -264,7 +264,7 @@
     <string name="streetDetails">Street Details</string>
     <string name="area">Area</string>
     <string name="resAndComplex">Residential Complex</string>
-    <string name="landmark">Landmark</string>
+    <string name="landmark">Landmarks</string>
     <string name="pinCode">Pincode</string>
     <string name="photo">Photo</string>
     <string name="profileUpdated">Profile updated successfully!</string>
@@ -389,7 +389,7 @@
     <string name="birthday">Birthday</string>
     <string name="address">Address</string>
     <string name="viewAll">View All</string>
-    <string name="addAddress">+ Add</string>
+    <string name="addAddress">\u0020 Add</string>
 
     <!-- address -->
     <string name="expressAvailable">Express Delivery is available!</string>
@@ -397,4 +397,8 @@
     <string name="other_address">Other Addresses:</string>
     <string name="addAnAddress"> \u0020 Add an Address</string>
     <string name="save">SAVE</string>
+    <string name="myAddressEmptyText">Voila! You reached my account! Please add an address to make it look cool!</string>
+    <string name="proceed">PROCEED</string>
+    <string name="total">TOTAL :</string>
+    <string name="deliveryPin">Delivery Pin</string>
 </resources>

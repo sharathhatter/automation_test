@@ -39,6 +39,7 @@
                 android:textColor="@color/text_color_myaccount"
                 android:layout_marginRight="@dimen/margin_small"
                 android:textSize="@dimen/primary_text_size"
+                android:textStyle="italic"
                 android:layout_marginLeft="@dimen/margin_normal"
                 android:layout_height="wrap_content" />
 
@@ -225,6 +226,7 @@
                 android:id="@+id/txtAddAddress"
                 android:text="@string/addAddress"
                 android:layout_alignParentRight="true"
+                android:drawableLeft="@drawable/small_add"
                 android:paddingTop="@dimen/margin_mini"
                 android:paddingLeft="@dimen/margin_small"
                 android:paddingRight="@dimen/margin_small"
@@ -236,6 +238,31 @@
                 android:textSize="@dimen/primary_text_size"
                 android:textColor="@color/text_color_myaccount"
                 android:layout_height="wrap_content" />
+
+            <ImageView
+                android:id="@+id/imgEmptyAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_small"
+                android:layout_below="@id/txtAddAddress"
+                android:layout_marginLeft="@dimen/margin_xlarge_account"
+                android:src="@drawable/address"/>
+
+
+            <TextView
+                android:id="@+id/txtAddressEmptyTxt"
+                android:layout_marginLeft="@dimen/margin_large"
+                android:layout_marginTop="@dimen/margin_small"
+                android:layout_below="@id/txtEmptyAddressLabel"
+                android:layout_toLeftOf="@id/txtAddAddress"
+                android:text="@string/myAddressEmptyText"
+                android:layout_toRightOf="@id/txtEmptyAddressLabel"
+                android:layout_width="wrap_content"
+                android:textStyle="italic"
+                android:textSize="@dimen/primary_text_size"
+                android:textColor="@color/uiv3_primary_text_color"
+                android:layout_height="wrap_content" />
+
 
 
         </RelativeLayout>
