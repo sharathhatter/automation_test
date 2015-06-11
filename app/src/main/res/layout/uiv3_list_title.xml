@@ -10,8 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:paddingLeft="@dimen/padding_large"
-        android:paddingTop="@dimen/padding_large"
+        android:paddingLeft="@dimen/padding_normal"
+        android:paddingTop="@dimen/padding_normal"
         android:textColor="@color/uiv3_secondary_text_color"
         android:textSize="@dimen/secondary_text_size" />
 </LinearLayout>

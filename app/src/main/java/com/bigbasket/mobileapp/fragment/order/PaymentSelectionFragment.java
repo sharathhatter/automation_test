@@ -144,142 +144,130 @@ public class PaymentSelectionFragment extends BaseFragment implements PostVouche
         View layoutPressOrderReview = base.findViewById(R.id.layoutPressOrderReviewContainer);
         layoutPressOrderReview.setVisibility(View.GONE);
 
-        TextView lblPaymentMethod = (TextView) base.findViewById(R.id.lblPaymentMethod);
-        View layoutChoosePayment = base.findViewById(R.id.layoutChoosePayment);
-
-        double amtPayable = Double.parseDouble(mAmtPayable);
-        double walletUsed = Double.parseDouble(mWalletUsed);
-        double walletRemaining = Double.parseDouble(mWalletRemaining);
-
-        TextView lblWalletUsed = (TextView) base.findViewById(R.id.lblWalletUsed);
-        TextView txtWalletUsed = (TextView) base.findViewById(R.id.txtWalletUsed);
-        TextView lblAmtToPay = (TextView) base.findViewById(R.id.lblOrderTotal);
-        TextView txtAmtToPay = (TextView) base.findViewById(R.id.txtOrderTotal);
-        TextView lblWalletRemaining = (TextView) base.findViewById(R.id.lblWalletRemaining);
-        TextView txtWalletRemaining = (TextView) base.findViewById(R.id.txtWalletRemaining);
-        TextView lblSaving = (TextView) base.findViewById(R.id.lblSaving);
-        TextView txtSaving = (TextView) base.findViewById(R.id.txtSaving);
-
-        lblAmtToPay.setTypeface(faceRobotoRegular);
-        txtAmtToPay.setTypeface(faceRobotoRegular);
-        txtAmtToPay.setText(asRupeeSpannable(amtPayable));
-
-        if (walletUsed > 0) {
-            lblWalletUsed.setTypeface(faceRobotoRegular);
-            txtWalletUsed.setTypeface(faceRobotoRegular);
-            txtWalletUsed.setText(asRupeeSpannable(walletUsed));
-
-            lblWalletRemaining.setTypeface(faceRobotoRegular);
-            txtWalletRemaining.setTypeface(faceRobotoRegular);
-            txtWalletRemaining.
-                    setText(walletRemaining > 0 ? asRupeeSpannable(walletRemaining) : "0");
-        } else {
-            lblWalletRemaining.setVisibility(View.GONE);
-            lblWalletUsed.setVisibility(View.GONE);
-            txtWalletRemaining.setVisibility(View.GONE);
-            txtWalletUsed.setVisibility(View.GONE);
-        }
-
-        if (mCartSummary.getSavings() > 0) {
-            lblSaving.setTypeface(faceRobotoRegular);
-            txtSaving.setTypeface(faceRobotoRegular);
-            txtSaving.setText(asRupeeSpannable(mCartSummary.getSavings()));
-        } else {
-            lblSaving.setVisibility(View.GONE);
-            txtSaving.setVisibility(View.GONE);
-        }
-
-        if (amtPayable > 0) {
-            boolean isInHDFCPayMode = HDFCPowerPayHandler.isInHDFCPayMode(getActivity())
-                    && mPaymentTypeMap.containsValue(Constants.HDFC_POWER_PAY);
-            RadioGroup layoutPaymentOptions = (RadioGroup) base.findViewById(R.id.layoutPaymentOptions);
-            int i = 0;
-            for (final Map.Entry<String, String> entrySet : mPaymentTypeMap.entrySet()) {
-                if (isInHDFCPayMode && !entrySet.getValue().equals(Constants.HDFC_POWER_PAY)) {
-                    continue;
-                }
-                RadioButton rbtnPaymentType = getPaymentOptionRadioButton(layoutPaymentOptions);
-                rbtnPaymentType.setText(entrySet.getKey());
-                rbtnPaymentType.setId(i);
-                if (i == 0) {
-                    if (getCurrentActivity() != null) {
-                        rbtnPaymentType.setChecked(true);
-                        ((SelectedPaymentAware) getCurrentActivity()).
-                                setPaymentMethod(entrySet.getValue());
-                    } else {
-                        return;
-                    }
-                }
-                rbtnPaymentType.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        if (isChecked && getCurrentActivity() != null) {
-                            ((SelectedPaymentAware) getCurrentActivity()).
-                                    setPaymentMethod(entrySet.getValue());
-                        }
-                    }
-                });
-                layoutPaymentOptions.addView(rbtnPaymentType);
-                i++;
-            }
-            lblPaymentMethod.setTypeface(faceRobotoRegular);
-        } else {
-            lblPaymentMethod.setVisibility(View.GONE);
-            layoutChoosePayment.setVisibility(View.GONE);
-        }
-
-        mTxtApplyVoucher = (TextView) base.findViewById(R.id.txtApplyVoucher);
-        mTxtApplyVoucher.setTypeface(faceRobotoRegular);
-        mTxtApplyVoucher.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent availableVoucherListActivity = new Intent(getActivity(), AvailableVoucherListActivity.class);
-                availableVoucherListActivity.putParcelableArrayListExtra(Constants.VOUCHERS, mActiveVouchersList);
-                startActivityForResult(availableVoucherListActivity, NavigationCodes.VOUCHER_APPLIED);
-            }
-        });
-
-        mTxtRemoveVoucher = (TextView) base.findViewById(R.id.txtRemoveVoucher);
-        mTxtRemoveVoucher.setTypeface(faceRobotoRegular);
-        mTxtRemoveVoucher.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showAlertDialog(getString(R.string.removeVoucherHeading), getString(R.string.removeVoucherDesc),
-                        DialogButton.YES, DialogButton.CANCEL, Constants.REMOVE_VOUCHER, mAppliedVoucherCode,
-                        getString(R.string.remove));
-            }
-        });
-
-        if (!TextUtils.isEmpty(mAppliedVoucherCode)) {
-            onVoucherApplied(mAppliedVoucherCode);
-        } else {
-            onVoucherRemoved();
-        }
-        mLblTransactionFailed = (TextView) base.findViewById(R.id.lblTransactionFailed);
-        mTxtTransactionFailureReason = (TextView) base.findViewById(R.id.txtTransactionFailedReason);
-        mLblSelectAnotherMethod = (TextView) base.findViewById(R.id.lblSelectAnotherMethod);
-
-        mLblTransactionFailed.setTypeface(faceRobotoRegular);
-        mTxtTransactionFailureReason.setTypeface(faceRobotoRegular);
-        mLblTransactionFailed.setVisibility(View.GONE);
-        mTxtTransactionFailureReason.setVisibility(View.GONE);
-        mLblSelectAnotherMethod.setVisibility(View.GONE);
-        mLblSelectAnotherMethod.setTypeface(faceRobotoRegular);
-
-        contentView.addView(base);
+//        TextView lblPaymentMethod = (TextView) base.findViewById(R.id.lblPaymentMethod);
+//        View layoutChoosePayment = base.findViewById(R.id.layoutChoosePayment);
+//
+//        double amtPayable = Double.parseDouble(mAmtPayable);
+//        double walletUsed = Double.parseDouble(mWalletUsed);
+//        double walletRemaining = Double.parseDouble(mWalletRemaining);
+//
+//        TextView lblWalletUsed = (TextView) base.findViewById(R.id.lblWalletUsed);
+//        TextView txtWalletUsed = (TextView) base.findViewById(R.id.txtWalletUsed);
+//        TextView lblAmtToPay = (TextView) base.findViewById(R.id.lblOrderTotal);
+//        TextView txtAmtToPay = (TextView) base.findViewById(R.id.txtOrderTotal);
+//        TextView lblWalletRemaining = (TextView) base.findViewById(R.id.lblWalletRemaining);
+//        TextView txtWalletRemaining = (TextView) base.findViewById(R.id.txtWalletRemaining);
+//        TextView lblSaving = (TextView) base.findViewById(R.id.lblSaving);
+//        TextView txtSaving = (TextView) base.findViewById(R.id.txtSaving);
+//
+//        lblAmtToPay.setTypeface(faceRobotoRegular);
+//        txtAmtToPay.setTypeface(faceRobotoRegular);
+//        txtAmtToPay.setText(asRupeeSpannable(amtPayable));
+//
+//        if (walletUsed > 0) {
+//            lblWalletUsed.setTypeface(faceRobotoRegular);
+//            txtWalletUsed.setTypeface(faceRobotoRegular);
+//            txtWalletUsed.setText(asRupeeSpannable(walletUsed));
+//
+//            lblWalletRemaining.setTypeface(faceRobotoRegular);
+//            txtWalletRemaining.setTypeface(faceRobotoRegular);
+//            txtWalletRemaining.
+//                    setText(walletRemaining > 0 ? asRupeeSpannable(walletRemaining) : "0");
+//        } else {
+//            lblWalletRemaining.setVisibility(View.GONE);
+//            lblWalletUsed.setVisibility(View.GONE);
+//            txtWalletRemaining.setVisibility(View.GONE);
+//            txtWalletUsed.setVisibility(View.GONE);
+//        }
+//
+//        if (mCartSummary.getSavings() > 0) {
+//            lblSaving.setTypeface(faceRobotoRegular);
+//            txtSaving.setTypeface(faceRobotoRegular);
+//            txtSaving.setText(asRupeeSpannable(mCartSummary.getSavings()));
+//        } else {
+//            lblSaving.setVisibility(View.GONE);
+//            txtSaving.setVisibility(View.GONE);
+//        }
+//
+//        if (amtPayable > 0) {
+//            boolean isInHDFCPayMode = HDFCPowerPayHandler.isInHDFCPayMode(getActivity())
+//                    && mPaymentTypeMap.containsValue(Constants.HDFC_POWER_PAY);
+//            RadioGroup layoutPaymentOptions = (RadioGroup) base.findViewById(R.id.layoutPaymentOptions);
+//            int i = 0;
+//            for (final Map.Entry<String, String> entrySet : mPaymentTypeMap.entrySet()) {
+//                if (isInHDFCPayMode && !entrySet.getValue().equals(Constants.HDFC_POWER_PAY)) {
+//                    continue;
+//                }
+//                RadioButton rbtnPaymentType = getPaymentOptionRadioButton(layoutPaymentOptions);
+//                rbtnPaymentType.setText(entrySet.getKey());
+//                rbtnPaymentType.setId(i);
+//                if (i == 0) {
+//                    if (getCurrentActivity() != null) {
+//                        rbtnPaymentType.setChecked(true);
+//                        ((SelectedPaymentAware) getCurrentActivity()).
+//                                setPaymentMethod(entrySet.getValue());
+//                    } else {
+//                        return;
+//                    }
+//                }
+//                rbtnPaymentType.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//                    @Override
+//                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                        if (isChecked && getCurrentActivity() != null) {
+//                            ((SelectedPaymentAware) getCurrentActivity()).
+//                                    setPaymentMethod(entrySet.getValue());
+//                        }
+//                    }
+//                });
+//                layoutPaymentOptions.addView(rbtnPaymentType);
+//                i++;
+//            }
+//            lblPaymentMethod.setTypeface(faceRobotoRegular);
+//        } else {
+//            lblPaymentMethod.setVisibility(View.GONE);
+//            layoutChoosePayment.setVisibility(View.GONE);
+//        }
+//
+//        mTxtApplyVoucher = (TextView) base.findViewById(R.id.txtApplyVoucher);
+//        mTxtApplyVoucher.setTypeface(faceRobotoRegular);
+//        mTxtApplyVoucher.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent availableVoucherListActivity = new Intent(getActivity(), AvailableVoucherListActivity.class);
+//                availableVoucherListActivity.putParcelableArrayListExtra(Constants.VOUCHERS, mActiveVouchersList);
+//                startActivityForResult(availableVoucherListActivity, NavigationCodes.VOUCHER_APPLIED);
+//            }
+//        });
+//
+//        mTxtRemoveVoucher = (TextView) base.findViewById(R.id.txtRemoveVoucher);
+//        mTxtRemoveVoucher.setTypeface(faceRobotoRegular);
+//        mTxtRemoveVoucher.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                showAlertDialog(getString(R.string.removeVoucherHeading), getString(R.string.removeVoucherDesc),
+//                        DialogButton.YES, DialogButton.CANCEL, Constants.REMOVE_VOUCHER, mAppliedVoucherCode,
+//                        getString(R.string.remove));
+//            }
+//        });
+//
+//        if (!TextUtils.isEmpty(mAppliedVoucherCode)) {
+//            onVoucherApplied(mAppliedVoucherCode);
+//        } else {
+//            onVoucherRemoved();
+//        }
+//        mLblTransactionFailed = (TextView) base.findViewById(R.id.lblTransactionFailed);
+//        mTxtTransactionFailureReason = (TextView) base.findViewById(R.id.txtTransactionFailedReason);
+//        mLblSelectAnotherMethod = (TextView) base.findViewById(R.id.lblSelectAnotherMethod);
+//
+//        mLblTransactionFailed.setTypeface(faceRobotoRegular);
+//        mTxtTransactionFailureReason.setTypeface(faceRobotoRegular);
+//        mLblTransactionFailed.setVisibility(View.GONE);
+//        mTxtTransactionFailureReason.setVisibility(View.GONE);
+//        mLblSelectAnotherMethod.setVisibility(View.GONE);
+//        mLblSelectAnotherMethod.setTypeface(faceRobotoRegular);
+//
+//        contentView.addView(base);
     }
-
-    private RadioButton getPaymentOptionRadioButton(ViewGroup parent) {
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        RadioButton radioButton = (RadioButton) inflater.inflate(R.layout.uiv3_payment_option_rbtn, parent, false);
-        RadioGroup.LayoutParams layoutParams = new RadioGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams.setMargins(0, 0, 0, (int) getResources().getDimension(R.dimen.margin_small));
-        radioButton.setLayoutParams(layoutParams);
-        radioButton.setTypeface(faceRobotoRegular);
-        return radioButton;
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         setSuspended(false);

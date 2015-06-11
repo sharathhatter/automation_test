@@ -72,7 +72,7 @@
     <string name="items">Items</string>
     <string name="orderModification">Modified</string>
     <string name="orderReview">Review Order</string>
-    <string name="chooseSlot">Select Slot</string>
+    <string name="chooseSlot">Delivery Options</string>
     <string name="createShoppingList">Create shopping List</string>
     <string name="shoppingListNameDialogTextHint">Enter shopping list name</string>
     <string name="chooseCity">Pick Your City</string>
@@ -191,7 +191,7 @@
     <string name="selectAllSlotsErrMsg">You have not selected slots for all the orders.</string>
 
     <!-- payment -->
-    <string name="choosePayment">Choose payment method</string>
+    <string name="choosePayment">Choose Payment</string>
     <string name="paymentMethod">Payment Options</string>
     <string name="pleaseChoosePaymentMethod">Please select a payment option.</string>
     <string name="orderItems">Order Items</string>
@@ -232,7 +232,8 @@
     <string name="wallet_activity">My Wallet</string>
     <string name="delivery_address">Delivery Addresses</string>
     <string name="delivery_van">Delivery Van</string>
-    <string name="delivery_time">Delivery Time</string>
+    <string name="delivery_time">Delivery Time:</string>
+    <string name="delivery_charges">Delivery Charges:</string>
     <string name="view_edit_pin_label">Delivery Pin</string>
     <string name="active_label">active</string>
     <string name="past_label">past</string>
@@ -307,7 +308,7 @@
     <string name="tapRetry">Tap to Retry</string>
 
     <!-- checkOut QC -->
-    <string name="out_of_stock">Out of stock</string>
+    <string name="out_of_stock">Out of Stock</string>
     <string name="check_out_selected">Selected:</string>
     <string name="check_out_available">Available:</string>
     <string name="similar_products">Add Similar products</string>
@@ -402,4 +403,10 @@
     <string name="other_address">Other Addresses:</string>
     <string name="addAnAddress"> \u0020 Add an Address</string>
     <string name="save">SAVE</string>
+    <string name="productsUnavailable">Products Unavailable!</string>
+    <string name="continueAnyway">Continue Anyway</string>
+    <string name="help">Help</string>
+    <string name="deliverableTextSingular">Your purchase will arrive in the following delivery</string>
+    <string name="deliverableTextPlural">Your purchase will arrive in the following deliveries</string>
+    <string name="checkingAvailability">Sit back while we check whether the products you selected are available</string>
 </resources>

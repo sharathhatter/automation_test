@@ -7,7 +7,7 @@
     android:paddingBottom="@dimen/padding_12"
     android:paddingRight="@dimen/padding_12"
     android:paddingLeft="@dimen/padding_normal"
-    android:background="@color/shadow_bck"
+    android:background="@color/uiv3_large_list_item_bck"
     android:layout_height="wrap_content">
 
     <RadioButton

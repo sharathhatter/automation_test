@@ -9,6 +9,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.BrowsePromoCategoryApi
 import com.bigbasket.mobileapp.apiservice.models.response.CartGetApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.CartOperationApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.CartSummaryApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.CreatePotentialOrderResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.CreateUpdateAddressApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.GetDeliveryAddressApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.GetDynamicPageApiResponse;
@@ -392,4 +393,11 @@ public interface BigBasketApiService {
 
     @GET("/register-utm-params/")
     BaseApiResponse postUtmParams(@QueryMap Map<String, String> utmQueryMap);
+
+    @FormUrlEncoded
+    @POST("/co-create-po/")
+    void createPotentialOrder(@Field(Constants.ADDRESS_ID) String addressId,
+                              @Field(Constants.SUPPORT_CC) String supportsCreditCard,
+                              @Field(Constants.SUPPORT_POWER_PAY) String supportsPowerPay,
+                              Callback<ApiResponse<CreatePotentialOrderResponseContent>> apiResponseCallback);
 }

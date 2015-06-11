@@ -21,14 +21,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.SpannableString;
-import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.text.style.ClickableSpan;
-import android.text.style.ForegroundColorSpan;
-import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -38,7 +34,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
@@ -48,10 +43,12 @@ import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.AgeValidationActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.BasketValidationActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.CheckoutQCActivity;
+import com.bigbasket.mobileapp.activity.order.uiv3.ShipmentSelectionActivity;
 import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 import com.bigbasket.mobileapp.adapter.order.PrescriptionImageAdapter;
+import com.bigbasket.mobileapp.apiservice.models.response.CreatePotentialOrderResponseContent;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
@@ -61,6 +58,7 @@ import com.bigbasket.mobileapp.interfaces.COMarketPlaceAware;
 import com.bigbasket.mobileapp.interfaces.COReserveQuantityCheckAware;
 import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
+import com.bigbasket.mobileapp.interfaces.CreatePotentialOrderAware;
 import com.bigbasket.mobileapp.interfaces.EmailAddressAware;
 import com.bigbasket.mobileapp.interfaces.LaunchProductListAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
@@ -84,6 +82,7 @@ import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.FacebookEventTrackWrapper;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
+import com.bigbasket.mobileapp.view.uiv3.OrderQcDialog;
 import com.demach.konotor.Konotor;
 import com.facebook.appevents.AppEventsLogger;
 import com.moe.pushlibrary.MoEHelper;
@@ -104,7 +103,7 @@ import java.util.Random;
 
 public abstract class BaseActivity extends AppCompatActivity implements COMarketPlaceAware,
         COReserveQuantityCheckAware, CancelableAware, ProgressIndicationAware, ActivityAware,
-        ConnectivityAware, TrackingAware, ApiErrorAware, EmailAddressAware,
+        ConnectivityAware, CreatePotentialOrderAware, TrackingAware, ApiErrorAware, EmailAddressAware,
         LaunchProductListAware {
 
     public static Typeface faceRupee;
@@ -133,7 +132,7 @@ public abstract class BaseActivity extends AppCompatActivity implements COMarket
         }, 100);
     }
 
-    public static void hidekeyboard(Context context){
+    public static void hidekeyboard(Context context) {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
@@ -216,6 +215,37 @@ public abstract class BaseActivity extends AppCompatActivity implements COMarket
             String pharmaPrescriptionId = prefer.getString(Constants.PHARMA_PRESCRIPTION_ID, null);
             new COReserveQuantityCheckTask<>(getCurrentActivity(), pharmaPrescriptionId).startTask();
         }
+    }
+
+    @Override
+    public void onPotentialOrderCreated(CreatePotentialOrderResponseContent createPotentialOrderResponseContent) {
+        if (createPotentialOrderResponseContent.hasQcErrors &&
+                createPotentialOrderResponseContent.qcErrorDatas != null &&
+                createPotentialOrderResponseContent.qcErrorDatas.size() > 0) {
+            new OrderQcDialog<>().show(getCurrentActivity(), createPotentialOrderResponseContent);
+        } else {
+            launchSlotSelection(createPotentialOrderResponseContent);
+        }
+    }
+
+    @Override
+    public void postOrderQc(CreatePotentialOrderResponseContent createPotentialOrderResponseContent) {
+        launchSlotSelection(createPotentialOrderResponseContent);
+    }
+
+    private void launchSlotSelection(CreatePotentialOrderResponseContent createPotentialOrderResponseContent) {
+        Intent intent = new Intent(getCurrentActivity(), ShipmentSelectionActivity.class);
+        intent.putExtra(Constants.EVOUCHER_CODE, createPotentialOrderResponseContent.evoucherCode);
+        intent.putParcelableArrayListExtra(Constants.VOUCHERS,
+                createPotentialOrderResponseContent.activeVouchersArrayList);
+        intent.putParcelableArrayListExtra(Constants.SHIPMENTS, createPotentialOrderResponseContent.shipments);
+        intent.putParcelableArrayListExtra(Constants.PAYMENT_TYPES,
+                createPotentialOrderResponseContent.paymentTypes);
+        intent.putExtra(Constants.ORDER_DETAILS, createPotentialOrderResponseContent.orderDetails);
+        intent.putParcelableArrayListExtra(Constants.CREDIT_DETAILS,
+                createPotentialOrderResponseContent.creditDetails);
+        intent.putExtra(Constants.P_ORDER_ID, createPotentialOrderResponseContent.potentialOrderId);
+        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
     @Override
@@ -567,7 +597,7 @@ public abstract class BaseActivity extends AppCompatActivity implements COMarket
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 String pinCode = editTextPincode.getText().toString();
                 String areaName = areaPinInfoAdapter.getAreaName(pinCode);
-                if(!TextUtils.isEmpty(pinCode) && !TextUtils.isEmpty(areaName)){
+                if (!TextUtils.isEmpty(pinCode) && !TextUtils.isEmpty(areaName)) {
                     editTextArea.setText(areaName);
                 }
             }

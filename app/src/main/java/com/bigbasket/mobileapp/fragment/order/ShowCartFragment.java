@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.fragment.order;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.adapter.order.ActiveOrderRowAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
@@ -40,12 +42,12 @@ import com.bigbasket.mobileapp.model.cart.FulfillmentInfo;
 import com.bigbasket.mobileapp.model.order.OrderItemDisplaySource;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.task.COMarketPlaceCheckTask;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 
@@ -158,7 +160,7 @@ public class ShowCartFragment extends BaseFragment {
                             getCurrentActivity().launchLogin(TrackEventkeys.NAVIGATION_CTX_SHOW_BASKET, FragmentCodes.START_VIEW_BASKET);
                         }
                     } else {
-                        new COMarketPlaceCheckTask<>(getCurrentActivity()).startTask();
+                        startCheckout();
                     }
                 }
             }
@@ -172,6 +174,12 @@ public class ShowCartFragment extends BaseFragment {
         contentView.addView(basketView);
 
         logViewBasketEvent(cartSummary, eventAttribs);
+    }
+
+    private void startCheckout() {
+        Intent intent = new Intent(getActivity(), BackButtonActivity.class);
+        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_VIEW_DELIVERY_ADDRESS);
+        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
     @Override

@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@color/shadow_bck"
+            android:background="@color/uiv3_large_list_item_bck"
             android:layout_margin="@dimen/margin_normal"
             android:paddingLeft="@dimen/padding_small"
             android:paddingRight="@dimen/padding_small"

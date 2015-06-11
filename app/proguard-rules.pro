@@ -60,7 +60,6 @@
 }
 -dontwarn rx.**
 -dontwarn retrofit.appengine.**
--dontwarn com.moe.pushlibrary.**
 -dontwarn okio.**
 -dontwarn com.squareup.okhttp.**
 

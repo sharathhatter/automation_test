@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -20,7 +19,6 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.order.MemberAddressFormActivity;
-import com.bigbasket.mobileapp.activity.order.uiv3.SlotPaymentSelectionActivity;
 import com.bigbasket.mobileapp.adapter.account.MemberAddressListAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
@@ -31,12 +29,12 @@ import com.bigbasket.mobileapp.interfaces.AddressSelectionAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.Address;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
+import com.bigbasket.mobileapp.task.CreatePotentialOrderTask;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,6 +47,7 @@ import retrofit.client.Response;
 public class MemberAddressListFragment extends BaseFragment implements AddressSelectionAware {
 
     protected ArrayList<Address> mAddressArrayList;
+    private MemberAddressListAdapter memberAddressListAdapter;
     private boolean mFromAccountPage = false;
     private String addressId;
 
@@ -167,7 +166,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             addressObjectList.add(2, getString(R.string.other_address));
             addressObjectList.add(3, getString(R.string.addAnAddress));
 
-            MemberAddressListAdapter memberAddressListAdapter =
+            memberAddressListAdapter =
                     new MemberAddressListAdapter<>(this, addressObjectList, mFromAccountPage);
             addressRecyclerView.setAdapter(memberAddressListAdapter);
         } else {
@@ -184,21 +183,24 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         }
 
         Button checkoutBtn = (Button) addressView.findViewById(R.id.btnListFooter);
-        if(mFromAccountPage)
+        if (mFromAccountPage)
             checkoutBtn.setVisibility(View.GONE);
         checkoutBtn.setText(getString(R.string.check_out));
         checkoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(addressId!=null)
-                    launchSlotSelection(addressId);
+                if (addressId != null) {
+                    createPotentialOrder(addressId);
+                } else {
+                    createPotentialOrder(memberAddressListAdapter.getSelectedAddress().getId());
+                }
             }
         });
         contentView.addView(addressView);
     }
 
     @Override
-    public void onAddNewAddressClicked(){
+    public void onAddNewAddressClicked() {
         showCreateAddressForm();
     }
 
@@ -217,7 +219,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
     }
 
     @Override
-    public void onEditAddressClicked(Address address){
+    public void onEditAddressClicked(Address address) {
         showAddressForm(address);
     }
 
@@ -231,27 +233,17 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
 
     @Override
     public void onAddressSelected(Address address) {
-        this.addressId =address.getId();
-       // if (!mFromAccountPage) {
-//            HashMap<String, String> map = new HashMap<>();
-//            map.put(TrackEventkeys.NAVIGATION_CTX, mFromAccountPage ? TrackEventkeys.NAVIGATION_CTX_MY_ACCOUNT :
-//                    TrackEventkeys.NAVIGATION_CTX_CHECKOUT_DELIVERY_ADDRESS);
-//            if (!mFromAccountPage) {
-//                SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
-//                map.put(TrackEventkeys.POTENTIAL_ORDER, prefer.getString(Constants.POTENTIAL_ORDER_ID, null));
-//            }
-//            trackEvent(TrackingAware.ADDRESS_CLICKED, map);
-//            launchSlotSelection(address.getId());
-        //}
-//        else {
-//            showAddressForm(address);
-//        }
+        this.addressId = address.getId();
+        memberAddressListAdapter.notifyDataSetChanged();
     }
 
-    private void launchSlotSelection(String addressId) {
-        Intent intent = new Intent(getCurrentActivity(), SlotPaymentSelectionActivity.class);
-        intent.putExtra(Constants.MEMBER_ADDRESS_ID, addressId);
-        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+    @Override
+    public String getSelectedAddressId() {
+        return this.addressId;
+    }
+
+    private void createPotentialOrder(String addressId) {
+        new CreatePotentialOrderTask<>(getActivity(), addressId).startTask();
     }
 
     public ViewGroup getContentView() {
@@ -286,7 +278,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             if (data != null) {
                 String addressId = data.getStringExtra(Constants.MEMBER_ADDRESS_ID);
                 if (!TextUtils.isEmpty(addressId) && !mFromAccountPage) {
-                    launchSlotSelection(addressId);
+                    createPotentialOrder(addressId);
                 } else {
                     loadAddresses();
                 }
