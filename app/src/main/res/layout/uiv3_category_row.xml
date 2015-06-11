@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:clickable="false"
     android:focusable="false"
+    android:background="@color/footerBtnColor"
     android:paddingTop="@dimen/padding_mini">
 
     <TextView
@@ -15,7 +16,7 @@
         android:layout_marginRight="@dimen/margin_small"
         android:layout_alignParentRight="true"
         android:textColor="@color/uiv3_primary_text_color"
-        android:textSize="@dimen/primary_text_size"
+        android:textSize="@dimen/secondary_text_size"
         android:visibility="visible" />
 
     <TextView
@@ -26,7 +27,7 @@
         android:layout_marginLeft="@dimen/margin_small"
         android:layout_toLeftOf="@id/topCatTotal"
         android:textColor="@color/uiv3_primary_text_color"
-        android:textSize="@dimen/primary_text_size"
+        android:textSize="@dimen/secondary_text_size"
         android:visibility="visible" />
 
     <TextView

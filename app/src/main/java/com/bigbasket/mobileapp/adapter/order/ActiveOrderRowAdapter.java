@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.adapter.order;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Spannable;
@@ -19,6 +20,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.activity.order.uiv3.ShowCartActivity;
 import com.bigbasket.mobileapp.fragment.promo.PromoDetailFragment;
@@ -34,6 +37,8 @@ import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.task.BasketOperationTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
+import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.ShowAnnotationInfo;
 import com.bigbasket.mobileapp.view.ShowFulfillmentInfo;
@@ -129,7 +134,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
             topCatTotalItems.setVisibility(View.GONE);
         }
 
-        String separator = " | Total: ";
+        String separator = "  |  ";
         String topCatTotalAmount = UIUtil.formatAsMoney(cartItemList.getTopCatTotal());
         TextView topCatTotal = headerTitleHolder.getTopCatTotal();
         if (!topCatTotalAmount.equals("0")) {
@@ -138,9 +143,6 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
             Spannable regularSpannable = new SpannableString(separator + regularSalePriceStr);
             regularSpannable.setSpan(new CustomTypefaceSpan("", faceRupee), separator.length(),
                     separator.length() + 1, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-//            regularSpannable.setSpan(new ForegroundColorSpan(((ActivityAware) context).getCurrentActivity().
-//                            getResources().getColor(R.color.red_color)),
-//                    separator.length(), regularSpannable.length(), 0);
             topCatTotal.setText(regularSpannable);
         } else {
             topCatTotal.setText("");
@@ -194,6 +196,13 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
             renderHeaderView(headerTitleHolder, (CartItemHeader) obj);
         }
         return row;
+    }
+
+    @Override
+    public boolean isEnabled(int position) {
+        if(getItemViewType(position) == VIEW_TYPE_CART_HEADER)
+            return false;
+        return true;
     }
 
     private View getFulfillmentInfo(Object obj) {
@@ -269,21 +278,17 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
         if(cartItem.getTotalPrice()>0){
             String prefix = "`";
             String salePriceStr = UIUtil.formatAsMoney(cartItem.getTotalPrice());
-            String perItemCostStr = " (1@"+cartItem.getSalePrice()+")";
+            //String perItemCostStr = " (1@"+UIUtil.formatAsMoney(cartItem.getSalePrice())+")";
             int prefixLen = prefix.length();
-            int salePriceLen = salePriceStr.length();
-            int perItemCostStrLen = perItemCostStr.length();
-            SpannableString spannableSalePrice = new SpannableString(prefix + salePriceStr + perItemCostStr);
+            //int salePriceLen = salePriceStr.length();
+            SpannableString spannableSalePrice = new SpannableString(prefix + salePriceStr);
             spannableSalePrice.setSpan(new CustomTypefaceSpan("", faceRupee), prefixLen - 1,
                     prefixLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-            spannableSalePrice.setSpan(new ForegroundColorSpan(((ActivityAware) context).getCurrentActivity().
-                           getResources().getColor(R.color.uiv3_secondary_text_color)),
-                    prefixLen + salePriceLen, spannableSalePrice.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-            spannableSalePrice.setSpan(new AbsoluteSizeSpan(30),
-                    prefixLen + salePriceLen, spannableSalePrice.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-
-//            spannableSalePrice.setSpan(new TypefaceSpan("italic"), prefixLen + salePriceLen + perItemCostStrLen - 1,
-//                     spannableSalePrice.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+//            spannableSalePrice.setSpan(new ForegroundColorSpan(((ActivityAware) context).getCurrentActivity().
+//                           getResources().getColor(R.color.uiv3_secondary_text_color)),
+//                    prefixLen + salePriceLen, spannableSalePrice.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+//            spannableSalePrice.setSpan(new AbsoluteSizeSpan(30),
+//                    prefixLen + salePriceLen, spannableSalePrice.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
             txtSalePrice.setText(spannableSalePrice);
             txtSalePrice.setVisibility(View.VISIBLE);
         } else {
@@ -301,7 +306,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
         if(!TextUtils.isEmpty(cartItem.getProductWeight()))
             packType = cartItem.getProductWeight();
         if(!TextUtils.isEmpty(cartItem.getPackDesc()))
-            packType += " "+cartItem.getPackDesc();
+            packType += " - "+cartItem.getPackDesc();
 
         if(!TextUtils.isEmpty(packType)){
             txtPackDesc.setText(packType);
@@ -737,11 +742,10 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
 
         @Override
         public void onClick(View v) {
-            Bundle bundle = new Bundle();
-            bundle.putInt(Constants.PROMO_ID, promoId);
-            PromoDetailFragment promoDetailFragment = new PromoDetailFragment();
-            promoDetailFragment.setArguments(bundle);
-            ((ActivityAware) context).getCurrentActivity().onChangeFragment(promoDetailFragment);
+            Intent intent = new Intent(((ActivityAware) context).getCurrentActivity(), BBActivity.class);
+            intent.putExtra(Constants.PROMO_ID, promoId);
+            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PROMO_DETAIL);
+            ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         }
     }
 }
