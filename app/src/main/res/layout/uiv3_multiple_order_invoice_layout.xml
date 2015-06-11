@@ -1,51 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/scrollView"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/uiv3_list_bkg_color"
-    android:orientation="vertical">
+    android:background="@color/white"
+    android:layout_height="match_parent">
 
-    <RelativeLayout
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@color/uiv3_list_bkg_color">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/thank_you_page_top_margin"
+            android:src="@drawable/bb_logo_transparent_bkg"
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/txtThankYou"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="@dimen/thank_you_page_txt_margin"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/thankYouHeader"
+            android:textSize="@dimen/thank_you_page_heading_text_size"
+            android:textColor="@color/red_color"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/txtOrderPlaced"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="@dimen/thank_you_order_placed"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/order_place_txt"
+            android:textSize="@dimen/large_text_size"
+            android:textColor="@color/red_color"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:id="@+id/layoutOrderNumber"
+            android:layout_marginTop="@dimen/margin_small"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/padding_normal"
-            android:text="@string/multipleOrderThankyouText"
+            android:layout_gravity="center_horizontal"
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:id="@+id/txtOrderReview"
+            android:layout_marginTop="@dimen/margin_normal"
+            android:layout_gravity="center_horizontal"
+            android:textSize="@dimen/secondary_text_size"
             android:textColor="@color/uiv3_primary_text_color"
-            android:textSize="@dimen/primary_text_size" />
+            android:text="@string/order_review_txt"
+            android:layout_height="wrap_content" />
 
-        <View
-            android:id="@+id/viewSeparator"
+        <TextView
+            android:id="@+id/txtMyOrder"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/my_orders"
+            android:textColor="@color/red_color"
+            android:textSize="@dimen/primary_text_size"
+            android:layout_marginTop="@dimen/margin_small"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/btnLogin"
+            style="@style/FormButtonStyle"
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@id/txtThankYou"
-            android:background="@color/uiv3_divider_color" />
+            android:layout_marginTop="@dimen/margin_xlarge"
+            android:layout_marginLeft="@dimen/margin_large"
+            android:layout_marginRight="@dimen/margin_large"
+            android:background="@drawable/red_rounded_btn_bkg"
+            android:paddingBottom="@dimen/padding_normal"
+            android:paddingTop="@dimen/padding_normal"
+            android:onClick="onContinueBtnClicked"
+            android:clickable="true"
+            android:text="@string/continue_shopping"
+            android:textColor="@color/white"
+            android:textSize="@dimen/large_text_size" />
 
-        <ListView
-            android:id="@+id/listOrders"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/viewSeparator"
-            android:divider="@null"
-            android:dividerHeight="0dp" />
-
-    </RelativeLayout>
-
-    <TextView
-        android:id="@+id/lblContinueShopping"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/padding_normal"
-        android:text="@string/continue_shopping_txt"
-        android:textColor="@color/uiv3_primary_btn_bkg"
-        android:textSize="@dimen/secondary_text_size" />
-
-</LinearLayout>
+    </LinearLayout>
+</ScrollView>

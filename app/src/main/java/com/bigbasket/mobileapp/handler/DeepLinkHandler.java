@@ -15,6 +15,7 @@ import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.callbacks.CallbackOrderInvoice;
+import com.bigbasket.mobileapp.activity.account.uiv3.DoWalletActivity;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -74,8 +75,7 @@ public class DeepLinkHandler {
                 }
                 return FAILED;
             case Constants.WALLET:
-                Intent intent = new Intent(context.getCurrentActivity(), BackButtonActivity.class);
-                intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WALLET_FRAGMENT);
+                Intent intent = new Intent(context.getCurrentActivity(), DoWalletActivity.class);
                 context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 return SUCCESS;
             case Constants.PRODUCT_LIST:

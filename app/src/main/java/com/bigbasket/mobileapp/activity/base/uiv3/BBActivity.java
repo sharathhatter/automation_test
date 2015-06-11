@@ -48,12 +48,9 @@ import com.bigbasket.mobileapp.fragment.DynamicScreenFragment;
 import com.bigbasket.mobileapp.fragment.HomeFragment;
 import com.bigbasket.mobileapp.fragment.account.AccountView;
 import com.bigbasket.mobileapp.fragment.account.ChangePasswordFragment;
-import com.bigbasket.mobileapp.fragment.account.DoWalletFragment;
 import com.bigbasket.mobileapp.fragment.account.UpdateProfileFragment;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.order.MemberAddressListFragment;
-import com.bigbasket.mobileapp.fragment.order.OrderThankYouFragment;
-import com.bigbasket.mobileapp.fragment.order.ShowCartFragment;
 import com.bigbasket.mobileapp.fragment.order.SlotSelectionFragment;
 import com.bigbasket.mobileapp.fragment.product.CategoryLandingFragment;
 import com.bigbasket.mobileapp.fragment.product.ProductDetailFragment;
@@ -74,7 +71,6 @@ import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.cart.BasketOperationResponse;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.navigation.SectionNavigationItem;
-import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -317,7 +313,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 updateProfileFragment.setArguments(updateProfileBundle);
                 addToMainLayout(updateProfileFragment);
                 break;
-            case FragmentCodes.START_CHANGE_PASSWD:
+            case FragmentCodes.START_CHANGE_PASSWD: //todo remove
                 addToMainLayout(new ChangePasswordFragment());
                 break;
             case FragmentCodes.START_VIEW_DELIVERY_ADDRESS:
@@ -336,12 +332,9 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             case FragmentCodes.START_SLOT_SELECTION:
                 addToMainLayout(new SlotSelectionFragment());
                 break;
-            case FragmentCodes.START_WALLET_FRAGMENT:
-                addToMainLayout(new DoWalletFragment());
-                break;
-            case FragmentCodes.START_VIEW_BASKET:
-                showViewBasketFragment();
-                break;
+//            case FragmentCodes.START_VIEW_BASKET:
+//                showViewBasketFragment();
+//                break;
             case FragmentCodes.START_COMMUNICATION_HUB:
                 launchKonotor();
                 break;
@@ -355,14 +348,16 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 productDetailFragment.setArguments(bundle);
                 addToMainLayout(productDetailFragment);
                 break;
-            case FragmentCodes.START_ORDER_THANKYOU:
-                ArrayList<Order> orders = getIntent().getParcelableArrayListExtra(Constants.ORDERS);
-                OrderThankYouFragment orderThankYouFragment = new OrderThankYouFragment();
-                bundle = new Bundle();
-                bundle.putParcelableArrayList(Constants.ORDERS, orders);
-                orderThankYouFragment.setArguments(bundle);
-                addToMainLayout(orderThankYouFragment);
-                break;
+
+
+//            case FragmentCodes.START_ORDER_THANKYOU:
+//                ArrayList<Order> orders = getIntent().getParcelableArrayListExtra(Constants.ORDERS);
+//                OrderThankYouFragment orderThankYouFragment = new OrderThankYouFragment();
+//                bundle = new Bundle();
+//                bundle.putParcelableArrayList(Constants.ORDERS, orders);
+//                orderThankYouFragment.setArguments(bundle);
+//                addToMainLayout(orderThankYouFragment);
+//                break;
             case FragmentCodes.START_CATEGORY_LANDING:
                 CategoryLandingFragment categoryLandingFragment = new CategoryLandingFragment();
                 Bundle subCatBundle = new Bundle();
@@ -457,13 +452,13 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         }
     }
 
-    private void showViewBasketFragment() {
-        ShowCartFragment showCartFragment = new ShowCartFragment();
-        Bundle cartBundle = new Bundle();
-        cartBundle.putString(Constants.INTERNAL_VALUE, getIntent().getStringExtra(Constants.INTERNAL_VALUE));
-        showCartFragment.setArguments(cartBundle);
-        onChangeFragment(showCartFragment);
-    }
+//    private void showViewBasketFragment() {
+//        ShowCartFragment showCartFragment = new ShowCartFragment();
+//        Bundle cartBundle = new Bundle();
+//        cartBundle.putString(Constants.INTERNAL_VALUE, getIntent().getStringExtra(Constants.INTERNAL_VALUE));
+//        showCartFragment.setArguments(cartBundle);
+//        onChangeFragment(showCartFragment);
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

@@ -34,6 +34,7 @@ public class Constants {
     public static final String PRODUCT_TOP_LEVEL_CATEGORY_SLUG = "tlc_s";
     public static final String PRODUCT_TOP_LEVEL_CATEGORY_NAME = "tlc_n";
     public static final String PRODUCT_CATEGORY_NAME = "pc_n";
+    public static final String IS_EXPRESS_AVAILABLE = "is_express";
     public static final String PRODUCT_CHILD_PRODUCTS = "all_prods";
     public static final String PRODUCT_PROMO_INFO = "p_promo_info";
     public static final String PROMO_ID = "promo_id";

@@ -1,7 +1,7 @@
-package com.bigbasket.mobileapp.fragment.account;
+package com.bigbasket.mobileapp.activity.account.uiv3;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -13,17 +13,18 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.WalletRule;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
-import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.CurrentWalletBalance;
 import com.bigbasket.mobileapp.model.account.WalletDataItem;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 
@@ -36,7 +37,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class DoWalletFragment extends BaseFragment {
+public class DoWalletActivity extends BackButtonActivity {
 
     boolean oneYearBack1 = false, oneYearBack2 = false, oneYearBack3 = false;
     private int numMonth1, numMonth2, numMonth3, maxDays1, maxDays2, maxDays3;
@@ -45,22 +46,19 @@ public class DoWalletFragment extends BaseFragment {
     };
     private String month1 = "", month2 = "", month3 = "", monthClickText;
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.uiv3_list_container, container, false);
-    }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setTitle(getString(R.string.wallet_activity));
         getCurrentMemberWalletBalance();
     }
 
     private void getCurrentMemberWalletBalance() {
-        if (!DataUtil.isInternetAvailable(getActivity())) {
+        if (!DataUtil.isInternetAvailable(getCurrentActivity())) {
             handler.sendOfflineError(true);
         }
-        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressView();
         bigBasketApiService.getCurrentWalletBalance(new Callback<ApiResponse<CurrentWalletBalance>>() {
             @Override
@@ -117,31 +115,30 @@ public class DoWalletFragment extends BaseFragment {
 
         TextView txtVoucherTc = (TextView) view.findViewById(R.id.txtVoucherTc);
         if (!TextUtils.isEmpty(walletRule.termAndCondition)) {
-            txtVoucherTc.setText(walletRule.termAndCondition);
+            txtVoucherTc.setText("*" + walletRule.termAndCondition);
             txtVoucherTc.setVisibility(View.VISIBLE);
         }
     }
 
 
     public void renderIntent(ArrayList<WalletDataItem> walletDataItemArrayList) {
-        WalletActivityFragment walletActivityFragment = new WalletActivityFragment();
-        Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList(Constants.WALLET_ACTIVITY_DATA, walletDataItemArrayList);
-        walletActivityFragment.setArguments(bundle);
-        changeFragment(walletActivityFragment);
-
+        Intent intent = new Intent(getCurrentActivity(), WalletActivity.class);
+        intent.putParcelableArrayListExtra(Constants.WALLET_ACTIVITY_DATA, walletDataItemArrayList);
+        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
 
     private void renderWalletMonthActivity(float currentBalance, WalletRule walletRule) {
-        if (getActivity() == null) return;
+        if (getCurrentActivity() == null) return;
         ViewGroup contentView = getContentView();
         if (contentView == null) return;
 
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+        LayoutInflater inflater = getLayoutInflater();
         View view = inflater.inflate(R.layout.uiv3_dowallet, contentView, false);
         contentView.addView(view);
-        ((TextView) view.findViewById(R.id.walletInfoMsg1)).setTypeface(faceRobotoLight);
+        ((TextView) view.findViewById(R.id.walletInfoMsg1)).setTypeface(faceRobotoRegular);
+        ((TextView) view.findViewById(R.id.walletInfoMsg2)).setTypeface(faceRobotoRegular);
+        ((TextView) view.findViewById(R.id.walletInfoMsg3)).setTypeface(faceRobotoRegular);
 
         String prefixBal = "Current Balance `";
         String mrpStrBal = currentBalance + "";
@@ -149,6 +146,9 @@ public class DoWalletFragment extends BaseFragment {
         SpannableString spannableBal = new SpannableString(prefixBal + " " + mrpStrBal);
         spannableBal.setSpan(new CustomTypefaceSpan("", faceRupee), prefixBalLen - 1,
                 prefixBalLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+
+        TextView walletActivitySubHeading = (TextView) view.findViewById(R.id.walletActivitySubHeading);
+        walletActivitySubHeading.setTypeface(faceRobotoMedium);
 
         TextView txtCurrentBalance = (TextView) view.findViewById(R.id.txtcurrentBalance);
         txtCurrentBalance.setText(spannableBal);
@@ -233,7 +233,7 @@ public class DoWalletFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
 
-                if (DataUtil.isInternetAvailable(getActivity())) {
+                if (DataUtil.isInternetAvailable(getCurrentActivity())) {
 
                     final Calendar date = Calendar.getInstance();
                     int year = date.get(Calendar.YEAR);
@@ -253,8 +253,7 @@ public class DoWalletFragment extends BaseFragment {
                     logWalletActivityClickEvent(numMonth1, year);
                     getWalletActivityForMonth(dateFrom, dateTo);
                 } else {
-                    String msg = "Cannot proceed with the operation. No network connection.";
-                    showErrorMsg(msg);
+                    handler.sendOfflineError(false);
                 }
 
 
@@ -264,7 +263,7 @@ public class DoWalletFragment extends BaseFragment {
         month2TxtView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (DataUtil.isInternetAvailable(getActivity())) {
+                if (DataUtil.isInternetAvailable(getCurrentActivity())) {
                     final Calendar date = Calendar.getInstance();
                     int year = date.get(Calendar.YEAR);
                     if (oneYearBack2)
@@ -283,15 +282,14 @@ public class DoWalletFragment extends BaseFragment {
                     logWalletActivityClickEvent(numMonth2, year);
                     getWalletActivityForMonth(dateFrom, dateTo);
                 } else {
-                    String msg = "Cannot proceed with the operation. No network connection.";
-                    showErrorMsg(msg);
+                    handler.sendOfflineError(false);
                 }
             }
         });
         month3TxtView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (DataUtil.isInternetAvailable(getActivity())) {
+                if (DataUtil.isInternetAvailable(getCurrentActivity())) {
 
                     final Calendar date = Calendar.getInstance();
                     int year = date.get(Calendar.YEAR);
@@ -311,8 +309,7 @@ public class DoWalletFragment extends BaseFragment {
                     getWalletActivityForMonth(dateFrom, dateTo);
 
                 } else {
-                    String msg = "Cannot proceed with the operation. No network connection.";
-                    showErrorMsg(msg);
+                    handler.sendOfflineError(false);
                 }
             }
         });
@@ -329,10 +326,10 @@ public class DoWalletFragment extends BaseFragment {
 
 
     private void getWalletActivityForMonth(final String dateFrom, final String dateTo) {
-        if (!DataUtil.isInternetAvailable(getActivity())) {
+        if (!DataUtil.isInternetAvailable(getCurrentActivity())) {
             return;
         }
-        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.getWalletActivity(dateFrom, dateTo,
                 new Callback<ApiResponse<ArrayList<WalletDataItem>>>() {
@@ -349,7 +346,7 @@ public class DoWalletFragment extends BaseFragment {
                                     walletActivityCallback.apiResponseContent.size() > 0) {
                                 renderIntent(walletActivityCallback.apiResponseContent);
                             } else {
-                                showErrorMsg(getString(R.string.noActivityErrorMsg) + " " + monthClickText);
+                                showAlertDialog(getString(R.string.noActivityErrorMsg) + " " + monthClickText);
                             }
                         } else {
                             handler.sendEmptyMessage(walletActivityCallback.status, walletActivityCallback.message);
@@ -368,27 +365,6 @@ public class DoWalletFragment extends BaseFragment {
                     }
                 });
 
-    }
-
-    @Override
-    public ViewGroup getContentView() {
-        return getView() != null ? (ViewGroup) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
-    }
-
-//    @Override
-//    public LinearLayout getContentView() {
-//        return getView() != null ? (LinearLayout) getView().findViewById(R.id.layoutDoWallet) : null;
-//    }
-
-    @Override
-    public String getTitle() {
-        return "My Wallet";
-    }
-
-    @NonNull
-    @Override
-    public String getFragmentTxnTag() {
-        return DoWalletFragment.class.getName();
     }
 
     @Override

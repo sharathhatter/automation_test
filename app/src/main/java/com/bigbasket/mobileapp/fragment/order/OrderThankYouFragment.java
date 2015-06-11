@@ -5,10 +5,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -40,16 +42,40 @@ public class OrderThankYouFragment extends BaseFragment implements InvoiceDataAw
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         ArrayList<Order> orders = getArguments().getParcelableArrayList(Constants.ORDERS);
-        showThankyou(orders);
+        //dummy order
+        showThankYou(orders);
         trackEvent(TrackingAware.THANK_YOU_PAGE_SHOWN, null);
     }
 
-    private void showThankyou(ArrayList<Order> orders) {
-        if (orders.size() == 1) {
-            renderSingleOrderInvoice(orders.get(0));
-        } else {
-            renderMultipleOrderInvoice(orders);
-        }
+    private void showThankYou(ArrayList<Order> orders) {
+        if (getActivity() == null) return;
+        ViewGroup contentView = getContentView();
+        if (contentView == null) return;
+        contentView.removeAllViews();
+
+        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        ViewGroup base = (ViewGroup) inflater.inflate(R.layout.uiv3_multiple_order_invoice_layout, contentView, false);
+
+        LinearLayout layoutOrderNumber = (LinearLayout) base.findViewById(R.id.layoutOrderNumber);
+
+        //order list
+        TextView orderNumberTxtView = new TextView(getActivity());
+        ViewGroup.MarginLayoutParams txtOrderNumberParams = (ViewGroup.MarginLayoutParams) orderNumberTxtView.getLayoutParams();
+        txtOrderNumberParams.topMargin = 4;
+        orderNumberTxtView.setLayoutParams(txtOrderNumberParams);
+        orderNumberTxtView.setText("BBXXXXXXXXXXX");
+        orderNumberTxtView.setGravity(Gravity.CENTER_HORIZONTAL);
+        layoutOrderNumber.addView(orderNumberTxtView);
+
+
+        contentView.addView(base);
+
+
+//        if (orders.size() == 1) {
+//            renderSingleOrderInvoice(orders.get(0));
+//        } else {
+//            renderMultipleOrderInvoice(orders);
+//        }
     }
 
     private void renderMultipleOrderInvoice(final ArrayList<Order> orders) {
@@ -59,8 +85,8 @@ public class OrderThankYouFragment extends BaseFragment implements InvoiceDataAw
 
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         ViewGroup base = (ViewGroup) inflater.inflate(R.layout.uiv3_multiple_order_invoice_layout, contentView, false);
-        AbsListView orderAbsListView = (AbsListView) base.findViewById(R.id.listOrders);
-        OrderListAdapter orderListAdapter = new OrderListAdapter(getActivity(), orders, 0);
+//        AbsListView orderAbsListView = (AbsListView) base.findViewById(R.id.listOrders);
+//        OrderListAdapter orderListAdapter = new OrderListAdapter(getActivity(), orders, 0);
 
 //        if (orderAbsListView instanceof ListView) {
 //            ((ListView) orderAbsListView).setAdapter(orderListAdapter);
@@ -75,16 +101,16 @@ public class OrderThankYouFragment extends BaseFragment implements InvoiceDataAw
 //            }
 //        });
 
-        TextView lblContinueShopping = (TextView) base.findViewById(R.id.lblContinueShopping);
-        lblContinueShopping.setTypeface(faceRobotoRegular);
-        lblContinueShopping.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (getCurrentActivity() != null) {
-                    getCurrentActivity().goToHome(false);
-                }
-            }
-        });
+//        TextView lblContinueShopping = (TextView) base.findViewById(R.id.lblContinueShopping);
+//        lblContinueShopping.setTypeface(faceRobotoRegular);
+//        lblContinueShopping.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (getCurrentActivity() != null) {
+//                    getCurrentActivity().goToHome(false);
+//                }
+//            }
+//        });
 
         contentView.removeAllViews();
         contentView.addView(base);

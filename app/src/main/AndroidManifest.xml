@@ -330,6 +330,13 @@
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" />
+
+        <activity
+            android:name=".activity.order.uiv3.ShowCartActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+
         <activity
             android:name=".activity.LandingPageActivity"
             android:configChanges="orientation|screenSize"
@@ -457,6 +464,20 @@
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" />
+
+        <activity
+            android:name=".activity.account.uiv3.DoWalletActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+
+        <activity
+            android:name=".activity.account.uiv3.WalletActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+
+
         <activity
             android:name=".activity.order.uiv3.PrescriptionListActivity"
             android:configChanges="orientation|screenSize"
@@ -550,7 +571,7 @@
         <!-- MANDATORY FIELD: THE NOTIFICATION ICON WHICH WILL BE USED TO SET TO NOTIFICATIONS POSTED -->
         <meta-data
             android:name="NOTIFICATION_ICON"
-            android:value="notification_icon" />
+            android:value="active_order" />
 
         <!-- moEngage UBox -->
         <activity

@@ -3,6 +3,9 @@ package com.bigbasket.mobileapp.fragment.order;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -144,6 +147,11 @@ public class OrderInvoiceSummaryFragment extends AbstractOrderSummaryFragment {
                 asRupeeSpannable(orderInvoiceDetails.getTotal()), orderTotalLabelColor,
                 orderTotalValueColor);
         layoutOrderSummaryInfo.addView(finalTotalRow);
+
+
+        View maxPayableByVoucher = getOrderMaxPayableByVoucher(inflater, getString(R.string.acceptedFoodCoupon),
+                orderInvoiceDetails.getFoodValue(), orderTotalLabelColor);
+        layoutOrderSummaryInfo.addView(maxPayableByVoucher);
 
         contentView.removeAllViews();
         contentView.addView(base);

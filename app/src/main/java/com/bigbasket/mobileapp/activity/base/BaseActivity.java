@@ -21,14 +21,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.SpannableString;
-import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.text.style.ClickableSpan;
-import android.text.style.ForegroundColorSpan;
-import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -38,13 +34,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignupActivity;
-import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.AgeValidationActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.BasketValidationActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.CheckoutQCActivity;
@@ -53,6 +47,7 @@ import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 import com.bigbasket.mobileapp.adapter.order.PrescriptionImageAdapter;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
+import com.bigbasket.mobileapp.activity.order.uiv3.ShowCartActivity;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
@@ -133,7 +128,7 @@ public abstract class BaseActivity extends AppCompatActivity implements COMarket
         }, 100);
     }
 
-    public static void hidekeyboard(Context context){
+    public static void hidekeyboard(Context context) {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
@@ -479,8 +474,7 @@ public abstract class BaseActivity extends AppCompatActivity implements COMarket
     }
 
     public void launchViewBasketScreen() {
-        Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
-        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_VIEW_BASKET);
+        Intent intent = new Intent(getCurrentActivity(), ShowCartActivity.class);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
@@ -567,7 +561,7 @@ public abstract class BaseActivity extends AppCompatActivity implements COMarket
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 String pinCode = editTextPincode.getText().toString();
                 String areaName = areaPinInfoAdapter.getAreaName(pinCode);
-                if(!TextUtils.isEmpty(pinCode) && !TextUtils.isEmpty(areaName)){
+                if (!TextUtils.isEmpty(pinCode) && !TextUtils.isEmpty(areaName)) {
                     editTextArea.setText(areaName);
                 }
             }

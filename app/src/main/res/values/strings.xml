@@ -118,7 +118,7 @@
     <string name="prescriptionNameList">Prescription Name:</string>
     <string name="ruleTotalPrice">Total Price:</string>
     <string name="ruleTotal">Total</string>
-    <string name="my_orders">My Orders</string>
+
     <string name="moEngageCommHub">MoEngage Hub</string>
     <string name="bbCommHub">Communication Hub</string>
     <string name="rating">Rating:</string>
@@ -204,6 +204,7 @@
     <string name="paymentHeading">PAYMENT DETAILS</string>
     <string name="subTotal">Sub Total</string>
     <string name="finalTotal">Total</string>
+    <string name="acceptedFoodCoupon">Accepted food coupon for this order is </string>
     <string name="deliveryCharges">Delivery Charges</string>
     <string name="noOrders">You don\'t have any delivered or cancelled order in</string>
     <string name="noOrdersPlaced">You haven\'t placed any orders yet</string>
@@ -247,14 +248,16 @@
     <string name="blankPin">****</string>
 
     <!-- wallet activity -->
-    <string name="noActivityErrorMsg">No Activity for</string>
+    <string name="noActivityErrorMsg">No Wallet Activity for</string>
     <string name="updating">UPDATING...</string>
     <string name="endingBal">Ending balance:</string>
+    <string name="wallet_activity_header">Wallet Activity</string>
     <string name="credited">Credited</string>
     <string name="debited">Debited:</string>
     <string name="walletActivityFor">Wallet activity for</string>
-    <string name="walletInfoMsg1">The BigBasket Wallet is a pre-paid credit account that is associated with your BigBasket account.\nWallet allows you to pay a lump sum amount and then shop multiple times without the hassle of making payments every time.\nWe will automatically deduct the amount corresponding to your order from your “Wallet” at the time of checkout until you run out of Wallet Credit.
-    \nYour BigBasket Wallet also gets credited automatically when BigBasket issues a Cashback, return of items credit etc.</string>
+    <string name="walletInfoMsg1">The BigBasket Wallet is a pre-paid credit account that is associated with your BigBasket account. Wallet allows you to pay a lump sum amount and then shop multiple times without the hassle of making payments every time you shop.</string>
+    <string name="walletInfoMsg2">We will automatically deduct the amount corresponding to your order from your “Wallet” at the time of checkout until you run out of Wallet Credit.</string>
+    <string name="walletInfoMsg3">Your BigBasket Wallet also gets credited automatically when BigBasket issues a Cashback, return of items credit etc.</string>
     <!-- signup -->
     <string name="passwordUpdated">Password successfully updated!</string>
     <string name="psswordMst6Digit">Password must be at least 6 characters.</string>
@@ -287,7 +290,7 @@
     <string name="noProductsSearchMsg">Sorry! There are no products found related to your search term.</string>
 
     <!-- Invoice -->
-    <string name="thankYouHeader">Thank You</string>
+    <string name="thankYouHeader">Thank You!</string>
     <string name="orderThankyouText">Thank you for placing order with BigBasket.\nYour Order# is\u00A0</string>
     <string name="multipleOrderThankyouText">Thank you! Your orders have been placed</string>
     <string name="viewInvoice">VIEW INVOICE</string>
@@ -406,4 +409,17 @@
     <string name="proceed">PROCEED</string>
     <string name="total">TOTAL :</string>
     <string name="deliveryPin">Delivery Pin</string>
+
+
+    <!-- order invoice -->
+    <string name="multi_order_place_txt">Your orders have been placed!</string>
+    <string name="order_place_txt">Your order has been placed!</string>
+    <string name="order_review_txt">You can review your order at any time in</string>
+    <string name="my_orders">My Orders</string>
+    <string name="continue_shopping">CONTINUE SHOPPING!</string>
+
+    <string name="expressDelAvailable">\u0020 Express Delivery may be available</string>
+    <string name="my_basket_header">My Basket</string>
+    <string name="empty_basket">Empty Basket</string>
+
 </resources>

@@ -1,21 +1,19 @@
-package com.bigbasket.mobileapp.fragment.account;
+package com.bigbasket.mobileapp.activity.account.uiv3;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.OrderDetailActivity;
 import com.bigbasket.mobileapp.adapter.account.WalletActivityListAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.callbacks.CallbackOrderInvoice;
-import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.InvoiceDataAware;
 import com.bigbasket.mobileapp.model.account.WalletDataItem;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
@@ -29,27 +27,23 @@ import java.util.ArrayList;
 /**
  * Created by jugal on 19/9/14.
  */
-public class WalletActivityFragment extends BaseFragment implements InvoiceDataAware {
+public class WalletActivity extends BackButtonActivity implements InvoiceDataAware {
 
     private ArrayList<WalletDataItem> walletActivityData;
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.uiv3_list_container, container, false);
-    }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setTitle(getString(R.string.wallet_activity_header));
         if (savedInstanceState != null) {
             walletActivityData = savedInstanceState.getParcelableArrayList(Constants.WALLET_DATA);
         } else {
-            walletActivityData = getArguments().getParcelableArrayList(Constants.WALLET_ACTIVITY_DATA);
+            walletActivityData = getIntent().getParcelableArrayListExtra(Constants.WALLET_ACTIVITY_DATA);
         }
         renderWalletActivityList(walletActivityData);
-
     }
+
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -61,14 +55,15 @@ public class WalletActivityFragment extends BaseFragment implements InvoiceDataA
 
 
     private void renderWalletActivityList(final ArrayList<WalletDataItem> walletActivityData) {
-        if (getActivity() == null) return;
+        if (getCurrentActivity() == null) return;
         ViewGroup view = getContentView();
         if (view == null) return;
 
-        ListView walletActivityList = new ListView(getActivity());
+        ListView walletActivityList = new ListView(getCurrentActivity());
         walletActivityList.setDivider(null);
+        walletActivityList.setPadding(0, 0, 0, 4);
         walletActivityList.setDividerHeight(0);
-        walletActivityList.setAdapter(new WalletActivityListAdapter<>(getActivity(),
+        walletActivityList.setAdapter(new WalletActivityListAdapter<>(getCurrentActivity(),
                 walletActivityData, faceRobotoRegular, faceRupee));
         walletActivityList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -77,7 +72,7 @@ public class WalletActivityFragment extends BaseFragment implements InvoiceDataA
                     WalletDataItem walletDataItem = walletActivityData.get(position);
                     String orderId = walletDataItem.getOrderNumber();
                     if (orderId != null && !orderId.equals("null")) {
-                        if (DataUtil.isInternetAvailable(getActivity())) {
+                        if (DataUtil.isInternetAvailable(getCurrentActivity())) {
                             showInvoice(orderId);
                         } else {
                             handler.sendOfflineError(true);
@@ -92,9 +87,9 @@ public class WalletActivityFragment extends BaseFragment implements InvoiceDataA
     }
 
     private void showInvoice(String orderId) {
-        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.getInvoice(orderId, new CallbackOrderInvoice<>(getActivity()));
+        bigBasketApiService.getInvoice(orderId, new CallbackOrderInvoice<>(getCurrentActivity()));
     }
 
     @Override
@@ -103,23 +98,6 @@ public class WalletActivityFragment extends BaseFragment implements InvoiceDataA
         orderDetailIntent.putExtra(Constants.ORDER_REVIEW_SUMMARY, orderInvoice);
         orderDetailIntent.putExtra(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_WALLET_ACTIVITIES);
         startActivityForResult(orderDetailIntent, NavigationCodes.GO_TO_HOME);
-    }
-
-
-    @Override
-    public ViewGroup getContentView() {
-        return getView() != null ? (ViewGroup) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
-    }
-
-    @Override
-    public String getTitle() {
-        return "Wallet Activity";
-    }
-
-    @NonNull
-    @Override
-    public String getFragmentTxnTag() {
-        return WalletActivityFragment.class.getName();
     }
 
     @Override

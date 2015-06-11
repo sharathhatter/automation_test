@@ -119,7 +119,7 @@ public final class ProductView {
         TextView txtProductDesc = productViewHolder.getTxtProductDesc();
         TextView txtProductBrand = productViewHolder.getTxtProductBrand();
         txtProductDesc.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
-        txtProductDesc.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
+        //txtProductDesc.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
         if (!TextUtils.isEmpty(product.getDescription())) {
             txtProductDesc.setText(product.getDescription());
             txtProductDesc.setVisibility(View.VISIBLE);
