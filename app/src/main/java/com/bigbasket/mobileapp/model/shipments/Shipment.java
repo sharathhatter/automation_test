@@ -18,6 +18,8 @@ public class Shipment implements Parcelable {
     private String shipmentName;
     @SerializedName(Constants.FULFILLMENT_NAME)
     private String fulfillmentName;
+    @SerializedName(Constants.FULFILLMENT_ID)
+    private String fulfillmentId;
     @SerializedName(Constants.DELIVERY_CHARGE)
     private String deliveryCharge;
     @SerializedName(Constants.ACTION)
@@ -42,6 +44,7 @@ public class Shipment implements Parcelable {
         dest.writeString(type);
         dest.writeString(shipmentName);
         dest.writeString(fulfillmentName);
+        dest.writeString(fulfillmentId);
         dest.writeString(deliveryCharge);
         boolean wasShipmentActionNull = shipmentAction == null;
         dest.writeByte(wasShipmentActionNull ? (byte) 1 : (byte) 0);
@@ -69,6 +72,7 @@ public class Shipment implements Parcelable {
         type = source.readString();
         shipmentName = source.readString();
         fulfillmentName = source.readString();
+        fulfillmentId = source.readString();
         deliveryCharge = source.readString();
         boolean wasShipmentActionNull = source.readByte() == (byte) 1;
         if (!wasShipmentActionNull) {
@@ -141,6 +145,10 @@ public class Shipment implements Parcelable {
 
     public String getHelpPage() {
         return helpPage;
+    }
+
+    public String getFulfillmentId() {
+        return fulfillmentId;
     }
 
     public Slot getSelectedSlot() {

@@ -26,6 +26,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseC
 import com.bigbasket.mobileapp.apiservice.models.response.PostDeliveryAddressApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostFeedbackApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostPrepaidPaymentResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.PostShipmentResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostVoucherApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PrescriptionImageUrls;
 import com.bigbasket.mobileapp.apiservice.models.response.ProductDetailApiResponse;
@@ -400,4 +401,10 @@ public interface BigBasketApiService {
                               @Field(Constants.SUPPORT_CC) String supportsCreditCard,
                               @Field(Constants.SUPPORT_POWER_PAY) String supportsPowerPay,
                               Callback<ApiResponse<CreatePotentialOrderResponseContent>> apiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/co-post-shipment/")
+    void postShipment(@Field("shipments") String shipments,
+                      @Field(Constants.P_ORDER_ID) String potentialOrderId,
+                      Callback<ApiResponse<PostShipmentResponseContent>> apiResponseCallback);
 }

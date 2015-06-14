@@ -24,6 +24,7 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
 import com.bigbasket.mobileapp.adapter.shipment.SlotListAdapter;
+import com.bigbasket.mobileapp.apiservice.models.request.SelectedShipment;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.model.order.OrderDetails;
 import com.bigbasket.mobileapp.model.shipments.BaseShipmentAction;
@@ -32,6 +33,7 @@ import com.bigbasket.mobileapp.model.shipments.ShipmentAction;
 import com.bigbasket.mobileapp.model.shipments.Slot;
 import com.bigbasket.mobileapp.model.shipments.SlotDisplay;
 import com.bigbasket.mobileapp.model.shipments.ToggleShipmentAction;
+import com.bigbasket.mobileapp.task.PostShipmentTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
@@ -46,6 +48,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
 
     private LinkedHashMap<String, Shipment> mShipmentLinkedHashMap;
     private boolean mHasUserToggledShipments;
+    private ArrayList<String> selectedShipmentIds;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,23 +72,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         ViewGroup layoutCheckoutFooter = (ViewGroup) findViewById(R.id.layoutCheckoutFooter);
         UIUtil.setUpFooterButton(this, layoutCheckoutFooter, orderDetails.getFormattedFinalTotal(),
                 getString(R.string.choosePayment));
-        layoutCheckoutFooter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getCurrentActivity(), PaymentSelectionActivity.class);
-                intent.putExtra(Constants.ORDER_DETAILS, getIntent().getParcelableExtra(Constants.ORDER_DETAILS));
-                intent.putExtra(Constants.EVOUCHER_CODE, getIntent().getParcelableExtra(Constants.EVOUCHER_CODE));
-                intent.putParcelableArrayListExtra(Constants.VOUCHERS,
-                        getIntent().getParcelableArrayListExtra(Constants.VOUCHERS));
-                intent.putParcelableArrayListExtra(Constants.PAYMENT_TYPES,
-                        getIntent().getParcelableArrayListExtra(Constants.PAYMENT_TYPES));
-                intent.putExtra(Constants.CREDIT_DETAILS,
-                        getIntent().getParcelableArrayListExtra(Constants.CREDIT_DETAILS));
-                intent.putExtra(Constants.P_ORDER_ID,
-                        getIntent().getStringExtra(Constants.P_ORDER_ID));
-                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-            }
-        });
+        layoutCheckoutFooter.setOnClickListener(new OnPostShipmentClickListener());
     }
 
     private void renderShipments() {
@@ -104,6 +91,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
     }
 
     private void displayShipmentsBasedOnViewState(HashMap<String, BaseShipmentAction> shipmentActionHashMap) {
+        selectedShipmentIds = new ArrayList<>();
         TextView txtDeliverablesHeading = (TextView) findViewById(R.id.txtDeliverablesHeading);
         txtDeliverablesHeading.setTypeface(faceRobotoRegular);
         txtDeliverablesHeading.setText(mShipmentLinkedHashMap.size() > 1 ? R.string.deliverableTextPlural :
@@ -126,6 +114,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
                         case Constants.HIDDEN:
                             continue;
                         case Constants.SHOW:
+                            selectedShipmentIds.add(shipment.getShipmentId());
                             shipmentView.setBackgroundColor(getResources().getColor(R.color.uiv3_large_list_item_bck));
                             break;
                         case Constants.DISABLED:
@@ -144,6 +133,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
             } else {
                 shipmentView.setBackgroundColor(getResources().getColor(R.color.uiv3_large_list_item_bck));
                 switchToggleDelivery.setVisibility(View.GONE);
+                selectedShipmentIds.add(shipment.getShipmentId());
             }
             TextView txtShipmentName = (TextView) shipmentView.findViewById(R.id.txtShipmentName);
             txtShipmentName.setTypeface(faceRobotoRegular);
@@ -227,12 +217,38 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
 
         private void updateMapFromToggleList(HashMap<String, BaseShipmentAction> shipmentActionHashMap,
                                              ArrayList<ToggleShipmentAction> toggleShipmentActions) {
-            for (ToggleShipmentAction toggleShipmentAction: toggleShipmentActions) {
+            for (ToggleShipmentAction toggleShipmentAction : toggleShipmentActions) {
                 shipmentActionHashMap.put(toggleShipmentAction.getId(),
                         new BaseShipmentAction(toggleShipmentAction.getActionMsg(),
                                 toggleShipmentAction.getViewState(),
                                 toggleShipmentAction.getActionState()));
             }
+        }
+    }
+
+    private class OnPostShipmentClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            if (selectedShipmentIds == null || selectedShipmentIds.size() == 0) {
+                showToast(getString(R.string.selectAllSlotsErrMsg));
+                return;
+            }
+            ArrayList<SelectedShipment> selectedShipments = new ArrayList<>();
+            for (String shipmentId : selectedShipmentIds) {
+                Shipment shipment = mShipmentLinkedHashMap.get(shipmentId);
+                if (shipment.getSelectedSlot() == null) {
+                    showToast(getString(R.string.selectAllSlotsErrMsg));
+                    break;
+                }
+                SelectedShipment selectedShipment = new
+                        SelectedShipment(shipmentId, shipment.getFulfillmentId(),
+                        shipment.getSelectedSlot().getSlotId(), shipment.getSelectedSlot().getSlotDate(),
+                        shipment.getSelectedSlot().getSlotTime());
+                selectedShipments.add(selectedShipment);
+            }
+            String potentialOrderId = getIntent().getStringExtra(Constants.P_ORDER_ID);
+            if (potentialOrderId == null) return;
+            new PostShipmentTask<>(getCurrentActivity(), selectedShipments, potentialOrderId).startTask();
         }
     }
 

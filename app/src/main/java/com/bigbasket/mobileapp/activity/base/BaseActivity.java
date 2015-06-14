@@ -235,15 +235,8 @@ public abstract class BaseActivity extends AppCompatActivity implements COMarket
 
     private void launchSlotSelection(CreatePotentialOrderResponseContent createPotentialOrderResponseContent) {
         Intent intent = new Intent(getCurrentActivity(), ShipmentSelectionActivity.class);
-        intent.putExtra(Constants.EVOUCHER_CODE, createPotentialOrderResponseContent.evoucherCode);
-        intent.putParcelableArrayListExtra(Constants.VOUCHERS,
-                createPotentialOrderResponseContent.activeVouchersArrayList);
         intent.putParcelableArrayListExtra(Constants.SHIPMENTS, createPotentialOrderResponseContent.shipments);
-        intent.putParcelableArrayListExtra(Constants.PAYMENT_TYPES,
-                createPotentialOrderResponseContent.paymentTypes);
         intent.putExtra(Constants.ORDER_DETAILS, createPotentialOrderResponseContent.orderDetails);
-        intent.putParcelableArrayListExtra(Constants.CREDIT_DETAILS,
-                createPotentialOrderResponseContent.creditDetails);
         intent.putExtra(Constants.P_ORDER_ID, createPotentialOrderResponseContent.potentialOrderId);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
