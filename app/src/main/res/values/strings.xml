@@ -3,9 +3,6 @@
     <string name="app_name">BigBasket</string>
     <string name="search">Search</string>
     <string name="searchHint">Search</string>
-    <string name="pharma_msg">Please choose/upload pharma prescription or remove pharma products</string>
-    <string name="age_validation_required">Age check or validation is required.</string>
-    <string name="errorWhileSampling">Error while sampling, please try again!</string>
     <string name="product_id_invalid">Sorry, this product does not exists!</string>
     <string name="invalidBasketQty">You cannot add any more quantities for this product!</string>
     <string name="headingServerError">Server Error!</string>
@@ -18,7 +15,6 @@
     <string name="OLD_PASS_NOT_CORRECT">Old password is incorrect!</string>
     <string name="slotNotAvailable">The selected delivery slot is no longer available, please select a new slot!</string>
     <string name="REGISTERED_EMAIL">Already registered with us, please use a different email!</string>
-    <string name="multipleDeliverySlotMsg1">This order is fulfilled by more than one vendor and hence will be delivered separately.</string>
     <string name="deliverySlotHeading">DELIVERY SLOT</string>
     <string name="cartNotExistsError">Cart does not exist!</string>
     <string name="basketEmpty">Your Basket is empty!</string>
@@ -29,7 +25,6 @@
         following product will be automatically added to your order during checkout.</string>
     <string name="free_promo_redeemed_txt">Following product will be added to your order during checkout.</string>
     <string name="product_image">Product Image</string>
-    <string name="add_to_shop">Add to Shopping List</string>
     <string name="discount">Discount</string>
     <string name="promo">Promo</string>
     <string name="remove">Remove</string>
@@ -48,38 +43,27 @@
     <string name="pin_text_para2">This PIN is required for acknowledgment of order delivery and to provide feedback for our service.</string>
     <string name="pin_text_para3">We request you not to share with the delivery person.</string>
     <string name="pin_text_para4">The PIN will also be sent to you as part of ready-to-ship email or SMS for each order.</string>
-    <string name="new_pin_hint">Please enter 4-digit PIN</string>
     <string name="placeorder">Place Order</string>
-    <string name="reviewAndPlaceorder">Review &amp; Place Order</string>
     <string name="invoicenumber">Invoice No:</string>
     <string name="ordernumber">Order No:</string>
-    <string name="amountpay">Amount to Pay</string>
     <string name="vat">VAT</string>
     <string name="action">Action</string>
     <string name="item">Item</string>
-    <string name="orderSummaryDefaultMsg">Your order is not placed yet! Please review and then place order.</string>
-    <string name="paymentGatewayRedirectMsg">Please note: You will be re-directed to the payment gateway, to complete the payment</string>
     <string name="txnFailedRetryTxt">Please choose a different payment method, or retry again!</string>
     <string name="ok">OK</string>
     <string name="yesTxt">Yes</string>
     <string name="noTxt">No</string>
-    <string name="walletUsed">Used from wallet:</string>
-    <string name="walletBal">Balance in wallet:</string>
-    <string name="youSaved">You saved:</string>
     <string name="walletSummary">Wallet Summary</string>
     <string name="walletBalance">Current Balance</string>
     <string name="summary">Summary</string>
     <string name="items">Items</string>
     <string name="orderModification">Modified</string>
-    <string name="orderReview">Review Order</string>
     <string name="chooseSlot">Delivery Options</string>
     <string name="createShoppingList">Create shopping List</string>
     <string name="shoppingListNameDialogTextHint">Enter shopping list name</string>
     <string name="chooseCity">Pick Your City</string>
     <string name="changeCityMenuTxt">Change City</string>
     <string name="outOfStock">Out of stock</string>
-    <string name="orLoginUsingEmail">Or Login using E-mail</string>
-    <string name="orSignupUsingEmail">Or Sign Up using E-mail</string>
     <string name="OR">OR</string>
     <string name="myAccount">My Account</string>
     <string name="signOut">Logout</string>
@@ -106,18 +90,6 @@
     <string name="newTxt">New</string>
     <string name="one">1</string>
     <string name="ADD">ADD</string>
-    <string name="UploadPrescription">UPLOAD PRESCRIPTION</string>
-    <string name="imageMandatoryError">Prescription Image is mandatory!</string>
-    <string name="imageUploading">Images loading....</string>
-    <string name="patientName">Patient Name</string>
-    <string name="doctorName">Doctor Name</string>
-    <string name="prescriptionName">Prescription Name</string>
-    <string name="dateCreatedList">Date Created:</string>
-    <string name="patientNameList">Patient Name:</string>
-    <string name="doctorNameList">Doctor Name:</string>
-    <string name="prescriptionNameList">Prescription Name:</string>
-    <string name="ruleTotalPrice">Total Price:</string>
-    <string name="ruleTotal">Total</string>
     <string name="my_orders">My Orders</string>
     <string name="moEngageCommHub">MoEngage Hub</string>
     <string name="bbCommHub">Communication Hub</string>
@@ -129,9 +101,6 @@
     <string name="apply">Apply</string>
     <string name="pleaseNote">Please Note:</string>
     <string name="shopFromOrder">Shop from this order</string>
-    <string name="back">Go Back</string>
-    <string name="background">Background</string>
-    <string name="slot">Slots</string>
 
     <style name="placeOrder">Place Order</style>
 
@@ -148,17 +117,10 @@
     <string name="otpCodeErrorMsg">Confirmation code entered is not valid.</string>
     <string name="numberUsedByAnotherMember">This mobile number is already in use, please use another mobile number.</string>
     <string name="resendOtpMsg">Code has been resent</string>
-    <string name="viewPrescriptionImages">View images</string>
-    <string name="txtChoosePrescription">Choose prescription</string>
-    <string name="uploadServiceForPrescriptionImage">Prescription Image Upload Service</string>
-    <string name="viewBasket">View Basket</string>
     <string name="more">More</string>
     <string name="moreAllCaps">MORE</string>
-    <string name="plusMore">&#43; More</string>
     <string name="drawer_open">Open navigation</string>
     <string name="drawer_close">Close navigation</string>
-    <string name="delete_from_shop_lst">Delete from shopping list</string>
-    <string name="additional_action">Additional action</string>
     <string name="please_wait">Please wait...</string>
     <string name="email">E-mail</string>
     <string name="emailNewPassword">Email new password</string>
@@ -170,7 +132,6 @@
     <string name="edit">Edit</string>
     <string name="renameShoppingList">Rename Shopping List</string>
     <string name="remember">Remember Me</string>
-    <string name="showPassword">Show Password</string>
     <string name="forgotPasswd">Forgot Password?</string>
     <string name="newPasswordSent">Your new password is emailed to you. Please check and login!</string>
     <string name="abortPayu">Are you sure, that you want to abort this transaction?</string>
@@ -181,13 +142,7 @@
     <string name="mobileNumber">Mobile Number</string>
     <string name="selectShoppingList">Select a shopping list</string>
     <string name="chooseShopList">Please select a shopping list</string>
-    <string name="uploadPrescription">Choose/Upload Prescription</string>
-    <string name="prescriptionIDSaved">Prescription selected</string>
     <string name="versionNoUpdated">Version Number Updated</string>
-    <string name="preYesRadioBtnAgeMsg">"Yes, I am aged</string>
-    <string name="preNoRadioBtnAgeMsg">No, I am not aged</string>
-    <string name="YesRadioBtnPharmaMsg">Yes, I have prescription.</string>
-    <string name="NoRadioBtnPharmaMsg">No, I do not have a prescription.</string>
     <string name="selectAllSlotsErrMsg">You have not selected slots for all the orders.</string>
 
     <!-- payment -->
@@ -299,7 +254,6 @@
     <string name="payment_and_slot_selection">Payment &amp; Slot Selection</string>
     <string name="empty_basket_txt1">There are no items in your basket.</string>
     <string name="empty_basket_txt2">Enjoy great shopping experience with us!</string>
-
 
 
     <string name="start_shopping_txt">START SHOPPING</string>

@@ -23,12 +23,10 @@ import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OrderListApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseContent;
-import com.bigbasket.mobileapp.apiservice.models.response.PostDeliveryAddressApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostFeedbackApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostPrepaidPaymentResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PostShipmentResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostVoucherApiResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.PrescriptionImageUrls;
 import com.bigbasket.mobileapp.apiservice.models.response.ProductDetailApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.ProductNextPageResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PromoDetailApiResponseContent;
@@ -36,20 +34,14 @@ import com.bigbasket.mobileapp.apiservice.models.response.PromoSetProductsApiRes
 import com.bigbasket.mobileapp.apiservice.models.response.PromoSummaryApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.SubCategoryApiResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.UpdateProductQtyResponseModel;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateProfileApiResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.UpdateReservationResponseModel;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateVersionInfoApiResponseContent;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.model.account.CurrentWalletBalance;
 import com.bigbasket.mobileapp.model.account.UpdatePin;
 import com.bigbasket.mobileapp.model.account.WalletDataItem;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
-import com.bigbasket.mobileapp.model.order.COReserveQuantity;
-import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
-import com.bigbasket.mobileapp.model.order.OrderSummary;
-import com.bigbasket.mobileapp.model.order.PrescriptionId;
 import com.bigbasket.mobileapp.model.product.ProductTabData;
 import com.bigbasket.mobileapp.util.Constants;
 
@@ -124,26 +116,6 @@ public interface BigBasketApiService {
     @FormUrlEncoded
     @POST("/change-pin/")
     void updateCurrentMemberPin(@Field(Constants.NEW_PIN) String newPin, Callback<BaseApiResponse> updatePinCallback);
-
-    @FormUrlEncoded
-    @POST("/upload-prescription/")
-    void uploadPrescription(@Field(Constants.PATIENT_NAME) String patientName,
-                            @Field(Constants.DOCTOR_NAME) String docName,
-                            @Field(Constants.PRESCRIPTION_NAME) String PrescriptionName,
-                            Callback<ApiResponse<PrescriptionId>> prescriptionId);
-
-    @FormUrlEncoded
-    @POST("/upload-prescription-image-chunk/")
-    void uploadPrescriptionImages(@Field(Constants.PHARMA_PRESCRIPTION_ID) String prescriptionId,
-                                  @Field(Constants.CHUNK_NUMBER) String chunkNumber,
-                                  @Field(Constants.MAX_CHUNKS) String maxChunk,
-                                  @Field(Constants.PRESCRIPTION_IMAGE_CHUNK) String prescriptionImageChunk,
-                                  @Field(Constants.IMAGE_SEQUENCE) String imageSeq,
-                                  Callback<BaseApiResponse> uploadPrescriptionImageCallback);
-
-    @GET("/get-prescription-images/")
-    void getPrescriptionImageUrls(@Query(Constants.PHARMA_PRESCRIPTION_ID) String prescriptionId,
-                                  Callback<ApiResponse<PrescriptionImageUrls>> imageUrlsCallback);
 
     @GET("/get-current-wallet-balance/")
     void getCurrentWalletBalance(Callback<ApiResponse<CurrentWalletBalance>> currentWalletBalCallback);
@@ -268,9 +240,6 @@ public interface BigBasketApiService {
     void deleteItemFromShoppingList(@Field("product_id") String productId, @Field(Constants.SLUG) String shoppingListSlug,
                                     Callback<OldBaseApiResponse> deleteItemFromShoppingListApiResponseCallback);
 
-    @GET("/co-basket-check/")
-    void basketCheck(Callback<ApiResponse<MarketPlace>> marketPlaceApiResponseCallback);
-
     @GET("/c-summary/")
     CartSummaryApiResponse cartSummary();
 
@@ -282,19 +251,6 @@ public interface BigBasketApiService {
     @GET("/co-get-delivery-addresses/")
     void getDeliveryAddresses(Callback<ApiResponse<GetDeliveryAddressApiResponseContent>> getDeliveryAddressApiResponseCallback);
 
-    @FormUrlEncoded
-    @POST("/co-post-delivery-addresses/")
-    void postDeliveryAddresses(@Field(Constants.P_ORDER_ID) String potentialOrderId, @Field(Constants.ADDRESS_ID) String addressId,
-                               @Field(Constants.SUPPORT_CC) String supportsCreditCard,
-                               @Field(Constants.SUPPORT_POWER_PAY) String supportsPowerPay,
-                               Callback<OldApiResponse<PostDeliveryAddressApiResponseContent>> postDeliveryAddressApiResponseCallback);
-
-    @FormUrlEncoded
-    @POST("/co-post-slot-and-payment/")
-    void postSlotAndPayment(@Field(Constants.P_ORDER_ID) String potentialOrderId, @Field(Constants.SLOTS) String slots,
-                            @Field(Constants.PAYMENT_TYPE) String paymentType, @Field(Constants.SUPPORT_CC) String supportsCreditCard,
-                            Callback<ApiResponse<OrderSummary>> postSlotAndPaymentApiResponseCallback);
-
     @GET("/get-payment-params/")
     void getPaymentParams(@Query(Constants.PID) String potentialOrderId, @Query(Constants.AMOUNT) String amount,
                           Callback<ApiResponse<GetPaymentParamsApiResponseContent>> getPaymentParamsApiResponseCallback);
@@ -303,10 +259,6 @@ public interface BigBasketApiService {
     @POST("/co-place-order/")
     void placeOrder(@Field(Constants.P_ORDER_ID) String potentialOrderId, @Field(Constants.TXN_ID) String txnId,
                     Callback<OldApiResponse<PlaceOrderApiResponseContent>> placeOrderApiResponseCallback);
-
-    @GET("/c-bulk-remove/")
-    void cartBulkRemove(@Query(Constants.FULFILLMENT_ID) String fulfillmentId,
-                        Callback<BaseApiResponse> cartBulkRemoveApiResponseCallback);
 
     @GET("/search-tc/")
     ApiResponse<AutoSearchApiResponseContent> autoSearch(@Query("t") String term);
@@ -338,17 +290,6 @@ public interface BigBasketApiService {
     void getSubCategoryData(@Query(Constants.CATEGORY_SLUG) String categorySlug,
                             @Query(Constants.VERSION) String version,
                             Callback<ApiResponse<SubCategoryApiResponse>> subCategoryCallback);
-
-    @FormUrlEncoded
-    @POST("/co-update-reservation/")
-    void coUpdateReservation(@Field(Constants.P_ORDER_ID) String potentialOrderId,
-                             @Field(Constants.ITEMS) String items,
-                             Callback<UpdateReservationResponseModel<UpdateProductQtyResponseModel>> coUpdateReservationApiResponseCallback);
-
-    @FormUrlEncoded
-    @POST("/co-reserve-quantity/")
-    void coReserveQuantity(@Field(Constants.PHARMA_PRESCRIPTION_ID) String pharmaPrescriptionId,
-                           Callback<OldApiResponse<COReserveQuantity>> coReserveQtyApiResponseCallback);
 
     @GET("/get-products-for-order/")
     void getProductsForOrder(@Query(Constants.ORDER_ID) String orderId,

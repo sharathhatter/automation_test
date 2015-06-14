@@ -7,14 +7,13 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
-import com.bigbasket.mobileapp.adapter.order.PrescriptionImageAdapter;
 import com.bigbasket.mobileapp.adapter.product.CategoryAdapter;
 import com.bigbasket.mobileapp.adapter.product.SubCategoryAdapter;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "bigbasket.db";
-    protected static final int DATABASE_VERSION = 13;
+    protected static final int DATABASE_VERSION = 14;
     public static SQLiteDatabase db = null;
     private static DatabaseHelper dbAdapter = null;
     private static boolean isConnectionOpen = false;
@@ -70,7 +69,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CategoryAdapter.createTable);
         db.execSQL(SubCategoryAdapter.createTable);
         db.execSQL(AreaPinInfoAdapter.createTable);
-        db.execSQL(PrescriptionImageAdapter.createTable);
         db.execSQL(SearchSuggestionAdapter.createTable);
         db.execSQL(MostSearchesAdapter.createTable);
     }

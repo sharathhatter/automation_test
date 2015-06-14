@@ -11,5 +11,4 @@
     <dimen name="vertical_tile_with_img_min_height">220dp</dimen>
     <integer name="numGridCols">3</integer>
     <dimen name="banner_slider_height">180dp</dimen>
-    <dimen name="product_row_item_margin_small">16dp</dimen>
 </resources>

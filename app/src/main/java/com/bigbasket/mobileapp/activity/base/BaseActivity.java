@@ -1,7 +1,6 @@
 package com.bigbasket.mobileapp.activity.base;
 
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -40,33 +39,21 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignupActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
-import com.bigbasket.mobileapp.activity.order.uiv3.AgeValidationActivity;
-import com.bigbasket.mobileapp.activity.order.uiv3.BasketValidationActivity;
-import com.bigbasket.mobileapp.activity.order.uiv3.CheckoutQCActivity;
 import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
-import com.bigbasket.mobileapp.adapter.order.PrescriptionImageAdapter;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
-import com.bigbasket.mobileapp.interfaces.COMarketPlaceAware;
-import com.bigbasket.mobileapp.interfaces.COReserveQuantityCheckAware;
 import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
-import com.bigbasket.mobileapp.interfaces.EmailAddressAware;
 import com.bigbasket.mobileapp.interfaces.LaunchProductListAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
-import com.bigbasket.mobileapp.model.order.COReserveQuantity;
-import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.task.COReserveQuantityCheckTask;
-import com.bigbasket.mobileapp.task.UploadImageService;
-import com.bigbasket.mobileapp.task.uiv3.LoadEmailAddressTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.DialogButton;
@@ -97,9 +84,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
-public abstract class BaseActivity extends AppCompatActivity implements COMarketPlaceAware,
-        COReserveQuantityCheckAware, CancelableAware, ProgressIndicationAware, ActivityAware,
-        ConnectivityAware, TrackingAware, ApiErrorAware, EmailAddressAware,
+public abstract class BaseActivity extends AppCompatActivity implements
+        CancelableAware, ProgressIndicationAware, ActivityAware,
+        ConnectivityAware, TrackingAware, ApiErrorAware,
         LaunchProductListAware {
 
     public static Typeface faceRupee;
@@ -107,7 +94,6 @@ public abstract class BaseActivity extends AppCompatActivity implements COMarket
             faceRobotoBold;
     protected BigBasketMessageHandler handler;
     protected boolean isActivitySuspended;
-    protected COReserveQuantity coReserveQuantity;
     protected ProgressDialog progressDialog = null;
     private MoEHelper moEHelper;
     private AppEventsLogger fbLogger;
@@ -198,39 +184,6 @@ public abstract class BaseActivity extends AppCompatActivity implements COMarket
     public abstract BaseActivity getCurrentActivity();
 
     @Override
-    public void onCoMarketPlaceSuccess(MarketPlace marketPlace) {
-        if (marketPlace.isRuleValidationError()) {
-            Intent intent = new Intent(getCurrentActivity(), BasketValidationActivity.class);
-            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-        } else if (marketPlace.isAgeCheckRequired() || marketPlace.isPharamaPrescriptionNeeded()
-                || marketPlace.hasTermsAndCond()) {
-            Intent intent = new Intent(getCurrentActivity(), AgeValidationActivity.class);
-            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-        } else {
-            SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
-            String pharmaPrescriptionId = prefer.getString(Constants.PHARMA_PRESCRIPTION_ID, null);
-            new COReserveQuantityCheckTask<>(getCurrentActivity(), pharmaPrescriptionId).startTask();
-        }
-    }
-
-    @Override
-    public COReserveQuantity getCOReserveQuantity() {
-        return coReserveQuantity;
-    }
-
-    @Override
-    public void setCOReserveQuantity(COReserveQuantity coReserveQuantity) {
-        this.coReserveQuantity = coReserveQuantity;
-    }
-
-    @Override
-    public void onCOReserveQuantityCheck() {
-        Intent intent = new Intent(getCurrentActivity(), CheckoutQCActivity.class);
-        intent.putExtra(Constants.CO_RESERVE_QTY_DATA, coReserveQuantity);
-        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-    }
-
-    @Override
     protected void onStart() {
         super.onStart();
         isActivitySuspended = false;
@@ -270,24 +223,6 @@ public abstract class BaseActivity extends AppCompatActivity implements COMarket
         }
         initializeKonotor();
         MoEngageWrapper.onResume(moEHelper, getCurrentActivity());
-        prescriptionImageUploadHandler();
-    }
-
-    private void prescriptionImageUploadHandler() {
-        PrescriptionImageAdapter prescriptionImageAdapter = new PrescriptionImageAdapter(getCurrentActivity());
-        if (!prescriptionImageAdapter.exists()) {
-            stopService(new Intent(this, UploadImageService.class));
-        } else if (prescriptionImageAdapter.hasData() && !isMyServiceRunning(UploadImageService.class)) {
-            startService(new Intent(getCurrentActivity(), UploadImageService.class));
-        }
-    }
-
-    private boolean isMyServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) return true;
-        }
-        return false;
     }
 
     public void launchKonotor() {
@@ -769,23 +704,6 @@ public abstract class BaseActivity extends AppCompatActivity implements COMarket
     public boolean isPendingReloadApp() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
         return preferences.getBoolean(Constants.RELOAD_APP, false);
-    }
-
-    protected void populateAutoComplete(AutoCompleteTextView emailView) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            // Use ContactsContract.Profile (API 14+)
-            getLoaderManager().initLoader(0, null, new LoadEmailAddressTask<>(getCurrentActivity(), emailView).new ContactsLoader());
-        }
-    }
-
-    public void addEmailsToAutoComplete(List<String> emailAddressCollection, AutoCompleteTextView emailView) {
-        //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
-        int layout = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2 ?
-                android.R.layout.simple_dropdown_item_1line : android.R.layout.simple_list_item_1;
-        ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(getCurrentActivity(), layout, emailAddressCollection);
-
-        emailView.setAdapter(adapter);
     }
 
     public void togglePasswordView(EditText passwordEditText, boolean show) {

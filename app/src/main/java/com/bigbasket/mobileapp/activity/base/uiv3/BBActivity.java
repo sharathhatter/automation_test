@@ -54,7 +54,6 @@ import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.order.MemberAddressListFragment;
 import com.bigbasket.mobileapp.fragment.order.OrderThankYouFragment;
 import com.bigbasket.mobileapp.fragment.order.ShowCartFragment;
-import com.bigbasket.mobileapp.fragment.order.SlotSelectionFragment;
 import com.bigbasket.mobileapp.fragment.product.CategoryLandingFragment;
 import com.bigbasket.mobileapp.fragment.product.ProductDetailFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoCategoryFragment;
@@ -330,9 +329,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 break;
             case FragmentCodes.START_ADDRESS_SELECTION:
                 addToMainLayout(new MemberAddressListFragment());
-                break;
-            case FragmentCodes.START_SLOT_SELECTION:
-                addToMainLayout(new SlotSelectionFragment());
                 break;
             case FragmentCodes.START_WALLET_FRAGMENT:
                 addToMainLayout(new DoWalletFragment());

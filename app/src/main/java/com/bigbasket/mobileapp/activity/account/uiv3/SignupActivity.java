@@ -8,7 +8,6 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -38,7 +37,7 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
     private EditText mLastNameView;
     private int mSelectedCityIndx;
     private EditText mCityView;
-    private AutoCompleteTextView mEmailView;
+    private EditText mEmailView;
     private boolean mIsPasswordVisible;
 
     @Override
@@ -65,7 +64,7 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
         mFirstNameView.setNextFocusDownId(R.id.editTextLastName);
         mLastNameView = (EditText) findViewById(R.id.editTextLastName);
 //        mRefCodeView = (EditText) base.findViewById(R.id.editTextRefCode);
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.emailInput);
+        mEmailView = (EditText) findViewById(R.id.emailInput);
         mCityView = (EditText) findViewById(R.id.editTextChooseCity);
 
         Button btnSignUp = (Button) findViewById(R.id.btnRegister);
@@ -99,7 +98,6 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
         setUpSocialButtons(findViewById(R.id.plus_sign_in_button),
                 findViewById(R.id.btnFBLogin));
 
-        populateAutoComplete(mEmailView);
         trackEvent(TrackingAware.REGISTRATION_PAGE_SHOWN, null);
     }
 
