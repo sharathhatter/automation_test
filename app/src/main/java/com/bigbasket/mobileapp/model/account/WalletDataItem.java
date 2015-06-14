@@ -3,6 +3,9 @@ package com.bigbasket.mobileapp.model.account;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.bigbasket.mobileapp.util.Constants;
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created with IntelliJ IDEA.
  * User: jugal
@@ -25,9 +28,16 @@ public class WalletDataItem implements Parcelable {
         }
     };
     String type;
+    @SerializedName(Constants.ORDER_NUMBER)
     String orderNumber;
+
+    @SerializedName(Constants.ORDER_ID)
     private String orderId;
+
+    @SerializedName(Constants.STARTING_BALANCE)
     private double startingBalance;
+
+    @SerializedName(Constants.ENDING_BALANCE)
     private double endingBalance;
     private String date;
     private double amount;

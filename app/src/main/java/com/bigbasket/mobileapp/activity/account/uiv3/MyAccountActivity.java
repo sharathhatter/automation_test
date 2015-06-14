@@ -55,6 +55,7 @@ public class MyAccountActivity extends BackButtonActivity {
 
     private void getMemberDetails() {
         if (!DataUtil.isInternetAvailable(getCurrentActivity())) {
+            handler.sendOfflineError(true);
             return;
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());

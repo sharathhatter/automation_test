@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class AppDataResponse {
 
-    @SerializedName(Constants.ANALYTICS)
+    @SerializedName(Constants.USER_DETAILS)
     public LoginUserDetails userDetails;
 
     @SerializedName(Constants.CAPABILITIES)

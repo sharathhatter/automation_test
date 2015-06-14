@@ -292,7 +292,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
     public void doLogout() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
         SharedPreferences.Editor editor = preferences.edit();
-        editor.remove(Constants.FIRST_NAME);
+        editor.remove(Constants.FIRST_NAME_PREF);
         editor.remove(Constants.BBTOKEN_KEY);
         editor.remove(Constants.OLD_BBTOKEN_KEY);
         editor.remove(Constants.MID_KEY);

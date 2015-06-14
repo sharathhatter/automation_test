@@ -62,7 +62,10 @@ public class UpdatePinActivity extends BackButtonActivity {
     }
 
     private void getCurrentMemberPin() {
-        if (!DataUtil.isInternetAvailable(getCurrentActivity())) handler.sendOfflineError(true);
+        if (!DataUtil.isInternetAvailable(getCurrentActivity())) {
+            handler.sendOfflineError(true);
+            return;
+        }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressView();
         bigBasketApiService.getCurrentMemberPin(new Callback<ApiResponse<UpdatePin>>() {

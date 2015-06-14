@@ -43,6 +43,7 @@ import com.bigbasket.mobileapp.model.account.CurrentWalletBalance;
 import com.bigbasket.mobileapp.model.account.UpdatePin;
 import com.bigbasket.mobileapp.model.account.WalletDataItem;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
+import com.bigbasket.mobileapp.model.discount.DiscountDataModel;
 import com.bigbasket.mobileapp.model.order.COReserveQuantity;
 import com.bigbasket.mobileapp.model.order.MarketPlace;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
@@ -392,4 +393,7 @@ public interface BigBasketApiService {
 
     @GET("/register-utm-params/")
     BaseApiResponse postUtmParams(@QueryMap Map<String, String> utmQueryMap);
+
+    @GET("/get-discount/")
+    void getDiscount(Callback<ApiResponse<DiscountDataModel>> discountApiResponseCallback);
 }

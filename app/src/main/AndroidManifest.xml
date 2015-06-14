@@ -343,6 +343,13 @@
             android:screenOrientation="portrait"
             android:theme="@style/LandingPageTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
+
+        <activity android:name=".activity.product.DiscountActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:theme="@style/BBAppTheme"
+            android:windowSoftInputMode="stateHidden|adjustPan"/>
+
         <activity
             android:name=".activity.order.uiv3.OrderDetailActivity"
             android:screenOrientation="portrait"

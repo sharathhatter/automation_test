@@ -19,8 +19,9 @@ import com.bigbasket.mobileapp.activity.account.uiv3.OrderListActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.UpdatePinActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
-import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
+import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListFragment;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -108,7 +109,20 @@ public class AccountView<T> {
                     intent = new Intent(ctx, DoWalletActivity.class);
                     ctx.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     break;
+                case 6:
+                    Map<String, String> eventAttribs = new HashMap<>();
+                    eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_LEFTNAV);
+                    ctx.trackEvent(TrackingAware.LOG_OUT_ICON_CLICKED, eventAttribs);
+                    ctx.trackEvent(TrackingAware.SHOPPING_LIST_ICON_CLICKED, eventAttribs);
+                    intent = new Intent(ctx, BackButtonActivity.class);
+                    intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_LANDING);
+                    ctx.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                    break;
                 case 7:
+                    eventAttribs = new HashMap<>();
+                    eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_LEFTNAV);
+                    ctx.trackEvent(TrackingAware.LOG_OUT_ICON_CLICKED, eventAttribs);
+                    ctx.trackEvent(TrackingAware.SMART_BASKET_ICON_CLICKED, eventAttribs);
                     ShoppingListName shoppingListName = new ShoppingListName(Constants.SMART_BASKET,
                             Constants.SMART_BASKET_SLUG, true);
                     intent = new Intent(ctx, ShoppingListSummaryActivity.class);
@@ -116,7 +130,7 @@ public class AccountView<T> {
                     ctx.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     break;
                 case 8:
-                    Map<String, String> eventAttribs = new HashMap<>();
+                    eventAttribs = new HashMap<>();
                     eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_LEFTNAV);
                     ctx.trackEvent(TrackingAware.RATE_APP_CLICKED, eventAttribs);
                     try {
@@ -135,7 +149,6 @@ public class AccountView<T> {
                         ((SocialLoginActivity) ctx).onLogoutRequested();
                     }
                     break;
-
             }
         }
     }

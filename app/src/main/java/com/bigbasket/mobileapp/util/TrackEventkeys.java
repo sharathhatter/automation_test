@@ -106,6 +106,7 @@ public final class TrackEventkeys {
     //PROMO
     public static final String PROMO_CATEGORY_SCREEN = "Promo Category"; //Done
     public static final String PROMO_DETAIL_SCREEN = "Promo Detail"; //Done
+    public static final String DISCOUNT_SCREEN = "Discount List";
     //SOPPING LIST
     public static final String SHOPPING_LIST_SCREEN = "Shopping List"; //Done
     public static final String SHOPPING_LIST_CATEGORY_LISTING_SCREEN = "Shopping List Summary"; //Done

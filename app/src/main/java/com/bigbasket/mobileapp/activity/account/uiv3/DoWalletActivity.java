@@ -57,6 +57,7 @@ public class DoWalletActivity extends BackButtonActivity {
     private void getCurrentMemberWalletBalance() {
         if (!DataUtil.isInternetAvailable(getCurrentActivity())) {
             handler.sendOfflineError(true);
+            return;
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressView();

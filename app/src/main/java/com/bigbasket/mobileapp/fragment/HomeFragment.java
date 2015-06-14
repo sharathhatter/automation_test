@@ -325,7 +325,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                                 SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
                                 UIUtil.updateStoredUserDetails(getCurrentActivity(), userDetails,
                                         prefer.getString(Constants.MEMBER_EMAIL_KEY, ""),
-                                        prefer.getString(Constants.MID_KEY, ""));//TODO: check with sid
+                                        prefer.getString(Constants.MID_KEY, ""));
                             }
                             savePopulateSearcher(callbackAppDataResponse.apiResponseContent.topSearches);
                             homePageGetter(savedInstanceState);

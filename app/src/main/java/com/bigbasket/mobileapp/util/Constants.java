@@ -614,4 +614,12 @@ public class Constants {
 
 
     public static final String TOTAL_BASKET_VALUE = "total_basket_vaule";
+    public static final String CATEGORY_DISCOUNT = "category_discount";
+    public static final String PERCENTAGE_DISCOUNT = "percentage_discount";
+
+
+    public static final String ENDING_BALANCE = "ending_balance";
+    public static final String STARTING_BALANCE = "starting_balance";
+
+
 }

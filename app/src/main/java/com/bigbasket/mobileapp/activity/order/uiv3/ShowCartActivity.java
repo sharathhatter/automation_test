@@ -337,7 +337,10 @@ public class ShowCartActivity extends BackButtonActivity {
 
 
     private void getCartItems(String fulfillmentIds) {
-        if (!DataUtil.isInternetAvailable(getCurrentActivity())) handler.sendOfflineError(true);
+        if (!DataUtil.isInternetAvailable(getCurrentActivity())){
+            handler.sendOfflineError(true);
+            return;
+        }
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
         final SharedPreferences.Editor editor = prefer.edit();
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
