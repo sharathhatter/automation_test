@@ -4,6 +4,8 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.SwitchCompat;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -12,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -23,26 +26,34 @@ import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
 import com.bigbasket.mobileapp.adapter.shipment.SlotListAdapter;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.model.order.OrderDetails;
+import com.bigbasket.mobileapp.model.shipments.BaseShipmentAction;
 import com.bigbasket.mobileapp.model.shipments.Shipment;
+import com.bigbasket.mobileapp.model.shipments.ShipmentAction;
 import com.bigbasket.mobileapp.model.shipments.Slot;
 import com.bigbasket.mobileapp.model.shipments.SlotDisplay;
+import com.bigbasket.mobileapp.model.shipments.ToggleShipmentAction;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ShipmentSelectionActivity extends BackButtonActivity {
 
-    private ArrayList<Shipment> mShipments;
+    private LinkedHashMap<String, Shipment> mShipmentLinkedHashMap;
+    private boolean mHasUserToggledShipments;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle(getString(R.string.chooseSlot));
-        mShipments = getIntent().getParcelableArrayListExtra(Constants.SHIPMENTS);
-        if (mShipments == null || mShipments.size() == 0) return;
+        ArrayList<Shipment> shipments = getIntent().getParcelableArrayListExtra(Constants.SHIPMENTS);
+        if (shipments == null || shipments.size() == 0) return;
+        mShipmentLinkedHashMap = getShipmentsMap(shipments);
         renderFooter();
         renderShipments();
     }
@@ -62,7 +73,6 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getCurrentActivity(), PaymentSelectionActivity.class);
-                intent.putParcelableArrayListExtra(Constants.SHIPMENTS, mShipments);
                 intent.putExtra(Constants.ORDER_DETAILS, getIntent().getParcelableExtra(Constants.ORDER_DETAILS));
                 intent.putExtra(Constants.EVOUCHER_CODE, getIntent().getParcelableExtra(Constants.EVOUCHER_CODE));
                 intent.putParcelableArrayListExtra(Constants.VOUCHERS,
@@ -79,18 +89,65 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
     }
 
     private void renderShipments() {
+        HashMap<String, BaseShipmentAction> shipmentActionHashMap = new HashMap<>();
+        for (Map.Entry<String, Shipment> entry : mShipmentLinkedHashMap.entrySet()) {
+            Shipment shipment = entry.getValue();
+            ShipmentAction shipmentAction = shipment.getShipmentAction();
+            if (shipmentAction != null) {
+                BaseShipmentAction baseShipmentAction =
+                        new BaseShipmentAction(shipmentAction.getActionMsg(),
+                                shipmentAction.getViewState(), shipmentAction.getActionState());
+                shipmentActionHashMap.put(shipment.getShipmentId(), baseShipmentAction);
+            }
+        }
+        displayShipmentsBasedOnViewState(shipmentActionHashMap);
+    }
+
+    private void displayShipmentsBasedOnViewState(HashMap<String, BaseShipmentAction> shipmentActionHashMap) {
         TextView txtDeliverablesHeading = (TextView) findViewById(R.id.txtDeliverablesHeading);
         txtDeliverablesHeading.setTypeface(faceRobotoRegular);
-        txtDeliverablesHeading.setText(mShipments.size() > 1 ? R.string.deliverableTextSingular :
+        txtDeliverablesHeading.setText(mShipmentLinkedHashMap.size() > 1 ? R.string.deliverableTextPlural :
                 R.string.deliverableTextSingular);
 
         LinearLayout layoutShipmentContainer = (LinearLayout) findViewById(R.id.layoutShipmentContainer);
-        for (final Shipment shipment : mShipments) {
+        layoutShipmentContainer.removeAllViews();
+        if (mShipmentLinkedHashMap == null) return;
+        for (Map.Entry<String, Shipment> entry : mShipmentLinkedHashMap.entrySet()) {
+            final Shipment shipment = entry.getValue();
             View shipmentView = getLayoutInflater().inflate(R.layout.shipment_row,
                     layoutShipmentContainer, false);
+
+            SwitchCompat switchToggleDelivery = (SwitchCompat) shipmentView.findViewById(R.id.switchToggleDelivery);
+            BaseShipmentAction shipmentAction = shipmentActionHashMap.get(shipment.getShipmentId());
+            String shipmentName = shipment.getShipmentName();
+            if (shipmentAction != null) {
+                if (!TextUtils.isEmpty(shipmentAction.getViewState())) {
+                    switch (shipmentAction.getViewState()) {
+                        case Constants.HIDDEN:
+                            continue;
+                        case Constants.SHOW:
+                            shipmentView.setBackgroundColor(getResources().getColor(R.color.uiv3_large_list_item_bck));
+                            break;
+                        case Constants.DISABLED:
+                            shipmentView.setBackgroundColor(getResources().getColor(R.color.uiv3_large_list_item_bck_disabled));
+                            break;
+                    }
+                }
+                if (!TextUtils.isEmpty(shipmentAction.getActionMsg())) {
+                    shipmentName = shipmentAction.getActionMsg();
+                    switchToggleDelivery.setChecked(!TextUtils.isEmpty(shipmentAction.getActionState())
+                            && shipmentAction.getActionState().equalsIgnoreCase(Constants.ON));
+                    switchToggleDelivery.setOnCheckedChangeListener(new OnShipmentToggleListener(shipment));
+                } else {
+                    switchToggleDelivery.setVisibility(View.GONE);
+                }
+            } else {
+                shipmentView.setBackgroundColor(getResources().getColor(R.color.uiv3_large_list_item_bck));
+                switchToggleDelivery.setVisibility(View.GONE);
+            }
             TextView txtShipmentName = (TextView) shipmentView.findViewById(R.id.txtShipmentName);
             txtShipmentName.setTypeface(faceRobotoRegular);
-            txtShipmentName.setText(shipment.getShipmentName());
+            txtShipmentName.setText(shipmentName);
 
             TextView txtShipmentCount = (TextView) shipmentView.findViewById(R.id.txtShipmentCount);
             txtShipmentName.setTypeface(faceRobotoMedium);
@@ -105,14 +162,18 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
             TextView txtDeliveryCharge = (TextView) shipmentView.findViewById(R.id.txtDeliveryCharge);
             txtDeliveryCharge.setTypeface(faceRobotoMedium);
 
-            String deliveryChargelbl = getString(R.string.delivery_charges) + " ";
-            String rupeeSym = "`";
-            SpannableString spannableString = new SpannableString(deliveryChargelbl + rupeeSym +
-                    shipment.getDeliveryCharge());
-            spannableString.setSpan(new CustomTypefaceSpan("", faceRupee), deliveryChargelbl.length(),
-                    deliveryChargelbl.length() + rupeeSym.length(),
-                    Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-            txtDeliveryCharge.setText(spannableString);
+            if (Double.parseDouble(shipment.getDeliveryCharge()) > 0) {
+                String deliveryChargelbl = getString(R.string.delivery_charges) + " ";
+                String rupeeSym = "`";
+                SpannableString spannableString = new SpannableString(deliveryChargelbl + rupeeSym +
+                        shipment.getDeliveryCharge());
+                spannableString.setSpan(new CustomTypefaceSpan("", faceRupee), deliveryChargelbl.length(),
+                        deliveryChargelbl.length() + rupeeSym.length(),
+                        Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+                txtDeliveryCharge.setText(spannableString);
+            } else {
+                txtDeliveryCharge.setVisibility(View.GONE);
+            }
 
             displaySelectedSlot(shipmentView, shipment);
 
@@ -133,6 +194,56 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
 
             layoutShipmentContainer.addView(shipmentView);
         }
+    }
+
+    private class OnShipmentToggleListener implements CompoundButton.OnCheckedChangeListener {
+        private Shipment shipment;
+
+        public OnShipmentToggleListener(Shipment shipment) {
+            this.shipment = shipment;
+        }
+
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            mHasUserToggledShipments = !mHasUserToggledShipments;
+            if (mHasUserToggledShipments) {
+                HashMap<String, BaseShipmentAction> shipmentActionHashMap = new HashMap<>();
+                ShipmentAction shipmentAction = shipment.getShipmentAction();
+                if (shipmentAction != null && shipmentAction.getShipmentActionInfo() != null) {
+                    ArrayList<ToggleShipmentAction> hide = shipmentAction.getShipmentActionInfo().getHide();
+                    ArrayList<ToggleShipmentAction> show = shipmentAction.getShipmentActionInfo().getShow();
+                    if (hide != null && hide.size() > 0) {
+                        updateMapFromToggleList(shipmentActionHashMap, hide);
+                    }
+                    if (show != null && show.size() > 0) {
+                        updateMapFromToggleList(shipmentActionHashMap, show);
+                    }
+                    displayShipmentsBasedOnViewState(shipmentActionHashMap);
+                }
+            } else {
+                renderShipments();
+            }
+        }
+
+        private void updateMapFromToggleList(HashMap<String, BaseShipmentAction> shipmentActionHashMap,
+                                             ArrayList<ToggleShipmentAction> toggleShipmentActions) {
+            for (ToggleShipmentAction toggleShipmentAction: toggleShipmentActions) {
+                shipmentActionHashMap.put(toggleShipmentAction.getId(),
+                        new BaseShipmentAction(toggleShipmentAction.getActionMsg(),
+                                toggleShipmentAction.getViewState(),
+                                toggleShipmentAction.getActionState()));
+            }
+        }
+    }
+
+    @Nullable
+    private LinkedHashMap<String, Shipment> getShipmentsMap(ArrayList<Shipment> shipments) {
+        if (shipments == null) return null;
+        LinkedHashMap<String, Shipment> shipmentLinkedHashMap = new LinkedHashMap<>();
+        for (Shipment shipment : shipments) {
+            shipmentLinkedHashMap.put(shipment.getShipmentId(), shipment);
+        }
+        return shipmentLinkedHashMap;
     }
 
     private void displaySelectedSlot(View shipmentView, Shipment shipment) {
@@ -165,7 +276,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         if (selectedSlot.getSlotDisplay() != null) {
             SlotDisplay slotDisplay = selectedSlot.getSlotDisplay();
             String display = TextUtils.isEmpty(slotDisplay.getDate()) ? slotDisplay.getTime() :
-                    slotDisplay.getDate() + "\t" + slotDisplay.getTime();
+                    slotDisplay.getDate() + "     " + slotDisplay.getTime();
             txtVw.setText(display);
         }
     }

@@ -6,8 +6,7 @@ import android.os.Parcelable;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
-public class ShipmentAction implements Parcelable {
-    private String type;
+public class ShipmentAction extends BaseShipmentAction implements Parcelable {
     @SerializedName(Constants.ACTION_INFO)
     private ShipmentActionInfo shipmentActionInfo;
 
@@ -18,11 +17,7 @@ public class ShipmentAction implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        boolean wasTypeNull = type == null;
-        dest.writeByte(wasTypeNull ? (byte) 1 : (byte) 0);
-        if (!wasTypeNull) {
-            dest.writeString(type);
-        }
+        super.writeToParcel(dest, flags);
         boolean wasShipmentActionInfoNull = shipmentActionInfo == null;
         dest.writeByte(wasShipmentActionInfoNull ? (byte) 1 : (byte) 0);
         if (!wasShipmentActionInfoNull) {
@@ -31,10 +26,7 @@ public class ShipmentAction implements Parcelable {
     }
 
     public ShipmentAction(Parcel source) {
-        boolean wasTypeNull = source.readByte() == (byte) 1;
-        if (!wasTypeNull) {
-            type = source.readString();
-        }
+        super(source);
         boolean wasShipmentActionInfoNull = source.readByte() == (byte) 1;
         if (!wasShipmentActionInfoNull) {
             shipmentActionInfo = source.readParcelable(ShipmentAction.class.getClassLoader());
@@ -52,10 +44,6 @@ public class ShipmentAction implements Parcelable {
             return new ShipmentAction[size];
         }
     };
-
-    public String getType() {
-        return type;
-    }
 
     public ShipmentActionInfo getShipmentActionInfo() {
         return shipmentActionInfo;

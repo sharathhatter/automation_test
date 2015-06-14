@@ -6,8 +6,8 @@ import android.os.Parcelable;
 import java.util.ArrayList;
 
 public class ShipmentActionInfo implements Parcelable {
-    private ArrayList<String> show;
-    private ArrayList<String> hide;
+    private ArrayList<ToggleShipmentAction> show;
+    private ArrayList<ToggleShipmentAction> hide;
 
     @Override
     public int describeContents() {
@@ -19,12 +19,12 @@ public class ShipmentActionInfo implements Parcelable {
         boolean wasShowNull = show == null;
         dest.writeByte(wasShowNull ? (byte) 1 : (byte) 0);
         if (!wasShowNull) {
-            dest.writeStringList(show);
+            dest.writeTypedList(show);
         }
         boolean wasHideNull = hide == null;
         dest.writeByte(wasHideNull ? (byte) 1 : (byte) 0);
         if (!wasHideNull) {
-            dest.writeStringList(hide);
+            dest.writeTypedList(hide);
         }
     }
 
@@ -32,12 +32,12 @@ public class ShipmentActionInfo implements Parcelable {
         boolean wasShowNull = source.readByte() == (byte) 1;
         if (!wasShowNull) {
             show = new ArrayList<>();
-            source.readStringList(show);
+            source.readTypedList(show, ToggleShipmentAction.CREATOR);
         }
         boolean wasHideNull = source.readByte() == (byte) 1;
         if (!wasHideNull) {
             hide = new ArrayList<>();
-            source.readStringList(hide);
+            source.readTypedList(hide, ToggleShipmentAction.CREATOR);
         }
     }
 
@@ -53,11 +53,11 @@ public class ShipmentActionInfo implements Parcelable {
         }
     };
 
-    public ArrayList<String> getShow() {
+    public ArrayList<ToggleShipmentAction> getShow() {
         return show;
     }
 
-    public ArrayList<String> getHide() {
+    public ArrayList<ToggleShipmentAction> getHide() {
         return hide;
     }
 }

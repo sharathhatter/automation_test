@@ -616,4 +616,11 @@ public class Constants {
     public static final String DISPLAY = "display";
     public static final String SLOT_TIME = "slot_time";
     public static final String HELP_PAGE = "help_page";
+    public static final String ACTION_MSG = "action_msg";
+    public static final String ACTION_STATE = "action_state";
+    public static final String ON = "on";
+    public static final String VIEW_STATE = "view_state";
+    public static final String SHOW = "show";
+    public static final String HIDDEN = "hidden";
+    public static final String DISABLED = "disabled";
 }

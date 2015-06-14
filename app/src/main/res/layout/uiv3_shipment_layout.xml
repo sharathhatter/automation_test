@@ -22,7 +22,6 @@
         android:layout_below="@id/toolbarMain">
 
         <LinearLayout
-            android:id="@+id/layoutShipmentContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -34,6 +33,12 @@
                 android:layout_margin="@dimen/margin_normal"
                 android:textColor="@color/uiv3_primary_text_color"
                 android:textSize="@dimen/secondary_text_size" />
+
+            <LinearLayout
+                android:id="@+id/layoutShipmentContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>

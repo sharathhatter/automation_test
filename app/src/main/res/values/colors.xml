@@ -95,5 +95,6 @@
     <color name="red_color">#df212a</color>
     <color name="text_color_myaccount">#df212a</color>
     <color name="uiv3_large_list_item_bck">#f5f5f5</color>
+    <color name="uiv3_large_list_item_bck_disabled">#e1e0e0</color>
 
 </resources>
