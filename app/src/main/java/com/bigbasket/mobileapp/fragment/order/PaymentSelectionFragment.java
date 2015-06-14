@@ -12,18 +12,12 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.order.uiv3.AvailableVoucherListActivity;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
-import com.bigbasket.mobileapp.handler.HDFCPowerPayHandler;
 import com.bigbasket.mobileapp.interfaces.OnApplyVoucherListener;
 import com.bigbasket.mobileapp.interfaces.PostVoucherAppliedListener;
-import com.bigbasket.mobileapp.interfaces.SelectedPaymentAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.order.ActiveVouchers;
@@ -31,14 +25,12 @@ import com.bigbasket.mobileapp.model.order.PaymentType;
 import com.bigbasket.mobileapp.model.order.PayuResponse;
 import com.bigbasket.mobileapp.model.order.PowerPayResponse;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 
 public class PaymentSelectionFragment extends BaseFragment implements PostVoucherAppliedListener {
@@ -268,6 +260,7 @@ public class PaymentSelectionFragment extends BaseFragment implements PostVouche
 //
 //        contentView.addView(base);
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         setSuspended(false);

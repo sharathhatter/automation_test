@@ -29,7 +29,7 @@ public class CreatePotentialOrderTask<T> {
                 getApiService(((ActivityAware) ctx).getCurrentActivity());
         ((ProgressIndicationAware) ctx).showProgressDialog(((ActivityAware) ctx).getCurrentActivity().getString(R.string.checkingAvailability),
                 false);
-        bigBasketApiService.createPotentialOrder(addressId, "yes", "yes", new Callback<ApiResponse<CreatePotentialOrderResponseContent>>() {
+        bigBasketApiService.createPotentialOrder(addressId, new Callback<ApiResponse<CreatePotentialOrderResponseContent>>() {
             @Override
             public void success(ApiResponse<CreatePotentialOrderResponseContent> createPotentialOrderApiResponse, Response response) {
                 if (((CancelableAware) ctx).isSuspended()) return;

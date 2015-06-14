@@ -224,7 +224,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
                 @Override
                 public void onClick(View view) {
                     showAlertDialog(null, getString(R.string.addAllProducts) + " from " + shoppingListSummary.getFacetName()
-                            + " " + getString(R.string.toBasket),
+                                    + " " + getString(R.string.toBasket),
                             DialogButton.YES, DialogButton.CANCEL, Constants.ADD_ALL,
                             shoppingListSummary,
                             getString(R.string.yesTxt));

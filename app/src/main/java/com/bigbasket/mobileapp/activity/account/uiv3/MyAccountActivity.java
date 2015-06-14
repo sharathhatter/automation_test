@@ -53,7 +53,7 @@ public class MyAccountActivity extends BackButtonActivity {
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         getMemberDetails();
     }

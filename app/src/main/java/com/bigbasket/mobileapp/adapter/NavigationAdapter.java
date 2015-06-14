@@ -127,7 +127,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 SectionItem subSectionItem = sectionItem.getSubSectionItems().get(0);
                 if (subSectionItem.hasImage()) {
                     UIUtil.preLoadImage(TextUtils.isEmpty(subSectionItem.getImage()) ?
-                            subSectionItem.constructImageUrl(context, baseImgUrl) : subSectionItem.getImage(),
+                                    subSectionItem.constructImageUrl(context, baseImgUrl) : subSectionItem.getImage(),
                             context);
                 }
             }

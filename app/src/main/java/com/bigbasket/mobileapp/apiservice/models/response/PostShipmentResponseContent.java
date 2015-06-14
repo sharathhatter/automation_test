@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.apiservice.models.response;
 
 import com.bigbasket.mobileapp.model.order.ActiveVouchers;
 import com.bigbasket.mobileapp.model.order.CreditDetails;
+import com.bigbasket.mobileapp.model.order.OrderDetails;
 import com.bigbasket.mobileapp.model.order.PaymentType;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
@@ -21,4 +22,7 @@ public class PostShipmentResponseContent {
 
     @SerializedName(Constants.CREDIT_DETAILS)
     public ArrayList<CreditDetails> creditDetails;
+
+    @SerializedName(Constants.ORDER_DETAILS)
+    public OrderDetails orderDetails;
 }

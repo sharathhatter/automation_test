@@ -43,12 +43,10 @@ import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.AgeValidationActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.BasketValidationActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.CheckoutQCActivity;
-import com.bigbasket.mobileapp.activity.order.uiv3.ShipmentSelectionActivity;
 import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 import com.bigbasket.mobileapp.adapter.order.PrescriptionImageAdapter;
-import com.bigbasket.mobileapp.apiservice.models.response.CreatePotentialOrderResponseContent;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
@@ -58,7 +56,6 @@ import com.bigbasket.mobileapp.interfaces.COMarketPlaceAware;
 import com.bigbasket.mobileapp.interfaces.COReserveQuantityCheckAware;
 import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
-import com.bigbasket.mobileapp.interfaces.CreatePotentialOrderAware;
 import com.bigbasket.mobileapp.interfaces.EmailAddressAware;
 import com.bigbasket.mobileapp.interfaces.LaunchProductListAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
@@ -82,7 +79,6 @@ import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.FacebookEventTrackWrapper;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
-import com.bigbasket.mobileapp.view.uiv3.OrderQcDialog;
 import com.demach.konotor.Konotor;
 import com.facebook.appevents.AppEventsLogger;
 import com.moe.pushlibrary.MoEHelper;
@@ -103,7 +99,7 @@ import java.util.Random;
 
 public abstract class BaseActivity extends AppCompatActivity implements COMarketPlaceAware,
         COReserveQuantityCheckAware, CancelableAware, ProgressIndicationAware, ActivityAware,
-        ConnectivityAware, CreatePotentialOrderAware, TrackingAware, ApiErrorAware, EmailAddressAware,
+        ConnectivityAware, TrackingAware, ApiErrorAware, EmailAddressAware,
         LaunchProductListAware {
 
     public static Typeface faceRupee;
@@ -215,30 +211,6 @@ public abstract class BaseActivity extends AppCompatActivity implements COMarket
             String pharmaPrescriptionId = prefer.getString(Constants.PHARMA_PRESCRIPTION_ID, null);
             new COReserveQuantityCheckTask<>(getCurrentActivity(), pharmaPrescriptionId).startTask();
         }
-    }
-
-    @Override
-    public void onPotentialOrderCreated(CreatePotentialOrderResponseContent createPotentialOrderResponseContent) {
-        if (createPotentialOrderResponseContent.hasQcErrors &&
-                createPotentialOrderResponseContent.qcErrorDatas != null &&
-                createPotentialOrderResponseContent.qcErrorDatas.size() > 0) {
-            new OrderQcDialog<>().show(getCurrentActivity(), createPotentialOrderResponseContent);
-        } else {
-            launchSlotSelection(createPotentialOrderResponseContent);
-        }
-    }
-
-    @Override
-    public void postOrderQc(CreatePotentialOrderResponseContent createPotentialOrderResponseContent) {
-        launchSlotSelection(createPotentialOrderResponseContent);
-    }
-
-    private void launchSlotSelection(CreatePotentialOrderResponseContent createPotentialOrderResponseContent) {
-        Intent intent = new Intent(getCurrentActivity(), ShipmentSelectionActivity.class);
-        intent.putParcelableArrayListExtra(Constants.SHIPMENTS, createPotentialOrderResponseContent.shipments);
-        intent.putExtra(Constants.ORDER_DETAILS, createPotentialOrderResponseContent.orderDetails);
-        intent.putExtra(Constants.P_ORDER_ID, createPotentialOrderResponseContent.potentialOrderId);
-        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
     @Override

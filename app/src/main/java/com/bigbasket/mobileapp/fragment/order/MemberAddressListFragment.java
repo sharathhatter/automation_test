@@ -19,13 +19,16 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.order.MemberAddressFormActivity;
+import com.bigbasket.mobileapp.activity.order.uiv3.ShipmentSelectionActivity;
 import com.bigbasket.mobileapp.adapter.account.MemberAddressListAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.CreatePotentialOrderResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.GetDeliveryAddressApiResponseContent;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.AddressSelectionAware;
+import com.bigbasket.mobileapp.interfaces.CreatePotentialOrderAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.Address;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -35,6 +38,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.bigbasket.mobileapp.view.uiv3.OrderQcDialog;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,7 +48,8 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class MemberAddressListFragment extends BaseFragment implements AddressSelectionAware {
+public class MemberAddressListFragment extends BaseFragment implements AddressSelectionAware,
+        CreatePotentialOrderAware {
 
     protected ArrayList<Address> mAddressArrayList;
     private MemberAddressListAdapter memberAddressListAdapter;
@@ -243,7 +248,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
     }
 
     private void createPotentialOrder(String addressId) {
-        new CreatePotentialOrderTask<>(getActivity(), addressId).startTask();
+        new CreatePotentialOrderTask<>(this, addressId).startTask();
     }
 
     public ViewGroup getContentView() {
@@ -278,6 +283,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             if (data != null) {
                 String addressId = data.getStringExtra(Constants.MEMBER_ADDRESS_ID);
                 if (!TextUtils.isEmpty(addressId) && !mFromAccountPage) {
+                    this.addressId = addressId;
                     createPotentialOrder(addressId);
                 } else {
                     loadAddresses();
@@ -285,9 +291,36 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             } else {
                 showAddAddressText();
             }
+        } else if (resultCode == NavigationCodes.GO_TO_SLOT_SELECTION) {
+            createPotentialOrder(addressId);
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+
+    @Override
+    public void onPotentialOrderCreated(CreatePotentialOrderResponseContent createPotentialOrderResponseContent) {
+        if (createPotentialOrderResponseContent.hasQcErrors &&
+                createPotentialOrderResponseContent.qcErrorDatas != null &&
+                createPotentialOrderResponseContent.qcErrorDatas.size() > 0) {
+            new OrderQcDialog<>().show(getCurrentActivity(), createPotentialOrderResponseContent);
+        } else {
+            launchSlotSelection(createPotentialOrderResponseContent);
+        }
+    }
+
+    @Override
+    public void postOrderQc(CreatePotentialOrderResponseContent createPotentialOrderResponseContent) {
+        launchSlotSelection(createPotentialOrderResponseContent);
+    }
+
+    private void launchSlotSelection(CreatePotentialOrderResponseContent createPotentialOrderResponseContent) {
+        Intent intent = new Intent(getCurrentActivity(), ShipmentSelectionActivity.class);
+        intent.putParcelableArrayListExtra(Constants.SHIPMENTS, createPotentialOrderResponseContent.shipments);
+        intent.putExtra(Constants.ORDER_DETAILS, createPotentialOrderResponseContent.orderDetails);
+        intent.putExtra(Constants.P_ORDER_ID, createPotentialOrderResponseContent.potentialOrderId);
+        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
     @Override

@@ -10,10 +10,11 @@ import com.bigbasket.mobileapp.adapter.order.QcListAdapter;
 import com.bigbasket.mobileapp.apiservice.models.response.CreatePotentialOrderResponseContent;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.CreatePotentialOrderAware;
 import com.bigbasket.mobileapp.util.FontHolder;
 
 public class OrderQcDialog<T> {
-    public void show(T ctx,
+    public void show(final T ctx,
                      final CreatePotentialOrderResponseContent createPotentialOrderResponseContent) {
         final BaseActivity activity = ((ActivityAware) ctx).getCurrentActivity();
         ListView listView = new ListView(activity);
@@ -29,7 +30,7 @@ public class OrderQcDialog<T> {
                 .setPositiveButton(R.string.continueAnyway, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        activity.postOrderQc(createPotentialOrderResponseContent);
+                        ((CreatePotentialOrderAware) ctx).postOrderQc(createPotentialOrderResponseContent);
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {

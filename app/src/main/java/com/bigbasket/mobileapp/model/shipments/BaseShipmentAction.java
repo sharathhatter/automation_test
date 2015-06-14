@@ -23,19 +23,19 @@ public class BaseShipmentAction implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         boolean wasActionMsgNull = actionMsg == null;
-        dest.writeByte(wasActionMsgNull ? (byte) 1: (byte) 0);
+        dest.writeByte(wasActionMsgNull ? (byte) 1 : (byte) 0);
         if (!wasActionMsgNull) {
             dest.writeString(actionMsg);
         }
 
         boolean wasViewStateNull = viewState == null;
-        dest.writeByte(wasViewStateNull ? (byte) 1: (byte) 0);
+        dest.writeByte(wasViewStateNull ? (byte) 1 : (byte) 0);
         if (!wasViewStateNull) {
             dest.writeString(viewState);
         }
 
         boolean wasActionStateNull = actionState == null;
-        dest.writeByte(wasActionStateNull ? (byte) 1: (byte) 0);
+        dest.writeByte(wasActionStateNull ? (byte) 1 : (byte) 0);
         if (!wasActionStateNull) {
             dest.writeString(actionState);
         }

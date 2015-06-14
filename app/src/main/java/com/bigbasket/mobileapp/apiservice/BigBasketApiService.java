@@ -398,13 +398,19 @@ public interface BigBasketApiService {
     @FormUrlEncoded
     @POST("/co-create-po/")
     void createPotentialOrder(@Field(Constants.ADDRESS_ID) String addressId,
-                              @Field(Constants.SUPPORT_CC) String supportsCreditCard,
-                              @Field(Constants.SUPPORT_POWER_PAY) String supportsPowerPay,
                               Callback<ApiResponse<CreatePotentialOrderResponseContent>> apiResponseCallback);
 
     @FormUrlEncoded
     @POST("/co-post-shipment/")
     void postShipment(@Field("shipments") String shipments,
                       @Field(Constants.P_ORDER_ID) String potentialOrderId,
+                      @Field(Constants.SUPPORT_CC) String supportsCreditCard,
+                      @Field(Constants.SUPPORT_POWER_PAY) String supportsPowerPay,
                       Callback<ApiResponse<PostShipmentResponseContent>> apiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/co-place-order/")
+    void placeOrder(@Field(Constants.P_ORDER_ID) String potentialOrderId, @Field(Constants.TXN_ID) String txnId,
+                    @Field(Constants.PAYMENT_METHOD) String paymentMethod,
+                    Callback<OldApiResponse<PlaceOrderApiResponseContent>> placeOrderApiResponseCallback);
 }

@@ -16,7 +16,6 @@ public class CreatePotentialOrderResponseContent {
     @SerializedName(Constants.QC_VALIDATION_ERROR_DATA)
     public ArrayList<QCErrorData> qcErrorDatas;
     public ArrayList<Shipment> shipments;
-
     @SerializedName(Constants.ORDER_DETAILS)
     public OrderDetails orderDetails;
 }
