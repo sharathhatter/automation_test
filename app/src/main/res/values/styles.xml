@@ -132,7 +132,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:padding">@dimen/padding_small</item>
 
-        <item name="android:background">@color/shadow_bck</item>
+        <item name="android:background">@color/uiv3_large_list_item_bck</item>
         <item name="android:textColor">@color/red_color</item>
         <item name="android:drawableRight">@drawable/ic_keyboard_arrow_right_white_36dp</item>
         <item name="android:gravity">center_vertical|right</item>

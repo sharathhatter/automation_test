@@ -50,7 +50,7 @@ public class Constants {
     public static final String QC_ORDER_ID = "p_order_id";
     public static final String QC_RESERVED_QUANTITY = "reserved_q";
     public static final String QC_RESERVED_PRODUCT = "product";
-    public static final String QC_ORIGINAL_QUANTITY = "original_quantity";
+    public static final String QC_ORIGINAL_QUANTITY = "original_q";
 
     public static final String SUCCESS = "success";
     public static final String RESPONSE = "response";
@@ -602,24 +602,32 @@ public class Constants {
     public static final String CONTENT_SECTION = "content_section";
     public static final String CART_INFO = "cart_info";
 
-    public static final String UTM_SOURCE = "utm_source";
-    public static final String UTM_MEDIUM = "utm_medium";
-    public static final String UTM_TERM = "utm_term";
-    public static final String UTM_CONTENT = "utm_content";
-    public static final String UTM_CAMPAIGN = "utm_campaign";
-
-
     public static final String UPDATE_PROFILE_OBJ = "updateProfileObj";
     public static final String UPDATE_PROFILE_IMG_URL = "profilePicUrl";
-
 
     public static final String TOTAL_BASKET_VALUE = "total_basket_vaule";
     public static final String CATEGORY_DISCOUNT = "category_discount";
     public static final String PERCENTAGE_DISCOUNT = "percentage_discount";
 
-
     public static final String ENDING_BALANCE = "ending_balance";
     public static final String STARTING_BALANCE = "starting_balance";
 
-
+    public static final String SHIPMENT_ID = "shipment_id";
+    public static final String SHIPMENT_NAME = "shipment_name";
+    public static final String FULFILLMENT_NAME = "fulfillment_name";
+    public static final String ACTION_INFO = "action_info";
+    public static final String ACTION = "action";
+    public static final String LINKED_SHIPMENTS = "linked_shipments";
+    public static final String SHIPMENTS = "shipments";
+    public static final String SKU_LIST = "sku_list";
+    public static final String DISPLAY = "display";
+    public static final String SLOT_TIME = "slot_time";
+    public static final String HELP_PAGE = "help_page";
+    public static final String ACTION_MSG = "action_msg";
+    public static final String ACTION_STATE = "action_state";
+    public static final String ON = "on";
+    public static final String VIEW_STATE = "view_state";
+    public static final String SHOW = "show";
+    public static final String HIDDEN = "hidden";
+    public static final String DISABLED = "disabled";
 }

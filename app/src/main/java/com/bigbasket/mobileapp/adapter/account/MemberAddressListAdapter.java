@@ -17,8 +17,6 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.Address;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
-import org.xml.sax.Attributes;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -32,7 +30,7 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<RecyclerVi
     private T context;
     private LayoutInflater inflater;
     private boolean fromAccount;
-    private RadioButton selectedRadioBtn;
+    private Address selectedAddress;
 
     public MemberAddressListAdapter(T context, ArrayList<Object> addressObjectList,
                                     boolean fromAccount) {
@@ -64,7 +62,7 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<RecyclerVi
                 return new MemberAddressViewHolder(view);
             case VIEW_TYPE_ADD_ADDRESS:
                 view = inflater.inflate(R.layout.uiv3_add_address_layout, viewGroup, false);
-                ((TextView)view.findViewById(R.id.txtAddNewAddress)).setTypeface(BaseActivity.faceRobotoMedium);
+                ((TextView) view.findViewById(R.id.txtAddNewAddress)).setTypeface(BaseActivity.faceRobotoMedium);
                 return new AddAddressViewHolder(view);
         }
         return null;
@@ -105,23 +103,25 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<RecyclerVi
             final Address address = (Address) addressObjectList.get(position);
             MemberAddressViewHolder memberAddressViewHolder = (MemberAddressViewHolder) viewHolder;
 
-            if(position>1){
+            if (position > 1) {
                 View view = memberAddressViewHolder.getItemView();
                 ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
-                params.bottomMargin = (int)((ActivityAware)context).getCurrentActivity().getResources().getDimension(R.dimen.margin_small);
+                params.bottomMargin = (int) ((ActivityAware) context).getCurrentActivity().getResources().getDimension(R.dimen.margin_small);
                 view.setLayoutParams(params);
             }
 
 
             RadioButton radioBtnSelectedAddress = memberAddressViewHolder.getRadioBtnSelectedAddress();
-            if(fromAccount){
+            if (fromAccount) {
                 radioBtnSelectedAddress.setVisibility(View.GONE);
-            }else {
-                if (address.isDefault()) {
+            } else {
+                String selectedAddressId = ((AddressSelectionAware) context).getSelectedAddressId();
+                boolean isSelected = TextUtils.isEmpty(selectedAddressId) ?
+                        address.isDefault() : (selectedAddressId.equals(address.getId()));
+                if (isSelected) {
+                    selectedAddress = address;
                     radioBtnSelectedAddress.setChecked(true);
-                    selectedRadioBtn = radioBtnSelectedAddress;
-                }
-                else
+                } else
                     radioBtnSelectedAddress.setChecked(false);
             }
 
@@ -223,7 +223,7 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<RecyclerVi
             itemView.setOnClickListener(this);
         }
 
-        public View getItemView(){
+        public View getItemView() {
             return this.itemView;
         }
 
@@ -258,13 +258,12 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<RecyclerVi
 
         @Override
         public void onClick(View v) {
-            if(selectedRadioBtn!=radioBtnSelectedAddress && !fromAccount){
-                radioBtnSelectedAddress.setChecked(true);
-                selectedRadioBtn.setChecked(false);
-                selectedRadioBtn = radioBtnSelectedAddress;
-                Address address = (Address) addressObjectList.get(getPosition());
-                ((AddressSelectionAware) context).onAddressSelected(address);
-            }
+            selectedAddress = (Address) addressObjectList.get(getPosition());
+            ((AddressSelectionAware) context).onAddressSelected(selectedAddress);
         }
+    }
+
+    public Address getSelectedAddress() {
+        return selectedAddress;
     }
 }

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layoutCheckoutFooter"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/uiv3_checkout_bkg"
+    android:orientation="horizontal"
+    android:padding="@dimen/padding_normal">
+
+    <TextView
+        android:id="@+id/txtTotal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/margin_small"
+        android:layout_weight="1"
+        android:textColor="@color/uiv3_primary_text_color"
+        android:textSize="@dimen/secondary_text_size" />
+
+    <TextView
+        android:id="@+id/txtAction"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="right|center_vertical"
+        android:textColor="@color/uiv3_dialog_header_text_bkg"
+        android:textSize="@dimen/secondary_text_size" />
+</LinearLayout>

@@ -97,8 +97,8 @@ public class ProductListSpinnerAdapter extends BaseAdapter {
                 Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
         txtProductSellPrice.setVisibility(View.VISIBLE);
         txtProductSellPrice.setText(spannableString);
-        UIUtil.preLoadImage(TextUtils.isEmpty(baseImgUrl) ? product.getImageUrl():
-            baseImgUrl + product.getImageUrl(), ctx);
+        UIUtil.preLoadImage(TextUtils.isEmpty(baseImgUrl) ? product.getImageUrl() :
+                baseImgUrl + product.getImageUrl(), ctx);
         return row;
     }
 

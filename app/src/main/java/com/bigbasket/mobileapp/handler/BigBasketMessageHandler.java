@@ -1,17 +1,12 @@
 package com.bigbasket.mobileapp.handler;
 
-import android.content.Intent;
 import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.order.uiv3.CheckoutQCActivity;
-import com.bigbasket.mobileapp.activity.order.uiv3.UploadNewPrescriptionActivity;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
-import com.bigbasket.mobileapp.interfaces.COReserveQuantityCheckAware;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
-import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 
 import java.net.HttpURLConnection;
@@ -121,14 +116,6 @@ public class BigBasketMessageHandler<T> {
                     Toast.makeText(((ActivityAware) ctx).getCurrentActivity(),
                             "Successfully deleted!", Toast.LENGTH_SHORT).show();
                 }
-                break;
-            case NavigationCodes.CO_RESERVE_QUANTITY_CHECK_OK:
-                Intent intent = new Intent(((ActivityAware) ctx).getCurrentActivity(), CheckoutQCActivity.class);
-                intent.putExtra(Constants.CO_RESERVE_QTY_DATA, ((COReserveQuantityCheckAware) ctx).getCOReserveQuantity());
-                ((ActivityAware) ctx).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                break;
-            case NavigationCodes.PRESCRIPTION_IMAGE_SAMPLING:
-                ((UploadNewPrescriptionActivity) ctx).doSampling();
                 break;
             default:
                 ((ApiErrorAware) ctx).showApiErrorDialog(null,

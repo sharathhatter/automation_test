@@ -10,7 +10,6 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -41,7 +40,7 @@ public class SignInActivity extends BackButtonActivity {
     // UI references.
     private EditText mPasswordView;
     private CheckBox mChkRememberMe;
-    private AutoCompleteTextView mEmailView;
+    private EditText mEmailView;
     private boolean mIsPasswordVisible;
 
     @Override
@@ -54,8 +53,7 @@ public class SignInActivity extends BackButtonActivity {
                 findViewById(R.id.btnFBLogin));
 
         // Set up the login form.
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.emailInput);
-        populateAutoComplete(mEmailView);
+        mEmailView = (EditText) findViewById(R.id.emailInput);
 
         ((TextView) findViewById(R.id.txtOrSeparator)).setTypeface(faceRobotoRegular);
         ((TextView) findViewById(R.id.lblConnectUsing)).setTypeface(faceRobotoLight);

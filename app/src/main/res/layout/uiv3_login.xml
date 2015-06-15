@@ -31,7 +31,7 @@
             android:paddingRight="@dimen/margin_large"
             android:paddingTop="@dimen/padding_normal">
 
-            <AutoCompleteTextView
+            <EditText
                 android:id="@+id/emailInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

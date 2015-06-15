@@ -51,7 +51,6 @@ import com.bigbasket.mobileapp.fragment.account.ChangePasswordFragment;
 import com.bigbasket.mobileapp.fragment.account.UpdateProfileFragment;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.order.MemberAddressListFragment;
-import com.bigbasket.mobileapp.fragment.order.SlotSelectionFragment;
 import com.bigbasket.mobileapp.fragment.product.CategoryLandingFragment;
 import com.bigbasket.mobileapp.fragment.product.ProductDetailFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoCategoryFragment;
@@ -329,12 +328,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             case FragmentCodes.START_ADDRESS_SELECTION:
                 addToMainLayout(new MemberAddressListFragment());
                 break;
-            case FragmentCodes.START_SLOT_SELECTION:
-                addToMainLayout(new SlotSelectionFragment());
-                break;
-//            case FragmentCodes.START_VIEW_BASKET:
-//                showViewBasketFragment();
-//                break;
             case FragmentCodes.START_COMMUNICATION_HUB:
                 launchKonotor();
                 break;
@@ -348,16 +341,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 productDetailFragment.setArguments(bundle);
                 addToMainLayout(productDetailFragment);
                 break;
-
-
-//            case FragmentCodes.START_ORDER_THANKYOU:
-//                ArrayList<Order> orders = getIntent().getParcelableArrayListExtra(Constants.ORDERS);
-//                OrderThankYouFragment orderThankYouFragment = new OrderThankYouFragment();
-//                bundle = new Bundle();
-//                bundle.putParcelableArrayList(Constants.ORDERS, orders);
-//                orderThankYouFragment.setArguments(bundle);
-//                addToMainLayout(orderThankYouFragment);
-//                break;
             case FragmentCodes.START_CATEGORY_LANDING:
                 CategoryLandingFragment categoryLandingFragment = new CategoryLandingFragment();
                 Bundle subCatBundle = new Bundle();

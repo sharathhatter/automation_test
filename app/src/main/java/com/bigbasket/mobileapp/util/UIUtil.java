@@ -32,7 +32,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.BuildConfig;
@@ -49,8 +48,6 @@ import com.moe.pushlibrary.MoEHelper;
 import com.moe.pushlibrary.utils.MoEHelperConstants;
 import com.squareup.picasso.Picasso;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -460,13 +457,88 @@ public class UIUtil {
         }
     }
 
-    public static void hideSpinnerDropdown(Spinner spinner) {
-        try {
-            Method method = Spinner.class.getDeclaredMethod("onDetachedFromWindow");
-            method.setAccessible(true);
-            method.invoke(spinner);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | NullPointerException e) {
-            e.printStackTrace();
+    public static void setUpFooterButton(Context context, ViewGroup checkoutContainer,
+                                         String total, String actionText) {
+        TextView txtTotal = (TextView) checkoutContainer.findViewById(R.id.txtTotal);
+        txtTotal.setTypeface(FontHolder.getInstance(context).getFaceRobotoMedium());
+        TextView txtAction = (TextView) checkoutContainer.findViewById(R.id.txtAction);
+        txtAction.setTypeface(FontHolder.getInstance(context).getFaceRobotoMedium());
+
+        String totalLabel = context.getString(R.string.totalMrp) + " ";
+        String rupeeSym = "`";
+        SpannableString spannableString = new SpannableString(totalLabel + rupeeSym +
+                total);
+        spannableString.setSpan(new CustomTypefaceSpan("", FontHolder.getInstance(context).getFaceRupee()),
+                totalLabel.length(),
+                totalLabel.length() + rupeeSym.length(),
+                Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+        txtTotal.setText(spannableString);
+        txtAction.setText(actionText.toUpperCase(Locale.getDefault()));
+    }
+
+    public static View getOrderSummaryRow(LayoutInflater inflater, String label, String text,
+                                          int textColor, Typeface typeface) {
+        return getOrderSummaryRow(inflater, label, text, textColor, textColor, typeface);
+    }
+
+    public static View getOrderSummaryRow(LayoutInflater inflater, String label, Spannable text,
+                                          int textColor, Typeface typeface) {
+        return getOrderSummaryRow(inflater, label, text, textColor, textColor, typeface);
+    }
+
+    public static View getOrderSummaryRow(LayoutInflater inflater, String label, String text,
+                                          int labelColor, int valueColor, Typeface typeface) {
+        View row = inflater.inflate(R.layout.uiv3_label_value_table_row, null);
+
+        TextView txtLabel = (TextView) row.findViewById(R.id.txtLabel);
+        txtLabel.setTypeface(typeface);
+        txtLabel.setTextColor(labelColor);
+
+        TextView txtValue = (TextView) row.findViewById(R.id.txtValue);
+        txtValue.setTypeface(typeface);
+        txtValue.setTextColor(valueColor);
+
+        txtLabel.setText(label);
+        txtValue.setText(text);
+        return row;
+    }
+
+    public static View getOrderSummaryRow(LayoutInflater inflater, String label, Spannable text,
+                                          int labelColor, int valueColor, Typeface typeface) {
+        View row = inflater.inflate(R.layout.uiv3_label_value_table_row, null);
+
+        TextView txtLabel = (TextView) row.findViewById(R.id.txtLabel);
+        txtLabel.setTypeface(typeface);
+        txtLabel.setTextColor(labelColor);
+
+        TextView txtValue = (TextView) row.findViewById(R.id.txtValue);
+        txtValue.setTypeface(typeface);
+        txtValue.setTextColor(valueColor);
+
+        txtLabel.setText(label);
+        txtValue.setText(text);
+        return row;
+    }
+
+    public static void renderSlotInfoRow(View row, String slotDate, String slotTime,
+                                         String fulfilledBy, boolean hasMultipleSlots, Typeface typeface) {
+        TextView txtNumItems = (TextView) row.findViewById(R.id.txtNumItems);
+        TextView txtBasketVal = (TextView) row.findViewById(R.id.txtBasketVal);
+        TextView txtSlotDate = (TextView) row.findViewById(R.id.txtSlotDate);
+        TextView txtSlotTime = (TextView) row.findViewById(R.id.txtSlotTime);
+        TextView txtFulfilledBy = (TextView) row.findViewById(R.id.txtFulfilledBy);
+        txtSlotDate.setTypeface(typeface);
+        txtSlotTime.setTypeface(typeface);
+
+        txtSlotDate.setText(slotDate);
+        txtSlotTime.setText(slotTime);
+        txtNumItems.setVisibility(View.GONE);
+        txtBasketVal.setVisibility(View.GONE);
+        if (!hasMultipleSlots) {
+            txtFulfilledBy.setVisibility(View.GONE);
+        } else {
+            txtFulfilledBy.setTypeface(typeface);
+            txtFulfilledBy.setText(fulfilledBy);
         }
     }
 }

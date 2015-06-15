@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.activity.order.uiv3;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -47,12 +48,12 @@ import com.bigbasket.mobileapp.model.cart.FulfillmentInfo;
 import com.bigbasket.mobileapp.model.order.OrderItemDisplaySource;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
-import com.bigbasket.mobileapp.task.COMarketPlaceCheckTask;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.facebook.share.widget.LikeView;
@@ -205,7 +206,7 @@ public class ShowCartActivity extends BackButtonActivity {
                             // FragmentCodes.START_VIEW_BASKET); //todo check for this
                         }
                     } else {
-                        new COMarketPlaceCheckTask<>(getCurrentActivity()).startTask();
+                        startCheckout();
                     }
                 }
             }
@@ -219,6 +220,12 @@ public class ShowCartActivity extends BackButtonActivity {
         contentLayout.addView(basketView);
 
         logViewBasketEvent(cartSummary, eventAttribs);
+    }
+
+    private void startCheckout() {
+        Intent intent = new Intent(this, BackButtonActivity.class);
+        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_VIEW_DELIVERY_ADDRESS);
+        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.application;
 
 import android.app.Application;
 
+import com.bigbasket.mobileapp.BuildConfig;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.crashlytics.android.Crashlytics;
@@ -18,7 +19,7 @@ public class BaseApplication extends Application {
         Fabric.with(this, new Crashlytics());
         AuthParameters.updateInstance(this);
         FacebookSdk.sdkInitialize(this.getApplicationContext());
-        MoEHelper.APP_DEBUG = true;
+        MoEHelper.APP_DEBUG = BuildConfig.DEBUG;
         LocalyticsWrapper.integrate(this);
     }
 

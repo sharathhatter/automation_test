@@ -19,7 +19,6 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
-import com.bigbasket.mobileapp.fragment.order.SlotSelectionFragment;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
@@ -291,14 +290,14 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
                         convertView.getPaddingRight(), position == getCount() - 1 ? dp16 : dp8);
             } else {
                 String headerText = shoppingListNames.get(position).toString();
-                SlotSelectionFragment.SlotHeaderViewHolder holder;
+                ShoppingListHeaderViewHolder holder;
                 if (convertView == null) {
                     LayoutInflater inflater = getActivity().getLayoutInflater();
                     convertView = inflater.inflate(R.layout.uiv3_list_title, parent, false);
-                    holder = new SlotSelectionFragment.SlotHeaderViewHolder(convertView);
+                    holder = new ShoppingListHeaderViewHolder(convertView);
                     convertView.setTag(holder);
                 } else {
-                    holder = (SlotSelectionFragment.SlotHeaderViewHolder) convertView.getTag();
+                    holder = (ShoppingListHeaderViewHolder) convertView.getTag();
                 }
 
                 TextView txtHeaderMsg = holder.getTxtHeaderMsg();
@@ -330,6 +329,23 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
                 }
                 return txtShopLstDesc;
             }
+        }
+    }
+
+    public static class ShoppingListHeaderViewHolder {
+        private TextView txtHeaderMsg;
+        private View base;
+
+        public ShoppingListHeaderViewHolder(View base) {
+            this.base = base;
+        }
+
+        public TextView getTxtHeaderMsg() {
+            if (txtHeaderMsg == null) {
+                txtHeaderMsg = (TextView) base.findViewById(R.id.txtHeaderMsg);
+                txtHeaderMsg.setTypeface(faceRobotoRegular);
+            }
+            return txtHeaderMsg;
         }
     }
 

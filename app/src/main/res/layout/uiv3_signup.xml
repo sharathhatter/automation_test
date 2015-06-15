@@ -58,7 +58,7 @@
                 android:textColorHint="@color/translucent_white"
                 android:textSize="@dimen/secondary_text_size" />
 
-            <AutoCompleteTextView
+            <EditText
                 android:id="@+id/emailInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

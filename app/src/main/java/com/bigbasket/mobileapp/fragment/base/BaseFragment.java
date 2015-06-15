@@ -21,12 +21,10 @@ import android.widget.Toast;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
-import com.bigbasket.mobileapp.activity.order.uiv3.CheckoutQCActivity;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
 import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
-import com.bigbasket.mobileapp.interfaces.COReserveQuantityCheckAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
@@ -37,7 +35,6 @@ import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.cart.BasketOperationResponse;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
-import com.bigbasket.mobileapp.model.order.COReserveQuantity;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
@@ -45,17 +42,15 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Map;
 
 
 public abstract class BaseFragment extends AbstractFragment implements HandlerAware,
-        CartInfoAware, BasketOperationAware, COReserveQuantityCheckAware, ProgressIndicationAware,
+        CartInfoAware, BasketOperationAware, ProgressIndicationAware,
         ConnectivityAware, TrackingAware, ApiErrorAware, LaunchProductListAware {
 
     protected BigBasketMessageHandler handler;
-    protected COReserveQuantity coReserveQuantity;
     private ProgressDialog progressDialog;
     private BasketOperationResponse basketOperationResponse;
 
@@ -354,37 +349,6 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
 
     protected void onNegativeButtonClicked(DialogInterface dialogInterface, String sourceName) {
 
-    }
-
-
-    @Override
-    public COReserveQuantity getCOReserveQuantity() {
-        return coReserveQuantity;
-    }
-
-    @Override
-    public void setCOReserveQuantity(COReserveQuantity coReserveQuantity) {
-        this.coReserveQuantity = coReserveQuantity;
-    }
-
-    @Override
-    public void onCOReserveQuantityCheck() {
-        if (coReserveQuantity.isStatus()) {
-            Intent intent = new Intent(getActivity(), CheckoutQCActivity.class);
-            intent.putExtra(Constants.CO_RESERVE_QTY_DATA, coReserveQuantity);
-            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-        }
-    }
-
-    public String getFloatAmount(float amount) {
-        int amountInt = (int) amount;
-        if (amountInt == amount)
-            return String.valueOf(amountInt);
-        final NumberFormat nf = NumberFormat.getInstance();
-        nf.setMinimumFractionDigits(2);
-        nf.setMaximumFractionDigits(2);
-        nf.setGroupingUsed(false);
-        return (nf.format(amount).equals("0.00") || nf.format(amount).equals("0.0")) ? "0" : nf.format(amount);
     }
 
     @Override

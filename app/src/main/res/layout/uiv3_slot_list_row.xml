@@ -4,7 +4,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/uiv3_list_bkg_color"
     android:paddingLeft="@dimen/padding_mini"
     android:paddingRight="@dimen/padding_mini"
     android:paddingTop="@dimen/padding_mini">

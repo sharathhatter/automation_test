@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -16,31 +15,33 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.order.MemberAddressFormActivity;
-import com.bigbasket.mobileapp.activity.order.uiv3.SlotPaymentSelectionActivity;
+import com.bigbasket.mobileapp.activity.order.uiv3.ShipmentSelectionActivity;
 import com.bigbasket.mobileapp.adapter.account.MemberAddressListAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.CreatePotentialOrderResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.GetDeliveryAddressApiResponseContent;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.AddressSelectionAware;
+import com.bigbasket.mobileapp.interfaces.CreatePotentialOrderAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.Address;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
+import com.bigbasket.mobileapp.task.CreatePotentialOrderTask;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.melnykov.fab.FloatingActionButton;
+import com.bigbasket.mobileapp.view.uiv3.OrderQcDialog;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,9 +51,11 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class MemberAddressListFragment extends BaseFragment implements AddressSelectionAware {
+public class MemberAddressListFragment extends BaseFragment implements AddressSelectionAware,
+        CreatePotentialOrderAware {
 
     protected ArrayList<Address> mAddressArrayList;
+    private MemberAddressListAdapter memberAddressListAdapter;
     private boolean mFromAccountPage;
     private String addressId;
 
@@ -171,7 +174,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             addressObjectList.add(2, getString(R.string.other_address));
             addressObjectList.add(3, getString(R.string.addAnAddress));
 
-            MemberAddressListAdapter memberAddressListAdapter =
+            memberAddressListAdapter =
                     new MemberAddressListAdapter<>(this, addressObjectList, mFromAccountPage);
             addressRecyclerView.setAdapter(memberAddressListAdapter);
         } else {
@@ -208,12 +211,9 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
                 @Override
                 public void onClick(View v) {
                     if (addressId != null) {
-                        launchSlotSelection(addressId);
-                        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
-                        HashMap<String, String> map = new HashMap<>();
-                        map.put(TrackEventkeys.POTENTIAL_ORDER, prefer.getString(Constants.POTENTIAL_ORDER_ID, null));
-                        map.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_CHECKOUT_DELIVERY_ADDRESS);
-                        trackEvent(TrackingAware.ADDRESS_CLICKED, map);
+                        createPotentialOrder(addressId);
+                    } else {
+                        createPotentialOrder(memberAddressListAdapter.getSelectedAddress().getId());
                     }
                 }
             });
@@ -225,7 +225,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
     }
 
     @Override
-    public void onAddNewAddressClicked(){
+    public void onAddNewAddressClicked() {
         showCreateAddressForm();
     }
 
@@ -244,7 +244,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
     }
 
     @Override
-    public void onEditAddressClicked(Address address){
+    public void onEditAddressClicked(Address address) {
         showAddressForm(address);
     }
 
@@ -258,13 +258,17 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
 
     @Override
     public void onAddressSelected(Address address) {
-        this.addressId =address.getId();
+        this.addressId = address.getId();
+        memberAddressListAdapter.notifyDataSetChanged();
     }
 
-    private void launchSlotSelection(String addressId) {
-        Intent intent = new Intent(getCurrentActivity(), SlotPaymentSelectionActivity.class);
-        intent.putExtra(Constants.MEMBER_ADDRESS_ID, addressId);
-        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+    @Override
+    public String getSelectedAddressId() {
+        return this.addressId;
+    }
+
+    private void createPotentialOrder(String addressId) {
+        new CreatePotentialOrderTask<>(this, addressId).startTask();
     }
 
     public ViewGroup getContentView() {
@@ -299,14 +303,44 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             if (data != null) {
                 String addressId = data.getStringExtra(Constants.MEMBER_ADDRESS_ID);
                 if (!TextUtils.isEmpty(addressId) && !mFromAccountPage) {
-                    launchSlotSelection(addressId);
+                    this.addressId = addressId;
+                    createPotentialOrder(addressId);
+                } else {
+                    loadAddresses();
                 }
             } else {
                 loadAddresses();
             }
+        } else if (resultCode == NavigationCodes.GO_TO_SLOT_SELECTION) {
+            createPotentialOrder(addressId);
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+
+    @Override
+    public void onPotentialOrderCreated(CreatePotentialOrderResponseContent createPotentialOrderResponseContent) {
+        if (createPotentialOrderResponseContent.hasQcErrors &&
+                createPotentialOrderResponseContent.qcErrorDatas != null &&
+                createPotentialOrderResponseContent.qcErrorDatas.size() > 0) {
+            new OrderQcDialog<>().show(getCurrentActivity(), createPotentialOrderResponseContent);
+        } else {
+            launchSlotSelection(createPotentialOrderResponseContent);
+        }
+    }
+
+    @Override
+    public void postOrderQc(CreatePotentialOrderResponseContent createPotentialOrderResponseContent) {
+        launchSlotSelection(createPotentialOrderResponseContent);
+    }
+
+    private void launchSlotSelection(CreatePotentialOrderResponseContent createPotentialOrderResponseContent) {
+        Intent intent = new Intent(getCurrentActivity(), ShipmentSelectionActivity.class);
+        intent.putParcelableArrayListExtra(Constants.SHIPMENTS, createPotentialOrderResponseContent.shipments);
+        intent.putExtra(Constants.ORDER_DETAILS, createPotentialOrderResponseContent.orderDetails);
+        intent.putExtra(Constants.P_ORDER_ID, createPotentialOrderResponseContent.potentialOrderId);
+        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
     @Override

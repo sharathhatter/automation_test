@@ -1,242 +1,169 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/scrollViewPaymentOption"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/uiv3_list_bkg_color">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
-    <FrameLayout
+    <include
+        android:id="@+id/toolbarMain"
+        layout="@layout/uiv3_tool_layout" />
+
+    <include
+        android:id="@+id/layoutCheckoutFooter"
+        layout="@layout/uiv3_checkout_footer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" />
 
-        <RelativeLayout
-            android:id="@+id/layoutPressOrderReviewContainer"
+    <ScrollView
+        android:id="@+id/scrollViewPaymentOption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/layoutCheckoutFooter"
+        android:layout_below="@id/toolbarMain">
+
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center">
-
-            <TextView
-                android:id="@+id/lblPreviousCreditCardTxnFailed"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_marginBottom="@dimen/margin_small"
-                android:layout_marginLeft="@dimen/margin_normal"
-                android:layout_marginRight="@dimen/margin_normal"
-                android:layout_marginTop="@dimen/margin_large"
-                android:text="@string/pressOrderReview"
-                android:textColor="@color/dark_red"
-                android:textSize="@dimen/heading_2_text_size" />
-        </RelativeLayout>
-
-        <LinearLayout
-            android:id="@+id/layoutPaymentContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/margin_small"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/lblPaymentMethod"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/margin_small"
-                android:layout_marginLeft="@dimen/margin_normal"
-                android:layout_marginRight="@dimen/margin_normal"
-                android:layout_marginTop="@dimen/margin_normal"
-                android:text="@string/choosePayment"
-                android:textColor="@color/uiv3_primary_text_color"
-                android:textSize="@dimen/heading_2_text_size" />
-
-            <LinearLayout
-                android:id="@+id/layoutChoosePayment"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:orientation="vertical"
-                android:paddingLeft="@dimen/padding_small"
-                android:paddingRight="@dimen/padding_small"
-                android:paddingTop="@dimen/padding_small">
-
-                <TextView
-                    android:id="@+id/lblTransactionFailed"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/margin_small"
-                    android:layout_marginTop="@dimen/margin_mini"
-                    android:text="@string/transactionFailed"
-                    android:textColor="@color/dark_red"
-                    android:textSize="@dimen/primary_text_size" />
-
-                <TextView
-                    android:id="@+id/txtTransactionFailedReason"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/margin_small"
-                    android:layout_marginTop="@dimen/margin_mini"
-                    android:text="@string/transactionFailed"
-                    android:textColor="@color/dark_red"
-                    android:textSize="@dimen/primary_text_size" />
-
-                <TextView
-                    android:id="@+id/lblSelectAnotherMethod"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/margin_normal"
-                    android:layout_marginLeft="@dimen/margin_small"
-                    android:layout_marginTop="@dimen/margin_mini"
-                    android:text="@string/txnFailedRetryTxt"
-                    android:textColor="@color/dark_red"
-                    android:textSize="@dimen/primary_text_size" />
-
-                <RadioGroup
-                    android:id="@+id/layoutPaymentOptions"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                </RadioGroup>
-            </LinearLayout>
+            android:layout_height="wrap_content">
 
             <RelativeLayout
-                android:id="@+id/layoutOrderSummary"
+                android:id="@+id/layoutPressOrderReviewContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_normal"
-                android:background="@color/white"
-                android:padding="@dimen/padding_normal">
+                android:layout_gravity="center">
 
                 <TextView
-                    android:id="@+id/txtWalletUsed"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/lblPreviousCreditCardTxnFailed"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
+                    android:layout_centerInParent="true"
                     android:layout_marginBottom="@dimen/margin_small"
-                    android:layout_marginLeft="@dimen/margin_small"
-                    android:text="Rs 200"
+                    android:layout_marginLeft="@dimen/margin_normal"
+                    android:layout_marginRight="@dimen/margin_normal"
+                    android:layout_marginTop="@dimen/margin_large"
+                    android:text="@string/pressOrderReview"
                     android:textColor="@color/dark_red"
-                    android:textSize="@dimen/primary_text_size" />
-
-                <TextView
-                    android:id="@+id/lblWalletUsed"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginBottom="@dimen/margin_small"
-                    android:layout_toLeftOf="@id/txtWalletUsed"
-                    android:text="@string/walletUsed"
-                    android:textColor="@color/uiv3_primary_text_color"
-                    android:textSize="@dimen/primary_text_size" />
-
-                <TextView
-                    android:id="@+id/txtOrderTotal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_below="@id/txtWalletUsed"
-                    android:text="Rs. 2177.00"
-                    android:textColor="@color/uiv3_primary_text_color"
-                    android:textSize="@dimen/primary_text_size" />
-
-                <TextView
-                    android:id="@+id/lblOrderTotal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_below="@id/txtWalletUsed"
-                    android:layout_toLeftOf="@id/txtOrderTotal"
-                    android:text="@string/amountpay"
-                    android:textColor="@color/uiv3_primary_text_color"
-                    android:textSize="@dimen/primary_text_size" />
-
-                <TextView
-                    android:id="@+id/txtWalletRemaining"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_below="@id/txtOrderTotal"
-                    android:layout_marginLeft="@dimen/margin_small"
-                    android:layout_marginTop="@dimen/margin_small"
-                    android:text="Rs 200"
-                    android:textColor="@color/uiv3_primary_text_color"
-                    android:textSize="@dimen/primary_text_size" />
-
-                <TextView
-                    android:id="@+id/lblWalletRemaining"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/txtOrderTotal"
-                    android:layout_marginTop="@dimen/margin_small"
-                    android:layout_toLeftOf="@id/txtWalletRemaining"
-                    android:text="@string/walletBal"
-                    android:textColor="@color/uiv3_primary_text_color"
-                    android:textSize="@dimen/primary_text_size" />
-
-                <TextView
-                    android:id="@+id/txtSaving"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_below="@id/txtWalletRemaining"
-                    android:layout_marginTop="@dimen/margin_small"
-                    android:text="Rs. 340"
-                    android:textColor="@color/dark_red"
-                    android:textSize="@dimen/small_text_size" />
-
-                <TextView
-                    android:id="@+id/lblSaving"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/txtWalletRemaining"
-                    android:layout_marginRight="@dimen/margin_mini"
-                    android:layout_marginTop="@dimen/margin_small"
-                    android:layout_toLeftOf="@id/txtSaving"
-                    android:text="@string/youSaved"
-                    android:textColor="@color/dark_red"
-                    android:textSize="@dimen/small_text_size" />
+                    android:textSize="@dimen/heading_2_text_size" />
             </RelativeLayout>
 
-            <TextView
-                android:id="@+id/txtApplyVoucher"
+            <LinearLayout
+                android:id="@+id/layoutPaymentContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/margin_normal"
-                android:layout_marginTop="@dimen/margin_normal"
-                android:background="@color/white"
-                android:clickable="true"
-                android:drawableLeft="@drawable/discount_24dp"
-                android:drawablePadding="@dimen/padding_normal"
-                android:drawableRight="@drawable/ic_keyboard_arrow_right_grey600_24dp"
-                android:gravity="center_vertical"
-                android:paddingBottom="@dimen/padding_normal"
-                android:paddingLeft="@dimen/padding_normal"
-                android:paddingRight="@dimen/padding_small"
-                android:paddingTop="@dimen/padding_normal"
-                android:text="@string/applyVoucher"
-                android:textColor="@color/uiv3_primary_text_color"
-                android:textSize="@dimen/large_text_size" />
+                android:layout_marginBottom="@dimen/margin_small"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/txtRemoveVoucher"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/margin_normal"
-                android:layout_marginTop="@dimen/margin_normal"
-                android:background="@color/white"
-                android:clickable="true"
-                android:drawableLeft="@drawable/done_green_24dp"
-                android:drawablePadding="@dimen/padding_normal"
-                android:drawableRight="@drawable/ic_highlight_remove_grey600_24dp"
-                android:gravity="center_vertical"
-                android:paddingBottom="@dimen/padding_normal"
-                android:paddingLeft="@dimen/padding_normal"
-                android:paddingRight="@dimen/padding_small"
-                android:paddingTop="@dimen/padding_normal"
-                android:text="@string/removeVoucher"
-                android:textColor="@color/dark_green"
-                android:textSize="@dimen/large_text_size"
-                android:visibility="gone" />
+                <LinearLayout
+                    android:id="@+id/layoutChoosePayment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/margin_small"
+                    android:layout_marginLeft="@dimen/margin_normal"
+                    android:layout_marginRight="@dimen/margin_normal"
+                    android:layout_marginTop="@dimen/margin_normal"
+                    android:background="@color/uiv3_list_bkg_color"
+                    android:orientation="vertical"
+                    android:paddingLeft="@dimen/padding_small"
+                    android:paddingRight="@dimen/padding_small"
+                    android:paddingTop="@dimen/padding_small">
 
-        </LinearLayout>
-    </FrameLayout>
-</ScrollView>
+                    <TextView
+                        android:id="@+id/lblTransactionFailed"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/margin_small"
+                        android:layout_marginTop="@dimen/margin_mini"
+                        android:text="@string/transactionFailed"
+                        android:textColor="@color/dark_red"
+                        android:textSize="@dimen/primary_text_size" />
+
+                    <TextView
+                        android:id="@+id/txtTransactionFailedReason"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/margin_small"
+                        android:layout_marginTop="@dimen/margin_mini"
+                        android:text="@string/transactionFailed"
+                        android:textColor="@color/dark_red"
+                        android:textSize="@dimen/primary_text_size" />
+
+                    <TextView
+                        android:id="@+id/lblSelectAnotherMethod"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/margin_normal"
+                        android:layout_marginLeft="@dimen/margin_small"
+                        android:layout_marginTop="@dimen/margin_mini"
+                        android:text="@string/txnFailedRetryTxt"
+                        android:textColor="@color/dark_red"
+                        android:textSize="@dimen/primary_text_size" />
+
+                    <RadioGroup
+                        android:id="@+id/layoutPaymentOptions"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                    </RadioGroup>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/txtApplyVoucher"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/margin_small"
+                    android:layout_marginLeft="@dimen/margin_normal"
+                    android:layout_marginRight="@dimen/margin_normal"
+                    android:background="@color/uiv3_list_bkg_color"
+                    android:clickable="true"
+                    android:drawableLeft="@drawable/discount_24dp"
+                    android:drawablePadding="@dimen/padding_normal"
+                    android:drawableRight="@drawable/ic_keyboard_arrow_right_grey600_24dp"
+                    android:gravity="center_vertical"
+                    android:paddingBottom="@dimen/padding_normal"
+                    android:paddingLeft="@dimen/padding_normal"
+                    android:paddingRight="@dimen/padding_small"
+                    android:paddingTop="@dimen/padding_normal"
+                    android:text="@string/applyVoucher"
+                    android:textColor="@color/uiv3_primary_text_color"
+                    android:textSize="@dimen/large_text_size" />
+
+                <TextView
+                    android:id="@+id/txtRemoveVoucher"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/margin_small"
+                    android:layout_marginLeft="@dimen/margin_normal"
+                    android:layout_marginRight="@dimen/margin_normal"
+                    android:background="@color/white"
+                    android:clickable="true"
+                    android:drawableLeft="@drawable/done_green_24dp"
+                    android:drawablePadding="@dimen/padding_normal"
+                    android:drawableRight="@drawable/ic_highlight_remove_grey600_24dp"
+                    android:gravity="center_vertical"
+                    android:paddingBottom="@dimen/padding_normal"
+                    android:paddingLeft="@dimen/padding_normal"
+                    android:paddingRight="@dimen/padding_small"
+                    android:paddingTop="@dimen/padding_normal"
+                    android:text="@string/removeVoucher"
+                    android:textColor="@color/dark_green"
+                    android:textSize="@dimen/large_text_size"
+                    android:visibility="gone" />
+
+
+                <LinearLayout
+                    android:id="@+id/layoutOrderSummaryInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/margin_small"
+                    android:layout_marginLeft="@dimen/margin_normal"
+                    android:layout_marginRight="@dimen/margin_normal"
+                    android:layout_marginTop="@dimen/margin_small"
+                    android:orientation="vertical"
+                    android:padding="@dimen/padding_normal">
+
+                </LinearLayout>
+            </LinearLayout>
+        </FrameLayout>
+    </ScrollView>
+</RelativeLayout>
