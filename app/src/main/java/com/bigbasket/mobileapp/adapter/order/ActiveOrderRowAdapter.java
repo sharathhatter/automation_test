@@ -1,13 +1,16 @@
 package com.bigbasket.mobileapp.adapter.order;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ForegroundColorSpan;
+import android.text.style.TypefaceSpan;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,8 +20,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
-import com.bigbasket.mobileapp.fragment.order.ShowCartFragment;
+import com.bigbasket.mobileapp.activity.order.uiv3.ShowCartActivity;
 import com.bigbasket.mobileapp.fragment.promo.PromoDetailFragment;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
@@ -32,6 +37,8 @@ import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.task.BasketOperationTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
+import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.ShowAnnotationInfo;
 import com.bigbasket.mobileapp.view.ShowFulfillmentInfo;
@@ -127,7 +134,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
             topCatTotalItems.setVisibility(View.GONE);
         }
 
-        String separator = " | Total: ";
+        String separator = "  |  ";
         String topCatTotalAmount = UIUtil.formatAsMoney(cartItemList.getTopCatTotal());
         TextView topCatTotal = headerTitleHolder.getTopCatTotal();
         if (!topCatTotalAmount.equals("0")) {
@@ -191,6 +198,13 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
         return row;
     }
 
+    @Override
+    public boolean isEnabled(int position) {
+        if(getItemViewType(position) == VIEW_TYPE_CART_HEADER)
+            return false;
+        return true;
+    }
+
     private View getFulfillmentInfo(Object obj) {
         ShowFulfillmentInfo showFulfillmentInfo = new ShowFulfillmentInfo<>((FulfillmentInfo) obj,
                 ((ActivityAware) context).getCurrentActivity(), faceRobotoRegular);
@@ -247,31 +261,60 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
         }
 
         TextView txtProductDesc = rowHolder.getTxtProductDesc();
-        txtProductDesc.setTypeface(faceRobotoRegular);
-        txtProductDesc.setText(cartItem.getProductBrand() + " " + cartItem.getProductDesc());
+        txtProductDesc.setText(cartItem.getProductDesc());
+
+        TextView txtProductBrand = rowHolder.getTxtProductBrand();
+        txtProductBrand.setText(cartItem.getProductBrand());
+
+
+        TextView txtExpressAvailable = rowHolder.getTxtExpressAvailable();
+        if(cartItem.isExpress()){
+            txtExpressAvailable.setVisibility(View.VISIBLE);
+        }else {
+            txtExpressAvailable.setVisibility(View.GONE);
+        }
 
         TextView txtSalePrice = rowHolder.getTxtSalePrice();
-        if (cartItem.getTotalPrice() > 0) {
-            txtSalePrice.setText(UIUtil.asRupeeSpannable(cartItem.getTotalPrice(), faceRupee));
+        if(cartItem.getTotalPrice()>0){
+            String prefix = "`";
+            String salePriceStr = UIUtil.formatAsMoney(cartItem.getTotalPrice());
+            //String perItemCostStr = " (1@"+UIUtil.formatAsMoney(cartItem.getSalePrice())+")";
+            int prefixLen = prefix.length();
+            //int salePriceLen = salePriceStr.length();
+            SpannableString spannableSalePrice = new SpannableString(prefix + salePriceStr);
+            spannableSalePrice.setSpan(new CustomTypefaceSpan("", faceRupee), prefixLen - 1,
+                    prefixLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+//            spannableSalePrice.setSpan(new ForegroundColorSpan(((ActivityAware) context).getCurrentActivity().
+//                           getResources().getColor(R.color.uiv3_secondary_text_color)),
+//                    prefixLen + salePriceLen, spannableSalePrice.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+//            spannableSalePrice.setSpan(new AbsoluteSizeSpan(30),
+//                    prefixLen + salePriceLen, spannableSalePrice.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+            txtSalePrice.setText(spannableSalePrice);
+            txtSalePrice.setVisibility(View.VISIBLE);
         } else {
             txtSalePrice.setText("Free!");
         }
 
-        TextView txtSaving = rowHolder.getTxtSaving();
-
-        if (cartItem.getSaving() > 0) {
-            txtSaving.setVisibility(View.VISIBLE);
-            txtSaving.setText(UIUtil.formatAsSavings(UIUtil.formatAsMoney(cartItem.getSaving()), faceRupee));
-        } else {
-            txtSaving.setVisibility(View.GONE);
-        }
 
         final TextView txtInBasket = rowHolder.getTxtInBasket();
         final View imgDecBasketQty = rowHolder.getViewDecBasketQty();
         final View imgIncBasketQty = rowHolder.getViewIncBasketQty();
         final ImageView imgRemove = rowHolder.getImgRemove();
         final View basketOperationSeparatorLine = rowHolder.getBasketOperationSeparatorLine();
-        TextView txtQty = rowHolder.getTxtQty();
+        TextView txtPackDesc = rowHolder.getTxtPackDesc();
+        String packType = "";
+        if(!TextUtils.isEmpty(cartItem.getProductWeight()))
+            packType = cartItem.getProductWeight();
+        if(!TextUtils.isEmpty(cartItem.getPackDesc()))
+            packType += " - "+cartItem.getPackDesc();
+
+        if(!TextUtils.isEmpty(packType)){
+            txtPackDesc.setText(packType);
+            txtPackDesc.setVisibility(View.VISIBLE);
+        }else {
+            txtPackDesc.setVisibility(View.GONE);
+        }
+
         if (imgDecBasketQty != null && imgIncBasketQty != null && imgRemove != null) {
             if (orderItemDisplaySource == OrderItemDisplaySource.BASKET && !isReadOnlyBasket && cartItem.getTotalPrice() > 0) {
                 txtInBasket.setVisibility(View.VISIBLE);
@@ -279,7 +322,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
                 imgDecBasketQty.setVisibility(View.VISIBLE);
                 imgRemove.setVisibility(View.VISIBLE);
                 basketOperationSeparatorLine.setVisibility(View.VISIBLE);
-                txtQty.setVisibility(View.GONE);
+                //txtQty.setVisibility(View.GONE);
 
                 if (cartItem.getTotalQty() > 0) {
                     txtInBasket.setVisibility(View.VISIBLE);
@@ -346,13 +389,13 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
                     }
                 });
             } else {
-                if (cartItem.getTotalQty() > 0) {
-                    txtQty.setVisibility(View.VISIBLE);
-                    String itemCount = UIUtil.formatAsMoney(cartItem.getTotalQty());
-                    txtQty.setText(itemCount + " item" + (cartItem.getTotalQty() > 1 ? "s" : ""));
-                } else {
-                    txtQty.setVisibility(View.GONE);
-                }
+//                if (cartItem.getTotalQty() > 0) {
+//                    txtQty.setVisibility(View.VISIBLE);
+//                    String itemCount = UIUtil.formatAsMoney(cartItem.getTotalQty());
+//                    txtQty.setText(itemCount + " item" + (cartItem.getTotalQty() > 1 ? "s" : ""));
+//                } else {
+//                    txtQty.setVisibility(View.GONE);
+//                }
                 txtInBasket.setVisibility(View.GONE);
                 imgIncBasketQty.setVisibility(View.GONE);
                 imgDecBasketQty.setVisibility(View.GONE);
@@ -405,7 +448,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
         txtPromoNameDesc.setVisibility(View.VISIBLE);
         String promoTxtName = cartItem.getCartItemPromoInfo().getPromoInfo().getPromoName();
         txtPromoNameDesc.setText(promoTxtName);
-        txtPromoNameDesc.setTextColor(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.dark_red));
+        txtPromoNameDesc.setTextColor(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.red_color));
 
         if (orderItemDisplaySource == OrderItemDisplaySource.BASKET) {
             txtPromoNameDesc.setOnClickListener(new PromoListener(cartItem.getCartItemPromoInfo().getPromoInfo().getPromoId()));
@@ -433,7 +476,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
         txtPromoNameDesc.setVisibility(View.VISIBLE);
         String promoTxtName = cartItem.getCartItemPromoInfo().getPromoInfo().getPromoName();
         txtPromoNameDesc.setText(promoTxtName);
-        if (context instanceof ShowCartFragment) {
+        if (context instanceof ShowCartActivity) {
             txtPromoNameDesc.setTextColor(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.promo_txt_green_color));
         } else {
             txtPromoNameDesc.setTextColor(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.link_color));
@@ -489,7 +532,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
         txtPromoNameDesc.setVisibility(View.VISIBLE);
         String promoTxtName = cartItem.getCartItemPromoInfo().getPromoInfo().getPromoName();
         txtPromoNameDesc.setText(promoTxtName);
-        if (context instanceof ShowCartFragment) {
+        if (context instanceof ShowCartActivity) {
             txtPromoNameDesc.setTextColor(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.promo_txt_green_color));
         } else {
             txtPromoNameDesc.setTextColor(((ActivityAware) context).getCurrentActivity().getResources().getColor(R.color.link_color));
@@ -503,8 +546,8 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
         private ImageView imgProduct;
         private TextView txtProductDesc;
         private TextView txtSalePrice;
-        private TextView txtSaving;
         private ImageView imgRegularImg;
+        private TextView txtProductBrand;
         private TextView txtRegularPriceAndQty;
         private TextView lblRegularPrice;
         private ImageView imgPromoUsed;
@@ -516,8 +559,9 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
         private ImageView imgRemove;
         private ImageView imgLiquorIcon;
         private View base;
+        private TextView txtExpressAvailable;
         private View basketOperationSeparatorLine;
-        private TextView txtQty;
+        private TextView txtPackDesc;
 
         public RowHolder(View base) {
             this.base = base;
@@ -543,20 +587,28 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
             return txtProductDesc;
         }
 
+
+        public TextView getTxtProductBrand() {
+            if (txtProductBrand == null) {
+                txtProductBrand = (TextView) base.findViewById(R.id.txtProductBrand);
+                txtProductBrand.setTypeface(faceRobotoRegular);
+            }
+            return txtProductBrand;
+        }
+
+        public TextView getTxtExpressAvailable() {
+            if(txtExpressAvailable==null)
+                txtExpressAvailable = (TextView) base.findViewById(R.id.txtExpressAvailable);
+                txtExpressAvailable.setTypeface(faceRobotoRegular);
+            return txtExpressAvailable;
+        }
+
         public TextView getTxtSalePrice() {
             if (txtSalePrice == null) {
                 txtSalePrice = (TextView) base.findViewById(R.id.txtSalePrice);
                 txtSalePrice.setTypeface(faceRobotoRegular);
             }
             return txtSalePrice;
-        }
-
-        public TextView getTxtSaving() {
-            if (txtSaving == null) {
-                txtSaving = (TextView) base.findViewById(R.id.txtSaving);
-                txtSaving.setTypeface(faceRobotoRegular);
-            }
-            return txtSaving;
         }
 
         public TextView getTxtInBasket() {
@@ -611,12 +663,12 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
             return txtPromoNameDesc;
         }
 
-        public TextView getTxtQty() {
-            if (txtQty == null) {
-                txtQty = (TextView) base.findViewById(R.id.txtQty);
-                txtQty.setTypeface(faceRobotoRegular);
+        public TextView getTxtPackDesc() {
+            if(txtPackDesc==null) {
+                txtPackDesc = (TextView) base.findViewById(R.id.txtPackDesc);
+                txtPackDesc.setTypeface(faceRobotoRegular);
             }
-            return txtQty;
+            return txtPackDesc;
         }
 
         public ImageView getImgRemove() {
@@ -690,11 +742,10 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
 
         @Override
         public void onClick(View v) {
-            Bundle bundle = new Bundle();
-            bundle.putInt(Constants.PROMO_ID, promoId);
-            PromoDetailFragment promoDetailFragment = new PromoDetailFragment();
-            promoDetailFragment.setArguments(bundle);
-            ((ActivityAware) context).getCurrentActivity().onChangeFragment(promoDetailFragment);
+            Intent intent = new Intent(((ActivityAware) context).getCurrentActivity(), BBActivity.class);
+            intent.putExtra(Constants.PROMO_ID, promoId);
+            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PROMO_DETAIL);
+            ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         }
     }
 }

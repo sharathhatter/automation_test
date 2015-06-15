@@ -7,9 +7,6 @@ public final class FragmentCodes {
     public static final int START_UPDATE_PROFILE = 10;
     public static final int START_CHANGE_PASSWD = 11;
     public static final int START_VIEW_DELIVERY_ADDRESS = 12;
-    public static final int START_CHANGE_PIN = 13;
-    public static final int START_WALLET_FRAGMENT = 14;
-    public static final int START_VIEW_BASKET = 15;
     public static final int START_PRODUCT_DETAIL = 16;
     public static final int START_ORDER_THANKYOU = 17;
     public static final int START_CATEGORY_LANDING = 19;

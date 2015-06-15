@@ -1,4 +1,4 @@
-package com.bigbasket.mobileapp.fragment.order;
+package com.bigbasket.mobileapp.activity.order.uiv3;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,13 +9,19 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -50,6 +56,7 @@ import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.facebook.share.widget.LikeView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,24 +67,64 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class ShowCartFragment extends BaseFragment {
+public class ShowCartActivity extends BackButtonActivity {
 
-    private boolean isReadOnly;
     private ArrayList<CartItemList> cartItemLists;
     private ArrayList<FulfillmentInfo> fullfillmentInfos;
     private ArrayList<AnnotationInfo> annotationInfoArrayList;
+    private MenuItem basketMenuItem;
+    private TextView txtBasketSubTitle;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.uiv3_list_container, container, false);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setTitle(getString(R.string.my_basket_header));
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (getArguments() != null) {
-            String fulfillmentIds = getArguments().getString(Constants.INTERNAL_VALUE);
-            getCartItems(fulfillmentIds);
+        getCartItems(null);
+    }
+
+    @Override
+    protected void setOptionsMenu(Menu menu) {
+        super.setOptionsMenu(menu);
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.empty_basket, menu);
+        basketMenuItem = menu.getItem(0);
+        basketMenuItem.setVisible(false);
+    }
+
+    private void renderHearView(int totalItemCount){
+        Toolbar toolbar = getToolbar();
+        if(txtBasketSubTitle!=null) toolbar.removeView(txtBasketSubTitle);
+        txtBasketSubTitle = (TextView) getLayoutInflater().inflate(R.layout.basket_header_layout, toolbar, false);
+        txtBasketSubTitle.setTypeface(faceRobotoRegular);
+        toolbar.addView(txtBasketSubTitle);
+        if(totalItemCount>0){
+            String itemString = totalItemCount > 1 ? " Items" : " Item";
+            txtBasketSubTitle.setText(totalItemCount + itemString);
+            basketMenuItem.setVisible(true);
+        }else {
+            txtBasketSubTitle.setVisibility(View.GONE);
+            basketMenuItem.setVisible(false);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_empty_basket:
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
+                if (preferences.getString(Constants.GET_CART, "0") != null
+                        && !preferences.getString(Constants.GET_CART, "0").equals("0")) {
+                    showAlertDialog(null, getString(R.string.removeAllProducts), DialogButton.YES,
+                            DialogButton.NO, Constants.EMPTY_BASKET, null, getString(R.string.emptyBasket));
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
@@ -93,19 +140,15 @@ public class ShowCartFragment extends BaseFragment {
     private void renderCartItemList(CartSummary cartSummary, String baseImageUrl) {
         Map<String, String> eventAttribs = new HashMap<>();
 
-        if (getActivity() == null) return;
+        FrameLayout contentLayout = (FrameLayout) findViewById(R.id.content_frame);
+        contentLayout.removeAllViews();
+        contentLayout.setBackgroundColor(getResources().getColor(R.color.uiv3_list_bkg_color));
 
-        ViewGroup contentView = getContentView();
-        if (contentView == null) return;
-
-        contentView.removeAllViews();
-        contentView.setBackgroundColor(getResources().getColor(R.color.uiv3_list_bkg_color));
-
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        View basketView = inflater.inflate(R.layout.uiv3_list_with_action, contentView, false);
+        LayoutInflater inflater = getLayoutInflater();
+        View basketView = inflater.inflate(R.layout.uiv3_list_with_action, contentLayout, false);
 
         ListView cartItemListView = (ListView) basketView.findViewById(R.id.listWithFixedFooter);
-        View basketSummaryView = getCartSummaryView(cartSummary, cartItemListView);
+        //View basketSummaryView = getCartSummaryView(cartSummary, cartItemListView);
 
         List<Object> cartItemHeaderList = new ArrayList<>();
         for (CartItemList cartItemInfoArray : cartItemLists) {
@@ -147,7 +190,9 @@ public class ShowCartFragment extends BaseFragment {
             }
         }
 
-        cartItemListView.addHeaderView(basketSummaryView);
+
+        //todo change button style
+        //cartItemListView.addHeaderView(basketSummaryView);
         Button btnFooterCheckout = (Button) basketView.findViewById(R.id.btnListFooter);
         btnFooterCheckout.setText(getString(R.string.check_out).toUpperCase());
         btnFooterCheckout.setTypeface(faceRobotoRegular);
@@ -155,9 +200,10 @@ public class ShowCartFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 if (getCartInfo() != null && getCartInfo().getNoOfItems() > 0) {
-                    if (AuthParameters.getInstance(getActivity()).isAuthTokenEmpty()) {
+                    if (AuthParameters.getInstance(getCurrentActivity()).isAuthTokenEmpty()) {
                         if (getCurrentActivity() != null) {
-                            getCurrentActivity().launchLogin(TrackEventkeys.NAVIGATION_CTX_SHOW_BASKET, FragmentCodes.START_VIEW_BASKET);
+                            //getCurrentActivity().launchLogin(TrackEventkeys.NAVIGATION_CTX_SHOW_BASKET,
+                            // FragmentCodes.START_VIEW_BASKET); //todo check for this
                         }
                     } else {
                         startCheckout();
@@ -166,18 +212,18 @@ public class ShowCartFragment extends BaseFragment {
             }
         });
         ActiveOrderRowAdapter activeOrderRowAdapter = new ActiveOrderRowAdapter<>(cartItemHeaderList, this,
-                faceRupee, faceRobotoRegular, OrderItemDisplaySource.BASKET, isReadOnly,
+                faceRupee, faceRobotoRegular, OrderItemDisplaySource.BASKET, false,
                 fulfillmentInfoIdAndIconHashMap, annotationHashMap, baseImageUrl, getNavigationCtx());
         cartItemListView.setDivider(null);
         cartItemListView.setDividerHeight(0);
         cartItemListView.setAdapter(activeOrderRowAdapter);
-        contentView.addView(basketView);
+        contentLayout.addView(basketView);
 
         logViewBasketEvent(cartSummary, eventAttribs);
     }
 
     private void startCheckout() {
-        Intent intent = new Intent(getActivity(), BackButtonActivity.class);
+        Intent intent = new Intent(this, BackButtonActivity.class);
         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_VIEW_DELIVERY_ADDRESS);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
@@ -201,7 +247,7 @@ public class ShowCartFragment extends BaseFragment {
 
     public View getCartSummaryView(CartSummary cartSummary, ViewGroup parent) {
         if (cartSummary == null) return null;
-        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View base = inflater.inflate(R.layout.uiv3_basket_header, parent, false);
         TextView lblSaving = (TextView) base.findViewById(R.id.lblSaving);
         lblSaving.setTypeface(faceRobotoRegular);
@@ -241,7 +287,7 @@ public class ShowCartFragment extends BaseFragment {
         viewEmptyBasket.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
                 if (preferences.getString(Constants.GET_CART, "0") != null
                         && !preferences.getString(Constants.GET_CART, "0").equals("0")) {
                     showAlertDialog(null, getString(R.string.removeAllProducts), DialogButton.YES,
@@ -254,18 +300,17 @@ public class ShowCartFragment extends BaseFragment {
 
 
     public final void setBasketNumItemsDisplay() {
-        if (getActivity() == null || getCartInfo() == null) return;
+        if (getCartInfo() == null) return;
         updateUIForCartInfo();
         markBasketDirty();
     }
 
     private void emptyCart() {
-        if (getActivity() == null) return;
-        if (!DataUtil.isInternetAvailable(getActivity())) return;
+        if (!DataUtil.isInternetAvailable(getCurrentActivity())) return;
         trackEvent(TrackingAware.BASKET_EMPTY_CLICKED, null);
-        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
         final SharedPreferences.Editor editor = prefer.edit();
-        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressView();
         bigBasketApiService.emptyCart(new Callback<BaseApiResponse>() {
             @Override
@@ -279,7 +324,7 @@ public class ShowCartFragment extends BaseFragment {
                     setCartInfo(cartSummary);
                     setBasketNumItemsDisplay();
                 } else if (cartEmptyApiResponseCallback.status == ApiErrorCodes.CART_NOT_EXISTS) {
-                    showErrorMsg("Cart is already empty");
+                    showAlertDialog("Cart is already empty");
                 } else {
                     handler.sendEmptyMessage(cartEmptyApiResponseCallback.status,
                             cartEmptyApiResponseCallback.message, true);
@@ -299,11 +344,13 @@ public class ShowCartFragment extends BaseFragment {
 
 
     private void getCartItems(String fulfillmentIds) {
-        if (getActivity() == null) return;
-        if (!DataUtil.isInternetAvailable(getActivity())) handler.sendOfflineError(true);
-        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        if (!DataUtil.isInternetAvailable(getCurrentActivity())){
+            handler.sendOfflineError(true);
+            return;
+        }
+        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
         final SharedPreferences.Editor editor = prefer.edit();
-        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressView();
         bigBasketApiService.cartGet(fulfillmentIds, new Callback<ApiResponse<CartGetApiResponseContent>>() {
             @Override
@@ -312,12 +359,10 @@ public class ShowCartFragment extends BaseFragment {
                 hideProgressView();
                 if (cartGetApiResponseContentApiResponse.status == 0) {
                     CartSummary cartSummary = cartGetApiResponseContentApiResponse.apiResponseContent.cartSummary;
-                    if (!isReadOnly) {
                         setCartInfo(cartSummary);
                         setBasketNumItemsDisplay();
                         editor.putString(Constants.GET_CART,
                                 String.valueOf(cartSummary.getNoOfItems()));
-                    }
                     fullfillmentInfos = cartGetApiResponseContentApiResponse.apiResponseContent.fulfillmentInfos;
                     annotationInfoArrayList = cartGetApiResponseContentApiResponse.apiResponseContent.annotationInfos;
                     if (cartGetApiResponseContentApiResponse.apiResponseContent.
@@ -326,6 +371,7 @@ public class ShowCartFragment extends BaseFragment {
                             && cartGetApiResponseContentApiResponse.apiResponseContent.cartGetApiCartItemsContent.cartItemLists.size() > 0) {
                         cartItemLists = cartGetApiResponseContentApiResponse.apiResponseContent.
                                 cartGetApiCartItemsContent.cartItemLists;
+                        renderHearView(cartSummary.getNoOfItems());
                         renderCartItemList(cartSummary, cartGetApiResponseContentApiResponse
                                 .apiResponseContent.cartGetApiCartItemsContent.baseImgUrl);
                     } else {
@@ -348,25 +394,10 @@ public class ShowCartFragment extends BaseFragment {
         });
     }
 
-
-    @Override
-    public ViewGroup getContentView() {
-        return getView() != null ? (ViewGroup) getView().findViewById(R.id.uiv3LayoutListContainer) : null;
-    }
-
-    @Override
-    public void onBackResume() {
-        super.onBackResume();
-        if (getArguments() != null) {
-            String fulfillmentIds = getArguments().getString(Constants.INTERNAL_VALUE);
-            getCartItems(fulfillmentIds);
-        }
-    }
-
     private void showBasketEmptyMessage() {
         ViewGroup contentView = getContentView();
         if (contentView == null) return;
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+        LayoutInflater inflater = getLayoutInflater();
         View base = inflater.inflate(R.layout.uiv3_empty_data_text, contentView, false);
         ImageView imgEmptyPage = (ImageView) base.findViewById(R.id.imgEmptyPage);
         imgEmptyPage.setImageResource(R.drawable.empty_basket);
@@ -378,16 +409,16 @@ public class ShowCartFragment extends BaseFragment {
         btnBlankPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((BaseActivity) getActivity()).goToHome(false);
+                goToHome(false);
             }
         });
+
+        Toolbar toolbar = getToolbar();
+        toolbar.setTitle(getString(R.string.my_basket_header));
+        if(txtBasketSubTitle!=null) txtBasketSubTitle.setVisibility(View.GONE);
+        if(basketMenuItem!=null) basketMenuItem.setVisible(false);
         contentView.removeAllViews();
         contentView.addView(base);
-    }
-
-    @Override
-    public String getTitle() {
-        return "My Basket";
     }
 
 
@@ -399,12 +430,6 @@ public class ShowCartFragment extends BaseFragment {
         super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextView, viewDecQty, viewIncQty,
                 btnAddToBasket, product, qty, productView);
         getCartItems(null);
-    }
-
-    @NonNull
-    @Override
-    public String getFragmentTxnTag() {
-        return ShowCartFragment.class.getName();
     }
 
     public String getNavigationCtx() {

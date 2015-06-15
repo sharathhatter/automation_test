@@ -101,7 +101,7 @@ public class WalletActivityListAdapter<T> extends BaseAdapter {
             String prefix = ((ActivityAware) ctx).getCurrentActivity().getString(R.string.debited) + " `";
             String mrpStr = getDecimalAmount(amount) + " ";
             int prefixLen = prefix.length();
-            holder.creditedHolder.setBackgroundColor(((ActivityAware) ctx).getCurrentActivity().getResources().getColor(R.color.promo_red_color));
+            holder.creditedHolder.setBackgroundColor(((ActivityAware) ctx).getCurrentActivity().getResources().getColor(R.color.red_color));
             spannableCredit = new SpannableString(prefix + mrpStr);
             spannableCredit.setSpan(new CustomTypefaceSpan("", faceRupee), prefixLen - 1,
                     prefixLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);

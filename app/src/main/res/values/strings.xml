@@ -39,10 +39,11 @@
     <string name="UPDATE">UPDATE</string>
     <string name="CANCEL">CANCEL</string>
     <string name="cancel">Cancel</string>
-    <string name="pin_text_para1">Delivery PIN is a 4-digit number. You can set or change the delivery PIN at your convenience.</string>
-    <string name="pin_text_para2">This PIN is required for acknowledgment of order delivery and to provide feedback for our service.</string>
+    <string name="pin_text_para1">Delivery PIN is a 4-digit number. You can change the PIN to something that can be remembered easily.</string>
+    <string name="pin_text_para2">The PIN is required to acknowledge order delivery.</string>
     <string name="pin_text_para3">We request you not to share with the delivery person.</string>
-    <string name="pin_text_para4">The PIN will also be sent to you as part of ready-to-ship email or SMS for each order.</string>
+    <string name="pin_text_para4">The PIN will also be sent to you as part of the order ready SMS or notification for each order.</string>
+    <string name="new_pin_hint">Please enter 4-digit PIN</string>
     <string name="placeorder">Place Order</string>
     <string name="invoicenumber">Invoice No:</string>
     <string name="ordernumber">Order No:</string>
@@ -73,13 +74,13 @@
     <string name="signUpCapsVerb">SIGNUP</string>
     <string name="signInCapsVerb">LOGIN</string>
     <string name="HNDetails">House No &amp; Details</string>
-    <string name="addressNick">Address nickname (Optional)</string>
+    <string name="addressNick">Address Nickname (Optional)</string>
     <string name="contactFirstName">Contact first name</string>
     <string name="contactLastName">Contact last name</string>
     <string name="contactNum">Contact number</string>
-    <string name="houseNum">House no</string>
-    <string name="streetName">Street name</string>
-    <string name="residentialComplex">Residential complex (Optional)</string>
+    <string name="houseNum">House No</string>
+    <string name="streetName">Street Name</string>
+    <string name="residentialComplex">Location/Area/Zone (Optional)</string>
     <string name="city">City</string>
     <string name="location">Location</string>
     <string name="pincode">Pincode</string>
@@ -159,6 +160,7 @@
     <string name="paymentHeading">PAYMENT DETAILS</string>
     <string name="subTotal">Sub Total</string>
     <string name="finalTotal">Total</string>
+    <string name="acceptedFoodCoupon">Accepted food coupon for this order is </string>
     <string name="deliveryCharges">Delivery Charges</string>
     <string name="noOrders">You don\'t have any delivered or cancelled order in</string>
     <string name="noOrdersPlaced">You haven\'t placed any orders yet</string>
@@ -196,21 +198,23 @@
     <string name="past_order_title">Past Orders</string>
 
     <string name="samePin">New pin should not be same as the current pin!</string>
-    <string name="min4digit">Pin should be 4 digit number!</string>
+    <string name="min4digit">Pin should a 4 digit number!</string>
     <string name="not0000">Pin should be other than 0000!</string>
     <string name="enterPin">Please enter a pin to update!</string>
     <string name="pinUpdatedSuccessfully">Your pin was updated successfully!</string>
     <string name="blankPin">****</string>
 
     <!-- wallet activity -->
-    <string name="noActivityErrorMsg">No Activity for</string>
+    <string name="noActivityErrorMsg">No Wallet Activity for</string>
     <string name="updating">UPDATING...</string>
     <string name="endingBal">Ending balance:</string>
+    <string name="wallet_activity_header">Wallet Activity</string>
     <string name="credited">Credited</string>
     <string name="debited">Debited:</string>
     <string name="walletActivityFor">Wallet activity for</string>
-    <string name="walletInfoMsg1">The BigBasket Wallet is a pre-paid credit account that is associated with your BigBasket account.\nWallet allows you to pay a lump sum amount and then shop multiple times without the hassle of making payments every time.\nWe will automatically deduct the amount corresponding to your order from your “Wallet” at the time of checkout until you run out of Wallet Credit.
-    \nYour BigBasket Wallet also gets credited automatically when BigBasket issues a Cashback, return of items credit etc.</string>
+    <string name="walletInfoMsg1">The BigBasket Wallet is a pre-paid credit account that is associated with your BigBasket account. Wallet allows you to pay a lump sum amount and then shop multiple times without the hassle of making payments every time you shop.</string>
+    <string name="walletInfoMsg2">We will automatically deduct the amount corresponding to your order from your “Wallet” at the time of checkout until you run out of Wallet Credit.</string>
+    <string name="walletInfoMsg3">Your BigBasket Wallet also gets credited automatically when BigBasket issues a Cashback, return of items credit etc.</string>
     <!-- signup -->
     <string name="passwordUpdated">Password successfully updated!</string>
     <string name="psswordMst6Digit">Password must be at least 6 characters.</string>
@@ -223,7 +227,7 @@
     <string name="streetDetails">Street Details</string>
     <string name="area">Area</string>
     <string name="resAndComplex">Residential Complex</string>
-    <string name="landmark">Landmark</string>
+    <string name="landmark">Landmarks</string>
     <string name="pinCode">Pincode</string>
     <string name="photo">Photo</string>
     <string name="profileUpdated">Profile updated successfully!</string>
@@ -243,7 +247,7 @@
     <string name="noProductsSearchMsg">Sorry! There are no products found related to your search term.</string>
 
     <!-- Invoice -->
-    <string name="thankYouHeader">Thank You</string>
+    <string name="thankYouHeader">Thank You!</string>
     <string name="orderThankyouText">Thank you for placing order with BigBasket.\nYour Order# is\u00A0</string>
     <string name="multipleOrderThankyouText">Thank you! Your orders have been placed</string>
     <string name="viewInvoice">VIEW INVOICE</string>
@@ -349,7 +353,7 @@
     <string name="birthday">Birthday</string>
     <string name="address">Address</string>
     <string name="viewAll">View All</string>
-    <string name="addAddress">+ Add</string>
+    <string name="addAddress">\u0020 Add</string>
 
     <!-- address -->
     <string name="expressAvailable">Express Delivery is available!</string>
@@ -357,6 +361,22 @@
     <string name="other_address">Other Addresses:</string>
     <string name="addAnAddress"> \u0020 Add an Address</string>
     <string name="save">SAVE</string>
+    <string name="myAddressEmptyText">Voila! You reached my account! Please add an address to make it look cool!</string>
+    <string name="proceed">PROCEED</string>
+    <string name="total">TOTAL :</string>
+    <string name="deliveryPin">Delivery Pin</string>
+
+
+    <!-- order invoice -->
+    <string name="multi_order_place_txt">Your orders have been placed!</string>
+    <string name="order_place_txt">Your order has been placed!</string>
+    <string name="order_review_txt">You can review your order at any time in</string>
+    <string name="continue_shopping">CONTINUE SHOPPING!</string>
+
+    <string name="expressDelAvailable">\u0020 Express Delivery may be available</string>
+    <string name="my_basket_header">My Basket</string>
+    <string name="empty_basket">Empty Basket</string>
+
     <string name="productsUnavailable">Products Unavailable!</string>
     <string name="continueAnyway">Continue Anyway</string>
     <string name="help">Help</string>

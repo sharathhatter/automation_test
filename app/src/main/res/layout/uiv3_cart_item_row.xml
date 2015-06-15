@@ -1,22 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="@dimen/margin_mini"
-    android:layout_marginRight="@dimen/margin_mini"
-    android:background="@color/white"
-    android:orientation="vertical">
+    android:background="@color/white">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/padding_mini"
-        android:paddingRight="@dimen/padding_mini"
-        android:paddingTop="@dimen/padding_mini">
+        android:layout_marginTop="@dimen/margin_normal"
+        android:id="@+id/layoutProductDetail"
+        android:layout_height="wrap_content">
+
 
         <ImageView
             android:id="@+id/imgProduct"
+            android:layout_centerVertical="true"
             android:layout_width="@dimen/product_image_width"
             android:layout_height="@dimen/product_image_height"
             android:contentDescription="@string/product_image"
@@ -29,10 +27,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
+            android:paddingRight="@dimen/margin_small"
+            android:paddingBottom="@dimen/margin_small"
             android:layout_marginLeft="@dimen/margin_small"
             android:layout_marginTop="2dp"
             android:contentDescription="@string/remove"
-            android:src="@drawable/ic_delete_grey600_24dp" />
+            android:src="@drawable/delete_product" />
 
         <ImageView
             android:id="@+id/imgLiquorIcon"
@@ -50,152 +50,181 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/margin_mini"
             android:layout_marginTop="2dp"
+            android:layout_marginRight="@dimen/margin_mini"
             android:layout_toLeftOf="@id/imgRemove"
             android:layout_toRightOf="@id/imgLiquorIcon"
             android:text="Delux Prestige - test test test test test test test test"
             android:textColor="@color/uiv3_primary_text_color"
+            android:textSize="@dimen/primary_text_size"/>
+
+        <TextView
+            android:id="@+id/txtProductBrand"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/txtProductDesc"
+            android:layout_marginLeft="@dimen/margin_mini"
+            android:layout_marginRight="@dimen/margin_large"
+            android:layout_toRightOf="@id/imgProduct"
+            android:text="Hampi Organic"
+            android:textColor="@color/uiv3_secondary_text_color"
+            android:textSize="@dimen/secondary_text_size" />
+
+
+        <TextView
+            android:id="@+id/txtPackDesc"
+            android:layout_below="@+id/txtProductBrand"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_small"
+            android:layout_marginLeft="@dimen/margin_mini"
+            android:layout_toRightOf="@id/imgProduct"
+            android:layout_gravity="center_vertical"
+            android:text="5 lt"
+            android:layout_marginRight="@dimen/margin_large"
+            android:textColor="@color/uiv3_primary_text_color"
             android:textSize="@dimen/primary_text_size" />
 
         <TextView
-            android:id="@+id/txtSalePrice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/txtProductDesc"
+            android:id="@+id/txtExpressAvailable"
+            android:layout_below="@id/txtPackDesc"
+            android:layout_marginTop="@dimen/margin_small"
             android:layout_marginLeft="@dimen/margin_mini"
-            android:layout_marginTop="@dimen/margin_mini"
             android:layout_toRightOf="@id/imgProduct"
-            android:text="Rs 1000.00"
-            android:textColor="@color/uiv3_primary_text_color"
-            android:textSize="@dimen/secondary_text_size" />
-
-        <TextView
-            android:id="@+id/txtSaving"
+            android:drawableLeft="@drawable/express_delivery"
+            android:text="@string/expressDelAvailable"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/txtProductDesc"
-            android:layout_marginLeft="@dimen/margin_mini"
-            android:layout_toRightOf="@id/txtSalePrice"
-            android:drawablePadding="@dimen/padding_mini"
-            android:paddingTop="5dp"
-            android:text="Save: Rs 10000.00"
-            android:textColor="@color/saveColor"
-            android:textSize="@dimen/small_text_size" />
+            android:textColor="@color/uiv3_secondary_text_color"
+            android:textSize="@dimen/small_text_size"
+            android:layout_height="wrap_content" />
 
-        <LinearLayout
-            android:id="@+id/layoutQty"
+
+        <RelativeLayout
+            android:id="@+id/layoutProductPrice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/txtSalePrice"
+            android:layout_below="@id/txtExpressAvailable"
+            android:layout_marginBottom="@dimen/margin_small"
             android:layout_marginLeft="@dimen/margin_mini"
+            android:layout_marginRight="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_small"
             android:layout_toRightOf="@id/imgProduct"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/txtQty"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/margin_mini"
-                android:layout_marginTop="@dimen/margin_small"
-                android:text="10 Items"
-                android:textColor="@color/uiv3_primary_text_color"
-                android:textSize="@dimen/secondary_text_size" />
+            android:orientation="horizontal">
 
             <include
-                android:id="@+id/layoutBasketOperation"
+                android:id="@+id/layoutInBasket"
                 layout="@layout/uiv3_basket_operation_control"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/margin_mini"
-                android:layout_marginTop="@dimen/margin_small" />
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true" />
 
-        </LinearLayout>
+            <TextView
+                android:id="@+id/txtSalePrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="123456"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@id/layoutInBasket"
+                android:layout_marginRight="@dimen/margin_small"
+                android:layout_alignParentLeft="true"
+                android:textColor="@color/uiv3_primary_text_color"
+                android:textSize="@dimen/primary_text_size"/>
 
-        <ImageView
-            android:id="@+id/imgRegularImg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/layoutQty"
-            android:layout_marginLeft="@dimen/margin_small"
-            android:layout_marginTop="@dimen/margin_mini"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/promo"
-            android:maxHeight="20dp"
-            android:maxWidth="24dp"
-            android:src="@drawable/ic_keyboard_arrow_right_grey600_24dp" />
+        </RelativeLayout>
 
-        <TextView
-            android:id="@+id/txtRegularPriceAndQty"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/layoutQty"
-            android:layout_marginLeft="@dimen/margin_small"
-            android:layout_marginTop="@dimen/margin_mini"
-            android:layout_toRightOf="@id/imgRegularImg"
-            android:paddingBottom="@dimen/padding_mini"
-            android:text="promo test"
-            android:textColor="@color/uiv3_primary_text_color"
-            android:textSize="@dimen/secondary_text_size" />
-
-        <TextView
-            android:id="@+id/lblRegularPrice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/layoutQty"
-            android:layout_marginBottom="@dimen/margin_small"
-            android:layout_marginLeft="@dimen/margin_small"
-            android:layout_marginTop="@dimen/margin_mini"
-            android:layout_toRightOf="@id/txtRegularPriceAndQty"
-            android:text="@string/regular_price"
-            android:textColor="@color/uiv3_primary_text_color"
-            android:textSize="@dimen/secondary_text_size" />
-
-        <ImageView
-            android:id="@+id/imgPromoUsed"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/lblRegularPrice"
-            android:layout_marginLeft="@dimen/margin_small"
-            android:layout_marginTop="@dimen/margin_mini"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/promo"
-            android:maxHeight="20dp"
-            android:maxWidth="24dp"
-            android:src="@drawable/promo_used" />
-
-        <TextView
-            android:id="@+id/txtPromoPriceAndQty"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/lblRegularPrice"
-            android:layout_marginLeft="@dimen/margin_small"
-            android:layout_marginTop="@dimen/margin_mini"
-            android:layout_toRightOf="@id/imgPromoUsed"
-            android:paddingBottom="@dimen/padding_small"
-            android:paddingLeft="@dimen/padding_small"
-            android:text="testing for promo"
-            android:textColor="@color/uiv3_primary_text_color"
-            android:textSize="@dimen/secondary_text_size" />
-
-        <TextView
-            android:id="@+id/txtPromoNameDesc"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/lblRegularPrice"
-            android:layout_marginLeft="@dimen/margin_small"
-            android:layout_marginTop="@dimen/margin_mini"
-            android:layout_toRightOf="@id/txtPromoPriceAndQty"
-            android:paddingBottom="@dimen/padding_mini"
-            android:paddingLeft="@dimen/padding_mini"
-            android:text="testing for Promo Name, description and bla bla bla..."
-            android:textColor="@color/uiv3_link_color"
-            android:textSize="@dimen/secondary_text_size" />
 
     </RelativeLayout>
+
+
+
+    <ImageView
+        android:id="@+id/imgRegularImg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layoutProductDetail"
+        android:layout_marginLeft="@dimen/margin_small"
+        android:layout_marginTop="@dimen/margin_normal"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/promo"
+        android:maxHeight="20dp"
+        android:maxWidth="24dp"
+        android:src="@drawable/ic_keyboard_arrow_right_grey600_24dp" />
+
+    <TextView
+        android:id="@+id/txtRegularPriceAndQty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layoutProductDetail"
+        android:layout_marginLeft="@dimen/margin_small"
+        android:paddingLeft="@dimen/padding_mini"
+        android:layout_marginTop="@dimen/margin_normal"
+        android:layout_toRightOf="@id/imgRegularImg"
+        android:paddingBottom="@dimen/padding_mini"
+        android:text="promo test"
+        android:textColor="@color/uiv3_primary_text_color"
+        android:textSize="@dimen/small_text_size" />
+
+    <TextView
+        android:id="@+id/lblRegularPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layoutProductDetail"
+        android:layout_marginBottom="@dimen/margin_12"
+        android:layout_marginLeft="@dimen/margin_small"
+        android:layout_marginTop="@dimen/margin_normal"
+        android:layout_toRightOf="@id/txtRegularPriceAndQty"
+        android:text="@string/regular_price"
+        android:textColor="@color/uiv3_primary_text_color"
+        android:textSize="@dimen/small_text_size" />
+
+
+    <ImageView
+        android:id="@+id/imgPromoUsed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/imgRegularImg"
+        android:layout_marginLeft="@dimen/margin_small"
+        android:layout_marginTop="@dimen/margin_mini"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/promo"
+        android:maxHeight="20dp"
+        android:maxWidth="24dp"
+        android:src="@drawable/promo_used" />
+
+    <TextView
+        android:id="@+id/txtPromoPriceAndQty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/imgRegularImg"
+        android:layout_marginLeft="@dimen/margin_small"
+        android:layout_marginTop="@dimen/margin_mini"
+        android:layout_toRightOf="@id/imgPromoUsed"
+        android:paddingBottom="@dimen/padding_small"
+        android:paddingLeft="@dimen/padding_mini"
+        android:text="testing for promo"
+        android:textColor="@color/uiv3_primary_text_color"
+        android:textSize="@dimen/small_text_size" />
+
+    <TextView
+        android:id="@+id/txtPromoNameDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/imgRegularImg"
+        android:layout_marginLeft="@dimen/margin_small"
+        android:layout_marginTop="@dimen/margin_mini"
+        android:layout_toRightOf="@id/txtPromoPriceAndQty"
+        android:paddingBottom="@dimen/padding_mini"
+        android:paddingLeft="@dimen/padding_mini"
+        android:text="testing for Promo Name, description and bla bla bla..."
+        android:textColor="@color/uiv3_link_color"
+        android:textSize="@dimen/small_text_size" />
 
     <View
         android:id="@+id/basketOperationSeparatorLine"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="@dimen/margin_small"
+        android:layout_height="0.5dp"
+        android:layout_below="@id/txtPromoNameDesc"
+        android:layout_marginTop="@dimen/margin_normal"
         android:background="@color/uiv3_divider_color" />
-</LinearLayout>
+
+</RelativeLayout>

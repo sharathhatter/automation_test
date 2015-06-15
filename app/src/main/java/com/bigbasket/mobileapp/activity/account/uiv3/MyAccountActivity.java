@@ -60,6 +60,7 @@ public class MyAccountActivity extends BackButtonActivity {
 
     private void getMemberDetails() {
         if (!DataUtil.isInternetAvailable(getCurrentActivity())) {
+            handler.sendOfflineError(true);
             return;
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
@@ -113,6 +114,15 @@ public class MyAccountActivity extends BackButtonActivity {
         }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        setSuspended(false);
+        if (resultCode == NavigationCodes.ACCOUNT_UPDATED) {
+            getMemberDetails();
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
 
     private void renderProfileData(UpdateProfileModel updateProfileModel) {
         if (updateProfileModel == null) return;

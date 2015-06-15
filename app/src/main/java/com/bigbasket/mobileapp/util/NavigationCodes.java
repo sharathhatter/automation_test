@@ -15,6 +15,7 @@ public interface NavigationCodes {
     int LAUNCH_LOGIN = 1351;
     int LAUNCH_SIGNUP = 1352;
     int LAUNCH_CITY = 1353;
+    int ACCOUNT_UPDATED = 1354;
 
     int CO_RESERVE_QUANTITY_CHECK_OK = 102;
     int ADD_TO_SHOPPINGLIST_OK = 1221;

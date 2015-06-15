@@ -97,6 +97,9 @@ public class OrderListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewH
             }
             txtNumItems.setText(numItemsStr);
 
+            TextView txtOrderStatus = rowHolder.getTxtOrderStatus();
+            txtOrderStatus.setText(order.getOrderStatus());
+
 
             ImageView imgOrderType = rowHolder.getImgOrderType();
             LinearLayout layoutOrderData = rowHolder.getLayoutOrderData();
@@ -146,10 +149,17 @@ public class OrderListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewH
         private TextView txtNumItems;
         private LinearLayout layoutOrderData;
         private ImageView imgOrderType;
+        private TextView txtOrderStatus;
 
 
         private OrderListRowHolder(View itemView) {
             super(itemView);
+        }
+
+        public TextView getTxtOrderStatus() {
+            if(txtOrderStatus==null)
+                txtOrderStatus = (TextView) itemView.findViewById(R.id.txtOrderStatus);
+            return txtOrderStatus;
         }
 
         public TextView getTxtSlotDate() {

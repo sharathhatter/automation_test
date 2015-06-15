@@ -48,7 +48,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/BBAppTheme"
-        tools:replace="android:allowBackup,android:theme,android:icon">
+        tools:replace="android:allowBackup,android:theme">
         <meta-data
             android:name="android.app.default_searchable"
             android:value=".activity.product.ProductListActivity" />
@@ -321,12 +321,26 @@
             android:screenOrientation="portrait"
             android:theme="@style/FilterTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
+
         <activity
             android:name=".activity.LandingPageActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
             android:theme="@style/LandingPageTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
+
+        <activity
+            android:name=".activity.order.uiv3.ShowCartActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+
+        <activity android:name=".activity.product.DiscountActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:theme="@style/BBAppTheme"
+            android:windowSoftInputMode="stateHidden|adjustPan"/>
+
         <activity
             android:name=".activity.order.uiv3.OrderDetailActivity"
             android:screenOrientation="portrait"
@@ -431,6 +445,18 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
+        <activity
+            android:name=".activity.account.uiv3.DoWalletActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+
+        <activity
+            android:name=".activity.account.uiv3.WalletActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+
         <provider
             android:name=".contentProvider.SearchSuggestionProvider"
             android:authorities="com.bigbasket.mobileapp.contentProvider.SearchSuggestionProvider"
@@ -514,7 +540,7 @@
         <!-- MANDATORY FIELD: THE NOTIFICATION ICON WHICH WILL BE USED TO SET TO NOTIFICATIONS POSTED -->
         <meta-data
             android:name="NOTIFICATION_ICON"
-            android:value="notification_icon" />
+            android:value="active_order" />
 
         <!-- moEngage UBox -->
         <activity

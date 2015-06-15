@@ -43,6 +43,7 @@ public abstract class TabActivity extends BackButtonActivity {
         viewPager.setAdapter(fragmentStatePagerAdapter);
 
         SmartTabLayout pagerSlidingTabStrip = (SmartTabLayout) base.findViewById(R.id.slidingTabs);
+        pagerSlidingTabStrip.setDistributeEvenly(true);
         pagerSlidingTabStrip.setViewPager(viewPager);
     }
 

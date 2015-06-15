@@ -28,6 +28,7 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
@@ -68,6 +69,10 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
     }
 
     private void loadOrders(int page) {
+        if (!DataUtil.isInternetAvailable(getCurrentActivity())) {
+            handler.sendOfflineError(true);
+            return;
+        }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         if (page == 1)
             showProgressView();

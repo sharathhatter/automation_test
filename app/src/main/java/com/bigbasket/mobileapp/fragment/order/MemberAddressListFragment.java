@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +28,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.CreatePotentialOrderResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.GetDeliveryAddressApiResponseContent;
+import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.AddressSelectionAware;
 import com.bigbasket.mobileapp.interfaces.CreatePotentialOrderAware;
@@ -53,7 +56,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
 
     protected ArrayList<Address> mAddressArrayList;
     private MemberAddressListAdapter memberAddressListAdapter;
-    private boolean mFromAccountPage = false;
+    private boolean mFromAccountPage;
     private String addressId;
 
     @Override
@@ -187,20 +190,37 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             btnBlankPage.setVisibility(View.GONE);
         }
 
-        Button checkoutBtn = (Button) addressView.findViewById(R.id.btnListFooter);
-        if (mFromAccountPage)
-            checkoutBtn.setVisibility(View.GONE);
-        checkoutBtn.setText(getString(R.string.check_out));
-        checkoutBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (addressId != null) {
-                    createPotentialOrder(addressId);
-                } else {
-                    createPotentialOrder(memberAddressListAdapter.getSelectedAddress().getId());
-                }
+        RelativeLayout layoutFooterBtn = (RelativeLayout) addressView.findViewById(R.id.layoutFooterBtn);
+        if(!mFromAccountPage){
+            layoutFooterBtn.setVisibility(View.VISIBLE);
+            String totalBasketValue = getArguments().getString(Constants.TOTAL_BASKET_VALUE);
+            TextView txtTotalPrice = (TextView) addressView.findViewById(R.id.txtTotalPrice);
+            if(!TextUtils.isEmpty(totalBasketValue)){
+                txtTotalPrice.setTypeface(faceRobotoMedium);
+                String preTxt = getString(R.string.total) +" `";
+                SpannableString spannableString = new SpannableString(preTxt + totalBasketValue);
+                spannableString.setSpan(new CustomTypefaceSpan("", faceRupee), preTxt.length() -1 ,
+                        preTxt.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+                txtTotalPrice.setText(spannableString);
+            }else {
+                txtTotalPrice.setVisibility(View.GONE);
             }
-        });
+            TextView txtProceed = (TextView) addressView.findViewById(R.id.txtProceed);
+            txtProceed.setTypeface(faceRobotoMedium);
+            layoutFooterBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (addressId != null) {
+                        createPotentialOrder(addressId);
+                    } else {
+                        createPotentialOrder(memberAddressListAdapter.getSelectedAddress().getId());
+                    }
+                }
+            });
+        }else {
+            layoutFooterBtn.setVisibility(View.GONE);
+        }
+
         contentView.addView(addressView);
     }
 
@@ -289,7 +309,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
                     loadAddresses();
                 }
             } else {
-                showAddAddressText();
+                loadAddresses();
             }
         } else if (resultCode == NavigationCodes.GO_TO_SLOT_SELECTION) {
             createPotentialOrder(addressId);

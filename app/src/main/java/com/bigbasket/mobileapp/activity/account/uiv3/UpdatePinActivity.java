@@ -39,7 +39,7 @@ public class UpdatePinActivity extends BackButtonActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("Delivery Pin");
+        setTitle(getString(R.string.deliveryPin));
         getCurrentMemberPin();
     }
 
@@ -62,7 +62,10 @@ public class UpdatePinActivity extends BackButtonActivity {
     }
 
     private void getCurrentMemberPin() {
-        if (!DataUtil.isInternetAvailable(getCurrentActivity())) handler.sendOfflineError(true);
+        if (!DataUtil.isInternetAvailable(getCurrentActivity())) {
+            handler.sendOfflineError(true);
+            return;
+        }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressView();
         bigBasketApiService.getCurrentMemberPin(new Callback<ApiResponse<UpdatePin>>() {

@@ -14,6 +14,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -70,17 +71,6 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
         }
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            setResult(NavigationCodes.ADDRESS_CREATED_MODIFIED);
-            finish();
-            return true;
-        } else {
-            return super.onOptionsItemSelected(item);
-        }
-    }
-
     private void showForm() {
         FrameLayout contentLayout = getContentView();
         if (contentLayout == null) return;
@@ -95,7 +85,13 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
             return;
         }
         TextView txtSaveAddress = (TextView) base.findViewById(R.id.txtSaveAddress);
-        txtSaveAddress.setTypeface(faceRobotoRegular);
+        txtSaveAddress.setTypeface(faceRobotoMedium);
+        txtSaveAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                uploadAddress(null);
+            }
+        });
         if (address != null) {
             populateUiFields();
         } else {
@@ -166,31 +162,37 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
         }
         if (isEditTextEmpty(editTextLastName)) {
             reportFormInputFieldError(editTextLastName, getString(R.string.error_field_required));
-            focusView = editTextLastName;
+            if(focusView == null)
+                focusView = editTextLastName;
             cancel = true;
         }
         if (isEditTextEmpty(editTextMobileNumber)) {
             reportFormInputFieldError(editTextMobileNumber, getString(R.string.error_field_required));
-            focusView = editTextMobileNumber;
+            if(focusView == null)
+                focusView = editTextMobileNumber;
             cancel = true;
         } else if (editTextMobileNumber.getText().toString().length() < 10) {
             reportFormInputFieldError(editTextMobileNumber, getString(R.string.contactNoMin10));
-            focusView = editTextMobileNumber;
+            if(focusView == null)
+                focusView = editTextMobileNumber;
             cancel = true;
         }
         if (isEditTextEmpty(editTextHouseNum)) {
             reportFormInputFieldError(editTextHouseNum, getString(R.string.error_field_required));
-            focusView = editTextHouseNum;
+            if(focusView == null)
+                focusView = editTextHouseNum;
             cancel = true;
         }
         if (isEditTextEmpty(editTextArea)) {
             reportFormInputFieldError(editTextArea, getString(R.string.error_field_required));
-            focusView = editTextArea;
+            if(focusView == null)
+                focusView = editTextArea;
             cancel = true;
         }
         if (isEditTextEmpty(editTextPincode)) {
             reportFormInputFieldError(editTextPincode, getString(R.string.error_field_required));
-            focusView = editTextPincode;
+            if(focusView == null)
+                focusView = editTextPincode;
             cancel = true;
         }
 
@@ -307,11 +309,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
         if (address == null) {
             address = getIntent().getParcelableExtra(Constants.UPDATE_ADDRESS);
         }
-        return address == null ? "Create new address" : "Update address";
-    }
-
-    public void OnSubmitButtonClicked(View v) {
-        uploadAddress(null);
+        return address == null ? "Add address" : "Update address";
     }
 
     private void validateMobileNumber(boolean txtErrorValidateNumberVisibility, String errorMsg) {
@@ -370,10 +368,6 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
         return TrackEventkeys.CREATE_OR_EDIT_DELIVERY_ADDRESS_SCREEN;
     }
 
-    public void onBackPressed() {
-        setResult(NavigationCodes.ADDRESS_CREATED_MODIFIED);
-        super.onBackPressed();
-    }
 
     @Override
     protected void onPause() {
@@ -395,16 +389,9 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
             }
             switch (createUpdateAddressApiResponse.status) {
                 case 0:
-                    if (address == null) {
-                        Toast.makeText(getCurrentActivity(), "Address added successfully", Toast.LENGTH_LONG).show();
-                        addressCreatedModified(createUpdateAddressApiResponse.apiResponseContent.addressId);
-                    } else {
-                        Toast.makeText(getCurrentActivity(), "Address updated successfully", Toast.LENGTH_LONG).show();
-                        addressCreatedModified();
-                    }
                     if (otpValidationDialogFragment != null && otpValidationDialogFragment.isVisible()) {
                         otpValidationDialogFragment.dismiss();
-                        BaseActivity.hideKeyboard(getCurrentActivity(), otpValidationDialogFragment.getView());
+                        BaseActivity.hidekeyboard(getCurrentActivity());
                     }
 
                     if (!mFromAccountPage) {
@@ -412,6 +399,13 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
                         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
                         map.put(TrackEventkeys.POTENTIAL_ORDER, prefer.getString(Constants.POTENTIAL_ORDER_ID, null));
                         trackEvent(TrackingAware.CHECKOUT_ADDRESS_CREATED, map);
+                    }
+                    if (address == null) {
+                        Toast.makeText(getCurrentActivity(), "Address added successfully", Toast.LENGTH_LONG).show();
+                        addressCreatedModified(createUpdateAddressApiResponse.apiResponseContent.addressId);
+                    } else {
+                        Toast.makeText(getCurrentActivity(), "Address updated successfully", Toast.LENGTH_LONG).show();
+                        addressCreatedModified();
                     }
 
                     break;

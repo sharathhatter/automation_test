@@ -34,6 +34,7 @@ public class Constants {
     public static final String PRODUCT_TOP_LEVEL_CATEGORY_SLUG = "tlc_s";
     public static final String PRODUCT_TOP_LEVEL_CATEGORY_NAME = "tlc_n";
     public static final String PRODUCT_CATEGORY_NAME = "pc_n";
+    public static final String IS_EXPRESS_AVAILABLE = "is_express";
     public static final String PRODUCT_CHILD_PRODUCTS = "all_prods";
     public static final String PRODUCT_PROMO_INFO = "p_promo_info";
     public static final String PROMO_ID = "promo_id";
@@ -601,9 +602,15 @@ public class Constants {
     public static final String CONTENT_SECTION = "content_section";
     public static final String CART_INFO = "cart_info";
 
-
     public static final String UPDATE_PROFILE_OBJ = "updateProfileObj";
     public static final String UPDATE_PROFILE_IMG_URL = "profilePicUrl";
+
+    public static final String TOTAL_BASKET_VALUE = "total_basket_vaule";
+    public static final String CATEGORY_DISCOUNT = "category_discount";
+    public static final String PERCENTAGE_DISCOUNT = "percentage_discount";
+
+    public static final String ENDING_BALANCE = "ending_balance";
+    public static final String STARTING_BALANCE = "starting_balance";
 
     public static final String SHIPMENT_ID = "shipment_id";
     public static final String SHIPMENT_NAME = "shipment_name";

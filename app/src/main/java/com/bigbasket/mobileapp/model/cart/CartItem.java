@@ -44,7 +44,12 @@ public class CartItem extends BaseCartItem {
     private String topCategoryName;
     @SerializedName(Constants.PRODUCT_CATEGORY_NAME)
     private String productCategoryName;
-
+    @SerializedName(Constants.IS_EXPRESS_AVAILABLE)
+    private boolean isExpress;
+    @SerializedName(Constants.PACKAGE_DESC)
+    private String packDesc;
+    @SerializedName(Constants.PRODUCT_WEIGHT)
+    private String productWeight;
     CartItem(Parcel source) {
         super(source);
         skuId = source.readInt();
@@ -61,6 +66,9 @@ public class CartItem extends BaseCartItem {
         annotationId = source.readString();
         topCategoryName = source.readString();
         productCategoryName = source.readString();
+        isExpress = source.readByte() == (byte) 1;
+        packDesc = source.readString();
+        productWeight = source.readString();
     }
 
     @Override
@@ -86,6 +94,9 @@ public class CartItem extends BaseCartItem {
         dest.writeString(annotationId);
         dest.writeString(topCategoryName);
         dest.writeString(productCategoryName);
+        dest.writeByte(isExpress ? (byte) 1 : (byte) 0);
+        dest.writeString(packDesc);
+        dest.writeString(productWeight);
     }
 
     public String getAnnotationId() {
@@ -134,5 +145,17 @@ public class CartItem extends BaseCartItem {
 
     public String getProductCategoryName() {
         return productCategoryName;
+    }
+
+    public boolean isExpress() {
+        return isExpress;
+    }
+
+    public String getPackDesc() {
+        return packDesc;
+    }
+
+    public String getProductWeight() {
+        return productWeight;
     }
 }
