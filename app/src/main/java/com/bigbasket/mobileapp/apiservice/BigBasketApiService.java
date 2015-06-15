@@ -88,7 +88,7 @@ public interface BigBasketApiService {
     @POST("/c-empty/")
     void emptyCart(Callback<BaseApiResponse> cartEmptyApiResponseCallback);
 
-    @GET("/product-list2/")
+    @GET("/product-list/")
     void productList(@QueryMap Map<String, String> productQueryMap, Callback<ApiResponse<ProductTabData>> productListApiCallback);
 
     @GET("/product-next-page/")
