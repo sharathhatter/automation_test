@@ -212,6 +212,14 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        if (mPasswordView != null) {
+            hideKeyboard(this, mPasswordView);
+        }
+    }
+
+    @Override
     public String getScreenTag() {
         return TrackEventkeys.REGISTER_MEMBER_SCREEN;
     }

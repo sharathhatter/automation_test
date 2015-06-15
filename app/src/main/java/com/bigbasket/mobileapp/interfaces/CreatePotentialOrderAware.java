@@ -6,4 +6,6 @@ public interface CreatePotentialOrderAware {
     void onPotentialOrderCreated(CreatePotentialOrderResponseContent createPotentialOrderResponseContent);
 
     void postOrderQc(CreatePotentialOrderResponseContent createPotentialOrderResponseContent);
+
+    void onAllProductsHavingQcError();
 }

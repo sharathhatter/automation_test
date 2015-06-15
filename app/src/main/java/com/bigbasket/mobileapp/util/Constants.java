@@ -45,7 +45,7 @@ public class Constants {
     public static final String PROMO_LABEL = "promo_label";
     public static final String PRODUCT_IS_BBY = "is_bby";
 
-    public static final String QC_HAS_VALIDATION_ERRORS = "has_qc_validation_errors";
+    public static final String QC_HAS_VALIDATION_ERRORS = "has_qc_errors";
     public static final String QC_VALIDATION_ERROR_DATA = "qc_validation_errors_data";
     public static final String QC_ORDER_ID = "p_order_id";
     public static final String QC_RESERVED_QUANTITY = "reserved_q";

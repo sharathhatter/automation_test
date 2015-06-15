@@ -324,7 +324,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         if (createPotentialOrderResponseContent.hasQcErrors &&
                 createPotentialOrderResponseContent.qcErrorDatas != null &&
                 createPotentialOrderResponseContent.qcErrorDatas.size() > 0) {
-            new OrderQcDialog<>().show(getCurrentActivity(), createPotentialOrderResponseContent);
+            new OrderQcDialog<>().show(this, createPotentialOrderResponseContent);
         } else {
             launchSlotSelection(createPotentialOrderResponseContent);
         }
@@ -333,6 +333,11 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
     @Override
     public void postOrderQc(CreatePotentialOrderResponseContent createPotentialOrderResponseContent) {
         launchSlotSelection(createPotentialOrderResponseContent);
+    }
+
+    @Override
+    public void onAllProductsHavingQcError() {
+        finish();
     }
 
     private void launchSlotSelection(CreatePotentialOrderResponseContent createPotentialOrderResponseContent) {

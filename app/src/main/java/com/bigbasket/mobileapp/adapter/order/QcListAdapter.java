@@ -58,9 +58,11 @@ public class QcListAdapter extends BaseAdapter {
         TextView txtProductDesc = viewHolder.getTxtProductDesc();
         TextView txtQty = viewHolder.getTxtQty();
         TextView txtStockAvailability = viewHolder.getTxtStockAvailability();
+        TextView txtSerialNum = viewHolder.getTxtSerialNum();
 
         txtProductBrand.setText(qcErrorData.getProduct().getBrand());
-        txtProductDesc.setText((position + 1) + ". " + qcErrorData.getProduct().getDescription());
+        txtProductDesc.setText(qcErrorData.getProduct().getDescription());
+        txtSerialNum.setText((position + 1) + ". ");
         String qty = qcErrorData.getOriginalQuantity();
         if (!TextUtils.isEmpty(qcErrorData.getProduct().getWeight())) {
             qty += " X " + qcErrorData.getProduct().getWeight();
@@ -81,6 +83,7 @@ public class QcListAdapter extends BaseAdapter {
         private TextView txtProductBrand;
         private TextView txtQty;
         private TextView txtStockAvailability;
+        private TextView txtSerialNum;
 
         public ViewHolder(View itemView) {
             this.itemView = itemView;
@@ -116,6 +119,14 @@ public class QcListAdapter extends BaseAdapter {
                 txtStockAvailability.setTypeface(typeface);
             }
             return txtStockAvailability;
+        }
+
+        public TextView getTxtSerialNum() {
+            if (txtSerialNum == null) {
+                txtSerialNum = (TextView) itemView.findViewById(R.id.txtSerialNum);
+                txtSerialNum.setTypeface(typeface);
+            }
+            return txtSerialNum;
         }
     }
 

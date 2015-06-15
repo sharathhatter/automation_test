@@ -378,6 +378,7 @@
     <string name="empty_basket">Empty Basket</string>
 
     <string name="productsUnavailable">Products Unavailable!</string>
+    <string name="noProductsUnavailable">No Products available!</string>
     <string name="continueAnyway">Continue Anyway</string>
     <string name="help">Help</string>
     <string name="deliverableTextSingular">Your purchase will arrive in the following delivery</string>
