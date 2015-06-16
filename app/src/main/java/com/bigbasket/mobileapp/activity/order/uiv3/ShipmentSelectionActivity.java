@@ -29,34 +29,52 @@ import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.model.order.OrderDetails;
 import com.bigbasket.mobileapp.model.shipments.BaseShipmentAction;
 import com.bigbasket.mobileapp.model.shipments.Shipment;
-import com.bigbasket.mobileapp.model.shipments.ShipmentAction;
 import com.bigbasket.mobileapp.model.shipments.Slot;
 import com.bigbasket.mobileapp.model.shipments.SlotDisplay;
-import com.bigbasket.mobileapp.model.shipments.ToggleShipmentAction;
 import com.bigbasket.mobileapp.task.PostShipmentTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ShipmentSelectionActivity extends BackButtonActivity {
 
-    private LinkedHashMap<String, Shipment> mShipmentLinkedHashMap;
+    @Nullable
+    public HashMap<String, BaseShipmentAction> mDefaultShipmentActions;
+
+    @Nullable
+    public HashMap<String, HashMap<String, BaseShipmentAction>> mToggleShipmentActions;
+
+    private ArrayList<Shipment> mShipments;
     private boolean mHasUserToggledShipments;
-    private ArrayList<String> selectedShipmentIds;
+    private ArrayList<Integer> mSelectedShipmentIndx;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle(getString(R.string.chooseSlot));
-        ArrayList<Shipment> shipments = getIntent().getParcelableArrayListExtra(Constants.SHIPMENTS);
-        if (shipments == null || shipments.size() == 0) return;
-        mShipmentLinkedHashMap = getShipmentsMap(shipments);
+        mShipments = getIntent().getParcelableArrayListExtra(Constants.SHIPMENTS);
+
+        String defaultActionsStr = getIntent().getStringExtra(Constants.DEFAULT_ACTIONS);
+        String toggleActionsStr = getIntent().getStringExtra(Constants.ON_TOGGLE_ACTIONS);
+        Gson gson = new Gson();
+        if (!TextUtils.isEmpty(defaultActionsStr)) {
+            Type type = new TypeToken<HashMap<String, BaseShipmentAction>>() {
+            }.getType();
+            mDefaultShipmentActions = gson.fromJson(defaultActionsStr, type);
+        }
+        if (!TextUtils.isEmpty(toggleActionsStr)) {
+            Type type = new TypeToken<HashMap<String, HashMap<String, BaseShipmentAction>>>() {
+            }.getType();
+            mToggleShipmentActions = gson.fromJson(toggleActionsStr, type);
+        }
+        if (mShipments == null || mShipments.size() == 0) return;
         renderFooter();
         renderShipments();
     }
@@ -71,42 +89,32 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         if (orderDetails == null) return;
         ViewGroup layoutCheckoutFooter = (ViewGroup) findViewById(R.id.layoutCheckoutFooter);
         UIUtil.setUpFooterButton(this, layoutCheckoutFooter, orderDetails.getFormattedFinalTotal(),
-                getString(R.string.choosePayment));
+                getString(R.string.choosePayment), true);
         layoutCheckoutFooter.setOnClickListener(new OnPostShipmentClickListener());
     }
 
     private void renderShipments() {
-        HashMap<String, BaseShipmentAction> shipmentActionHashMap = new HashMap<>();
-        for (Map.Entry<String, Shipment> entry : mShipmentLinkedHashMap.entrySet()) {
-            Shipment shipment = entry.getValue();
-            ShipmentAction shipmentAction = shipment.getShipmentAction();
-            if (shipmentAction != null) {
-                BaseShipmentAction baseShipmentAction =
-                        new BaseShipmentAction(shipmentAction.getActionMsg(),
-                                shipmentAction.getViewState(), shipmentAction.getActionState());
-                shipmentActionHashMap.put(shipment.getShipmentId(), baseShipmentAction);
-            }
-        }
-        displayShipmentsBasedOnViewState(shipmentActionHashMap);
+        displayShipmentsBasedOnViewState(mDefaultShipmentActions);
     }
 
-    private void displayShipmentsBasedOnViewState(HashMap<String, BaseShipmentAction> shipmentActionHashMap) {
-        selectedShipmentIds = new ArrayList<>();
+    private void displayShipmentsBasedOnViewState(@Nullable HashMap<String, BaseShipmentAction> shipmentActionHashMap) {
+        mSelectedShipmentIndx = new ArrayList<>();
         TextView txtDeliverablesHeading = (TextView) findViewById(R.id.txtDeliverablesHeading);
         txtDeliverablesHeading.setTypeface(faceRobotoRegular);
-        txtDeliverablesHeading.setText(mShipmentLinkedHashMap.size() > 1 ? R.string.deliverableTextPlural :
+        txtDeliverablesHeading.setText(mShipments.size() > 1 ? R.string.deliverableTextPlural :
                 R.string.deliverableTextSingular);
 
         LinearLayout layoutShipmentContainer = (LinearLayout) findViewById(R.id.layoutShipmentContainer);
         layoutShipmentContainer.removeAllViews();
-        if (mShipmentLinkedHashMap == null) return;
-        for (Map.Entry<String, Shipment> entry : mShipmentLinkedHashMap.entrySet()) {
-            final Shipment shipment = entry.getValue();
+        for (int i = 0; i < mShipments.size(); i++) {
+            final Shipment shipment = mShipments.get(i);
             View shipmentView = getLayoutInflater().inflate(R.layout.shipment_row,
                     layoutShipmentContainer, false);
 
             SwitchCompat switchToggleDelivery = (SwitchCompat) shipmentView.findViewById(R.id.switchToggleDelivery);
-            BaseShipmentAction shipmentAction = shipmentActionHashMap.get(shipment.getShipmentId());
+
+            BaseShipmentAction shipmentAction = shipmentActionHashMap != null ?
+                    shipmentActionHashMap.get(shipment.getShipmentId()) : null;
             String shipmentName = shipment.getShipmentName();
             if (shipmentAction != null) {
                 if (!TextUtils.isEmpty(shipmentAction.getViewState())) {
@@ -114,7 +122,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
                         case Constants.HIDDEN:
                             continue;
                         case Constants.SHOW:
-                            selectedShipmentIds.add(shipment.getShipmentId());
+                            mSelectedShipmentIndx.add(i);
                             shipmentView.setBackgroundColor(getResources().getColor(R.color.uiv3_large_list_item_bck));
                             break;
                         case Constants.DISABLED:
@@ -133,7 +141,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
             } else {
                 shipmentView.setBackgroundColor(getResources().getColor(R.color.uiv3_large_list_item_bck));
                 switchToggleDelivery.setVisibility(View.GONE);
-                selectedShipmentIds.add(shipment.getShipmentId());
+                mSelectedShipmentIndx.add(i);
             }
             TextView txtShipmentName = (TextView) shipmentView.findViewById(R.id.txtShipmentName);
             txtShipmentName.setTypeface(faceRobotoRegular);
@@ -197,31 +205,10 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             mHasUserToggledShipments = !mHasUserToggledShipments;
             if (mHasUserToggledShipments) {
-                HashMap<String, BaseShipmentAction> shipmentActionHashMap = new HashMap<>();
-                ShipmentAction shipmentAction = shipment.getShipmentAction();
-                if (shipmentAction != null && shipmentAction.getShipmentActionInfo() != null) {
-                    ArrayList<ToggleShipmentAction> hide = shipmentAction.getShipmentActionInfo().getHide();
-                    ArrayList<ToggleShipmentAction> show = shipmentAction.getShipmentActionInfo().getShow();
-                    if (hide != null && hide.size() > 0) {
-                        updateMapFromToggleList(shipmentActionHashMap, hide);
-                    }
-                    if (show != null && show.size() > 0) {
-                        updateMapFromToggleList(shipmentActionHashMap, show);
-                    }
-                    displayShipmentsBasedOnViewState(shipmentActionHashMap);
-                }
+                displayShipmentsBasedOnViewState(mToggleShipmentActions != null ?
+                        mToggleShipmentActions.get(shipment.getShipmentId()) : null);
             } else {
                 renderShipments();
-            }
-        }
-
-        private void updateMapFromToggleList(HashMap<String, BaseShipmentAction> shipmentActionHashMap,
-                                             ArrayList<ToggleShipmentAction> toggleShipmentActions) {
-            for (ToggleShipmentAction toggleShipmentAction : toggleShipmentActions) {
-                shipmentActionHashMap.put(toggleShipmentAction.getId(),
-                        new BaseShipmentAction(toggleShipmentAction.getActionMsg(),
-                                toggleShipmentAction.getViewState(),
-                                toggleShipmentAction.getActionState()));
             }
         }
     }
@@ -229,19 +216,19 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
     private class OnPostShipmentClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            if (selectedShipmentIds == null || selectedShipmentIds.size() == 0) {
+            if (mSelectedShipmentIndx == null || mSelectedShipmentIndx.size() == 0) {
                 showToast(getString(R.string.selectAllSlotsErrMsg));
                 return;
             }
             ArrayList<SelectedShipment> selectedShipments = new ArrayList<>();
-            for (String shipmentId : selectedShipmentIds) {
-                Shipment shipment = mShipmentLinkedHashMap.get(shipmentId);
+            for (int shipmentIdx : mSelectedShipmentIndx) {
+                Shipment shipment = mShipments.get(shipmentIdx);
                 if (shipment.getSelectedSlot() == null) {
                     showToast(getString(R.string.selectAllSlotsErrMsg));
                     break;
                 }
                 SelectedShipment selectedShipment = new
-                        SelectedShipment(shipmentId, shipment.getFulfillmentId(),
+                        SelectedShipment(shipment.getShipmentId(), shipment.getFulfillmentId(),
                         shipment.getSelectedSlot().getSlotId(), shipment.getSelectedSlot().getSlotDate(),
                         shipment.getSelectedSlot().getSlotTime());
                 selectedShipments.add(selectedShipment);
@@ -250,16 +237,6 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
             if (potentialOrderId == null) return;
             new PostShipmentTask<>(getCurrentActivity(), selectedShipments, potentialOrderId).startTask();
         }
-    }
-
-    @Nullable
-    private LinkedHashMap<String, Shipment> getShipmentsMap(ArrayList<Shipment> shipments) {
-        if (shipments == null) return null;
-        LinkedHashMap<String, Shipment> shipmentLinkedHashMap = new LinkedHashMap<>();
-        for (Shipment shipment : shipments) {
-            shipmentLinkedHashMap.put(shipment.getShipmentId(), shipment);
-        }
-        return shipmentLinkedHashMap;
     }
 
     private void displaySelectedSlot(View shipmentView, Shipment shipment) {

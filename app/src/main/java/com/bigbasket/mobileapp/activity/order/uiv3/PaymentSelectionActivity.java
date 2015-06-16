@@ -119,7 +119,7 @@ public class PaymentSelectionActivity extends BackButtonActivity {
         if (mOrderDetails == null) return;
         ViewGroup layoutCheckoutFooter = (ViewGroup) findViewById(R.id.layoutCheckoutFooter);
         UIUtil.setUpFooterButton(this, layoutCheckoutFooter, mOrderDetails.getFormattedFinalTotal(),
-                getString(R.string.placeorder));
+                getString(R.string.placeorder), false);
         layoutCheckoutFooter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

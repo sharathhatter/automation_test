@@ -28,8 +28,8 @@
 
     <!-- UIv3 colours -->
     <color name="uiv3_action_bar_background">#F44336</color>
-    <color name="uiv3_primary_btn_bkg">#FFFF7F2A</color>
-    <color name="uiv3_primary_btn_pressed_bkg">#88FF7F2A</color>
+    <color name="uiv3_primary_btn_bkg">#ff5919</color>
+    <color name="uiv3_primary_btn_pressed_bkg">#88ff5919</color>
     <color name="uiv3_secondary_btn_bkg">#ff37474f</color>
     <color name="uiv3_secondary_btn_pressed_bkg">#8837474f</color>
     <color name="uiv3_status_bar_background">#bd1c24</color>
@@ -52,7 +52,6 @@
     <color name="uiv3_orange">#E7685D</color>
     <color name="uiv3_grey_status_bar_color">#bdbdbd</color>
     <color name="uiv3_dialog_header_text_bkg">#df212a</color>
-    <color name="uiv3_checkout_bkg">#e9e9e9</color>
     <!--<color name="uiv3_rounded_btn_bkg">#e73937</color>-->
     <color name="uiv3_rounded_btn_bkg">@color/uiv3_dialog_header_text_bkg</color>
 

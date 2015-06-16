@@ -630,4 +630,7 @@ public class Constants {
     public static final String SHOW = "show";
     public static final String HIDDEN = "hidden";
     public static final String DISABLED = "disabled";
+    public static final String DEFAULT_ACTIONS = "default_actions";
+    public static final String ON_TOGGLE_ACTIONS = "on_action_trigger";
+    public static final String SHIPMENT_ACTIONS = "shipment_actions";
 }

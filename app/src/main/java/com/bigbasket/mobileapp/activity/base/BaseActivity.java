@@ -758,28 +758,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
-    private class TncClickListener extends ClickableSpan {
-
-        @Override
-        public void onClick(View widget) {
-            Intent flatPageWebviewActivity = new Intent(getCurrentActivity(), FlatPageWebViewActivity.class);
-            flatPageWebviewActivity.putExtra(Constants.WEBVIEW_URL, MobileApiUrl.DOMAIN + "terms-and-conditions/");
-            flatPageWebviewActivity.putExtra(Constants.WEBVIEW_TITLE, getString(R.string.termsAndCondHeading));
-            startActivityForResult(flatPageWebviewActivity, NavigationCodes.GO_TO_HOME);
-        }
-    }
-
-    private class PrivacyPolicyClickListener extends ClickableSpan {
-
-        @Override
-        public void onClick(View widget) {
-            Intent flatPageWebviewActivity = new Intent(getCurrentActivity(), FlatPageWebViewActivity.class);
-            flatPageWebviewActivity.putExtra(Constants.WEBVIEW_URL, MobileApiUrl.DOMAIN + "privacy-policy/");
-            flatPageWebviewActivity.putExtra(Constants.WEBVIEW_TITLE, getString(R.string.privacyPolicy));
-            startActivityForResult(flatPageWebviewActivity, NavigationCodes.GO_TO_HOME);
-        }
-    }
-
     @Override
     public void launchProductList(ArrayList<NameValuePair> nameValuePairs, @Nullable String sectionName, @Nullable String sectionItemName) {
         if (nameValuePairs != null && nameValuePairs.size() > 0) {

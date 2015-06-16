@@ -22,8 +22,6 @@ public class Shipment implements Parcelable {
     private String fulfillmentId;
     @SerializedName(Constants.DELIVERY_CHARGE)
     private String deliveryCharge;
-    @SerializedName(Constants.ACTION)
-    private ShipmentAction shipmentAction;
     @SerializedName(Constants.LINKED_SHIPMENTS)
     private LinkedShipments linkedShipments;
     private ArrayList<Slot> slots;
@@ -46,11 +44,6 @@ public class Shipment implements Parcelable {
         dest.writeString(fulfillmentName);
         dest.writeString(fulfillmentId);
         dest.writeString(deliveryCharge);
-        boolean wasShipmentActionNull = shipmentAction == null;
-        dest.writeByte(wasShipmentActionNull ? (byte) 1 : (byte) 0);
-        if (!wasShipmentActionNull) {
-            dest.writeParcelable(shipmentAction, flags);
-        }
         boolean wasHelpPageNull = helpPage == null;
         dest.writeByte(wasHelpPageNull ? (byte) 1 : (byte) 0);
         if (!wasHelpPageNull) {
@@ -74,10 +67,6 @@ public class Shipment implements Parcelable {
         fulfillmentName = source.readString();
         fulfillmentId = source.readString();
         deliveryCharge = source.readString();
-        boolean wasShipmentActionNull = source.readByte() == (byte) 1;
-        if (!wasShipmentActionNull) {
-            shipmentAction = source.readParcelable(Shipment.class.getClassLoader());
-        }
         boolean wasHelpPageNull = source.readByte() == (byte) 1;
         if (!wasHelpPageNull) {
             helpPage = source.readString();
@@ -129,10 +118,6 @@ public class Shipment implements Parcelable {
 
     public String getDeliveryCharge() {
         return deliveryCharge;
-    }
-
-    public ShipmentAction getShipmentAction() {
-        return shipmentAction;
     }
 
     public LinkedShipments getLinkedShipments() {

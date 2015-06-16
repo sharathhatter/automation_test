@@ -7,8 +7,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.text.SpannableString;
-import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +26,6 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.CreatePotentialOrderResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.GetDeliveryAddressApiResponseContent;
-import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.AddressSelectionAware;
 import com.bigbasket.mobileapp.interfaces.CreatePotentialOrderAware;
@@ -42,6 +39,7 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.OrderQcDialog;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -190,24 +188,12 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             btnBlankPage.setVisibility(View.GONE);
         }
 
-        RelativeLayout layoutFooterBtn = (RelativeLayout) addressView.findViewById(R.id.layoutFooterBtn);
-        if(!mFromAccountPage){
-            layoutFooterBtn.setVisibility(View.VISIBLE);
-            String totalBasketValue = getArguments().getString(Constants.TOTAL_BASKET_VALUE);
-            TextView txtTotalPrice = (TextView) addressView.findViewById(R.id.txtTotalPrice);
-            if(!TextUtils.isEmpty(totalBasketValue)){
-                txtTotalPrice.setTypeface(faceRobotoMedium);
-                String preTxt = getString(R.string.total) +" `";
-                SpannableString spannableString = new SpannableString(preTxt + totalBasketValue);
-                spannableString.setSpan(new CustomTypefaceSpan("", faceRupee), preTxt.length() -1 ,
-                        preTxt.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-                txtTotalPrice.setText(spannableString);
-            }else {
-                txtTotalPrice.setVisibility(View.GONE);
-            }
-            TextView txtProceed = (TextView) addressView.findViewById(R.id.txtProceed);
-            txtProceed.setTypeface(faceRobotoMedium);
-            layoutFooterBtn.setOnClickListener(new View.OnClickListener() {
+        ViewGroup layoutCheckoutFooter = (ViewGroup) addressView.findViewById(R.id.layoutCheckoutFooter);
+        if (!mFromAccountPage) {
+            String total = getArguments() != null ? getArguments().getString(Constants.TOTAL_BASKET_VALUE) : null;
+            UIUtil.setUpFooterButton(getCurrentActivity(), layoutCheckoutFooter, total,
+                    getString(R.string.check_out), true);
+            layoutCheckoutFooter.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (addressId != null) {
@@ -217,8 +203,8 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
                     }
                 }
             });
-        }else {
-            layoutFooterBtn.setVisibility(View.GONE);
+        } else {
+            layoutCheckoutFooter.setVisibility(View.GONE);
         }
 
         contentView.addView(addressView);
@@ -345,6 +331,14 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         intent.putParcelableArrayListExtra(Constants.SHIPMENTS, createPotentialOrderResponseContent.shipments);
         intent.putExtra(Constants.ORDER_DETAILS, createPotentialOrderResponseContent.orderDetails);
         intent.putExtra(Constants.P_ORDER_ID, createPotentialOrderResponseContent.potentialOrderId);
+        if (createPotentialOrderResponseContent.defaultShipmentActions != null) {
+            intent.putExtra(Constants.DEFAULT_ACTIONS,
+                    new Gson().toJson(createPotentialOrderResponseContent.defaultShipmentActions));
+        }
+        if (createPotentialOrderResponseContent.toggleShipmentActions != null) {
+            intent.putExtra(Constants.ON_TOGGLE_ACTIONS,
+                    new Gson().toJson(createPotentialOrderResponseContent.toggleShipmentActions));
+        }
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 

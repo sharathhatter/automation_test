@@ -190,23 +190,18 @@ public class ShowCartActivity extends BackButtonActivity {
             }
         }
 
-
-        //todo change button style
-        //cartItemListView.addHeaderView(basketSummaryView);
-        Button btnFooterCheckout = (Button) basketView.findViewById(R.id.btnListFooter);
-        btnFooterCheckout.setText(getString(R.string.check_out).toUpperCase());
-        btnFooterCheckout.setTypeface(faceRobotoRegular);
-        btnFooterCheckout.setOnClickListener(new View.OnClickListener() {
+        ViewGroup layoutCheckoutFooter = (ViewGroup) basketView.findViewById(R.id.layoutCheckoutFooter);
+        final String cartTotal = UIUtil.formatAsMoney(cartSummary.getTotal());
+        UIUtil.setUpFooterButton(this, layoutCheckoutFooter, cartTotal,
+                getString(R.string.check_out), true);
+        layoutCheckoutFooter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (getCartInfo() != null && getCartInfo().getNoOfItems() > 0) {
                     if (AuthParameters.getInstance(getCurrentActivity()).isAuthTokenEmpty()) {
-                        if (getCurrentActivity() != null) {
-                            //getCurrentActivity().launchLogin(TrackEventkeys.NAVIGATION_CTX_SHOW_BASKET,
-                            // FragmentCodes.START_VIEW_BASKET); //todo check for this
-                        }
+                       launchLogin(TrackEventkeys.NAVIGATION_CTX_SHOW_BASKET, NavigationCodes.GO_TO_BASKET);
                     } else {
-                        startCheckout();
+                        startCheckout(cartTotal);
                     }
                 }
             }
@@ -222,9 +217,10 @@ public class ShowCartActivity extends BackButtonActivity {
         logViewBasketEvent(cartSummary, eventAttribs);
     }
 
-    private void startCheckout() {
+    private void startCheckout(String cartTotal) {
         Intent intent = new Intent(this, BackButtonActivity.class);
         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_VIEW_DELIVERY_ADDRESS);
+        intent.putExtra(Constants.TOTAL_BASKET_VALUE, cartTotal);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
