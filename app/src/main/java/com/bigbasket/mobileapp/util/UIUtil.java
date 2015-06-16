@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -461,21 +462,31 @@ public class UIUtil {
     }
 
     public static void setUpFooterButton(Context context, ViewGroup checkoutContainer,
-                                         String total, String actionText) {
+                                         @Nullable String total, String actionText,
+                                         boolean showNextArrow) {
         TextView txtTotal = (TextView) checkoutContainer.findViewById(R.id.txtTotal);
-        txtTotal.setTypeface(FontHolder.getInstance(context).getFaceRobotoMedium());
+        txtTotal.setTypeface(FontHolder.getInstance(context).getFaceRobotoRegular());
         TextView txtAction = (TextView) checkoutContainer.findViewById(R.id.txtAction);
-        txtAction.setTypeface(FontHolder.getInstance(context).getFaceRobotoMedium());
 
-        String totalLabel = context.getString(R.string.totalMrp) + " ";
-        String rupeeSym = "`";
-        SpannableString spannableString = new SpannableString(totalLabel + rupeeSym +
-                total);
-        spannableString.setSpan(new CustomTypefaceSpan("", FontHolder.getInstance(context).getFaceRupee()),
-                totalLabel.length(),
-                totalLabel.length() + rupeeSym.length(),
-                Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-        txtTotal.setText(spannableString);
+        if (!showNextArrow) {
+            txtAction.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+            txtAction.setTypeface(FontHolder.getInstance(context).getFaceRobotoMedium());
+        } else {
+            txtAction.setTypeface(FontHolder.getInstance(context).getFaceRobotoRegular());
+        }
+        if (!TextUtils.isEmpty(total)) {
+            String totalLabel = context.getString(R.string.totalMrp).toUpperCase(Locale.getDefault()) + " ";
+            String rupeeSym = "`";
+            SpannableString spannableString = new SpannableString(totalLabel + rupeeSym +
+                    total);
+            spannableString.setSpan(new CustomTypefaceSpan("", FontHolder.getInstance(context).getFaceRupee()),
+                    totalLabel.length(),
+                    totalLabel.length() + rupeeSym.length(),
+                    Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+            txtTotal.setText(spannableString);
+        } else {
+            txtTotal.setVisibility(View.GONE);
+        }
         txtAction.setText(actionText.toUpperCase(Locale.getDefault()));
     }
 
