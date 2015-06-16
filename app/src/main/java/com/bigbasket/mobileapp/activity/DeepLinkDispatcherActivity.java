@@ -15,6 +15,7 @@ import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
+import com.moe.pushlibrary.utils.MoEHelperConstants;
 
 public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceDataAware,
         HandlerAware {
@@ -38,10 +39,32 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
         }
     }
 
+    private void handleBackStack(){
+        Uri uri = getIntent().getData();
+        if (uri == null) {
+            finish();
+            return;
+        }
+        String sourceName = uri.getQueryParameter(MoEHelperConstants.NAVIGATION_SOURCE_KEY);
+        if(sourceName.equals(MoEHelperConstants.NAVIGATION_SOURCE_NOTIFICATION)){
+            Intent intent = new Intent(this, SplashActivity.class);
+            startActivity(intent);
+            finish();
+        }else {
+            finish();
+        }
+    }
+
+    /**
+     * MoEHelperUtils.dumpIntentExtras for dumping all extras
+     * MoEHelperConstants.NAVIGATION_*
+     *
+     */
+
     @Override
     protected void onRestart() {
         super.onRestart();
-        finish();
+        handleBackStack();
     }
 
     @Override

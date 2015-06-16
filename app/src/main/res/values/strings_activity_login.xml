@@ -16,4 +16,8 @@
     <string name="error_field_required">This field is required</string>
     <string name="error_invalid_mobile_number">This mobile number is invalid</string>
     <string name="error_mobile_number_less_digits">Mobile number should have 10 digits</string>
+    <string name="error_field_first_name">First Name should contain characters</string>
+    <string name="error_field_last_name">Last Name should contain characters</string>
+    <string name="error_dob">Not a valid DOB</string>
+    <string name="error_dob_message">Please enter a valid date of birth</string>
 </resources>

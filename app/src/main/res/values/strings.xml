@@ -198,7 +198,7 @@
     <string name="past_order_title">Past Orders</string>
 
     <string name="samePin">New pin should not be same as the current pin!</string>
-    <string name="min4digit">Pin should a 4 digit number!</string>
+    <string name="min4digit">Pin should be a 4 digit number!</string>
     <string name="not0000">Pin should be other than 0000!</string>
     <string name="enterPin">Please enter a pin to update!</string>
     <string name="pinUpdatedSuccessfully">Your pin was updated successfully!</string>

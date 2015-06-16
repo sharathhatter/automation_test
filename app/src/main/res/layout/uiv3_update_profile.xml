@@ -140,6 +140,7 @@
                 android:layout_marginLeft="@dimen/margin_small"
                 android:layout_marginRight="@dimen/margin_small"
                 android:ems="10"
+                android:maxLength="10"
                 android:textColorHint="@color/uiv3_secondary_text_color"
                 android:hint="@string/telNumber"
                 android:inputType="numberSigned"

@@ -630,4 +630,6 @@ public class Constants {
     public static final String SHOW = "show";
     public static final String HIDDEN = "hidden";
     public static final String DISABLED = "disabled";
+
+    public static final String DATE_FORMAT_DATE_PICKER = "MM/dd/yyyy";
 }
