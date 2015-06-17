@@ -268,7 +268,7 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
         if(!UIUtil.isAlphaString(editTextFirstName.getText().toString())){
             cancel = true;
             if(focusView==null) focusView = editTextFirstName;
-            UIUtil.reportFormInputFieldError(editTextFirstName, getString(R.string.error_field_first_name));
+            UIUtil.reportFormInputFieldError(editTextFirstName, getString(R.string.error_field_name));
         }
 
         if (TextUtils.isEmpty(editTextLastName.getText().toString())){
@@ -280,7 +280,7 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
         if(!UIUtil.isAlphaString(editTextLastName.getText().toString())){
             cancel = true;
             if(focusView==null) focusView = editTextLastName;
-            UIUtil.reportFormInputFieldError(editTextLastName, getString(R.string.error_field_last_name));
+            UIUtil.reportFormInputFieldError(editTextLastName, getString(R.string.error_field_name));
         }
 
         if (TextUtils.isEmpty(editTextMobileNumber.getText().toString())) {

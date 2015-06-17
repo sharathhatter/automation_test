@@ -59,6 +59,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import android.accounts.AccountManager;
 
 public class UIUtil {
 
@@ -582,4 +583,10 @@ public class UIUtil {
         }
         return false;
     }
+
+
+    public static boolean isPhoneWithGoogleAccount(Context context){
+        return AccountManager.get(context).getAccountsByType("com.google").length > 0;
+    }
+
 }

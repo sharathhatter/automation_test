@@ -90,7 +90,7 @@
                     android:id="@+id/walletActivityFor"
                     android:text="@string/walletActivityFor"
                     android:textSize="@dimen/primary_text_size"
-                    android:textColor="@color/link_color"
+                    android:textColor="@color/red_color"
                     android:layout_height="wrap_content" />
 
                 <HorizontalScrollView

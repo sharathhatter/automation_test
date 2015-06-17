@@ -43,6 +43,27 @@
         android:visibility="gone" >
     </ListView>
 
+
+    <TextView
+        android:id="@+id/helperText"
+        android:layout_width="match_parent"
+        android:layout_marginTop="16dp"
+        android:layout_below="@+id/messageNote"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@drawable/bubble_msg"
+        android:drawableLeft="@mipmap/ic_launcher"
+        android:paddingRight="8dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:gravity="left"
+        android:textSize="16sp"
+        android:drawablePadding="8dp"
+        android:textColor="#5F5F5F"
+        android:text="@string/txt_loading" />
+
+
     <ProgressBar
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyleLarge"
@@ -51,14 +72,6 @@
         android:layout_centerHorizontal="true"
         android:layout_centerInParent="true"
         android:indeterminate="true" />
-
-    <TextView
-        android:id="@+id/helperText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/progressBar"
-        android:gravity="center_horizontal"
-        android:text="@string/txt_loading" />
 
     <RelativeLayout
         android:id="@+id/chatInput"

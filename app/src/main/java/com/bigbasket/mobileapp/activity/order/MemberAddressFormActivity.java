@@ -165,7 +165,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
         if(!UIUtil.isAlphaString(editTextFirstName.getText().toString())){
             cancel = true;
             if(focusView == null)  focusView = editTextFirstName;
-            UIUtil.reportFormInputFieldError(editTextFirstName, getString(R.string.error_field_first_name));
+            UIUtil.reportFormInputFieldError(editTextFirstName, getString(R.string.error_field_name));
         }
 
         if (isEditTextEmpty(editTextLastName)) {
@@ -177,7 +177,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
         if(!UIUtil.isAlphaString(editTextLastName.getText().toString())){
             cancel = true;
             if(focusView==null) focusView = editTextLastName;
-            UIUtil.reportFormInputFieldError(editTextLastName, getString(R.string.error_field_last_name));
+            UIUtil.reportFormInputFieldError(editTextLastName, getString(R.string.error_field_name));
         }
 
         if (isEditTextEmpty(editTextMobileNumber)) {
