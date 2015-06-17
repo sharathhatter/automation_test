@@ -43,7 +43,6 @@ import com.bigbasket.mobileapp.activity.account.uiv3.SignupActivity;
 import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
-import com.bigbasket.mobileapp.application.ViewServer;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.activity.order.uiv3.ShowCartActivity;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
@@ -141,7 +140,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
         faceRobotoLight = FontHolder.getInstance(this).getFaceRobotoLight();
         moEHelper = MoEngageWrapper.getMoHelperObj(getCurrentActivity());
         fbLogger = AppEventsLogger.newLogger(getApplicationContext());
-        ViewServer.get(this).addWindow(this);
     }
 
     @Override
@@ -227,7 +225,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
         initializeKonotor();
         MoEngageWrapper.onResume(moEHelper, getCurrentActivity());
-        ViewServer.get(this).setFocusedWindow(this);
     }
 
     public void launchKonotor() {
@@ -564,7 +561,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
             progressDialog.dismiss();
             progressDialog = null;
         }
-        ViewServer.get(this).removeWindow(this);
     }
 
     public BigBasketMessageHandler getHandler() {
