@@ -43,6 +43,7 @@ import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -211,7 +212,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     public void updateUIAfterBasketOperationSuccess(BasketOperation basketOperation, TextView basketCountTextView,
                                                     View viewDecQty, View viewIncQty, View btnAddToBasket,
                                                     Product product, String qty,
-                                                    @Nullable View productView) {
+                                                    @Nullable View productView, @Nullable HashMap<String, Integer> cartInfoMap) {
 
         int productQtyInBasket = 0;
         if (basketOperationResponse.getBasketResponseProductInfo() != null) {
@@ -252,11 +253,14 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         }
         if (product != null) {
             product.setNoOfItemsInCart(productQtyInBasket);
+            if (cartInfoMap != null) {
+                cartInfoMap.put(product.getSku(), productQtyInBasket);
+            }
         }
 
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
         editor.putString(Constants.GET_CART, String.valueOf(totalProductsInBasket));
-        editor.commit();
+        editor.apply();
         if (getCartInfo() != null) {
             getCartInfo().setNoOfItems(totalProductsInBasket);
         }

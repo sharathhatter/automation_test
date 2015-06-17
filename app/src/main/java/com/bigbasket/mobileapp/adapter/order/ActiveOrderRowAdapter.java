@@ -3,14 +3,11 @@ package com.bigbasket.mobileapp.adapter.order;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
-import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ForegroundColorSpan;
-import android.text.style.TypefaceSpan;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,10 +18,8 @@ import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
-import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
-import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.activity.order.uiv3.ShowCartActivity;
-import com.bigbasket.mobileapp.fragment.promo.PromoDetailFragment;
+import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.AnnotationInfo;
@@ -200,7 +195,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
 
     @Override
     public boolean isEnabled(int position) {
-        if(getItemViewType(position) == VIEW_TYPE_CART_HEADER)
+        if (getItemViewType(position) == VIEW_TYPE_CART_HEADER)
             return false;
         return true;
     }
@@ -268,14 +263,14 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
 
 
         TextView txtExpressAvailable = rowHolder.getTxtExpressAvailable();
-        if(cartItem.isExpress()){
+        if (cartItem.isExpress()) {
             txtExpressAvailable.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             txtExpressAvailable.setVisibility(View.GONE);
         }
 
         TextView txtSalePrice = rowHolder.getTxtSalePrice();
-        if(cartItem.getTotalPrice()>0){
+        if (cartItem.getTotalPrice() > 0) {
             String prefix = "`";
             String salePriceStr = UIUtil.formatAsMoney(cartItem.getTotalPrice());
             //String perItemCostStr = " (1@"+UIUtil.formatAsMoney(cartItem.getSalePrice())+")";
@@ -303,15 +298,15 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
         final View basketOperationSeparatorLine = rowHolder.getBasketOperationSeparatorLine();
         TextView txtPackDesc = rowHolder.getTxtPackDesc();
         String packType = "";
-        if(!TextUtils.isEmpty(cartItem.getProductWeight()))
+        if (!TextUtils.isEmpty(cartItem.getProductWeight()))
             packType = cartItem.getProductWeight();
-        if(!TextUtils.isEmpty(cartItem.getPackDesc()))
-            packType += " - "+cartItem.getPackDesc();
+        if (!TextUtils.isEmpty(cartItem.getPackDesc()))
+            packType += " - " + cartItem.getPackDesc();
 
-        if(!TextUtils.isEmpty(packType)){
+        if (!TextUtils.isEmpty(packType)) {
             txtPackDesc.setText(packType);
             txtPackDesc.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             txtPackDesc.setVisibility(View.GONE);
         }
 
@@ -341,7 +336,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
                                     cartItem.getTopCategoryName(), cartItem.getProductCategoryName());
                             BasketOperationTask basketOperationTask = new BasketOperationTask<>(context,
                                     BasketOperation.DEC, product,
-                                    null, null, null, null, null, TrackingAware.BASKET_DECREMENT, navigationCtx, null);
+                                    null, null, null, null, null, TrackingAware.BASKET_DECREMENT, navigationCtx, null, null);
                             basketOperationTask.startTask();
                         } else {
                             Toast toast = Toast.makeText(((ActivityAware) context).getCurrentActivity(), "Unable to connect to Internet", Toast.LENGTH_LONG);
@@ -359,7 +354,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
                                     cartItem.getTopCategoryName(), cartItem.getProductCategoryName());
                             BasketOperationTask basketOperationTask = new BasketOperationTask<>(context,
                                     BasketOperation.INC, product,
-                                    null, null, null, null, null, TrackingAware.BASKET_INCREMENT, navigationCtx, null);
+                                    null, null, null, null, null, TrackingAware.BASKET_INCREMENT, navigationCtx, null, null);
                             basketOperationTask.startTask();
 
                         } else {
@@ -379,7 +374,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
                             BasketOperationTask basketOperationTask = new BasketOperationTask<>(context,
                                     BasketOperation.EMPTY,
                                     product, txtInBasket, null, null, null, "0",
-                                    TrackingAware.BASKET_REMOVE, navigationCtx, null);
+                                    TrackingAware.BASKET_REMOVE, navigationCtx, null, null);
                             basketOperationTask.startTask();
                         } else {
                             Toast toast = Toast.makeText(((ActivityAware) context).getCurrentActivity(), "Unable to connect to Internet", Toast.LENGTH_LONG);
@@ -597,9 +592,9 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
         }
 
         public TextView getTxtExpressAvailable() {
-            if(txtExpressAvailable==null)
+            if (txtExpressAvailable == null)
                 txtExpressAvailable = (TextView) base.findViewById(R.id.txtExpressAvailable);
-                txtExpressAvailable.setTypeface(faceRobotoRegular);
+            txtExpressAvailable.setTypeface(faceRobotoRegular);
             return txtExpressAvailable;
         }
 
@@ -664,7 +659,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
         }
 
         public TextView getTxtPackDesc() {
-            if(txtPackDesc==null) {
+            if (txtPackDesc == null) {
                 txtPackDesc = (TextView) base.findViewById(R.id.txtPackDesc);
                 txtPackDesc.setTypeface(faceRobotoRegular);
             }

@@ -44,20 +44,23 @@ public class BasketOperationTask<T> {
     private String eventName;
     private View productView;
     private String navigationCtx;
+    private @Nullable HashMap<String, Integer> cartInfo;
 
     public BasketOperationTask(T context, BasketOperation basketOperation, @NonNull Product product,
                                TextView basketCountTextView, View viewDecQty,
                                View viewIncQty, View viewAddToBasket, String eventName,
-                               String navigationCtx, @Nullable View productView) {
+                               String navigationCtx, @Nullable View productView,
+                               @Nullable HashMap<String, Integer> cartInfo) {
         this(context, basketOperation, product, basketCountTextView, viewDecQty, viewIncQty,
-                viewAddToBasket, "1", eventName, navigationCtx, productView);
+                viewAddToBasket, "1", eventName, navigationCtx, productView, cartInfo);
     }
 
     public BasketOperationTask(T context, BasketOperation basketOperation, @NonNull Product product,
                                TextView basketCountTextView, View viewDecQty,
                                View viewIncQty, View viewAddToBasket,
                                String qty, String eventName,
-                               String navigationCtx, @Nullable View productView) {
+                               String navigationCtx, @Nullable View productView,
+                               @Nullable HashMap<String, Integer> cartInfo) {
         this.context = context;
         this.product = product;
         this.basketOperation = basketOperation;
@@ -69,6 +72,7 @@ public class BasketOperationTask<T> {
         this.eventName = eventName;
         this.productView = productView;
         this.navigationCtx = navigationCtx;
+        this.cartInfo = cartInfo;
     }
 
     public void startTask() {
@@ -133,7 +137,7 @@ public class BasketOperationTask<T> {
                     ((BasketOperationAware) context).setBasketOperationResponse(cartOperationApiResponse.basketOperationResponse);
                     ((BasketOperationAware) context).updateUIAfterBasketOperationSuccess(basketOperation,
                             basketCountTextView, viewDecQty, viewIncQty, viewAddToBasket, product, qty,
-                            productView);
+                            productView, cartInfo);
                     break;
                 case Constants.ERROR:
                     switch (cartOperationApiResponse.errorType) {

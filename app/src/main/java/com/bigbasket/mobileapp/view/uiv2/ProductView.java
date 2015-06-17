@@ -282,7 +282,7 @@ public final class ProductView {
     private static <T> void setBasketAndAvailabilityViews(final ProductViewHolder productViewHolder, final Product product,
                                                           final ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                                           final T basketOperationAware, final String navigationCtx,
-                                                          @Nullable HashMap<String, Integer> cartInfo) {
+                                                          @Nullable final HashMap<String, Integer> cartInfo) {
         final ImageView imgAddToBasket = productViewHolder.getImgAddToBasket();
         final View viewDecBasketQty = productViewHolder.getViewDecBasketQty();
         final TextView txtInBasket = productViewHolder.getTxtInBasket();
@@ -326,7 +326,7 @@ public final class ProductView {
                             BasketOperationTask<T> basketOperationTask = new BasketOperationTask<>(basketOperationAware,
                                     BasketOperation.INC, product,
                                     txtInBasket, viewDecBasketQty, viewIncBasketQty, imgAddToBasket,
-                                    TrackingAware.BASKET_INCREMENT, navigationCtx, productViewHolder.itemView);
+                                    TrackingAware.BASKET_INCREMENT, navigationCtx, productViewHolder.itemView, cartInfo);
                             basketOperationTask.startTask();
 
                         } else {
@@ -343,7 +343,7 @@ public final class ProductView {
                                     BasketOperation.DEC,
                                     product, txtInBasket, viewDecBasketQty, viewIncBasketQty,
                                     imgAddToBasket, TrackingAware.BASKET_DECREMENT,
-                                    navigationCtx, productViewHolder.itemView);
+                                    navigationCtx, productViewHolder.itemView, cartInfo);
                             myTask.startTask();
                         } else {
                             productViewDisplayDataHolder.getHandler().sendOfflineError();
@@ -359,7 +359,8 @@ public final class ProductView {
                             BasketOperationTask<T> basketOperationTask = new BasketOperationTask<>(basketOperationAware,
                                     BasketOperation.INC, product,
                                     txtInBasket, viewDecBasketQty, viewIncBasketQty, imgAddToBasket,
-                                    "1", TrackingAware.BASKET_ADD, navigationCtx, productViewHolder.itemView);
+                                    "1", TrackingAware.BASKET_ADD, navigationCtx, productViewHolder.itemView,
+                                    cartInfo);
                             basketOperationTask.startTask();
                         } else {
                             productViewDisplayDataHolder.getHandler().sendOfflineError();

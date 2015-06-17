@@ -26,7 +26,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseC
 import com.bigbasket.mobileapp.apiservice.models.response.PostFeedbackApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostPrepaidPaymentResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PostShipmentResponseContent;
-import com.bigbasket.mobileapp.apiservice.models.response.PostVoucherApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.PostVoucherApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.ProductDetailApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.ProductNextPageResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PromoDetailApiResponseContent;
@@ -256,18 +256,13 @@ public interface BigBasketApiService {
     void getPaymentParams(@Query(Constants.PID) String potentialOrderId, @Query(Constants.AMOUNT) String amount,
                           Callback<ApiResponse<GetPaymentParamsApiResponseContent>> getPaymentParamsApiResponseCallback);
 
-    @FormUrlEncoded
-    @POST("/co-place-order/")
-    void placeOrder(@Field(Constants.P_ORDER_ID) String potentialOrderId, @Field(Constants.TXN_ID) String txnId,
-                    Callback<OldApiResponse<PlaceOrderApiResponseContent>> placeOrderApiResponseCallback);
-
     @GET("/search-tc/")
     ApiResponse<AutoSearchApiResponseContent> autoSearch(@Query("t") String term);
 
     @FormUrlEncoded
     @POST("/co-post-voucher/")
     void postVoucher(@Field(Constants.P_ORDER_ID) String potentialOrderId, @Field(Constants.EVOUCHER_CODE) String evoucherCode,
-                     Callback<PostVoucherApiResponse> postVoucherApiResponseCallback);
+                     Callback<ApiResponse<PostVoucherApiResponseContent>> postVoucherApiResponseCallback);
 
     @GET("/change-city/")
     void changeCity(@Query("new_city_id") String newCityId, Callback<OldBaseApiResponse> oldBaseApiResponseCallback);

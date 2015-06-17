@@ -39,6 +39,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import retrofit.Callback;
@@ -319,9 +320,9 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
     @Override
     public void updateUIAfterBasketOperationSuccess(BasketOperation basketOperation, TextView basketCountTextView, View viewDecQty,
                                                     View viewIncQty, View btnAddToBasket, Product product, String qty,
-                                                    @Nullable View productView) {
+                                                    @Nullable View productView, @Nullable HashMap<String, Integer> cartInfo) {
         super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextView, viewDecQty,
-                viewIncQty, btnAddToBasket, product, qty, productView);
+                viewIncQty, btnAddToBasket, product, qty, productView, cartInfo);
         getPromoSummary();
     }
 

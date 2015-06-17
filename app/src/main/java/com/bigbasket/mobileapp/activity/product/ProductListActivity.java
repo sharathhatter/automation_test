@@ -449,10 +449,12 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
             listChildProducts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    if (position != Spinner.INVALID_POSITION && position != mHeaderSelectedIdx) {
-                        new OnSectionItemClickListener<>(getCurrentActivity(), headSection,
-                                headSection.getSectionItems().get(position),
-                                TrackingAware.PRODUCT_LIST_HEADER).onClick(view);
+                    if (position != Spinner.INVALID_POSITION) {
+                        if (position != mHeaderSelectedIdx) {
+                            new OnSectionItemClickListener<>(getCurrentActivity(), headSection,
+                                    headSection.getSectionItems().get(position),
+                                    TrackingAware.PRODUCT_LIST_HEADER).onClick(view);
+                        }
                         onChildDropdownRequested.onClick(view);  // Manually simulate click to hide dropdown
                     }
                 }
