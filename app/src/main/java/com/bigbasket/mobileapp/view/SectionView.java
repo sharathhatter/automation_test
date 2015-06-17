@@ -76,7 +76,7 @@ public class SectionView {
         mainLayout.setBackgroundColor(context.getResources().getColor(R.color.uiv3_list_bkg_color));
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         ArrayList<Section> sections = mSectionData.getSections();
-        int marginBetweenWidgets = (int) context.getResources().getDimension(R.dimen.margin_normal);
+        int marginBetweenWidgets = (int) context.getResources().getDimension(R.dimen.margin_small);
         for (int i = 0; i < sections.size(); i++) {
             View sectionView;
             try {
