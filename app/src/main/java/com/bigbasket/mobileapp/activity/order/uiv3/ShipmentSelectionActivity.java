@@ -1,10 +1,12 @@
 package com.bigbasket.mobileapp.activity.order.uiv3;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SwitchCompat;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -23,6 +25,7 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
+import com.bigbasket.mobileapp.adapter.order.LinkedProductsAdapter;
 import com.bigbasket.mobileapp.adapter.shipment.SlotListAdapter;
 import com.bigbasket.mobileapp.apiservice.models.request.SelectedShipment;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
@@ -156,6 +159,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
                 itemStr += "s";
             }
             txtShipmentCount.setText(String.valueOf(count) + itemStr);
+            txtShipmentCount.setOnClickListener(new OnViewShipmentLinkedProductsListener(shipment));
 
             TextView txtDeliveryCharge = (TextView) shipmentView.findViewById(R.id.txtDeliveryCharge);
             txtDeliveryCharge.setTypeface(faceRobotoMedium);
@@ -191,6 +195,52 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
             }
 
             layoutShipmentContainer.addView(shipmentView);
+        }
+    }
+
+    private class OnViewShipmentLinkedProductsListener implements View.OnClickListener {
+        private Shipment shipment;
+
+        public OnViewShipmentLinkedProductsListener(Shipment shipment) {
+            this.shipment = shipment;
+        }
+
+        @Override
+        public void onClick(View v) {
+            showDialog();
+        }
+
+        private void showDialog() {
+            View base = getLayoutInflater().inflate(R.layout.uiv3_linked_shipment_dialog, null);
+
+            TextView txtShipmentCount = (TextView) base.findViewById(R.id.txtShipmentCount);
+            int count = shipment.getCount();
+            String itemStr = " Item";
+            if (count > 1) {
+                itemStr += "s";
+            }
+            txtShipmentCount.setTypeface(faceRobotoRegular);
+            txtShipmentCount.setText(String.valueOf(count) + itemStr);
+
+            TextView txtShipmentName = (TextView) base.findViewById(R.id.txtShipmentName);
+            txtShipmentName.setTypeface(faceRobotoMedium);
+            txtShipmentName.setText(shipment.getShipmentName());
+
+            ListView lstLinkedShipments = (ListView) base.findViewById(R.id.lstLinkedShipments);
+            LinkedProductsAdapter linkedProductsAdapter = new LinkedProductsAdapter(getCurrentActivity(),
+                    shipment.getShipmentName(), shipment.getLinkedShipments(), faceRobotoRegular);
+            lstLinkedShipments.setAdapter(linkedProductsAdapter);
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(getCurrentActivity())
+                    .setView(base)
+                    .setPositiveButton(R.string.dismiss, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+            AlertDialog dialog = builder.create();
+            dialog.show();
         }
     }
 

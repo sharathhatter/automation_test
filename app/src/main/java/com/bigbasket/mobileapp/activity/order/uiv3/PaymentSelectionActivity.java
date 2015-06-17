@@ -21,7 +21,6 @@ import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.BaseApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPrepaidPaymentResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseContent;
@@ -365,9 +364,9 @@ public class PaymentSelectionActivity extends BackButtonActivity {
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.removeVoucher(mPotentialOrderId, new Callback<BaseApiResponse>() {
+        bigBasketApiService.removeVoucher(mPotentialOrderId, new Callback<ApiResponse<PostVoucherApiResponseContent>>() {
             @Override
-            public void success(BaseApiResponse removeVoucherApiResponse, Response response) {
+            public void success(ApiResponse<PostVoucherApiResponseContent> removeVoucherApiResponse, Response response) {
                 if (isSuspended()) return;
                 try {
                     hideProgressDialog();
@@ -378,7 +377,8 @@ public class PaymentSelectionActivity extends BackButtonActivity {
                     case 0:
                         Toast.makeText(getCurrentActivity(),
                                 getString(R.string.voucherWasRemoved), Toast.LENGTH_SHORT).show();
-                        onVoucherRemoved(voucherCode);
+                        onVoucherRemoved(voucherCode, removeVoucherApiResponse.apiResponseContent.orderDetails,
+                                removeVoucherApiResponse.apiResponseContent.creditDetails);
                         break;
                     default:
                         handler.sendEmptyMessage(removeVoucherApiResponse.status,
@@ -429,6 +429,7 @@ public class PaymentSelectionActivity extends BackButtonActivity {
     }
 
     private void onVoucherRemoved(@Nullable String voucherCode) {
+        mAppliedVoucherCode = null;
         if (voucherCode != null && mPreviouslyAppliedVoucherMap != null
                 && mPreviouslyAppliedVoucherMap.containsKey(voucherCode)) {
             mPreviouslyAppliedVoucherMap.remove(voucherCode);
@@ -438,6 +439,13 @@ public class PaymentSelectionActivity extends BackButtonActivity {
         if (mActiveVouchersList != null && mActiveVouchersList.size() > 0) {
             mTxtApplicableVoucherCount.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void onVoucherRemoved(@Nullable String voucherCode, OrderDetails orderDetails,
+                                  ArrayList<CreditDetails> creditDetails) {
+        onVoucherRemoved(voucherCode);
+        mOrderDetails = orderDetails;
+        renderPaymentMethodsAndSummary(creditDetails);
     }
 
     private void onPlaceOrderAction() {

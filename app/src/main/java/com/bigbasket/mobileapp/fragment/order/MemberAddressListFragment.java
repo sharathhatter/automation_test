@@ -192,7 +192,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         if (!mFromAccountPage) {
             String total = getArguments() != null ? getArguments().getString(Constants.TOTAL_BASKET_VALUE) : null;
             UIUtil.setUpFooterButton(getCurrentActivity(), layoutCheckoutFooter, total,
-                    getString(R.string.check_out), true);
+                    getString(R.string.chooseSlot), true);
             layoutCheckoutFooter.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
