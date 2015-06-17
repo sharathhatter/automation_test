@@ -71,6 +71,7 @@
 -keep class com.google.gson.stream.** { *; }
 
 # Moengage
+-dontwarn com.google.android.gms.location.**
 -keep class com.moe.** { *; }
 -keep class com.moengage.** { *; }
 
