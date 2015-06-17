@@ -5,11 +5,24 @@
     android:background="@color/white"
     android:orientation="vertical">
 
+    <TextView
+        android:id="@+id/lblApply"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/margin_22"
+        android:layout_marginTop="@dimen/margin_22"
+        android:text="@string/applyAllCaps"
+        android:textColor="@color/uiv3_dialog_header_text_bkg"
+        android:textSize="@dimen/primary_text_size" />
+
     <EditText
         android:id="@+id/editTextVoucherCode"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
         android:layout_margin="@dimen/margin_normal"
+        android:layout_toLeftOf="@id/lblApply"
         android:hint="@string/enterVoucher"
         android:imeActionLabel="@string/apply"
         android:imeOptions="actionDone"
@@ -17,31 +30,14 @@
         android:textColor="@color/uiv3_primary_text_color"
         android:textSize="@dimen/primary_text_size" />
 
-    <TextView
-        android:id="@+id/lblOr"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/editTextVoucherCode"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="@dimen/margin_small"
-        android:text="@string/OR"
-        android:textColor="@color/uiv3_primary_text_color"
-        android:textSize="@dimen/primary_text_size" />
-
-    <Button
-        android:id="@+id/btnApplyVoucher"
-        style="@style/FormButtonStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:text="@string/applyVoucher" />
-
     <ListView
         android:id="@+id/lstAvailableVouchers"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/btnApplyVoucher"
-        android:layout_below="@id/lblOr"
-        android:choiceMode="singleChoice"
-        android:listSelector="@color/uiv3_list_bkg_color" />
+        android:layout_below="@id/editTextVoucherCode"
+        android:layout_marginLeft="@dimen/margin_small"
+        android:layout_marginRight="@dimen/margin_small"
+        android:layout_marginTop="@dimen/margin_small"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="@dimen/margin_small" />
 </RelativeLayout>

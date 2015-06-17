@@ -26,7 +26,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.GetPrepaidPaymentRespo
 import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostPrepaidPaymentResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.PostVoucherApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.PostVoucherApiResponseContent;
 import com.bigbasket.mobileapp.handler.HDFCPowerPayHandler;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
@@ -72,6 +72,7 @@ public class PaymentSelectionActivity extends BackButtonActivity {
     private HashMap<String, Boolean> mPreviouslyAppliedVoucherMap;
     private TextView mTxtApplyVoucher;
     private TextView mTxtRemoveVoucher;
+    private TextView mTxtApplicableVoucherCount;
     private String mAppliedVoucherCode;
     private TextView mLblTransactionFailed;
     private TextView mTxtTransactionFailureReason;
@@ -137,10 +138,11 @@ public class PaymentSelectionActivity extends BackButtonActivity {
         for (PaymentType paymentType : paymentTypes) {
             mPaymentTypeMap.put(paymentType.getDisplayName(), paymentType.getValue());
         }
-        renderPaymentMethodsAndSummary();
+        ArrayList<CreditDetails> creditDetails = getIntent().getParcelableArrayListExtra(Constants.CREDIT_DETAILS);
+        renderPaymentMethodsAndSummary(creditDetails);
     }
 
-    private void renderPaymentMethodsAndSummary() {
+    private void renderPaymentMethodsAndSummary(@Nullable ArrayList<CreditDetails> creditDetails) {
         View layoutPressOrderReview = findViewById(R.id.layoutPressOrderReviewContainer);
         layoutPressOrderReview.setVisibility(View.GONE);
 
@@ -151,26 +153,20 @@ public class PaymentSelectionActivity extends BackButtonActivity {
         int orderTotalLabelColor = getResources().getColor(R.color.uiv3_primary_text_color);
         int orderTotalValueColor = getResources().getColor(R.color.uiv3_ok_label_color);
         LinearLayout layoutOrderSummaryInfo = (LinearLayout) findViewById(R.id.layoutOrderSummaryInfo);
+        layoutOrderSummaryInfo.removeAllViews();
 
-        OrderDetails orderDetails = getIntent().getParcelableExtra(Constants.ORDER_DETAILS);
-        ArrayList<CreditDetails> creditDetails = getIntent().getParcelableArrayListExtra(Constants.CREDIT_DETAILS);
-
-        View paymentInformationRow = UIUtil.getOrderSummaryRow(inflater, getString(R.string.paymentMethod),
-                orderDetails.getPaymentMethodDisplay(), normalColor, secondaryColor, faceRobotoRegular);
-        layoutOrderSummaryInfo.addView(paymentInformationRow);
-
-        String numItems = orderDetails.getTotalItems() + " Item" + (orderDetails.getTotalItems() > 1 ? "s" : "");
+        String numItems = mOrderDetails.getTotalItems() + " Item" + (mOrderDetails.getTotalItems() > 1 ? "s" : "");
         View orderItemsRow = UIUtil.getOrderSummaryRow(inflater, getString(R.string.orderItems),
                 numItems, normalColor, secondaryColor, faceRobotoRegular);
         layoutOrderSummaryInfo.addView(orderItemsRow);
 
         View subTotalRow = UIUtil.getOrderSummaryRow(inflater, getString(R.string.subTotal),
-                UIUtil.asRupeeSpannable(orderDetails.getSubTotal(), faceRupee), normalColor, secondaryColor,
+                UIUtil.asRupeeSpannable(mOrderDetails.getSubTotal(), faceRupee), normalColor, secondaryColor,
                 faceRobotoRegular);
         layoutOrderSummaryInfo.addView(subTotalRow);
 
         View deliveryChargeRow = UIUtil.getOrderSummaryRow(inflater, getString(R.string.deliveryCharges),
-                UIUtil.asRupeeSpannable(orderDetails.getDeliveryCharge(), faceRupee), normalColor,
+                UIUtil.asRupeeSpannable(mOrderDetails.getDeliveryCharge(), faceRupee), normalColor,
                 secondaryColor, faceRobotoRegular);
         layoutOrderSummaryInfo.addView(deliveryChargeRow);
 
@@ -184,20 +180,26 @@ public class PaymentSelectionActivity extends BackButtonActivity {
         }
 
         View finalTotalRow = UIUtil.getOrderSummaryRow(inflater, getString(R.string.finalTotal),
-                UIUtil.asRupeeSpannable(orderDetails.getFinalTotal(), faceRupee), orderTotalLabelColor,
+                UIUtil.asRupeeSpannable(mOrderDetails.getFinalTotal(), faceRupee), orderTotalLabelColor,
                 orderTotalValueColor, faceRobotoRegular);
         layoutOrderSummaryInfo.addView(finalTotalRow);
 
         mTxtApplyVoucher = (TextView) findViewById(R.id.txtApplyVoucher);
         mTxtApplyVoucher.setTypeface(faceRobotoRegular);
-        mTxtApplyVoucher.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent availableVoucherListActivity = new Intent(getCurrentActivity(), AvailableVoucherListActivity.class);
-                availableVoucherListActivity.putParcelableArrayListExtra(Constants.VOUCHERS, mActiveVouchersList);
-                startActivityForResult(availableVoucherListActivity, NavigationCodes.VOUCHER_APPLIED);
-            }
-        });
+        OnShowAvailableVouchersListener showAvailableVouchersListener = new OnShowAvailableVouchersListener();
+        mTxtApplyVoucher.setOnClickListener(showAvailableVouchersListener);
+        mTxtApplicableVoucherCount = (TextView) findViewById(R.id.txtApplicableVoucherCount);
+        mTxtApplicableVoucherCount.setTypeface(faceRobotoRegular);
+        if (mActiveVouchersList != null && mActiveVouchersList.size() > 0) {
+            mTxtApplicableVoucherCount.setText(mActiveVouchersList.size() + " " +
+                    (mActiveVouchersList.size() > 1 ?
+                            getString(R.string.voucherApplicablePlural) :
+                            getString(R.string.voucherApplicableSingular)));
+            mTxtApplicableVoucherCount.setVisibility(View.VISIBLE);
+        } else {
+            mTxtApplicableVoucherCount.setVisibility(View.GONE);
+        }
+        mTxtApplicableVoucherCount.setOnClickListener(showAvailableVouchersListener);
 
         mTxtRemoveVoucher = (TextView) findViewById(R.id.txtRemoveVoucher);
         mTxtRemoveVoucher.setTypeface(faceRobotoRegular);
@@ -211,9 +213,9 @@ public class PaymentSelectionActivity extends BackButtonActivity {
         });
 
         if (!TextUtils.isEmpty(mAppliedVoucherCode)) {
-            onVoucherApplied(mAppliedVoucherCode);
+            showVoucherAppliedText(mAppliedVoucherCode);
         } else {
-            onVoucherRemoved();
+            onVoucherRemoved(null);
         }
 
         boolean isInHDFCPayMode = HDFCPowerPayHandler.isInHDFCPayMode(this)
@@ -252,12 +254,21 @@ public class PaymentSelectionActivity extends BackButtonActivity {
         mLblSelectAnotherMethod.setTypeface(faceRobotoRegular);
     }
 
+    private class OnShowAvailableVouchersListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            Intent availableVoucherListActivity = new Intent(getCurrentActivity(), AvailableVoucherListActivity.class);
+            availableVoucherListActivity.putParcelableArrayListExtra(Constants.VOUCHERS, mActiveVouchersList);
+            startActivityForResult(availableVoucherListActivity, NavigationCodes.VOUCHER_APPLIED);
+        }
+    }
+
     public void displayPayuFailure(String reason) {
         if (mTxtTransactionFailureReason == null || mLblTransactionFailed == null
                 || mLblSelectAnotherMethod == null) return;
         mTxtTransactionFailureReason.setVisibility(View.VISIBLE);
         mLblTransactionFailed.setVisibility(View.VISIBLE);
-        mLblSelectAnotherMethod.setVisibility(View.GONE);
+        mLblSelectAnotherMethod.setVisibility(View.VISIBLE);
 
         mTxtTransactionFailureReason.setText(reason);
     }
@@ -274,17 +285,23 @@ public class PaymentSelectionActivity extends BackButtonActivity {
     }
 
 
-    public void onVoucherApplied(String voucher) {
+    public void onVoucherApplied(String voucher, OrderDetails orderDetails,
+                                 ArrayList<CreditDetails> creditDetails) {
         if (!TextUtils.isEmpty(voucher)) {
-            mTxtApplyVoucher.setVisibility(View.GONE);
-            mTxtRemoveVoucher.setVisibility(View.VISIBLE);
-            mAppliedVoucherCode = voucher;
+            showVoucherAppliedText(voucher);
+            mOrderDetails = orderDetails;
+            renderPaymentMethodsAndSummary(creditDetails);
         }
     }
 
-    public void onVoucherRemoved() {
-        mTxtApplyVoucher.setVisibility(View.VISIBLE);
-        mTxtRemoveVoucher.setVisibility(View.GONE);
+    private void showVoucherAppliedText(String voucher) {
+        mTxtApplyVoucher.setVisibility(View.GONE);
+        mTxtRemoveVoucher.setVisibility(View.VISIBLE);
+        mTxtRemoveVoucher.setText("eVoucher: " + voucher + " Applied!");
+        if (mActiveVouchersList != null && mActiveVouchersList.size() > 0) {
+            mTxtApplicableVoucherCount.setVisibility(View.GONE);
+        }
+        mAppliedVoucherCode = voucher;
     }
 
     public void applyVoucher(final String voucherCode) {
@@ -294,9 +311,9 @@ public class PaymentSelectionActivity extends BackButtonActivity {
         if (checkInternetConnection()) {
             BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
             showProgressDialog(getString(R.string.please_wait));
-            bigBasketApiService.postVoucher(mPotentialOrderId, voucherCode, new Callback<PostVoucherApiResponse>() {
+            bigBasketApiService.postVoucher(mPotentialOrderId, voucherCode, new Callback<ApiResponse<PostVoucherApiResponseContent>>() {
                 @Override
-                public void success(PostVoucherApiResponse postVoucherApiResponse, Response response) {
+                public void success(ApiResponse<PostVoucherApiResponseContent> postVoucherApiResponse, Response response) {
                     if (isSuspended()) return;
                     try {
                         hideProgressDialog();
@@ -307,15 +324,17 @@ public class PaymentSelectionActivity extends BackButtonActivity {
                     map.put(TrackEventkeys.POTENTIAL_ORDER, mPotentialOrderId);
                     map.put(TrackEventkeys.VOUCHER_NAME, voucherCode);
                     switch (postVoucherApiResponse.status) {
-                        case Constants.OK:
+                        case 0:
                             if (mPreviouslyAppliedVoucherMap == null ||
                                     mPreviouslyAppliedVoucherMap.size() == 0) {
                                 trackEvent(TrackingAware.CHECKOUT_VOUCHER_APPLIED, map);
                             }
-                            onVoucherSuccessfullyApplied(voucherCode);
+                            onVoucherSuccessfullyApplied(voucherCode,
+                                    postVoucherApiResponse.apiResponseContent.orderDetails,
+                                    postVoucherApiResponse.apiResponseContent.creditDetails);
                             break;
                         default:
-                            handler.sendEmptyMessage(postVoucherApiResponse.getErrorTypeAsInt(), postVoucherApiResponse.message);
+                            handler.sendEmptyMessage(postVoucherApiResponse.status, postVoucherApiResponse.message);
                             map.put(TrackEventkeys.FAILURE_REASON, postVoucherApiResponse.message);
                             trackEvent(TrackingAware.CHECKOUT_VOUCHER_FAILED, map);
                             break;
@@ -384,7 +403,8 @@ public class PaymentSelectionActivity extends BackButtonActivity {
     /**
      * Callback when the voucher has been successfully applied
      */
-    private void onVoucherSuccessfullyApplied(String voucherCode) {
+    private void onVoucherSuccessfullyApplied(String voucherCode, OrderDetails orderDetails,
+                                              ArrayList<CreditDetails> creditDetails) {
         if (mPreviouslyAppliedVoucherMap != null) {
             mPreviouslyAppliedVoucherMap.put(voucherCode, true);
             boolean allApplied = true;
@@ -404,17 +424,20 @@ public class PaymentSelectionActivity extends BackButtonActivity {
             }
             mVoucherAppliedList.add(new VoucherApplied(voucherCode));
             VoucherApplied.saveToPreference(mVoucherAppliedList, this);
-            onVoucherApplied(voucherCode);
+            onVoucherApplied(voucherCode, orderDetails, creditDetails);
         }
     }
 
-    private void onVoucherRemoved(String voucherCode) {
-        if (mPreviouslyAppliedVoucherMap != null
+    private void onVoucherRemoved(@Nullable String voucherCode) {
+        if (voucherCode != null && mPreviouslyAppliedVoucherMap != null
                 && mPreviouslyAppliedVoucherMap.containsKey(voucherCode)) {
             mPreviouslyAppliedVoucherMap.remove(voucherCode);
         }
         mTxtApplyVoucher.setVisibility(View.VISIBLE);
         mTxtRemoveVoucher.setVisibility(View.GONE);
+        if (mActiveVouchersList != null && mActiveVouchersList.size() > 0) {
+            mTxtApplicableVoucherCount.setVisibility(View.VISIBLE);
+        }
     }
 
     private void onPlaceOrderAction() {
@@ -480,6 +503,14 @@ public class PaymentSelectionActivity extends BackButtonActivity {
             }
         } else {
             switch (resultCode) {
+                case NavigationCodes.VOUCHER_APPLIED:
+                    if (data != null) {
+                        String voucherCode = data.getStringExtra(Constants.EVOUCHER_CODE);
+                        if (!TextUtils.isEmpty(voucherCode)) {
+                            applyVoucher(voucherCode);
+                        }
+                    }
+                    break;
                 case Constants.PREPAID_TXN_FAILED:
                     map.put(TrackEventkeys.FAILURE_REASON, "");
                     trackEvent(TrackingAware.CHECKOUT_PAYMENT_GATEWAY_FAILURE, map);

@@ -322,7 +322,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                         getIntent().getBooleanExtra(Constants.FROM_ACCOUNT_PAGE, false));
                 addressbundle.putString(Constants.TOTAL_BASKET_VALUE,
                         getIntent().getStringExtra(Constants.TOTAL_BASKET_VALUE));
-                        memberAddressListFragment.setArguments(addressbundle);
+                memberAddressListFragment.setArguments(addressbundle);
                 addToMainLayout(memberAddressListFragment);
                 break;
             case FragmentCodes.START_ADDRESS_SELECTION:
@@ -493,8 +493,8 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     public void updateUIAfterBasketOperationSuccess(BasketOperation basketOperation, TextView basketCountTextView,
                                                     View viewDecQty, View viewIncQty, View btnAddToBasket,
                                                     Product product, String qty,
-                                                    @Nullable View productView) {
-
+                                                    @Nullable View productView,
+                                                    @Nullable HashMap<String, Integer> cartInfoMap) {
 
         int productQtyInBasket = 0;
         if (basketOperationResponse.getBasketResponseProductInfo() != null) {
@@ -536,11 +536,14 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
         if (product != null) {
             product.setNoOfItemsInCart(productQtyInBasket);
+            if (cartInfoMap != null) {
+                cartInfoMap.put(product.getSku(), productQtyInBasket);
+            }
         }
 
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
         editor.putString(Constants.GET_CART, String.valueOf(totalProductsInBasket));
-        editor.commit();
+        editor.apply();
         cartInfo.setNoOfItems(totalProductsInBasket);
     }
 

@@ -384,4 +384,6 @@
     <string name="deliverableTextSingular">Your purchase will arrive in the following delivery</string>
     <string name="deliverableTextPlural">Your purchase will arrive in the following deliveries</string>
     <string name="checkingAvailability">Sit back while we check whether the products you selected are available</string>
+    <string name="voucherApplicableSingular">Voucher Applicable</string>
+    <string name="voucherApplicablePlural">Vouchers Applicable</string>
 </resources>

@@ -10,9 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.CheckedTextView;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
@@ -64,37 +63,37 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
                 return false;
             }
         });
-        TextView lblOr = (TextView) base.findViewById(R.id.lblOr);
-        Button btnApplyVoucher = (Button) base.findViewById(R.id.btnApplyVoucher);
+        TextView lblApplyVoucher = (TextView) base.findViewById(R.id.lblApply);
         final ListView listVoucher = (ListView) base.findViewById(R.id.lstAvailableVouchers);
 
-        editTextVoucherCode.setTypeface(faceRobotoRegular);
+        editTextVoucherCode.setTypeface(faceRobotoLight);
         if (activeVouchersList == null || activeVouchersList.size() == 0) {
-            lblOr.setVisibility(View.GONE);
             listVoucher.setVisibility(View.GONE);
         } else {
-            lblOr.setTypeface(faceRobotoRegular);
             ActiveVoucherListAdapter activeVoucherListAdapter = new ActiveVoucherListAdapter(activeVouchersList);
             listVoucher.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
             listVoucher.setAdapter(activeVoucherListAdapter);
+            listVoucher.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    ActiveVouchers activeVouchers = activeVouchersList.get(position);
+                    if (activeVouchers.canApply()) {
+                        applyVoucher(activeVouchers.getCode());
+                    } else {
+                        showAlertDialog(getString(R.string.voucherCannotBeApplied),
+                                activeVouchers.getMessage());
+                    }
+                }
+            });
         }
 
-        btnApplyVoucher.setTypeface(faceRobotoRegular);
-        btnApplyVoucher.setOnClickListener(new View.OnClickListener() {
+        lblApplyVoucher.setTypeface(faceRobotoRegular);
+        lblApplyVoucher.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!TextUtils.isEmpty(editTextVoucherCode.getText().toString())) {
                     String voucherCode = editTextVoucherCode.getText().toString();
                     applyVoucher(voucherCode);
-                } else if (activeVouchersList != null && activeVouchersList.size() > 0
-                        && listVoucher.getCheckedItemPosition() != ListView.INVALID_POSITION) {
-                    ActiveVouchers activeVouchers = activeVouchersList.get(listVoucher.getCheckedItemPosition());
-                    if (activeVouchers.canApply()) {
-                        applyVoucher(activeVouchers.getCode());
-                    } else {
-                        showAlertDialogFinish(getString(R.string.voucherCannotBeApplied),
-                                activeVouchers.getMessage());
-                    }
                 }
             }
         });
@@ -154,6 +153,7 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
             if (row == null) {
                 LayoutInflater inflater = (LayoutInflater) getCurrentActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 row = inflater.inflate(R.layout.uiv3_active_voucher_list_row, parent, false);
+                ((TextView) row.findViewById(R.id.lblApply)).setTypeface(faceRobotoRegular);
                 activeVoucherViewHolder = new ActiveVoucherViewHolder(row);
                 row.setTag(activeVoucherViewHolder);
             } else {
@@ -163,18 +163,14 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
             TextView txtVoucherDesc = activeVoucherViewHolder.getTxtVoucherDesc();
             TextView txtVoucherValidity = activeVoucherViewHolder.getTxtVoucherValidity();
             TextView txtVoucherMsg = activeVoucherViewHolder.getTxtVoucherMsg();
-            CheckedTextView rbtnApplyVoucher = activeVoucherViewHolder.getRbtnApplyVoucher();
 
             if (activeVouchers.canApply()) {
-                rbtnApplyVoucher.setVisibility(View.VISIBLE);
                 txtVoucherMsg.setTextColor(getResources().getColor(R.color.uiv3_secondary_text_color));
             } else {
-                rbtnApplyVoucher.setVisibility(View.GONE);
                 txtVoucherMsg.setTextColor(getResources().getColor(R.color.dark_red));
             }
 
             txtVoucherCode.setText(activeVouchers.getCode());
-            txtVoucherCode.setBackgroundColor(randomColor());
             txtVoucherDesc.setText(activeVouchers.getCustomerDesc());
             txtVoucherMsg.setText(activeVouchers.getMessage());
             txtVoucherValidity.setText(getString(R.string.pleaseNote) + " " +
@@ -188,7 +184,6 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
             private TextView txtVoucherDesc;
             private TextView txtVoucherMsg;
             private TextView txtVoucherValidity;
-            private CheckedTextView rbtnApplyVoucher;
 
             private ActiveVoucherViewHolder(View base) {
                 this.base = base;
@@ -221,16 +216,9 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
             public TextView getTxtVoucherCode() {
                 if (txtVoucherCode == null) {
                     txtVoucherCode = (TextView) base.findViewById(R.id.txtVoucherCode);
-                    txtVoucherCode.setTypeface(faceRobotoLight);
+                    txtVoucherCode.setTypeface(faceRobotoMedium);
                 }
                 return txtVoucherCode;
-            }
-
-            public CheckedTextView getRbtnApplyVoucher() {
-                if (rbtnApplyVoucher == null) {
-                    rbtnApplyVoucher = (CheckedTextView) base.findViewById(R.id.rbtnApplyVoucher);
-                }
-                return rbtnApplyVoucher;
             }
         }
     }

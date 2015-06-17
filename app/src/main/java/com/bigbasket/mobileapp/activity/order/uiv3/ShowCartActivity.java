@@ -422,9 +422,9 @@ public class ShowCartActivity extends BackButtonActivity {
     public void updateUIAfterBasketOperationSuccess(BasketOperation basketOperation, TextView basketCountTextView,
                                                     View viewDecQty, View viewIncQty, View btnAddToBasket,
                                                     Product product, String qty,
-                                                    @Nullable View productView) {
+                                                    @Nullable View productView, @Nullable HashMap<String, Integer> cartInfo) {
         super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextView, viewDecQty, viewIncQty,
-                btnAddToBasket, product, qty, productView);
+                btnAddToBasket, product, qty, productView, cartInfo);
         getCartItems(null);
     }
 

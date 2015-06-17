@@ -22,8 +22,6 @@ public class OrderDetails implements Parcelable {
     };
     @SerializedName(Constants.PAYMENT_METHOD)
     private String paymentMethod;
-    @SerializedName(Constants.PAYMENT_METHOD_DISPLAY)
-    private String paymentMethodDisplay;
     @SerializedName(Constants.TOTAL_ITEMS)
     private int totalItems;
     @SerializedName(Constants.SUB_TOTAL)
@@ -34,8 +32,10 @@ public class OrderDetails implements Parcelable {
     private double finalTotal;
 
     OrderDetails(Parcel source) {
-        paymentMethod = source.readString();
-        paymentMethodDisplay = source.readString();
+        boolean wasFieldNull = source.readByte() == (byte) 1;
+        if (!wasFieldNull) {
+            paymentMethod = source.readString();
+        }
         totalItems = source.readInt();
         subTotal = source.readDouble();
         deliveryCharge = source.readDouble();
@@ -49,8 +49,11 @@ public class OrderDetails implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(paymentMethod);
-        dest.writeString(paymentMethodDisplay);
+        boolean wasFieldNull = paymentMethod == null;
+        dest.writeByte(wasFieldNull ? (byte) 1 : (byte) 0);
+        if (!wasFieldNull) {
+            dest.writeString(paymentMethod);
+        }
         dest.writeInt(totalItems);
         dest.writeDouble(subTotal);
         dest.writeDouble(deliveryCharge);
@@ -79,9 +82,5 @@ public class OrderDetails implements Parcelable {
 
     public String getFormattedFinalTotal() {
         return UIUtil.formatAsMoney(finalTotal);
-    }
-
-    public String getPaymentMethodDisplay() {
-        return paymentMethodDisplay;
     }
 }

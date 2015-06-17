@@ -79,6 +79,6 @@ public class ShoppingListSummary implements Parcelable {
     }
 
     public String getTitle() {
-        return facetName + " (" + numProducts + ")";
+        return facetName;
     }
 }
