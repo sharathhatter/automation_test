@@ -297,7 +297,8 @@ public interface BigBasketApiService {
 
     @FormUrlEncoded
     @POST("/remove-voucher/")
-    void removeVoucher(@Field(Constants.P_ORDER_ID) String potentialOrderId, Callback<BaseApiResponse> removeVoucherApiResponseCallback);
+    void removeVoucher(@Field(Constants.P_ORDER_ID) String potentialOrderId,
+                       Callback<ApiResponse<PostVoucherApiResponseContent>> removeVoucherApiResponseCallback);
 
     @GET("/get-app-data/")
     void getAppData(@Query(Constants.CLIENT) String client,

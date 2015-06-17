@@ -44,6 +44,9 @@ public class ProductTabData implements Parcelable {
     @SerializedName(Constants.TAB_INFO)
     private ArrayList<ProductTabInfo> productTabInfos;
 
+    @SerializedName(Constants.SCREEN_NAME)
+    private String screenName;
+
     public ProductTabData(Parcel source) {
         boolean isHeaderSectionNull = source.readByte() == (byte) 1;
         if (!isHeaderSectionNull) {
@@ -88,6 +91,10 @@ public class ProductTabData implements Parcelable {
             source.readTypedList(productTabInfos, ProductTabInfo.CREATOR);
         }
         headerSelectedIndex = source.readInt();
+        boolean isScreenNameNull = source.readByte() == (byte) 1;
+        if (!isScreenNameNull) {
+            screenName = source.readString();
+        }
     }
 
     @Override
@@ -143,6 +150,11 @@ public class ProductTabData implements Parcelable {
             dest.writeTypedList(productTabInfos);
         }
         dest.writeInt(headerSelectedIndex);
+        boolean isScreenNameNull = screenName == null;
+        dest.writeByte(isScreenNameNull ? (byte) 1 : (byte) 0);
+        if (!isScreenNameNull) {
+            dest.writeString(screenName);
+        }
     }
 
     public static final Parcelable.Creator<ProductTabData> CREATOR = new Parcelable.Creator<ProductTabData>() {
@@ -203,6 +215,10 @@ public class ProductTabData implements Parcelable {
 
     public ArrayList<ProductTabInfo> getProductTabInfos() {
         return productTabInfos;
+    }
+
+    public String getScreenName() {
+        return screenName;
     }
 
     public int getHeaderSelectedIndex() {

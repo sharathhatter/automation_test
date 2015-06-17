@@ -1,11 +1,11 @@
 package com.bigbasket.mobileapp.fragment.order;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +16,8 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
-import com.bigbasket.mobileapp.fragment.base.AbstractOrderSummaryFragment;
+import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
+import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.order.CreditDetails;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
@@ -25,12 +26,13 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
+import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.HashMap;
 import java.util.Map;
 
 
-public class OrderInvoiceSummaryFragment extends AbstractOrderSummaryFragment {
+public class OrderInvoiceSummaryFragment extends BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -100,16 +102,16 @@ public class OrderInvoiceSummaryFragment extends AbstractOrderSummaryFragment {
         LinearLayout layoutOrderSummaryInfo = (LinearLayout) base.findViewById(R.id.layoutOrderSummaryInfo);
         OrderInvoiceDetails orderInvoiceDetails = orderInvoice.getOrderInvoiceDetails();
 
-        View orderNumberRow = getOrderSummaryRow(inflater, getString(R.string.ordernumber),
-                orderInvoice.getOrderNumber(), normalColor);
+        View orderNumberRow = UIUtil.getOrderSummaryRow(inflater, getString(R.string.ordernumber),
+                orderInvoice.getOrderNumber(), normalColor, faceRobotoRegular);
         layoutOrderSummaryInfo.addView(orderNumberRow);
 
-        View invoiceNumberRow = getOrderSummaryRow(inflater, getString(R.string.invoicenumber),
-                orderInvoice.getInvoiceNumber(), normalColor);
+        View invoiceNumberRow = UIUtil.getOrderSummaryRow(inflater, getString(R.string.invoicenumber),
+                orderInvoice.getInvoiceNumber(), normalColor, faceRobotoRegular);
         layoutOrderSummaryInfo.addView(invoiceNumberRow);
 
-        View paymentMethodRow = getOrderSummaryRow(inflater, getString(R.string.paymentMethod),
-                orderInvoiceDetails.getPaymentMethod(), normalColor);
+        View paymentMethodRow = UIUtil.getOrderSummaryRow(inflater, getString(R.string.paymentMethod),
+                orderInvoiceDetails.getPaymentMethod(), normalColor, faceRobotoRegular);
         layoutOrderSummaryInfo.addView(paymentMethodRow);
 
         int numOrderItems = orderInvoiceDetails.getTotalItems();
@@ -117,35 +119,35 @@ public class OrderInvoiceSummaryFragment extends AbstractOrderSummaryFragment {
         if (numOrderItems > 1) {
             itemsStr += "s";
         }
-        View orderItemsNumRow = getOrderSummaryRow(inflater, getString(R.string.orderItems),
-                itemsStr, normalColor);
+        View orderItemsNumRow = UIUtil.getOrderSummaryRow(inflater, getString(R.string.orderItems),
+                itemsStr, normalColor, faceRobotoRegular);
         layoutOrderSummaryInfo.addView(orderItemsNumRow);
 
-        View subTotalRow = getOrderSummaryRow(inflater, getString(R.string.subTotal),
-                asRupeeSpannable(orderInvoiceDetails.getSubTotal()), normalColor);
+        View subTotalRow = UIUtil.getOrderSummaryRow(inflater, getString(R.string.subTotal),
+                asRupeeSpannable(orderInvoiceDetails.getSubTotal()), normalColor, faceRobotoRegular);
         layoutOrderSummaryInfo.addView(subTotalRow);
 
         if (orderInvoiceDetails.getVatValue() > 0) {
-            View vatRow = getOrderSummaryRow(inflater, getString(R.string.vat),
-                    asRupeeSpannable(orderInvoiceDetails.getVatValue()), normalColor);
+            View vatRow = UIUtil.getOrderSummaryRow(inflater, getString(R.string.vat),
+                    asRupeeSpannable(orderInvoiceDetails.getVatValue()), normalColor, faceRobotoRegular);
             layoutOrderSummaryInfo.addView(vatRow);
         }
 
-        View deliveryChargeRow = getOrderSummaryRow(inflater, getString(R.string.deliveryCharges),
-                asRupeeSpannable(orderInvoiceDetails.getDeliveryCharge()), normalColor);
+        View deliveryChargeRow = UIUtil.getOrderSummaryRow(inflater, getString(R.string.deliveryCharges),
+                asRupeeSpannable(orderInvoiceDetails.getDeliveryCharge()), normalColor, faceRobotoRegular);
         layoutOrderSummaryInfo.addView(deliveryChargeRow);
 
         if (orderInvoice.getCreditDetails() != null && orderInvoice.getCreditDetails().size() > 0) {
             for (CreditDetails creditDetails : orderInvoice.getCreditDetails()) {
-                View creditDetailRow = getOrderSummaryRow(inflater, creditDetails.getMessage(),
-                        asRupeeSpannable(creditDetails.getCreditValue()), normalColor);
+                View creditDetailRow = UIUtil.getOrderSummaryRow(inflater, creditDetails.getMessage(),
+                        asRupeeSpannable(creditDetails.getCreditValue()), normalColor, faceRobotoRegular);
                 layoutOrderSummaryInfo.addView(creditDetailRow);
             }
         }
 
-        View finalTotalRow = getOrderSummaryRow(inflater, getString(R.string.finalTotal),
+        View finalTotalRow = UIUtil.getOrderSummaryRow(inflater, getString(R.string.finalTotal),
                 asRupeeSpannable(orderInvoiceDetails.getTotal()), orderTotalLabelColor,
-                orderTotalValueColor);
+                orderTotalValueColor, faceRobotoRegular);
         layoutOrderSummaryInfo.addView(finalTotalRow);
 
 
@@ -167,6 +169,46 @@ public class OrderInvoiceSummaryFragment extends AbstractOrderSummaryFragment {
 
 
         logOrderDetailSummaryEvent(orderInvoice.getOrderNumber());
+    }
+
+    public View getOrderMaxPayableByVoucher(LayoutInflater inflater, String label,
+                                            double foodValue, int labelColor) {
+        View row = inflater.inflate(R.layout.uiv3_label_value_table_row, null);
+
+        TextView txtLabel = (TextView) row.findViewById(R.id.txtLabel);
+        txtLabel.setTypeface(txtLabel.getTypeface(), Typeface.ITALIC);
+        txtLabel.setTextColor(labelColor);
+        String foodValueFix = "(" + label + " `";
+        String foodValueStr = UIUtil.formatAsMoney(foodValue) + ")";
+        int prefixLen = foodValueFix.length();
+        SpannableString spannableFoodValue = new SpannableString(foodValueFix + foodValueStr);
+        spannableFoodValue.setSpan(new CustomTypefaceSpan("", faceRupee), prefixLen - 1,
+                prefixLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+
+        txtLabel.setText(spannableFoodValue);
+        return row;
+    }
+
+    public void renderSlotInfoRow(View row, String slotDate, String slotTime,
+                                  String fulfilledBy, boolean hasMultipleSlots) {
+        TextView txtNumItems = (TextView) row.findViewById(R.id.txtNumItems);
+        TextView txtBasketVal = (TextView) row.findViewById(R.id.txtBasketVal);
+        TextView txtSlotDate = (TextView) row.findViewById(R.id.txtSlotDate);
+        TextView txtSlotTime = (TextView) row.findViewById(R.id.txtSlotTime);
+        TextView txtFulfilledBy = (TextView) row.findViewById(R.id.txtFulfilledBy);
+        txtSlotDate.setTypeface(faceRobotoRegular);
+        txtSlotTime.setTypeface(faceRobotoRegular);
+
+        txtSlotDate.setText(slotDate);
+        txtSlotTime.setText(slotTime);
+        txtNumItems.setVisibility(View.GONE);
+        txtBasketVal.setVisibility(View.GONE);
+        if (!hasMultipleSlots) {
+            txtFulfilledBy.setVisibility(View.GONE);
+        } else {
+            txtFulfilledBy.setTypeface(faceRobotoRegular);
+            txtFulfilledBy.setText(fulfilledBy);
+        }
     }
 
     private void logOrderDetailSummaryEvent(String orderNumber) {

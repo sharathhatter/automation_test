@@ -206,6 +206,9 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                     setTitle(null);
                 } else if (!TextUtils.isEmpty(mTitlePassedViaIntent)) {
                     setTitle(mTitlePassedViaIntent);
+                } else if (!TextUtils.isEmpty(productTabData.getScreenName())) {
+                    mTitlePassedViaIntent = productTabData.getScreenName();
+                    setTitle(productTabData.getScreenName());
                 }
             } else {
                 // When only one product tab
@@ -235,6 +238,9 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
             UIUtil.showEmptyProductsView(this, contentFrame, getString(R.string.noProducts),
                     R.drawable.empty_smart_basket);
             renderHeaderDropDown(null);
+        } else if (!TextUtils.isEmpty(productTabData.getScreenName())) {
+            mTitlePassedViaIntent = productTabData.getScreenName();
+            setTitle(productTabData.getScreenName());
         }
     }
 

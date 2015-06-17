@@ -26,6 +26,7 @@
     <string name="free_promo_redeemed_txt">Following product will be added to your order during checkout.</string>
     <string name="product_image">Product Image</string>
     <string name="discount">Discount</string>
+    <string name="dismiss">Dismiss</string>
     <string name="promo">Promo</string>
     <string name="remove">Remove</string>
     <string name="add">Add</string>
@@ -63,6 +64,7 @@
     <string name="createShoppingList">Create shopping List</string>
     <string name="shoppingListNameDialogTextHint">Enter shopping list name</string>
     <string name="chooseCity">Pick Your City</string>
+    <string name="pickAddress">Pick Address</string>
     <string name="changeCityMenuTxt">Change City</string>
     <string name="outOfStock">Out of stock</string>
     <string name="OR">OR</string>

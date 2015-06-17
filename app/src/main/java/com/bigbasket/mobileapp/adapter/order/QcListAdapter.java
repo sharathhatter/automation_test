@@ -49,7 +49,7 @@ public class QcListAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(R.layout.uiv3_order_qc_layout,
                     parent, false);
-            viewHolder = new ViewHolder(convertView);
+            viewHolder = new ViewHolder(convertView, typeface);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
@@ -77,16 +77,18 @@ public class QcListAdapter extends BaseAdapter {
         return convertView;
     }
 
-    private class ViewHolder {
+    public static class ViewHolder {
         private View itemView;
         private TextView txtProductDesc;
         private TextView txtProductBrand;
         private TextView txtQty;
         private TextView txtStockAvailability;
         private TextView txtSerialNum;
+        private Typeface typeface;
 
-        public ViewHolder(View itemView) {
+        public ViewHolder(View itemView, Typeface typeface) {
             this.itemView = itemView;
+            this.typeface = typeface;
         }
 
         public TextView getTxtProductDesc() {

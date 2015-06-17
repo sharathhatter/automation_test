@@ -1,19 +1,12 @@
 package com.bigbasket.mobileapp.activity.order.uiv3;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,7 +20,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.adapter.order.ActiveOrderRowAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
@@ -35,8 +27,6 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.BaseApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.CartGetApiResponseContent;
-import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
-import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.AnnotationInfo;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
@@ -56,7 +46,6 @@ import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.facebook.share.widget.LikeView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -96,17 +85,17 @@ public class ShowCartActivity extends BackButtonActivity {
         basketMenuItem.setVisible(false);
     }
 
-    private void renderHearView(int totalItemCount){
+    private void renderHearView(int totalItemCount) {
         Toolbar toolbar = getToolbar();
-        if(txtBasketSubTitle!=null) toolbar.removeView(txtBasketSubTitle);
+        if (txtBasketSubTitle != null) toolbar.removeView(txtBasketSubTitle);
         txtBasketSubTitle = (TextView) getLayoutInflater().inflate(R.layout.basket_header_layout, toolbar, false);
         txtBasketSubTitle.setTypeface(faceRobotoRegular);
         toolbar.addView(txtBasketSubTitle);
-        if(totalItemCount>0){
+        if (totalItemCount > 0) {
             String itemString = totalItemCount > 1 ? " Items" : " Item";
             txtBasketSubTitle.setText(totalItemCount + itemString);
             basketMenuItem.setVisible(true);
-        }else {
+        } else {
             txtBasketSubTitle.setVisibility(View.GONE);
             basketMenuItem.setVisible(false);
         }
@@ -117,8 +106,8 @@ public class ShowCartActivity extends BackButtonActivity {
         switch (item.getItemId()) {
             case R.id.action_empty_basket:
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
-                if (preferences.getString(Constants.GET_CART, "0") != null
-                        && !preferences.getString(Constants.GET_CART, "0").equals("0")) {
+                String numItems = preferences.getString(Constants.GET_CART, "0");
+                if (numItems != null && !numItems.equals("0")) {
                     showAlertDialog(null, getString(R.string.removeAllProducts), DialogButton.YES,
                             DialogButton.NO, Constants.EMPTY_BASKET, null, getString(R.string.emptyBasket));
                 }
@@ -193,13 +182,13 @@ public class ShowCartActivity extends BackButtonActivity {
         ViewGroup layoutCheckoutFooter = (ViewGroup) basketView.findViewById(R.id.layoutCheckoutFooter);
         final String cartTotal = UIUtil.formatAsMoney(cartSummary.getTotal());
         UIUtil.setUpFooterButton(this, layoutCheckoutFooter, cartTotal,
-                getString(R.string.check_out), true);
+                getString(R.string.pickAddress), true);
         layoutCheckoutFooter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (getCartInfo() != null && getCartInfo().getNoOfItems() > 0) {
                     if (AuthParameters.getInstance(getCurrentActivity()).isAuthTokenEmpty()) {
-                       launchLogin(TrackEventkeys.NAVIGATION_CTX_SHOW_BASKET, NavigationCodes.GO_TO_BASKET);
+                        launchLogin(TrackEventkeys.NAVIGATION_CTX_SHOW_BASKET, NavigationCodes.GO_TO_BASKET);
                     } else {
                         startCheckout(cartTotal);
                     }
@@ -239,59 +228,6 @@ public class ShowCartActivity extends BackButtonActivity {
         } else {
             super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
         }
-    }
-
-    public View getCartSummaryView(CartSummary cartSummary, ViewGroup parent) {
-        if (cartSummary == null) return null;
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View base = inflater.inflate(R.layout.uiv3_basket_header, parent, false);
-        TextView lblSaving = (TextView) base.findViewById(R.id.lblSaving);
-        lblSaving.setTypeface(faceRobotoRegular);
-
-        TextView txtSaving = (TextView) base.findViewById(R.id.txtSaving);
-        txtSaving.setTypeface(faceRobotoRegular);
-
-        String totalSaveAmount = UIUtil.formatAsMoney(cartSummary.getSavings());
-        if (!totalSaveAmount.equals("0")) {
-            Spannable savingSpannable = new SpannableString("`" + UIUtil.formatAsMoney(cartSummary.getSavings()));
-            savingSpannable.setSpan(new CustomTypefaceSpan("", faceRupee), 0, 1, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-            txtSaving.setText(savingSpannable);
-        } else {
-            txtSaving.setVisibility(View.GONE);
-            lblSaving.setVisibility(View.GONE);
-        }
-
-        String totalBasketAmount = UIUtil.formatAsMoney(cartSummary.getTotal());
-        TextView txtTotal = (TextView) base.findViewById(R.id.txtTotal);
-        txtTotal.setTypeface(faceRobotoRegular);
-        if (!totalBasketAmount.equals("0")) {
-            Spannable totalSpannable = new SpannableString("`" + totalBasketAmount + (!totalSaveAmount.equals("0") ? " | " : ""));
-            totalSpannable.setSpan(new CustomTypefaceSpan("", faceRupee), 0, 1, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-            txtTotal.setText(totalSpannable);
-        } else {
-            txtTotal.setText("");
-            txtTotal.setVisibility(View.INVISIBLE);
-        }
-
-        // TextView on Gingerbread and Button on HoneyComb onwards
-        View viewEmptyBasket = base.findViewById(R.id.viewEmptyBasket);
-        // Since button extends textview hence it'll work for both
-        ((TextView) viewEmptyBasket).setTypeface(faceRobotoRegular);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            ((TextView) viewEmptyBasket).setAllCaps(false);
-        }
-        viewEmptyBasket.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
-                if (preferences.getString(Constants.GET_CART, "0") != null
-                        && !preferences.getString(Constants.GET_CART, "0").equals("0")) {
-                    showAlertDialog(null, getString(R.string.removeAllProducts), DialogButton.YES,
-                            DialogButton.NO, Constants.EMPTY_BASKET, null, getString(R.string.emptyBasket));
-                }
-            }
-        });
-        return base;
     }
 
 
@@ -340,7 +276,7 @@ public class ShowCartActivity extends BackButtonActivity {
 
 
     private void getCartItems(String fulfillmentIds) {
-        if (!DataUtil.isInternetAvailable(getCurrentActivity())){
+        if (!DataUtil.isInternetAvailable(getCurrentActivity())) {
             handler.sendOfflineError(true);
             return;
         }
@@ -355,10 +291,10 @@ public class ShowCartActivity extends BackButtonActivity {
                 hideProgressView();
                 if (cartGetApiResponseContentApiResponse.status == 0) {
                     CartSummary cartSummary = cartGetApiResponseContentApiResponse.apiResponseContent.cartSummary;
-                        setCartInfo(cartSummary);
-                        setBasketNumItemsDisplay();
-                        editor.putString(Constants.GET_CART,
-                                String.valueOf(cartSummary.getNoOfItems()));
+                    setCartInfo(cartSummary);
+                    setBasketNumItemsDisplay();
+                    editor.putString(Constants.GET_CART,
+                            String.valueOf(cartSummary.getNoOfItems()));
                     fullfillmentInfos = cartGetApiResponseContentApiResponse.apiResponseContent.fulfillmentInfos;
                     annotationInfoArrayList = cartGetApiResponseContentApiResponse.apiResponseContent.annotationInfos;
                     if (cartGetApiResponseContentApiResponse.apiResponseContent.
@@ -411,8 +347,8 @@ public class ShowCartActivity extends BackButtonActivity {
 
         Toolbar toolbar = getToolbar();
         toolbar.setTitle(getString(R.string.my_basket_header));
-        if(txtBasketSubTitle!=null) txtBasketSubTitle.setVisibility(View.GONE);
-        if(basketMenuItem!=null) basketMenuItem.setVisible(false);
+        if (txtBasketSubTitle != null) txtBasketSubTitle.setVisibility(View.GONE);
+        if (basketMenuItem != null) basketMenuItem.setVisible(false);
         contentView.removeAllViews();
         contentView.addView(base);
     }
