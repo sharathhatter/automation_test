@@ -1,7 +1,7 @@
 <resources>
     <string name="hint_input_chat">Enter message here</string>
     <string name="content_desc_send">Send Message</string>
-    <string name="txt_empty_chat">No Messages to show</string>
+    <string name="txt_empty_chat">Welcome to BigBasket communication hub. You can send use your feedback or report problems through communication hub, someone will respond to your query.</string>
     <string name="txt_loading">Loading chat history</string>
     <string name="lbl_attach_new_image">Capture Image</string>
     <string name="lbl_menu_attach">Attach Image</string>

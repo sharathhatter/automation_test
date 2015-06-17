@@ -35,6 +35,7 @@ import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
+import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -160,12 +161,25 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
             focusView = editTextFirstName;
             cancel = true;
         }
+
+        if(!UIUtil.isAlphaString(editTextFirstName.getText().toString())){
+            cancel = true;
+            if(focusView == null)  focusView = editTextFirstName;
+            UIUtil.reportFormInputFieldError(editTextFirstName, getString(R.string.error_field_name));
+        }
+
         if (isEditTextEmpty(editTextLastName)) {
             reportFormInputFieldError(editTextLastName, getString(R.string.error_field_required));
-            if(focusView == null)
-                focusView = editTextLastName;
+            if(focusView == null) focusView = editTextLastName;
             cancel = true;
         }
+
+        if(!UIUtil.isAlphaString(editTextLastName.getText().toString())){
+            cancel = true;
+            if(focusView==null) focusView = editTextLastName;
+            UIUtil.reportFormInputFieldError(editTextLastName, getString(R.string.error_field_name));
+        }
+
         if (isEditTextEmpty(editTextMobileNumber)) {
             reportFormInputFieldError(editTextMobileNumber, getString(R.string.error_field_required));
             if(focusView == null)

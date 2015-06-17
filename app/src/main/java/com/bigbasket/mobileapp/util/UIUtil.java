@@ -49,14 +49,17 @@ import com.moe.pushlibrary.MoEHelper;
 import com.moe.pushlibrary.utils.MoEHelperConstants;
 import com.squareup.picasso.Picasso;
 
+import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import android.accounts.AccountManager;
 
 public class UIUtil {
 
@@ -345,6 +348,7 @@ public class UIUtil {
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(activity);
         long lastPopUpShownTime = prefer.getLong(Constants.LAST_POPUP_SHOWN_TIME, 0);
         SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_FOR_APP_UPGRADE_POPUP, Locale.getDefault());
+
         String today = getToday(Constants.DATE_FORMAT_FOR_APP_UPGRADE_POPUP);
 
         Date serverAppExpireDate, toDaysData;
@@ -552,4 +556,37 @@ public class UIUtil {
             txtFulfilledBy.setText(fulfilledBy);
         }
     }
+
+    public static boolean isAlphaString(String matchString){
+        return matchString.matches("[a-zA-Z]+");
+    }
+
+    public static boolean isValidDOB(String dob){
+        if(!TextUtils.isEmpty(dob)) {
+            DateFormat df = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_PICKER, Locale.getDefault());
+            String today = getToday(Constants.DATE_FORMAT_DATE_PICKER);
+            Date inputDate, toDaysData, dateBefore1900;
+            try {
+                inputDate = df.parse(dob);
+                toDaysData = df.parse(today);
+                dateBefore1900 = df.parse("01/01/1900");
+            } catch (java.text.ParseException e1) {
+                e1.printStackTrace();
+                return false;
+            }
+            if(inputDate==null || toDaysData==null) return false;
+            if(inputDate.after(toDaysData))
+                return false;
+            if(inputDate.before(dateBefore1900))
+                return false;
+            return true;
+        }
+        return false;
+    }
+
+
+    public static boolean isPhoneWithGoogleAccount(Context context){
+        return AccountManager.get(context).getAccountsByType("com.google").length > 0;
+    }
+
 }

@@ -35,6 +35,8 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.appsflyer.AppsFlyerLib;
+import com.bigbasket.mobileapp.BuildConfig;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignupActivity;
@@ -109,7 +111,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 if (motionActionDown == null || motionActionUp == null) return;
                 editText.dispatchTouchEvent(motionActionDown);
                 editText.dispatchTouchEvent(motionActionUp);
-
+                editText.setSelection(editText.getText().length());
             }
         }, 100);
     }
@@ -553,6 +555,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     @Override
     protected void onDestroy() {
+        isActivitySuspended = true;
         super.onDestroy();
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
@@ -593,6 +596,20 @@ public abstract class BaseActivity extends AppCompatActivity implements
         trackEvent(eventName, eventAttribs, null, null, false);
     }
 
+    public void trackEvent(String eventName, String valueToSum, Map<String, String> mapAttr){
+        try{
+            AppsFlyerLib.sendTrackingWithEvent(getApplicationContext(), eventName, valueToSum);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(mapAttr!=null && mapAttr.size()>0){
+            Bundle bundleAttr = new Bundle();
+            for (Map.Entry<String, String> entry : mapAttr.entrySet()) {
+                bundleAttr.putString(entry.getKey(), entry.getValue());
+            }
+            FacebookEventTrackWrapper.logAppEvent(fbLogger, eventName, Double.parseDouble(valueToSum), bundleAttr);
+        }
+    }
 
     @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs, String source,

@@ -107,19 +107,20 @@ public class UpdatePinActivity extends BackButtonActivity {
 
     public void onUpdatePinButtonClicked() {
         if (editTextNewPin != null && editTextNewPin.isEnabled()) {
+            editTextNewPin.setError(null);
             final String newPin = editTextNewPin.getText().toString();
             if (!TextUtils.isEmpty(newPin)) {
                 if (newPin.equalsIgnoreCase(currentPin)) {
                     finish();
                 } else if (newPin.length() != 4) {
-                    showToast(getString(R.string.min4digit));
+                    editTextNewPin.setError(getString(R.string.min4digit));
                 } else if (newPin.equals(Constants.FOUR_ZERO)) {
-                    showToast(getString(R.string.not0000));
+                    editTextNewPin.setError(getString(R.string.not0000));
                 } else {
                     updatePinServerCall(newPin);
                 }
             } else {
-                showToast(getString(R.string.enterPin));
+                editTextNewPin.setError(getString(R.string.enterPin));
             }
         } else {
             finish();
@@ -144,6 +145,7 @@ public class UpdatePinActivity extends BackButtonActivity {
                 if (status == 0) {
                     updateEditTextField(newPin);
                     BaseActivity.hideKeyboard(getCurrentActivity(), editTextNewPin);
+                    finish();
                 } else {
                     HashMap<String, String> map = new HashMap<>();
                     map.put(TrackEventkeys.FAILURE_REASON, apiResponse.message);

@@ -25,6 +25,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.handler.HDFCPowerPayHandler;
 import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
+import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.CityManager;
 import com.bigbasket.mobileapp.model.SectionManager;
@@ -50,7 +51,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class SplashActivity extends SocialLoginActivity implements DynamicScreenAware {
+public class SplashActivity extends SocialLoginActivity implements DynamicScreenAware, HandlerAware {
 
     private boolean mIsFromActivityResult;
 

@@ -50,11 +50,6 @@ public class MyAccountActivity extends BackButtonActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle(getString(R.string.myAccount));
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         getMemberDetails();
     }
 

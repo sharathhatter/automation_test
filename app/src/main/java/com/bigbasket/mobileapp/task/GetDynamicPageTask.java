@@ -47,6 +47,7 @@ public class GetDynamicPageTask<T> {
         }
         if (!((ConnectivityAware) context).checkInternetConnection()) {
             ((HandlerAware) context).getHandler().sendOfflineError(finishOnError);
+            return;
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.
                 getApiService(((ActivityAware) context).getCurrentActivity());

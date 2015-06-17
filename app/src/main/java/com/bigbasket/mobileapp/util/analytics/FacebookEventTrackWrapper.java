@@ -32,6 +32,15 @@ public class FacebookEventTrackWrapper {
         }
     }
 
+    public static void logAppEvent(AppEventsLogger logger, String eventName,
+                                   double valueToSum, Bundle bundleAttr) {
+        try {
+            logger.logEvent(eventName, valueToSum, bundleAttr);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void logAppEvent(AppEventsLogger logger,
                                    String eventName) {
         try {

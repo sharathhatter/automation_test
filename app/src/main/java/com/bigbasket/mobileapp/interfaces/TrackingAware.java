@@ -179,6 +179,7 @@ public interface TrackingAware {
     public static final String CHECKOUT_PLACE_ORDER_CLICKED = "Checkout.Place Order Clicked";
     public static final String CHECKOUT_PLACE_ORDER_AMOUNT_MISMATCH = "Checkout.Place Order Amount Mismatch";
     public static final String CHECKOUT_ORDER_COMPLETE = "Checkout.Order Complete";
+    public static final String PLACE_ORDER = "placeorder";
 
     //thank you
     public static final String THANK_YOU_PAGE_SHOWN = "Checkout.Thank You Page Shown";

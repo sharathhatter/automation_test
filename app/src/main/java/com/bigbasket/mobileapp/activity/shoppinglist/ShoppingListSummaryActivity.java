@@ -354,12 +354,13 @@ public class ShoppingListSummaryActivity extends BBActivity {
             return;
         }
         new InputDialog<ShoppingListSummaryActivity>(this, R.string.change, R.string.cancel,
-                R.string.changeShoppingListName, R.string.shoppingListNameDialogTextHint,
+                R.string.renameShoppingList, R.string.shoppingListNameDialogTextHint,
                 mShoppingListName.getName()) {
             @Override
             public void onPositiveButtonClicked(String inputText) {
                 if (getCurrentActivity() == null) return;
-                editShoppingListName(mShoppingListName, inputText);
+                if(!mShoppingListName.getName().equals(inputText))
+                    editShoppingListName(mShoppingListName, inputText);
             }
         }.show();
     }
