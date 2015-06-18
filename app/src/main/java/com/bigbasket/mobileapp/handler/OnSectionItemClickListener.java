@@ -203,7 +203,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                     ((ActivityAware) context).getCurrentActivity().goToHome(false);
                     break;
                 case DestinationInfo.COMMUNICATION_HUB:
-                    ((ActivityAware) context).getCurrentActivity().launchKonotor();
+                    ((ActivityAware) context).getCurrentActivity().launchMoEngageCommunicationHub();
                     break;
                 case DestinationInfo.CALL:
                     if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {

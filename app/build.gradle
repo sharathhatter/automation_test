@@ -88,9 +88,7 @@ int calculateVersionCodeFromDpi(int dpi) {
 }
 
 dependencies {
-    compile files('libs/gcm.jar')
     compile files('libs/localytics.jar')
-    compile project(':konotorActivity')
     compile project(':androidImageSlider')
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.android.support:support-v4:22.1.1'

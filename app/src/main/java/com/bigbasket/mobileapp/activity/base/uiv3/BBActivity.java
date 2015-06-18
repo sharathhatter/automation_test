@@ -329,7 +329,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 addToMainLayout(new MemberAddressListFragment());
                 break;
             case FragmentCodes.START_COMMUNICATION_HUB:
-                launchKonotor();
+                launchMoEngageCommunicationHub();
                 break;
             case FragmentCodes.START_PRODUCT_DETAIL:
                 ProductDetailFragment productDetailFragment = new ProductDetailFragment();

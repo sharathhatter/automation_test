@@ -11,7 +11,6 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -23,7 +22,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
-import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -36,15 +34,13 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.appsflyer.AppsFlyerLib;
-import com.bigbasket.mobileapp.BuildConfig;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignupActivity;
+import com.bigbasket.mobileapp.activity.order.uiv3.ShowCartActivity;
 import com.bigbasket.mobileapp.activity.product.ProductListActivity;
-import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
-import com.bigbasket.mobileapp.activity.order.uiv3.ShowCartActivity;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
@@ -61,14 +57,12 @@ import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.FragmentCodes;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.FacebookEventTrackWrapper;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
-import com.demach.konotor.Konotor;
 import com.facebook.appevents.AppEventsLogger;
 import com.moe.pushlibrary.MoEHelper;
 import com.moengage.addon.ubox.UnifiedInboxActivity;
@@ -81,7 +75,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
@@ -223,22 +216,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
             goToHome(isPendingReloadApp());
             return;
         }
-        initializeKonotor();
         MoEngageWrapper.onResume(moEHelper, getCurrentActivity());
-    }
-
-    public void launchKonotor() {
-        AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());
-        if (!authParameters.isAuthTokenEmpty()) {
-            Konotor.getInstance(getApplicationContext()).launchFeedbackScreen(this);
-        } else {
-            showToast(getString(R.string.loginToContinue));
-            launchLogin(TrackEventkeys.NAVIGATION_CTX_SHOW_BASKET, FragmentCodes.START_COMMUNICATION_HUB);
-        }
-
-        Map<String, String> eventAttribs = new HashMap<>();
-        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_TOPNAV);
-        trackEvent(TrackingAware.COMMUNICATION_HUB_CLICKED, eventAttribs);
     }
 
     public void launchMoEngageCommunicationHub() {
@@ -248,47 +226,12 @@ public abstract class BaseActivity extends AppCompatActivity implements
             startActivity(communicationHunIntent);
         } else {
             showToast(getString(R.string.loginToContinue));
-            launchLogin(TrackEventkeys.NAVIGATION_CTX_SHOW_BASKET, FragmentCodes.START_COMMUNICATION_HUB);
+            launchLogin(TrackEventkeys.NAVIGATION_CTX_LEFTNAV, FragmentCodes.START_COMMUNICATION_HUB);
         }
 
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_TOPNAV);
         trackEvent(TrackingAware.COMMUNICATION_HUB_CLICKED, eventAttribs);
-    }
-
-    protected void initializeKonotor() {
-        AuthParameters authParameters = AuthParameters.getInstance(this);
-        if (!authParameters.isAuthTokenEmpty()) {
-            Konotor.getInstance(getApplicationContext())
-                    .withLaunchMainActivityOnFinish(true)
-                    .withUserName(authParameters.getMemberFullName())
-                    .withIdentifier(authParameters.getMid())
-                    .withUserEmail(authParameters.getMemberEmail())
-                    .withWelcomeMessage(this.getResources().getString(R.string.konotorWelcomeMessage))
-                    .withNoAudioRecording(true)
-                    .withFeedbackScreenTitle(getResources().getString(R.string.bbCommHub))
-                    .withLinking("bigbasket://[a-z0-9A-Z\\?\\&\\=]+", "bigbasket")
-                    .init(Constants.KONOTOR_APP_ID, Constants.KONOTOR_APP_KEY);
-        } else {
-            Konotor.getInstance(getApplicationContext())
-                    .withLaunchMainActivityOnFinish(true)
-                    .withWelcomeMessage(this.getResources().getString(R.string.konotorWelcomeMessage))
-                    .withNoAudioRecording(true)
-                    .withFeedbackScreenTitle(getResources().getString(R.string.bbCommHub))
-                    .withLinking("bigbasket://[a-z0-9A-Z\\?\\&\\=]+", "bigbasket")
-                    .init(Constants.KONOTOR_APP_ID, Constants.KONOTOR_APP_KEY);
-        }
-    }
-
-    public void updateKonotor() {
-        AuthParameters authParameters = AuthParameters.getInstance(this);
-        if (!authParameters.isAuthTokenEmpty()) {
-            Konotor.getInstance(getApplicationContext())
-                    .withUserName(authParameters.getMemberFullName())
-                    .withIdentifier(authParameters.getMid())
-                    .withUserEmail(authParameters.getMemberEmail())
-                    .update();
-        }
     }
 
     public void showAlertDialog(String title, String msg) {
@@ -596,13 +539,13 @@ public abstract class BaseActivity extends AppCompatActivity implements
         trackEvent(eventName, eventAttribs, null, null, false);
     }
 
-    public void trackEvent(String eventName, String valueToSum, Map<String, String> mapAttr){
-        try{
+    public void trackEvent(String eventName, String valueToSum, Map<String, String> mapAttr) {
+        try {
             AppsFlyerLib.sendTrackingWithEvent(getApplicationContext(), eventName, valueToSum);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        if(mapAttr!=null && mapAttr.size()>0){
+        if (mapAttr != null && mapAttr.size() > 0) {
             Bundle bundleAttr = new Bundle();
             for (Map.Entry<String, String> entry : mapAttr.entrySet()) {
                 bundleAttr.putString(entry.getKey(), entry.getValue());
