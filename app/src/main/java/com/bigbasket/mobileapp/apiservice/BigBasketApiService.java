@@ -20,6 +20,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListSummary
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListsApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponseWithCart;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OrderListApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseContent;
@@ -153,13 +154,13 @@ public interface BigBasketApiService {
     @POST("/sl-cat-items-to-cart/")
     void addAllToBasketShoppingList(@Field(Constants.SHOPPING_LIST_SLUG) String shoppingListSlug,
                                     @Field(Constants.CATEGORY_SLUG) String topCategorySlug,
-                                    Callback<OldApiResponse<CartSummary>> addAllToBasketShoppingListCallBack);
+                                    Callback<OldApiResponseWithCart> addAllToBasketShoppingListCallBack);
 
     @FormUrlEncoded
     @POST("/sb-cat-items-to-cart/")
     void addAllToBasketSmartBasket(@Field(Constants.SHOPPING_LIST_SLUG) String shoppingListSlug,
                                    @Field(Constants.CATEGORY_SLUG) String topCategorySlug,
-                                   Callback<OldApiResponse<CartSummary>> addAllToBasketSmartBasketCallBack);
+                                   Callback<OldApiResponseWithCart> addAllToBasketSmartBasketCallBack);
 
 
     @FormUrlEncoded

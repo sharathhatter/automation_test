@@ -270,23 +270,24 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
             if (!checkInternetConnection()) {
                 handler.sendOfflineError();
                 return;
-            }
-            switch (socialAccountType) {
-                case SocialAccount.FB:
-                    mIsInLogoutMode = true;
-                    LoginManager.getInstance().logOut();
-                    doLogout();
-                    break;
-                case SocialAccount.GP:
-                    mIsInLogoutMode = true;
-                    if(UIUtil.isPhoneWithGoogleAccount(this)){
-                        initializeGooglePlusSignIn();
-                        showProgressDialog(getString(R.string.please_wait));
-                        initiatePlusClientConnect();
-                    }else {
+            }else {
+                switch (socialAccountType) {
+                    case SocialAccount.FB:
+                        mIsInLogoutMode = true;
+                        LoginManager.getInstance().logOut();
                         doLogout();
-                    }
-                    break;
+                        break;
+                    case SocialAccount.GP:
+                        mIsInLogoutMode = true;
+                        if(UIUtil.isPhoneWithGoogleAccount(this)){
+                            initializeGooglePlusSignIn();
+                            showProgressDialog(getString(R.string.please_wait));
+                            initiatePlusClientConnect();
+                        }else {
+                            doLogout();
+                        }
+                        break;
+                }
             }
         } else {
             doLogout();
