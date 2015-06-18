@@ -8,7 +8,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -107,17 +106,14 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        View shopListHeaderLayout = inflater.inflate(R.layout.uiv3_shopping_list_products_header, contentView, false);
-        TextView brandNameTxt = (TextView) shopListHeaderLayout.findViewById(R.id.brandNameTxt);
-        View txtSeparator = shopListHeaderLayout.findViewById(R.id.txtSeparator);
-        brandNameTxt.setVisibility(View.INVISIBLE);
+        View shopFromOrderLayout = inflater.inflate(R.layout.uiv3_shop_from_order, contentView, false);
 
-        Button btnAddAllToBasket = (Button) shopListHeaderLayout.findViewById(R.id.btnAddAllToBasket);
+        View layoutAddAll = shopFromOrderLayout.findViewById(R.id.layoutAddAll);
         if (Product.areAllProductsOutOfStock(mProducts)) {
-            btnAddAllToBasket.setVisibility(View.GONE);
-            txtSeparator.setVisibility(View.GONE);
+            layoutAddAll.setVisibility(View.GONE);
         } else {
-            btnAddAllToBasket.setOnClickListener(new View.OnClickListener() {
+            ((TextView) shopFromOrderLayout.findViewById(R.id.txtAddAll)).setTypeface(faceRobotoRegular);
+            layoutAddAll.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     showAlertDialog(null, getString(R.string.addAllProducts),
@@ -125,10 +121,9 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
                 }
             });
         }
-        contentView.addView(shopListHeaderLayout);
 
-
-        RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, contentView);
+        RecyclerView productRecyclerView = (RecyclerView) shopFromOrderLayout.findViewById(R.id.recyclerView);
+        UIUtil.configureRecyclerView(productRecyclerView, getActivity(), 1, 1);
 
         // Set product-list data
         AuthParameters authParameters = AuthParameters.getInstance(getActivity());
@@ -148,7 +143,7 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
                 getNavigationCtx());
 
         productRecyclerView.setAdapter(productListRecyclerAdapter);
-        contentView.addView(productRecyclerView);
+        contentView.addView(shopFromOrderLayout);
         logShopFromOrderEvent();
     }
 
