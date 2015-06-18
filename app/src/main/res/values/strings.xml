@@ -75,6 +75,7 @@
     <string name="signInCaps">LOG IN</string>
     <string name="signUpCapsVerb">SIGNUP</string>
     <string name="signInCapsVerb">LOGIN</string>
+    <string name="newUserSignup">New user? Sign up</string>
     <string name="HNDetails">House No &amp; Details</string>
     <string name="addressNick">Address Nickname (Optional)</string>
     <string name="contactFirstName">Contact first name</string>

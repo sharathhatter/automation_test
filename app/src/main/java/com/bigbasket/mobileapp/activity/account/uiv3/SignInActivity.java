@@ -4,9 +4,11 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.InputType;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.UnderlineSpan;
 import android.view.KeyEvent;
-import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
@@ -97,6 +99,21 @@ public class SignInActivity extends BackButtonActivity {
             }
         });
 
+        TextView lblSignUp = (TextView) findViewById(R.id.lblSignUp);
+        lblSignUp.setTypeface(faceRobotoLight);
+        SpannableString signUpSpannable = new SpannableString(lblSignUp.getText());
+        signUpSpannable.setSpan(new UnderlineSpan(), 0, signUpSpannable.length(),
+                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        lblSignUp.setText(signUpSpannable);
+        lblSignUp.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                logHomeScreenEvent(TrackingAware.REGISTRATION_CLICKED, TrackEventkeys.NAVIGATION_CTX,
+                        TrackEventkeys.NAVIGATION_CTX_LOGIN_PAGE);
+                launchRegistrationPage();
+            }
+        });
+
         mChkRememberMe = (CheckBox) findViewById(R.id.chkRememberMe);
         mChkRememberMe.setTypeface(faceRobotoLight);
 
@@ -119,12 +136,6 @@ public class SignInActivity extends BackButtonActivity {
     @Override
     public int getMainLayout() {
         return R.layout.uiv3_login;
-    }
-
-    @Override
-    protected void setOptionsMenu(Menu menu) {
-        super.setOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.login_menu, menu);
     }
 
     private void logRememberMeEnabled(String enabled) {

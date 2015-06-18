@@ -395,7 +395,6 @@ public class UIUtil {
     public static void displayAsyncImage(ImageView imageView, String url) {
         Log.i(imageView.getContext().getClass().getName(), "Loading image = " + url);
         Picasso picasso = Picasso.with(imageView.getContext());
-        picasso.setIndicatorsEnabled(BuildConfig.DEBUG);
         picasso.load(url)
                 .placeholder(R.drawable.loading)
                 .error(R.drawable.noimage)

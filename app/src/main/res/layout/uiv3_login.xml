@@ -141,7 +141,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="@dimen/margin_normal"
                 android:layout_marginTop="@dimen/margin_medium_large"
                 android:baselineAligned="false"
                 android:orientation="horizontal">
@@ -172,6 +171,19 @@
                 </LinearLayout>
 
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/lblSignUp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/margin_normal"
+                android:layout_marginBottom="@dimen/margin_normal"
+                android:clickable="true"
+                android:padding="@dimen/padding_normal"
+                android:text="@string/newUserSignup"
+                android:textColor="@color/white"
+                android:textSize="@dimen/secondary_text_size" />
         </LinearLayout>
 
     </ScrollView>

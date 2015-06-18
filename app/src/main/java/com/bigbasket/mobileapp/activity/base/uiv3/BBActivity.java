@@ -425,11 +425,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             case android.R.id.home:
                 finish();
                 return true;
-            case R.id.action_signup:
-                logHomeScreenEvent(TrackingAware.REGISTRATION_CLICKED, TrackEventkeys.NAVIGATION_CTX,
-                        TrackEventkeys.NAVIGATION_CTX_TOPNAV);
-                launchRegistrationPage();
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -660,7 +655,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
-    private void logHomeScreenEvent(String trackAwareName, String eventKeyName,
+    public void logHomeScreenEvent(String trackAwareName, String eventKeyName,
                                     String navigationCtx) {
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(eventKeyName, navigationCtx);

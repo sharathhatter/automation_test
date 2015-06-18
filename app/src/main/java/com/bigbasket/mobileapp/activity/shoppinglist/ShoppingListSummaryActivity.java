@@ -213,16 +213,18 @@ public class ShoppingListSummaryActivity extends BBActivity {
             contentFrame.addView(base);
         }
 
+        final ViewPager copyViewPagerIntoFinalForOnClick = viewPager;
         View layoutAddAll = findViewById(R.id.layoutAddAll);
         if (areAllProductsOutOfStock(shoppingListSummaries)) {
             layoutAddAll.setVisibility(View.GONE);
         } else {
             ((TextView) findViewById(R.id.txtAddAll)).setTypeface(faceRobotoRegular);
-            final ShoppingListSummary shoppingListSummary =
-                    shoppingListSummaries.get(viewPager != null ? viewPager.getCurrentItem() : 0);
             layoutAddAll.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    ShoppingListSummary shoppingListSummary =
+                            shoppingListSummaries.get(copyViewPagerIntoFinalForOnClick != null ?
+                                    copyViewPagerIntoFinalForOnClick.getCurrentItem() : 0);
                     showAlertDialog(null, getString(R.string.addAllProducts) + " from " + shoppingListSummary.getFacetName()
                                     + " " + getString(R.string.toBasket),
                             DialogButton.YES, DialogButton.CANCEL, Constants.ADD_ALL,
@@ -359,7 +361,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
             @Override
             public void onPositiveButtonClicked(String inputText) {
                 if (getCurrentActivity() == null) return;
-                if(!mShoppingListName.getName().equals(inputText))
+                if (!mShoppingListName.getName().equals(inputText))
                     editShoppingListName(mShoppingListName, inputText);
             }
         }.show();
