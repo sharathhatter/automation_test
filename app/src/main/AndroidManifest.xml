@@ -78,35 +78,6 @@
             </intent-filter>
         </receiver>
 
-        <service android:name=".GCMIntentService" />
-
-        <receiver
-            android:name="com.google.android.gcm.GCMBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND">
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
-
-                <category android:name="com.bigbasket.mobileapp" />
-            </intent-filter>
-        </receiver>
-
-        <service android:name="com.demach.konotor.service.KonotorService" />
-        <service android:name="com.demach.konotor.service.KonotorBacklogService" />
-
-        <receiver android:name="com.demach.konotor.KonotorAlarmReceiver" />
-        <receiver android:name="com.demach.konotor.NetworkStateReceiver">
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            </intent-filter>
-        </receiver>
-
-        <activity
-            android:name="com.demach.konotor.KonotorFeedbackActivity"
-            android:configChanges="orientation|screenSize"
-            android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.CustomerFeedbackActivity"
             android:configChanges="orientation|screenSize"
@@ -546,7 +517,7 @@
         <activity
             android:name="com.moengage.addon.ubox.UnifiedInboxActivity"
             android:label="Communication Hub"
-            android:theme="@style/BBAppTheme"></activity>
+            android:theme="@style/BBAppTheme" />
 
         <service
             android:name="com.moengage.addon.ubox.UBoxMessenger"
