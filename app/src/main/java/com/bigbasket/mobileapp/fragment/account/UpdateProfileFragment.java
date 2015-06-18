@@ -289,13 +289,14 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
             UIUtil.reportFormInputFieldError(editTextMobileNumber, getString(R.string.error_field_required));
         }
 
+
         if (!TextUtils.isDigitsOnly(editTextMobileNumber.getText().toString())) {
             UIUtil.reportFormInputFieldError(editTextMobileNumber, getString(R.string.error_invalid_mobile_number));
             if(focusView==null) focusView = editTextMobileNumber;
             cancel = true;
         }
 
-        if (editTextMobileNumber.getText().toString().length() > 10) {
+        if (editTextMobileNumber.getText().toString().length() != 10) {
             UIUtil.reportFormInputFieldError(editTextMobileNumber, getString(R.string.error_mobile_number_less_digits));
             if(focusView==null) focusView = editTextMobileNumber;
             cancel = true;
@@ -305,6 +306,14 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
             showErrorMsg(getString(R.string.error_dob_message));
             editTextDob.requestFocus();
            return;
+        }
+
+
+        if (!TextUtils.isEmpty(editTextTelNumber.getText().toString())
+                && editTextTelNumber.getText().toString().length() !=10) {
+            cancel = true;
+            if(focusView==null) focusView = editTextMobileNumber;
+            UIUtil.reportFormInputFieldError(editTextMobileNumber, getString(R.string.error_telephone_number_less_digits));
         }
 
         if (cancel) {

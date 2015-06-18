@@ -8,48 +8,51 @@
 
         <RelativeLayout
             android:id="@+id/layoutName"
-            android:layout_marginTop="@dimen/margin_normal"
             android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/margin_small"
             android:layout_height="wrap_content">
 
             <com.bigbasket.mobileapp.view.uiv3.ImageViewCircular
-                android:layout_width="65dp"
+                android:layout_width="wrap_content"
                 android:id="@+id/circularImageView"
-                android:layout_marginLeft="@dimen/margin_small"
-                android:layout_height="65dp"/>
-
-            <TextView
-                android:id="@+id/txtMemberName"
-                android:layout_width="wrap_content"
-                android:layout_marginTop="@dimen/margin_small"
-                android:layout_alignBaseline="@id/circularImageView"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_toRightOf="@id/circularImageView"
-                android:layout_marginRight="@dimen/margin_small"
+                android:maxWidth="65dp"
+                android:layout_centerVertical="true"
+                android:maxHeight="65dp"
                 android:layout_marginLeft="@dimen/margin_normal"
-                android:textColor="@color/uiv3_primary_text_color"
-                android:textSize="@dimen/large_text_size" />
+                android:layout_height="wrap_content"/>
 
-            <TextView
-                android:id="@+id/txtEmailId"
-                android:layout_width="wrap_content"
-                android:layout_below="@id/txtMemberName"
-                android:layout_toRightOf="@id/circularImageView"
-                android:textColor="@color/text_color_myaccount"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="85dp"
+                android:orientation="vertical"
+                android:id="@+id/layoutEmailId"
                 android:layout_marginRight="@dimen/margin_small"
-                android:textSize="@dimen/primary_text_size"
-                android:textStyle="italic"
-                android:layout_marginLeft="@dimen/margin_normal"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content">
 
+                <TextView
+                    android:id="@+id/txtMemberName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/uiv3_primary_text_color"
+                    android:textSize="@dimen/large_text_size" />
+
+                <TextView
+                    android:id="@+id/txtEmailId"
+                    android:layout_width="wrap_content"
+                    android:textColor="@color/text_color_myaccount"
+                    android:textSize="@dimen/primary_text_size"
+                    android:textStyle="italic"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
                 android:id="@+id/line1"
-                android:layout_marginTop="@dimen/margin_normal"
-                android:layout_below="@id/circularImageView"
+                android:layout_marginTop="@dimen/margin_medium_large"
+                android:layout_below="@id/layoutEmailId"
                 android:background="@color/separator_line_color"/>
         </RelativeLayout>
 
@@ -90,7 +93,6 @@
                 android:textSize="@dimen/primary_text_size"
                 android:textColor="@color/uiv3_primary_text_color"
                 android:layout_toRightOf="@+id/imgPhone"
-                android:onClick="TextViewClicked"
                 />
 
 
@@ -168,8 +170,9 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:id="@+id/txtViewAll"
-                android:text="@string/viewAll"
+                android:text="@string/addAddress"
                 android:layout_alignParentRight="true"
+                android:drawableLeft="@drawable/small_add"
                 android:paddingTop="@dimen/margin_mini"
                 android:paddingLeft="@dimen/margin_small"
                 android:paddingRight="@dimen/margin_small"
@@ -181,6 +184,7 @@
                 android:textSize="@dimen/primary_text_size"
                 android:textColor="@color/text_color_myaccount"
                 android:layout_height="wrap_content" />
+
 
             <ImageView
                 android:id="@+id/imgAddress"

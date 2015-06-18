@@ -27,6 +27,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListSummaryResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponseWithCart;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListProductFragment;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
@@ -290,14 +291,15 @@ public class ShoppingListSummaryActivity extends BBActivity {
             trackEvent(TrackingAware.SMART_BASKET + "." + shoppingListSummary.getFacetName() + " Add All", null);
             bigBasketApiService.addAllToBasketSmartBasket(shoppingListSlug,
                     shoppingListSummary.getFacetSlug(),
-                    new Callback<OldApiResponse<CartSummary>>() {
+                    new Callback<OldApiResponseWithCart>() {
                         @Override
-                        public void success(OldApiResponse<CartSummary> addAllToBasketSmartBasketCallBack, Response response) {
+                        public void success(OldApiResponseWithCart addAllToBasketSmartBasketCallBack, Response response) {
                             if (isSuspended()) return;
                             hideProgressView();
                             switch (addAllToBasketSmartBasketCallBack.status) {
                                 case Constants.OK:
-                                    setCartInfo(addAllToBasketSmartBasketCallBack.apiResponseContent);
+                                    if(addAllToBasketSmartBasketCallBack.status.equals(Constants.OK))
+                                    setCartInfo(addAllToBasketSmartBasketCallBack);
                                     updateUIForCartInfo();
                                     loadShoppingListSummary();
                                     break;
@@ -319,14 +321,14 @@ public class ShoppingListSummaryActivity extends BBActivity {
             trackEvent(TrackingAware.SHOPPING_LIST + "." + shoppingListSummary.getFacetName() + " Add All", null);
             bigBasketApiService.addAllToBasketShoppingList(shoppingListSlug,
                     shoppingListSummary.getFacetSlug(),
-                    new Callback<OldApiResponse<CartSummary>>() {
+                    new Callback<OldApiResponseWithCart>() {
                         @Override
-                        public void success(OldApiResponse<CartSummary> addAllToBasketShoppingListCallBack, Response response) {
+                        public void success(OldApiResponseWithCart addAllToBasketShoppingListCallBack, Response response) {
                             if (isSuspended()) return;
                             hideProgressView();
                             switch (addAllToBasketShoppingListCallBack.status) {
                                 case Constants.OK:
-                                    setCartInfo(addAllToBasketShoppingListCallBack.apiResponseContent);
+                                    setCartInfo(addAllToBasketShoppingListCallBack);
                                     updateUIForCartInfo();
                                     loadShoppingListSummary();
                                     break;

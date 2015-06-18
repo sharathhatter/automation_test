@@ -190,6 +190,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         super.onStop();
         isActivitySuspended = true;
         MoEngageWrapper.onStop(moEHelper, getCurrentActivity());
+        FacebookEventTrackWrapper.deactivateApp(getApplicationContext());
     }
 
     @Override
@@ -217,6 +218,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
             return;
         }
         MoEngageWrapper.onResume(moEHelper, getCurrentActivity());
+        FacebookEventTrackWrapper.activateApp(getCurrentActivity());
     }
 
     public void launchMoEngageCommunicationHub() {
@@ -592,9 +594,9 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 Bundle paramBundle = new Bundle();
                 for (Map.Entry<String, String> eventAttrib : eventAttribs.entrySet())
                     paramBundle.putString(eventAttrib.getKey(), eventAttrib.getValue());
-                FacebookEventTrackWrapper.logAppEvent(fbLogger, eventName, paramBundle);
+                FacebookEventTrackWrapper.logAppEvent(fbLogger, eventName.replace(".", "_"), paramBundle);
             } else {
-                FacebookEventTrackWrapper.logAppEvent(fbLogger, eventName);
+                FacebookEventTrackWrapper.logAppEvent(fbLogger, eventName.replace(".", "_"));
             }
         }
     }
