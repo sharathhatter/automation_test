@@ -123,7 +123,6 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
     protected void onResume() {
         super.onResume();
         if (mIsFromActivityResult) return;
-        //FacebookEventTrackWrapper.activateApp(getCurrentActivity());//todo facebook event tracking
         if (checkInternetConnection()) {
             startSplashScreen();
         } else {
@@ -300,8 +299,7 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
 
     @Override
     protected void onPause() {
-        super.onPause(); //todo facebook event tracking
-        //FacebookEventTrackWrapper.deactivateApp(getApplicationContext());
+        super.onPause();
     }
 
     @Override
