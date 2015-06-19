@@ -328,7 +328,10 @@
     <string name="nowShoppingListMsg1">You have not created any shopping list yet.</string>
     <string name="nowShoppingListMsg2">Start creating now for easy shopping.</string>
     <string name="noSmartBasketProducts">It will be updated 3 days after your first order is delivered! Enjoy awesome grocery shopping experience with BigBasket Mobile app!</string>
-    <string name="skip">SKIP</string>
+    <string name="skipAllCaps">SKIP</string>
+    <string name="skip">Skip</string>
+    <string name="next">Next</string>
+    <string name="startShopping">Start Shopping</string>
     <string name="signinAndStart">Login and Get Started</string>
     <string name="loginToContinue">Please login to continue</string>
     <string name="byLoggingIn">I agree to BigBasket\'s\u00A0</string>

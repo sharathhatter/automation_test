@@ -5,16 +5,17 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.View;
+import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.fragment.TutorialItemFragment;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
-import com.bigbasket.mobileapp.interfaces.PagerNavigationAware;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 
-public class TutorialActivity extends BaseActivity implements PagerNavigationAware {
+public class TutorialActivity extends BaseActivity {
 
     private ViewPager mViewPager;
 
@@ -32,9 +33,61 @@ public class TutorialActivity extends BaseActivity implements PagerNavigationAwa
         TutorialAdapter tutorialAdapter = new TutorialAdapter(getSupportFragmentManager(),
                 drawableIdArray);
         mViewPager.setAdapter(tutorialAdapter);
+
+        final TextView lblSkip = (TextView) findViewById(R.id.lblSkip);
+        final TextView lblNext = (TextView) findViewById(R.id.lblNext);
+        final TextView lblStartShopping = (TextView) findViewById(R.id.lblStartShopping);
+
+        lblSkip.setTypeface(faceRobotoLight);
+        lblNext.setTypeface(faceRobotoMedium);
+        lblStartShopping.setTypeface(faceRobotoMedium);
+
+        lblStartShopping.setVisibility(View.GONE);
+
+        lblSkip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                skip();
+            }
+        });
+        lblStartShopping.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                skip();
+            }
+        });
+        lblNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                slideNext();
+            }
+        });
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                if (position == mViewPager.getAdapter().getCount() - 1) {
+                    lblSkip.setVisibility(View.GONE);
+                    lblNext.setVisibility(View.GONE);
+                    lblStartShopping.setVisibility(View.VISIBLE);
+                } else {
+                    lblSkip.setVisibility(View.VISIBLE);
+                    lblNext.setVisibility(View.VISIBLE);
+                    lblStartShopping.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
-    @Override
     public void slideNext() {
         int currentPosition = mViewPager.getCurrentItem();
         int total = mViewPager.getAdapter().getCount();
@@ -45,7 +98,6 @@ public class TutorialActivity extends BaseActivity implements PagerNavigationAwa
         }
     }
 
-    @Override
     public void skip() {
         finish();
     }

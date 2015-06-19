@@ -52,7 +52,7 @@
             android:background="@android:color/transparent"
             android:onClick="onLandingPageButtonClicked"
             android:layout_marginBottom="@dimen/margin_normal"
-            android:text="@string/skip"
+            android:text="@string/skipAllCaps"
             android:textColor="@color/white"
             android:textSize="@dimen/secondary_text_size" />
     </LinearLayout>

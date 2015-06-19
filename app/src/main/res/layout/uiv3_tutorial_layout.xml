@@ -1,11 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#333333"
     android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/layoutTutorialFooter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/lblSkip"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingBottom="@dimen/padding_normal"
+            android:paddingLeft="@dimen/padding_large"
+            android:paddingRight="@dimen/padding_normal"
+            android:paddingTop="@dimen/padding_normal"
+            android:text="@string/skip"
+            android:textColor="@color/white"
+            android:textSize="@dimen/heading_1_text_size" />
+
+
+        <TextView
+            android:id="@+id/lblNext"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="right|center_vertical"
+            android:paddingBottom="@dimen/padding_normal"
+            android:paddingLeft="@dimen/padding_normal"
+            android:paddingRight="@dimen/padding_large"
+            android:paddingTop="@dimen/padding_normal"
+            android:text="@string/next"
+            android:textColor="@color/white"
+            android:textSize="@dimen/heading_1_text_size" />
+
+
+        <TextView
+            android:id="@+id/lblStartShopping"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="@dimen/padding_normal"
+            android:text="@string/startShopping"
+            android:textColor="@color/white"
+            android:textSize="@dimen/heading_1_text_size"
+            android:visibility="gone" />
+
+    </LinearLayout>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-</LinearLayout>
+        android:layout_height="match_parent"
+        android:layout_above="@id/layoutTutorialFooter"
+        android:layout_marginBottom="@dimen/margin_small" />
+</RelativeLayout>

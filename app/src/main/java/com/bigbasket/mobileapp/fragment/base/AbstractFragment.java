@@ -11,6 +11,7 @@ import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FontHolder;
+import com.newrelic.agent.android.NewRelic;
 
 
 public abstract class AbstractFragment extends Fragment implements CancelableAware, ActivityAware {
@@ -66,6 +67,8 @@ public abstract class AbstractFragment extends Fragment implements CancelableAwa
         faceRobotoRegular = FontHolder.getInstance(getActivity()).getFaceRobotoRegular();
         faceRobotoLight = FontHolder.getInstance(getActivity()).getFaceRobotoLight();
         faceRobotoMedium = FontHolder.getInstance(getActivity()).getFaceRobotoMedium();
+
+        NewRelic.setInteractionName(getFragmentTxnTag());
     }
 
     @Override

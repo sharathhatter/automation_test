@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.interfaces.PagerNavigationAware;
 import com.bigbasket.mobileapp.util.Constants;
 
 public class TutorialItemFragment extends Fragment {
@@ -30,17 +29,5 @@ public class TutorialItemFragment extends Fragment {
         if (imgDrawableId == 0) return;
         ImageView imgTutorial = (ImageView) getView().findViewById(R.id.imgTutorial);
         imgTutorial.setImageDrawable(ContextCompat.getDrawable(getActivity(), imgDrawableId));
-        getView().findViewById(R.id.viewNext).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((PagerNavigationAware) getActivity()).slideNext();
-            }
-        });
-        getView().findViewById(R.id.viewSkip).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((PagerNavigationAware) getActivity()).skip();
-            }
-        });
     }
 }
