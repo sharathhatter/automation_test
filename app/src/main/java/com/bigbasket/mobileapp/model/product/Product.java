@@ -54,16 +54,14 @@ public class Product implements Parcelable {
     private String productStatus;
     @SerializedName(Constants.PRODUCT_CHILD_PRODUCTS)
     private List<Product> allProducts;
-    @SerializedName(Constants.PRODUCT_IS_NEW)
-    private boolean newProduct;
-    @SerializedName(Constants.PRODUCT_IS_BBY)
-    private boolean bbyProduct;
     @SerializedName(Constants.PRODUCT_PROMO_INFO)
     private ProductPromoInfo productPromoInfo;
     @SerializedName(Constants.ADDITIONAL_INFOS)
     private ArrayList<ProductAdditionalInfo> productAdditionalInfos;
     @SerializedName(Constants.PRODUCT_CATEGORY_NAME)
     private String productCategoryName;
+    @SerializedName(Constants.BRAND_SLUG)
+    private String brandSlug;
 
     public Product(Parcel source) {
         description = source.readString();
@@ -95,8 +93,6 @@ public class Product implements Parcelable {
             allProducts = new ArrayList<>();
             source.readTypedList(allProducts, Product.CREATOR);
         }
-        newProduct = source.readByte() == (byte) 1;
-        bbyProduct = source.readByte() == (byte) 1;
         boolean isProductPromoInfoNull = source.readByte() == (byte) 1;
         if (!isProductPromoInfoNull) {
             productPromoInfo = source.readParcelable(Product.class.getClassLoader());
@@ -105,6 +101,10 @@ public class Product implements Parcelable {
         if (!isProductAdditionInfoNull) {
             productAdditionalInfos = new ArrayList<>();
             source.readTypedList(productAdditionalInfos, ProductAdditionalInfo.CREATOR);
+        }
+        boolean isBrandSlugNull = source.readByte() == (byte) 1;
+        if (!isBrandSlugNull) {
+            brandSlug = source.readString();
         }
     }
 
@@ -168,8 +168,6 @@ public class Product implements Parcelable {
         if (!isChildProductsNull) {
             dest.writeTypedList(allProducts);
         }
-        dest.writeByte(newProduct ? (byte) 1 : (byte) 0);
-        dest.writeByte(bbyProduct ? (byte) 1 : (byte) 0);
         boolean isProductPromoInfoNull = productPromoInfo == null;
         dest.writeByte(isProductPromoInfoNull ? (byte) 1 : (byte) 0);
         if (!isProductPromoInfoNull) {
@@ -180,14 +178,11 @@ public class Product implements Parcelable {
         if (!isProductAdditionInfoNull) {
             dest.writeTypedList(productAdditionalInfos);
         }
-    }
-
-    public boolean isBbyProduct() {
-        return bbyProduct;
-    }
-
-    public boolean isNewProduct() {
-        return newProduct;
+        boolean isBrandSlugNull = brandSlug == null;
+        dest.writeByte(isBrandSlugNull ? (byte) 1: (byte) 0);
+        if (!isBrandSlugNull) {
+            dest.writeString(brandSlug);
+        }
     }
 
     public String getDescription() {
@@ -285,5 +280,9 @@ public class Product implements Parcelable {
 
     public ArrayList<ProductAdditionalInfo> getProductAdditionalInfos() {
         return productAdditionalInfos;
+    }
+
+    public String getBrandSlug() {
+        return brandSlug;
     }
 }

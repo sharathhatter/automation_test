@@ -27,6 +27,7 @@ public class Constants {
     public static final String DISCOUNT_VALUE = "dis_val";
     public static final String PRODUCT_WEIGHT = "w";
     public static final String PRODUCT_BRAND = "p_brand";
+    public static final String BRAND_SLUG = "brand_slug";
     public static final String PRODUCT_DESC = "p_desc";
     public static final String PACKAGE_DESC = "pack_desc";
     public static final String PRODUCT_STATUS = "pstat";
