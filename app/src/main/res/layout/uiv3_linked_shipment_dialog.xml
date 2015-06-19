@@ -29,5 +29,5 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/margin_22"
         android:divider="@null"
-        android:dividerHeight="0dp" />
+        android:dividerHeight="@dimen/padding_small" />
 </RelativeLayout>
