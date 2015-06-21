@@ -16,9 +16,12 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 
+import java.util.HashMap;
+
 
 public class ShoppingListProductFragment extends ProductListAwareFragment {
 
+    //private ProductListRecyclerAdapter productListAdapter;
     @Override
     public void loadProducts() {
         loadShoppingListProducts();
@@ -42,28 +45,11 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
     private void loadShoppingListProducts() {
         ShoppingListSummary shoppingListSummary = getArguments().getParcelable(Constants.SHOPPING_LIST_SUMMARY);
         String baseImgUrl = getArguments().getString(Constants.BASE_IMG_URL);
-        renderShoppingListItems(shoppingListSummary, baseImgUrl);
+        renderProducts(shoppingListSummary, baseImgUrl, null);
     }
 
-    private void renderShoppingListItems(final ShoppingListSummary shoppingListSummary,
-                                         String baseImgUrl) {
-        if (getActivity() == null) return;
-        ViewGroup contentView = getContentView();
-        if (contentView == null) return;
-
-        contentView.removeAllViews();
-
-        renderProducts(shoppingListSummary, baseImgUrl);
-    }
-
-    private void renderProducts(ShoppingListSummary shoppingListSummary, String baseImgUrl) {
-        if (getActivity() == null) return;
-        ViewGroup contentView = getContentView();
-        if (contentView == null) return;
-
-        RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, contentView);
-
-        ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
+    private ProductViewDisplayDataHolder getProductViewHolder(ShoppingListSummary shoppingListSummary){
+        return new ProductViewDisplayDataHolder.Builder()
                 .setCommonTypeface(faceRobotoRegular)
                 .setSansSerifMediumTypeface(faceRobotoMedium)
                 .setHandler(new BigBasketMessageHandler<>(getCurrentActivity()))
@@ -74,13 +60,35 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
                 .setShoppingListName(shoppingListSummary.getShoppingListName())
                 .setRupeeTypeface(faceRupee)
                 .build();
+    }
 
-        ProductListRecyclerAdapter productListAdapter = new ProductListRecyclerAdapter(shoppingListSummary.getProducts(),
-                baseImgUrl,
-                productViewDisplayDataHolder, this, shoppingListSummary.getProducts().size(), getNavigationCtx());
+    private void renderProducts(ShoppingListSummary shoppingListSummary, String baseImgUrl,
+                                HashMap<String, Integer> cartInfo) {
+        if (getActivity() == null) return;
+        ViewGroup contentView = getContentView();
+        if (contentView == null) return;
+        contentView.removeAllViews();
 
+        RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, contentView);
+
+        ProductListRecyclerAdapter productListAdapter;
+        if(cartInfo!=null){
+            productListAdapter = new ProductListRecyclerAdapter(shoppingListSummary.getProducts(),
+                    baseImgUrl,
+                    getProductViewHolder(shoppingListSummary), this, shoppingListSummary.getProducts().size(), getNavigationCtx(),
+                    cartInfo);
+        }else {
+            productListAdapter = new ProductListRecyclerAdapter(shoppingListSummary.getProducts(),
+                    baseImgUrl,
+                    getProductViewHolder(shoppingListSummary), this, shoppingListSummary.getProducts().size(), getNavigationCtx());
+        }
         productRecyclerView.setAdapter(productListAdapter);
         contentView.addView(productRecyclerView);
+    }
+
+    public void notifyDataChanged(HashMap<String, Integer> cartInfo,
+                                  ShoppingListSummary shoppingListSummary, String baseImgUrl){
+        renderProducts(shoppingListSummary, baseImgUrl, cartInfo);
     }
 
     @Override

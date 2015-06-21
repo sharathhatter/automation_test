@@ -68,7 +68,7 @@ public final class ProductView {
         setProductImage(productViewHolder, product, baseImgUrl, productDetailOnClickListener);
         if (!skipChildDropDownRendering) {
             setChildProducts(productViewHolder, product, baseImgUrl, productViewDisplayDataHolder,
-                    productDataAware, navigationCtx);
+                    productDataAware, navigationCtx, cartInfo);
         }
         setProductDesc(productViewHolder, product, productViewDisplayDataHolder, productDetailOnClickListener);
         setPrice(productViewHolder, product, productViewDisplayDataHolder);
@@ -93,7 +93,8 @@ public final class ProductView {
     private static <T> void setChildProducts(final ProductViewHolder productViewHolder, final Product product,
                                              final String baseImgUrl,
                                              final ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                             final T productDataAware, final String navigationCtx) {
+                                             final T productDataAware, final String navigationCtx,
+                                             @Nullable HashMap<String, Integer> cartInfo) {
         final List<Product> childProducts = product.getAllProducts();
         boolean hasChildren = childProducts != null && childProducts.size() > 0;
         final Button btnMorePackSizes = productViewHolder.getBtnMorePackSizes();
@@ -104,7 +105,7 @@ public final class ProductView {
             btnMorePackSizes.setText(product.getWeightAndPackDesc());
             btnMorePackSizes.setOnClickListener(
                     new OnShowChildProductDropdownClickListener<>(productDataAware, productViewDisplayDataHolder,
-                            product, productViewHolder, baseImgUrl, navigationCtx));
+                            product, productViewHolder, baseImgUrl, navigationCtx, cartInfo));
             btnMorePackSizes.setVisibility(View.VISIBLE);
             txtPackageDesc.setVisibility(View.GONE);
         } else {
@@ -402,9 +403,12 @@ public final class ProductView {
         private String baseImgUrl;
         private String navigationCtx;
         private Product currentProduct;
+        private HashMap<String, Integer> cartInfo;
 
         public OnShowChildProductDropdownClickListener(T productDataAware, ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                                       Product product, ProductViewHolder productViewHolder, String baseImgUrl, String navigationCtx) {
+                                                       Product product, ProductViewHolder productViewHolder,
+                                                       String baseImgUrl, String navigationCtx,
+                                                       @Nullable HashMap<String, Integer> cartInfo) {
             this.productDataAware = productDataAware;
             this.productViewDisplayDataHolder = productViewDisplayDataHolder;
             this.product = product;
@@ -413,6 +417,7 @@ public final class ProductView {
             this.baseImgUrl = baseImgUrl;
             this.navigationCtx = navigationCtx;
             this.childProducts = product.getAllProducts();
+            this.cartInfo = cartInfo;
         }
 
         @Override
@@ -442,7 +447,7 @@ public final class ProductView {
                     currentProduct = childProduct;
                     setProductView(productViewHolder, childProduct, baseImgUrl,
                             new ProductDetailOnClickListener(childProduct.getSku(), (ActivityAware) productDataAware),
-                            productViewDisplayDataHolder, true, productDataAware, navigationCtx);
+                            productViewDisplayDataHolder, true, productDataAware, navigationCtx, cartInfo);
                     if (dialog.isShowing()) {
                         dialog.dismiss();
                     }

@@ -76,7 +76,6 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
     public void onResume() {
         super.onResume();
         if (getCurrentActivity() == null) return;
-        getCurrentActivity().removePharmaPrescriptionId();
     }
 
     private boolean isVisitorUpdateNeeded() {

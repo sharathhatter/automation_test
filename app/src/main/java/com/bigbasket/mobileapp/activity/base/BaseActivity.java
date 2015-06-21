@@ -109,11 +109,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }, 100);
     }
 
-    public static void hidekeyboard(Context context) {
-        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-    }
-
     public static void hideKeyboard(BaseActivity context, View view) {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(
                 Context.INPUT_METHOD_SERVICE);
@@ -518,12 +513,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
         Random random = new Random();
         String[] colorsArr = getResources().getStringArray(R.array.letterImageViewColors);
         return Color.parseColor(colorsArr[random.nextInt(colorsArr.length)]);
-    }
-
-    public void removePharmaPrescriptionId() {
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
-        editor.remove(Constants.PHARMA_PRESCRIPTION_ID);
-        editor.commit();
     }
 
     public abstract void onChangeTitle(String title);

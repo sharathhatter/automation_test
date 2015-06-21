@@ -1,6 +1,5 @@
 package com.bigbasket.mobileapp.fragment.account;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -312,8 +311,8 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
         if (!TextUtils.isEmpty(editTextTelNumber.getText().toString())
                 && editTextTelNumber.getText().toString().length() !=10) {
             cancel = true;
-            if(focusView==null) focusView = editTextMobileNumber;
-            UIUtil.reportFormInputFieldError(editTextMobileNumber, getString(R.string.error_telephone_number_less_digits));
+            if(focusView==null) focusView = editTextTelNumber;
+            UIUtil.reportFormInputFieldError(editTextTelNumber, getString(R.string.error_telephone_number_less_digits));
         }
 
         if (cancel) {
@@ -357,8 +356,9 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
                 hideProgressDialog();
                 if (memberProfileDataCallback.status == 0) {
                     if (otpValidationDialogFragment != null && otpValidationDialogFragment.isVisible()) {
+                        if(getCurrentActivity() != null)
+                            BaseActivity.hideKeyboard((BaseActivity)(getActivity()), getCurrentActivity().getCurrentFocus());
                         otpValidationDialogFragment.dismiss();
-                        BaseActivity.hidekeyboard(getActivity());
                     }
                     updatePreferenceData();
                 } else {
@@ -375,8 +375,9 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
                         logUpdateProfileEvent(memberProfileDataCallback.message,
                                 TrackingAware.UPDATE_PROFILE_SUBMIT_BTN_CLICKED);
                         if (otpValidationDialogFragment != null && otpValidationDialogFragment.isVisible()) {
+                            if(getCurrentActivity() != null)
+                                BaseActivity.hideKeyboard((BaseActivity)(getActivity()), getCurrentActivity().getCurrentFocus());
                             otpValidationDialogFragment.dismiss();
-                            BaseActivity.hidekeyboard(getActivity());
                         }
                     }
                 }

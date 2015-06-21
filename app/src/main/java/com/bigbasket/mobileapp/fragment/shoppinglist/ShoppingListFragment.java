@@ -358,4 +358,10 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
+
+    @Override
+    public void onDetach(){
+        super.onDetach();
+        markBasketDirty();
+    }
 }

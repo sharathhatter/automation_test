@@ -338,7 +338,7 @@ public class Constants {
     public static final String DATE_CREATED = "date_created";
     public static final String PATIENT_NAME = "patient_name";
     public static final String DOCTOR_NAME = "doctor_name";
-    public static final String PHARMA_PRESCRIPTION_ID = "pharma_prescription_id";
+    //public static final String PHARMA_PRESCRIPTION_ID = "pharma_prescription_id";
     public static final String PRESCRIPTION_NAME = "prescription_name";
     public static final String RULE_VALIDATION_TITLE = "rule_validation_title";
     public static final String TITLE = "title";
