@@ -23,10 +23,12 @@ import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.adapter.product.ProductListSpinnerAdapter;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.common.ProductViewHolder;
+import com.bigbasket.mobileapp.handler.OnBrandPageListener;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
 import com.bigbasket.mobileapp.handler.ProductDetailOnClickListener;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
+import com.bigbasket.mobileapp.interfaces.LaunchProductListAware;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
@@ -70,7 +72,8 @@ public final class ProductView {
             setChildProducts(productViewHolder, product, baseImgUrl, productViewDisplayDataHolder,
                     productDataAware, navigationCtx, cartInfo);
         }
-        setProductDesc(productViewHolder, product, productViewDisplayDataHolder, productDetailOnClickListener);
+        setProductDesc(productViewHolder, product, productViewDisplayDataHolder,
+                productDetailOnClickListener, productDataAware);
         setPrice(productViewHolder, product, productViewDisplayDataHolder);
         setPromo(productViewHolder, product, productViewDisplayDataHolder, productDataAware);
         setProductAdditionalActionMenu(productViewHolder, product, productViewDisplayDataHolder, productDataAware);
@@ -115,8 +118,10 @@ public final class ProductView {
         }
     }
 
-    private static void setProductDesc(ProductViewHolder productViewHolder, Product product, ProductViewDisplayDataHolder productViewDisplayDataHolder,
-                                       ProductDetailOnClickListener productDetailOnClickListener) {
+    private static <T> void setProductDesc(ProductViewHolder productViewHolder, Product product,
+                                           ProductViewDisplayDataHolder productViewDisplayDataHolder,
+                                           ProductDetailOnClickListener productDetailOnClickListener,
+                                           final T productDataAware) {
         TextView txtProductDesc = productViewHolder.getTxtProductDesc();
         TextView txtProductBrand = productViewHolder.getTxtProductBrand();
         txtProductDesc.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
@@ -130,8 +135,12 @@ public final class ProductView {
         if (!TextUtils.isEmpty(product.getBrand())) {
             txtProductBrand.setText(product.getBrand());
             txtProductBrand.setVisibility(View.VISIBLE);
+            if (!TextUtils.isEmpty(product.getBrandSlug())) {
+                txtProductBrand.setOnClickListener(new OnBrandPageListener((LaunchProductListAware) productDataAware,
+                        product.getBrandSlug()));
+            }
         } else {
-            txtProductBrand.setVisibility(View.VISIBLE);
+            txtProductBrand.setVisibility(View.GONE);
         }
         txtProductDesc.setOnClickListener(productDetailOnClickListener);
     }

@@ -66,6 +66,7 @@ import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
 import com.facebook.appevents.AppEventsLogger;
 import com.moe.pushlibrary.MoEHelper;
 import com.moengage.addon.ubox.UnifiedInboxActivity;
+import com.newrelic.agent.android.NewRelic;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -128,6 +129,8 @@ public abstract class BaseActivity extends AppCompatActivity implements
         faceRobotoLight = FontHolder.getInstance(this).getFaceRobotoLight();
         moEHelper = MoEngageWrapper.getMoHelperObj(getCurrentActivity());
         fbLogger = AppEventsLogger.newLogger(getApplicationContext());
+
+        NewRelic.setInteractionName(getCurrentActivity().getClass().getName());
     }
 
     @Override
