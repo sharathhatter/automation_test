@@ -237,8 +237,13 @@ public class SectionView {
         if (section.getSectionItems() == null || section.getSectionItems().size() == 0)
             return null;
         LinearLayout base = new LinearLayout(context);
+        LinearLayout.LayoutParams baseLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        base.setLayoutParams(baseLayoutParams);
         base.setOrientation(LinearLayout.VERTICAL);
-        for (SectionItem sectionItem : section.getSectionItems()) {
+        ArrayList<SectionItem> sectionItems = section.getSectionItems();
+        for (int i = 0; i < sectionItems.size(); i++) {
+            SectionItem sectionItem = sectionItems.get(i);
             if (sectionItem.getDescription() == null || TextUtils.isEmpty(sectionItem.getDescription().getText())) {
                 continue;
             }
@@ -250,6 +255,9 @@ public class SectionView {
             if (renderer != null) {
                 int margin = renderer.getSafeMargin(0);
                 layoutParams.setMargins(margin, margin, margin, 0);
+            } else {
+                // Not applying when i == 0 has parent already has a top-margin of 4dp by default
+                layoutParams.setMargins(fourDp, i == 0 ? 0 : fourDp, fourDp, 0);
             }
             webView.setLayoutParams(layoutParams);
             webView.getSettings().setJavaScriptEnabled(true);
