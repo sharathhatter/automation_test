@@ -172,7 +172,7 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
                         hideProgressView();
                         switch (addAllToBasketPastOrdersCallBack.status) {
                             case Constants.OK:
-                                setCartInfo(addAllToBasketPastOrdersCallBack.apiResponseContent);
+                                setCartSummary(addAllToBasketPastOrdersCallBack.apiResponseContent);
                                 updateUIForCartInfo();
                                 loadProducts();
                                 break;

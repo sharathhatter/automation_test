@@ -131,7 +131,7 @@ public class BasketOperationTask<T> {
             }
             switch (cartOperationApiResponse.status) {
                 case Constants.OK:
-                    ((CartInfoAware) context).setCartInfo(cartOperationApiResponse.basketOperationResponse.getCartSummary());
+                    ((CartInfoAware) context).setCartSummary(cartOperationApiResponse.basketOperationResponse.getCartSummary());
                     ((CartInfoAware) context).updateUIForCartInfo();
                     ((CartInfoAware) context).markBasketDirty();
                     ((BasketOperationAware) context).setBasketOperationResponse(cartOperationApiResponse.basketOperationResponse);

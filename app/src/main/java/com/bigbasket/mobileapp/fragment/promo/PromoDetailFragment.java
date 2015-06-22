@@ -105,7 +105,7 @@ public class PromoDetailFragment extends BaseFragment {
                         mPromoDetail = promoDetailApiResponseContentApiResponse.apiResponseContent.promoDetail;
                         if (mPromoDetail != null) {
                             renderPromoDetail();
-                            setCartInfo(promoDetailApiResponseContentApiResponse.cartSummary);
+                            setCartSummary(promoDetailApiResponseContentApiResponse.cartSummary);
                             updateUIForCartInfo();
                             trackEvent(TrackingAware.PROMO_DETAIL_SHOWN, null);
                         } else {

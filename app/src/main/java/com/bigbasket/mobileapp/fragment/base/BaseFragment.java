@@ -53,7 +53,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
 
     protected BigBasketMessageHandler handler;
     private ProgressDialog progressDialog;
-    private BasketOperationResponse basketOperationResponse;
+    protected BasketOperationResponse basketOperationResponse;
 
     @Override
     public void onAttach(Activity activity) {
@@ -261,23 +261,23 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
         editor.putString(Constants.GET_CART, String.valueOf(totalProductsInBasket));
         editor.apply();
-        if (getCartInfo() != null) {
-            getCartInfo().setNoOfItems(totalProductsInBasket);
+        if (getCartSummary() != null) {
+            getCartSummary().setNoOfItems(totalProductsInBasket);
         }
     }
 
     @Override
-    public CartSummary getCartInfo() {
+    public CartSummary getCartSummary() {
         if (getCurrentActivity() instanceof CartInfoAware) {
-            return ((CartInfoAware) getCurrentActivity()).getCartInfo();
+            return ((CartInfoAware) getCurrentActivity()).getCartSummary();
         }
         return null;
     }
 
     @Override
-    public void setCartInfo(CartSummary cartInfo) {
+    public void setCartSummary(CartSummary cartInfo) {
         if (getCurrentActivity() instanceof CartInfoAware) {
-            ((CartInfoAware) getCurrentActivity()).setCartInfo(cartInfo);
+            ((CartInfoAware) getCurrentActivity()).setCartSummary(cartInfo);
         }
     }
 

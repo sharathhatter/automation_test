@@ -26,13 +26,11 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListSummaryResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponseWithCart;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListProductFragment;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
-import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListSummary;
@@ -299,7 +297,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
                             switch (addAllToBasketSmartBasketCallBack.status) {
                                 case Constants.OK:
                                     if(addAllToBasketSmartBasketCallBack.status.equals(Constants.OK))
-                                    setCartInfo(addAllToBasketSmartBasketCallBack);
+                                    setCartSummary(addAllToBasketSmartBasketCallBack);
                                     updateUIForCartInfo();
                                     loadShoppingListSummary();
                                     break;
@@ -328,7 +326,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
                             hideProgressView();
                             switch (addAllToBasketShoppingListCallBack.status) {
                                 case Constants.OK:
-                                    setCartInfo(addAllToBasketShoppingListCallBack);
+                                    setCartSummary(addAllToBasketShoppingListCallBack);
                                     updateUIForCartInfo();
                                     loadShoppingListSummary();
                                     break;
