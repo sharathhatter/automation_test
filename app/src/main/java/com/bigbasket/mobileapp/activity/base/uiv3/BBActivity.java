@@ -699,7 +699,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 case Constants.LOGOUT:
                     onLogoutRequested();
                     break;
-                case Constants.NOT_ALPHAMUMERIC_TXT_SHOOPING_LIST:
+                case Constants.NOT_ALPHANUMERIC_TXT_SHOPPING_LIST:
                     new CreateShoppingListTask<>(this).showDialog();
                 default:
                     super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);

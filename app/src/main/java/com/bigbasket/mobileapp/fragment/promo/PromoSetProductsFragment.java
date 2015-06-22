@@ -139,7 +139,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
             public void success(ApiResponse<CartInfo> addBundleApiResponse, Response response) {
                 if (isSuspended()) return;
                 try {
-                    hideProgressView();
+                    hideProgressDialog();
                 } catch (IllegalArgumentException e) {
                     return;
                 }
@@ -165,7 +165,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
             public void failure(RetrofitError error) {
                 if (isSuspended()) return;
                 try {
-                    hideProgressView();
+                    hideProgressDialog();
                 } catch (IllegalArgumentException e) {
                     return;
                 }

@@ -106,7 +106,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
                         break;
                     default:
                         handler.sendEmptyMessage(productDetailApiResponse.getErrorTypeAsInt(),
-                                productDetailApiResponse.message);
+                                productDetailApiResponse.message, true);
                         break;
                 }
             }
@@ -119,7 +119,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
                 } catch (IllegalArgumentException e) {
                     return;
                 }
-                handler.handleRetrofitError(error);
+                handler.handleRetrofitError(error, true);
             }
         });
     }
