@@ -209,7 +209,7 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
         setResultCodeOnProfileUpdate();
     }
 
-    private void setResultCodeOnProfileUpdate(){
+    private void setResultCodeOnProfileUpdate() {
         getActivity().setResult(NavigationCodes.ACCOUNT_UPDATED, null);
         finish();
     }
@@ -255,63 +255,63 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
 
         if (!UIUtil.isValidEmail(editTextEmail.getText().toString())) {
             UIUtil.reportFormInputFieldError(editTextEmail, getString(R.string.error_invalid_email));
-            if(focusView==null) focusView = editTextEmail;
+            if (focusView == null) focusView = editTextEmail;
             cancel = true;
         }
         if (TextUtils.isEmpty(editTextFirstName.getText().toString())) {
             cancel = true;
-            if(focusView==null) focusView = editTextFirstName;
+            if (focusView == null) focusView = editTextFirstName;
             UIUtil.reportFormInputFieldError(editTextFirstName, getString(R.string.error_field_required));
         }
 
-        if(!UIUtil.isAlphaString(editTextFirstName.getText().toString())){
+        if (!UIUtil.isAlphaString(editTextFirstName.getText().toString())) {
             cancel = true;
-            if(focusView==null) focusView = editTextFirstName;
+            if (focusView == null) focusView = editTextFirstName;
             UIUtil.reportFormInputFieldError(editTextFirstName, getString(R.string.error_field_name));
         }
 
-        if (TextUtils.isEmpty(editTextLastName.getText().toString())){
+        if (TextUtils.isEmpty(editTextLastName.getText().toString())) {
             cancel = true;
-            if(focusView==null) focusView = editTextLastName;
+            if (focusView == null) focusView = editTextLastName;
             UIUtil.reportFormInputFieldError(editTextLastName, getString(R.string.error_field_required));
         }
 
-        if(!UIUtil.isAlphaString(editTextLastName.getText().toString())){
+        if (!UIUtil.isAlphaString(editTextLastName.getText().toString())) {
             cancel = true;
-            if(focusView==null) focusView = editTextLastName;
+            if (focusView == null) focusView = editTextLastName;
             UIUtil.reportFormInputFieldError(editTextLastName, getString(R.string.error_field_name));
         }
 
         if (TextUtils.isEmpty(editTextMobileNumber.getText().toString())) {
             cancel = true;
-            if(focusView==null) focusView = editTextMobileNumber;
+            if (focusView == null) focusView = editTextMobileNumber;
             UIUtil.reportFormInputFieldError(editTextMobileNumber, getString(R.string.error_field_required));
         }
 
 
         if (!TextUtils.isDigitsOnly(editTextMobileNumber.getText().toString())) {
             UIUtil.reportFormInputFieldError(editTextMobileNumber, getString(R.string.error_invalid_mobile_number));
-            if(focusView==null) focusView = editTextMobileNumber;
+            if (focusView == null) focusView = editTextMobileNumber;
             cancel = true;
         }
 
         if (editTextMobileNumber.getText().toString().length() != 10) {
             UIUtil.reportFormInputFieldError(editTextMobileNumber, getString(R.string.error_mobile_number_less_digits));
-            if(focusView==null) focusView = editTextMobileNumber;
+            if (focusView == null) focusView = editTextMobileNumber;
             cancel = true;
         }
 
-        if(!UIUtil.isValidDOB(editTextDob.getText().toString()) && !cancel){
+        if (!UIUtil.isValidDOB(editTextDob.getText().toString()) && !cancel) {
             showErrorMsg(getString(R.string.error_dob_message));
             editTextDob.requestFocus();
-           return;
+            return;
         }
 
 
         if (!TextUtils.isEmpty(editTextTelNumber.getText().toString())
-                && editTextTelNumber.getText().toString().length() !=10) {
+                && editTextTelNumber.getText().toString().length() != 10) {
             cancel = true;
-            if(focusView==null) focusView = editTextTelNumber;
+            if (focusView == null) focusView = editTextTelNumber;
             UIUtil.reportFormInputFieldError(editTextTelNumber, getString(R.string.error_telephone_number_less_digits));
         }
 
@@ -361,8 +361,8 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
                 }
                 if (memberProfileDataCallback.status == 0) {
                     if (otpValidationDialogFragment != null && otpValidationDialogFragment.isVisible()) {
-                        if(getCurrentActivity() != null)
-                            BaseActivity.hideKeyboard((BaseActivity)(getActivity()), getCurrentActivity().getCurrentFocus());
+                        if (getCurrentActivity() != null)
+                            BaseActivity.hideKeyboard((BaseActivity) (getActivity()), getCurrentActivity().getCurrentFocus());
                         otpValidationDialogFragment.dismiss();
                     }
                     updatePreferenceData();
@@ -380,8 +380,8 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
                         logUpdateProfileEvent(memberProfileDataCallback.message,
                                 TrackingAware.UPDATE_PROFILE_SUBMIT_BTN_CLICKED);
                         if (otpValidationDialogFragment != null && otpValidationDialogFragment.isVisible()) {
-                            if(getCurrentActivity() != null)
-                                BaseActivity.hideKeyboard((BaseActivity)(getActivity()), getCurrentActivity().getCurrentFocus());
+                            if (getCurrentActivity() != null)
+                                BaseActivity.hideKeyboard((BaseActivity) (getActivity()), getCurrentActivity().getCurrentFocus());
                             otpValidationDialogFragment.dismiss();
                         }
                     }

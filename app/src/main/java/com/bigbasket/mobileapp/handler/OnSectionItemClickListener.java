@@ -35,6 +35,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
+import com.bigbasket.mobileapp.util.UIUtil;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 
 import java.util.ArrayList;
@@ -237,7 +238,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
     }
 
     private void launchProductList(DestinationInfo destinationInfo) {
-        ArrayList<NameValuePair> nameValuePairs = destinationInfo.getProductQueryParams();
+        ArrayList<NameValuePair> nameValuePairs = UIUtil.getAsNameValuePair(destinationInfo.getDestinationSlug());
         launchProductList(nameValuePairs);
     }
 

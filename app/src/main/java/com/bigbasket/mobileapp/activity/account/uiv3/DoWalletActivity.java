@@ -142,7 +142,7 @@ public class DoWalletActivity extends BackButtonActivity {
         ((TextView) view.findViewById(R.id.walletInfoMsg3)).setTypeface(faceRobotoRegular);
 
         String prefixBal = "Current Balance `";
-        String mrpStrBal = UIUtil.formatAsMoney((double)(currentBalance)) + "";
+        String mrpStrBal = UIUtil.formatAsMoney((double) (currentBalance)) + "";
         int prefixBalLen = prefixBal.length();
         SpannableString spannableBal = new SpannableString(prefixBal + " " + mrpStrBal);
         spannableBal.setSpan(new CustomTypefaceSpan("", faceRupee), prefixBalLen - 1,

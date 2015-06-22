@@ -367,7 +367,7 @@ public class PromoDetailFragment extends BaseFragment {
                 break;
             case Constants.AMOUNT:
                 String prefix = "`";
-                valInBasket = prefix + UIUtil.formatAsMoney((double)promoSet.getValueInBasket()) + " in basket";
+                valInBasket = prefix + UIUtil.formatAsMoney((double) promoSet.getValueInBasket()) + " in basket";
                 Spannable valInBasketSpan = new SpannableString(valInBasket);
                 valInBasketSpan.setSpan(new CustomTypefaceSpan("", faceRupee),
                         0, 1, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);

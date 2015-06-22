@@ -360,7 +360,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
     }
 
     @Override
-    public void onDetach(){
+    public void onDetach() {
         super.onDetach();
         markBasketDirty();
     }

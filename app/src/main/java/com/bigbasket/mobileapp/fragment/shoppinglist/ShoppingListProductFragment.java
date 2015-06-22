@@ -48,7 +48,7 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
         renderProducts(shoppingListSummary, baseImgUrl, null);
     }
 
-    private ProductViewDisplayDataHolder getProductViewHolder(ShoppingListSummary shoppingListSummary){
+    private ProductViewDisplayDataHolder getProductViewHolder(ShoppingListSummary shoppingListSummary) {
         return new ProductViewDisplayDataHolder.Builder()
                 .setCommonTypeface(faceRobotoRegular)
                 .setSansSerifMediumTypeface(faceRobotoMedium)
@@ -72,12 +72,12 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
         RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, contentView);
 
         ProductListRecyclerAdapter productListAdapter;
-        if(cartInfo!=null){
+        if (cartInfo != null) {
             productListAdapter = new ProductListRecyclerAdapter(shoppingListSummary.getProducts(),
                     baseImgUrl,
                     getProductViewHolder(shoppingListSummary), this, shoppingListSummary.getProducts().size(), getNavigationCtx(),
                     cartInfo);
-        }else {
+        } else {
             productListAdapter = new ProductListRecyclerAdapter(shoppingListSummary.getProducts(),
                     baseImgUrl,
                     getProductViewHolder(shoppingListSummary), this, shoppingListSummary.getProducts().size(), getNavigationCtx());
@@ -87,7 +87,7 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
     }
 
     public void notifyDataChanged(HashMap<String, Integer> cartInfo,
-                                  ShoppingListSummary shoppingListSummary, String baseImgUrl){
+                                  ShoppingListSummary shoppingListSummary, String baseImgUrl) {
         renderProducts(shoppingListSummary, baseImgUrl, cartInfo);
     }
 

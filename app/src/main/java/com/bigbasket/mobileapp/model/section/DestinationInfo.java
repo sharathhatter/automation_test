@@ -2,15 +2,11 @@ package com.bigbasket.mobileapp.model.section;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.Nullable;
-import android.text.TextUtils;
 
-import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
 public class DestinationInfo implements Parcelable, Serializable {
 
@@ -97,31 +93,5 @@ public class DestinationInfo implements Parcelable, Serializable {
         if (!_wasCacheVersionNull) {
             dest.writeString(cacheVersion);
         }
-    }
-
-    @Nullable
-    public ArrayList<NameValuePair> getProductQueryParams() {
-        if (TextUtils.isEmpty(destinationSlug)) return null;
-
-        if (destinationSlug.contains("&") || destinationSlug.contains("=")) {
-            return getAsNameValuePair();
-        }
-        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new NameValuePair(Constants.TYPE, destinationSlug));
-        return nameValuePairs;
-    }
-
-    public ArrayList<NameValuePair> getAsNameValuePair() {
-        String[] params = destinationSlug.split("&");
-        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        for (String paramData : params) {
-            if (paramData.contains("=")) {
-                String[] splittedParams = paramData.split("=");
-                if (splittedParams.length == 2) {
-                    nameValuePairs.add(new NameValuePair(splittedParams[0], splittedParams[1]));
-                }
-            }
-        }
-        return nameValuePairs;
     }
 }

@@ -279,11 +279,11 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
                     break;
                 case SocialAccount.GP:
                     mIsInLogoutMode = true;
-                    if(UIUtil.isPhoneWithGoogleAccount(this)){
+                    if (UIUtil.isPhoneWithGoogleAccount(this)) {
                         initializeGooglePlusSignIn();
                         showProgressDialog(getString(R.string.please_wait));
                         initiatePlusClientConnect();
-                    }else {
+                    } else {
                         doLogout();
                     }
                     break;

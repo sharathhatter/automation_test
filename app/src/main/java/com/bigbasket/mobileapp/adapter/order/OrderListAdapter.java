@@ -157,7 +157,7 @@ public class OrderListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewH
         }
 
         public TextView getTxtOrderStatus() {
-            if(txtOrderStatus==null)
+            if (txtOrderStatus == null)
                 txtOrderStatus = (TextView) itemView.findViewById(R.id.txtOrderStatus);
             return txtOrderStatus;
         }

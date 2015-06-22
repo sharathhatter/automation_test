@@ -44,7 +44,9 @@ public class BasketOperationTask<T> {
     private String eventName;
     private View productView;
     private String navigationCtx;
-    private @Nullable HashMap<String, Integer> cartInfo;
+    private
+    @Nullable
+    HashMap<String, Integer> cartInfo;
 
     public BasketOperationTask(T context, BasketOperation basketOperation, @NonNull Product product,
                                TextView basketCountTextView, View viewDecQty,

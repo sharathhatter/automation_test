@@ -179,7 +179,7 @@ public class Product implements Parcelable {
             dest.writeTypedList(productAdditionalInfos);
         }
         boolean isBrandSlugNull = brandSlug == null;
-        dest.writeByte(isBrandSlugNull ? (byte) 1: (byte) 0);
+        dest.writeByte(isBrandSlugNull ? (byte) 1 : (byte) 0);
         if (!isBrandSlugNull) {
             dest.writeString(brandSlug);
         }

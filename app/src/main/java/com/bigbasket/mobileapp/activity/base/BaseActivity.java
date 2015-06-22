@@ -1,6 +1,5 @@
 package com.bigbasket.mobileapp.activity.base;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -713,7 +712,8 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void launchProductList(ArrayList<NameValuePair> nameValuePairs, @Nullable String sectionName, @Nullable String sectionItemName) {
+    public void launchProductList(ArrayList<NameValuePair> nameValuePairs, @Nullable String sectionName,
+                                  @Nullable String sectionItemName) {
         if (nameValuePairs != null && nameValuePairs.size() > 0) {
             Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
             intent.putParcelableArrayListExtra(Constants.PRODUCT_QUERY, nameValuePairs);

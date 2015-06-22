@@ -160,50 +160,50 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
             cancel = true;
         }
 
-        if(!UIUtil.isAlphaString(editTextFirstName.getText().toString())){
+        if (!UIUtil.isAlphaString(editTextFirstName.getText().toString())) {
             cancel = true;
-            if(focusView == null)  focusView = editTextFirstName;
+            if (focusView == null) focusView = editTextFirstName;
             UIUtil.reportFormInputFieldError(editTextFirstName, getString(R.string.error_field_name));
         }
 
         if (isEditTextEmpty(editTextLastName)) {
             reportFormInputFieldError(editTextLastName, getString(R.string.error_field_required));
-            if(focusView == null) focusView = editTextLastName;
+            if (focusView == null) focusView = editTextLastName;
             cancel = true;
         }
 
-        if(!UIUtil.isAlphaString(editTextLastName.getText().toString())){
+        if (!UIUtil.isAlphaString(editTextLastName.getText().toString())) {
             cancel = true;
-            if(focusView==null) focusView = editTextLastName;
+            if (focusView == null) focusView = editTextLastName;
             UIUtil.reportFormInputFieldError(editTextLastName, getString(R.string.error_field_name));
         }
 
         if (isEditTextEmpty(editTextMobileNumber)) {
             reportFormInputFieldError(editTextMobileNumber, getString(R.string.error_field_required));
-            if(focusView == null)
+            if (focusView == null)
                 focusView = editTextMobileNumber;
             cancel = true;
         } else if (editTextMobileNumber.getText().toString().length() < 10) {
             reportFormInputFieldError(editTextMobileNumber, getString(R.string.contactNoMin10));
-            if(focusView == null)
+            if (focusView == null)
                 focusView = editTextMobileNumber;
             cancel = true;
         }
         if (isEditTextEmpty(editTextHouseNum)) {
             reportFormInputFieldError(editTextHouseNum, getString(R.string.error_field_required));
-            if(focusView == null)
+            if (focusView == null)
                 focusView = editTextHouseNum;
             cancel = true;
         }
         if (isEditTextEmpty(editTextArea)) {
             reportFormInputFieldError(editTextArea, getString(R.string.error_field_required));
-            if(focusView == null)
+            if (focusView == null)
                 focusView = editTextArea;
             cancel = true;
         }
         if (isEditTextEmpty(editTextPincode)) {
             reportFormInputFieldError(editTextPincode, getString(R.string.error_field_required));
-            if(focusView == null)
+            if (focusView == null)
                 focusView = editTextPincode;
             cancel = true;
         }
@@ -402,7 +402,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
             switch (createUpdateAddressApiResponse.status) {
                 case 0:
                     if (otpValidationDialogFragment != null && otpValidationDialogFragment.isVisible()) {
-                        if(getCurrentActivity()!=null)
+                        if (getCurrentActivity() != null)
                             BaseActivity.hideKeyboard(getCurrentActivity(), getCurrentActivity().getCurrentFocus());
                         otpValidationDialogFragment.dismiss();
                     }

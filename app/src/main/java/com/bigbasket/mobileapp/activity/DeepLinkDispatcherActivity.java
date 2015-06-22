@@ -45,18 +45,18 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
         }
     }
 
-    private void handleBackStack(){
+    private void handleBackStack() {
         Uri uri = getIntent().getData();
         if (uri == null) {
             finish();
             return;
         }
         String sourceName = uri.getQueryParameter(MoEHelperConstants.NAVIGATION_SOURCE_KEY);
-        if(sourceName.equals(MoEHelperConstants.NAVIGATION_SOURCE_NOTIFICATION)){
+        if (sourceName.equals(MoEHelperConstants.NAVIGATION_SOURCE_NOTIFICATION)) {
             Intent intent = new Intent(this, SplashActivity.class);
             startActivity(intent);
             finish();
-        }else {
+        } else {
             finish();
         }
     }
@@ -102,7 +102,6 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
     /**
      * MoEHelperUtils.dumpIntentExtras for dumping all extras
      * MoEHelperConstants.NAVIGATION_*
-     *
      */
 
     @Override

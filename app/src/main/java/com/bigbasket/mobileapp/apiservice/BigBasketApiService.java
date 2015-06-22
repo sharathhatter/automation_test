@@ -22,7 +22,6 @@ import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListSummary
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListsApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponseWithCart;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OrderListApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseContent;

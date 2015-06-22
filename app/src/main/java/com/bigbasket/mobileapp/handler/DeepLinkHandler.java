@@ -6,6 +6,7 @@ import android.os.Build;
 import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.activity.CustomerFeedbackActivity;
+import com.bigbasket.mobileapp.activity.account.uiv3.DoWalletActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonWithBasketButtonActivity;
@@ -15,18 +16,20 @@ import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.callbacks.CallbackOrderInvoice;
-import com.bigbasket.mobileapp.activity.account.uiv3.DoWalletActivity;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
+import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
+import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -79,7 +82,13 @@ public class DeepLinkHandler {
                 context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 return SUCCESS;
             case Constants.PRODUCT_LIST:
-                return SUCCESS; //todo
+                String queryParams = uri.getQuery();
+                if (!TextUtils.isEmpty(queryParams)) {
+                    ArrayList<NameValuePair> nameValuePairs = UIUtil.getAsNameValuePair(queryParams);
+                    context.getCurrentActivity().launchProductList(nameValuePairs, null, null);
+                    return SUCCESS;
+                }
+                return FAILED;
             case Constants.CATEGORY_LANDING:
                 String name = uri.getQueryParameter(Constants.NAME);
                 String slug = uri.getQueryParameter(Constants.SLUG);

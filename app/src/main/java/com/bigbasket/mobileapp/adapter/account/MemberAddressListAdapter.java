@@ -13,12 +13,9 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.AddressSelectionAware;
-import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.Address;
-import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -127,16 +124,15 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<RecyclerVi
 
             TextView txtAddress = memberAddressViewHolder.getTxtAddress();
             ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) txtAddress.getLayoutParams();
-            if(fromAccount){
+            if (fromAccount) {
                 params.leftMargin = 0;
                 txtAddress.setLayoutParams(params);
-            }else {
-                params.leftMargin = (int)((ActivityAware)context).getCurrentActivity().getResources().getDimension(R.dimen.margin_normal);
+            } else {
+                params.leftMargin = (int) ((ActivityAware) context).getCurrentActivity().getResources().getDimension(R.dimen.margin_normal);
                 txtAddress.setLayoutParams(params);
             }
             String completeAdd = getCompleteAddress(address);
             txtAddress.setText(completeAdd);
-
 
 
             ImageView imgEditIcon = memberAddressViewHolder.getImgEditIcon();
@@ -156,11 +152,11 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<RecyclerVi
                 txtExpressDelivery.setText(((ActivityAware) context).getCurrentActivity().getString(R.string.expressAvailable));
                 txtExpressDelivery.setVisibility(View.VISIBLE);
                 ViewGroup.MarginLayoutParams txtExpressDeliveryParams = (ViewGroup.MarginLayoutParams) txtExpressDelivery.getLayoutParams();
-                if(fromAccount){
+                if (fromAccount) {
                     txtExpressDeliveryParams.leftMargin = 0;
                     txtExpressDelivery.setLayoutParams(txtExpressDeliveryParams);
-                }else {
-                    params.leftMargin = (int)((ActivityAware)context).getCurrentActivity().getResources().getDimension(R.dimen.margin_normal);
+                } else {
+                    params.leftMargin = (int) ((ActivityAware) context).getCurrentActivity().getResources().getDimension(R.dimen.margin_normal);
                     txtExpressDelivery.setLayoutParams(txtExpressDeliveryParams);
                 }
 

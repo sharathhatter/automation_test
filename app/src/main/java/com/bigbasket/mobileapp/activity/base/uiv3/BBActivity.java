@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -454,7 +453,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             createFragmentFromName(data.getStringExtra(Constants.FRAGMENT_CLASS_NAME), data.getExtras(),
                     data.getStringExtra(Constants.FRAGMENT_TAG));
             return;
-        }else if(resultCode == NavigationCodes.ACCOUNT_UPDATED){
+        } else if (resultCode == NavigationCodes.ACCOUNT_UPDATED) {
             setTxtNavSalutation();
             return;
         }
@@ -657,7 +656,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     public void logHomeScreenEvent(String trackAwareName, String eventKeyName,
-                                    String navigationCtx) {
+                                   String navigationCtx) {
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(eventKeyName, navigationCtx);
         trackEvent(trackAwareName, eventAttribs);
@@ -710,10 +709,10 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         }
     }
 
-    public void setTxtNavSalutation(){
+    public void setTxtNavSalutation() {
         AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());
         TextView txtNavSalutation = (TextView) findViewById(R.id.txtNavSalutation);
-        if(txtNavSalutation!=null) {
+        if (txtNavSalutation != null) {
             txtNavSalutation.setText(!TextUtils.isEmpty(authParameters.getMemberFullName()) ?
                     authParameters.getMemberFullName() : authParameters.getMemberEmail());
         }

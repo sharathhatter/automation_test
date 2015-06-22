@@ -41,19 +41,19 @@ public class OrderInvoiceActivity extends BaseActivity {
 
 
     private void showOrderList(ArrayList<Order> orders) {
-        if(orders ==null || orders.size()==0) return;
+        if (orders == null || orders.size() == 0) return;
 
         TextView txtThankYou = (TextView) findViewById(R.id.txtThankYou);
         txtThankYou.setTypeface(faceRobotoBold);
 
         TextView txtOrderPlaced = (TextView) findViewById(R.id.txtOrderPlaced);
         txtOrderPlaced.setTypeface(faceRobotoMedium, 0);
-        txtOrderPlaced.setText(orders.size()>1 ? getString(R.string.multi_order_place_txt) :
+        txtOrderPlaced.setText(orders.size() > 1 ? getString(R.string.multi_order_place_txt) :
                 getString(R.string.order_place_txt));
 
         LinearLayout layoutOrderNumber = (LinearLayout) findViewById(R.id.layoutOrderNumber);
         //order list
-        for(Order order: orders){
+        for (Order order : orders) {
             TextView orderNumberTxtView = new TextView(getCurrentActivity());
             orderNumberTxtView.setTextSize(14);
             orderNumberTxtView.setTextColor(getResources().getColor(R.color.uiv3_primary_text_color));

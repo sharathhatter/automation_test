@@ -20,7 +20,6 @@ import com.bigbasket.mobileapp.adapter.product.ProductListRecyclerAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.BaseApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.CartInfo;
 import com.bigbasket.mobileapp.apiservice.models.response.PromoSetProductsApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PromoSummaryApiResponseContent;
@@ -75,12 +74,12 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
         int numPromoCompletedInBasket = bundle.getInt(Constants.NUM_IN_BASKET, 0);
 
         getPromoSummaryView();
-        if(promoProductListView ==  null)return;
+        if (promoProductListView == null) return;
         displayPromoSummary(promoInfoMsg, criteriaMsgs, saving, numPromoCompletedInBasket);
         renderProductList(products);
     }
 
-    private void renderProductList(ArrayList<Product> products){
+    private void renderProductList(ArrayList<Product> products) {
         Bundle bundle = getArguments();
         String baseImgUrl = bundle.getString(Constants.BASE_IMG_URL);
         int setId = bundle.getInt(Constants.SET_ID);
@@ -152,7 +151,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
                     setCartSummary(addBundleApiResponse.cartSummary);
                     updateUIForCartInfo();
                     getPromoSummary();
-                    if(addBundleApiResponse.apiResponseContent.cartInfo !=null) {
+                    if (addBundleApiResponse.apiResponseContent.cartInfo != null) {
                         notifyPromoProducts(products, baseImgUrl,
                                 addBundleApiResponse.apiResponseContent.cartInfo);
                     }
@@ -248,7 +247,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
                         savingFormattedAmount, faceRupee));
     }
 
-    private ProductViewDisplayDataHolder getProductDisplayHodler(){
+    private ProductViewDisplayDataHolder getProductDisplayHodler() {
         return new ProductViewDisplayDataHolder.Builder()
                 .setCommonTypeface(faceRobotoRegular)
                 .setSansSerifMediumTypeface(faceRobotoMedium)
@@ -264,12 +263,12 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
     private void displayProductList(final ArrayList<Product> products, final String baseImgUrl,
                                     HashMap<String, Integer> cartInfo) {
         if (getActivity() == null) return;
-        if(products==null){
+        if (products == null) {
             showAlertDialogFinish(getString(R.string.error), getString(R.string.server_error));
             return;
         }
 
-        LinearLayout layoutPromoProductList = (LinearLayout)promoProductListView.findViewById(R.id.layoutPromoProductList);
+        LinearLayout layoutPromoProductList = (LinearLayout) promoProductListView.findViewById(R.id.layoutPromoProductList);
         if (layoutPromoProductList == null) return;
         layoutPromoProductList.removeAllViews();
 
@@ -277,10 +276,10 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
         RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, layoutPromoProductList);
 
         ProductListRecyclerAdapter productListAdapter;
-        if(cartInfo==null){
+        if (cartInfo == null) {
             productListAdapter = new ProductListRecyclerAdapter(products, baseImgUrl,
                     getProductDisplayHodler(), this, products.size(), getNavigationCtx());
-        }else {
+        } else {
             productListAdapter = new ProductListRecyclerAdapter(products, baseImgUrl,
                     getProductDisplayHodler(), this, products.size(), getNavigationCtx(),
                     cartInfo);
@@ -301,7 +300,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
                     addBundle(products, baseImgUrl);
                 }
             });
-        }else {
+        } else {
             layoutAddBundle.setVisibility(View.GONE);
         }
         try {
@@ -311,7 +310,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
     }
 
     private void notifyPromoProducts(ArrayList<Product> products, String baseImgUrl,
-                                     HashMap<String, Integer> cartInfo){
+                                     HashMap<String, Integer> cartInfo) {
         displayProductList(products, baseImgUrl, cartInfo);
     }
 

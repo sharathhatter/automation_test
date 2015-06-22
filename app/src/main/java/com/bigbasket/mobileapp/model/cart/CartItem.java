@@ -50,6 +50,7 @@ public class CartItem extends BaseCartItem {
     private String packDesc;
     @SerializedName(Constants.PRODUCT_WEIGHT)
     private String productWeight;
+
     CartItem(Parcel source) {
         super(source);
         skuId = source.readInt();

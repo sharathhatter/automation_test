@@ -35,14 +35,14 @@ public class CreateShoppingListTask<T> {
                 R.string.createShoppingList, R.string.shoppingListNameDialogTextHint) {
             @Override
             public void onPositiveButtonClicked(String inputText) {
-                if(UIUtil.isAlphaNumericString(inputText.trim())){
+                if (UIUtil.isAlphaNumericString(inputText.trim())) {
                     startTask(inputText);
-                }else {
+                } else {
                     ((ActivityAware) ctx).getCurrentActivity().
                             showAlertDialog(
                                     ((ActivityAware) ctx).getCurrentActivity().
-                                            getResources().getString(R.string.error),((ActivityAware) ctx).getCurrentActivity().
-                                    getResources().getString(R.string.shoppingListNameAlphaNumeric),
+                                            getResources().getString(R.string.error), ((ActivityAware) ctx).getCurrentActivity().
+                                            getResources().getString(R.string.shoppingListNameAlphaNumeric),
                                     DialogButton.OK, DialogButton.CANCEL, Constants.NOT_ALPHANUMERIC_TXT_SHOPPING_LIST);
                 }
             }

@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.util;
 
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -35,12 +36,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bigbasket.mobileapp.BuildConfig;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginUserDetails;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.handler.AnalyticsIdentifierKeys;
 import com.bigbasket.mobileapp.handler.AppDataSyncHandler;
+import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
@@ -54,12 +55,10 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import android.accounts.AccountManager;
 
 public class UIUtil {
 
@@ -475,7 +474,7 @@ public class UIUtil {
             txtAction.setTypeface(FontHolder.getInstance(context).getFaceRobotoBold());
         }
         if (!TextUtils.isEmpty(total)) {
-            String totalLabel = context.getString(R.string.totalMrp)+ " "; //toUpperCase(Locale.getDefault())
+            String totalLabel = context.getString(R.string.totalMrp) + " "; //toUpperCase(Locale.getDefault())
             String rupeeSym = "`";
             SpannableString spannableString = new SpannableString(totalLabel + rupeeSym +
                     total);
@@ -556,16 +555,16 @@ public class UIUtil {
         }
     }
 
-    public static boolean isAlphaString(String matchString){
+    public static boolean isAlphaString(String matchString) {
         return matchString.matches("[a-zA-Z]+");
     }
 
-    public static boolean isAlphaNumericString(String matchString){
+    public static boolean isAlphaNumericString(String matchString) {
         return matchString.matches("[a-zA-Z0-9]+");
     }
 
-    public static boolean isValidDOB(String dob){
-        if(!TextUtils.isEmpty(dob)) {
+    public static boolean isValidDOB(String dob) {
+        if (!TextUtils.isEmpty(dob)) {
             DateFormat df = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_PICKER, Locale.getDefault());
             String today = getToday(Constants.DATE_FORMAT_DATE_PICKER);
             Date inputDate, toDaysData, dateBefore1900;
@@ -577,10 +576,10 @@ public class UIUtil {
                 e1.printStackTrace();
                 return false;
             }
-            if(inputDate==null || toDaysData==null) return false;
-            if(inputDate.after(toDaysData))
+            if (inputDate == null || toDaysData == null) return false;
+            if (inputDate.after(toDaysData))
                 return false;
-            if(inputDate.before(dateBefore1900))
+            if (inputDate.before(dateBefore1900))
                 return false;
             return true;
         }
@@ -588,8 +587,33 @@ public class UIUtil {
     }
 
 
-    public static boolean isPhoneWithGoogleAccount(Context context){
+    public static boolean isPhoneWithGoogleAccount(Context context) {
         return AccountManager.get(context).getAccountsByType("com.google").length > 0;
     }
 
+    @Nullable
+    public static ArrayList<NameValuePair> getProductQueryParams(String queryParams) {
+        if (TextUtils.isEmpty(queryParams)) return null;
+
+        if (queryParams.contains("&") || queryParams.contains("=")) {
+            return getAsNameValuePair(queryParams);
+        }
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
+        nameValuePairs.add(new NameValuePair(Constants.TYPE, queryParams));
+        return nameValuePairs;
+    }
+
+    public static ArrayList<NameValuePair> getAsNameValuePair(String queryParams) {
+        String[] params = queryParams.split("&");
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
+        for (String paramData : params) {
+            if (paramData.contains("=")) {
+                String[] splittedParams = paramData.split("=");
+                if (splittedParams.length == 2) {
+                    nameValuePairs.add(new NameValuePair(splittedParams[0], splittedParams[1]));
+                }
+            }
+        }
+        return nameValuePairs;
+    }
 }
