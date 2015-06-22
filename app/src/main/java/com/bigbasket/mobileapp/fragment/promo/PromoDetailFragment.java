@@ -356,7 +356,7 @@ public class PromoDetailFragment extends BaseFragment {
 
         switch (promoSet.getSetType()) {
             case Constants.QUANTITY:
-                String valInBasket = promoSet.getValueInBasket() + " in basket";
+                String valInBasket = UIUtil.formatAsMoney((double) promoSet.getValueInBasket()) + " in basket";
                 txtValInBasket.setText(valInBasket);
                 if (!isRedeemed && promoSet.getValType().equalsIgnoreCase(PromoSet.CRITERIA)) {
                     String moreQtyNeeded = String.valueOf(Math.abs(promoSet.getPromoCriteriaVal() - promoSet.getValueInBasket()));
@@ -367,13 +367,14 @@ public class PromoDetailFragment extends BaseFragment {
                 break;
             case Constants.AMOUNT:
                 String prefix = "`";
-                valInBasket = prefix + promoSet.getValueInBasket() + " in basket";
+                valInBasket = prefix + UIUtil.formatAsMoney((double)promoSet.getValueInBasket()) + " in basket";
                 Spannable valInBasketSpan = new SpannableString(valInBasket);
                 valInBasketSpan.setSpan(new CustomTypefaceSpan("", faceRupee),
                         0, 1, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
                 txtValInBasket.setText(valInBasketSpan);
                 if (!isRedeemed && promoSet.getValType().equalsIgnoreCase(PromoSet.CRITERIA)) {
-                    String moreAmountNeeded = String.valueOf(Math.abs(promoSet.getPromoCriteriaVal() - promoSet.getValueInBasket()));
+                    String moreAmountNeeded = String.valueOf(Math.abs(promoSet.getPromoCriteriaVal() -
+                            promoSet.getValueInBasket()));
                     String txt = "`" + moreAmountNeeded
                             + " more needed for the promo";
                     Spannable spannable = new SpannableString(txt);

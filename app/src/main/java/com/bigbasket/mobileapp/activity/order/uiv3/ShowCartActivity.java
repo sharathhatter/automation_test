@@ -185,7 +185,7 @@ public class ShowCartActivity extends BackButtonActivity {
         ViewGroup layoutCheckoutFooter = (ViewGroup) basketView.findViewById(R.id.layoutCheckoutFooter);
         final String cartTotal = UIUtil.formatAsMoney(cartSummary.getTotal());
         UIUtil.setUpFooterButton(this, layoutCheckoutFooter, cartTotal,
-                getString(R.string.pickAddress), true);
+                getString(R.string.checkOut), true);
         layoutCheckoutFooter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

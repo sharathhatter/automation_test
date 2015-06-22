@@ -24,7 +24,7 @@ public class PromoSet implements Parcelable {
     @SerializedName(Constants.PROMO_SET_NAME)
     private String name;
     @SerializedName(Constants.VAL_IN_BASKET)
-    private int valueInBasket;
+    private float valueInBasket;
     @SerializedName(Constants.PROMO_CRITERIA_VAL)
     private int promoCriteriaVal;
     @SerializedName(Constants.SET_ID)
@@ -36,7 +36,7 @@ public class PromoSet implements Parcelable {
 
     public PromoSet(Parcel source) {
         name = source.readString();
-        valueInBasket = source.readInt();
+        valueInBasket = source.readFloat();
         promoCriteriaVal = source.readInt();
         setId = source.readInt();
         setType = source.readString();
@@ -51,7 +51,7 @@ public class PromoSet implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
-        dest.writeInt(valueInBasket);
+        dest.writeFloat(valueInBasket);
         dest.writeInt(promoCriteriaVal);
         dest.writeInt(setId);
         dest.writeString(setType);
@@ -66,7 +66,7 @@ public class PromoSet implements Parcelable {
         this.name = name;
     }
 
-    public int getValueInBasket() {
+    public float getValueInBasket() {
         return valueInBasket;
     }
 

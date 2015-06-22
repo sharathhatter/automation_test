@@ -65,7 +65,9 @@
     <string name="shoppingListNameDialogTextHint">Enter shopping list name</string>
     <string name="shoppingListNameAlphaNumeric">please enter only alphanumeric characters in the shopping list name field</string>
     <string name="chooseCity">Pick Your City</string>
-    <string name="pickAddress">Pick Address</string>
+    <string name="checkOut">CHECKOUT</string>
+    <string name="continueCaps">CONTINUE</string>
+    <string name="placeOrderCaps">PLACE ORDER</string>
     <string name="changeCityMenuTxt">Change City</string>
     <string name="outOfStock">Out of stock</string>
     <string name="OR">OR</string>

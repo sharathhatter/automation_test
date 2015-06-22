@@ -92,7 +92,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         if (orderDetails == null) return;
         ViewGroup layoutCheckoutFooter = (ViewGroup) findViewById(R.id.layoutCheckoutFooter);
         UIUtil.setUpFooterButton(this, layoutCheckoutFooter, orderDetails.getFormattedFinalTotal(),
-                getString(R.string.choosePayment), true);
+                getString(R.string.continueCaps), true);
         layoutCheckoutFooter.setOnClickListener(new OnPostShipmentClickListener());
     }
 

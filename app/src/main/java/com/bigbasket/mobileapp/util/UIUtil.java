@@ -470,12 +470,12 @@ public class UIUtil {
 
         if (!showNextArrow) {
             txtAction.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
-            txtAction.setTypeface(FontHolder.getInstance(context).getFaceRobotoMedium());
+            txtAction.setTypeface(FontHolder.getInstance(context).getFaceRobotoBold());
         } else {
-            txtAction.setTypeface(FontHolder.getInstance(context).getFaceRobotoRegular());
+            txtAction.setTypeface(FontHolder.getInstance(context).getFaceRobotoBold());
         }
         if (!TextUtils.isEmpty(total)) {
-            String totalLabel = context.getString(R.string.totalMrp).toUpperCase(Locale.getDefault()) + " ";
+            String totalLabel = context.getString(R.string.totalMrp)+ " "; //toUpperCase(Locale.getDefault())
             String rupeeSym = "`";
             SpannableString spannableString = new SpannableString(totalLabel + rupeeSym +
                     total);
