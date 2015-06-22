@@ -41,7 +41,7 @@ public class GetCartCountTask<T> {
                                             @Override
                                             public void run() {
                                                 if (ctx.get() != null) {
-                                                    ((CartInfoAware) ctx.get()).setCartInfo(cartSummaryApiResponse.cartSummaryApiResponseContent.cartSummary);
+                                                    ((CartInfoAware) ctx.get()).setCartSummary(cartSummaryApiResponse.cartSummaryApiResponseContent.cartSummary);
                                                 }
                                                 if (ctx.get() != null) {
                                                     ((CartInfoAware) ctx.get()).updateUIForCartInfo();

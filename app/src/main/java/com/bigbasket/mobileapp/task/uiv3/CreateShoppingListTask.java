@@ -1,7 +1,6 @@
 package com.bigbasket.mobileapp.task.uiv3;
 
 import android.text.TextUtils;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
@@ -44,7 +43,7 @@ public class CreateShoppingListTask<T> {
                                     ((ActivityAware) ctx).getCurrentActivity().
                                             getResources().getString(R.string.error),((ActivityAware) ctx).getCurrentActivity().
                                     getResources().getString(R.string.shoppingListNameAlphaNumeric),
-                                    DialogButton.OK, DialogButton.CANCEL, Constants.NOT_ALPHAMUMERIC_TXT_SHOOPING_LIST);
+                                    DialogButton.OK, DialogButton.CANCEL, Constants.NOT_ALPHAMUMERIC_TXT_SHOPPING_LIST);
                 }
             }
         }.show();

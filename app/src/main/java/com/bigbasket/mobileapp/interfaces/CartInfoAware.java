@@ -4,9 +4,9 @@ import com.bigbasket.mobileapp.model.cart.CartSummary;
 
 public interface CartInfoAware {
 
-    CartSummary getCartInfo();
+    CartSummary getCartSummary();
 
-    void setCartInfo(CartSummary cartInfo);
+    void setCartSummary(CartSummary cartInfo);
 
     void updateUIForCartInfo();
 

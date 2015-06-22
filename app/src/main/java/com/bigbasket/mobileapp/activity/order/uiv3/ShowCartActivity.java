@@ -189,7 +189,7 @@ public class ShowCartActivity extends BackButtonActivity {
         layoutCheckoutFooter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (getCartInfo() != null && getCartInfo().getNoOfItems() > 0) {
+                if (getCartSummary() != null && getCartSummary().getNoOfItems() > 0) {
                     if (AuthParameters.getInstance(getCurrentActivity()).isAuthTokenEmpty()) {
                         launchLogin(TrackEventkeys.NAVIGATION_CTX_SHOW_BASKET, NavigationCodes.GO_TO_BASKET);
                     } else {
@@ -235,7 +235,7 @@ public class ShowCartActivity extends BackButtonActivity {
 
 
     public final void setBasketNumItemsDisplay() {
-        if (getCartInfo() == null) return;
+        if (getCartSummary() == null) return;
         updateUIForCartInfo();
         markBasketDirty();
     }
@@ -256,7 +256,7 @@ public class ShowCartActivity extends BackButtonActivity {
                     editor.putString(Constants.GET_CART, "0");
                     showBasketEmptyMessage();
                     CartSummary cartSummary = new CartSummary(0, 0, 0);
-                    setCartInfo(cartSummary);
+                    setCartSummary(cartSummary);
                     setBasketNumItemsDisplay();
                 } else if (cartEmptyApiResponseCallback.status == ApiErrorCodes.CART_NOT_EXISTS) {
                     showAlertDialog("Cart is already empty");
@@ -294,7 +294,7 @@ public class ShowCartActivity extends BackButtonActivity {
                 hideProgressView();
                 if (cartGetApiResponseContentApiResponse.status == 0) {
                     CartSummary cartSummary = cartGetApiResponseContentApiResponse.apiResponseContent.cartSummary;
-                    setCartInfo(cartSummary);
+                    setCartSummary(cartSummary);
                     setBasketNumItemsDisplay();
                     editor.putString(Constants.GET_CART,
                             String.valueOf(cartSummary.getNoOfItems()));

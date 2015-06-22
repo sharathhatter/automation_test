@@ -637,5 +637,5 @@ public class Constants {
     public static final String ON_TOGGLE_ACTIONS = "on_action_trigger";
     public static final String SHIPMENT_ACTIONS = "shipment_actions";
 
-    public static final String NOT_ALPHAMUMERIC_TXT_SHOOPING_LIST = "aplhaNumericTxt";
+    public static final String NOT_ALPHAMUMERIC_TXT_SHOPPING_LIST = "aplhaNumericTxt";
 }

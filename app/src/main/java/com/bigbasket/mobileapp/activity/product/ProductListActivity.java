@@ -42,6 +42,7 @@ import com.bigbasket.mobileapp.interfaces.LazyProductListAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
+import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.product.FilterOptionCategory;
 import com.bigbasket.mobileapp.model.product.FilteredOn;
 import com.bigbasket.mobileapp.model.product.Option;
@@ -88,6 +89,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     private ArrayList<FilterOptionCategory> mFilterOptionCategories;
     private String mSortedOn;
     private ArrayList<Option> mSortOptions;
+    private HashMap<String, Integer> mCartInfo;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -198,6 +200,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         boolean showFilters = hasProducts && productTabData.getFilterOptionItems() != null
                 && productTabData.getFilterOptionItems().size() > 0;
         toggleFilterSortView(showFilters);
+        mCartInfo = productTabData.getCartInfo();
         if (hasProducts) {
             if (productTabData.getProductTabInfos().size() > 1) {
                 displayProductTabs(productTabData, contentFrame);
@@ -216,7 +219,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                 ProductTabInfo productTabInfo = productTabData.getProductTabInfos().get(0);
                 ProductInfo productInfo = productTabInfo.getProductInfo();
                 Bundle bundle = getBundleForProductListFragment(productTabInfo, productInfo,
-                        productTabData.getBaseImgUrl(), productTabData.getCartInfo());
+                        productTabData.getBaseImgUrl());
                 GenericProductListFragment genericProductListFragment = new GenericProductListFragment();
                 genericProductListFragment.setArguments(bundle);
                 // Not using onChangeFragment/addToMainLayout since their implementation has been changed in this class
@@ -263,7 +266,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
             ProductInfo productInfo = productTabInfo.getProductInfo();
             if (productInfo != null) {
                 Bundle bundle = getBundleForProductListFragment(productTabInfo,
-                        productInfo, productTabData.getBaseImgUrl(), productTabData.getCartInfo());
+                        productInfo, productTabData.getBaseImgUrl());
                 bbTabs.add(new BBTab<>(productTabInfo.getTabName(),
                         GenericProductListFragment.class, bundle));
                 if (productInfo.getCurrentPage() == -1) {
@@ -342,15 +345,12 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
     private Bundle getBundleForProductListFragment(ProductTabInfo productTabInfo,
                                                    ProductInfo productInfo,
-                                                   String baseImgUrl,
-                                                   HashMap<String, Integer> cartInfo) {
+                                                   String baseImgUrl) {
         Bundle bundle = new Bundle();
         bundle.putParcelable(Constants.PRODUCT_INFO, productInfo);
         bundle.putString(Constants.BASE_IMG_URL, baseImgUrl);
         bundle.putParcelableArrayList(Constants.PRODUCT_QUERY, mNameValuePairs);
         bundle.putString(Constants.TAB_TYPE, productTabInfo.getTabType());
-        bundle.putString(Constants.CART_INFO, cartInfo != null ?
-                new Gson().toJson(cartInfo) : null);
         return bundle;
     }
 
@@ -686,4 +686,29 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         }
     }
 
+    @Override
+    public void updateUIAfterBasketOperationSuccess(BasketOperation basketOperation, TextView basketCountTextView,
+                                                    View viewDecQty, View viewIncQty, View btnAddToBasket, Product product,
+                                                    String qty, @Nullable View productView, @Nullable HashMap<String, Integer> cartInfoMap) {
+        super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextView, viewDecQty, viewIncQty, btnAddToBasket, product, qty, productView, cartInfoMap);
+        if (cartInfoMap != null) {
+            // Sync local cartInfoMap with this one
+            mCartInfo = cartInfoMap;
+            // Update in-memory fragments
+            setProductListForFragmentAtPosition(mViewPager.getCurrentItem() - 1);
+            setProductListForFragmentAtPosition(mViewPager.getCurrentItem() + 1);
+        }
+    }
+
+    protected void onPositiveButtonClicked(DialogInterface dialogInterface, String sourceName, Object valuePassed) {
+        if (sourceName!=null && Constants.NOT_ALPHAMUMERIC_TXT_SHOPPING_LIST.equals(sourceName)) {
+            new CreateShoppingListTask<>(this).showDialog();
+        }
+    }
+
+    @Nullable
+    @Override
+    public HashMap<String, Integer> getCartInfo() {
+        return mCartInfo;
+    }
 }

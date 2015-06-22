@@ -104,7 +104,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     private String mDrawerTitle;
     private String mTitle;
     private BasketOperationResponse basketOperationResponse;
-    private CartSummary cartInfo = new CartSummary();
+    private CartSummary cartSummary = new CartSummary();
     private BBDrawerLayout mDrawerLayout;
     private String currentFragmentTag;
     private RecyclerView mNavRecyclerView;
@@ -514,9 +514,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             if (basketCountTextView != null) {
                 basketCountTextView.setVisibility(View.GONE);
             }
-            if (productView != null) {
-                productView.setBackgroundColor(Color.WHITE);
-            }
         } else {
             if (viewDecQty != null) {
                 viewDecQty.setVisibility(View.VISIBLE);
@@ -543,24 +540,24 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
         editor.putString(Constants.GET_CART, String.valueOf(totalProductsInBasket));
         editor.apply();
-        cartInfo.setNoOfItems(totalProductsInBasket);
+        cartSummary.setNoOfItems(totalProductsInBasket);
     }
 
     @Override
-    public CartSummary getCartInfo() {
-        return cartInfo;
+    public CartSummary getCartSummary() {
+        return cartSummary;
     }
 
     @Override
-    public void setCartInfo(CartSummary cartInfo) {
-        this.cartInfo = cartInfo;
+    public void setCartSummary(CartSummary cartSummary) {
+        this.cartSummary = cartSummary;
     }
 
     @Override
     public void updateUIForCartInfo() {
-        if (cartInfo == null) return;
+        if (cartSummary == null) return;
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
-        editor.putString(Constants.GET_CART, String.valueOf(cartInfo.getNoOfItems()));
+        editor.putString(Constants.GET_CART, String.valueOf(cartSummary.getNoOfItems()));
         editor.commit();
         updateCartCountHeaderTextView();
     }
@@ -582,11 +579,11 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
     private void updateCartCountHeaderTextView() {
         FloatingBadgeCountView btnViewBasket = getViewBasketFloatingButton();
-        if (cartInfo != null && btnViewBasket != null) {
-            if (cartInfo.getNoOfItems() <= 0) {
+        if (cartSummary != null && btnViewBasket != null) {
+            if (cartSummary.getNoOfItems() <= 0) {
                 btnViewBasket.setText(null);
             } else {
-                btnViewBasket.setText(String.valueOf(cartInfo.getNoOfItems()));
+                btnViewBasket.setText(String.valueOf(cartSummary.getNoOfItems()));
             }
         }
     }
@@ -900,12 +897,12 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     private void syncCartInfoFromPreference() {
-        if (cartInfo != null && cartInfo.getNoOfItems() == 0) {
+        if (cartSummary != null && cartSummary.getNoOfItems() == 0) {
             // Update from preference
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
             String cartCountStr = preferences.getString(Constants.GET_CART, null);
             if (!TextUtils.isEmpty(cartCountStr) && TextUtils.isDigitsOnly(cartCountStr)) {
-                cartInfo.setNoOfItems(Integer.parseInt(cartCountStr));
+                cartSummary.setNoOfItems(Integer.parseInt(cartCountStr));
             }
         }
     }

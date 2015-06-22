@@ -4,8 +4,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
@@ -15,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -25,20 +22,15 @@ import android.widget.Toast;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.adapter.ProductListPagerAdapter;
-import com.bigbasket.mobileapp.adapter.TabPagerAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.AddAllShoppingListItemResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListSummaryResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponseWithCart;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
-import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListProductFragment;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
-import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListSummary;
@@ -296,11 +288,11 @@ public class ShoppingListSummaryActivity extends BBActivity {
     }
 
     private void setProductCount(HashMap<String, Integer> cartInfo,
-                                 ShoppingListSummary shoppingListSummary){
-        if(cartInfo!=null && cartInfo.size()>0){
+                                 ShoppingListSummary shoppingListSummary) {
+        if (cartInfo != null && cartInfo.size() > 0) {
             Fragment fragment = getCurrentFragment();
             if (fragment != null) {
-                ((ShoppingListProductFragment)fragment).notifyDataChanged(cartInfo,
+                ((ShoppingListProductFragment) fragment).notifyDataChanged(cartInfo,
                         shoppingListSummary, baseImgUrl);
             }
         }
@@ -322,7 +314,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
                             hideProgressView();
                             switch (addAllToBasketSmartBasketCallBack.status) {
                                 case Constants.OK:
-                                    setCartInfo(addAllToBasketSmartBasketCallBack);
+                                    setCartSummary(addAllToBasketSmartBasketCallBack);
                                     updateUIForCartInfo();
                                     setProductCount(addAllToBasketSmartBasketCallBack.cartInfo,
                                             shoppingListSummary);
@@ -353,7 +345,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
                             hideProgressView();
                             switch (addAllToBasketShoppingListCallBack.status) {
                                 case Constants.OK:
-                                    setCartInfo(addAllToBasketShoppingListCallBack);
+                                    setCartSummary(addAllToBasketShoppingListCallBack);
                                     updateUIForCartInfo();
                                     setProductCount(addAllToBasketShoppingListCallBack.cartInfo,
                                             shoppingListSummary);
