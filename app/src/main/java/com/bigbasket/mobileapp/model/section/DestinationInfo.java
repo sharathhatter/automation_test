@@ -30,6 +30,7 @@ public class DestinationInfo implements Parcelable, Serializable {
     public static final String COMMUNICATION_HUB = "com_hub";
     public static final String CALL = "call";
     public static final String DYNAMIC_PAGE = Constants.DYNAMIC_PAGE;
+    public static final String DISCOUNT = "discount";
 
     public static final Parcelable.Creator<DestinationInfo> CREATOR = new Parcelable.Creator<DestinationInfo>() {
         @Override

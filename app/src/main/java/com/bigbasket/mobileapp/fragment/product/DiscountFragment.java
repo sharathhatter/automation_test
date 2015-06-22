@@ -15,9 +15,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.SectionView;
 
-/**
- * Created by jugal on 12/6/15.
- */
+
 public class DiscountFragment extends BaseFragment {
 
 
@@ -62,7 +60,7 @@ public class DiscountFragment extends BaseFragment {
 
     @Override
     public String getTitle() {
-        return getString(R.string.discount);
+        return getString(R.string.discounts);
     }
 
     @Override

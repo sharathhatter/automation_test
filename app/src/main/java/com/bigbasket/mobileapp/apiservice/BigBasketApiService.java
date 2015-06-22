@@ -337,7 +337,7 @@ public interface BigBasketApiService {
     @GET("/register-utm-params/")
     BaseApiResponse postUtmParams(@QueryMap Map<String, String> utmQueryMap);
 
-    @GET("/get-discount/")
+    @GET("/get-discount-page/")
     void getDiscount(Callback<ApiResponse<DiscountDataModel>> discountApiResponseCallback);
 
     @FormUrlEncoded

@@ -25,17 +25,15 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-/**
- * Created by jugal on 11/6/15.
- */
+
 public class DiscountActivity extends BBActivity {
 
 
     @Override
     public void onCreate(Bundle saveInstanceState) {
         super.onCreate(saveInstanceState);
-        setTitle(getString(R.string.discount));
-        //getDiscountData();
+        setTitle(getString(R.string.discounts));
+        getDiscountData();
     }
 
 
