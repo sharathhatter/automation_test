@@ -84,6 +84,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="0dp"
+        android:visibility="gone"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
         android:background="@color/uiv3_list_bkg_color"

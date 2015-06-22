@@ -50,7 +50,6 @@ import retrofit.client.Response;
 
 public class ShoppingListSummaryActivity extends BBActivity {
 
-    //private int currectTab;
     private String baseImgUrl;
     @Nullable
     private ShoppingListName mShoppingListName;
@@ -207,9 +206,6 @@ public class ShoppingListSummaryActivity extends BBActivity {
             viewPager = (ViewPager) base.findViewById(R.id.pager);
             ProductListPagerAdapter productListPagerAdapter = new ProductListPagerAdapter(getCurrentActivity(),
                     getSupportFragmentManager(), getTabs(shoppingListSummaries, shoppingListName, baseImgUrl));
-//            FragmentStatePagerAdapter fragmentStatePagerAdapter = new
-//                    TabPagerAdapter(getCurrentActivity(), getSupportFragmentManager(),
-//                    getTabs(shoppingListSummaries, shoppingListName, baseImgUrl));
             viewPager.setAdapter(productListPagerAdapter);
 
             SmartTabLayout pagerSlidingTabStrip = (SmartTabLayout) base.findViewById(R.id.slidingTabs);
@@ -229,8 +225,6 @@ public class ShoppingListSummaryActivity extends BBActivity {
                     ShoppingListSummary shoppingListSummary =
                             shoppingListSummaries.get(copyViewPagerIntoFinalForOnClick != null ?
                                     copyViewPagerIntoFinalForOnClick.getCurrentItem() : 0);
-//                    if(copyViewPagerIntoFinalForOnClick!=null)
-//                        currectTab = copyViewPagerIntoFinalForOnClick.getCurrentItem();
                     showAlertDialog(null, getString(R.string.addAllProducts) + " from " + shoppingListSummary.getFacetName()
                                     + " " + getString(R.string.toBasket),
                             DialogButton.YES, DialogButton.CANCEL, Constants.ADD_ALL,
@@ -324,7 +318,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
                                     updateUIForCartInfo();
                                     setProductCount(addAllToBasketSmartBasketCallBack.cartInfo,
                                             shoppingListSummary);
-                                    //loadShoppingListSummary();
+                                    markBasketDirty();
                                     break;
                                 case Constants.ERROR:
                                     handler.sendEmptyMessage(addAllToBasketSmartBasketCallBack.getErrorTypeAsInt(),
@@ -355,7 +349,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
                                     updateUIForCartInfo();
                                     setProductCount(addAllToBasketShoppingListCallBack.cartInfo,
                                             shoppingListSummary);
-                                    //loadShoppingListSummary();
+                                    markBasketDirty();
                                     break;
                                 case Constants.ERROR:
                                     handler.sendEmptyMessage(addAllToBasketShoppingListCallBack.getErrorTypeAsInt(),

@@ -139,7 +139,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
             public void success(ApiResponse<CartInfo> addBundleApiResponse, Response response) {
                 if (isSuspended()) return;
                 try {
-                    hideProgressView();
+                    hideProgressDialog();
                 } catch (IllegalArgumentException e) {
                     return;
                 }
@@ -165,7 +165,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
             public void failure(RetrofitError error) {
                 if (isSuspended()) return;
                 try {
-                    hideProgressView();
+                    hideProgressDialog();
                 } catch (IllegalArgumentException e) {
                     return;
                 }
@@ -264,6 +264,10 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
     private void displayProductList(final ArrayList<Product> products, final String baseImgUrl,
                                     HashMap<String, Integer> cartInfo) {
         if (getActivity() == null) return;
+        if(products==null){
+            showAlertDialogFinish(getString(R.string.error), getString(R.string.server_error));
+            return;
+        }
 
         LinearLayout layoutPromoProductList = (LinearLayout)promoProductListView.findViewById(R.id.layoutPromoProductList);
         if (layoutPromoProductList == null) return;
