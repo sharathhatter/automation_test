@@ -266,28 +266,27 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
     public void onLogoutRequested() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
         String socialAccountType = preferences.getString(Constants.SOCIAL_ACCOUNT_TYPE, "");
+        if (!checkInternetConnection()) {
+            handler.sendOfflineError();
+            return;
+        }
         if (!TextUtils.isEmpty(socialAccountType) && SocialAccount.getSocialLoginTypes().contains(socialAccountType)) {
-            if (!checkInternetConnection()) {
-                handler.sendOfflineError();
-                return;
-            }else {
-                switch (socialAccountType) {
-                    case SocialAccount.FB:
-                        mIsInLogoutMode = true;
-                        LoginManager.getInstance().logOut();
+            switch (socialAccountType) {
+                case SocialAccount.FB:
+                    mIsInLogoutMode = true;
+                    LoginManager.getInstance().logOut();
+                    doLogout();
+                    break;
+                case SocialAccount.GP:
+                    mIsInLogoutMode = true;
+                    if(UIUtil.isPhoneWithGoogleAccount(this)){
+                        initializeGooglePlusSignIn();
+                        showProgressDialog(getString(R.string.please_wait));
+                        initiatePlusClientConnect();
+                    }else {
                         doLogout();
-                        break;
-                    case SocialAccount.GP:
-                        mIsInLogoutMode = true;
-                        if(UIUtil.isPhoneWithGoogleAccount(this)){
-                            initializeGooglePlusSignIn();
-                            showProgressDialog(getString(R.string.please_wait));
-                            initiatePlusClientConnect();
-                        }else {
-                            doLogout();
-                        }
-                        break;
-                }
+                    }
+                    break;
             }
         } else {
             doLogout();

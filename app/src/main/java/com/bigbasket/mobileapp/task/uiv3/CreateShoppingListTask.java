@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.task.uiv3;
 
 import android.text.TextUtils;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
@@ -15,7 +16,9 @@ import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.InputDialog;
+import com.bigbasket.mobileapp.util.UIUtil;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -33,7 +36,16 @@ public class CreateShoppingListTask<T> {
                 R.string.createShoppingList, R.string.shoppingListNameDialogTextHint) {
             @Override
             public void onPositiveButtonClicked(String inputText) {
-                startTask(inputText);
+                if(UIUtil.isAlphaNumericString(inputText.trim())){
+                    startTask(inputText);
+                }else {
+                    ((ActivityAware) ctx).getCurrentActivity().
+                            showAlertDialog(
+                                    ((ActivityAware) ctx).getCurrentActivity().
+                                            getResources().getString(R.string.error),((ActivityAware) ctx).getCurrentActivity().
+                                    getResources().getString(R.string.shoppingListNameAlphaNumeric),
+                                    DialogButton.OK, DialogButton.CANCEL, Constants.NOT_ALPHAMUMERIC_TXT_SHOOPING_LIST);
+                }
             }
         }.show();
     }

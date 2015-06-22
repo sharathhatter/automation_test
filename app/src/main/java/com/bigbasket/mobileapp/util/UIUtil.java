@@ -560,6 +560,10 @@ public class UIUtil {
         return matchString.matches("[a-zA-Z]+");
     }
 
+    public static boolean isAlphaNumericString(String matchString){
+        return matchString.matches("[a-zA-Z0-9]+");
+    }
+
     public static boolean isValidDOB(String dob){
         if(!TextUtils.isEmpty(dob)) {
             DateFormat df = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_PICKER, Locale.getDefault());

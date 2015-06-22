@@ -305,7 +305,7 @@ public class DoWalletActivity extends BackButtonActivity {
                     final String dateTo = m3 + "-" + (numMonth3) + "-" + year;
                     Log.d("Date to::::::::::::", dateTo);
                     Log.d("Date from::::::::::", dateFrom);
-                    monthClickText = month1;
+                    monthClickText = month3;
                     logWalletActivityClickEvent(numMonth3, year);
                     getWalletActivityForMonth(dateFrom, dateTo);
 

@@ -21,6 +21,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.BaseApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.CartInfo;
 import com.bigbasket.mobileapp.apiservice.models.response.PromoSetProductsApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PromoSummaryApiResponseContent;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
@@ -37,7 +38,10 @@ import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,7 +53,7 @@ import retrofit.client.Response;
 
 public class PromoSetProductsFragment extends ProductListAwareFragment implements CartInfoAware, BasketOperationAware {
 
-    private View promoSummaryView = null;
+    private View promoProductListView = null;
     private int promoId;
     private String promoType;
 
@@ -63,17 +67,32 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
         Bundle bundle = getArguments();
 
         promoId = bundle.getInt(Constants.PROMO_ID);
-        int setId = bundle.getInt(Constants.SET_ID);
         promoType = bundle.getString(Constants.PROMO_TYPE);
-        String baseImgUrl = bundle.getString(Constants.BASE_IMG_URL);
         ArrayList<Product> products = bundle.getParcelableArrayList(Constants.PRODUCT_LIST);
         double saving = bundle.getDouble(Constants.SAVING, 0);
         String promoInfoMsg = bundle.getString(Constants.INFO_MESSAGE);
         ArrayList<String> criteriaMsgs = bundle.getStringArrayList(Constants.CRITERIA_MSGS);
         int numPromoCompletedInBasket = bundle.getInt(Constants.NUM_IN_BASKET, 0);
 
+        getPromoSummaryView();
+        if(promoProductListView ==  null)return;
         displayPromoSummary(promoInfoMsg, criteriaMsgs, saving, numPromoCompletedInBasket);
-        renderPromoSet(setId, products, baseImgUrl);
+        renderProductList(products);
+    }
+
+    private void renderProductList(ArrayList<Product> products){
+        Bundle bundle = getArguments();
+        String baseImgUrl = bundle.getString(Constants.BASE_IMG_URL);
+        int setId = bundle.getInt(Constants.SET_ID);
+        String cartString = bundle.getString(Constants.CART_INFO);
+        HashMap<String, Integer> cartInfo = null;
+        if (!TextUtils.isEmpty(cartString)) {
+            Gson gson = new Gson();
+            Type type = new TypeToken<HashMap<String, Integer>>() {
+            }.getType();
+            cartInfo = gson.fromJson(cartString, type);
+        }
+        renderPromoSet(setId, products, baseImgUrl, cartInfo);
     }
 
     @Override
@@ -82,10 +101,11 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
     }
 
     private void renderPromoSet(final int setId,
-                                ArrayList<Product> products, String baseImgUrl) {
+                                ArrayList<Product> products, String baseImgUrl,
+                                final HashMap<String, Integer> cartInfo) {
 
         if (products != null) {
-            displayProductList(products, baseImgUrl);
+            displayProductList(products, baseImgUrl, cartInfo);
         } else {
             BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
             showProgressDialog(getString(R.string.please_wait));
@@ -99,7 +119,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
                         showErrorMsg(promoSetProductsApiResponseContent.message);
                     } else if (status == 0) {
                         displayProductList(promoSetProductsApiResponseContent.apiResponseContent.promoSetProducts,
-                                promoSetProductsApiResponseContent.apiResponseContent.baseImgUrl);
+                                promoSetProductsApiResponseContent.apiResponseContent.baseImgUrl, cartInfo);
                     }
                 }
 
@@ -109,40 +129,20 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
                 }
             });
         }
-
-        if (promoType.equalsIgnoreCase(Promo.PromoType.FIXED_COMBO) ||
-                promoType.equalsIgnoreCase(Promo.PromoType.FIXED_FREE_COMBO)) {
-            // TODO : Add Bundle button implementation
-            //View headerTitleLayout = getHeader().findViewById(R.id.header_title_layout);
-//            RelativeLayout.LayoutParams btnParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-//                    ViewGroup.LayoutParams.WRAP_CONTENT);
-//            btnParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-//            btnParams.setMargins(5, 6, 10, 0);
-//
-//            int fiveDp = 6;
-//            Button btnAddBundle = getLinearLayoutYellowButton("Add Bundle", fiveDp, 0, 0, fiveDp, fiveDp, fiveDp);
-//            btnAddBundle.setBackgroundResource(R.drawable.yellow_button_border);
-//            btnAddBundle.setTypeface(faceRobotoSlabNrml);
-//            btnAddBundle.setTextColor(getResources().getColor(R.color.light_grey_text));
-//            btnAddBundle.setTextSize(scaleToScreenIndependentPixel(9));
-//            RelativeLayout header = getHeaderLayout();
-//            header.addView(btnAddBundle, btnParams);
-//            btnAddBundle.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    addBundle();
-//                }
-//            });
-        }
     }
 
-    private void addBundle() {
+    private void addBundle(final ArrayList<Product> products, final String baseImgUrl) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.addPromoBundle(String.valueOf(promoId), new Callback<BaseApiResponse>() {
+        bigBasketApiService.addPromoBundle(String.valueOf(promoId), new Callback<ApiResponse<CartInfo>>() {
             @Override
-            public void success(BaseApiResponse addBundleApiResponse, Response response) {
-                hideProgressDialog();
+            public void success(ApiResponse<CartInfo> addBundleApiResponse, Response response) {
+                if (isSuspended()) return;
+                try {
+                    hideProgressView();
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
                 int status = addBundleApiResponse.status;
                 if (status == ApiErrorCodes.PROMO_NOT_EXIST || status == ApiErrorCodes.PROMO_NOT_ACTIVE
                         || status == ApiErrorCodes.INVALID_FIELD || status == ApiErrorCodes.INVALID_PROMO) {
@@ -151,8 +151,11 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
                     // Operation Successful, now do a get-promo-summary API call
                     setCartInfo(addBundleApiResponse.cartSummary);
                     updateUIForCartInfo();
-                    markBasketDirty();
                     getPromoSummary();
+                    if(addBundleApiResponse.apiResponseContent.cartInfo !=null) {
+                        notifyPromoProducts(products, baseImgUrl,
+                                addBundleApiResponse.apiResponseContent.cartInfo);
+                    }
                 } else {
                     showErrorMsg("Server Error");
                 }
@@ -160,7 +163,12 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
 
             @Override
             public void failure(RetrofitError error) {
-                hideProgressDialog();
+                if (isSuspended()) return;
+                try {
+                    hideProgressView();
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
                 showErrorMsg("Server Error");
             }
         });
@@ -168,11 +176,9 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
 
     private void getPromoSummary() {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
-        showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.getPromoSummary(String.valueOf(promoId), new Callback<ApiResponse<PromoSummaryApiResponseContent>>() {
             @Override
             public void success(ApiResponse<PromoSummaryApiResponseContent> promoSummaryApiResponseContent, Response response) {
-                hideProgressDialog();
                 int status = promoSummaryApiResponseContent.status;
                 if (status == ApiErrorCodes.PROMO_NOT_EXIST || status == ApiErrorCodes.PROMO_NOT_ACTIVE
                         || status == ApiErrorCodes.INVALID_FIELD) {
@@ -195,8 +201,13 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
 
             @Override
             public void failure(RetrofitError error) {
-                hideProgressDialog();
-                showErrorMsg("Server Error");
+                if (isSuspended()) return;
+                try {
+                    showErrorMsg("Server Error");
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
+
             }
         });
     }
@@ -204,12 +215,11 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
     private void displayPromoSummary(String promoInfoMsg, ArrayList<String> criteriaMsgs,
                                      double saving, int numPromoCompletedInBasket) {
         if (getActivity() == null || getCurrentActivity() == null) return;
-        View promoSummaryView = getPromoSummaryView();
-        TextView txtPromoInfoMsg = (TextView) promoSummaryView.findViewById(R.id.txtPromoInfoMsg);
+        TextView txtPromoInfoMsg = (TextView) promoProductListView.findViewById(R.id.txtPromoInfoMsg);
         txtPromoInfoMsg.setTypeface(faceRobotoRegular);
         txtPromoInfoMsg.setText(promoInfoMsg);
 
-        LinearLayout layoutCriteriaMsg = (LinearLayout) promoSummaryView.findViewById(R.id.layoutCriteriaMsg);
+        LinearLayout layoutCriteriaMsg = (LinearLayout) promoProductListView.findViewById(R.id.layoutCriteriaMsg);
         List<Spannable> criteriaSpannable = UIUtil.createBulletSpannableList(criteriaMsgs);
         if (criteriaSpannable != null && criteriaSpannable.size() > 0) {
             layoutCriteriaMsg.removeAllViews();
@@ -224,13 +234,13 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
             layoutCriteriaMsg.setVisibility(View.GONE);
         }
 
-        TextView txtNumCompletedOffer = (TextView) promoSummaryView.findViewById(R.id.txtNumCompletedOffer);
+        TextView txtNumCompletedOffer = (TextView) promoProductListView.findViewById(R.id.txtNumCompletedOffer);
         txtNumCompletedOffer.setTypeface(faceRobotoRegular);
         txtNumCompletedOffer.setText(PromoDetail.
                 getNumCompletedInBasketSpannable(getResources().getColor(R.color.promo_txt_green_color),
                         numPromoCompletedInBasket));
 
-        TextView txtSaving = (TextView) promoSummaryView.findViewById(R.id.txtSaving);
+        TextView txtSaving = (TextView) promoProductListView.findViewById(R.id.txtSaving);
         txtSaving.setTypeface(faceRobotoRegular);
         String savingFormattedAmount = UIUtil.formatAsMoney(saving);
         txtSaving.setText(PromoDetail.
@@ -238,16 +248,8 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
                         savingFormattedAmount, faceRupee));
     }
 
-    private void displayProductList(ArrayList<Product> products, String baseImgUrl) {
-        if (getActivity() == null) return;
-
-        ViewGroup contentView = getContentView();
-        if (contentView == null) return;
-
-        showProgressDialog(getString(R.string.please_wait));
-        RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, contentView);
-
-        ProductViewDisplayDataHolder productViewDisplayDataHolder = new ProductViewDisplayDataHolder.Builder()
+    private ProductViewDisplayDataHolder getProductDisplayHodler(){
+        return new ProductViewDisplayDataHolder.Builder()
                 .setCommonTypeface(faceRobotoRegular)
                 .setSansSerifMediumTypeface(faceRobotoMedium)
                 .setRupeeTypeface(faceRupee)
@@ -257,43 +259,46 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
                 .setShowBasketBtn(true)
                 .setShowShopListDeleteBtn(false)
                 .build();
+    }
 
-        ProductListRecyclerAdapter productListAdapter = new ProductListRecyclerAdapter(products, baseImgUrl,
-                productViewDisplayDataHolder, this, products.size(), getNavigationCtx());
+    private void displayProductList(final ArrayList<Product> products, final String baseImgUrl,
+                                    HashMap<String, Integer> cartInfo) {
+        if (getActivity() == null) return;
+
+        LinearLayout layoutPromoProductList = (LinearLayout)promoProductListView.findViewById(R.id.layoutPromoProductList);
+        if (layoutPromoProductList == null) return;
+        layoutPromoProductList.removeAllViews();
+
+        showProgressDialog(getString(R.string.please_wait));
+        RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, layoutPromoProductList);
+
+        ProductListRecyclerAdapter productListAdapter;
+        if(cartInfo==null){
+            productListAdapter = new ProductListRecyclerAdapter(products, baseImgUrl,
+                    getProductDisplayHodler(), this, products.size(), getNavigationCtx());
+        }else {
+            productListAdapter = new ProductListRecyclerAdapter(products, baseImgUrl,
+                    getProductDisplayHodler(), this, products.size(), getNavigationCtx(),
+                    cartInfo);
+        }
 
         productRecyclerView.setAdapter(productListAdapter);
 
-        contentView.addView(productRecyclerView);
+        layoutPromoProductList.addView(productRecyclerView);
+
+        LinearLayout layoutAddBundle = (LinearLayout) promoProductListView.findViewById(R.id.layoutAddBundle);
         if (promoType.equalsIgnoreCase(Promo.PromoType.FIXED_FREE_COMBO) ||
                 promoType.equalsIgnoreCase(Promo.PromoType.FIXED_COMBO)) {
-            // TODO : Add Bundle button implementation
-//            RelativeLayout relativeLayout = new RelativeLayout(getActivity());
-//            LinearLayout.LayoutParams relativeLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-//                    ViewGroup.LayoutParams.WRAP_CONTENT);
-//            relativeLayout.setLayoutParams(relativeLayoutParams);
-//            int eightDp = 8;
-//            relativeLayout.setPadding(eightDp, eightDp, eightDp, eightDp);
-//
-//            Button btnAddBundle = new Button(getActivity());
-//            btnAddBundle.setBackgroundResource(R.drawable.button_bg);
-//            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(150,
-//                    ViewGroup.LayoutParams.WRAP_CONTENT);
-//            layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
-//            btnAddBundle.setTypeface(null, Typeface.BOLD);
-//            btnAddBundle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
-//            btnAddBundle.setPadding(eightDp, eightDp, eightDp, eightDp);
-//            btnAddBundle.setText(getResources().getString(R.string.add_bundle));
-//            btnAddBundle.setLayoutParams(layoutParams);
-//            btnAddBundle.setGravity(Gravity.CENTER_HORIZONTAL);
-//            btnAddBundle.setTextColor(getResources().getColor(R.color.dark_grey));
-//            btnAddBundle.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    addBundle();
-//                }
-//            });
-//            relativeLayout.addView(btnAddBundle);
-//            contentView.addView(relativeLayout);
+
+            layoutAddBundle.setVisibility(View.VISIBLE);
+            layoutAddBundle.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    addBundle(products, baseImgUrl);
+                }
+            });
+        }else {
+            layoutAddBundle.setVisibility(View.GONE);
         }
         try {
             hideProgressDialog();
@@ -301,20 +306,20 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
         }
     }
 
-    private View getPromoSummaryView() {
-        if (promoSummaryView == null) {
+    private void notifyPromoProducts(ArrayList<Product> products, String baseImgUrl,
+                                     HashMap<String, Integer> cartInfo){
+        displayProductList(products, baseImgUrl, cartInfo);
+    }
 
+    private View getPromoSummaryView() {
+        if (promoProductListView == null) {
             ViewGroup contentView = getContentView();
             if (contentView == null) return null;
-
             LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            promoSummaryView = inflater.inflate(R.layout.promo_info_box, contentView, false);
-            View layoutPromoInfoBox = promoSummaryView.findViewById(R.id.layoutPromoInfoBox);
-            int fiveDp = 5;
-            layoutPromoInfoBox.setPadding(0, fiveDp, 0, fiveDp);
-            contentView.addView(promoSummaryView);
+            promoProductListView = inflater.inflate(R.layout.promo_info_box, contentView, false);
+            contentView.addView(promoProductListView);
         }
-        return promoSummaryView;
+        return promoProductListView;
     }
 
     @Override

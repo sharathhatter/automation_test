@@ -1,12 +1,14 @@
 package com.bigbasket.mobileapp.apiservice;
 
 import com.bigbasket.mobileapp.apiservice.callbacks.CallbackGetAreaInfo;
+import com.bigbasket.mobileapp.apiservice.models.response.AddAllShoppingListItemResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.AppDataResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.AutoSearchApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.BaseApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.BrowsePromoCategoryApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.CartGetApiResponseContent;
+import com.bigbasket.mobileapp.apiservice.models.response.CartInfo;
 import com.bigbasket.mobileapp.apiservice.models.response.CartOperationApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.CartSummaryApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.CreatePotentialOrderResponseContent;
@@ -110,7 +112,8 @@ public interface BigBasketApiService {
 
     @FormUrlEncoded
     @POST("/add-promo-bundle/")
-    void addPromoBundle(@Field(Constants.PROMO_ID) String promoId, Callback<BaseApiResponse> addPromoBundleApiResponseCallback);
+    void addPromoBundle(@Field(Constants.PROMO_ID) String promoId, Callback<ApiResponse<CartInfo>>
+            addPromoBundleApiResponseCallback);
 
     @GET("/get-pin/")
     void getCurrentMemberPin(Callback<ApiResponse<UpdatePin>> updatePinCallback);
@@ -154,13 +157,13 @@ public interface BigBasketApiService {
     @POST("/sl-cat-items-to-cart/")
     void addAllToBasketShoppingList(@Field(Constants.SHOPPING_LIST_SLUG) String shoppingListSlug,
                                     @Field(Constants.CATEGORY_SLUG) String topCategorySlug,
-                                    Callback<OldApiResponseWithCart> addAllToBasketShoppingListCallBack);
+                                    Callback<AddAllShoppingListItemResponse> addAllToBasketShoppingListCallBack);
 
     @FormUrlEncoded
     @POST("/sb-cat-items-to-cart/")
     void addAllToBasketSmartBasket(@Field(Constants.SHOPPING_LIST_SLUG) String shoppingListSlug,
                                    @Field(Constants.CATEGORY_SLUG) String topCategorySlug,
-                                   Callback<OldApiResponseWithCart> addAllToBasketSmartBasketCallBack);
+                                   Callback<AddAllShoppingListItemResponse> addAllToBasketSmartBasketCallBack);
 
 
     @FormUrlEncoded

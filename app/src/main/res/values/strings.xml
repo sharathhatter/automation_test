@@ -63,6 +63,7 @@
     <string name="chooseSlot">Delivery Options</string>
     <string name="createShoppingList">Create shopping List</string>
     <string name="shoppingListNameDialogTextHint">Enter shopping list name</string>
+    <string name="shoppingListNameAlphaNumeric">please enter only alphanumeric characters in the shopping list name field</string>
     <string name="chooseCity">Pick Your City</string>
     <string name="pickAddress">Pick Address</string>
     <string name="changeCityMenuTxt">Change City</string>
@@ -327,9 +328,10 @@
     <string name="noAddressMsg2">Add one now to shop easy.</string>
     <string name="nowShoppingListMsg1">You have not created any shopping list yet.</string>
     <string name="nowShoppingListMsg2">Start creating now for easy shopping.</string>
-    <string name="noSmartBasketProducts">It will be updated 3 days after your first order is delivered! Enjoy awesome grocery shopping experience with BigBasket Mobile app!</string>
+
+    <string name="noSmartBasketProducts">You haven\'t placed any orders yet, hence your Smart Basket is currently empty</string>
+    <string name="skip">SKIP</string>
     <string name="skipAllCaps">SKIP</string>
-    <string name="skip">Skip</string>
     <string name="next">Next</string>
     <string name="startShopping">Start Shopping</string>
     <string name="signinAndStart">Login and Get Started</string>
@@ -391,4 +393,7 @@
     <string name="checkingAvailability">Sit back while we check whether the products you selected are available</string>
     <string name="voucherApplicableSingular">Voucher Applicable</string>
     <string name="voucherApplicablePlural">Vouchers Applicable</string>
+
+    <string name="add_bundle">Add Bundle</string>
+    <string name="error">Error!</string>
 </resources>
