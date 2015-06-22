@@ -353,7 +353,12 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
         bigBasketApiService.setUserDetailsData(userDetails, new Callback<ApiResponse<UpdateProfileApiResponse>>() {
             @Override
             public void success(ApiResponse<UpdateProfileApiResponse> memberProfileDataCallback, Response response) {
-                hideProgressDialog();
+                if (isSuspended()) return;
+                try {
+                    hideProgressView();
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
                 if (memberProfileDataCallback.status == 0) {
                     if (otpValidationDialogFragment != null && otpValidationDialogFragment.isVisible()) {
                         if(getCurrentActivity() != null)
@@ -385,7 +390,12 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
 
             @Override
             public void failure(RetrofitError error) {
-                hideProgressDialog();
+                if (isSuspended()) return;
+                try {
+                    hideProgressView();
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
                 handler.handleRetrofitError(error);
                 logUpdateProfileEvent(error.toString(), TrackingAware.UPDATE_PROFILE_SUBMIT_BTN_CLICKED);
             }

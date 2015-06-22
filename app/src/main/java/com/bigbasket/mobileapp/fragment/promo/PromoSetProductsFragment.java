@@ -137,7 +137,12 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
         bigBasketApiService.addPromoBundle(String.valueOf(promoId), new Callback<ApiResponse<CartInfo>>() {
             @Override
             public void success(ApiResponse<CartInfo> addBundleApiResponse, Response response) {
-                hideProgressDialog();
+                if (isSuspended()) return;
+                try {
+                    hideProgressView();
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
                 int status = addBundleApiResponse.status;
                 if (status == ApiErrorCodes.PROMO_NOT_EXIST || status == ApiErrorCodes.PROMO_NOT_ACTIVE
                         || status == ApiErrorCodes.INVALID_FIELD || status == ApiErrorCodes.INVALID_PROMO) {
@@ -158,7 +163,12 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
 
             @Override
             public void failure(RetrofitError error) {
-                hideProgressDialog();
+                if (isSuspended()) return;
+                try {
+                    hideProgressView();
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
                 showErrorMsg("Server Error");
             }
         });
@@ -166,11 +176,9 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
 
     private void getPromoSummary() {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
-        //showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.getPromoSummary(String.valueOf(promoId), new Callback<ApiResponse<PromoSummaryApiResponseContent>>() {
             @Override
             public void success(ApiResponse<PromoSummaryApiResponseContent> promoSummaryApiResponseContent, Response response) {
-                //hideProgressDialog();
                 int status = promoSummaryApiResponseContent.status;
                 if (status == ApiErrorCodes.PROMO_NOT_EXIST || status == ApiErrorCodes.PROMO_NOT_ACTIVE
                         || status == ApiErrorCodes.INVALID_FIELD) {
@@ -193,8 +201,13 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
 
             @Override
             public void failure(RetrofitError error) {
-                //hideProgressDialog();
-                showErrorMsg("Server Error");
+                if (isSuspended()) return;
+                try {
+                    showErrorMsg("Server Error");
+                } catch (IllegalArgumentException e) {
+                    return;
+                }
+
             }
         });
     }
