@@ -208,11 +208,11 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                         productTabData.getHeaderSection().getSectionItems() != null &&
                         productTabData.getHeaderSection().getSectionItems().size() > 0) {
                     setTitle(null);
-                } else if (!TextUtils.isEmpty(mTitlePassedViaIntent)) {
-                    setTitle(mTitlePassedViaIntent);
                 } else if (!TextUtils.isEmpty(productTabData.getScreenName())) {
                     mTitlePassedViaIntent = productTabData.getScreenName();
                     setTitle(productTabData.getScreenName());
+                } else if (!TextUtils.isEmpty(mTitlePassedViaIntent)) {
+                    setTitle(mTitlePassedViaIntent);
                 }
             } else {
                 // When only one product tab

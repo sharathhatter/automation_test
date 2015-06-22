@@ -25,7 +25,7 @@
         following product will be automatically added to your order during checkout.</string>
     <string name="free_promo_redeemed_txt">Following product will be added to your order during checkout.</string>
     <string name="product_image">Product Image</string>
-    <string name="discount">Discount</string>
+    <string name="discounts">Discounts</string>
     <string name="dismiss">Dismiss</string>
     <string name="promo">Promo</string>
     <string name="remove">Remove</string>
@@ -330,7 +330,7 @@
     <string name="nowShoppingListMsg2">Start creating now for easy shopping.</string>
 
     <string name="noSmartBasketProducts">You haven\'t placed any orders yet, hence your Smart Basket is currently empty</string>
-    <string name="skip">SKIP</string>
+    <string name="skip">Skip</string>
     <string name="skipAllCaps">SKIP</string>
     <string name="next">Next</string>
     <string name="startShopping">Start Shopping</string>
