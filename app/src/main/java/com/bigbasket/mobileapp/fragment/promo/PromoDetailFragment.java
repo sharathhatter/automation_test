@@ -17,7 +17,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -42,8 +41,10 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv2.ProductView;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import retrofit.Callback;
@@ -55,6 +56,7 @@ public class PromoDetailFragment extends BaseFragment {
 
     private PromoDetail mPromoDetail;
     private PromoCategory mPromoCategory;
+    private HashMap<String, Integer> cartInfo;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -103,6 +105,7 @@ public class PromoDetailFragment extends BaseFragment {
                         showAlertDialogFinish(null, promoDetailApiResponseContentApiResponse.message);
                     } else if (status == 0) {
                         mPromoDetail = promoDetailApiResponseContentApiResponse.apiResponseContent.promoDetail;
+                        cartInfo = promoDetailApiResponseContentApiResponse.apiResponseContent.cartInfo;
                         if (mPromoDetail != null) {
                             renderPromoDetail();
                             setCartSummary(promoDetailApiResponseContentApiResponse.cartSummary);
@@ -112,7 +115,7 @@ public class PromoDetailFragment extends BaseFragment {
                             handler.sendEmptyMessage(promoDetailApiResponseContentApiResponse.status,
                                     promoDetailApiResponseContentApiResponse.message, true);
                         }
-                    } //TODO Sid check if error handling needed.
+                    }
                 }
 
                 @Override
@@ -209,7 +212,7 @@ public class PromoDetailFragment extends BaseFragment {
         if (promoType.equalsIgnoreCase(Promo.PromoType.FREE)) {
             boolean isRedeemed = true;
             for (PromoSet promoSet : mPromoDetail.getPromoRedemptionInfo().getPromoSets()) {
-                View promoSetLayout = getPromoSetView(promoSet, mPromoDetail, layoutMain);
+                View promoSetLayout = getPromoSetView(promoSet, mPromoDetail, cartInfo, layoutMain);
                 layoutMain.addView(promoSetLayout);
                 if (!(promoSet.getPromoCriteriaVal() <= 0 ||
                         promoSet.getPromoCriteriaVal() <= promoSet.getValueInBasket())) {
@@ -224,14 +227,14 @@ public class PromoDetailFragment extends BaseFragment {
 
         } else if (promoType.equalsIgnoreCase(Promo.PromoType.FIXED_FREE_COMBO)) {
             View fixedFreeComboView = getPromoSetBar("View All Combo Products",
-                    mPromoDetail, layoutMain);
+                    mPromoDetail, cartInfo, layoutMain);
             layoutMain.addView(fixedFreeComboView);
             View freePromoView = getFreePromoMsgView(false);
             layoutMain.addView(freePromoView);
             addFreeProductToLayout(mPromoDetail, layoutMain, layoutInflater);
         } else if (promoType.equalsIgnoreCase(Promo.PromoType.FIXED_COMBO)) {
             View fixedComboView = getPromoSetBar("View All Combo Products",
-                    mPromoDetail, layoutMain);
+                    mPromoDetail, cartInfo, layoutMain);
             layoutMain.addView(fixedComboView);
         } else if (promoType.equalsIgnoreCase(Promo.PromoType.DISCOUNT_PRICE)
                 || promoType.equalsIgnoreCase(Promo.PromoType.MIN_ORDER_DISCOUNTED_PRODUCT)
@@ -240,7 +243,7 @@ public class PromoDetailFragment extends BaseFragment {
             if (mPromoDetail.getPromoRedemptionInfo() != null &&
                     mPromoDetail.getPromoRedemptionInfo().getPromoSets() != null) {
                 for (PromoSet promoSet : mPromoDetail.getPromoRedemptionInfo().getPromoSets()) {
-                    View promoSetLayout = getPromoSetView(promoSet, mPromoDetail, layoutMain);
+                    View promoSetLayout = getPromoSetView(promoSet, mPromoDetail, cartInfo, layoutMain);
                     layoutMain.addView(promoSetLayout);
                 }
             }
@@ -250,7 +253,7 @@ public class PromoDetailFragment extends BaseFragment {
             if (mPromoDetail.getPromoRedemptionInfo() != null &&
                     mPromoDetail.getPromoRedemptionInfo().getPromoSets() != null) {
                 for (PromoSet promoSet : mPromoDetail.getPromoRedemptionInfo().getPromoSets()) {
-                    View promoSetLayout = getPromoSetView(promoSet, mPromoDetail, layoutMain);
+                    View promoSetLayout = getPromoSetView(promoSet, mPromoDetail, cartInfo, layoutMain);
                     layoutMain.addView(promoSetLayout);
                     if (!(promoSet.getPromoCriteriaVal() <= 0 ||
                             promoSet.getPromoCriteriaVal() <= promoSet.getValueInBasket())) {
@@ -279,7 +282,7 @@ public class PromoDetailFragment extends BaseFragment {
                 .setRupeeTypeface(faceRupee)
                 .setHandler(handler)
                 .setLoggedInMember(!AuthParameters.getInstance(getActivity()).isAuthTokenEmpty())
-                .setShowShoppingListBtn(true)
+                .setShowShoppingListBtn(false)
                 .setShowBasketBtn(false)
                 .setShowShopListDeleteBtn(false)
                 .build();
@@ -299,25 +302,20 @@ public class PromoDetailFragment extends BaseFragment {
         trackEvent(TrackingAware.PROMO_SET_PRODUCTS_SHOWN, null);
     }
 
-    private View getPromoSetBar(String text, PromoDetail promoDetail, ViewGroup parent) {
+    private View getPromoSetBar(String text, PromoDetail promoDetail, HashMap<String, Integer> cartInfo,
+                                ViewGroup parent) {
         LayoutInflater layoutInflater = (LayoutInflater) getActivity().getSystemService(
                 Context.LAYOUT_INFLATER_SERVICE);
         View base = layoutInflater.inflate(R.layout.promo_set_row, parent, false);
         TextView txtSetName = (TextView) base.findViewById(R.id.txtSetName);
         txtSetName.setTypeface(faceRobotoRegular);
         txtSetName.setText(text);
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
-        int margin = 20;
-        layoutParams.setMargins(margin, margin, margin, margin);
-        txtSetName.setLayoutParams(layoutParams);
         TextView txtValNeeded = (TextView) base.findViewById(R.id.txtValueNeed);
         txtValNeeded.setVisibility(View.GONE);
         TextView txtValInBasket = (TextView) base.findViewById(R.id.txtValueInBasket);
         txtValInBasket.setTypeface(faceRobotoRegular);
         txtValInBasket.setVisibility(View.GONE);
-        base.setOnClickListener(new PromoSetActivityHandler(promoDetail));
+        base.setOnClickListener(new PromoSetActivityHandler(promoDetail, cartInfo));
         return base;
     }
 
@@ -336,11 +334,12 @@ public class PromoDetailFragment extends BaseFragment {
         return txtDescription;
     }
 
-    private View getPromoSetView(PromoSet promoSet, PromoDetail promoDetail, ViewGroup parent) {
+    private View getPromoSetView(PromoSet promoSet, PromoDetail promoDetail,
+                                 HashMap<String, Integer> cartInfo, ViewGroup parent) {
         LayoutInflater layoutInflater = (LayoutInflater) getActivity().getSystemService(
                 Context.LAYOUT_INFLATER_SERVICE);
         View base = layoutInflater.inflate(R.layout.promo_set_row, parent, false);
-        base.setOnClickListener(new PromoSetActivityHandler(promoDetail, promoSet));
+        base.setOnClickListener(new PromoSetActivityHandler(promoDetail, cartInfo, promoSet));
 
         TextView txtSetName = (TextView) base.findViewById(R.id.txtSetName);
         txtSetName.setTypeface(faceRobotoRegular);
@@ -467,14 +466,19 @@ public class PromoDetailFragment extends BaseFragment {
 
         private PromoDetail promoDetail;
         private PromoSet promoSet;
+        private HashMap<String, Integer> cartInfo;
 
-        public PromoSetActivityHandler(PromoDetail promoDetail) {
+        public PromoSetActivityHandler(PromoDetail promoDetail,
+                                       HashMap<String, Integer> cartInfo) {
             this.promoDetail = promoDetail;
+            this.cartInfo = cartInfo;
         }
 
-        public PromoSetActivityHandler(PromoDetail promoDetail, PromoSet promoSet) {
+        public PromoSetActivityHandler(PromoDetail promoDetail, HashMap<String, Integer> cartInfo,
+                                       PromoSet promoSet) {
             this.promoDetail = promoDetail;
             this.promoSet = promoSet;
+            this.cartInfo = cartInfo;
         }
 
         public void onClick(View v) {
@@ -483,6 +487,7 @@ public class PromoDetailFragment extends BaseFragment {
             bundle.putInt(Constants.PROMO_ID, promoDetail.getId());
             bundle.putString(Constants.PROMO_TYPE, promoDetail.getPromoType());
             bundle.putString(Constants.BASE_IMG_URL, promoDetail.getBaseImgUrl());
+            bundle.putString(Constants.CART_INFO, new Gson().toJson(cartInfo));
             bundle.putString(Constants.PROMO_NAME, promoDetail.getPromoName());
             ArrayList<Product> products = null;
             if (!promoDetail.getPromoType().equalsIgnoreCase(Promo.PromoType.FREE)) {

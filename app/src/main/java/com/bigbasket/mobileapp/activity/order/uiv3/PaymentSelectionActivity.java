@@ -624,7 +624,6 @@ public class PaymentSelectionActivity extends BackButtonActivity {
         PayuResponse.clearTxnDetail(this);
         VoucherApplied.clearFromPreference(this);
         PowerPayResponse.clearTxnDetail(this);
-        removePharmaPrescriptionId();
         ((CartInfoAware) getCurrentActivity()).markBasketDirty();
         showOrderThankyou(orders);
     }

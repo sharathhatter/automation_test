@@ -113,9 +113,9 @@ public class OTPValidationDialogFragment extends AbstractDialogFragment {
                 @Override
                 public void onClick(View v) {
                     txtCancel.setBackgroundColor(getResources().getColor(R.color.white));
+                    BaseActivity.hideKeyboard((BaseActivity) getActivity(), editTextMobileCode);
                     if (getDialog().isShowing())
                         getDialog().dismiss();
-                    BaseActivity.hidekeyboard(getActivity());
                 }
             });
         }

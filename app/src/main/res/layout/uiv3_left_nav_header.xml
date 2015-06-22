@@ -44,6 +44,7 @@
         android:layout_marginRight="@dimen/margin_small"
         android:gravity="center_vertical"
         android:textColor="@color/white"
+        android:singleLine="true"
         android:textSize="@dimen/heading_2_text_size" />
 
     <TextView

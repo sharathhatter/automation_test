@@ -8,13 +8,11 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -404,8 +402,9 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
             switch (createUpdateAddressApiResponse.status) {
                 case 0:
                     if (otpValidationDialogFragment != null && otpValidationDialogFragment.isVisible()) {
+                        if(getCurrentActivity()!=null)
+                            BaseActivity.hideKeyboard(getCurrentActivity(), getCurrentActivity().getCurrentFocus());
                         otpValidationDialogFragment.dismiss();
-                        BaseActivity.hidekeyboard(getCurrentActivity());
                     }
 
                     if (!mFromAccountPage) {

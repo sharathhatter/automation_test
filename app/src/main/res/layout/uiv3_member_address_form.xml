@@ -162,6 +162,7 @@
                 android:layout_marginLeft="@dimen/margin_normal"
                 android:layout_marginRight="@dimen/margin_normal"
                 android:layout_marginTop="@dimen/margin_small"
+                android:maxLength="6"
                 android:ems="10"
                 android:hint="@string/pincode"
                 android:inputType="numberSigned"

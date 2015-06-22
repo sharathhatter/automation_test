@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/layoutPromoInfoBox"
     android:layout_width="match_parent"
-
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    >
 
     <LinearLayout
         android:id="@+id/layoutPromoInfoMsg"
         android:layout_width="match_parent"
+        android:layout_marginLeft="@dimen/margin_small"
+        android:layout_marginRight="@dimen/margin_small"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:orientation="vertical"
-
-        >
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/txtPromoInfoMsg"
@@ -43,6 +42,10 @@
         android:id="@+id/layoutPromoSavingInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_small"
+        android:layout_marginRight="@dimen/margin_small"
+        android:layout_below="@id/layoutPromoInfoMsg"
+        android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal"
         android:orientation="horizontal">
 
@@ -76,11 +79,45 @@
             android:textSize="@dimen/secondary_text_size" />
     </LinearLayout>
 
-    <View
-        android:id="@+id/line"
+    <LinearLayout
+        android:id="@+id/layoutAddBundle"
         android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:layout_marginTop="@dimen/margin_small"
-        android:background="@color/uiv3_divider_color" />
+        android:layout_height="wrap_content"
+        android:layout_margin="0dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:background="@color/uiv3_list_bkg_color"
+        android:clickable="true"
+        android:gravity="center"
+        android:orientation="horizontal">
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/txtAddAll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="0dp"
+            android:drawableLeft="@drawable/add_footer"
+            android:drawablePadding="@dimen/padding_small"
+            android:gravity="center"
+            android:paddingBottom="@dimen/padding_small"
+            android:paddingLeft="@dimen/padding_normal"
+            android:paddingRight="@dimen/padding_normal"
+            android:paddingTop="@dimen/padding_small"
+            android:text="@string/add_bundle"
+            android:textColor="@color/uiv3_product_list_footer_txt_color"
+            android:textSize="@dimen/secondary_text_size" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_below="@id/layoutPromoSavingInfo"
+        android:id="@+id/layoutPromoProductList"
+        android:layout_above="@id/layoutAddBundle"
+        android:orientation="vertical"
+        android:layout_height="wrap_content">
+
+    </LinearLayout>
+
+
+
+</RelativeLayout>

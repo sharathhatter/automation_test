@@ -55,6 +55,7 @@ import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.model.section.SectionTextItem;
 import com.bigbasket.mobileapp.task.GetCartCountTask;
+import com.bigbasket.mobileapp.task.uiv3.CreateShoppingListTask;
 import com.bigbasket.mobileapp.task.uiv3.ProductListTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
@@ -696,6 +697,12 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
             // Update in-memory fragments
             setProductListForFragmentAtPosition(mViewPager.getCurrentItem() - 1);
             setProductListForFragmentAtPosition(mViewPager.getCurrentItem() + 1);
+        }
+    }
+
+    protected void onPositiveButtonClicked(DialogInterface dialogInterface, String sourceName, Object valuePassed) {
+        if (sourceName!=null && Constants.NOT_ALPHAMUMERIC_TXT_SHOPPING_LIST.equals(sourceName)) {
+            new CreateShoppingListTask<>(this).showDialog();
         }
     }
 

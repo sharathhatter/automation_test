@@ -32,6 +32,7 @@
 
                 <TextView
                     android:id="@+id/txtMemberName"
+                    android:singleLine="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/uiv3_primary_text_color"
@@ -40,6 +41,7 @@
                 <TextView
                     android:id="@+id/txtEmailId"
                     android:layout_width="wrap_content"
+                    android:singleLine="true"
                     android:textColor="@color/text_color_myaccount"
                     android:textSize="@dimen/primary_text_size"
                     android:textStyle="italic"
