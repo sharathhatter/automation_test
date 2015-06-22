@@ -453,6 +453,9 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             createFragmentFromName(data.getStringExtra(Constants.FRAGMENT_CLASS_NAME), data.getExtras(),
                     data.getStringExtra(Constants.FRAGMENT_TAG));
             return;
+        }else if(resultCode == NavigationCodes.ACCOUNT_UPDATED){
+            setTxtNavSalutation();
+            return;
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -704,6 +707,15 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             }
         } else {
             super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
+        }
+    }
+
+    public void setTxtNavSalutation(){
+        AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());
+        TextView txtNavSalutation = (TextView) findViewById(R.id.txtNavSalutation);
+        if(txtNavSalutation!=null) {
+            txtNavSalutation.setText(!TextUtils.isEmpty(authParameters.getMemberFullName()) ?
+                    authParameters.getMemberFullName() : authParameters.getMemberEmail());
         }
     }
 

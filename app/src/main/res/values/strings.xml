@@ -63,6 +63,7 @@
     <string name="chooseSlot">Delivery Options</string>
     <string name="createShoppingList">Create shopping List</string>
     <string name="shoppingListNameDialogTextHint">Enter shopping list name</string>
+    <string name="shoppingListNameAlphaNumeric">please enter only alphanumeric characters in the shopping list name field</string>
     <string name="chooseCity">Pick Your City</string>
     <string name="pickAddress">Pick Address</string>
     <string name="changeCityMenuTxt">Change City</string>
@@ -394,4 +395,5 @@
     <string name="voucherApplicablePlural">Vouchers Applicable</string>
 
     <string name="add_bundle">Add Bundle</string>
+    <string name="error">Error!</string>
 </resources>
