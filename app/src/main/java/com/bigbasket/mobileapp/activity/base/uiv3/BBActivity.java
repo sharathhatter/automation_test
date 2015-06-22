@@ -80,6 +80,7 @@ import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.model.section.SectionItem;
 import com.bigbasket.mobileapp.model.section.SectionTextItem;
 import com.bigbasket.mobileapp.task.GetCartCountTask;
+import com.bigbasket.mobileapp.task.uiv3.CreateShoppingListTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
@@ -701,6 +702,8 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 case Constants.LOGOUT:
                     onLogoutRequested();
                     break;
+                case Constants.NOT_ALPHAMUMERIC_TXT_SHOOPING_LIST:
+                    new CreateShoppingListTask<>(this).showDialog();
                 default:
                     super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
                     break;

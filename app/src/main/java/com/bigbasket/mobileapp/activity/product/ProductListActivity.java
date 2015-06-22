@@ -686,12 +686,4 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         }
     }
 
-    protected void onPositiveButtonClicked(DialogInterface dialogInterface, String sourceName, Object valuePassed) {
-        if (sourceName!=null && Constants.NOT_ALPHAMUMERIC_TXT_SHOOPING_LIST.equals(sourceName)) {
-            new CreateShoppingListTask<>(this).showDialog();
-        }
-    }
-
-
-
 }
