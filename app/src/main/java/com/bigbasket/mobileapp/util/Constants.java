@@ -594,6 +594,7 @@ public class Constants {
     public static final String FIXED_COMBO_PRODUCTS = "fixed_combo_products";
     public static final String FREE_PRODUCTS = "free_products";
     public static final String MODE_HDFC_PAY = "restrict_payment_to_wibmo_iap";
+    public static final String HDFC_POWER_PAY_EXPIRY = "hdfc_power_pay_expiry";
     public static final String TAB_TYPE = "tab_type";
     public static final String HEADER_SECTION = "header_section";
     public static final String HEADER_SEL = "header_sel";
@@ -615,13 +616,10 @@ public class Constants {
     public static final String SHIPMENT_ID = "shipment_id";
     public static final String SHIPMENT_NAME = "shipment_name";
     public static final String FULFILLMENT_NAME = "fulfillment_name";
-    public static final String ACTION_INFO = "action_info";
-    public static final String ACTION = "action";
     public static final String LINKED_SHIPMENTS = "linked_shipments";
     public static final String SHIPMENTS = "shipments";
     public static final String SKU_LIST = "sku_list";
     public static final String DISPLAY = "display";
-    public static final String SLOT_TIME = "slot_time";
     public static final String HELP_PAGE = "help_page";
     public static final String ACTION_MSG = "action_msg";
     public static final String ACTION_STATE = "action_state";

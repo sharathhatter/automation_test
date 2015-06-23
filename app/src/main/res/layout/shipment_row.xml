@@ -40,10 +40,19 @@
         android:textSize="@dimen/primary_text_size" />
 
     <TextView
-        android:id="@+id/lblDeliveryTime"
+        android:id="@+id/txtShipmentAnnotation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/txtShipmentName"
+        android:layout_marginTop="@dimen/margin_normal"
+        android:text="@string/delivery_time"
+        android:textColor="@color/uiv3_primary_text_color" />
+
+    <TextView
+        android:id="@+id/lblDeliveryTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtShipmentAnnotation"
         android:layout_marginTop="@dimen/margin_normal"
         android:text="@string/delivery_time"
         android:textColor="@color/uiv3_primary_text_color" />

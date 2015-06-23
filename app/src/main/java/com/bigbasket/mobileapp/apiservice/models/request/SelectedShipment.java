@@ -12,14 +12,11 @@ public class SelectedShipment {
     private String slotId;
     @SerializedName(Constants.SLOT_DATE)
     private String slotDate;
-    @SerializedName(Constants.SLOT_TIME)
-    private String slotTime;
 
-    public SelectedShipment(String shipmentId, String fulfillmentId, String slotId, String slotDate, String slotTime) {
+    public SelectedShipment(String shipmentId, String fulfillmentId, String slotId, String slotDate) {
         this.shipmentId = shipmentId;
         this.fulfillmentId = fulfillmentId;
         this.slotId = slotId;
         this.slotDate = slotDate;
-        this.slotTime = slotTime;
     }
 }
