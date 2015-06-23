@@ -101,7 +101,6 @@ public class ShoppingListSummaryActivity extends BBActivity {
         if (mShoppingListName == null) {
             return;
         }
-        ((ViewGroup) findViewById(R.id.content_frame)).removeAllViews();
         setTitle(mShoppingListName.getName());
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
@@ -199,7 +198,8 @@ public class ShoppingListSummaryActivity extends BBActivity {
                     shoppingListName, baseImgUrl);
             ShoppingListProductFragment shoppingListProductFragment = new ShoppingListProductFragment();
             shoppingListProductFragment.setArguments(bundle);
-            addToMainLayout(shoppingListProductFragment, ShoppingListProductFragment.class.getName());
+            replaceToMainLayout(shoppingListProductFragment, ShoppingListProductFragment.class.getName(), false,
+                    contentFrame);
         } else {
             View base = inflater.inflate(R.layout.uiv3_swipe_tab_view, contentFrame, false);
 
@@ -215,9 +215,11 @@ public class ShoppingListSummaryActivity extends BBActivity {
         }
         final ViewPager copyViewPagerIntoFinalForOnClick = viewPager;
         View layoutAddAll = findViewById(R.id.layoutAddAll);
-        if (areAllProductsOutOfStock(shoppingListSummaries)) {
+        if (areAllProductsOutOfStock(shoppingListSummaries) || (shoppingListName.isSystem() &&
+                !shoppingListName.getSlug().equals(Constants.SMART_BASKET_SLUG))) {
             layoutAddAll.setVisibility(View.GONE);
         } else {
+            layoutAddAll.setVisibility(View.VISIBLE);
             ((TextView) findViewById(R.id.txtAddAll)).setTypeface(faceRobotoRegular);
             layoutAddAll.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -316,9 +318,14 @@ public class ShoppingListSummaryActivity extends BBActivity {
                                 case Constants.OK:
                                     setCartSummary(addAllToBasketSmartBasketCallBack);
                                     updateUIForCartInfo();
-                                    setProductCount(addAllToBasketSmartBasketCallBack.cartInfo,
-                                            shoppingListSummary);
                                     markBasketDirty();
+                                    if(viewPager!=null){
+                                        setProductCount(addAllToBasketSmartBasketCallBack.cartInfo,
+                                                shoppingListSummary);
+                                    }else {
+                                        loadShoppingListSummary();
+                                    }
+
                                     break;
                                 case Constants.ERROR:
                                     handler.sendEmptyMessage(addAllToBasketSmartBasketCallBack.getErrorTypeAsInt(),
@@ -347,9 +354,13 @@ public class ShoppingListSummaryActivity extends BBActivity {
                                 case Constants.OK:
                                     setCartSummary(addAllToBasketShoppingListCallBack);
                                     updateUIForCartInfo();
-                                    setProductCount(addAllToBasketShoppingListCallBack.cartInfo,
-                                            shoppingListSummary);
                                     markBasketDirty();
+                                    if(viewPager!=null){
+                                        setProductCount(addAllToBasketShoppingListCallBack.cartInfo,
+                                                shoppingListSummary);
+                                    }else {
+                                        loadShoppingListSummary();
+                                    }
                                     break;
                                 case Constants.ERROR:
                                     handler.sendEmptyMessage(addAllToBasketShoppingListCallBack.getErrorTypeAsInt(),
