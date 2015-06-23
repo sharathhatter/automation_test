@@ -215,9 +215,10 @@ public class ShoppingListSummaryActivity extends BBActivity {
         }
         final ViewPager copyViewPagerIntoFinalForOnClick = viewPager;
         View layoutAddAll = findViewById(R.id.layoutAddAll);
-        if (areAllProductsOutOfStock(shoppingListSummaries)) {
+        if (areAllProductsOutOfStock(shoppingListSummaries) || shoppingListName.isSystem()) {
             layoutAddAll.setVisibility(View.GONE);
         } else {
+            layoutAddAll.setVisibility(View.VISIBLE);
             ((TextView) findViewById(R.id.txtAddAll)).setTypeface(faceRobotoRegular);
             layoutAddAll.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -316,9 +317,14 @@ public class ShoppingListSummaryActivity extends BBActivity {
                                 case Constants.OK:
                                     setCartSummary(addAllToBasketSmartBasketCallBack);
                                     updateUIForCartInfo();
-                                    setProductCount(addAllToBasketSmartBasketCallBack.cartInfo,
-                                            shoppingListSummary);
                                     markBasketDirty();
+                                    if(viewPager!=null){
+                                        setProductCount(addAllToBasketSmartBasketCallBack.cartInfo,
+                                                shoppingListSummary);
+                                    }else {
+                                        loadShoppingListSummary();
+                                    }
+
                                     break;
                                 case Constants.ERROR:
                                     handler.sendEmptyMessage(addAllToBasketSmartBasketCallBack.getErrorTypeAsInt(),
@@ -347,9 +353,13 @@ public class ShoppingListSummaryActivity extends BBActivity {
                                 case Constants.OK:
                                     setCartSummary(addAllToBasketShoppingListCallBack);
                                     updateUIForCartInfo();
-                                    setProductCount(addAllToBasketShoppingListCallBack.cartInfo,
-                                            shoppingListSummary);
                                     markBasketDirty();
+                                    if(viewPager!=null){
+                                        setProductCount(addAllToBasketShoppingListCallBack.cartInfo,
+                                                shoppingListSummary);
+                                    }else {
+                                        loadShoppingListSummary();
+                                    }
                                     break;
                                 case Constants.ERROR:
                                     handler.sendEmptyMessage(addAllToBasketShoppingListCallBack.getErrorTypeAsInt(),
