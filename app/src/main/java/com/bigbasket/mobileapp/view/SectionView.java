@@ -113,7 +113,7 @@ public class SectionView {
             case Section.SALUTATION:
                 return getSalutationView(section, inflater, mainLayout);
             case Section.TILE:
-                return getTileView(section, inflater, mainLayout);
+                return getTileView(section, inflater, mainLayout, false);
             case Section.GRID:
                 return getGridLayoutView(section, inflater, mainLayout);
             case Section.PRODUCT_CAROUSEL:
@@ -123,7 +123,7 @@ public class SectionView {
             case Section.INFO_WIDGET:
                 return getInfoWidgetView(section);
             case Section.AD_IMAGE:
-                return getImageView(section);
+                return getTileView(section, inflater, mainLayout, true);
             case Section.SALUTATION_TITLE:
                 return getMsgView(section, inflater);
             case Section.MSG:
@@ -267,39 +267,6 @@ public class SectionView {
         return base;
     }
 
-    private View getImageView(Section section) {
-        LinearLayout linearLayout = new LinearLayout(context);
-        LinearLayout.LayoutParams baseLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        linearLayout.setLayoutParams(baseLayoutParams);
-        linearLayout.setOrientation(LinearLayout.VERTICAL);
-        ArrayList<SectionItem> sectionItems = section.getSectionItems();
-        if (sectionItems == null) return null;
-        for (int i = 0; i < sectionItems.size(); i++) {
-            SectionItem sectionItem = sectionItems.get(i);
-            if (!sectionItem.hasImage())
-                continue;
-            ImageView imageView = new ImageView(context);
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT);
-            imageView.setAdjustViewBounds(true);
-            Renderer renderer = mSectionData.getRenderersMap() != null ?
-                    mSectionData.getRenderersMap().get(sectionItem.getRenderingId()) : null;
-            if (renderer != null) {
-                renderer.setRendering(imageView, 0, 0);
-            } else {
-                // Not applying when i == 0 has parent already has a top-margin of 4dp by default
-                layoutParams.setMargins(fourDp, i == 0 ? 0 : fourDp, fourDp, 0);
-            }
-            imageView.setLayoutParams(layoutParams);
-            imageView.setAdjustViewBounds(true);
-            imageView.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
-            sectionItem.displayImage(context, mSectionData.getBaseImgUrl(), imageView);
-            linearLayout.addView(imageView);
-        }
-        return linearLayout;
-    }
-
     private View getMsgView(Section section, LayoutInflater inflater) {
         LinearLayout linearLayout = new LinearLayout(context);
         LinearLayout.LayoutParams baseLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
@@ -427,18 +394,23 @@ public class SectionView {
         return base;
     }
 
-    private View getTileView(Section section, LayoutInflater inflater, ViewGroup parent) {
+    private View getTileView(Section section, LayoutInflater inflater, ViewGroup parent,
+                             boolean isVertical) {
         View base = inflater.inflate(R.layout.uiv3_tile_container, parent, false);
         formatSectionTitle(base, R.id.txtListTitle, section);
         setViewMoreBehaviour(base.findViewById(R.id.btnMore), section, section.getMoreSectionItem());
 
         LinearLayout tileContainer = (LinearLayout) base.findViewById(R.id.layoutTileContainer);
+        if (isVertical) {
+            tileContainer.setOrientation(LinearLayout.VERTICAL);
+        }
         ArrayList<SectionItem> sectionItems = section.getSectionItems();
         boolean hasSectionTitle = section.getTitle() != null && !TextUtils.isEmpty(section.getTitle().getText());
         int numSectionItems = sectionItems.size();
+        Typeface titleTypeface = isVertical ? FontHolder.getInstance(context).getFaceRobotoMedium() : faceRobotoRegular;
         for (int i = 0; i < numSectionItems; i++) {
             SectionItem sectionItem = sectionItems.get(i);
-            boolean applyRight = i != numSectionItems - 1;
+            boolean applyRight = !isVertical && i != numSectionItems - 1;
 
             Renderer renderer = mSectionData.getRenderersMap() != null ?
                     mSectionData.getRenderersMap().get(sectionItem.getRenderingId()) : null;
@@ -460,7 +432,7 @@ public class SectionView {
 
             if (txtTitle != null) {
                 if (sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
-                    txtTitle.setTypeface(faceRobotoRegular);
+                    txtTitle.setTypeface(titleTypeface);
                     txtTitle.setText(sectionItem.getTitle().getText());
                     Renderer itemRenderer = mSectionData.getRenderersMap() != null ?
                             mSectionData.getRenderersMap().get(sectionItem.getTitle().getRenderingId()) : null;
@@ -506,17 +478,35 @@ public class SectionView {
             }
 
             ViewGroup layoutSection = (ViewGroup) view.findViewById(R.id.layoutSection);
-            if (layoutSection != null && sectionItem.doesViewRequireMinHeight(viewType)) {
+            if (!isVertical && layoutSection != null && sectionItem.doesViewRequireMinHeight(viewType)) {
                 int minHeight = sectionItem.getHeight(context, renderer);
                 layoutSection.setMinimumHeight(minHeight);
             }
 
-            ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
-            if (layoutParams instanceof LinearLayout.LayoutParams) {
-                layoutParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
+            if (isVertical) {
+                ViewGroup sectionLayoutContainer = (ViewGroup) view.findViewById(R.id.sectionLayoutContainer);
+                if (sectionLayoutContainer != null) {
+                    ViewGroup.LayoutParams lp = sectionLayoutContainer.getLayoutParams();
+                    if (lp != null) {
+                        lp.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                        sectionLayoutContainer.setLayoutParams(lp);
+                    }
+                }
             }
-            if (layoutParams instanceof ViewGroup.MarginLayoutParams) {
-                ((ViewGroup.MarginLayoutParams) layoutParams).setMargins(0, hasSectionTitle ? fourDp : 0, applyRight ? fourDp : 0, 0);
+
+            ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+            if (!isVertical) {
+                if (layoutParams instanceof LinearLayout.LayoutParams) {
+                    layoutParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
+                }
+                if (layoutParams instanceof ViewGroup.MarginLayoutParams) {
+                    ((ViewGroup.MarginLayoutParams) layoutParams).setMargins(0, hasSectionTitle ? fourDp : 0, applyRight ? fourDp : 0, 0);
+                }
+            } else {
+                layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                if (layoutParams instanceof ViewGroup.MarginLayoutParams) {
+                    ((ViewGroup.MarginLayoutParams) layoutParams).setMargins(0, i != 0 ? fourDp : 0, 0, 0);
+                }
             }
             view.setLayoutParams(layoutParams);
 
