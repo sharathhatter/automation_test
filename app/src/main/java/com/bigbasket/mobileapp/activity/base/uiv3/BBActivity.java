@@ -102,7 +102,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
     protected BigBasketMessageHandler handler;
     private ActionBarDrawerToggle mDrawerToggle;
-    private String mDrawerTitle;
     private String mTitle;
     private BasketOperationResponse basketOperationResponse;
     private CartSummary cartSummary = new CartSummary();
@@ -125,7 +124,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         }
 
         handler = new BigBasketMessageHandler<>(this);
-        mTitle = mDrawerTitle = getTitle().toString();
+        mTitle = getTitle().toString();
 
         Toolbar toolbar = getToolbar();
         setSupportActionBar(toolbar);
@@ -216,7 +215,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 logHomeScreenEvent(TrackingAware.MENU_CLICKED, TrackEventkeys.NAVIGATION_CTX,
                         TrackEventkeys.NAVIGATION_CTX_TOPNAV); //todo check with sid
                 trackEvent(TrackingAware.MENU_SHOWN, null);
-                toolbar.setTitle(formatToolbarTitle(mDrawerTitle));
                 invalidateOptionsMenu();
             }
         };
