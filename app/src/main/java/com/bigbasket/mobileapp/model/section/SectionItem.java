@@ -60,7 +60,7 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
     private DestinationInfo destinationInfo;
 
     @SerializedName(Constants.SUB_ITEMS)
-    private ArrayList<SectionItem> subSectionItems;
+    private ArrayList<SubSectionItem> subSectionItems;
 
     @SerializedName(Constants.IMAGE_PARAMS)
     private ImageParams imageParams;
@@ -87,7 +87,7 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
         boolean wasSubSectionItemNull = source.readByte() == (byte) 1;
         if (!wasSubSectionItemNull) {
             subSectionItems = new ArrayList<>();
-            source.readTypedList(subSectionItems, SectionItem.CREATOR);
+            source.readTypedList(subSectionItems, SubSectionItem.CREATOR);
         }
         boolean wasImgNameNull = source.readByte() == (byte) 1;
         if (!wasImgNameNull) {
@@ -156,7 +156,7 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
         return destinationInfo;
     }
 
-    public ArrayList<SectionItem> getSubSectionItems() {
+    public ArrayList<SubSectionItem> getSubSectionItems() {
         return subSectionItems;
     }
 

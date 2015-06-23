@@ -4,7 +4,6 @@ public class Constants {
 
     // connection parameters
     public static final String APP_FLYER_ID = "5uD68XCLk3KJXJQkW24KrK";
-    public static final String MO_SENDER_ID = "551288451469";
     public static final String DEEP_LINK = "deepLink";
     public static final String HAS_PARENT = "hasParent";
 
@@ -269,11 +268,9 @@ public class Constants {
     public static final String VOUCHER = "voucher";
     public static final String IS_MAPPED = "is_mapped";
     public static final String IS_EXPRESS = "is_express";
+    public static final String IS_LINK = "is_link";
     public static final String LAT = "lat";
     public static final String LNG = "lng";
-
-    public static final String KONOTOR_APP_ID = "d2c94ed6-1946-4d40-9d3f-affc719949a6";
-    public static final String KONOTOR_APP_KEY = "97689aa4-af46-423d-9518-24828113d074";
 
     public static final String SLOT_ID = "slot_id";
     public static final String SLOT_DATE = "slot_date";
@@ -290,10 +287,8 @@ public class Constants {
     public static final String C_SUMMARY = "c-summary/";
     public static final String VERSION_NAME = "versionName";
     public static final String APPLIED_VOUCHER = "appliedVoucher";
-    public static final String ENABLE_KONOTOR = "enable_konotor";
     public static final String ENABLE_FB_LOGGER = "enable_fb_logger";
     public static final String ENABLE_MOENGAGE = "enable_moengage";
-    public static final String FIRST_TIME_COOKIE_TIME_STAMP = "firstTimeCookieTimestamp";
     public static final String ENABLE_LOCALYTICS = "enable_localytics";
     public static final int CUSTOMER_VALUE_INCREASE = 1;
     public static final String ANALYTICS = "analytics";

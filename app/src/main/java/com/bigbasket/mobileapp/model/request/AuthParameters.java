@@ -9,14 +9,7 @@ import android.text.TextUtils;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.util.Constants;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
-
 public class AuthParameters {
-    public static final int FIRST_TIME_COOKIE_EXPIRY_IN_DAYS = 15;
     private static AuthParameters authParameters;
     private String visitorId;
     private String bbAuthToken;
@@ -25,7 +18,6 @@ public class AuthParameters {
     private String memberEmail;
     private String memberFullName;
     private String firstName;
-    private boolean isKonotorEnabled;
     private boolean isMoEngageEnabled;
     private boolean isLocalyticsEnabled;
     private boolean isFBLoggerEnabled;
@@ -45,7 +37,6 @@ public class AuthParameters {
             memberEmail = prefer.getString(Constants.MEMBER_EMAIL_KEY, "");
             memberFullName = prefer.getString(Constants.MEMBER_FULL_NAME_KEY, "");
             osVersion = prefer.getString(Constants.OS_PREFERENCE_KEY, "");
-            isKonotorEnabled = prefer.getBoolean(Constants.ENABLE_KONOTOR, false);
             isMoEngageEnabled = prefer.getBoolean(Constants.ENABLE_MOENGAGE, false);
             isLocalyticsEnabled = prefer.getBoolean(Constants.ENABLE_LOCALYTICS, false);
             isFBLoggerEnabled = prefer.getBoolean(Constants.ENABLE_FB_LOGGER, false);
@@ -63,35 +54,6 @@ public class AuthParameters {
             authParameters = new AuthParameters(context);
         }
         return authParameters;
-    }
-
-    public static boolean isFirstTimeVisitor(Context context) {
-        if (!AuthParameters.getInstance(context).isAuthTokenEmpty()) return false;
-        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(context);
-        String firstTimeCookieTimeStamp = prefer.getString(Constants.FIRST_TIME_COOKIE_TIME_STAMP, null);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-        Date now = new Date();
-        if (TextUtils.isEmpty(firstTimeCookieTimeStamp)) {
-            setFirstTimeVisitor(context, now, simpleDateFormat);
-            return true;
-        }
-        try {
-            Date createdOnDate = simpleDateFormat.parse(firstTimeCookieTimeStamp);
-            long days = TimeUnit.DAYS.convert(now.getTime() - createdOnDate.getTime(),
-                    TimeUnit.MILLISECONDS);
-            return days <= FIRST_TIME_COOKIE_EXPIRY_IN_DAYS;
-        } catch (ParseException e) {
-            setFirstTimeVisitor(context, now, simpleDateFormat);
-            return true;
-        }
-    }
-
-    private static void setFirstTimeVisitor(Context context,
-                                            Date now, SimpleDateFormat simpleDateFormat) {
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
-        editor.putString(Constants.FIRST_TIME_COOKIE_TIME_STAMP,
-                simpleDateFormat.format(now));
-        editor.commit();
     }
 
     public String getVisitorId() {
@@ -131,28 +93,22 @@ public class AuthParameters {
         return TextUtils.isEmpty(getBbAuthToken());
     }
 
-    public boolean isKonotorEnabled() {
-        return isKonotorEnabled;
-    }
-
     public boolean isMoEngageEnabled() {
         return isMoEngageEnabled;
     }
 
     public void setAnyLyticsEnabled(boolean isMoEngaleEnabled,
-                                    boolean isLocalyticsEnabled, boolean isKonotorEnabled,
+                                    boolean isLocalyticsEnabled,
                                     boolean isFBLoggerEnabled,
                                     Context context) {
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefer.edit();
         editor.putBoolean(Constants.ENABLE_MOENGAGE, isMoEngaleEnabled);
         editor.putBoolean(Constants.ENABLE_LOCALYTICS, isLocalyticsEnabled);
-        editor.putBoolean(Constants.ENABLE_KONOTOR, isKonotorEnabled);
         editor.putBoolean(Constants.ENABLE_FB_LOGGER, isFBLoggerEnabled);
-        editor.commit();
+        editor.apply();
         this.isMoEngageEnabled = isMoEngaleEnabled;
         this.isLocalyticsEnabled = isLocalyticsEnabled;
-        this.isKonotorEnabled = isKonotorEnabled;
         this.isFBLoggerEnabled = isFBLoggerEnabled;
     }
 

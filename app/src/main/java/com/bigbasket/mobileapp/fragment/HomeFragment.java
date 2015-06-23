@@ -292,7 +292,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
     private void setAnalyticalData(AnalyticsEngine analyticsEngine) {
         if (analyticsEngine == null) return;
         AuthParameters.getInstance(getCurrentActivity()).setAnyLyticsEnabled(analyticsEngine.isMoEngageEnabled(),
-                analyticsEngine.isAnalyticsEnabled(), analyticsEngine.isKonotorEnabled(),
+                analyticsEngine.isAnalyticsEnabled(),
                 analyticsEngine.isFBLoggerEnabled(), getCurrentActivity());
         AuthParameters.updateInstance(getCurrentActivity());
     }

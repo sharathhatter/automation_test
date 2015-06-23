@@ -24,8 +24,6 @@ public class AnalyticsEngine implements Parcelable {
     private boolean isMoEngageEnabled;
     @SerializedName(Constants.ENABLE_LOCALYTICS)
     private boolean isAnalyticsEnabled;
-    @SerializedName(Constants.ENABLE_KONOTOR)
-    private boolean isKonotorEnabled;
     @SerializedName(Constants.ENABLE_FB_LOGGER)
     private boolean isFBLoggerEnabled;
 
@@ -33,7 +31,6 @@ public class AnalyticsEngine implements Parcelable {
     public AnalyticsEngine(Parcel source) {
         isMoEngageEnabled = source.readByte() == (byte) 1;
         isAnalyticsEnabled = source.readByte() == (byte) 1;
-        isKonotorEnabled = source.readByte() == (byte) 1;
         isFBLoggerEnabled = source.readByte() == (byte) 1;
     }
 
@@ -46,7 +43,6 @@ public class AnalyticsEngine implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeByte(isMoEngageEnabled ? (byte) 1 : (byte) 0);
         dest.writeByte(isAnalyticsEnabled ? (byte) 1 : (byte) 0);
-        dest.writeByte(isKonotorEnabled ? (byte) 1 : (byte) 0);
         dest.writeByte(isFBLoggerEnabled ? (byte) 1 : (byte) 0);
     }
 
@@ -64,14 +60,6 @@ public class AnalyticsEngine implements Parcelable {
 
     public void setAnalyticsEnabled(boolean isAnalyticsEnabled) {
         this.isAnalyticsEnabled = isAnalyticsEnabled;
-    }
-
-    public boolean isKonotorEnabled() {
-        return isKonotorEnabled;
-    }
-
-    public void setKonotorEnabled(boolean isKonotorEnabled) {
-        this.isKonotorEnabled = isKonotorEnabled;
     }
 
 

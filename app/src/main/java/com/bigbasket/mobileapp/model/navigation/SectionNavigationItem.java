@@ -3,15 +3,15 @@ package com.bigbasket.mobileapp.model.navigation;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionItem;
 
-public class SectionNavigationItem {
+public class SectionNavigationItem<T extends SectionItem> {
     private Section section;
-    private SectionItem sectionItem;
+    private T sectionItem;
 
     public SectionNavigationItem(Section section) {
         this.section = section;
     }
 
-    public SectionNavigationItem(Section section, SectionItem sectionItem) {
+    public SectionNavigationItem(Section section, T sectionItem) {
         this.section = section;
         this.sectionItem = sectionItem;
     }
@@ -24,7 +24,7 @@ public class SectionNavigationItem {
         return section;
     }
 
-    public SectionItem getSectionItem() {
+    public T getSectionItem() {
         return sectionItem;
     }
 

@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.activity.base.uiv3;
 
 import android.app.SearchManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -78,6 +79,7 @@ import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.model.section.SectionItem;
 import com.bigbasket.mobileapp.model.section.SectionTextItem;
+import com.bigbasket.mobileapp.model.section.SubSectionItem;
 import com.bigbasket.mobileapp.task.GetCartCountTask;
 import com.bigbasket.mobileapp.task.uiv3.CreateShoppingListTask;
 import com.bigbasket.mobileapp.util.Constants;
@@ -796,7 +798,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 if (section.getTitle() != null && !TextUtils.isEmpty(section.getTitle().getText())) {
                     sectionNavigationItems.add(new SectionNavigationItem(section));
                 }
-                setSectionNavigationItemList(sectionNavigationItems, section.getSectionItems(),
+                setSectionNavigationItemList(this, sectionNavigationItems, section.getSectionItems(),
                         section, sectionData.getBaseImgUrl());
             }
         }
@@ -804,17 +806,18 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 sectionData != null ? sectionData.getRenderersMap() : null};
     }
 
-    private void setSectionNavigationItemList(ArrayList<SectionNavigationItem> sectionNavigationItems,
-                                              ArrayList<SectionItem> sectionItems,
+    private static <T extends SectionItem> void
+        setSectionNavigationItemList(Context context, ArrayList<SectionNavigationItem> sectionNavigationItems,
+                                              ArrayList<T> sectionItems,
                                               Section section, String baseImgUrl) {
         for (SectionItem sectionItem : sectionItems) {
             if (sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
                 if (sectionItem.hasImage()) {
                     UIUtil.preLoadImage(TextUtils.isEmpty(sectionItem.getImage()) ?
-                                    sectionItem.constructImageUrl(this, baseImgUrl) : sectionItem.getImage(),
-                            this);
+                                    sectionItem.constructImageUrl(context, baseImgUrl) : sectionItem.getImage(),
+                            context);
                 }
-                sectionNavigationItems.add(new SectionNavigationItem(section, sectionItem));
+                sectionNavigationItems.add(new SectionNavigationItem<>(section, sectionItem));
             }
         }
     }
@@ -825,13 +828,13 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         ArrayList<SectionItem> sectionItems = new ArrayList<>();
         sectionItems.add(homeSectionItem);
         Section section = new Section(null, null, Section.MSG, sectionItems, null);
-        return new SectionNavigationItem(section, homeSectionItem);
+        return new SectionNavigationItem<>(section, homeSectionItem);
     }
 
     @Override
     public void onSubNavigationRequested(Section section, SectionItem sectionItem, String baseImgUrl,
                                          HashMap<Integer, Renderer> rendererHashMap) {
-        ArrayList<SectionItem> subNavigationSectionItems = sectionItem.getSubSectionItems();
+        ArrayList<SubSectionItem> subNavigationSectionItems = sectionItem.getSubSectionItems();
         if (subNavigationSectionItems == null || subNavigationSectionItems.size() == 0) return;
 
         if (mSubNavLayout == null) {
@@ -844,7 +847,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             mListSubNavigation.setLayoutManager(new LinearLayoutManager(this));
         }
         ArrayList<SectionNavigationItem> sectionNavigationItems = new ArrayList<>();
-        setSectionNavigationItemList(sectionNavigationItems, subNavigationSectionItems, section,
+        setSectionNavigationItemList(this, sectionNavigationItems, subNavigationSectionItems, section,
                 baseImgUrl);
         NavigationAdapter navigationAdapter = new NavigationAdapter(this, faceRobotoMedium,
                 sectionNavigationItems,

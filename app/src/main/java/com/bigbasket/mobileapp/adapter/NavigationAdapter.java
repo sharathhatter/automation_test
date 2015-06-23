@@ -17,6 +17,7 @@ import com.bigbasket.mobileapp.interfaces.SubNavigationAware;
 import com.bigbasket.mobileapp.model.navigation.SectionNavigationItem;
 import com.bigbasket.mobileapp.model.section.Renderer;
 import com.bigbasket.mobileapp.model.section.SectionItem;
+import com.bigbasket.mobileapp.model.section.SubSectionItem;
 import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
@@ -201,11 +202,15 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         } else {
             SectionNavigationItem sectionNavigationItem = sectionNavigationItems.get(position);
             SectionItem sectionItem = sectionNavigationItem.getSectionItem();
+            boolean isLink = false;
+            if (sectionItem instanceof SubSectionItem) {
+                isLink = ((SubSectionItem) sectionItem).isLink();
+            }
             Renderer renderer = rendererHashMap != null ? rendererHashMap.get(sectionItem.getRenderingId()) : null;
             boolean hasParentSectionItemText = parentSectionItem != null && parentSectionItem.getTitle() != null
                     && !TextUtils.isEmpty(parentSectionItem.getTitle().getText());
             if (renderer != null && renderer.getOrientation() == Renderer.VERTICAL) {
-                if (hasParentSectionItemText && position == 0) {
+                if (isLink && position == 0) {
                     return VIEW_TYPE_SUB_MENU_SECTION_ITEM_HEADER_VERTICAL;
                 }
                 return VIEW_TYPE_SECTION_ITEM_VERTICAL;
