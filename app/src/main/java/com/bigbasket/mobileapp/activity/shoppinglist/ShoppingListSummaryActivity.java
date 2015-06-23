@@ -101,7 +101,6 @@ public class ShoppingListSummaryActivity extends BBActivity {
         if (mShoppingListName == null) {
             return;
         }
-        ((ViewGroup) findViewById(R.id.content_frame)).removeAllViews();
         setTitle(mShoppingListName.getName());
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
@@ -199,7 +198,8 @@ public class ShoppingListSummaryActivity extends BBActivity {
                     shoppingListName, baseImgUrl);
             ShoppingListProductFragment shoppingListProductFragment = new ShoppingListProductFragment();
             shoppingListProductFragment.setArguments(bundle);
-            addToMainLayout(shoppingListProductFragment, ShoppingListProductFragment.class.getName());
+            replaceToMainLayout(shoppingListProductFragment, ShoppingListProductFragment.class.getName(), false,
+                    contentFrame);
         } else {
             View base = inflater.inflate(R.layout.uiv3_swipe_tab_view, contentFrame, false);
 
@@ -215,7 +215,8 @@ public class ShoppingListSummaryActivity extends BBActivity {
         }
         final ViewPager copyViewPagerIntoFinalForOnClick = viewPager;
         View layoutAddAll = findViewById(R.id.layoutAddAll);
-        if (areAllProductsOutOfStock(shoppingListSummaries) || shoppingListName.isSystem()) {
+        if (areAllProductsOutOfStock(shoppingListSummaries) || (shoppingListName.isSystem() &&
+                !shoppingListName.getSlug().equals(Constants.SMART_BASKET_SLUG))) {
             layoutAddAll.setVisibility(View.GONE);
         } else {
             layoutAddAll.setVisibility(View.VISIBLE);
