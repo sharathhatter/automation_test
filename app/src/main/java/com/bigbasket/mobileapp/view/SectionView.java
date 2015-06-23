@@ -471,6 +471,13 @@ public class SectionView {
 
             if (imgInRow != null) {
                 if (sectionItem.hasImage()) {
+                    if (isVertical) {
+                        ViewGroup.LayoutParams lp = imgInRow.getLayoutParams();
+                        if (lp != null) {
+                            lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                            imgInRow.setLayoutParams(lp);
+                        }
+                    }
                     sectionItem.displayImage(context, mSectionData.getBaseImgUrl(), imgInRow);
                 } else {
                     imgInRow.setVisibility(View.GONE);
