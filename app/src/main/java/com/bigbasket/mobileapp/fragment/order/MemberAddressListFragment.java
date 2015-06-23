@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
@@ -198,8 +199,12 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
                 public void onClick(View v) {
                     if (addressId != null) {
                         createPotentialOrder(addressId);
+                    } else if (memberAddressListAdapter.getSelectedAddress() != null) {
+                        addressId = memberAddressListAdapter.getSelectedAddress().getId();
+                        createPotentialOrder(addressId);
                     } else {
-                        createPotentialOrder(memberAddressListAdapter.getSelectedAddress().getId());
+                        Toast.makeText(getActivity(), getString(R.string.pleaseChooseAddress),
+                                Toast.LENGTH_SHORT).show();
                     }
                 }
             });

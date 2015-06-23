@@ -376,9 +376,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
             } else {
                 goToHome(data);
             }
-        } else if (resultCode == NavigationCodes.GO_TO_SLOT_SELECTION) {
-            setResult(NavigationCodes.GO_TO_SLOT_SELECTION);
-            finish();
         } else if (resultCode == NavigationCodes.GO_TO_QC) {
             setResult(NavigationCodes.GO_TO_QC);
             finish();

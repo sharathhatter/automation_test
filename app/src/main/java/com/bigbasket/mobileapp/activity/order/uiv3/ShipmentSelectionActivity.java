@@ -388,4 +388,14 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
             mSlotListDialog.show();
         }
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == NavigationCodes.GO_TO_SLOT_SELECTION) {
+            setResult(NavigationCodes.GO_TO_SLOT_SELECTION);
+            finish();
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
 }

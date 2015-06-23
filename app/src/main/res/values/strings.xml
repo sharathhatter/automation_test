@@ -154,6 +154,7 @@
     <!-- payment -->
     <string name="choosePayment">Choose Payment</string>
     <string name="paymentMethod">Payment Options</string>
+    <string name="pleaseChooseAddress">Please choose an address</string>
     <string name="pleaseChoosePaymentMethod">Please select a payment option.</string>
     <string name="orderItems">Order Items</string>
     <string name="enterVoucher">Enter eVoucher code</string>

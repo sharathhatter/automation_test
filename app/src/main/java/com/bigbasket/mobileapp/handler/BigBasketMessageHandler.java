@@ -79,7 +79,7 @@ public class BigBasketMessageHandler<T> {
                 ((ApiErrorAware) ctx).showApiErrorDialog(null, !TextUtils.isEmpty(message) ? message : getString(R.string.list_exists), true);
                 break;
             case ApiErrorCodes.PROMO_NOT_EXIST:
-                ((ApiErrorAware) ctx).showApiErrorDialog(null, getString(R.string.invalid_promo), true);
+                ((ApiErrorAware) ctx).showApiErrorDialog(null, !TextUtils.isEmpty(message) ? message : getString(R.string.invalid_promo), true);
                 break;
             case ApiErrorCodes.PROMO_CATEGORY_NOT_EXIST:
                 ((ApiErrorAware) ctx).showApiErrorDialog(null, !TextUtils.isEmpty(message) ? message : getString(R.string.no_promo_cat), true);
