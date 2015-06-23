@@ -119,6 +119,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
             BaseShipmentAction shipmentAction = shipmentActionHashMap != null ?
                     shipmentActionHashMap.get(shipment.getShipmentId()) : null;
             String shipmentName = shipment.getShipmentName();
+            String actionName = null;
             if (shipmentAction != null) {
                 if (!TextUtils.isEmpty(shipmentAction.getViewState())) {
                     switch (shipmentAction.getViewState()) {
@@ -134,7 +135,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
                     }
                 }
                 if (!TextUtils.isEmpty(shipmentAction.getActionMsg())) {
-                    shipmentName = shipmentAction.getActionMsg();
+                    actionName = shipmentAction.getActionMsg();
                     switchToggleDelivery.setChecked(!TextUtils.isEmpty(shipmentAction.getActionState())
                             && shipmentAction.getActionState().equalsIgnoreCase(Constants.ON));
                     switchToggleDelivery.setOnCheckedChangeListener(new OnShipmentToggleListener(shipment));
@@ -146,6 +147,17 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
                 switchToggleDelivery.setVisibility(View.GONE);
                 mSelectedShipmentIndx.add(i);
             }
+
+            TextView txtShipmentAction = (TextView) shipmentView.findViewById(R.id.txtShipmentAnnotation);
+            txtShipmentAction.setTypeface(faceRobotoRegular);
+            if (!TextUtils.isEmpty(actionName)) {
+                txtShipmentAction.setText(actionName);
+            } else {
+                txtShipmentAction.setVisibility(View.GONE);
+            }
+
+            ((TextView) shipmentView.findViewById(R.id.lblDeliveryTime)).setTypeface(faceRobotoRegular);
+
             TextView txtShipmentName = (TextView) shipmentView.findViewById(R.id.txtShipmentName);
             txtShipmentName.setTypeface(faceRobotoRegular);
             txtShipmentName.setText(shipmentName);
@@ -279,8 +291,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
                 }
                 SelectedShipment selectedShipment = new
                         SelectedShipment(shipment.getShipmentId(), shipment.getFulfillmentId(),
-                        shipment.getSelectedSlot().getSlotId(), shipment.getSelectedSlot().getSlotDate(),
-                        shipment.getSelectedSlot().getSlotTime());
+                        shipment.getSelectedSlot().getSlotId(), shipment.getSelectedSlot().getSlotDate());
                 selectedShipments.add(selectedShipment);
             }
             String potentialOrderId = getIntent().getStringExtra(Constants.P_ORDER_ID);
@@ -375,6 +386,16 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
             mSlotListDialog.getWindow().setLayout(displayRectangle.width() - 20,
                     (int) (displayRectangle.height() * 0.7f));
             mSlotListDialog.show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == NavigationCodes.GO_TO_SLOT_SELECTION) {
+            setResult(NavigationCodes.GO_TO_SLOT_SELECTION);
+            finish();
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 }

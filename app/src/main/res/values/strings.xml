@@ -154,6 +154,7 @@
     <!-- payment -->
     <string name="choosePayment">Choose Payment</string>
     <string name="paymentMethod">Payment Options</string>
+    <string name="pleaseChooseAddress">Please choose an address</string>
     <string name="pleaseChoosePaymentMethod">Please select a payment option.</string>
     <string name="orderItems">Order Items</string>
     <string name="enterVoucher">Enter eVoucher code</string>
@@ -352,8 +353,8 @@
     <string name="productTabErrorMsg">Sorry, but an error occurred</string>
     <string name="welcome">Welcome,</string>
     <string name="bigbasketeer">BigBasketeer</string>
-    <string name="productFound">product.</string>
-    <string name="productFoundPlural">products.</string>
+    <string name="productFound">product</string>
+    <string name="productFoundPlural">products</string>
     <string name="createNewList">Create New List</string>
     <string name="connectUsing">You can connect using</string>
     <string name="tutorial">Tutorial</string>

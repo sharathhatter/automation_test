@@ -21,8 +21,6 @@ public class Slot implements Parcelable {
     private boolean available;
     @SerializedName(Constants.SLOT_DATE)
     private String slotDate;
-    @SerializedName(Constants.SLOT_TIME)
-    private String slotTime;
 
     @Override
     public int describeContents() {
@@ -40,7 +38,6 @@ public class Slot implements Parcelable {
         if (!wasSlotDateNull) {
             dest.writeString(slotDate);
         }
-        dest.writeString(slotTime);
     }
 
     public Slot(Parcel source) {
@@ -51,7 +48,6 @@ public class Slot implements Parcelable {
         if (!wasSlotDateNull) {
             slotDate = source.readString();
         }
-        slotTime = source.readString();
     }
 
     public static final Parcelable.Creator<Slot> CREATOR = new Parcelable.Creator<Slot>() {
@@ -80,10 +76,6 @@ public class Slot implements Parcelable {
 
     public String getSlotDate() {
         return slotDate;
-    }
-
-    public String getSlotTime() {
-        return slotTime;
     }
 
     public static List<Object> getFlattenedSlotGroupList(List<Slot> slotListToGroup) {

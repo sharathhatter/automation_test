@@ -99,8 +99,11 @@ public class PaymentSelectionActivity extends BackButtonActivity {
         renderFooter();
         PayuResponse payuResponse = PayuResponse.getInstance(this);
         PowerPayResponse powerPayResponse = PowerPayResponse.getInstance(this);
-        if ((payuResponse != null && payuResponse.isSuccess())
-                || (powerPayResponse != null && powerPayResponse.isSuccess())) {
+        boolean isPayuPending = payuResponse != null && payuResponse.isSuccess();
+        boolean isHdfcPpPending = powerPayResponse != null && powerPayResponse.isSuccess();
+        if (isPayuPending || isHdfcPpPending) {
+            mSelectedPaymentMethod = isPayuPending ? Constants.PAYU : Constants.HDFC_POWER_PAY;
+            findViewById(R.id.viewPaymentInProgress).setVisibility(View.VISIBLE);
             ArrayList<VoucherApplied> previouslyAppliedVoucherList = VoucherApplied.readFromPreference(getCurrentActivity());
             if (previouslyAppliedVoucherList == null || previouslyAppliedVoucherList.size() == 0) {
                 onPlaceOrderAction();
@@ -108,8 +111,8 @@ public class PaymentSelectionActivity extends BackButtonActivity {
                 mPreviouslyAppliedVoucherMap = VoucherApplied.toMap(previouslyAppliedVoucherList);
                 applyVoucher(previouslyAppliedVoucherList.get(0).getVoucherCode());
             }
-            onPlaceOrderAction();
         } else {
+            findViewById(R.id.viewPaymentInProgress).setVisibility(View.GONE);
             renderPaymentDetails();
         }
     }
@@ -488,12 +491,21 @@ public class PaymentSelectionActivity extends BackButtonActivity {
         }
     }
 
+    private void syncContentView() {
+        View paymentInProgress = findViewById(R.id.viewPaymentInProgress);
+        if (paymentInProgress.getVisibility() == View.VISIBLE) {
+            paymentInProgress.setVisibility(View.GONE);
+            renderPaymentDetails();
+        }
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         setSuspended(false);
         HashMap<String, String> map = new HashMap<>();
         map.put(TrackEventkeys.POTENTIAL_ORDER, mPotentialOrderId);
         if (requestCode == WibmoSDK.REQUEST_CODE_IAP_PAY) {
+            findViewById(R.id.viewPaymentInProgress).setVisibility(View.GONE);
             if (resultCode == RESULT_OK) {
                 WPayResponse res = WibmoSDK.processInAppResponseWPay(data);
                 String pgTxnId = res.getWibmoTxnId();
@@ -520,11 +532,13 @@ public class PaymentSelectionActivity extends BackButtonActivity {
                     }
                     break;
                 case Constants.PREPAID_TXN_FAILED:
+                    syncContentView();
                     map.put(TrackEventkeys.FAILURE_REASON, "");
                     trackEvent(TrackingAware.CHECKOUT_PAYMENT_GATEWAY_FAILURE, map);
                     displayPayuFailure(getString(R.string.failedToProcess));
                     break;
                 case Constants.PREPAID_TXN_ABORTED:
+                    syncContentView();
                     displayPayuFailure(getString(R.string.youAborted));
                     break;
                 case Constants.PAYU_SUCCESS:
@@ -539,6 +553,10 @@ public class PaymentSelectionActivity extends BackButtonActivity {
                     } else {
                         placeOrder(payuResponse.getTxnId());
                     }
+                    break;
+                case NavigationCodes.GO_TO_SLOT_SELECTION:
+                    setResult(NavigationCodes.GO_TO_SLOT_SELECTION);
+                    finish();
                     break;
                 default:
                     super.onActivityResult(requestCode, resultCode, data);
@@ -560,34 +578,31 @@ public class PaymentSelectionActivity extends BackButtonActivity {
                         } catch (IllegalArgumentException e) {
                             return;
                         }
-                        switch (placeOrderApiResponse.status) {
-                            case Constants.OK:
-                                postOrderCreation(placeOrderApiResponse.apiResponseContent.orders);
-                                break;
-                            case ApiErrorCodes.AMOUNT_MISMATCH_STR:
-                                String paymentMethod = mSelectedPaymentMethod;
-                                String amtTxt = null;
-                                switch (paymentMethod) {
-                                    case Constants.PAYU:
-                                        PayuResponse payuResponse = PayuResponse.getInstance(getCurrentActivity());
-                                        amtTxt = payuResponse != null ? "of Rs. " + payuResponse.getAmount() + " " : "";
-                                        break;
-                                    case Constants.HDFC_POWER_PAY:
-                                        amtTxt = wPayInitRequest != null ? "of Rs. " + wPayInitRequest.getTransactionInfo().getTxnAmount() + " " : "";
-                                        break;
-                                }
-                                showAlertDialog("Create a separate order?",
-                                        "We are sorry. The payment amount " + amtTxt + "does not match the" +
-                                                " order amount of Rs." + mOrderDetails.getFormattedFinalTotal() + ". Please go through the " +
-                                                "payment process to complete this" +
-                                                " transaction. BigBasket customer service will get back to you regarding " +
-                                                "the payment made by you.",
-                                        DialogButton.YES, DialogButton.NO, Constants.SOURCE_PLACE_ORDER
-                                );
-                                break;
-                            default:
-                                handler.sendEmptyMessage(placeOrderApiResponse.getErrorTypeAsInt(), placeOrderApiResponse.message);
-                                break;
+                        if (placeOrderApiResponse.status.equals(Constants.OK)) {
+                            postOrderCreation(placeOrderApiResponse.apiResponseContent.orders);
+                        } else if (placeOrderApiResponse.errorType != null &&
+                                placeOrderApiResponse.errorType.equals(ApiErrorCodes.AMOUNT_MISMATCH_STR)) {
+                            String paymentMethod = mSelectedPaymentMethod;
+                            String amtTxt = null;
+                            switch (paymentMethod) {
+                                case Constants.PAYU:
+                                    PayuResponse payuResponse = PayuResponse.getInstance(getCurrentActivity());
+                                    amtTxt = payuResponse != null ? "of Rs. " + payuResponse.getAmount() + " " : "";
+                                    break;
+                                case Constants.HDFC_POWER_PAY:
+                                    amtTxt = wPayInitRequest != null ? "of Rs. " + wPayInitRequest.getTransactionInfo().getTxnAmount() + " " : "";
+                                    break;
+                            }
+                            showAlertDialog("Create a separate order?",
+                                    "We are sorry. The payment amount " + amtTxt + "does not match the" +
+                                            " order amount of Rs." + mOrderDetails.getFormattedFinalTotal() + ". Please go through the " +
+                                            "payment process to complete this" +
+                                            " transaction. BigBasket customer service will get back to you regarding " +
+                                            "the payment made by you.",
+                                    DialogButton.YES, DialogButton.NO, Constants.SOURCE_PLACE_ORDER
+                            );
+                        } else {
+                            handler.sendEmptyMessage(placeOrderApiResponse.getErrorTypeAsInt(), placeOrderApiResponse.message);
                         }
                     }
 
@@ -828,6 +843,22 @@ public class PaymentSelectionActivity extends BackButtonActivity {
             }
         } else {
             super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
+        }
+    }
+
+    @Override
+    protected void onNegativeButtonClicked(DialogInterface dialogInterface, String sourceName) {
+        if (sourceName != null) {
+            switch (sourceName) {
+                case Constants.SOURCE_PLACE_ORDER:
+                    findViewById(R.id.viewPaymentInProgress).setVisibility(View.GONE);
+                    renderPaymentDetails();
+                default:
+                    super.onNegativeButtonClicked(dialogInterface, sourceName);
+                    break;
+            }
+        } else {
+            super.onNegativeButtonClicked(dialogInterface, sourceName);
         }
     }
 

@@ -18,9 +18,7 @@ public interface NavigationCodes {
     int ACCOUNT_UPDATED = 1354;
     int GO_TO_BASKET = 1356;
 
-    int CO_RESERVE_QUANTITY_CHECK_OK = 102;
     int ADD_TO_SHOPPINGLIST_OK = 1221;
     int DELETE_FROM_SHOPPING_LIST_OK = 200;
-    int PRESCRIPTION_IMAGE_SAMPLING = 1735;
     int CITY_CHANGED = 111;
 }

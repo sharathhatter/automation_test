@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
+import com.bigbasket.mobileapp.util.Constants;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -13,7 +15,18 @@ import java.util.concurrent.TimeUnit;
 
 public class HDFCPowerPayHandler {
     private static final String DATE_FORMAT = "dd-MM-yyyy HH:mm:ss";
-    private static final int TIMEOUT_IN_MINUTES = 6 * 60;
+    private static final int DEFAULT_TIMEOUT_IN_MINUTES = 6 * 60;
+
+    public static void setTimeOut(Context context, int timeOutInMinutes) {
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
+        editor.putInt(Constants.HDFC_POWER_PAY_EXPIRY, timeOutInMinutes);
+        editor.commit();
+    }
+
+    public static int getTimeoutInMinutes(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getInt(Constants.HDFC_POWER_PAY_EXPIRY, DEFAULT_TIMEOUT_IN_MINUTES);
+    }
 
     public static void setHDFCPayMode(Context context) {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
@@ -31,7 +44,7 @@ public class HDFCPowerPayHandler {
         }
         SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT,
                 Locale.getDefault());
-        return !isStale(timeStr, dateFormat);
+        return !isStale(context, timeStr, dateFormat);
     }
 
     public static void clear(Context context) {
@@ -40,13 +53,14 @@ public class HDFCPowerPayHandler {
         editor.commit();
     }
 
-    private static boolean isStale(String createdOn, SimpleDateFormat simpleDateFormat) {
+    private static boolean isStale(Context context,
+                                   String createdOn, SimpleDateFormat simpleDateFormat) {
         try {
             Date createOnDate = simpleDateFormat.parse(createdOn);
             Date now = new Date();
             long minutes = TimeUnit.MINUTES.convert(now.getTime() - createOnDate.getTime(),
                     TimeUnit.MILLISECONDS);
-            return minutes > TIMEOUT_IN_MINUTES;
+            return minutes > getTimeoutInMinutes(context);
         } catch (ParseException e) {
             return true;
         }
