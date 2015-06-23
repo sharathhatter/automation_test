@@ -695,8 +695,10 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
             // Sync local cartInfoMap with this one
             mCartInfo = cartInfoMap;
             // Update in-memory fragments
-            setProductListForFragmentAtPosition(mViewPager.getCurrentItem() - 1);
-            setProductListForFragmentAtPosition(mViewPager.getCurrentItem() + 1);
+            if(mViewPager!=null){ // if list page don't have tabs
+                setProductListForFragmentAtPosition(mViewPager.getCurrentItem() - 1);
+                setProductListForFragmentAtPosition(mViewPager.getCurrentItem() + 1);
+            }
         }
     }
 

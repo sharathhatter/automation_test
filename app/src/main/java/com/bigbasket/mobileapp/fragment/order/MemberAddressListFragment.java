@@ -57,6 +57,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
     private MemberAddressListAdapter memberAddressListAdapter;
     private boolean mFromAccountPage;
     private String addressId;
+    private ViewGroup layoutCheckoutFooter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -141,15 +142,26 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
     }
 
     private void handleEmptyAddresses() {
-        if (mFromAccountPage) {
-            showAddAddressText();
-        } else {
-            showCreateAddressForm();
-        }
+        renderAddressList();
     }
 
-    private void showAddAddressText() {
-        renderAddressList();
+    private void emptyAddressView(RelativeLayout noDeliveryAddLayout, RecyclerView addressRecyclerView, View addressView){
+        noDeliveryAddLayout.setVisibility(View.VISIBLE);
+        addressRecyclerView.setVisibility(View.GONE);
+        ImageView imgEmptyPage = (ImageView) addressView.findViewById(R.id.imgEmptyPage);
+        imgEmptyPage.setImageResource(R.drawable.empty_delivery_address);
+        TextView txtEmptyMsg1 = (TextView) addressView.findViewById(R.id.txtEmptyMsg1);
+        txtEmptyMsg1.setText(R.string.noAddressMsg1);
+        TextView txtEmptyMsg2 = (TextView) addressView.findViewById(R.id.txtEmptyMsg2);
+        txtEmptyMsg2.setText(R.string.noAddressMsg2);
+        Button btnBlankPage = (Button) addressView.findViewById(R.id.btnBlankPage);
+        btnBlankPage.setText(getString(R.string.adAddresCaps));
+        btnBlankPage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showAddressForm(null);
+            }
+        });
     }
 
     private void renderAddressList() {
@@ -165,6 +177,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         UIUtil.configureRecyclerView(addressRecyclerView, getActivity(), 1, 3);
         RelativeLayout noDeliveryAddLayout = (RelativeLayout) addressView.findViewById(R.id.noDeliveryAddLayout);
         ArrayList<Object> addressObjectList = new ArrayList<>();
+        boolean hideCheckOutBtn = false;
         if (mAddressArrayList != null && mAddressArrayList.size() > 0) {
             addressRecyclerView.setVisibility(View.VISIBLE);
             noDeliveryAddLayout.setVisibility(View.GONE);
@@ -177,37 +190,30 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
                     new MemberAddressListAdapter<>(this, addressObjectList, mFromAccountPage);
             addressRecyclerView.setAdapter(memberAddressListAdapter);
         } else {
-            noDeliveryAddLayout.setVisibility(View.VISIBLE);
-            addressRecyclerView.setVisibility(View.GONE);
-            ImageView imgEmptyPage = (ImageView) addressView.findViewById(R.id.imgEmptyPage);
-            imgEmptyPage.setImageResource(R.drawable.empty_delivery_address);
-            TextView txtEmptyMsg1 = (TextView) addressView.findViewById(R.id.txtEmptyMsg1);
-            txtEmptyMsg1.setText(R.string.noAddressMsg1);
-            TextView txtEmptyMsg2 = (TextView) addressView.findViewById(R.id.txtEmptyMsg2);
-            txtEmptyMsg2.setText(R.string.noAddressMsg2);
-            Button btnBlankPage = (Button) addressView.findViewById(R.id.btnBlankPage);
-            btnBlankPage.setVisibility(View.GONE);
+            hideCheckOutBtn = true;
+            emptyAddressView(noDeliveryAddLayout, addressRecyclerView, addressView);
         }
 
-        ViewGroup layoutCheckoutFooter = (ViewGroup) addressView.findViewById(R.id.layoutCheckoutFooter);
-        if (!mFromAccountPage) {
-            String total = getArguments() != null ? getArguments().getString(Constants.TOTAL_BASKET_VALUE) : null;
-            UIUtil.setUpFooterButton(getCurrentActivity(), layoutCheckoutFooter, total,
-                    getString(R.string.continueCaps), true);
-            layoutCheckoutFooter.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (addressId != null) {
-                        createPotentialOrder(addressId);
-                    } else if (memberAddressListAdapter.getSelectedAddress() != null) {
-                        addressId = memberAddressListAdapter.getSelectedAddress().getId();
-                        createPotentialOrder(addressId);
-                    } else {
-                        Toast.makeText(getActivity(), getString(R.string.pleaseChooseAddress),
-                                Toast.LENGTH_SHORT).show();
-                    }
+        layoutCheckoutFooter = (ViewGroup) addressView.findViewById(R.id.layoutCheckoutFooter);
+        String total = getArguments() != null ? getArguments().getString(Constants.TOTAL_BASKET_VALUE) : null;
+        UIUtil.setUpFooterButton(getCurrentActivity(), layoutCheckoutFooter, total,
+                getString(R.string.continueCaps), true);
+        layoutCheckoutFooter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (addressId != null) {
+                    createPotentialOrder(addressId);
+                } else if (memberAddressListAdapter.getSelectedAddress() != null) {
+                    addressId = memberAddressListAdapter.getSelectedAddress().getId();
+                    createPotentialOrder(addressId);
+                } else {
+                    Toast.makeText(getActivity(), getString(R.string.pleaseChooseAddress),
+                            Toast.LENGTH_SHORT).show();
                 }
-            });
+            }
+        });
+        if (!mFromAccountPage && !hideCheckOutBtn) {
+            layoutCheckoutFooter.setVisibility(View.VISIBLE);
         } else {
             layoutCheckoutFooter.setVisibility(View.GONE);
         }
@@ -227,8 +233,6 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             map.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_MY_ACCOUNT);
             trackEvent(TrackingAware.NEW_ADDRESS_CLICKED, map);
         } else {
-            SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            map.put(TrackEventkeys.POTENTIAL_ORDER, prefer.getString(Constants.POTENTIAL_ORDER_ID, null));
             map.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_CHECKOUT_DELIVERY_ADDRESS);
             trackEvent(TrackingAware.CHECK_CREATE_ADDRESS_SHOWN, map);
         }
@@ -295,11 +299,14 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
                 String addressId = data.getStringExtra(Constants.MEMBER_ADDRESS_ID);
                 if (!TextUtils.isEmpty(addressId) && !mFromAccountPage) {
                     this.addressId = addressId;
-                    createPotentialOrder(addressId);
+                    layoutCheckoutFooter.setVisibility(View.VISIBLE);
+                    loadAddresses();
                 } else {
+                    getActivity().setResult(NavigationCodes.ACCOUNT_UPDATED);
                     loadAddresses();
                 }
             } else {
+                getActivity().setResult(NavigationCodes.ACCOUNT_UPDATED);
                 loadAddresses();
             }
         } else if (resultCode == NavigationCodes.GO_TO_SLOT_SELECTION) {

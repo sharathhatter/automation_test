@@ -85,7 +85,7 @@
     <string name="contactLastName">Contact last name</string>
     <string name="contactNum">Contact number</string>
     <string name="houseNum">House No</string>
-    <string name="streetName">Street Name</string>
+    <string name="streetName">Street Name (Optional)</string>
     <string name="residentialComplex">Location/Area/Zone (Optional)</string>
     <string name="city">City</string>
     <string name="location">Location</string>
@@ -331,6 +331,7 @@
     <string name="noAddressMsg2">Add one now to shop easy.</string>
     <string name="nowShoppingListMsg1">You have not created any shopping list yet.</string>
     <string name="nowShoppingListMsg2">Start creating now for easy shopping.</string>
+    <string name="adAddresCaps">ADD ADDRESS</string>
 
     <string name="noSmartBasketProducts">You haven\'t placed any orders yet, hence your Smart Basket is currently empty</string>
     <string name="skip">Skip</string>
@@ -397,6 +398,6 @@
     <string name="voucherApplicableSingular">Voucher Applicable</string>
     <string name="voucherApplicablePlural">Vouchers Applicable</string>
 
-    <string name="add_bundle">Add Bundle</string>
+    <string name="add_bundle">ADD BUNDLE</string>
     <string name="error">Error!</string>
 </resources>

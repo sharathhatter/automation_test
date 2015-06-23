@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonWithBasketButtonActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.OrderDetailActivity;
 import com.bigbasket.mobileapp.adapter.order.OrderListAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
@@ -194,7 +195,7 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
     }
 
     public void onShopFromThisOrder(String orderNumber) {
-        Intent intent = new Intent(this, BBActivity.class);
+        Intent intent = new Intent(this, BackButtonWithBasketButtonActivity.class);
         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_PRODUCT_LIST_FRAGMENT);
         intent.putExtra(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_HOME_PAGE);
         intent.putExtra(Constants.ORDER_ID, orderNumber);

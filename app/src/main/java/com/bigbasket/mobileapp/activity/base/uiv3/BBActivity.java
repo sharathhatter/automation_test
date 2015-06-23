@@ -243,6 +243,24 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         addToMainLayout(fragment, tag, false);
     }
 
+    public void replaceToMainLayout(AbstractFragment fragment, String tag, boolean stateLess,
+                                    FrameLayout frameLayout){
+        if(frameLayout==null) return;
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        String ftTag = TextUtils.isEmpty(tag) ? fragment.getFragmentTxnTag() : tag;
+        this.currentFragmentTag = ftTag;
+        ft.replace(frameLayout.getId(), fragment, ftTag);
+        if (stateLess) {
+            ft.commitAllowingStateLoss();
+        } else {
+            ft.commit();
+        }
+        if (mDrawerLayout != null) {
+            mDrawerLayout.closeDrawers();
+        }
+    }
+
     public void addToMainLayout(AbstractFragment fragment, String tag, boolean stateLess) {
 
         FragmentManager fm = getSupportFragmentManager();

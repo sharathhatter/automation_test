@@ -114,7 +114,7 @@ public class DeepLinkHandler {
             case Constants.ORDER_ITEMS:
                 id = uri.getQueryParameter(Constants.ID);
                 if (!TextUtils.isEmpty(id)) {
-                    intent = new Intent(context.getCurrentActivity(), BackButtonActivity.class);
+                    intent = new Intent(context.getCurrentActivity(), BackButtonWithBasketButtonActivity.class);
                     intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_PRODUCT_LIST_FRAGMENT);
                     intent.putExtra(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_DEEP_LINK);
                     intent.putExtra(Constants.ORDER_ID, id);
