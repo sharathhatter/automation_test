@@ -533,28 +533,6 @@ public class UIUtil {
         return row;
     }
 
-    public static void renderSlotInfoRow(View row, String slotDate, String slotTime,
-                                         String fulfilledBy, boolean hasMultipleSlots, Typeface typeface) {
-        TextView txtNumItems = (TextView) row.findViewById(R.id.txtNumItems);
-        TextView txtBasketVal = (TextView) row.findViewById(R.id.txtBasketVal);
-        TextView txtSlotDate = (TextView) row.findViewById(R.id.txtSlotDate);
-        TextView txtSlotTime = (TextView) row.findViewById(R.id.txtSlotTime);
-        TextView txtFulfilledBy = (TextView) row.findViewById(R.id.txtFulfilledBy);
-        txtSlotDate.setTypeface(typeface);
-        txtSlotTime.setTypeface(typeface);
-
-        txtSlotDate.setText(slotDate);
-        txtSlotTime.setText(slotTime);
-        txtNumItems.setVisibility(View.GONE);
-        txtBasketVal.setVisibility(View.GONE);
-        if (!hasMultipleSlots) {
-            txtFulfilledBy.setVisibility(View.GONE);
-        } else {
-            txtFulfilledBy.setTypeface(typeface);
-            txtFulfilledBy.setText(fulfilledBy);
-        }
-    }
-
     public static boolean isAlphaString(String matchString) {
         return matchString.matches("[a-zA-Z]+");
     }

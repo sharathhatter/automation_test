@@ -84,7 +84,7 @@ public class DeepLinkHandler {
             case Constants.PRODUCT_LIST:
                 String queryParams = uri.getQuery();
                 if (!TextUtils.isEmpty(queryParams)) {
-                    ArrayList<NameValuePair> nameValuePairs = UIUtil.getAsNameValuePair(queryParams);
+                    ArrayList<NameValuePair> nameValuePairs = UIUtil.getProductQueryParams(queryParams);
                     context.getCurrentActivity().launchProductList(nameValuePairs, null, null);
                     return SUCCESS;
                 }

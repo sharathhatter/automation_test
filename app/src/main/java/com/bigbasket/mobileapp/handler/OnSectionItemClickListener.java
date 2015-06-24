@@ -247,7 +247,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
     }
 
     private void launchProductList(DestinationInfo destinationInfo) {
-        ArrayList<NameValuePair> nameValuePairs = UIUtil.getAsNameValuePair(destinationInfo.getDestinationSlug());
+        ArrayList<NameValuePair> nameValuePairs = UIUtil.getProductQueryParams(destinationInfo.getDestinationSlug());
         launchProductList(nameValuePairs);
     }
 
