@@ -631,4 +631,5 @@ public class Constants {
     public static final String SHIPMENT_ACTIONS = "shipment_actions";
 
     public static final String NOT_ALPHANUMERIC_TXT_SHOPPING_LIST = "aplhaNumericTxt";
+    public static final int CALL_AREA_INFO = 75;
 }
