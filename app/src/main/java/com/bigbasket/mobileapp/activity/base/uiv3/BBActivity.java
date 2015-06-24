@@ -90,7 +90,7 @@ import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.view.uiv3.AnimatedRelativeLayout;
 import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
-import com.melnykov.fab.FloatingBadgeCountView;
+import com.bigbasket.mobileapp.view.uiv3.FloatingBadgeCountView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -166,8 +166,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     public void setViewBasketFloatingButton() {
         FloatingBadgeCountView btnViewBasket = getViewBasketFloatingButton();
         if (btnViewBasket != null) {
-            btnViewBasket.setImg(R.drawable.view_basket);
-            btnViewBasket.setText(null);
             syncCartInfoFromPreference();
             updateCartCountHeaderTextView();
             btnViewBasket.setOnClickListener(new View.OnClickListener() {
@@ -242,8 +240,8 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     public void replaceToMainLayout(AbstractFragment fragment, String tag, boolean stateLess,
-                                    FrameLayout frameLayout){
-        if(frameLayout==null) return;
+                                    FrameLayout frameLayout) {
+        if (frameLayout == null) return;
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         String ftTag = TextUtils.isEmpty(tag) ? fragment.getFragmentTxnTag() : tag;
@@ -598,9 +596,12 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         FloatingBadgeCountView btnViewBasket = getViewBasketFloatingButton();
         if (cartSummary != null && btnViewBasket != null) {
             if (cartSummary.getNoOfItems() <= 0) {
+                btnViewBasket.setImg(R.drawable.view_basket);
                 btnViewBasket.setText(null);
             } else {
-                btnViewBasket.setText(String.valueOf(cartSummary.getNoOfItems()));
+                btnViewBasket.setImg(R.drawable.filled_basket);
+                btnViewBasket.setText(cartSummary.getNoOfItems() < 10 ? "0" + cartSummary.getNoOfItems() :
+                        String.valueOf(cartSummary.getNoOfItems()));
             }
         }
     }
@@ -823,9 +824,9 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     private static <T extends SectionItem> void
-        setSectionNavigationItemList(Context context, ArrayList<SectionNavigationItem> sectionNavigationItems,
-                                              ArrayList<T> sectionItems,
-                                              Section section, String baseImgUrl) {
+    setSectionNavigationItemList(Context context, ArrayList<SectionNavigationItem> sectionNavigationItems,
+                                 ArrayList<T> sectionItems,
+                                 Section section, String baseImgUrl) {
         for (SectionItem sectionItem : sectionItems) {
             if (sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
                 if (sectionItem.hasImage()) {

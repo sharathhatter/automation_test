@@ -1,4 +1,4 @@
-package com.melnykov.fab;
+package com.bigbasket.mobileapp.view.uiv3;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -17,7 +17,6 @@ import android.support.annotation.ColorRes;
 import android.support.annotation.DimenRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IntDef;
-import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -31,8 +30,10 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ScrollView;
 import android.widget.TextView;
+
+import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.util.FontHolder;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -57,6 +58,7 @@ public class FloatingBadgeCountView extends FrameLayout {
         super.onFinishInflate();
         img = (ImageView) findViewById(R.id.img);
         txt = (TextView) findViewById(R.id.txt);
+        txt.setTypeface(FontHolder.getInstance(getContext()).getFaceRobotoMedium());
     }
 
     public void setImg(@DrawableRes int drawableRes) {
@@ -93,8 +95,6 @@ public class FloatingBadgeCountView extends FrameLayout {
 
     private int mShadowSize;
 
-    private int mScrollThreshold;
-
     private boolean mMarginsSet;
     private Animation mPreHoneyCombSlideUpAnimation;
     private Animation mPreHoneyCombSlideDownAnimation;
@@ -105,7 +105,7 @@ public class FloatingBadgeCountView extends FrameLayout {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int size = getDimension(
-                mType == TYPE_NORMAL ? R.dimen.fab_size_normal : R.dimen.fab_size_mini);
+                mType == TYPE_NORMAL ? com.melnykov.fab.R.dimen.fab_size_normal : com.melnykov.fab.R.dimen.fab_size_mini);
         if (mShadow && !hasLollipopApi()) {
             size += mShadowSize * 2;
             setMarginsWithoutShadow();
@@ -115,14 +115,13 @@ public class FloatingBadgeCountView extends FrameLayout {
 
     private void init(Context context, AttributeSet attributeSet) {
         mVisible = true;
-        mColorNormal = getColor(R.color.material_blue_500);
+        mColorNormal = getColor(com.melnykov.fab.R.color.material_blue_500);
         mColorPressed = darkenColor(mColorNormal);
         mColorRipple = lightenColor(mColorNormal);
         mColorDisabled = getColor(android.R.color.darker_gray);
         mType = TYPE_NORMAL;
         mShadow = true;
-        mScrollThreshold = getResources().getDimensionPixelOffset(R.dimen.fab_scroll_threshold);
-        mShadowSize = getDimension(R.dimen.fab_shadow_size);
+        mShadowSize = getDimension(com.melnykov.fab.R.dimen.fab_shadow_size);
         if (attributeSet != null) {
             initAttributes(context, attributeSet);
         }
@@ -130,19 +129,19 @@ public class FloatingBadgeCountView extends FrameLayout {
     }
 
     private void initAttributes(Context context, AttributeSet attributeSet) {
-        TypedArray attr = getTypedArray(context, attributeSet, R.styleable.FloatingActionButton);
+        TypedArray attr = getTypedArray(context, attributeSet, com.melnykov.fab.R.styleable.FloatingActionButton);
         if (attr != null) {
             try {
-                mColorNormal = attr.getColor(R.styleable.FloatingActionButton_fab_colorNormal,
-                        getColor(R.color.material_blue_500));
-                mColorPressed = attr.getColor(R.styleable.FloatingActionButton_fab_colorPressed,
+                mColorNormal = attr.getColor(com.melnykov.fab.R.styleable.FloatingActionButton_fab_colorNormal,
+                        getColor(com.melnykov.fab.R.color.material_blue_500));
+                mColorPressed = attr.getColor(com.melnykov.fab.R.styleable.FloatingActionButton_fab_colorPressed,
                         darkenColor(mColorNormal));
-                mColorRipple = attr.getColor(R.styleable.FloatingActionButton_fab_colorRipple,
+                mColorRipple = attr.getColor(com.melnykov.fab.R.styleable.FloatingActionButton_fab_colorRipple,
                         lightenColor(mColorNormal));
-                mColorDisabled = attr.getColor(R.styleable.FloatingActionButton_fab_colorDisabled,
+                mColorDisabled = attr.getColor(com.melnykov.fab.R.styleable.FloatingActionButton_fab_colorDisabled,
                         mColorDisabled);
-                mShadow = attr.getBoolean(R.styleable.FloatingActionButton_fab_shadow, true);
-                mType = attr.getInt(R.styleable.FloatingActionButton_fab_type, TYPE_NORMAL);
+                mShadow = attr.getBoolean(com.melnykov.fab.R.styleable.FloatingActionButton_fab_shadow, true);
+                mType = attr.getInt(com.melnykov.fab.R.styleable.FloatingActionButton_fab_type, TYPE_NORMAL);
             } finally {
                 attr.recycle();
             }
@@ -164,8 +163,8 @@ public class FloatingBadgeCountView extends FrameLayout {
 
         if (mShadow && !hasLollipopApi()) {
             Drawable shadowDrawable = ContextCompat.getDrawable(getContext(),
-                    mType == TYPE_NORMAL ? R.drawable.fab_shadow
-                            : R.drawable.fab_shadow_mini);
+                    mType == TYPE_NORMAL ? com.melnykov.fab.R.drawable.fab_shadow
+                            : com.melnykov.fab.R.drawable.fab_shadow_mini);
             LayerDrawable layerDrawable = new LayerDrawable(new Drawable[]{shadowDrawable, shapeDrawable});
             layerDrawable.setLayerInset(1, mShadowSize, mShadowSize, mShadowSize, mShadowSize);
             return layerDrawable;
@@ -209,7 +208,7 @@ public class FloatingBadgeCountView extends FrameLayout {
             float elevation;
             if (mShadow) {
                 elevation = getElevation() > 0.0f ? getElevation()
-                        : getDimension(R.dimen.fab_elevation_lollipop);
+                        : getDimension(com.melnykov.fab.R.dimen.fab_elevation_lollipop);
             } else {
                 elevation = 0.0f;
             }
@@ -219,8 +218,8 @@ public class FloatingBadgeCountView extends FrameLayout {
             setOutlineProvider(new ViewOutlineProvider() {
                 @Override
                 public void getOutline(View view, Outline outline) {
-                    int size = getDimension(mType == TYPE_NORMAL ? R.dimen.fab_size_normal
-                            : R.dimen.fab_size_mini);
+                    int size = getDimension(mType == TYPE_NORMAL ? com.melnykov.fab.R.dimen.fab_size_normal
+                            : com.melnykov.fab.R.dimen.fab_size_mini);
                     outline.setOval(0, 0, size, size);
                 }
             });
@@ -323,13 +322,13 @@ public class FloatingBadgeCountView extends FrameLayout {
         if (mVisible) {
             setVisibility(View.VISIBLE);
             if (mPreHoneyCombSlideUpAnimation == null) {
-                mPreHoneyCombSlideUpAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.slide_up);
+                mPreHoneyCombSlideUpAnimation = AnimationUtils.loadAnimation(getContext(), com.melnykov.fab.R.anim.slide_up);
             }
             startAnimation(mPreHoneyCombSlideUpAnimation);
         } else {
             setVisibility(View.GONE);
             if (mPreHoneyCombSlideDownAnimation == null) {
-                mPreHoneyCombSlideDownAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.slide_down);
+                mPreHoneyCombSlideDownAnimation = AnimationUtils.loadAnimation(getContext(), com.melnykov.fab.R.anim.slide_down);
             }
             startAnimation(mPreHoneyCombSlideDownAnimation);
         }
@@ -359,58 +358,5 @@ public class FloatingBadgeCountView extends FrameLayout {
         Color.colorToHSV(color, hsv);
         hsv[2] *= 1.1f;
         return Color.HSVToColor(hsv);
-    }
-
-    public void attachToScrollView(@NonNull ObservableScrollView scrollView) {
-        attachToScrollView(scrollView, null, null);
-    }
-
-    public void attachToScrollView(@NonNull ObservableScrollView scrollView,
-                                   ScrollDirectionListener scrollDirectionListener,
-                                   ObservableScrollView.OnScrollChangedListener onScrollChangedListener) {
-        ScrollViewScrollDetectorImpl scrollDetector = new ScrollViewScrollDetectorImpl();
-        scrollDetector.setScrollDirectionListener(scrollDirectionListener);
-        scrollDetector.setOnScrollChangedListener(onScrollChangedListener);
-        scrollDetector.setScrollThreshold(mScrollThreshold);
-        scrollView.setOnScrollChangedListener(scrollDetector);
-    }
-
-    private class ScrollViewScrollDetectorImpl extends ScrollViewScrollDetector {
-        private ScrollDirectionListener mScrollDirectionListener;
-
-        private ObservableScrollView.OnScrollChangedListener mOnScrollChangedListener;
-
-        private void setScrollDirectionListener(ScrollDirectionListener scrollDirectionListener) {
-            mScrollDirectionListener = scrollDirectionListener;
-        }
-
-        public void setOnScrollChangedListener(ObservableScrollView.OnScrollChangedListener onScrollChangedListener) {
-            mOnScrollChangedListener = onScrollChangedListener;
-        }
-
-        @Override
-        public void onScrollDown() {
-            show();
-            if (mScrollDirectionListener != null) {
-                mScrollDirectionListener.onScrollDown();
-            }
-        }
-
-        @Override
-        public void onScrollUp() {
-            hide();
-            if (mScrollDirectionListener != null) {
-                mScrollDirectionListener.onScrollUp();
-            }
-        }
-
-        @Override
-        public void onScrollChanged(ScrollView who, int l, int t, int oldl, int oldt) {
-            if (mOnScrollChangedListener != null) {
-                mOnScrollChangedListener.onScrollChanged(who, l, t, oldl, oldt);
-            }
-
-            super.onScrollChanged(who, l, t, oldl, oldt);
-        }
     }
 }

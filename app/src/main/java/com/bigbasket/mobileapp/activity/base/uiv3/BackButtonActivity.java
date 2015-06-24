@@ -10,7 +10,7 @@ import android.view.View;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout;
-import com.melnykov.fab.FloatingBadgeCountView;
+import com.bigbasket.mobileapp.view.uiv3.FloatingBadgeCountView;
 
 public class BackButtonActivity extends BBActivity {
 

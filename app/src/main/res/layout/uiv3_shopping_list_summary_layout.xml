@@ -61,7 +61,7 @@
                 android:layout_above="@id/layoutAddAll"
                 android:layout_below="@id/toolbarMain" />
 
-            <com.melnykov.fab.FloatingBadgeCountView
+            <com.bigbasket.mobileapp.view.uiv3.FloatingBadgeCountView
                 android:id="@+id/btnViewBasket"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
