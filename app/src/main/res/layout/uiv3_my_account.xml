@@ -16,6 +16,8 @@
                 android:layout_width="wrap_content"
                 android:id="@+id/circularImageView"
                 android:maxWidth="65dp"
+                android:minWidth="45dp"
+                android:minHeight="45dp"
                 android:layout_centerVertical="true"
                 android:maxHeight="65dp"
                 android:layout_marginLeft="@dimen/margin_normal"

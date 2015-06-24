@@ -106,7 +106,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
                         break;
                     default:
                         handler.sendEmptyMessage(getDeliveryAddressApiResponse.status,
-                                getDeliveryAddressApiResponse.message);
+                                getDeliveryAddressApiResponse.message, true);
                         break;
                 }
             }

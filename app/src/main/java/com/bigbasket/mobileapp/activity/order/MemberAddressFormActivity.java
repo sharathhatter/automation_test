@@ -63,9 +63,11 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
             cityName = preferences.getString(Constants.CITY, null);
         }
-        if (getSystemAreaInfo()) {
-            handleMessage(1);
-        } else {
+
+        String addressCityName = address!=null ? address.getCityName() : null;
+        if(getSystemAreaInfo(addressCityName)){
+            handleMessage(Constants.CALL_AREA_INFO);
+        }else {
             showForm();
         }
     }
@@ -358,7 +360,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
 
     public void handleMessage(int what) {
         switch (what) {
-            case 1:
+            case Constants.CALL_AREA_INFO:
                 BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
                 showProgressDialog(getString(R.string.please_wait));
                 bigBasketApiService.getAreaInfo(new CallbackGetAreaInfo<>(getCurrentActivity()));

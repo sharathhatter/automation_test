@@ -17,6 +17,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetProductsForOrderApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponseWithCart;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
@@ -165,14 +166,14 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressView();
         bigBasketApiService.addAllToBasketPastOrders(mOrderId,
-                new Callback<OldApiResponse<CartSummary>>() {
+                new Callback<OldApiResponseWithCart>() {
                     @Override
-                    public void success(OldApiResponse<CartSummary> addAllToBasketPastOrdersCallBack, Response response) {
+                    public void success(OldApiResponseWithCart addAllToBasketPastOrdersCallBack, Response response) {
                         if (isSuspended()) return;
                         hideProgressView();
                         switch (addAllToBasketPastOrdersCallBack.status) {
                             case Constants.OK:
-                                setCartSummary(addAllToBasketPastOrdersCallBack.apiResponseContent);
+                                setCartSummary(addAllToBasketPastOrdersCallBack);
                                 updateUIForCartInfo();
                                 loadProducts();
                                 break;

@@ -22,6 +22,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListSummary
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListsApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponseWithCart;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OrderListApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseContent;
@@ -311,7 +312,7 @@ public interface BigBasketApiService {
     @FormUrlEncoded
     @POST("/add-order-products/")
     void addAllToBasketPastOrders(@Field(Constants.ORDER_ID) String orderId,
-                                  Callback<OldApiResponse<CartSummary>> addAllToBasketSmartBasketCallBack);
+                                  Callback<OldApiResponseWithCart> addAllToBasketSmartBasketCallBack);
 
     @GET("/get-prepaid-payment-params/")
     void getPrepaidPaymentParams(@Query(Constants.P_ORDER_ID) String potentialOrderId, @Query(Constants.PAYMENT_TYPE) String paymentType,
