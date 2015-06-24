@@ -22,16 +22,11 @@
     </RelativeLayout>
 
 
-    <com.bigbasket.mobileapp.view.uiv3.ExpandableHeightGridView
-        android:id="@+id/layoutGrid"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/layoutGridContainer"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/margin_mini"
         android:layout_marginRight="@dimen/margin_mini"
-        android:gravity="center_horizontal"
-        android:horizontalSpacing="@dimen/margin_mini"
-        android:isScrollContainer="false"
-        android:numColumns="@integer/numGridCols"
-        android:stretchMode="columnWidth"
-        android:verticalSpacing="@dimen/margin_mini" />
+        android:orientation="vertical" />
 </LinearLayout>

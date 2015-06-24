@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -374,23 +375,59 @@ public class SectionView {
     }
 
     private View getGridLayoutView(final Section section, LayoutInflater inflater, ViewGroup parent) {
+
+        ArrayList<ArrayList<SectionItem>> sectionItemRows = new ArrayList<>();
+        int numCols = context.getResources().getInteger(R.integer.numGridCols);
+        int sz  = section.getSectionItems().size();
+        int numRowsExpected = (int) Math.ceil((double) sz / (double) numCols);
+        Log.d("Section", "For grid, num rows expected = " + numRowsExpected);
+        ArrayList<SectionItem> eachSectionItemRow = null;
+        for (int i = 0; i < sz; i++) {
+            if (i % numCols == 0) {
+                if (eachSectionItemRow != null) {
+                    sectionItemRows.add(eachSectionItemRow);
+                }
+                eachSectionItemRow = new ArrayList<>();
+            }
+            if (eachSectionItemRow != null) {
+                eachSectionItemRow.add(section.getSectionItems().get(i));
+            }
+        }
+        if (sectionItemRows.size() != numRowsExpected && eachSectionItemRow != null) {
+            sectionItemRows.add(eachSectionItemRow);
+        }
+
         View base = inflater.inflate(R.layout.uiv3_grid_container, parent, false);
         formatSectionTitle(base, R.id.txtListTitle, section);
         setViewMoreBehaviour(base.findViewById(R.id.btnMore), section, section.getMoreSectionItem());
+        ViewGroup layoutGridContainer = (ViewGroup) base.findViewById(R.id.layoutGridContainer);
+//
+//        ExpandableHeightGridView layoutGrid = (ExpandableHeightGridView) base.findViewById(R.id.layoutGrid);
+//        layoutGrid.setExpanded(true);
+//        SectionGridAdapter sectionGridAdapter = new SectionGridAdapter<>(context, section, mSectionData.getBaseImgUrl(),
+//                mSectionData.getRenderersMap(), faceRobotoRegular, screenName);
+//        layoutGrid.setAdapter(sectionGridAdapter);
+//        layoutGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                SectionItem sectionItem = section.getSectionItems().get(position);
+//                new OnSectionItemClickListener<>(context, section, sectionItem, screenName).
+//                        onClick(view);
+//            }
+//        });
+//        return base;
 
-        ExpandableHeightGridView layoutGrid = (ExpandableHeightGridView) base.findViewById(R.id.layoutGrid);
-        layoutGrid.setExpanded(true);
-        SectionGridAdapter sectionGridAdapter = new SectionGridAdapter<>(context, section, mSectionData.getBaseImgUrl(),
-                mSectionData.getRenderersMap(), faceRobotoRegular, screenName);
-        layoutGrid.setAdapter(sectionGridAdapter);
-        layoutGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                SectionItem sectionItem = section.getSectionItems().get(position);
-                new OnSectionItemClickListener<>(context, section, sectionItem, screenName).
-                        onClick(view);
-            }
-        });
+
+        for (ArrayList<SectionItem> sectionItems: sectionItemRows) {
+
+            View tileBase = inflater.inflate(R.layout.uiv3_tile_container, parent, false);
+            tileBase.findViewById(R.id.txtListTitle).setVisibility(View.GONE);
+            tileBase.findViewById(R.id.btnMore).setVisibility(View.GONE);
+
+            LinearLayout tileContainer = (LinearLayout) tileBase.findViewById(R.id.layoutTileContainer);
+            addTilesToParent(tileContainer, false, section, sectionItems, inflater, false);
+            layoutGridContainer.addView(tileBase);
+        }
         return base;
     }
 
@@ -405,6 +442,14 @@ public class SectionView {
             tileContainer.setOrientation(LinearLayout.VERTICAL);
         }
         ArrayList<SectionItem> sectionItems = section.getSectionItems();
+        addTilesToParent(tileContainer, isVertical, section, sectionItems, inflater, true);
+        return base;
+    }
+
+    private void addTilesToParent(ViewGroup tileContainer, boolean isVertical,
+                                  Section section, ArrayList<SectionItem> sectionItems,
+                                  LayoutInflater inflater,
+                                  boolean stretchImage) {
         boolean hasSectionTitle = section.getTitle() != null && !TextUtils.isEmpty(section.getTitle().getText());
         int numSectionItems = sectionItems.size();
         Typeface titleTypeface = isVertical ? FontHolder.getInstance(context).getFaceRobotoMedium() : faceRobotoRegular;
@@ -477,6 +522,9 @@ public class SectionView {
                             lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
                             imgInRow.setLayoutParams(lp);
                         }
+                    } else if (!stretchImage) {
+                        // By default images are stretched
+
                     }
                     sectionItem.displayImage(context, mSectionData.getBaseImgUrl(), imgInRow);
                 } else {
@@ -524,7 +572,6 @@ public class SectionView {
             view.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
             tileContainer.addView(view);
         }
-        return base;
     }
 
     private void formatSectionTitle(View parent, int txtViewId, Section section) {
