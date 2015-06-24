@@ -84,7 +84,7 @@ public class DeepLinkHandler {
             case Constants.PRODUCT_LIST:
                 String queryParams = uri.getQuery();
                 if (!TextUtils.isEmpty(queryParams)) {
-                    ArrayList<NameValuePair> nameValuePairs = UIUtil.getAsNameValuePair(queryParams);
+                    ArrayList<NameValuePair> nameValuePairs = UIUtil.getProductQueryParams(queryParams);
                     context.getCurrentActivity().launchProductList(nameValuePairs, null, null);
                     return SUCCESS;
                 }
@@ -185,6 +185,12 @@ public class DeepLinkHandler {
                 intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_DYNAMIC_SCREEN);
                 context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 return SUCCESS;
+            case Constants.AUTH:
+                if (authParameters.isAuthTokenEmpty()) {
+                    context.getCurrentActivity().launchLogin(TrackEventkeys.NAVIGATION_CTX_DEEP_LINK);
+                    return SUCCESS;
+                }
+                return FAILED;
             default:
                 return FAILED;
         }

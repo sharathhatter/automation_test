@@ -43,6 +43,8 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle(getString(R.string.signUpCapsVerb));
+
         new GetCitiesTask<>(this).startTask();
     }
 
@@ -54,8 +56,6 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
     @Override
     public void onReadyToDisplayCity(ArrayList<City> cities) {
         mCities = cities;
-
-        setTitle(getString(R.string.signUpCapsVerb));
 
         ((TextView) findViewById(R.id.txtOrSeparator)).setTypeface(faceRobotoRegular);
         ((TextView) findViewById(R.id.lblConnectUsing)).setTypeface(faceRobotoLight);

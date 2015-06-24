@@ -10,10 +10,11 @@ public abstract class OnRightCompoundDrawableClicked implements View.OnTouchList
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        if (event != null && event.getAction() == MotionEvent.ACTION_UP
+        if (event != null && event.getAction() == MotionEvent.ACTION_DOWN
                 && v instanceof EditText) {
             EditText editText = (EditText) v;
-            if (!TextUtils.isEmpty(editText.getError())) return false;
+            if (!TextUtils.isEmpty(editText.getError())
+                    || editText.getCompoundDrawables()[DRAWABLE_RIGHT] == null) return false;
             int leftEdgeOfRightDrawable = editText.getRight() -
                     editText.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width();
             // when EditBox has padding, adjust leftEdge like

@@ -145,9 +145,6 @@ public class PaymentSelectionActivity extends BackButtonActivity {
     }
 
     private void renderPaymentMethodsAndSummary(@Nullable ArrayList<CreditDetails> creditDetails) {
-        View layoutPressOrderReview = findViewById(R.id.layoutPressOrderReviewContainer);
-        layoutPressOrderReview.setVisibility(View.GONE);
-
         // Show invoice and other order details
         LayoutInflater inflater = getLayoutInflater();
         int normalColor = getResources().getColor(R.color.uiv3_primary_text_color);
@@ -842,7 +839,7 @@ public class PaymentSelectionActivity extends BackButtonActivity {
                     break;
             }
         } else {
-            super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
+            super.onPositiveButtonClicked(dialogInterface, null, valuePassed);
         }
     }
 
@@ -858,7 +855,7 @@ public class PaymentSelectionActivity extends BackButtonActivity {
                     break;
             }
         } else {
-            super.onNegativeButtonClicked(dialogInterface, sourceName);
+            super.onNegativeButtonClicked(dialogInterface, null);
         }
     }
 

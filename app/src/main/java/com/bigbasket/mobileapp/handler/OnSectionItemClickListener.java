@@ -27,6 +27,7 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.SectionManager;
 import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
+import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.section.DestinationInfo;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionItem;
@@ -148,10 +149,14 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                         intent.putExtra(Constants.SHOPPING_LIST_NAME, shoppingListName);
                         ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
 
-                        if (isSmartBasket) logMainMenuEvent(TrackingAware.SMART_BASKET_ICON_CLICKED,
-                                TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_HOME_PAGE);
-                        else logMainMenuEvent(TrackingAware.SHOPPING_LIST_ICON_CLICKED,
-                                TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_HOME_PAGE);
+                        if (isSmartBasket) {
+                            logMainMenuEvent(TrackingAware.SMART_BASKET_ICON_CLICKED,
+                                    TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_HOME_PAGE);
+                        }
+                        else {
+                            logMainMenuEvent(TrackingAware.SHOPPING_LIST_ICON_CLICKED,
+                                    TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_HOME_PAGE);
+                        }
                     }
                     break;
                 case DestinationInfo.SHOPPING_LIST_LANDING:
@@ -233,12 +238,16 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                             DiscountActivity.class);
                     ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent,
                             NavigationCodes.GO_TO_HOME);
+                    break;
+                case DestinationInfo.BASKET:
+                    ((ActivityAware) context).getCurrentActivity().launchViewBasketScreen();
+                    break;
             }
         }
     }
 
     private void launchProductList(DestinationInfo destinationInfo) {
-        ArrayList<NameValuePair> nameValuePairs = UIUtil.getAsNameValuePair(destinationInfo.getDestinationSlug());
+        ArrayList<NameValuePair> nameValuePairs = UIUtil.getProductQueryParams(destinationInfo.getDestinationSlug());
         launchProductList(nameValuePairs);
     }
 

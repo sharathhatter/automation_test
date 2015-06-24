@@ -33,8 +33,8 @@
                 android:background="@color/uiv3_list_bkg_color"
                 android:clickable="true"
                 android:gravity="center"
-                android:visibility="gone"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/txtAddAll"
@@ -55,6 +55,7 @@
 
             <FrameLayout
                 android:id="@+id/content_frame"
+                style="@style/WindowStyle.ContentArea"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_above="@id/layoutAddAll"

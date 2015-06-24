@@ -202,18 +202,22 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         toggleFilterSortView(showFilters);
         mCartInfo = productTabData.getCartInfo();
         if (hasProducts) {
+            // Setup title
+            if (productTabData.getHeaderSection() != null &&
+                    productTabData.getHeaderSection().getSectionItems() != null &&
+                    productTabData.getHeaderSection().getSectionItems().size() > 0) {
+                mTitlePassedViaIntent = "";
+                setTitle(null);
+            } else if (!TextUtils.isEmpty(productTabData.getScreenName())) {
+                mTitlePassedViaIntent = productTabData.getScreenName();
+                setTitle(productTabData.getScreenName());
+            } else if (!TextUtils.isEmpty(mTitlePassedViaIntent)) {
+                setTitle(mTitlePassedViaIntent);
+            }
+
+            // Setup content
             if (productTabData.getProductTabInfos().size() > 1) {
                 displayProductTabs(productTabData, contentFrame);
-                if (productTabData.getHeaderSection() != null &&
-                        productTabData.getHeaderSection().getSectionItems() != null &&
-                        productTabData.getHeaderSection().getSectionItems().size() > 0) {
-                    setTitle(null);
-                } else if (!TextUtils.isEmpty(productTabData.getScreenName())) {
-                    mTitlePassedViaIntent = productTabData.getScreenName();
-                    setTitle(productTabData.getScreenName());
-                } else if (!TextUtils.isEmpty(mTitlePassedViaIntent)) {
-                    setTitle(mTitlePassedViaIntent);
-                }
             } else {
                 // When only one product tab
                 ProductTabInfo productTabInfo = productTabData.getProductTabInfos().get(0);

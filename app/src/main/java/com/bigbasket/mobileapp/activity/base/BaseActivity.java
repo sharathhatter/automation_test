@@ -93,7 +93,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     private MoEHelper moEHelper;
     private AppEventsLogger fbLogger;
 
-    public static void showKeyboard(final EditText editText) {
+    public static void showKeyboard(final View view) {
         (new Handler()).postDelayed(new Runnable() {
 
             public void run() {
@@ -102,9 +102,12 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 MotionEvent motionActionUp = MotionEvent.obtain(SystemClock.uptimeMillis(),
                         SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0);
                 if (motionActionDown == null || motionActionUp == null) return;
-                editText.dispatchTouchEvent(motionActionDown);
-                editText.dispatchTouchEvent(motionActionUp);
-                editText.setSelection(editText.getText().length());
+                view.dispatchTouchEvent(motionActionDown);
+                view.dispatchTouchEvent(motionActionUp);
+                if (view instanceof EditText) {
+                    EditText editText = (EditText) view;
+                    editText.setSelection(editText.getText().length());
+                }
             }
         }, 100);
     }
