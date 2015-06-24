@@ -324,7 +324,7 @@
     <string name="removeVoucherDesc">Are you sure that you want to remove this voucher?</string>
     <string name="minus">&#x2013;</string>
     <string name="plus">&#43;</string>
-    <string name="addAllProducts">Are you sure you want to add all products</string>
+    <string name="addAllProducts">Are you sure that you want to add all the products?</string>
     <string name="toBasket">to the basket?</string>
     <string name="addAllProductsDisplay">ADD ALL ITEMS TO THE BASKET</string>
     <string name="noAddressMsg1">You have not told us your delivery address.</string>

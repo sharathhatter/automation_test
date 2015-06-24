@@ -445,7 +445,6 @@
             android:exported="false"
             android:multiprocess="true" />
 
-        <!--android:launchMode="singleTask"  -->
         <activity
             android:name=".activity.base.SearchableActivity"
             android:configChanges="orientation|screenSize"

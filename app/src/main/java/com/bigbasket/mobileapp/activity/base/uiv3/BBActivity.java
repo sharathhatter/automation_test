@@ -803,7 +803,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
     private Object[] getSectionNavigationItems() {
         ArrayList<SectionNavigationItem> sectionNavigationItems = new ArrayList<>();
-        sectionNavigationItems.add(getHomeSectionNavItem());
+        sectionNavigationItems.addAll(getPreBakedNavigationItems());
 
         SectionManager sectionManager = new SectionManager(this, SectionManager.MAIN_MENU);
         SectionData sectionData = sectionManager.getStoredSectionData(true);
@@ -838,13 +838,30 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         }
     }
 
-    private SectionNavigationItem getHomeSectionNavItem() {
+    private ArrayList<SectionNavigationItem> getPreBakedNavigationItems() {
+        ArrayList<SectionNavigationItem> sectionNavigationItems = new ArrayList<>();
         SectionItem homeSectionItem = new SectionItem(new SectionTextItem(getString(R.string.home), 0),
-                null, Constants.LOCAL_RES_URL + "nav_home", -1, new DestinationInfo(DestinationInfo.HOME, null));
-        ArrayList<SectionItem> sectionItems = new ArrayList<>();
-        sectionItems.add(homeSectionItem);
-        Section section = new Section(null, null, Section.MSG, sectionItems, null);
-        return new SectionNavigationItem<>(section, homeSectionItem);
+                null, null, -1, new DestinationInfo(DestinationInfo.HOME, null));
+        ArrayList<SectionItem> homeSectionItems = new ArrayList<>();
+        homeSectionItems.add(homeSectionItem);
+        Section homeSection = new Section(null, null, Section.MSG, homeSectionItems, null);
+        sectionNavigationItems.add(new SectionNavigationItem<>(homeSection, homeSectionItem));
+
+        SectionItem myBasketSectionItem = new SectionItem(new SectionTextItem(getString(R.string.my_basket_header), 0),
+                null, null, -1, new DestinationInfo(DestinationInfo.BASKET, null));
+        ArrayList<SectionItem> myBasketSectionItems = new ArrayList<>();
+        myBasketSectionItems.add(myBasketSectionItem);
+        Section myBasketSection = new Section(null, null, Section.MSG, myBasketSectionItems, null);
+        sectionNavigationItems.add(new SectionNavigationItem<>(myBasketSection, myBasketSectionItem));
+
+        String smartBasketDeepLink = "bigbasket://smart-basket/";
+        SectionItem smartBasketSectionItem = new SectionItem(new SectionTextItem(getString(R.string.smartBasket), 0),
+                null, null, -1, new DestinationInfo(DestinationInfo.DEEP_LINK, smartBasketDeepLink));
+        ArrayList<SectionItem> smartBasketSectionItems = new ArrayList<>();
+        smartBasketSectionItems.add(smartBasketSectionItem);
+        Section smartBasketSection = new Section(null, null, Section.MSG, smartBasketSectionItems, null);
+        sectionNavigationItems.add(new SectionNavigationItem<>(smartBasketSection, smartBasketSectionItem));
+        return sectionNavigationItems;
     }
 
     @Override
