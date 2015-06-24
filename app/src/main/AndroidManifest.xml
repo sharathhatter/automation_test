@@ -261,6 +261,16 @@
                     android:host="dynamic_page"
                     android:scheme="bigbasket" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="auth"
+                    android:scheme="bigbasket" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".activity.base.uiv3.BBActivity"

@@ -564,6 +564,7 @@ public class Constants {
     public static final String SL_SUMMARY = "sl_summary";
     public static final String PROMO_LIST = "promo_list";
     public static final String DYNAMIC_PAGE = "dynamic_page";
+    public static final String AUTH = "auth";
     public static final String IS_PENDING_GO_TO_HOME = "isPendingGoToHome";
     public static final String RELOAD_APP = "reloadApp";
     public static final String HAS_USER_CHOSEN_CITY = "has_user_chosen_city";
