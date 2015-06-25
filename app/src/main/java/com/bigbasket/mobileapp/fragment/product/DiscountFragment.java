@@ -3,10 +3,10 @@ package com.bigbasket.mobileapp.fragment.product;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ScrollView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
@@ -41,13 +41,10 @@ public class DiscountFragment extends BaseFragment {
         contentLayout.removeAllViews();
 
         if (sectionData != null) {
-            View contentSectionView = new SectionView(getCurrentActivity(), faceRobotoRegular,
-                    sectionData, sectionData.getScreenName()).getView();
-            if (contentSectionView != null) {
-                // Use a scrollview as this section can be huge
-                ScrollView scrollView = new ScrollView(getCurrentActivity());
-                scrollView.addView(contentSectionView);
-                contentLayout.addView(scrollView);
+            RecyclerView recyclerView = new SectionView(getCurrentActivity(), faceRobotoRegular,
+                    sectionData, sectionData.getScreenName()).getRecyclerView(contentLayout);
+            if (recyclerView != null) {
+                contentLayout.addView(recyclerView);
             }
         }
     }

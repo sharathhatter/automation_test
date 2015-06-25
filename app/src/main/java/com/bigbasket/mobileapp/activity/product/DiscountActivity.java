@@ -14,6 +14,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.fragment.product.DiscountFragment;
 import com.bigbasket.mobileapp.model.discount.DiscountDataModel;
 import com.bigbasket.mobileapp.model.section.SectionData;
+import com.bigbasket.mobileapp.model.section.SectionUtil;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
@@ -50,8 +51,15 @@ public class DiscountActivity extends BBActivity {
                     return;
                 }
                 if (discountDataModelApiResponse.status == 0) {
-                    renderDiscountFragments(discountDataModelApiResponse.apiResponseContent.categoryDiscount,
-                            discountDataModelApiResponse.apiResponseContent.percentageDiscount);
+                    SectionData categoryDiscount = discountDataModelApiResponse.apiResponseContent.categoryDiscount;
+                    if (categoryDiscount != null) {
+                        categoryDiscount.setSections(SectionUtil.preserveMemory(categoryDiscount.getSections()));
+                    }
+                    SectionData percentageDiscount = discountDataModelApiResponse.apiResponseContent.percentageDiscount;
+                    if (percentageDiscount != null) {
+                        percentageDiscount.setSections(SectionUtil.preserveMemory(percentageDiscount.getSections()));
+                    }
+                    renderDiscountFragments(categoryDiscount, percentageDiscount);
                 } else {
                     handler.sendEmptyMessage(discountDataModelApiResponse.status,
                             discountDataModelApiResponse.message, true);

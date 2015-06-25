@@ -619,6 +619,7 @@ public class SectionView {
 
         @Override
         public void onBindViewHolder(SectionRowHolder holder, int position) {
+            Log.d("Section", "Requesting UI view for position = " + position);
             Section section = mSectionData.getSections().get(position);
             ViewGroup sectionViewHolderRow = holder.getRow();
             sectionViewHolderRow.removeAllViews();
