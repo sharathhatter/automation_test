@@ -143,7 +143,7 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
 
         } else {
             if (orderListAdapter == null) {
-                orderListAdapter = new OrderListAdapter(this, mOrders, totalPages);
+                orderListAdapter = new OrderListAdapter<>(this, mOrders, totalPages);
                 orderListAdapter.setCurrentPage(currentPage);
             }
 
@@ -203,8 +203,7 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
     }
 
     @Override
-    public String getScreenTag() { //todo change
-        return mOrderType.equals(getString(R.string.active_label)) ?
-                TrackEventkeys.ACCOUNT_VIEW_ACTIVE_ORDER_SCREEN : TrackEventkeys.ACCOUNT_VIEW_PAST_ORDER_PAGE;
+    public String getScreenTag() {
+        return TrackEventkeys.ACCOUNT_MEMBER_ORDER_SCREEN;
     }
 }

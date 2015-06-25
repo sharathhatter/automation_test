@@ -10,7 +10,7 @@ public final class TrackEventkeys {
     public static final String NAVIGATION_CTX_DIALOG = "dialog";
     public static final String NAVIGATION_CTX_SIGNUP_PAGE = "signup";
     public static final String LOGIN_TYPE_GOOGLE = "Google";
-    public static final String LOGIN_TYPE_FACEBOOK = "Facebook"; //todo
+    public static final String LOGIN_TYPE_FACEBOOK = "Facebook";
     public static final String LOGIN_TYPE_NORMAL = "Normal";
     public static final String TYPE = "type";
     public static final String FAILURE_REASON = "failure reason";
@@ -52,7 +52,6 @@ public final class TrackEventkeys {
     public static final String NAVIGATION_CTX_PRODUCT_LIST = "product_list";
     public static final String NAVIGATION_CTX_PRODUCT_DETAIL = "product_detail";
     public static final String NAVIGATION_CTX_SHOW_BASKET = "basket";
-    public static final String NAVIGATION_CTX_MARKET_PLACE_QC = "mp_qc"; //todo check with hari
     public static final String NAVIGATION_CTX_PROMO_DETAIL = "promo_detail"; //todo check with hari
     //basket
     public static final String TOTAL_ITEMS_IN_BASKET = "total items";
@@ -87,7 +86,7 @@ public final class TrackEventkeys {
     //ACCOUNT
     public static final String ACCOUNT_SCREEN = "My Account"; //Done
     public static final String ACCOUNT_CHANGE_PASSWORD_SCREEN = "Change Password"; //Done
-    public static final String ACCOUNT_VIEW_ACTIVE_ORDER_SCREEN = "Active Orders"; //Done
+    public static final String ACCOUNT_MEMBER_ORDER_SCREEN = "Orders List"; //Done
     public static final String ACCOUNT_VIEW_PAST_ORDER_PAGE = "History Orders"; //Done
     public static final String ACCOUNT_UPDATE_PROFILE_SCREEN = "Update Profile"; //Done
     public static final String ACCOUNT_WALLET_SCREEN = "Wallet Summary"; //Done

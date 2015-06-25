@@ -12,6 +12,7 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.OrderListActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
@@ -37,6 +38,7 @@ public class OrderInvoiceActivity extends BaseActivity {
                 startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
             }
         });
+        trackEvent(TrackingAware.THANK_YOU_PAGE_SHOWN, null);
     }
 
 

@@ -232,7 +232,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
 
         Map<String, String> eventAttribs = new HashMap<>();
-        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_TOPNAV);
+        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_LEFTNAV);
         trackEvent(TrackingAware.COMMUNICATION_HUB_CLICKED, eventAttribs);
     }
 

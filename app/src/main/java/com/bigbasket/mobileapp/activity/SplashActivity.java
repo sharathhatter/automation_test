@@ -304,7 +304,6 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
 
     @Override
     public void onDynamicScreenFailure(RetrofitError error) {
-        //showNoInternetConnectionView(); todo check with sid
         handler.handleRetrofitError(error, true);
     }
 
