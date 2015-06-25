@@ -6,13 +6,13 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -40,7 +40,6 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.AppNotSupportedDialog;
 import com.bigbasket.mobileapp.view.uiv2.UpgradeAppDialog;
-import com.melnykov.fab.ObservableScrollView;
 
 import java.util.ArrayList;
 
@@ -193,20 +192,14 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         // Render sections
         showProgressView();
 
-        ObservableScrollView contentScrollView = new ObservableScrollView(getActivity());
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT);
-        contentScrollView.setLayoutParams(layoutParams);
-
+        contentView.removeAllViews();
         //Trace.beginSection("Home page section rendering begin");
-        View sectionView = getSectionView();
-        if (sectionView != null) {
-            contentScrollView.addView(sectionView);
+        RecyclerView recyclerView = getSectionRecylerView(contentView);
+        if (recyclerView != null) {
+            contentView.addView(recyclerView);
         }
         //Trace.beginSection("Home page section rendering end");
 
-        contentView.removeAllViews();
-        contentView.addView(contentScrollView);
 
         // Check if any deep-link needs to be opened
         processPendingDeepLink();
