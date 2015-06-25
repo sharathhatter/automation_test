@@ -219,7 +219,7 @@ public class SectionView {
             }
             if (sectionItem.hasImage()) {
                 layoutSalutationItem.setVisibility(View.VISIBLE);
-                sectionItem.displayImage(context, mSectionData.getBaseImgUrl(), imgSalutationItem);
+                sectionItem.displayImage(context, mSectionData.getBaseImgUrl(), imgSalutationItem, R.drawable.loading_small);
                 imgSalutationItem.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
             }
         }
@@ -363,7 +363,7 @@ public class SectionView {
             layoutMenuTxt.setPadding(sixteenDp, layoutMenuTxtPadding, layoutMenuTxtPadding, layoutMenuTxtPadding);
 
             if (sectionItem.hasImage()) {
-                sectionItem.displayImage(context, mSectionData.getBaseImgUrl(), imgInRow);
+                sectionItem.displayImage(context, mSectionData.getBaseImgUrl(), imgInRow, R.drawable.loading_small);
             } else {
                 imgInRow.setVisibility(View.GONE);
             }
@@ -527,7 +527,8 @@ public class SectionView {
                             imgInRow.setLayoutParams(lp);
                         }
                     }
-                    sectionItem.displayImage(context, mSectionData.getBaseImgUrl(), imgInRow);
+                    sectionItem.displayImage(context, mSectionData.getBaseImgUrl(), imgInRow,
+                            stretchImage ? R.drawable.loading_large : R.drawable.loading_small);
                 } else {
                     imgInRow.setVisibility(View.GONE);
                 }

@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.model.section;
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -196,7 +197,14 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
         }
     }
 
-    public void displayImage(Context context, @Nullable String baseImgUrl, ImageView imageView) {
+    public void displayImage(Context context, @Nullable String baseImgUrl, ImageView imageView,
+                             @DrawableRes int placeHolderDrawableResId) {
+        displayImage(context, baseImgUrl, imageView, placeHolderDrawableResId, false);
+    }
+
+    public void displayImage(Context context, @Nullable String baseImgUrl, ImageView imageView,
+                             @DrawableRes int placeHolderDrawableResId,
+                             boolean animate) {
         imageView.setVisibility(View.VISIBLE);
         if (!TextUtils.isEmpty(image)) {
             if (image.startsWith(Constants.LOCAL_RES_PREFIX)) {
@@ -215,11 +223,11 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
                     imageView.setVisibility(View.GONE);
                 }
             } else {
-                UIUtil.displayAsyncImage(imageView, image);
+                UIUtil.displayAsyncImage(imageView, image, animate, placeHolderDrawableResId);
             }
         } else if (!TextUtils.isEmpty(imageName) && !TextUtils.isEmpty(baseImgUrl)) {
             UIUtil.displayAsyncImage(imageView,
-                    constructImageUrl(context, baseImgUrl));
+                    constructImageUrl(context, baseImgUrl), animate, placeHolderDrawableResId);
         } else {
             imageView.setImageDrawable(null);
             imageView.setVisibility(View.GONE);

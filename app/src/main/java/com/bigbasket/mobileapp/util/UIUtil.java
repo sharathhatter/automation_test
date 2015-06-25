@@ -49,6 +49,7 @@ import com.google.gson.Gson;
 import com.moe.pushlibrary.MoEHelper;
 import com.moe.pushlibrary.utils.MoEHelperConstants;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.RequestCreator;
 
 import java.text.DateFormat;
 import java.text.NumberFormat;
@@ -392,13 +393,20 @@ public class UIUtil {
     }
 
     public static void displayAsyncImage(ImageView imageView, String url) {
+        displayAsyncImage(imageView, url, false, R.drawable.loading_small);
+    }
+
+    public static void displayAsyncImage(ImageView imageView, String url, boolean animate,
+                                         @DrawableRes int placeHolderDrawableId) {
         Log.i(imageView.getContext().getClass().getName(), "Loading image = " + url);
         Picasso picasso = Picasso.with(imageView.getContext());
-        picasso.load(url)
-                .placeholder(R.drawable.loading)
+        RequestCreator requestCreator = picasso.load(url)
                 .error(R.drawable.noimage)
-                .noFade()
-                .into(imageView);
+                .placeholder(placeHolderDrawableId);
+        if (!animate) {
+            requestCreator.noFade();
+        }
+        requestCreator.into(imageView);
     }
 
     public static void preLoadImage(String url, Context context) {
