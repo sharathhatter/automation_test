@@ -478,7 +478,7 @@ public class PaymentSelectionActivity extends BackButtonActivity {
         switch (mSelectedPaymentMethod) {
             case Constants.PAYU:
                 Intent intent = new Intent(getApplicationContext(), PayuTransactionActivity.class);
-                intent.putExtra(Constants.POTENTIAL_ORDER_ID, mPotentialOrderId);
+                intent.putExtra(Constants.P_ORDER_ID, mPotentialOrderId);
                 intent.putExtra(Constants.FINAL_PAY, UIUtil.formatAsMoney(amount));
                 startActivityForResult(intent, Constants.PAYU_SUCCESS);
                 break;

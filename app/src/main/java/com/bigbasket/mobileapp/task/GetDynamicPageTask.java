@@ -97,13 +97,15 @@ public class GetDynamicPageTask<T> {
             switch (getDynamicPageApiResponse.status) {
                 case 0:
                     SectionData sectionData = getDynamicPageApiResponse.apiResponseContent.sectionData;
-                    if (sectionData != null) {
+                    if (sectionData != null && !screenName.equals(SectionManager.MAIN_MENU)) {
                         sectionData.setSections(SectionUtil.preserveMemory(sectionData.getSections()));
                     }
                     ((DynamicScreenAware) context).onDynamicScreenSuccess(screenName, sectionData);
                     if (sectionData != null && sectionData.getSections() != null &&
                             sectionData.getSections().size() > 0) {
                         sectionManager.storeSectionData(sectionData);
+                    } else {
+                        sectionManager.storeSectionData(null);
                     }
                     break;
                 default:

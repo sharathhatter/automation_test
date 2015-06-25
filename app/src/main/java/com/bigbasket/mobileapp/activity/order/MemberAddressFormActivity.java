@@ -410,10 +410,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
                     }
 
                     if (!mFromAccountPage) {
-                        HashMap<String, String> map = new HashMap<>();
-                        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
-                        map.put(TrackEventkeys.POTENTIAL_ORDER, prefer.getString(Constants.POTENTIAL_ORDER_ID, null));
-                        trackEvent(TrackingAware.CHECKOUT_ADDRESS_CREATED, map);
+                        trackEvent(TrackingAware.CHECKOUT_ADDRESS_CREATED, null);
                     }
                     if (address == null) {
                         Toast.makeText(getCurrentActivity(), "Address added successfully", Toast.LENGTH_LONG).show();
@@ -422,7 +419,6 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
                         Toast.makeText(getCurrentActivity(), "Address updated successfully", Toast.LENGTH_LONG).show();
                         addressCreatedModified();
                     }
-
                     break;
                 case ApiErrorCodes.NUMBER_IN_USE:
                     mErrorMsg = createUpdateAddressApiResponse.message;

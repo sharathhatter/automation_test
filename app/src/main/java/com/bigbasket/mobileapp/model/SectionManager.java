@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.model;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.bigbasket.mobileapp.BuildConfig;
@@ -63,13 +64,18 @@ public class SectionManager {
         return null;
     }
 
-    public void storeSectionData(SectionData sectionData) {
+    public void storeSectionData(@Nullable SectionData sectionData) {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
-        String sectionJson = new Gson().toJson(sectionData);
-        editor.putString(preferenceKey, sectionJson);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss",
-                Locale.getDefault());
-        editor.putString(preferenceKey + "_time", dateFormat.format(new Date()));
+        if (sectionData == null) {
+            editor.remove(preferenceKey);
+            editor.remove(preferenceKey + "_time");
+        } else {
+            String sectionJson = new Gson().toJson(sectionData);
+            editor.putString(preferenceKey, sectionJson);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss",
+                    Locale.getDefault());
+            editor.putString(preferenceKey + "_time", dateFormat.format(new Date()));
+        }
         editor.commit();
     }
 
