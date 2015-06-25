@@ -2,7 +2,9 @@ package com.bigbasket.mobileapp.fragment.base;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.bigbasket.mobileapp.interfaces.SectionAware;
 import com.bigbasket.mobileapp.model.section.SectionData;
@@ -18,6 +20,12 @@ public abstract class BaseSectionFragment extends BaseFragment implements Sectio
     public View getSectionView() {
         SectionView sectionView = new SectionView(getActivity(), faceRobotoRegular, mSectionData, mScreenName);
         return sectionView.getView();
+    }
+
+    @Nullable
+    public RecyclerView getSectionRecylerView(ViewGroup parent) {
+        SectionView sectionView = new SectionView(getActivity(), faceRobotoRegular, mSectionData, mScreenName);
+        return sectionView.getRecyclerView(parent);
     }
 
     protected void retainSectionState(Bundle outState) {

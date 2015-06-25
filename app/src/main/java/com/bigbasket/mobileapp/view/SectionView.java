@@ -7,18 +7,17 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.CarouselAdapter;
-import com.bigbasket.mobileapp.adapter.SectionGridAdapter;
 import com.bigbasket.mobileapp.handler.OnSectionItemClickListener;
 import com.bigbasket.mobileapp.model.section.Renderer;
 import com.bigbasket.mobileapp.model.section.Section;
@@ -26,7 +25,6 @@ import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.model.section.SectionItem;
 import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.bigbasket.mobileapp.view.uiv3.ExpandableHeightGridView;
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.SliderTypes.DefaultSliderView;
@@ -42,6 +40,7 @@ public class SectionView {
     private int eightDp;
     private int sixteenDp;
     private String screenName;
+    private int marginBetweenWidgets;
 
     public SectionView(Context context, Typeface faceRobotoRegular, SectionData mSectionData, String screenName) {
         this.context = context;
@@ -51,6 +50,7 @@ public class SectionView {
         this.fourDp = (int) context.getResources().getDimension(R.dimen.margin_mini);
         this.eightDp = (int) context.getResources().getDimension(R.dimen.margin_small);
         this.sixteenDp = (int) context.getResources().getDimension(R.dimen.margin_normal);
+        this.marginBetweenWidgets = (int) context.getResources().getDimension(R.dimen.margin_mini);
     }
 
     private void parseRendererColors() {
@@ -66,6 +66,10 @@ public class SectionView {
         }
     }
 
+    /**
+     * Don't use function view as much as possible since it puts all the views into memory
+     * Use this only when there's already a scrollable view on the page
+     */
     @Nullable
     public View getView() {
         if (mSectionData == null || mSectionData.getSections() == null || mSectionData.getSections().size() == 0)
@@ -106,7 +110,17 @@ public class SectionView {
     }
 
     @Nullable
-    private View getViewToRender(Section section, LayoutInflater inflater, LinearLayout mainLayout) {
+    public RecyclerView getRecyclerView(ViewGroup parent) {
+        if (mSectionData == null || mSectionData.getSections() == null || mSectionData.getSections().size() == 0)
+            return null;
+        parseRendererColors();
+        RecyclerView recyclerView = UIUtil.getResponsiveRecyclerView(context, 1, 1, parent);
+        recyclerView.setAdapter(new SectionRowAdapter());
+        return recyclerView;
+    }
+
+    @Nullable
+    private View getViewToRender(Section section, LayoutInflater inflater, ViewGroup mainLayout) {
         switch (section.getSectionType()) {
             case Section.BANNER:
                 return getBannerView(section, inflater, mainLayout);
@@ -374,23 +388,43 @@ public class SectionView {
     }
 
     private View getGridLayoutView(final Section section, LayoutInflater inflater, ViewGroup parent) {
+
+        ArrayList<ArrayList<SectionItem>> sectionItemRows = new ArrayList<>();
+        int numCols = context.getResources().getInteger(R.integer.numGridCols);
+        int sz = section.getSectionItems().size();
+        int numRowsExpected = (int) Math.ceil((double) sz / (double) numCols);
+        Log.d("Section", "For grid, num rows expected = " + numRowsExpected);
+        ArrayList<SectionItem> eachSectionItemRow = null;
+        for (int i = 0; i < sz; i++) {
+            if (i % numCols == 0) {
+                if (eachSectionItemRow != null) {
+                    sectionItemRows.add(eachSectionItemRow);
+                }
+                eachSectionItemRow = new ArrayList<>();
+            }
+            if (eachSectionItemRow != null) {
+                eachSectionItemRow.add(section.getSectionItems().get(i));
+            }
+        }
+        if (sectionItemRows.size() != numRowsExpected && eachSectionItemRow != null) {
+            sectionItemRows.add(eachSectionItemRow);
+        }
+
         View base = inflater.inflate(R.layout.uiv3_grid_container, parent, false);
         formatSectionTitle(base, R.id.txtListTitle, section);
         setViewMoreBehaviour(base.findViewById(R.id.btnMore), section, section.getMoreSectionItem());
+        ViewGroup layoutGridContainer = (ViewGroup) base.findViewById(R.id.layoutGridContainer);
 
-        ExpandableHeightGridView layoutGrid = (ExpandableHeightGridView) base.findViewById(R.id.layoutGrid);
-        layoutGrid.setExpanded(true);
-        SectionGridAdapter sectionGridAdapter = new SectionGridAdapter<>(context, section, mSectionData.getBaseImgUrl(),
-                mSectionData.getRenderersMap(), faceRobotoRegular, screenName);
-        layoutGrid.setAdapter(sectionGridAdapter);
-        layoutGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                SectionItem sectionItem = section.getSectionItems().get(position);
-                new OnSectionItemClickListener<>(context, section, sectionItem, screenName).
-                        onClick(view);
-            }
-        });
+        for (ArrayList<SectionItem> sectionItems : sectionItemRows) {
+
+            View tileBase = inflater.inflate(R.layout.uiv3_tile_container, parent, false);
+            tileBase.findViewById(R.id.txtListTitle).setVisibility(View.GONE);
+            tileBase.findViewById(R.id.btnMore).setVisibility(View.GONE);
+
+            LinearLayout tileContainer = (LinearLayout) tileBase.findViewById(R.id.layoutTileContainer);
+            addTilesToParent(tileContainer, false, section, sectionItems, inflater, false);
+            layoutGridContainer.addView(tileBase);
+        }
         return base;
     }
 
@@ -405,6 +439,14 @@ public class SectionView {
             tileContainer.setOrientation(LinearLayout.VERTICAL);
         }
         ArrayList<SectionItem> sectionItems = section.getSectionItems();
+        addTilesToParent(tileContainer, isVertical, section, sectionItems, inflater, true);
+        return base;
+    }
+
+    private void addTilesToParent(ViewGroup tileContainer, boolean isVertical,
+                                  Section section, ArrayList<SectionItem> sectionItems,
+                                  LayoutInflater inflater,
+                                  boolean stretchImage) {
         boolean hasSectionTitle = section.getTitle() != null && !TextUtils.isEmpty(section.getTitle().getText());
         int numSectionItems = sectionItems.size();
         Typeface titleTypeface = isVertical ? FontHolder.getInstance(context).getFaceRobotoMedium() : faceRobotoRegular;
@@ -477,6 +519,13 @@ public class SectionView {
                             lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
                             imgInRow.setLayoutParams(lp);
                         }
+                    } else if (!stretchImage) {
+                        // By default images are stretched
+                        ViewGroup.LayoutParams lp = imgInRow.getLayoutParams();
+                        if (lp != null) {
+                            lp.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+                            imgInRow.setLayoutParams(lp);
+                        }
                     }
                     sectionItem.displayImage(context, mSectionData.getBaseImgUrl(), imgInRow);
                 } else {
@@ -524,7 +573,6 @@ public class SectionView {
             view.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
             tileContainer.addView(view);
         }
-        return base;
     }
 
     private void formatSectionTitle(View parent, int txtViewId, Section section) {
@@ -559,5 +607,57 @@ public class SectionView {
             }
         }
         view.setOnClickListener(new OnSectionItemClickListener<>(context, section, moreSectionItem, screenName));
+    }
+
+    private class SectionRowAdapter extends RecyclerView.Adapter<SectionRowHolder> {
+
+        @Override
+        public SectionRowHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(context).inflate(R.layout.uiv3_section_row, parent, false);
+            return new SectionRowHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(SectionRowHolder holder, int position) {
+            Log.d("Section", "Requesting UI view for position = " + position);
+            Section section = mSectionData.getSections().get(position);
+            ViewGroup sectionViewHolderRow = holder.getRow();
+            sectionViewHolderRow.removeAllViews();
+
+            try {
+                View sectionView = getViewToRender(section, LayoutInflater.from(context), sectionViewHolderRow);
+                if (sectionView == null || sectionView.getLayoutParams() == null) {
+                    return;
+                }
+                if (section.getSectionType().equals(Section.SALUTATION))
+                    return;
+                ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams)
+                        sectionView.getLayoutParams();
+                layoutParams.topMargin = marginBetweenWidgets;
+                if (position == getItemCount() - 1) {
+                    layoutParams.bottomMargin = marginBetweenWidgets;
+                }
+                sectionView.setLayoutParams(layoutParams);
+                sectionViewHolderRow.addView(sectionView);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public int getItemCount() {
+            return mSectionData.getSections().size();
+        }
+    }
+
+    private class SectionRowHolder extends RecyclerView.ViewHolder {
+
+        public SectionRowHolder(View itemView) {
+            super(itemView);
+        }
+
+        public ViewGroup getRow() {
+            return (ViewGroup) itemView;
+        }
     }
 }

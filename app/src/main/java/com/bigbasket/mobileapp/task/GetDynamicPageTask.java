@@ -12,6 +12,7 @@ import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.model.SectionManager;
 import com.bigbasket.mobileapp.model.section.SectionData;
+import com.bigbasket.mobileapp.model.section.SectionUtil;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -96,6 +97,9 @@ public class GetDynamicPageTask<T> {
             switch (getDynamicPageApiResponse.status) {
                 case 0:
                     SectionData sectionData = getDynamicPageApiResponse.apiResponseContent.sectionData;
+                    if (sectionData != null) {
+                        sectionData.setSections(SectionUtil.preserveMemory(sectionData.getSections()));
+                    }
                     ((DynamicScreenAware) context).onDynamicScreenSuccess(screenName, sectionData);
                     if (sectionData != null && sectionData.getSections() != null &&
                             sectionData.getSections().size() > 0) {
