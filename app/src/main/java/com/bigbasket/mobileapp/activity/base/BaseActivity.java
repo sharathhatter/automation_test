@@ -388,7 +388,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     public void showToast(String txt) {
-        Toast toast = Toast.makeText(getCurrentActivity(), txt, Toast.LENGTH_SHORT);
+        Toast toast = Toast.makeText(getCurrentActivity(), txt, Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
         toast.show();
     }

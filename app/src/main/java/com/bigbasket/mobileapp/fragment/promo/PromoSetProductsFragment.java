@@ -26,6 +26,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.PromoSummaryApiRespons
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
@@ -297,6 +298,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
             layoutAddBundle.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    trackEvent(TrackingAware.BASKET_ADD_PROMO_BUNDLE, null);
                     addBundle(products, baseImgUrl);
                 }
             });

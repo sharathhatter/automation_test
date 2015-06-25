@@ -330,7 +330,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 updateProfileFragment.setArguments(updateProfileBundle);
                 addToMainLayout(updateProfileFragment);
                 break;
-            case FragmentCodes.START_CHANGE_PASSWD: //todo remove
+            case FragmentCodes.START_CHANGE_PASSWD:
                 addToMainLayout(new ChangePasswordFragment());
                 break;
             case FragmentCodes.START_VIEW_DELIVERY_ADDRESS:
