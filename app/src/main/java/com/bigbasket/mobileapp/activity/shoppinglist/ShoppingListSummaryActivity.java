@@ -53,6 +53,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
     private String baseImgUrl;
     @Nullable
     private ShoppingListName mShoppingListName;
+    @Nullable
     private ViewPager viewPager;
 
     @Override
@@ -193,7 +194,8 @@ public class ShoppingListSummaryActivity extends BBActivity {
             return;
         }
 
-        if (shoppingListSummaries.size() == 1) {
+        final int numTabs = shoppingListSummaries.size();
+        if (numTabs == 1) {
             Bundle bundle = getBundleForShoppingListProductFragment(shoppingListSummaries.get(0),
                     shoppingListName, baseImgUrl);
             ShoppingListProductFragment shoppingListProductFragment = new ShoppingListProductFragment();
@@ -206,12 +208,14 @@ public class ShoppingListSummaryActivity extends BBActivity {
             viewPager = (ViewPager) base.findViewById(R.id.pager);
             ProductListPagerAdapter productListPagerAdapter = new ProductListPagerAdapter(getCurrentActivity(),
                     getSupportFragmentManager(), getTabs(shoppingListSummaries, shoppingListName, baseImgUrl));
-            viewPager.setAdapter(productListPagerAdapter);
+            if (viewPager != null) {
+                viewPager.setAdapter(productListPagerAdapter);
 
-            SmartTabLayout pagerSlidingTabStrip = (SmartTabLayout) base.findViewById(R.id.slidingTabs);
-            pagerSlidingTabStrip.setViewPager(viewPager);
+                SmartTabLayout pagerSlidingTabStrip = (SmartTabLayout) base.findViewById(R.id.slidingTabs);
+                pagerSlidingTabStrip.setViewPager(viewPager);
 
-            contentFrame.addView(base);
+                contentFrame.addView(base);
+            }
         }
         final ViewPager copyViewPagerIntoFinalForOnClick = viewPager;
         View layoutAddAll = findViewById(R.id.layoutAddAll);
@@ -227,8 +231,10 @@ public class ShoppingListSummaryActivity extends BBActivity {
                     ShoppingListSummary shoppingListSummary =
                             shoppingListSummaries.get(copyViewPagerIntoFinalForOnClick != null ?
                                     copyViewPagerIntoFinalForOnClick.getCurrentItem() : 0);
-                    showAlertDialog(null, getString(R.string.addAllProducts) + " from " + shoppingListSummary.getFacetName()
-                                    + " " + getString(R.string.toBasket),
+                    String title = getString(R.string.addAllProducts);
+                    title += numTabs > 1 ? " from " + shoppingListSummary.getFacetName()
+                            + " " + getString(R.string.toBasket) : "?";
+                    showAlertDialog(null, title,
                             DialogButton.YES, DialogButton.CANCEL, Constants.ADD_ALL,
                             shoppingListSummary,
                             getString(R.string.yesTxt));
@@ -285,6 +291,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
 
     @Nullable
     private Fragment getCurrentFragment() {
+        if (viewPager == null) return null;
         int currentPosition = viewPager.getCurrentItem();
         return ((ProductListPagerAdapter) viewPager.getAdapter()).getRegisteredFragment(currentPosition);
     }

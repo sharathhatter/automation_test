@@ -106,7 +106,8 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             }
             if (sectionNavigationItem.getSectionItem().hasImage()) {
                 imgNavItem.setVisibility(View.VISIBLE);
-                sectionNavigationItem.getSectionItem().displayImage(context, baseImgUrl, imgNavItem);
+                sectionNavigationItem.getSectionItem().displayImage(context, baseImgUrl, imgNavItem,
+                        R.drawable.loading_small, false);
             } else {
                 imgNavItem.setVisibility(View.GONE);
             }
@@ -156,7 +157,8 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 int minHt = sectionItem.getHeight(context, null);
                 imgNavItem.setMinimumHeight(minHt);
                 imgNavItem.setVisibility(View.VISIBLE);
-                sectionNavigationItem.getSectionItem().displayImage(context, baseImgUrl, imgNavItem);
+                sectionNavigationItem.getSectionItem().displayImage(context, baseImgUrl, imgNavItem,
+                        R.drawable.loading_small, true);
             } else {
                 imgNavItem.setVisibility(View.GONE);
             }
