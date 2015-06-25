@@ -4,6 +4,7 @@ import android.graphics.Typeface;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,6 +47,11 @@ public class WalletActivityListAdapter<T> extends BaseAdapter {
     @Override
     public Object getItem(int position) {
         return walletDataItems.get(position);
+    }
+
+    @Override
+    public boolean isEnabled(int position){
+        return !TextUtils.isEmpty(walletDataItems.get(position).getOrderId());
     }
 
     @Override
