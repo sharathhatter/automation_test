@@ -162,7 +162,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
             cancel = true;
         }
 
-        if (!UIUtil.isAlphaString(editTextFirstName.getText().toString())) {
+        if (!UIUtil.isAlphaString(editTextFirstName.getText().toString().trim())) {
             cancel = true;
             if (focusView == null) focusView = editTextFirstName;
             UIUtil.reportFormInputFieldError(editTextFirstName, getString(R.string.error_field_name));
@@ -174,7 +174,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
             cancel = true;
         }
 
-        if (!UIUtil.isAlphaString(editTextLastName.getText().toString())) {
+        if (!UIUtil.isAlphaString(editTextLastName.getText().toString().trim())) {
             cancel = true;
             if (focusView == null) focusView = editTextLastName;
             UIUtil.reportFormInputFieldError(editTextLastName, getString(R.string.error_field_name));

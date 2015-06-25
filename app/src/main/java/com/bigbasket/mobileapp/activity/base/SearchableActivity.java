@@ -28,6 +28,7 @@ import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.adapter.SearchViewAdapter;
 import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
 import com.bigbasket.mobileapp.interfaces.SearchTermRemoveAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
 import com.bigbasket.mobileapp.model.search.MostSearchedItem;
@@ -35,6 +36,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.SearchUtil;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -131,6 +133,7 @@ public class SearchableActivity extends BackButtonActivity
         nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.CATEGORY.get()));
         nameValuePairs.add(new NameValuePair(Constants.SLUG, categorySlug));
         Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
+        intent.putExtra(TrackEventkeys.NAVIGATION_CTX, "ps");
         intent.putExtra(Constants.PRODUCT_QUERY, nameValuePairs);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         finish();
@@ -169,6 +172,7 @@ public class SearchableActivity extends BackButtonActivity
     public void doSearch(String searchQuery) {
         Intent data = new Intent();
         data.putExtra(Constants.SEARCH_QUERY, searchQuery);
+        data.putExtra(TrackEventkeys.NAVIGATION_CTX, "ps");
         setResult(NavigationCodes.START_SEARCH, data);
         finish();
     }

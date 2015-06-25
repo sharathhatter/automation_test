@@ -604,6 +604,9 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     private void onFilterScreenRequested() {
         Intent sortFilterIntent = new Intent(this, FilterActivity.class);
         sortFilterIntent.putExtra(Constants.FILTER_OPTIONS, mFilterOptionCategories);
+        sortFilterIntent.putExtra(TrackEventkeys.NAVIGATION_CTX,
+                getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX)!=null ?
+                        getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX) : "pc");
         sortFilterIntent.putExtra(Constants.FILTERED_ON, mFilteredOns);
         startActivityForResult(sortFilterIntent, NavigationCodes.FILTER_APPLIED);
     }

@@ -6,8 +6,8 @@ public interface TrackingAware {
 
 
     //Start Activity
-    public static final String ENTRY_PAGE_SHOWN = "EntryPage.Shown";  // Done
-    public static final String ENTRY_PAGE_SKIP_BUTTON_CLICKED = "EntryPage.Skip Button Clicked";  // Done
+    public static final String ENTRY_PAGE_SHOWN = "EntryPage.Shown";
+    public static final String ENTRY_PAGE_SKIP_BUTTON_CLICKED = "EntryPage.Skip Button Clicked";
     String ENTRY_PAGE_LOGIN_CLICKED = "EntryPage.Login Button Clicked";
     String ENTRY_PAGE_SIGNUP_CLICKED = "EntryPage.Signup Button Clicked";
 
@@ -21,7 +21,6 @@ public interface TrackingAware {
 
     //change city dialog
     public static final String CHANGE_CITY_POSSITIVE_BTN_CLICKED = "Change Your City. Change City Clicked";
-    public static final String CHANGE_CITY_CANCEL_BTN_CLICKED = "Change Your City.Cancel Clicked";
     String CHANGE_CITY_SHOWN = "Change Your City.Shown";
     String CHANGE_CITY_CLICKED = "Change Your City.Change City Clicked";
 
@@ -36,7 +35,6 @@ public interface TrackingAware {
     public static final String FORGOT_PASSWORD_DIALOG_SHOWN = "Forgot Password.Dialog Shown";
     public static final String FORGOT_PASSWORD_EMAIL_CLICKED = "Forgot Password.Email New Password Clicked";
     public static final String REGISTRATION_PAGE_SHOWN = "Registration Page.Shown";
-    public static final String REGISTRATION_PAGE_TC_CLICKED = "Registration Page.Terms And Conditions Clicked";
     public static final String PROMO_MAILER_ENABLED = "Promotional Mailer Enabled";
     public static final String REGISTER_BTN_CLICK = "Registration Page.Register Clicked";
     public static final String REGISTRATION_FAILED = "Registration Page. Failed";
@@ -70,13 +68,12 @@ public interface TrackingAware {
     public static final String WALLET_ACTIVITY_FOR_MONTH_CLICKED = "MyAccount.Wallet Activity For Month Clicked";
 
     //Address
-    public static final String DELIVERY_ADDRESS_CLICKED = "Delivery Addresses Clicked"; //done
-    public static final String DELIVERY_ADDRESS_SHOWN = "Delivery Addresses Shown"; //done
-    public static final String ADDRESS_CLICKED = "Address Clicked";
-    public static final String NEW_ADDRESS_CLICKED = "Address New Clicked"; //done
-    public static final String ENABLE_DEFAULT_ADDRESS = "Make This Default Address Enabled"; //done
-    public static final String NEW_ADDRESS_FAILED = "New Address Add Failed"; //done
-    public static final String UPDATE_ADDRESS_FAILED = "Update Address Failed"; //done
+    public static final String DELIVERY_ADDRESS_CLICKED = "Delivery Addresses Clicked";
+    public static final String DELIVERY_ADDRESS_SHOWN = "Delivery Addresses Shown";
+    public static final String NEW_ADDRESS_CLICKED = "Address New Clicked";
+    public static final String ENABLE_DEFAULT_ADDRESS = "Make This Default Address Enabled";
+    public static final String NEW_ADDRESS_FAILED = "New Address Add Failed";
+    public static final String UPDATE_ADDRESS_FAILED = "Update Address Failed";
 
     //delivery pin
     public static final String CHANGE_PIN_CLICKED = "MyAccount.Change Pin Clicked";
@@ -91,8 +88,6 @@ public interface TrackingAware {
     public static final String LOG_OUT_ICON_CLICKED = "Logout Icon Clicked";
 
     //active and past order
-    public static final String ORDER_ACTIVE_ORDERS_SHOWN = "Active Orders Shown";
-    public static final String ORDER_PAST_ORDERS_SHOWN = "Order History List Shown";
     public static final String ORDER_SUMMARY_SHOWN = "Order.Order Details Shown";
     public static final String ORDER_ITEMS_TAB_CLICKED = "Order.View Items Clicked";
 
@@ -115,7 +110,6 @@ public interface TrackingAware {
     public static final String HOME_PAGE_SHOWN = "HomePage.Shown";
     public static final String DYNAMIC_SCREEN_SHOWN = "Dynamic Screen.Shown";
     public static final String HOME_PAGE_ITEM_CLICKED = "HomePage.Item Clicked";
-    public static final String HOME_PAGE_BANNER_CLICKED = "HomePage.Banner Clicked";
     public static final String SEARCH = "Search";
 
     //product listing page
@@ -153,15 +147,6 @@ public interface TrackingAware {
     public static final String FILTER_CLEARED = "Filter.Cleared";
     public static final String SORT_BY = "SortBy.Selected";
 
-    //precheckout
-    public static final String PRE_CHECKOUT_AGE_LEGAL_SHOWN = "Precheckout.Age Legal Shown";
-    public static final String PRE_CHECKOUT_AGE_LEGAL_ACCEPTED = "Precheckout.Age Legal Accepted";
-    public static final String PRE_CHECKOUT_AGE_LEGAL_REJECTED = "Precheckout.Age Legal Rejected";
-    public static final String PRE_CHECKOUT_PHARMA_PRESCRIPTION_CHOSEN = "Precheckout.Pharma Prescription Chosen";
-    public static final String PRE_CHECKOUT_PHARMA_PRESCRIPTION_CREATED = "Precheckout.Pharma Prescription Created";
-    public static final String PRE_CHECKOUT_PHARMA_PRESCRIPTION_NOT_PROVIDED = "Precheckout.Pharma Prescription Not Provided";
-    public static final String PRE_CHECKOUT_CWR_APPICABLE = "Precheckout.Category Weight Restriction Applicable";
-
     //check out
     public static final String CHECKOUT_QC_SHOWN = "Checkout.Order QC Shown";
     public static final String CHECK_OUT_QC_PROCEED_BTN = "Checkout.QC Proceed Clicked";
@@ -185,7 +170,7 @@ public interface TrackingAware {
     public static final String THANK_YOU_PAGE_SHOWN = "Checkout.Thank You Page Shown";
     public static final String THANK_YOU_VIEW_INVOICE_CLICKED = "Checkout.View Invoice Clicked";
 
-    public static final String BASKET_ADD_PROMO_BUNDLE = "Basket.Add Promo Bundle"; //todo
+    public static final String BASKET_ADD_PROMO_BUNDLE = "Basket.Add Promo Bundle";
 
 
     //member referral
