@@ -441,7 +441,7 @@ public class UIUtil {
             case DisplayMetrics.DENSITY_XHIGH:
                 return "xhdpi";
             case DisplayMetrics.DENSITY_XXHIGH:
-                return "xxhdpi";
+                return "xhdpi";
             case DisplayMetrics.DENSITY_XXXHIGH:
                 return "xxhdpi";
             case DisplayMetrics.DENSITY_280:
@@ -449,7 +449,7 @@ public class UIUtil {
             case DisplayMetrics.DENSITY_400:
                 return "xhdpi";
             case DisplayMetrics.DENSITY_560:
-                return "xxhdpi";
+                return "xhdpi";
         }
         return "hdpi";
     }
