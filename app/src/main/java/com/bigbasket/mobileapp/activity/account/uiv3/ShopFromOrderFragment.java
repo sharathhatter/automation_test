@@ -117,7 +117,7 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
             layoutAddAll.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    showAlertDialog(null, getString(R.string.addAllProducts),
+                    showAlertDialog(null, getString(R.string.addAllProducts) + "?",
                             DialogButton.YES, DialogButton.CANCEL, Constants.ADD_ALL, null, getString(R.string.yesTxt));
                 }
             });
