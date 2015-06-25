@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
@@ -36,8 +38,6 @@ import retrofit.client.Response;
 public class ChangePasswordFragment extends BaseFragment {
 
     private EditText oldEditText, newPwdText, confirmPwdEditText;
-    private Button updateButton;
-    private ProgressBar progressBarUpdatePassword;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -54,17 +54,15 @@ public class ChangePasswordFragment extends BaseFragment {
         newPwdText = (EditText) base.findViewById(R.id.newPassWordEditTxt);
         newPwdText.setTypeface(faceRobotoRegular);
 
-        progressBarUpdatePassword = (ProgressBar) base.findViewById(R.id.progressBarUpdatePassword);
-
         confirmPwdEditText = (EditText) base.findViewById(R.id.confirmPwdEditTxt);
         confirmPwdEditText.setTypeface(faceRobotoRegular);
 
-        updateButton = (Button) base.findViewById(R.id.btnUpdate);
-        updateButton.setTypeface(faceRobotoRegular);
+        TextView txtUpdatePassword = (TextView) base.findViewById(R.id.txtUpdatePassword);
+        txtUpdatePassword.setTypeface(faceRobotoRegular);
 
         BaseActivity.showKeyboard(oldEditText);
 
-        updateButton.setOnClickListener(new View.OnClickListener() {
+        txtUpdatePassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 OnUpdateBtnClick();
@@ -74,12 +72,6 @@ public class ChangePasswordFragment extends BaseFragment {
         trackEvent(TrackingAware.CHANGE_PASSWORD_SHOWN, null);
     }
 
-
-    private void setUpdateButtonInProgress() {
-        updateButton.setText(getString(R.string.updating));
-        progressBarUpdatePassword.setVisibility(View.VISIBLE);
-        progressBarUpdatePassword.setOnClickListener(null);
-    }
 
     private void OnUpdateBtnClick() {
         oldEditText.setError(null);
@@ -97,27 +89,22 @@ public class ChangePasswordFragment extends BaseFragment {
         }
         if (TextUtils.isEmpty(newPassword)) {
             cancel = true;
-            focusView = newPwdText;
+            if(focusView==null) focusView = newPwdText;
             UIUtil.reportFormInputFieldError(newPwdText, getString(R.string.error_field_required));
         }
         if (TextUtils.isEmpty(confPassword)) {
             cancel = true;
-            focusView = confirmPwdEditText;
+            if(focusView==null) focusView = confirmPwdEditText;
             UIUtil.reportFormInputFieldError(confirmPwdEditText, getString(R.string.error_field_required));
         }
 
-        if (cancel) {
-            focusView.requestFocus();
-            return;
-        }
-
-        if (newPassword.length() < 6) {
+        if (newPassword.length() < 6 && !cancel) {
             cancel = true;
             focusView = newPwdText;
             UIUtil.reportFormInputFieldError(newPwdText, getString(R.string.psswordMst6Digit));
         }
 
-        if (confPassword.length() < 6) {
+        if (confPassword.length() < 6 && !cancel) {
             cancel = true;
             focusView = confirmPwdEditText;
             UIUtil.reportFormInputFieldError(confirmPwdEditText, getString(R.string.psswordMst6Digit));
@@ -130,23 +117,21 @@ public class ChangePasswordFragment extends BaseFragment {
 
         if (!newPassword.equals(confPassword)) {
             newPwdText.requestFocus();
-            ((BaseActivity) getActivity()).showToast(getString(R.string.oldNewPasswordNotMatch));
+            showErrorMsg(getString(R.string.oldNewPasswordNotMatch));
             newPwdText.setText("");
             confirmPwdEditText.setText("");
             return;
         }
-        setUpdateButtonInProgress();
         updatePassword();
-
     }
 
     private void updatePassword() {
         if (!DataUtil.isInternetAvailable(getActivity())) {
+            handler.sendOfflineError(true);
             return;
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));
-        resetUpdateButton();
         bigBasketApiService.changePassword(oldEditText.getText().toString(), newPwdText.getText().toString(),
                 confirmPwdEditText.getText().toString(),
                 new Callback<OldBaseApiResponse>() {
@@ -187,17 +172,6 @@ public class ChangePasswordFragment extends BaseFragment {
                         logChangePasswordErrorEvent(error.toString(), TrackingAware.CHANGE_PASSWORD_FAILED);
                     }
                 });
-    }
-
-    private void resetUpdateButton() {
-        updateButton.setText(getString(R.string.UPDATE));
-        progressBarUpdatePassword.setVisibility(View.GONE);
-        updateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                OnUpdateBtnClick();
-            }
-        });
     }
 
     private void onChangePasswordSuccessResponse() {

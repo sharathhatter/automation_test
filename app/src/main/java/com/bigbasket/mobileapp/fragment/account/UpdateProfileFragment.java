@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -264,7 +265,7 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
             UIUtil.reportFormInputFieldError(editTextFirstName, getString(R.string.error_field_required));
         }
 
-        if (!UIUtil.isAlphaString(editTextFirstName.getText().toString())) {
+        if (!UIUtil.isAlphaString(editTextFirstName.getText().toString().trim())) {
             cancel = true;
             if (focusView == null) focusView = editTextFirstName;
             UIUtil.reportFormInputFieldError(editTextFirstName, getString(R.string.error_field_name));
@@ -276,7 +277,7 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
             UIUtil.reportFormInputFieldError(editTextLastName, getString(R.string.error_field_required));
         }
 
-        if (!UIUtil.isAlphaString(editTextLastName.getText().toString())) {
+        if (!UIUtil.isAlphaString(editTextLastName.getText().toString().trim())) {
             cancel = true;
             if (focusView == null) focusView = editTextLastName;
             UIUtil.reportFormInputFieldError(editTextLastName, getString(R.string.error_field_name));
@@ -342,6 +343,11 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
         } else {
             handler.sendOfflineError();
         }
+
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.ENABLED, chkReceivePromos.isChecked() ? TrackEventkeys.YES :
+                TrackEventkeys.NO);
+        trackEvent(TrackingAware.PROMO_MAILER_ENABLED, map);
     }
 
     private void postUserDetails(String userDetails, final boolean hasOTP) {
