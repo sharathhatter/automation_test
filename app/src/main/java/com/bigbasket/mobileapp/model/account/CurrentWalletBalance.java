@@ -29,7 +29,7 @@ public class CurrentWalletBalance implements Parcelable {
 
     public CurrentWalletBalance(Parcel source) {
         currentBalance = source.readFloat();
-        responseJsonStringWalletActivity = source.readString(); //todo
+        responseJsonStringWalletActivity = source.readString();
         walletRule = source.readParcelable(CurrentWalletBalance.class.getClassLoader());
     }
 

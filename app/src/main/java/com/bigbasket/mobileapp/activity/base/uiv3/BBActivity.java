@@ -199,7 +199,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
                 logHomeScreenEvent(TrackingAware.MENU_CLICKED, TrackEventkeys.NAVIGATION_CTX,
-                        TrackEventkeys.NAVIGATION_CTX_TOPNAV); //todo check with sid
+                        TrackEventkeys.NAVIGATION_CTX_TOPNAV);
                 toolbar.setTitle(formatToolbarTitle(mTitle));
                 invalidateOptionsMenu();
                 if (mSubNavLayout != null && mSubNavLayout.getVisibility() == View.VISIBLE) {
@@ -211,7 +211,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
                 logHomeScreenEvent(TrackingAware.MENU_CLICKED, TrackEventkeys.NAVIGATION_CTX,
-                        TrackEventkeys.NAVIGATION_CTX_TOPNAV); //todo check with sid
+                        TrackEventkeys.NAVIGATION_CTX_TOPNAV);
                 trackEvent(TrackingAware.MENU_SHOWN, null);
                 invalidateOptionsMenu();
             }

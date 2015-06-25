@@ -530,12 +530,12 @@ public class PaymentSelectionActivity extends BackButtonActivity {
                     break;
                 case Constants.PREPAID_TXN_FAILED:
                     syncContentView();
-                    map.put(TrackEventkeys.FAILURE_REASON, "");
                     trackEvent(TrackingAware.CHECKOUT_PAYMENT_GATEWAY_FAILURE, map);
                     displayPayuFailure(getString(R.string.failedToProcess));
                     break;
                 case Constants.PREPAID_TXN_ABORTED:
                     syncContentView();
+                    trackEvent(TrackingAware.CHECKOUT_PAYMENT_GATEWAY_ABORTED, map);
                     displayPayuFailure(getString(R.string.youAborted));
                     break;
                 case Constants.PAYU_SUCCESS:
