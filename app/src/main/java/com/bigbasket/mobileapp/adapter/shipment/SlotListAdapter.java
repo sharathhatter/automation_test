@@ -192,6 +192,11 @@ public class SlotListAdapter<T> extends BaseAdapter {
 
     @Override
     public boolean isEnabled(int position) {
-        return getItemViewType(position) == VIEW_TYPE_ITEM;
+        if (flattenedSlotDateTimeList.get(position) instanceof Slot) {
+            selectedSlot = (Slot) flattenedSlotDateTimeList.get(position);
+            return selectedSlot.isAvailable();
+        }
+        return false;
+        //return getItemViewType(position) == VIEW_TYPE_ITEM;
     }
 }

@@ -28,8 +28,13 @@ public class OTPValidationDialogFragment extends AbstractDialogFragment {
 
     private TextView txtErrorValidateNumber, txtResendNumber;
     private boolean isUpdateProfile;
+    private EditText editTextMobileCode;
 
     public OTPValidationDialogFragment() {
+    }
+
+    public EditText getEditTextMobileCode(){
+        return editTextMobileCode;
     }
 
 
@@ -72,7 +77,7 @@ public class OTPValidationDialogFragment extends AbstractDialogFragment {
             TextView txtDialogTitle = (TextView) view.findViewById(R.id.txtDialogTitle);
             txtDialogTitle.setTypeface(FontHolder.getInstance(getActivity()).getFaceRobotoRegular(), Typeface.BOLD);
             TextView txtHeaderMsg = (TextView) view.findViewById(R.id.txtHeaderMsg);
-            final EditText editTextMobileCode = (EditText) view.findViewById(R.id.editTextMobileCode);
+            editTextMobileCode = (EditText) view.findViewById(R.id.editTextMobileCode);
             editTextMobileCode.setTypeface(FontHolder.getInstance(getActivity()).getFaceRobotoRegular());
             editTextMobileCode.requestFocus();
             txtHeaderMsg.setTypeface(FontHolder.getInstance(getActivity()).getFaceRobotoRegular());

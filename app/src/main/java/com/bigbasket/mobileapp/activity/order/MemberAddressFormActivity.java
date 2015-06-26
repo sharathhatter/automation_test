@@ -410,10 +410,11 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
             }
             switch (createUpdateAddressApiResponse.status) {
                 case 0:
-                    if (otpValidationDialogFragment != null && otpValidationDialogFragment.isVisible()) {
-                        if (getCurrentActivity() != null)
-                            BaseActivity.hideKeyboard(getCurrentActivity(), getCurrentActivity().getCurrentFocus());
-                        otpValidationDialogFragment.dismiss();
+                    if (otpValidationDialogFragment != null) {
+                        if (getCurrentActivity() != null && otpValidationDialogFragment.getEditTextMobileCode()!=null)
+                            BaseActivity.hideKeyboard(getCurrentActivity(), otpValidationDialogFragment.getEditTextMobileCode());
+                        if(otpValidationDialogFragment.isVisible())
+                            otpValidationDialogFragment.dismiss();
                     }
 
                     if (!mFromAccountPage) {

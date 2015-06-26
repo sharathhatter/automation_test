@@ -89,6 +89,7 @@
                     android:id="@+id/txtResendNumber"
                     android:textColor="@color/dark_green"
                     android:gravity="left"
+                    android:paddingTop="@dimen/padding_mini"
                     android:textSize="@dimen/small_text_size"
                     android:visibility="gone"
                     android:layout_marginLeft="@dimen/margin_mini"
