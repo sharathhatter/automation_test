@@ -55,7 +55,7 @@
             android:layout_toRightOf="@id/imgLiquorIcon"
             android:text="Delux Prestige - test test test test test test test test"
             android:textColor="@color/uiv3_primary_text_color"
-            android:textSize="@dimen/primary_text_size"/>
+            android:textSize="@dimen/primary_text_size" />
 
         <TextView
             android:id="@+id/txtProductBrand"
@@ -128,13 +128,12 @@
                 android:layout_marginRight="@dimen/margin_small"
                 android:layout_alignParentLeft="true"
                 android:textColor="@color/uiv3_primary_text_color"
-                android:textSize="@dimen/primary_text_size"/>
+                android:textSize="@dimen/primary_text_size" />
 
         </RelativeLayout>
 
 
     </RelativeLayout>
-
 
 
     <ImageView

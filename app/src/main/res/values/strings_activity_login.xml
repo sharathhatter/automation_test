@@ -14,6 +14,7 @@
     <string name="error_invalid_password">This password is too short</string>
     <!--<string name="error_incorrect_password">This password is incorrect</string>-->
     <string name="error_field_required">This field is required</string>
+    <string name="pin_code_error">Pincode should be 6 digit</string>
     <string name="error_invalid_mobile_number">This mobile number is invalid</string>
     <string name="error_mobile_number_less_digits">Mobile number should have 10 digits</string>
     <string name="error_telephone_number_less_digits">Telephone number should have 10 digits</string>

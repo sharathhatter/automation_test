@@ -100,7 +100,7 @@ public class BigBasketMessageHandler<T> {
                 ((ApiErrorAware) ctx).showApiErrorDialog(null, !TextUtils.isEmpty(message) ? message : getString(R.string.invalidBasketQty));
                 break;
             case ApiErrorCodes.ADDRESS_NOT_SERVED:
-                ((ApiErrorAware) ctx).showApiErrorDialog(null, message, true);
+                ((ApiErrorAware) ctx).showApiErrorDialog(null, message, finish);
                 break;
             case ApiErrorCodes.EMAIL_DOESNT_EXISTS:
                 ((ApiErrorAware) ctx).showApiErrorDialog(null, message, finish);

@@ -310,20 +310,28 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         Slot selectedSlot;
         if (slots.size() == 1) {
             btnSelectedSlot.setVisibility(View.GONE);
-            selectedSlot = slots.get(0);
+            selectedSlot = setAvailableSlot(slots);
             shipment.setSelectedSlot(selectedSlot);
             if (selectedSlot.getSlotDisplay() != null) {
                 showSelectedSlot(selectedSlot, txtReadonlySelectedSlot);
             }
         } else {
             txtReadonlySelectedSlot.setVisibility(View.GONE);
-            selectedSlot = slots.get(0);
+            selectedSlot = setAvailableSlot(slots);
             shipment.setSelectedSlot(selectedSlot);
             if (selectedSlot.getSlotDisplay() != null) {
                 showSelectedSlot(selectedSlot, btnSelectedSlot);
             }
             btnSelectedSlot.setOnClickListener(new OnSelectSlotClickListener(shipment));
         }
+    }
+
+    private Slot setAvailableSlot(ArrayList<Slot> slots) {
+        for (Slot slot : slots) {
+            if (slot.isAvailable())
+                return slot;
+        }
+        return slots.get(0);
     }
 
     private void showSelectedSlot(Slot selectedSlot, TextView txtVw) {

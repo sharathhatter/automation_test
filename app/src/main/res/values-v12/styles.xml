@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="BBAppTheme.SearchViewTheme" parent="BBAppTheme">
-        <item name="android:autoCompleteTextViewStyle">@style/BBAppTheme.SearchViewTheme.CursorStyle</item>
+        <item name="android:autoCompleteTextViewStyle">
+            @style/BBAppTheme.SearchViewTheme.CursorStyle
+        </item>
     </style>
 
     <style name="BBAppTheme.SearchViewTheme.CursorStyle" parent="Widget.AppCompat.AutoCompleteTextView">

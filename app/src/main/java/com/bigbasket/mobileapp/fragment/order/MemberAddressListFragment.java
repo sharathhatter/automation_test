@@ -145,7 +145,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         renderAddressList();
     }
 
-    private void emptyAddressView(RelativeLayout noDeliveryAddLayout, RecyclerView addressRecyclerView, View addressView){
+    private void emptyAddressView(RelativeLayout noDeliveryAddLayout, RecyclerView addressRecyclerView, View addressView) {
         noDeliveryAddLayout.setVisibility(View.VISIBLE);
         addressRecyclerView.setVisibility(View.GONE);
         ImageView imgEmptyPage = (ImageView) addressView.findViewById(R.id.imgEmptyPage);

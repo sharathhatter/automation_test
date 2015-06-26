@@ -85,6 +85,7 @@ public class OTPValidationDialogFragment extends AbstractDialogFragment {
             txtResendCode.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    editTextMobileCode.setText("");
                     txtErrorValidateNumber.setVisibility(View.GONE);
                     txtResendNumber.setVisibility(View.VISIBLE);
                     resendOrConfirmOTP(null);

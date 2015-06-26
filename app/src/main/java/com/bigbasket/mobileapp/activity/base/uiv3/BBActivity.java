@@ -687,6 +687,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.SEARCH.get()));
         nameValuePairs.add(new NameValuePair(Constants.SLUG, searchQuery.trim()));
         intent.putParcelableArrayListExtra(Constants.PRODUCT_QUERY, nameValuePairs);
+        intent.putExtra(TrackEventkeys.NAVIGATION_CTX, "ps");
         intent.putExtra(Constants.TITLE, searchQuery);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }

@@ -37,6 +37,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginUserDetails;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.handler.AnalyticsIdentifierKeys;
@@ -219,6 +220,11 @@ public class UIUtil {
         editor.putString(Constants.FIRST_NAME_PREF, userDetails.firstName);
         editor.putString(Constants.MEMBER_FULL_NAME_KEY, userDetails.fullName);
         editor.putString(Constants.MID_KEY, mId);
+
+        if (!preferences.getString(Constants.CITY_ID, "-1").
+                equals(String.valueOf(userDetails.analytics.cityId))) {
+            new AreaPinInfoAdapter(ctx).deleteData();
+        }
 
         if (userDetails.analytics != null) {
             editor.putString(Constants.CITY, userDetails.analytics.city);
@@ -424,7 +430,6 @@ public class UIUtil {
         txtEmptyMsg1.setText(msg);
         TextView txtEmptyMsg2 = (TextView) emptyPageView.findViewById(R.id.txtEmptyMsg2);
         txtEmptyMsg2.setVisibility(View.GONE);
-        emptyPageView.findViewById(R.id.btnBlankPage).setVisibility(View.GONE);
         parent.addView(emptyPageView);
     }
 

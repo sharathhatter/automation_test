@@ -64,10 +64,10 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
             cityName = preferences.getString(Constants.CITY, null);
         }
 
-        String addressCityName = address!=null ? address.getCityName() : null;
-        if(getSystemAreaInfo(addressCityName)){
+        String addressCityName = address != null ? address.getCityName() : null;
+        if (getSystemAreaInfo(addressCityName)) {
             handleMessage(Constants.CALL_AREA_INFO);
-        }else {
+        } else {
             showForm();
         }
     }
@@ -205,6 +205,13 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
         }
         if (isEditTextEmpty(editTextPincode)) {
             reportFormInputFieldError(editTextPincode, getString(R.string.error_field_required));
+            if (focusView == null)
+                focusView = editTextPincode;
+            cancel = true;
+        }
+
+        if (editTextPincode.getText().length() < 6) {
+            reportFormInputFieldError(editTextPincode, getString(R.string.pin_code_error));
             if (focusView == null)
                 focusView = editTextPincode;
             cancel = true;
@@ -444,7 +451,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
                     trackEvent(address == null ? TrackingAware.NEW_ADDRESS_FAILED :
                             TrackingAware.UPDATE_ADDRESS_FAILED, map);
                     handler.sendEmptyMessage(createUpdateAddressApiResponse.status,
-                            createUpdateAddressApiResponse.message);
+                            createUpdateAddressApiResponse.message, false);
                     break;
             }
         }

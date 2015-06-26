@@ -60,14 +60,14 @@
 
 
                 <!--<View-->
-                    <!--android:layout_width="1dp"-->
-                    <!--android:background="@color/strokeLine"-->
-                    <!--android:layout_marginRight="@dimen/margin_small"-->
-                    <!--android:id="@+id/resendSeparatorLine"-->
-                    <!--android:layout_alignBottom="@+id/txtResendCode"-->
-                    <!--android:layout_marginTop="@dimen/margin_small"-->
-                    <!--android:layout_toLeftOf="@id/txtResendCode"-->
-                    <!--android:layout_height="30dp" />-->
+                <!--android:layout_width="1dp"-->
+                <!--android:background="@color/strokeLine"-->
+                <!--android:layout_marginRight="@dimen/margin_small"-->
+                <!--android:id="@+id/resendSeparatorLine"-->
+                <!--android:layout_alignBottom="@+id/txtResendCode"-->
+                <!--android:layout_marginTop="@dimen/margin_small"-->
+                <!--android:layout_toLeftOf="@id/txtResendCode"-->
+                <!--android:layout_height="30dp" />-->
 
 
                 <EditText
@@ -82,7 +82,6 @@
                     android:textColor="@color/uiv3_primary_text_color"
                     android:paddingLeft="@dimen/padding_mini"
                     android:paddingRight="@dimen/padding_mini" />
-
 
 
                 <TextView

@@ -27,7 +27,6 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.SectionManager;
 import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
-import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.section.DestinationInfo;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionItem;
@@ -152,8 +151,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                         if (isSmartBasket) {
                             logMainMenuEvent(TrackingAware.SMART_BASKET_ICON_CLICKED,
                                     TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_HOME_PAGE);
-                        }
-                        else {
+                        } else {
                             logMainMenuEvent(TrackingAware.SHOPPING_LIST_ICON_CLICKED,
                                     TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_HOME_PAGE);
                         }
@@ -316,7 +314,9 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
     private void logItemClickEvent() {
         HashMap<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.SECTION_TYPE, getSectionName());
-        eventAttribs.put(TrackEventkeys.SECTION_ITEM, getSectionItemName());
+        String itemName = getSectionItemName();
+        if (!TextUtils.isEmpty(itemName))
+            eventAttribs.put(TrackEventkeys.SECTION_ITEM, getSectionItemName());
         ((TrackingAware) context).trackEvent(getAnalyticsFormattedScreeName(), eventAttribs);
     }
 

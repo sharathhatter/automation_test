@@ -187,7 +187,7 @@ public interface TrackingAware {
 
 
     void trackEvent(String eventName, Map<String, String> eventAttribs,
-                           String source, String sourceValue, boolean isCustomerValueIncrease);
+                    String source, String sourceValue, boolean isCustomerValueIncrease);
 
     void trackEvent(String eventName, Map<String, String> eventAttribs);
 }

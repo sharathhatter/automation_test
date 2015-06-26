@@ -3,8 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include layout="@layout/uiv3_empty_data_text"
-        android:id="@+id/noDeliveryAddLayout"/>
+    <include
+        layout="@layout/uiv3_empty_data_text"
+        android:id="@+id/noDeliveryAddLayout" />
 
     <ListView
         android:id="@+id/fabListView"

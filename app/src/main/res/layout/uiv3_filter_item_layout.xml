@@ -8,4 +8,4 @@
     android:textSize="@dimen/secondary_text_size"
     android:textColor="@color/uiv3_primary_text_color"
     android:checkMark="?android:attr/listChoiceIndicatorMultiple"
-    android:padding="@dimen/padding_normal"/>
+    android:padding="@dimen/padding_normal" />

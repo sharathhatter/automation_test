@@ -69,8 +69,7 @@
         android:layout_marginTop="@dimen/margin_large"
         android:background="@color/white"
         android:orientation="vertical"
-        android:paddingBottom="@dimen/padding_small"
-        >
+        android:paddingBottom="@dimen/padding_small">
 
         <TextView
             android:id="@+id/textUpdatePinInfo1"

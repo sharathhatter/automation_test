@@ -12,7 +12,7 @@
         android:layout_marginTop="@dimen/margin_22"
         android:layout_marginLeft="@dimen/margin_small"
         android:src="@drawable/active_order"
-        android:scaleType="centerInside"/>
+        android:scaleType="centerInside" />
 
     <LinearLayout
         android:id="@+id/layoutOrderData"
@@ -55,7 +55,6 @@
             android:textColor="@color/uiv3_primary_text_color" />
 
 
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -65,17 +64,17 @@
             android:textColor="@color/uiv3_secondary_text_color" />
     </LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Status"
-            android:layout_alignBottom="@id/layoutOrderData"
-            android:layout_marginRight="@dimen/margin_normal"
-            android:paddingRight="@dimen/padding_normal"
-            android:layout_alignParentRight="true"
-            android:paddingBottom="@dimen/padding_small"
-            android:textSize="@dimen/secondary_text_size"
-            android:id="@+id/txtOrderStatus"
-            android:textStyle="italic"
-            android:textColor="@color/uiv3_primary_text_color" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Status"
+        android:layout_alignBottom="@id/layoutOrderData"
+        android:layout_marginRight="@dimen/margin_normal"
+        android:paddingRight="@dimen/padding_normal"
+        android:layout_alignParentRight="true"
+        android:paddingBottom="@dimen/padding_small"
+        android:textSize="@dimen/secondary_text_size"
+        android:id="@+id/txtOrderStatus"
+        android:textStyle="italic"
+        android:textColor="@color/uiv3_primary_text_color" />
 </RelativeLayout>

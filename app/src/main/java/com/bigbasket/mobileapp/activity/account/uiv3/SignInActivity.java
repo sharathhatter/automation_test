@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.activity.account.uiv3;
 
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -26,6 +27,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.handler.OnRightCompoundDrawableClicked;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.InputDialog;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
@@ -231,17 +233,34 @@ public class SignInActivity extends BackButtonActivity {
                 new LoginApiResponseCallback(email, password, mChkRememberMe.isChecked(), Constants.SIGN_IN_ACCOUNT_TYPE));
     }
 
+    @Override
+    protected void onPositiveButtonClicked(DialogInterface dialogInterface, String sourceName, Object valuePassed) {
+        if (!TextUtils.isEmpty(sourceName)) {
+            switch (sourceName) {
+                case Constants.FORGOT_PASSWORD_DIALOG:
+                    showForgotPasswordDialog();
+                    break;
+            }
+        } else {
+            super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
+        }
+    }
+
     private void showForgotPasswordDialog() {
         new InputDialog<SignInActivity>(this, R.string.emailNewPassword, R.string.cancel,
                 R.string.forgotPasswd, R.string.email, InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS) {
             @Override
             public void onPositiveButtonClicked(String inputEmail) {
                 if (TextUtils.isEmpty(inputEmail)) {
-                    showToast("Please enter an email address");
+                    showAlertDialog(
+                            getResources().getString(R.string.error), getResources().getString(R.string.emailBlank),
+                            DialogButton.OK, DialogButton.CANCEL, Constants.FORGOT_PASSWORD_DIALOG);
                     return;
                 }
                 if (!UIUtil.isValidEmail(inputEmail)) {
-                    showToast(getString(R.string.error_invalid_email));
+                    showAlertDialog(
+                            getResources().getString(R.string.error), getResources().getString(R.string.error_invalid_email),
+                            DialogButton.OK, DialogButton.CANCEL, Constants.FORGOT_PASSWORD_DIALOG);
                     return;
                 }
                 requestNewPassword(inputEmail);

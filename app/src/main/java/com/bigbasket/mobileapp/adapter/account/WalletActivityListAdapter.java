@@ -50,7 +50,7 @@ public class WalletActivityListAdapter<T> extends BaseAdapter {
     }
 
     @Override
-    public boolean isEnabled(int position){
+    public boolean isEnabled(int position) {
         return !TextUtils.isEmpty(walletDataItems.get(position).getOrderId());
     }
 

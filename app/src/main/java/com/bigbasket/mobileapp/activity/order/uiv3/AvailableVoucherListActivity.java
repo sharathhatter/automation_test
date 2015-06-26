@@ -79,9 +79,6 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
                     ActiveVouchers activeVouchers = activeVouchersList.get(position);
                     if (activeVouchers.canApply()) {
                         applyVoucher(activeVouchers.getCode());
-                    } else {
-                        showAlertDialog(getString(R.string.voucherCannotBeApplied),
-                                activeVouchers.getMessage());
                     }
                 }
             });
@@ -163,11 +160,13 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
             TextView txtVoucherDesc = activeVoucherViewHolder.getTxtVoucherDesc();
             TextView txtVoucherValidity = activeVoucherViewHolder.getTxtVoucherValidity();
             TextView txtVoucherMsg = activeVoucherViewHolder.getTxtVoucherMsg();
+            TextView txtLblApply = activeVoucherViewHolder.getTxtLblApply();
 
             if (activeVouchers.canApply()) {
                 txtVoucherMsg.setTextColor(getResources().getColor(R.color.uiv3_secondary_text_color));
             } else {
                 txtVoucherMsg.setTextColor(getResources().getColor(R.color.dark_red));
+                txtLblApply.setTextColor(getResources().getColor(R.color.uiv3_secondary_text_color));
             }
 
             txtVoucherCode.setText(activeVouchers.getCode());
@@ -184,6 +183,7 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
             private TextView txtVoucherDesc;
             private TextView txtVoucherMsg;
             private TextView txtVoucherValidity;
+            private TextView txtLblApply;
 
             private ActiveVoucherViewHolder(View base) {
                 this.base = base;
@@ -219,6 +219,14 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
                     txtVoucherCode.setTypeface(faceRobotoMedium);
                 }
                 return txtVoucherCode;
+            }
+
+            public TextView getTxtLblApply() {
+                if (txtLblApply == null) {
+                    txtLblApply = (TextView) base.findViewById(R.id.lblApply);
+                    txtLblApply.setTypeface(faceRobotoRegular);
+                }
+                return txtLblApply;
             }
         }
     }
