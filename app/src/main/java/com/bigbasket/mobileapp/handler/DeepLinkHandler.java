@@ -143,6 +143,11 @@ public class DeepLinkHandler {
                     isSystem = !TextUtils.isEmpty(isSystemStr) &&
                             !isSystemStr.equals("false") && !isSystemStr.equals("0");
                 }
+                boolean isLoginRequiredToViewSl = authParameters.isAuthTokenEmpty() && (!isSystem
+                        || (slug != null && slug.equalsIgnoreCase(Constants.SMART_BASKET_SLUG)));
+                if (isLoginRequiredToViewSl) {
+                    return LOGIN_REQUIRED;
+                }
                 if (!TextUtils.isEmpty(slug)) {
                     ShoppingListName shoppingListName = new ShoppingListName(name, slug, isSystem);
                     intent = new Intent(context.getCurrentActivity(), ShoppingListSummaryActivity.class);
@@ -204,7 +209,6 @@ public class DeepLinkHandler {
         loginRequiredUrls.add(Constants.WALLET);
         loginRequiredUrls.add(Constants.ORDER_ITEMS);
         loginRequiredUrls.add(Constants.ALL_SL);
-        loginRequiredUrls.add(Constants.SL_SUMMARY);
         loginRequiredUrls.add(Constants.SMART_BASKET_SLUG);
         return loginRequiredUrls;
     }
