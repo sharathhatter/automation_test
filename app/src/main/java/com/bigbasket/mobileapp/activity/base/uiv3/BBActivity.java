@@ -809,12 +809,17 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     setSectionNavigationItemList(Context context, ArrayList<SectionNavigationItem> sectionNavigationItems,
                                  ArrayList<T> sectionItems,
                                  Section section, String baseImgUrl) {
-        for (SectionItem sectionItem : sectionItems) {
+        for (int i = 0; i < sectionItems.size(); i++) {
+            SectionItem sectionItem = sectionItems.get(i);
             if (sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
                 if (sectionItem.hasImage()) {
                     UIUtil.preLoadImage(TextUtils.isEmpty(sectionItem.getImage()) ?
                                     sectionItem.constructImageUrl(context, baseImgUrl) : sectionItem.getImage(),
                             context);
+                }
+                if (i == 0 && ((sectionItem instanceof SubSectionItem) && !((SubSectionItem) sectionItem).isLink())) {
+                    // Duplicate the first element as it'll be used to display the back arrow
+                    sectionNavigationItems.add(new SectionNavigationItem<>(section, sectionItem));
                 }
                 sectionNavigationItems.add(new SectionNavigationItem<>(section, sectionItem));
             }
@@ -911,6 +916,14 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             syncBasket();
         } else {
             syncCartInfoFromPreference();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mDrawerLayout != null) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
         }
     }
 

@@ -20,6 +20,7 @@ import com.bigbasket.mobileapp.handler.PayUWebViewClientHandler;
 import com.bigbasket.mobileapp.model.order.PayuResponse;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.google.gson.Gson;
@@ -164,7 +165,8 @@ public class PayuTransactionActivity extends BackButtonActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                showAlertDialog(null, getString(R.string.abortPayu), Constants.PAYU_CANCELLED);
+                showAlertDialog(null, getString(R.string.abortPayu),
+                        DialogButton.YES, DialogButton.NO, Constants.PAYU_CANCELLED);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -176,7 +178,8 @@ public class PayuTransactionActivity extends BackButtonActivity {
         if (mWebView.canGoBack()) {
             mWebView.goBack();
         } else {
-            showAlertDialog(null, getString(R.string.abortPayu), Constants.PAYU_CANCELLED);
+            showAlertDialog(null, getString(R.string.abortPayu),
+                    DialogButton.YES, DialogButton.NO, Constants.PAYU_CANCELLED);
         }
     }
 

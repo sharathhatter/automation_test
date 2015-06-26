@@ -142,16 +142,20 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             } else {
                 txtNavListRowHeader.setVisibility(View.GONE);
             }
-        } else if (viewType == VIEW_TYPE_SECTION_ITEM_VERTICAL || viewType == VIEW_TYPE_SUB_MENU_SECTION_ITEM_HEADER_VERTICAL) {
+        } else if (viewType == VIEW_TYPE_SECTION_ITEM_VERTICAL ||
+                viewType == VIEW_TYPE_SUB_MENU_SECTION_ITEM_HEADER_VERTICAL) {
             SubNavHeaderViewHolder viewHolder = (SubNavHeaderViewHolder) holder;
             TextView txtNavListRow = viewHolder.getTxtNavListRow();
             ImageView imgNavItem = viewHolder.getImgNavItem();
             SectionItem sectionItem = sectionNavigationItem.getSectionItem();
-            if (sectionItem.getTitle() != null &&
-                    !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
-                txtNavListRow.setText(sectionItem.getTitle().getText());
+            String sectionTitle = sectionItem.getTitle() != null ?
+                    sectionItem.getTitle().getText() : null;
+            if (!TextUtils.isEmpty(sectionTitle) && !TextUtils.isEmpty(sectionTitle.trim())) {
+                txtNavListRow.setText(sectionTitle);
+                txtNavListRow.setVisibility(View.VISIBLE);
             } else {
                 txtNavListRow.setText("");
+                txtNavListRow.setVisibility(View.GONE);
             }
             if (sectionItem.hasImage()) {
                 int minHt = sectionItem.getHeight(context, null);
