@@ -174,7 +174,7 @@ public class AccountView<T> {
                     eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_LEFTNAV);
                     ctx.trackEvent(TrackingAware.HOME_CHANGE_CITY, eventAttribs);
                     Intent intent = new Intent(ctx, ChangeCityActivity.class);
-                    ctx.startActivityForResult(intent, NavigationCodes.CITY_CHANGED);
+                    ctx.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     break;
                 case 3:
                     eventAttribs = new HashMap<>();

@@ -65,7 +65,7 @@ public class LandingPageActivity extends SocialLoginActivity {
 
     private void showChangeCity() {
         Intent intent = new Intent(this, ChangeCityActivity.class);
-        startActivityForResult(intent, NavigationCodes.CITY_CHANGED);
+        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
     @Override

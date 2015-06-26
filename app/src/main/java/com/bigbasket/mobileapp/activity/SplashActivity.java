@@ -17,8 +17,6 @@ import com.appsflyer.AppsFlyerLib;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
-import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
-import com.bigbasket.mobileapp.activity.order.uiv3.OrderInvoiceActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse;
@@ -58,26 +56,29 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        boolean reloadApp = getIntent().getBooleanExtra(Constants.RELOAD_APP, false);
+        if (reloadApp) {
+            setContentView(R.layout.loading_layout);
+            mIsFromActivityResult = true;
+            handleResults(true);
+        } else {
+            AppsFlyerLib.setAppsFlyerKey(Constants.APP_FLYER_ID);
+            AppsFlyerLib.setUseHTTPFalback(true);
+            AppsFlyerLib.sendTracking(getApplicationContext()); //detects installation, session and updates
 
-        AppsFlyerLib.setAppsFlyerKey(Constants.APP_FLYER_ID);
-        AppsFlyerLib.setUseHTTPFalback(true);
-        AppsFlyerLib.sendTracking(getApplicationContext()); //detects installation, session and updates
+            // Defensive fix
+            removePendingCodes();
+            try {
+                boolean isHDFCPayMode = getIntent().getBooleanExtra(Constants.MODE_HDFC_PAY, false);
+                if (isHDFCPayMode) {
+                    HDFCPowerPayHandler.setHDFCPayMode(this);
+                }
+            } catch (ClassCastException e) {
 
-        // Defensive fix
-        removePendingCodes();
-        try {
-            boolean isHDFCPayMode = getIntent().getBooleanExtra(Constants.MODE_HDFC_PAY, false);
-            if (isHDFCPayMode) {
-                HDFCPowerPayHandler.setHDFCPayMode(this);
             }
-        } catch (ClassCastException e) {
-
-        }
-        if (checkInternetConnection()) {
-            NewRelic.withApplicationToken(getString(R.string.new_relic_key)).start(this.getApplication());
-            //MoEHelper moEHelper = new MoEHelper(this);
-            //moEHelper.initialize(Constants.MO_SENDER_ID, Constants.MO_APP_ID);
-            //moEHelper.Register(R.drawable.ic_launcher);
+            if (checkInternetConnection()) {
+                NewRelic.withApplicationToken(getString(R.string.new_relic_key)).start(this.getApplication());
+            }
         }
     }
 
@@ -149,9 +150,12 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
     }
 
     private void loadHomePage() {
-        Intent homePageIntent = new Intent(this, BBActivity.class);
+        Intent homePageIntent = new Intent(this, HomeActivity.class);
         homePageIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_HOME);
         startActivityForResult(homePageIntent, NavigationCodes.GO_TO_HOME);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            finish();
+        }
     }
 
     private void doRegisterDevice(final City city) {
@@ -252,23 +256,22 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         setSuspended(false);
         mIsFromActivityResult = true;
-        if (resultCode == NavigationCodes.GO_TO_HOME || resultCode == NavigationCodes.CITY_CHANGED) {
+        if (resultCode == NavigationCodes.GO_TO_HOME) {
             removePendingGoToHome();
-            if ((data != null && data.getBooleanExtra(Constants.RELOAD_APP, false))
-                    || resultCode == NavigationCodes.CITY_CHANGED) {
-                trackCity();
-                loadNavigation();
-            } else if (data != null && data.getBooleanExtra(Constants.GO_TO_INVOICE, false)) {
-                Intent invoiceIntent = new Intent(this, OrderInvoiceActivity.class);
-                invoiceIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_THANKYOU);
-                invoiceIntent.putExtra(Constants.ORDERS, data.getParcelableArrayListExtra(Constants.ORDERS));
-                startActivityForResult(invoiceIntent, NavigationCodes.GO_TO_HOME);
-            } else {
-                loadHomePage();
-            }
-
+            boolean reloadApp = data != null && data.getBooleanExtra(Constants.RELOAD_APP, false);
+            handleResults(reloadApp);
         } else {
             finish();
+        }
+    }
+
+    protected void handleResults(boolean reloadApp) {
+        removePendingGoToHome();
+        if (reloadApp) {
+            trackCity();
+            loadNavigation();
+        } else {
+            loadHomePage();
         }
     }
 

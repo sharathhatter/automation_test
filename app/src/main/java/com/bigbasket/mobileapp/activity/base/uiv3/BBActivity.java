@@ -390,25 +390,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             case FragmentCodes.START_SHOPPING_LIST_LANDING:
                 addToMainLayout(new ShoppingListFragment());
                 break;
-//            case FragmentCodes.START_SEARCH:
-//                doSearch(getIntent().getStringExtra(Constants.SEARCH_QUERY));
-//                break;
-//            case FragmentCodes.START_GENERIC_PRODUCT_LIST:
-//                ArrayList<NameValuePair> nameValuePairs = getIntent().getParcelableArrayListExtra(Constants.PRODUCT_QUERY);
-//                String title = getIntent().getStringExtra(Constants.TITLE);
-//                if (nameValuePairs != null && !nameValuePairs.isEmpty()) {
-//                    GenericProductListFragment productListFragment = new GenericProductListFragment();
-//                    Bundle productListArgs = new Bundle();
-//                    productListArgs.putString(TrackEventkeys.NAVIGATION_CTX,
-//                            getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX));
-//                    productListArgs.putParcelableArrayList(Constants.PRODUCT_QUERY, nameValuePairs);
-//                    if (!TextUtils.isEmpty(title)) {
-//                        productListArgs.putString(Constants.TITLE, title);
-//                    }
-//                    productListFragment.setArguments(productListArgs);
-//                    addToMainLayout(productListFragment);
-//                }
-//                break;
             case FragmentCodes.START_PROMO_CATEGORY:
                 addToMainLayout(new PromoCategoryFragment());
                 break;
@@ -759,7 +740,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(getCurrentActivity(), ChangeCityActivity.class);
-                    startActivityForResult(intent, NavigationCodes.CITY_CHANGED);
+                    startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 }
             });
         }

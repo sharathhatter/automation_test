@@ -55,7 +55,7 @@ public class PayuTransactionActivity extends BackButtonActivity {
     }
 
     private void startPaymentGateway() {
-        final String potentialOrderId = getIntent().getStringExtra(Constants.POTENTIAL_ORDER_ID);
+        final String potentialOrderId = getIntent().getStringExtra(Constants.P_ORDER_ID);
         String amount = getIntent().getStringExtra(Constants.FINAL_PAY);
         if (!TextUtils.isEmpty(potentialOrderId)) {
             BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);

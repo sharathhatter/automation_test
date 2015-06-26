@@ -41,7 +41,7 @@ public class PayuResponse {
             payuResponse = new PayuResponse(capturedUrl, isSuccess, pid);
             SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(ctx);
             if (prefer != null) {
-                saveTxnDetailToPreference(ctx, capturedUrl, isSuccess);
+                saveTxnDetailToPreference(ctx, capturedUrl, isSuccess, pid);
             }
         } catch (URISyntaxException e) {
             payuResponse = null;
@@ -59,10 +59,11 @@ public class PayuResponse {
         return payuResponse;
     }
 
-    private static void saveTxnDetailToPreference(Context ctx, String capturedUrl, boolean isSuccess) {
+    private static void saveTxnDetailToPreference(Context ctx, String capturedUrl, boolean isSuccess, String pid) {
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(ctx);
         SharedPreferences.Editor editor = prefer.edit();
         editor.putString(Constants.CAPTURED_URL_KEY, capturedUrl);
+        editor.putString(Constants.P_ORDER_ID, pid);
         editor.putBoolean(Constants.IS_PAYU_SUCCESS_KEY, isSuccess);
         editor.commit();
     }
@@ -80,7 +81,7 @@ public class PayuResponse {
             throws URISyntaxException {
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(ctx);
         String capturedUrl = prefer.getString(Constants.CAPTURED_URL_KEY, null);
-        String pid = prefer.getString(Constants.POTENTIAL_ORDER_ID, null);
+        String pid = prefer.getString(Constants.P_ORDER_ID, null);
         if (capturedUrl != null && pid != null) {
             boolean isSuccess = prefer.getBoolean(Constants.IS_PAYU_SUCCESS_KEY, false);
             createInstance(ctx, capturedUrl, isSuccess, pid);
@@ -143,14 +144,6 @@ public class PayuResponse {
 
     public String getAmount() {
         return amount;
-    }
-
-    public String getPid() {
-        return pid;
-    }
-
-    public String getFailureReason() {
-        return failureReason;
     }
 
     public boolean isSuccess() {

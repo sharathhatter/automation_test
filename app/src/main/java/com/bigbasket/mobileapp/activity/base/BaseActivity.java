@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -34,6 +35,8 @@ import android.widget.Toast;
 
 import com.appsflyer.AppsFlyerLib;
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.HomeActivity;
+import com.bigbasket.mobileapp.activity.SplashActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignupActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.ShowCartActivity;
@@ -371,14 +374,9 @@ public abstract class BaseActivity extends AppCompatActivity implements
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         isActivitySuspended = false;
-        if (resultCode == NavigationCodes.GO_TO_HOME || resultCode == NavigationCodes.CITY_CHANGED) {
-            boolean reloadApp = (data != null && data.getBooleanExtra(Constants.RELOAD_APP, false))
-                    || resultCode == NavigationCodes.CITY_CHANGED;
-            if (reloadApp) {
-                goToHome(true, resultCode);
-            } else {
-                goToHome(data);
-            }
+        if (resultCode == NavigationCodes.GO_TO_HOME) {
+            boolean reloadApp = (data != null && data.getBooleanExtra(Constants.RELOAD_APP, false));
+            goToHome(reloadApp, resultCode);
         } else if (resultCode == NavigationCodes.GO_TO_QC) {
             setResult(NavigationCodes.GO_TO_QC);
             finish();
@@ -401,25 +399,29 @@ public abstract class BaseActivity extends AppCompatActivity implements
         goToHome(reloadApp, NavigationCodes.GO_TO_HOME);
     }
 
-    public void goToHome(Intent data) {
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
-        editor.putBoolean(Constants.IS_PENDING_GO_TO_HOME, true);
-        editor.commit();
-
-        setResult(NavigationCodes.GO_TO_HOME, data);
-        getCurrentActivity().finish();
-    }
-
     public void goToHome(boolean reloadApp, int resultCode) {
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
-        editor.putBoolean(Constants.IS_PENDING_GO_TO_HOME, true);
-        editor.putBoolean(Constants.RELOAD_APP, reloadApp);
-        editor.commit();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            Intent intent;
+            if (reloadApp) {
+                intent = new Intent(getCurrentActivity(), SplashActivity.class);
+                intent.putExtra(Constants.RELOAD_APP, true);
+            } else {
+                intent = new Intent(getCurrentActivity(), HomeActivity.class);
+                intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_HOME);
+            }
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        } else {
+            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
+            editor.putBoolean(Constants.IS_PENDING_GO_TO_HOME, true);
+            editor.putBoolean(Constants.RELOAD_APP, reloadApp);
+            editor.commit();
 
-        Intent data = new Intent();
-        data.putExtra(Constants.RELOAD_APP, reloadApp);
-        setResult(resultCode, data);
-        getCurrentActivity().finish();
+            Intent data = new Intent();
+            data.putExtra(Constants.RELOAD_APP, reloadApp);
+            setResult(resultCode, data);
+            getCurrentActivity().finish();
+        }
     }
 
     public void setAreaPinCode(String areaName, AreaPinInfoAdapter areaPinInfoAdapter, EditText editTextPincode) {

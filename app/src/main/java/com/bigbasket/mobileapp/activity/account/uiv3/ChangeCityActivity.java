@@ -144,8 +144,6 @@ public class ChangeCityActivity extends BackButtonActivity implements CityListDi
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.CITY, city.getName());
         trackEvent(TrackingAware.CHANGE_CITY_CLICKED, eventAttribs);
-        setResult(NavigationCodes.CITY_CHANGED);
-
-        finish();
+        goToHome(true);
     }
 }
