@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.fragment;
 
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -52,7 +53,9 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.uiv3_list_container, container, false);
+        View view = inflater.inflate(R.layout.uiv3_list_container, container, false);
+        view.setBackgroundColor(Color.WHITE);
+        return view;
     }
 
     @Override

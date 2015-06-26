@@ -178,7 +178,7 @@ public class SectionView {
 
     private View getSalutationView(Section section, LayoutInflater inflater, ViewGroup parent) {
         View baseSalutation = inflater.inflate(R.layout.uiv3_salutation_box, parent, false);
-        formatSectionTitle(baseSalutation, R.id.txtSalutationTitle, section);
+        formatSection(baseSalutation, R.id.txtSalutationTitle, section);
         ArrayList<SectionItem> sectionItems = section.getSectionItems();
         for (int i = 0; i < sectionItems.size(); i++) {
             if (i > 2) {
@@ -228,7 +228,7 @@ public class SectionView {
 
     private View getCarouselView(Section section, LayoutInflater inflater, ViewGroup parent) {
         View baseProductCarousel = inflater.inflate(R.layout.uiv3_horizontal_recycler_view, parent, false);
-        formatSectionTitle(baseProductCarousel, R.id.txtListTitle, section);
+        formatSection(baseProductCarousel, R.id.txtListTitle, section);
         setViewMoreBehaviour(baseProductCarousel.findViewById(R.id.btnMore), section, section.getMoreSectionItem());
 
         RecyclerView horizontalRecyclerView = (RecyclerView) baseProductCarousel.findViewById(R.id.horizontalRecyclerView);
@@ -411,7 +411,7 @@ public class SectionView {
         }
 
         View base = inflater.inflate(R.layout.uiv3_grid_container, parent, false);
-        formatSectionTitle(base, R.id.txtListTitle, section);
+        formatSection(base, R.id.txtListTitle, section);
         setViewMoreBehaviour(base.findViewById(R.id.btnMore), section, section.getMoreSectionItem());
         ViewGroup layoutGridContainer = (ViewGroup) base.findViewById(R.id.layoutGridContainer);
 
@@ -431,7 +431,7 @@ public class SectionView {
     private View getTileView(Section section, LayoutInflater inflater, ViewGroup parent,
                              boolean isVertical) {
         View base = inflater.inflate(R.layout.uiv3_tile_container, parent, false);
-        formatSectionTitle(base, R.id.txtListTitle, section);
+        formatSection(base, R.id.txtListTitle, section);
         setViewMoreBehaviour(base.findViewById(R.id.btnMore), section, section.getMoreSectionItem());
 
         LinearLayout tileContainer = (LinearLayout) base.findViewById(R.id.layoutTileContainer);
@@ -576,7 +576,25 @@ public class SectionView {
         }
     }
 
-    private void formatSectionTitle(View parent, int txtViewId, Section section) {
+    private void formatSection(View parent, int txtViewId, Section section) {
+        Renderer sectionRender = mSectionData.getRenderersMap() != null ?
+                mSectionData.getRenderersMap().get(section.getRenderingId()) : null;
+        if (sectionRender != null) {
+            if (!TextUtils.isEmpty(sectionRender.getBackgroundColor())) {
+                parent.setBackgroundColor(sectionRender.getNativeBkgColor());
+                if (section.getSectionType().equals(Section.NON_PRODUCT_CAROUSEL)
+                        || section.getSectionType().equals(Section.PRODUCT_CAROUSEL)) {
+                    parent.setPadding(eightDp, eightDp, eightDp, eightDp);
+
+                    ViewGroup.LayoutParams baseViewLayoutParams = parent.getLayoutParams();
+                    if (baseViewLayoutParams != null && baseViewLayoutParams instanceof ViewGroup.MarginLayoutParams) {
+                        ((ViewGroup.MarginLayoutParams) baseViewLayoutParams).leftMargin = fourDp;
+                        ((ViewGroup.MarginLayoutParams) baseViewLayoutParams).rightMargin = fourDp;
+                        parent.setLayoutParams(baseViewLayoutParams);
+                    }
+                }
+            }
+        }
         TextView txtVw = (TextView) parent.findViewById(txtViewId);
         if (section.getTitle() != null && !TextUtils.isEmpty(section.getTitle().getText())) {
             txtVw.setTypeface(FontHolder.getInstance(context).getFaceRobotoMedium());

@@ -42,6 +42,8 @@ public class Section extends BaseSectionTextItem implements Parcelable, Serializ
     private ArrayList<SectionItem> sectionItems;
     @SerializedName(Constants.MORE)
     private SectionItem moreSectionItem;
+    @SerializedName(Constants.RENDERING_ID)
+    private int renderingId;
 
     public Section(SectionTextItem title, SectionTextItem description,
                    String sectionType, ArrayList<SectionItem> sectionItems, SectionItem moreSectionItem) {
@@ -63,6 +65,7 @@ public class Section extends BaseSectionTextItem implements Parcelable, Serializ
         if (!_wasMoreSectionItemNull) {
             moreSectionItem = source.readParcelable(Section.class.getClassLoader());
         }
+        renderingId = source.readInt();
     }
 
     public String getSectionType() {
@@ -75,6 +78,10 @@ public class Section extends BaseSectionTextItem implements Parcelable, Serializ
 
     public SectionItem getMoreSectionItem() {
         return moreSectionItem;
+    }
+
+    public int getRenderingId() {
+        return renderingId;
     }
 
     @Override
@@ -96,7 +103,7 @@ public class Section extends BaseSectionTextItem implements Parcelable, Serializ
         if (!_wasMoreSectionItemNull) {
             dest.writeParcelable(moreSectionItem, flags);
         }
-
+        dest.writeInt(renderingId);
     }
 
     public int getWidgetHeight(Context context, HashMap<Integer, Renderer> rendererHashMap) {
