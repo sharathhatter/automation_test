@@ -31,12 +31,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginUserDetails;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
@@ -420,7 +422,7 @@ public class UIUtil {
         Picasso.with(context).load(url).fetch();
     }
 
-    public static void showEmptyProductsView(Context context, ViewGroup parent, String msg,
+    public static void showEmptyProductsView(final Context context, ViewGroup parent, String msg,
                                              @DrawableRes int drawableId) {
         View emptyPageView = LayoutInflater.from(context)
                 .inflate(R.layout.uiv3_empty_data_text, parent, false);
@@ -430,6 +432,13 @@ public class UIUtil {
         txtEmptyMsg1.setText(msg);
         TextView txtEmptyMsg2 = (TextView) emptyPageView.findViewById(R.id.txtEmptyMsg2);
         txtEmptyMsg2.setVisibility(View.GONE);
+        Button btnBlankPage = (Button) emptyPageView.findViewById(R.id.btnBlankPage);
+        btnBlankPage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((BaseActivity)context).goToHome(false);
+            }
+        });
         parent.addView(emptyPageView);
     }
 

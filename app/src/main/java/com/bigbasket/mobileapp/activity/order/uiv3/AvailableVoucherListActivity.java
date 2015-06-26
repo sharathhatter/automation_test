@@ -89,6 +89,7 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
             @Override
             public void onClick(View v) {
                 if (!TextUtils.isEmpty(editTextVoucherCode.getText().toString())) {
+                    BaseActivity.hideKeyboard(getCurrentActivity(), editTextVoucherCode);
                     String voucherCode = editTextVoucherCode.getText().toString();
                     applyVoucher(voucherCode);
                 }

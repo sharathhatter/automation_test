@@ -351,6 +351,7 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
 
     private void postUserDetails(String userDetails, final boolean hasOTP) {
         if (!DataUtil.isInternetAvailable(getActivity())) {
+            handler.sendOfflineError(false);
             return;
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
@@ -360,15 +361,16 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
             public void success(ApiResponse<UpdateProfileApiResponse> memberProfileDataCallback, Response response) {
                 if (isSuspended()) return;
                 try {
-                    hideProgressView();
+                    hideProgressDialog();
                 } catch (IllegalArgumentException e) {
                     return;
                 }
                 if (memberProfileDataCallback.status == 0) {
-                    if (otpValidationDialogFragment != null && otpValidationDialogFragment.isVisible()) {
-                        if (getCurrentActivity() != null)
-                            BaseActivity.hideKeyboard((BaseActivity) (getActivity()), getCurrentActivity().getCurrentFocus());
-                        otpValidationDialogFragment.dismiss();
+                    if (otpValidationDialogFragment != null) {
+                        if (getCurrentActivity() != null && otpValidationDialogFragment.getEditTextMobileCode()!=null)
+                            BaseActivity.hideKeyboard((BaseActivity) (getActivity()), otpValidationDialogFragment.getEditTextMobileCode());
+                        if(otpValidationDialogFragment.isVisible())
+                            otpValidationDialogFragment.dismiss();
                     }
                     updatePreferenceData();
                 } else {
@@ -397,7 +399,7 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
             public void failure(RetrofitError error) {
                 if (isSuspended()) return;
                 try {
-                    hideProgressView();
+                    hideProgressDialog();
                 } catch (IllegalArgumentException e) {
                     return;
                 }
