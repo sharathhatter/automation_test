@@ -131,4 +131,8 @@ public class AreaPinInfoAdapter {
         }
         return areaName;
     }
+
+    public void deleteData() {
+        DatabaseHelper.db.execSQL("DELETE FROM " + tableName);
+    }
 }

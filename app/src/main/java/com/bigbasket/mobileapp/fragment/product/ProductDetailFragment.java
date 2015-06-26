@@ -145,6 +145,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
                 .build();
 
         LinearLayout layoutProductDetail = (LinearLayout) getView().findViewById(R.id.layoutProductDetail);
+        layoutProductDetail.setPadding(0, 0, 0, 36);
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View productRow = inflater.inflate(R.layout.uiv3_product_detail_row, layoutProductDetail, false);
 

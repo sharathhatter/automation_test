@@ -8,11 +8,8 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
@@ -89,12 +86,12 @@ public class ChangePasswordFragment extends BaseFragment {
         }
         if (TextUtils.isEmpty(newPassword)) {
             cancel = true;
-            if(focusView==null) focusView = newPwdText;
+            if (focusView == null) focusView = newPwdText;
             UIUtil.reportFormInputFieldError(newPwdText, getString(R.string.error_field_required));
         }
         if (TextUtils.isEmpty(confPassword)) {
             cancel = true;
-            if(focusView==null) focusView = confirmPwdEditText;
+            if (focusView == null) focusView = confirmPwdEditText;
             UIUtil.reportFormInputFieldError(confirmPwdEditText, getString(R.string.error_field_required));
         }
 

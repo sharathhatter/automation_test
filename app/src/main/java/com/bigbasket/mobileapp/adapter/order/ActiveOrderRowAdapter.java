@@ -316,8 +316,6 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
                 imgIncBasketQty.setVisibility(View.VISIBLE);
                 imgDecBasketQty.setVisibility(View.VISIBLE);
                 imgRemove.setVisibility(View.VISIBLE);
-                basketOperationSeparatorLine.setVisibility(View.VISIBLE);
-                //txtQty.setVisibility(View.GONE);
 
                 if (cartItem.getTotalQty() > 0) {
                     txtInBasket.setVisibility(View.VISIBLE);
@@ -384,18 +382,10 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
                     }
                 });
             } else {
-//                if (cartItem.getTotalQty() > 0) {
-//                    txtQty.setVisibility(View.VISIBLE);
-//                    String itemCount = UIUtil.formatAsMoney(cartItem.getTotalQty());
-//                    txtQty.setText(itemCount + " item" + (cartItem.getTotalQty() > 1 ? "s" : ""));
-//                } else {
-//                    txtQty.setVisibility(View.GONE);
-//                }
                 txtInBasket.setVisibility(View.GONE);
                 imgIncBasketQty.setVisibility(View.GONE);
                 imgDecBasketQty.setVisibility(View.GONE);
                 imgRemove.setVisibility(View.INVISIBLE);
-                basketOperationSeparatorLine.setVisibility(View.GONE);
             }
         }
     }

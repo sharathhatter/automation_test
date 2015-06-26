@@ -326,10 +326,10 @@ public class ShoppingListSummaryActivity extends BBActivity {
                                     setCartSummary(addAllToBasketSmartBasketCallBack);
                                     updateUIForCartInfo();
                                     markBasketDirty();
-                                    if(viewPager!=null){
+                                    if (viewPager != null) {
                                         setProductCount(addAllToBasketSmartBasketCallBack.cartInfo,
                                                 shoppingListSummary);
-                                    }else {
+                                    } else {
                                         loadShoppingListSummary();
                                     }
 
@@ -362,10 +362,10 @@ public class ShoppingListSummaryActivity extends BBActivity {
                                     setCartSummary(addAllToBasketShoppingListCallBack);
                                     updateUIForCartInfo();
                                     markBasketDirty();
-                                    if(viewPager!=null){
+                                    if (viewPager != null) {
                                         setProductCount(addAllToBasketShoppingListCallBack.cartInfo,
                                                 shoppingListSummary);
-                                    }else {
+                                    } else {
                                         loadShoppingListSummary();
                                     }
                                     break;
@@ -400,7 +400,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
             @Override
             public void onPositiveButtonClicked(String inputText) {
                 if (getCurrentActivity() == null) return;
-                if (!mShoppingListName.getName().equals(inputText))
+                if (!mShoppingListName.getName().equals(inputText.trim()))
                     editShoppingListName(mShoppingListName, inputText);
             }
         }.show();

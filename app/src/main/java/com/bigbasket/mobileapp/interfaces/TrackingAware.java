@@ -9,7 +9,7 @@ public interface TrackingAware {
     String ENTRY_PAGE_SHOWN = "EntryPage.Shown";
     String ENTRY_PAGE_SKIP_BUTTON_CLICKED = "EntryPage.Skip Button Clicked";
     String ENTRY_PAGE_LOGIN_CLICKED = "EntryPage.Login Button Clicked";
-    String ENTRY_PAGE_SIGNUP_CLICKED = "EntryPage.Signup Button Clicked";
+    String ENTRY_PAGE_SIGNUP_CLICKED = "EntryPage.Signup Button Clicked"; //
 
     //Home Screen topnav
     String COMMUNICATION_HUB_CLICKED = "MyAccount.CommunicationHubClicked";
@@ -187,7 +187,7 @@ public interface TrackingAware {
 
 
     void trackEvent(String eventName, Map<String, String> eventAttribs,
-                           String source, String sourceValue, boolean isCustomerValueIncrease);
+                    String source, String sourceValue, boolean isCustomerValueIncrease);
 
     void trackEvent(String eventName, Map<String, String> eventAttribs);
 }

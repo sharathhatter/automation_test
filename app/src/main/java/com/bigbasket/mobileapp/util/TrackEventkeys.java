@@ -8,7 +8,6 @@ public final class TrackEventkeys {
     public static final String NAVIGATION_CTX_LEFTNAV = "leftnav";
     public static final String NAVIGATION_CTX_LANDING_PAGE = "landing_page";
     public static final String NAVIGATION_CTX_DIALOG = "dialog";
-    public static final String NAVIGATION_CTX_SIGNUP_PAGE = "signup";
     public static final String LOGIN_TYPE_GOOGLE = "Google";
     public static final String LOGIN_TYPE_FACEBOOK = "Facebook";
     public static final String LOGIN_TYPE_NORMAL = "Normal";
@@ -18,7 +17,6 @@ public final class TrackEventkeys {
     public static final String YES = "YES";
     public static final String NO = "NO";
     public static final String NAVIGATION_CTX_LOGIN_PAGE = "login_page";
-    public static final String NAVIGATION_CTX_REGISTRATION_PAGE = "registration_page";
     public static final String NAVIGATION_CTX_UPDATE_PROFILE = "update_profile";
     public static final String NAVIGATION_CTX_DELIVERY_ADDRESS = "delivery_address";
     public static final String MONTH = "month";

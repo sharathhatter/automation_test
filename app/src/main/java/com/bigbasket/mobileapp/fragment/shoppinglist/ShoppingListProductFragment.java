@@ -35,6 +35,8 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
     @Override
     public String getNavigationCtx() {
         ShoppingListSummary shoppingListSummary = getArguments().getParcelable(Constants.SHOPPING_LIST_SUMMARY);
+        if (shoppingListSummary == null || shoppingListSummary.getShoppingListName() == null)
+            return TrackEventkeys.NAVIGATION_CTX_SHOPPING_LIST;
         String shoppingListSlug = shoppingListSummary.getShoppingListName().getSlug();
         if (shoppingListSlug.equals(Constants.SMART_BASKET_SLUG))
             return TrackEventkeys.NAVIGATION_CTX_SMART_BASKET;

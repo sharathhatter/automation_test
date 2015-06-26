@@ -10,8 +10,7 @@
     android:orientation="vertical"
     android:paddingBottom="@dimen/padding_small"
     android:paddingLeft="@dimen/padding_small"
-    android:paddingRight="@dimen/padding_small"
-    >
+    android:paddingRight="@dimen/padding_small">
 
     <TextView
         android:id="@+id/txtSalutationTitle"

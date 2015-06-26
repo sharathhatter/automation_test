@@ -102,7 +102,6 @@
     <string name="rating">Rating:</string>
     <string name="yourComments">Your comments (optional)</string>
     <string name="submit">Submit</string>
-    <string name="konotorWelcomeMessage">Welcome to BigBasket communication hub. You can send us your feedback or report problems through communication hub, someone will respond to your query.</string>
     <string name="applyAllCaps">APPLY</string>
     <string name="apply">Apply</string>
     <string name="pleaseNote">Please Note:</string>
@@ -400,4 +399,5 @@
 
     <string name="add_bundle">ADD BUNDLE</string>
     <string name="error">Error!</string>
+    <string name="emailBlank">Please enter an email address</string>
 </resources>
