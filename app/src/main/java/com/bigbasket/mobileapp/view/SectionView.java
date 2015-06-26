@@ -457,6 +457,7 @@ public class SectionView {
             Renderer renderer = mSectionData.getRenderersMap() != null ?
                     mSectionData.getRenderersMap().get(sectionItem.getRenderingId()) : null;
 
+            boolean isItemOrientationVertical = renderer != null && renderer.getOrientation() == Renderer.VERTICAL;
             int viewType = sectionItem.getItemViewType(renderer, section.getSectionType());
             if (viewType == SectionItem.VIEW_UNKNOWN) {
                 continue;
@@ -480,12 +481,14 @@ public class SectionView {
                             mSectionData.getRenderersMap().get(sectionItem.getTitle().getRenderingId()) : null;
                     if (itemRenderer != null) {
                         itemRenderer.setRendering(txtTitle, fourDp, fourDp, true, true, true, true);
-                        if (itemRenderer.getPadding() == 0 && sectionItem.isOverlayWithAdjacentTitleDesc(viewType)) {
+                        if (itemRenderer.getPadding() == 0 && sectionItem.isOverlayWithAdjacentTitleDesc(viewType)
+                                && isItemOrientationVertical) {
                             itemRenderer.adjustTitlePaddingForOverlayWithAdjacentTitleAndDesc(eightDp, fourDp, txtTitle, txtDescription, sectionItem);
                         }
                     } else {
+                        int bottomPadding = txtDescription != null && sectionItem.hasDescription() ? fourDp : eightDp;
                         txtTitle.setPadding(eightDp, eightDp, eightDp,
-                                txtDescription != null && sectionItem.hasDescription() ? fourDp : eightDp);
+                                isItemOrientationVertical ? bottomPadding : 0);
                     }
                 } else {
                     txtTitle.setVisibility(View.GONE);
@@ -500,11 +503,14 @@ public class SectionView {
                             mSectionData.getRenderersMap().get(sectionItem.getDescription().getRenderingId()) : null;
                     if (itemRenderer != null) {
                         itemRenderer.setRendering(txtDescription, fourDp, fourDp, true, true, true, true);
-                        if (itemRenderer.getPadding() == 0 && sectionItem.isOverlayWithAdjacentTitleDesc(viewType)) {
+                        if (itemRenderer.getPadding() == 0 && sectionItem.isOverlayWithAdjacentTitleDesc(viewType)
+                                && isItemOrientationVertical) {
                             itemRenderer.adjustDescPaddingForOverlayWithAdjacentTitleAndDesc(eightDp, 0, txtTitle, txtDescription, sectionItem);
                         }
                     } else {
-                        txtDescription.setPadding(txtTitle != null && sectionItem.hasTitle() ? 0 : eightDp, eightDp, eightDp, eightDp);
+                        int leftPadding = txtTitle != null && sectionItem.hasTitle() ? 0 : eightDp;
+                        txtDescription.setPadding(isItemOrientationVertical ? leftPadding : eightDp,
+                                isItemOrientationVertical ? eightDp : 0, eightDp, eightDp);
                     }
                 } else {
                     txtDescription.setVisibility(View.GONE);
@@ -540,6 +546,10 @@ public class SectionView {
                 layoutSection.setMinimumHeight(minHeight);
             }
 
+            if (renderer != null) {
+                renderer.setRendering(layoutSection, 0, 0, false, true, applyRight, true);
+            }
+
             if (isVertical) {
                 ViewGroup sectionLayoutContainer = (ViewGroup) view.findViewById(R.id.sectionLayoutContainer);
                 if (sectionLayoutContainer != null) {
@@ -566,10 +576,6 @@ public class SectionView {
                 }
             }
             view.setLayoutParams(layoutParams);
-
-            if (renderer != null) {
-                renderer.setRendering(view, 0, 0, false, true, applyRight, true);
-            }
 
             view.setOnClickListener(new OnSectionItemClickListener<>(context, section, sectionItem, screenName));
             tileContainer.addView(view);
