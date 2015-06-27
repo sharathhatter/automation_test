@@ -436,14 +436,19 @@ public class UIUtil {
         btnBlankPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((BaseActivity)context).goToHome(false);
+                ((BaseActivity) context).goToHome(false);
             }
         });
         parent.addView(emptyPageView);
     }
 
     public static String getScreenDensity(Context context) {
-        switch (context.getResources().getDisplayMetrics().densityDpi) {
+        int densityDpi = context.getResources().getDisplayMetrics().densityDpi;
+        if (densityDpi == 493 || densityDpi >= 540) {
+            // For devices like Nexus 6/LG G4
+            return "xxhdpi";
+        }
+        switch (densityDpi) {
             case DisplayMetrics.DENSITY_LOW:
                 return "mdpi";
             case DisplayMetrics.DENSITY_MEDIUM:
