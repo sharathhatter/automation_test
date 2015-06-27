@@ -811,7 +811,8 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                                  Section section, String baseImgUrl) {
         for (int i = 0; i < sectionItems.size(); i++) {
             SectionItem sectionItem = sectionItems.get(i);
-            if (sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
+            if ((sectionItem.getTitle() != null && !TextUtils.isEmpty(sectionItem.getTitle().getText()))
+                    || (sectionItem instanceof SubSectionItem && ((SubSectionItem) sectionItem).isLink())) {
                 if (sectionItem.hasImage()) {
                     UIUtil.preLoadImage(TextUtils.isEmpty(sectionItem.getImage()) ?
                                     sectionItem.constructImageUrl(context, baseImgUrl) : sectionItem.getImage(),
