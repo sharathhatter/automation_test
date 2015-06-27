@@ -6,7 +6,6 @@ import android.text.TextUtils;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 import com.bigbasket.mobileapp.R;
@@ -50,7 +49,6 @@ public class FlatPageWebViewActivity extends BackButtonActivity {
                 }
             }
             bbWebView.loadUrl(webViewUrl); // To get responsive template
-            bbWebView.setWebViewClient(new FulFillmentWebViewClient());
         }
 
         bbWebView.setWebChromeClient((new WebChromeClient() {
@@ -93,14 +91,5 @@ public class FlatPageWebViewActivity extends BackButtonActivity {
     @Override
     public String getScreenTag() {
         return TrackEventkeys.FLAT_PAGE_SCREEN;
-    }
-
-    private class FulFillmentWebViewClient extends WebViewClient {
-
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            view.loadUrl(url);
-            return true;
-        }
     }
 }

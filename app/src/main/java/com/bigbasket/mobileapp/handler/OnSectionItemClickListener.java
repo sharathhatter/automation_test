@@ -98,6 +98,8 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                     if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
                         Intent intent = new Intent(((ActivityAware) context).getCurrentActivity(), FlatPageWebViewActivity.class);
                         intent.putExtra(Constants.WEBVIEW_URL, destinationInfo.getDestinationSlug());
+                        intent.putExtra(Constants.WEBVIEW_TITLE, sectionItem.getTitle() != null ?
+                                sectionItem.getTitle().getText() : null);
                         ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     }
                     break;
