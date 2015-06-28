@@ -1,1 +1,1 @@
-include ':app', ':androidImageSlider', ':wibmosdklib', ':wibmoSDK', ':floatingActionButton', ':moe-addon-ubox', ':moengagesdk'
+include ':app', ':androidImageSlider', ':wibmosdklib', ':wibmoSDK', ':moe-addon-ubox', ':moengagesdk'

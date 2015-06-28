@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.view.uiv3;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
@@ -18,15 +19,16 @@ import android.support.annotation.DimenRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IntDef;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.MotionEventCompat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -34,14 +36,20 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.util.FontHolder;
+import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.view.ViewHelper;
+import com.nineoldandroids.view.ViewPropertyAnimator;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-public class FloatingBadgeCountView extends FrameLayout {
+public class FloatingBadgeCountView extends FrameLayout implements View.OnTouchListener {
 
     private ImageView img;
     private TextView txt;
+    private boolean mHasBeenAnimated;
+    private boolean mAnimationInProgress;
+    private static final int TRANSLATE_DURATION_MILLIS = 200;
 
     public FloatingBadgeCountView(Context context) {
         super(context);
@@ -51,6 +59,7 @@ public class FloatingBadgeCountView extends FrameLayout {
         super(context, attrs);
         View.inflate(context, R.layout.floating_badge_count, this);
         init(context, attrs);
+        this.setOnTouchListener(this);
     }
 
     @Override
@@ -76,7 +85,67 @@ public class FloatingBadgeCountView extends FrameLayout {
         }
     }
 
-    private static final int TRANSLATE_DURATION_MILLIS = 200;
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        switch (MotionEventCompat.getActionMasked(event)) {
+            case MotionEvent.ACTION_DOWN:
+                break;
+            case MotionEvent.ACTION_MOVE:
+                if (!mAnimationInProgress) {
+                    int translationX = mHasBeenAnimated ? 0 : -(getScreenWidth() -
+                            getMeasuredWidth() - getMarginRight() * 2);
+                    ViewPropertyAnimator.animate(this).setInterpolator(mInterpolator)
+                            .setDuration(TRANSLATE_DURATION_MILLIS)
+                            .translationX(translationX)
+                            .setListener(new Animator.AnimatorListener() {
+                                @Override
+                                public void onAnimationStart(Animator animation) {
+                                    mAnimationInProgress = true;
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+                                    mAnimationInProgress = false;
+                                    mHasBeenAnimated = !mHasBeenAnimated;
+                                }
+
+                                @Override
+                                public void onAnimationCancel(Animator animation) {
+                                    mAnimationInProgress = false;
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animator animation) {
+
+                                }
+                            });
+                    return true;
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                break;
+            case MotionEvent.ACTION_POINTER_UP:
+                break;
+            case MotionEvent.ACTION_POINTER_DOWN:
+                break;
+        }
+        return false;
+    }
+
+    private int getScreenWidth() {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        ((Activity) getContext()).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        return displayMetrics.widthPixels;
+    }
+
+    private int getMarginRight() {
+        int marginRight = 0;
+        final ViewGroup.LayoutParams layoutParams = getLayoutParams();
+        if (layoutParams instanceof ViewGroup.MarginLayoutParams) {
+            marginRight = ((MarginLayoutParams) layoutParams).rightMargin;
+        }
+        return marginRight;
+    }
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({TYPE_NORMAL, TYPE_MINI})
@@ -98,8 +167,6 @@ public class FloatingBadgeCountView extends FrameLayout {
     private int mShadowSize;
 
     private boolean mMarginsSet;
-    private Animation mPreHoneyCombSlideUpAnimation;
-    private Animation mPreHoneyCombSlideDownAnimation;
 
     private final Interpolator mInterpolator = new AccelerateDecelerateInterpolator();
 
@@ -298,41 +365,17 @@ public class FloatingBadgeCountView extends FrameLayout {
             }
             int translationY = visible ? 0 : height + getMarginBottom();
             if (animate) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
-                    animate().setInterpolator(mInterpolator)
-                            .setDuration(TRANSLATE_DURATION_MILLIS)
-                            .translationY(translationY);
-                } else {
-                    doTranslateAnimationForPreHoneycomb();
-                }
+                ViewPropertyAnimator.animate(this).setInterpolator(mInterpolator)
+                        .setDuration(TRANSLATE_DURATION_MILLIS)
+                        .translationY(translationY);
             } else {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
-                    setTranslationY(translationY);
-                } else {
-                    setVisibility(mVisible ? View.VISIBLE : View.GONE);
-                }
+                ViewHelper.setTranslationY(this, translationY);
             }
 
             // On pre-Honeycomb a translated view is still clickable, so we need to disable clicks manually
             if (!hasHoneycombApi()) {
                 setClickable(visible);
             }
-        }
-    }
-
-    public void doTranslateAnimationForPreHoneycomb() {
-        if (mVisible) {
-            setVisibility(View.VISIBLE);
-            if (mPreHoneyCombSlideUpAnimation == null) {
-                mPreHoneyCombSlideUpAnimation = AnimationUtils.loadAnimation(getContext(), com.melnykov.fab.R.anim.slide_up);
-            }
-            startAnimation(mPreHoneyCombSlideUpAnimation);
-        } else {
-            setVisibility(View.GONE);
-            if (mPreHoneyCombSlideDownAnimation == null) {
-                mPreHoneyCombSlideDownAnimation = AnimationUtils.loadAnimation(getContext(), com.melnykov.fab.R.anim.slide_down);
-            }
-            startAnimation(mPreHoneyCombSlideDownAnimation);
         }
     }
 
