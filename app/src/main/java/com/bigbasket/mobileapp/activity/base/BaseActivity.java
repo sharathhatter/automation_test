@@ -461,13 +461,10 @@ public abstract class BaseActivity extends AppCompatActivity implements
         });
     }
 
-    public boolean getSystemAreaInfo(String addressCityName) {
+    public boolean getSystemAreaInfo() {
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(this);
-        String areaInfoCalledLast = prefer.getString("areaInfoCalledLast", null);
+        String areaInfoCalledLast = prefer.getString(Constants.AREA_INFO_CALL_LAST, null);
         SharedPreferences.Editor editor = prefer.edit();
-        String preferCityName = prefer.getString(Constants.CITY, null);
-        if (addressCityName == null || preferCityName == null) return true;
-        if (!addressCityName.equalsIgnoreCase(preferCityName)) return true;
         try {
             DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
             Date d1 = format.getCalendar().getTime();

@@ -228,8 +228,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                 genericProductListFragment.setArguments(bundle);
                 // Not using onChangeFragment/addToMainLayout since their implementation has been changed in this class
                 getSupportFragmentManager().beginTransaction()
-                        .add(R.id.content_frame, genericProductListFragment, genericProductListFragment.getFragmentTxnTag())
-                        .addToBackStack(genericProductListFragment.getFragmentTxnTag())
+                        .replace(R.id.content_frame, genericProductListFragment, genericProductListFragment.getFragmentTxnTag())
                         .commit();
                 if (productTabData.getHeaderSection() != null &&
                         productTabData.getHeaderSection().getSectionItems() != null &&
