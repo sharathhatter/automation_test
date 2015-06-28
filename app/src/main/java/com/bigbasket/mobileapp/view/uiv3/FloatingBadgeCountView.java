@@ -19,11 +19,9 @@ import android.support.annotation.DimenRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IntDef;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.MotionEventCompat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
@@ -36,19 +34,16 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.util.FontHolder;
-import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.view.ViewHelper;
 import com.nineoldandroids.view.ViewPropertyAnimator;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-public class FloatingBadgeCountView extends FrameLayout implements View.OnTouchListener {
+public class FloatingBadgeCountView extends FrameLayout {
 
     private ImageView img;
     private TextView txt;
-    private boolean mHasBeenAnimated;
-    private boolean mAnimationInProgress;
     private static final int TRANSLATE_DURATION_MILLIS = 200;
 
     public FloatingBadgeCountView(Context context) {
@@ -59,7 +54,23 @@ public class FloatingBadgeCountView extends FrameLayout implements View.OnTouchL
         super(context, attrs);
         View.inflate(context, R.layout.floating_badge_count, this);
         init(context, attrs);
-        this.setOnTouchListener(this);
+        this.setOnTouchListener(new OnSwipeTouchListener(context) {
+            @Override
+            public void onSwipeLeft() {
+                int translationX = -(getScreenWidth() - getMeasuredWidth() - getMarginRight() * 2);
+                ViewPropertyAnimator.animate(FloatingBadgeCountView.this).setInterpolator(mInterpolator)
+                        .setDuration(TRANSLATE_DURATION_MILLIS)
+                        .translationX(translationX);
+            }
+
+            @Override
+            public void onSwipeRight() {
+                int translationX = 0;
+                ViewPropertyAnimator.animate(FloatingBadgeCountView.this).setInterpolator(mInterpolator)
+                        .setDuration(TRANSLATE_DURATION_MILLIS)
+                        .translationX(translationX);
+            }
+        });
     }
 
     @Override
@@ -83,53 +94,6 @@ public class FloatingBadgeCountView extends FrameLayout implements View.OnTouchL
             this.txt.setText(text);
             this.txt.setVisibility(View.VISIBLE);
         }
-    }
-
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        switch (MotionEventCompat.getActionMasked(event)) {
-            case MotionEvent.ACTION_DOWN:
-                break;
-            case MotionEvent.ACTION_MOVE:
-                if (!mAnimationInProgress) {
-                    int translationX = mHasBeenAnimated ? 0 : -(getScreenWidth() -
-                            getMeasuredWidth() - getMarginRight() * 2);
-                    ViewPropertyAnimator.animate(this).setInterpolator(mInterpolator)
-                            .setDuration(TRANSLATE_DURATION_MILLIS)
-                            .translationX(translationX)
-                            .setListener(new Animator.AnimatorListener() {
-                                @Override
-                                public void onAnimationStart(Animator animation) {
-                                    mAnimationInProgress = true;
-                                }
-
-                                @Override
-                                public void onAnimationEnd(Animator animation) {
-                                    mAnimationInProgress = false;
-                                    mHasBeenAnimated = !mHasBeenAnimated;
-                                }
-
-                                @Override
-                                public void onAnimationCancel(Animator animation) {
-                                    mAnimationInProgress = false;
-                                }
-
-                                @Override
-                                public void onAnimationRepeat(Animator animation) {
-
-                                }
-                            });
-                    return true;
-                }
-                break;
-            case MotionEvent.ACTION_UP:
-                break;
-            case MotionEvent.ACTION_POINTER_UP:
-                break;
-            case MotionEvent.ACTION_POINTER_DOWN:
-                break;
-        }
-        return false;
     }
 
     private int getScreenWidth() {
