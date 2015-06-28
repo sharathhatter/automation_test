@@ -301,7 +301,8 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
             cancel = true;
         }
 
-        if (!UIUtil.isValidDOB(editTextDob.getText().toString()) && !cancel) {
+        if (!TextUtils.isEmpty(editTextDob.getText().toString()) &&
+                !UIUtil.isValidDOB(editTextDob.getText().toString()) && !cancel) {
             showErrorMsg(getString(R.string.error_dob_message));
             editTextDob.requestFocus();
             return;
