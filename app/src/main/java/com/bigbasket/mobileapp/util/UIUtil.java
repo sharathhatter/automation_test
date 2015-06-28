@@ -225,6 +225,7 @@ public class UIUtil {
 
         if (!preferences.getString(Constants.CITY_ID, "-1").
                 equals(String.valueOf(userDetails.analytics.cityId))) {
+            editor.remove(Constants.AREA_INFO_CALL_LAST);
             new AreaPinInfoAdapter(ctx).deleteData();
         }
 

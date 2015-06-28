@@ -563,4 +563,5 @@ public class Constants {
     public static final String UNABLE_TO_GET_EMAIL = "emilNotFound";
     public static final String PREF_UNABLE_TO_GET_EMAIL = "reqEailFailed";
     public static final String FORGOT_PASSWORD_DIALOG = "FPassDialog";
+    public static final String AREA_INFO_CALL_LAST = "areaInfoCalledLast";
 }

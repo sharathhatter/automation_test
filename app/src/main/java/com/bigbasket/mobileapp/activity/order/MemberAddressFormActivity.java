@@ -64,8 +64,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
             cityName = preferences.getString(Constants.CITY, null);
         }
 
-        String addressCityName = address != null ? address.getCityName() : null;
-        if (getSystemAreaInfo(addressCityName)) {
+        if (getSystemAreaInfo()) {
             handleMessage(Constants.CALL_AREA_INFO);
         } else {
             showForm();
