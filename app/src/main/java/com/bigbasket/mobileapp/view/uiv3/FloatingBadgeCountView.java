@@ -58,7 +58,9 @@ public class FloatingBadgeCountView extends FrameLayout {
         super.onFinishInflate();
         img = (ImageView) findViewById(R.id.img);
         txt = (TextView) findViewById(R.id.txt);
-        txt.setTypeface(FontHolder.getInstance(getContext()).getFaceRobotoMedium());
+        if (!isInEditMode()) {
+            txt.setTypeface(FontHolder.getInstance(getContext()).getFaceRobotoMedium());
+        }
     }
 
     public void setImg(@DrawableRes int drawableRes) {
