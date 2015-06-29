@@ -87,7 +87,17 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         }
     }
 
+    @Override
+    public void retryNextPage() {
+        loadMoreProducts();
+        mProductListRecyclerAdapter.setLoadingFailed(false);
+        mProductListRecyclerAdapter.notifyDataSetChanged();
+    }
+
     public void loadMoreProducts() {
+        if (!checkInternetConnection()) {
+            mProductListRecyclerAdapter.setLoadingFailed(true);
+        }
         if (isNextPageLoading() || getCurrentActivity() == null) return;
         final int nextPage = Math.max(mProductInfo.getCurrentPage(), 1) + 1;
 
@@ -108,7 +118,8 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                         if (productMap != null && productMap.size() > 0) {
                             updateProductList(productMap.get(mTabType));
                         } else {
-                            // TODO : Add some code
+                            mProductListRecyclerAdapter.setLoadingFailed(true);
+                            mProductListRecyclerAdapter.notifyDataSetChanged();
                         }
                     }
                 }
@@ -116,6 +127,8 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                 @Override
                 public void failure(RetrofitError error) {
                     setNextPageLoading(false);
+                    mProductListRecyclerAdapter.setLoadingFailed(true);
+                    mProductListRecyclerAdapter.notifyDataSetChanged();
                 }
             });
         }
