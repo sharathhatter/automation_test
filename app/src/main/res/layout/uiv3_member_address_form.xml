@@ -166,7 +166,7 @@
             android:textColor="@color/uiv3_primary_text_color"
             android:textSize="@dimen/secondary_text_size" />
 
-        <AutoCompleteTextView
+        <com.bigbasket.mobileapp.view.InstantAutoComplete
             android:id="@+id/editTextArea"
             android:layout_below="@id/editTextPincode"
             android:paddingLeft="@dimen/padding_small"

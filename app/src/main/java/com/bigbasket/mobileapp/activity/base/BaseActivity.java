@@ -437,21 +437,31 @@ public abstract class BaseActivity extends AppCompatActivity implements
         ArrayAdapter<String> pinAdapter = new ArrayAdapter<>(getCurrentActivity(), android.R.layout.select_dialog_item, areaPinArrayList);
         editTextPincode.setThreshold(1);
         editTextPincode.setAdapter(pinAdapter);
+
+        ArrayList<String> areaNameArrayList = areaPinInfoAdapter.getAreaNameList();
+        final ArrayAdapter<String> areaAdapter = new ArrayAdapter<>(getCurrentActivity(), android.R.layout.select_dialog_item, areaNameArrayList);
+        editTextArea.setThreshold(1);
+        editTextArea.setAdapter(areaAdapter);
+
         editTextPincode.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 String pinCode = editTextPincode.getText().toString();
-                String areaName = areaPinInfoAdapter.getAreaName(pinCode);
-                if (!TextUtils.isEmpty(pinCode) && !TextUtils.isEmpty(areaName)) {
-                    editTextArea.setText(areaName);
+                ArrayList<String> areaNameArrayList = areaPinInfoAdapter.getAreaName(pinCode);
+                if (areaNameArrayList !=null && areaNameArrayList.size()>1) {
+                    areaAdapter.clear();
+                    for(String areaName : areaNameArrayList)
+                        areaAdapter.add(areaName);
+                    areaAdapter.notifyDataSetChanged();
+                    editTextArea.requestFocus();
+                    editTextArea.showDropDown();
+                }else if(areaNameArrayList !=null && areaNameArrayList.size()==1){
+                    editTextArea.setText(areaNameArrayList.get(0));
                 }
             }
         });
 
-        ArrayList<String> areaNameArrayList = areaPinInfoAdapter.getAreaNameList();
-        ArrayAdapter<String> areaAdapter = new ArrayAdapter<>(getCurrentActivity(), android.R.layout.select_dialog_item, areaNameArrayList);
-        editTextArea.setThreshold(1);
-        editTextArea.setAdapter(areaAdapter);
+
         editTextArea.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {

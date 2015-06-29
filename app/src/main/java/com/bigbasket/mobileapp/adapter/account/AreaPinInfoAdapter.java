@@ -95,8 +95,8 @@ public class AreaPinInfoAdapter {
         String areaNameStr;
         ArrayList<String> result = new ArrayList<>();
         try {
-            areaPinCursor = DatabaseHelper.db.query(tableName, new String[]{COLUMN_PIN}
-                    , null, null, null, null, null);
+            areaPinCursor = DatabaseHelper.db.query(true, tableName, new String[]{COLUMN_PIN}
+                    , null, null, null, null, null, null);
             if (areaPinCursor != null && areaPinCursor.moveToFirst()) {
                 do {
                     areaNameStr = areaPinCursor.getString(areaPinCursor.getColumnIndex(AreaPinInfoAdapter.COLUMN_PIN));
@@ -113,14 +113,17 @@ public class AreaPinInfoAdapter {
         return result;
     }
 
-    public String getAreaName(String pinCode) {
+    public ArrayList<String> getAreaName(String pinCode) {
         Cursor areaNameCursor = null;
-        String areaName = null;
+        ArrayList<String> areaNameArrayList = new ArrayList<>();;
         try {
             areaNameCursor = DatabaseHelper.db.query(tableName, new String[]{COLUMN_AREA}
                     , COLUMN_PIN + " = " + "\"" + pinCode + "\"", null, null, null, null);
             if (areaNameCursor != null && areaNameCursor.moveToFirst()) {
-                areaName = areaNameCursor.getString(areaNameCursor.getColumnIndex(AreaPinInfoAdapter.COLUMN_AREA));
+                do {
+                    String areaNameStr = areaNameCursor.getString(areaNameCursor.getColumnIndex(AreaPinInfoAdapter.COLUMN_AREA));
+                    areaNameArrayList.add(areaNameStr);
+                } while (areaNameCursor.moveToNext());
             }
         } catch (SQLiteException ex) {
             ex.getStackTrace();
@@ -129,7 +132,7 @@ public class AreaPinInfoAdapter {
                 areaNameCursor.close();
             }
         }
-        return areaName;
+        return areaNameArrayList;
     }
 
     public void deleteData() {
