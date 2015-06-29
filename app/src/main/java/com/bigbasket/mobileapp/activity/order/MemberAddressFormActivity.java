@@ -34,6 +34,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.bigbasket.mobileapp.view.InstantAutoComplete;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -49,7 +50,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
     private View base;
     private String cityName;
     private AutoCompleteTextView editTextPincode;
-    private AutoCompleteTextView editTextArea;
+    private InstantAutoComplete editTextArea;
     private String mErrorMsg;
     private OTPValidationDialogFragment otpValidationDialogFragment;
     private boolean mFromAccountPage = false;
@@ -78,7 +79,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
         contentLayout.setBackgroundColor(getResources().getColor(R.color.white));
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         base = inflater.inflate(R.layout.uiv3_member_address_form, contentLayout, false);
-        editTextArea = (AutoCompleteTextView) base.findViewById(R.id.editTextArea);
+        editTextArea = (InstantAutoComplete) base.findViewById(R.id.editTextArea);
         editTextPincode = (AutoCompleteTextView) base.findViewById(R.id.editTextPincode);
         if (base == null) {
             finish();
