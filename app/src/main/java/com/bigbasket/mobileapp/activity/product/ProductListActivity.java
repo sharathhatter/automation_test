@@ -40,6 +40,7 @@ import com.bigbasket.mobileapp.handler.OnDialogShowListener;
 import com.bigbasket.mobileapp.handler.OnSectionItemClickListener;
 import com.bigbasket.mobileapp.interfaces.LazyProductListAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
+import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
@@ -54,6 +55,7 @@ import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.model.section.SectionTextItem;
+import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.task.GetCartCountTask;
 import com.bigbasket.mobileapp.task.uiv3.CreateShoppingListTask;
 import com.bigbasket.mobileapp.task.uiv3.ProductListTask;
@@ -69,6 +71,7 @@ import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import retrofit.Callback;
@@ -76,7 +79,8 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class ProductListActivity extends BBActivity implements ProductListDataAware, LazyProductListAware {
+public class ProductListActivity extends BBActivity implements ProductListDataAware, LazyProductListAware,
+        ShoppingListNamesAware {
 
     private ArrayList<NameValuePair> mNameValuePairs;
     private ViewPager mViewPager;
@@ -90,6 +94,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     private String mSortedOn;
     private ArrayList<Option> mSortOptions;
     private HashMap<String, Integer> mCartInfo;
+    private String mSelectedProductId;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -481,6 +486,41 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                 toolbar.removeView(mToolbarTextDropdown);
             }
         }
+    }
+
+    @Override
+    public void onShoppingListFetched(ArrayList<ShoppingListName> shoppingListNames) {
+
+    }
+
+    @Override
+    public String getSelectedProductId() {
+        return mSelectedProductId;
+    }
+
+    @Override
+    public void setSelectedProductId(String selectedProductId) {
+        this.mSelectedProductId = selectedProductId;
+    }
+
+    @Override
+    public void postShoppingListItemDeleteOperation() {
+
+    }
+
+    @Override
+    public void addToShoppingList(List<ShoppingListName> selectedShoppingListNames) {
+
+    }
+
+    @Override
+    public void createNewShoppingList() {
+
+    }
+
+    @Override
+    public void onNewShoppingListCreated(String listName) {
+
     }
 
     private class OnChildDropdownRequested implements View.OnClickListener {

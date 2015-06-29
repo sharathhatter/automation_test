@@ -145,6 +145,7 @@ public class SearchableActivity extends BackButtonActivity
     }
 
     private void launchVoiceSearch() {
+        mSearchView.clearFocus();
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
@@ -158,6 +159,8 @@ public class SearchableActivity extends BackButtonActivity
     }
 
     private void launchScanner() {
+        mSearchView.clearFocus();
+        showToast(getString(R.string.please_wait));
         new IntentIntegrator(this).initiateScan();
     }
 
