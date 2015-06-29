@@ -126,7 +126,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
                 topCatTotalItems.setText(cartItemList.getTopCatItems() + " Item");
             }
         } else {
-            topCatTotalItems.setVisibility(View.GONE);
+            topCatTotalItems.setVisibility(View.INVISIBLE);
         }
 
         String separator = "  |  ";
@@ -141,7 +141,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
             topCatTotal.setText(regularSpannable);
         } else {
             topCatTotal.setText("");
-            topCatTotal.setVisibility(View.GONE);
+            topCatTotal.setVisibility(View.INVISIBLE);
         }
 
 
