@@ -231,13 +231,21 @@ public class ShoppingListSummaryActivity extends BBActivity {
                     ShoppingListSummary shoppingListSummary =
                             shoppingListSummaries.get(copyViewPagerIntoFinalForOnClick != null ?
                                     copyViewPagerIntoFinalForOnClick.getCurrentItem() : 0);
-                    String title = getString(R.string.addAllProducts);
-                    title += numTabs > 1 ? " from " + shoppingListSummary.getFacetName()
-                            + " " + getString(R.string.toBasket) : "?";
-                    showAlertDialog(null, title,
-                            DialogButton.YES, DialogButton.CANCEL, Constants.ADD_ALL,
-                            shoppingListSummary,
-                            getString(R.string.yesTxt));
+                    if (Product.areAllProductsOutOfStock(shoppingListSummary.getProducts())) {
+                        String msg = numTabs > 1 ? getString(R.string.allAreOutOfStockForTabPrefix) + " "
+                                + shoppingListSummary.getFacetName() + " " + getString(R.string.allAreOutOfStockForTabSuffix)
+                                : getString(R.string.allAreOutOfStockForSingleTab);
+                        showAlertDialog(null, msg);
+                    } else {
+                        String msg = getString(R.string.addAllProducts);
+                        msg += numTabs > 1 ? " from " + shoppingListSummary.getFacetName()
+                                + " " + getString(R.string.toBasket) : "?";
+                        msg += "\n" + getString(R.string.outOfStockExcluded);
+                        showAlertDialog(null, msg,
+                                DialogButton.YES, DialogButton.CANCEL, Constants.ADD_ALL,
+                                shoppingListSummary,
+                                getString(R.string.yesTxt));
+                    }
                 }
             });
         }

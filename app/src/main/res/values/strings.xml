@@ -63,7 +63,7 @@
     <string name="chooseSlot">Delivery Options</string>
     <string name="createShoppingList">Create shopping List</string>
     <string name="shoppingListNameDialogTextHint">Enter shopping list name</string>
-    <string name="shoppingListNameAlphaNumeric">please enter only alphanumeric characters in the shopping list name field</string>
+    <string name="shoppingListNameAlphaNumeric">Please enter only alphanumeric characters in the shopping list name field</string>
     <string name="chooseCity">Pick Your City</string>
     <string name="checkOut">CHECKOUT</string>
     <string name="continueCaps">CONTINUE</string>
@@ -324,6 +324,10 @@
     <string name="minus">&#x2013;</string>
     <string name="plus">&#43;</string>
     <string name="addAllProducts">Are you sure that you want to add all the products</string>
+    <string name="allAreOutOfStockForSingleTab">Sorry but all the products that you\'ve requested are currently out of stock.</string>
+    <string name="allAreOutOfStockForTabPrefix">Sorry but all the</string>
+    <string name="allAreOutOfStockForTabSuffix">that you\'ve requested are currently out of stock.</string>
+    <string name="outOfStockExcluded">Please note: Out of stock products won\'t be added to your basket</string>
     <string name="toBasket">to the basket?</string>
     <string name="addAllProductsDisplay">ADD ALL ITEMS TO THE BASKET</string>
     <string name="noAddressMsg1">You have not told us your delivery address.</string>

@@ -104,9 +104,6 @@ public class ShowCartActivity extends BackButtonActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
-                goToHome(false);
-                return true;
             case R.id.action_empty_basket:
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
                 String numItems = preferences.getString(Constants.GET_CART, "0");
@@ -374,10 +371,5 @@ public class ShowCartActivity extends BackButtonActivity {
     @Override
     public String getScreenTag() {
         return TrackEventkeys.VIEW_BASKET_SCREEN;
-    }
-
-    @Override
-    public void onBackPressed() {
-        goToHome(false);
     }
 }
