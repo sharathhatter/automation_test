@@ -22,6 +22,10 @@ public class SectionManager {
     public static final String HOME_PAGE = "home-page";
     public static final String MAIN_MENU = "main-menu";
 
+
+    public static final String TIME_KEY = "_time";
+    public static final String DURATION_KEY = "_duration";
+
     private Context context;
     private String preferenceKey;
 
@@ -41,7 +45,8 @@ public class SectionManager {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
         for (String preferenceKey : getAllSectionPreferenceKeys()) {
             editor.remove(preferenceKey);
-            editor.remove(preferenceKey + "_time");
+            editor.remove(preferenceKey + TIME_KEY);
+            editor.remove(preferenceKey + DURATION_KEY);
         }
         editor.commit();
     }
@@ -56,37 +61,41 @@ public class SectionManager {
         if (!TextUtils.isEmpty(storedSectionJson)) {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss",
                     Locale.getDefault());
-            String createdOn = preferences.getString(preferenceKey + "_time", null);
-            if (ignoreStale || !isStale(createdOn, dateFormat)) {
+            String createdOn = preferences.getString(preferenceKey + TIME_KEY, null);
+            int cacheDuration = preferences.getInt(preferenceKey + DURATION_KEY,
+                    Section.DEFAULT_SECTION_TIMEOUT_IN_MINUTES);
+            if (ignoreStale || !isStale(createdOn, dateFormat, cacheDuration)) {
                 return new Gson().fromJson(storedSectionJson, SectionData.class);
             }
         }
         return null;
     }
 
-    public void storeSectionData(@Nullable SectionData sectionData) {
+    public void storeSectionData(@Nullable SectionData sectionData, int cacheDuration) {
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
         if (sectionData == null) {
             editor.remove(preferenceKey);
-            editor.remove(preferenceKey + "_time");
+            editor.remove(preferenceKey + TIME_KEY);
+            editor.remove(preferenceKey + DURATION_KEY);
         } else {
             String sectionJson = new Gson().toJson(sectionData);
             editor.putString(preferenceKey, sectionJson);
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss",
                     Locale.getDefault());
-            editor.putString(preferenceKey + "_time", dateFormat.format(new Date()));
+            editor.putString(preferenceKey + TIME_KEY, dateFormat.format(new Date()));
+            editor.putInt(preferenceKey + DURATION_KEY, cacheDuration);
         }
         editor.commit();
     }
 
-    private boolean isStale(String createdOn, SimpleDateFormat simpleDateFormat) {
+    private boolean isStale(String createdOn, SimpleDateFormat simpleDateFormat, int duration) {
         if (BuildConfig.DEBUG) return true;
         try {
             Date createOnDate = simpleDateFormat.parse(createdOn);
             Date now = new Date();
             long minutes = TimeUnit.MINUTES.convert(now.getTime() - createOnDate.getTime(),
                     TimeUnit.MILLISECONDS);
-            return minutes > Section.SECTION_TIMEOUT_IN_MINUTES;
+            return minutes > duration;
         } catch (ParseException e) {
             return true;
         }

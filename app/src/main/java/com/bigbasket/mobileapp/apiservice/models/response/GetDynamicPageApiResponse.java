@@ -9,4 +9,6 @@ public class GetDynamicPageApiResponse {
     @SerializedName(Constants.SECTION_INFO)
     public SectionData sectionData;
 
+    @SerializedName(Constants.CACHE_DURATION)
+    public int cacheDuration;
 }

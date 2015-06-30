@@ -158,8 +158,6 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 txtNavListRow.setVisibility(View.GONE);
             }
             if (sectionItem.hasImage()) {
-                int minHt = sectionItem.getHeight(context, null);
-                imgNavItem.setMinimumHeight(minHt);
                 imgNavItem.setVisibility(View.VISIBLE);
                 sectionNavigationItem.getSectionItem().displayImage(context, baseImgUrl, imgNavItem,
                         R.drawable.loading_small, true);

@@ -31,6 +31,7 @@ import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.handler.HDFCPowerPayHandler;
 import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.model.SectionManager;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.task.GetDynamicPageTask;
@@ -49,6 +50,8 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class HomeFragment extends BaseSectionFragment implements DynamicScreenAware {
+
+    private boolean mSyncChanges;
 
     @Nullable
     @Override
@@ -78,7 +81,26 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
     @Override
     public void onResume() {
         super.onResume();
-        if (getCurrentActivity() == null) return;
+        if (mSyncChanges) {
+            Log.d("Home page", "Home page has to be refreshed");
+            mSyncChanges = false;
+            SectionManager sectionManager = new SectionManager(getActivity(), SectionManager.HOME_PAGE);
+            SectionData sectionData = sectionManager.getStoredSectionData();
+            onDynamicScreenSuccess(SectionManager.HOME_PAGE, sectionData);
+        } else {
+            syncHomePageIfNeeded();
+        }
+    }
+
+    private void syncHomePageIfNeeded() {
+        SectionManager sectionManager = new SectionManager(getActivity(), SectionManager.HOME_PAGE);
+        SectionData sectionData = sectionManager.getStoredSectionData();
+        if (sectionData == null || sectionData.getSections() == null || sectionData.getSections().size() == 0) {
+            // Need to refresh
+            mSyncChanges = true;
+            Log.d("Home page", "Home page sync is required");
+            new GetDynamicPageTask<>(this, SectionManager.HOME_PAGE, false, false, true, true).startTask();
+        }
     }
 
     private boolean isVisitorUpdateNeeded() {
@@ -169,7 +191,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
 
     private void getHomePage() {
         if (getActivity() == null) return;
-        new GetDynamicPageTask<>(this, "home-page", true, true).startTask();
+        new GetDynamicPageTask<>(this, SectionManager.HOME_PAGE, true, true).startTask();
     }
 
     private void handleHomePageRetrofitError(RetrofitError error) {
