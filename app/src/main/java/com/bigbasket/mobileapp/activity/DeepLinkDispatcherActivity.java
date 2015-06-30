@@ -19,6 +19,7 @@ import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
+import com.bigbasket.mobileapp.util.UIUtil;
 import com.moe.pushlibrary.utils.MoEHelperConstants;
 
 import java.util.List;
@@ -30,6 +31,8 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         launchCorrespondingActivity();
+//        UIUtil.showEmptyProductsView(getCurrentActivity(), contentView, getString(R.string.productTabErrorMsg),
+//                R.drawable.ic_error_red_36dp);
     }
 
     private void launchCorrespondingActivity() {
