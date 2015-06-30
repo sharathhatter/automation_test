@@ -112,6 +112,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     private AnimatedRelativeLayout mSubNavLayout;
     private FloatingBadgeCountView mBtnViewBasket;
     private RecyclerView mListSubNavigation;
+    private boolean mSyncNeeded;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -912,15 +913,21 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             syncCartInfoFromPreference();
         }
 
-        loadNavigationItems();
-        syncMainMenuIfNeeded();
+        if (mSyncNeeded) {
+            mSyncNeeded = false;
+            loadNavigationItems();
+        } else {
+            syncMainMenuIfNeeded();
+        }
     }
 
     private void syncMainMenuIfNeeded() {
         SectionManager sectionManager = new SectionManager(getCurrentActivity(), SectionManager.MAIN_MENU);
         SectionData sectionData = sectionManager.getStoredSectionData();
         if (sectionData == null || sectionData.getSections() == null || sectionData.getSections().size() == 0) {
+            if (!checkInternetConnection()) return;
             // Need to refresh
+            mSyncNeeded = true;
             new GetDynamicPageTask<>(getCurrentActivity(), SectionManager.MAIN_MENU, false, false, true, true).startTask();
         }
     }

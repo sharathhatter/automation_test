@@ -102,6 +102,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         SectionManager sectionManager = new SectionManager(getActivity(), SectionManager.HOME_PAGE);
         SectionData sectionData = sectionManager.getStoredSectionData();
         if (sectionData == null || sectionData.getSections() == null || sectionData.getSections().size() == 0) {
+            if (!checkInternetConnection()) return;
             // Need to refresh
             mSyncChanges = true;
             Log.d("Home page", "Home page sync is required");
