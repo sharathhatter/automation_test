@@ -307,6 +307,7 @@ public class Constants {
     public static final String SKU_ID = "sku_id";
     public static final String APP_EXPIRED_DIALOG_FLAG = "app_expired";
     public static final String APP_UPDATE_DIALOG_FLAG = "app_update";
+    public static final String APP_UPDATE_MSG = "app_update_msg";
 
     public static final String OTP_CODE = "otp";
     public static final int VALIDATE_MOBILE_NUMBER_POPUP = 401;
