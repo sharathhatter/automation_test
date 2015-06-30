@@ -54,7 +54,7 @@ public class BigBasketMessageHandler<T> {
                 ((ApiErrorAware) ctx).showApiErrorDialog(null, !TextUtils.isEmpty(message) ? message : getString(R.string.INVALID_USER_PASS));
                 break;
             case ApiErrorCodes.INVALID_EVOUCHER:
-                ((ApiErrorAware) ctx).showApiErrorDialog(null, message);
+                ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.evoucherError), message);
                 break;
             case ApiErrorCodes.LOGIN_REQUIRED:
                 ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.signIn), getString(R.string.login_required), NavigationCodes.GO_TO_LOGIN, null);

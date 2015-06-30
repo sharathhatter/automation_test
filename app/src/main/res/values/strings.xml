@@ -19,6 +19,7 @@
     <string name="cartNotExistsError">Cart does not exist!</string>
     <string name="basketEmpty">Your Basket is empty!</string>
     <string name="alt_placeholder">BigBasket Image</string>
+    <string name="evoucherError">Evoucher Error!</string>
     <string name="invalid_promo">Sorry,this promotion is no longer active!</string>
     <string name="no_promo_cat">No promotions are currently active for this city!</string>
     <string name="free_promo_txt">On completing promo selection,
