@@ -3,13 +3,16 @@ package com.bigbasket.mobileapp.activity;
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.widget.FrameLayout;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.OrderDetailActivity;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.handler.DeepLinkHandler;
@@ -31,8 +34,6 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         launchCorrespondingActivity();
-//        UIUtil.showEmptyProductsView(getCurrentActivity(), contentView, getString(R.string.productTabErrorMsg),
-//                R.drawable.ic_error_red_36dp);
     }
 
     private void launchCorrespondingActivity() {
@@ -156,5 +157,10 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
         orderDetailIntent.putExtra(Constants.ORDER_REVIEW_SUMMARY, orderInvoice);
         orderDetailIntent.putExtra(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_DEEP_LINK);
         startActivityForResult(orderDetailIntent, NavigationCodes.GO_TO_HOME);
+    }
+
+    @Override
+    protected void onPositiveButtonClicked(DialogInterface dialogInterface, String sourceName, Object valuePassed) {
+        handleBackStack();
     }
 }
