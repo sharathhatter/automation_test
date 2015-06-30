@@ -520,7 +520,7 @@
         <!-- MANDATORY FIELD: SENDER ID , i.e. THE PROJECT NUMBER AS MENTIONED ON GOOGLE CLOUD CONSOLE PROJECTS PAGE -->
         <meta-data
             android:name="SENDER_ID"
-            android:value="id:551288451469" />
+            android:value="@string/moe_gcm_sender_id" />
 
         <!-- MANDATORY FIELD: THE NOTIFICATION ICON WHICH WILL BE USED TO SET TO NOTIFICATIONS POSTED -->
         <meta-data
