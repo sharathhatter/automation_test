@@ -299,6 +299,13 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
                 viewType == VIEW_TITLE_DESC_IMG_VERTICAL_OVERLAY;
     }
 
+    public int getActualWidth(Context context) {
+        if (imageParams != null) {
+            return (int) (imageParams.getWidth() * UIUtil.getDpiCoefficient(context));
+        }
+        return 0;
+    }
+
     private int getActualHeight(Context context) {
         if (imageParams != null) {
             return (int) (imageParams.getHeight() * UIUtil.getDpiCoefficient(context));

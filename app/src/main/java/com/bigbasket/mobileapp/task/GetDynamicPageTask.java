@@ -24,6 +24,7 @@ public class GetDynamicPageTask<T> {
     private boolean inlineProgress;
     private boolean finishOnError;
     private boolean hideProgress;
+    private boolean silentMode;
 
     public GetDynamicPageTask(T context, String screenName, boolean inlineProgress,
                               boolean finishOnError) {
@@ -33,9 +34,17 @@ public class GetDynamicPageTask<T> {
         this.finishOnError = finishOnError;
     }
 
-    public GetDynamicPageTask(T context, String screenName, boolean inlineProgress, boolean finishOnError, boolean hideProgress) {
+    public GetDynamicPageTask(T context, String screenName, boolean inlineProgress,
+                              boolean finishOnError, boolean hideProgress) {
         this(context, screenName, inlineProgress, finishOnError);
         this.hideProgress = hideProgress;
+    }
+
+    public GetDynamicPageTask(T context, String screenName, boolean inlineProgress,
+                              boolean finishOnError, boolean hideProgress,
+                              boolean silentMode) {
+        this(context, screenName, inlineProgress, finishOnError, hideProgress);
+        this.silentMode = silentMode;
     }
 
     public void startTask() {
@@ -52,10 +61,12 @@ public class GetDynamicPageTask<T> {
         }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.
                 getApiService(((ActivityAware) context).getCurrentActivity());
-        if (inlineProgress) {
-            ((ProgressIndicationAware) context).showProgressView();
-        } else {
-            ((ProgressIndicationAware) context).showProgressDialog("Please wait...");
+        if (!silentMode) {
+            if (inlineProgress) {
+                ((ProgressIndicationAware) context).showProgressView();
+            } else {
+                ((ProgressIndicationAware) context).showProgressDialog("Please wait...");
+            }
         }
         switch (screenName) {
             case SectionManager.HOME_PAGE:
@@ -83,7 +94,7 @@ public class GetDynamicPageTask<T> {
             if (((CancelableAware) context).isSuspended()) {
                 return;
             }
-            if (!hideProgress) {
+            if (!hideProgress && !silentMode) {
                 try {
                     if (inlineProgress) {
                         ((ProgressIndicationAware) context).hideProgressView();
@@ -100,23 +111,28 @@ public class GetDynamicPageTask<T> {
                     if (sectionData != null && !screenName.equals(SectionManager.MAIN_MENU)) {
                         sectionData.setSections(SectionUtil.preserveMemory(sectionData.getSections()));
                     }
-                    ((DynamicScreenAware) context).onDynamicScreenSuccess(screenName, sectionData);
+                    if (!silentMode) {
+                        ((DynamicScreenAware) context).onDynamicScreenSuccess(screenName, sectionData);
+                    }
                     if (sectionData != null && sectionData.getSections() != null &&
                             sectionData.getSections().size() > 0) {
-                        sectionManager.storeSectionData(sectionData);
+                        sectionManager.storeSectionData(sectionData, getDynamicPageApiResponse.apiResponseContent.cacheDuration);
                     } else {
-                        sectionManager.storeSectionData(null);
+                        sectionManager.storeSectionData(null, 0);
                     }
                     break;
                 default:
-                    ((DynamicScreenAware) context).onDynamicScreenFailure(getDynamicPageApiResponse.status,
-                            getDynamicPageApiResponse.message);
+                    if (!silentMode) {
+                        ((DynamicScreenAware) context).onDynamicScreenFailure(getDynamicPageApiResponse.status,
+                                getDynamicPageApiResponse.message);
+                    }
                     break;
             }
         }
 
         @Override
         public void failure(RetrofitError error) {
+            if (silentMode) return;
             if (((CancelableAware) context).isSuspended()) {
                 return;
             }

@@ -153,7 +153,7 @@ public class SectionView {
         SliderLayout bannerSlider = (SliderLayout) baseSlider.findViewById(R.id.imgSlider);
         ViewGroup.LayoutParams bannerLayoutParams = bannerSlider.getLayoutParams();
         if (bannerLayoutParams != null) {
-            bannerLayoutParams.height = section.getWidgetHeight(context, mSectionData.getRenderersMap());
+            bannerLayoutParams.height = section.getWidgetHeight(context, mSectionData.getRenderersMap(), true);
             bannerSlider.setLayoutParams(bannerLayoutParams);
         }
         for (SectionItem sectionItem : section.getSectionItems()) {
@@ -232,7 +232,7 @@ public class SectionView {
         setViewMoreBehaviour(baseProductCarousel.findViewById(R.id.btnMore), section, section.getMoreSectionItem());
 
         RecyclerView horizontalRecyclerView = (RecyclerView) baseProductCarousel.findViewById(R.id.horizontalRecyclerView);
-        int carouselHeight = section.getWidgetHeight(context, mSectionData.getRenderersMap());
+        int carouselHeight = section.getWidgetHeight(context, mSectionData.getRenderersMap(), false);
         ViewGroup.LayoutParams layoutParams = horizontalRecyclerView.getLayoutParams();
         layoutParams.height = carouselHeight;
         horizontalRecyclerView.setLayoutParams(layoutParams);

@@ -273,10 +273,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.HomeActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
-        <activity
             android:name=".activity.base.uiv3.BBActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan">

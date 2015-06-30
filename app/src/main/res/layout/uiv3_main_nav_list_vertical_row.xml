@@ -8,8 +8,8 @@
         android:id="@+id/imgNavItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:contentDescription="@string/alt_placeholder"
-        android:scaleType="fitXY" />
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/alt_placeholder" />
 
     <TextView
         android:id="@+id/txtNavMainItem"

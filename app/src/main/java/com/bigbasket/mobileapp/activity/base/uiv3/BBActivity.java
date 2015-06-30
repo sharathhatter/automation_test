@@ -81,6 +81,7 @@ import com.bigbasket.mobileapp.model.section.SectionItem;
 import com.bigbasket.mobileapp.model.section.SectionTextItem;
 import com.bigbasket.mobileapp.model.section.SubSectionItem;
 import com.bigbasket.mobileapp.task.GetCartCountTask;
+import com.bigbasket.mobileapp.task.GetDynamicPageTask;
 import com.bigbasket.mobileapp.task.uiv3.CreateShoppingListTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
@@ -427,14 +428,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         }
     }
 
-//    private void showViewBasketFragment() {
-//        ShowCartFragment showCartFragment = new ShowCartFragment();
-//        Bundle cartBundle = new Bundle();
-//        cartBundle.putString(Constants.INTERNAL_VALUE, getIntent().getStringExtra(Constants.INTERNAL_VALUE));
-//        showCartFragment.setArguments(cartBundle);
-//        onChangeFragment(showCartFragment);
-//    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == NavigationCodes.START_SEARCH) {
@@ -721,7 +714,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
     @SuppressWarnings("unchecked")
     private void loadNavigationItems() {
-        if (mNavRecyclerView == null) return;
+        if (mNavRecyclerView == null || mDrawerLayout == null) return;
         TextView txtNavSalutation = (TextView) findViewById(R.id.txtNavSalutation);
         txtNavSalutation.setTypeface(faceRobotoMedium);
         ((TextView) findViewById(R.id.lblWelcome)).setTypeface(faceRobotoMedium);
@@ -917,6 +910,18 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             syncBasket();
         } else {
             syncCartInfoFromPreference();
+        }
+
+        loadNavigationItems();
+        syncMainMenuIfNeeded();
+    }
+
+    private void syncMainMenuIfNeeded() {
+        SectionManager sectionManager = new SectionManager(getCurrentActivity(), SectionManager.MAIN_MENU);
+        SectionData sectionData = sectionManager.getStoredSectionData();
+        if (sectionData == null || sectionData.getSections() == null || sectionData.getSections().size() == 0) {
+            // Need to refresh
+            new GetDynamicPageTask<>(getCurrentActivity(), SectionManager.MAIN_MENU, false, false, true, true).startTask();
         }
     }
 

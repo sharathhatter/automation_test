@@ -560,8 +560,7 @@ public class Constants {
     public static final String NOT_ALPHANUMERIC_TXT_SHOPPING_LIST = "aplhaNumericTxt";
     public static final int CALL_AREA_INFO = 75;
 
-    public static final String UNABLE_TO_GET_EMAIL = "emilNotFound";
-    public static final String PREF_UNABLE_TO_GET_EMAIL = "reqEailFailed";
     public static final String FORGOT_PASSWORD_DIALOG = "FPassDialog";
     public static final String AREA_INFO_CALL_LAST = "areaInfoCalledLast";
+    public static final String CACHE_DURATION = "cache_duration";
 }

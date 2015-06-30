@@ -21,7 +21,6 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.account.City;
 import com.bigbasket.mobileapp.task.uiv3.GetCitiesTask;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.melnykov.fab.FloatingActionButton;
 
@@ -69,7 +68,6 @@ public class ChangeCityActivity extends BackButtonActivity implements CityListDi
 
         FloatingActionButton btnFab = (FloatingActionButton) base.findViewById(R.id.btnFab);
         btnFab.setImageResource(R.drawable.ic_keyboard_arrow_right_white_36dp);
-        btnFab.attachToListView(listView);
         btnFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

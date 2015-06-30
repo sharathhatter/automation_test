@@ -1,8 +1,10 @@
 package com.bigbasket.mobileapp.model.section;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.DisplayMetrics;
 
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
@@ -24,7 +26,7 @@ public class Section extends BaseSectionTextItem implements Parcelable, Serializ
     public static final String MSG = Constants.MSG;
     public static final String GRID = "grid";
 
-    public static final int SECTION_TIMEOUT_IN_MINUTES = 15;
+    public static final int DEFAULT_SECTION_TIMEOUT_IN_MINUTES = 15;
     public static final Parcelable.Creator<Section> CREATOR = new Parcelable.Creator<Section>() {
         @Override
         public Section createFromParcel(Parcel source) {
@@ -106,12 +108,23 @@ public class Section extends BaseSectionTextItem implements Parcelable, Serializ
         dest.writeInt(renderingId);
     }
 
-    public int getWidgetHeight(Context context, HashMap<Integer, Renderer> rendererHashMap) {
+    public int getWidgetHeight(Context context, HashMap<Integer, Renderer> rendererHashMap,
+                               boolean adjustForScreen) {
         if (sectionItems == null) return 0;
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int screenWidth = displayMetrics.widthPixels;
         int maxHeight = 0;
         for (SectionItem sectionItem : sectionItems) {
             Renderer renderer = rendererHashMap != null ? rendererHashMap.get(sectionItem.getRenderingId()) : null;
             int sectionItemHeight = sectionItem.getHeight(context, renderer);
+            if (adjustForScreen) {
+                int actualSectionItemWidth = sectionItem.getActualWidth(context);
+                if (actualSectionItemWidth > 0) {
+                    double actualToScreenWidthRatio = (double) screenWidth / (double) actualSectionItemWidth;
+                    sectionItemHeight = (int) (actualToScreenWidthRatio * (double) sectionItemHeight);
+                }
+            }
             maxHeight = Math.max(maxHeight, sectionItemHeight);
         }
         return maxHeight;
