@@ -569,6 +569,9 @@ public class SectionView {
                 if (layoutParams instanceof ViewGroup.MarginLayoutParams) {
                     ((ViewGroup.MarginLayoutParams) layoutParams).setMargins(0, hasSectionTitle ? fourDp : 0, applyRight ? fourDp : 0, 0);
                 }
+                if (renderer != null && renderer.getOrientation() == Renderer.HORIZONTAL) {
+                    layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
+                }
             } else {
                 layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
                 if (layoutParams instanceof ViewGroup.MarginLayoutParams) {
