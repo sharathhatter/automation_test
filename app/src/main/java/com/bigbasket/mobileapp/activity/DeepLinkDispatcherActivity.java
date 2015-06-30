@@ -1,7 +1,11 @@
 package com.bigbasket.mobileapp.activity;
 
+import android.app.ActivityManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.bigbasket.mobileapp.R;
@@ -15,14 +19,20 @@ import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
+import com.bigbasket.mobileapp.util.UIUtil;
 import com.moe.pushlibrary.utils.MoEHelperConstants;
+
+import java.util.List;
 
 public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceDataAware,
         HandlerAware {
 
+    private boolean isInBackground;
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         launchCorrespondingActivity();
+//        UIUtil.showEmptyProductsView(getCurrentActivity(), contentView, getString(R.string.productTabErrorMsg),
+//                R.drawable.ic_error_red_36dp);
     }
 
     private void launchCorrespondingActivity() {
@@ -47,7 +57,8 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
             return;
         }
         String sourceName = uri.getQueryParameter(MoEHelperConstants.NAVIGATION_SOURCE_KEY);
-        if (sourceName != null && sourceName.equals(MoEHelperConstants.NAVIGATION_SOURCE_NOTIFICATION)) {
+        if (sourceName != null && sourceName.equals(MoEHelperConstants.NAVIGATION_SOURCE_NOTIFICATION) &&
+                isInBackground) {
             Intent intent = new Intent(this, SplashActivity.class);
             startActivity(intent);
             finish();
@@ -56,31 +67,40 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
         }
     }
 
-//    private boolean isAppIsInBackground(Context context) {
-//        boolean isInBackground = true;
-//        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-//        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
-//            List<ActivityManager.RunningAppProcessInfo> runningProcesses = am.getRunningAppProcesses();
-//            for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
-//                if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
-//                    for (String activeProcess : processInfo.pkgList) {
-//                        if (activeProcess.equals(context.getPackageName())) {
-//                            isInBackground = false;
-//                        }
-//                    }
-//                }
-//            }
-//        } else {
-//            List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(1);
-//            ComponentName componentInfo = taskInfo.get(0).topActivity;
-//            if (componentInfo.getPackageName().equals(context.getPackageName())) {
-//                isInBackground = false;
-//            }
-//        }
-//
-//        return isInBackground;
-//    }
-//
+    @Override
+    public void onStart(){
+        super.onStart();
+        setAppInBackGround(this);
+    }
+
+    private void setAppInBackGround(final Context context){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                isInBackground = true;
+                ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
+                    List<ActivityManager.RunningAppProcessInfo> runningProcesses = am.getRunningAppProcesses();
+                    for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
+                        if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+                            for (String activeProcess : processInfo.pkgList) {
+                                if (activeProcess.equals(context.getPackageName())) {
+                                    isInBackground = false;
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(1);
+                    ComponentName componentInfo = taskInfo.get(0).topActivity;
+                    if (componentInfo.getPackageName().equals(context.getPackageName())) {
+                        isInBackground = false;
+                    }
+                }
+            }
+        });
+    }
+
 //    public static boolean isApplicationSentToBackground(final Context context) {
 //        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
 //        List<ActivityManager.RunningTaskInfo> tasks = am.getRunningTasks(1);

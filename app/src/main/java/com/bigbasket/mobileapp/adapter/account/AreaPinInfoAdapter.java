@@ -96,7 +96,7 @@ public class AreaPinInfoAdapter {
         ArrayList<String> result = new ArrayList<>();
         try {
             areaPinCursor = DatabaseHelper.db.query(true, tableName, new String[]{COLUMN_PIN}
-                    , null, null, null, null, null, null);
+                    , null, null, null, null, COLUMN_PIN +" ASC", null);
             if (areaPinCursor != null && areaPinCursor.moveToFirst()) {
                 do {
                     areaNameStr = areaPinCursor.getString(areaPinCursor.getColumnIndex(AreaPinInfoAdapter.COLUMN_PIN));
