@@ -269,6 +269,8 @@
     <string name="continue_shopping_txt">CONTINUE SHOPPING</string>
     <string name="lostInternetConnection">Lost internet connection?</string>
     <string name="tapRetry">Tap to Retry</string>
+    <string name="retry">Retry</string>
+    <string name="productNextPageFailed">Failed to load products!</string>
 
     <!-- checkOut QC -->
     <string name="out_of_stock">Out of Stock</string>

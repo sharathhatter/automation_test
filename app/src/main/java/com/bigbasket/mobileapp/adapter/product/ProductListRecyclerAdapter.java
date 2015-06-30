@@ -27,6 +27,7 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
     private static final int VIEW_TYPE_DATA = 1;
     private static final int VIEW_TYPE_EMPTY = 2;
     private static final int VIEW_TYPE_PRODUCT_COUNT = 3;
+    private static final int VIEW_TYPE_PRODUCT_LOADING_FAILED = 4;
 
     private static final int DELTA_FOR_NEXT_PAGE_LOAD = 5;
     private static final int DELTA_FOR_PRELOADING_IMG = 3;
@@ -38,6 +39,7 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
     private List<Product> products;
     private String navigationCtx;
     private HashMap<String, Integer> cartInfo;
+    private boolean mLoadingFailed;
 
     public ProductListRecyclerAdapter(List<Product> products, String baseImgUrl,
                                       ProductViewDisplayDataHolder productViewDisplayDataHolder,
@@ -66,7 +68,8 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         if (position >= serverListSize && serverListSize > 0) {
             return VIEW_TYPE_EMPTY;
         }
-        return position >= products.size() ? VIEW_TYPE_LOADING : VIEW_TYPE_DATA;
+        return position >= products.size() ? (mLoadingFailed ? VIEW_TYPE_PRODUCT_LOADING_FAILED : VIEW_TYPE_LOADING)
+                : VIEW_TYPE_DATA;
     }
 
     private int getActualPosition(int position) {
@@ -93,6 +96,11 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
             case VIEW_TYPE_PRODUCT_COUNT:
                 row = inflater.inflate(R.layout.uiv3_product_count_view, viewGroup, false);
                 return new ProductCountViewHolder(row);
+            case VIEW_TYPE_PRODUCT_LOADING_FAILED:
+                row = inflater.inflate(R.layout.uiv3_list_loading_failure, viewGroup, false);
+                ((TextView) row.findViewById(R.id.txtProductLoadFailed)).
+                        setTypeface(productViewDisplayDataHolder.getSerifTypeface());
+                return new FixedLayoutViewHolder(row);
         }
         return null;
     }
@@ -118,7 +126,7 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
             }
             int positionToCheckForNextPageLoad = position + DELTA_FOR_NEXT_PAGE_LOAD;
             if (positionToCheckForNextPageLoad <= serverListSize && serverListSize > 0 &&
-                    positionToCheckForNextPageLoad > products.size()) {
+                    positionToCheckForNextPageLoad > products.size() && !mLoadingFailed) {
                 ((InfiniteProductListAware) activityAware).loadMoreProducts();
             }
         } else if (viewType == VIEW_TYPE_PRODUCT_COUNT) {
@@ -126,6 +134,13 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
             int stringResId = serverListSize > 1 ? R.string.productFoundPlural : R.string.productFound;
             productCountViewHolder.getTxtProductCount().setText(serverListSize + " " +
                     activityAware.getCurrentActivity().getString(stringResId));
+        } else if (viewType == VIEW_TYPE_PRODUCT_LOADING_FAILED) {
+            ((FixedLayoutViewHolder) viewHolder).getItemView().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((InfiniteProductListAware) activityAware).retryNextPage();
+                }
+            });
         }
     }
 
@@ -148,6 +163,10 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
             }
             return txtProductCount;
         }
+    }
+
+    public void setLoadingFailed(boolean loadingFailed) {
+        this.mLoadingFailed = loadingFailed;
     }
 }
 

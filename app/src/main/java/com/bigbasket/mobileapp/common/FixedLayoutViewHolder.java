@@ -7,6 +7,9 @@ public class FixedLayoutViewHolder extends RecyclerView.ViewHolder {
 
     public FixedLayoutViewHolder(View itemView) {
         super(itemView);
+    }
 
+    public View getItemView() {
+        return itemView;
     }
 }

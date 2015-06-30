@@ -8,4 +8,5 @@ public interface InfiniteProductListAware {
 
     void setNextPageLoading(boolean isNextPageLoading);
 
+    void retryNextPage();
 }
