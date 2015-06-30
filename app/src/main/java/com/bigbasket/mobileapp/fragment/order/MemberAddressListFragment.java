@@ -119,7 +119,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
                 } catch (IllegalArgumentException e) {
                     return;
                 }
-                handler.handleRetrofitError(error);
+                handler.handleRetrofitError(error, true);
             }
         });
     }
