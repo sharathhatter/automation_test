@@ -115,6 +115,7 @@ public class PaymentSelectionActivity extends BackButtonActivity {
             findViewById(R.id.viewPaymentInProgress).setVisibility(View.GONE);
             renderPaymentDetails();
         }
+        trackEvent(TrackingAware.CHECKOUT_PAYMENT_SHOWN, null);
     }
 
     private void renderFooter() {
@@ -127,6 +128,9 @@ public class PaymentSelectionActivity extends BackButtonActivity {
             @Override
             public void onClick(View v) {
                 onPlaceOrderAction();
+                HashMap<String, String> map = new HashMap<>();
+                map.put(TrackEventkeys.PAYMENT_MODE, mSelectedPaymentMethod);
+                trackEvent(TrackingAware.CHECKOUT_PLACE_ORDER_CLICKED, map);
             }
         });
     }
@@ -320,8 +324,6 @@ public class PaymentSelectionActivity extends BackButtonActivity {
                         return;
                     }
                     HashMap<String, String> map = new HashMap<>();
-                    map.put(TrackEventkeys.POTENTIAL_ORDER, mPotentialOrderId);
-                    map.put(TrackEventkeys.VOUCHER_NAME, voucherCode);
                     switch (postVoucherApiResponse.status) {
                         case 0:
                             if (mPreviouslyAppliedVoucherMap == null ||
@@ -499,8 +501,6 @@ public class PaymentSelectionActivity extends BackButtonActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         setSuspended(false);
-        HashMap<String, String> map = new HashMap<>();
-        map.put(TrackEventkeys.POTENTIAL_ORDER, mPotentialOrderId);
         if (requestCode == WibmoSDK.REQUEST_CODE_IAP_PAY) {
             findViewById(R.id.viewPaymentInProgress).setVisibility(View.GONE);
             if (resultCode == RESULT_OK) {
@@ -530,16 +530,16 @@ public class PaymentSelectionActivity extends BackButtonActivity {
                     break;
                 case Constants.PREPAID_TXN_FAILED:
                     syncContentView();
-                    trackEvent(TrackingAware.CHECKOUT_PAYMENT_GATEWAY_FAILURE, map);
+                    trackEvent(TrackingAware.CHECKOUT_PAYMENT_GATEWAY_FAILURE, null);
                     displayPayuFailure(getString(R.string.failedToProcess));
                     break;
                 case Constants.PREPAID_TXN_ABORTED:
                     syncContentView();
-                    trackEvent(TrackingAware.CHECKOUT_PAYMENT_GATEWAY_ABORTED, map);
+                    trackEvent(TrackingAware.CHECKOUT_PAYMENT_GATEWAY_ABORTED, null);
                     displayPayuFailure(getString(R.string.youAborted));
                     break;
                 case Constants.PAYU_SUCCESS:
-                    trackEvent(TrackingAware.CHECKOUT_PAYMENT_GATEWAY_SUCCESS, map);
+                    trackEvent(TrackingAware.CHECKOUT_PAYMENT_GATEWAY_SUCCESS, null);
                     PayuResponse payuResponse = PayuResponse.getInstance(getCurrentActivity());
                     if (payuResponse == null) {
                         showAlertDialog("Error", "Unable to place your order via credit-card." +
@@ -596,8 +596,8 @@ public class PaymentSelectionActivity extends BackButtonActivity {
                                             "payment process to complete this" +
                                             " transaction. BigBasket customer service will get back to you regarding " +
                                             "the payment made by you.",
-                                    DialogButton.YES, DialogButton.NO, Constants.SOURCE_PLACE_ORDER
-                            );
+                                    DialogButton.YES, DialogButton.NO, Constants.SOURCE_PLACE_ORDER,
+                                    amtTxt);
                         } else {
                             handler.sendEmptyMessage(placeOrderApiResponse.getErrorTypeAsInt(), placeOrderApiResponse.message);
                         }
@@ -629,7 +629,7 @@ public class PaymentSelectionActivity extends BackButtonActivity {
             map.put(TrackEventkeys.PAYMENT_MODE, order.getPaymentMethod());
             map.put(TrackEventkeys.POTENTIAL_ORDER, mPotentialOrderId);
             trackEvent(TrackingAware.CHECKOUT_ORDER_COMPLETE, map, null, null, true);
-            trackEvent(TrackingAware.PLACE_ORDER, order.getOrderValue(), map);
+            trackEventAppsFlyer(TrackingAware.PLACE_ORDER, order.getOrderValue(), map);
         }
 
         PayuResponse.clearTxnDetail(this);
@@ -813,17 +813,12 @@ public class PaymentSelectionActivity extends BackButtonActivity {
                 && valuePassed != null) {
             removeVoucher(valuePassed.toString());
         } else if (sourceName != null) {
-//            HashMap<String, String> map = new HashMap<>();
-//            map.put(TrackEventkeys.POTENTIAL_ORDER, mPotentialOrderId);
             // When user clicks the Yes button in Alert Dialog that is shown when there's a amount mismatch
             switch (sourceName) {
                 case Constants.SOURCE_PLACE_ORDER:
                     PayuResponse.clearTxnDetail(this);
                     PowerPayResponse.clearTxnDetail(this);
-                    // TODO : Track amount mismatch
-//                    map.put(TrackEventkeys.EXPECTED_AMOUNT, PayuResponse.getInstance(getCurrentActivity()).getAmount());
-//                    map.put(TrackEventkeys.ORDER_AMOUNT, UIUtil.formatAsMoney(amount));
-//                    trackEvent(TrackingAware.CHECKOUT_PLACE_ORDER_AMOUNT_MISMATCH, mPotentialOrderId);
+                    trackEvent(TrackingAware.CHECKOUT_PLACE_ORDER_AMOUNT_MISMATCH, null);
                     if (isCreditCardPayment()) {
                         startCreditCardTxnActivity(mOrderDetails.getFinalTotal());
                     } else {
@@ -862,5 +857,10 @@ public class PaymentSelectionActivity extends BackButtonActivity {
     @Override
     public int getMainLayout() {
         return R.layout.uiv3_payment_option;
+    }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.PAYMENT_SELECTION_SCREEN;
     }
 }

@@ -26,7 +26,6 @@ public final class TrackEventkeys {
     public static final String NAVIGATION_CTX_HOME_PAGE = "home_page";
     public static final String ORDER_ID = "order id";
     public static final String NAVIGATION_CTX_PAST_ORDER = "order_history";
-    public static final String NAVIGATION_CTX_ACTIVE_ORDER = "active_order";
     public static final String NAVIGATION_CTX_THANK_YOU_PAGE = "thank_you_page";
     public static final String NAVIGATION_CTX_WALLET_ACTIVITIES = "wallet_activity";
     public static final String NAVIGATION_CTX_DEEP_LINK = "deep_link";
@@ -45,17 +44,13 @@ public final class TrackEventkeys {
     public static final String NAVIGATION_CTX_SMART_BASKET = "smart_basket";
     public static final String NAVIGATION_CTX_SHOPPING_LIST = "shopping_list";
     public static final String NAVIGATION_CTX_SHOP_FROM_ORDER = "past_order";
-    public static final String NAVIGATION_CTX_DISCOUNT = "discounts";
-    public static final String NAVIGATION_CTX_CL_PAGE = "cl_page";
-    public static final String NAVIGATION_CTX_PRODUCT_LIST = "product_list";
     public static final String NAVIGATION_CTX_PRODUCT_DETAIL = "product_detail";
     public static final String NAVIGATION_CTX_SHOW_BASKET = "basket";
-    public static final String NAVIGATION_CTX_PROMO_DETAIL = "promo_detail"; //todo check with hari
+    public static final String NAVIGATION_CTX_PROMO_DETAIL = "promo_detail";
     //basket
     public static final String TOTAL_ITEMS_IN_BASKET = "total items";
     public static final String TOTAL_BASKET_VALUE = "total value";
     public static final String TOTAL_BASKET_SAVING = "total savings";
-    public static final String SMART_BASKET = "SmartBasket";
     //filter
     public static final String FILTER_NAME = "name";
     //search
@@ -65,66 +60,54 @@ public final class TrackEventkeys {
     public static final String PAYMENT_MODE = "payment mode";
     public static final String ORDER_AMOUNT = "order amount";
     public static final String ORDER_NUMBER = "order number";
-    public static final String EXPECTED_AMOUNT = "expected amount";
     public static final String ORDER_TYPE = "order type";
     public static final String VOUCHER_NAME = "voucher name";
-    public static final String SECTION = "section"; //todo this is removed with new code
-    public static final String START_SCREEN = "Entry Page"; //Done
-    public static final String LANDING_PAGE = "Landing Page"; //Done
-    public static final String HOME_SCREEN = "Home Page"; //Done
-    public static final String DYNAMIC_SCREEN = "Dynamic Screen"; //Done
+    public static final String START_SCREEN = "Entry Page";
+    public static final String LANDING_PAGE = "Landing Page";
+    public static final String HOME_SCREEN = "Home Page";
+    public static final String DYNAMIC_SCREEN = "Dynamic Screen";
     //Dialog
-    public static final String CHANGE_CITY_SCREEN = "Change Your City"; //Done
-    public static final String FORGOT_PASSWORD_SCREEN = "Forgot Password"; //Done
+    public static final String FORGOT_PASSWORD_SCREEN = "Forgot Password";
     public static final String OTP_SCREEN = "OPT Dialog";
     //REGISTER
-    public static final String REGISTER_MEMBER_SCREEN = "Registration Page"; //Done
-    public static final String SIGN_IN_SCREEN = "Login or Register"; //Done
-    public static final String SOCIAL_ACCOUNT_CONFIRMATION_SCREEN = "Social Account Confirmation"; //Done
+    public static final String REGISTER_MEMBER_SCREEN = "Registration Page";
+    public static final String SIGN_IN_SCREEN = "Login or Register";
+    public static final String SOCIAL_ACCOUNT_CONFIRMATION_SCREEN = "Social Account Confirmation";
     //ACCOUNT
-    public static final String ACCOUNT_SCREEN = "My Account"; //Done
-    public static final String ACCOUNT_CHANGE_PASSWORD_SCREEN = "Change Password"; //Done
-    public static final String ACCOUNT_MEMBER_ORDER_SCREEN = "Orders List"; //Done
-    public static final String ACCOUNT_VIEW_PAST_ORDER_PAGE = "History Orders"; //Done
-    public static final String ACCOUNT_UPDATE_PROFILE_SCREEN = "Update Profile"; //Done
-    public static final String ACCOUNT_WALLET_SCREEN = "Wallet Summary"; //Done
-    public static final String ACCOUNT_WALLET_ACTIVITY_SCREEN = "Wallet Activity"; //Done
-    public static final String VIEW_DELIVERY_ADDRESS_SCREEN = "Delivery Address"; //Done
-    public static final String ACCOUNT_EDIT_PIN_SCREEN = "Change Pin"; //Done
-    public static final String VIEW_SPEND_TRENDS_SCREEN = "Spend Trends"; //Done
+    public static final String ACCOUNT_SCREEN = "My Account";
+    public static final String ACCOUNT_CHANGE_PASSWORD_SCREEN = "Change Password";
+    public static final String ACCOUNT_MEMBER_ORDER_SCREEN = "Orders List";
+    public static final String ACCOUNT_UPDATE_PROFILE_SCREEN = "Update Profile";
+    public static final String ACCOUNT_WALLET_SCREEN = "Wallet Summary";
+    public static final String ACCOUNT_WALLET_ACTIVITY_SCREEN = "Wallet Activity";
+    public static final String VIEW_DELIVERY_ADDRESS_SCREEN = "Delivery Address";
+    public static final String ACCOUNT_EDIT_PIN_SCREEN = "Change Pin";
     //ORDER AND PRODUCT OTHER PAGE
-    public static final String ORDER_DETAILS_SUMMARY_SCREEN = "Order Details";  //Done
-    public static final String ORDER_DETAILS_ITEMS_SCREEN = null;  //Done
-    public static final String ORDER_DETAILS_MODIFICATION_SCREEN = null; //Done
-    public static final String PRODUCT_DETAIL_SCREEN = "Product Detail "; //Done
-    public static final String FLAT_PAGE_SCREEN = "Flat Page"; //Done
+    public static final String ORDER_DETAILS_SUMMARY_SCREEN = "Order Details";
+    public static final String ORDER_DETAILS_ITEMS_SCREEN = null;
+    public static final String ORDER_DETAILS_MODIFICATION_SCREEN = null;
+    public static final String PRODUCT_DETAIL_SCREEN = "Product Detail ";
+    public static final String FLAT_PAGE_SCREEN = "Flat Page";
     public static final String CUSTOMER_FEEDBACK_SCREEN = "Customer FeedBack";
     public static final String DEEP_LINK_DISPATCHER_SCREEN = "Deep Link Dispatcher";
     //PROMO
-    public static final String PROMO_CATEGORY_SCREEN = "Promo Category"; //Done
-    public static final String PROMO_DETAIL_SCREEN = "Promo Detail"; //Done
+    public static final String PROMO_CATEGORY_SCREEN = "Promo Category";
+    public static final String PROMO_DETAIL_SCREEN = "Promo Detail";
     public static final String DISCOUNT_SCREEN = "Discount List";
     //SOPPING LIST
-    public static final String SHOPPING_LIST_SCREEN = "Shopping List"; //Done
-    public static final String SHOPPING_LIST_CATEGORY_LISTING_SCREEN = "Shopping List Summary"; //Done
-    public static final String CATEGORY_LANDING_SCREEN = "Category Landing"; //Done
+    public static final String SHOPPING_LIST_SCREEN = "Shopping List";
+    public static final String SHOPPING_LIST_CATEGORY_LISTING_SCREEN = "Shopping List Summary";
+    public static final String CATEGORY_LANDING_SCREEN = "Category Landing";
     //PRODUCT_LISTING_PAGE
-    public static final String PRODUCT_LISTING_SCREEN = "Product Listing"; //Done
+    public static final String PRODUCT_LISTING_SCREEN = "Product Listing";
     //CHECKOUT
-    public static final String VIEW_BASKET_SCREEN = "Basket"; //Done
-    public static final String MARKET_PLACE_QTY_CHECK_SCREEN = "Market Place Category Weight Restriction"; //Done
+    public static final String VIEW_BASKET_SCREEN = "Basket";
     public static final String APPLY_EVOUCHER_SCREEN = "offer";
-    public static final String AGE_VALIDATION_SCREEN = "Age Validation"; //Done
-    public static final String PRESCRIPTION_LISTING_SCREEN = "Prama Prescription Listing"; //Done
-    public static final String UPLOAD_NEW_PRESCRIPTION_SCREEN = "New Prama Prescription"; //Done
-    public static final String QC_SCREEN = "Quantity Check"; //Done
-    public static final String CREATE_OR_EDIT_DELIVERY_ADDRESS_SCREEN = "Create or Edit Address"; //Done
-    public static final String PAYMENT_SELECTION_SCREEN = "Payment Options"; //Done
-    public static final String SLOT_SELECTION_SCREEN = "Slot Selection"; //Done
-    public static final String ORDER_REVIEW_ITEMS_SCREEN = "Order Review Items"; //Done
-    public static final String ORDER_REVIEW_SUMMARY_SCREEN = "Order Review Summary"; //Done
-    public static final String CREDIT_CARD_SCREEN = "Credit Card"; //Done
-    public static final String THANK_YOU_SCREEN = "Thank You"; //Done
+    public static final String CREATE_OR_EDIT_DELIVERY_ADDRESS_SCREEN = "Create or Edit Address";
+    public static final String PAYMENT_SELECTION_SCREEN = "Payment Options";
+    public static final String SLOT_SELECTION_SCREEN = "Slot Selection";
+    public static final String CREDIT_CARD_SCREEN = "Credit Card";
+    public static final String THANK_YOU_SCREEN = "Thank You";
     //referral
     public static final String BB_REFERRAL_MAIL_SCREEN = "offer";
     public static final String CONTACT_REFERRAL_SCREEN = "offer";

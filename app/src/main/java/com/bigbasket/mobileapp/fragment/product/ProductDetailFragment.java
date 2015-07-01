@@ -75,6 +75,8 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
         map.put(TrackEventkeys.PRODUCT_TOP_CAT, mProduct.getTopLevelCategoryName());
         map.put(TrackEventkeys.PRODUCT_CAT, mProduct.getProductCategoryName());
         map.put(TrackEventkeys.PRODUCT_BRAND, mProduct.getBrand());
+        map.put(TrackEventkeys.PRODUCT_ID, mProduct.getSku());
+        map.put(TrackEventkeys.NAVIGATION_CTX, getArguments().getString(TrackEventkeys.NAVIGATION_CTX));
         String desc = mProduct.getDescription();
         if (!TextUtils.isEmpty(mProduct.getPackageDescription()))
             desc = " " + mProduct.getWeightAndPackDesc();

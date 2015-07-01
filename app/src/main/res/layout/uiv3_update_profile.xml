@@ -157,7 +157,6 @@
                 android:layout_marginLeft="@dimen/margin_mini"
                 android:layout_marginRight="@dimen/margin_small"
                 android:layout_marginTop="@dimen/margin_small"
-                android:checked="true"
                 android:text="@string/receivePromos"
                 android:textColor="@color/uiv3_primary_text_color"
                 android:textSize="@dimen/small_text_size" />

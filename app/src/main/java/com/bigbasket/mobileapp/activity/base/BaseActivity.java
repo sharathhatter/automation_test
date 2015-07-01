@@ -446,6 +446,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         editTextPincode.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                editTextArea.setText("");
                 String pinCode = editTextPincode.getText().toString();
                 ArrayList<String> areaNameArrayList = areaPinInfoAdapter.getAreaName(pinCode);
                 if (areaNameArrayList != null && areaNameArrayList.size() > 1) {
@@ -544,7 +545,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         trackEvent(eventName, eventAttribs, null, null, false);
     }
 
-    public void trackEvent(String eventName, String valueToSum, Map<String, String> mapAttr) {
+    public void trackEventAppsFlyer(String eventName, String valueToSum, Map<String, String> mapAttr) {
         try {
             AppsFlyerLib.sendTrackingWithEvent(getApplicationContext(), eventName, valueToSum);
         } catch (Exception e) {

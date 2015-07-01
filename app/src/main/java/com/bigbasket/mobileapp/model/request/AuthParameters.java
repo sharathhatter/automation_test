@@ -37,9 +37,9 @@ public class AuthParameters {
             memberEmail = prefer.getString(Constants.MEMBER_EMAIL_KEY, "");
             memberFullName = prefer.getString(Constants.MEMBER_FULL_NAME_KEY, "");
             osVersion = prefer.getString(Constants.OS_PREFERENCE_KEY, "");
-            isMoEngageEnabled = prefer.getBoolean(Constants.ENABLE_MOENGAGE, false);
-            isLocalyticsEnabled = prefer.getBoolean(Constants.ENABLE_LOCALYTICS, false);
-            isFBLoggerEnabled = prefer.getBoolean(Constants.ENABLE_FB_LOGGER, false);
+            isMoEngageEnabled = prefer.getBoolean(Constants.ENABLE_MOENGAGE, true);
+            isLocalyticsEnabled = prefer.getBoolean(Constants.ENABLE_LOCALYTICS, true);
+            isFBLoggerEnabled = prefer.getBoolean(Constants.ENABLE_FB_LOGGER, true);
             firstName = prefer.getString(Constants.FIRST_NAME_PREF, "");
         }
     }
