@@ -8,6 +8,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
 import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
@@ -38,12 +39,11 @@ public class CreateShoppingListTask<T> {
                 if (UIUtil.isAlphaNumericString(inputText.trim())) {
                     startTask(inputText);
                 } else {
-                    ((ActivityAware) ctx).getCurrentActivity().
-                            showAlertDialog(
-                                    ((ActivityAware) ctx).getCurrentActivity().
-                                            getResources().getString(R.string.error), ((ActivityAware) ctx).getCurrentActivity().
-                                            getResources().getString(R.string.shoppingListNameAlphaNumeric),
-                                    DialogButton.OK, DialogButton.CANCEL, Constants.NOT_ALPHANUMERIC_TXT_SHOPPING_LIST);
+                    ((ApiErrorAware) ctx).showApiErrorDialog(
+                            ((ActivityAware) ctx).getCurrentActivity().
+                                    getResources().getString(R.string.error), ((ActivityAware) ctx).getCurrentActivity().
+                                    getResources().getString(R.string.shoppingListNameAlphaNumeric),
+                            Constants.NOT_ALPHANUMERIC_TXT_SHOPPING_LIST, null);
                 }
             }
         }.show();

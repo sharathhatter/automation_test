@@ -570,11 +570,10 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     private void updateCartCountHeaderTextView() {
         FloatingBadgeCountView btnViewBasket = getViewBasketFloatingButton();
         if (cartSummary != null && btnViewBasket != null) {
+            btnViewBasket.setImg(R.drawable.filled_basket);
             if (cartSummary.getNoOfItems() <= 0) {
-                btnViewBasket.setImg(R.drawable.view_basket);
                 btnViewBasket.setText(null);
             } else {
-                btnViewBasket.setImg(R.drawable.filled_basket);
                 btnViewBasket.setText(cartSummary.getNoOfItems() < 10 ? "0" + cartSummary.getNoOfItems() :
                         String.valueOf(cartSummary.getNoOfItems()));
             }
@@ -693,8 +692,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 case Constants.LOGOUT:
                     onLogoutRequested();
                     break;
-                case Constants.NOT_ALPHANUMERIC_TXT_SHOPPING_LIST:
-                    new CreateShoppingListTask<>(this).showDialog();
                 default:
                     super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
                     break;

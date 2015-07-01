@@ -1,7 +1,9 @@
 package com.bigbasket.mobileapp.fragment.product;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -19,6 +21,7 @@ import com.bigbasket.mobileapp.common.ProductViewHolder;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductAdditionalInfo;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
@@ -29,6 +32,7 @@ import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
 import com.bigbasket.mobileapp.task.uiv3.CreateShoppingListTask;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListDoAddDeleteTask;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.uiv2.ProductView;
 import com.bigbasket.mobileapp.view.uiv3.ShoppingListNamesDialog;
@@ -257,5 +261,23 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
     @Override
     public String getScreenTag() {
         return TrackEventkeys.PRODUCT_DETAIL_SCREEN;
+    }
+
+    @Override
+    public void updateUIAfterBasketOperationSuccess(BasketOperation basketOperation, TextView basketCountTextView, View viewDecQty,
+                                                    View viewIncQty, View btnAddToBasket, Product product,
+                                                    String qty, @Nullable View productView, @Nullable HashMap<String, Integer> cartInfoMap) {
+        super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextView, viewDecQty,
+                viewIncQty, btnAddToBasket, product, qty, productView, cartInfoMap);
+        int productQtyInBasket = 0;
+        if (basketOperationResponse.getBasketResponseProductInfo() != null) {
+            productQtyInBasket = Integer.parseInt(basketOperationResponse.getBasketResponseProductInfo().getTotalQty());
+        }
+        if (product != null && getActivity() != null) {
+            Intent data = new Intent();
+            data.putExtra(Constants.SKU_ID, product.getSku());
+            data.putExtra(Constants.NO_ITEM_IN_CART, productQtyInBasket);
+            getActivity().setResult(NavigationCodes.BASKET_CHANGED, data);
+        }
     }
 }

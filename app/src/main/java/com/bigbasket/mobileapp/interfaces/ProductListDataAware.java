@@ -12,6 +12,8 @@ public interface ProductListDataAware {
     @Nullable
     HashMap<String, Integer> getCartInfo();
 
+    void setCartInfo(HashMap<String, Integer> cartInfo);
+
     boolean isNextPageLoading();
 
     void setNextPageLoading(boolean isNextPageLoading);

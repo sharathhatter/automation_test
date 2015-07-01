@@ -17,6 +17,7 @@ public interface NavigationCodes {
     int LAUNCH_CITY = 1353;
     int ACCOUNT_UPDATED = 1354;
     int GO_TO_BASKET = 1356;
+    int BASKET_CHANGED = 1357;
 
     int ADD_TO_SHOPPINGLIST_OK = 1221;
     int DELETE_FROM_SHOPPING_LIST_OK = 200;

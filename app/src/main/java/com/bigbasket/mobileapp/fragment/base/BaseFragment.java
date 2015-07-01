@@ -36,6 +36,7 @@ import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.cart.BasketOperationResponse;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.product.Product;
+import com.bigbasket.mobileapp.task.uiv3.CreateShoppingListTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.NavigationCodes;
@@ -347,6 +348,8 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
                     Intent loginIntent = new Intent(getActivity(), SignInActivity.class);
                     startActivityForResult(loginIntent, NavigationCodes.GO_TO_HOME);
                     break;
+                case Constants.NOT_ALPHANUMERIC_TXT_SHOPPING_LIST:
+                    new CreateShoppingListTask<>(this).showDialog();
             }
         }
     }

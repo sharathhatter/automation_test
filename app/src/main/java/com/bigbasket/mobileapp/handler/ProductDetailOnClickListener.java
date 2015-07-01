@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.handler;
 
 import android.content.Intent;
+import android.support.v4.app.Fragment;
 import android.view.View;
 
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonWithBasketButtonActivity;
@@ -24,6 +25,10 @@ public class ProductDetailOnClickListener implements View.OnClickListener {
         Intent intent = new Intent(ctx.getCurrentActivity(), BackButtonWithBasketButtonActivity.class);
         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PRODUCT_DETAIL);
         intent.putExtra(Constants.SKU_ID, skuId);
-        ctx.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+        if (ctx instanceof Fragment) {
+            ((Fragment) ctx).startActivityForResult(intent, NavigationCodes.BASKET_CHANGED);
+        } else {
+            ctx.getCurrentActivity().startActivityForResult(intent, NavigationCodes.BASKET_CHANGED);
+        }
     }
 }
