@@ -105,35 +105,11 @@
     public static final ** CREATOR;
 }
 
-# Konotor
-# Application classes that will be serialized/deserialized over Gson
--keep class com.google.gson.demach.** {
-    <fields>;
-    <methods>;
-}
 
 # Http classes
 -keep class org.apache.http.entity.** {
     <fields>;
     <methods>;
-}
-
-# Demach GSON files
--keep,allowshrinking class com.google.gson.demach.** {
-    <fields>;
-    <methods>;
-}
-
-# Demach model
--keep,allowshrinking class com.demach.konotor.model.** {
- <fields>;
- <methods>;
-}
-
-# Konotor MAIN class
--keep,allowshrinking class com.demach.konotor.Konotor {
- <fields>;
- <methods>;
 }
 
 # Also keep - Enumerations. Keep the special static methods that are required in

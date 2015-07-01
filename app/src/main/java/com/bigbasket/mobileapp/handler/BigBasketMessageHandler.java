@@ -170,15 +170,19 @@ public class BigBasketMessageHandler<T> {
     public void handleHttpError(int errorCode, String reasonPhrase, String sourceName, boolean finish) {
         if (errorCode == HttpURLConnection.HTTP_UNAVAILABLE) {
             if (!finish) {
-                ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.weAreDown), getString(R.string.serviceUnavailable), sourceName, null);
+                ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.weAreDown),
+                        getString(R.string.serviceUnavailable), sourceName, null);
             } else {
-                ((ActivityAware) ctx).getCurrentActivity().showAlertDialogFinish(getString(R.string.weAreDown), getString(R.string.serviceUnavailable));
+                ((ActivityAware) ctx).getCurrentActivity().showAlertDialogFinish(getString(R.string.weAreDown),
+                        getString(R.string.serviceUnavailable));
             }
         } else if (errorCode == HttpURLConnection.HTTP_BAD_GATEWAY || errorCode == HttpURLConnection.HTTP_INTERNAL_ERROR) {
             if (!finish) {
-                ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.weAreOverloaded), getString(R.string.weAreOverloadedDesc), sourceName, null);
+                ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.headingServerError),
+                        getString(R.string.server_error), sourceName, null);
             } else {
-                ((ActivityAware) ctx).getCurrentActivity().showAlertDialogFinish(getString(R.string.weAreOverloaded), getString(R.string.weAreOverloadedDesc));
+                ((ActivityAware) ctx).getCurrentActivity().showAlertDialogFinish(getString(R.string.headingServerError),
+                        getString(R.string.server_error));
             }
         } else if (errorCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
             showUnauthorised();

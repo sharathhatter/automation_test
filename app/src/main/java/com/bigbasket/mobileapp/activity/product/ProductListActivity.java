@@ -494,27 +494,20 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         public void onClick(View v) {
             if (layoutChildToolbarContainer.getVisibility() == View.VISIBLE) {
                 layoutChildToolbarContainer.setVisibility(View.GONE);
-                changeStatusBarColor(R.color.uiv3_status_bar_background);
                 if (getSupportActionBar() != null) {
                     getSupportActionBar().show();
                 }
+                UIUtil.changeStatusBarColor(getCurrentActivity(),
+                        R.color.uiv3_status_bar_background);
             } else {
                 layoutChildToolbarContainer.setVisibility(View.VISIBLE);
-                changeStatusBarColor(R.color.uiv3_grey_status_bar_color);
+                UIUtil.changeStatusBarColor(getCurrentActivity(),
+                        R.color.uiv3_grey_status_bar_color);
                 if (getSupportActionBar() != null) {
                     getSupportActionBar().hide();
                 }
             }
             trackEvent(TrackingAware.PRODUCT_LIST_HEADER_CLICKED, null);
-        }
-
-        private void changeStatusBarColor(@ColorRes int color) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                Window window = getCurrentActivity().getWindow();
-                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-                window.setStatusBarColor(getCurrentActivity().getResources().getColor(color));
-            }
         }
     }
 

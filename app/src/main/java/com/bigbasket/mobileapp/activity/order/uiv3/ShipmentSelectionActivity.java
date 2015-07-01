@@ -139,9 +139,12 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
                 }
                 if (!TextUtils.isEmpty(shipmentAction.getActionMsg())) {
                     actionName = shipmentAction.getActionMsg();
-                    switchToggleDelivery.setChecked(!TextUtils.isEmpty(shipmentAction.getActionState())
-                            && shipmentAction.getActionState().equalsIgnoreCase(Constants.ON));
-                    switchToggleDelivery.setOnCheckedChangeListener(new OnShipmentToggleListener(shipment));
+                    if (TextUtils.isEmpty(shipmentAction.getActionState())) {
+                        switchToggleDelivery.setVisibility(View.GONE);
+                    } else {
+                        switchToggleDelivery.setChecked(shipmentAction.getActionState().equalsIgnoreCase(Constants.ON));
+                        switchToggleDelivery.setOnCheckedChangeListener(new OnShipmentToggleListener(shipment));
+                    }
                 } else {
                     switchToggleDelivery.setVisibility(View.GONE);
                 }
@@ -302,7 +305,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
             new PostShipmentTask<>(getCurrentActivity(), selectedShipments, potentialOrderId).startTask();
 
             trackEvent(mHasDefaultSlotSelected ? TrackingAware.CHECKOUT_DEFAULT_SLOT_SELECTED :
-                            TrackingAware.CHECKOUT_SLOT_SELECTED, null);
+                    TrackingAware.CHECKOUT_SLOT_SELECTED, null);
         }
     }
 

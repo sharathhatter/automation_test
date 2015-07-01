@@ -185,12 +185,6 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
                     showErrorMsg(promoSummaryApiResponseContent.message);
                 } else if (status == 0) {
                     PromoMessage promoMessage = promoSummaryApiResponseContent.apiResponseContent.promoMessage;
-                    if (promoType.equalsIgnoreCase(Promo.PromoType.FIXED_FREE_COMBO) ||
-                            promoType.equalsIgnoreCase(Promo.PromoType.FIXED_COMBO)) {
-                        Toast aToastForSuccess = Toast.makeText(getActivity(), "Added bundle successfully", Toast.LENGTH_SHORT);
-                        aToastForSuccess.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
-                        aToastForSuccess.show();
-                    }
                     displayPromoSummary(promoMessage.getPromoMessage(), promoMessage.getCriteriaMessages(),
                             promoSummaryApiResponseContent.apiResponseContent.saving,
                             promoSummaryApiResponseContent.apiResponseContent.numInBasket);
