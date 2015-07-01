@@ -529,7 +529,7 @@
             android:name="com.moengage.addon.ubox.UnifiedInboxActivity"
             android:label="Communication Hub"
             android:windowSoftInputMode="adjustResize"
-            android:theme="@style/BBAppTheme" />
+            android:theme="@style/BaseAppTheme" />
 
         <service
             android:name="com.moengage.addon.ubox.UBoxMessenger"

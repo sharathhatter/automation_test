@@ -505,6 +505,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                     getSupportActionBar().hide();
                 }
             }
+            trackEvent(TrackingAware.PRODUCT_LIST_HEADER_CLICKED, null);
         }
 
         private void changeStatusBarColor(@ColorRes int color) {

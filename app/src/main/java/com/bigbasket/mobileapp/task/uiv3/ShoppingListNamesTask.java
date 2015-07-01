@@ -51,7 +51,7 @@ public class ShoppingListNamesTask<T> {
                         break;
                     default:
                         ((HandlerAware) ctx).getHandler().sendEmptyMessage(getShoppingListsApiResponse.getErrorTypeAsInt(),
-                                getShoppingListsApiResponse.message);
+                                getShoppingListsApiResponse.message, true);
                         break;
                 }
             }
@@ -67,7 +67,7 @@ public class ShoppingListNamesTask<T> {
                         return;
                     }
                 }
-                ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
+                ((HandlerAware) ctx).getHandler().handleRetrofitError(error, true);
             }
         });
     }

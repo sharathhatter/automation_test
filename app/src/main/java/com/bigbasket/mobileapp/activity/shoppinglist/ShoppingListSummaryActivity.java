@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.activity.shoppinglist;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -38,6 +39,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.InputDialog;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
@@ -59,6 +61,11 @@ public class ShoppingListSummaryActivity extends BBActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
         loadShoppingListSummary();
     }
 
@@ -135,7 +142,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
                 } catch (IllegalArgumentException e) {
                     return;
                 }
-                handler.handleRetrofitError(error);
+                handler.handleRetrofitError(error, true);
             }
         });
     }
@@ -320,7 +327,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressView();
         String shoppingListSlug = mShoppingListName.getSlug();
-        if (shoppingListSummary.getFacetSlug().equals(Constants.SMART_BASKET_SLUG)) {
+        if (shoppingListSlug.equals(Constants.SMART_BASKET_SLUG)) {
             trackEvent(TrackingAware.SMART_BASKET + "." + shoppingListSummary.getFacetName() + " Add All", null);
             bigBasketApiService.addAllToBasketSmartBasket(shoppingListSlug,
                     shoppingListSummary.getFacetSlug(),
@@ -525,5 +532,10 @@ public class ShoppingListSummaryActivity extends BBActivity {
     private void notifyListChanged() {
         setResult(NavigationCodes.SHOPPING_LIST_CHANGED);
         finish();
+    }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.SHOPPING_LIST_CATEGORY_LISTING_SCREEN;
     }
 }

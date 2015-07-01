@@ -127,7 +127,6 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
     private void showAddresses() {
         if (mAddressArrayList != null && mAddressArrayList.size() > 0) {
             HashMap<String, String> map = new HashMap<>();
-
             map.put(TrackEventkeys.NAVIGATION_CTX, mFromAccountPage ? TrackEventkeys.NAVIGATION_CTX_MY_ACCOUNT :
                     TrackEventkeys.NAVIGATION_CTX_CHECKOUT_DELIVERY_ADDRESS);
             trackEvent(TrackingAware.DELIVERY_ADDRESS_SHOWN, map);
@@ -230,7 +229,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             trackEvent(TrackingAware.NEW_ADDRESS_CLICKED, map);
         } else {
             map.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_CHECKOUT_DELIVERY_ADDRESS);
-            trackEvent(TrackingAware.CHECK_CREATE_ADDRESS_SHOWN, map);
+            trackEvent(TrackingAware.CHECKOUT_CREATE_ADDRESS_SHOWN, map);
         }
     }
 
@@ -319,6 +318,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
                 createPotentialOrderResponseContent.qcErrorDatas != null &&
                 createPotentialOrderResponseContent.qcErrorDatas.size() > 0) {
             new OrderQcDialog<>().show(this, createPotentialOrderResponseContent);
+            trackEvent(TrackingAware.CHECKOUT_QC_SHOWN, null);
         } else {
             launchSlotSelection(createPotentialOrderResponseContent);
         }

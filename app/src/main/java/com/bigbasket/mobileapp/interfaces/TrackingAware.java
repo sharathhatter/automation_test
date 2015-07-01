@@ -9,7 +9,7 @@ public interface TrackingAware {
     String ENTRY_PAGE_SHOWN = "EntryPage.Shown";
     String ENTRY_PAGE_SKIP_BUTTON_CLICKED = "EntryPage.Skip Button Clicked";
     String ENTRY_PAGE_LOGIN_CLICKED = "EntryPage.Login Button Clicked";
-    String ENTRY_PAGE_SIGNUP_CLICKED = "EntryPage.Signup Button Clicked"; //
+    String ENTRY_PAGE_SIGNUP_CLICKED = "EntryPage.Signup Button Clicked";
 
     //Home Screen topnav
     String COMMUNICATION_HUB_CLICKED = "MyAccount.CommunicationHubClicked";
@@ -90,6 +90,7 @@ public interface TrackingAware {
     //active and past order
     String ORDER_SUMMARY_SHOWN = "Order.Order Details Shown";
     String ORDER_ITEMS_TAB_CLICKED = "Order.View Items Clicked";
+    String SHOP_FROM_PAST_ORDER = "Shop from This Order";
 
     //shopping list
     String SHOP_LST_SHOWN = "ShoppingList.All Lists Shown";
@@ -100,8 +101,8 @@ public interface TrackingAware {
 
 
     //main menu
-    public static final String MENU_SHOWN = "Menu.Shown";
-    public static final String MENU_ITEM_CLICKED = "Menu.Item Clicked";
+    String MENU_SHOWN = "Menu.Shown";
+    String MENU_ITEM_CLICKED = "Menu.Item Clicked";
 
     // Dynamic Page
     String ITEM_CLICKED = "Item Clicked";
@@ -116,7 +117,8 @@ public interface TrackingAware {
     String PRODUCT_LIST_SHOWN = "Product Listing.Shown";
     String PRODUCT_LIST_TAB_CHANGED = "Product List.Tab Changed";
     String PRODUCT_LIST_HEADER = "Product List Header";
-    String PRODUCT_DETAIL_SHOWN = "Product Detail.Shown";
+    String PRODUCT_DETAIL_SHOWN = "Product Detail Shown";
+    String PRODUCT_LIST_HEADER_CLICKED = "Product Listing.Header Clicked";
 
     //promo
     String PROMO_DETAIL_SHOWN = "Promo.Promo Detail Shown";
@@ -149,16 +151,14 @@ public interface TrackingAware {
 
     //check out
     String CHECKOUT_QC_SHOWN = "Checkout.Order QC Shown";
-    String CHECK_OUT_QC_PROCEED_BTN = "Checkout.QC Proceed Clicked";
-    String CHECK_CREATE_ADDRESS_SHOWN = "Checkout.Address Shown";
+    String CHECKOUT_CREATE_ADDRESS_SHOWN = "Checkout.Address Shown";
     String CHECKOUT_ADDRESS_CREATED = "Checkout.Address Created";
     String CHECKOUT_SLOT_SHOWN = "Checkout.Slot Shown";
-    String CHECKOUT_SLOT_CLICKED = "Checkout.Slot Clicked";
+    String CHECKOUT_DEFAULT_SLOT_SELECTED = "Checkout.Default.Slot Selected";
+    String CHECKOUT_SLOT_SELECTED = "Checkout.Slot Selected";
     String CHECKOUT_PAYMENT_SHOWN = "Checkout.Payment Shown";
-    String CHECKOUT_ORDER_REVIEW_CLICKED = "Checkout.Order Review Clicked";
     String CHECKOUT_VOUCHER_APPLIED = "Checkout.Voucher Applied";
     String CHECKOUT_VOUCHER_FAILED = "Checkout.Voucher Failed";
-    String CHECKOUT_ORDER_REVIEW_SHOWN = "Checkout.Order Review Shown";
     String CHECKOUT_PAYMENT_GATEWAY_SUCCESS = "Checkout.Payment Gateway Success";
     String CHECKOUT_PAYMENT_GATEWAY_FAILURE = "Checkout.Payment Gateway Failure";
     String CHECKOUT_PAYMENT_GATEWAY_ABORTED = "Checkout.Payment Gateway Aborted";
@@ -169,8 +169,6 @@ public interface TrackingAware {
 
     //thank you
     String THANK_YOU_PAGE_SHOWN = "Checkout.Thank You Page Shown";
-    String THANK_YOU_VIEW_INVOICE_CLICKED = "Checkout.View Invoice Clicked";
-
     String BASKET_ADD_PROMO_BUNDLE = "Basket.Add Promo Bundle";
 
 
