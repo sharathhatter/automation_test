@@ -91,6 +91,7 @@ public class AccountView<T> {
                     ctx.trackEvent(TrackingAware.MY_ORDER_CLICKED, null);
                     intent = new Intent(ctx, OrderListActivity.class);
                     intent.putExtra(Constants.ORDER, "all");
+                    intent.putExtra(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_PAST_ORDER);
                     ctx.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     break;
                 case 2:

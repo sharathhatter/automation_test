@@ -35,6 +35,7 @@ public class OrderInvoiceActivity extends BaseActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(getCurrentActivity(), OrderListActivity.class);
                 intent.putExtra(Constants.ORDER, "all");
+                intent.putExtra(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_THANK_YOU_PAGE);
                 startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
             }
         });

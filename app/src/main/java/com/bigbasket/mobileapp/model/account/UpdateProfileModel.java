@@ -46,7 +46,7 @@ public class UpdateProfileModel implements Parcelable {
     @SerializedName(Constants.PIN_CODE)
     private String pincode;
     @SerializedName(Constants.NEWSPAPER_SUBSCRIPTION)
-    private String newPaperSubscription;
+    private boolean newPaperSubscription;
 
     public UpdateProfileModel(Parcel source) {
         email = source.readString();
@@ -77,10 +77,7 @@ public class UpdateProfileModel implements Parcelable {
             street = source.readString();
         }
         pincode = source.readString();
-        boolean isSubNull = source.readByte() == (byte) 1;
-        if (!isSubNull) {
-            newPaperSubscription = source.readString();
-        }
+        newPaperSubscription = source.readByte() == (byte) 1;
     }
 
     @Override
@@ -123,11 +120,8 @@ public class UpdateProfileModel implements Parcelable {
             dest.writeString(street);
         }
         dest.writeString(pincode);
-        boolean isSubscriptionNull = newPaperSubscription == null;
-        dest.writeByte(isSubscriptionNull ? (byte) 1 : (byte) 0);
-        if (!isSubscriptionNull) {
-            dest.writeString(newPaperSubscription);
-        }
+
+        dest.writeByte((byte) (newPaperSubscription  ? 1 : 0));
     }
 
     public String getStreet() {
@@ -196,5 +190,9 @@ public class UpdateProfileModel implements Parcelable {
 
     public String getPincode() {
         return pincode;
+    }
+
+    public boolean isNewPaperSubscription() {
+        return newPaperSubscription;
     }
 }

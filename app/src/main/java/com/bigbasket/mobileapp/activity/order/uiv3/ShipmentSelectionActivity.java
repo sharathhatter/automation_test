@@ -29,6 +29,7 @@ import com.bigbasket.mobileapp.adapter.order.LinkedProductsAdapter;
 import com.bigbasket.mobileapp.adapter.shipment.SlotListAdapter;
 import com.bigbasket.mobileapp.apiservice.models.request.SelectedShipment;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.order.OrderDetails;
 import com.bigbasket.mobileapp.model.shipments.BaseShipmentAction;
 import com.bigbasket.mobileapp.model.shipments.Shipment;
@@ -37,6 +38,7 @@ import com.bigbasket.mobileapp.model.shipments.SlotDisplay;
 import com.bigbasket.mobileapp.task.PostShipmentTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -57,6 +59,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
     private ArrayList<Shipment> mShipments;
     private boolean mHasUserToggledShipments;
     private ArrayList<Integer> mSelectedShipmentIndx;
+    private boolean mHasDefaultSlotSelected = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -297,6 +300,9 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
             String potentialOrderId = getIntent().getStringExtra(Constants.P_ORDER_ID);
             if (potentialOrderId == null) return;
             new PostShipmentTask<>(getCurrentActivity(), selectedShipments, potentialOrderId).startTask();
+
+            trackEvent(mHasDefaultSlotSelected ? TrackingAware.CHECKOUT_DEFAULT_SLOT_SELECTED :
+                            TrackingAware.CHECKOUT_SLOT_SELECTED, null);
         }
     }
 
@@ -355,6 +361,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         @Override
         public void onClick(View v) {
             showSlotListDialog(v);
+            trackEvent(TrackingAware.CHECKOUT_SLOT_SHOWN, null);
         }
 
         public void showSlotListDialog(final View v) {
@@ -386,6 +393,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
                             showSelectedSlot(selectedSlot, (Button) v);
                         }
                     }
+                    mHasDefaultSlotSelected = false;
                 }
             });
 
@@ -405,5 +413,10 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    @Override
+    public String getScreenTag() {
+        return TrackEventkeys.SLOT_SELECTION_SCREEN;
     }
 }

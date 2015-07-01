@@ -97,6 +97,7 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
         editTextTelNumber.setText(updateProfileModel.getTelephoneNumber());
 
         chkReceivePromos = (CheckBox) view.findViewById(R.id.chkReceivePromos);
+        chkReceivePromos.setChecked(updateProfileModel.isNewPaperSubscription());
 
         TextView txtSave = (TextView) view.findViewById(R.id.txtUpdateProfile);
         txtSave.setTypeface(faceRobotoMedium);
