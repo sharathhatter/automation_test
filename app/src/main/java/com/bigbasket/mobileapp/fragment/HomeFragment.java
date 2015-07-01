@@ -27,6 +27,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.LoginUserDetails;
 import com.bigbasket.mobileapp.apiservice.models.response.UpdateVersionInfoApiResponseContent;
 import com.bigbasket.mobileapp.fragment.base.BaseSectionFragment;
 import com.bigbasket.mobileapp.handler.AppDataSyncHandler;
+import com.bigbasket.mobileapp.handler.AppUpdateHandler;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.handler.HDFCPowerPayHandler;
 import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
@@ -81,6 +82,11 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
     @Override
     public void onResume() {
         super.onResume();
+        AppUpdateHandler.AppUpdateData appUpdateData = AppUpdateHandler.isOutOfDate(getActivity());
+        if (appUpdateData != null && !TextUtils.isEmpty(appUpdateData.getAppExpireBy())) {
+            showUpgradeAppDialog(appUpdateData.getAppExpireBy(), appUpdateData.getAppUpdateMsg(),
+                    appUpdateData.getLatestAppVersion());
+        }
         if (mSyncChanges) {
             Log.d("Home page", "Home page has to be refreshed");
             mSyncChanges = false;
@@ -96,6 +102,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         SectionManager sectionManager = new SectionManager(getActivity(), SectionManager.HOME_PAGE);
         SectionData sectionData = sectionManager.getStoredSectionData();
         if (sectionData == null || sectionData.getSections() == null || sectionData.getSections().size() == 0) {
+            if (!checkInternetConnection()) return;
             // Need to refresh
             mSyncChanges = true;
             Log.d("Home page", "Home page sync is required");
@@ -117,6 +124,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
             displayHomePageError(getString(R.string.lostInternetConnection), R.drawable.empty_no_internet);
             return;
         }
+        AppUpdateHandler.markAsCurrent(getActivity());
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));
@@ -315,26 +323,23 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         AuthParameters.updateInstance(getCurrentActivity());
     }
 
-    private void callGetAppData(String client, String versionName, final Bundle savedInstanceState) {
-        if (!DataUtil.isInternetAvailable(getCurrentActivity())) handler.sendOfflineError();
+    private void callGetAppData(String client, String versionName) {
+        if (!DataUtil.isInternetAvailable(getCurrentActivity())) return;
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
-        showProgressView();
         bigBasketApiService.getAppData(client, versionName,
                 new Callback<ApiResponse<AppDataResponse>>() {
                     @Override
                     public void success(ApiResponse<AppDataResponse> callbackAppDataResponse, Response response) {
-                        if (isSuspended()) return;
-                        try {
-                            hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
                         if (callbackAppDataResponse.status == 0) {
-                            AppDataSyncHandler.updateLastAppDataCall(getCurrentActivity());
                             String appExpiredBy = callbackAppDataResponse.apiResponseContent.appUpdate.expiryDate;
                             String upgradeMsg = callbackAppDataResponse.apiResponseContent.appUpdate.upgradeMsg;
                             String latestAppVersion = callbackAppDataResponse.apiResponseContent.appUpdate.latestAppVersion;
-                            showUpgradeAppDialog(appExpiredBy, upgradeMsg, latestAppVersion);
+                            if (!TextUtils.isEmpty(appExpiredBy)) {
+                                AppUpdateHandler.markAsOutOfDate(getActivity(), appExpiredBy, upgradeMsg,
+                                        latestAppVersion);
+                            } else {
+                                AppUpdateHandler.markAsCurrent(getActivity());
+                            }
                             AnalyticsEngine analyticsEngine = callbackAppDataResponse.apiResponseContent.capabilities;
                             setAnalyticalData(analyticsEngine);
                             LoginUserDetails userDetails = callbackAppDataResponse.apiResponseContent.userDetails;
@@ -347,22 +352,14 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                             HDFCPowerPayHandler.setTimeOut(getCurrentActivity(),
                                     callbackAppDataResponse.apiResponseContent.hdfcPowerPayExpiry);
                             savePopulateSearcher(callbackAppDataResponse.apiResponseContent.topSearches);
-                            homePageGetter(savedInstanceState);
-                        } else {
-                            handler.sendEmptyMessage(callbackAppDataResponse.status,
-                                    callbackAppDataResponse.message);
+                            AppDataSyncHandler.updateLastAppDataCall(getCurrentActivity());
                         }
+                        // Fail silently
                     }
 
                     @Override
                     public void failure(RetrofitError error) {
-                        if (isSuspended()) return;
-                        try {
-                            hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                        handler.handleRetrofitError(error);
+                        // Fail silently
                     }
 
                 });
@@ -379,13 +376,13 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
 
 
     private void showUpgradeAppDialog(String appExpiredBy, String upgradeMsg, String latestAppVersion) {
-        if (appExpiredBy == null) return;
-        int updateValue = UIUtil.handleUpdateDialog(appExpiredBy.replace("-", "/"), getCurrentActivity());
+        if (TextUtils.isEmpty(appExpiredBy)) return;
+        int updateValue = AppUpdateHandler.handleUpdateDialog(appExpiredBy.replace("-", "/"), getCurrentActivity());
         switch (updateValue) {
             case Constants.SHOW_APP_UPDATE_POPUP:
                 UpgradeAppDialog upgradeAppDialog = UpgradeAppDialog.newInstance(upgradeMsg);
                 upgradeAppDialog.show(getFragmentManager(), Constants.APP_UPDATE_DIALOG_FLAG);
-                UIUtil.updateLastPopShownDate(System.currentTimeMillis(), getCurrentActivity());
+                AppUpdateHandler.updateLastPopShownDate(System.currentTimeMillis(), getCurrentActivity());
                 break;
             case Constants.SHOW_APP_EXPIRE_POPUP:
                 AppNotSupportedDialog appNotSupportedDialog = AppNotSupportedDialog.newInstance(upgradeMsg, latestAppVersion);
@@ -398,11 +395,9 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
 
     private void getAppData(Bundle savedInstanceState) {
         if (AppDataSyncHandler.isSyncNeeded(getActivity())) {
-            callGetAppData(Constants.CLIENT_NAME, DataUtil.getAppVersion(getCurrentActivity()),
-                    savedInstanceState);
-        } else {
-            homePageGetter(savedInstanceState);
+            callGetAppData(Constants.CLIENT_NAME, DataUtil.getAppVersion(getCurrentActivity()));
         }
+        homePageGetter(savedInstanceState);
     }
 
 

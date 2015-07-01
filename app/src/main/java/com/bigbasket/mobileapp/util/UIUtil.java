@@ -152,14 +152,6 @@ public class UIUtil {
         return sbr.toString();
     }
 
-    public static String abbreviate(String txt, int sz) {
-        if (txt.length() <= sz) {
-            return txt;
-        }
-        String abbreviatedTxt = txt.substring(0, sz - 4);
-        return abbreviatedTxt + "...";
-    }
-
     public static boolean isValidEmail(String email) {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
@@ -342,63 +334,6 @@ public class UIUtil {
     public static String getToday(String format) {
         Date date = new Date();
         return new SimpleDateFormat(format, Locale.getDefault()).format(date);
-    }
-
-    public static Spannable formatAsSavings(String savingsStr, Typeface faceRupee) {
-        String prefix = "SAVE:`";
-        Spannable spannableSaving = new SpannableString(prefix + savingsStr);
-        spannableSaving.setSpan(new CustomTypefaceSpan("", faceRupee),
-                prefix.length() - 1,
-                prefix.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
-        return spannableSaving;
-    }
-
-    public static int handleUpdateDialog(String serverAppExpireDateString, Activity activity) {
-        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(activity);
-        long lastPopUpShownTime = prefer.getLong(Constants.LAST_POPUP_SHOWN_TIME, 0);
-        SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_FOR_APP_UPGRADE_POPUP, Locale.getDefault());
-
-        String today = getToday(Constants.DATE_FORMAT_FOR_APP_UPGRADE_POPUP);
-
-        Date serverAppExpireDate, toDaysData;
-        try {
-            serverAppExpireDate = sdf.parse(serverAppExpireDateString);
-            toDaysData = sdf.parse(today);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return Constants.DONT_SHOW_APP_UPDATE_POPUP;
-        }
-
-        if (serverAppExpireDate.compareTo(toDaysData) < 0) {
-            prefer.edit().putLong(AppDataSyncHandler.LAST_APP_DATA_CALL_TIME, 0).apply();
-            return Constants.SHOW_APP_EXPIRE_POPUP;
-        }
-        int popUpShownTimes = prefer.getInt(Constants.APP_EXPIRE_POPUP_SHOWN_TIMES, 0);
-        long timeDiff = (serverAppExpireDate.getTime() - lastPopUpShownTime) / (24 * 60 * 60 * 1000);
-
-        if (timeDiff >= 0) {
-            if (UIUtil.isMoreThanXDays(lastPopUpShownTime, Constants.ONE_DAY)) {
-                if (popUpShownTimes < 3) {
-                    return Constants.SHOW_APP_UPDATE_POPUP;
-                } else {
-                    if (UIUtil.isMoreThanXDays(lastPopUpShownTime, Constants.SIX_DAYS)) {
-                        return Constants.SHOW_APP_UPDATE_POPUP;
-                    } else return Constants.DONT_SHOW_APP_UPDATE_POPUP;
-                }
-            } else return Constants.DONT_SHOW_APP_UPDATE_POPUP;
-        } else {
-            prefer.edit().putLong(AppDataSyncHandler.LAST_APP_DATA_CALL_TIME, 0).apply();
-            return Constants.SHOW_APP_EXPIRE_POPUP;
-        }
-    }
-
-    public static void updateLastPopShownDate(long lastPopShownTime, Activity activity) {
-        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(activity);
-        SharedPreferences.Editor editor = prefer.edit();
-        editor.putLong(Constants.LAST_POPUP_SHOWN_TIME, lastPopShownTime);
-        int popUpShownTimes = prefer.getInt(Constants.APP_EXPIRE_POPUP_SHOWN_TIMES, 0);
-        editor.putInt(Constants.APP_EXPIRE_POPUP_SHOWN_TIMES, popUpShownTimes + 1);
-        editor.apply();
     }
 
     public static void displayAsyncImage(ImageView imageView, String url) {

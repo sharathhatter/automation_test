@@ -112,6 +112,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     private AnimatedRelativeLayout mSubNavLayout;
     private FloatingBadgeCountView mBtnViewBasket;
     private RecyclerView mListSubNavigation;
+    private boolean mSyncNeeded;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -569,11 +570,10 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     private void updateCartCountHeaderTextView() {
         FloatingBadgeCountView btnViewBasket = getViewBasketFloatingButton();
         if (cartSummary != null && btnViewBasket != null) {
+            btnViewBasket.setImg(R.drawable.filled_basket);
             if (cartSummary.getNoOfItems() <= 0) {
-                btnViewBasket.setImg(R.drawable.view_basket);
                 btnViewBasket.setText(null);
             } else {
-                btnViewBasket.setImg(R.drawable.filled_basket);
                 btnViewBasket.setText(cartSummary.getNoOfItems() < 10 ? "0" + cartSummary.getNoOfItems() :
                         String.valueOf(cartSummary.getNoOfItems()));
             }
@@ -692,8 +692,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 case Constants.LOGOUT:
                     onLogoutRequested();
                     break;
-                case Constants.NOT_ALPHANUMERIC_TXT_SHOPPING_LIST:
-                    new CreateShoppingListTask<>(this).showDialog();
                 default:
                     super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
                     break;
@@ -912,15 +910,21 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             syncCartInfoFromPreference();
         }
 
-        loadNavigationItems();
-        syncMainMenuIfNeeded();
+        if (mSyncNeeded) {
+            mSyncNeeded = false;
+            loadNavigationItems();
+        } else {
+            syncMainMenuIfNeeded();
+        }
     }
 
     private void syncMainMenuIfNeeded() {
         SectionManager sectionManager = new SectionManager(getCurrentActivity(), SectionManager.MAIN_MENU);
         SectionData sectionData = sectionManager.getStoredSectionData();
         if (sectionData == null || sectionData.getSections() == null || sectionData.getSections().size() == 0) {
+            if (!checkInternetConnection()) return;
             // Need to refresh
+            mSyncNeeded = true;
             new GetDynamicPageTask<>(getCurrentActivity(), SectionManager.MAIN_MENU, false, false, true, true).startTask();
         }
     }

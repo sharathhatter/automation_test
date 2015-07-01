@@ -1,8 +1,10 @@
 package com.bigbasket.mobileapp.fragment.base;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +34,7 @@ import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListOption;
 import com.bigbasket.mobileapp.task.uiv3.CreateShoppingListTask;
 import com.bigbasket.mobileapp.task.uiv3.ShoppingListDoAddDeleteTask;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.ShoppingListNamesDialog;
@@ -207,6 +210,12 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         }
     }
 
+    public void redrawProductList() {
+        if (mProductListRecyclerAdapter != null) {
+            mProductListRecyclerAdapter.notifyDataSetChanged();
+        }
+    }
+
     public abstract String getNavigationCtx();
 
     @Override
@@ -303,5 +312,24 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                         null, null, null, null, product, qty, null, cartInfoMap);
             }
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        setSuspended(false);
+        if (resultCode == NavigationCodes.BASKET_CHANGED && data != null) {
+            String productId = data.getStringExtra(Constants.SKU_ID);
+            int productInQty = data.getIntExtra(Constants.NO_ITEM_IN_CART, 0);
+            if (!TextUtils.isEmpty(productId) && getActivity() != null) {
+                HashMap<String, Integer> cartInfo = getActivity() instanceof ProductListDataAware ?
+                        ((ProductListDataAware) getActivity()).getCartInfo() : null;
+                if (cartInfo == null) {
+                    cartInfo = new HashMap<>();
+                }
+                cartInfo.put(productId, productInQty);
+                ((ProductListDataAware) getActivity()).setCartInfo(cartInfo);
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

@@ -22,7 +22,6 @@ import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -40,7 +39,6 @@ import com.bigbasket.mobileapp.handler.OnDialogShowListener;
 import com.bigbasket.mobileapp.handler.OnSectionItemClickListener;
 import com.bigbasket.mobileapp.interfaces.LazyProductListAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
-import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
@@ -55,7 +53,6 @@ import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.model.section.SectionTextItem;
-import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.task.GetCartCountTask;
 import com.bigbasket.mobileapp.task.uiv3.CreateShoppingListTask;
 import com.bigbasket.mobileapp.task.uiv3.ProductListTask;
@@ -71,7 +68,6 @@ import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import retrofit.Callback;
@@ -79,10 +75,10 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class ProductListActivity extends BBActivity implements ProductListDataAware, LazyProductListAware,
-        ShoppingListNamesAware {
+public class ProductListActivity extends BBActivity implements ProductListDataAware, LazyProductListAware {
 
     private ArrayList<NameValuePair> mNameValuePairs;
+    @Nullable
     private ViewPager mViewPager;
     private HashMap<String, ArrayList<Product>> mMapForTabWithNoProducts;
     private SparseArray<String> mArrayTabTypeAndFragmentPosition;
@@ -94,7 +90,6 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     private String mSortedOn;
     private ArrayList<Option> mSortOptions;
     private HashMap<String, Integer> mCartInfo;
-    private String mSelectedProductId;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -190,16 +185,13 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         boolean hasProducts = productTabData.getProductTabInfos() != null &&
                 productTabData.getProductTabInfos().size() > 0;
         if (sectionData != null) {
-            contentSectionView = new SectionView(this, faceRobotoRegular, sectionData, "Product List").getView();
+            if (!hasProducts) {
+                contentSectionView = new SectionView(this, faceRobotoRegular, sectionData, "Product List").getRecyclerView(contentFrame);
+            } else {
+                contentSectionView = new SectionView(this, faceRobotoRegular, sectionData, "Product List").getView();
+            }
             if (contentSectionView != null) {
-                if (!hasProducts) {
-                    // Use a scrollview as this section can be huge
-                    ScrollView scrollView = new ScrollView(this);
-                    scrollView.addView(contentSectionView);
-                    contentFrame.addView(scrollView);
-                } else {
-                    contentFrame.addView(contentSectionView);
-                }
+                contentFrame.addView(contentSectionView);
             }
         }
         boolean showFilters = hasProducts && productTabData.getFilterOptionItems() != null
@@ -265,6 +257,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     private void displayProductTabs(ProductTabData productTabData, ViewGroup contentFrame) {
         View base = getLayoutInflater().inflate(R.layout.uiv3_swipe_tab_view, contentFrame, false);
         mViewPager = (ViewPager) base.findViewById(R.id.pager);
+        if (mViewPager == null) return;
 
         ArrayList<BBTab> bbTabs = new ArrayList<>();
         ArrayList<String> tabTypeWithNoProducts = new ArrayList<>();
@@ -372,7 +365,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     }
 
     private void setUpProductsInEmptyFragments() {
-        if (mArrayTabTypeAndFragmentPosition != null) {
+        if (mArrayTabTypeAndFragmentPosition != null && mViewPager != null) {
             int currentPosition = mViewPager.getCurrentItem();
             setProductListForFragmentAtPosition(currentPosition);
             setProductListForFragmentAtPosition(currentPosition + 1);
@@ -382,7 +375,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
     private void setProductListForFragmentAtPosition(int position) {
         String tabType = mArrayTabTypeAndFragmentPosition.get(position);
-        if (tabType == null) return;
+        if (tabType == null || mViewPager == null) return;
         Fragment fragment = ((ProductListPagerAdapter) mViewPager.getAdapter()).getRegisteredFragment(position);
         if (fragment != null) {
             ArrayList<Product> products = mMapForTabWithNoProducts != null ?
@@ -397,7 +390,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
     private void notifyFragmentAtPositionAboutFailure(int position) {
         String tabType = mArrayTabTypeAndFragmentPosition.get(position);
-        if (tabType == null) return;
+        if (tabType == null || mViewPager == null) return;
         Fragment fragment = ((ProductListPagerAdapter) mViewPager.getAdapter()).getRegisteredFragment(position);
         if (fragment != null) {
             ((ProductListAwareFragment) fragment).setLazyProductLoadingFailure();
@@ -407,6 +400,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
     @Nullable
     private Fragment getCurrentFragment() {
+        if (mViewPager == null) return null;
         int currentPosition = mViewPager.getCurrentItem();
         return ((ProductListPagerAdapter) mViewPager.getAdapter()).getRegisteredFragment(currentPosition);
     }
@@ -486,41 +480,6 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                 toolbar.removeView(mToolbarTextDropdown);
             }
         }
-    }
-
-    @Override
-    public void onShoppingListFetched(ArrayList<ShoppingListName> shoppingListNames) {
-
-    }
-
-    @Override
-    public String getSelectedProductId() {
-        return mSelectedProductId;
-    }
-
-    @Override
-    public void setSelectedProductId(String selectedProductId) {
-        this.mSelectedProductId = selectedProductId;
-    }
-
-    @Override
-    public void postShoppingListItemDeleteOperation() {
-
-    }
-
-    @Override
-    public void addToShoppingList(List<ShoppingListName> selectedShoppingListNames) {
-
-    }
-
-    @Override
-    public void createNewShoppingList() {
-
-    }
-
-    @Override
-    public void onNewShoppingListCreated(String listName) {
-
     }
 
     private class OnChildDropdownRequested implements View.OnClickListener {
@@ -760,5 +719,32 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     @Override
     public HashMap<String, Integer> getCartInfo() {
         return mCartInfo;
+    }
+
+    @Override
+    public void setCartInfo(HashMap<String, Integer> cartInfo) {
+        mCartInfo = cartInfo;
+        // Refresh product list
+
+        if (mViewPager != null) {
+            int currentItem = mViewPager.getCurrentItem();
+            redrawFragment(currentItem - 1);
+            redrawFragment(currentItem);
+            redrawFragment(currentItem + 1);
+        } else {
+            // There's only one fragment
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag(GenericProductListFragment.class.getName());
+            if (fragment != null) {
+                ((ProductListAwareFragment) fragment).redrawProductList();
+            }
+        }
+    }
+
+    private void redrawFragment(int position) {
+        if (mViewPager == null) return;
+        Fragment fragment = ((ProductListPagerAdapter) mViewPager.getAdapter()).getRegisteredFragment(position);
+        if (fragment != null) {
+            ((ProductListAwareFragment) fragment).redrawProductList();
+        }
     }
 }
