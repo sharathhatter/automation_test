@@ -233,7 +233,9 @@ public class PaymentSelectionActivity extends BackButtonActivity {
             RadioButton rbtnPaymentType = getPaymentOptionRadioButton(layoutPaymentOptions);
             rbtnPaymentType.setText(entrySet.getKey());
             rbtnPaymentType.setId(i);
-            if (i == 0) {
+            boolean isSelected = TextUtils.isEmpty(mSelectedPaymentMethod) ? i == 0 :
+                    mSelectedPaymentMethod.equals(entrySet.getValue());
+            if (isSelected) {
                 rbtnPaymentType.setChecked(true);
                 mSelectedPaymentMethod = entrySet.getValue();
             }
