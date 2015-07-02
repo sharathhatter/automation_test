@@ -82,7 +82,6 @@ import com.bigbasket.mobileapp.model.section.SectionTextItem;
 import com.bigbasket.mobileapp.model.section.SubSectionItem;
 import com.bigbasket.mobileapp.task.GetCartCountTask;
 import com.bigbasket.mobileapp.task.GetDynamicPageTask;
-import com.bigbasket.mobileapp.task.uiv3.CreateShoppingListTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;

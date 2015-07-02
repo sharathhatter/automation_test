@@ -3,4 +3,6 @@
     <string name="fb_app_id" templateMergeStrategy="preserve">1406239262971187</string>
     <string name="moe_app_id" templateMergeStrategy="preserve">YSD6Y5AVT60X4AWNLL35EIDJ</string>
     <string name="moe_gcm_sender_id" templateMergeStrategy="preserve">id:551288451469</string>
+    <string name="new_relic_key">AA7a058918c000f6de19f87629160fe53b42368eb1</string>
+    <string name="localytics_api_key" templateMergeStrategy="preserve">6ccceb97a4f73e429baff50-9c4389ba-1afe-11e5-445b-006918dcf667</string>
 </resources>
