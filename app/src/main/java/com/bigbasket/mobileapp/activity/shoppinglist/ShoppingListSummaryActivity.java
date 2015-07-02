@@ -536,6 +536,12 @@ public class ShoppingListSummaryActivity extends BBActivity {
     }
 
     @Override
+    public void onBasketChanged() {
+        super.onBasketChanged();
+        handleIntent(getIntent());
+    }
+
+    @Override
     public String getScreenTag() {
         return TrackEventkeys.SHOPPING_LIST_CATEGORY_LISTING_SCREEN;
     }

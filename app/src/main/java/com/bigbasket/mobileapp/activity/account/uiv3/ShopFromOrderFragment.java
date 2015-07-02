@@ -50,6 +50,17 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
         return TextUtils.isEmpty(mOrderId) ? getString(R.string.shopFromOrder) : mOrderId;
     }
 
+    @Override
+    public void productListOnActivityCreated() {
+        logProductListingEvent();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadProducts();
+    }
+
     @NonNull
     @Override
     public String getFragmentTxnTag() {
@@ -237,6 +248,8 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
                     }
                 }
                 productListRecyclerAdapter.notifyDataSetChanged();
+            } else if (getCurrentActivity() != null) {
+                getCurrentActivity().triggerActivityResult(requestCode, resultCode, data);
             }
         }
         super.onActivityResult(requestCode, resultCode, data);

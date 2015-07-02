@@ -16,6 +16,7 @@ import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
+import com.bigbasket.mobileapp.interfaces.OnBasketChangeListener;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
@@ -136,6 +137,10 @@ public class BasketOperationTask<T> {
                     ((CartInfoAware) context).setCartSummary(cartOperationApiResponse.basketOperationResponse.getCartSummary());
                     ((CartInfoAware) context).updateUIForCartInfo();
                     ((CartInfoAware) context).markBasketDirty();
+                    if (!TextUtils.isEmpty(navigationCtx) && navigationCtx.equals(TrackEventkeys.NAVIGATION_CTX_SHOW_BASKET)
+                            && context instanceof OnBasketChangeListener) {
+                        ((OnBasketChangeListener) context).markBasketChanged();
+                    }
                     ((BasketOperationAware) context).setBasketOperationResponse(cartOperationApiResponse.basketOperationResponse);
                     ((BasketOperationAware) context).updateUIAfterBasketOperationSuccess(basketOperation,
                             basketCountTextView, viewDecQty, viewIncQty, viewAddToBasket, product, qty,

@@ -165,7 +165,6 @@ public class ProductListRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
         }
     }
 
-
     public void setLoadingFailed(boolean loadingFailed) {
         this.mLoadingFailed = loadingFailed;
     }

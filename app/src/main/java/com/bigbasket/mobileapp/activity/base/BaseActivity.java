@@ -35,10 +35,10 @@ import android.widget.Toast;
 
 import com.appsflyer.AppsFlyerLib;
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.HomeActivity;
 import com.bigbasket.mobileapp.activity.SplashActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignupActivity;
-import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.ShowCartActivity;
 import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
@@ -50,6 +50,7 @@ import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
 import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.LaunchProductListAware;
+import com.bigbasket.mobileapp.interfaces.OnBasketChangeListener;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
@@ -85,7 +86,7 @@ import java.util.Random;
 public abstract class BaseActivity extends AppCompatActivity implements
         CancelableAware, ProgressIndicationAware, ActivityAware,
         ConnectivityAware, TrackingAware, ApiErrorAware,
-        LaunchProductListAware {
+        LaunchProductListAware, OnBasketChangeListener {
 
     public static Typeface faceRupee;
     public static Typeface faceRobotoRegular, faceRobotoLight, faceRobotoMedium,
@@ -381,6 +382,8 @@ public abstract class BaseActivity extends AppCompatActivity implements
         } else if (resultCode == NavigationCodes.GO_TO_QC) {
             setResult(NavigationCodes.GO_TO_QC);
             finish();
+        } else if (resultCode == NavigationCodes.BASKET_CHANGED) {
+            onBasketChanged();
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
@@ -407,7 +410,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 intent = new Intent(getCurrentActivity(), SplashActivity.class);
                 intent.putExtra(Constants.RELOAD_APP, true);
             } else {
-                intent = new Intent(getCurrentActivity(), BBActivity.class);
+                intent = new Intent(getCurrentActivity(), HomeActivity.class);
                 intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_HOME);
             }
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -739,5 +742,15 @@ public abstract class BaseActivity extends AppCompatActivity implements
             }
             getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         }
+    }
+
+    @Override
+    public void onBasketChanged() {
+        markBasketChanged();
+    }
+
+    @Override
+    public void markBasketChanged() {
+        setResult(NavigationCodes.BASKET_CHANGED);
     }
 }

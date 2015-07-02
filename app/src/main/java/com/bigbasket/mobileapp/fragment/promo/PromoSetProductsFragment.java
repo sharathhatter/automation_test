@@ -67,6 +67,17 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
     }
 
     @Override
+    public void productListOnActivityCreated() {
+        logProductListingEvent();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadProducts();
+    }
+
+    @Override
     public void loadProducts() {
         Bundle bundle = getArguments();
 
@@ -377,6 +388,8 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
                 }
                 cartInfo.put(productId, productInQty);
                 productListAdapter.notifyDataSetChanged();
+            } else if (getCurrentActivity() != null) {
+                getCurrentActivity().triggerActivityResult(requestCode, resultCode, data);
             }
         }
         super.onActivityResult(requestCode, resultCode, data);

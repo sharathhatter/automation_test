@@ -136,6 +136,8 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
                 }
                 cartInfo.put(productId, productInQty);
                 productListAdapter.notifyDataSetChanged();
+            } else if (getCurrentActivity() != null) {
+                getCurrentActivity().triggerActivityResult(requestCode, resultCode, data);
             }
         }
         super.onActivityResult(requestCode, resultCode, data);

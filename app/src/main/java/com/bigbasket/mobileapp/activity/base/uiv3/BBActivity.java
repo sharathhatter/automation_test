@@ -558,11 +558,13 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         editor.commit();
     }
 
+    public boolean isBasketDirty() {
+        return PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).
+                getBoolean(Constants.IS_BASKET_COUNT_DIRTY, false);
+    }
+
     @Override
     public void syncBasket() {
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-        editor.remove(Constants.IS_BASKET_COUNT_DIRTY);
-        editor.commit();
         new GetCartCountTask<>(this).startTask();
     }
 
@@ -590,7 +592,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         handleIntent(intent);
     }
 
-    private void handleIntent(Intent intent) {
+    public void handleIntent(Intent intent) {
         handleIntent(intent, null);
     }
 

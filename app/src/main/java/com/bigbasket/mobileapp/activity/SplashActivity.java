@@ -17,7 +17,6 @@ import com.appsflyer.AppsFlyerLib;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
-import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse;
@@ -151,7 +150,7 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
     }
 
     private void loadHomePage() {
-        Intent homePageIntent = new Intent(this, BBActivity.class);
+        Intent homePageIntent = new Intent(this, HomeActivity.class);
         homePageIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_HOME);
         startActivityForResult(homePageIntent, NavigationCodes.GO_TO_HOME);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {

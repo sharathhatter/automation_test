@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.fragment.promo;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -20,6 +21,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
@@ -37,6 +39,8 @@ import com.bigbasket.mobileapp.model.promo.PromoSet;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv2.ProductView;
@@ -488,7 +492,8 @@ public class PromoDetailFragment extends BaseFragment {
         }
 
         public void onClick(View v) {
-            PromoSetProductsFragment promoSetProductsFragment = new PromoSetProductsFragment();
+            Intent intent = new Intent(getActivity(), BackButtonActivity.class);
+            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PROMO_SET_PRODUCTS);
             Bundle bundle = new Bundle();
             bundle.putInt(Constants.PROMO_ID, promoDetail.getId());
             bundle.putString(Constants.PROMO_TYPE, promoDetail.getPromoType());
@@ -517,8 +522,8 @@ public class PromoDetailFragment extends BaseFragment {
                 bundle.putInt(Constants.SET_ID, promoSet.getSetId());
                 bundle.putString(Constants.NAME, promoSet.getName());
             }
-            promoSetProductsFragment.setArguments(bundle);
-            changeFragment(promoSetProductsFragment);
+            intent.putExtras(bundle);
+            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         }
     }
 

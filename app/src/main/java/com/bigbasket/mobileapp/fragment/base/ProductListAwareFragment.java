@@ -69,11 +69,15 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        productListOnActivityCreated();
+    }
+
+    public void productListOnActivityCreated() {
         loadProducts();
         logProductListingEvent();
     }
 
-    private void logProductListingEvent() {
+    public void logProductListingEvent() {
         HashMap<String, String> map = new HashMap<>();
         map.put(TrackEventkeys.NAVIGATION_CTX, getNavigationCtx());
         trackEvent(TrackingAware.PRODUCT_LIST_SHOWN, map);
@@ -292,13 +296,6 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         return TrackEventkeys.PRODUCT_LISTING_SCREEN;
     }
 
-    public void onResume() {
-        super.onResume();
-        if (getCurrentActivity() != null && getCurrentActivity().isBasketDirty()) {
-            syncBasket();
-        }
-    }
-
     @Override
     public void updateUIAfterBasketOperationSuccess(BasketOperation basketOperation, TextView basketCountTextView, View viewDecQty,
                                                     View viewIncQty, View btnAddToBasket, Product product, String qty,
@@ -330,6 +327,8 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                 if (getActivity() instanceof ProductListDataAware) {
                     ((ProductListDataAware) getActivity()).setCartInfo(cartInfo);
                 }
+            } else if (getCurrentActivity() != null) {
+                getCurrentActivity().triggerActivityResult(requestCode, resultCode, data);
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
