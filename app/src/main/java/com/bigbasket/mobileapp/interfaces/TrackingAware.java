@@ -171,6 +171,8 @@ public interface TrackingAware {
     String THANK_YOU_PAGE_SHOWN = "Checkout.Thank You Page Shown";
     String BASKET_ADD_PROMO_BUNDLE = "Basket.Add Promo Bundle";
 
+    String NOTIFICATION_ERROR = "Notification Error";
+
 
     //member referral
     String MEMBER_REFERRAL_SHOWN = "Member.Referral Shown";

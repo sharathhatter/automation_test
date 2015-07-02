@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.widget.FrameLayout;
 
 import com.bigbasket.mobileapp.R;
@@ -15,9 +17,12 @@ import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.OrderDetailActivity;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
+import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.handler.DeepLinkHandler;
+import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.InvoiceDataAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
@@ -25,15 +30,25 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.moe.pushlibrary.utils.MoEHelperConstants;
 
+import java.util.HashMap;
 import java.util.List;
+
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceDataAware,
         HandlerAware {
 
-    private boolean isInBackground;
+    protected BigBasketMessageHandler handler;
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        handler = new SilentDeepLinkHandler<>(this);
         launchCorrespondingActivity();
+    }
+
+    @Override
+    public BigBasketMessageHandler getHandler() {
+        return handler;
     }
 
     private void launchCorrespondingActivity() {
@@ -58,27 +73,18 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
             return;
         }
         String sourceName = uri.getQueryParameter(MoEHelperConstants.NAVIGATION_SOURCE_KEY);
-        if (sourceName != null && sourceName.equals(MoEHelperConstants.NAVIGATION_SOURCE_NOTIFICATION) &&
-                isInBackground) {
-            Intent intent = new Intent(this, SplashActivity.class);
-            startActivity(intent);
-            finish();
+        if (sourceName != null && sourceName.equals(MoEHelperConstants.NAVIGATION_SOURCE_NOTIFICATION)) {
+            goToHome(false);
         } else {
             finish();
         }
-    }
-
-    @Override
-    public void onStart(){
-        super.onStart();
-        setAppInBackGround(this);
     }
 
     private void setAppInBackGround(final Context context){
         new Thread(new Runnable() {
             @Override
             public void run() {
-                isInBackground = true;
+                boolean isInBackground = true;
                 ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
                     List<ActivityManager.RunningAppProcessInfo> runningProcesses = am.getRunningAppProcesses();
@@ -101,19 +107,6 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
             }
         });
     }
-
-//    public static boolean isApplicationSentToBackground(final Context context) {
-//        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-//        List<ActivityManager.RunningTaskInfo> tasks = am.getRunningTasks(1);
-//        if (!tasks.isEmpty()) {
-//            ComponentName topActivity = tasks.get(0).topActivity;
-//            if (!topActivity.getPackageName().equals(context.getPackageName())) {
-//                return true;
-//            }
-//        }
-//
-//        return false;
-//    }
 
     /**
      * MoEHelperUtils.dumpIntentExtras for dumping all extras
@@ -159,8 +152,40 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
         startActivityForResult(orderDetailIntent, NavigationCodes.GO_TO_HOME);
     }
 
-    @Override
-    protected void onPositiveButtonClicked(DialogInterface dialogInterface, String sourceName, Object valuePassed) {
-        handleBackStack();
+
+    private class SilentDeepLinkHandler<T> extends BigBasketMessageHandler{
+
+        public SilentDeepLinkHandler(T ctx) {
+            super(ctx);
+        }
+
+        @Override
+        public void sendEmptyMessage(int what, String message, boolean finish) {
+            HashMap<String, String> map = new HashMap<>();
+            map.put(TrackEventkeys.ERROR_CODE, String.valueOf(what));
+            map.put(TrackEventkeys.ERROR_MSG, message);
+            trackEvent(TrackingAware.NOTIFICATION_ERROR, map);
+            goToHome(false);
+        }
+
+        @Override
+        public void handleRetrofitError(RetrofitError error, String sourceName, boolean finish) {
+            LogNotificationEvent(error);
+            goToHome(false);
+        }
+
     }
+
+    private void LogNotificationEvent(RetrofitError error){
+        HashMap<String, String> map = new HashMap<>();
+        if(error.getResponse()!=null) {
+            map.put(TrackEventkeys.ERROR_CODE, String.valueOf(error.getResponse().getStatus()));
+            map.put(TrackEventkeys.ERROR_MSG, String.valueOf(error.getResponse().getReason()));
+        }else {
+            map.put(TrackEventkeys.ERROR_CODE, String.valueOf(error.getKind()));
+            map.put(TrackEventkeys.ERROR_MSG, error.getMessage());
+        }
+        trackEvent(TrackingAware.NOTIFICATION_ERROR, map);
+    }
+
 }
