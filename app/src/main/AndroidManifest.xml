@@ -541,8 +541,8 @@
             android:value="@string/localytics_api_key" />
 
         <meta-data
-            android:name="com.crashlytics.ApiKey"
-            android:value="d2ddc47cb01fb54a209f0ff02a2aecfec7b4d827" />
+            android:name="io.fabric.ApiKey"
+            android:value="${crashlytics_id}" />
 
         <meta-data
             android:name="com.google.android.gms.version"

@@ -35,11 +35,13 @@ android {
         targetSdkVersion Integer.parseInt(project.ANDROID_BUILD_TARGET_SDK_VERSION)
         versionCode Integer.parseInt(project.VERSION_CODE)
         versionName project.VERSION_NAME
+        manifestPlaceholders = [ crashlytics_id:"d2ddc47cb01fb54a209f0ff02a2aecfec7b4d827" ]
     }
     buildTypes {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            manifestPlaceholders = [ crashlytics_id:"5c333c62dd3801a51b2d6c14ef6e11a868ba5277" ]
         }
     }
     compileOptions {
@@ -100,7 +102,7 @@ dependencies {
     compile 'com.newrelic.agent.android:android-agent:5.+'
     compile 'com.facebook.android:facebook-android-sdk:4.2.0'
     provided 'com.squareup.okhttp:okhttp:2.3.0'
-    compile('com.crashlytics.sdk.android:crashlytics:2.2.1@aar') {
+    compile('com.crashlytics.sdk.android:crashlytics:2.2.3@aar') {
         transitive = true;
     }
     // Supports Android 4.0.3 and later (API level 15)
