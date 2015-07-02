@@ -42,7 +42,7 @@
                 android:singleLine="true"
                 android:textColor="@color/white"
                 android:textColorHint="@color/translucent_white"
-                android:textSize="@dimen/primary_text_size" />
+                android:textSize="@dimen/secondary_text_size" />
 
             <EditText
                 android:id="@+id/editTextLastName"

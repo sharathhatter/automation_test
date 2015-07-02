@@ -483,16 +483,6 @@
             </intent-filter>
         </receiver>
 
-        <service
-            android:name="com.moe.pushlibrary.internal.MoEService"
-            android:exported="false" />
-        <service
-            android:name="com.moe.pushlibrary.MoEWorker"
-            android:exported="false" />
-        <service
-            android:name="com.moe.pushlibrary.GeofenceIntentService"
-            android:exported="false" />
-
         <provider
             android:name="com.moe.pushlibrary.providers.MoEProvider"
             android:authorities="com.bigbasket.mobileapp.moengage.provider"
