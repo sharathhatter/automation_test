@@ -42,7 +42,7 @@ public class SocialLoginConfirmActivity extends ChangeCityActivity {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgress(true);
         bigBasketApiService.socialRegisterMember(mLoginType, new Gson().toJson(socialAccount, SocialAccount.class),
-                String.valueOf(city.getId()), new LoginApiResponseCallback(socialAccount.getEmail(), null, false, mLoginType, socialAccount, true));
+                String.valueOf(city.getId()), new LoginApiResponseCallback(socialAccount.getEmail(), null, false, mLoginType, socialAccount));
     }
 
     public void showProgress(boolean show) {

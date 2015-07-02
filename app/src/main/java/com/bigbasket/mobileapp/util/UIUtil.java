@@ -216,8 +216,9 @@ public class UIUtil {
         editor.putString(Constants.MEMBER_FULL_NAME_KEY, userDetails.fullName);
         editor.putString(Constants.MID_KEY, mId);
 
-        if (!preferences.getString(Constants.CITY_ID, "-1").
-                equals(String.valueOf(userDetails.analytics.cityId))) {
+        String cityId = preferences.getString(Constants.CITY_ID, "-1");
+        if (!TextUtils.isEmpty(cityId) &&
+                !cityId.equals(String.valueOf(userDetails.analytics.cityId))) {
             editor.remove(Constants.AREA_INFO_CALL_LAST);
             new AreaPinInfoAdapter(ctx).deleteData();
         }

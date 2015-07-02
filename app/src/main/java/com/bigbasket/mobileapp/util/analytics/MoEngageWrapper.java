@@ -26,6 +26,15 @@ public class MoEngageWrapper {
         }
     }
 
+    public static void logout(MoEHelper moEHelper) {
+        try {
+            moEHelper.syncInteractionDataNow();
+            moEHelper.logoutUser();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void onStart(MoEHelper moEHelper, Activity context) {
         try {
             moEHelper.onStart(context);

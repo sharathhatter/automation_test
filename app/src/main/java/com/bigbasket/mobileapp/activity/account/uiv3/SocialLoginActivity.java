@@ -25,6 +25,7 @@ import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
+import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
@@ -141,7 +142,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
         Gson gson = new Gson();
         bigBasketApiService.socialLogin(loginType, gson.toJson(socialAccount, SocialAccount.class),
                 new LoginApiResponseCallback(socialAccount.getEmail(),
-                        null, false, loginType, socialAccount, false));
+                        null, false, loginType, socialAccount));
     }
 
     @Override
@@ -293,6 +294,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
         }
     }
 
+    @SuppressWarnings("unchecked")
     public void doLogout() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
         SharedPreferences.Editor editor = preferences.edit();
@@ -337,6 +339,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
 
     public void saveLoginUserDetailInPreference(LoginApiResponse loginApiResponse, String socialAccountType,
                                                 String email, String password, boolean rememberMe) {
+        MoEngageWrapper.logout(moEHelper);
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(Constants.BBTOKEN_KEY, loginApiResponse.bbToken);
@@ -392,7 +395,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
         private String loginType;
         private String email;
         private String password;
-        private boolean rememberMe, isNewAccount;
+        private boolean rememberMe;
         private SocialAccount socialAccount;
 
         public LoginApiResponseCallback(String email, String password, boolean rememberMe, String loginType) {
@@ -403,11 +406,10 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
         }
 
         public LoginApiResponseCallback(String email, String password, boolean rememberMe, String loginType,
-                                        SocialAccount socialAccount, boolean isNewAccount) {
+                                        SocialAccount socialAccount) {
             this(email, password, rememberMe, loginType);
             this.loginType = loginType;
             this.socialAccount = socialAccount;
-            this.isNewAccount = isNewAccount;
         }
 
         @Override

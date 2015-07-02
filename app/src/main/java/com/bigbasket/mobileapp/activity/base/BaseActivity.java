@@ -93,7 +93,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     protected BigBasketMessageHandler handler;
     protected boolean isActivitySuspended;
     protected ProgressDialog progressDialog = null;
-    private MoEHelper moEHelper;
+    protected MoEHelper moEHelper;
     private AppEventsLogger fbLogger;
 
     public static void showKeyboard(final View view) {
