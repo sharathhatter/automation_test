@@ -314,9 +314,7 @@ public class UIUtil {
     public static boolean isMoreThanXHour(long timeInMiliSeconds, int hour) {
         long timerDiff = System.currentTimeMillis() - timeInMiliSeconds;
         int hourDiff = (int) timerDiff / (60 * 60 * 1000);
-        if (hourDiff >= hour)
-            return true;
-        return false;
+        return hourDiff >= hour;
     }
 
     public static void openPlayStoreLink(Activity activity) {
@@ -522,9 +520,7 @@ public class UIUtil {
             if (inputDate == null || toDaysData == null) return false;
             if (inputDate.after(toDaysData))
                 return false;
-            if (inputDate.before(dateBefore1900))
-                return false;
-            return true;
+            return !inputDate.before(dateBefore1900);
         }
         return false;
     }

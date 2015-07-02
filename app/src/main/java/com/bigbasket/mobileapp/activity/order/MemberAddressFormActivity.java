@@ -402,7 +402,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
 
         @Override
         public void success(ApiResponse<CreateUpdateAddressApiResponseContent> createUpdateAddressApiResponse, Response response) {
-            if (isSuspended()) return;
+            if (isSuspended() || getCurrentActivity() == null) return;
             try {
                 hideProgressDialog();
             } catch (IllegalArgumentException e) {
@@ -411,9 +411,9 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
             switch (createUpdateAddressApiResponse.status) {
                 case 0:
                     if (otpValidationDialogFragment != null) {
-                        if (getCurrentActivity() != null && otpValidationDialogFragment.getEditTextMobileCode()!=null)
+                        if (getCurrentActivity() != null && otpValidationDialogFragment.getEditTextMobileCode() != null)
                             BaseActivity.hideKeyboard(getCurrentActivity(), otpValidationDialogFragment.getEditTextMobileCode());
-                        if(otpValidationDialogFragment.isVisible())
+                        if (otpValidationDialogFragment.isVisible())
                             otpValidationDialogFragment.dismiss();
                     }
 

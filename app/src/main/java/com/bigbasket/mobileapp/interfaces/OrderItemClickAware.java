@@ -7,5 +7,5 @@ import com.bigbasket.mobileapp.model.order.Order;
  */
 public interface OrderItemClickAware {
 
-    public void onOrderItemClicked(Order order);
+    void onOrderItemClicked(Order order);
 }

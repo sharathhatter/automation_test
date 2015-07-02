@@ -178,21 +178,18 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
             focusView.requestFocus();
         } else {
             showProgress(true);
-            startMemberRegistration(email, password, firstName, lastName, null);
+            startMemberRegistration(email, password, firstName, lastName);
         }
     }
 
     private void startMemberRegistration(String email, String passwd, String firstName,
-                                         String lastName, String refCode) {
+                                         String lastName) {
         JsonObject userDetailsJsonObj = new JsonObject();
         userDetailsJsonObj.addProperty(Constants.EMAIL, email);
         userDetailsJsonObj.addProperty(Constants.FIRSTNAME, firstName);
         userDetailsJsonObj.addProperty(Constants.LASTNAME, lastName);
         userDetailsJsonObj.addProperty(Constants.PASSWORD, passwd);
         userDetailsJsonObj.addProperty(Constants.CITY_ID, mCities.get(mSelectedCityIndx).getId());
-        if (!TextUtils.isEmpty(refCode)) {
-            userDetailsJsonObj.addProperty(Constants.REF_CODE, refCode);
-        }
         userDetailsJsonObj.addProperty(Constants.NEWSLETTER_SUBSCRIPTION, true);
 
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);

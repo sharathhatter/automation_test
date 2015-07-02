@@ -20,16 +20,12 @@ import java.util.ArrayList;
 public class LinkedProductsAdapter extends BaseAdapter {
 
     private Context context;
-    private String shipmentName;
-    private LinkedShipments linkedShipments;
     private ArrayList<Product> products;
     private Typeface typeface;
 
-    public LinkedProductsAdapter(Context context, String shipmentName, LinkedShipments linkedShipments,
+    public LinkedProductsAdapter(Context context, LinkedShipments linkedShipments,
                                  Typeface typeface) {
         this.context = context;
-        this.shipmentName = shipmentName;
-        this.linkedShipments = linkedShipments;
         this.products = linkedShipments.getSkuList();
         this.typeface = typeface;
     }

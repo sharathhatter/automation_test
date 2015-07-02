@@ -1,25 +1,15 @@
 package com.bigbasket.mobileapp.activity;
 
-import android.app.ActivityManager;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.text.TextUtils;
-import android.widget.FrameLayout;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
-import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.OrderDetailActivity;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.handler.DeepLinkHandler;
-import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.InvoiceDataAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
@@ -27,19 +17,17 @@ import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
-import com.bigbasket.mobileapp.util.UIUtil;
 import com.moe.pushlibrary.utils.MoEHelperConstants;
 
 import java.util.HashMap;
-import java.util.List;
 
 import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceDataAware,
         HandlerAware {
 
     protected BigBasketMessageHandler handler;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         handler = new SilentDeepLinkHandler<>(this);
@@ -80,33 +68,33 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
         }
     }
 
-    private void setAppInBackGround(final Context context){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                boolean isInBackground = true;
-                ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
-                    List<ActivityManager.RunningAppProcessInfo> runningProcesses = am.getRunningAppProcesses();
-                    for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
-                        if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
-                            for (String activeProcess : processInfo.pkgList) {
-                                if (activeProcess.equals(context.getPackageName())) {
-                                    isInBackground = false;
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(1);
-                    ComponentName componentInfo = taskInfo.get(0).topActivity;
-                    if (componentInfo.getPackageName().equals(context.getPackageName())) {
-                        isInBackground = false;
-                    }
-                }
-            }
-        });
-    }
+//    private void setAppInBackGround(final Context context) {
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                boolean isInBackground = true;
+//                ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+//                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
+//                    List<ActivityManager.RunningAppProcessInfo> runningProcesses = am.getRunningAppProcesses();
+//                    for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
+//                        if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+//                            for (String activeProcess : processInfo.pkgList) {
+//                                if (activeProcess.equals(context.getPackageName())) {
+//                                    isInBackground = false;
+//                                }
+//                            }
+//                        }
+//                    }
+//                } else {
+//                    List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(1);
+//                    ComponentName componentInfo = taskInfo.get(0).topActivity;
+//                    if (componentInfo.getPackageName().equals(context.getPackageName())) {
+//                        isInBackground = false;
+//                    }
+//                }
+//            }
+//        });
+//    }
 
     /**
      * MoEHelperUtils.dumpIntentExtras for dumping all extras
@@ -153,8 +141,9 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
     }
 
 
-    private class SilentDeepLinkHandler<T> extends BigBasketMessageHandler{
+    private class SilentDeepLinkHandler<T> extends BigBasketMessageHandler {
 
+        @SuppressWarnings("unchecked")
         public SilentDeepLinkHandler(T ctx) {
             super(ctx);
         }
@@ -176,12 +165,12 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
 
     }
 
-    private void LogNotificationEvent(RetrofitError error){
+    private void LogNotificationEvent(RetrofitError error) {
         HashMap<String, String> map = new HashMap<>();
-        if(error.getResponse()!=null) {
+        if (error.getResponse() != null) {
             map.put(TrackEventkeys.ERROR_CODE, String.valueOf(error.getResponse().getStatus()));
             map.put(TrackEventkeys.ERROR_MSG, String.valueOf(error.getResponse().getReason()));
-        }else {
+        } else {
             map.put(TrackEventkeys.ERROR_CODE, String.valueOf(error.getKind()));
             map.put(TrackEventkeys.ERROR_MSG, error.getMessage());
         }

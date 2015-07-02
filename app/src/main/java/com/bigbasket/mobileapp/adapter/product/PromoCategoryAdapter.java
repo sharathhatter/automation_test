@@ -53,6 +53,7 @@ public class PromoCategoryAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         int viewType = getItemViewType(position);
         if (viewType == VIEW_TYPE_PROMO) {

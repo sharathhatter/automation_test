@@ -2,7 +2,7 @@ package com.bigbasket.mobileapp.interfaces;
 
 
 public interface CancelableAware {
-    public boolean isSuspended();
+    boolean isSuspended();
 
-    public void setSuspended(boolean state);
+    void setSuspended(boolean state);
 }

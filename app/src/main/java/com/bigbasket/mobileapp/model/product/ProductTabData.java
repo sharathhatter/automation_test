@@ -47,6 +47,7 @@ public class ProductTabData implements Parcelable {
     @SerializedName(Constants.SCREEN_NAME)
     private String screenName;
 
+    @SuppressWarnings("unchecked")
     public ProductTabData(Parcel source) {
         boolean isHeaderSectionNull = source.readByte() == (byte) 1;
         if (!isHeaderSectionNull) {

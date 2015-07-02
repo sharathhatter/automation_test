@@ -226,7 +226,7 @@ public class ShowCartActivity extends BackButtonActivity {
                     break;
             }
         } else {
-            super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
+            super.onPositiveButtonClicked(dialogInterface, null, valuePassed);
         }
     }
 

@@ -7,13 +7,11 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.product.ProductListRecyclerAdapter;
@@ -199,7 +197,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
                 try {
                     showErrorMsg("Server Error");
                 } catch (IllegalArgumentException e) {
-                    return;
+
                 }
 
             }

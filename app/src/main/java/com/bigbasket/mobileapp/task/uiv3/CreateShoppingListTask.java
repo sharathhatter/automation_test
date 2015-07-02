@@ -16,7 +16,6 @@ import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.interfaces.ShoppingListNamesAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.Constants;
-import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.InputDialog;
 import com.bigbasket.mobileapp.util.UIUtil;
 

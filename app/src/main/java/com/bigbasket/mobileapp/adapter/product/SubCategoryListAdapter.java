@@ -51,6 +51,7 @@ public class SubCategoryListAdapter<T> extends RecyclerView.Adapter<RecyclerView
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (getItemViewType(position) == VIEW_TYPE_CATEGORY) {
             final Category subcategory = categoryList.get(getActualPosition(position));

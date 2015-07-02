@@ -2,13 +2,13 @@ package com.bigbasket.mobileapp.interfaces;
 
 
 public interface ProgressIndicationAware {
-    public void showProgressDialog(String msg);
+    void showProgressDialog(String msg);
 
-    public void showProgressDialog(String msg, boolean cancelable);
+    void showProgressDialog(String msg, boolean cancelable);
 
-    public void hideProgressDialog();
+    void hideProgressDialog();
 
-    public void showProgressView();
+    void showProgressView();
 
-    public void hideProgressView();
+    void hideProgressView();
 }

@@ -246,7 +246,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
 
             ListView lstLinkedShipments = (ListView) base.findViewById(R.id.lstLinkedShipments);
             LinkedProductsAdapter linkedProductsAdapter = new LinkedProductsAdapter(getCurrentActivity(),
-                    shipment.getShipmentName(), shipment.getLinkedShipments(), faceRobotoRegular);
+                    shipment.getLinkedShipments(), faceRobotoRegular);
             lstLinkedShipments.setAdapter(linkedProductsAdapter);
 
             AlertDialog.Builder builder = new AlertDialog.Builder(getCurrentActivity())

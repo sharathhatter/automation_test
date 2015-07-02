@@ -3,9 +3,9 @@ package com.bigbasket.mobileapp.interfaces;
 import com.bigbasket.mobileapp.model.section.SectionData;
 
 public interface SectionAware {
-    public SectionData getSectionData();
+    SectionData getSectionData();
 
-    public void setSectionData(SectionData sectionData);
+    void setSectionData(SectionData sectionData);
 
-    public void setScreenName(String screenName);
+    void setScreenName(String screenName);
 }

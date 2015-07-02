@@ -35,13 +35,13 @@ android {
         targetSdkVersion Integer.parseInt(project.ANDROID_BUILD_TARGET_SDK_VERSION)
         versionCode Integer.parseInt(project.VERSION_CODE)
         versionName project.VERSION_NAME
-        manifestPlaceholders = [ crashlytics_id:"d2ddc47cb01fb54a209f0ff02a2aecfec7b4d827" ]
+        manifestPlaceholders = [crashlytics_id: "d2ddc47cb01fb54a209f0ff02a2aecfec7b4d827"]
     }
     buildTypes {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            manifestPlaceholders = [ crashlytics_id:"5c333c62dd3801a51b2d6c14ef6e11a868ba5277" ]
+            manifestPlaceholders = [crashlytics_id: "5c333c62dd3801a51b2d6c14ef6e11a868ba5277"]
         }
     }
     compileOptions {

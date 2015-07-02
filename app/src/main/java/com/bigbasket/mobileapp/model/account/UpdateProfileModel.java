@@ -121,7 +121,7 @@ public class UpdateProfileModel implements Parcelable {
         }
         dest.writeString(pincode);
 
-        dest.writeByte((byte) (newPaperSubscription  ? 1 : 0));
+        dest.writeByte((byte) (newPaperSubscription ? 1 : 0));
     }
 
     public String getStreet() {
