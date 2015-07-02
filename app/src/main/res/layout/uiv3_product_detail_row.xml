@@ -182,7 +182,6 @@
             android:layout_below="@id/txtPromoAddSavings"
             android:layout_marginLeft="@dimen/margin_normal"
             android:layout_marginRight="@dimen/margin_small"
-            android:layout_marginTop="@dimen/margin_small"
             android:layout_toRightOf="@id/imgPromoStar"
             android:text="Buy 1 get 1 free"
             android:textColor="@color/uiv3_secondary_text_color"

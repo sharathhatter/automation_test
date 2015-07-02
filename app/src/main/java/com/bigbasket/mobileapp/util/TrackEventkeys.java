@@ -108,6 +108,9 @@ public final class TrackEventkeys {
     public static final String SLOT_SELECTION_SCREEN = "Slot Selection";
     public static final String CREDIT_CARD_SCREEN = "Credit Card";
     public static final String THANK_YOU_SCREEN = "Thank You";
+
+    public static final String ERROR_CODE = "error_code";
+    public static final String ERROR_MSG = "error_message";
     //referral
     public static final String BB_REFERRAL_MAIL_SCREEN = "offer";
     public static final String CONTACT_REFERRAL_SCREEN = "offer";
