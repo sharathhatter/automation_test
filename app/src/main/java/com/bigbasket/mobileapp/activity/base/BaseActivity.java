@@ -383,7 +383,9 @@ public abstract class BaseActivity extends AppCompatActivity implements
             setResult(NavigationCodes.GO_TO_QC);
             finish();
         } else if (resultCode == NavigationCodes.BASKET_CHANGED) {
-            onBasketChanged();
+            onBasketChanged(data);
+            // Initiate Fragment callback (if-any) to sync cart
+            super.onActivityResult(requestCode, resultCode, data);
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
@@ -745,12 +747,12 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onBasketChanged() {
-        markBasketChanged();
+    public void onBasketChanged(@Nullable Intent data) {
+        markBasketChanged(data);
     }
 
     @Override
-    public void markBasketChanged() {
-        setResult(NavigationCodes.BASKET_CHANGED);
+    public void markBasketChanged(@Nullable Intent data) {
+        setResult(NavigationCodes.BASKET_CHANGED, data);
     }
 }

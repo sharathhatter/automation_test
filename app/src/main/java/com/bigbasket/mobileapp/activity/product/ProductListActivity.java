@@ -736,8 +736,8 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     }
 
     @Override
-    public void onBasketChanged() {
-        super.onBasketChanged();
+    public void onBasketChanged(Intent data) {
+        super.onBasketChanged(data);
         getProducts();
     }
 }

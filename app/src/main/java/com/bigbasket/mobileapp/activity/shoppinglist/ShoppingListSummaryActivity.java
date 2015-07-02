@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.activity.shoppinglist;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -536,8 +537,8 @@ public class ShoppingListSummaryActivity extends BBActivity {
     }
 
     @Override
-    public void onBasketChanged() {
-        super.onBasketChanged();
+    public void onBasketChanged(Intent data) {
+        super.onBasketChanged(data);
         handleIntent(getIntent());
     }
 

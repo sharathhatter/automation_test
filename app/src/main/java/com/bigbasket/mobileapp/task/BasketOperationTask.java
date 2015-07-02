@@ -139,7 +139,7 @@ public class BasketOperationTask<T> {
                     ((CartInfoAware) context).markBasketDirty();
                     if (!TextUtils.isEmpty(navigationCtx) && navigationCtx.equals(TrackEventkeys.NAVIGATION_CTX_SHOW_BASKET)
                             && context instanceof OnBasketChangeListener) {
-                        ((OnBasketChangeListener) context).markBasketChanged();
+                        ((OnBasketChangeListener) context).markBasketChanged(null);
                     }
                     ((BasketOperationAware) context).setBasketOperationResponse(cartOperationApiResponse.basketOperationResponse);
                     ((BasketOperationAware) context).updateUIAfterBasketOperationSuccess(basketOperation,

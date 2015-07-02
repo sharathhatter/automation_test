@@ -99,12 +99,14 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
         Bundle bundle = getArguments();
         String baseImgUrl = bundle.getString(Constants.BASE_IMG_URL);
         int setId = bundle.getInt(Constants.SET_ID);
-        String cartString = bundle.getString(Constants.CART_INFO);
-        if (!TextUtils.isEmpty(cartString)) {
-            Gson gson = new Gson();
-            Type type = new TypeToken<HashMap<String, Integer>>() {
-            }.getType();
-            cartInfo = gson.fromJson(cartString, type);
+        if (cartInfo == null) {
+            String cartString = bundle.getString(Constants.CART_INFO);
+            if (!TextUtils.isEmpty(cartString)) {
+                Gson gson = new Gson();
+                Type type = new TypeToken<HashMap<String, Integer>>() {
+                }.getType();
+                cartInfo = gson.fromJson(cartString, type);
+            }
         }
         renderPromoSet(setId, products, baseImgUrl);
     }
@@ -257,7 +259,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
                         savingFormattedAmount, faceRupee));
     }
 
-    private ProductViewDisplayDataHolder getProductDisplayHodler() {
+    private ProductViewDisplayDataHolder getProductDisplayHolder() {
         return new ProductViewDisplayDataHolder.Builder()
                 .setCommonTypeface(faceRobotoRegular)
                 .setSansSerifMediumTypeface(faceRobotoMedium)
@@ -286,10 +288,10 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
 
         if (cartInfo == null) {
             productListAdapter = new ProductListRecyclerAdapter(products, baseImgUrl,
-                    getProductDisplayHodler(), this, products.size(), getNavigationCtx());
+                    getProductDisplayHolder(), this, products.size(), getNavigationCtx());
         } else {
             productListAdapter = new ProductListRecyclerAdapter(products, baseImgUrl,
-                    getProductDisplayHodler(), this, products.size(), getNavigationCtx(),
+                    getProductDisplayHolder(), this, products.size(), getNavigationCtx(),
                     cartInfo);
         }
 
@@ -387,7 +389,6 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
                     cartInfo = new HashMap<>();
                 }
                 cartInfo.put(productId, productInQty);
-                productListAdapter.notifyDataSetChanged();
             } else if (getCurrentActivity() != null) {
                 getCurrentActivity().triggerActivityResult(requestCode, resultCode, data);
             }
