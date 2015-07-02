@@ -1,7 +1,10 @@
 package com.bigbasket.mobileapp.fragment.shoppinglist;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.ViewGroup;
 
 import com.bigbasket.mobileapp.R;
@@ -13,6 +16,7 @@ import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListSummary;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 
@@ -21,7 +25,12 @@ import java.util.HashMap;
 
 public class ShoppingListProductFragment extends ProductListAwareFragment {
 
-    //private ProductListRecyclerAdapter productListAdapter;
+    @Nullable
+    private ProductListRecyclerAdapter productListAdapter;
+
+    @Nullable
+    private HashMap<String, Integer> cartInfo;
+
     @Override
     public void loadProducts() {
         loadShoppingListProducts();
@@ -47,7 +56,7 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
     private void loadShoppingListProducts() {
         ShoppingListSummary shoppingListSummary = getArguments().getParcelable(Constants.SHOPPING_LIST_SUMMARY);
         String baseImgUrl = getArguments().getString(Constants.BASE_IMG_URL);
-        renderProducts(shoppingListSummary, baseImgUrl, null);
+        renderProducts(shoppingListSummary, baseImgUrl);
     }
 
     private ProductViewDisplayDataHolder getProductViewHolder(ShoppingListSummary shoppingListSummary) {
@@ -64,8 +73,7 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
                 .build();
     }
 
-    private void renderProducts(ShoppingListSummary shoppingListSummary, String baseImgUrl,
-                                HashMap<String, Integer> cartInfo) {
+    private void renderProducts(ShoppingListSummary shoppingListSummary, String baseImgUrl) {
         if (getActivity() == null) return;
         ViewGroup contentView = getContentView();
         if (contentView == null) return;
@@ -73,7 +81,6 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
 
         RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, contentView);
 
-        ProductListRecyclerAdapter productListAdapter;
         if (cartInfo != null) {
             productListAdapter = new ProductListRecyclerAdapter(shoppingListSummary.getProducts(),
                     baseImgUrl,
@@ -90,7 +97,8 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
 
     public void notifyDataChanged(HashMap<String, Integer> cartInfo,
                                   ShoppingListSummary shoppingListSummary, String baseImgUrl) {
-        renderProducts(shoppingListSummary, baseImgUrl, cartInfo);
+        this.cartInfo = cartInfo;
+        renderProducts(shoppingListSummary, baseImgUrl);
     }
 
     @Override
@@ -113,5 +121,23 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
     @Override
     public String getFragmentTxnTag() {
         return ShoppingListProductFragment.class.getName();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        setSuspended(false);
+        if (resultCode == NavigationCodes.BASKET_CHANGED && data != null) {
+            String productId = data.getStringExtra(Constants.SKU_ID);
+            int productInQty = data.getIntExtra(Constants.NO_ITEM_IN_CART, 0);
+            if (!TextUtils.isEmpty(productId) && getActivity() != null
+                    && productListAdapter != null) {
+                if (cartInfo == null) {
+                    cartInfo = new HashMap<>();
+                }
+                cartInfo.put(productId, productInQty);
+                productListAdapter.notifyDataSetChanged();
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.fragment.promo;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -34,6 +35,7 @@ import com.bigbasket.mobileapp.model.promo.PromoMessage;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.google.gson.Gson;
@@ -54,6 +56,10 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
     private View promoProductListView = null;
     private int promoId;
     private String promoType;
+    @Nullable
+    private ProductListRecyclerAdapter productListAdapter;
+    @Nullable
+    private HashMap<String, Integer> cartInfo;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -83,14 +89,13 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
         String baseImgUrl = bundle.getString(Constants.BASE_IMG_URL);
         int setId = bundle.getInt(Constants.SET_ID);
         String cartString = bundle.getString(Constants.CART_INFO);
-        HashMap<String, Integer> cartInfo = null;
         if (!TextUtils.isEmpty(cartString)) {
             Gson gson = new Gson();
             Type type = new TypeToken<HashMap<String, Integer>>() {
             }.getType();
             cartInfo = gson.fromJson(cartString, type);
         }
-        renderPromoSet(setId, products, baseImgUrl, cartInfo);
+        renderPromoSet(setId, products, baseImgUrl);
     }
 
     @Override
@@ -99,11 +104,10 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
     }
 
     private void renderPromoSet(final int setId,
-                                ArrayList<Product> products, String baseImgUrl,
-                                final HashMap<String, Integer> cartInfo) {
+                                ArrayList<Product> products, String baseImgUrl) {
 
         if (products != null) {
-            displayProductList(products, baseImgUrl, cartInfo);
+            displayProductList(products, baseImgUrl);
         } else {
             BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
             showProgressDialog(getString(R.string.please_wait));
@@ -117,7 +121,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
                         showErrorMsg(promoSetProductsApiResponseContent.message);
                     } else if (status == 0) {
                         displayProductList(promoSetProductsApiResponseContent.apiResponseContent.promoSetProducts,
-                                promoSetProductsApiResponseContent.apiResponseContent.baseImgUrl, cartInfo);
+                                promoSetProductsApiResponseContent.apiResponseContent.baseImgUrl);
                     }
                 }
 
@@ -150,12 +154,13 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
                     setCartSummary(addBundleApiResponse.cartSummary);
                     updateUIForCartInfo();
                     getPromoSummary();
+                    cartInfo = addBundleApiResponse.apiResponseContent.cartInfo;
                     if (addBundleApiResponse.apiResponseContent.cartInfo != null) {
-                        notifyPromoProducts(products, baseImgUrl,
-                                addBundleApiResponse.apiResponseContent.cartInfo);
+                        notifyPromoProducts(products, baseImgUrl);
                     }
+                    markBasketDirty();
                 } else {
-                    showErrorMsg("Server Error");
+                    handler.sendEmptyMessage(addBundleApiResponse.status, addBundleApiResponse.message);
                 }
             }
 
@@ -167,7 +172,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
                 } catch (IllegalArgumentException e) {
                     return;
                 }
-                showErrorMsg("Server Error");
+                handler.handleRetrofitError(error);
             }
         });
     }
@@ -187,7 +192,8 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
                             promoSummaryApiResponseContent.apiResponseContent.saving,
                             promoSummaryApiResponseContent.apiResponseContent.numInBasket);
                 } else {
-                    showErrorMsg("Server Error");
+                    handler.sendEmptyMessage(promoSummaryApiResponseContent.status,
+                            promoSummaryApiResponseContent.message);
                 }
             }
 
@@ -195,7 +201,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
             public void failure(RetrofitError error) {
                 if (isSuspended()) return;
                 try {
-                    showErrorMsg("Server Error");
+                    handler.handleRetrofitError(error);
                 } catch (IllegalArgumentException e) {
 
                 }
@@ -253,8 +259,7 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
                 .build();
     }
 
-    private void displayProductList(final ArrayList<Product> products, final String baseImgUrl,
-                                    HashMap<String, Integer> cartInfo) {
+    private void displayProductList(final ArrayList<Product> products, final String baseImgUrl) {
         if (getActivity() == null) return;
         if (products == null) {
             showAlertDialogFinish(getString(R.string.error), getString(R.string.server_error));
@@ -268,7 +273,6 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
         showProgressDialog(getString(R.string.please_wait));
         RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, layoutPromoProductList);
 
-        ProductListRecyclerAdapter productListAdapter;
         if (cartInfo == null) {
             productListAdapter = new ProductListRecyclerAdapter(products, baseImgUrl,
                     getProductDisplayHodler(), this, products.size(), getNavigationCtx());
@@ -303,9 +307,8 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
         }
     }
 
-    private void notifyPromoProducts(ArrayList<Product> products, String baseImgUrl,
-                                     HashMap<String, Integer> cartInfo) {
-        displayProductList(products, baseImgUrl, cartInfo);
+    private void notifyPromoProducts(ArrayList<Product> products, String baseImgUrl) {
+        displayProductList(products, baseImgUrl);
     }
 
     private View getPromoSummaryView() {
@@ -359,5 +362,23 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
     @Override
     public String getNavigationCtx() {
         return TrackEventkeys.NAVIGATION_CTX_PROMO;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        setSuspended(false);
+        if (resultCode == NavigationCodes.BASKET_CHANGED && data != null) {
+            String productId = data.getStringExtra(Constants.SKU_ID);
+            int productInQty = data.getIntExtra(Constants.NO_ITEM_IN_CART, 0);
+            if (!TextUtils.isEmpty(productId) && getActivity() != null
+                    && productListAdapter != null) {
+                if (cartInfo == null) {
+                    cartInfo = new HashMap<>();
+                }
+                cartInfo.put(productId, productInQty);
+                productListAdapter.notifyDataSetChanged();
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

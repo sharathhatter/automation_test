@@ -27,7 +27,6 @@ import com.bigbasket.mobileapp.apiservice.models.response.PromoDetailApiResponse
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.common.ProductViewHolder;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
-import com.bigbasket.mobileapp.handler.ProductDetailOnClickListener;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
@@ -80,6 +79,13 @@ public class PromoDetailFragment extends BaseFragment {
 
         int promoId = getArguments().getInt(Constants.PROMO_ID, -1);
         mPromoCategory = getArguments().getParcelable(Constants.PROMO_CATS);
+        getPromoDetail(promoId);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        int promoId = getArguments().getInt(Constants.PROMO_ID, -1);
         getPromoDetail(promoId);
     }
 
@@ -294,8 +300,7 @@ public class PromoDetailFragment extends BaseFragment {
             productRowParams.setMargins(8, 8, 8, 0);
 
             ProductView.setProductView(new ProductViewHolder(base), freeProduct, promoDetail.getBaseImgUrl(),
-                    new ProductDetailOnClickListener(freeProduct.getSku(), this), productViewDisplayDataHolder,
-                    false, null, getNavigationCtx());
+                    null, productViewDisplayDataHolder, false, null, getNavigationCtx());
             base.setLayoutParams(productRowParams);
             view.addView(base);
         }

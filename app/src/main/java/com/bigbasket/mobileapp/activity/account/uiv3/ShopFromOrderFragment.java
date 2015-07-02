@@ -1,8 +1,10 @@
 package com.bigbasket.mobileapp.activity.account.uiv3;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -24,6 +26,7 @@ import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 
@@ -39,6 +42,8 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
 
     private ArrayList<Product> mProducts;
     private String mOrderId;
+    @Nullable
+    private ProductListRecyclerAdapter productListRecyclerAdapter;
 
     @Override
     public String getTitle() {
@@ -137,7 +142,7 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
                 .setShowShopListDeleteBtn(false)
                 .build();
 
-        ProductListRecyclerAdapter productListRecyclerAdapter = new ProductListRecyclerAdapter(mProducts, null,
+        productListRecyclerAdapter = new ProductListRecyclerAdapter(mProducts, null,
                 productViewDisplayDataHolder, this, mProducts.size(),
                 getNavigationCtx());
 
@@ -215,5 +220,25 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
             outState.putParcelableArrayList(Constants.PRODUCTS, mProducts);
         }
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        setSuspended(false);
+        if (resultCode == NavigationCodes.BASKET_CHANGED && data != null) {
+            String productId = data.getStringExtra(Constants.SKU_ID);
+            int productInQty = data.getIntExtra(Constants.NO_ITEM_IN_CART, 0);
+            if (!TextUtils.isEmpty(productId) && getActivity() != null
+                    && mProducts != null && productListRecyclerAdapter != null) {
+                for (Product product : mProducts) {
+                    if (product.getSku().equals(productId)) {
+                        product.setNoOfItemsInCart(productInQty);
+                        break;
+                    }
+                }
+                productListRecyclerAdapter.notifyDataSetChanged();
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

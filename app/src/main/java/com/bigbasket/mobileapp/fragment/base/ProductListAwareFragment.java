@@ -327,7 +327,9 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                     cartInfo = new HashMap<>();
                 }
                 cartInfo.put(productId, productInQty);
-                ((ProductListDataAware) getActivity()).setCartInfo(cartInfo);
+                if (getActivity() instanceof ProductListDataAware) {
+                    ((ProductListDataAware) getActivity()).setCartInfo(cartInfo);
+                }
             }
         }
         super.onActivityResult(requestCode, resultCode, data);

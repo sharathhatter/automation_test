@@ -350,7 +350,17 @@ public class UIUtil {
         if (!animate) {
             requestCreator.noFade();
         }
-        requestCreator.into(imageView);
+        try {
+            requestCreator.into(imageView);
+        } catch (OutOfMemoryError e) {
+            System.gc();
+            try {
+                requestCreator.into(imageView);
+            } catch (OutOfMemoryError e1) {
+                // :(
+                e1.printStackTrace();
+            }
+        }
     }
 
     public static void preLoadImage(String url, Context context) {

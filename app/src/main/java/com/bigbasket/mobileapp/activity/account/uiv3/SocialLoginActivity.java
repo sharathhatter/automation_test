@@ -296,6 +296,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
 
     @SuppressWarnings("unchecked")
     public void doLogout() {
+        SectionManager.clearAllSectionData(getCurrentActivity());
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
         SharedPreferences.Editor editor = preferences.edit();
         editor.remove(Constants.FIRST_NAME_PREF);
