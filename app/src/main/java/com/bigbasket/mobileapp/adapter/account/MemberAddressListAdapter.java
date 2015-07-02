@@ -88,6 +88,7 @@ public class MemberAddressListAdapter<T> extends RecyclerView.Adapter<RecyclerVi
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         int viewType = getItemViewType(position);
         if (viewType == VIEW_TYPE_LABEL) {

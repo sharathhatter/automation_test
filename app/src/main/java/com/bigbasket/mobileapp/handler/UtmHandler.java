@@ -61,7 +61,7 @@ public class UtmHandler {
             return Collections.emptySet();
         }
 
-        Set<String> names = new LinkedHashSet<String>();
+        Set<String> names = new LinkedHashSet<>();
         int start = 0;
         do {
             int next = query.indexOf('&', start);

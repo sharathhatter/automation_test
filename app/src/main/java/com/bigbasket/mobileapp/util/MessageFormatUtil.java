@@ -80,7 +80,6 @@ public class MessageFormatUtil<T> {
         int index = 0;
         while (idx1 != -1) {
             idx2 = str.indexOf("]", idx1) + 1;
-            final String clickString = str.substring(idx1, idx2);
             final MessageParamInfo messageParamInfoArrayList = messageParamInfoList.get(arrayListIndex.get(index));
             spannableStringBuilder.setSpan(new ClickableSpan() {
                 @Override

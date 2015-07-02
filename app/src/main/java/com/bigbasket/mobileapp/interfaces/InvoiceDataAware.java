@@ -4,5 +4,5 @@ import com.bigbasket.mobileapp.model.order.OrderInvoice;
 
 public interface InvoiceDataAware {
 
-    public void onDisplayOrderInvoice(OrderInvoice orderInvoice);
+    void onDisplayOrderInvoice(OrderInvoice orderInvoice);
 }

@@ -67,6 +67,7 @@ public class OrderListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (getItemViewType(position) == VIEW_TYPE_DATA) {
             OrderListRowHolder rowHolder = (OrderListRowHolder) holder;

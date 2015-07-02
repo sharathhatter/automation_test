@@ -148,6 +148,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public View getView(int position, View convertView, ViewGroup parent) {
         final Object obj = orderList.get(position);
 
@@ -195,9 +196,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
 
     @Override
     public boolean isEnabled(int position) {
-        if (getItemViewType(position) == VIEW_TYPE_CART_HEADER)
-            return false;
-        return true;
+        return getItemViewType(position) != VIEW_TYPE_CART_HEADER;
     }
 
     private View getFulfillmentInfo(Object obj) {
@@ -295,7 +294,6 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
         final View imgDecBasketQty = rowHolder.getViewDecBasketQty();
         final View imgIncBasketQty = rowHolder.getViewIncBasketQty();
         final ImageView imgRemove = rowHolder.getImgRemove();
-        final View basketOperationSeparatorLine = rowHolder.getBasketOperationSeparatorLine();
         TextView txtPackDesc = rowHolder.getTxtPackDesc();
         String packType = "";
         if (!TextUtils.isEmpty(cartItem.getProductWeight()))
@@ -545,7 +543,6 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
         private ImageView imgLiquorIcon;
         private View base;
         private TextView txtExpressAvailable;
-        private View basketOperationSeparatorLine;
         private TextView txtPackDesc;
 
         public RowHolder(View base) {
@@ -672,13 +669,6 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
             if (viewDecBasketQty == null)
                 viewDecBasketQty = base.findViewById(R.id.viewDecBasketQty);
             return viewDecBasketQty;
-        }
-
-        public View getBasketOperationSeparatorLine() {
-            if (basketOperationSeparatorLine == null) {
-                basketOperationSeparatorLine = base.findViewById(R.id.basketOperationSeparatorLine);
-            }
-            return basketOperationSeparatorLine;
         }
     }
 

@@ -33,7 +33,7 @@ public class OTPValidationDialogFragment extends AbstractDialogFragment {
     public OTPValidationDialogFragment() {
     }
 
-    public EditText getEditTextMobileCode(){
+    public EditText getEditTextMobileCode() {
         return editTextMobileCode;
     }
 

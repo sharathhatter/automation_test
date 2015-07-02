@@ -32,6 +32,7 @@ public class SearchViewAdapter<T> extends CursorAdapter implements Filterable {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void bindView(final View view, final Context context, Cursor cursor) {
         int viewType = getItemViewType(cursor);
         String termString = cursor.getString(1);

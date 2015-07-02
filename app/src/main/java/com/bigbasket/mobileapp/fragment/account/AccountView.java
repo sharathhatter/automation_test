@@ -217,6 +217,7 @@ public class AccountView<T> {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public View getView(int position, View convertView, ViewGroup parent) {
             View row = convertView;
             ViewHolder viewHolder;

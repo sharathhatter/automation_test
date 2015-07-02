@@ -157,7 +157,7 @@ public class PayuTransactionActivity extends BackButtonActivity {
                     break;
             }
         } else {
-            super.onPositiveButtonClicked(dialogInterface, sourceName, valuePassed);
+            super.onPositiveButtonClicked(dialogInterface, null, valuePassed);
         }
     }
 

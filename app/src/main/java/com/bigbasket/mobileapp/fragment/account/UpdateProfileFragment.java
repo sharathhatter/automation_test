@@ -369,9 +369,9 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
                 }
                 if (memberProfileDataCallback.status == 0) {
                     if (otpValidationDialogFragment != null) {
-                        if (getCurrentActivity() != null && otpValidationDialogFragment.getEditTextMobileCode()!=null)
+                        if (getCurrentActivity() != null && otpValidationDialogFragment.getEditTextMobileCode() != null)
                             BaseActivity.hideKeyboard((BaseActivity) (getActivity()), otpValidationDialogFragment.getEditTextMobileCode());
-                        if(otpValidationDialogFragment.isVisible())
+                        if (otpValidationDialogFragment.isVisible())
                             otpValidationDialogFragment.dismiss();
                     }
                     updatePreferenceData();

@@ -356,7 +356,6 @@ public class Constants {
     public static final String PASSWD_PREF = "PWD";
     public static final String USER_DETAILS = "user_details";
     public static final String MOBILE_NUMBER = "mobile_number";
-    public static final String REF_CODE = "ref_code";
     public static final String CITY_ID = "city_id";
     public static final String NEWSLETTER_SUBSCRIPTION = "newsletter_subscription";
     public static final String FIRST_NAME_PREF = "firstname";
