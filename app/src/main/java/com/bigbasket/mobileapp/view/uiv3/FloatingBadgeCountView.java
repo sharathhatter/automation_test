@@ -48,29 +48,51 @@ public class FloatingBadgeCountView extends FrameLayout {
 
     public FloatingBadgeCountView(Context context) {
         super(context);
+        this.setOnTouchListener(new AnimatorListener(context));
     }
 
     public FloatingBadgeCountView(Context context, AttributeSet attrs) {
         super(context, attrs);
         View.inflate(context, R.layout.floating_badge_count, this);
         init(context, attrs);
-        this.setOnTouchListener(new OnSwipeTouchListener(context) {
-            @Override
-            public void onSwipeLeft() {
-                int translationX = -(getScreenWidth() - getMeasuredWidth() - getMarginRight() * 2);
-                ViewPropertyAnimator.animate(FloatingBadgeCountView.this).setInterpolator(mInterpolator)
-                        .setDuration(TRANSLATE_DURATION_MILLIS)
-                        .translationX(translationX);
-            }
+        if (doesOsSupportSmoothAnimation()) {
+            this.setOnTouchListener(new AnimatorListener(context));
+        }
+    }
 
-            @Override
-            public void onSwipeRight() {
-                int translationX = 0;
-                ViewPropertyAnimator.animate(FloatingBadgeCountView.this).setInterpolator(mInterpolator)
-                        .setDuration(TRANSLATE_DURATION_MILLIS)
-                        .translationX(translationX);
-            }
-        });
+    public FloatingBadgeCountView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        View.inflate(context, R.layout.floating_badge_count, this);
+        init(context, attrs);
+        if (doesOsSupportSmoothAnimation()) {
+            this.setOnTouchListener(new AnimatorListener(context));
+        }
+    }
+
+    private class AnimatorListener extends OnSwipeTouchListener {
+        public AnimatorListener(Context context) {
+            super(context);
+        }
+
+        @Override
+        public void onSwipeLeft() {
+            int translationX = -(getScreenWidth() - getMeasuredWidth() - getMarginRight() * 2);
+            ViewPropertyAnimator.animate(FloatingBadgeCountView.this).setInterpolator(mInterpolator)
+                    .setDuration(TRANSLATE_DURATION_MILLIS)
+                    .translationX(translationX);
+        }
+
+        @Override
+        public void onSwipeRight() {
+            int translationX = 0;
+            ViewPropertyAnimator.animate(FloatingBadgeCountView.this).setInterpolator(mInterpolator)
+                    .setDuration(TRANSLATE_DURATION_MILLIS)
+                    .translationX(translationX);
+        }
+    }
+
+    private boolean doesOsSupportSmoothAnimation() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
     }
 
     @Override

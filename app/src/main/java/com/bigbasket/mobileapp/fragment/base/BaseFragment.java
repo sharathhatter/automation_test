@@ -121,6 +121,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         }
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setCancelable(cancelable);
+        progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.setMessage(msg);
         progressDialog.show();
     }

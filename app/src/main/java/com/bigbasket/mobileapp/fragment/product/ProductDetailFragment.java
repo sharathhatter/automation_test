@@ -196,13 +196,12 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
 
     @Override
     public void onShoppingListFetched(ArrayList<ShoppingListName> shoppingListNames) {
-        if (shoppingListNames == null || shoppingListNames.size() == 0) {
-            Toast.makeText(getActivity(), getString(R.string.createAShoppingList), Toast.LENGTH_SHORT).show();
-        } else {
-            ShoppingListNamesDialog shoppingListNamesDialog = ShoppingListNamesDialog.newInstance(shoppingListNames);
-            shoppingListNamesDialog.setTargetFragment(this, 0);
-            shoppingListNamesDialog.show(getFragmentManager(), Constants.SHOP_LST);
+        if (shoppingListNames == null) {
+            shoppingListNames = new ArrayList<>();
         }
+        ShoppingListNamesDialog shoppingListNamesDialog = ShoppingListNamesDialog.newInstance(shoppingListNames);
+        shoppingListNamesDialog.setTargetFragment(this, 0);
+        shoppingListNamesDialog.show(getFragmentManager(), Constants.SHOP_LST);
     }
 
     @Override
