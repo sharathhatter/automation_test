@@ -565,6 +565,9 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
     @Override
     public void syncBasket() {
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+        editor.remove(Constants.IS_BASKET_COUNT_DIRTY);
+        editor.commit();
         new GetCartCountTask<>(this).startTask();
     }
 
@@ -939,14 +942,15 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     private void syncCartInfoFromPreference() {
-        if (cartSummary != null && cartSummary.getNoOfItems() == 0) {
-            // Update from preference
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
-            String cartCountStr = preferences.getString(Constants.GET_CART, null);
-            if (!TextUtils.isEmpty(cartCountStr) && TextUtils.isDigitsOnly(cartCountStr)) {
-                cartSummary.setNoOfItems(Integer.parseInt(cartCountStr));
-            }
+        // Update from preference
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
+        String cartCountStr = preferences.getString(Constants.GET_CART, "0");
+        if (cartSummary == null || cartCountStr == null || !TextUtils.isDigitsOnly(cartCountStr)) {
+            cartSummary = new CartSummary(0, 0, Integer.parseInt(cartCountStr));
+        } else if (!TextUtils.isEmpty(cartCountStr) && TextUtils.isDigitsOnly(cartCountStr)) {
+            cartSummary.setNoOfItems(Integer.parseInt(cartCountStr));
         }
+        updateCartCountHeaderTextView();
     }
 
     @Override

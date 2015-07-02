@@ -607,6 +607,8 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                 filteredOns = data.getParcelableArrayListExtra(Constants.FILTERED_ON);
             }
             applyFilter(filteredOns);
+        } else if (resultCode == NavigationCodes.BASKET_CHANGED) {
+            onBasketChanged(data);
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
