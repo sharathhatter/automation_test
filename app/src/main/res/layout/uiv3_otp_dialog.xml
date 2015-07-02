@@ -1,113 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="@color/white"
-    android:layout_height="match_parent">
+    android:orientation="vertical">
 
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:orientation="vertical"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/margin_normal"
         android:layout_marginRight="@dimen/margin_normal"
-        android:layout_height="wrap_content">
+        android:orientation="vertical">
 
         <TextView
+            android:id="@+id/txtDialogTitle"
             android:layout_width="match_parent"
-            android:layout_marginTop="@dimen/margin_medium_large"
-            android:layout_marginBottom="@dimen/margin_normal"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/large_text_size"
+            android:layout_marginBottom="@dimen/margin_normal"
+            android:layout_marginTop="@dimen/margin_medium_large"
             android:text="@string/confirmMobileNumber"
-            android:id="@+id/txtDialogTitle" />
+            android:textSize="@dimen/large_text_size" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <TextView
-                android:layout_width="match_parent"
                 android:id="@+id/txtHeaderMsg"
-                android:gravity="left"
-                android:textSize="@dimen/primary_text_size"
-                android:textColor="@color/dark_grey"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/headerMsgForMobileConfirm" />
+                android:gravity="left"
+                android:text="@string/headerMsgForMobileConfirm"
+                android:textColor="@color/dark_grey"
+                android:textSize="@dimen/primary_text_size" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_marginTop="@dimen/margin_mini"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_height="wrap_content">
+                android:layout_marginTop="@dimen/margin_mini">
 
 
                 <TextView
-                    android:layout_width="wrap_content"
                     android:id="@+id/txtResendCode"
-                    android:gravity="center_vertical"
-                    android:text="@string/txtResendCodeStr"
-                    android:textColor="@color/dark_green"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
+                    android:layout_marginTop="@dimen/margin_small"
+                    android:gravity="center_vertical"
                     android:paddingBottom="@dimen/padding_small"
                     android:paddingLeft="@dimen/padding_small"
                     android:paddingTop="@dimen/padding_small"
-                    android:layout_marginTop="@dimen/margin_small"
-                    android:textSize="@dimen/primary_text_size"
-                    android:layout_height="wrap_content" />
-
-
-                <!--<View-->
-                <!--android:layout_width="1dp"-->
-                <!--android:background="@color/strokeLine"-->
-                <!--android:layout_marginRight="@dimen/margin_small"-->
-                <!--android:id="@+id/resendSeparatorLine"-->
-                <!--android:layout_alignBottom="@+id/txtResendCode"-->
-                <!--android:layout_marginTop="@dimen/margin_small"-->
-                <!--android:layout_toLeftOf="@id/txtResendCode"-->
-                <!--android:layout_height="30dp" />-->
+                    android:text="@string/txtResendCodeStr"
+                    android:textColor="@color/dark_green"
+                    android:textSize="@dimen/primary_text_size" />
 
 
                 <EditText
+                    android:id="@+id/editTextMobileCode"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/txtConfirmNumberHint"
-                    android:inputType="number"
+                    android:layout_alignBaseline="@id/txtResendCode"
                     android:layout_marginRight="@dimen/margin_normal"
                     android:layout_toLeftOf="@id/txtResendCode"
-                    android:layout_alignBaseline="@id/txtResendCode"
-                    android:id="@+id/editTextMobileCode"
-                    android:textColor="@color/uiv3_primary_text_color"
+                    android:hint="@string/txtConfirmNumberHint"
+                    android:inputType="number"
                     android:paddingLeft="@dimen/padding_mini"
-                    android:paddingRight="@dimen/padding_mini" />
+                    android:paddingRight="@dimen/padding_mini"
+                    android:textColor="@color/uiv3_primary_text_color" />
 
 
                 <TextView
-                    android:layout_width="match_parent"
                     android:id="@+id/txtResendNumber"
-                    android:textColor="@color/dark_green"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/editTextMobileCode"
+                    android:layout_marginLeft="@dimen/margin_mini"
                     android:gravity="left"
                     android:paddingTop="@dimen/padding_mini"
-                    android:textSize="@dimen/small_text_size"
-                    android:visibility="gone"
-                    android:layout_marginLeft="@dimen/margin_mini"
-                    android:layout_below="@id/editTextMobileCode"
                     android:text="@string/resendOtpMsg"
-                    android:layout_height="wrap_content" />
+                    android:textColor="@color/dark_green"
+                    android:textSize="@dimen/small_text_size"
+                    android:visibility="gone" />
 
                 <TextView
-                    android:layout_width="match_parent"
                     android:id="@+id/txtErrorValidateNumber"
-                    android:textSize="@dimen/small_text_size"
-                    android:layout_marginLeft="@dimen/margin_mini"
-                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_below="@id/txtResendNumber"
-                    android:textColor="@color/promo_red_color"
+                    android:layout_marginLeft="@dimen/margin_mini"
                     android:gravity="center|left"
+                    android:paddingTop="@dimen/padding_mini"
                     android:text="@string/otpCodeErrorMsg"
-                    android:layout_height="wrap_content" />
+                    android:textColor="@color/promo_red_color"
+                    android:textSize="@dimen/small_text_size"
+                    android:visibility="gone" />
 
             </RelativeLayout>
 
@@ -117,37 +107,37 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_marginTop="@dimen/margin_normal"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/margin_normal"
-        android:orientation="horizontal"
-        android:gravity="center|right"
         android:layout_marginRight="@dimen/margin_normal"
-        android:layout_height="wrap_content">
+        android:layout_marginTop="@dimen/margin_normal"
+        android:gravity="center|right"
+        android:orientation="horizontal">
 
         <TextView
-            android:layout_width="wrap_content"
             android:id="@+id/txtCancel"
-            android:text="@string/CANCEL"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:gravity="center"
             android:paddingBottom="@dimen/padding_small"
             android:paddingLeft="@dimen/padding_small"
             android:paddingTop="@dimen/padding_small"
-            android:textSize="@dimen/primary_text_size"
+            android:text="@string/CANCEL"
             android:textColor="@android:color/black"
-            android:layout_height="wrap_content" />
+            android:textSize="@dimen/primary_text_size" />
 
         <TextView
-            android:layout_width="wrap_content"
             android:id="@+id/txtConfirm"
-            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/padding_normal"
+            android:gravity="center"
             android:paddingBottom="@dimen/padding_small"
             android:paddingLeft="@dimen/padding_small"
             android:paddingTop="@dimen/padding_small"
-            android:textSize="@dimen/primary_text_size"
             android:text="@string/txtConfirm"
             android:textColor="@color/red_color"
-            android:layout_height="wrap_content" />
+            android:textSize="@dimen/primary_text_size" />
     </LinearLayout>
 
 
