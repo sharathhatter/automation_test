@@ -15,31 +15,35 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 public class BBWebView extends WebView {
     public BBWebView(Context context) {
         super(context);
+        setWebViewClient(new BBWebViewClient());
     }
 
     public BBWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        setWebViewClient(new BBWebViewClient());
     }
 
     public BBWebView(final Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        setWebViewClient(new WebViewClient() {
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                if (url != null && url.startsWith("bigbasket://")) {
-                    try {
-                        ((ActivityAware) context).getCurrentActivity().
-                                startActivityForResult(new Intent(Intent.ACTION_VIEW,
-                                                Uri.parse(url)),
-                                        NavigationCodes.GO_TO_HOME);
-                        return true;
-                    } catch (ActivityNotFoundException e) {
-                        // Do nothing
-                    }
+        setWebViewClient(new BBWebViewClient());
+    }
+
+    private class BBWebViewClient extends WebViewClient {
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            if (url != null && url.startsWith("bigbasket://")) {
+                try {
+                    ((ActivityAware) getContext()).getCurrentActivity().
+                            startActivityForResult(new Intent(Intent.ACTION_VIEW,
+                                            Uri.parse(url)),
+                                    NavigationCodes.GO_TO_HOME);
+                    return true;
+                } catch (ActivityNotFoundException e) {
+                    // Do nothing
                 }
-                return super.shouldOverrideUrlLoading(view, url);
             }
-        });
+            return super.shouldOverrideUrlLoading(view, url);
+        }
     }
 
     @Override
