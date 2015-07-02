@@ -17,7 +17,6 @@
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@+id/picUsr"
         android:layout_toRightOf="@+id/picCrm"
-        android:clickable="true"
         android:orientation="vertical"
         android:paddingTop="5dp"
         android:paddingRight="5dp"
