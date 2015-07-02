@@ -416,6 +416,8 @@ public class ShoppingListSummaryActivity extends BBActivity {
                 if (getCurrentActivity() == null) return;
                 if (!mShoppingListName.getName().equalsIgnoreCase(inputText.trim()))
                     editShoppingListName(mShoppingListName, inputText);
+                else
+                    showAlertDialog("Shopping List with name \""+inputText.trim()+"\" already exits");
             }
         }.show();
     }
