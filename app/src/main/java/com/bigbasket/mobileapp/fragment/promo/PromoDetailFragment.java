@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.fragment.promo;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -20,6 +21,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
@@ -27,7 +29,6 @@ import com.bigbasket.mobileapp.apiservice.models.response.PromoDetailApiResponse
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.common.ProductViewHolder;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
-import com.bigbasket.mobileapp.handler.ProductDetailOnClickListener;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
@@ -38,6 +39,8 @@ import com.bigbasket.mobileapp.model.promo.PromoSet;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv2.ProductView;
@@ -80,6 +83,13 @@ public class PromoDetailFragment extends BaseFragment {
 
         int promoId = getArguments().getInt(Constants.PROMO_ID, -1);
         mPromoCategory = getArguments().getParcelable(Constants.PROMO_CATS);
+        getPromoDetail(promoId);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        int promoId = getArguments().getInt(Constants.PROMO_ID, -1);
         getPromoDetail(promoId);
     }
 
@@ -294,8 +304,7 @@ public class PromoDetailFragment extends BaseFragment {
             productRowParams.setMargins(8, 8, 8, 0);
 
             ProductView.setProductView(new ProductViewHolder(base), freeProduct, promoDetail.getBaseImgUrl(),
-                    new ProductDetailOnClickListener(freeProduct.getSku(), this), productViewDisplayDataHolder,
-                    false, null, getNavigationCtx());
+                    null, productViewDisplayDataHolder, false, null, getNavigationCtx());
             base.setLayoutParams(productRowParams);
             view.addView(base);
         }
@@ -483,7 +492,8 @@ public class PromoDetailFragment extends BaseFragment {
         }
 
         public void onClick(View v) {
-            PromoSetProductsFragment promoSetProductsFragment = new PromoSetProductsFragment();
+            Intent intent = new Intent(getActivity(), BackButtonActivity.class);
+            intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PROMO_SET_PRODUCTS);
             Bundle bundle = new Bundle();
             bundle.putInt(Constants.PROMO_ID, promoDetail.getId());
             bundle.putString(Constants.PROMO_TYPE, promoDetail.getPromoType());
@@ -512,8 +522,8 @@ public class PromoDetailFragment extends BaseFragment {
                 bundle.putInt(Constants.SET_ID, promoSet.getSetId());
                 bundle.putString(Constants.NAME, promoSet.getName());
             }
-            promoSetProductsFragment.setArguments(bundle);
-            changeFragment(promoSetProductsFragment);
+            intent.putExtras(bundle);
+            startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         }
     }
 

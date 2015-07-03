@@ -249,6 +249,7 @@ public class ShowCartActivity extends BackButtonActivity {
             public void success(BaseApiResponse cartEmptyApiResponseCallback, Response response) {
                 if (isSuspended()) return;
                 hideProgressView();
+                markBasketChanged(null);
                 if (cartEmptyApiResponseCallback.status == 0) {
                     editor.putString(Constants.GET_CART, "0");
                     showBasketEmptyMessage();

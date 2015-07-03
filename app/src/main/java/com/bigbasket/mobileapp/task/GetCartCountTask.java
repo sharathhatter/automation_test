@@ -1,5 +1,7 @@
 package com.bigbasket.mobileapp.task;
 
+import android.util.Log;
+
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.CartSummaryApiResponse;
@@ -24,6 +26,7 @@ public class GetCartCountTask<T> {
     public void startTask() {
         if (ctx.get() == null) return;
         if (((ConnectivityAware) ctx.get()).checkInternetConnection()) {
+            Log.d("BigBasket", "Doing network call to sync cart");
             final BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(((ActivityAware) ctx.get()).getCurrentActivity());
             new Thread() {
                 @Override

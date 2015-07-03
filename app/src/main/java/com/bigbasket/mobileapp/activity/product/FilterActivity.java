@@ -93,7 +93,7 @@ public class FilterActivity extends BackButtonActivity {
     }
 
     private void renderFilterItems(final FilterOptionCategory filterOptionCategory) {
-        ListView lstFilterItems = (ListView) findViewById(R.id.lstFilterItems);
+        final ListView lstFilterItems = (ListView) findViewById(R.id.lstFilterItems);
         EditText editTextFilter = (EditText) findViewById(R.id.editTextFilter);
         List<FilterOptionItem> filterOptionItems = filterOptionCategory.getFilterOptionItems();
         mFilterByAdapter = new BBCheckedListAdapter<>
@@ -133,8 +133,8 @@ public class FilterActivity extends BackButtonActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int itemPosition, long id) {
                 if (itemPosition != ListView.INVALID_POSITION) {
-                    FilterOptionItem filterOptionItem = filterOptionCategory.getFilterOptionItems().
-                            get(itemPosition);
+                    FilterOptionItem filterOptionItem = (FilterOptionItem)
+                            lstFilterItems.getAdapter().getItem(itemPosition);
                     CheckedTextView checkedTextView = (CheckedTextView) view.findViewById(android.R.id.text1);
                     boolean isChecked;
                     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {

@@ -50,6 +50,7 @@ import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
 import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.LaunchProductListAware;
+import com.bigbasket.mobileapp.interfaces.OnBasketChangeListener;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
@@ -85,7 +86,7 @@ import java.util.Random;
 public abstract class BaseActivity extends AppCompatActivity implements
         CancelableAware, ProgressIndicationAware, ActivityAware,
         ConnectivityAware, TrackingAware, ApiErrorAware,
-        LaunchProductListAware {
+        LaunchProductListAware, OnBasketChangeListener {
 
     public static Typeface faceRupee;
     public static Typeface faceRobotoRegular, faceRobotoLight, faceRobotoMedium,
@@ -381,6 +382,10 @@ public abstract class BaseActivity extends AppCompatActivity implements
         } else if (resultCode == NavigationCodes.GO_TO_QC) {
             setResult(NavigationCodes.GO_TO_QC);
             finish();
+        } else if (resultCode == NavigationCodes.BASKET_CHANGED) {
+            onBasketChanged(data);
+            // Initiate Fragment callback (if-any) to sync cart
+            super.onActivityResult(requestCode, resultCode, data);
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
@@ -739,5 +744,15 @@ public abstract class BaseActivity extends AppCompatActivity implements
             }
             getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         }
+    }
+
+    @Override
+    public void onBasketChanged(@Nullable Intent data) {
+        markBasketChanged(data);
+    }
+
+    @Override
+    public void markBasketChanged(@Nullable Intent data) {
+        setResult(NavigationCodes.BASKET_CHANGED, data);
     }
 }

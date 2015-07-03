@@ -49,7 +49,6 @@ import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.model.section.SectionTextItem;
-import com.bigbasket.mobileapp.task.GetCartCountTask;
 import com.bigbasket.mobileapp.task.uiv3.CreateShoppingListTask;
 import com.bigbasket.mobileapp.task.uiv3.ProductListTask;
 import com.bigbasket.mobileapp.util.Constants;
@@ -90,6 +89,10 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getProducts();
+    }
+
+    private void getProducts() {
         mTitlePassedViaIntent = getIntent().getStringExtra(Constants.TITLE);
         setTitle(mTitlePassedViaIntent);
         mNameValuePairs = getIntent().getParcelableArrayListExtra(Constants.PRODUCT_QUERY);
@@ -125,11 +128,6 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     @Override
     public String getScreenTag() {
         return TrackEventkeys.PRODUCT_LISTING_SCREEN;
-    }
-
-    public void syncBasket() {
-        // Don't remove the IS_BASKET_DIRTY flag, as Fragment also needs to refresh, only update count
-        new GetCartCountTask<>(this).startTask();
     }
 
     @Override
@@ -609,6 +607,8 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                 filteredOns = data.getParcelableArrayListExtra(Constants.FILTERED_ON);
             }
             applyFilter(filteredOns);
+        } else if (resultCode == NavigationCodes.BASKET_CHANGED) {
+            onBasketChanged(data);
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
@@ -735,5 +735,11 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         if (fragment != null) {
             ((ProductListAwareFragment) fragment).redrawProductList();
         }
+    }
+
+    @Override
+    public void onBasketChanged(Intent data) {
+        super.onBasketChanged(data);
+        getProducts();
     }
 }
