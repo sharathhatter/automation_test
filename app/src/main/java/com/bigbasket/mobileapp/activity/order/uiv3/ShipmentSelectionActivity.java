@@ -105,13 +105,10 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
 
     private void displayShipmentsBasedOnViewState(@Nullable HashMap<String, BaseShipmentAction> shipmentActionHashMap) {
         mSelectedShipmentIndx = new ArrayList<>();
-        TextView txtDeliverablesHeading = (TextView) findViewById(R.id.txtDeliverablesHeading);
-        txtDeliverablesHeading.setTypeface(faceRobotoRegular);
-        txtDeliverablesHeading.setText(mShipments.size() > 1 ? R.string.deliverableTextPlural :
-                R.string.deliverableTextSingular);
 
         LinearLayout layoutShipmentContainer = (LinearLayout) findViewById(R.id.layoutShipmentContainer);
         layoutShipmentContainer.removeAllViews();
+        int marginVertical = (int) getResources().getDimension(R.dimen.margin_normal);
         for (int i = 0; i < mShipments.size(); i++) {
             final Shipment shipment = mShipments.get(i);
             View shipmentView = getLayoutInflater().inflate(R.layout.shipment_row,
@@ -123,16 +120,21 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
                     shipmentActionHashMap.get(shipment.getShipmentId()) : null;
             String shipmentName = shipment.getShipmentName();
             String actionName = null;
+            boolean applyBottom = true;
             if (shipmentAction != null) {
                 if (!TextUtils.isEmpty(shipmentAction.getViewState())) {
                     switch (shipmentAction.getViewState()) {
                         case Constants.HIDDEN:
                             continue;
                         case Constants.SHOW:
+                            if (isAdjacentShipmentDisabled(i, shipmentActionHashMap)) {
+                                applyBottom = i != 0;
+                            }
                             mSelectedShipmentIndx.add(i);
                             shipmentView.setBackgroundColor(getResources().getColor(R.color.uiv3_large_list_item_bck));
                             break;
                         case Constants.DISABLED:
+                            applyBottom = i != 0;
                             shipmentView.setBackgroundColor(getResources().getColor(R.color.uiv3_large_list_item_bck_disabled));
                             break;
                     }
@@ -149,10 +151,16 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
                     switchToggleDelivery.setVisibility(View.GONE);
                 }
             } else {
+                if (isAdjacentShipmentDisabled(i, shipmentActionHashMap)) {
+                    applyBottom = i != 0;
+                }
                 shipmentView.setBackgroundColor(getResources().getColor(R.color.uiv3_large_list_item_bck));
                 switchToggleDelivery.setVisibility(View.GONE);
                 mSelectedShipmentIndx.add(i);
             }
+            ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) shipmentView.getLayoutParams();
+            marginLayoutParams.bottomMargin = applyBottom ? marginVertical : 0;
+            shipmentView.setLayoutParams(marginLayoutParams);
 
             TextView txtShipmentAction = (TextView) shipmentView.findViewById(R.id.txtShipmentAnnotation);
             txtShipmentAction.setTypeface(faceRobotoRegular);
@@ -214,6 +222,30 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
 
             layoutShipmentContainer.addView(shipmentView);
         }
+        setShipmentHeaderMsg(mSelectedShipmentIndx.size());
+    }
+
+    private boolean isAdjacentShipmentDisabled(int position,
+                                               @Nullable HashMap<String, BaseShipmentAction> shipmentActionHashMap) {
+        if (mShipments == null || mShipments.size() <= 1) return false;
+        Shipment adjShipment;
+        if (position == 0) {
+            adjShipment = mShipments.get(position + 1);
+        } else {
+            adjShipment = mShipments.get(position - 1);
+        }
+        BaseShipmentAction shipmentAction = shipmentActionHashMap != null ?
+                shipmentActionHashMap.get(adjShipment.getShipmentId()) : null;
+        return shipmentAction != null &&
+                !TextUtils.isEmpty(shipmentAction.getViewState()) &&
+                shipmentAction.getViewState().equals(Constants.DISABLED);
+    }
+
+    private void setShipmentHeaderMsg(int numVisibleShipments) {
+        TextView txtDeliverablesHeading = (TextView) findViewById(R.id.txtDeliverablesHeading);
+        txtDeliverablesHeading.setTypeface(faceRobotoRegular);
+        txtDeliverablesHeading.setText(numVisibleShipments > 1 ? R.string.deliverableTextPlural :
+                R.string.deliverableTextSingular);
     }
 
     private class OnViewShipmentLinkedProductsListener implements View.OnClickListener {

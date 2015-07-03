@@ -397,6 +397,7 @@
         <activity
             android:name=".activity.order.uiv3.OrderInvoiceActivity"
             android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
         <meta-data
@@ -517,8 +518,8 @@
         <activity
             android:name="com.moengage.addon.ubox.UnifiedInboxActivity"
             android:label="Communication Hub"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@style/BaseAppTheme" />
+            android:theme="@style/BaseAppTheme"
+            android:windowSoftInputMode="adjustResize" />
 
         <service
             android:name="com.moengage.addon.ubox.UBoxMessenger"
