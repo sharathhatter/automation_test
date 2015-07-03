@@ -311,6 +311,8 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
         editor.commit();
         AuthParameters.updateInstance(getCurrentActivity());
 
+        MoEngageWrapper.setUserAttribute(moEHelper, Constants.IS_LOGGED_IN, false);
+
         String analyticsAdditionalAttrsJson = preferences.getString(Constants.ANALYTICS_ADDITIONAL_ATTRS, null);
         editor.remove(Constants.ANALYTICS_ADDITIONAL_ATTRS);
 
@@ -340,7 +342,6 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
 
     public void saveLoginUserDetailInPreference(LoginApiResponse loginApiResponse, String socialAccountType,
                                                 String email, String password, boolean rememberMe) {
-        MoEngageWrapper.logout(moEHelper);
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(Constants.BBTOKEN_KEY, loginApiResponse.bbToken);
