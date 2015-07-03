@@ -26,14 +26,14 @@ public class MoEngageWrapper {
         }
     }
 
-    public static void logout(MoEHelper moEHelper) {
+    public static void setUserAttribute(MoEHelper moEHelper, String key, boolean isLoggedIn) {
         try {
-            moEHelper.syncInteractionDataNow();
-            moEHelper.logoutUser();
+            moEHelper.setUserAttribute(key, isLoggedIn);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 
     public static void onStart(MoEHelper moEHelper, Activity context) {
         try {
