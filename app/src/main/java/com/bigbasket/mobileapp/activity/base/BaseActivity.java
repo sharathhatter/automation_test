@@ -549,15 +549,15 @@ public abstract class BaseActivity extends AppCompatActivity implements
     public void trackEventAppsFlyer(String eventName, String valueToSum, Map<String, String> mapAttr) {
         try {
             AppsFlyerLib.sendTrackingWithEvent(getApplicationContext(), eventName, valueToSum);
+            if (mapAttr != null && mapAttr.size() > 0) {
+                Bundle bundleAttr = new Bundle();
+                for (Map.Entry<String, String> entry : mapAttr.entrySet()) {
+                    bundleAttr.putString(entry.getKey(), entry.getValue());
+                }
+                FacebookEventTrackWrapper.logAppEvent(fbLogger, eventName, Double.parseDouble(valueToSum), bundleAttr);
+            }
         } catch (Exception e) {
             e.printStackTrace();
-        }
-        if (mapAttr != null && mapAttr.size() > 0) {
-            Bundle bundleAttr = new Bundle();
-            for (Map.Entry<String, String> entry : mapAttr.entrySet()) {
-                bundleAttr.putString(entry.getKey(), entry.getValue());
-            }
-            FacebookEventTrackWrapper.logAppEvent(fbLogger, eventName, Double.parseDouble(valueToSum), bundleAttr);
         }
     }
 

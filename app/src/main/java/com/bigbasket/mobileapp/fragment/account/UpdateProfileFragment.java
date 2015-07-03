@@ -310,13 +310,6 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
         }
 
 
-        if (!TextUtils.isEmpty(editTextTelNumber.getText().toString())
-                && editTextTelNumber.getText().toString().length() != 10) {
-            cancel = true;
-            if (focusView == null) focusView = editTextTelNumber;
-            UIUtil.reportFormInputFieldError(editTextTelNumber, getString(R.string.error_telephone_number_less_digits));
-        }
-
         if (cancel) {
             focusView.requestFocus();
             return;

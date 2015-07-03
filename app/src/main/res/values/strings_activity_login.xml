@@ -17,7 +17,6 @@
     <string name="pin_code_error">Pincode should be 6 digit</string>
     <string name="error_invalid_mobile_number">This mobile number is invalid</string>
     <string name="error_mobile_number_less_digits">Mobile number should have 10 digits</string>
-    <string name="error_telephone_number_less_digits">Telephone number should have 10 digits</string>
     <string name="error_field_name">Characters only</string>
     <string name="error_dob">Not a valid DOB</string>
     <string name="error_dob_message">Please enter a valid date of birth</string>

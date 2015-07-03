@@ -238,6 +238,7 @@ public class UIUtil {
 
             MoEHelper moEHelper = MoEngageWrapper.getMoHelperObj(ctx);
             MoEngageWrapper.setUserAttribute(moEHelper, MoEHelperConstants.USER_ATTRIBUTE_UNIQUE_ID, mId);
+            MoEngageWrapper.setUserAttribute(moEHelper, Constants.IS_LOGGED_IN, true);
             MoEngageWrapper.setUserAttribute(moEHelper, MoEHelperConstants.USER_ATTRIBUTE_USER_EMAIL, email);
             MoEngageWrapper.setUserAttribute(moEHelper, MoEHelperConstants.USER_ATTRIBUTE_USER_MOBILE, userDetails.analytics.mobileNumber);
             MoEngageWrapper.setUserAttribute(moEHelper, MoEHelperConstants.USER_ATTRIBUTE_USER_FIRST_NAME, userDetails.firstName);
