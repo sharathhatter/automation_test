@@ -7,14 +7,12 @@
     <color name="light_grey">#ff8a8a8a</color>
     <color name="lighter_grey">#C2C2C2</color>
     <color name="medium_grey">#727272</color>
-    <color name="light_grey_text">#4D4D4D</color>
     <color name="tabDark">#000000</color>
     <color name="red">#E10000</color>
     <color name="dark_red">#9A2722</color>
     <color name="dark_green">#ff14a209</color>
     <color name="white">#ffffff</color>
     <color name="translucent_white">#BBffffff</color>
-    <color name="heading">#f4f3f2</color>
     <color name="strokeLine">#d1d2d3</color>
     <color name="redColor">#ba5253</color>
     <color name="promo_txt_green_color">#2E9B57</color>
@@ -22,8 +20,6 @@
     <color name="active_order_red_color">#ed5353</color>
     <color name="dark_black">#000000</color>
     <color name="actualCostColor">#4CAF70</color>
-    <color name="saveColor">@color/actualCostColor</color>
-    <color name="buttonYellowBkg">#F2D747</color>
     <color name="buttonGreyBkg">#E4E4E4</color>
 
     <!-- UIv3 colours -->
@@ -45,7 +41,6 @@
     <color name="uiv3_list_bkg_color">#EDEDED</color>
     <color name="uiv3_list_bkg_light_color">#F9F9F9</color>
     <color name="uiv3_secondary_text_color">#929292</color>
-    <color name="uiv3_secondary_text_color_pressed">#88929292</color>
     <color name="uiv3_ok_label_color">#FF9100</color>
     <color name="uiv3_link_color">#66009688</color>
     <color name="uiv3_dark_bkg">#333333</color>

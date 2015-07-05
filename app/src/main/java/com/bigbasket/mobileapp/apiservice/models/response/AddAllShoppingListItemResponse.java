@@ -5,9 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.HashMap;
 
-/**
- * Created by jugal on 19/6/15.
- */
+
 public class AddAllShoppingListItemResponse extends OldApiResponseWithCart {
 
     @SerializedName(Constants.CART_INFO)

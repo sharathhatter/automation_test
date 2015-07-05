@@ -31,7 +31,6 @@
     <string name="promo">Promo</string>
     <string name="remove">Remove</string>
     <string name="add">Add</string>
-    <string name="addAll">Add all</string>
     <string name="saving">Savings:</string>
     <string name="regular_price">Regular Price</string>
     <string name="totalMrp">Total: </string>
@@ -45,7 +44,6 @@
     <string name="pin_text_para2">The PIN is required to acknowledge order delivery.</string>
     <string name="pin_text_para3">We request you not to share with the delivery person.</string>
     <string name="pin_text_para4">The PIN will also be sent to you as part of the order ready SMS or notification for each order.</string>
-    <string name="new_pin_hint">Please enter 4-digit PIN</string>
     <string name="placeorder">Place Order</string>
     <string name="invoicenumber">Invoice No:</string>
     <string name="ordernumber">Order No:</string>
@@ -80,11 +78,7 @@
     <string name="signUpCapsVerb">SIGNUP</string>
     <string name="signInCapsVerb">LOGIN</string>
     <string name="newUserSignup">New user? Sign up</string>
-    <string name="HNDetails">House No &amp; Details</string>
     <string name="addressNick">Address Nickname (Optional)</string>
-    <string name="contactFirstName">Contact first name</string>
-    <string name="contactLastName">Contact last name</string>
-    <string name="contactNum">Contact number</string>
     <string name="houseNum">House No</string>
     <string name="streetName">Street Name (Optional)</string>
     <string name="residentialComplex">Location/Area/Zone (Optional)</string>
@@ -94,10 +88,6 @@
     <string name="makeDefaultAddress">Make this my default address.</string>
     <string name="createList">Create list</string>
     <string name="isSystemShoppingListMsg">Lists created by BigBasket cannot be edited!They are system generated lists.</string>
-    <string name="defaultAddress">Default Address</string>
-    <string name="newTxt">New</string>
-    <string name="one">1</string>
-    <string name="ADD">ADD</string>
     <string name="my_orders">My Orders</string>
     <string name="bbCommHub">Communication Hub</string>
     <string name="rating">Rating:</string>
@@ -152,28 +142,20 @@
     <string name="selectAllSlotsErrMsg">You have not selected slots for all the orders.</string>
 
     <!-- payment -->
-    <string name="choosePayment">Choose Payment</string>
     <string name="paymentMethod">Payment Options</string>
     <string name="pleaseChooseAddress">Please choose an address</string>
-    <string name="pleaseChoosePaymentMethod">Please select a payment option.</string>
     <string name="orderItems">Order Items</string>
     <string name="enterVoucher">Enter eVoucher code</string>
-    <string name="largeImageError">Please upload smaller size image.</string>
-    <string name="maxImageError">Can not upload more than 5 images.</string>
     <string name="connectionOffline">Apologies, cannot proceed with the operation. No network connection!\nPlease check your Internet connection</string>
-    <string name="info">Information</string>
     <string name="contactHeading">ADDRESS</string>
     <string name="paymentHeading">PAYMENT DETAILS</string>
     <string name="subTotal">Sub Total</string>
     <string name="finalTotal">Total</string>
     <string name="acceptedFoodCoupon">Accepted food coupon for this order is </string>
     <string name="deliveryCharges">Delivery Charges</string>
-    <string name="noOrders">You don\'t have any delivered or cancelled order in</string>
     <string name="noOrdersPlaced">You haven\'t placed any orders yet</string>
-    <string name="noActiveOrders">Sorry! There are no active orders.</string>
 
     <!-- Shopping list -->
-    <string name="changeShoppingListName">Change shopping list name</string>
     <string name="change">Change</string>
     <string name="deleteShoppingListText">Are you sure, that you want to delete this shopping list?</string>
     <string name="delete">Delete</string>
@@ -190,29 +172,21 @@
     <string name="my_order_label">My Orders</string>
     <!--<string name="active_order_label">Active Orders</string>-->
     <!--<string name="past_order_label">View Order History</string>-->
-    <string name="update_my_profile">Update My Profile</string>
     <string name="change_password">Change Password</string>
     <string name="wallet_activity">My Wallet</string>
-    <string name="delivery_address">Delivery Addresses</string>
-    <string name="delivery_van">Delivery Van</string>
     <string name="delivery_time">Delivery Time:</string>
     <string name="delivery_charges">Delivery Charges:</string>
     <string name="view_edit_pin_label">Delivery Pin</string>
-    <string name="active_label">active</string>
     <string name="past_label">past</string>
     <string name="deleteShoppingList">Delete Shopping List</string>
-    <string name="past_order_title">Past Orders</string>
 
-    <string name="samePin">New pin should not be same as the current pin!</string>
     <string name="min4digit">Pin should be a 4 digit number!</string>
     <string name="not0000">Pin should be other than 0000!</string>
     <string name="enterPin">Please enter a pin to update!</string>
     <string name="pinUpdatedSuccessfully">Your pin was updated successfully!</string>
-    <string name="blankPin">****</string>
 
     <!-- wallet activity -->
     <string name="noActivityErrorMsg">No Wallet Activity for</string>
-    <string name="updating">UPDATING...</string>
     <string name="endingBal">Ending balance:</string>
     <string name="wallet_activity_header">Wallet Activity</string>
     <string name="credited">Credited</string>
@@ -230,18 +204,13 @@
     <string name="dob">Date of Birth</string>
     <string name="calender">Calender</string>
     <string name="telNumber">Telephone Number</string>
-    <string name="streetDetails">Street Details</string>
     <string name="area">Area</string>
-    <string name="resAndComplex">Residential Complex</string>
     <string name="landmark">Landmarks</string>
-    <string name="pinCode">Pincode</string>
-    <string name="photo">Photo</string>
     <string name="profileUpdated">Profile updated successfully!</string>
 
     <!-- main nav -->
     <string name="shoppingList">Shopping Lists</string>
     <string name="sortBy">Sort By</string>
-    <string name="filterBy">Filter By</string>
     <string name="filter">Filter</string>
     <string name="sort">Sort</string>
     <string name="voice">Voice</string>
@@ -250,18 +219,14 @@
     <string name="speechNotSupported">Sorry! Your device does not support speech input!</string>
     <string name="clear">RESET</string>
     <string name="noProducts">Sorry! There are no products to display.</string>
-    <string name="noProductsSearchMsg">Sorry! There are no products found related to your search term.</string>
 
     <!-- Invoice -->
     <string name="thankYouHeader">Thank You!</string>
     <string name="orderThankyouText">Thank you for placing order with BigBasket.\nYour Order# is\u00A0</string>
-    <string name="multipleOrderThankyouText">Thank you! Your orders have been placed</string>
     <string name="viewInvoice">VIEW INVOICE</string>
 
     <!-- cart page -->
     <string name="empty">Empty</string>
-    <string name="check_out">Checkout</string>
-    <string name="payment_and_slot_selection">Payment &amp; Slot Selection</string>
     <string name="empty_basket_txt1">There are no items in your basket.</string>
     <string name="empty_basket_txt2">Enjoy great shopping experience with us!</string>
 
@@ -270,60 +235,38 @@
     <string name="continue_shopping_txt">CONTINUE SHOPPING</string>
     <string name="lostInternetConnection">Lost internet connection?</string>
     <string name="tapRetry">Tap to Retry</string>
-    <string name="retry">Retry</string>
     <string name="productNextPageFailed">Failed to load products!</string>
 
     <!-- checkOut QC -->
     <string name="out_of_stock">Out of Stock</string>
-    <string name="check_out_selected">Selected:</string>
-    <string name="check_out_available">Available:</string>
-    <string name="similar_products">Add Similar products</string>
-    <string name="out_of_stock_msg1">We are sorry, but based on our current stock availability, following products
-        are currently out of stock.</string>
-    <string name="out_of_stock_msg2">We are sorry, but based on our current stock availability, we do not have sufficient
-        quantities for the following product(s).</string>
-    <string name="deleteQCProduct">Delete Product</string>
-    <string name="use_facebook">Facebook</string>
-    <string name="use_google">Google\u00A0\u00A0\u00A0\u00A0</string>
     <string name="facebookSignup">Facebook</string>
-    <string name="googleSignup">Google\u00A0\u00A0\u00A0\u00A0</string>
+    <string name="googleSignup">Google</string>
 
     <string name="headingNetworkError">Network Error</string>
     <string name="headingConnectionOffline">Connection Offline</string>
     <string name="msgNetworkError">A network error occurred while communicating with the server.\nPlease check your internet connection!</string>
     <string name="serviceUnavailable">Service is temporarily unavailable. Please come back after sometime!</string>
     <string name="weAreDown">We are down for maintenance!</string>
-    <string name="bbMail">Send mail</string>
 
     <string name="networkError">Network Error</string>
     <string name="communicationError">Failed to connect to the server</string>
     <string name="otherError">An error occurred</string>
-    <string name="amountSpent">Total Amount Spent</string>
-    <string name="amountSaved">Total Amount Saved</string>
-    <string name="amountSpentPerMonth">Amount Spent per month</string>
     <string name="updateGooglePlayServices">Update Google Play Services</string>
     <string name="updateGooglePlayServicesDesc">You are using an outdated version of Google Play Services.\nPlease update it, in order to login with Google.</string>
-    <string name="viewTerms">View terms and conditions</string>
     <string name="termsAndCondHeading">Terms and conditions</string>
-    <string name="tc">T&amp;C</string>
-    <string name="privacyPolicy">Privacy Policy</string>
     <string name="home">Home</string>
     <string name="transactionFailed">Transaction Failed!</string>
     <string name="failedToProcess">Failed to process your transaction</string>
     <string name="youAborted">You aborted the transaction</string>
-    <string name="pressOrderReview">Your transaction was successful, but the order was not created. Please select a slot, and your order will be placed.</string>
     <string name="smartBasket">Smart Basket</string>
     <string name="rateTheApp">Rate our App</string>
     <string name="shopFromPreviousOrder">Shop From Previous Order(s)</string>
     <string name="applyVoucher">Apply Voucher</string>
     <string name="selectAndApplyVoucher">Select &amp; Apply Voucher</string>
     <string name="removeVoucher">eVoucher: BBFNV Applied!</string>
-    <string name="voucherCannotBeApplied">eVoucher not applicable</string>
     <string name="voucherWasRemoved">eVoucher was successfully removed</string>
     <string name="removeVoucherHeading">Remove voucher</string>
     <string name="removeVoucherDesc">Are you sure that you want to remove this voucher?</string>
-    <string name="minus">&#x2013;</string>
-    <string name="plus">&#43;</string>
     <string name="addAllProducts">Are you sure that you want to add all the products</string>
     <string name="allAreOutOfStockForSingleTab">Sorry but all the products that you\'ve requested are currently out of stock.</string>
     <string name="allAreOutOfStockForTabPrefix">Sorry but all the</string>
@@ -342,17 +285,11 @@
     <string name="skipAllCaps">SKIP</string>
     <string name="next">Next</string>
     <string name="startShopping">Start Shopping</string>
-    <string name="signinAndStart">Login and Get Started</string>
     <string name="loginToContinue">Please login to continue</string>
-    <string name="byLoggingIn">I agree to BigBasket\'s\u00A0</string>
-    <string name="byRegistering">I agree to BigBasket\'s\u00A0</string>
-    <string name="authFooterSeparator">, and\u00A0</string>
     <string name="citiesWhereWeServe">Cities where we currently serve</string>
-    <string name="createAShoppingList">You do not have a shopping list! Please create one to add items</string>
     <string name="bbShoppingLists">BigBasket Shopping List</string>
     <string name="removeAllProducts">Remove all the products from basket?</string>
     <string name="emptyBasket">Empty Basket</string>
-    <string name="sortOrFilterBy">Sort By or Filter Options</string>
     <string name="deleteProductFromShoppingList">Are you sure you want to delete this product from the shopping list?</string>
     <string name="productTabErrorMsg">Sorry, but an error occurred</string>
     <string name="welcome">Welcome,</string>
@@ -367,7 +304,6 @@
     <string name="phone">Phone</string>
     <string name="birthday">Birthday</string>
     <string name="address">Address</string>
-    <string name="viewAll">View All</string>
     <string name="addAddress">\u0020 Add</string>
 
     <!-- address -->
@@ -377,8 +313,6 @@
     <string name="addAnAddress"> \u0020 Add an Address</string>
     <string name="save">SAVE</string>
     <string name="myAddressEmptyText">Voila! You reached my account! Please add an address to make it look cool!</string>
-    <string name="proceed">PROCEED</string>
-    <string name="total">TOTAL :</string>
     <string name="deliveryPin">Delivery Pin</string>
 
 

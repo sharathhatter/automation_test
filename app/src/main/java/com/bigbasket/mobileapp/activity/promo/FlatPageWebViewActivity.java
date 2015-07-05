@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.activity.promo;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -20,6 +21,7 @@ import com.bigbasket.mobileapp.view.BBWebView;
 public class FlatPageWebViewActivity extends BackButtonActivity {
     private ProgressBar progressBar;
 
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

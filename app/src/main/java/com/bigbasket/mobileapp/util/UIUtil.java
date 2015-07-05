@@ -355,12 +355,6 @@ public class UIUtil {
             requestCreator.into(imageView);
         } catch (OutOfMemoryError e) {
             System.gc();
-            try {
-                requestCreator.into(imageView);
-            } catch (OutOfMemoryError e1) {
-                // :(
-                e1.printStackTrace();
-            }
         }
     }
 

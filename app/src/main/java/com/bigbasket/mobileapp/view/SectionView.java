@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -247,6 +248,7 @@ public class SectionView {
         return baseProductCarousel;
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     private View getInfoWidgetView(Section section) {
         if (section.getSectionItems() == null || section.getSectionItems().size() == 0)
             return null;

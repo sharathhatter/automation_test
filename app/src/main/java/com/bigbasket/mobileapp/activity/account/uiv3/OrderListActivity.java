@@ -128,6 +128,7 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
         contentLayout.addView(emptyPageView);
     }
 
+    @SuppressWarnings("unchecked")
     private void renderOrderList(final ArrayList<Order> mOrders) {
 
         FrameLayout contentLayout = (FrameLayout) findViewById(R.id.content_frame);

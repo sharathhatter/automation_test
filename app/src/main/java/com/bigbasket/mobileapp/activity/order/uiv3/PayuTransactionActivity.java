@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.activity.order.uiv3;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
@@ -98,6 +99,7 @@ public class PayuTransactionActivity extends BackButtonActivity {
         }
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     private void openPayuGateway(String potentialOrderId,
                                  String payuGatewayUrl,
                                  String payuPostParamStr,
