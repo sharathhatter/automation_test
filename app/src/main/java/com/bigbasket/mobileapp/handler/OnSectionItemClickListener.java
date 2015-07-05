@@ -149,22 +149,12 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                                 isSmartBasket);
                         intent.putExtra(Constants.SHOPPING_LIST_NAME, shoppingListName);
                         ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-
-                        if (isSmartBasket) {
-                            logMainMenuEvent(TrackingAware.SMART_BASKET_ICON_CLICKED,
-                                    TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_HOME_PAGE);
-                        } else {
-                            logMainMenuEvent(TrackingAware.SHOPPING_LIST_ICON_CLICKED,
-                                    TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_HOME_PAGE);
-                        }
                     }
                     break;
                 case DestinationInfo.SHOPPING_LIST_LANDING:
                     intent = new Intent(((ActivityAware) context).getCurrentActivity(), ShoppingListActivity.class);
                     intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_LANDING);
                     ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                    logMainMenuEvent(TrackingAware.SHOPPING_LIST_ICON_CLICKED, TrackEventkeys.NAVIGATION_CTX,
-                            TrackEventkeys.NAVIGATION_CTX_HOME_PAGE);
                     break;
                 case DestinationInfo.SEARCH:
                     if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
@@ -320,13 +310,6 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
         if (!TextUtils.isEmpty(itemName))
             eventAttribs.put(TrackEventkeys.SECTION_ITEM, getSectionItemName());
         ((TrackingAware) context).trackEvent(getAnalyticsFormattedScreeName(), eventAttribs);
-    }
-
-    private void logMainMenuEvent(String trackAwareName, String eventKeyName,
-                                  String navigationCtx) {
-        HashMap<String, String> eventAttribs = new HashMap<>();
-        eventAttribs.put(eventKeyName, navigationCtx);
-        ((TrackingAware) context).trackEvent(trackAwareName, eventAttribs);
     }
 
     private boolean hasMainMenu() {

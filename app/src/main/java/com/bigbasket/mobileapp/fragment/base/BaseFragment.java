@@ -23,6 +23,7 @@ import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
+import com.bigbasket.mobileapp.interfaces.AnalyticsNavigationContextAware;
 import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
@@ -50,11 +51,13 @@ import java.util.Map;
 
 public abstract class BaseFragment extends AbstractFragment implements HandlerAware,
         CartInfoAware, BasketOperationAware, ProgressIndicationAware,
-        ConnectivityAware, TrackingAware, ApiErrorAware, LaunchProductListAware {
+        ConnectivityAware, TrackingAware, ApiErrorAware, LaunchProductListAware,
+        AnalyticsNavigationContextAware {
 
     protected BigBasketMessageHandler handler;
     private ProgressDialog progressDialog;
     protected BasketOperationResponse basketOperationResponse;
+    private String mNavigationContext;
 
     @Override
     public void onAttach(Activity activity) {
@@ -362,14 +365,28 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs) {
         if (getCurrentActivity() == null) return;
-        getCurrentActivity().trackEvent(eventName, eventAttribs);
+        trackEvent(eventName, eventAttribs, null, null);
+    }
+
+    @Override
+    public void trackEvent(String eventName, Map<String, String> eventAttribs, String source, String sourceValue) {
+        if (getCurrentActivity() == null) return;
+        trackEvent(eventName, eventAttribs, source, sourceValue, getNavigationContext(), false);
     }
 
     @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs, String source,
                            String sourceValue, boolean isCustomerValueIncrease) {
         if (getCurrentActivity() == null) return;
-        getCurrentActivity().trackEvent(eventName, eventAttribs, source, sourceValue, false);
+        trackEvent(eventName, eventAttribs, source, sourceValue, getNavigationContext(), isCustomerValueIncrease);
+    }
+
+    @Override
+    public void trackEvent(String eventName, Map<String, String> eventAttribs, String source,
+                           String sourceValue, String nc, boolean isCustomerValueIncrease) {
+        if (getCurrentActivity() == null) return;
+        getCurrentActivity().trackEvent(eventName, eventAttribs, source, sourceValue,
+                nc, isCustomerValueIncrease);
     }
 
     @Override
@@ -423,6 +440,17 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     }
 
     public abstract String getScreenTag();
+
+    @Nullable
+    @Override
+    public String getNavigationContext() {
+        return mNavigationContext;
+    }
+
+    @Override
+    public void setNavigationContext(@Nullable String nc) {
+        this.mNavigationContext = nc;
+    }
 
     public void onResume() {
         super.onResume();

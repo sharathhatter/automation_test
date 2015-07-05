@@ -174,20 +174,14 @@ public interface TrackingAware {
     String NOTIFICATION_ERROR = "Notification Error";
 
 
-    //member referral
-    String MEMBER_REFERRAL_SHOWN = "Member.Referral Shown";
-    String MEMBER_REFERRAL_FREE_SMS_SHOWN = "Member.Referral free SMS Shown";
-    String MEMBER_REFERRAL_WHATS_APP_SHOWN = "Member.Referral WhatsApp Shown";
-    String MEMBER_REFERRAL_FACEBOOK_SHOWN = "Member.Referral Facebook Shown";
-    String MEMBER_REFERRAL_BB_MAIL_SHOWN = "Member.Referral Mail Shown";
-    String MEMBER_REFERRAL_GOOGLE_PLUS_SHOWN = "Member.Referral Google Plus Shown";
-    String MEMBER_REFERRAL_GOOGLE_APP_SHOWN = "Member.Referral Google App Shown";
-    String MEMBER_REFERRAL_HIKE_SHOWN = "Member.Referral Hike Shown";
-    String MEMBER_REFERRAL_OTHER_SHOWN = "Member.Referral Shear via other Shown";
-
-
     void trackEvent(String eventName, Map<String, String> eventAttribs,
                     String source, String sourceValue, boolean isCustomerValueIncrease);
+
+    void trackEvent(String eventName, Map<String, String> eventAttribs,
+                    String source, String sourceValue, String nc, boolean isCustomerValueIncrease);
+
+    void trackEvent(String eventName, Map<String, String> eventAttribs,
+                    String source, String sourceValue);
 
     void trackEvent(String eventName, Map<String, String> eventAttribs);
 }
