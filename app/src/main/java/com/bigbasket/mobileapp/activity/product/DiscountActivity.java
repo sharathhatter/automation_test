@@ -85,23 +85,46 @@ public class DiscountActivity extends BBActivity {
         if (contentFrame == null) return;
         contentFrame.removeAllViews();
 
-        View view = getLayoutInflater().inflate(R.layout.uiv3_swipe_tab_view, contentFrame, false);
+        if (categorySectionData != null && categorySectionData.getSections() != null
+                && categorySectionData.getSections().size() > 0 &&
+                binSectionData != null && binSectionData.getSections() != null
+                && binSectionData.getSections().size() > 0) {
 
-        ArrayList<BBTab> bbTabs = new ArrayList<>();
-        createTabFragment(categorySectionData, bbTabs);
-        createTabFragment(binSectionData, bbTabs);
+            View view = getLayoutInflater().inflate(R.layout.uiv3_swipe_tab_view, contentFrame, false);
 
-        ViewPager viewPager = (ViewPager) view.findViewById(R.id.pager);
-        TabPagerAdapter tabPagerAdapter = new TabPagerAdapter(getCurrentActivity(), getSupportFragmentManager(),
-                bbTabs);
-        viewPager.setAdapter(tabPagerAdapter);
+            ArrayList<BBTab> bbTabs = new ArrayList<>();
+            createTabFragment(categorySectionData, bbTabs);
+            createTabFragment(binSectionData, bbTabs);
+
+            ViewPager viewPager = (ViewPager) view.findViewById(R.id.pager);
+            TabPagerAdapter tabPagerAdapter = new TabPagerAdapter(getCurrentActivity(), getSupportFragmentManager(),
+                    bbTabs);
+            viewPager.setAdapter(tabPagerAdapter);
 
 
-        SmartTabLayout pageTitleStrip = (SmartTabLayout) view.findViewById(R.id.slidingTabs);
-        pageTitleStrip.setDistributeEvenly(true);
-        pageTitleStrip.setViewPager(viewPager);
+            SmartTabLayout pageTitleStrip = (SmartTabLayout) view.findViewById(R.id.slidingTabs);
+            pageTitleStrip.setDistributeEvenly(true);
+            pageTitleStrip.setViewPager(viewPager);
 
-        contentFrame.addView(view);
+            contentFrame.addView(view);
+        } else {
+            SectionData availableSectionData = null;
+            if (categorySectionData != null && categorySectionData.getSections() != null
+                    && categorySectionData.getSections().size() > 0) {
+                availableSectionData = categorySectionData;
+            } else if (binSectionData != null && binSectionData.getSections() != null
+                    && binSectionData.getSections().size() > 0) {
+                availableSectionData = binSectionData;
+            }
+
+            if (availableSectionData != null) {
+                DiscountFragment discountFragment = new DiscountFragment();
+                Bundle bundle = new Bundle();
+                bundle.putParcelable(Constants.SECTIONS, availableSectionData);
+                discountFragment.setArguments(bundle);
+                onChangeFragment(discountFragment);
+            }
+        }
     }
 
     private ArrayList<BBTab> createTabFragment(SectionData categorySectionData, ArrayList<BBTab> bbTabs) {
