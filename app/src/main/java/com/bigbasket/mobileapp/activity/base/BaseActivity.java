@@ -137,7 +137,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         faceRobotoLight = FontHolder.getInstance(this).getFaceRobotoLight();
         moEHelper = MoEngageWrapper.getMoHelperObj(getCurrentActivity());
         fbLogger = AppEventsLogger.newLogger(getApplicationContext());
-
+        mNavigationContext = getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX);
         NewRelic.setInteractionName(getCurrentActivity().getClass().getName());
     }
 
@@ -665,11 +665,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
         return mNavigationContext;
     }
 
-    @Override
-    public void setNavigationContext(@Nullable String nc) {
-        this.mNavigationContext = nc;
-    }
-
     public void launchAppDeepLink(String uri) {
         try {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
@@ -787,5 +782,11 @@ public abstract class BaseActivity extends AppCompatActivity implements
     @Override
     public void markBasketChanged(@Nullable Intent data) {
         setResult(NavigationCodes.BASKET_CHANGED, data);
+    }
+
+    @Override
+    public void startActivityForResult(Intent intent, int requestCode) {
+        intent.putExtra(TrackEventkeys.NAVIGATION_CTX, getNavigationContext());
+        super.startActivityForResult(intent, requestCode);
     }
 }

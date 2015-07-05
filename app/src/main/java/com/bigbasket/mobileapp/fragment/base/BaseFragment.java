@@ -41,6 +41,7 @@ import com.bigbasket.mobileapp.task.uiv3.CreateShoppingListTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 
@@ -74,6 +75,8 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         if (getCurrentActivity() != null && getCurrentActivity().getSupportActionBar() != null) {
             getCurrentActivity().getSupportActionBar().setSubtitle(null);
         }
+        mNavigationContext = getArguments() != null ?
+                getArguments().getString(TrackEventkeys.NAVIGATION_CTX) : null;
     }
 
     @Override
@@ -445,11 +448,6 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     @Override
     public String getNavigationContext() {
         return mNavigationContext;
-    }
-
-    @Override
-    public void setNavigationContext(@Nullable String nc) {
-        this.mNavigationContext = nc;
     }
 
     public void onResume() {
