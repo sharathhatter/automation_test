@@ -304,7 +304,9 @@
     <string name="phone">Phone</string>
     <string name="birthday">Birthday</string>
     <string name="address">Address</string>
+    <string name="default_address">Default Address</string>
     <string name="addAddress">\u0020 Add</string>
+    <string name="viewAll">\u0020 View All</string>
 
     <!-- address -->
     <string name="expressAvailable"> \u0020 Express Delivery is available!</string>
