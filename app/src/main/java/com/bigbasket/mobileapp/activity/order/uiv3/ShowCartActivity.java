@@ -107,7 +107,7 @@ public class ShowCartActivity extends BackButtonActivity {
             case R.id.action_empty_basket:
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
                 String numItems = preferences.getString(Constants.GET_CART, "0");
-                if (numItems != null && !numItems.equals("0")) {
+                if (!numItems.equals("0")) {
                     showAlertDialog(null, getString(R.string.removeAllProducts), DialogButton.YES,
                             DialogButton.NO, Constants.EMPTY_BASKET, null, getString(R.string.emptyBasket));
                 }
