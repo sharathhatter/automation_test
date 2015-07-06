@@ -117,9 +117,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         HashMap<String, String> paramMap = NameValuePair.toMap(mNameValuePairs);
 
         if (paramMap != null && paramMap.containsKey(Constants.TYPE)) {
-            Map<String, String> eventAttribs = new HashMap<>();
-            eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, paramMap.get(Constants.TYPE));
-            trackEvent(TrackingAware.PRODUCT_LIST_SHOWN, eventAttribs);
+            trackEvent(TrackingAware.PRODUCT_LIST_SHOWN, paramMap);
         }
 
         new ProductListTask<>(this, paramMap).startTask();
