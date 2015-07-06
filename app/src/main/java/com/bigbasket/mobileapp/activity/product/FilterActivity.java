@@ -37,8 +37,8 @@ import java.util.Locale;
 public class FilterActivity extends BackButtonActivity {
 
     private ArrayList<FilteredOn> mFilteredOns;
-    private BBCheckedListAdapter<FilterOptionItem> mFilterByAdapter;
-    private FilterTextWatcher mFilterTextWatcher;
+    private static BBCheckedListAdapter<FilterOptionItem> mFilterByAdapter;
+    private static FilterTextWatcher mFilterTextWatcher;
     private String mCurrentlySelectedFilter;
 
     @Override
@@ -178,7 +178,7 @@ public class FilterActivity extends BackButtonActivity {
         }
     }
 
-    private class FilterTextWatcher implements TextWatcher {
+    private static class FilterTextWatcher implements TextWatcher {
 
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {

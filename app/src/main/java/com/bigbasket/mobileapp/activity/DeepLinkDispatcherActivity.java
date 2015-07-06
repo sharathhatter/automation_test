@@ -10,6 +10,7 @@ import com.bigbasket.mobileapp.activity.order.uiv3.OrderDetailActivity;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.handler.DeepLinkHandler;
+import com.bigbasket.mobileapp.handler.SilentDeepLinkHandler;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.InvoiceDataAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
@@ -26,7 +27,7 @@ import retrofit.RetrofitError;
 public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceDataAware,
         HandlerAware {
 
-    protected BigBasketMessageHandler handler;
+    private BigBasketMessageHandler handler;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -138,43 +139,6 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
         orderDetailIntent.putExtra(Constants.ORDER_REVIEW_SUMMARY, orderInvoice);
         orderDetailIntent.putExtra(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_DEEP_LINK);
         startActivityForResult(orderDetailIntent, NavigationCodes.GO_TO_HOME);
-    }
-
-
-    private class SilentDeepLinkHandler<T> extends BigBasketMessageHandler {
-
-        @SuppressWarnings("unchecked")
-        public SilentDeepLinkHandler(T ctx) {
-            super(ctx);
-        }
-
-        @Override
-        public void sendEmptyMessage(int what, String message, boolean finish) {
-            HashMap<String, String> map = new HashMap<>();
-            map.put(TrackEventkeys.ERROR_CODE, String.valueOf(what));
-            map.put(TrackEventkeys.ERROR_MSG, message);
-            trackEvent(TrackingAware.NOTIFICATION_ERROR, map);
-            goToHome(false);
-        }
-
-        @Override
-        public void handleRetrofitError(RetrofitError error, String sourceName, boolean finish) {
-            LogNotificationEvent(error);
-            goToHome(false);
-        }
-
-    }
-
-    private void LogNotificationEvent(RetrofitError error) {
-        HashMap<String, String> map = new HashMap<>();
-        if (error.getResponse() != null) {
-            map.put(TrackEventkeys.ERROR_CODE, String.valueOf(error.getResponse().getStatus()));
-            map.put(TrackEventkeys.ERROR_MSG, String.valueOf(error.getResponse().getReason()));
-        } else {
-            map.put(TrackEventkeys.ERROR_CODE, String.valueOf(error.getKind()));
-            map.put(TrackEventkeys.ERROR_MSG, error.getMessage());
-        }
-        trackEvent(TrackingAware.NOTIFICATION_ERROR, map);
     }
 
 }
