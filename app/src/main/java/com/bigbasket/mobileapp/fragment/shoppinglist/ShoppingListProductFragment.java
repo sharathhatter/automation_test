@@ -17,7 +17,6 @@ import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListSummary;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
-import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.HashMap;
@@ -39,18 +38,6 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
     @Override
     public void loadMoreProducts() {
         // Do nothing
-    }
-
-    @Override
-    public String getNavigationCtx() {
-        ShoppingListSummary shoppingListSummary = getArguments().getParcelable(Constants.SHOPPING_LIST_SUMMARY);
-        if (shoppingListSummary == null || shoppingListSummary.getShoppingListName() == null)
-            return TrackEventkeys.NAVIGATION_CTX_SHOPPING_LIST;
-        String shoppingListSlug = shoppingListSummary.getShoppingListName().getSlug();
-        if (shoppingListSlug.equals(Constants.SMART_BASKET_SLUG))
-            return TrackEventkeys.NAVIGATION_CTX_SMART_BASKET;
-        else
-            return TrackEventkeys.NAVIGATION_CTX_SHOPPING_LIST;
     }
 
     private void loadShoppingListProducts() {
@@ -84,12 +71,12 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
         if (cartInfo != null) {
             productListAdapter = new ProductListRecyclerAdapter(shoppingListSummary.getProducts(),
                     baseImgUrl,
-                    getProductViewHolder(shoppingListSummary), this, shoppingListSummary.getProducts().size(), getNavigationCtx(),
+                    getProductViewHolder(shoppingListSummary), this, shoppingListSummary.getProducts().size(), getNextScreenNavigationContext(),
                     cartInfo);
         } else {
             productListAdapter = new ProductListRecyclerAdapter(shoppingListSummary.getProducts(),
                     baseImgUrl,
-                    getProductViewHolder(shoppingListSummary), this, shoppingListSummary.getProducts().size(), getNavigationCtx());
+                    getProductViewHolder(shoppingListSummary), this, shoppingListSummary.getProducts().size(), getNextScreenNavigationContext());
         }
         productRecyclerView.setAdapter(productListAdapter);
         contentView.addView(productRecyclerView);

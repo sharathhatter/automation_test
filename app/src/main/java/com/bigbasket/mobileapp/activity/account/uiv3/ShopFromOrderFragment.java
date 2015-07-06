@@ -155,7 +155,7 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
 
         productListRecyclerAdapter = new ProductListRecyclerAdapter(mProducts, null,
                 productViewDisplayDataHolder, this, mProducts.size(),
-                getNavigationCtx());
+                getNextScreenNavigationContext());
 
         productRecyclerView.setAdapter(productListRecyclerAdapter);
         contentView.addView(shopFromOrderLayout);
@@ -218,11 +218,6 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
     @Override
     public void loadMoreProducts() {
         // Do nothing
-    }
-
-    @Override
-    public String getNavigationCtx() {
-        return TrackEventkeys.NAVIGATION_CTX_SHOP_FROM_ORDER;
     }
 
     @Override

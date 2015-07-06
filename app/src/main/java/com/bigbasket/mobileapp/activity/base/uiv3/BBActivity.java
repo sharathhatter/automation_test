@@ -263,7 +263,11 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
         Bundle args = fragment.getArguments();
         String nc = fragment instanceof AnalyticsNavigationContextAware ?
-                ((AnalyticsNavigationContextAware) fragment).getNavigationContext() : null;
+                ((AnalyticsNavigationContextAware) fragment).getNextScreenNavigationContext() : null;
+        if (nc == null) {
+            // Use activity's current nc
+            nc = getCurrentNavigationContext();
+        }
         if (!TextUtils.isEmpty(nc)) {
             if (args == null) {
                 args = new Bundle();

@@ -119,7 +119,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         if (paramMap != null && paramMap.containsKey(Constants.TYPE)) {
             trackEvent(TrackingAware.PRODUCT_LIST_SHOWN, paramMap);
         }
-
+        setNextScreenNavigationContext(NameValuePair.buildNavigationContext(mNameValuePairs));
         new ProductListTask<>(this, paramMap).startTask();
     }
 

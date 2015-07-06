@@ -60,27 +60,27 @@ android {
         }
     }
 // Uncomment at the time of deployment
-    productFlavors {
-        flavourMdpi {
-            versionCode calculateVersionCodeFromDpi(160)
-        }
-
-        flavourHdpi {
-            versionCode calculateVersionCodeFromDpi(240)
-        }
-
-        flavourXHdpi {
-            versionCode calculateVersionCodeFromDpi(320)
-        }
-
-        flavourXXHdpi {
-            versionCode calculateVersionCodeFromDpi(480)
-        }
-
-        flavourXXXHdpi {
-            versionCode calculateVersionCodeFromDpi(640)
-        }
-    }
+//    productFlavors {
+//        flavourMdpi {
+//            versionCode calculateVersionCodeFromDpi(160)
+//        }
+//
+//        flavourHdpi {
+//            versionCode calculateVersionCodeFromDpi(240)
+//        }
+//
+//        flavourXHdpi {
+//            versionCode calculateVersionCodeFromDpi(320)
+//        }
+//
+//        flavourXXHdpi {
+//            versionCode calculateVersionCodeFromDpi(480)
+//        }
+//
+//        flavourXXXHdpi {
+//            versionCode calculateVersionCodeFromDpi(640)
+//        }
+//    }
 }
 
 int calculateVersionCodeFromDpi(int dpi) {

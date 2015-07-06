@@ -98,6 +98,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     protected MoEHelper moEHelper;
     private AppEventsLogger fbLogger;
     private String mNavigationContext;
+    private String mNextScreenNavigationContext;
 
     public static void showKeyboard(final View view) {
         (new Handler()).postDelayed(new Runnable() {
@@ -570,13 +571,13 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs, String source, String sourceValue) {
-        trackEvent(eventName, eventAttribs, source, sourceValue, getNavigationContext(), false);
+        trackEvent(eventName, eventAttribs, source, sourceValue, getCurrentNavigationContext(), false);
     }
 
     @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs, String source,
                            String sourceValue, boolean isCustomerValueIncrease) {
-        trackEvent(eventName, eventAttribs, source, sourceValue, getNavigationContext(),
+        trackEvent(eventName, eventAttribs, source, sourceValue, getCurrentNavigationContext(),
                 isCustomerValueIncrease);
     }
 
@@ -588,6 +589,10 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 ", eventAttribs = " + eventAttribs + ", source = " + source +
                 ", sourceValue = " + sourceValue + ", nc = " + nc + ", isCustomerValueIncrease = "
                 + isCustomerValueIncrease);
+        if (eventAttribs != null && eventAttribs.containsKey(TrackEventkeys.NAVIGATION_CTX)) {
+            // Someone has already set nc, so don't override it
+            nc = null;
+        }
         if (!TextUtils.isEmpty(nc)) {
             if (eventAttribs == null) {
                 eventAttribs = new HashMap<>();
@@ -661,8 +666,19 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     @Nullable
     @Override
-    public String getNavigationContext() {
+    public String getCurrentNavigationContext() {
         return mNavigationContext;
+    }
+
+    @Nullable
+    @Override
+    public String getNextScreenNavigationContext() {
+        return mNextScreenNavigationContext;
+    }
+
+    @Override
+    public void setNextScreenNavigationContext(@Nullable String nc) {
+        mNextScreenNavigationContext = nc;
     }
 
     public void launchAppDeepLink(String uri) {
@@ -786,7 +802,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     @Override
     public void startActivityForResult(Intent intent, int requestCode) {
-        intent.putExtra(TrackEventkeys.NAVIGATION_CTX, getNavigationContext());
+        intent.putExtra(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
         super.startActivityForResult(intent, requestCode);
     }
 }

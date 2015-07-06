@@ -59,6 +59,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     private ProgressDialog progressDialog;
     protected BasketOperationResponse basketOperationResponse;
     private String mNavigationContext;
+    private String mNextScreenNavigationContext;
 
     @Override
     public void onAttach(Activity activity) {
@@ -166,8 +167,6 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
 
     /**
      * Return null if you don't want the title to be changed
-     *
-     * @return
      */
     public abstract String getTitle();
 
@@ -195,10 +194,6 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
 
     public Spannable asRupeeSpannable(String amtTxt) {
         return UIUtil.asRupeeSpannable(amtTxt, faceRupee);
-    }
-
-    public BasketOperationResponse getBasketOperationResponse() {
-        return basketOperationResponse;
     }
 
     @Override
@@ -374,14 +369,14 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs, String source, String sourceValue) {
         if (getCurrentActivity() == null) return;
-        trackEvent(eventName, eventAttribs, source, sourceValue, getNavigationContext(), false);
+        trackEvent(eventName, eventAttribs, source, sourceValue, getCurrentNavigationContext(), false);
     }
 
     @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs, String source,
                            String sourceValue, boolean isCustomerValueIncrease) {
         if (getCurrentActivity() == null) return;
-        trackEvent(eventName, eventAttribs, source, sourceValue, getNavigationContext(), isCustomerValueIncrease);
+        trackEvent(eventName, eventAttribs, source, sourceValue, getCurrentNavigationContext(), isCustomerValueIncrease);
     }
 
     @Override
@@ -446,8 +441,22 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
 
     @Nullable
     @Override
-    public String getNavigationContext() {
+    public String getCurrentNavigationContext() {
         return mNavigationContext;
+    }
+
+    @Nullable
+    @Override
+    public String getNextScreenNavigationContext() {
+        return mNextScreenNavigationContext;
+    }
+
+    @Override
+    public void setNextScreenNavigationContext(@Nullable String nc) {
+        mNextScreenNavigationContext = nc;
+        if (getCurrentActivity() != null) {
+            getCurrentActivity().setNextScreenNavigationContext(mNextScreenNavigationContext);
+        }
     }
 
     public void onResume() {
@@ -463,5 +472,11 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
             ((LaunchProductListAware) getActivity()).
                     launchProductList(nameValuePairs, sectionName, sectionItemName);
         }
+    }
+
+    @Override
+    public void startActivityForResult(Intent intent, int requestCode) {
+        intent.putExtra(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+        super.startActivityForResult(intent, requestCode);
     }
 }
