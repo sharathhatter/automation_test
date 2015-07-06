@@ -27,7 +27,7 @@ import retrofit.RetrofitError;
 public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceDataAware,
         HandlerAware {
 
-    private BigBasketMessageHandler handler;
+    protected BigBasketMessageHandler handler;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

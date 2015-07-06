@@ -37,8 +37,7 @@ import java.util.Locale;
 public class FilterActivity extends BackButtonActivity {
 
     private ArrayList<FilteredOn> mFilteredOns;
-    private static BBCheckedListAdapter<FilterOptionItem> mFilterByAdapter;
-    private static FilterTextWatcher mFilterTextWatcher;
+    private FilterTextWatcher mFilterTextWatcher;
     private String mCurrentlySelectedFilter;
 
     @Override
@@ -96,7 +95,7 @@ public class FilterActivity extends BackButtonActivity {
         final ListView lstFilterItems = (ListView) findViewById(R.id.lstFilterItems);
         EditText editTextFilter = (EditText) findViewById(R.id.editTextFilter);
         List<FilterOptionItem> filterOptionItems = filterOptionCategory.getFilterOptionItems();
-        mFilterByAdapter = new BBCheckedListAdapter<>
+        BBCheckedListAdapter<FilterOptionItem> mFilterByAdapter = new BBCheckedListAdapter<>
                 (getCurrentActivity(), R.layout.uiv3_filter_item_layout,
                         filterOptionItems, R.color.uiv3_primary_text_color, faceRobotoMedium);
 
@@ -112,7 +111,7 @@ public class FilterActivity extends BackButtonActivity {
         } else {
             editTextFilter.setVisibility(View.VISIBLE);
             if (mFilterTextWatcher == null) {
-                mFilterTextWatcher = new FilterTextWatcher();
+                mFilterTextWatcher = new FilterTextWatcher(mFilterByAdapter);
                 editTextFilter.addTextChangedListener(mFilterTextWatcher);
             }
         }
@@ -180,6 +179,10 @@ public class FilterActivity extends BackButtonActivity {
 
     private static class FilterTextWatcher implements TextWatcher {
 
+        private BBCheckedListAdapter<FilterOptionItem> mFilterByAdapter;
+        public FilterTextWatcher(BBCheckedListAdapter<FilterOptionItem> mFilterByAdapter){
+            this.mFilterByAdapter = mFilterByAdapter;
+        }
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 

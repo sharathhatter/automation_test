@@ -31,11 +31,11 @@ public class SilentDeepLinkHandler<T> extends BigBasketMessageHandler {
 
     @Override
     public void handleRetrofitError(RetrofitError error, String sourceName, boolean finish) {
-        LogNotificationEvent(error);
+        logNotificationEvent(error);
         ((ActivityAware)ctx).getCurrentActivity().goToHome(false);
     }
 
-    private void LogNotificationEvent(RetrofitError error) {
+    private void logNotificationEvent(RetrofitError error) {
         HashMap<String, String> map = new HashMap<>();
         if (error.getResponse() != null) {
             map.put(TrackEventkeys.ERROR_CODE, String.valueOf(error.getResponse().getStatus()));
