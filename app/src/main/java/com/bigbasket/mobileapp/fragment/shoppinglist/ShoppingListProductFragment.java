@@ -12,8 +12,10 @@ import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity
 import com.bigbasket.mobileapp.adapter.product.ProductListRecyclerAdapter;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.product.ProductViewDisplayDataHolder;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
+import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListSummary;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
@@ -71,12 +73,14 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
         if (cartInfo != null) {
             productListAdapter = new ProductListRecyclerAdapter(shoppingListSummary.getProducts(),
                     baseImgUrl,
-                    getProductViewHolder(shoppingListSummary), this, shoppingListSummary.getProducts().size(), getNextScreenNavigationContext(),
+                    getProductViewHolder(shoppingListSummary), this, shoppingListSummary.getProducts().size(),
+                    getNextScreenNavigationContext(),
                     cartInfo);
         } else {
             productListAdapter = new ProductListRecyclerAdapter(shoppingListSummary.getProducts(),
                     baseImgUrl,
-                    getProductViewHolder(shoppingListSummary), this, shoppingListSummary.getProducts().size(), getNextScreenNavigationContext());
+                    getProductViewHolder(shoppingListSummary), this, shoppingListSummary.getProducts().size(),
+                    getNextScreenNavigationContext());
         }
         productRecyclerView.setAdapter(productListAdapter);
         contentView.addView(productRecyclerView);
@@ -128,5 +132,22 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void logProductListingEvent() {
+        ShoppingListSummary shoppingListSummary = getArguments().getParcelable(Constants.SHOPPING_LIST_SUMMARY);
+        ShoppingListName shoppingListName = shoppingListSummary.getShoppingListName();
+        HashMap<String, String> eventAttribs = new HashMap<>();
+        eventAttribs.put(Constants.TYPE, shoppingListSummary.getFacetSlug());
+
+        if (shoppingListName != null) {
+            eventAttribs.put(Constants.NAME, shoppingListName.getSlug());
+            if (!shoppingListName.getSlug().equals(Constants.SMART_BASKET_SLUG)) {
+                trackEvent(TrackingAware.SHOP_LST_SUMMARY_SHOWN, eventAttribs);
+            } else {
+                trackEvent(TrackingAware.SMART_BASKET_SUMMARY_SHOWN, eventAttribs);
+            }
+        }
     }
 }

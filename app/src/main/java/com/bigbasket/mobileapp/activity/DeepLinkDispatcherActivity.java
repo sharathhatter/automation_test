@@ -13,16 +13,11 @@ import com.bigbasket.mobileapp.handler.DeepLinkHandler;
 import com.bigbasket.mobileapp.handler.SilentDeepLinkHandler;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.InvoiceDataAware;
-import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.moe.pushlibrary.utils.MoEHelperConstants;
-
-import java.util.HashMap;
-
-import retrofit.RetrofitError;
 
 public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceDataAware,
         HandlerAware {
@@ -46,6 +41,7 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
             finish();
             return;
         }
+        setNextScreenNavigationContext(TrackEventkeys.DEEP_LINK);
         int resultCode = DeepLinkHandler.handleDeepLink(this, uri);
         if (resultCode == DeepLinkHandler.LOGIN_REQUIRED) {
             showToast(getString(R.string.login_required));

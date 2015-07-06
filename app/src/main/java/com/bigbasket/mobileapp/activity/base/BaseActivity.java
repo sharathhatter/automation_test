@@ -584,11 +584,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
     @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs, String source,
                            String sourceValue, String nc, boolean isCustomerValueIncrease) {
-
-        Log.d(getCurrentActivity().getClass().getName(), "Sending event = " + eventName +
-                ", eventAttribs = " + eventAttribs + ", source = " + source +
-                ", sourceValue = " + sourceValue + ", nc = " + nc + ", isCustomerValueIncrease = "
-                + isCustomerValueIncrease);
         if (eventAttribs != null && eventAttribs.containsKey(TrackEventkeys.NAVIGATION_CTX)) {
             // Someone has already set nc, so don't override it
             nc = null;
@@ -596,9 +591,20 @@ public abstract class BaseActivity extends AppCompatActivity implements
         if (!TextUtils.isEmpty(nc)) {
             if (eventAttribs == null) {
                 eventAttribs = new HashMap<>();
+            }
+            eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, nc);
+        }
+        if (eventAttribs != null && eventAttribs.containsKey(TrackEventkeys.NAVIGATION_CTX)) {
+            nc = eventAttribs.get(TrackEventkeys.NAVIGATION_CTX);
+            if (!TextUtils.isEmpty(nc)) {
+                nc = nc.replace(" ", "-").toLowerCase(Locale.getDefault());
                 eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, nc);
             }
         }
+        Log.d(getCurrentActivity().getClass().getName(), "Sending event = " + eventName +
+                ", eventAttribs = " + eventAttribs + ", source = " + source +
+                ", sourceValue = " + sourceValue + ", isCustomerValueIncrease = "
+                + isCustomerValueIncrease);
         AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());
         if (authParameters.isMoEngageEnabled()) {
             JSONObject analyticsJsonObj = new JSONObject();
@@ -668,6 +674,11 @@ public abstract class BaseActivity extends AppCompatActivity implements
     @Override
     public String getCurrentNavigationContext() {
         return mNavigationContext;
+    }
+
+    @Override
+    public void setCurrentNavigationContext(@Nullable String nc) {
+        mNavigationContext = nc;
     }
 
     @Nullable
@@ -780,8 +791,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
         if (nameValuePairs != null && nameValuePairs.size() > 0) {
             Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
             intent.putParcelableArrayListExtra(Constants.PRODUCT_QUERY, nameValuePairs);
-            if (!TextUtils.isEmpty(sectionName) || !TextUtils.isEmpty(sectionItemName))
-                intent.putExtra(TrackEventkeys.NAVIGATION_CTX, sectionName + "." + sectionItemName);
             String title = sectionItemName != null ? sectionItemName : null;
             if (!TextUtils.isEmpty(title)) {
                 intent.putExtra(Constants.TITLE, title);

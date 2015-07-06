@@ -52,7 +52,12 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
 
     @Override
     public void productListOnActivityCreated() {
-        logProductListingEvent();
+        // Don't do anything
+    }
+
+    @Override
+    public void logProductListingEvent() {
+        // Don't do anything
     }
 
     @Override

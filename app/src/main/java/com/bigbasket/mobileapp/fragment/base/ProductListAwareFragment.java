@@ -75,6 +75,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
     }
 
     public void logProductListingEvent() {
+        if (mTabType == null) return;
         HashMap<String, String> map = new HashMap<>();
         map.put(Constants.TYPE, mTabType);
         trackEvent(TrackingAware.PRODUCT_LIST_SHOWN, map);

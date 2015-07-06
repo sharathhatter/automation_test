@@ -58,7 +58,6 @@ import com.bigbasket.mobileapp.fragment.promo.PromoDetailFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoSetProductsFragment;
 import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
-import com.bigbasket.mobileapp.interfaces.AnalyticsNavigationContextAware;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.FloatingBasketUIAware;
@@ -244,6 +243,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     public void replaceToMainLayout(AbstractFragment fragment, String tag, boolean stateLess,
                                     FrameLayout frameLayout) {
         if (frameLayout == null) return;
+        UIUtil.addNavigationContextToBundle(fragment);
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         String ftTag = TextUtils.isEmpty(tag) ? fragment.getFragmentTxnTag() : tag;
@@ -260,20 +260,8 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     public void addToMainLayout(AbstractFragment fragment, String tag, boolean stateLess) {
-
-        Bundle args = fragment.getArguments();
-        String nc = fragment instanceof AnalyticsNavigationContextAware ?
-                ((AnalyticsNavigationContextAware) fragment).getNextScreenNavigationContext() : null;
-        if (nc == null) {
-            // Use activity's current nc
-            nc = getCurrentNavigationContext();
-        }
-        if (!TextUtils.isEmpty(nc)) {
-            if (args == null) {
-                args = new Bundle();
-            }
-            args.putString(TrackEventkeys.NAVIGATION_CTX, nc);
-        }
+        if (fragment == null) return;
+        UIUtil.addNavigationContextToBundle(fragment);
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         String ftTag = TextUtils.isEmpty(tag) ? fragment.getFragmentTxnTag() : tag;
@@ -679,8 +667,8 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.SEARCH.get()));
         nameValuePairs.add(new NameValuePair(Constants.SLUG, searchQuery.trim()));
         intent.putParcelableArrayListExtra(Constants.PRODUCT_QUERY, nameValuePairs);
-        intent.putExtra(TrackEventkeys.NAVIGATION_CTX, "ps");
         intent.putExtra(Constants.TITLE, searchQuery);
+        setNextScreenNavigationContext(TrackEventkeys.PL_PS + "." + searchQuery);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 

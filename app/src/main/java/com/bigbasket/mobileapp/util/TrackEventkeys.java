@@ -111,10 +111,14 @@ public final class TrackEventkeys {
 
     public static final String ERROR_CODE = "error_code";
     public static final String ERROR_MSG = "error_message";
-    //referral
-    public static final String BB_REFERRAL_MAIL_SCREEN = "offer";
-    public static final String CONTACT_REFERRAL_SCREEN = "offer";
-    public static final String REFERRAL_SCREEN = "offer";
+    public static final String SL = "sl";
+    public static final String SB = "sb";
+    public static final String SSL = "ssl";
+    public static final String HOME = "home";
+    public static final String SCREEN = "screen";
+    public static final String MENU = "menu";
+    public static final String PL_PS = "pl.ps";
+    public static final String DEEP_LINK = "deep-link";
 
     private TrackEventkeys() {
     }

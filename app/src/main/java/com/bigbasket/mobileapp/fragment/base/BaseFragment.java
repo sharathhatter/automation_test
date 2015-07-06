@@ -445,6 +445,11 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         return mNavigationContext;
     }
 
+    @Override
+    public void setCurrentNavigationContext(@Nullable String nc) {
+        mNavigationContext = nc;
+    }
+
     @Nullable
     @Override
     public String getNextScreenNavigationContext() {
