@@ -172,11 +172,6 @@ public class ShoppingListSummaryActivity extends BBActivity {
                                            final ArrayList<ShoppingListSummary> shoppingListSummaries,
                                            String baseImgUrl) {
         this.baseImgUrl = baseImgUrl;
-        if (!shoppingListName.getSlug().equals(Constants.SMART_BASKET_SLUG)) {
-            trackEvent(TrackingAware.SHOP_LST_SUMMARY_SHOWN, null);
-        } else {
-            trackEvent(TrackingAware.SMART_BASKET_SUMMARY_SHOWN, null);
-        }
         FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
         contentFrame.removeAllViews();
         LayoutInflater inflater = getLayoutInflater();
@@ -202,6 +197,9 @@ public class ShoppingListSummaryActivity extends BBActivity {
         }
 
         final int numTabs = shoppingListSummaries.size();
+
+        String nc = getNc();
+        setNextScreenNavigationContext(nc);
         if (numTabs == 1) {
             Bundle bundle = getBundleForShoppingListProductFragment(shoppingListSummaries.get(0),
                     shoppingListName, baseImgUrl);
@@ -418,7 +416,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
                 if (!mShoppingListName.getName().equalsIgnoreCase(inputText.trim()))
                     editShoppingListName(mShoppingListName, inputText);
                 else
-                    showAlertDialog("Shopping List with name \""+inputText.trim()+"\" already exits");
+                    showAlertDialog("Shopping List with name \"" + inputText.trim() + "\" already exits");
             }
         }.show();
     }
@@ -545,5 +543,12 @@ public class ShoppingListSummaryActivity extends BBActivity {
     @Override
     public String getScreenTag() {
         return TrackEventkeys.SHOPPING_LIST_CATEGORY_LISTING_SCREEN;
+    }
+
+    @Nullable
+    private String getNc() {
+        String nc;
+        if (mShoppingListName == null) return null;
+        return mShoppingListName.getNc();
     }
 }

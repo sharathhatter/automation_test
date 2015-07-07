@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
+import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
 
 import java.util.ArrayList;
@@ -23,8 +24,11 @@ public class TabPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int i) {
         BBTab bbTab = bbTabs.get(i);
-        return Fragment.instantiate(ctx, bbTab.getFragmentClass().getName(),
+        Fragment fragment = Fragment.instantiate(ctx, bbTab.getFragmentClass().getName(),
                 bbTab.getArgs());
+
+        UIUtil.addNavigationContextToBundle(fragment);
+        return fragment;
     }
 
     @Override

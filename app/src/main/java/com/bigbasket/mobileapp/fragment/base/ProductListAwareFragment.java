@@ -75,6 +75,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
     }
 
     public void logProductListingEvent() {
+        if (mTabType == null) return;
         HashMap<String, String> map = new HashMap<>();
         map.put(Constants.TYPE, mTabType);
         trackEvent(TrackingAware.PRODUCT_LIST_SHOWN, map);
@@ -187,7 +188,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                     .build();
             mProductListRecyclerAdapter = new ProductListRecyclerAdapter(products, mBaseImgUrl,
                     productViewDisplayDataHolder, this, mProductInfo.getProductCount(),
-                    getNavigationCtx(), cartInfo);
+                    getNextScreenNavigationContext(), cartInfo);
 
             productRecyclerView.setAdapter(mProductListRecyclerAdapter);
             contentView.addView(productRecyclerView);
@@ -217,7 +218,23 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         }
     }
 
-    public abstract String getNavigationCtx();
+    @Nullable
+    @Override
+    public String getNextScreenNavigationContext() {
+        if (getCurrentActivity() != null) {
+            return getCurrentActivity().getNextScreenNavigationContext();
+        }
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public String getCurrentNavigationContext() {
+        if (getCurrentActivity() != null) {
+            return getCurrentActivity().getCurrentNavigationContext();
+        }
+        return null;
+    }
 
     @Override
     public void onShoppingListFetched(ArrayList<ShoppingListName> shoppingListNames) {

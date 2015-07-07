@@ -124,10 +124,7 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
 
     private void showAddresses() {
         if (mAddressArrayList != null && mAddressArrayList.size() > 0) {
-            HashMap<String, String> map = new HashMap<>();
-            map.put(TrackEventkeys.NAVIGATION_CTX, mFromAccountPage ? TrackEventkeys.NAVIGATION_CTX_MY_ACCOUNT :
-                    TrackEventkeys.NAVIGATION_CTX_CHECKOUT_DELIVERY_ADDRESS);
-            trackEvent(TrackingAware.DELIVERY_ADDRESS_SHOWN, map);
+            trackEvent(TrackingAware.DELIVERY_ADDRESS_SHOWN, null);
             renderAddressList();
         } else {
             handleEmptyAddresses();
@@ -223,10 +220,10 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         showAddressForm(null);
         HashMap<String, String> map = new HashMap<>();
         if (mFromAccountPage) {
-            map.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_MY_ACCOUNT);
+            setCurrentNavigationContext(TrackEventkeys.NAVIGATION_CTX_MY_ACCOUNT);
             trackEvent(TrackingAware.NEW_ADDRESS_CLICKED, map);
         } else {
-            map.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_CHECKOUT_DELIVERY_ADDRESS);
+            setCurrentNavigationContext(TrackEventkeys.CO_BASKET);
             trackEvent(TrackingAware.CHECKOUT_CREATE_ADDRESS_SHOWN, map);
         }
     }
@@ -318,12 +315,14 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             new OrderQcDialog<>().show(this, createPotentialOrderResponseContent);
             trackEvent(TrackingAware.CHECKOUT_QC_SHOWN, null);
         } else {
+            setNextScreenNavigationContext(TrackEventkeys.CO_ADDRESS);
             launchSlotSelection(createPotentialOrderResponseContent);
         }
     }
 
     @Override
     public void postOrderQc(CreatePotentialOrderResponseContent createPotentialOrderResponseContent) {
+        setNextScreenNavigationContext(TrackEventkeys.CO_QC);
         launchSlotSelection(createPotentialOrderResponseContent);
     }
 

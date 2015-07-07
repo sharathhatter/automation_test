@@ -5,6 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.google.gson.annotations.SerializedName;
 
 public class ShoppingListName implements Parcelable {
@@ -99,5 +100,17 @@ public class ShoppingListName implements Parcelable {
         if (!wasDescNull) {
             dest.writeString(description);
         }
+    }
+
+    public String getNc() {
+        String nc;
+        if (slug.equalsIgnoreCase(Constants.SMART_BASKET_SLUG)) {
+            nc = TrackEventkeys.SB;
+        } else if (isSystem()) {
+            nc = TrackEventkeys.SSL;
+        } else {
+            nc = TrackEventkeys.SL;
+        }
+        return nc + "." + slug;
     }
 }

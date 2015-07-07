@@ -23,6 +23,7 @@ import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
+import com.bigbasket.mobileapp.interfaces.AnalyticsNavigationContextAware;
 import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
 import com.bigbasket.mobileapp.interfaces.BasketOperationAware;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
@@ -40,6 +41,7 @@ import com.bigbasket.mobileapp.task.uiv3.CreateShoppingListTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 
@@ -50,11 +52,14 @@ import java.util.Map;
 
 public abstract class BaseFragment extends AbstractFragment implements HandlerAware,
         CartInfoAware, BasketOperationAware, ProgressIndicationAware,
-        ConnectivityAware, TrackingAware, ApiErrorAware, LaunchProductListAware {
+        ConnectivityAware, TrackingAware, ApiErrorAware, LaunchProductListAware,
+        AnalyticsNavigationContextAware {
 
     protected BigBasketMessageHandler handler;
     private ProgressDialog progressDialog;
     protected BasketOperationResponse basketOperationResponse;
+    private String mNavigationContext;
+    private String mNextScreenNavigationContext;
 
     @Override
     public void onAttach(Activity activity) {
@@ -71,6 +76,8 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         if (getCurrentActivity() != null && getCurrentActivity().getSupportActionBar() != null) {
             getCurrentActivity().getSupportActionBar().setSubtitle(null);
         }
+        mNavigationContext = getArguments() != null ?
+                getArguments().getString(TrackEventkeys.NAVIGATION_CTX) : null;
     }
 
     @Override
@@ -160,8 +167,6 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
 
     /**
      * Return null if you don't want the title to be changed
-     *
-     * @return
      */
     public abstract String getTitle();
 
@@ -189,10 +194,6 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
 
     public Spannable asRupeeSpannable(String amtTxt) {
         return UIUtil.asRupeeSpannable(amtTxt, faceRupee);
-    }
-
-    public BasketOperationResponse getBasketOperationResponse() {
-        return basketOperationResponse;
     }
 
     @Override
@@ -362,14 +363,28 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs) {
         if (getCurrentActivity() == null) return;
-        getCurrentActivity().trackEvent(eventName, eventAttribs);
+        trackEvent(eventName, eventAttribs, null, null);
+    }
+
+    @Override
+    public void trackEvent(String eventName, Map<String, String> eventAttribs, String source, String sourceValue) {
+        if (getCurrentActivity() == null) return;
+        trackEvent(eventName, eventAttribs, source, sourceValue, getCurrentNavigationContext(), false);
     }
 
     @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs, String source,
                            String sourceValue, boolean isCustomerValueIncrease) {
         if (getCurrentActivity() == null) return;
-        getCurrentActivity().trackEvent(eventName, eventAttribs, source, sourceValue, false);
+        trackEvent(eventName, eventAttribs, source, sourceValue, getCurrentNavigationContext(), isCustomerValueIncrease);
+    }
+
+    @Override
+    public void trackEvent(String eventName, Map<String, String> eventAttribs, String source,
+                           String sourceValue, String nc, boolean isCustomerValueIncrease) {
+        if (getCurrentActivity() == null) return;
+        getCurrentActivity().trackEvent(eventName, eventAttribs, source, sourceValue,
+                nc, isCustomerValueIncrease);
     }
 
     @Override
@@ -424,6 +439,31 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
 
     public abstract String getScreenTag();
 
+    @Nullable
+    @Override
+    public String getCurrentNavigationContext() {
+        return mNavigationContext;
+    }
+
+    @Override
+    public void setCurrentNavigationContext(@Nullable String nc) {
+        mNavigationContext = nc;
+    }
+
+    @Nullable
+    @Override
+    public String getNextScreenNavigationContext() {
+        return mNextScreenNavigationContext;
+    }
+
+    @Override
+    public void setNextScreenNavigationContext(@Nullable String nc) {
+        mNextScreenNavigationContext = nc;
+        if (getCurrentActivity() != null) {
+            getCurrentActivity().setNextScreenNavigationContext(mNextScreenNavigationContext);
+        }
+    }
+
     public void onResume() {
         super.onResume();
         setTitle();
@@ -437,5 +477,11 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
             ((LaunchProductListAware) getActivity()).
                     launchProductList(nameValuePairs, sectionName, sectionItemName);
         }
+    }
+
+    @Override
+    public void startActivityForResult(Intent intent, int requestCode) {
+        intent.putExtra(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+        super.startActivityForResult(intent, requestCode);
     }
 }

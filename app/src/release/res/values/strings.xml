@@ -5,6 +5,6 @@
     <string name="moe_gcm_sender_id" templateMergeStrategy="preserve">id:610100195438</string>
     <string name="new_relic_key">AA054414b252856094214a4ec0db255ef16cd7c1a4</string>
     <string name="localytics_api_key" templateMergeStrategy="preserve">
-        3731706dde7be87f1c2fc85-2cd59b96-20b8-11e5-4ee5-00712085a1eb
+        929bde845dd6abef0220bbb-e29737e4-2463-11e5-4f1b-00712085a1eb
     </string>
 </resources>

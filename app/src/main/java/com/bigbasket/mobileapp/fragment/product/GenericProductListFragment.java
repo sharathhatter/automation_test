@@ -8,11 +8,6 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 public class GenericProductListFragment extends ProductListAwareFragment {
 
     @Override
-    public String getNavigationCtx() {
-        return getArguments().getString(TrackEventkeys.NAVIGATION_CTX);
-    }
-
-    @Override
     public String getTitle() {
         return null;
     }

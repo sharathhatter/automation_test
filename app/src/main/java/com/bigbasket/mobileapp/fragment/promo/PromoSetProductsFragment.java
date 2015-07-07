@@ -36,7 +36,6 @@ import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
-import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -288,10 +287,10 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
 
         if (cartInfo == null) {
             productListAdapter = new ProductListRecyclerAdapter(products, baseImgUrl,
-                    getProductDisplayHolder(), this, products.size(), getNavigationCtx());
+                    getProductDisplayHolder(), this, products.size(), getNextScreenNavigationContext());
         } else {
             productListAdapter = new ProductListRecyclerAdapter(products, baseImgUrl,
-                    getProductDisplayHolder(), this, products.size(), getNavigationCtx(),
+                    getProductDisplayHolder(), this, products.size(), getNextScreenNavigationContext(),
                     cartInfo);
         }
 
@@ -369,12 +368,6 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
     @Override
     public String getFragmentTxnTag() {
         return PromoSetProductsFragment.class.getName();
-    }
-
-
-    @Override
-    public String getNavigationCtx() {
-        return TrackEventkeys.NAVIGATION_CTX_PROMO;
     }
 
     @Override

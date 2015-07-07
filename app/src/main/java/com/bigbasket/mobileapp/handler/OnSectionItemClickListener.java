@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -21,6 +22,7 @@ import com.bigbasket.mobileapp.fragment.product.CategoryLandingFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoCategoryFragment;
 import com.bigbasket.mobileapp.fragment.promo.PromoDetailFragment;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.AnalyticsNavigationContextAware;
 import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.LaunchProductListAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
@@ -106,7 +108,6 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                 case DestinationInfo.PREVIOUS_ORDERS:
                     Intent intent = new Intent(((ActivityAware) context).getCurrentActivity(), OrderListActivity.class);
                     intent.putExtra(Constants.ORDER, ((ActivityAware) context).getCurrentActivity().getString(R.string.past_label));
-                    intent.putExtra(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_HOME_PAGE);
                     intent.putExtra(Constants.SHOP_FROM_PREVIOUS_ORDER, true);
                     ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     break;
@@ -149,22 +150,12 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                                 isSmartBasket);
                         intent.putExtra(Constants.SHOPPING_LIST_NAME, shoppingListName);
                         ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-
-                        if (isSmartBasket) {
-                            logMainMenuEvent(TrackingAware.SMART_BASKET_ICON_CLICKED,
-                                    TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_HOME_PAGE);
-                        } else {
-                            logMainMenuEvent(TrackingAware.SHOPPING_LIST_ICON_CLICKED,
-                                    TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_HOME_PAGE);
-                        }
                     }
                     break;
                 case DestinationInfo.SHOPPING_LIST_LANDING:
                     intent = new Intent(((ActivityAware) context).getCurrentActivity(), ShoppingListActivity.class);
                     intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_LANDING);
                     ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                    logMainMenuEvent(TrackingAware.SHOPPING_LIST_ICON_CLICKED, TrackEventkeys.NAVIGATION_CTX,
-                            TrackEventkeys.NAVIGATION_CTX_HOME_PAGE);
                     break;
                 case DestinationInfo.SEARCH:
                     if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
@@ -262,6 +253,45 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
         } else if (screenName != null) {
             logItemClickEvent();
         }
+        setNc();
+    }
+
+    private void setNc() {
+        StringBuilder ncBuilder = new StringBuilder();
+        switch (screenName) {
+            case SectionManager.HOME_PAGE:
+                ncBuilder.append(TrackEventkeys.HOME);
+                break;
+            case SectionManager.MAIN_MENU:
+                ncBuilder.append(TrackEventkeys.MENU);
+                break;
+            default:
+                ncBuilder.append(TrackEventkeys.SCREEN);
+                if (!TextUtils.isEmpty(screenName)) {
+                    ncBuilder.append(".").append(screenName);
+                }
+                break;
+        }
+        if (section != null) {
+            if (section.getTitle() != null &&
+                    !TextUtils.isEmpty(section.getTitle().getText())) {
+                ncBuilder.append(".").append(section.getTitle().getText());
+            } else if (section.getDescription() != null && !TextUtils.isEmpty(section.getDescription().getText())) {
+                ncBuilder.append(".").append(section.getDescription().getText());
+            }
+        }
+        if (sectionItem != null) {
+            if (sectionItem.getTitle() != null &&
+                    !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
+                ncBuilder.append(".").append(sectionItem.getTitle().getText());
+            } else if (sectionItem.getDescription() != null && !TextUtils.isEmpty(sectionItem.getDescription().getText())) {
+                ncBuilder.append(".").append(sectionItem.getDescription().getText());
+            }
+        }
+        if (context instanceof Fragment && context instanceof AnalyticsNavigationContextAware) {
+            ((AnalyticsNavigationContextAware) context).setNextScreenNavigationContext(ncBuilder.toString());
+        }
+        ((ActivityAware) context).getCurrentActivity().setNextScreenNavigationContext(ncBuilder.toString());
     }
 
     private String getAnalyticsFormattedScreeName() {
@@ -320,13 +350,6 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
         if (!TextUtils.isEmpty(itemName))
             eventAttribs.put(TrackEventkeys.SECTION_ITEM, getSectionItemName());
         ((TrackingAware) context).trackEvent(getAnalyticsFormattedScreeName(), eventAttribs);
-    }
-
-    private void logMainMenuEvent(String trackAwareName, String eventKeyName,
-                                  String navigationCtx) {
-        HashMap<String, String> eventAttribs = new HashMap<>();
-        eventAttribs.put(eventKeyName, navigationCtx);
-        ((TrackingAware) context).trackEvent(trackAwareName, eventAttribs);
     }
 
     private boolean hasMainMenu() {

@@ -81,16 +81,11 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
         map.put(TrackEventkeys.PRODUCT_CAT, mProduct.getProductCategoryName());
         map.put(TrackEventkeys.PRODUCT_BRAND, mProduct.getBrand());
         map.put(TrackEventkeys.PRODUCT_ID, mProduct.getSku());
-        map.put(TrackEventkeys.NAVIGATION_CTX, getArguments().getString(TrackEventkeys.NAVIGATION_CTX));
         String desc = mProduct.getDescription();
         if (!TextUtils.isEmpty(mProduct.getPackageDescription()))
             desc = " " + mProduct.getWeightAndPackDesc();
         map.put(TrackEventkeys.PRODUCT_DESC, desc);
         trackEvent(TrackingAware.PRODUCT_DETAIL_SHOWN, map);
-    }
-
-    public String getNavigationCtx() {
-        return TrackEventkeys.NAVIGATION_CTX_PRODUCT_DETAIL;
     }
 
     private void loadProductDetail() {
@@ -99,6 +94,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
         String productId = args.getString(Constants.SKU_ID);
         String eanCode = args.getString(Constants.EAN_CODE);
         if (TextUtils.isEmpty(productId) && TextUtils.isEmpty(eanCode)) return;
+        setNextScreenNavigationContext("pd." + (productId != null ? productId : eanCode));
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
         showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.productDetails(productId, eanCode, new Callback<ProductDetailApiResponse>() {
@@ -162,7 +158,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
         View productRow = inflater.inflate(R.layout.uiv3_product_detail_row, layoutProductDetail, false);
 
         ProductView.setProductView(new ProductViewHolder(productRow), mProduct, null, null, productViewDisplayDataHolder,
-                false, this, getNavigationCtx());
+                false, this, getNextScreenNavigationContext());
 
         if (mProduct.getProductPromoInfo() == null ||
                 !Promo.getAllTypes().contains(mProduct.getProductPromoInfo().getPromoType())) {

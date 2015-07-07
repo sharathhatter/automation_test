@@ -215,7 +215,6 @@ public class OrderInvoiceSummaryFragment extends BaseFragment {
         if (getArguments() == null) return;
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.ORDER_ID, orderNumber);
-        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getArguments().getString(TrackEventkeys.NAVIGATION_CTX));
         trackEvent(TrackingAware.ORDER_SUMMARY_SHOWN, eventAttribs);
     }
 
@@ -238,7 +237,6 @@ public class OrderInvoiceSummaryFragment extends BaseFragment {
     public void onShopFromThisOrder(String orderNumber) {
         Intent intent = new Intent(getActivity(), BackButtonWithBasketButtonActivity.class);
         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_PRODUCT_LIST_FRAGMENT);
-        intent.putExtra(TrackEventkeys.NAVIGATION_CTX, getArguments().getString(TrackEventkeys.NAVIGATION_CTX));
         intent.putExtra(Constants.ORDER_ID, orderNumber);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }

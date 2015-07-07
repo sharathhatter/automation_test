@@ -46,6 +46,7 @@ import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.AnalyticsNavigationContextAware;
 import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
 import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
@@ -86,7 +87,7 @@ import java.util.Random;
 public abstract class BaseActivity extends AppCompatActivity implements
         CancelableAware, ProgressIndicationAware, ActivityAware,
         ConnectivityAware, TrackingAware, ApiErrorAware,
-        LaunchProductListAware, OnBasketChangeListener {
+        LaunchProductListAware, OnBasketChangeListener, AnalyticsNavigationContextAware {
 
     public static Typeface faceRupee;
     public static Typeface faceRobotoRegular, faceRobotoLight, faceRobotoMedium,
@@ -96,6 +97,8 @@ public abstract class BaseActivity extends AppCompatActivity implements
     protected ProgressDialog progressDialog = null;
     protected MoEHelper moEHelper;
     private AppEventsLogger fbLogger;
+    private String mNavigationContext;
+    private String mNextScreenNavigationContext;
 
     public static void showKeyboard(final View view) {
         (new Handler()).postDelayed(new Runnable() {
@@ -135,7 +138,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         faceRobotoLight = FontHolder.getInstance(this).getFaceRobotoLight();
         moEHelper = MoEngageWrapper.getMoHelperObj(getCurrentActivity());
         fbLogger = AppEventsLogger.newLogger(getApplicationContext());
-
+        mNavigationContext = getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX);
         NewRelic.setInteractionName(getCurrentActivity().getClass().getName());
     }
 
@@ -362,6 +365,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     public void launchViewBasketScreen() {
         Intent intent = new Intent(getCurrentActivity(), ShowCartActivity.class);
+        setNextScreenNavigationContext(TrackEventkeys.VIEW_BASKET);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
@@ -546,11 +550,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
         UIUtil.reportFormInputFieldError(autoCompleteTextView, errMsg);
     }
 
-    @Override
-    public void trackEvent(String eventName, Map<String, String> eventAttribs) {
-        trackEvent(eventName, eventAttribs, null, null, false);
-    }
-
     public void trackEventAppsFlyer(String eventName, String valueToSum, Map<String, String> mapAttr) {
         try {
             AppsFlyerLib.sendTrackingWithEvent(getApplicationContext(), eventName, valueToSum);
@@ -567,11 +566,46 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void trackEvent(String eventName, Map<String, String> eventAttribs) {
+        trackEvent(eventName, eventAttribs, null, null, false);
+    }
+
+    @Override
+    public void trackEvent(String eventName, Map<String, String> eventAttribs, String source, String sourceValue) {
+        trackEvent(eventName, eventAttribs, source, sourceValue, getCurrentNavigationContext(), false);
+    }
+
+    @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs, String source,
-                           String sourceValue,
-                           boolean isCustomerValueIncrease) {
-        Log.i(getCurrentActivity().getClass().getName(), "Sending event = " + eventName +
-                " eventAttribs = " + eventAttribs);
+                           String sourceValue, boolean isCustomerValueIncrease) {
+        trackEvent(eventName, eventAttribs, source, sourceValue, getCurrentNavigationContext(),
+                isCustomerValueIncrease);
+    }
+
+    @Override
+    public void trackEvent(String eventName, Map<String, String> eventAttribs, String source,
+                           String sourceValue, String nc, boolean isCustomerValueIncrease) {
+        if (eventAttribs != null && eventAttribs.containsKey(TrackEventkeys.NAVIGATION_CTX)) {
+            // Someone has already set nc, so don't override it
+            nc = null;
+        }
+        if (!TextUtils.isEmpty(nc)) {
+            if (eventAttribs == null) {
+                eventAttribs = new HashMap<>();
+            }
+            eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, nc);
+        }
+        if (eventAttribs != null && eventAttribs.containsKey(TrackEventkeys.NAVIGATION_CTX)) {
+            nc = eventAttribs.get(TrackEventkeys.NAVIGATION_CTX);
+            if (!TextUtils.isEmpty(nc)) {
+                nc = nc.replace(" ", "-").toLowerCase(Locale.getDefault());
+                eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, nc);
+            }
+        }
+        Log.d(getCurrentActivity().getClass().getName(), "Sending event = " + eventName +
+                ", eventAttribs = " + eventAttribs + ", source = " + source +
+                ", sourceValue = " + sourceValue + ", isCustomerValueIncrease = "
+                + isCustomerValueIncrease);
         AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());
         if (authParameters.isMoEngageEnabled()) {
             JSONObject analyticsJsonObj = new JSONObject();
@@ -636,6 +670,28 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     public abstract String getScreenTag();
+
+    @Nullable
+    @Override
+    public String getCurrentNavigationContext() {
+        return mNavigationContext;
+    }
+
+    @Override
+    public void setCurrentNavigationContext(@Nullable String nc) {
+        mNavigationContext = nc;
+    }
+
+    @Nullable
+    @Override
+    public String getNextScreenNavigationContext() {
+        return mNextScreenNavigationContext;
+    }
+
+    @Override
+    public void setNextScreenNavigationContext(@Nullable String nc) {
+        mNextScreenNavigationContext = nc;
+    }
 
     public void launchAppDeepLink(String uri) {
         try {
@@ -736,8 +792,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
         if (nameValuePairs != null && nameValuePairs.size() > 0) {
             Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
             intent.putParcelableArrayListExtra(Constants.PRODUCT_QUERY, nameValuePairs);
-            if (!TextUtils.isEmpty(sectionName) || !TextUtils.isEmpty(sectionItemName))
-                intent.putExtra(TrackEventkeys.NAVIGATION_CTX, sectionName + "." + sectionItemName);
             String title = sectionItemName != null ? sectionItemName : null;
             if (!TextUtils.isEmpty(title)) {
                 intent.putExtra(Constants.TITLE, title);
@@ -754,5 +808,11 @@ public abstract class BaseActivity extends AppCompatActivity implements
     @Override
     public void markBasketChanged(@Nullable Intent data) {
         setResult(NavigationCodes.BASKET_CHANGED, data);
+    }
+
+    @Override
+    public void startActivityForResult(Intent intent, int requestCode) {
+        intent.putExtra(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+        super.startActivityForResult(intent, requestCode);
     }
 }
