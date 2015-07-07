@@ -270,6 +270,8 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
             removePendingGoToHome();
             boolean reloadApp = data != null && data.getBooleanExtra(Constants.RELOAD_APP, false);
             handleResults(reloadApp);
+        } else if (requestCode == NavigationCodes.TUTORIAL_SEEN) {
+            super.onActivityResult(requestCode, resultCode, data);
         } else {
             finish();
         }
