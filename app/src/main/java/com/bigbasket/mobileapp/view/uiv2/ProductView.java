@@ -494,6 +494,9 @@ public final class ProductView {
         }
 
         public void swapWithChildProduct(Product childProduct, Button btnMorePackSizes) {
+            if (childProduct.getSku().equals(product.getSku())) {
+                childProduct = product;
+            }
             btnMorePackSizes.setText(childProduct.getWeightAndPackDesc());
             currentProduct = childProduct;
             setProductView(productViewHolder, childProduct, baseImgUrl,
