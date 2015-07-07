@@ -149,6 +149,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
                 .setShowShoppingListBtn(true)
                 .setShowBasketBtn(true)
                 .setShowShopListDeleteBtn(false)
+                .disableInBasketChildSwap(true)
                 .build();
 
         LinearLayout layoutProductDetail = (LinearLayout) getView().findViewById(R.id.layoutProductDetail);

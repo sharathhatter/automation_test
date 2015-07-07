@@ -68,10 +68,6 @@ public final class ProductView {
                                           final T productDataAware, String navigationCtx,
                                           @Nullable HashMap<String, Integer> cartInfo) {
         setProductImage(productViewHolder, product, baseImgUrl, productDetailOnClickListener);
-        if (!skipChildDropDownRendering) {
-            setChildProducts(productViewHolder, product, baseImgUrl, productViewDisplayDataHolder,
-                    productDataAware, navigationCtx, cartInfo);
-        }
         setProductDesc(productViewHolder, product, productViewDisplayDataHolder,
                 productDetailOnClickListener, productDataAware);
         setPrice(productViewHolder, product, productViewDisplayDataHolder);
@@ -79,6 +75,10 @@ public final class ProductView {
         setProductAdditionalActionMenu(productViewHolder, product, productViewDisplayDataHolder, productDataAware);
         setBasketAndAvailabilityViews(productViewHolder, product, productViewDisplayDataHolder,
                 productDataAware, navigationCtx, cartInfo);
+        if (!skipChildDropDownRendering) {
+            setChildProducts(productViewHolder, product, baseImgUrl, productViewDisplayDataHolder,
+                    productDataAware, navigationCtx, cartInfo);
+        }
     }
 
     private static void setProductImage(ProductViewHolder productViewHolder, Product product, String baseImgUrl,
@@ -106,11 +106,34 @@ public final class ProductView {
         txtPackageDesc.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
         if (hasChildren) {
             btnMorePackSizes.setText(product.getWeightAndPackDesc());
-            btnMorePackSizes.setOnClickListener(
-                    new OnShowChildProductDropdownClickListener<>(productDataAware, productViewDisplayDataHolder,
-                            product, productViewHolder, baseImgUrl, navigationCtx, cartInfo));
             btnMorePackSizes.setVisibility(View.VISIBLE);
             txtPackageDesc.setVisibility(View.GONE);
+            OnShowChildProductDropdownClickListener listener = null;
+            Product childProductInBasket = null;
+            if (!productViewDisplayDataHolder.disableInBasketChildSwap()) {
+                boolean isCurrentProductInBasket = getNoOfItemsInCart(product, cartInfo) > 0;
+                if (!isCurrentProductInBasket) {
+                    for (Product childProduct : childProducts) {
+                        boolean isThisChildProductInBasket = getNoOfItemsInCart(childProduct, cartInfo) > 0;
+                        if (isThisChildProductInBasket) {
+                            childProductInBasket = childProduct;
+                            listener = new OnShowChildProductDropdownClickListener<>(productDataAware, productViewDisplayDataHolder,
+                                    product, productViewHolder, baseImgUrl, navigationCtx, cartInfo);
+                            listener.setCurrentProduct(childProductInBasket);
+                            break;
+                        }
+                    }
+                }
+            }
+            if (listener == null) {
+                listener = new OnShowChildProductDropdownClickListener<>(productDataAware, productViewDisplayDataHolder,
+                        product, productViewHolder, baseImgUrl, navigationCtx, cartInfo);
+            } else {
+                // There is a child product that is in basket
+                // Manually trigger click to change to that product
+                listener.swapWithChildProduct(childProductInBasket, btnMorePackSizes);
+            }
+            btnMorePackSizes.setOnClickListener(listener);
         } else {
             btnMorePackSizes.setVisibility(View.GONE);
             txtPackageDesc.setText(product.getWeightAndPackDesc());
@@ -289,6 +312,17 @@ public final class ProductView {
         }
     }
 
+    private static int getNoOfItemsInCart(Product product, @Nullable final HashMap<String, Integer> cartInfo) {
+        int noOfItemsInCart;
+        if (cartInfo != null) {
+            noOfItemsInCart = cartInfo.containsKey(product.getSku()) ?
+                    cartInfo.get(product.getSku()) : 0;
+        } else {
+            noOfItemsInCart = product.getNoOfItemsInCart();
+        }
+        return noOfItemsInCart;
+    }
+
     private static <T> void setBasketAndAvailabilityViews(final ProductViewHolder productViewHolder, final Product product,
                                                           final ProductViewDisplayDataHolder productViewDisplayDataHolder,
                                                           final T basketOperationAware, final String navigationCtx,
@@ -303,13 +337,7 @@ public final class ProductView {
 
         if (productViewDisplayDataHolder.isShowBasketBtn()) {
             if (product.getProductStatus().equalsIgnoreCase("A")) {
-                int noOfItemsInCart;
-                if (cartInfo != null) {
-                    noOfItemsInCart = cartInfo.containsKey(product.getSku()) ?
-                            cartInfo.get(product.getSku()) : 0;
-                } else {
-                    noOfItemsInCart = product.getNoOfItemsInCart();
-                }
+                int noOfItemsInCart = getNoOfItemsInCart(product, cartInfo);
 
                 if (noOfItemsInCart > 0) {
                     txtInBasket.setText(String.valueOf(noOfItemsInCart));
@@ -452,20 +480,32 @@ public final class ProductView {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Product childProduct = childProducts.get(position);
-                    btnMorePackSizes.setText(childProduct.getWeightAndPackDesc());
-                    currentProduct = childProduct;
-                    setProductView(productViewHolder, childProduct, baseImgUrl,
-                            new ProductDetailOnClickListener(childProduct.getSku(), (ActivityAware) productDataAware),
-                            productViewDisplayDataHolder, true, productDataAware, navigationCtx, cartInfo);
+                    swapWithChildProduct(childProduct, btnMorePackSizes);
                     if (dialog.isShowing()) {
                         dialog.dismiss();
                     }
+
                 }
             });
             dialog.setCancelable(true);
             dialog.setCanceledOnTouchOutside(true);
             dialog.setView(childDropdown, 0, 0, 0, 0);
             dialog.show();
+        }
+
+        public void swapWithChildProduct(Product childProduct, Button btnMorePackSizes) {
+            if (childProduct.getSku().equals(product.getSku())) {
+                childProduct = product;
+            }
+            btnMorePackSizes.setText(childProduct.getWeightAndPackDesc());
+            currentProduct = childProduct;
+            setProductView(productViewHolder, childProduct, baseImgUrl,
+                    new ProductDetailOnClickListener(childProduct.getSku(), (ActivityAware) productDataAware),
+                    productViewDisplayDataHolder, true, productDataAware, navigationCtx, cartInfo);
+        }
+
+        public void setCurrentProduct(Product currentProduct) {
+            this.currentProduct = currentProduct;
         }
     }
 }

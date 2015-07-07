@@ -17,6 +17,7 @@ public class ProductViewDisplayDataHolder {
     private boolean showShopListDeleteBtn;
     private BigBasketMessageHandler handler;
     private ShoppingListName shoppingListName;
+    private boolean disableInBasketChildSwap;
 
     public ProductViewDisplayDataHolder(Builder builder) {
         this.sanSerifLightTypeface = builder.sanSerifLightTypeface;
@@ -29,6 +30,7 @@ public class ProductViewDisplayDataHolder {
         this.showShopListDeleteBtn = builder.showShopListDeleteBtn;
         this.handler = builder.handler;
         this.shoppingListName = builder.shoppingListName;
+        this.disableInBasketChildSwap = builder.disableInBasketChildSwap;
     }
 
     public ShoppingListName getShoppingListName() {
@@ -63,6 +65,10 @@ public class ProductViewDisplayDataHolder {
         return showBasketBtn;
     }
 
+    public boolean disableInBasketChildSwap() {
+        return disableInBasketChildSwap;
+    }
+
     public BigBasketMessageHandler getHandler() {
         return handler;
     }
@@ -78,8 +84,10 @@ public class ProductViewDisplayDataHolder {
         private boolean showShopListDeleteBtn;
         private BigBasketMessageHandler handler;
         private ShoppingListName shoppingListName;
+        private boolean disableInBasketChildSwap;
 
         public Builder() {
+            this.disableInBasketChildSwap = false;
         }
 
         public Builder setCommonTypeface(Typeface commonTypeface) {
@@ -126,6 +134,11 @@ public class ProductViewDisplayDataHolder {
 
         public Builder setShoppingListName(ShoppingListName shoppingListName) {
             this.shoppingListName = shoppingListName;
+            return this;
+        }
+
+        public Builder disableInBasketChildSwap(boolean disableInBasketChildSwap) {
+            this.disableInBasketChildSwap = disableInBasketChildSwap;
             return this;
         }
 

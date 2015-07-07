@@ -117,7 +117,9 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         HashMap<String, String> paramMap = NameValuePair.toMap(mNameValuePairs);
 
         if (paramMap != null && paramMap.containsKey(Constants.TYPE)) {
-            trackEvent(TrackingAware.PRODUCT_LIST_SHOWN, paramMap);
+            // Using separate map since nc can be added by trackEvent which we don't want in paramMap
+            HashMap<String, String> eventAttribs = new HashMap<>(paramMap);
+            trackEvent(TrackingAware.PRODUCT_LIST_SHOWN, eventAttribs);
         }
         setNextScreenNavigationContext(NameValuePair.buildNavigationContext(mNameValuePairs));
         new ProductListTask<>(this, paramMap).startTask();
