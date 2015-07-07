@@ -23,6 +23,7 @@ import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.AnalyticsNavigationContextAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
@@ -48,6 +49,10 @@ public class AccountView<T> {
 
     public void setListView() {
         final BaseActivity ctx = ((ActivityAware) context).getCurrentActivity();
+        if (context instanceof AnalyticsNavigationContextAware) {
+            ((AnalyticsNavigationContextAware) context).
+                    setNextScreenNavigationContext(TrackEventkeys.ACCOUNT_MENU);
+        }
         if (AuthParameters.getInstance(ctx).isAuthTokenEmpty()) {
             // Not logged in
             final String[] itemDetails = {

@@ -140,8 +140,10 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
         ShoppingListName shoppingListName = shoppingListSummary.getShoppingListName();
         HashMap<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(Constants.TYPE, shoppingListSummary.getFacetSlug());
-
         if (shoppingListName != null) {
+            String nc = shoppingListName.getNc();
+            nc += "." + shoppingListSummary.getFacetSlug();
+            setNextScreenNavigationContext(nc);
             eventAttribs.put(Constants.NAME, shoppingListName.getSlug());
             if (!shoppingListName.getSlug().equals(Constants.SMART_BASKET_SLUG)) {
                 trackEvent(TrackingAware.SHOP_LST_SUMMARY_SHOWN, eventAttribs);

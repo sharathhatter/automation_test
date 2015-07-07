@@ -443,8 +443,6 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
                 default:
                     HashMap<String, String> map = new HashMap<>();
                     map.put(TrackEventkeys.FAILURE_REASON, createUpdateAddressApiResponse.message);
-                    map.put(TrackEventkeys.NAVIGATION_CTX, mFromAccountPage ? TrackEventkeys.NAVIGATION_CTX_MY_ACCOUNT :
-                            TrackEventkeys.NAVIGATION_CTX_MY_ACCOUNT);
                     trackEvent(address == null ? TrackingAware.NEW_ADDRESS_FAILED :
                             TrackingAware.UPDATE_ADDRESS_FAILED, map);
                     handler.sendEmptyMessage(createUpdateAddressApiResponse.status,

@@ -365,6 +365,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     public void launchViewBasketScreen() {
         Intent intent = new Intent(getCurrentActivity(), ShowCartActivity.class);
+        setNextScreenNavigationContext(TrackEventkeys.VIEW_BASKET);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 

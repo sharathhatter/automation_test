@@ -216,7 +216,6 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
         if (getArguments() == null || mOrderId == null) return;
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.ORDER_ID, mOrderId);
-        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getArguments().getString(TrackEventkeys.NAVIGATION_CTX));
         trackEvent(TrackingAware.SHOP_FROM_PAST_ORDER, eventAttribs);
     }
 

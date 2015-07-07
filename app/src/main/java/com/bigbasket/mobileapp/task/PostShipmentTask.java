@@ -26,11 +26,14 @@ public class PostShipmentTask<T> {
     private T ctx;
     private ArrayList<SelectedShipment> selectedShipments;
     private String potentialOrderId;
+    private String nc;
 
-    public PostShipmentTask(T ctx, ArrayList<SelectedShipment> selectedShipments, String potentialOrderId) {
+    public PostShipmentTask(T ctx, ArrayList<SelectedShipment> selectedShipments, String potentialOrderId,
+                            String nc) {
         this.ctx = ctx;
         this.selectedShipments = selectedShipments;
         this.potentialOrderId = potentialOrderId;
+        this.nc = nc;
     }
 
     public void startTask() {
@@ -83,6 +86,7 @@ public class PostShipmentTask<T> {
         intent.putExtra(Constants.EVOUCHER_CODE, postShipmentResponseContent.evoucherCode);
         intent.putParcelableArrayListExtra(Constants.VOUCHERS,
                 postShipmentResponseContent.activeVouchersArrayList);
+        ((ActivityAware) ctx).getCurrentActivity().setNextScreenNavigationContext(nc);
         ((ActivityAware) ctx).getCurrentActivity().startActivityForResult(intent,
                 NavigationCodes.GO_TO_HOME);
     }

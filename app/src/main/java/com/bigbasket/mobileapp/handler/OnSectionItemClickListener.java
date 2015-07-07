@@ -108,7 +108,6 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                 case DestinationInfo.PREVIOUS_ORDERS:
                     Intent intent = new Intent(((ActivityAware) context).getCurrentActivity(), OrderListActivity.class);
                     intent.putExtra(Constants.ORDER, ((ActivityAware) context).getCurrentActivity().getString(R.string.past_label));
-                    intent.putExtra(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_HOME_PAGE);
                     intent.putExtra(Constants.SHOP_FROM_PREVIOUS_ORDER, true);
                     ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     break;

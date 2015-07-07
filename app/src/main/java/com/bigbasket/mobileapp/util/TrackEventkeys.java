@@ -119,6 +119,13 @@ public final class TrackEventkeys {
     public static final String MENU = "menu";
     public static final String PL_PS = "pl.ps";
     public static final String DEEP_LINK = "deep-link";
+    public static final String CO_BASKET = "co.basket";
+    public static final String CO_ADDRESS = "co.address";
+    public static final String CO_QC = "co.qc";
+    public static final String VIEW_BASKET = "floating-button";
+    public static final String CO_DELIVERY_OPS = "co.delivery-options";
+    public static final String CO_PAYMENT = "co.payment";
+    public static final String ACCOUNT_MENU = "account-menu";
 
     private TrackEventkeys() {
     }

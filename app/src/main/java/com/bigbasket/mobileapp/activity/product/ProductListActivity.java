@@ -344,7 +344,6 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         bundle.putString(Constants.BASE_IMG_URL, baseImgUrl);
         bundle.putParcelableArrayList(Constants.PRODUCT_QUERY, mNameValuePairs);
         bundle.putString(Constants.TAB_TYPE, productTabInfo.getTabType());
-        bundle.putString(TrackEventkeys.NAVIGATION_CTX, getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX));
         return bundle;
     }
 
@@ -600,9 +599,6 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     private void onFilterScreenRequested() {
         Intent sortFilterIntent = new Intent(this, FilterActivity.class);
         sortFilterIntent.putExtra(Constants.FILTER_OPTIONS, mFilterOptionCategories);
-        sortFilterIntent.putExtra(TrackEventkeys.NAVIGATION_CTX,
-                getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX) != null ?
-                        getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX) : "pc");
         sortFilterIntent.putExtra(Constants.FILTERED_ON, mFilteredOns);
         startActivityForResult(sortFilterIntent, NavigationCodes.FILTER_APPLIED);
     }
@@ -684,7 +680,6 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
             Map<String, String> eventAttribs = new HashMap<>();
             for (FilteredOn filteredOn : filteredOnArrayList) {
                 eventAttribs.put(TrackEventkeys.FILTER_NAME, filteredOn.getFilterSlug());
-                eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.PRODUCT_LISTING_SCREEN);
                 trackEvent(TrackingAware.FILTER_APPLIED, eventAttribs,
                         TrackEventkeys.PRODUCT_LISTING_SCREEN, null, false);
             }

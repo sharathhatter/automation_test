@@ -642,6 +642,7 @@ public class PaymentSelectionActivity extends BackButtonActivity {
     }
 
     private void showOrderThankyou(ArrayList<Order> orders) {
+        setNextScreenNavigationContext(TrackEventkeys.CO_PAYMENT);
         Intent invoiceIntent = new Intent(this, OrderInvoiceActivity.class);
         invoiceIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_THANKYOU);
         invoiceIntent.putExtra(Constants.ORDERS, orders);

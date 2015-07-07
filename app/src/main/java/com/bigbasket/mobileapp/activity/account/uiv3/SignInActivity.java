@@ -127,12 +127,7 @@ public class SignInActivity extends BackButtonActivity {
                 logRememberMeEnabled(isChecked ? TrackEventkeys.YES : TrackEventkeys.NO);
             }
         });
-
-        if (!TextUtils.isEmpty(getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX))) {
-            Map<String, String> eventAttribs = new HashMap<>();
-            eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX));
-            trackEvent(TrackingAware.LOGIN_SHOWN, eventAttribs);
-        }
+        trackEvent(TrackingAware.LOGIN_SHOWN, null);
     }
 
     @Override

@@ -549,13 +549,6 @@ public class ShoppingListSummaryActivity extends BBActivity {
     private String getNc() {
         String nc;
         if (mShoppingListName == null) return null;
-        if (mShoppingListName.getSlug().equalsIgnoreCase(Constants.SMART_BASKET_SLUG)) {
-            nc = TrackEventkeys.SB;
-        } else if (mShoppingListName.isSystem()) {
-            nc = TrackEventkeys.SSL;
-        } else {
-            nc = TrackEventkeys.SL;
-        }
-        return nc + "." + mShoppingListName.getSlug();
+        return mShoppingListName.getNc();
     }
 }
