@@ -142,6 +142,8 @@ public class BasketOperationTask<T> {
                     if (!TextUtils.isEmpty(navigationCtx) && navigationCtx.equals(TrackEventkeys.NAVIGATION_CTX_SHOW_BASKET)
                             && context instanceof OnBasketChangeListener) {
                         ((OnBasketChangeListener) context).markBasketChanged(null);
+                        ((OnBasketChangeListener) context).onBasketCountChanged
+                                (cartOperationApiResponse.basketOperationResponse.getCartSummary().getNoOfItems());
                     }
                     ((BasketOperationAware) context).setBasketOperationResponse(cartOperationApiResponse.basketOperationResponse);
                     ((BasketOperationAware) context).updateUIAfterBasketOperationSuccess(basketOperation,

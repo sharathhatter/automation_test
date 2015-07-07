@@ -355,6 +355,11 @@ public class ShowCartActivity extends BackButtonActivity {
         contentView.addView(base);
     }
 
+    @Override
+    public void onBasketCountChanged(int basketCount){
+        renderHearView(basketCount);
+    }
+
 
     @Override
     public void updateUIAfterBasketOperationSuccess(BasketOperation basketOperation, TextView basketCountTextView,
