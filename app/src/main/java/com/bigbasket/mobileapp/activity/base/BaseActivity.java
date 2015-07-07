@@ -815,6 +815,11 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void onBasketCountChanged(int totalItemCount){
+        //do nothing as Override in showCartActivity
+    }
+
+    @Override
     public void startActivityForResult(Intent intent, int requestCode) {
         intent.putExtra(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
         super.startActivityForResult(intent, requestCode);
