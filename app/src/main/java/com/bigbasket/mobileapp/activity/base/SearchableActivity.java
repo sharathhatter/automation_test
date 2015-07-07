@@ -132,7 +132,7 @@ public class SearchableActivity extends BackButtonActivity
         nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.CATEGORY.get()));
         nameValuePairs.add(new NameValuePair(Constants.SLUG, categorySlug));
         Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
-        intent.putExtra(TrackEventkeys.NAVIGATION_CTX, "ps");
+        setNextScreenNavigationContext(TrackEventkeys.PL_PS + ".pc." + categorySlug);
         intent.putExtra(Constants.PRODUCT_QUERY, nameValuePairs);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         finish();
@@ -174,7 +174,6 @@ public class SearchableActivity extends BackButtonActivity
     public void doSearch(String searchQuery) {
         Intent data = new Intent();
         data.putExtra(Constants.SEARCH_QUERY, searchQuery);
-        data.putExtra(TrackEventkeys.NAVIGATION_CTX, "ps");
         setResult(NavigationCodes.START_SEARCH, data);
         finish();
     }
@@ -295,6 +294,7 @@ public class SearchableActivity extends BackButtonActivity
         if (requestCode == REQ_CODE_SPEECH_INPUT && resultCode == RESULT_OK && data != null) {
             ArrayList<String> items = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
             if (items != null && items.size() > 0) {
+                setNextScreenNavigationContext(TrackEventkeys.PL_PS + "-voice");
                 triggerSearch(items.get(0).trim());
                 return;
             }
@@ -306,6 +306,7 @@ public class SearchableActivity extends BackButtonActivity
                 Intent intent = new Intent(getCurrentActivity(), BackButtonWithBasketButtonActivity.class);
                 intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PRODUCT_DETAIL);
                 intent.putExtra(Constants.EAN_CODE, eanCode);
+                setNextScreenNavigationContext(TrackEventkeys.PL_PS + "-scan");
                 startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 return;
             }

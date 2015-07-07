@@ -208,6 +208,7 @@ public class ShowCartActivity extends BackButtonActivity {
 
     private void startCheckout(String cartTotal) {
         Intent intent = new Intent(this, BackButtonActivity.class);
+        setNextScreenNavigationContext(TrackEventkeys.CO_BASKET);
         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_VIEW_DELIVERY_ADDRESS);
         intent.putExtra(Constants.TOTAL_BASKET_VALUE, cartTotal);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);

@@ -10,10 +10,12 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -46,6 +48,7 @@ import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginUserDetails;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.handler.AnalyticsIdentifierKeys;
+import com.bigbasket.mobileapp.interfaces.AnalyticsNavigationContextAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
@@ -567,6 +570,28 @@ public class UIUtil {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.setStatusBarColor(context.getResources().getColor(color));
+        }
+    }
+
+    public static void addNavigationContextToBundle(Fragment fragment) {
+        Bundle args = fragment.getArguments();
+        String nc = fragment instanceof AnalyticsNavigationContextAware ?
+                ((AnalyticsNavigationContextAware) fragment).getNextScreenNavigationContext() : null;
+        if (nc == null && fragment.getActivity() != null &&
+                fragment.getActivity() instanceof AnalyticsNavigationContextAware) {
+            // Use activity's current nc
+            nc = ((AnalyticsNavigationContextAware) fragment.getActivity()).getCurrentNavigationContext();
+            if (nc == null) {
+                nc = ((AnalyticsNavigationContextAware) fragment.getActivity()).
+                        getNextScreenNavigationContext();
+            }
+        }
+        if (!TextUtils.isEmpty(nc)) {
+            if (args == null) {
+                args = new Bundle();
+            }
+            args.putString(TrackEventkeys.NAVIGATION_CTX, nc);
+            fragment.setArguments(args);
         }
     }
 }

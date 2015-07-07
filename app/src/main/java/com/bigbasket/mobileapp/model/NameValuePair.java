@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,6 +39,22 @@ public class NameValuePair implements Parcelable {
             map.put(nameValuePair.getName(), nameValuePair.getValue());
         }
         return map;
+    }
+
+    @Nullable
+    public static String buildNavigationContext(ArrayList<NameValuePair> nameValuePairs) {
+        StringBuilder ncBuilder = new StringBuilder("pl");
+        for (NameValuePair nameValuePair : nameValuePairs) {
+            if (nameValuePair.getName() == null
+                    || nameValuePair.getValue() == null) continue;
+            if (nameValuePair.getName().equalsIgnoreCase("is_express")) {
+                ncBuilder.append(".is_express");
+            } else {
+                ncBuilder.append(".");
+                ncBuilder.append(nameValuePair.getValue());
+            }
+        }
+        return ncBuilder.toString();
     }
 
     public String getName() {

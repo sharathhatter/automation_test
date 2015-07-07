@@ -115,7 +115,9 @@ public class BasketOperationTask<T> {
         eventAttribs.put(TrackEventkeys.PRODUCT_DESC, desc);
         eventAttribs.put(TrackEventkeys.PRODUCT_TOP_CAT, product.getTopLevelCategoryName());
         eventAttribs.put(TrackEventkeys.PRODUCT_CAT, product.getProductCategoryName());
-        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, navigationCtx);
+        if (navigationCtx != null) {
+            eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, navigationCtx);
+        }
         ((TrackingAware) context).trackEvent(eventName, eventAttribs, navigationCtx, null, false);
     }
 

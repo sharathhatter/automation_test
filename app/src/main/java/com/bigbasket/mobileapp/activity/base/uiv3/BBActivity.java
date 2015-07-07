@@ -243,6 +243,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     public void replaceToMainLayout(AbstractFragment fragment, String tag, boolean stateLess,
                                     FrameLayout frameLayout) {
         if (frameLayout == null) return;
+        UIUtil.addNavigationContextToBundle(fragment);
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         String ftTag = TextUtils.isEmpty(tag) ? fragment.getFragmentTxnTag() : tag;
@@ -259,7 +260,8 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     public void addToMainLayout(AbstractFragment fragment, String tag, boolean stateLess) {
-
+        if (fragment == null) return;
+        UIUtil.addNavigationContextToBundle(fragment);
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         String ftTag = TextUtils.isEmpty(tag) ? fragment.getFragmentTxnTag() : tag;
@@ -665,8 +667,8 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.SEARCH.get()));
         nameValuePairs.add(new NameValuePair(Constants.SLUG, searchQuery.trim()));
         intent.putParcelableArrayListExtra(Constants.PRODUCT_QUERY, nameValuePairs);
-        intent.putExtra(TrackEventkeys.NAVIGATION_CTX, "ps");
         intent.putExtra(Constants.TITLE, searchQuery);
+        setNextScreenNavigationContext(TrackEventkeys.PL_PS + "." + searchQuery);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 

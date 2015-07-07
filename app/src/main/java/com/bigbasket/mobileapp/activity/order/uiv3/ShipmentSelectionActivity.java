@@ -334,7 +334,8 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
             }
             String potentialOrderId = getIntent().getStringExtra(Constants.P_ORDER_ID);
             if (potentialOrderId == null) return;
-            new PostShipmentTask<>(getCurrentActivity(), selectedShipments, potentialOrderId).startTask();
+            new PostShipmentTask<>(getCurrentActivity(), selectedShipments, potentialOrderId,
+                    TrackEventkeys.CO_DELIVERY_OPS).startTask();
 
             trackEvent(mHasDefaultSlotSelected ? TrackingAware.CHECKOUT_DEFAULT_SLOT_SELECTED :
                     TrackingAware.CHECKOUT_SLOT_SELECTED, null);

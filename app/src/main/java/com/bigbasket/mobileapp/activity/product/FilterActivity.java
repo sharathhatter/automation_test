@@ -180,9 +180,11 @@ public class FilterActivity extends BackButtonActivity {
     private static class FilterTextWatcher implements TextWatcher {
 
         private BBCheckedListAdapter<FilterOptionItem> mFilterByAdapter;
-        public FilterTextWatcher(BBCheckedListAdapter<FilterOptionItem> mFilterByAdapter){
+
+        public FilterTextWatcher(BBCheckedListAdapter<FilterOptionItem> mFilterByAdapter) {
             this.mFilterByAdapter = mFilterByAdapter;
         }
+
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -209,7 +211,6 @@ public class FilterActivity extends BackButtonActivity {
         public void onClick(View v) {
             HashMap<String, String> map = new HashMap<>();
             map.put(TrackEventkeys.TYPE, "sort query");
-            map.put(TrackEventkeys.NAVIGATION_CTX, getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX));
             trackEvent(TrackingAware.SORT_BY, map);
             Intent data = new Intent();
             data.putExtra(Constants.FILTERED_ON, mFilteredOns);
@@ -285,7 +286,7 @@ public class FilterActivity extends BackButtonActivity {
                 txtAppliedFilterCount.setText(String.valueOf(filteredOn.getFilterValues().size()));
                 txtAppliedFilterCount.setVisibility(View.VISIBLE);
             } else {
-                txtAppliedFilterCount.setVisibility(View.INVISIBLE);
+                txtAppliedFilterCount.setVisibility(View.GONE);
             }
             return convertView;
         }
