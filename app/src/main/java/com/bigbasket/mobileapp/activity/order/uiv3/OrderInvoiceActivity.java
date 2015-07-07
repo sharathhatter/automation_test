@@ -11,16 +11,21 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.OrderListActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
+import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
+import com.bigbasket.mobileapp.apiservice.callbacks.CallbackOrderInvoice;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
+import com.bigbasket.mobileapp.interfaces.InvoiceDataAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.order.Order;
+import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.ArrayList;
 
-public class OrderInvoiceActivity extends BaseActivity {
+public class OrderInvoiceActivity extends BaseActivity implements InvoiceDataAware {
 
     @Override
     public void onCreate(Bundle saveInstanceState) {
@@ -58,12 +63,22 @@ public class OrderInvoiceActivity extends BaseActivity {
         //order list
         for (Order order : orders) {
             TextView orderNumberTxtView = new TextView(getCurrentActivity());
+            orderNumberTxtView.setTag(order);
             orderNumberTxtView.setTextSize(14);
             orderNumberTxtView.setTextColor(getResources().getColor(R.color.uiv3_primary_text_color));
-            orderNumberTxtView.setPadding(0, 4, 0, 0);
+            orderNumberTxtView.setPadding(8, 8, 8, 8);
             orderNumberTxtView.setText(getString(R.string.ordernumber) + " " + order.getOrderNumber());
             orderNumberTxtView.setTypeface(faceRobotoMedium);
             orderNumberTxtView.setGravity(Gravity.CENTER_HORIZONTAL);
+            orderNumberTxtView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Order orderTagObj = (Order) view.getTag();
+                    if (orderTagObj != null) {
+                        showInvoice(orderTagObj);
+                    }
+                }
+            });
             layoutOrderNumber.addView(orderNumberTxtView);
         }
 
@@ -75,6 +90,20 @@ public class OrderInvoiceActivity extends BaseActivity {
         txtMyOrder.setPaintFlags(txtMyOrder.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
 
+    }
+
+    private void showInvoice(Order order) {
+        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
+        showProgressDialog(getString(R.string.please_wait));
+        bigBasketApiService.getInvoice(order.getOrderId(), new CallbackOrderInvoice<>(this));
+    }
+
+    @Override
+    public void onDisplayOrderInvoice(OrderInvoice orderInvoice) {
+        Intent orderDetailIntent = new Intent(getCurrentActivity(), OrderDetailActivity.class);
+        orderDetailIntent.putExtra(Constants.ORDER_REVIEW_SUMMARY, orderInvoice);
+        orderDetailIntent.putExtra(TrackEventkeys.NAVIGATION_CTX, getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX));
+        startActivityForResult(orderDetailIntent, NavigationCodes.GO_TO_HOME);
     }
 
     public void onContinueBtnClicked(View view) {

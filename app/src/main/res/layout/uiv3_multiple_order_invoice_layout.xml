@@ -44,8 +44,9 @@
 
         <LinearLayout
             android:id="@+id/layoutOrderNumber"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/margin_small"
             android:orientation="vertical">
@@ -57,7 +58,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/margin_normal"
+            android:layout_marginTop="@dimen/margin_small"
             android:text="@string/order_review_txt"
             android:textColor="@color/uiv3_primary_text_color"
             android:textSize="@dimen/secondary_text_size" />
