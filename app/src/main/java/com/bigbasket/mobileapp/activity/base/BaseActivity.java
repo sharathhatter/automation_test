@@ -36,6 +36,8 @@ import android.widget.Toast;
 import com.appsflyer.AppsFlyerLib;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.SplashActivity;
+import com.bigbasket.mobileapp.activity.TutorialActivity;
+import com.bigbasket.mobileapp.activity.account.uiv3.ChangeCityActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignupActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
@@ -390,6 +392,8 @@ public abstract class BaseActivity extends AppCompatActivity implements
             onBasketChanged(data);
             // Initiate Fragment callback (if-any) to sync cart
             super.onActivityResult(requestCode, resultCode, data);
+        } else if (requestCode == NavigationCodes.TUTORIAL_SEEN) {
+            handleTutorialResponse(resultCode);
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
@@ -814,5 +818,39 @@ public abstract class BaseActivity extends AppCompatActivity implements
     public void startActivityForResult(Intent intent, int requestCode) {
         intent.putExtra(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
         super.startActivityForResult(intent, requestCode);
+    }
+
+    public void launchTutorial(int resultCode) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean isTutorialShown = preferences.getBoolean(Constants.TUTORIAL_SEEN, false);
+        if (isTutorialShown) {
+            handleTutorialResponse(resultCode);
+        } else {
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putBoolean(Constants.TUTORIAL_SEEN, true);
+            editor.apply();
+            Intent intent = new Intent(this, TutorialActivity.class);
+            intent.putExtra(Constants.ACTION_TAB_TAG, resultCode);
+            startActivityForResult(intent, NavigationCodes.TUTORIAL_SEEN);
+        }
+    }
+
+    public void handleTutorialResponse(int resultCode) {
+        switch (resultCode) {
+            case NavigationCodes.LAUNCH_LOGIN:
+                launchLogin(TrackEventkeys.NAVIGATION_CTX_LANDING_PAGE);
+                break;
+            case NavigationCodes.LAUNCH_CITY:
+                showChangeCity();
+                break;
+            case NavigationCodes.LAUNCH_SIGNUP:
+                launchRegistrationPage();
+                break;
+        }
+    }
+
+    private void showChangeCity() {
+        Intent intent = new Intent(this, ChangeCityActivity.class);
+        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 }

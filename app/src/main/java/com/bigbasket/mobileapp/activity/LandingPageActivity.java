@@ -1,19 +1,14 @@
 package com.bigbasket.mobileapp.activity;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.account.uiv3.ChangeCityActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
-import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
@@ -48,26 +43,6 @@ public class LandingPageActivity extends SocialLoginActivity {
         }
     }
 
-    private void launchTutorial(int resultCode) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean isTutorialShown = preferences.getBoolean(Constants.TUTORIAL_SEEN, false);
-        if (isTutorialShown) {
-            handleTutorialResponse(resultCode);
-        } else {
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean(Constants.TUTORIAL_SEEN, true);
-            editor.apply();
-            Intent intent = new Intent(this, TutorialActivity.class);
-            intent.putExtra(Constants.ACTION_TAB_TAG, resultCode);
-            startActivityForResult(intent, NavigationCodes.TUTORIAL_SEEN);
-        }
-    }
-
-    private void showChangeCity() {
-        Intent intent = new Intent(this, ChangeCityActivity.class);
-        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-    }
-
     @Override
     public BaseActivity getCurrentActivity() {
         return this;
@@ -86,29 +61,5 @@ public class LandingPageActivity extends SocialLoginActivity {
     @Override
     public String getScreenTag() {
         return TrackEventkeys.LANDING_PAGE;
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        setSuspended(false);
-        if (requestCode == NavigationCodes.TUTORIAL_SEEN) {
-            handleTutorialResponse(resultCode);
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
-    private void handleTutorialResponse(int resultCode) {
-        switch (resultCode) {
-            case NavigationCodes.LAUNCH_LOGIN:
-                launchLogin(TrackEventkeys.NAVIGATION_CTX_LANDING_PAGE);
-                break;
-            case NavigationCodes.LAUNCH_CITY:
-                showChangeCity();
-                break;
-            case NavigationCodes.LAUNCH_SIGNUP:
-                launchRegistrationPage();
-                break;
-        }
     }
 }

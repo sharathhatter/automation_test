@@ -151,11 +151,20 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
     }
 
     private void loadHomePage() {
-        Intent homePageIntent = new Intent(this, BBActivity.class);
-        homePageIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_HOME);
-        startActivityForResult(homePageIntent, NavigationCodes.GO_TO_HOME);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            finish();
+        launchTutorial(FragmentCodes.START_HOME);
+    }
+
+    @Override
+    public void handleTutorialResponse(int resultCode) {
+        if (resultCode == FragmentCodes.START_HOME) {
+            Intent homePageIntent = new Intent(this, BBActivity.class);
+            homePageIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_HOME);
+            startActivityForResult(homePageIntent, NavigationCodes.GO_TO_HOME);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                finish();
+            }
+        } else {
+            super.handleTutorialResponse(resultCode);
         }
     }
 
