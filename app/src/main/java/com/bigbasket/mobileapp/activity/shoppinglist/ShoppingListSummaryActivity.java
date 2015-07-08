@@ -40,6 +40,7 @@ import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.InputDialog;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
+import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
@@ -413,10 +414,12 @@ public class ShoppingListSummaryActivity extends BBActivity {
             @Override
             public void onPositiveButtonClicked(String inputText) {
                 if (getCurrentActivity() == null) return;
-                if (!mShoppingListName.getName().equalsIgnoreCase(inputText.trim()))
-                    editShoppingListName(mShoppingListName, inputText);
-                else
+                if (!UIUtil.isAlphaNumericString(inputText.trim())) {
+                    showAlertDialog(getResources().getString(R.string.shoppingListNameAlphaNumeric));
+                } else if (mShoppingListName.getName().equalsIgnoreCase(inputText.trim()))
                     showAlertDialog("Shopping List with name \"" + inputText.trim() + "\" already exits");
+                else
+                    editShoppingListName(mShoppingListName, inputText);
             }
         }.show();
     }
