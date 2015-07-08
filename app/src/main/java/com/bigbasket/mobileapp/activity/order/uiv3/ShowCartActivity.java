@@ -297,6 +297,7 @@ public class ShowCartActivity extends BackButtonActivity {
                     setBasketNumItemsDisplay();
                     editor.putString(Constants.GET_CART,
                             String.valueOf(cartSummary.getNoOfItems()));
+                    renderHearView(cartSummary.getNoOfItems());
                     fullfillmentInfos = cartGetApiResponseContentApiResponse.apiResponseContent.fulfillmentInfos;
                     annotationInfoArrayList = cartGetApiResponseContentApiResponse.apiResponseContent.annotationInfos;
                     if (cartGetApiResponseContentApiResponse.apiResponseContent.
@@ -305,7 +306,6 @@ public class ShowCartActivity extends BackButtonActivity {
                             && cartGetApiResponseContentApiResponse.apiResponseContent.cartGetApiCartItemsContent.cartItemLists.size() > 0) {
                         cartItemLists = cartGetApiResponseContentApiResponse.apiResponseContent.
                                 cartGetApiCartItemsContent.cartItemLists;
-                        renderHearView(cartSummary.getNoOfItems());
                         renderCartItemList(cartSummary, cartGetApiResponseContentApiResponse
                                 .apiResponseContent.cartGetApiCartItemsContent.baseImgUrl);
                     } else {
@@ -355,10 +355,6 @@ public class ShowCartActivity extends BackButtonActivity {
         contentView.addView(base);
     }
 
-    @Override
-    public void onBasketCountChanged(int basketCount){
-        renderHearView(basketCount);
-    }
 
 
     @Override
