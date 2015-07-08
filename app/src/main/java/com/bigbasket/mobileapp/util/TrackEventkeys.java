@@ -3,7 +3,7 @@ package com.bigbasket.mobileapp.util;
 public final class TrackEventkeys {
 
     public static final String CITY = "city";
-    public static final String NAVIGATION_CTX = "nc";
+    public static final String NAVIGATION_CTX = "referer";
     public static final String NAVIGATION_CTX_TOPNAV = "topnav";
     public static final String NAVIGATION_CTX_LEFTNAV = "leftnav";
     public static final String NAVIGATION_CTX_LANDING_PAGE = "landing_page";
