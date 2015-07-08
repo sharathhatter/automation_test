@@ -36,6 +36,7 @@ public class OrderInvoiceItemsListFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
         OrderInvoice orderInvoice = getArguments().getParcelable(Constants.ACTION_TAB_TAG);
         setTitle("Order Details");
+        if (orderInvoice == null) return;
         logOrderItemTabClicked(orderInvoice);
         renderCartItems(orderInvoice);
     }

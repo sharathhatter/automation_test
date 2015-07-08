@@ -6,13 +6,7 @@ import android.os.Parcelable;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
-/**
- * Created with IntelliJ IDEA.
- * User: jugal
- * Date: 30/10/13
- * Time: 2:28 PM
- * To change this template use File | Settings | File Templates.
- */
+
 public class WalletDataItem implements Parcelable {
 
 
@@ -57,9 +51,6 @@ public class WalletDataItem implements Parcelable {
         }
         type = source.readString();
         orderNumber = source.readString();
-    }
-
-    public WalletDataItem() {
     }
 
     @Override

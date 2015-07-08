@@ -24,9 +24,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.ArrayList;
 
-/**
- * Created by jugal on 19/9/14.
- */
+
 public class WalletActivity extends BackButtonActivity implements InvoiceDataAware {
 
     private ArrayList<WalletDataItem> walletActivityData;
@@ -41,7 +39,7 @@ public class WalletActivity extends BackButtonActivity implements InvoiceDataAwa
         } else {
             walletActivityData = getIntent().getParcelableArrayListExtra(Constants.WALLET_ACTIVITY_DATA);
         }
-        if(walletActivityData==null) return;
+        if (walletActivityData == null) return;
         renderWalletActivityList(walletActivityData);
     }
 

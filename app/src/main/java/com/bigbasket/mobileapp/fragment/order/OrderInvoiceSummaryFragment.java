@@ -50,6 +50,7 @@ public class OrderInvoiceSummaryFragment extends BaseFragment {
         if (getArguments() != null) {
             orderInvoice = getArguments().getParcelable(Constants.ACTION_TAB_TAG);
             setTitle("Order Details");
+            if (orderInvoice == null) return;
             renderOrderInvoice(orderInvoice);
         }
     }

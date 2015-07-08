@@ -78,7 +78,13 @@ public class SectionManager {
             editor.remove(preferenceKey + TIME_KEY);
             editor.remove(preferenceKey + DURATION_KEY);
         } else {
-            String sectionJson = new Gson().toJson(sectionData);
+            String sectionJson;
+            try {
+                sectionJson = new Gson().toJson(sectionData);
+            } catch (OutOfMemoryError e) {
+                System.gc();
+                return;
+            }
             editor.putString(preferenceKey, sectionJson);
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss",
                     Locale.getDefault());
