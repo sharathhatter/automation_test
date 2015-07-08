@@ -258,7 +258,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
 
     private void setNc() {
         StringBuilder ncBuilder = new StringBuilder();
-        if(screenName!=null){
+        if (screenName != null) {
             switch (screenName) {
                 case SectionManager.HOME_PAGE:
                     ncBuilder.append(TrackEventkeys.HOME);
@@ -273,6 +273,8 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                     }
                     break;
             }
+        } else {
+            ncBuilder.append(TrackEventkeys.SCREEN);
         }
         if (section != null) {
             if (section.getTitle() != null &&

@@ -77,19 +77,23 @@ public class FilterActivity extends BackButtonActivity {
         ListView lstFilterName = (ListView) findViewById(R.id.lstFilterName);
 
         final FilterNameAdapter filterNameAdapter = new FilterNameAdapter(filterOptionCategories);
-        //Caused by: java.lang.NullPointerException
-        mCurrentlySelectedFilter = filterOptionCategories.get(0).getFilterSlug();
-        lstFilterName.setAdapter(filterNameAdapter);
-        renderFilterItems(filterOptionCategories.get(0));
-        lstFilterName.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                FilterOptionCategory filterOptionCategory = filterOptionCategories.get(position);
+        if (filterOptionCategories != null && filterOptionCategories.size() > 0) {
+            FilterOptionCategory filterOptionCategory = filterOptionCategories.get(0);
+            if (filterOptionCategory != null) {
                 mCurrentlySelectedFilter = filterOptionCategory.getFilterSlug();
-                filterNameAdapter.notifyDataSetChanged();
+                lstFilterName.setAdapter(filterNameAdapter);
                 renderFilterItems(filterOptionCategory);
+                lstFilterName.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        FilterOptionCategory filterOptionCategory = filterOptionCategories.get(position);
+                        mCurrentlySelectedFilter = filterOptionCategory.getFilterSlug();
+                        filterNameAdapter.notifyDataSetChanged();
+                        renderFilterItems(filterOptionCategory);
+                    }
+                });
             }
-        });
+        }
     }
 
     private void renderFilterItems(final FilterOptionCategory filterOptionCategory) {

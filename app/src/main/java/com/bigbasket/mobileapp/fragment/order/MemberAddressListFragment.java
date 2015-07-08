@@ -289,7 +289,9 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
                 String addressId = data.getStringExtra(Constants.MEMBER_ADDRESS_ID);
                 if (!TextUtils.isEmpty(addressId) && !mFromAccountPage) {
                     this.addressId = addressId;
-                    layoutCheckoutFooter.setVisibility(View.VISIBLE);
+                    if (layoutCheckoutFooter != null) {
+                        layoutCheckoutFooter.setVisibility(View.VISIBLE);
+                    }
                     loadAddresses();
                 } else {
                     getActivity().setResult(NavigationCodes.ACCOUNT_UPDATED);
