@@ -77,6 +77,7 @@ public class FilterActivity extends BackButtonActivity {
         ListView lstFilterName = (ListView) findViewById(R.id.lstFilterName);
 
         final FilterNameAdapter filterNameAdapter = new FilterNameAdapter(filterOptionCategories);
+        //Caused by: java.lang.NullPointerException
         mCurrentlySelectedFilter = filterOptionCategories.get(0).getFilterSlug();
         lstFilterName.setAdapter(filterNameAdapter);
         renderFilterItems(filterOptionCategories.get(0));

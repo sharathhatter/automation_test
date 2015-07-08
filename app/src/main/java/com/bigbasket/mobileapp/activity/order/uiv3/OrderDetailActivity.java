@@ -35,7 +35,7 @@ public class OrderDetailActivity extends TabActivity {
         bbTabs.add(new BBTab<>(getString(R.string.summary), OrderInvoiceSummaryFragment.class, bundle));
         bbTabs.add(new BBTab<>(getString(R.string.items), OrderInvoiceItemsListFragment.class, bundle));
 
-        if (orderInvoice.getOrderModifications() != null && orderInvoice.getOrderModifications().size() > 0) {
+        if (orderInvoice!=null && orderInvoice.getOrderModifications() != null && orderInvoice.getOrderModifications().size() > 0) {
             bbTabs.add(new BBTab<>(getString(R.string.orderModification), OrderModificationFragment.class, bundle));
         }
         return bbTabs;
