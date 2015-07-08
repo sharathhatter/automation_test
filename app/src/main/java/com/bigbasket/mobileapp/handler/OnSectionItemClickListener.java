@@ -258,19 +258,21 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
 
     private void setNc() {
         StringBuilder ncBuilder = new StringBuilder();
-        switch (screenName) {
-            case SectionManager.HOME_PAGE:
-                ncBuilder.append(TrackEventkeys.HOME);
-                break;
-            case SectionManager.MAIN_MENU:
-                ncBuilder.append(TrackEventkeys.MENU);
-                break;
-            default:
-                ncBuilder.append(TrackEventkeys.SCREEN);
-                if (!TextUtils.isEmpty(screenName)) {
-                    ncBuilder.append(".").append(screenName);
-                }
-                break;
+        if(screenName!=null){
+            switch (screenName) {
+                case SectionManager.HOME_PAGE:
+                    ncBuilder.append(TrackEventkeys.HOME);
+                    break;
+                case SectionManager.MAIN_MENU:
+                    ncBuilder.append(TrackEventkeys.MENU);
+                    break;
+                default:
+                    ncBuilder.append(TrackEventkeys.SCREEN);
+                    if (!TextUtils.isEmpty(screenName)) {
+                        ncBuilder.append(".").append(screenName);
+                    }
+                    break;
+            }
         }
         if (section != null) {
             if (section.getTitle() != null &&

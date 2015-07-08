@@ -41,6 +41,7 @@ public class WalletActivity extends BackButtonActivity implements InvoiceDataAwa
         } else {
             walletActivityData = getIntent().getParcelableArrayListExtra(Constants.WALLET_ACTIVITY_DATA);
         }
+        if(walletActivityData==null) return;
         renderWalletActivityList(walletActivityData);
     }
 

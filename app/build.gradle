@@ -60,6 +60,7 @@ android {
         }
     }
  //Uncomment at the time of deployment
+    /*
     productFlavors {
         flavourMdpi {
             versionCode calculateVersionCodeFromDpi(160)
@@ -81,6 +82,7 @@ android {
             versionCode calculateVersionCodeFromDpi(640)
         }
     }
+    */
 }
 
 int calculateVersionCodeFromDpi(int dpi) {

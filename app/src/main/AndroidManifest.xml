@@ -17,8 +17,9 @@
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
     <!-- HDFC -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <!-- AppsFlyer -->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
+    <!-- don't required by AppsFlyer-->
+    <!--<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />-->
 
     <!-- MOEngage UBox-->
     <uses-permission android:name="android.permission.CAMERA" />
