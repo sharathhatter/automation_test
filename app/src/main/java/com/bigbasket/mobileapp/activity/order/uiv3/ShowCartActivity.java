@@ -140,6 +140,7 @@ public class ShowCartActivity extends BackButtonActivity {
         //View basketSummaryView = getCartSummaryView(cartSummary, cartItemListView);
 
         List<Object> cartItemHeaderList = new ArrayList<>();
+        int numItems = 0;
         for (CartItemList cartItemInfoArray : cartItemLists) {
             CartItemHeader cartItemHeader = new CartItemHeader();
             cartItemHeaderList.add(cartItemHeader);
@@ -150,6 +151,7 @@ public class ShowCartActivity extends BackButtonActivity {
             cartItemHeader.setTopCatTotal(cartItemInfoArray.getTopCatTotal());
 
             int cartItemsSize = cartItemInfoArray.getCartItems().size();
+            numItems += cartItemsSize;
             ArrayList<CartItem> cartItems = cartItemInfoArray.getCartItems();
             for (int i = 0; i < cartItemsSize; i++) {
                 cartItemHeaderList.add(cartItems.get(i));
@@ -159,6 +161,7 @@ public class ShowCartActivity extends BackButtonActivity {
                 }
             }
         }
+        renderHearView(numItems);
         HashMap<String, String> fulfillmentInfoIdAndIconHashMap = new HashMap<>();
         if (fullfillmentInfos != null) {
             for (FulfillmentInfo fullfillmentInfo : fullfillmentInfos) {
@@ -297,7 +300,6 @@ public class ShowCartActivity extends BackButtonActivity {
                     setBasketNumItemsDisplay();
                     editor.putString(Constants.GET_CART,
                             String.valueOf(cartSummary.getNoOfItems()));
-                    renderHearView(cartSummary.getNoOfItems());
                     fullfillmentInfos = cartGetApiResponseContentApiResponse.apiResponseContent.fulfillmentInfos;
                     annotationInfoArrayList = cartGetApiResponseContentApiResponse.apiResponseContent.annotationInfos;
                     if (cartGetApiResponseContentApiResponse.apiResponseContent.
@@ -354,7 +356,6 @@ public class ShowCartActivity extends BackButtonActivity {
         contentView.removeAllViews();
         contentView.addView(base);
     }
-
 
 
     @Override
