@@ -31,15 +31,19 @@ import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListSummary
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListProductFragment;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
+import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.ApiErrorAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.product.Product;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListSummary;
+import com.bigbasket.mobileapp.task.uiv3.CreateShoppingListTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.InputDialog;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
+import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
@@ -413,10 +417,12 @@ public class ShoppingListSummaryActivity extends BBActivity {
             @Override
             public void onPositiveButtonClicked(String inputText) {
                 if (getCurrentActivity() == null) return;
-                if (!mShoppingListName.getName().equalsIgnoreCase(inputText.trim()))
-                    editShoppingListName(mShoppingListName, inputText);
-                else
+                if (!UIUtil.isAlphaNumericString(inputText.trim())) {
+                    showAlertDialog(getResources().getString(R.string.shoppingListNameAlphaNumeric));
+                } else if (mShoppingListName.getName().equalsIgnoreCase(inputText.trim()))
                     showAlertDialog("Shopping List with name \"" + inputText.trim() + "\" already exits");
+                else
+                    editShoppingListName(mShoppingListName, inputText);
             }
         }.show();
     }
