@@ -88,6 +88,18 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String currentCityName = preferences.getString(Constants.CITY, cities.get(0).getName());
+        String cityIdStr = preferences.getString(Constants.CITY_ID, String.valueOf(cities.get(0).getId()));
+        if (TextUtils.isEmpty(cityIdStr) || !TextUtils.isDigitsOnly(cityIdStr)) {
+            cityIdStr = "1";
+        }
+        int cityId = Integer.parseInt(cityIdStr);
+        for (int i = 0; i < mCities.size(); i++) {
+            City city = mCities.get(i);
+            if (cityId == city.getId()) {
+                mSelectedCityIndx = i;
+                break;
+            }
+        }
         mCityView.setText(currentCityName);
         mCityView.setOnClickListener(new View.OnClickListener() {
             @Override
