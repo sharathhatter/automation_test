@@ -5,7 +5,7 @@
     style="@style/WindowStyle"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/landing_bkg">
+    android:background="@drawable/landing_drawable">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbarMain"
