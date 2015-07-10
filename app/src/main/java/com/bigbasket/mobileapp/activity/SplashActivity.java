@@ -37,6 +37,7 @@ import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
+import com.daimajia.slider.library.BuildConfig;
 import com.newrelic.agent.android.NewRelic;
 
 import org.json.JSONException;
@@ -77,7 +78,7 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
             } catch (ClassCastException e) {
 
             }
-            if (checkInternetConnection()) {
+            if (checkInternetConnection() && !BuildConfig.DEBUG) {
                 NewRelic.withApplicationToken(getString(R.string.new_relic_key)).start(this.getApplication());
             }
         }
