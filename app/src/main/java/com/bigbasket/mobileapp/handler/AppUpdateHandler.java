@@ -42,7 +42,8 @@ public class AppUpdateHandler {
     }
 
     @Nullable
-    public static AppUpdateData isOutOfDate(Context context) {
+    public static AppUpdateData isOutOfDate(@Nullable Context context) {
+        if (context == null) return null;
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         String appExpireBy = preferences.getString(Constants.APP_EXPIRE_BY, null);
         if (TextUtils.isEmpty(appExpireBy)) return null;
@@ -51,7 +52,8 @@ public class AppUpdateHandler {
                 preferences.getString(Constants.LATEST_APP_VERSION, ""));
     }
 
-    public static void markAsOutOfDate(Context context, String appExpiredBy, String upgradeMsg, String latestAppVersion) {
+    public static void markAsOutOfDate(@Nullable Context context, String appExpiredBy, String upgradeMsg, String latestAppVersion) {
+        if (context == null) return;
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(Constants.APP_EXPIRE_BY, appExpiredBy);
@@ -60,7 +62,8 @@ public class AppUpdateHandler {
         editor.apply();
     }
 
-    public static void markAsCurrent(Context context) {
+    public static void markAsCurrent(@Nullable Context context) {
+        if (context == null) return;
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = preferences.edit();
         editor.remove(Constants.APP_EXPIRE_BY);
@@ -69,7 +72,8 @@ public class AppUpdateHandler {
         editor.apply();
     }
 
-    public static int handleUpdateDialog(String serverAppExpireDateString, Activity activity) {
+    public static int handleUpdateDialog(String serverAppExpireDateString, @Nullable Activity activity) {
+        if (activity == null) return Constants.DONT_SHOW_APP_UPDATE_POPUP;
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(activity);
         long lastPopUpShownTime = prefer.getLong(Constants.LAST_POPUP_SHOWN_TIME, 0);
         SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_FOR_APP_UPGRADE_POPUP, Locale.getDefault());
@@ -108,7 +112,8 @@ public class AppUpdateHandler {
         }
     }
 
-    public static void updateLastPopShownDate(long lastPopShownTime, Activity activity) {
+    public static void updateLastPopShownDate(long lastPopShownTime, @Nullable Activity activity) {
+        if (activity == null) return;
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(activity);
         SharedPreferences.Editor editor = prefer.edit();
         editor.putLong(Constants.LAST_POPUP_SHOWN_TIME, lastPopShownTime);

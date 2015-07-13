@@ -205,7 +205,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
 
     @Override
     protected void updatePlusConnectedButtonState() {
-        if (getPlusClient() == null) return;
+        if (getPlusClient() == null || isSuspended()) return;
 
         boolean connected = getPlusClient().isConnected();
         if (connected) {

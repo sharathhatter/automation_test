@@ -362,8 +362,8 @@ public class UIUtil {
     }
 
     public static void preLoadImage(String url, Context context) {
-        Log.i(context.getClass().getName(), "Pre loading image = " + url);
-        Picasso.with(context).load(url).fetch();
+//        Log.i(context.getClass().getName(), "Pre loading image = " + url);
+//        Picasso.with(context).load(url).fetch();
     }
 
     public static void showEmptyProductsView(final Context context, ViewGroup parent, String msg,

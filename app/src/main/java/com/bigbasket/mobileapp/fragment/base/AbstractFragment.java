@@ -66,7 +66,9 @@ public abstract class AbstractFragment extends Fragment implements CancelableAwa
         faceRobotoRegular = FontHolder.getInstance(getActivity()).getFaceRobotoRegular();
         faceRobotoMedium = FontHolder.getInstance(getActivity()).getFaceRobotoMedium();
 
-        NewRelic.setInteractionName(getFragmentTxnTag());
+        if (!isSuspended()) {
+            NewRelic.setInteractionName(getFragmentTxnTag());
+        }
     }
 
     @Override

@@ -314,7 +314,13 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         renderHeaderDropDown(productTabData.getHeaderSection());
 
         if (tabTypeWithNoProducts.size() > 0) {
-            ArrayList<NameValuePair> newNameValuePairs = new ArrayList<>(mNameValuePairs);
+            ArrayList<NameValuePair> newNameValuePairs;
+            if (mNameValuePairs != null) {
+                newNameValuePairs = new ArrayList<>(mNameValuePairs);
+            } else {
+                newNameValuePairs = new ArrayList<>();
+            }
+
             newNameValuePairs.add(new NameValuePair(Constants.TAB_TYPE, new Gson().toJson(tabTypeWithNoProducts)));
             BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
             bigBasketApiService.productNextPage(NameValuePair.toMap(newNameValuePairs), new Callback<ApiResponse<ProductNextPageResponse>>() {

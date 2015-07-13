@@ -196,6 +196,12 @@ public class DeepLinkHandler {
                     return SUCCESS;
                 }
                 return FAILED;
+            case Constants.INBOX:
+                if (!authParameters.isAuthTokenEmpty()) {
+                    context.getCurrentActivity().launchMoEngageCommunicationHub();
+                    return SUCCESS;
+                }
+                return FAILED;
             default:
                 return FAILED;
         }
@@ -210,6 +216,7 @@ public class DeepLinkHandler {
         loginRequiredUrls.add(Constants.ORDER_ITEMS);
         loginRequiredUrls.add(Constants.ALL_SL);
         loginRequiredUrls.add(Constants.SMART_BASKET_SLUG);
+        loginRequiredUrls.add(Constants.INBOX);
         return loginRequiredUrls;
     }
 }

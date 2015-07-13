@@ -4,6 +4,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.callbacks.ProductListApiResponseCallback;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
+import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
@@ -29,6 +30,7 @@ public class ProductListTask<T> {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.
                 getApiService(((ActivityAware) ctx).getCurrentActivity());
 
+        if (((CancelableAware) ctx).isSuspended()) return;
         ((ProgressIndicationAware) ctx).showProgressDialog("Please wait...");
         bigBasketApiService.productList(paramMap, new ProductListApiResponseCallback<>(ctx, false));
     }

@@ -708,6 +708,7 @@ public class PaymentSelectionActivity extends BackButtonActivity {
             handler.sendOfflineError();
             return;
         }
+        if (wPayInitRequest == null || wPayInitRequest.getTransactionInfo() == null) return;
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.postPrepaidPayment(wPayInitRequest.getTransactionInfo().getMerTxnId(),
