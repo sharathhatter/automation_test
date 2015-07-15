@@ -160,7 +160,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             if (sectionItem.hasImage()) {
                 imgNavItem.setVisibility(View.VISIBLE);
                 sectionNavigationItem.getSectionItem().displayImage(context, baseImgUrl, imgNavItem,
-                        R.drawable.loading_small, true);
+                        R.drawable.loading_nav_header, true);
             } else {
                 imgNavItem.setVisibility(View.GONE);
             }

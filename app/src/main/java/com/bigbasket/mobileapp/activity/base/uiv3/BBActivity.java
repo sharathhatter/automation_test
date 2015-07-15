@@ -213,6 +213,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                     if (imgSwitchNav != null) {
                         toggleNavigationArea(imgSwitchNav);
                     }
+                    mNavRecyclerView.scrollToPosition(0);
                 }
             }
 
