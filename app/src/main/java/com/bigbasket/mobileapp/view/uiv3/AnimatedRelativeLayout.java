@@ -61,24 +61,25 @@ public class AnimatedRelativeLayout extends RelativeLayout {
         });
     }
 
-    @Override
-    public void setVisibility(final int visibility) {
-        if (getVisibility() != visibility) {
-            if (inAnimation == null) {
-                Animation slideIn = AnimationUtils.loadAnimation(getContext(), R.anim.slide_in);
-                setInAnimation(slideIn);
-            }
-            if (outAnimation == null) {
-                Animation slideOut = AnimationUtils.loadAnimation(getContext(), R.anim.slide_out);
-                setOutAnimation(slideOut);
-            }
-            if (visibility == VISIBLE) {
-                if (inAnimation != null) {
-                    startAnimation(inAnimation);
+    public void setVisibility(final int visibility, boolean animated) {
+        if (animated) {
+            if (getVisibility() != visibility) {
+                if (inAnimation == null) {
+                    Animation slideIn = AnimationUtils.loadAnimation(getContext(), R.anim.slide_in);
+                    setInAnimation(slideIn);
                 }
-            } else {
-                if (outAnimation != null) {
-                    startAnimation(outAnimation);
+                if (outAnimation == null) {
+                    Animation slideOut = AnimationUtils.loadAnimation(getContext(), R.anim.slide_out);
+                    setOutAnimation(slideOut);
+                }
+                if (visibility == VISIBLE) {
+                    if (inAnimation != null) {
+                        startAnimation(inAnimation);
+                    }
+                } else {
+                    if (outAnimation != null) {
+                        startAnimation(outAnimation);
+                    }
                 }
             }
         }

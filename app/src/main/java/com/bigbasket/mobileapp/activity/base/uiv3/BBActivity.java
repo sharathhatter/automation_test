@@ -205,7 +205,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 toolbar.setTitle(formatToolbarTitle(mTitle));
                 invalidateOptionsMenu();
                 if (mSubNavLayout != null && mSubNavLayout.getVisibility() == View.VISIBLE) {
-                    onSubNavigationHideRequested();
+                    onSubNavigationHideRequested(false);
                 }
                 if (mNavRecyclerView != null && mNavRecyclerView.getVisibility() != View.VISIBLE) {
                     // User was in settings menu, now restore the default state to avoid confusion
@@ -889,16 +889,16 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 sectionNavigationItems,
                 SectionManager.MAIN_MENU, baseImgUrl, rendererHashMap, sectionItem);
         mListSubNavigation.setAdapter(navigationAdapter);
-        mSubNavLayout.setVisibility(View.VISIBLE);
+        mSubNavLayout.setVisibility(View.VISIBLE, true);
     }
 
     @Override
-    public void onSubNavigationHideRequested() {
+    public void onSubNavigationHideRequested(boolean animated) {
         if (mListSubNavigation != null) {
             mListSubNavigation.setAdapter(null);
         }
         if (mSubNavLayout != null) {
-            mSubNavLayout.setVisibility(View.GONE);
+            mSubNavLayout.setVisibility(View.GONE, animated);
         }
     }
 
@@ -976,7 +976,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     public void onBackPressed() {
         if (mDrawerLayout != null && mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             if (mSubNavLayout != null && mSubNavLayout.getVisibility() == View.VISIBLE) {
-                mSubNavLayout.setVisibility(View.GONE);
+                mSubNavLayout.setVisibility(View.GONE, true);
             } else {
                 mDrawerLayout.closeDrawers();
             }

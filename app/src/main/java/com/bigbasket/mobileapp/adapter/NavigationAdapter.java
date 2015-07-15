@@ -174,7 +174,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 txtNavMainItem.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        ((SubNavigationAware) context).onSubNavigationHideRequested();
+                        ((SubNavigationAware) context).onSubNavigationHideRequested(true);
                     }
                 });
             } else {
@@ -190,7 +190,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 txtNavMainItem.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        ((SubNavigationAware) context).onSubNavigationHideRequested();
+                        ((SubNavigationAware) context).onSubNavigationHideRequested(true);
                     }
                 });
             } else {
