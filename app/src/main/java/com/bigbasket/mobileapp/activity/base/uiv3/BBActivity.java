@@ -28,6 +28,7 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -480,7 +481,8 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     public void updateUIAfterBasketOperationFailed(BasketOperation basketOperation, TextView basketCountTextView,
                                                    View viewDecQty, View viewIncQty, View btnAddToBasket,
                                                    Product product, String qty,
-                                                   String errorType, @Nullable View productView) {
+                                                   String errorType, @Nullable View productView,
+                                                   @Nullable EditText editTextQty) {
         if (errorType.equals(Constants.PRODUCT_ID_NOT_FOUND)) {
             Toast.makeText(this, "0 added to basket.", Toast.LENGTH_SHORT).show();
         }
@@ -491,7 +493,8 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                                                     View viewDecQty, View viewIncQty, View btnAddToBasket,
                                                     Product product, String qty,
                                                     @Nullable View productView,
-                                                    @Nullable HashMap<String, Integer> cartInfoMap) {
+                                                    @Nullable HashMap<String, Integer> cartInfoMap,
+                                                    @Nullable EditText editTextQty) {
 
         int productQtyInBasket = 0;
         if (basketOperationResponse.getBasketResponseProductInfo() != null) {
@@ -509,6 +512,10 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             if (btnAddToBasket != null) {
                 btnAddToBasket.setVisibility(View.VISIBLE);
             }
+            if (editTextQty != null && AuthParameters.getInstance(getCurrentActivity()).isKirana()) {
+                editTextQty.setText("1");
+                editTextQty.setVisibility(View.VISIBLE);
+            }
             if (basketCountTextView != null) {
                 basketCountTextView.setVisibility(View.GONE);
             }
@@ -525,6 +532,9 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             if (basketCountTextView != null) {
                 basketCountTextView.setText(String.valueOf(productQtyInBasket));
                 basketCountTextView.setVisibility(View.VISIBLE);
+            }
+            if (editTextQty != null && AuthParameters.getInstance(getCurrentActivity()).isKirana()) {
+                editTextQty.setVisibility(View.GONE);
             }
         }
 

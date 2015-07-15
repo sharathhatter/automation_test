@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -64,7 +65,6 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
             mProduct = savedInstanceState.getParcelable(Constants.PRODUCT);
             if (mProduct != null) {
                 renderProductDetail();
-                return;
             }
         }
     }
@@ -150,6 +150,7 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
                 .setShowBasketBtn(true)
                 .setShowShopListDeleteBtn(false)
                 .disableInBasketChildSwap(true)
+                .showQtyInput(AuthParameters.getInstance(getActivity()).isKirana())
                 .build();
 
         LinearLayout layoutProductDetail = (LinearLayout) getView().findViewById(R.id.layoutProductDetail);
@@ -270,9 +271,10 @@ public class ProductDetailFragment extends BaseFragment implements ShoppingListN
     @Override
     public void updateUIAfterBasketOperationSuccess(BasketOperation basketOperation, TextView basketCountTextView, View viewDecQty,
                                                     View viewIncQty, View btnAddToBasket, Product product,
-                                                    String qty, @Nullable View productView, @Nullable HashMap<String, Integer> cartInfoMap) {
+                                                    String qty, @Nullable View productView, @Nullable HashMap<String, Integer> cartInfoMap,
+                                                    @Nullable EditText editTextQty) {
         super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextView, viewDecQty,
-                viewIncQty, btnAddToBasket, product, qty, productView, cartInfoMap);
+                viewIncQty, btnAddToBasket, product, qty, productView, cartInfoMap, editTextQty);
         int productQtyInBasket = 0;
         if (basketOperationResponse.getBasketResponseProductInfo() != null) {
             productQtyInBasket = Integer.parseInt(basketOperationResponse.getBasketResponseProductInfo().getTotalQty());

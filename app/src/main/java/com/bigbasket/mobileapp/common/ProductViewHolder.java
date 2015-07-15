@@ -4,6 +4,7 @@ package com.bigbasket.mobileapp.common;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,6 +27,7 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
     private View viewIncBasketQty;
     private TextView txtOutOfStockORNotForSale;
     private ImageView imgProductOverflowAction;
+    private EditText editTextQty;
 
     public ProductViewHolder(View itemView) {
         super(itemView);
@@ -141,5 +143,12 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
             imgProductOverflowAction = (ImageView) itemView.findViewById(R.id.imgProductOverflowAction);
         }
         return imgProductOverflowAction;
+    }
+
+    public EditText getEditTextQty() {
+        if (editTextQty == null) {
+            editTextQty = (EditText) itemView.findViewById(R.id.editTextQty);
+        }
+        return editTextQty;
     }
 }

@@ -295,6 +295,7 @@ public class PromoDetailFragment extends BaseFragment {
                 .setShowShoppingListBtn(false)
                 .setShowBasketBtn(false)
                 .setShowShopListDeleteBtn(false)
+                .showQtyInput(AuthParameters.getInstance(getActivity()).isKirana())
                 .build();
         for (Product freeProduct : freeProducts) {
             View base = layoutInflater.inflate(R.layout.uiv3_product_row, view, false);

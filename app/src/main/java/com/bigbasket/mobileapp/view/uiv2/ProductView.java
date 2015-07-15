@@ -14,9 +14,11 @@ import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
@@ -331,9 +333,12 @@ public final class ProductView {
         final View viewDecBasketQty = productViewHolder.getViewDecBasketQty();
         final TextView txtInBasket = productViewHolder.getTxtInBasket();
         final View viewIncBasketQty = productViewHolder.getViewIncBasketQty();
+        final EditText editTextQty = productViewHolder.getEditTextQty();
 
         TextView txtOutOfStockORNotForSale = productViewHolder.getTxtOutOfStockORNotForSale();
         txtInBasket.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
+        editTextQty.setTypeface(productViewDisplayDataHolder.getSansSerifMediumTypeface());
+        editTextQty.setText("1");
 
         if (productViewDisplayDataHolder.isShowBasketBtn()) {
             if (product.getProductStatus().equalsIgnoreCase("A")) {
@@ -345,7 +350,9 @@ public final class ProductView {
                     viewDecBasketQty.setVisibility(View.VISIBLE);
                     viewIncBasketQty.setVisibility(View.VISIBLE);
                     //productViewHolder.itemView.setBackgroundColor(Constants.IN_BASKET_COLOR);
-
+                    if (productViewDisplayDataHolder.isShowQtyInput()) {
+                        editTextQty.setVisibility(View.GONE);
+                    }
                     imgAddToBasket.setVisibility(View.GONE);
                 } else {
                     txtInBasket.setText("");
@@ -354,6 +361,9 @@ public final class ProductView {
                     viewIncBasketQty.setVisibility(View.GONE);
 
                     imgAddToBasket.setVisibility(View.VISIBLE);
+                    if (productViewDisplayDataHolder.isShowQtyInput()) {
+                        editTextQty.setVisibility(View.VISIBLE);
+                    }
                     //productViewHolder.itemView.setBackgroundColor(Color.WHITE);
                 }
 
@@ -364,7 +374,8 @@ public final class ProductView {
                             BasketOperationTask<T> basketOperationTask = new BasketOperationTask<>(basketOperationAware,
                                     BasketOperation.INC, product,
                                     txtInBasket, viewDecBasketQty, viewIncBasketQty, imgAddToBasket,
-                                    TrackingAware.BASKET_INCREMENT, navigationCtx, productViewHolder.itemView, cartInfo);
+                                    TrackingAware.BASKET_INCREMENT, navigationCtx, productViewHolder.itemView, cartInfo,
+                                    editTextQty);
                             basketOperationTask.startTask();
 
                         } else {
@@ -381,7 +392,7 @@ public final class ProductView {
                                     BasketOperation.DEC,
                                     product, txtInBasket, viewDecBasketQty, viewIncBasketQty,
                                     imgAddToBasket, TrackingAware.BASKET_DECREMENT,
-                                    navigationCtx, productViewHolder.itemView, cartInfo);
+                                    navigationCtx, productViewHolder.itemView, cartInfo, editTextQty);
                             myTask.startTask();
                         } else {
                             productViewDisplayDataHolder.getHandler().sendOfflineError();
@@ -394,11 +405,20 @@ public final class ProductView {
                     @Override
                     public void onClick(View view) {
                         if (((ConnectivityAware) basketOperationAware).checkInternetConnection()) {
+                            String qty = "1";
+                            if (productViewDisplayDataHolder.isShowQtyInput()) {
+                                String txt = editTextQty.getText().toString();
+                                if (TextUtils.isEmpty(txt)) {
+                                    Toast.makeText(((ActivityAware) basketOperationAware).getCurrentActivity(), "Quantity shouldn\'t be blank", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                                qty = txt;
+                            }
                             BasketOperationTask<T> basketOperationTask = new BasketOperationTask<>(basketOperationAware,
                                     BasketOperation.INC, product,
                                     txtInBasket, viewDecBasketQty, viewIncBasketQty, imgAddToBasket,
-                                    "1", TrackingAware.BASKET_ADD, navigationCtx, productViewHolder.itemView,
-                                    cartInfo);
+                                    qty, TrackingAware.BASKET_ADD, navigationCtx, productViewHolder.itemView,
+                                    cartInfo, editTextQty);
                             basketOperationTask.startTask();
                         } else {
                             productViewDisplayDataHolder.getHandler().sendOfflineError();
@@ -410,8 +430,9 @@ public final class ProductView {
                 txtInBasket.setVisibility(View.GONE);
                 viewDecBasketQty.setVisibility(View.GONE);
                 viewIncBasketQty.setVisibility(View.GONE);
-
+                editTextQty.setVisibility(View.GONE);
                 imgAddToBasket.setVisibility(View.GONE);
+
                 txtOutOfStockORNotForSale.setVisibility(View.VISIBLE);
                 txtOutOfStockORNotForSale.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
                 if (product.getProductStatus().equalsIgnoreCase("0") || product.getProductStatus().equalsIgnoreCase("O")) {  // zero not O
@@ -426,6 +447,7 @@ public final class ProductView {
             viewDecBasketQty.setVisibility(View.GONE);
             viewIncBasketQty.setVisibility(View.GONE);
             imgAddToBasket.setVisibility(View.GONE);
+            editTextQty.setVisibility(View.GONE);
             //productViewHolder.itemView.setBackgroundColor(Color.WHITE);
         }
     }

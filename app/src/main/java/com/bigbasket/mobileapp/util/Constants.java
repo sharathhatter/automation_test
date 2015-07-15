@@ -192,6 +192,7 @@ public class Constants {
     public static final String MID_KEY = "m_id";
     public static final String MEMBER_EMAIL_KEY = "email_id";
     public static final String FULL_NAME = "full_name";
+    public static final String IS_KIRANA = "is_kirana";
     public static final String MEMBER_FULL_NAME_KEY = "memberName";
     public static final String HUB = "hub";
     public static final String CREATED_ON = "created_on";

@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -628,8 +629,10 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     @Override
     public void updateUIAfterBasketOperationSuccess(BasketOperation basketOperation, TextView basketCountTextView,
                                                     View viewDecQty, View viewIncQty, View btnAddToBasket, Product product,
-                                                    String qty, @Nullable View productView, @Nullable HashMap<String, Integer> cartInfoMap) {
-        super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextView, viewDecQty, viewIncQty, btnAddToBasket, product, qty, productView, cartInfoMap);
+                                                    String qty, @Nullable View productView, @Nullable HashMap<String, Integer> cartInfoMap,
+                                                    @Nullable EditText editTextQty) {
+        super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextView, viewDecQty,
+                viewIncQty, btnAddToBasket, product, qty, productView, cartInfoMap, editTextQty);
         if (cartInfoMap != null) {
             // Sync local cartInfoMap with this one
             mCartInfo = cartInfoMap;
