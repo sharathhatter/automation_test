@@ -139,7 +139,6 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                 case DestinationInfo.SHOPPING_LIST_SUMMARY:
                     if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
                         boolean isSmartBasket = destinationInfo.getDestinationSlug().equalsIgnoreCase(Constants.SMART_BASKET_SLUG);
-                        intent = new Intent(((ActivityAware) context).getCurrentActivity(), ShoppingListSummaryActivity.class);
                         String title;
                         if (isSmartBasket) {
                             title = Constants.SMART_BASKET;
@@ -148,8 +147,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                         }
                         ShoppingListName shoppingListName = new ShoppingListName(title, destinationInfo.getDestinationSlug(),
                                 isSmartBasket);
-                        intent.putExtra(Constants.SHOPPING_LIST_NAME, shoppingListName);
-                        ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                        ((LaunchProductListAware) context).launchShoppingList(shoppingListName);
                     }
                     break;
                 case DestinationInfo.SHOPPING_LIST_LANDING:

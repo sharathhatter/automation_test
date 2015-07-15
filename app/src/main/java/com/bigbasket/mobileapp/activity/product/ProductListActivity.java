@@ -2,7 +2,6 @@ package com.bigbasket.mobileapp.activity.product;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
@@ -14,11 +13,10 @@ import android.text.TextUtils;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -32,7 +30,6 @@ import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.fragment.product.GenericProductListFragment;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
-import com.bigbasket.mobileapp.handler.OnSectionItemClickListener;
 import com.bigbasket.mobileapp.interfaces.LazyProductListAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
@@ -48,7 +45,6 @@ import com.bigbasket.mobileapp.model.product.ProductTabInfo;
 import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
-import com.bigbasket.mobileapp.model.section.SectionTextItem;
 import com.bigbasket.mobileapp.task.uiv3.CreateShoppingListTask;
 import com.bigbasket.mobileapp.task.uiv3.ProductListTask;
 import com.bigbasket.mobileapp.util.Constants;
@@ -56,8 +52,8 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.SectionView;
-import com.bigbasket.mobileapp.view.uiv3.BBArrayAdapter;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
+import com.bigbasket.mobileapp.view.uiv3.HeaderSpinnerView;
 import com.google.gson.Gson;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
@@ -424,90 +420,25 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
     private void renderHeaderDropDown(@Nullable final Section headSection) {
         Toolbar toolbar = getToolbar();
-        ViewGroup layoutChildToolbarContainer = (ViewGroup) findViewById(R.id.layoutChildToolbarContainer);
-        ListView listChildProducts = (ListView) findViewById(R.id.listHeaderDropdown);
-        TextView txtChildDropdownTitle = (TextView) findViewById(R.id.txtListDialogTitle);
-        if (headSection != null && headSection.getSectionItems() != null
-                && headSection.getSectionItems().size() > 0) {
-
-            final OnChildDropdownRequested onChildDropdownRequested = new OnChildDropdownRequested(layoutChildToolbarContainer);
-            if (mToolbarTextDropdown == null) {
-                mToolbarTextDropdown = (TextView) getLayoutInflater().inflate(R.layout.uiv3_product_header_text, toolbar, false);
-                mToolbarTextDropdown.setTypeface(faceRobotoRegular);
-                toolbar.addView(mToolbarTextDropdown);
-                mToolbarTextDropdown.setOnClickListener(onChildDropdownRequested);
-            }
-            findViewById(R.id.imgCloseChildDropdown).setOnClickListener(onChildDropdownRequested);
-
-            if (mHeaderSelectedIdx >= headSection.getSectionItems().size()) {
-                // Defensive check
-                mHeaderSelectedIdx = 0;
-            }
-
-            SectionTextItem title = headSection.getSectionItems().get(mHeaderSelectedIdx).getTitle();
-            mToolbarTextDropdown.setText(title != null ? title.getText() : "");
-            txtChildDropdownTitle.setTypeface(faceRobotoRegular);
-            txtChildDropdownTitle.setText(title != null ? title.getText() : "");
-            txtChildDropdownTitle.setOnClickListener(onChildDropdownRequested);
-
-            BBArrayAdapter bbArrayAdapter = new BBArrayAdapter<>(this, R.layout.uiv3_product_header_list_item, headSection.getSectionItems(),
-                    faceRobotoRegular, getResources().getColor(R.color.uiv3_primary_text_color), Color.WHITE);
-            bbArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            listChildProducts.setAdapter(bbArrayAdapter);
-
-            listChildProducts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    if (position != Spinner.INVALID_POSITION) {
-                        if (position != mHeaderSelectedIdx) {
-                            new OnSectionItemClickListener<>(getCurrentActivity(), headSection,
-                                    headSection.getSectionItems().get(position),
-                                    TrackingAware.PRODUCT_LIST_HEADER).onClick(view);
-                        }
-                        onChildDropdownRequested.onClick(view);  // Manually simulate click to hide dropdown
-                    }
-                }
-            });
-            findViewById(R.id.layoutListHeader).setOnClickListener(onChildDropdownRequested);
-
-        } else {
-            layoutChildToolbarContainer.setVisibility(View.GONE);
-            listChildProducts.setAdapter(null);
-            toolbar.setTitle(mTitlePassedViaIntent);
-            if (mToolbarTextDropdown != null) {
-                mToolbarTextDropdown.setOnClickListener(null);
-                toolbar.removeView(mToolbarTextDropdown);
-            }
+        if (mToolbarTextDropdown == null) {
+            mToolbarTextDropdown = (TextView) getLayoutInflater().
+                    inflate(R.layout.uiv3_product_header_text, toolbar, false);
         }
-    }
-
-    private class OnChildDropdownRequested implements View.OnClickListener {
-
-        private ViewGroup layoutChildToolbarContainer;
-
-        public OnChildDropdownRequested(ViewGroup layoutChildToolbarContainer) {
-            this.layoutChildToolbarContainer = layoutChildToolbarContainer;
-        }
-
-        @Override
-        public void onClick(View v) {
-            if (layoutChildToolbarContainer.getVisibility() == View.VISIBLE) {
-                layoutChildToolbarContainer.setVisibility(View.GONE);
-                if (getSupportActionBar() != null) {
-                    getSupportActionBar().show();
-                }
-                UIUtil.changeStatusBarColor(getCurrentActivity(),
-                        R.color.uiv3_status_bar_background);
-            } else {
-                layoutChildToolbarContainer.setVisibility(View.VISIBLE);
-                UIUtil.changeStatusBarColor(getCurrentActivity(),
-                        R.color.uiv3_grey_status_bar_color);
-                if (getSupportActionBar() != null) {
-                    getSupportActionBar().hide();
-                }
-            }
-            trackEvent(TrackingAware.PRODUCT_LIST_HEADER_CLICKED, null);
-        }
+        new HeaderSpinnerView.HeaderSpinnerViewBuilder<>()
+                .withCtx(this)
+                .withDefaultSelectedIdx(mHeaderSelectedIdx)
+                .withFallbackHeaderTitle(mTitlePassedViaIntent)
+                .withHeadSection(headSection)
+                .withImgCloseChildDropdown((ImageView) findViewById(R.id.imgCloseChildDropdown))
+                .withLayoutChildToolbarContainer((ViewGroup) findViewById(R.id.layoutChildToolbarContainer))
+                .withLayoutListHeader((ViewGroup) findViewById(R.id.layoutListHeader))
+                .withListHeaderDropdown((ListView) findViewById(R.id.listHeaderDropdown))
+                .withToolbar(getToolbar())
+                .withTxtChildDropdownTitle((TextView) findViewById(R.id.txtListDialogTitle))
+                .withTxtToolbarDropdown(mToolbarTextDropdown)
+                .withTypeface(faceRobotoRegular)
+                .build()
+                .setView();
     }
 
     @Override

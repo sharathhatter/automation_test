@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
 import com.bigbasket.mobileapp.interfaces.AnalyticsNavigationContextAware;
@@ -37,6 +38,7 @@ import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.cart.BasketOperationResponse;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.product.Product;
+import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.task.uiv3.CreateShoppingListTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
@@ -477,6 +479,13 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
             ((LaunchProductListAware) getActivity()).
                     launchProductList(nameValuePairs, sectionName, sectionItemName);
         }
+    }
+
+    @Override
+    public void launchShoppingList(ShoppingListName shoppingListName) {
+        Intent intent = new Intent(getCurrentActivity(), ShoppingListSummaryActivity.class);
+        intent.putExtra(Constants.SHOPPING_LIST_NAME, shoppingListName);
+        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
     @Override

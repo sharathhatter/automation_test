@@ -43,6 +43,7 @@ import com.bigbasket.mobileapp.activity.account.uiv3.SignupActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.ShowCartActivity;
 import com.bigbasket.mobileapp.activity.product.ProductListActivity;
+import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
 import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
@@ -58,6 +59,7 @@ import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
+import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.DialogButton;
@@ -802,6 +804,13 @@ public abstract class BaseActivity extends AppCompatActivity implements
             }
             getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         }
+    }
+
+    @Override
+    public void launchShoppingList(ShoppingListName shoppingListName) {
+        Intent intent = new Intent(getCurrentActivity(), ShoppingListSummaryActivity.class);
+        intent.putExtra(Constants.SHOPPING_LIST_NAME, shoppingListName);
+        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
     @Override
