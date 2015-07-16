@@ -5,6 +5,7 @@ public interface ApiErrorCodes {
     int POTENTIAL_ORDER_SLOT_EXPIRED = 100;
     int INTERNAL_SERVER_ERROR = 101;
     int INVALID_FIELD = 103;
+    String INVALID_FIELD_STR = "103";
     int INVALID_USER = 104;
     int EMAIL_ALREADY_EXISTS = 105;
     int CART_NOT_EXISTS = 106;

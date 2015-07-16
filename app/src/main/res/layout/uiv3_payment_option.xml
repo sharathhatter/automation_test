@@ -70,7 +70,6 @@
                     android:id="@+id/lblSelectAnotherMethod"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/margin_normal"
                     android:layout_marginLeft="@dimen/margin_small"
                     android:layout_marginTop="@dimen/margin_mini"
                     android:text="@string/txnFailedRetryTxt"
@@ -83,6 +82,16 @@
                     android:layout_height="wrap_content">
 
                 </RadioGroup>
+
+                <TextView
+                    android:id="@+id/lblAmountFromWallet"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/margin_small"
+                    android:layout_marginTop="@dimen/margin_mini"
+                    android:text="@string/fromWalletMsg"
+                    android:textColor="@color/uiv3_dialog_header_text_bkg"
+                    android:textSize="@dimen/primary_text_size" />
             </LinearLayout>
 
             <RelativeLayout
