@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -587,7 +588,7 @@ public class SectionView {
         }
     }
 
-    private void formatSection(View parent, int txtViewId, Section section) {
+    private void formatSection(View parent, @IdRes int txtViewId, Section section) {
         Renderer sectionRender = mSectionData.getRenderersMap() != null ?
                 mSectionData.getRenderersMap().get(section.getRenderingId()) : null;
         if (sectionRender != null) {
@@ -606,18 +607,21 @@ public class SectionView {
                 }
             }
         }
-        TextView txtVw = (TextView) parent.findViewById(txtViewId);
-        if (section.getTitle() != null && !TextUtils.isEmpty(section.getTitle().getText())) {
-            txtVw.setTypeface(FontHolder.getInstance(context).getFaceRobotoMedium());
-            txtVw.setText(section.getTitle().getText());
-            Renderer renderer = mSectionData.getRenderersMap() != null ?
-                    mSectionData.getRenderersMap().get(section.getTitle().getRenderingId()) : null;
-            if (renderer != null) {
-                renderer.setRendering(txtVw, 0, 0, true, true, true, false,
-                        true, true, true, true);
+
+        if (txtViewId != 0) {
+            TextView txtVw = (TextView) parent.findViewById(txtViewId);
+            if (section.getTitle() != null && !TextUtils.isEmpty(section.getTitle().getText())) {
+                txtVw.setTypeface(FontHolder.getInstance(context).getFaceRobotoMedium());
+                txtVw.setText(section.getTitle().getText());
+                Renderer renderer = mSectionData.getRenderersMap() != null ?
+                        mSectionData.getRenderersMap().get(section.getTitle().getRenderingId()) : null;
+                if (renderer != null) {
+                    renderer.setRendering(txtVw, 0, 0, true, true, true, false,
+                            true, true, true, true);
+                }
+            } else {
+                txtVw.setVisibility(View.GONE);
             }
-        } else {
-            txtVw.setVisibility(View.GONE);
         }
     }
 

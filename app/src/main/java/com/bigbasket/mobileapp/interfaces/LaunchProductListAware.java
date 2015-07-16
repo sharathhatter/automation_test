@@ -10,5 +10,6 @@ import java.util.ArrayList;
 public interface LaunchProductListAware {
     void launchProductList(ArrayList<NameValuePair> nameValuePairs,
                            @Nullable String sectionName, @Nullable String sectionItemName);
+
     void launchShoppingList(ShoppingListName shoppingListName);
 }

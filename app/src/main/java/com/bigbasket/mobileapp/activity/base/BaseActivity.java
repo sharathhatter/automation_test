@@ -35,12 +35,12 @@ import android.widget.Toast;
 
 import com.appsflyer.AppsFlyerLib;
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.HomeActivity;
 import com.bigbasket.mobileapp.activity.SplashActivity;
 import com.bigbasket.mobileapp.activity.TutorialActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.ChangeCityActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignupActivity;
-import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.activity.order.uiv3.ShowCartActivity;
 import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
@@ -422,7 +422,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 intent = new Intent(getCurrentActivity(), SplashActivity.class);
                 intent.putExtra(Constants.RELOAD_APP, true);
             } else {
-                intent = new Intent(getCurrentActivity(), BBActivity.class);
+                intent = new Intent(getCurrentActivity(), HomeActivity.class);
                 intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_HOME);
             }
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

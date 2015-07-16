@@ -60,6 +60,9 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
     @SerializedName(Constants.DESTINATION)
     private DestinationInfo destinationInfo;
 
+    @SerializedName(Constants.HELP)
+    private HelpDestinationInfo helpDestinationInfo;
+
     @SerializedName(Constants.SUB_ITEMS)
     private ArrayList<SubSectionItem> subSectionItems;
 
@@ -98,11 +101,10 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
         if (!wasImgParamsNull) {
             imageParams = source.readParcelable(SectionItem.class.getClassLoader());
         }
-    }
-
-    public static int getViewTypeCount() {
-        // Update this number once you add/remove any of the above view-types
-        return 13;
+        boolean wasHelpDestNull = source.readByte() == (byte) 1;
+        if (!wasHelpDestNull) {
+            helpDestinationInfo = source.readParcelable(SectionItem.class.getClassLoader());
+        }
     }
 
     @LayoutRes
@@ -157,6 +159,14 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
         return destinationInfo;
     }
 
+    public HelpDestinationInfo getHelpDestinationInfo() {
+        return helpDestinationInfo;
+    }
+
+    public void setHelpDestinationInfo(HelpDestinationInfo helpDestinationInfo) {
+        this.helpDestinationInfo = helpDestinationInfo;
+    }
+
     public ArrayList<SubSectionItem> getSubSectionItems() {
         return subSectionItems;
     }
@@ -194,6 +204,11 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
         dest.writeByte(wasImageParamsNull ? (byte) 1 : (byte) 0);
         if (!wasImageParamsNull) {
             dest.writeParcelable(imageParams, flags);
+        }
+        boolean wasHelpDestNull = helpDestinationInfo == null;
+        dest.writeByte(wasHelpDestNull ? (byte) 1 : (byte) 0);
+        if (!wasHelpDestNull) {
+            dest.writeParcelable(helpDestinationInfo, flags);
         }
     }
 

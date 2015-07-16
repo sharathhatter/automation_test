@@ -450,10 +450,13 @@ public class Constants {
     public static final String SECTIONS = "sections";
     public static final String SECTION_TYPE = "section_type";
     public static final String SECTION_INFO = "section_info";
+    public static final String SECTION_ITEM = "section_item";
     public static final String DESTINATION = "destination";
     public static final String MORE = "more";
     public static final String DESTINATION_TYPE = "dest_type";
     public static final String DESTINATION_SLUG = "dest_slug";
+    public static final String HELP_KEY = "help_key";
+    public static final String HELP = "help";
     public static final String RENDERING_ID = "rendering_id";
     public static final String IMAGE_NAME = "image_name";
     public static final String IMAGE_PARAMS = "image_params";
