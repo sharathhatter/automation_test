@@ -289,6 +289,19 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
             txtSalePrice.setText("Free!");
         }
 
+        TextView txtSaving = rowHolder.getTxtSaving();
+        if (cartItem.getSaving() > 0 && (cartItem.getPromoAppliedType() >CartItem.REGULAR_PRICE_AND_PROMO_NOT_APPLIED &&
+                cartItem.getPromoAppliedType()<CartItem.REGULAR_PRICE_AND_NO_PROMO)) {
+            txtSaving.setVisibility(View.VISIBLE);
+            String prefix = "Save: `";
+            Spannable savingSpannable = new SpannableString(prefix + UIUtil.formatAsMoney(cartItem.getSaving()));
+            savingSpannable.setSpan(new CustomTypefaceSpan("", faceRupee), prefix.length()-1, prefix.length(),
+                    Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+            txtSaving.setText(savingSpannable);
+        }else {
+            txtSaving.setVisibility(View.GONE);
+        }
+
 
         final TextView txtInBasket = rowHolder.getTxtInBasket();
         final View imgDecBasketQty = rowHolder.getViewDecBasketQty();
@@ -544,6 +557,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
         private View base;
         private TextView txtExpressAvailable;
         private TextView txtPackDesc;
+        private TextView txtSaving;
 
         public RowHolder(View base) {
             this.base = base;
@@ -669,6 +683,12 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
             if (viewDecBasketQty == null)
                 viewDecBasketQty = base.findViewById(R.id.viewDecBasketQty);
             return viewDecBasketQty;
+        }
+
+        public TextView getTxtSaving() {
+            if (txtSaving == null)
+                txtSaving = (TextView)base.findViewById(R.id.txtSaving);
+            return txtSaving;
         }
     }
 

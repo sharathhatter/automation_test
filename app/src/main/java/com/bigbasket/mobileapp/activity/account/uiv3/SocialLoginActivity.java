@@ -34,6 +34,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.plus.model.people.Person;
 import com.google.gson.Gson;
+import com.moe.pushlibrary.MoEHelper;
 
 import org.json.JSONObject;
 
@@ -336,6 +337,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
                 }
             }
         }
+        moEHelper.logoutUser(); //todo check
         mIsInLogoutMode = false;
         goToHome(true);
     }

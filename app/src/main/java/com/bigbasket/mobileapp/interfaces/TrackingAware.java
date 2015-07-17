@@ -19,6 +19,8 @@ public interface TrackingAware {
     String RATE_APP_CLICKED = "Rate This App Clicked";
     String MENU_CLICKED = "Menu.Clicked";
 
+    String DISCOUNT_SHOWN = "Discount Page Shown";
+
     //change city dialog
     String CHANGE_CITY_POSSITIVE_BTN_CLICKED = "Change Your City. Change City Clicked";
     String CHANGE_CITY_SHOWN = "Change Your City.Shown";
@@ -113,6 +115,7 @@ public interface TrackingAware {
     String HOME_PAGE_ITEM_CLICKED = "HomePage.Item Clicked";
     String SEARCH = "Search";
 
+    String DISCOUNT_TAB_CHANGED = "Discount Tab Changed";
     //product listing page
     String PRODUCT_LIST_SHOWN = "Product Listing.Shown";
     String PRODUCT_LIST_TAB_CHANGED = "Product List.Tab Changed";

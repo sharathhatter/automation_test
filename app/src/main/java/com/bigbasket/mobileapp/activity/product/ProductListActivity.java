@@ -11,6 +11,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -116,11 +117,11 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
         HashMap<String, String> paramMap = NameValuePair.toMap(mNameValuePairs);
 
-        if (paramMap != null && paramMap.containsKey(Constants.TYPE)) {
-            // Using separate map since nc can be added by trackEvent which we don't want in paramMap
-            HashMap<String, String> eventAttribs = new HashMap<>(paramMap);
-            trackEvent(TrackingAware.PRODUCT_LIST_SHOWN, eventAttribs);
-        }
+//        if (paramMap != null && paramMap.containsKey(Constants.TYPE)) {
+//            // Using separate map since nc can be added by trackEvent which we don't want in paramMap
+//            HashMap<String, String> eventAttribs = new HashMap<>(paramMap);
+//            trackEvent(TrackingAware.PRODUCT_LIST_SHOWN, eventAttribs);
+//        }
         setNextScreenNavigationContext(NameValuePair.buildNavigationContext(mNameValuePairs));
         new ProductListTask<>(this, paramMap).startTask();
     }
@@ -271,6 +272,8 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                     mArrayTabTypeAndFragmentPosition.put(i, productTabInfo.getTabType());
                     tabTypeWithNoProducts.add(productTabInfo.getTabType());
                 }
+                if(i==0)
+                    logProductListingShownEvent(productTabInfo.getTabType());
             }
         }
 
@@ -278,26 +281,25 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                 new ProductListPagerAdapter(this, getSupportFragmentManager(), bbTabs);
         mViewPager.setAdapter(statePagerAdapter);
 
-        SmartTabLayout pagerSlidingTabStrip = (SmartTabLayout) base.findViewById(R.id.slidingTabs);
-        pagerSlidingTabStrip.setViewPager(mViewPager);
-        pagerSlidingTabStrip.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                HashMap<String, String> eventAttribs = new HashMap<>();
-                eventAttribs.put(Constants.TAB_NAME, productTabInfos.get(position).getTabName());
-                trackEvent(TrackingAware.PRODUCT_LIST_TAB_CHANGED, eventAttribs);
             }
 
             @Override
             public void onPageSelected(int position) {
-
+                HashMap<String, String> eventAttribs = new HashMap<>();
+                eventAttribs.put(Constants.TYPE, productTabInfos.get(position).getTabType());
+                trackEvent(TrackingAware.PRODUCT_LIST_TAB_CHANGED, eventAttribs);
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
-
             }
         });
+
+        SmartTabLayout pagerSlidingTabStrip = (SmartTabLayout) base.findViewById(R.id.slidingTabs);
+        pagerSlidingTabStrip.setViewPager(mViewPager);
         if (productTabData.getContentSectionData() != null) {
             LinearLayout layoutProducts = new LinearLayout(this);
             layoutProducts.setOrientation(LinearLayout.VERTICAL);
@@ -342,6 +344,15 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                 }
             });
         }
+    }
+
+
+    public void logProductListingShownEvent(String mTabType) {
+        Log.e("#########", "############### ProductListAwareFragment logProductListingEvent");
+        if (mTabType == null) return;
+        HashMap<String, String> map = new HashMap<>();
+        map.put(Constants.TYPE, mTabType);
+        trackEvent(TrackingAware.PRODUCT_LIST_SHOWN, map);
     }
 
     private Bundle getBundleForProductListFragment(ProductTabInfo productTabInfo,
@@ -650,6 +661,8 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     }
 
     private void applySort(String sortedOn) {
+
+
         if (sortedOn == null || sortedOn.equals(mSortedOn)) return;
         NameValuePair sortedOnNameValuePair = getSortedOnNameValuePair();
         if (sortedOnNameValuePair == null) {
@@ -658,7 +671,14 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         } else {
             sortedOnNameValuePair.setValue(sortedOn);
         }
+        trackSortByEvent(sortedOn);
         loadProductTabs();
+    }
+
+    private void trackSortByEvent(String sortedOn){
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.NAME, sortedOn);
+        trackEvent(TrackingAware.SORT_BY, map);
     }
 
     @Nullable
@@ -687,7 +707,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         } else {
             Map<String, String> eventAttribs = new HashMap<>();
             for (FilteredOn filteredOn : filteredOnArrayList) {
-                eventAttribs.put(TrackEventkeys.FILTER_NAME, filteredOn.getFilterSlug());
+                eventAttribs.put(filteredOn.getFilterSlug(), UIUtil.strJoin(filteredOn.getFilterValues(), ","));
                 trackEvent(TrackingAware.FILTER_APPLIED, eventAttribs,
                         TrackEventkeys.PRODUCT_LISTING_SCREEN, null, false);
             }

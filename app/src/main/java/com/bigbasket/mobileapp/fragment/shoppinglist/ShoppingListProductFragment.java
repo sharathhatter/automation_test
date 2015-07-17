@@ -35,6 +35,7 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
     @Override
     public void loadProducts() {
         loadShoppingListProducts();
+        logProductListingEvent();
     }
 
     @Override
@@ -134,7 +135,7 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    @Override
+    //@Override
     public void logProductListingEvent() {
         ShoppingListSummary shoppingListSummary = getArguments().getParcelable(Constants.SHOPPING_LIST_SUMMARY);
         ShoppingListName shoppingListName = shoppingListSummary.getShoppingListName();

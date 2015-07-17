@@ -64,6 +64,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setNextScreenNavigationContext(TrackEventkeys.CO_DELIVERY_OPS);
         setTitle(getString(R.string.chooseSlot));
         mShipments = getIntent().getParcelableArrayListExtra(Constants.SHIPMENTS);
 

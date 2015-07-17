@@ -99,7 +99,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     protected ProgressDialog progressDialog = null;
     protected MoEHelper moEHelper;
     private AppEventsLogger fbLogger;
-    private String mNavigationContext;
+    protected String mNavigationContext;
     private String mNextScreenNavigationContext;
 
     public static void showKeyboard(final View view) {
@@ -238,11 +238,10 @@ public abstract class BaseActivity extends AppCompatActivity implements
             startActivity(communicationHunIntent);
         } else {
             showToast(getString(R.string.loginToContinue));
-            launchLogin(TrackEventkeys.NAVIGATION_CTX_LEFTNAV, FragmentCodes.START_COMMUNICATION_HUB);
+            launchLogin(getCurrentNavigationContext(), FragmentCodes.START_COMMUNICATION_HUB);
         }
 
         Map<String, String> eventAttribs = new HashMap<>();
-        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_LEFTNAV);
         trackEvent(TrackingAware.COMMUNICATION_HUB_CLICKED, eventAttribs);
     }
 
@@ -359,7 +358,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         if (sourceName != null) {
             switch (sourceName) {
                 case NavigationCodes.GO_TO_LOGIN:
-                    launchLogin(TrackEventkeys.NAVIGATION_CTX_DIALOG, valuePassed);
+                    launchLogin(getCurrentNavigationContext(), valuePassed);
                     break;
             }
         }
@@ -367,7 +366,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     public void launchViewBasketScreen() {
         Intent intent = new Intent(getCurrentActivity(), ShowCartActivity.class);
-        setNextScreenNavigationContext(TrackEventkeys.VIEW_BASKET);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
@@ -678,6 +676,8 @@ public abstract class BaseActivity extends AppCompatActivity implements
     @Nullable
     @Override
     public String getCurrentNavigationContext() {
+//        Log.e("BaseFragment getCurrentNavigationContext=>", mNavigationContext ==null ?
+//        "null" : mNavigationContext);
         return mNavigationContext;
     }
 
@@ -695,6 +695,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     @Override
     public void setNextScreenNavigationContext(@Nullable String nc) {
         mNextScreenNavigationContext = nc;
+
     }
 
     public void launchAppDeepLink(String uri) {
@@ -816,6 +817,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     @Override
     public void startActivityForResult(Intent intent, int requestCode) {
+        Log.e("StartActivityForResult", getNextScreenNavigationContext()==null ? "null" : getNextScreenNavigationContext());
         intent.putExtra(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
         super.startActivityForResult(intent, requestCode);
     }

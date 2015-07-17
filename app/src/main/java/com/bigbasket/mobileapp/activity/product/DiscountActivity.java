@@ -12,6 +12,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.fragment.product.DiscountFragment;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.discount.DiscountDataModel;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.model.section.SectionUtil;
@@ -21,6 +22,7 @@ import com.bigbasket.mobileapp.view.uiv3.BBTab;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -33,6 +35,7 @@ public class DiscountActivity extends BBActivity {
     @Override
     public void onCreate(Bundle saveInstanceState) {
         super.onCreate(saveInstanceState);
+        setNextScreenNavigationContext(TrackEventkeys.NC_DISCOUNT_SCREEN);
         setTitle(getString(R.string.discounts));
         getDiscountData();
     }
@@ -80,7 +83,7 @@ public class DiscountActivity extends BBActivity {
     }
 
 
-    private void renderDiscountFragments(SectionData categorySectionData, SectionData binSectionData) {
+    private void renderDiscountFragments(final SectionData categorySectionData, final SectionData binSectionData) {
         FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
         if (contentFrame == null) return;
         contentFrame.removeAllViews();
@@ -100,6 +103,26 @@ public class DiscountActivity extends BBActivity {
             TabPagerAdapter tabPagerAdapter = new TabPagerAdapter(getCurrentActivity(), getSupportFragmentManager(),
                     bbTabs);
             viewPager.setAdapter(tabPagerAdapter);
+            viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                }
+
+                @Override
+                public void onPageSelected(int position) {
+                    HashMap<String, String> eventAttribs = new HashMap<>();
+                    if(position==0 && categorySectionData.getScreenName()!=null){
+                        eventAttribs.put(Constants.TYPE, categorySectionData.getScreenName());
+                    }else if(binSectionData.getScreenName()!=null){
+                        eventAttribs.put(Constants.TYPE, binSectionData.getScreenName());
+                    }
+                    trackEvent(TrackingAware.DISCOUNT_TAB_CHANGED, eventAttribs);
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int state) {
+                }
+            });
 
 
             SmartTabLayout pageTitleStrip = (SmartTabLayout) view.findViewById(R.id.slidingTabs);
@@ -125,6 +148,8 @@ public class DiscountActivity extends BBActivity {
                 onChangeFragment(discountFragment);
             }
         }
+
+        trackEvent(TrackingAware.DISCOUNT_SHOWN, null);
     }
 
     private ArrayList<BBTab> createTabFragment(SectionData categorySectionData, ArrayList<BBTab> bbTabs) {

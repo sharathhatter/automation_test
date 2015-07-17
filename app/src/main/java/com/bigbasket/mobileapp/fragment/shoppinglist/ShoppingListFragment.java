@@ -49,6 +49,7 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        setNextScreenNavigationContext(TrackEventkeys.SL);
         if (savedInstanceState != null) {
             mShoppingListNames = savedInstanceState.getParcelableArrayList(Constants.SHOPPING_LISTS);
             if (mShoppingListNames != null) {

@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.text.Spannable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -442,6 +443,8 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     @Nullable
     @Override
     public String getCurrentNavigationContext() {
+        if(mNavigationContext == null && getActivity()!=null && ((BaseActivity)getActivity()).getCurrentNavigationContext()!=null)
+            return ((BaseActivity)getActivity()).getCurrentNavigationContext();
         return mNavigationContext;
     }
 
@@ -453,6 +456,8 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     @Nullable
     @Override
     public String getNextScreenNavigationContext() {
+        if(mNextScreenNavigationContext==null && getActivity() !=null &&((BaseActivity)getActivity()).getNextScreenNavigationContext()!=null)
+            return ((BaseActivity)getActivity()).getNextScreenNavigationContext();
         return mNextScreenNavigationContext;
     }
 

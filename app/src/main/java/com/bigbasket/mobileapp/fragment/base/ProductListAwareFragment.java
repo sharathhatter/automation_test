@@ -3,6 +3,7 @@ package com.bigbasket.mobileapp.fragment.base;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.adapter.product.ProductListRecyclerAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
@@ -71,15 +73,16 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
 
     public void productListOnActivityCreated() {
         loadProducts();
-        logProductListingEvent();
+        //logProductListingEvent();
     }
 
-    public void logProductListingEvent() {
-        if (mTabType == null) return;
-        HashMap<String, String> map = new HashMap<>();
-        map.put(Constants.TYPE, mTabType);
-        trackEvent(TrackingAware.PRODUCT_LIST_SHOWN, map);
-    }
+//    public void logProductListingEvent() {
+//        Log.e("#########", "############### ProductListAwareFragment logProductListingEvent");
+//        if (mTabType == null) return;
+//        HashMap<String, String> map = new HashMap<>();
+//        map.put(Constants.TYPE, mTabType);
+//        trackEvent(TrackingAware.PRODUCT_LIST_SHOWN, map);
+//    }
 
     public void loadProducts() {
         if (getArguments() != null) {
@@ -234,6 +237,18 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
             return getCurrentActivity().getCurrentNavigationContext();
         }
         return null;
+    }
+
+    @Override
+    public void setCurrentNavigationContext(@Nullable String nc) {
+        super.setCurrentNavigationContext(nc);
+    }
+
+    @Override
+    public void setNextScreenNavigationContext(@Nullable String nc) {
+        if (getCurrentActivity() != null) {
+            getCurrentActivity().setNextScreenNavigationContext(nc);
+        }
     }
 
     @Override

@@ -83,6 +83,7 @@ public class PaymentSelectionActivity extends BackButtonActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setNextScreenNavigationContext(TrackEventkeys.CO_PAYMENT);
         mPotentialOrderId = getIntent().getStringExtra(Constants.P_ORDER_ID);
 
         mLblTransactionFailed = (TextView) findViewById(R.id.lblTransactionFailed);
@@ -642,7 +643,6 @@ public class PaymentSelectionActivity extends BackButtonActivity {
     }
 
     private void showOrderThankyou(ArrayList<Order> orders) {
-        setNextScreenNavigationContext(TrackEventkeys.CO_PAYMENT);
         Intent invoiceIntent = new Intent(this, OrderInvoiceActivity.class);
         invoiceIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_THANKYOU);
         invoiceIntent.putExtra(Constants.ORDERS, orders);

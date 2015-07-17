@@ -214,9 +214,6 @@ public class FilterActivity extends BackButtonActivity {
     private class OnApplyFilterListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            HashMap<String, String> map = new HashMap<>();
-            map.put(TrackEventkeys.TYPE, "sort query");
-            trackEvent(TrackingAware.SORT_BY, map);
             Intent data = new Intent();
             data.putExtra(Constants.FILTERED_ON, mFilteredOns);
             setResult(NavigationCodes.FILTER_APPLIED, data);

@@ -55,14 +55,15 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
         // Don't do anything
     }
 
-    @Override
-    public void logProductListingEvent() {
-        // Don't do anything
-    }
+//    @Override
+//    public void logProductListingEvent() {
+//        // Don't do anything
+//    }
 
     @Override
     public void onResume() {
         super.onResume();
+        setNextScreenNavigationContext(TrackEventkeys.NAVIGATION_CTX_SHOP_FROM_ORDER);
         loadProducts();
     }
 

@@ -266,6 +266,9 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                 case SectionManager.MAIN_MENU:
                     ncBuilder.append(TrackEventkeys.MENU);
                     break;
+                case SectionManager.DISCOUNT_PAGE:
+                    ncBuilder.append(SectionManager.DISCOUNT_PAGE);
+                    break;
                 default:
                     ncBuilder.append(TrackEventkeys.SCREEN);
                     if (!TextUtils.isEmpty(screenName)) {

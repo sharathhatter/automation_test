@@ -37,15 +37,9 @@ public class OrderInvoiceItemsListFragment extends BaseFragment {
         OrderInvoice orderInvoice = getArguments().getParcelable(Constants.ACTION_TAB_TAG);
         setTitle("Order Details");
         if (orderInvoice == null) return;
-        logOrderItemTabClicked(orderInvoice);
+        ///logOrderItemTabClicked(orderInvoice);
         renderCartItems(orderInvoice);
-    }
-
-    private void logOrderItemTabClicked(OrderInvoice orderInvoice) {
-        if (getArguments() == null || orderInvoice == null) return;
-        Map<String, String> eventAttribs = new HashMap<>();
-        eventAttribs.put(TrackEventkeys.ORDER_ID, orderInvoice.getOrderNumber());
-        trackEvent(TrackingAware.ORDER_ITEMS_TAB_CLICKED, eventAttribs);
+        setNextScreenNavigationContext(TrackEventkeys.NC_ORDER_DETAIL);
     }
 
     private void renderCartItems(OrderInvoice orderInvoice) {

@@ -25,7 +25,6 @@ import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.handler.HDFCPowerPayHandler;
 import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
-import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.CityManager;
 import com.bigbasket.mobileapp.model.SectionManager;
 import com.bigbasket.mobileapp.model.account.City;
@@ -43,9 +42,6 @@ import com.newrelic.agent.android.NewRelic;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -58,6 +54,7 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setNextScreenNavigationContext(TrackEventkeys.NC_SPLASH_SCREEN);
         boolean reloadApp = getIntent().getBooleanExtra(Constants.RELOAD_APP, false);
         if (reloadApp) {
             setContentView(R.layout.loading_layout);
@@ -67,6 +64,7 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
             AppsFlyerLib.setAppsFlyerKey(Constants.APP_FLYER_ID);
             AppsFlyerLib.setUseHTTPFalback(true);
             AppsFlyerLib.sendTracking(getApplicationContext()); //detects installation, session and updates
+            AppsFlyerLib.setCurrencyCode("INR");
 
             // Defensive fix
             removePendingCodes();
@@ -281,20 +279,9 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
     protected void handleResults(boolean reloadApp) {
         removePendingGoToHome();
         if (reloadApp) {
-            trackCity();
             loadNavigation();
         } else {
             loadHomePage();
-        }
-    }
-
-    private void trackCity() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String city = preferences.getString(Constants.CITY, null);
-        if (!TextUtils.isEmpty(city)) {
-            Map<String, String> eventAttribs = new HashMap<>();
-            eventAttribs.put(TrackEventkeys.CITY, city);
-            trackEvent(TrackingAware.ENTRY_PAGE_SKIP_BUTTON_CLICKED, eventAttribs);
         }
     }
 

@@ -59,7 +59,7 @@ import retrofit.client.Response;
 public class ShowCartActivity extends BackButtonActivity {
 
     private ArrayList<CartItemList> cartItemLists;
-    private ArrayList<FulfillmentInfo> fullfillmentInfos;
+    private ArrayList<FulfillmentInfo> fulfillmentInfos;
     private ArrayList<AnnotationInfo> annotationInfoArrayList;
     private MenuItem basketMenuItem;
     private TextView txtBasketSubTitle;
@@ -67,13 +67,14 @@ public class ShowCartActivity extends BackButtonActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setNextScreenNavigationContext(TrackEventkeys.CO_BASKET);
         setTitle(getString(R.string.my_basket_header));
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        getCartItems(null);
+        getCartItems(null, false);
     }
 
     @Override
@@ -122,11 +123,10 @@ public class ShowCartActivity extends BackButtonActivity {
         eventAttribs.put(TrackEventkeys.TOTAL_ITEMS_IN_BASKET, String.valueOf(cartSummary.getNoOfItems()));
         eventAttribs.put(TrackEventkeys.TOTAL_BASKET_VALUE, String.valueOf(cartSummary.getTotal()));
         eventAttribs.put(TrackEventkeys.TOTAL_BASKET_SAVING, String.valueOf(cartSummary.getSavings()));
-        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_TOPNAV);
         trackEvent(TrackingAware.BASKET_VIEW_CLICKED, eventAttribs);
     }
 
-    private void renderCartItemList(CartSummary cartSummary, String baseImageUrl) {
+    private void renderCartItemList(CartSummary cartSummary, String baseImageUrl, boolean isCurrentPageRequest) {
         Map<String, String> eventAttribs = new HashMap<>();
 
         FrameLayout contentLayout = (FrameLayout) findViewById(R.id.content_frame);
@@ -163,8 +163,8 @@ public class ShowCartActivity extends BackButtonActivity {
         }
         renderHearView(numItems);
         HashMap<String, String> fulfillmentInfoIdAndIconHashMap = new HashMap<>();
-        if (fullfillmentInfos != null) {
-            for (FulfillmentInfo fullfillmentInfo : fullfillmentInfos) {
+        if (fulfillmentInfos != null) {
+            for (FulfillmentInfo fullfillmentInfo : fulfillmentInfos) {
                 fulfillmentInfoIdAndIconHashMap.put(fullfillmentInfo.getFulfillmentId(), fullfillmentInfo.getIcon());
                 if (fullfillmentInfo.getDisplayName() == null || fullfillmentInfo.getIcon() == null)
                     continue;
@@ -200,13 +200,14 @@ public class ShowCartActivity extends BackButtonActivity {
         });
         ActiveOrderRowAdapter activeOrderRowAdapter = new ActiveOrderRowAdapter<>(cartItemHeaderList, this,
                 faceRupee, faceRobotoRegular, OrderItemDisplaySource.BASKET, false,
-                fulfillmentInfoIdAndIconHashMap, annotationHashMap, baseImageUrl, getNavigationCtx());
+                fulfillmentInfoIdAndIconHashMap, annotationHashMap, baseImageUrl, getNextScreenNavigationContext());
         cartItemListView.setDivider(null);
         cartItemListView.setDividerHeight(0);
         cartItemListView.setAdapter(activeOrderRowAdapter);
         contentLayout.addView(basketView);
 
-        logViewBasketEvent(cartSummary, eventAttribs);
+        if(!isCurrentPageRequest)
+            logViewBasketEvent(cartSummary, eventAttribs);
     }
 
     private void startCheckout(String cartTotal) {
@@ -243,7 +244,9 @@ public class ShowCartActivity extends BackButtonActivity {
 
     private void emptyCart() {
         if (!DataUtil.isInternetAvailable(getCurrentActivity())) return;
-        trackEvent(TrackingAware.BASKET_EMPTY_CLICKED, null);
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+        trackEvent(TrackingAware.BASKET_EMPTY_CLICKED, map);
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
         final SharedPreferences.Editor editor = prefer.edit();
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
@@ -280,7 +283,7 @@ public class ShowCartActivity extends BackButtonActivity {
     }
 
 
-    private void getCartItems(String fulfillmentIds) {
+    private void getCartItems(String fulfillmentIds, final boolean isCurrentPageRequest) {
         if (!DataUtil.isInternetAvailable(getCurrentActivity())) {
             handler.sendOfflineError(true);
             return;
@@ -300,7 +303,7 @@ public class ShowCartActivity extends BackButtonActivity {
                     setBasketNumItemsDisplay();
                     editor.putString(Constants.GET_CART,
                             String.valueOf(cartSummary.getNoOfItems()));
-                    fullfillmentInfos = cartGetApiResponseContentApiResponse.apiResponseContent.fulfillmentInfos;
+                    fulfillmentInfos = cartGetApiResponseContentApiResponse.apiResponseContent.fulfillmentInfos;
                     annotationInfoArrayList = cartGetApiResponseContentApiResponse.apiResponseContent.annotationInfos;
                     if (cartGetApiResponseContentApiResponse.apiResponseContent.
                             cartGetApiCartItemsContent != null
@@ -309,7 +312,7 @@ public class ShowCartActivity extends BackButtonActivity {
                         cartItemLists = cartGetApiResponseContentApiResponse.apiResponseContent.
                                 cartGetApiCartItemsContent.cartItemLists;
                         renderCartItemList(cartSummary, cartGetApiResponseContentApiResponse
-                                .apiResponseContent.cartGetApiCartItemsContent.baseImgUrl);
+                                .apiResponseContent.cartGetApiCartItemsContent.baseImgUrl, isCurrentPageRequest);
                     } else {
                         showBasketEmptyMessage();
                         editor.putString(Constants.GET_CART, "0");
@@ -365,11 +368,7 @@ public class ShowCartActivity extends BackButtonActivity {
                                                     @Nullable View productView, @Nullable HashMap<String, Integer> cartInfo) {
         super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextView, viewDecQty, viewIncQty,
                 btnAddToBasket, product, qty, productView, cartInfo);
-        getCartItems(null);
-    }
-
-    public String getNavigationCtx() {
-        return TrackEventkeys.NAVIGATION_CTX_SHOW_BASKET;
+        getCartItems(null, true);
     }
 
     @Override

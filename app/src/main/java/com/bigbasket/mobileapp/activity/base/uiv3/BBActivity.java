@@ -199,8 +199,8 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-                logHomeScreenEvent(TrackingAware.MENU_CLICKED, TrackEventkeys.NAVIGATION_CTX,
-                        TrackEventkeys.NAVIGATION_CTX_TOPNAV);
+//                logHomeScreenEvent(TrackingAware.MENU_CLICKED, TrackEventkeys.NAVIGATION_CTX,
+//                        TrackEventkeys.NAVIGATION_CTX_TOPNAV);
                 toolbar.setTitle(formatToolbarTitle(mTitle));
                 invalidateOptionsMenu();
                 if (mSubNavLayout != null && mSubNavLayout.getVisibility() == View.VISIBLE) {
@@ -218,8 +218,8 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                logHomeScreenEvent(TrackingAware.MENU_CLICKED, TrackEventkeys.NAVIGATION_CTX,
-                        TrackEventkeys.NAVIGATION_CTX_TOPNAV);
+//                logHomeScreenEvent(TrackingAware.MENU_CLICKED, TrackEventkeys.NAVIGATION_CTX,
+//                        TrackEventkeys.NAVIGATION_CTX_TOPNAV);
                 trackEvent(TrackingAware.MENU_SHOWN, null);
                 invalidateOptionsMenu();
             }
@@ -250,7 +250,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     public void replaceToMainLayout(AbstractFragment fragment, String tag, boolean stateLess,
                                     FrameLayout frameLayout) {
         if (frameLayout == null) return;
-        UIUtil.addNavigationContextToBundle(fragment);
+        UIUtil.addNavigationContextToBundle(fragment, getNextScreenNavigationContext());
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         String ftTag = TextUtils.isEmpty(tag) ? fragment.getFragmentTxnTag() : tag;
@@ -268,7 +268,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
     public void addToMainLayout(AbstractFragment fragment, String tag, boolean stateLess) {
         if (fragment == null) return;
-        UIUtil.addNavigationContextToBundle(fragment);
+        UIUtil.addNavigationContextToBundle(fragment, getNextScreenNavigationContext());
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         String ftTag = TextUtils.isEmpty(tag) ? fragment.getFragmentTxnTag() : tag;
@@ -284,6 +284,8 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             mDrawerLayout.closeDrawers();
         }
     }
+
+    //method for add bundle
 
     public BBDrawerLayout getDrawerLayout() {
         return mDrawerLayout;
@@ -645,7 +647,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         mostSearchesAdapter.update(query);
         HashMap<String, String> map = new HashMap<>();
         map.put(TrackEventkeys.QUERY, query);
-        map.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_TOPNAV);
+
         trackEvent(TrackingAware.SEARCH, map);
     }
 
@@ -661,12 +663,12 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
-    public void logHomeScreenEvent(String trackAwareName, String eventKeyName,
-                                   String navigationCtx) {
-        Map<String, String> eventAttribs = new HashMap<>();
-        eventAttribs.put(eventKeyName, navigationCtx);
-        trackEvent(trackAwareName, eventAttribs);
-    }
+//    public void logHomeScreenEvent(String trackAwareName, String eventKeyName,
+//                                   String navigationCtx) {
+//        Map<String, String> eventAttribs = new HashMap<>();
+//        eventAttribs.put(eventKeyName, navigationCtx);
+//        trackEvent(trackAwareName, eventAttribs);
+//    }
 
     public void doSearch(String searchQuery) {
         Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);

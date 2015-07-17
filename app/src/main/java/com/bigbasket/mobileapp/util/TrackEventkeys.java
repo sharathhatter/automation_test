@@ -4,9 +4,7 @@ public final class TrackEventkeys {
 
     public static final String CITY = "city";
     public static final String NAVIGATION_CTX = "referer";
-    public static final String NAVIGATION_CTX_TOPNAV = "topnav";
-    public static final String NAVIGATION_CTX_LEFTNAV = "leftnav";
-    public static final String NAVIGATION_CTX_LANDING_PAGE = "landing_page";
+    public static final String NAVIGATION_CTX_LANDING_PAGE = "landing-page";
     public static final String NAVIGATION_CTX_DIALOG = "dialog";
     public static final String LOGIN_TYPE_GOOGLE = "Google";
     public static final String LOGIN_TYPE_FACEBOOK = "Facebook";
@@ -17,19 +15,14 @@ public final class TrackEventkeys {
     public static final String YES = "YES";
     public static final String NO = "NO";
     public static final String NAVIGATION_CTX_LOGIN_PAGE = "login_page";
-    public static final String NAVIGATION_CTX_UPDATE_PROFILE = "update_profile";
-    public static final String NAVIGATION_CTX_DELIVERY_ADDRESS = "delivery_address";
     public static final String MONTH = "month";
     public static final String YEAR = "year";
-    public static final String NAVIGATION_CTX_MY_ACCOUNT = "my_account";
-    public static final String NAVIGATION_CTX_CHECKOUT_DELIVERY_ADDRESS = "checkout";
-    public static final String NAVIGATION_CTX_HOME_PAGE = "home_page";
+    public static final String NAVIGATION_CTX_MY_ACCOUNT = "account";
     public static final String ORDER_ID = "order id";
-    public static final String NAVIGATION_CTX_PAST_ORDER = "order_history";
     public static final String NAVIGATION_CTX_THANK_YOU_PAGE = "thank_you_page";
+    public static final String NAVIGATION_CTX_WALLET_SUMMARY = "wallet_summary";
     public static final String NAVIGATION_CTX_WALLET_ACTIVITIES = "wallet_activity";
     public static final String NAVIGATION_CTX_DEEP_LINK = "deep_link";
-    public static final String SECTION_NAME = "section name";
     public static final String SECTION_ITEM = "section item";
     public static final String SECTION_TYPE = "section type";
     public static final String BANNER_ID = "banner id";
@@ -43,7 +36,7 @@ public final class TrackEventkeys {
     public static final String NAVIGATION_CTX_PROMO = "promo";
     public static final String NAVIGATION_CTX_SMART_BASKET = "smart_basket";
     public static final String NAVIGATION_CTX_SHOPPING_LIST = "shopping_list";
-    public static final String NAVIGATION_CTX_SHOP_FROM_ORDER = "past_order";
+    public static final String NAVIGATION_CTX_SHOP_FROM_ORDER = "past-order";
     public static final String NAVIGATION_CTX_PRODUCT_DETAIL = "product_detail";
     public static final String NAVIGATION_CTX_SHOW_BASKET = "basket";
     public static final String NAVIGATION_CTX_PROMO_DETAIL = "promo_detail";
@@ -52,7 +45,8 @@ public final class TrackEventkeys {
     public static final String TOTAL_BASKET_VALUE = "total value";
     public static final String TOTAL_BASKET_SAVING = "total savings";
     //filter
-    public static final String FILTER_NAME = "name";
+    public static final String NAME = "name";
+    public static final String VALUE = "vaule";
     //search
     public static final String QUERY = "query";
     //checkout
@@ -122,10 +116,24 @@ public final class TrackEventkeys {
     public static final String CO_BASKET = "co.basket";
     public static final String CO_ADDRESS = "co.address";
     public static final String CO_QC = "co.qc";
-    public static final String VIEW_BASKET = "floating-button";
     public static final String CO_DELIVERY_OPS = "co.delivery-options";
     public static final String CO_PAYMENT = "co.payment";
     public static final String ACCOUNT_MENU = "account-menu";
+    public static final String ORDER_HISTORY = "order-history";
+    public static final String ACCOUNT = NAVIGATION_CTX_MY_ACCOUNT;
+    public static final String NC_ORDER_DETAIL = "order-detail";
+    public static final String NC_SPLASH_SCREEN = "splash";
+    public static final String NC_ENTRY_SCREEN = "entry";
+    public static final String NC_TUTORIAL_SCREEN = "tutorial";
+    public static final String NC_LOGIN_SCREEN = "login";
+    public static final String NC_CITY_SELECTION_SCREEN = "city-selection";
+    public static final String NC_SINGUP_SCREEN = "signup";
+    public static final String NC_DISCOUNT_SCREEN = "discount";
+    public static final String NC_PROMO_CAT_LISTING = "promo-listing";
+    public static final String NC_PROMO_DETAIL = "promo-detail";
+    public static final String NC_PROMO_PRODUCT_LISTING = "promo-set";
+    public static final String NC_ACCOUNT_ADDRESS = "account-address";
+    public static final String CO_INVOICE = "co.invoice";
 
     private TrackEventkeys() {
     }

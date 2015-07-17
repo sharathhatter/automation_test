@@ -41,6 +41,7 @@ import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.view.AppNotSupportedDialog;
 import com.bigbasket.mobileapp.view.uiv2.UpgradeAppDialog;
 
@@ -80,8 +81,15 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
     }
 
     @Override
+    public void onBackResume() {
+        super.onBackResume();
+        setNextScreenNavigationContext(TrackEventkeys.HOME);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
+        setNextScreenNavigationContext(TrackEventkeys.HOME);
         AppUpdateHandler.AppUpdateData appUpdateData = AppUpdateHandler.isOutOfDate(getActivity());
         if (appUpdateData != null && !TextUtils.isEmpty(appUpdateData.getAppExpireBy())) {
             showUpgradeAppDialog(appUpdateData.getAppExpireBy(), appUpdateData.getAppUpdateMsg(),

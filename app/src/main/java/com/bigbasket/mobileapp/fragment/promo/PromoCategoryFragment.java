@@ -44,6 +44,7 @@ public class PromoCategoryFragment extends BaseSectionFragment implements PromoD
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        setNextScreenNavigationContext(TrackEventkeys.NC_PROMO_CAT_LISTING);
         if (savedInstanceState != null) {
             mPromoCategoryList = savedInstanceState.getParcelableArrayList(Constants.PROMO_CATS);
             if (mPromoCategoryList != null && mPromoCategoryList.size() > 0) {

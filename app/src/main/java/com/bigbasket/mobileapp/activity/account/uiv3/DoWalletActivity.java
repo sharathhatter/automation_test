@@ -50,6 +50,7 @@ public class DoWalletActivity extends BackButtonActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setNextScreenNavigationContext(TrackEventkeys.NAVIGATION_CTX_WALLET_SUMMARY);
         setTitle(getString(R.string.wallet_activity));
         getCurrentMemberWalletBalance();
     }

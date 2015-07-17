@@ -189,6 +189,7 @@ public class MyAccountActivity extends BackButtonActivity {
         }
 
         contentLayout.addView(view);
+        setNextScreenNavigationContext(TrackEventkeys.ACCOUNT);
         trackEvent(TrackingAware.MY_ACCOUNT_SHOWN, null);
     }
 

@@ -37,6 +37,7 @@ public class ChangeCityActivity extends BackButtonActivity implements CityListDi
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setNextScreenNavigationContext(TrackEventkeys.NC_CITY_SELECTION_SCREEN);
         setTitle(getString(R.string.chooseCity));
         trackEvent(TrackingAware.CHANGE_CITY_SHOWN, null);
         loadCities();

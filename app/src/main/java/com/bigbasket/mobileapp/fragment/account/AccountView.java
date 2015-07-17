@@ -49,10 +49,10 @@ public class AccountView<T> {
 
     public void setListView() {
         final BaseActivity ctx = ((ActivityAware) context).getCurrentActivity();
-        if (context instanceof AnalyticsNavigationContextAware) {
-            ((AnalyticsNavigationContextAware) context).
-                    setNextScreenNavigationContext(TrackEventkeys.ACCOUNT_MENU);
-        }
+//        if (context instanceof AnalyticsNavigationContextAware) {
+//            ((AnalyticsNavigationContextAware) context).
+//                    setNextScreenNavigationContext(TrackEventkeys.ACCOUNT_MENU);
+//        }
         if (AuthParameters.getInstance(ctx).isAuthTokenEmpty()) {
             // Not logged in
             final String[] itemDetails = {
@@ -86,6 +86,8 @@ public class AccountView<T> {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             final BaseActivity ctx = ((ActivityAware) context).getCurrentActivity();
+            ctx.setNextScreenNavigationContext(TrackEventkeys.ACCOUNT_MENU);
+            ctx.setCurrentNavigationContext(TrackEventkeys.ACCOUNT_MENU);
             switch (position) {
                 case 0:
                     ctx.trackEvent(TrackingAware.MY_ACCOUNT_CLICKED, null);
@@ -96,7 +98,6 @@ public class AccountView<T> {
                     ctx.trackEvent(TrackingAware.MY_ORDER_CLICKED, null);
                     intent = new Intent(ctx, OrderListActivity.class);
                     intent.putExtra(Constants.ORDER, "all");
-                    intent.putExtra(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_PAST_ORDER);
                     ctx.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     break;
                 case 2:
@@ -119,19 +120,13 @@ public class AccountView<T> {
                     ctx.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     break;
                 case 6:
-                    Map<String, String> eventAttribs = new HashMap<>();
-                    eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_LEFTNAV);
-                    ctx.trackEvent(TrackingAware.LOG_OUT_ICON_CLICKED, eventAttribs);
-                    ctx.trackEvent(TrackingAware.SHOPPING_LIST_ICON_CLICKED, eventAttribs);
+                    ctx.trackEvent(TrackingAware.SHOPPING_LIST_ICON_CLICKED, null);
                     intent = new Intent(ctx, ShoppingListActivity.class);
                     intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_SHOPPING_LIST_LANDING);
                     ctx.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     break;
                 case 7:
-                    eventAttribs = new HashMap<>();
-                    eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_LEFTNAV);
-                    ctx.trackEvent(TrackingAware.LOG_OUT_ICON_CLICKED, eventAttribs);
-                    ctx.trackEvent(TrackingAware.SMART_BASKET_ICON_CLICKED, eventAttribs);
+                    ctx.trackEvent(TrackingAware.SMART_BASKET_ICON_CLICKED, null);
                     ShoppingListName shoppingListName = new ShoppingListName(Constants.SMART_BASKET,
                             Constants.SMART_BASKET_SLUG, true);
                     intent = new Intent(ctx, ShoppingListSummaryActivity.class);
@@ -139,9 +134,7 @@ public class AccountView<T> {
                     ctx.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     break;
                 case 8:
-                    eventAttribs = new HashMap<>();
-                    eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_LEFTNAV);
-                    ctx.trackEvent(TrackingAware.RATE_APP_CLICKED, eventAttribs);
+                    ctx.trackEvent(TrackingAware.RATE_APP_CLICKED, null);
                     try {
                         ctx.startActivity(new Intent(Intent.ACTION_VIEW,
                                 Uri.parse("market://details?id=" + Constants.BASE_PKG_NAME)));
@@ -151,9 +144,7 @@ public class AccountView<T> {
                     }
                     break;
                 case 9:
-                    eventAttribs = new HashMap<>();
-                    eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_LEFTNAV);
-                    ctx.trackEvent(TrackingAware.LOG_OUT_ICON_CLICKED, eventAttribs);
+                    ctx.trackEvent(TrackingAware.LOG_OUT_ICON_CLICKED, null);
                     if (ctx instanceof SocialLoginActivity) {
                         ((SocialLoginActivity) ctx).onLogoutRequested();
                     }
@@ -166,27 +157,23 @@ public class AccountView<T> {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             final BaseActivity ctx = ((ActivityAware) context).getCurrentActivity();
+            ctx.setNextScreenNavigationContext(TrackEventkeys.ACCOUNT_MENU);
+            ctx.setCurrentNavigationContext(TrackEventkeys.ACCOUNT_MENU);
             switch (position) {
                 case 0:
-                    HashMap<String, String> eventAttribs = new HashMap<>();
-                    eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_LEFTNAV);
-                    ctx.trackEvent(TrackingAware.LOGIN_CLICKED, eventAttribs);
-                    ctx.launchLogin(TrackEventkeys.NAVIGATION_CTX_LEFTNAV);
+                    ctx.trackEvent(TrackingAware.LOGIN_CLICKED, null);
+                    ctx.launchLogin(null);
                     break;
                 case 1:
                     ctx.launchMoEngageCommunicationHub();
                     break;
                 case 2:
-                    eventAttribs = new HashMap<>();
-                    eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_LEFTNAV);
-                    ctx.trackEvent(TrackingAware.HOME_CHANGE_CITY, eventAttribs);
+                    ctx.trackEvent(TrackingAware.HOME_CHANGE_CITY, null);
                     Intent intent = new Intent(ctx, ChangeCityActivity.class);
                     ctx.startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                     break;
                 case 3:
-                    eventAttribs = new HashMap<>();
-                    eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_LEFTNAV);
-                    ctx.trackEvent(TrackingAware.RATE_APP_CLICKED, eventAttribs);
+                    ctx.trackEvent(TrackingAware.RATE_APP_CLICKED, null);
                     try {
                         ctx.startActivity(new Intent(Intent.ACTION_VIEW,
                                 Uri.parse("market://details?id=" + Constants.BASE_PKG_NAME)));

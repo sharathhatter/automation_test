@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -67,6 +68,11 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         super.onActivityCreated(savedInstanceState);
         Bundle args = getArguments();
         mFromAccountPage = args != null && args.getBoolean(Constants.FROM_ACCOUNT_PAGE, false);
+        if(mFromAccountPage){
+            setNextScreenNavigationContext(TrackEventkeys.NC_ACCOUNT_ADDRESS);
+        }else {
+            setNextScreenNavigationContext(TrackEventkeys.CO_ADDRESS);
+        }
         if (savedInstanceState != null) {
             mAddressArrayList = savedInstanceState.getParcelableArrayList(Constants.ADDRESSES);
             if (mAddressArrayList != null) {
@@ -317,7 +323,6 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
             new OrderQcDialog<>().show(this, createPotentialOrderResponseContent);
             trackEvent(TrackingAware.CHECKOUT_QC_SHOWN, null);
         } else {
-            setNextScreenNavigationContext(TrackEventkeys.CO_ADDRESS);
             launchSlotSelection(createPotentialOrderResponseContent);
         }
     }
