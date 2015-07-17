@@ -72,6 +72,10 @@ public class ShoppingListName implements Parcelable {
         return isSystem == 1;
     }
 
+    public void setAsSystem(int isSystem) {
+        this.isSystem = isSystem;
+    }
+
     public String getDescription() {
         return description;
     }

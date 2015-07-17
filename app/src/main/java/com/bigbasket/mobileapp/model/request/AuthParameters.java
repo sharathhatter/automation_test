@@ -21,6 +21,7 @@ public class AuthParameters {
     private boolean isMoEngageEnabled;
     private boolean isLocalyticsEnabled;
     private boolean isFBLoggerEnabled;
+    private boolean isKirana;
 
     private AuthParameters(Context context) {
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(context);
@@ -41,6 +42,7 @@ public class AuthParameters {
             isLocalyticsEnabled = prefer.getBoolean(Constants.ENABLE_LOCALYTICS, true);
             isFBLoggerEnabled = prefer.getBoolean(Constants.ENABLE_FB_LOGGER, true);
             firstName = prefer.getString(Constants.FIRST_NAME_PREF, "");
+            isKirana = prefer.getBoolean(Constants.IS_KIRANA, false);
         }
     }
 
@@ -74,6 +76,10 @@ public class AuthParameters {
 
     public String getMemberEmail() {
         return memberEmail != null ? memberEmail : "";
+    }
+
+    public boolean isKirana() {
+        return isKirana;
     }
 
     public String getFirstName() {

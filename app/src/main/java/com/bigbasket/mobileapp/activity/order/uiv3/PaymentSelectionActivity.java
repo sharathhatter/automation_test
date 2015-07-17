@@ -222,34 +222,44 @@ public class PaymentSelectionActivity extends BackButtonActivity {
             onVoucherRemoved(null);
         }
 
+        TextView lblAmountFromWallet = (TextView) findViewById(R.id.lblAmountFromWallet);
+        lblAmountFromWallet.setTypeface(faceRobotoRegular);
+
         boolean isInHDFCPayMode = HDFCPowerPayHandler.isInHDFCPayMode(this)
                 && mPaymentTypeMap.containsValue(Constants.HDFC_POWER_PAY);
         RadioGroup layoutPaymentOptions = (RadioGroup) findViewById(R.id.layoutPaymentOptions);
         layoutPaymentOptions.removeAllViews();
-        int i = 0;
-        for (final Map.Entry<String, String> entrySet : mPaymentTypeMap.entrySet()) {
-            if (isInHDFCPayMode && !entrySet.getValue().equals(Constants.HDFC_POWER_PAY)) {
-                continue;
-            }
-            RadioButton rbtnPaymentType = getPaymentOptionRadioButton(layoutPaymentOptions);
-            rbtnPaymentType.setText(entrySet.getKey());
-            rbtnPaymentType.setId(i);
-            boolean isSelected = TextUtils.isEmpty(mSelectedPaymentMethod) ? i == 0 :
-                    mSelectedPaymentMethod.equals(entrySet.getValue());
-            if (isSelected) {
-                rbtnPaymentType.setChecked(true);
-                mSelectedPaymentMethod = entrySet.getValue();
-            }
-            rbtnPaymentType.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (isChecked) {
-                        mSelectedPaymentMethod = entrySet.getValue();
-                    }
+
+        if (mOrderDetails.getFinalTotal() <= 0) {
+            lblAmountFromWallet.setVisibility(View.VISIBLE);
+            mSelectedPaymentMethod = mPaymentTypeMap.entrySet().iterator().next().getValue();
+        } else {
+            lblAmountFromWallet.setVisibility(View.GONE);
+            int i = 0;
+            for (final Map.Entry<String, String> entrySet : mPaymentTypeMap.entrySet()) {
+                if (isInHDFCPayMode && !entrySet.getValue().equals(Constants.HDFC_POWER_PAY)) {
+                    continue;
                 }
-            });
-            layoutPaymentOptions.addView(rbtnPaymentType);
-            i++;
+                RadioButton rbtnPaymentType = getPaymentOptionRadioButton(layoutPaymentOptions);
+                rbtnPaymentType.setText(entrySet.getKey());
+                rbtnPaymentType.setId(i);
+                boolean isSelected = TextUtils.isEmpty(mSelectedPaymentMethod) ? i == 0 :
+                        mSelectedPaymentMethod.equals(entrySet.getValue());
+                if (isSelected) {
+                    rbtnPaymentType.setChecked(true);
+                    mSelectedPaymentMethod = entrySet.getValue();
+                }
+                rbtnPaymentType.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (isChecked) {
+                            mSelectedPaymentMethod = entrySet.getValue();
+                        }
+                    }
+                });
+                layoutPaymentOptions.addView(rbtnPaymentType);
+                i++;
+            }
         }
 
         mLblTransactionFailed.setTypeface(faceRobotoRegular);
@@ -601,6 +611,15 @@ public class PaymentSelectionActivity extends BackButtonActivity {
                                             "the payment made by you.",
                                     DialogButton.YES, DialogButton.NO, Constants.SOURCE_PLACE_ORDER,
                                     amtTxt);
+                        } else if (placeOrderApiResponse.errorType != null
+                                && placeOrderApiResponse.errorType.equals(ApiErrorCodes.INVALID_FIELD_STR)) {
+                            PayuResponse.clearTxnDetail(getCurrentActivity());
+                            VoucherApplied.clearFromPreference(getCurrentActivity());
+                            PowerPayResponse.clearTxnDetail(getCurrentActivity());
+                            showAlertDialog(getString(R.string.error),
+                                    !TextUtils.isEmpty(placeOrderApiResponse.message) ?
+                                            placeOrderApiResponse.message : getString(R.string.failedToProcess));
+                            displayPayuFailure(getString(R.string.failedToProcess));
                         } else {
                             handler.sendEmptyMessage(placeOrderApiResponse.getErrorTypeAsInt(), placeOrderApiResponse.message);
                         }

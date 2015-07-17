@@ -308,7 +308,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
         editor.remove(Constants.MEMBER_EMAIL_KEY);
         editor.remove(Constants.SOCIAL_ACCOUNT_TYPE);
         editor.remove(Constants.UPDATE_PROFILE_IMG_URL);
-//        editor.remove(Constants.HAS_USER_CHOSEN_CITY);
+        editor.remove(Constants.IS_KIRANA);
         editor.commit();
         AuthParameters.updateInstance(getCurrentActivity());
 

@@ -129,6 +129,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
+        <EditText
+            android:id="@+id/editTextQty"
+            style="@style/BBEditTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/margin_mini"
+            android:inputType="numberSigned"
+            android:maxLength="2"
+            android:minLines="1"
+            android:paddingBottom="2dp"
+            android:paddingLeft="@dimen/padding_small"
+            android:paddingRight="@dimen/padding_small"
+            android:paddingTop="0dp"
+            android:selectAllOnFocus="true"
+            android:textColor="@color/uiv3_primary_text_color"
+            android:textSize="@dimen/primary_text_size"
+            android:visibility="gone" />
+
         <ImageView
             android:id="@+id/imgAddToBasket"
             android:layout_width="wrap_content"

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/uiv3_list_bkg_color">
+
+    <include
+        android:id="@+id/layoutCheckoutFooter"
+        layout="@layout/uiv3_checkout_footer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" />
+
+    <LinearLayout
+        android:id="@+id/layoutSectionHelp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/layoutCheckoutFooter"
+        android:gravity="center"
+        android:orientation="vertical" />
+</RelativeLayout>

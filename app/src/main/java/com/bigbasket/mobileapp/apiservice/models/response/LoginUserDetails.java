@@ -14,6 +14,9 @@ public class LoginUserDetails {
     @SerializedName(Constants.FULL_NAME)
     public String fullName;
 
+    @SerializedName(Constants.IS_KIRANA)
+    public boolean isKirana;
+
     @SerializedName(Constants.ANALYTICS)
     public LoginAnalyticsDetails analytics;
 }

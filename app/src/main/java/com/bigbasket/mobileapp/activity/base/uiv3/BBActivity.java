@@ -28,6 +28,7 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -204,7 +205,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 toolbar.setTitle(formatToolbarTitle(mTitle));
                 invalidateOptionsMenu();
                 if (mSubNavLayout != null && mSubNavLayout.getVisibility() == View.VISIBLE) {
-                    onSubNavigationHideRequested();
+                    onSubNavigationHideRequested(false);
                 }
                 if (mNavRecyclerView != null && mNavRecyclerView.getVisibility() != View.VISIBLE) {
                     // User was in settings menu, now restore the default state to avoid confusion
@@ -212,6 +213,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                     if (imgSwitchNav != null) {
                         toggleNavigationArea(imgSwitchNav);
                     }
+                    mNavRecyclerView.scrollToPosition(0);
                 }
             }
 
@@ -482,7 +484,8 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     public void updateUIAfterBasketOperationFailed(BasketOperation basketOperation, TextView basketCountTextView,
                                                    View viewDecQty, View viewIncQty, View btnAddToBasket,
                                                    Product product, String qty,
-                                                   String errorType, @Nullable View productView) {
+                                                   String errorType, @Nullable View productView,
+                                                   @Nullable EditText editTextQty) {
         if (errorType.equals(Constants.PRODUCT_ID_NOT_FOUND)) {
             Toast.makeText(this, "0 added to basket.", Toast.LENGTH_SHORT).show();
         }
@@ -493,7 +496,8 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                                                     View viewDecQty, View viewIncQty, View btnAddToBasket,
                                                     Product product, String qty,
                                                     @Nullable View productView,
-                                                    @Nullable HashMap<String, Integer> cartInfoMap) {
+                                                    @Nullable HashMap<String, Integer> cartInfoMap,
+                                                    @Nullable EditText editTextQty) {
 
         int productQtyInBasket = 0;
         if (basketOperationResponse.getBasketResponseProductInfo() != null) {
@@ -511,6 +515,10 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             if (btnAddToBasket != null) {
                 btnAddToBasket.setVisibility(View.VISIBLE);
             }
+            if (editTextQty != null && AuthParameters.getInstance(getCurrentActivity()).isKirana()) {
+                editTextQty.setText("1");
+                editTextQty.setVisibility(View.VISIBLE);
+            }
             if (basketCountTextView != null) {
                 basketCountTextView.setVisibility(View.GONE);
             }
@@ -527,6 +535,9 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             if (basketCountTextView != null) {
                 basketCountTextView.setText(String.valueOf(productQtyInBasket));
                 basketCountTextView.setVisibility(View.VISIBLE);
+            }
+            if (editTextQty != null && AuthParameters.getInstance(getCurrentActivity()).isKirana()) {
+                editTextQty.setVisibility(View.GONE);
             }
         }
 
@@ -881,16 +892,16 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 sectionNavigationItems,
                 SectionManager.MAIN_MENU, baseImgUrl, rendererHashMap, sectionItem);
         mListSubNavigation.setAdapter(navigationAdapter);
-        mSubNavLayout.setVisibility(View.VISIBLE);
+        mSubNavLayout.setVisibility(View.VISIBLE, true);
     }
 
     @Override
-    public void onSubNavigationHideRequested() {
+    public void onSubNavigationHideRequested(boolean animated) {
         if (mListSubNavigation != null) {
             mListSubNavigation.setAdapter(null);
         }
         if (mSubNavLayout != null) {
-            mSubNavLayout.setVisibility(View.GONE);
+            mSubNavLayout.setVisibility(View.GONE, animated);
         }
     }
 
@@ -968,7 +979,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     public void onBackPressed() {
         if (mDrawerLayout != null && mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             if (mSubNavLayout != null && mSubNavLayout.getVisibility() == View.VISIBLE) {
-                mSubNavLayout.setVisibility(View.GONE);
+                mSubNavLayout.setVisibility(View.GONE, true);
             } else {
                 mDrawerLayout.closeDrawers();
             }

@@ -51,6 +51,7 @@
     <string name="action">Action</string>
     <string name="item">Item</string>
     <string name="txnFailedRetryTxt">Please choose a different payment method, or retry again!</string>
+    <string name="fromWalletMsg">Since, you have sufficient funds in wallet - amount will be deducted directly from wallet</string>
     <string name="ok">OK</string>
     <string name="yesTxt">Yes</string>
     <string name="noTxt">No</string>

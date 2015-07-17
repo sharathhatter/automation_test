@@ -157,6 +157,7 @@ public class ShopFromOrderFragment extends ProductListAwareFragment {
                 .setShowShoppingListBtn(true)
                 .setShowBasketBtn(true)
                 .setShowShopListDeleteBtn(false)
+                .showQtyInput(authParameters.isKirana())
                 .build();
 
         productListRecyclerAdapter = new ProductListRecyclerAdapter(mProducts, null,

@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -188,6 +189,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
                     .setShowShoppingListBtn(true)
                     .setShowBasketBtn(true)
                     .setShowShopListDeleteBtn(false)
+                    .showQtyInput(authParameters.isKirana())
                     .build();
             mProductListRecyclerAdapter = new ProductListRecyclerAdapter(products, mBaseImgUrl,
                     productViewDisplayDataHolder, this, mProductInfo.getProductCount(),
@@ -328,14 +330,15 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
     @Override
     public void updateUIAfterBasketOperationSuccess(BasketOperation basketOperation, TextView basketCountTextView, View viewDecQty,
                                                     View viewIncQty, View btnAddToBasket, Product product, String qty,
-                                                    @Nullable View productView, @Nullable HashMap<String, Integer> cartInfoMap) {
+                                                    @Nullable View productView, @Nullable HashMap<String, Integer> cartInfoMap,
+                                                    @Nullable EditText editTextQty) {
         super.updateUIAfterBasketOperationSuccess(basketOperation, basketCountTextView, viewDecQty, viewIncQty,
-                btnAddToBasket, product, qty, productView, cartInfoMap);
+                btnAddToBasket, product, qty, productView, cartInfoMap, editTextQty);
         if (cartInfoMap != null) {
             if (getActivity() instanceof BasketOperationAware) {
                 ((BasketOperationAware) getActivity()).setBasketOperationResponse(basketOperationResponse);
                 ((BasketOperationAware) getActivity()).updateUIAfterBasketOperationSuccess(basketOperation,
-                        null, null, null, null, product, qty, null, cartInfoMap);
+                        null, null, null, null, product, qty, null, cartInfoMap, editTextQty);
             }
         }
     }

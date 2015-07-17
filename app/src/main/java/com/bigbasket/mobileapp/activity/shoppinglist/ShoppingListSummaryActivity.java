@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,6 +35,7 @@ import com.bigbasket.mobileapp.fragment.shoppinglist.ShoppingListProductFragment
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.product.Product;
+import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListSummary;
 import com.bigbasket.mobileapp.util.Constants;
@@ -42,6 +45,7 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
+import com.bigbasket.mobileapp.view.uiv3.HeaderSpinnerView;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import java.util.ArrayList;
@@ -58,6 +62,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
     private ShoppingListName mShoppingListName;
     @Nullable
     private ViewPager viewPager;
+    private TextView mTxtToolbarDropdown;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -67,6 +72,10 @@ public class ShoppingListSummaryActivity extends BBActivity {
     @Override
     public void onResume() {
         super.onResume();
+        mShoppingListName = getIntent().getParcelableExtra(Constants.SHOPPING_LIST_NAME);
+        if (mShoppingListName == null) {
+            return;
+        }
         loadShoppingListSummary();
     }
 
@@ -106,11 +115,8 @@ public class ShoppingListSummaryActivity extends BBActivity {
             handler.sendOfflineError(true);
             return;
         }
-        mShoppingListName = getIntent().getParcelableExtra(Constants.SHOPPING_LIST_NAME);
-        if (mShoppingListName == null) {
-            return;
-        }
-        setTitle(mShoppingListName.getName());
+        if (mShoppingListName == null) return;
+        setTitle(null);
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.getShoppingListSummary(mShoppingListName.getSlug(), new Callback<ApiResponse<GetShoppingListSummaryResponse>>() {
@@ -124,9 +130,14 @@ public class ShoppingListSummaryActivity extends BBActivity {
                 }
                 switch (getShoppingListSummaryApiResponse.status) {
                     case 0:
+                        if (mShoppingListName != null) {
+                            mShoppingListName.setAsSystem(getShoppingListSummaryApiResponse.apiResponseContent.isSystem);
+                        }
                         renderShoppingListSummary(mShoppingListName,
                                 getShoppingListSummaryApiResponse.apiResponseContent.shoppingListSummaries,
-                                getShoppingListSummaryApiResponse.apiResponseContent.baseImgUrl);
+                                getShoppingListSummaryApiResponse.apiResponseContent.baseImgUrl,
+                                getShoppingListSummaryApiResponse.apiResponseContent.headerSection,
+                                getShoppingListSummaryApiResponse.apiResponseContent.headerSelectedOn);
                         break;
                     default:
                         handler.sendEmptyMessage(getShoppingListSummaryApiResponse.status,
@@ -169,13 +180,39 @@ public class ShoppingListSummaryActivity extends BBActivity {
         contentView.addView(base);
     }
 
+    private void renderHeaderDropDown(@Nullable final Section headSection,
+                                      int headerSelectedOn) {
+        Toolbar toolbar = getToolbar();
+        if (mTxtToolbarDropdown == null) {
+            mTxtToolbarDropdown = (TextView) getLayoutInflater().
+                    inflate(R.layout.uiv3_product_header_text, toolbar, false);
+        }
+        new HeaderSpinnerView.HeaderSpinnerViewBuilder<>()
+                .withCtx(this)
+                .withDefaultSelectedIdx(headerSelectedOn)
+                .withFallbackHeaderTitle(mShoppingListName != null ? mShoppingListName.getName() : "")
+                .withHeadSection(headSection)
+                .withImgCloseChildDropdown((ImageView) findViewById(R.id.imgCloseChildDropdown))
+                .withLayoutChildToolbarContainer((ViewGroup) findViewById(R.id.layoutChildToolbarContainer))
+                .withLayoutListHeader((ViewGroup) findViewById(R.id.layoutListHeader))
+                .withListHeaderDropdown((ListView) findViewById(R.id.listHeaderDropdown))
+                .withToolbar(getToolbar())
+                .withTxtChildDropdownTitle((TextView) findViewById(R.id.txtListDialogTitle))
+                .withTxtToolbarDropdown(mTxtToolbarDropdown)
+                .withTypeface(faceRobotoRegular)
+                .build()
+                .setView();
+    }
+
     private void renderShoppingListSummary(ShoppingListName shoppingListName,
                                            final ArrayList<ShoppingListSummary> shoppingListSummaries,
-                                           String baseImgUrl) {
+                                           String baseImgUrl, @Nullable Section headerSection,
+                                           int headerSelectedOn) {
         this.baseImgUrl = baseImgUrl;
         FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
         contentFrame.removeAllViews();
         LayoutInflater inflater = getLayoutInflater();
+        renderHeaderDropDown(headerSection, headerSelectedOn);
         if (shoppingListSummaries == null || shoppingListSummaries.size() == 0) {
             if (shoppingListName.getSlug().equals(Constants.SMART_BASKET_SLUG)) {
                 showNoShoppingListView(contentFrame);
@@ -550,8 +587,13 @@ public class ShoppingListSummaryActivity extends BBActivity {
 
     @Nullable
     private String getNc() {
-        String nc;
         if (mShoppingListName == null) return null;
         return mShoppingListName.getNc();
+    }
+
+    @Override
+    public void launchShoppingList(ShoppingListName shoppingListName) {
+        mShoppingListName = shoppingListName;
+        loadShoppingListSummary();
     }
 }

@@ -16,12 +16,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.account.uiv3.SignInActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
 import com.bigbasket.mobileapp.interfaces.AnalyticsNavigationContextAware;
@@ -38,6 +40,8 @@ import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.cart.BasketOperationResponse;
 import com.bigbasket.mobileapp.model.cart.CartSummary;
 import com.bigbasket.mobileapp.model.product.Product;
+import com.bigbasket.mobileapp.model.request.AuthParameters;
+import com.bigbasket.mobileapp.model.shoppinglist.ShoppingListName;
 import com.bigbasket.mobileapp.task.uiv3.CreateShoppingListTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
@@ -206,7 +210,8 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     public void updateUIAfterBasketOperationFailed(BasketOperation basketOperation, TextView basketCountTextView,
                                                    View viewDecQty, View viewIncQty, View btnAddToBasket,
                                                    Product product, String qty, String errorType,
-                                                   @Nullable View productView) {
+                                                   @Nullable View productView,
+                                                   @Nullable EditText editTextQty) {
         if (errorType.equals(Constants.PRODUCT_ID_NOT_FOUND)) {
             Toast.makeText(getActivity(), "0 added to basket.", Toast.LENGTH_SHORT).show();
         }
@@ -216,7 +221,8 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     public void updateUIAfterBasketOperationSuccess(BasketOperation basketOperation, TextView basketCountTextView,
                                                     View viewDecQty, View viewIncQty, View btnAddToBasket,
                                                     Product product, String qty,
-                                                    @Nullable View productView, @Nullable HashMap<String, Integer> cartInfoMap) {
+                                                    @Nullable View productView, @Nullable HashMap<String, Integer> cartInfoMap,
+                                                    @Nullable EditText editTextQty) {
 
         int productQtyInBasket = 0;
         if (basketOperationResponse.getBasketResponseProductInfo() != null) {
@@ -240,6 +246,10 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
             if (productView != null) {
                 productView.setBackgroundColor(Color.WHITE);
             }
+            if (editTextQty != null && AuthParameters.getInstance(getCurrentActivity()).isKirana()) {
+                editTextQty.setText("1");
+                editTextQty.setVisibility(View.VISIBLE);
+            }
         } else {
             if (viewDecQty != null) {
                 viewDecQty.setVisibility(View.VISIBLE);
@@ -253,6 +263,9 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
             if (basketCountTextView != null) {
                 basketCountTextView.setText(String.valueOf(productQtyInBasket));
                 basketCountTextView.setVisibility(View.VISIBLE);
+            }
+            if (editTextQty != null && AuthParameters.getInstance(getCurrentActivity()).isKirana()) {
+                editTextQty.setVisibility(View.GONE);
             }
         }
         if (product != null) {
@@ -482,6 +495,13 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
             ((LaunchProductListAware) getActivity()).
                     launchProductList(nameValuePairs, sectionName, sectionItemName);
         }
+    }
+
+    @Override
+    public void launchShoppingList(ShoppingListName shoppingListName) {
+        Intent intent = new Intent(getCurrentActivity(), ShoppingListSummaryActivity.class);
+        intent.putExtra(Constants.SHOPPING_LIST_NAME, shoppingListName);
+        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
     @Override

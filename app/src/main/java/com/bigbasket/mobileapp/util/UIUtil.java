@@ -218,6 +218,7 @@ public class UIUtil {
         editor.putString(Constants.FIRST_NAME_PREF, userDetails.firstName);
         editor.putString(Constants.MEMBER_FULL_NAME_KEY, userDetails.fullName);
         editor.putString(Constants.MID_KEY, mId);
+        editor.putBoolean(Constants.IS_KIRANA, userDetails.isKirana);
 
         String cityId = preferences.getString(Constants.CITY_ID, "-1");
         if (!TextUtils.isEmpty(cityId) &&

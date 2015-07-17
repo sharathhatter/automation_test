@@ -286,6 +286,7 @@ public class PromoDetailFragment extends BaseFragment {
                 .setShowShoppingListBtn(false)
                 .setShowBasketBtn(false)
                 .setShowShopListDeleteBtn(false)
+                .showQtyInput(AuthParameters.getInstance(getActivity()).isKirana())
                 .build();
         for (Product freeProduct : freeProducts) {
             View base = layoutInflater.inflate(R.layout.uiv3_product_row, view, false);
@@ -358,7 +359,7 @@ public class PromoDetailFragment extends BaseFragment {
                 String valInBasket = UIUtil.formatAsMoney((double) promoSet.getValueInBasket()) + " in basket";
                 txtValInBasket.setText(valInBasket);
                 if (!isRedeemed && promoSet.getValType().equalsIgnoreCase(PromoSet.CRITERIA)) {
-                    String moreQtyNeeded = String.valueOf(Math.abs(promoSet.getPromoCriteriaVal() - promoSet.getValueInBasket()));
+                    String moreQtyNeeded = UIUtil.roundOrInt(Math.abs(promoSet.getPromoCriteriaVal() - promoSet.getValueInBasket()));
                     txtValNeeded.setVisibility(View.VISIBLE);
                     txtValNeeded.setText(moreQtyNeeded +
                             " more needed for the promo");
@@ -372,7 +373,7 @@ public class PromoDetailFragment extends BaseFragment {
                         0, 1, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
                 txtValInBasket.setText(valInBasketSpan);
                 if (!isRedeemed && promoSet.getValType().equalsIgnoreCase(PromoSet.CRITERIA)) {
-                    String moreAmountNeeded = String.valueOf(Math.abs(promoSet.getPromoCriteriaVal() -
+                    String moreAmountNeeded = UIUtil.roundOrInt(Math.abs(promoSet.getPromoCriteriaVal() -
                             promoSet.getValueInBasket()));
                     String txt = "`" + moreAmountNeeded
                             + " more needed for the promo";

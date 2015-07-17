@@ -345,7 +345,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
                                     cartItem.getTopCategoryName(), cartItem.getProductCategoryName());
                             BasketOperationTask basketOperationTask = new BasketOperationTask<>(context,
                                     BasketOperation.DEC, product,
-                                    null, null, null, null, null, TrackingAware.BASKET_DECREMENT, navigationCtx, null, null);
+                                    null, null, null, null, null, TrackingAware.BASKET_DECREMENT, navigationCtx, null, null, null);
                             basketOperationTask.startTask();
                         } else {
                             Toast toast = Toast.makeText(((ActivityAware) context).getCurrentActivity(), "Unable to connect to Internet", Toast.LENGTH_LONG);
@@ -363,7 +363,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
                                     cartItem.getTopCategoryName(), cartItem.getProductCategoryName());
                             BasketOperationTask basketOperationTask = new BasketOperationTask<>(context,
                                     BasketOperation.INC, product,
-                                    null, null, null, null, null, TrackingAware.BASKET_INCREMENT, navigationCtx, null, null);
+                                    null, null, null, null, null, TrackingAware.BASKET_INCREMENT, navigationCtx, null, null, null);
                             basketOperationTask.startTask();
 
                         } else {
@@ -383,7 +383,7 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
                             BasketOperationTask basketOperationTask = new BasketOperationTask<>(context,
                                     BasketOperation.EMPTY,
                                     product, txtInBasket, null, null, null, "0",
-                                    TrackingAware.BASKET_REMOVE, navigationCtx, null, null);
+                                    TrackingAware.BASKET_REMOVE, navigationCtx, null, null, null);
                             basketOperationTask.startTask();
                         } else {
                             Toast toast = Toast.makeText(((ActivityAware) context).getCurrentActivity(), "Unable to connect to Internet", Toast.LENGTH_LONG);
