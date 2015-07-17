@@ -30,6 +30,7 @@ import com.bigbasket.mobileapp.util.UIUtil;
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.SliderTypes.DefaultSliderView;
+import com.daimajia.slider.library.Transformers.AccordionTransformer;
 
 import java.util.ArrayList;
 
@@ -153,6 +154,7 @@ public class SectionView {
     private View getBannerView(Section section, LayoutInflater inflater, ViewGroup parent) {
         View baseSlider = inflater.inflate(R.layout.uiv3_image_slider, parent, false);
         SliderLayout bannerSlider = (SliderLayout) baseSlider.findViewById(R.id.imgSlider);
+        bannerSlider.setPagerTransformer(false, new AccordionTransformer());
         ViewGroup.LayoutParams bannerLayoutParams = bannerSlider.getLayoutParams();
         if (bannerLayoutParams != null) {
             bannerLayoutParams.height = section.getWidgetHeight(context, mSectionData.getRenderersMap(), true);
