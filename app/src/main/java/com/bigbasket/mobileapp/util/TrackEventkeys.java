@@ -111,7 +111,7 @@ public final class TrackEventkeys {
     public static final String HOME = "home";
     public static final String SCREEN = "screen";
     public static final String MENU = "menu";
-    public static final String PL_PS = "pl.ps";
+    public static final String PS_PL = "ps.pl";
     public static final String DEEP_LINK = "deep-link";
     public static final String CO_BASKET = "co.basket";
     public static final String CO_ADDRESS = "co.address";
@@ -134,6 +134,12 @@ public final class TrackEventkeys {
     public static final String NC_PROMO_PRODUCT_LISTING = "promo-set";
     public static final String NC_ACCOUNT_ADDRESS = "account-address";
     public static final String CO_INVOICE = "co.invoice";
+    public static final String PS_VOICE = "ps.voice";
+    public static final String PS_SCAN = "ps.scan";
+    public static final String TERM = "term";
+    public static final String PS_VOICE_PL = "ps.voice.pl";
+    public static final String PS_SCAN_PL = "ps.scan.pl";
+    public static final String PS_C_PL = "ps.c.pl";
 
     private TrackEventkeys() {
     }

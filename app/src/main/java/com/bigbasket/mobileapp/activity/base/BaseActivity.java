@@ -570,25 +570,35 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void trackEvent(String eventName, Map<String, String> eventAttribs,
+                    String source, String sourceValue, boolean isCustomerValueIncrease,
+                    boolean sendToFacebook){
+        trackEvent(eventName, eventAttribs, source, sourceValue, getCurrentNavigationContext(),
+                isCustomerValueIncrease, sendToFacebook);
+    }
+
+    @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs) {
         trackEvent(eventName, eventAttribs, null, null, false);
     }
 
     @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs, String source, String sourceValue) {
-        trackEvent(eventName, eventAttribs, source, sourceValue, getCurrentNavigationContext(), false);
+        trackEvent(eventName, eventAttribs, source, sourceValue, getCurrentNavigationContext(),
+                false, false);
     }
 
     @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs, String source,
                            String sourceValue, boolean isCustomerValueIncrease) {
         trackEvent(eventName, eventAttribs, source, sourceValue, getCurrentNavigationContext(),
-                isCustomerValueIncrease);
+                isCustomerValueIncrease, false);
     }
 
     @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs, String source,
-                           String sourceValue, String nc, boolean isCustomerValueIncrease) {
+                           String sourceValue, String nc, boolean isCustomerValueIncrease,
+                           boolean sendToFacebook) {
         if (eventAttribs != null && eventAttribs.containsKey(TrackEventkeys.NAVIGATION_CTX)) {
             // Someone has already set nc, so don't override it
             nc = null;
@@ -637,7 +647,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 LocalyticsWrapper.tagEvent(eventName, eventAttribs);
         }
 
-        if (authParameters.isFBLoggerEnabled()) {
+        if (sendToFacebook && authParameters.isFBLoggerEnabled()) {
             if (eventAttribs != null) {
                 Bundle paramBundle = new Bundle();
                 for (Map.Entry<String, String> eventAttrib : eventAttribs.entrySet())
@@ -826,7 +836,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     @Override
     public void startActivityForResult(Intent intent, int requestCode) {
-        Log.e("StartActivityForResult", getNextScreenNavigationContext()==null ? "null" : getNextScreenNavigationContext());
         intent.putExtra(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
         super.startActivityForResult(intent, requestCode);
     }

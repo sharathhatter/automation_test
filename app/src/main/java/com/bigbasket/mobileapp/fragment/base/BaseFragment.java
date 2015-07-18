@@ -375,6 +375,14 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     }
 
     @Override
+    public void trackEvent(String eventName, Map<String, String> eventAttribs,
+                           String source, String sourceValue, boolean isCustomerValueIncrease,
+                           boolean sendToFacebook){
+        trackEvent(eventName, eventAttribs, source, sourceValue, getCurrentNavigationContext(),
+                isCustomerValueIncrease, sendToFacebook);
+    }
+
+    @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs) {
         if (getCurrentActivity() == null) return;
         trackEvent(eventName, eventAttribs, null, null);
@@ -383,22 +391,24 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs, String source, String sourceValue) {
         if (getCurrentActivity() == null) return;
-        trackEvent(eventName, eventAttribs, source, sourceValue, getCurrentNavigationContext(), false);
+        trackEvent(eventName, eventAttribs, source, sourceValue, getCurrentNavigationContext(), false, false);
     }
 
     @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs, String source,
                            String sourceValue, boolean isCustomerValueIncrease) {
         if (getCurrentActivity() == null) return;
-        trackEvent(eventName, eventAttribs, source, sourceValue, getCurrentNavigationContext(), isCustomerValueIncrease);
+        trackEvent(eventName, eventAttribs, source, sourceValue, getCurrentNavigationContext(),
+                isCustomerValueIncrease, false);
     }
 
     @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs, String source,
-                           String sourceValue, String nc, boolean isCustomerValueIncrease) {
+                           String sourceValue, String nc, boolean isCustomerValueIncrease,
+                           boolean sendToFacebook) {
         if (getCurrentActivity() == null) return;
         getCurrentActivity().trackEvent(eventName, eventAttribs, source, sourceValue,
-                nc, isCustomerValueIncrease);
+                nc, isCustomerValueIncrease, sendToFacebook);
     }
 
     @Override

@@ -176,12 +176,16 @@ public interface TrackingAware {
 
     String NOTIFICATION_ERROR = "Notification Error";
 
+    void trackEvent(String eventName, Map<String, String> eventAttribs,
+                    String source, String sourceValue, boolean isCustomerValueIncrease,
+                    boolean sendToFacebook);
 
     void trackEvent(String eventName, Map<String, String> eventAttribs,
                     String source, String sourceValue, boolean isCustomerValueIncrease);
 
     void trackEvent(String eventName, Map<String, String> eventAttribs,
-                    String source, String sourceValue, String nc, boolean isCustomerValueIncrease);
+                    String source, String sourceValue, String nc, boolean isCustomerValueIncrease,
+                    boolean sendToFacebook);
 
     void trackEvent(String eventName, Map<String, String> eventAttribs,
                     String source, String sourceValue);

@@ -83,12 +83,14 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
     @Override
     public void onBackResume() {
         super.onBackResume();
+        trackEvent(TrackingAware.HOME_PAGE_SHOWN, null);
         setNextScreenNavigationContext(TrackEventkeys.HOME);
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        trackEvent(TrackingAware.HOME_PAGE_SHOWN, null);
         setNextScreenNavigationContext(TrackEventkeys.HOME);
         AppUpdateHandler.AppUpdateData appUpdateData = AppUpdateHandler.isOutOfDate(getActivity());
         if (appUpdateData != null && !TextUtils.isEmpty(appUpdateData.getAppExpireBy())) {
@@ -414,7 +416,6 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         setSectionData(sectionData);
         setScreenName(screenName);
         renderHomePage();
-        trackEvent(TrackingAware.HOME_PAGE_SHOWN, null);
         //screen name pass to OnSectionItemClickListener
     }
 

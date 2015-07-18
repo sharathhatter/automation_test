@@ -228,6 +228,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                             productTabInfo.getTabName() : mTitlePassedViaIntent;
                     setTitle(title);
                 }
+                logProductListingShownEvent(productTabInfo.getTabType());
                 renderHeaderDropDown(productTabData.getHeaderSection());
             }
         } else if (contentSectionView == null) {
@@ -345,7 +346,6 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
 
     public void logProductListingShownEvent(String mTabType) {
-        Log.e("#########", "############### ProductListAwareFragment logProductListingEvent");
         if (mTabType == null) return;
         HashMap<String, String> map = new HashMap<>();
         map.put(Constants.TYPE, mTabType);
@@ -478,22 +478,22 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         loadProductTabs();
     }
 
-    @Override
-    public void doSearch(String searchQuery) {
-        if (!TextUtils.isEmpty(searchQuery)) {
-            mTitlePassedViaIntent = searchQuery;
-            mNameValuePairs = new ArrayList<>();
-            mNameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.SEARCH.get()));
-            mNameValuePairs.add(new NameValuePair(Constants.SLUG, searchQuery));
-            if (getSupportFragmentManager().getFragments() != null &&
-                    getSupportFragmentManager().getFragments().size() > 0) {
-                // New product list is requested over current page, so change nc by copying next-nc
-                setCurrentNavigationContext(getNextScreenNavigationContext());
-            }
-            setNextScreenNavigationContext(TrackEventkeys.PL_PS + "." + searchQuery);
-            loadProductTabs();
-        }
-    }
+//    @Override
+//    public void doSearch(String searchQuery, String referrer) {
+//        if (!TextUtils.isEmpty(searchQuery)) {
+//            mTitlePassedViaIntent = searchQuery;
+//            mNameValuePairs = new ArrayList<>();
+//            mNameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.SEARCH.get()));
+//            mNameValuePairs.add(new NameValuePair(Constants.SLUG, searchQuery));
+//            if (getSupportFragmentManager().getFragments() != null &&
+//                    getSupportFragmentManager().getFragments().size() > 0) {
+//                // New product list is requested over current page, so change nc by copying next-nc
+//                setCurrentNavigationContext(getNextScreenNavigationContext());
+//            }
+//            setNextScreenNavigationContext(TrackEventkeys.PL_PS + "." + searchQuery);
+//            loadProductTabs();
+//        }
+//    }
 
     public void onFooterViewClicked(View v) {
         switch (v.getId()) {
