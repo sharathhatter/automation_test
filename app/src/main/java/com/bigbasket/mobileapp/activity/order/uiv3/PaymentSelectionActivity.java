@@ -588,7 +588,8 @@ public class PaymentSelectionActivity extends BackButtonActivity {
                             return;
                         }
                         if (placeOrderApiResponse.status.equals(Constants.OK)) {
-                            postOrderCreation(placeOrderApiResponse.apiResponseContent.orders);
+                            postOrderCreation(placeOrderApiResponse.apiResponseContent.orders,
+                                    placeOrderApiResponse.apiResponseContent.addMoreLink);
                         } else if (placeOrderApiResponse.errorType != null &&
                                 placeOrderApiResponse.errorType.equals(ApiErrorCodes.AMOUNT_MISMATCH_STR)) {
                             String paymentMethod = mSelectedPaymentMethod;
@@ -637,7 +638,7 @@ public class PaymentSelectionActivity extends BackButtonActivity {
                 });
     }
 
-    private void postOrderCreation(ArrayList<Order> orders) {
+    private void postOrderCreation(ArrayList<Order> orders, String addMoreLink) {
         if (orders == null || orders.size() == 0) return;
         for (Order order : orders) {
             HashMap<String, String> map = new HashMap<>();
@@ -657,14 +658,15 @@ public class PaymentSelectionActivity extends BackButtonActivity {
         VoucherApplied.clearFromPreference(this);
         PowerPayResponse.clearTxnDetail(this);
         ((CartInfoAware) getCurrentActivity()).markBasketDirty();
-        showOrderThankyou(orders);
+        showOrderThankyou(orders, addMoreLink);
     }
 
-    private void showOrderThankyou(ArrayList<Order> orders) {
+    private void showOrderThankyou(ArrayList<Order> orders, String addMoreLink) {
         setNextScreenNavigationContext(TrackEventkeys.CO_PAYMENT);
         Intent invoiceIntent = new Intent(this, OrderInvoiceActivity.class);
         invoiceIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_THANKYOU);
         invoiceIntent.putExtra(Constants.ORDERS, orders);
+        invoiceIntent.putExtra(Constants.ADD_MORE_LINK, addMoreLink);
         startActivityForResult(invoiceIntent, NavigationCodes.GO_TO_HOME);
     }
 

@@ -340,6 +340,7 @@ public class Constants {
 
     public static final String ORDER_NUMBER = "order_number";
     public static final String ORDERS = "orders";
+    public static final String ADD_MORE_LINK = "add_more_link";
     public static final String SHOPPING_LIST_SUMMARY = "shoplist_summary";
     public static final String SL_NAME = "name";
     public static final String IS_PUBLIC = "is_public";
