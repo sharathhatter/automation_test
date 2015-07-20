@@ -378,7 +378,11 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
         String itemName = getSectionItemName();
         if (!TextUtils.isEmpty(itemName))
             eventAttribs.put(TrackEventkeys.SECTION_ITEM, getSectionItemName());
-        ((TrackingAware) context).trackEvent(getAnalyticsFormattedScreeName(), eventAttribs);
+        if(screenName!=null && screenName.equals(SectionManager.DISCOUNT_PAGE))
+            ((TrackingAware) context).trackEvent(getAnalyticsFormattedScreeName(), eventAttribs,
+                    null, null, false, true);
+        else
+            ((TrackingAware) context).trackEvent(getAnalyticsFormattedScreeName(), eventAttribs);
     }
 
     private boolean hasMainMenu() {

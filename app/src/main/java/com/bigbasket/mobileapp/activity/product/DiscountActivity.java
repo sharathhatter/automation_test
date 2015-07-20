@@ -148,8 +148,7 @@ public class DiscountActivity extends BBActivity {
                 onChangeFragment(discountFragment);
             }
         }
-
-        trackEvent(TrackingAware.DISCOUNT_SHOWN, null);
+        trackEvent(TrackingAware.DISCOUNT_SHOWN, null, null, null, false, true);
     }
 
     private ArrayList<BBTab> createTabFragment(SectionData categorySectionData, ArrayList<BBTab> bbTabs) {

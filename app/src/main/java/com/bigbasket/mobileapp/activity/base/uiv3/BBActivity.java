@@ -173,6 +173,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             btnViewBasket.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    trackEvent(TrackingAware.BASKET_VIEW_CLICKED, null, null, null, false, true);
                     launchViewBasketScreen();
                 }
             });

@@ -337,7 +337,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
                 }
             }
         }
-        moEHelper.logoutUser(); //todo check
+        moEHelper.logoutUser();
         mIsInLogoutMode = false;
         goToHome(true);
     }

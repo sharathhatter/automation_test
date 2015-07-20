@@ -188,7 +188,7 @@ public class SearchableActivity extends BackButtonActivity
     private void logSearchEvent(String query) {
         HashMap<String, String> map = new HashMap<>();
         map.put(TrackEventkeys.TERM, query);
-        trackEvent(TrackingAware.SEARCH, map);
+        trackEvent(TrackingAware.SEARCH, map, null, null, false, true);
     }
 
     private String getCategorySlug(String categoryUrl) {

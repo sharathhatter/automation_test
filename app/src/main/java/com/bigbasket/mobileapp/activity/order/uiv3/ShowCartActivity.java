@@ -124,7 +124,7 @@ public class ShowCartActivity extends BackButtonActivity {
         eventAttribs.put(TrackEventkeys.TOTAL_ITEMS_IN_BASKET, String.valueOf(cartSummary.getNoOfItems()));
         eventAttribs.put(TrackEventkeys.TOTAL_BASKET_VALUE, String.valueOf(cartSummary.getTotal()));
         eventAttribs.put(TrackEventkeys.TOTAL_BASKET_SAVING, String.valueOf(cartSummary.getSavings()));
-        trackEvent(TrackingAware.BASKET_VIEW_CLICKED, eventAttribs);
+        trackEvent(TrackingAware.BASKET_VIEW_SHOWN, eventAttribs, null, null, false, true);
     }
 
     private void renderCartItemList(CartSummary cartSummary, String baseImageUrl, boolean isCurrentPageRequest) {

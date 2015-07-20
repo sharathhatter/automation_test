@@ -137,6 +137,7 @@ public interface TrackingAware {
     String BASKET_REMOVE = "Basket.Remove Clicked";
     String BASKET_EMPTY_CLICKED = "Basket.Empty Clicked";
     String BASKET_VIEW_CLICKED = "Basket.View Clicked";
+    String BASKET_VIEW_SHOWN = "Basket.View Shown";
 
     //subCat
     String CATEGORY_LANDING_SHOWN = "Category.Landing Shown";
@@ -169,6 +170,11 @@ public interface TrackingAware {
     String CHECKOUT_PLACE_ORDER_AMOUNT_MISMATCH = "Checkout.Place Order Amount Mismatch";
     String CHECKOUT_ORDER_COMPLETE = "Checkout.Order Complete";
     String PLACE_ORDER = "placeorder";
+
+    String CHECKOUT_ADDRESS_CLICKED_CONTI = "Checkout.Address Continue Clicked ";
+    String CHECKOUT_ADDRESS_SELECTED = "Checkout.Address Selected";
+    String CHECKOUT_SLOT_SELECTED_CLICKED = "Checkout.Delivery Option Continue Clicked";
+    String CHECKOUT_DELIVERY_OPTION_SHOWN = "Checkout.Delivery Options Shown";
 
     //thank you
     String THANK_YOU_PAGE_SHOWN = "Checkout.Thank You Page Shown";

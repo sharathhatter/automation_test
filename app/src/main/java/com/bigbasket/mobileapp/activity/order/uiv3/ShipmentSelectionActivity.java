@@ -84,6 +84,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
         if (mShipments == null || mShipments.size() == 0) return;
         renderFooter();
         renderShipments();
+        trackEvent(TrackingAware.CHECKOUT_DELIVERY_OPTION_SHOWN, null, null, null, false, true);
     }
 
     @Override
@@ -317,6 +318,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
     private class OnPostShipmentClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
+            trackEvent(TrackingAware.CHECKOUT_SLOT_SELECTED_CLICKED, null, null, null, false, true);
             if (mSelectedShipmentIndx == null || mSelectedShipmentIndx.size() == 0) {
                 showToast(getString(R.string.selectAllSlotsErrMsg));
                 return;
