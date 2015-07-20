@@ -1,6 +1,7 @@
 package com.bigbasket.mobileapp.adapter.order;
 
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,15 +74,28 @@ public class OrderListAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewH
             OrderListRowHolder rowHolder = (OrderListRowHolder) holder;
             final Order order = orders.get(position);
 
-            String[] dateTime = order.getDeliveryDate().split(",");
+            String date = order.getSlotDisplay().getDate();
+            String time = order.getSlotDisplay().getTime();
+
             TextView txtSlotDate = rowHolder.getTxtSlotDate();
-            txtSlotDate.setTypeface(BaseActivity.faceRobotoBold);
-            txtSlotDate.setText(dateTime[0].trim() + ", " + dateTime[1].trim());
+
+            if (!TextUtils.isEmpty(date)) {
+                txtSlotDate.setText(date);
+                txtSlotDate.setTypeface(BaseActivity.faceRobotoBold);
+                txtSlotDate.setVisibility(View.VISIBLE);
+            } else {
+                txtSlotDate.setVisibility(View.GONE);
+            }
 
 
             TextView txtSlotTime = rowHolder.getTxtSlotTime();
-            txtSlotTime.setText(dateTime[2].trim());
-            txtSlotTime.setTypeface(BaseActivity.faceRobotoRegular);
+            if (!TextUtils.isEmpty(time)) {
+                txtSlotTime.setText(time);
+                txtSlotTime.setTypeface(BaseActivity.faceRobotoRegular);
+                txtSlotTime.setVisibility(View.VISIBLE);
+            } else {
+                txtSlotTime.setVisibility(View.GONE);
+            }
 
 
             TextView txtOrderId = rowHolder.getTxtOrderId();

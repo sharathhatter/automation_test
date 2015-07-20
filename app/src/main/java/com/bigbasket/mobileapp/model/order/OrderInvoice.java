@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import com.bigbasket.mobileapp.model.account.MemberSummary;
 import com.bigbasket.mobileapp.model.cart.CartItemList;
 import com.bigbasket.mobileapp.model.cart.FulfillmentInfo;
-import com.bigbasket.mobileapp.model.slot.SlotHeader;
+import com.bigbasket.mobileapp.model.shipments.SlotDisplay;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
@@ -30,7 +30,7 @@ public class OrderInvoice implements Parcelable {
     @SerializedName(Constants.MEMBER_DETAILS)
     private MemberSummary memberSummary;
     @SerializedName(Constants.SLOT_INFO)
-    private SlotHeader slot;
+    private SlotDisplay slotDisplay;
     @SerializedName(Constants.INVOICE_NUMBER)
     private String invoiceNumber;
     @SerializedName(Constants.BASE_IMG_URL)
@@ -49,7 +49,7 @@ public class OrderInvoice implements Parcelable {
     public OrderInvoice(Parcel source) {
         this.orderNumber = source.readString();
         this.memberSummary = source.readParcelable(OrderInvoice.class.getClassLoader());
-        this.slot = source.readParcelable(OrderInvoice.class.getClassLoader());
+        this.slotDisplay = source.readParcelable(OrderInvoice.class.getClassLoader());
         this.invoiceNumber = source.readString();
         boolean _wasBaseImgUrlNull = source.readByte() == (byte) 1;
         if (!_wasBaseImgUrlNull) {
@@ -77,7 +77,7 @@ public class OrderInvoice implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(orderNumber);
         dest.writeParcelable(memberSummary, flags);
-        dest.writeParcelable(slot, flags);
+        dest.writeParcelable(slotDisplay, flags);
         dest.writeString(invoiceNumber);
         boolean _wasBaseImgUrlNull = baseImgUrl == null;
         dest.writeByte(_wasBaseImgUrlNull ? (byte) 1 : (byte) 0);
@@ -103,8 +103,8 @@ public class OrderInvoice implements Parcelable {
         return memberSummary;
     }
 
-    public SlotHeader getSlot() {
-        return slot;
+    public SlotDisplay getSlot() {
+        return slotDisplay;
     }
 
     public String getInvoiceNumber() {

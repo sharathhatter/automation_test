@@ -48,7 +48,8 @@ public class SectionHelpActivity extends BaseActivity implements DynamicScreenAw
     }
 
     private void displaySection(String screenName, SectionData sectionData) {
-        SectionView sectionView = new SectionView(this, faceRobotoRegular, sectionData, screenName);
+        SectionView sectionView = new SectionView(this, faceRobotoRegular, sectionData, screenName,
+                true);
         ViewGroup layoutSectionHelp = (ViewGroup) findViewById(R.id.layoutSectionHelp);
         View sectionViewGenerated = sectionView.getView();
         if (sectionViewGenerated != null) {
