@@ -207,11 +207,13 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 if (mSubNavLayout != null && mSubNavLayout.getVisibility() == View.VISIBLE) {
                     onSubNavigationHideRequested(false);
                 }
-                if (mNavRecyclerView != null && mNavRecyclerView.getVisibility() != View.VISIBLE) {
-                    // User was in settings menu, now restore the default state to avoid confusion
-                    ImageView imgSwitchNav = (ImageView) findViewById(R.id.imgSwitchNav);
-                    if (imgSwitchNav != null) {
-                        toggleNavigationArea(imgSwitchNav);
+                if (mNavRecyclerView != null) {
+                    if (mNavRecyclerView.getVisibility() != View.VISIBLE) {
+                        // User was in settings menu, now restore the default state to avoid confusion
+                        ImageView imgSwitchNav = (ImageView) findViewById(R.id.imgSwitchNav);
+                        if (imgSwitchNav != null) {
+                            toggleNavigationArea(imgSwitchNav);
+                        }
                     }
                     mNavRecyclerView.scrollToPosition(0);
                 }

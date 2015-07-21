@@ -32,7 +32,6 @@ import com.enstage.wibmo.sdk.inapp.pojo.W2faInitRequest;
 import com.enstage.wibmo.sdk.inapp.pojo.W2faResponse;
 import com.enstage.wibmo.sdk.inapp.pojo.WPayInitRequest;
 import com.enstage.wibmo.sdk.inapp.pojo.WPayResponse;
-import com.enstage.wibmo.sdk.qco.pojo.QcoMerchantReq;
 import com.enstage.wibmo.util.HttpUtil;
 
 import java.util.List;
@@ -52,31 +51,6 @@ public class WibmoSDK {
 
     private static String wibmoIntentActionPackage = "com.enstage.wibmo.sdk.inapp.main";
     private static String wibmoAppPackage;
-	
-	public static void startQCOForMPos(Activity activity, QcoMerchantReq qcoMerchantReq) {
-        if(activity==null) {
-            throw new IllegalArgumentException("Activity passed was null");
-        }
-        if(qcoMerchantReq==null) {
-            throw new IllegalArgumentException("QcoMerchantReq passed was null");
-        }
-
-		Intent intent = new Intent("com.enstage.wibmo.sdk.qco.QcoRequesterActivity");
-		intent.addCategory(Intent.CATEGORY_DEFAULT);
-		intent.putExtra("test", "something");
-		intent.putExtra("QcoMerchantReq", qcoMerchantReq);
-
-        String targetAppPackage = getWibmoIntentActionPackage();
-        boolean flag = WibmoSDK.isPackageExisted(activity, targetAppPackage);
-		if (flag==false) {
-			showDownloadDialog(activity);
-		}
-		intent.setPackage(targetAppPackage);
-		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-		
-		activity.startActivityForResult(intent, REQUEST_CODE_MPOS);
-	}
 
     public static void startForInApp(Activity activity, W2faInitRequest w2faInitRequest) {
         if(activity==null) {

@@ -46,7 +46,7 @@ import com.enstage.wibmo.sdk.inapp.pojo.WPayInitResponse;
  * Created by akshath on 20/10/14.
  */
 public class InAppBrowserActivity extends Activity {
-    private static final String TAG = "wibmo.sdk.inapp.InAppBrowserActivity";
+    private static final String TAG = "wibmo.sdk.InAppBrowser";
 
     public static final int REQUEST_CODE = 0x0000c0c0; // Only use bottom 16 bits
 
@@ -64,6 +64,8 @@ public class InAppBrowserActivity extends Activity {
 
     private WPayInitRequest wPayInitRequest;
     private WPayInitResponse wPayInitResponse;
+
+    private boolean resultSet;
 
 
     @Override
@@ -94,6 +96,8 @@ public class InAppBrowserActivity extends Activity {
                 return;
             }
         }
+
+        resultSet = false;
 
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setProgressBarIndeterminateVisibility(false);
@@ -210,8 +214,35 @@ public class InAppBrowserActivity extends Activity {
                             Toast.LENGTH_SHORT).show();
                             */
                 }
-                sendSuccess(resCode, resDesc,
+                _recordSuccess(resCode, resDesc,
                         dataPickUpCode, wTxnId, msgHash);
+                _notifyCompletion();
+            }
+
+            @android.webkit.JavascriptInterface
+            @SuppressWarnings("unused")
+            public void recordSuccess(String resCode, String resDesc,
+                                      String dataPickUpCode, String wTxnId, String msgHash) {
+                if(WibmoSDKConfig.isTestMode()) {
+                    /*
+                    Toast.makeText(activity, "notifySuccess called",
+                            Toast.LENGTH_SHORT).show();
+                            */
+                }
+                _recordSuccess(resCode, resDesc,
+                        dataPickUpCode, wTxnId, msgHash);
+            }
+
+            @android.webkit.JavascriptInterface
+            @SuppressWarnings("unused")
+            public void notifyCompletion() {
+                if(WibmoSDKConfig.isTestMode()) {
+                    /*
+                    Toast.makeText(activity, "notifySuccess called",
+                            Toast.LENGTH_SHORT).show();
+                            */
+                }
+                _notifyCompletion();
             }
         }
         webView.addJavascriptInterface(new MyJavaScriptInterface(), "WibmoSDK");
@@ -275,7 +306,7 @@ public class InAppBrowserActivity extends Activity {
         finish();
     }
 
-    private void sendSuccess(String resCode, String resDesc,
+    private void _recordSuccess(String resCode, String resDesc,
             String dataPickUpCode, String wTxnId, String msgHash) {
         //webView.destroy();
 
@@ -296,6 +327,11 @@ public class InAppBrowserActivity extends Activity {
         }
 
         setResult(Activity.RESULT_OK, resultData);
+
+        resultSet = true;
+    }
+
+    private void _notifyCompletion() {
         finish();
     }
 
@@ -309,7 +345,13 @@ public class InAppBrowserActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        sendAbort();
+        if(resultSet) {
+            Log.v(TAG, "resultSet was true");
+            _notifyCompletion();
+        } else {
+            Log.v(TAG, "resultSet was false");
+            sendAbort();
+        }
         super.onBackPressed();
     }
 
