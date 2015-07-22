@@ -101,6 +101,13 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     }
 
     @Override
+    public void onResume(){
+        super.onResume();
+        if(mNameValuePairs!=null)
+            setNextScreenNavigationContext(NameValuePair.buildNavigationContext(mNameValuePairs));
+    }
+
+    @Override
     @LayoutRes
     public int getMainLayout() {
         return R.layout.uiv3_product_list_layout;

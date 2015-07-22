@@ -43,6 +43,7 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -76,14 +77,6 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
         loadProducts();
         //logProductListingEvent();
     }
-
-//    public void logProductListingEvent() {
-//        Log.e("#########", "############### ProductListAwareFragment logProductListingEvent");
-//        if (mTabType == null) return;
-//        HashMap<String, String> map = new HashMap<>();
-//        map.put(Constants.TYPE, mTabType);
-//        trackEvent(TrackingAware.PRODUCT_LIST_SHOWN, map);
-//    }
 
     public void loadProducts() {
         if (getArguments() != null) {
