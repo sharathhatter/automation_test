@@ -10,4 +10,7 @@ public class PlaceOrderApiResponseContent {
 
     @SerializedName(Constants.ORDERS)
     public ArrayList<Order> orders;
+
+    @SerializedName(Constants.ADD_MORE_LINK)
+    public String addMoreLink;
 }

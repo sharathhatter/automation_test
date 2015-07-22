@@ -7,9 +7,9 @@ import android.widget.ImageView;
 
 import com.daimajia.slider.library.R;
 
-public class TransparentSliderView extends BaseSliderView {
+public class HelpSliderView extends BaseSliderView {
 
-    public TransparentSliderView(Context context) {
+    public HelpSliderView(Context context) {
         super(context);
     }
 

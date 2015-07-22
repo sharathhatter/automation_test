@@ -37,6 +37,7 @@ import com.enstage.wibmo.sdk.inapp.pojo.W2faInitRequest;
 import com.enstage.wibmo.sdk.inapp.pojo.W2faInitResponse;
 import com.enstage.wibmo.sdk.inapp.pojo.WPayInitRequest;
 import com.enstage.wibmo.sdk.inapp.pojo.WPayInitResponse;
+import com.google.gson.Gson;
 
 /**
  * Created by akshath on 17/10/14.
@@ -59,6 +60,8 @@ public class InAppInitActivity extends Activity {
 
     private boolean isAppReady;
     private static String readyPackage;
+
+    private AsyncTask asyncTask = null;
 
 
     @Override
@@ -110,6 +113,10 @@ public class InAppInitActivity extends Activity {
         abortButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(asyncTask!=null) {
+                    asyncTask.cancel(true);
+                    asyncTask = null;
+                }
                 sendAbort();
             }
         });
@@ -129,7 +136,7 @@ public class InAppInitActivity extends Activity {
 
             w2faInitRequest.getDeviceInfo().setAppInstalled(isAppReady);
 
-            new Init2FAReqTask().execute(w2faInitRequest);
+            asyncTask = new Init2FAReqTask().execute(w2faInitRequest);
         }
 
         if (wPayInitRequest != null) {
@@ -137,7 +144,7 @@ public class InAppInitActivity extends Activity {
 
             wPayInitRequest.getDeviceInfo().setAppInstalled(isAppReady);
 
-            new InitPayReqTask().execute(wPayInitRequest);
+            asyncTask = new InitPayReqTask().execute(wPayInitRequest);
         }
     }
 
@@ -231,10 +238,14 @@ public class InAppInitActivity extends Activity {
         resultData.putExtra("ResDesc", "user abort");
         if(w2faInitResponse!=null) {
             resultData.putExtra("WibmoTxnId", w2faInitResponse.getWibmoTxnId());
-            resultData.putExtra("MerTxnId", w2faInitResponse.getTransactionInfo().getMerTxnId());
+            if(w2faInitResponse.getTransactionInfo()!=null) {
+                resultData.putExtra("MerTxnId", w2faInitResponse.getTransactionInfo().getMerTxnId());
+            }
         } else if(wPayInitResponse!=null) {
             resultData.putExtra("WibmoTxnId", wPayInitResponse.getWibmoTxnId());
-            resultData.putExtra("MerTxnId", wPayInitResponse.getTransactionInfo().getMerTxnId());
+            if(wPayInitResponse.getTransactionInfo()!=null) {
+                resultData.putExtra("MerTxnId", wPayInitResponse.getTransactionInfo().getMerTxnId());
+            }
         }
         setResult(Activity.RESULT_CANCELED, resultData);
         finish();
@@ -246,7 +257,9 @@ public class InAppInitActivity extends Activity {
         resultData.putExtra("ResDesc", w2faInitResponse.getResDesc());
         if(w2faInitResponse!=null) {
             resultData.putExtra("WibmoTxnId", w2faInitResponse.getWibmoTxnId());
-            resultData.putExtra("MerTxnId", w2faInitResponse.getTransactionInfo().getMerTxnId());
+            if(w2faInitResponse.getTransactionInfo()!=null) {
+                resultData.putExtra("MerTxnId", w2faInitResponse.getTransactionInfo().getMerTxnId());
+            }
         }
         setResult(Activity.RESULT_CANCELED, resultData);
         finish();
@@ -257,7 +270,9 @@ public class InAppInitActivity extends Activity {
         resultData.putExtra("ResDesc", wPayInitResponse.getResDesc());
         if(wPayInitResponse!=null) {
             resultData.putExtra("WibmoTxnId", wPayInitResponse.getWibmoTxnId());
-            resultData.putExtra("MerTxnId", wPayInitResponse.getTransactionInfo().getMerTxnId());
+            if(wPayInitResponse.getTransactionInfo()!=null) {
+                resultData.putExtra("MerTxnId", wPayInitResponse.getTransactionInfo().getMerTxnId());
+            }
         }
 
         setResult(Activity.RESULT_CANCELED, resultData);
@@ -269,7 +284,7 @@ public class InAppInitActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        Log.d(TAG, "onActivityResult~ requestCode: "+requestCode+"; resultCode: "+resultCode);
+        Log.d(TAG, "onActivityResult~ requestCode: " + requestCode + "; resultCode: " + resultCode);
 
         if(requestCode==REQUEST_CODE_IAP_READY) {
             if(resultCode == Activity.RESULT_OK) {
@@ -396,6 +411,8 @@ public class InAppInitActivity extends Activity {
         protected Void doInBackground(WPayInitRequest... data) {
             try {
                 wPayInitResponse = InAppHandler.initPay(data[0]);
+
+                //Log.v(TAG, "wPayInitResponse  "+ (new Gson()).toJson(wPayInitResponse));
             } catch (Exception ex) {
                 Log.e(TAG, "Error: " + ex, ex);
                 showError = true;

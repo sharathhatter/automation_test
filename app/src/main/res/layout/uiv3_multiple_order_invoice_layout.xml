@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:paddingBottom="@dimen/margin_normal"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:paddingBottom="@dimen/margin_normal">
 
 
     <LinearLayout
@@ -46,32 +46,22 @@
             android:id="@+id/layoutOrderNumber"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/margin_small"
+            android:gravity="center_horizontal"
             android:orientation="vertical">
 
         </LinearLayout>
 
         <TextView
-            android:id="@+id/txtOrderReview"
+            android:id="@+id/lblAddMoreProducts"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/margin_small"
-            android:text="@string/order_review_txt"
-            android:textColor="@color/uiv3_primary_text_color"
-            android:textSize="@dimen/secondary_text_size" />
-
-        <TextView
-            android:id="@+id/txtMyOrder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/margin_small"
-            android:text="@string/my_orders"
+            android:layout_marginTop="@dimen/margin_normal"
+            android:text="@string/add_more_products"
             android:textColor="@color/red_color"
-            android:textSize="@dimen/primary_text_size" />
+            android:textSize="@dimen/secondary_text_size" />
 
         <Button
             android:id="@+id/btnLogin"

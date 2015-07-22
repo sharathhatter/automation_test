@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.LayoutRes;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
@@ -16,6 +15,7 @@ import android.widget.RelativeLayout;
 
 import com.daimajia.slider.library.Indicators.PagerIndicator;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
+import com.daimajia.slider.library.Transformers.BaseTransformer;
 import com.daimajia.slider.library.Tricks.FixedSpeedScroller;
 import com.daimajia.slider.library.Tricks.InfinitePagerAdapter;
 import com.daimajia.slider.library.Tricks.InfiniteViewPager;
@@ -27,7 +27,6 @@ import java.util.TimerTask;
 
 /**
  * SliderLayout is compound layout. This is combined with {@link com.daimajia.slider.library.Indicators.PagerIndicator}
- * and {@link android.support.v4.view.ViewPager} .
  * <p/>
  * There is some properties you can set in XML:
  * <p/>
@@ -79,43 +78,20 @@ public class SliderLayout extends RelativeLayout {
      */
     private SliderAdapter mSliderAdapter;
 
-    /**
-     * {@link android.support.v4.view.ViewPager} indicator.
-     */
     private PagerIndicator mIndicator;
 
 
-    /**
-     * A timer and a TimerTask using to cycle the {@link android.support.v4.view.ViewPager}.
-     */
     private Timer mCycleTimer;
     private TimerTask mCycleTask;
 
-    /**
-     * For resuming the cycle, after user touch or click the {@link android.support.v4.view.ViewPager}.
-     */
     private Timer mResumingTimer;
     private TimerTask mResumingTask;
 
-    /**
-     * If {@link android.support.v4.view.ViewPager} is Cycling
-     */
     private boolean mCycling;
 
-    /**
-     * Determine if auto recover after user touch the {@link android.support.v4.view.ViewPager}
-     */
     private boolean mAutoRecover = true;
-
-    private int mTransformerId;
-
-    /**
-     * {@link android.support.v4.view.ViewPager} transformer time span.
-     */
-    private int mTransformerSpan = 1100;
-
     private boolean mAutoCycle;
-
+    private AutoCycleHandler mh;
     /**
      * the duration between animation.
      */
@@ -125,12 +101,6 @@ public class SliderLayout extends RelativeLayout {
      * Visibility of {@link com.daimajia.slider.library.Indicators.PagerIndicator}
      */
     private PagerIndicator.IndicatorVisibility mIndicatorVisibility = PagerIndicator.IndicatorVisibility.Visible;
-
-    private AutoCycleHandler mh;
-
-    /**
-     * {@link com.daimajia.slider.library.Indicators.PagerIndicator} shape, rect or oval.
-     */
 
     public SliderLayout(Context context) {
         this(context, null);
@@ -145,13 +115,12 @@ public class SliderLayout extends RelativeLayout {
     public SliderLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         this.mh = new AutoCycleHandler(this);
-        LayoutInflater.from(context).inflate(getLayoutResId(), this, true);
+        LayoutInflater.from(context).inflate(R.layout.slider_layout, this, true);
 
         final TypedArray attributes = context.getTheme().obtainStyledAttributes(attrs, R.styleable.SliderLayout,
                 defStyle, 0);
 
-        mTransformerSpan = attributes.getInteger(R.styleable.SliderLayout_pager_animation_span, 1100);
-        mTransformerId = attributes.getInt(R.styleable.SliderLayout_pager_animation, Transformer.Default.ordinal());
+        int transformerSpan = attributes.getInteger(R.styleable.SliderLayout_pager_animation_span, 1100);
         mAutoCycle = attributes.getBoolean(R.styleable.SliderLayout_auto_cycle, true);
         int visibility = attributes.getInt(R.styleable.SliderLayout_indicator_visibility, 0);
         for (PagerIndicator.IndicatorVisibility v : PagerIndicator.IndicatorVisibility.values()) {
@@ -181,16 +150,11 @@ public class SliderLayout extends RelativeLayout {
 
         attributes.recycle();
         setPresetIndicator(PresetIndicators.Center_Bottom);
-        setSliderTransformDuration(mTransformerSpan, null);
+        setSliderTransformDuration(transformerSpan, null);
         setIndicatorVisibility(mIndicatorVisibility);
         if (mAutoCycle) {
             startAutoCycle();
         }
-    }
-
-    @LayoutRes
-    protected int getLayoutResId() {
-        return R.layout.slider_layout;
     }
 
     public void setCustomIndicator(PagerIndicator indicator) {
@@ -224,7 +188,7 @@ public class SliderLayout extends RelativeLayout {
     }
 
     public void startAutoCycle() {
-        startAutoCycle(1000, mSliderDuration, mAutoRecover);
+        startAutoCycle(mSliderDuration, mSliderDuration, mAutoRecover);
     }
 
     /**
@@ -268,18 +232,28 @@ public class SliderLayout extends RelativeLayout {
         }
     }
 
+    public void setPagerTransformer(boolean reverseDrawingOrder, BaseTransformer transformer) {
+        mViewPager.setPageTransformer(reverseDrawingOrder, transformer);
+    }
+
     /**
-     * set the duration between two slider changes. the duration value must >= 500
-     *
-     * @param duration
+     * stop the auto circle
      */
-    public void setDuration(long duration) {
-        if (duration >= 500) {
-            mSliderDuration = duration;
-            if (mAutoCycle && mCycling) {
-                startAutoCycle();
-            }
+    public void stopAutoCycle() {
+        if (mCycleTask != null) {
+            mCycleTask.cancel();
         }
+        if (mCycleTimer != null) {
+            mCycleTimer.cancel();
+        }
+        if (mResumingTimer != null) {
+            mResumingTimer.cancel();
+        }
+        if (mResumingTask != null) {
+            mResumingTask.cancel();
+        }
+        mAutoCycle = false;
+        mCycling = false;
     }
 
     /**
@@ -332,42 +306,6 @@ public class SliderLayout extends RelativeLayout {
             mScroller.set(mViewPager, scroller);
         } catch (Exception e) {
 
-        }
-    }
-
-    /**
-     * preset transformers and their names
-     */
-    public enum Transformer {
-        Default("Default"),
-        Accordion("Accordion"),
-        Background2Foreground("Background2Foreground"),
-        CubeIn("CubeIn"),
-        DepthPage("DepthPage"),
-        Fade("Fade"),
-        FlipHorizontal("FlipHorizontal"),
-        FlipPage("FlipPage"),
-        Foreground2Background("Foreground2Background"),
-        RotateDown("RotateDown"),
-        RotateUp("RotateUp"),
-        Stack("Stack"),
-        Tablet("Tablet"),
-        ZoomIn("ZoomIn"),
-        ZoomOutSlide("ZoomOutSlide"),
-        ZoomOut("ZoomOut");
-
-        private final String name;
-
-        private Transformer(String s) {
-            name = s;
-        }
-
-        public String toString() {
-            return name;
-        }
-
-        public boolean equals(String other) {
-            return (other != null) && name.equals(other);
         }
     }
 

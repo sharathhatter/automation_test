@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import com.bigbasket.mobileapp.model.account.Address;
 import com.bigbasket.mobileapp.model.cart.FulfillmentInfo;
+import com.bigbasket.mobileapp.model.shipments.SlotDisplay;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
@@ -25,8 +26,8 @@ public class Order implements Parcelable {
     private String orderId;
     @SerializedName(Constants.ORDER_NUMBER)
     private String orderNumber;
-    @SerializedName(Constants.DELIVERY_DATE)
-    private String deliveryDate;
+    @SerializedName(Constants.SLOT_INFO)
+    private SlotDisplay slotDisplay;
     @SerializedName(Constants.ITEMS_COUNT)
     private int itemsCount;
     @SerializedName(Constants.ORDER_STATUS)
@@ -50,7 +51,7 @@ public class Order implements Parcelable {
     public Order(Parcel parcel) {
         this.orderId = parcel.readString();
         this.orderNumber = parcel.readString();
-        this.deliveryDate = parcel.readString();
+        this.slotDisplay = parcel.readParcelable(OrderInvoice.class.getClassLoader());
         this.itemsCount = parcel.readInt();
         this.orderStatus = parcel.readString();
         this.orderValue = parcel.readString();
@@ -72,7 +73,7 @@ public class Order implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.orderId);
         dest.writeString(this.orderNumber);
-        dest.writeString(this.deliveryDate);
+        dest.writeParcelable(this.slotDisplay, flags);
         dest.writeInt(this.itemsCount);
         dest.writeString(this.orderStatus);
         dest.writeString(this.orderValue != null ? this.orderValue : "0");
@@ -109,8 +110,8 @@ public class Order implements Parcelable {
         return fulfillmentInfo;
     }
 
-    public String getDeliveryDate() {
-        return deliveryDate;
+    public SlotDisplay getSlotDisplay() {
+        return slotDisplay;
     }
 
     public int getItemsCount() {
