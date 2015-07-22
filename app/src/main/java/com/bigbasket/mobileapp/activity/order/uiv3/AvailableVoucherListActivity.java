@@ -21,12 +21,14 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.order.ActiveVouchers;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class AvailableVoucherListActivity extends BackButtonActivity {
@@ -38,6 +40,9 @@ public class AvailableVoucherListActivity extends BackButtonActivity {
         setTitle(getString(R.string.selectAndApplyVoucher));
         ArrayList<ActiveVouchers> activeVouchersList = getIntent().getParcelableArrayListExtra(Constants.VOUCHERS);
         renderVouchers(activeVouchersList);
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentNavigationContext());
+        trackEvent(TrackingAware.EVOUCHER_SHOWN, map);
     }
 
     private void renderVouchers(final ArrayList<ActiveVouchers> activeVouchersList) {

@@ -1,12 +1,10 @@
 package com.bigbasket.mobileapp.activity.base.uiv3;
 
-import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.LayoutRes;
@@ -43,7 +41,6 @@ import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.SearchableActivity;
 import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.adapter.NavigationAdapter;
-import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.DynamicScreenFragment;
 import com.bigbasket.mobileapp.fragment.HomeFragment;
@@ -173,7 +170,9 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             btnViewBasket.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    trackEvent(TrackingAware.BASKET_VIEW_CLICKED, null, null, null, false, true);
+                    HashMap<String, String> map = new HashMap<>();
+                    map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                    trackEvent(TrackingAware.BASKET_VIEW_CLICKED, map, null, null, false, true);
                     launchViewBasketScreen();
                 }
             });
@@ -201,8 +200,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-//                logHomeScreenEvent(TrackingAware.MENU_CLICKED, TrackEventkeys.NAVIGATION_CTX,
-//                        TrackEventkeys.NAVIGATION_CTX_TOPNAV);
                 toolbar.setTitle(formatToolbarTitle(mTitle));
                 invalidateOptionsMenu();
                 if (mSubNavLayout != null && mSubNavLayout.getVisibility() == View.VISIBLE) {
@@ -221,9 +218,9 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-//                logHomeScreenEvent(TrackingAware.MENU_CLICKED, TrackEventkeys.NAVIGATION_CTX,
-//                        TrackEventkeys.NAVIGATION_CTX_TOPNAV);
-                trackEvent(TrackingAware.MENU_SHOWN, null);
+                Map<String, String> eventAttribs = new HashMap<>();
+                eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                trackEvent(TrackingAware.MENU_SHOWN, eventAttribs);
                 invalidateOptionsMenu();
             }
         };
@@ -652,11 +649,11 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         } else {
             */
 
-            currentFragmentTag = savedInstanceState != null ? savedInstanceState.getString(Constants.FRAGMENT_TAG) : null;
-            if (TextUtils.isEmpty(currentFragmentTag) ||
-                    getSupportFragmentManager().findFragmentByTag(currentFragmentTag) == null) {
-                startFragment();
-            }
+        currentFragmentTag = savedInstanceState != null ? savedInstanceState.getString(Constants.FRAGMENT_TAG) : null;
+        if (TextUtils.isEmpty(currentFragmentTag) ||
+                getSupportFragmentManager().findFragmentByTag(currentFragmentTag) == null) {
+            startFragment();
+        }
         //}
     }
 
@@ -678,13 +675,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 //        Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
 //        intent.putParcelableArrayListExtra(Constants.PRODUCT_QUERY, nameValuePairs);
 //        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-//    }
-
-//    public void logHomeScreenEvent(String trackAwareName, String eventKeyName,
-//                                   String navigationCtx) {
-//        Map<String, String> eventAttribs = new HashMap<>();
-//        eventAttribs.put(eventKeyName, navigationCtx);
-//        trackEvent(trackAwareName, eventAttribs);
 //    }
 
     public void doSearch(String searchQuery, String referrer) {

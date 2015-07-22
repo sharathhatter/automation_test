@@ -244,7 +244,8 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
 
         Map<String, String> eventAttribs = new HashMap<>();
-        trackEvent(TrackingAware.COMMUNICATION_HUB_CLICKED, eventAttribs);
+        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.ACCOUNT_MENU);
+        trackEvent(TrackingAware.COMMUNICATION_HUB_SHOWN, eventAttribs);
     }
 
     public void showAlertDialog(String title, String msg) {
@@ -617,7 +618,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
             }
         }
         Log.d(getCurrentActivity().getClass().getName(), "Sending event = " + eventName +
-                ", eventAttribs = " + eventAttribs + ", source = " + source +
+                ", eventAttribs = " + eventAttribs + ", "+
                 ", sourceValue = " + sourceValue + ", isCustomerValueIncrease = "
                 + isCustomerValueIncrease);
         AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());
@@ -629,9 +630,9 @@ public abstract class BaseActivity extends AppCompatActivity implements
                         analyticsJsonObj.put(entry.getKey(), entry.getValue());
                     }
                 }
-                if (!TextUtils.isEmpty(source)) {
-                    analyticsJsonObj.put(Constants.SOURCE, source);
-                }
+//                if (!TextUtils.isEmpty(source)) {
+//                    analyticsJsonObj.put(Constants.SOURCE, source);
+//                }
                 if (!TextUtils.isEmpty(sourceValue)) {
                     analyticsJsonObj.put(Constants.SOURCE_ID, sourceValue);
                 }
@@ -796,7 +797,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     public void launchRegistrationPage() {
-        trackEvent(TrackingAware.NEW_USER_REGISTER_CLICKED, null);
+        //trackEvent(TrackingAware.NEW_USER_REGISTER_CLICKED, null);
         Intent intent = new Intent(this, SignupActivity.class);
         intent.putExtra(Constants.DEEP_LINK, getIntent().getStringExtra(Constants.DEEP_LINK));
         intent.putExtra(Constants.FRAGMENT_CODE, getIntent().getStringExtra(Constants.FRAGMENT_CODE));

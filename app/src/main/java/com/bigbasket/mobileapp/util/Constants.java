@@ -119,6 +119,7 @@ public class Constants {
     public static final String BASKET = "basket";
 
     public static final String PROMO_CATS = "promo_categories";
+    public static final String PROMO_CAT = "promo_category";
     public static final String NUM_IN_BASKET = "num_completed_in_basket";
     public static final String SAVING = "saving";
     public static final String SAVINGS = "savings";

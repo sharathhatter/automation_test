@@ -56,6 +56,7 @@ public class SearchableActivity extends BackButtonActivity
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         renderSearchView();
+        trackEvent(TrackingAware.SEARCH_SHOWN, null);
     }
 
     private void renderSearchView() {
@@ -188,6 +189,7 @@ public class SearchableActivity extends BackButtonActivity
     private void logSearchEvent(String query) {
         HashMap<String, String> map = new HashMap<>();
         map.put(TrackEventkeys.TERM, query);
+        map.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.PS);
         trackEvent(TrackingAware.SEARCH, map, null, null, false, true);
     }
 
@@ -308,7 +310,7 @@ public class SearchableActivity extends BackButtonActivity
             ArrayList<String> items = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
             if (items != null && items.size() > 0) {
                 String term = items.get(0).trim();
-                triggerSearch(term, TrackEventkeys.PS_VOICE_PL);
+                triggerSearch(term, TrackEventkeys.PS_VOICE);
                 return;
             }
         }
@@ -320,7 +322,7 @@ public class SearchableActivity extends BackButtonActivity
                 Intent intent = new Intent(getCurrentActivity(), BackButtonWithBasketButtonActivity.class);
                 intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PRODUCT_DETAIL);
                 intent.putExtra(Constants.EAN_CODE, eanCode);
-                setNextScreenNavigationContext(TrackEventkeys.PS_SCAN_PL);
+                setNextScreenNavigationContext(TrackEventkeys.PS_SCAN);
                 startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 return;
             }

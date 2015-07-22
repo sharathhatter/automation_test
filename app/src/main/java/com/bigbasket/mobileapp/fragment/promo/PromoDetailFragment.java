@@ -71,7 +71,6 @@ public class PromoDetailFragment extends BaseFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setNextScreenNavigationContext(TrackEventkeys.NC_PROMO_DETAIL);
         if (savedInstanceState != null) {
             mPromoDetail = savedInstanceState.getParcelable(Constants.PROMO_DETAIL);
             if (mPromoDetail != null) {
@@ -81,6 +80,7 @@ public class PromoDetailFragment extends BaseFragment {
             }
         }
         mPromoCategory = getArguments().getParcelable(Constants.PROMO_CATS);
+        setNextScreenNavigationContext(TrackEventkeys.NC_PROMO_DETAIL);
     }
 
     @Override
@@ -111,7 +111,11 @@ public class PromoDetailFragment extends BaseFragment {
                             renderPromoDetail();
                             setCartSummary(promoDetailApiResponseContentApiResponse.cartSummary);
                             updateUIForCartInfo();
-                            trackEvent(TrackingAware.PROMO_DETAIL_SHOWN, null);
+                            HashMap<String, String> map = new HashMap<>();
+                            if(!TextUtils.isEmpty(mPromoDetail.getPromoName())){
+                                map.put(TrackEventkeys.PROMO_NAME, mPromoDetail.getPromoName());
+                            }
+                            trackEvent(TrackingAware.PROMO_DETAIL_SHOWN, map);
                         } else {
                             handler.sendEmptyMessage(promoDetailApiResponseContentApiResponse.status,
                                     promoDetailApiResponseContentApiResponse.message, true);

@@ -7,71 +7,68 @@ public interface TrackingAware {
 
     //Start Activity
     String ENTRY_PAGE_SHOWN = "EntryPage.Shown";
-    String ENTRY_PAGE_SKIP_BUTTON_CLICKED = "EntryPage.Skip Button Clicked";
-    String ENTRY_PAGE_LOGIN_CLICKED = "EntryPage.Login Button Clicked";
-    String ENTRY_PAGE_SIGNUP_CLICKED = "EntryPage.Signup Button Clicked";
+    String ENTRY_PAGE_SKIP_BUTTON_CLICKED = "EntryPage.Skip Clicked";
+    String ENTRY_PAGE_LOGIN_CLICKED = "EntryPage.Login Clicked";
+    String ENTRY_PAGE_SIGNUP_CLICKED = "EntryPage.Signup Clicked";
 
     //Home Screen topnav
-    String COMMUNICATION_HUB_CLICKED = "MyAccount.CommunicationHubClicked";
-    String LOGIN_CLICKED = "Login Clicked";
-    String REGISTRATION_CLICKED = "Sign up Clicked";
-    String HOME_CHANGE_CITY = "Change Your Location Clicked";
-    String RATE_APP_CLICKED = "Rate This App Clicked";
-    String MENU_CLICKED = "Menu.Clicked";
+    String COMMUNICATION_HUB_SHOWN = "CommunicationHub.Shown";
+    String LOGIN_CLICKED = "Login.Clicked";
+    String HOME_CHANGE_CITY = "Change Your Location.Clicked";
+    String RATE_APP_CLICKED = "Rate Our App.Clicked";
 
-    String DISCOUNT_SHOWN = "Discount Page Shown";
+    String DISCOUNT_SHOWN = "Discounts Page.Shown";
+    String SEARCH_SHOWN = "Search Page.Shown";
 
     //change city dialog
-    String CHANGE_CITY_POSSITIVE_BTN_CLICKED = "Change Your City. Change City Clicked";
-    String CHANGE_CITY_SHOWN = "Change Your City.Shown";
-    String CHANGE_CITY_CLICKED = "Change Your City.Change City Clicked";
+    String CHANGE_CITY_SHOWN = "Select City.Shown";
+    String CHANGE_CITY_CLICKED = "Select City.Continue";
 
     //login and register
-    String LOGIN_SHOWN = "Login.Login Page Shown";
-    String LOGIN_BTN_CLICKED = "Login.Login Button Clicked";
-    String LOGIN_FAILED = "Login.Login Failed";
+    String LOGIN_SHOWN = "Login Page.Shown";
+    String LOGIN_BTN_CLICKED = "Login Button.Clicked";
+    String LOGIN_FAILED = "Login Failed";
     String SHOW_PASSWORD_ENABLED = "Show Password Enabled";
     String LOGIN_REMEMBER_ME_ENABLED = "Login.Remember Me Enabled";
     String FORGOT_PASSWORD_CLICKED = "Login.Forgot PassWord Clicked";
-    String NEW_USER_REGISTER_CLICKED = "Login.New User Register Clicked";
+    //String NEW_USER_REGISTER_CLICKED = "Login.New User Register Clicked";
     String FORGOT_PASSWORD_DIALOG_SHOWN = "Forgot Password.Dialog Shown";
     String FORGOT_PASSWORD_EMAIL_CLICKED = "Forgot Password.Email New Password Clicked";
     String REGISTRATION_PAGE_SHOWN = "Registration Page.Shown";
     String PROMO_MAILER_ENABLED = "Promotional Mailer Enabled";
-    String REGISTER_BTN_CLICK = "Registration Page.Register Clicked";
-    String REGISTRATION_FAILED = "Registration Page. Failed";
+    String REGISTER_BTN_CLICK = "SignUp Page.SignUp Clicked";
+    String REGISTRATION_FAILED = "SignUp Page. Failed";
 
 
     //Account
-    String MY_ACCOUNT_CLICKED = "My Account.My Account Clicked";
-    String MY_ACCOUNT_SHOWN = "MyAccount.My Account Shown";
-    String MY_ORDER_CLICKED = "My Orders Clicked";
-    String MY_ORDER_SHOWN = "My Orders Shown";
-    String MY_ORDER_ITEM_CLICKED = "My Orders Item Clicked";
-    String MY_ACCOUNT_UPDATE_PROFILE_CLICKED = "MyAccount.Update Profile Clicked";
+    String MY_ACCOUNT_CLICKED = "My Account.Clicked";
+    String MY_ACCOUNT_SHOWN = "My Account.Shown";
+    String MY_ORDER_CLICKED = "My Orders.Clicked";
+    String MY_ORDER_SHOWN = "My Orders.Shown";
+    String MY_ORDER_ITEM_CLICKED = "My Orders Item.Clicked";
+    String MY_ACCOUNT_UPDATE_PROFILE_CLICKED = "Edit Profile.Clicked";
 
 
     //update_profile
-    String UPDATE_PROFILE_SHOWN = "MyAccount.Profile Shown";
-    String UPDATE_PROFILE_GET_FAILED = "MyAccount.Update Profile Failed";
-    String UPDATE_PROFILE_SUBMIT_BTN_CLICKED = "MyAccount.Profile Update Clicked";
+    String UPDATE_PROFILE_SHOWN = "Update Profile.Shown";
+    String UPDATE_PROFILE_GET_FAILED = "Update Profile.Failed";
+    String UPDATE_PROFILE_SUBMIT_BTN_CLICKED = "Update Profile.Clicked";
     //otp dialog
-    String OTP_DIALOG_SHOWN = "MyAccount.OTPDialog Shown";
-    String OTP_SUBMIT_BTN_CLICKED = "MyAccount.OTP Submit Clicked";
+    String OTP_DIALOG_SHOWN = "OTPDialog.Shown";
+    String OTP_SUBMIT_BTN_CLICKED = "OTP Submit.Clicked";
 
     //change password
-    String CHANGE_PASSWORD_CLICKED = "MyAccount.Change Password Clicked";
-    String CHANGE_PASSWORD_SHOWN = "MyAccount.Change Password Screen Shown";
-    String CHANGE_PASSWORD_FAILED = "MyAccount.Change Password Update Clicked";
+    String CHANGE_PASSWORD_CLICKED = "Change Password.Clicked";
+    String CHANGE_PASSWORD_SHOWN = "Change Password.Shown";
+    String CHANGE_PASSWORD_FAILED = "Change Password.Update";
 
     //wallet
-    String MY_ACCOUNT_WALLET_CLICKED = "MyAccount.Wallet Activity Clicked";
-    String WALLET_SUMMARY_SHOWN = "MyAccount.Wallet Summary Shown";
-    String WALLET_ACTIVITY_FOR_MONTH_CLICKED = "MyAccount.Wallet Activity For Month Clicked";
+    String MY_ACCOUNT_WALLET_CLICKED = "My Wallet Activity.Clicked";
+    String WALLET_SUMMARY_SHOWN = "My Wallet Summary.Shown";
 
     //Address
-    String DELIVERY_ADDRESS_CLICKED = "Delivery Addresses Clicked";
-    String DELIVERY_ADDRESS_SHOWN = "Delivery Addresses Shown";
+    String DELIVERY_ADDRESS_CLICKED = "Delivery Addresses.Clicked";
+    String DELIVERY_ADDRESS_SHOWN = "Delivery Addresses.Shown";
     String NEW_ADDRESS_CLICKED = "Address New Clicked";
     String ENABLE_DEFAULT_ADDRESS = "Make This Default Address Enabled";
     String NEW_ADDRESS_FAILED = "New Address Add Failed";
@@ -83,19 +80,19 @@ public interface TrackingAware {
     String UPDATE_PIN_CLICKED = "MyAccount.Change Pin Update Clicked";
 
     //topnav and home page
-    String SHOPPING_LIST_ICON_CLICKED = "Shopping Lists Icon Clicked";
-    String SMART_BASKET_ICON_CLICKED = "Smart Basket Icon Clicked";
+    String SHOPPING_LIST_ICON_CLICKED = "Shopping Lists.Clicked";
+    String SMART_BASKET_ICON_CLICKED = "Smart Basket.Clicked";
 
     //logout
-    String LOG_OUT_ICON_CLICKED = "Logout Icon Clicked";
+    String LOG_OUT_ICON_CLICKED = "Logout.Clicked";
 
     //active and past order
     String ORDER_SUMMARY_SHOWN = "Order.Order Details Shown";
-    String ORDER_ITEMS_TAB_CLICKED = "Order.View Items Clicked";
-    String SHOP_FROM_PAST_ORDER = "Shop from This Order";
+    String ORDER_ITEMS_TAB_CHANGED = "Order Items.Tab Changed";
+    String SHOP_FROM_PAST_ORDER = "Shop from This Order Shown";
 
     //shopping list
-    String SHOP_LST_SHOWN = "ShoppingList.All Lists Shown";
+    String SHOP_LST_SHOWN = "ShoppingList.All Shown";
     String SHOP_LST_CREATED = "ShoppingList.Created";
     String SHOP_LST_NAME_CHANGED = "ShoppingList.Name Changed";
     String SHOP_LST_DELETED = "ShoppingList.Deleted";
@@ -104,7 +101,7 @@ public interface TrackingAware {
 
     //main menu
     String MENU_SHOWN = "Menu.Shown";
-    String MENU_ITEM_CLICKED = "Menu.Item Clicked";
+    String MENU_ITEM_CLICKED = "Menu Item.Clicked";
 
     // Dynamic Page
     String ITEM_CLICKED = "Item Clicked";
@@ -115,29 +112,31 @@ public interface TrackingAware {
     String HOME_PAGE_ITEM_CLICKED = "HomePage.Item Clicked";
     String SEARCH = "Search";
 
-    String DISCOUNT_TAB_CHANGED = "Discount Tab Changed";
+    String DISCOUNT_TAB_CHANGED = "Discounts Tab.Changed";
     //product listing page
-    String PRODUCT_LIST_SHOWN = "Product Listing.Shown";
-    String PRODUCT_LIST_TAB_CHANGED = "Product List.Tab Changed";
-    String PRODUCT_LIST_HEADER = "Product List Header";
-    String PRODUCT_DETAIL_SHOWN = "Product Detail Shown";
-    String PRODUCT_LIST_HEADER_CLICKED = "Product Listing.Header Clicked";
-
+    String PRODUCT_LIST_SHOWN = "Product List.Shown";
+    String PRODUCT_LIST_TAB_CHANGED = "Product List Tab.Changed";
+    String PRODUCT_LIST_HEADER = "Spinner";
+    String PRODUCT_DETAIL_SHOWN = "PD.Shown";
+    String PRODUCT_LIST_HEADER_CLICKED = "Spinner.Clicked";
+    String PRODUCT_LIST_FILTER_CLICKED = "Filter.Clicked";
+    String TAB_CHANGED = "Tab Changed";
     //promo
-    String PROMO_DETAIL_SHOWN = "Promo.Promo Detail Shown";
-    String PROMO_SET_PRODUCTS_SHOWN = "Promo.Promo Set Products Shown";
-    String PROMO_CATEGORY_LIST = "Promo.Category List";
-    String PROMO_REDEEMED = "Promo.Promo Redeemed";
+    String PROMO_DETAIL_SHOWN = "Promo Detail.Shown";
+    String PROMO_SET_PRODUCTS_SHOWN = "Promo Set.Shown";
+    String PROMO_CATEGORY_LIST = "Promo Category.Shown";
+    String PROMO_REDEEMED = "Promo.Redeemed";
 
 
     //basket
-    String BASKET_INCREMENT = "Basket.Increment Clicked";
-    String BASKET_ADD = "Basket.add Clicked";
-    String BASKET_DECREMENT = "Basket.Decrement Clicked";
-    String BASKET_REMOVE = "Basket.Remove Clicked";
-    String BASKET_EMPTY_CLICKED = "Basket.Empty Clicked";
-    String BASKET_VIEW_CLICKED = "Basket.View Clicked";
-    String BASKET_VIEW_SHOWN = "Basket.View Shown";
+    String BASKET_INCREMENT = "Basket.Increment";
+    String BASKET_ADD = "Basket.add";
+    String BASKET_DECREMENT = "Basket.Decrement";
+    String BASKET_REMOVE = "Basket.Remove Item";
+    String BASKET_EMPTY_CLICKED = "Basket.Empty";
+    String BASKET_VIEW_CLICKED = "Basket.Clicked";
+    String BASKET_VIEW_SHOWN = "Basket.Shown";
+    String BASKET_CHECKOUT_CLICKED = "Basket.Checkout Clicked";
 
     //subCat
     String CATEGORY_LANDING_SHOWN = "Category.Landing Shown";
@@ -146,7 +145,7 @@ public interface TrackingAware {
     String SMART_BASKET = "SmartBasket";
     String SHOPPING_LIST = "ShoppingList";
     String SMART_BASKET_SUMMARY_SHOWN = "SmartBasket.Summary Shown";
-    String ADD_TO_SHOPPING_LIST = "Add To ShoppingList";
+    String ADD_TO_SHOPPING_LIST = "Add To ShoppingList.Clicked";
 
     //product page dialog
     String FILTER_APPLIED = "Filter.Applied";
@@ -158,7 +157,6 @@ public interface TrackingAware {
     String CHECKOUT_CREATE_ADDRESS_SHOWN = "Checkout.Address Shown";
     String CHECKOUT_ADDRESS_CREATED = "Checkout.Address Created";
     String CHECKOUT_SLOT_SHOWN = "Checkout.Slot Shown";
-    String CHECKOUT_DEFAULT_SLOT_SELECTED = "Checkout.Default.Slot Selected";
     String CHECKOUT_SLOT_SELECTED = "Checkout.Slot Selected";
     String CHECKOUT_PAYMENT_SHOWN = "Checkout.Payment Shown";
     String CHECKOUT_VOUCHER_APPLIED = "Checkout.Voucher Applied";
@@ -168,7 +166,7 @@ public interface TrackingAware {
     String CHECKOUT_PAYMENT_GATEWAY_ABORTED = "Checkout.Payment Gateway Aborted";
     String CHECKOUT_PLACE_ORDER_CLICKED = "Checkout.Place Order Clicked";
     String CHECKOUT_PLACE_ORDER_AMOUNT_MISMATCH = "Checkout.Place Order Amount Mismatch";
-    String CHECKOUT_ORDER_COMPLETE = "Checkout.Order Complete";
+    String CHECKOUT_ORDER_COMPLETE = "Checkout.Order Completed";
     String PLACE_ORDER = "placeorder";
 
     String CHECKOUT_ADDRESS_CLICKED_CONTI = "Checkout.Address Continue Clicked ";
@@ -178,9 +176,14 @@ public interface TrackingAware {
 
     //thank you
     String THANK_YOU_PAGE_SHOWN = "Checkout.Thank You Page Shown";
-    String BASKET_ADD_PROMO_BUNDLE = "Basket.Add Promo Bundle";
+    String BASKET_ADD_PROMO_BUNDLE = "Promo.Add Bundle";
+
+    //eVoucher
+    String EVOUCHER_SHOWN = "EVocuher.Shown";
 
     String NOTIFICATION_ERROR = "Notification Error";
+
+    String FLAT_PAGE_SHOWN = "Flat Page Shown";
 
     void trackEvent(String eventName, Map<String, String> eventAttribs,
                     String source, String sourceValue, boolean isCustomerValueIncrease,

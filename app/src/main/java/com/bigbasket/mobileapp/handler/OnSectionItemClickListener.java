@@ -270,12 +270,12 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
 
     private void logClickEvent() {
         if (section == null) return;
+        setNc();
         if (section.getSectionType().equals(Section.BANNER)) {
             logBannerEvent();
         } else if (screenName != null) {
             logItemClickEvent();
         }
-        setNc();
     }
 
     private void setNc() {
@@ -292,9 +292,8 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                     ncBuilder.append(SectionManager.DISCOUNT_PAGE);
                     break;
                 default:
-                    ncBuilder.append(TrackEventkeys.SCREEN);
                     if (!TextUtils.isEmpty(screenName)) {
-                        ncBuilder.append(".").append(screenName);
+                        ncBuilder.append(screenName);
                     }
                     break;
             }
@@ -302,6 +301,9 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
             ncBuilder.append(TrackEventkeys.SCREEN);
         }
         if (section != null) {
+//            if(!TextUtils.isEmpty(section.getSectionType()) && section.getSectionType().equal(Section.BANNER))
+//                ncBuilder.append(".").append(section.getSectionType());
+
             if (section.getTitle() != null &&
                     !TextUtils.isEmpty(section.getTitle().getText())) {
                 ncBuilder.append(".").append(section.getTitle().getText());
@@ -313,8 +315,21 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
             if (sectionItem.getTitle() != null &&
                     !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
                 ncBuilder.append(".").append(sectionItem.getTitle().getText());
+            } else if(sectionItem.hasImage() && !TextUtils.isEmpty(sectionItem.getImageName())) {
+                ncBuilder.append(".").append(sectionItem.getImageName().replaceAll("[.]\\w+", ""));
             } else if (sectionItem.getDescription() != null && !TextUtils.isEmpty(sectionItem.getDescription().getText())) {
                 ncBuilder.append(".").append(sectionItem.getDescription().getText());
+            } else if(sectionItem.getDestinationInfo()!=null &&
+                    sectionItem.getDestinationInfo().getDestinationSlug().contains("&slug=")){
+                String typeAndSlug = sectionItem.getDestinationInfo().getDestinationSlug();
+                int indexOfSlug = typeAndSlug.indexOf("&slug=");
+                String slug = typeAndSlug.substring(indexOfSlug + 6);
+                if(slug.contains("&")){
+                    int indexOfNextParam  = slug.indexOf("&");
+                    slug = slug.substring(0, indexOfNextParam);
+                }
+                if(!TextUtils.isEmpty(slug))
+                    ncBuilder.append(".").append(slug);
             }
         }
         if (context instanceof Fragment && context instanceof AnalyticsNavigationContextAware) {
@@ -342,7 +357,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
     }
 
     private void logBannerEvent() {
-        if (sectionItem == null || sectionItem.getDestinationInfo() != null) return;
+        if (sectionItem == null || sectionItem.getDestinationInfo() == null) return;
         int index = 0;
         for (int i = 0; i < section.getSectionItems().size(); i++) {
             if (section.getSectionItems().get(i) == sectionItem)
@@ -360,6 +375,8 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
         HashMap<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.BANNER_ID, String.valueOf(index));
         eventAttribs.put(TrackEventkeys.BANNER_SLUG, bannerName);
+        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX,
+                ((ActivityAware) context).getCurrentActivity().getNextScreenNavigationContext());
         ((TrackingAware) context).trackEvent(getAnalyticsFormattedScreeName(), eventAttribs);
     }
 
@@ -374,10 +391,12 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
 
     private void logItemClickEvent() {
         HashMap<String, String> eventAttribs = new HashMap<>();
-        eventAttribs.put(TrackEventkeys.SECTION_TYPE, getSectionName());
+        //eventAttribs.put(TrackEventkeys.SECTION_TYPE, getSectionName());
         String itemName = getSectionItemName();
         if (!TextUtils.isEmpty(itemName))
             eventAttribs.put(TrackEventkeys.SECTION_ITEM, getSectionItemName());
+        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX,
+                ((ActivityAware) context).getCurrentActivity().getNextScreenNavigationContext());
         if(screenName!=null && screenName.equals(SectionManager.DISCOUNT_PAGE))
             ((TrackingAware) context).trackEvent(getAnalyticsFormattedScreeName(), eventAttribs,
                     null, null, false, true);

@@ -326,7 +326,10 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
         } catch (IllegalArgumentException e) {
         }
 
-        trackEvent(TrackingAware.PROMO_SET_PRODUCTS_SHOWN, null);
+        HashMap<String, String> map = new HashMap<>();
+        if(!TextUtils.isEmpty(getArguments().getString(Constants.PROMO_NAME)))
+            map.put(TrackEventkeys.PROMO_NAME, getArguments().getString(Constants.PROMO_NAME));
+        trackEvent(TrackingAware.PROMO_SET_PRODUCTS_SHOWN, map);
     }
 
     private void notifyPromoProducts(ArrayList<Product> products, String baseImgUrl) {

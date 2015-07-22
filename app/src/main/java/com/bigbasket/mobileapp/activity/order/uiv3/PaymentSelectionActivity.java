@@ -131,6 +131,7 @@ public class PaymentSelectionActivity extends BackButtonActivity {
                 onPlaceOrderAction();
                 HashMap<String, String> map = new HashMap<>();
                 map.put(TrackEventkeys.PAYMENT_MODE, mSelectedPaymentMethod);
+                map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
                 trackEvent(TrackingAware.CHECKOUT_PLACE_ORDER_CLICKED, map, null, null, false, true);
             }
         });

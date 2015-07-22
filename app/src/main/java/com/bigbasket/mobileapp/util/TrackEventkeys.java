@@ -123,7 +123,7 @@ public final class TrackEventkeys {
     public static final String ACCOUNT = NAVIGATION_CTX_MY_ACCOUNT;
     public static final String NC_ORDER_DETAIL = "order-detail";
     public static final String NC_SPLASH_SCREEN = "splash";
-    public static final String NC_ENTRY_SCREEN = "entry";
+    public static final String NC_ENTRY_SCREEN = "entry-page";
     public static final String NC_TUTORIAL_SCREEN = "tutorial";
     public static final String NC_LOGIN_SCREEN = "login";
     public static final String NC_CITY_SELECTION_SCREEN = "city-selection";
@@ -134,12 +134,17 @@ public final class TrackEventkeys {
     public static final String NC_PROMO_PRODUCT_LISTING = "promo-set";
     public static final String NC_ACCOUNT_ADDRESS = "account-address";
     public static final String CO_INVOICE = "co.invoice";
+    public static final String TERM = "term";
     public static final String PS_VOICE = "ps.voice";
     public static final String PS_SCAN = "ps.scan";
-    public static final String TERM = "term";
-    public static final String PS_VOICE_PL = "ps.voice.pl";
-    public static final String PS_SCAN_PL = "ps.scan.pl";
+    public static final String PS = "ps";
     public static final String PS_C_PL = "ps.c.pl";
+    public static final String URL = "url";
+    public static final String FILTER_ON = "filter_on";
+    public static final String SORT_ON = "sort_on";
+    public static final String SELECTED_SLOT = "selected_slot";
+    public static final String PROMO_NAME = "promo_name";
+    public static final String ITEM_TAB = "order_item";
 
     private TrackEventkeys() {
     }

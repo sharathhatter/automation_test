@@ -158,7 +158,13 @@ public class ShowCartActivity extends BackButtonActivity {
                 cartItemHeaderList.add(cartItems.get(i));
                 if (cartItems.get(i).getPromoAppliedType() == 2 ||
                         cartItems.get(i).getPromoAppliedType() == 3) {
-                    trackEvent(TrackingAware.PROMO_REDEEMED, null);
+                    HashMap<String, String> map = new HashMap<>();
+                    if(isCurrentPageRequest){
+                        map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                    }else {
+                        map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentNavigationContext());
+                    }
+                    trackEvent(TrackingAware.PROMO_REDEEMED, map);
                 }
             }
         }
@@ -190,6 +196,9 @@ public class ShowCartActivity extends BackButtonActivity {
         layoutCheckoutFooter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                HashMap<String, String> map = new HashMap<>();
+                map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                trackEvent(TrackingAware.BASKET_CHECKOUT_CLICKED, map);
                 if (getCartSummary() != null && getCartSummary().getNoOfItems() > 0) {
                     if (AuthParameters.getInstance(getCurrentActivity()).isAuthTokenEmpty()) {
                         launchLogin(TrackEventkeys.NAVIGATION_CTX_SHOW_BASKET, NavigationCodes.GO_TO_BASKET);

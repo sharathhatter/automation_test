@@ -67,6 +67,8 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         getAppData(savedInstanceState);
+        trackEvent(TrackingAware.HOME_PAGE_SHOWN, null);
+        setNextScreenNavigationContext(TrackEventkeys.HOME);
     }
 
     private void homePageGetter(Bundle savedInstanceState) {
@@ -83,15 +85,14 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
     @Override
     public void onBackResume() {
         super.onBackResume();
-        trackEvent(TrackingAware.HOME_PAGE_SHOWN, null);
+        // removed home event from here
         setNextScreenNavigationContext(TrackEventkeys.HOME);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        trackEvent(TrackingAware.HOME_PAGE_SHOWN, null);
-        setNextScreenNavigationContext(TrackEventkeys.HOME);
+        // removed home event from here
         AppUpdateHandler.AppUpdateData appUpdateData = AppUpdateHandler.isOutOfDate(getActivity());
         if (appUpdateData != null && !TextUtils.isEmpty(appUpdateData.getAppExpireBy())) {
             showUpgradeAppDialog(appUpdateData.getAppExpireBy(), appUpdateData.getAppUpdateMsg(),

@@ -36,6 +36,7 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -164,7 +165,9 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
 
     @Override
     public void onOrderItemClicked(Order order) {
-        trackEvent(TrackingAware.MY_ORDER_ITEM_CLICKED, null);
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+        trackEvent(TrackingAware.MY_ORDER_ITEM_CLICKED, map);
         if (mIsInShopFromPreviousOrderMode) {
             onShopFromThisOrder(order.getOrderNumber());
         } else {

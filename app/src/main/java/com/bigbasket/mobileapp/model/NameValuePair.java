@@ -4,6 +4,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 
+import com.bigbasket.mobileapp.util.Constants;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -46,7 +48,8 @@ public class NameValuePair implements Parcelable {
         StringBuilder ncBuilder = new StringBuilder("pl");
         for (NameValuePair nameValuePair : nameValuePairs) {
             if (nameValuePair.getName() == null
-                    || nameValuePair.getValue() == null) continue;
+                    || nameValuePair.getValue() == null || nameValuePair.getName().equals(Constants.FILTER_ON) ||
+                    nameValuePair.getName().equals(Constants.SORT_ON)) continue;
             if (nameValuePair.getName().equalsIgnoreCase("is_express")) {
                 ncBuilder.append(".is_express");
             } else {

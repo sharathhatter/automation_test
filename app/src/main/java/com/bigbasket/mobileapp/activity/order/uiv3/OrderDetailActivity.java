@@ -84,7 +84,9 @@ public class OrderDetailActivity extends TabActivity {
         if (orderInvoice == null) return;
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.ORDER_ID, orderInvoice.getOrderNumber());
-        trackEvent(TrackingAware.ORDER_ITEMS_TAB_CLICKED, eventAttribs);
+        eventAttribs.put(Constants.TAB_NAME, TrackEventkeys.ITEM_TAB);
+        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+        trackEvent(TrackingAware.ORDER_ITEMS_TAB_CHANGED, eventAttribs);
     }
 
 

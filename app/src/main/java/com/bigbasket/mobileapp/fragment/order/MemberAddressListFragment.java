@@ -197,7 +197,9 @@ public class MemberAddressListFragment extends BaseFragment implements AddressSe
         layoutCheckoutFooter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                trackEvent(TrackingAware.CHECKOUT_ADDRESS_CLICKED_CONTI, null, null, null, false, true);
+                HashMap<String, String> map = new HashMap<>();
+                map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                trackEvent(TrackingAware.CHECKOUT_ADDRESS_CLICKED_CONTI, map, null, null, false, true);
                 if (addressId != null) {
                     createPotentialOrder(addressId);
                 } else if (memberAddressListAdapter.getSelectedAddress() != null) {

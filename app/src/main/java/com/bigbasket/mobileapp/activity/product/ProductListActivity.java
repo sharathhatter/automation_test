@@ -38,6 +38,7 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.product.FilterOptionCategory;
+import com.bigbasket.mobileapp.model.product.FilterOptionItem;
 import com.bigbasket.mobileapp.model.product.FilteredOn;
 import com.bigbasket.mobileapp.model.product.Option;
 import com.bigbasket.mobileapp.model.product.Product;
@@ -58,6 +59,8 @@ import com.bigbasket.mobileapp.view.uiv3.BBTab;
 import com.bigbasket.mobileapp.view.uiv3.HeaderSpinnerView;
 import com.google.gson.Gson;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
+
+import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -113,12 +116,6 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         mArrayTabTypeAndFragmentPosition = null;
 
         HashMap<String, String> paramMap = NameValuePair.toMap(mNameValuePairs);
-
-//        if (paramMap != null && paramMap.containsKey(Constants.TYPE)) {
-//            // Using separate map since nc can be added by trackEvent which we don't want in paramMap
-//            HashMap<String, String> eventAttribs = new HashMap<>(paramMap);
-//            trackEvent(TrackingAware.PRODUCT_LIST_SHOWN, eventAttribs);
-//        }
         setNextScreenNavigationContext(NameValuePair.buildNavigationContext(mNameValuePairs));
         new ProductListTask<>(this, paramMap).startTask();
     }
@@ -287,7 +284,8 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
             @Override
             public void onPageSelected(int position) {
                 HashMap<String, String> eventAttribs = new HashMap<>();
-                eventAttribs.put(Constants.TYPE, productTabInfos.get(position).getTabType());
+                eventAttribs.put(Constants.TAB_NAME, productTabInfos.get(position).getTabType());
+                eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
                 trackEvent(TrackingAware.PRODUCT_LIST_TAB_CHANGED, eventAttribs);
             }
 
@@ -348,8 +346,23 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     public void logProductListingShownEvent(String mTabType) {
         if (mTabType == null) return;
         HashMap<String, String> map = new HashMap<>();
-        map.put(Constants.TYPE, mTabType);
+        map.put(Constants.TAB_NAME, mTabType);
         trackEvent(TrackingAware.PRODUCT_LIST_SHOWN, map);
+    }
+
+    private void getFilterAndSortBy(HashMap<String, String> map){
+        if(mNameValuePairs == null)  return;
+        for (NameValuePair nameValuePair : mNameValuePairs) {
+            if (nameValuePair.getName() == null || nameValuePair.getValue() == null) return;
+
+            if(nameValuePair.getName().equals(Constants.FILTER_ON)){
+                //JSONArray jsonArray = new Gson().toJson(nameValuePair.getValue())
+                map.put(TrackEventkeys.FILTER_ON, new Gson().toJson(nameValuePair.getValue()));
+            }else if(nameValuePair.getName().equals(Constants.SORT_ON)){
+                map.put(TrackEventkeys.SORT_ON, nameValuePair.getValue());
+            }
+        }
+
     }
 
     private Bundle getBundleForProductListFragment(ProductTabInfo productTabInfo,
@@ -531,7 +544,8 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                     public void onClick(DialogInterface dialog, int which) {
                         int selectedPosition = ((AlertDialog) dialog).getListView().getCheckedItemPosition();
                         if (selectedPosition != ListView.INVALID_POSITION) {
-                            applySort(mSortOptions.get(selectedPosition).getSortSlug());
+                            applySort(mSortOptions.get(selectedPosition).getSortSlug(),
+                                    mSortOptions.get(selectedPosition).getSortName());
                         }
                     }
                 })
@@ -548,6 +562,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     }
 
     private void onFilterScreenRequested() {
+        trackEvent(TrackingAware.PRODUCT_LIST_FILTER_CLICKED, null);
         Intent sortFilterIntent = new Intent(this, FilterActivity.class);
         sortFilterIntent.putExtra(Constants.FILTER_OPTIONS, mFilterOptionCategories);
         sortFilterIntent.putExtra(Constants.FILTERED_ON, mFilteredOns);
@@ -592,9 +607,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         loadProductTabs();
     }
 
-    private void applySort(String sortedOn) {
-
-
+    private void applySort(String sortedOn, String mSortedOnName) {
         if (sortedOn == null || sortedOn.equals(mSortedOn)) return;
         NameValuePair sortedOnNameValuePair = getSortedOnNameValuePair();
         if (sortedOnNameValuePair == null) {
@@ -603,13 +616,14 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         } else {
             sortedOnNameValuePair.setValue(sortedOn);
         }
-        trackSortByEvent(sortedOn);
+        trackSortByEvent(mSortedOnName);
         loadProductTabs();
     }
 
     private void trackSortByEvent(String sortedOn){
         HashMap<String, String> map = new HashMap<>();
         map.put(TrackEventkeys.NAME, sortedOn);
+        map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
         trackEvent(TrackingAware.SORT_BY, map);
     }
 
@@ -639,11 +653,28 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         } else {
             Map<String, String> eventAttribs = new HashMap<>();
             for (FilteredOn filteredOn : filteredOnArrayList) {
-                eventAttribs.put(filteredOn.getFilterSlug(), UIUtil.strJoin(filteredOn.getFilterValues(), ","));
+                eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                eventAttribs.put(filteredOn.getFilterSlug(), UIUtil.strJoin(getFilterDisplayName(filteredOn), ","));
                 trackEvent(TrackingAware.FILTER_APPLIED, eventAttribs,
-                        TrackEventkeys.PRODUCT_LISTING_SCREEN, null, false);
+                        null, null, false);
             }
         }
+    }
+
+    private ArrayList<String> getFilterDisplayName(FilteredOn filteredOn){
+        ArrayList<String> filterDisplayNameArrayList = new ArrayList<>();
+        for(FilterOptionCategory filterOptionCategory : mFilterOptionCategories){
+            if(filterOptionCategory.getFilterSlug().equals(filteredOn.getFilterSlug())){
+                for(FilterOptionItem filterOptionItem : filterOptionCategory.getFilterOptionItems()) {
+                    for(String filterValue : filteredOn.getFilterValues()){
+                        if(filterOptionItem.getFilterValueSlug().equals(filterValue)){
+                            filterDisplayNameArrayList.add(filterOptionItem.getDisplayName());
+                        }
+                    }
+                }
+            }
+        }
+        return filterDisplayNameArrayList;
     }
 
     @Override
