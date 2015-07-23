@@ -115,9 +115,15 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                 break;
             case DestinationInfo.FLAT_PAGE:
                 if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
-                    Intent intent = new Intent(((ActivityAware) context).getCurrentActivity(), BackButtonActivity.class);
-                    intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
-                    intent.putExtra(Constants.WEBVIEW_URL, destinationInfo.getDestinationSlug());
+                    Intent intent;
+                    if (destinationInfo instanceof HelpDestinationInfo) {
+                        intent = new Intent(((ActivityAware) context).getCurrentActivity(), SectionHelpActivity.class);
+                        intent.putExtra(Constants.SECTION_INFO, (Parcelable) section);
+                        intent.putExtra(Constants.SECTION_ITEM, (Parcelable) sectionItem);
+                    } else {
+                        intent = new Intent(((ActivityAware) context).getCurrentActivity(), BackButtonActivity.class);
+                        intent.putExtra(Constants.WEBVIEW_URL, destinationInfo.getDestinationSlug());
+                    }
                     intent.putExtra(Constants.WEBVIEW_TITLE, sectionItem.getTitle() != null ?
                             sectionItem.getTitle().getText() : null);
                     ((ActivityAware) context).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
@@ -312,21 +318,21 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
             if (sectionItem.getTitle() != null &&
                     !TextUtils.isEmpty(sectionItem.getTitle().getText())) {
                 ncBuilder.append(".").append(sectionItem.getTitle().getText());
-            } else if(sectionItem.hasImage() && !TextUtils.isEmpty(sectionItem.getImageName())) {
+            } else if (sectionItem.hasImage() && !TextUtils.isEmpty(sectionItem.getImageName())) {
                 ncBuilder.append(".").append(sectionItem.getImageName().replaceAll("[.]\\w+", ""));
             } else if (sectionItem.getDescription() != null && !TextUtils.isEmpty(sectionItem.getDescription().getText())) {
                 ncBuilder.append(".").append(sectionItem.getDescription().getText());
-            } else if(sectionItem.getDestinationInfo()!=null &&
+            } else if (sectionItem.getDestinationInfo() != null &&
                     !TextUtils.isEmpty(sectionItem.getDestinationInfo().getDestinationSlug()) &&
-                    sectionItem.getDestinationInfo().getDestinationSlug().contains(Constants.SLUG_PARAM)){
+                    sectionItem.getDestinationInfo().getDestinationSlug().contains(Constants.SLUG_PARAM)) {
                 String typeAndSlug = sectionItem.getDestinationInfo().getDestinationSlug();
                 int indexOfSlug = typeAndSlug.indexOf(Constants.SLUG_PARAM);
                 String slug = typeAndSlug.substring(indexOfSlug + Constants.SLUG_PARAM.length());
-                if(slug.contains("&")){
-                    int indexOfNextParam  = slug.indexOf("&");
+                if (slug.contains("&")) {
+                    int indexOfNextParam = slug.indexOf("&");
                     slug = slug.substring(0, indexOfNextParam);
                 }
-                if(!TextUtils.isEmpty(slug))
+                if (!TextUtils.isEmpty(slug))
                     ncBuilder.append(".").append(slug);
             }
         }
@@ -395,7 +401,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
             eventAttribs.put(TrackEventkeys.SECTION_ITEM, getSectionItemName());
         eventAttribs.put(TrackEventkeys.NAVIGATION_CTX,
                 ((ActivityAware) context).getCurrentActivity().getNextScreenNavigationContext());
-        if(screenName!=null && screenName.equals(SectionManager.DISCOUNT_PAGE))
+        if (screenName != null && screenName.equals(SectionManager.DISCOUNT_PAGE))
             ((TrackingAware) context).trackEvent(getAnalyticsFormattedScreeName(), eventAttribs,
                     null, null, false, true);
         else

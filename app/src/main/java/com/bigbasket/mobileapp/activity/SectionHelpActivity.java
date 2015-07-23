@@ -51,7 +51,7 @@ public class SectionHelpActivity extends BaseActivity {
                 break;
             case DestinationInfo.FLAT_PAGE:
                 bundle = new Bundle();
-                bundle.putString(Constants.WEBVIEW_URL, getIntent().getStringExtra(Constants.WEBVIEW_URL));
+                bundle.putString(Constants.WEBVIEW_URL, helpDestinationInfo.getDestinationSlug());
                 bundle.putString(Constants.WEBVIEW_TITLE, getIntent().getStringExtra(Constants.WEBVIEW_TITLE));
                 FlatPageFragment flatPageFragment = new FlatPageFragment();
                 flatPageFragment.setArguments(bundle);
