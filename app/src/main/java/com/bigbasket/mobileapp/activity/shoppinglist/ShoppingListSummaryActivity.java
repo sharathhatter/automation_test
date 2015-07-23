@@ -72,10 +72,6 @@ public class ShoppingListSummaryActivity extends BBActivity {
     @Override
     public void onResume() {
         super.onResume();
-        mShoppingListName = getIntent().getParcelableExtra(Constants.SHOPPING_LIST_NAME);
-        if (mShoppingListName == null) {
-            return;
-        }
         loadShoppingListSummary();
     }
 
@@ -115,7 +111,12 @@ public class ShoppingListSummaryActivity extends BBActivity {
             handler.sendOfflineError(true);
             return;
         }
-        if (mShoppingListName == null) return;
+        if (mShoppingListName == null) {
+            mShoppingListName = getIntent().getParcelableExtra(Constants.SHOPPING_LIST_NAME);
+        }
+        if (mShoppingListName == null) {
+            return;
+        }
         setTitle(null);
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
