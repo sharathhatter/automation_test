@@ -84,10 +84,6 @@
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" />
-        <activity
-            android:name=".activity.promo.FlatPageWebViewActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
 
         <!-- <activity android:name="com.luminous.pick.CustomGalleryActivity" > -->
         <!-- <intent-filter> -->

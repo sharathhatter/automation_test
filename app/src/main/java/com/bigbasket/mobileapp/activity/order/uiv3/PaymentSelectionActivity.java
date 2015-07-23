@@ -589,7 +589,8 @@ public class PaymentSelectionActivity extends BackButtonActivity {
                         }
                         if (placeOrderApiResponse.status.equals(Constants.OK)) {
                             postOrderCreation(placeOrderApiResponse.apiResponseContent.orders,
-                                    placeOrderApiResponse.apiResponseContent.addMoreLink);
+                                    placeOrderApiResponse.apiResponseContent.addMoreLink,
+                                    placeOrderApiResponse.apiResponseContent.addMoreMsg);
                         } else if (placeOrderApiResponse.errorType != null &&
                                 placeOrderApiResponse.errorType.equals(ApiErrorCodes.AMOUNT_MISMATCH_STR)) {
                             String paymentMethod = mSelectedPaymentMethod;
@@ -638,7 +639,8 @@ public class PaymentSelectionActivity extends BackButtonActivity {
                 });
     }
 
-    private void postOrderCreation(ArrayList<Order> orders, String addMoreLink) {
+    private void postOrderCreation(ArrayList<Order> orders, String addMoreLink,
+                                   String addMoreMsg) {
         if (orders == null || orders.size() == 0) return;
         for (Order order : orders) {
             HashMap<String, String> map = new HashMap<>();
@@ -658,15 +660,16 @@ public class PaymentSelectionActivity extends BackButtonActivity {
         VoucherApplied.clearFromPreference(this);
         PowerPayResponse.clearTxnDetail(this);
         ((CartInfoAware) getCurrentActivity()).markBasketDirty();
-        showOrderThankyou(orders, addMoreLink);
+        showOrderThankyou(orders, addMoreLink, addMoreMsg);
     }
 
-    private void showOrderThankyou(ArrayList<Order> orders, String addMoreLink) {
+    private void showOrderThankyou(ArrayList<Order> orders, String addMoreLink, String addMoreMsg) {
         setNextScreenNavigationContext(TrackEventkeys.CO_PAYMENT);
         Intent invoiceIntent = new Intent(this, OrderInvoiceActivity.class);
         invoiceIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_THANKYOU);
         invoiceIntent.putExtra(Constants.ORDERS, orders);
         invoiceIntent.putExtra(Constants.ADD_MORE_LINK, addMoreLink);
+        invoiceIntent.putExtra(Constants.ADD_MORE_MSG, addMoreMsg);
         startActivityForResult(invoiceIntent, NavigationCodes.GO_TO_HOME);
     }
 

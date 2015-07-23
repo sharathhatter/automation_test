@@ -40,7 +40,7 @@ public class DynamicScreenFragment extends BaseSectionFragment implements Dynami
         new GetDynamicPageTask<>(this, screenName, true, true).startTask();
     }
 
-    private void loadDynamicScreen() {
+    protected void loadDynamicScreen() {
         ViewGroup contentView = getContentView();
         SectionData sectionData = getSectionData();
         if (contentView == null || sectionData == null || sectionData.getSections() == null

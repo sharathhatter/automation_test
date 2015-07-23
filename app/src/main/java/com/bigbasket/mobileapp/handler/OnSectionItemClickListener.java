@@ -16,7 +16,6 @@ import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonWithBasketButtonActivity;
 import com.bigbasket.mobileapp.activity.product.DiscountActivity;
-import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListActivity;
 import com.bigbasket.mobileapp.fragment.DynamicScreenFragment;
 import com.bigbasket.mobileapp.fragment.product.CategoryLandingFragment;
@@ -116,7 +115,8 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                 break;
             case DestinationInfo.FLAT_PAGE:
                 if (!TextUtils.isEmpty(destinationInfo.getDestinationSlug())) {
-                    Intent intent = new Intent(((ActivityAware) context).getCurrentActivity(), FlatPageWebViewActivity.class);
+                    Intent intent = new Intent(((ActivityAware) context).getCurrentActivity(), BackButtonActivity.class);
+                    intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
                     intent.putExtra(Constants.WEBVIEW_URL, destinationInfo.getDestinationSlug());
                     intent.putExtra(Constants.WEBVIEW_TITLE, sectionItem.getTitle() != null ?
                             sectionItem.getTitle().getText() : null);

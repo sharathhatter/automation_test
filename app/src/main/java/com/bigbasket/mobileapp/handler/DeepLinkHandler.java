@@ -10,7 +10,6 @@ import com.bigbasket.mobileapp.activity.account.uiv3.DoWalletActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonWithBasketButtonActivity;
-import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListActivity;
 import com.bigbasket.mobileapp.activity.shoppinglist.ShoppingListSummaryActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
@@ -175,7 +174,8 @@ public class DeepLinkHandler {
                 String url = uri.getQueryParameter("url");
                 try {
                     if (!TextUtils.isEmpty(url)) {
-                        intent = new Intent(context.getCurrentActivity(), FlatPageWebViewActivity.class);
+                        intent = new Intent(context.getCurrentActivity(), BackButtonActivity.class);
+                        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
                         intent.putExtra(Constants.WEBVIEW_URL, URLDecoder.decode(url, "UTF-8"));
                         context.getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                         return SUCCESS;

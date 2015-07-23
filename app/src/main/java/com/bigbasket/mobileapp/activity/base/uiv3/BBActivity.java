@@ -46,6 +46,7 @@ import com.bigbasket.mobileapp.adapter.NavigationAdapter;
 import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.DynamicScreenFragment;
+import com.bigbasket.mobileapp.fragment.FlatPageFragment;
 import com.bigbasket.mobileapp.fragment.HomeFragment;
 import com.bigbasket.mobileapp.fragment.account.AccountView;
 import com.bigbasket.mobileapp.fragment.account.ChangePasswordFragment;
@@ -419,6 +420,14 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 bundle.putString(Constants.SCREEN, getIntent().getStringExtra(Constants.SCREEN));
                 dynamicScreenFragment.setArguments(bundle);
                 addToMainLayout(dynamicScreenFragment);
+                break;
+            case FragmentCodes.START_WEBVIEW:
+                bundle = new Bundle();
+                bundle.putString(Constants.WEBVIEW_URL, getIntent().getStringExtra(Constants.WEBVIEW_URL));
+                bundle.putString(Constants.WEBVIEW_TITLE, getIntent().getStringExtra(Constants.WEBVIEW_TITLE));
+                FlatPageFragment flatPageFragment = new FlatPageFragment();
+                flatPageFragment.setArguments(bundle);
+                addToMainLayout(flatPageFragment);
                 break;
         }
     }

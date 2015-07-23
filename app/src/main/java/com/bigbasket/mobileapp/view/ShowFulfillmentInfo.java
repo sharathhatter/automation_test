@@ -13,10 +13,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.model.cart.FulfillmentInfo;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.UIUtil;
 
@@ -113,7 +114,8 @@ public class ShowFulfillmentInfo<T> {
     }
 
     public void showFulfillmentInfoPage(String fulfillmentInfoPageUrl) {
-        Intent intent = new Intent(((ActivityAware) ctx).getCurrentActivity(), FlatPageWebViewActivity.class);
+        Intent intent = new Intent(((ActivityAware) ctx).getCurrentActivity(), BackButtonActivity.class);
+        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
         intent.putExtra(Constants.WEBVIEW_URL, fulfillmentInfoPageUrl);
         ((ActivityAware) ctx).getCurrentActivity().startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }

@@ -144,7 +144,7 @@ public class CategoryLandingFragment extends BaseSectionFragment {
 
         RecyclerView subCategoryRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, contentView);
 
-        SubCategoryListAdapter subCategoryListAdapter = new SubCategoryListAdapter<>(this, categoryArrayList, getSectionView());
+        SubCategoryListAdapter subCategoryListAdapter = new SubCategoryListAdapter<>(this, categoryArrayList, getSectionView(false));
         subCategoryRecyclerView.setAdapter(subCategoryListAdapter);
 
         contentView.addView(subCategoryRecyclerView);

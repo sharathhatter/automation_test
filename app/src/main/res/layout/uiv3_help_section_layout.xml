@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/uiv3_list_bkg_color">
+    android:layout_height="match_parent">
 
     <include
         android:id="@+id/layoutCheckoutFooter"
@@ -16,6 +15,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/layoutCheckoutFooter"
-        android:gravity="center"
+        android:background="@color/uiv3_list_bkg_color"
         android:orientation="vertical" />
+
+    <ImageView
+        android:id="@+id/imgCloseHelp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:contentDescription="@string/cancel"
+        android:padding="@dimen/padding_small"
+        android:src="@drawable/ic_close_grey600_24dp" />
 </RelativeLayout>

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.text.style.UnderlineSpan;
 import android.view.Gravity;
 import android.view.View;
@@ -12,7 +13,7 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
-import com.bigbasket.mobileapp.activity.promo.FlatPageWebViewActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.callbacks.CallbackOrderInvoice;
@@ -22,6 +23,7 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
@@ -35,24 +37,30 @@ public class OrderInvoiceActivity extends BaseActivity implements InvoiceDataAwa
         setContentView(R.layout.uiv3_multiple_order_invoice_layout);
         ArrayList<Order> orderArrayList = getIntent().getParcelableArrayListExtra(Constants.ORDERS);
         final String addMoreLink = getIntent().getStringExtra(Constants.ADD_MORE_LINK);
+        String addMoreMsg = getIntent().getStringExtra(Constants.ADD_MORE_MSG);
         showOrderList(orderArrayList);
 
         TextView lblAddMoreProducts = (TextView) findViewById(R.id.lblAddMoreProducts);
-        final String addMoreText = lblAddMoreProducts.getText().toString();
-        SpannableString spannableString = new SpannableString(addMoreText);
-        spannableString.setSpan(new UnderlineSpan(), 0, spannableString.length(),
-                Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-        lblAddMoreProducts.setText(spannableString);
-        lblAddMoreProducts.setTypeface(faceRobotoMedium);
-        lblAddMoreProducts.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getCurrentActivity(), FlatPageWebViewActivity.class);
-                intent.putExtra(Constants.WEBVIEW_URL, addMoreLink);
-                intent.putExtra(Constants.WEBVIEW_TITLE, addMoreText);
-                startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-            }
-        });
+        if (!TextUtils.isEmpty(addMoreMsg) && !TextUtils.isEmpty(addMoreLink)) {
+            final String addMoreText = lblAddMoreProducts.getText().toString();
+            SpannableString spannableString = new SpannableString(addMoreText);
+            spannableString.setSpan(new UnderlineSpan(), 0, spannableString.length(),
+                    Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+            lblAddMoreProducts.setText(spannableString);
+            lblAddMoreProducts.setTypeface(faceRobotoMedium);
+            lblAddMoreProducts.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
+                    intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
+                    intent.putExtra(Constants.WEBVIEW_URL, addMoreLink);
+                    intent.putExtra(Constants.WEBVIEW_TITLE, addMoreText);
+                    startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
+                }
+            });
+        } else {
+            lblAddMoreProducts.setVisibility(View.GONE);
+        }
         trackEvent(TrackingAware.THANK_YOU_PAGE_SHOWN, null);
     }
 

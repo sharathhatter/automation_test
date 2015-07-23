@@ -1,45 +1,41 @@
-package com.bigbasket.mobileapp.activity.promo;
+package com.bigbasket.mobileapp.fragment;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.base.BaseActivity;
-import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
-import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
+import com.bigbasket.mobileapp.fragment.base.BaseFragment;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.BBWebView;
 
+public class FlatPageFragment extends BaseFragment {
 
-public class FlatPageWebViewActivity extends BackButtonActivity {
-    private ProgressBar progressBar;
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fullfill_info_web_view, container, false);
+    }
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.fullfill_info_web_view);
-        String webViewUrl = getIntent().getStringExtra(Constants.WEBVIEW_URL);
-        String webViewTitle = getIntent().getStringExtra(Constants.WEBVIEW_TITLE);
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Bundle args = getArguments();
+        if (args == null || getView() == null) return;
+        String webViewUrl = args.getString(Constants.WEBVIEW_URL);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarMain);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
-        if (!TextUtils.isEmpty(webViewTitle)) {
-            getSupportActionBar().setTitle(webViewTitle);
-        }
-        progressBar = (ProgressBar) findViewById(R.id.progressbar_Horizontal);
+        final ProgressBar progressBar = (ProgressBar) getView().findViewById(R.id.progressbar_Horizontal);
 
-        BBWebView bbWebView = (BBWebView) findViewById(R.id.webViewFulfillmentPage);
+        BBWebView bbWebView = (BBWebView) getView().findViewById(R.id.webViewFulfillmentPage);
         bbWebView.getSettings().setJavaScriptEnabled(true);
         bbWebView.getSettings().setDomStorageEnabled(true);
         if (webViewUrl != null) {
@@ -71,27 +67,28 @@ public class FlatPageWebViewActivity extends BackButtonActivity {
                 }
             }
         }));
-
-    }
-
-
-    @Override
-    public BaseActivity getCurrentActivity() {
-        return this;
     }
 
     @Override
-    public void onChangeFragment(AbstractFragment newFragment) {
-
+    public String getTitle() {
+        return getArguments() != null ? getArguments().getString(Constants.WEBVIEW_TITLE) :
+                null;
     }
 
+    @Nullable
     @Override
-    public void onChangeTitle(String title) {
-
+    public ViewGroup getContentView() {
+        return getView() != null ? (ViewGroup) getView().findViewById(R.id.layoutContentView) : null;
     }
 
     @Override
     public String getScreenTag() {
         return TrackEventkeys.FLAT_PAGE_SCREEN;
+    }
+
+    @NonNull
+    @Override
+    public String getFragmentTxnTag() {
+        return FlatPageFragment.class.getName();
     }
 }

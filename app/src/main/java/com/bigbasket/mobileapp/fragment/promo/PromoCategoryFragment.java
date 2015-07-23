@@ -123,7 +123,7 @@ public class PromoCategoryFragment extends BaseSectionFragment implements PromoD
             }
         }
 
-        final View sectionLayout = getSectionView();
+        final View sectionLayout = getSectionView(false);
 
         final RecyclerView promoCategoryListRecyclerView =
                 UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, contentView);

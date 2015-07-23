@@ -1,28 +1,23 @@
 package com.bigbasket.mobileapp.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.view.View;
 import android.view.ViewGroup;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
+import com.bigbasket.mobileapp.fragment.FlatPageFragment;
+import com.bigbasket.mobileapp.fragment.HelpDynamicScreenFragment;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.handler.OnSectionItemClickListener;
-import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
+import com.bigbasket.mobileapp.model.section.DestinationInfo;
 import com.bigbasket.mobileapp.model.section.HelpDestinationInfo;
-import com.bigbasket.mobileapp.model.section.Renderer;
 import com.bigbasket.mobileapp.model.section.Section;
-import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.model.section.SectionItem;
-import com.bigbasket.mobileapp.task.GetDynamicPageTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.bigbasket.mobileapp.view.SectionView;
 
-import retrofit.RetrofitError;
-
-public class SectionHelpActivity extends BaseActivity implements DynamicScreenAware {
+public class SectionHelpActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +28,10 @@ public class SectionHelpActivity extends BaseActivity implements DynamicScreenAw
         HelpDestinationInfo helpDestinationInfo = sectionItem.getHelpDestinationInfo();
 
         ViewGroup layoutCheckoutFooter = (ViewGroup) findViewById(R.id.layoutCheckoutFooter);
-        layoutCheckoutFooter.setOnClickListener(new OnSectionItemClickListener<>(this,
-                section, sectionItem, Constants.HELP));
+        OnSectionItemClickListener sectionItemClickListener = new OnSectionItemClickListener<>(this,
+                section, sectionItem, Constants.HELP);
+        layoutCheckoutFooter.setOnClickListener(sectionItemClickListener);
+        findViewById(R.id.imgCloseHelp).setOnClickListener(sectionItemClickListener);
         UIUtil.setUpFooterButton(this, layoutCheckoutFooter, null,
                 getString(R.string.continueCaps), true);
 
@@ -43,23 +40,23 @@ public class SectionHelpActivity extends BaseActivity implements DynamicScreenAw
 
     private void showHelp(HelpDestinationInfo helpDestinationInfo) {
         if (helpDestinationInfo == null) return;
-        new GetDynamicPageTask<>(this, helpDestinationInfo.getDestinationSlug(),
-                false, true, false, false).startTask();
-    }
-
-    private void displaySection(String screenName, SectionData sectionData) {
-        SectionView sectionView = new SectionView(this, faceRobotoRegular, sectionData, screenName,
-                true);
-        ViewGroup layoutSectionHelp = (ViewGroup) findViewById(R.id.layoutSectionHelp);
-        View sectionViewGenerated = sectionView.getView();
-        if (sectionViewGenerated != null) {
-            Section firstSection = sectionData.getSections().get(0);
-            Renderer sectionRender = sectionData.getRenderersMap() != null ?
-                    sectionData.getRenderersMap().get(firstSection.getRenderingId()) : null;
-            if (sectionRender != null) {
-                layoutSectionHelp.setBackgroundColor(sectionRender.getNativeBkgColor());
-            }
-            layoutSectionHelp.addView(sectionViewGenerated);
+        switch (helpDestinationInfo.getDestinationType()) {
+            case DestinationInfo.DYNAMIC_PAGE:
+                HelpDynamicScreenFragment dynamicScreenFragment = new HelpDynamicScreenFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString(Constants.SCREEN, helpDestinationInfo.getDestinationSlug());
+                bundle.putBoolean(Constants.HELP, true);
+                dynamicScreenFragment.setArguments(bundle);
+                onChangeFragment(dynamicScreenFragment);
+                break;
+            case DestinationInfo.FLAT_PAGE:
+                bundle = new Bundle();
+                bundle.putString(Constants.WEBVIEW_URL, getIntent().getStringExtra(Constants.WEBVIEW_URL));
+                bundle.putString(Constants.WEBVIEW_TITLE, getIntent().getStringExtra(Constants.WEBVIEW_TITLE));
+                FlatPageFragment flatPageFragment = new FlatPageFragment();
+                flatPageFragment.setArguments(bundle);
+                onChangeFragment(flatPageFragment);
+                break;
         }
     }
 
@@ -70,7 +67,10 @@ public class SectionHelpActivity extends BaseActivity implements DynamicScreenAw
 
     @Override
     public void onChangeFragment(AbstractFragment newFragment) {
-
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.layoutSectionHelp, newFragment, newFragment.getFragmentTxnTag())
+                .commit();
     }
 
     @Override
@@ -79,25 +79,13 @@ public class SectionHelpActivity extends BaseActivity implements DynamicScreenAw
     }
 
     @Override
+    public void startActivityForResult(Intent intent, int requestCode) {
+        super.startActivityForResult(intent, requestCode);
+        finish();  // Die!!!
+    }
+
+    @Override
     public String getScreenTag() {
         return SectionHelpActivity.class.getName();
-    }
-
-    @Override
-    public void onDynamicScreenSuccess(String screenName, SectionData sectionData) {
-        if (!TextUtils.isEmpty(screenName)) {
-            setTitle(screenName);
-        }
-        displaySection(screenName, sectionData);
-    }
-
-    @Override
-    public void onDynamicScreenFailure(RetrofitError error) {
-        handler.handleRetrofitError(error, true);
-    }
-
-    @Override
-    public void onDynamicScreenFailure(int error, String msg) {
-        handler.sendEmptyMessage(error, msg, true);
     }
 }

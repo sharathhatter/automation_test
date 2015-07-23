@@ -17,8 +17,9 @@ public abstract class BaseSectionFragment extends BaseFragment implements Sectio
     private String mScreenName;
 
     @Nullable
-    public View getSectionView() {
-        SectionView sectionView = new SectionView(getActivity(), faceRobotoRegular, mSectionData, mScreenName);
+    public View getSectionView(boolean isHelp) {
+        SectionView sectionView = new SectionView(getActivity(), faceRobotoRegular, mSectionData,
+                mScreenName, isHelp);
         return sectionView.getView();
     }
 
