@@ -14,8 +14,8 @@ public interface TrackingAware {
     //Home Screen topnav
     String COMMUNICATION_HUB_SHOWN = "CommunicationHub.Shown";
     String LOGIN_CLICKED = "Login.Clicked";
-    String HOME_CHANGE_CITY = "Change Your Location.Clicked";
-    String RATE_APP_CLICKED = "Rate Our App.Clicked";
+    String HOME_CHANGE_CITY = "Change City.Clicked";
+    String RATE_APP_CLICKED = "Rate App.Clicked";
 
     String DISCOUNT_SHOWN = "Discounts Page.Shown";
     String SEARCH_SHOWN = "Search Page.Shown";
@@ -28,16 +28,16 @@ public interface TrackingAware {
     String LOGIN_SHOWN = "Login Page.Shown";
     String LOGIN_BTN_CLICKED = "Login Button.Clicked";
     String LOGIN_FAILED = "Login Failed";
-    String SHOW_PASSWORD_ENABLED = "Show Password Enabled";
-    String LOGIN_REMEMBER_ME_ENABLED = "Login.Remember Me Enabled";
-    String FORGOT_PASSWORD_CLICKED = "Login.Forgot PassWord Clicked";
+    String SHOW_PASSWORD_ENABLED = "Show Password.Clicked";
+    String LOGIN_REMEMBER_ME_ENABLED = "Remember Me.Enabled";
+    String FORGOT_PASSWORD_CLICKED = "Forgot PassWord.Clicked";
     //String NEW_USER_REGISTER_CLICKED = "Login.New User Register Clicked";
     String FORGOT_PASSWORD_DIALOG_SHOWN = "Forgot Password.Dialog Shown";
     String FORGOT_PASSWORD_EMAIL_CLICKED = "Forgot Password.Email New Password Clicked";
     String REGISTRATION_PAGE_SHOWN = "Registration Page.Shown";
     String PROMO_MAILER_ENABLED = "Promotional Mailer Enabled";
     String REGISTER_BTN_CLICK = "SignUp Page.SignUp Clicked";
-    String REGISTRATION_FAILED = "SignUp Page. Failed";
+    String REGISTRATION_FAILED = "SignUp Page.Failed";
 
 
     //Account
@@ -63,16 +63,16 @@ public interface TrackingAware {
     String CHANGE_PASSWORD_FAILED = "Change Password.Update";
 
     //wallet
-    String MY_ACCOUNT_WALLET_CLICKED = "My Wallet Activity.Clicked";
+    String MY_ACCOUNT_WALLET_CLICKED = "My Wallet.Clicked";
     String WALLET_SUMMARY_SHOWN = "My Wallet Summary.Shown";
 
     //Address
     String DELIVERY_ADDRESS_CLICKED = "Delivery Addresses.Clicked";
     String DELIVERY_ADDRESS_SHOWN = "Delivery Addresses.Shown";
-    String NEW_ADDRESS_CLICKED = "Address New Clicked";
-    String ENABLE_DEFAULT_ADDRESS = "Make This Default Address Enabled";
-    String NEW_ADDRESS_FAILED = "New Address Add Failed";
-    String UPDATE_ADDRESS_FAILED = "Update Address Failed";
+    String NEW_ADDRESS_CLICKED = "Address New.Clicked";
+    String ENABLE_DEFAULT_ADDRESS = "Make This Default Address.Clicked";
+    String NEW_ADDRESS_FAILED = "New Address Add.Failed";
+    String UPDATE_ADDRESS_FAILED = "Update Address.Failed";
 
     //delivery pin
     String CHANGE_PIN_CLICKED = "MyAccount.Change Pin Clicked";
@@ -153,7 +153,7 @@ public interface TrackingAware {
     String SORT_BY = "SortBy.Selected";
 
     //check out
-    String CHECKOUT_QC_SHOWN = "Checkout.Order QC Shown";
+    String CHECKOUT_QC_SHOWN = "Checkout.QC Shown";
     String CHECKOUT_CREATE_ADDRESS_SHOWN = "Checkout.Address Shown";
     String CHECKOUT_ADDRESS_CREATED = "Checkout.Address Created";
     String CHECKOUT_SLOT_SHOWN = "Checkout.Slot Shown";
@@ -161,9 +161,9 @@ public interface TrackingAware {
     String CHECKOUT_PAYMENT_SHOWN = "Checkout.Payment Shown";
     String CHECKOUT_VOUCHER_APPLIED = "Checkout.Voucher Applied";
     String CHECKOUT_VOUCHER_FAILED = "Checkout.Voucher Failed";
-    String CHECKOUT_PAYMENT_GATEWAY_SUCCESS = "Checkout.Payment Gateway Success";
-    String CHECKOUT_PAYMENT_GATEWAY_FAILURE = "Checkout.Payment Gateway Failure";
-    String CHECKOUT_PAYMENT_GATEWAY_ABORTED = "Checkout.Payment Gateway Aborted";
+    String CHECKOUT_PAYMENT_GATEWAY_SUCCESS = "Checkout.Payment Success";
+    String CHECKOUT_PAYMENT_GATEWAY_FAILURE = "Checkout.Payment Failure";
+    String CHECKOUT_PAYMENT_GATEWAY_ABORTED = "Checkout.Payment Aborted";
     String CHECKOUT_PLACE_ORDER_CLICKED = "Checkout.Place Order Clicked";
     String CHECKOUT_PLACE_ORDER_AMOUNT_MISMATCH = "Checkout.Place Order Amount Mismatch";
     String CHECKOUT_ORDER_COMPLETE = "Checkout.Order Completed";
@@ -171,7 +171,7 @@ public interface TrackingAware {
 
     String CHECKOUT_ADDRESS_CLICKED_CONTI = "Checkout.Address Continue Clicked ";
     String CHECKOUT_ADDRESS_SELECTED = "Checkout.Address Selected";
-    String CHECKOUT_SLOT_SELECTED_CLICKED = "Checkout.Delivery Option Continue Clicked";
+    String CHECKOUT_SLOT_SELECTED_CLICKED = "Checkout.Delivery Options Continue Clicked";
     String CHECKOUT_DELIVERY_OPTION_SHOWN = "Checkout.Delivery Options Shown";
 
     //thank you
