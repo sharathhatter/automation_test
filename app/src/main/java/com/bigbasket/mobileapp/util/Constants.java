@@ -397,6 +397,8 @@ public class Constants {
     public static final int SIX_HOUR = 6;
     public static final int ONE_DAY = 1;
     public static final int SIX_DAYS = 6;
+    public static final String OS = "os";
+    public static final String ANDROID = "android";
 
 
     public static final String APP_VERSION = "app_version";
