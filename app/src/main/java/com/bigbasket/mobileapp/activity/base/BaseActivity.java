@@ -101,7 +101,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     protected ProgressDialog progressDialog = null;
     protected MoEHelper moEHelper;
     private AppEventsLogger fbLogger;
-    protected String mNavigationContext;
+    private String mNavigationContext;
     private String mNextScreenNavigationContext;
 
     public static void showKeyboard(final View view) {
@@ -629,12 +629,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
                     for (Map.Entry<String, String> entry : eventAttribs.entrySet()) {
                         analyticsJsonObj.put(entry.getKey(), entry.getValue());
                     }
-                }
-//                if (!TextUtils.isEmpty(source)) {
-//                    analyticsJsonObj.put(Constants.SOURCE, source);
-//                }
-                if (!TextUtils.isEmpty(sourceValue)) {
-                    analyticsJsonObj.put(Constants.SOURCE_ID, sourceValue);
                 }
                 MoEngageWrapper.trackEvent(moEHelper, eventName, analyticsJsonObj);
             } catch (JSONException e) {
