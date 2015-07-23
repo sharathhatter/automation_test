@@ -360,21 +360,6 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         trackEvent(TrackingAware.PRODUCT_LIST_SHOWN, map);
     }
 
-    private void getFilterAndSortBy(HashMap<String, String> map){
-        if(mNameValuePairs == null)  return;
-        for (NameValuePair nameValuePair : mNameValuePairs) {
-            if (nameValuePair.getName() == null || nameValuePair.getValue() == null) return;
-
-            if(nameValuePair.getName().equals(Constants.FILTER_ON)){
-                //JSONArray jsonArray = new Gson().toJson(nameValuePair.getValue())
-                map.put(TrackEventkeys.FILTER_ON, new Gson().toJson(nameValuePair.getValue()));
-            }else if(nameValuePair.getName().equals(Constants.SORT_ON)){
-                map.put(TrackEventkeys.SORT_ON, nameValuePair.getValue());
-            }
-        }
-
-    }
-
     private Bundle getBundleForProductListFragment(ProductTabInfo productTabInfo,
                                                    ProductInfo productInfo,
                                                    String baseImgUrl) {

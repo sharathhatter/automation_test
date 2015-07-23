@@ -47,14 +47,15 @@ public class NameValuePair implements Parcelable {
     public static String buildNavigationContext(ArrayList<NameValuePair> nameValuePairs) {
         StringBuilder ncBuilder = new StringBuilder("pl");
         for (NameValuePair nameValuePair : nameValuePairs) {
-            if (nameValuePair.getName() == null
-                    || nameValuePair.getValue() == null || nameValuePair.getName().equals(Constants.FILTER_ON) ||
-                    nameValuePair.getName().equals(Constants.SORT_ON)) continue;
-            if (nameValuePair.getName().equalsIgnoreCase("is_express")) {
-                ncBuilder.append(".is_express");
-            } else {
-                ncBuilder.append(".");
-                ncBuilder.append(nameValuePair.getValue());
+            if (nameValuePair.getName() != null && nameValuePair.getValue() != null &&
+                    (nameValuePair.getName().equals(Constants.TYPE) ||
+                            nameValuePair.getName().equals(Constants.SLUG))) {
+                if (nameValuePair.getName().equalsIgnoreCase("is_express")) {
+                    ncBuilder.append(".is_express");
+                } else {
+                    ncBuilder.append(".");
+                    ncBuilder.append(nameValuePair.getValue());
+                }
             }
         }
         return ncBuilder.toString();
