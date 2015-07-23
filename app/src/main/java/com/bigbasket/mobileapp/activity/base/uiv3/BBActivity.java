@@ -448,7 +448,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 String searchQuery = data.getStringExtra(Constants.SEARCH_QUERY);
                 String nc = data.getStringExtra(TrackEventkeys.NAVIGATION_CTX);
                 if (!TextUtils.isEmpty(searchQuery)) {
-                    //logSearchEvent(searchQuery.trim());
                     doSearch(searchQuery.trim(), nc);
                     return;
                 }
@@ -623,61 +622,12 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     public void handleIntent(Intent intent, Bundle savedInstanceState) {
-        /*
-        if (Intent.ACTION_SEARCH.equals(intent.getAction()) && savedInstanceState == null) {
-            // User has entered something in search, and pressed enter and this is not due to a screen rotation
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            String nc = intent.getStringExtra(TrackEventkeys.NAVIGATION_CTX);
-            if (!TextUtils.isEmpty(query)) {
-                logSearchEvent(query.trim());
-                doSearch(query.trim(), nc);
-            }
-        } else if (Intent.ACTION_VIEW.equals(intent.getAction()) && savedInstanceState == null) {
-            // User has selected a suggestion and this is not due to a screen rotation
-            String categoryUrl = intent.getStringExtra(SearchManager.EXTRA_DATA_KEY);
-            String nc = intent.getStringExtra(TrackEventkeys.NAVIGATION_CTX);
-            Uri data = intent.getData();
-            if (data != null) {
-                String query = data.getLastPathSegment();
-                if (!TextUtils.isEmpty(categoryUrl) && categoryUrl.contains("/")) {
-                    String[] categoryUrlElements = categoryUrl.split("/");
-                    String slug = categoryUrlElements[categoryUrlElements.length - 1];
-                    launchCategoryProducts(query, categoryUrl, slug);
-                } else {
-                    logSearchEvent(query.trim());
-                    doSearch(query.trim(), nc);
-                }
-            }
-        } else {
-            */
-
         currentFragmentTag = savedInstanceState != null ? savedInstanceState.getString(Constants.FRAGMENT_TAG) : null;
         if (TextUtils.isEmpty(currentFragmentTag) ||
                 getSupportFragmentManager().findFragmentByTag(currentFragmentTag) == null) {
             startFragment();
         }
-        //}
     }
-
-//    private void logSearchEvent(String query) {
-//        MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(this);
-//        mostSearchesAdapter.update(query);
-//        HashMap<String, String> map = new HashMap<>();
-//        map.put(TrackEventkeys.QUERY, query);
-//        trackEvent(TrackingAware.SEARCH, map);
-//    }
-
-//    private void launchCategoryProducts(String categoryName, String categoryUrl,
-//                                        String categorySlug) {  //todo remmove not used
-//        MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(this);
-//        mostSearchesAdapter.update(categoryName, categoryUrl);
-//        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-//        nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.CATEGORY.get()));
-//        nameValuePairs.add(new NameValuePair(Constants.SLUG, categorySlug));
-//        Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
-//        intent.putParcelableArrayListExtra(Constants.PRODUCT_QUERY, nameValuePairs);
-//        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-//    }
 
     public void doSearch(String searchQuery, String referrer) {
         Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);

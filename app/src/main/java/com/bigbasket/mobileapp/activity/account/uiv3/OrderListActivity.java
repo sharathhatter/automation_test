@@ -193,14 +193,12 @@ public class OrderListActivity extends BackButtonActivity implements InvoiceData
     public void onDisplayOrderInvoice(OrderInvoice orderInvoice) {
         Intent orderDetailIntent = new Intent(getCurrentActivity(), OrderDetailActivity.class);
         orderDetailIntent.putExtra(Constants.ORDER_REVIEW_SUMMARY, orderInvoice);
-        //orderDetailIntent.putExtra(TrackEventkeys.NAVIGATION_CTX, getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX));
         startActivityForResult(orderDetailIntent, NavigationCodes.GO_TO_HOME);
     }
 
     public void onShopFromThisOrder(String orderNumber) {
         Intent intent = new Intent(this, BackButtonWithBasketButtonActivity.class);
         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_PRODUCT_LIST_FRAGMENT);
-        //intent.putExtra(TrackEventkeys.NAVIGATION_CTX, getIntent().getStringExtra(TrackEventkeys.NAVIGATION_CTX));
         intent.putExtra(Constants.ORDER_ID, orderNumber);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }

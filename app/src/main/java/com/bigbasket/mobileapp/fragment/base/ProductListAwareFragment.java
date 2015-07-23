@@ -75,7 +75,6 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
 
     public void productListOnActivityCreated() {
         loadProducts();
-        //logProductListingEvent();
     }
 
     public void loadProducts() {

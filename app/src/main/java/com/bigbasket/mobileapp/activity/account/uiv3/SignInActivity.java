@@ -111,8 +111,6 @@ public class SignInActivity extends BackButtonActivity {
         lblSignUp.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-//                logHomeScreenEvent(TrackingAware.REGISTRATION_CLICKED, TrackEventkeys.NAVIGATION_CTX,
-//                        TrackEventkeys.NAVIGATION_CTX_LOGIN_PAGE);
                 launchRegistrationPage();
             }
         });

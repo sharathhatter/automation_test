@@ -69,7 +69,6 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
 
     @Override
     public void productListOnActivityCreated() {
-        //logProductListingEvent();
     }
 
     @Override

@@ -84,14 +84,12 @@ public class SearchableActivity extends BackButtonActivity
         layoutVoice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //trackEvent(TrackEventkeys.PS_VOICE, null);
                 launchVoiceSearch();
             }
         });
         layoutScanner.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //trackEvent(TrackEventkeys.PS_SCAN, null);
                 launchScanner();
             }
         });

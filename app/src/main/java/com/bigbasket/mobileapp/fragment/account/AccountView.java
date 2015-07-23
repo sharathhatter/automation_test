@@ -49,10 +49,6 @@ public class AccountView<T> {
 
     public void setListView() {
         final BaseActivity ctx = ((ActivityAware) context).getCurrentActivity();
-//        if (context instanceof AnalyticsNavigationContextAware) {
-//            ((AnalyticsNavigationContextAware) context).
-//                    setNextScreenNavigationContext(TrackEventkeys.ACCOUNT_MENU);
-//        }
         if (AuthParameters.getInstance(ctx).isAuthTokenEmpty()) {
             // Not logged in
             final String[] itemDetails = {
@@ -87,7 +83,6 @@ public class AccountView<T> {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             final BaseActivity ctx = ((ActivityAware) context).getCurrentActivity();
             ctx.setNextScreenNavigationContext(TrackEventkeys.ACCOUNT_MENU);
-            //ctx.setCurrentNavigationContext(TrackEventkeys.ACCOUNT_MENU);
             HashMap<String, String> map = new HashMap<>();
             map.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.ACCOUNT_MENU);
             switch (position) {
@@ -162,10 +157,8 @@ public class AccountView<T> {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             final BaseActivity ctx = ((ActivityAware) context).getCurrentActivity();
-            //ctx.setNextScreenNavigationContext(TrackEventkeys.ACCOUNT_MENU);
             HashMap<String, String> map = new HashMap<>();
             map.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.ACCOUNT_MENU);
-            //ctx.setCurrentNavigationContext(TrackEventkeys.ACCOUNT_MENU);
             switch (position) {
                 case 0:
                     ctx.trackEvent(TrackingAware.LOGIN_CLICKED, map);

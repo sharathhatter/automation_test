@@ -689,8 +689,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
     @Nullable
     @Override
     public String getCurrentNavigationContext() {
-//        Log.e("BaseFragment getCurrentNavigationContext=>", mNavigationContext ==null ?
-//        "null" : mNavigationContext);
         return mNavigationContext;
     }
 
@@ -708,7 +706,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
     @Override
     public void setNextScreenNavigationContext(@Nullable String nc) {
         mNextScreenNavigationContext = nc;
-
     }
 
     public void launchAppDeepLink(String uri) {

@@ -498,23 +498,6 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         loadProductTabs();
     }
 
-//    @Override
-//    public void doSearch(String searchQuery, String referrer) {
-//        if (!TextUtils.isEmpty(searchQuery)) {
-//            mTitlePassedViaIntent = searchQuery;
-//            mNameValuePairs = new ArrayList<>();
-//            mNameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.SEARCH.get()));
-//            mNameValuePairs.add(new NameValuePair(Constants.SLUG, searchQuery));
-//            if (getSupportFragmentManager().getFragments() != null &&
-//                    getSupportFragmentManager().getFragments().size() > 0) {
-//                // New product list is requested over current page, so change nc by copying next-nc
-//                setCurrentNavigationContext(getNextScreenNavigationContext());
-//            }
-//            setNextScreenNavigationContext(TrackEventkeys.PL_PS + "." + searchQuery);
-//            loadProductTabs();
-//        }
-//    }
-
     public void onFooterViewClicked(View v) {
         switch (v.getId()) {
             case R.id.layoutFilter:
