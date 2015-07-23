@@ -6,7 +6,7 @@
     <string name="product_id_invalid">Sorry, this product does not exists!</string>
     <string name="invalidBasketQty">You cannot add any more quantities for this product!</string>
     <string name="headingServerError">Server Error!</string>
-    <string name="server_error">Oops an error occurred!\nPlease try again later!</string>
+    <string name="server_error">Oops an error occurred!\nPlease try again later.</string>
     <string name="login_required">Please login to continue!</string>
     <string name="voucherCode">eVoucher Code</string>
     <string name="potentialOrderIdExpired">Previous checkout process timed out. Please start again!</string>
