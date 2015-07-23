@@ -173,6 +173,7 @@ public interface TrackingAware {
 
     String NOTIFICATION_ERROR = "Notification Error";
 
+    String BARCODE_SCAN_SHOWN = "PS.Scan";
 
     void trackEvent(String eventName, Map<String, String> eventAttribs,
                     String source, String sourceValue, boolean isCustomerValueIncrease);

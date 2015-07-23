@@ -28,6 +28,7 @@ import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.adapter.SearchViewAdapter;
 import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
 import com.bigbasket.mobileapp.interfaces.SearchTermRemoveAware;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.product.uiv2.ProductListType;
 import com.bigbasket.mobileapp.model.search.MostSearchedItem;
@@ -161,6 +162,7 @@ public class SearchableActivity extends BackButtonActivity
     private void launchScanner() {
         mSearchView.clearFocus();
         showToast(getString(R.string.please_wait));
+        trackEvent(TrackingAware.BARCODE_SCAN_SHOWN, null);
         new IntentIntegrator(this).initiateScan();
     }
 
