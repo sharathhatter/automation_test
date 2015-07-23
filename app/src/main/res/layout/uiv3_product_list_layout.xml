@@ -1,118 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawer_layout"
     style="@style/WindowStyle"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout
-        android:id="@+id/drawer_layout"
+    <!-- As the main content view, the view below consumes the entire
+         space available using match_parent in both dimensions. -->
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <!-- As the main content view, the view below consumes the entire
-             space available using match_parent in both dimensions. -->
+        <include
+            android:id="@+id/toolbarMain"
+            layout="@layout/uiv3_tool_layout" />
 
-        <RelativeLayout
+        <LinearLayout
+            android:id="@+id/layoutFilterSort"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <include
-                android:id="@+id/toolbarMain"
-                layout="@layout/uiv3_tool_layout" />
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="0dp"
+            android:background="@color/uiv3_product_list_footer_bkg"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
 
             <LinearLayout
-                android:id="@+id/layoutFilterSort"
-                android:layout_width="match_parent"
+                android:id="@+id/layoutFilter"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_margin="0dp"
-                android:background="@color/uiv3_product_list_footer_bkg"
-                android:baselineAligned="false"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:gravity="center"
+                android:onClick="onFooterViewClicked"
                 android:orientation="horizontal">
 
-                <LinearLayout
-                    android:id="@+id/layoutFilter"
-                    android:layout_width="0dp"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:clickable="true"
+                    android:layout_margin="0dp"
+                    android:drawableLeft="@drawable/filter"
+                    android:drawablePadding="@dimen/padding_small"
                     android:gravity="center"
-                    android:onClick="onFooterViewClicked"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="0dp"
-                        android:drawableLeft="@drawable/filter"
-                        android:drawablePadding="@dimen/padding_small"
-                        android:gravity="center"
-                        android:paddingBottom="@dimen/padding_small"
-                        android:paddingTop="@dimen/padding_small"
-                        android:text="@string/filter"
-                        android:textColor="@color/uiv3_product_list_footer_txt_color"
-                        android:textSize="@dimen/primary_text_size" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/layoutSort"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:clickable="true"
-                    android:gravity="center"
-                    android:onClick="onFooterViewClicked"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="0dp"
-                        android:drawableLeft="@drawable/sort"
-                        android:drawablePadding="@dimen/padding_small"
-                        android:gravity="center"
-                        android:paddingBottom="@dimen/padding_small"
-                        android:paddingTop="@dimen/padding_small"
-                        android:text="@string/sort"
-                        android:textColor="@color/uiv3_product_list_footer_txt_color"
-                        android:textSize="@dimen/primary_text_size" />
-                </LinearLayout>
+                    android:paddingBottom="@dimen/padding_small"
+                    android:paddingTop="@dimen/padding_small"
+                    android:text="@string/filter"
+                    android:textColor="@color/uiv3_product_list_footer_txt_color"
+                    android:textSize="@dimen/primary_text_size" />
             </LinearLayout>
 
-            <FrameLayout
-                android:id="@+id/content_frame"
-                style="@style/WindowStyle.ContentArea"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_above="@id/layoutFilterSort"
-                android:layout_below="@id/toolbarMain" />
-
-            <com.bigbasket.mobileapp.view.uiv3.FloatingBadgeCountView
-                android:id="@+id/btnViewBasket"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/layoutSort"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@id/content_frame"
-                android:layout_alignParentRight="true"
-                android:layout_marginBottom="@dimen/margin_normal"
-                android:layout_marginRight="@dimen/margin_small"
-                android:src="@drawable/filled_basket"
-                app:fab_colorNormal="@color/uiv3_action_bar_background"
-                app:fab_colorPressed="@color/uiv3_action_bar_background_pressed" />
+                android:layout_weight="1"
+                android:clickable="true"
+                android:gravity="center"
+                android:onClick="onFooterViewClicked"
+                android:orientation="horizontal">
 
-            <include layout="@layout/uiv3_header_dropdown_layout" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="0dp"
+                    android:drawableLeft="@drawable/sort"
+                    android:drawablePadding="@dimen/padding_small"
+                    android:gravity="center"
+                    android:paddingBottom="@dimen/padding_small"
+                    android:paddingTop="@dimen/padding_small"
+                    android:text="@string/sort"
+                    android:textColor="@color/uiv3_product_list_footer_txt_color"
+                    android:textSize="@dimen/primary_text_size" />
+            </LinearLayout>
+        </LinearLayout>
 
-        </RelativeLayout>
+        <FrameLayout
+            android:id="@+id/content_frame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/layoutFilterSort"
+            android:layout_below="@id/toolbarMain" />
 
-        <!-- android:layout_gravity="start" tells DrawerLayout to treat
-             this as a sliding drawer on the left side for left-to-right
-             languages and on the right side for right-to-left languages.
-             The drawer is given a fixed width in dp and extends the full height of
-             the container. A solid background is used for contrast
-             with the content view. -->
+        <com.bigbasket.mobileapp.view.uiv3.FloatingBadgeCountView
+            android:id="@+id/btnViewBasket"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/content_frame"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="@dimen/margin_normal"
+            android:layout_marginRight="@dimen/margin_small"
+            android:src="@drawable/filled_basket"
+            app:fab_colorNormal="@color/uiv3_action_bar_background"
+            app:fab_colorPressed="@color/uiv3_action_bar_background_pressed" />
 
-        <include layout="@layout/uiv3_left_nav_layout" />
-    </com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout>
-</FrameLayout>
+        <include layout="@layout/uiv3_header_dropdown_layout" />
+
+    </RelativeLayout>
+
+    <!-- android:layout_gravity="start" tells DrawerLayout to treat
+         this as a sliding drawer on the left side for left-to-right
+         languages and on the right side for right-to-left languages.
+         The drawer is given a fixed width in dp and extends the full height of
+         the container. A solid background is used for contrast
+         with the content view. -->
+
+    <include layout="@layout/uiv3_left_nav_layout" />
+</com.bigbasket.mobileapp.view.uiv3.BBDrawerLayout>

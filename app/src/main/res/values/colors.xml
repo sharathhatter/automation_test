@@ -29,6 +29,7 @@
     <color name="uiv3_secondary_btn_bkg">#ff37474f</color>
     <color name="uiv3_secondary_btn_pressed_bkg">#8837474f</color>
     <color name="uiv3_status_bar_background">#bd1c24</color>
+    <color name="uiv3_nav_open_status_bar_background">#66000000</color>
     <color name="uiv3_action_bar_background_pressed">#32FF0000</color>
     <color name="uiv3_primary_text_color">#5F5F5F</color>
     <color name="uiv3_product_list_footer_bkg">#f5f5f5</color>

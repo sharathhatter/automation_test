@@ -228,6 +228,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
+        mDrawerLayout.setStatusBarBackground(R.color.uiv3_status_bar_background);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }

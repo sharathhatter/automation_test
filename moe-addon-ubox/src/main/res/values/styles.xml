@@ -5,9 +5,4 @@
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">#c22611</item>
     </style>
-    <style name="WindowStyle">
-        <item name="android:fitsSystemWindows">false</item>
-    </style>
-
-    <style name="WindowStyle.ContentArea" />
 </resources>
