@@ -203,6 +203,8 @@ public class Constants {
     public static final String DOB = "dob";
     public static final String SOURCE_ID = "src_id";
 
+    public static final String SLUG_PARAM = "&slug=";
+
     public static final String PID = "pid";
     public static final String POST_PARAMS = "post_params";
     public static final String PAYU_GATEWAY_URL = "pg_server_url";

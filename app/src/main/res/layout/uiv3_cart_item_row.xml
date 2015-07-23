@@ -131,22 +131,6 @@
 
         </RelativeLayout>
 
-
-        <TextView
-            android:id="@+id/txtSaving"
-            android:layout_width="wrap_content"
-            android:text="Save: 1234"
-            android:layout_marginLeft="@dimen/margin_mini"
-            android:layout_toRightOf="@id/imgProduct"
-            android:layout_marginTop="@dimen/margin_mini"
-            android:layout_marginRight="@dimen/margin_small"
-            android:layout_below="@id/layoutProductPrice"
-            android:textColor="@color/uiv3_action_bar_background"
-            android:textSize="@dimen/primary_text_size"
-            android:layout_marginBottom="@dimen/margin_small"
-            android:layout_height="wrap_content" />
-
-
     </RelativeLayout>
 
 

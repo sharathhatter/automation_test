@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.activity.product;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -32,6 +33,7 @@ import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.fragment.product.GenericProductListFragment;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
+import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.LazyProductListAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
@@ -58,6 +60,7 @@ import com.bigbasket.mobileapp.view.SectionView;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
 import com.bigbasket.mobileapp.view.uiv3.HeaderSpinnerView;
 import com.google.gson.Gson;
+import com.moe.imageLib.AsyncTask;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import org.json.JSONArray;
@@ -400,6 +403,22 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         }
     }
 
+    @Override
+    public void doSearch(String searchQuery, String referrer) {
+        if (!TextUtils.isEmpty(searchQuery)) {
+            mTitlePassedViaIntent = searchQuery;
+            mNameValuePairs = new ArrayList<>();
+            mNameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.SEARCH.get()));
+            mNameValuePairs.add(new NameValuePair(Constants.SLUG, searchQuery));
+            if (getSupportFragmentManager().getFragments() != null &&
+                    getSupportFragmentManager().getFragments().size() > 0) {
+                // New product list is requested over current page, so change nc by copying next-nc
+                setCurrentNavigationContext(referrer);
+            }
+            loadProductTabs();
+        }
+    }
+
     private void setProductListForFragmentAtPosition(int position) {
         String tabType = mArrayTabTypeAndFragmentPosition.get(position);
         if (tabType == null || mViewPager == null) return;
@@ -641,18 +660,51 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         if (filteredOnArrayList == null || filteredOnArrayList.size() == 0) {
             trackEvent(TrackingAware.FILTER_CLEARED, null);
         } else {
-            Map<String, String> eventAttribs = new HashMap<>();
-            for (FilteredOn filteredOn : filteredOnArrayList) {
-                eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
-                eventAttribs.put(filteredOn.getFilterSlug(), UIUtil.strJoin(getFilterDisplayName(filteredOn), ","));
-                trackEvent(TrackingAware.FILTER_APPLIED, eventAttribs,
-                        null, null, false);
-            }
+            if(mFilterOptionCategories!=null && mFilterOptionCategories.size()>0)
+                new FilterTrackEvent(this, getNextScreenNavigationContext(),
+                        mFilterOptionCategories, filteredOnArrayList).execute();
         }
     }
 
-    private ArrayList<String> getFilterDisplayName(FilteredOn filteredOn){
-        ArrayList<String> filterDisplayNameArrayList = new ArrayList<>();
+
+    private static class FilterTrackEvent extends AsyncTask<Void, Void, Map<String, String>>{
+
+        private Context context;
+        private Map<String, String> eventAttribs;
+        private String mNextScreenNavigationContext;
+        private ArrayList<FilterOptionCategory> mFilterOptionCategories;
+        private ArrayList<FilteredOn> filteredOnArrayList;
+
+        FilterTrackEvent(Context context, String mNextScreenNavigationContext,
+                         ArrayList<FilterOptionCategory> mFilterOptionCategories,
+                         ArrayList<FilteredOn> filteredOnArrayList){
+            this.context = context;
+            this.mNextScreenNavigationContext = mNextScreenNavigationContext;
+            this.mFilterOptionCategories = mFilterOptionCategories;
+            this.filteredOnArrayList = filteredOnArrayList;
+            eventAttribs = new HashMap<>();
+        }
+
+        @Override
+        protected Map<String, String> doInBackground(Void... Void) {
+            for (FilteredOn filteredOn : filteredOnArrayList) {
+                eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, mNextScreenNavigationContext);
+                eventAttribs.put(filteredOn.getFilterSlug(), UIUtil.strJoin(getFilterDisplayName(filteredOn,
+                        mFilterOptionCategories), ","));
+            }
+            return eventAttribs;
+        }
+
+        @Override
+        protected void onPostExecute(Map<String, String> map) {
+            super.onPostExecute(map);
+            ((ActivityAware)context).getCurrentActivity().trackEvent(TrackingAware.FILTER_APPLIED, map,
+                    null, null, false);
+        }
+    }
+    private static ArrayList<String> getFilterDisplayName(final FilteredOn filteredOn,
+                                                          ArrayList<FilterOptionCategory> mFilterOptionCategories){
+        final ArrayList<String> filterDisplayNameArrayList = new ArrayList<>();
         for(FilterOptionCategory filterOptionCategory : mFilterOptionCategories){
             if(filterOptionCategory.getFilterSlug().equals(filteredOn.getFilterSlug())){
                 for(FilterOptionItem filterOptionItem : filterOptionCategory.getFilterOptionItems()) {

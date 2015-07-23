@@ -237,7 +237,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
 
         final int numTabs = shoppingListSummaries.size();
 
-        String nc = getNc();
+        final String nc = getNc();
         setNextScreenNavigationContext(nc);
         if (numTabs == 1) {
             Bundle bundle = getBundleForShoppingListProductFragment(shoppingListSummaries.get(0),
@@ -263,9 +263,8 @@ public class ShoppingListSummaryActivity extends BBActivity {
                     public void onPageSelected(int position) {
                         HashMap<String, String> eventAttribs = new HashMap<>();
                         eventAttribs.put(Constants.TAB_NAME, shoppingListSummaries.get(position).getFacetSlug());
-                        ShoppingListSummary shoppingListSummary = shoppingListSummaries.get(0);
-                        ShoppingListName shoppingListName1 = shoppingListSummary.getShoppingListName();
-                        String tabName = shoppingListName1.getNc().equals("sb") ? "SmartBasket" : "ShoppingList";
+                        String tabName = !TextUtils.isEmpty(nc) && nc.equals(TrackEventkeys.SB)
+                                                            ? "SmartBasket" : "ShoppingList";
                         eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
                         trackEvent(tabName+"."+ TrackingAware.TAB_CHANGED, eventAttribs);
                     }

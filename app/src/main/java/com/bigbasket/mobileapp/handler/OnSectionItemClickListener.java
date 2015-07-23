@@ -301,9 +301,6 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
             ncBuilder.append(TrackEventkeys.SCREEN);
         }
         if (section != null) {
-//            if(!TextUtils.isEmpty(section.getSectionType()) && section.getSectionType().equal(Section.BANNER))
-//                ncBuilder.append(".").append(section.getSectionType());
-
             if (section.getTitle() != null &&
                     !TextUtils.isEmpty(section.getTitle().getText())) {
                 ncBuilder.append(".").append(section.getTitle().getText());
@@ -320,10 +317,11 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
             } else if (sectionItem.getDescription() != null && !TextUtils.isEmpty(sectionItem.getDescription().getText())) {
                 ncBuilder.append(".").append(sectionItem.getDescription().getText());
             } else if(sectionItem.getDestinationInfo()!=null &&
-                    sectionItem.getDestinationInfo().getDestinationSlug().contains("&slug=")){
+                    !TextUtils.isEmpty(sectionItem.getDestinationInfo().getDestinationSlug()) &&
+                    sectionItem.getDestinationInfo().getDestinationSlug().contains(Constants.SLUG_PARAM)){
                 String typeAndSlug = sectionItem.getDestinationInfo().getDestinationSlug();
-                int indexOfSlug = typeAndSlug.indexOf("&slug=");
-                String slug = typeAndSlug.substring(indexOfSlug + 6);
+                int indexOfSlug = typeAndSlug.indexOf(Constants.SLUG_PARAM);
+                String slug = typeAndSlug.substring(indexOfSlug + Constants.SLUG_PARAM.length());
                 if(slug.contains("&")){
                     int indexOfNextParam  = slug.indexOf("&");
                     slug = slug.substring(0, indexOfNextParam);

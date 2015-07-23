@@ -234,11 +234,6 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
     }
 
     @Override
-    public void setCurrentNavigationContext(@Nullable String nc) {
-        super.setCurrentNavigationContext(nc);
-    }
-
-    @Override
     public void setNextScreenNavigationContext(@Nullable String nc) {
         if (getCurrentActivity() != null) {
             getCurrentActivity().setNextScreenNavigationContext(nc);
