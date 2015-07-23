@@ -44,6 +44,7 @@ public class PromoCategoryFragment extends BaseSectionFragment implements PromoD
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        setNextScreenNavigationContext(TrackEventkeys.NC_PROMO_CAT_LISTING);
         if (savedInstanceState != null) {
             mPromoCategoryList = savedInstanceState.getParcelableArrayList(Constants.PROMO_CATS);
             if (mPromoCategoryList != null && mPromoCategoryList.size() > 0) {
@@ -69,7 +70,7 @@ public class PromoCategoryFragment extends BaseSectionFragment implements PromoD
                             mPromoCategoryList = filterPromoCategories();
                             setSectionData(browsePromoCategoryApiResponse.apiResponseContent.sectionData);
                             renderPromoCategories();
-                            trackEvent(TrackingAware.PROMO_CATEGORY_LIST, null);
+                            trackEvent(TrackingAware.PROMO_CATEGORY_LIST, null, null, null, false, true);
                         }
                         break;
                     case ApiErrorCodes.PROMO_CATEGORY_NOT_EXIST:

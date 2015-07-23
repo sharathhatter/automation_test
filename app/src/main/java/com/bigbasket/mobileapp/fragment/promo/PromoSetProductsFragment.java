@@ -37,6 +37,7 @@ import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -68,7 +69,12 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
 
     @Override
     public void productListOnActivityCreated() {
-        logProductListingEvent();
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setNextScreenNavigationContext(TrackEventkeys.NC_PROMO_PRODUCT_LISTING);
     }
 
     @Override
@@ -318,6 +324,11 @@ public class PromoSetProductsFragment extends ProductListAwareFragment implement
             hideProgressDialog();
         } catch (IllegalArgumentException e) {
         }
+
+        HashMap<String, String> map = new HashMap<>();
+        if(!TextUtils.isEmpty(getArguments().getString(Constants.PROMO_NAME)))
+            map.put(TrackEventkeys.PROMO_NAME, getArguments().getString(Constants.PROMO_NAME));
+        trackEvent(TrackingAware.PROMO_SET_PRODUCTS_SHOWN, map);
     }
 
     private void notifyPromoProducts(ArrayList<Product> products, String baseImgUrl) {

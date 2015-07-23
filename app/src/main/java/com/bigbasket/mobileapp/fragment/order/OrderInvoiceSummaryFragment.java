@@ -44,6 +44,7 @@ public class OrderInvoiceSummaryFragment extends BaseFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         loadOrderInvoiceSummary();
+        setNextScreenNavigationContext(TrackEventkeys.NC_ORDER_DETAIL);
     }
 
     private void loadOrderInvoiceSummary() {

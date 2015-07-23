@@ -237,7 +237,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
 
         final int numTabs = shoppingListSummaries.size();
 
-        String nc = getNc();
+        final String nc = getNc();
         setNextScreenNavigationContext(nc);
         if (numTabs == 1) {
             Bundle bundle = getBundleForShoppingListProductFragment(shoppingListSummaries.get(0),
@@ -254,6 +254,25 @@ public class ShoppingListSummaryActivity extends BBActivity {
                     getSupportFragmentManager(), getTabs(shoppingListSummaries, shoppingListName, baseImgUrl));
             if (viewPager != null) {
                 viewPager.setAdapter(productListPagerAdapter);
+                viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                    @Override
+                    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                    }
+
+                    @Override
+                    public void onPageSelected(int position) {
+                        HashMap<String, String> eventAttribs = new HashMap<>();
+                        eventAttribs.put(Constants.TAB_NAME, shoppingListSummaries.get(position).getFacetSlug());
+                        String tabName = !TextUtils.isEmpty(nc) && nc.equals(TrackEventkeys.SB)
+                                                            ? "SmartBasket" : "ShoppingList";
+                        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                        trackEvent(tabName+"."+ TrackingAware.TAB_CHANGED, eventAttribs);
+                    }
+
+                    @Override
+                    public void onPageScrollStateChanged(int state) {
+                    }
+                });
 
                 SmartTabLayout pagerSlidingTabStrip = (SmartTabLayout) base.findViewById(R.id.slidingTabs);
                 pagerSlidingTabStrip.setViewPager(viewPager);
@@ -261,6 +280,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
                 contentFrame.addView(base);
             }
         }
+        logShoppingListingEvent(shoppingListSummaries.get(0));
         final ViewPager copyViewPagerIntoFinalForOnClick = viewPager;
         View layoutAddAll = findViewById(R.id.layoutAddAll);
         if (areAllProductsOutOfStock(shoppingListSummaries) || (shoppingListName.isSystem() &&
@@ -292,6 +312,23 @@ public class ShoppingListSummaryActivity extends BBActivity {
                     }
                 }
             });
+        }
+    }
+
+    public void logShoppingListingEvent(ShoppingListSummary shoppingListSummary) {
+        ShoppingListName shoppingListName = shoppingListSummary.getShoppingListName();
+        HashMap<String, String> eventAttribs = new HashMap<>();
+        eventAttribs.put(Constants.TAB_NAME, shoppingListSummary.getFacetSlug());
+        if (shoppingListName != null) {
+            String nc = shoppingListName.getNc();
+            nc += "." + shoppingListSummary.getFacetSlug();
+            setNextScreenNavigationContext(nc);
+            eventAttribs.put(Constants.NAME, shoppingListName.getSlug());
+            if (!shoppingListName.getSlug().equals(Constants.SMART_BASKET_SLUG)) {
+                trackEvent(TrackingAware.SHOP_LST_SUMMARY_SHOWN, eventAttribs);
+            } else {
+                trackEvent(TrackingAware.SMART_BASKET_SUMMARY_SHOWN, eventAttribs);
+            }
         }
     }
 

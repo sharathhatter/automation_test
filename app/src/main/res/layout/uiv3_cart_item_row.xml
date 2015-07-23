@@ -103,12 +103,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/txtExpressAvailable"
-            android:layout_marginBottom="@dimen/margin_small"
             android:layout_marginLeft="@dimen/margin_mini"
             android:layout_marginRight="@dimen/margin_small"
             android:layout_marginTop="@dimen/margin_small"
             android:layout_toRightOf="@id/imgProduct"
-            android:orientation="horizontal">
+            >
 
             <include
                 android:id="@+id/layoutInBasket"
@@ -122,7 +121,7 @@
                 android:id="@+id/txtSalePrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="123456"
+                android:text="123456 (save: 1234)"
                 android:layout_centerVertical="true"
                 android:layout_toLeftOf="@id/layoutInBasket"
                 android:layout_marginRight="@dimen/margin_small"
@@ -131,7 +130,6 @@
                 android:textSize="@dimen/primary_text_size" />
 
         </RelativeLayout>
-
 
     </RelativeLayout>
 

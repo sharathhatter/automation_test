@@ -41,6 +41,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -55,6 +56,7 @@ public class SearchableActivity extends BackButtonActivity
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         renderSearchView();
+        trackEvent(TrackingAware.SEARCH_SHOWN, null);
     }
 
     private void renderSearchView() {
@@ -115,7 +117,8 @@ public class SearchableActivity extends BackButtonActivity
                         doSearchByCategory(cursor.getString(1), cursor.getString(4),
                                 getCategorySlug(cursor.getString(4)));
                     else
-                        triggerSearch(cursor.getString(4).trim());
+                        triggerSearch(cursor.getString(4).trim(),
+                                TrackEventkeys.PS_PL);
                 }
             }
         });
@@ -133,7 +136,7 @@ public class SearchableActivity extends BackButtonActivity
         nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.CATEGORY.get()));
         nameValuePairs.add(new NameValuePair(Constants.SLUG, categorySlug));
         Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
-        setNextScreenNavigationContext(TrackEventkeys.PL_PS + ".pc." + categorySlug);
+        setNextScreenNavigationContext(TrackEventkeys.PS_C_PL);
         intent.putExtra(Constants.PRODUCT_QUERY, nameValuePairs);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
         finish();
@@ -162,22 +165,30 @@ public class SearchableActivity extends BackButtonActivity
     private void launchScanner() {
         mSearchView.clearFocus();
         showToast(getString(R.string.please_wait));
-        trackEvent(TrackingAware.BARCODE_SCAN_SHOWN, null);
         new IntentIntegrator(this).initiateScan();
     }
 
-    private void triggerSearch(String searchQuery) {
+    private void triggerSearch(String searchQuery, String referrer) {
         MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(this);
         mostSearchesAdapter.update(searchQuery);
-        doSearch(searchQuery);
+        doSearch(searchQuery, referrer);
     }
 
     @Override
-    public void doSearch(String searchQuery) {
+    public void doSearch(String searchQuery, String referrer) {
+        logSearchEvent(searchQuery);
         Intent data = new Intent();
         data.putExtra(Constants.SEARCH_QUERY, searchQuery);
+        data.putExtra(TrackEventkeys.NAVIGATION_CTX, referrer);
         setResult(NavigationCodes.START_SEARCH, data);
         finish();
+    }
+
+    private void logSearchEvent(String query) {
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.TERM, query);
+        map.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.PS);
+        trackEvent(TrackingAware.SEARCH, map, null, null, false, true);
     }
 
     private String getCategorySlug(String categoryUrl) {
@@ -267,7 +278,7 @@ public class SearchableActivity extends BackButtonActivity
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        triggerSearch(query.trim());
+        triggerSearch(query.trim(), TrackEventkeys.PS_PL);
         return false;
     }
 
@@ -296,8 +307,8 @@ public class SearchableActivity extends BackButtonActivity
         if (requestCode == REQ_CODE_SPEECH_INPUT && resultCode == RESULT_OK && data != null) {
             ArrayList<String> items = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
             if (items != null && items.size() > 0) {
-                setNextScreenNavigationContext(TrackEventkeys.PL_PS + "-voice");
-                triggerSearch(items.get(0).trim());
+                String term = items.get(0).trim();
+                triggerSearch(term, TrackEventkeys.PS_VOICE);
                 return;
             }
         }
@@ -305,10 +316,11 @@ public class SearchableActivity extends BackButtonActivity
         if (scanResult != null) {
             String eanCode = scanResult.getContents();
             if (!TextUtils.isEmpty(eanCode)) {
+                logSearchEvent(eanCode);
                 Intent intent = new Intent(getCurrentActivity(), BackButtonWithBasketButtonActivity.class);
                 intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_PRODUCT_DETAIL);
                 intent.putExtra(Constants.EAN_CODE, eanCode);
-                setNextScreenNavigationContext(TrackEventkeys.PL_PS + "-scan");
+                setNextScreenNavigationContext(TrackEventkeys.PS_SCAN);
                 startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 return;
             }

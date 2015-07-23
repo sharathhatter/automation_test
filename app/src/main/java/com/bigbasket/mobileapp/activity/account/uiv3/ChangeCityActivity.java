@@ -37,6 +37,7 @@ public class ChangeCityActivity extends BackButtonActivity implements CityListDi
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setNextScreenNavigationContext(TrackEventkeys.NC_CITY_SELECTION_SCREEN);
         setTitle(getString(R.string.chooseCity));
         trackEvent(TrackingAware.CHANGE_CITY_SHOWN, null);
         loadCities();
@@ -94,9 +95,6 @@ public class ChangeCityActivity extends BackButtonActivity implements CityListDi
     }
 
     protected void changeCity(final City city) {
-        Map<String, String> eventAttribs = new HashMap<>();
-        eventAttribs.put(TrackEventkeys.CITY, city.getName());
-        trackEvent(TrackingAware.CHANGE_CITY_POSSITIVE_BTN_CLICKED, eventAttribs);
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
         bigBasketApiService.changeCity(String.valueOf(city.getId()), new Callback<OldBaseApiResponse>() {

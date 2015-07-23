@@ -33,6 +33,7 @@ public class WalletActivity extends BackButtonActivity implements InvoiceDataAwa
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setNextScreenNavigationContext(TrackEventkeys.NAVIGATION_CTX_WALLET_ACTIVITIES);
         setTitle(getString(R.string.wallet_activity_header));
         if (savedInstanceState != null) {
             walletActivityData = savedInstanceState.getParcelableArrayList(Constants.WALLET_DATA);

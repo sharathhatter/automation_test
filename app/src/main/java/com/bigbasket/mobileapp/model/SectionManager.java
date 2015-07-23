@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 public class SectionManager {
     public static final String HOME_PAGE = "home-page";
     public static final String MAIN_MENU = "main-menu";
+    public static final String DISCOUNT_PAGE = "Discount Page";
 
 
     public static final String TIME_KEY = "_time";

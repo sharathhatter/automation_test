@@ -123,7 +123,7 @@ public class BasketOperationTask<T> {
         if (navigationCtx != null) {
             eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, navigationCtx);
         }
-        ((TrackingAware) context).trackEvent(eventName, eventAttribs, navigationCtx, null, false);
+        ((TrackingAware) context).trackEvent(eventName, eventAttribs, navigationCtx, null, false, true);
     }
 
     private class CartOperationApiResponseCallback implements Callback<CartOperationApiResponse> {

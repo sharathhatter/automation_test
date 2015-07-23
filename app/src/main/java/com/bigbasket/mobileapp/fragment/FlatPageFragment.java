@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,9 +14,12 @@ import android.widget.ProgressBar;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.BBWebView;
+
+import java.util.HashMap;
 
 public class FlatPageFragment extends BaseFragment {
 
@@ -67,6 +71,11 @@ public class FlatPageFragment extends BaseFragment {
                 }
             }
         }));
+
+        HashMap<String, String> map = new HashMap<>();
+        if (!TextUtils.isEmpty(webViewUrl))
+            map.put(TrackEventkeys.URL, webViewUrl);
+        trackEvent(TrackingAware.FLAT_PAGE_SHOWN, map);
     }
 
     @Override

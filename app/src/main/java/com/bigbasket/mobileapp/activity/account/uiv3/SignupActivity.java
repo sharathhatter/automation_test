@@ -43,6 +43,7 @@ public class SignupActivity extends BackButtonActivity implements CityListDispla
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setNextScreenNavigationContext(TrackEventkeys.NC_SINGUP_SCREEN);
         setTitle(getString(R.string.signUpCapsVerb));
 
         new GetCitiesTask<>(this).startTask();

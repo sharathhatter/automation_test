@@ -19,7 +19,10 @@ import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionTextItem;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
+
+import java.util.HashMap;
 
 public class HeaderSpinnerView<T> {
     private T ctx;
@@ -142,7 +145,9 @@ public class HeaderSpinnerView<T> {
                     activity.getSupportActionBar().hide();
                 }
             }
-            activity.trackEvent(TrackingAware.PRODUCT_LIST_HEADER_CLICKED, null);
+            HashMap<String, String> map = new HashMap<>();
+            map.put(TrackEventkeys.NAVIGATION_CTX, activity.getNextScreenNavigationContext());
+            activity.trackEvent(TrackingAware.PRODUCT_LIST_HEADER_CLICKED, map);
         }
     }
 

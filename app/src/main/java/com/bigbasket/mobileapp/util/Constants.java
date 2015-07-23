@@ -119,6 +119,7 @@ public class Constants {
     public static final String BASKET = "basket";
 
     public static final String PROMO_CATS = "promo_categories";
+    public static final String PROMO_CAT = "promo_category";
     public static final String NUM_IN_BASKET = "num_completed_in_basket";
     public static final String SAVING = "saving";
     public static final String SAVINGS = "savings";
@@ -201,6 +202,8 @@ public class Constants {
     public static final String SOURCE = "src";
     public static final String DOB = "dob";
     public static final String SOURCE_ID = "src_id";
+
+    public static final String SLUG_PARAM = "&slug=";
 
     public static final String PID = "pid";
     public static final String POST_PARAMS = "post_params";

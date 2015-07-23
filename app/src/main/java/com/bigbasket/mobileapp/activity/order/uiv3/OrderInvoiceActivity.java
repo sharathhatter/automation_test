@@ -34,6 +34,7 @@ public class OrderInvoiceActivity extends BaseActivity implements InvoiceDataAwa
     @Override
     public void onCreate(Bundle saveInstanceState) {
         super.onCreate(saveInstanceState);
+        setNextScreenNavigationContext(TrackEventkeys.CO_INVOICE);
         setContentView(R.layout.uiv3_multiple_order_invoice_layout);
         ArrayList<Order> orderArrayList = getIntent().getParcelableArrayListExtra(Constants.ORDERS);
         final String addMoreLink = getIntent().getStringExtra(Constants.ADD_MORE_LINK);

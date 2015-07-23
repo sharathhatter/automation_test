@@ -1,5 +1,6 @@
 package com.bigbasket.mobileapp.activity.product;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,12 +33,14 @@ import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
 import com.bigbasket.mobileapp.fragment.base.ProductListAwareFragment;
 import com.bigbasket.mobileapp.fragment.product.GenericProductListFragment;
 import com.bigbasket.mobileapp.handler.OnDialogShowListener;
+import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.LazyProductListAware;
 import com.bigbasket.mobileapp.interfaces.ProductListDataAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.cart.BasketOperation;
 import com.bigbasket.mobileapp.model.product.FilterOptionCategory;
+import com.bigbasket.mobileapp.model.product.FilterOptionItem;
 import com.bigbasket.mobileapp.model.product.FilteredOn;
 import com.bigbasket.mobileapp.model.product.Option;
 import com.bigbasket.mobileapp.model.product.Product;
@@ -56,7 +60,10 @@ import com.bigbasket.mobileapp.view.SectionView;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
 import com.bigbasket.mobileapp.view.uiv3.HeaderSpinnerView;
 import com.google.gson.Gson;
+import com.moe.imageLib.AsyncTask;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
+
+import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -97,6 +104,13 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     }
 
     @Override
+    public void onResume(){
+        super.onResume();
+        if(mNameValuePairs!=null)
+            setNextScreenNavigationContext(NameValuePair.buildNavigationContext(mNameValuePairs));
+    }
+
+    @Override
     @LayoutRes
     public int getMainLayout() {
         return R.layout.uiv3_product_list_layout;
@@ -112,12 +126,6 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         mArrayTabTypeAndFragmentPosition = null;
 
         HashMap<String, String> paramMap = NameValuePair.toMap(mNameValuePairs);
-
-        if (paramMap != null && paramMap.containsKey(Constants.TYPE)) {
-            // Using separate map since nc can be added by trackEvent which we don't want in paramMap
-            HashMap<String, String> eventAttribs = new HashMap<>(paramMap);
-            trackEvent(TrackingAware.PRODUCT_LIST_SHOWN, eventAttribs);
-        }
         setNextScreenNavigationContext(NameValuePair.buildNavigationContext(mNameValuePairs));
         new ProductListTask<>(this, paramMap).startTask();
     }
@@ -227,6 +235,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                             productTabInfo.getTabName() : mTitlePassedViaIntent;
                     setTitle(title);
                 }
+                logProductListingShownEvent(productTabInfo.getTabType());
                 renderHeaderDropDown(productTabData.getHeaderSection());
             }
         } else if (contentSectionView == null) {
@@ -268,6 +277,8 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                     mArrayTabTypeAndFragmentPosition.put(i, productTabInfo.getTabType());
                     tabTypeWithNoProducts.add(productTabInfo.getTabType());
                 }
+                if(i==0)
+                    logProductListingShownEvent(productTabInfo.getTabType());
             }
         }
 
@@ -275,26 +286,26 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                 new ProductListPagerAdapter(this, getSupportFragmentManager(), bbTabs);
         mViewPager.setAdapter(statePagerAdapter);
 
-        SmartTabLayout pagerSlidingTabStrip = (SmartTabLayout) base.findViewById(R.id.slidingTabs);
-        pagerSlidingTabStrip.setViewPager(mViewPager);
-        pagerSlidingTabStrip.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                HashMap<String, String> eventAttribs = new HashMap<>();
-                eventAttribs.put(Constants.TAB_NAME, productTabInfos.get(position).getTabName());
-                trackEvent(TrackingAware.PRODUCT_LIST_TAB_CHANGED, eventAttribs);
             }
 
             @Override
             public void onPageSelected(int position) {
-
+                HashMap<String, String> eventAttribs = new HashMap<>();
+                eventAttribs.put(Constants.TAB_NAME, productTabInfos.get(position).getTabType());
+                eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                trackEvent(TrackingAware.PRODUCT_LIST_TAB_CHANGED, eventAttribs);
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
-
             }
         });
+
+        SmartTabLayout pagerSlidingTabStrip = (SmartTabLayout) base.findViewById(R.id.slidingTabs);
+        pagerSlidingTabStrip.setViewPager(mViewPager);
         if (productTabData.getContentSectionData() != null) {
             LinearLayout layoutProducts = new LinearLayout(this);
             layoutProducts.setOrientation(LinearLayout.VERTICAL);
@@ -341,6 +352,14 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         }
     }
 
+
+    public void logProductListingShownEvent(String mTabType) {
+        if (mTabType == null) return;
+        HashMap<String, String> map = new HashMap<>();
+        map.put(Constants.TAB_NAME, mTabType);
+        trackEvent(TrackingAware.PRODUCT_LIST_SHOWN, map);
+    }
+
     private Bundle getBundleForProductListFragment(ProductTabInfo productTabInfo,
                                                    ProductInfo productInfo,
                                                    String baseImgUrl) {
@@ -366,6 +385,22 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
             setProductListForFragmentAtPosition(currentPosition);
             setProductListForFragmentAtPosition(currentPosition + 1);
             setProductListForFragmentAtPosition(currentPosition - 1);
+        }
+    }
+
+    @Override
+    public void doSearch(String searchQuery, String referrer) {
+        if (!TextUtils.isEmpty(searchQuery)) {
+            mTitlePassedViaIntent = searchQuery;
+            mNameValuePairs = new ArrayList<>();
+            mNameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.SEARCH.get()));
+            mNameValuePairs.add(new NameValuePair(Constants.SLUG, searchQuery));
+            if (getSupportFragmentManager().getFragments() != null &&
+                    getSupportFragmentManager().getFragments().size() > 0) {
+                // New product list is requested over current page, so change nc by copying next-nc
+                setCurrentNavigationContext(referrer);
+            }
+            loadProductTabs();
         }
     }
 
@@ -467,23 +502,6 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         loadProductTabs();
     }
 
-    @Override
-    public void doSearch(String searchQuery) {
-        if (!TextUtils.isEmpty(searchQuery)) {
-            mTitlePassedViaIntent = searchQuery;
-            mNameValuePairs = new ArrayList<>();
-            mNameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.SEARCH.get()));
-            mNameValuePairs.add(new NameValuePair(Constants.SLUG, searchQuery));
-            if (getSupportFragmentManager().getFragments() != null &&
-                    getSupportFragmentManager().getFragments().size() > 0) {
-                // New product list is requested over current page, so change nc by copying next-nc
-                setCurrentNavigationContext(getNextScreenNavigationContext());
-            }
-            setNextScreenNavigationContext(TrackEventkeys.PL_PS + "." + searchQuery);
-            loadProductTabs();
-        }
-    }
-
     public void onFooterViewClicked(View v) {
         switch (v.getId()) {
             case R.id.layoutFilter:
@@ -520,7 +538,8 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                     public void onClick(DialogInterface dialog, int which) {
                         int selectedPosition = ((AlertDialog) dialog).getListView().getCheckedItemPosition();
                         if (selectedPosition != ListView.INVALID_POSITION) {
-                            applySort(mSortOptions.get(selectedPosition).getSortSlug());
+                            applySort(mSortOptions.get(selectedPosition).getSortSlug(),
+                                    mSortOptions.get(selectedPosition).getSortName());
                         }
                     }
                 })
@@ -537,6 +556,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     }
 
     private void onFilterScreenRequested() {
+        trackEvent(TrackingAware.PRODUCT_LIST_FILTER_CLICKED, null);
         Intent sortFilterIntent = new Intent(this, FilterActivity.class);
         sortFilterIntent.putExtra(Constants.FILTER_OPTIONS, mFilterOptionCategories);
         sortFilterIntent.putExtra(Constants.FILTERED_ON, mFilteredOns);
@@ -581,7 +601,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         loadProductTabs();
     }
 
-    private void applySort(String sortedOn) {
+    private void applySort(String sortedOn, String mSortedOnName) {
         if (sortedOn == null || sortedOn.equals(mSortedOn)) return;
         NameValuePair sortedOnNameValuePair = getSortedOnNameValuePair();
         if (sortedOnNameValuePair == null) {
@@ -590,7 +610,15 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         } else {
             sortedOnNameValuePair.setValue(sortedOn);
         }
+        trackSortByEvent(mSortedOnName);
         loadProductTabs();
+    }
+
+    private void trackSortByEvent(String sortedOn){
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.NAME, sortedOn);
+        map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+        trackEvent(TrackingAware.SORT_BY, map);
     }
 
     @Nullable
@@ -617,13 +645,63 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         if (filteredOnArrayList == null || filteredOnArrayList.size() == 0) {
             trackEvent(TrackingAware.FILTER_CLEARED, null);
         } else {
-            Map<String, String> eventAttribs = new HashMap<>();
+            if(mFilterOptionCategories!=null && mFilterOptionCategories.size()>0)
+                new FilterTrackEvent(this, getNextScreenNavigationContext(),
+                        mFilterOptionCategories, filteredOnArrayList).execute();
+        }
+    }
+
+
+    private static class FilterTrackEvent extends AsyncTask<Void, Void, Map<String, String>>{
+
+        private Context context;
+        private Map<String, String> eventAttribs;
+        private String mNextScreenNavigationContext;
+        private ArrayList<FilterOptionCategory> mFilterOptionCategories;
+        private ArrayList<FilteredOn> filteredOnArrayList;
+
+        FilterTrackEvent(Context context, String mNextScreenNavigationContext,
+                         ArrayList<FilterOptionCategory> mFilterOptionCategories,
+                         ArrayList<FilteredOn> filteredOnArrayList){
+            this.context = context;
+            this.mNextScreenNavigationContext = mNextScreenNavigationContext;
+            this.mFilterOptionCategories = mFilterOptionCategories;
+            this.filteredOnArrayList = filteredOnArrayList;
+            eventAttribs = new HashMap<>();
+        }
+
+        @Override
+        protected Map<String, String> doInBackground(Void... Void) {
             for (FilteredOn filteredOn : filteredOnArrayList) {
-                eventAttribs.put(TrackEventkeys.FILTER_NAME, filteredOn.getFilterSlug());
-                trackEvent(TrackingAware.FILTER_APPLIED, eventAttribs,
-                        TrackEventkeys.PRODUCT_LISTING_SCREEN, null, false);
+                eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, mNextScreenNavigationContext);
+                eventAttribs.put(filteredOn.getFilterSlug(), UIUtil.strJoin(getFilterDisplayName(filteredOn,
+                        mFilterOptionCategories), ","));
+            }
+            return eventAttribs;
+        }
+
+        @Override
+        protected void onPostExecute(Map<String, String> map) {
+            super.onPostExecute(map);
+            ((ActivityAware)context).getCurrentActivity().trackEvent(TrackingAware.FILTER_APPLIED, map,
+                    null, null, false);
+        }
+    }
+    private static ArrayList<String> getFilterDisplayName(final FilteredOn filteredOn,
+                                                          ArrayList<FilterOptionCategory> mFilterOptionCategories){
+        final ArrayList<String> filterDisplayNameArrayList = new ArrayList<>();
+        for(FilterOptionCategory filterOptionCategory : mFilterOptionCategories){
+            if(filterOptionCategory.getFilterSlug().equals(filteredOn.getFilterSlug())){
+                for(FilterOptionItem filterOptionItem : filterOptionCategory.getFilterOptionItems()) {
+                    for(String filterValue : filteredOn.getFilterValues()){
+                        if(filterOptionItem.getFilterValueSlug().equals(filterValue)){
+                            filterDisplayNameArrayList.add(filterOptionItem.getDisplayName());
+                        }
+                    }
+                }
             }
         }
+        return filterDisplayNameArrayList;
     }
 
     @Override
