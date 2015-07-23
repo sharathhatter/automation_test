@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
+import com.bigbasket.mobileapp.model.SectionManager;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
@@ -42,7 +43,7 @@ public class DiscountFragment extends BaseFragment {
 
         if (sectionData != null) {
             RecyclerView recyclerView = new SectionView(getCurrentActivity(), faceRobotoRegular,
-                    sectionData, sectionData.getScreenName()).getRecyclerView(contentLayout);
+                    sectionData, SectionManager.DISCOUNT_PAGE).getRecyclerView(contentLayout);
             if (recyclerView != null) {
                 contentLayout.addView(recyclerView);
             }

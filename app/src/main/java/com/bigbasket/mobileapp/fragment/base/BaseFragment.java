@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.text.Spannable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -374,6 +375,14 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     }
 
     @Override
+    public void trackEvent(String eventName, Map<String, String> eventAttribs,
+                           String source, String sourceValue, boolean isCustomerValueIncrease,
+                           boolean sendToFacebook){
+        trackEvent(eventName, eventAttribs, source, sourceValue, getCurrentNavigationContext(),
+                isCustomerValueIncrease, sendToFacebook);
+    }
+
+    @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs) {
         if (getCurrentActivity() == null) return;
         trackEvent(eventName, eventAttribs, null, null);
@@ -382,22 +391,24 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs, String source, String sourceValue) {
         if (getCurrentActivity() == null) return;
-        trackEvent(eventName, eventAttribs, source, sourceValue, getCurrentNavigationContext(), false);
+        trackEvent(eventName, eventAttribs, source, sourceValue, getCurrentNavigationContext(), false, false);
     }
 
     @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs, String source,
                            String sourceValue, boolean isCustomerValueIncrease) {
         if (getCurrentActivity() == null) return;
-        trackEvent(eventName, eventAttribs, source, sourceValue, getCurrentNavigationContext(), isCustomerValueIncrease);
+        trackEvent(eventName, eventAttribs, source, sourceValue, getCurrentNavigationContext(),
+                isCustomerValueIncrease, false);
     }
 
     @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs, String source,
-                           String sourceValue, String nc, boolean isCustomerValueIncrease) {
+                           String sourceValue, String nc, boolean isCustomerValueIncrease,
+                           boolean sendToFacebook) {
         if (getCurrentActivity() == null) return;
         getCurrentActivity().trackEvent(eventName, eventAttribs, source, sourceValue,
-                nc, isCustomerValueIncrease);
+                nc, isCustomerValueIncrease, sendToFacebook);
     }
 
     @Override
@@ -455,6 +466,8 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     @Nullable
     @Override
     public String getCurrentNavigationContext() {
+        if(mNavigationContext == null && getActivity()!=null && ((BaseActivity)getActivity()).getCurrentNavigationContext()!=null)
+            return ((BaseActivity)getActivity()).getCurrentNavigationContext();
         return mNavigationContext;
     }
 
@@ -466,6 +479,8 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     @Nullable
     @Override
     public String getNextScreenNavigationContext() {
+        if(mNextScreenNavigationContext==null && getActivity() !=null &&((BaseActivity)getActivity()).getNextScreenNavigationContext()!=null)
+            return ((BaseActivity)getActivity()).getNextScreenNavigationContext();
         return mNextScreenNavigationContext;
     }
 

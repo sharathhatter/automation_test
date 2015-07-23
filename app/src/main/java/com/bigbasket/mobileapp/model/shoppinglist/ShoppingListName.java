@@ -115,6 +115,6 @@ public class ShoppingListName implements Parcelable {
         } else {
             nc = TrackEventkeys.SL;
         }
-        return nc + "." + slug;
+        return nc;// + "." + slug;
     }
 }

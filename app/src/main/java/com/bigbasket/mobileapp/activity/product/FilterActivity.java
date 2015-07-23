@@ -21,16 +21,13 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.adapter.BBCheckedListAdapter;
-import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.product.FilterOptionCategory;
 import com.bigbasket.mobileapp.model.product.FilterOptionItem;
 import com.bigbasket.mobileapp.model.product.FilteredOn;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
-import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -214,9 +211,6 @@ public class FilterActivity extends BackButtonActivity {
     private class OnApplyFilterListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            HashMap<String, String> map = new HashMap<>();
-            map.put(TrackEventkeys.TYPE, "sort query");
-            trackEvent(TrackingAware.SORT_BY, map);
             Intent data = new Intent();
             data.putExtra(Constants.FILTERED_ON, mFilteredOns);
             setResult(NavigationCodes.FILTER_APPLIED, data);

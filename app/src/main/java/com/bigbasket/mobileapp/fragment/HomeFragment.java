@@ -41,6 +41,7 @@ import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
+import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.view.AppNotSupportedDialog;
 import com.bigbasket.mobileapp.view.uiv2.UpgradeAppDialog;
 
@@ -66,6 +67,8 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         getAppData(savedInstanceState);
+        trackEvent(TrackingAware.HOME_PAGE_SHOWN, null);
+        setNextScreenNavigationContext(TrackEventkeys.HOME);
     }
 
     private void homePageGetter(Bundle savedInstanceState) {
@@ -80,8 +83,16 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
     }
 
     @Override
+    public void onBackResume() {
+        super.onBackResume();
+        // removed home event from here
+        setNextScreenNavigationContext(TrackEventkeys.HOME);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
+        // removed home event from here
         AppUpdateHandler.AppUpdateData appUpdateData = AppUpdateHandler.isOutOfDate(getActivity());
         if (appUpdateData != null && !TextUtils.isEmpty(appUpdateData.getAppExpireBy())) {
             showUpgradeAppDialog(appUpdateData.getAppExpireBy(), appUpdateData.getAppUpdateMsg(),
@@ -406,7 +417,6 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         setSectionData(sectionData);
         setScreenName(screenName);
         renderHomePage();
-        trackEvent(TrackingAware.HOME_PAGE_SHOWN, null);
         //screen name pass to OnSectionItemClickListener
     }
 

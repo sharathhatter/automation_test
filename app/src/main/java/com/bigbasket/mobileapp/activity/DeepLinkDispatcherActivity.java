@@ -41,7 +41,13 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
             finish();
             return;
         }
-        setNextScreenNavigationContext(TrackEventkeys.DEEP_LINK);
+
+        // Deep link can be from dynamic screen also, hence we need to preserve that referer
+        if(getCurrentNavigationContext()==null)
+            setNextScreenNavigationContext(TrackEventkeys.DEEP_LINK);
+        else
+            setNextScreenNavigationContext(getCurrentNavigationContext());
+
         int resultCode = DeepLinkHandler.handleDeepLink(this, uri);
         if (resultCode == DeepLinkHandler.LOGIN_REQUIRED) {
             showToast(getString(R.string.login_required));
@@ -58,7 +64,10 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
             return;
         }
         String sourceName = uri.getQueryParameter(MoEHelperConstants.NAVIGATION_SOURCE_KEY);
-        if (sourceName != null && sourceName.equals(MoEHelperConstants.NAVIGATION_SOURCE_NOTIFICATION)) {
+        boolean isFromBckGround = Boolean.valueOf(uri.getQueryParameter(MoEHelperConstants.EXTRA_IS_FROM_BACKGROUND));
+        // if user minimize app isFromBckGround=> False
+        if (sourceName != null && sourceName.equals(MoEHelperConstants.NAVIGATION_SOURCE_NOTIFICATION)
+                && isFromBckGround) {
             goToHome(false);
         } else {
             finish();

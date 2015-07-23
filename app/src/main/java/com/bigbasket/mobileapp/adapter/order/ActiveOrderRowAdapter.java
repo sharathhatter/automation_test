@@ -272,22 +272,30 @@ public class ActiveOrderRowAdapter<T> extends android.widget.BaseAdapter {
         if (cartItem.getTotalPrice() > 0) {
             String prefix = "`";
             String salePriceStr = UIUtil.formatAsMoney(cartItem.getTotalPrice());
-            //String perItemCostStr = " (1@"+UIUtil.formatAsMoney(cartItem.getSalePrice())+")";
             int prefixLen = prefix.length();
-            //int salePriceLen = salePriceStr.length();
             SpannableString spannableSalePrice = new SpannableString(prefix + salePriceStr);
             spannableSalePrice.setSpan(new CustomTypefaceSpan("", faceRupee), prefixLen - 1,
                     prefixLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-//            spannableSalePrice.setSpan(new ForegroundColorSpan(((ActivityAware) context).getCurrentActivity().
-//                           getResources().getColor(R.color.uiv3_secondary_text_color)),
-//                    prefixLen + salePriceLen, spannableSalePrice.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-//            spannableSalePrice.setSpan(new AbsoluteSizeSpan(30),
-//                    prefixLen + salePriceLen, spannableSalePrice.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
             txtSalePrice.setText(spannableSalePrice);
             txtSalePrice.setVisibility(View.VISIBLE);
         } else {
             txtSalePrice.setText("Free!");
         }
+
+        /*
+        TextView txtSaving = rowHolder.getTxtSaving();
+        if (cartItem.getSaving() > 0 && (cartItem.getPromoAppliedType() >CartItem.REGULAR_PRICE_AND_PROMO_NOT_APPLIED &&
+                cartItem.getPromoAppliedType()<CartItem.REGULAR_PRICE_AND_NO_PROMO)) {
+            txtSaving.setVisibility(View.VISIBLE);
+            String prefix = "Save: `";
+            Spannable savingSpannable = new SpannableString(prefix + UIUtil.formatAsMoney(cartItem.getSaving()));
+            savingSpannable.setSpan(new CustomTypefaceSpan("", faceRupee), prefix.length()-1, prefix.length(),
+                    Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+            txtSaving.setText(savingSpannable);
+        }else {
+            txtSaving.setVisibility(View.GONE);
+        }
+        */
 
 
         final TextView txtInBasket = rowHolder.getTxtInBasket();

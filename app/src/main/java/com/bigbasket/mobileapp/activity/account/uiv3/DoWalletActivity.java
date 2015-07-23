@@ -50,6 +50,8 @@ public class DoWalletActivity extends BackButtonActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setCurrentNavigationContext(TrackEventkeys.ACCOUNT_MENU);
+        setNextScreenNavigationContext(TrackEventkeys.NAVIGATION_CTX_WALLET_SUMMARY);
         setTitle(getString(R.string.wallet_activity));
         getCurrentMemberWalletBalance();
     }
@@ -251,7 +253,6 @@ public class DoWalletActivity extends BackButtonActivity {
                     Log.d("Date from::::::::::", dateFrom);
 
                     monthClickText = month1;
-                    logWalletActivityClickEvent(numMonth1, year);
                     getWalletActivityForMonth(dateFrom, dateTo);
                 } else {
                     handler.sendOfflineError(false);
@@ -280,7 +281,6 @@ public class DoWalletActivity extends BackButtonActivity {
                     Log.d("Date to::::::::::::", dateTo);
                     Log.d("Date from::::::::::", dateFrom);
                     monthClickText = month2;
-                    logWalletActivityClickEvent(numMonth2, year);
                     getWalletActivityForMonth(dateFrom, dateTo);
                 } else {
                     handler.sendOfflineError(false);
@@ -306,7 +306,6 @@ public class DoWalletActivity extends BackButtonActivity {
                     Log.d("Date to::::::::::::", dateTo);
                     Log.d("Date from::::::::::", dateFrom);
                     monthClickText = month3;
-                    logWalletActivityClickEvent(numMonth3, year);
                     getWalletActivityForMonth(dateFrom, dateTo);
 
                 } else {
@@ -317,14 +316,6 @@ public class DoWalletActivity extends BackButtonActivity {
 
         renderDeliveryTokenData(walletRule, view);
     }
-
-    private void logWalletActivityClickEvent(int month, int year) {
-        final HashMap<String, String> map = new HashMap<>();
-        map.put(TrackEventkeys.MONTH, String.valueOf(month));
-        map.put(TrackEventkeys.YEAR, String.valueOf(year));
-        trackEvent(TrackingAware.WALLET_ACTIVITY_FOR_MONTH_CLICKED, map);
-    }
-
 
     private void getWalletActivityForMonth(final String dateFrom, final String dateTo) {
         if (!DataUtil.isInternetAvailable(getCurrentActivity())) {

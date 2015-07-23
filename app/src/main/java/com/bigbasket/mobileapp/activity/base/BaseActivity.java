@@ -240,12 +240,12 @@ public abstract class BaseActivity extends AppCompatActivity implements
             startActivity(communicationHunIntent);
         } else {
             showToast(getString(R.string.loginToContinue));
-            launchLogin(TrackEventkeys.NAVIGATION_CTX_LEFTNAV, FragmentCodes.START_COMMUNICATION_HUB);
+            launchLogin(getCurrentNavigationContext(), FragmentCodes.START_COMMUNICATION_HUB);
         }
 
         Map<String, String> eventAttribs = new HashMap<>();
-        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_LEFTNAV);
-        trackEvent(TrackingAware.COMMUNICATION_HUB_CLICKED, eventAttribs);
+        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.ACCOUNT_MENU);
+        trackEvent(TrackingAware.COMMUNICATION_HUB_SHOWN, eventAttribs);
     }
 
     public void showAlertDialog(String title, String msg) {
@@ -361,7 +361,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
         if (sourceName != null) {
             switch (sourceName) {
                 case NavigationCodes.GO_TO_LOGIN:
-                    launchLogin(TrackEventkeys.NAVIGATION_CTX_DIALOG, valuePassed);
+                    launchLogin(getCurrentNavigationContext(), valuePassed);
                     break;
             }
         }
@@ -369,7 +369,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     public void launchViewBasketScreen() {
         Intent intent = new Intent(getCurrentActivity(), ShowCartActivity.class);
-        setNextScreenNavigationContext(TrackEventkeys.VIEW_BASKET);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 
@@ -572,25 +571,35 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void trackEvent(String eventName, Map<String, String> eventAttribs,
+                    String source, String sourceValue, boolean isCustomerValueIncrease,
+                    boolean sendToFacebook){
+        trackEvent(eventName, eventAttribs, source, sourceValue, getCurrentNavigationContext(),
+                isCustomerValueIncrease, sendToFacebook);
+    }
+
+    @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs) {
         trackEvent(eventName, eventAttribs, null, null, false);
     }
 
     @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs, String source, String sourceValue) {
-        trackEvent(eventName, eventAttribs, source, sourceValue, getCurrentNavigationContext(), false);
+        trackEvent(eventName, eventAttribs, source, sourceValue, getCurrentNavigationContext(),
+                false, false);
     }
 
     @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs, String source,
                            String sourceValue, boolean isCustomerValueIncrease) {
         trackEvent(eventName, eventAttribs, source, sourceValue, getCurrentNavigationContext(),
-                isCustomerValueIncrease);
+                isCustomerValueIncrease, false);
     }
 
     @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs, String source,
-                           String sourceValue, String nc, boolean isCustomerValueIncrease) {
+                           String sourceValue, String nc, boolean isCustomerValueIncrease,
+                           boolean sendToFacebook) {
         if (eventAttribs != null && eventAttribs.containsKey(TrackEventkeys.NAVIGATION_CTX)) {
             // Someone has already set nc, so don't override it
             nc = null;
@@ -609,7 +618,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
             }
         }
         Log.d(getCurrentActivity().getClass().getName(), "Sending event = " + eventName +
-                ", eventAttribs = " + eventAttribs + ", source = " + source +
+                ", eventAttribs = " + eventAttribs + ", "+
                 ", sourceValue = " + sourceValue + ", isCustomerValueIncrease = "
                 + isCustomerValueIncrease);
         AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());
@@ -620,12 +629,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
                     for (Map.Entry<String, String> entry : eventAttribs.entrySet()) {
                         analyticsJsonObj.put(entry.getKey(), entry.getValue());
                     }
-                }
-                if (!TextUtils.isEmpty(source)) {
-                    analyticsJsonObj.put(Constants.SOURCE, source);
-                }
-                if (!TextUtils.isEmpty(sourceValue)) {
-                    analyticsJsonObj.put(Constants.SOURCE_ID, sourceValue);
                 }
                 MoEngageWrapper.trackEvent(moEHelper, eventName, analyticsJsonObj);
             } catch (JSONException e) {
@@ -639,7 +642,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
                 LocalyticsWrapper.tagEvent(eventName, eventAttribs);
         }
 
-        if (authParameters.isFBLoggerEnabled()) {
+        if (sendToFacebook && authParameters.isFBLoggerEnabled()) {
             if (eventAttribs != null) {
                 Bundle paramBundle = new Bundle();
                 for (Map.Entry<String, String> eventAttrib : eventAttribs.entrySet())
@@ -785,7 +788,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     public void launchRegistrationPage() {
-        trackEvent(TrackingAware.NEW_USER_REGISTER_CLICKED, null);
+        //trackEvent(TrackingAware.NEW_USER_REGISTER_CLICKED, null);
         Intent intent = new Intent(this, SignupActivity.class);
         intent.putExtra(Constants.DEEP_LINK, getIntent().getStringExtra(Constants.DEEP_LINK));
         intent.putExtra(Constants.FRAGMENT_CODE, getIntent().getStringExtra(Constants.FRAGMENT_CODE));

@@ -125,14 +125,7 @@ public class OTPValidationDialogFragment extends AbstractDialogFragment {
                 }
             });
         }
-        logOtpDialogEvent();
-    }
-
-    private void logOtpDialogEvent() {
-        HashMap<String, String> map = new HashMap<>();
-        map.put(TrackEventkeys.NAVIGATION_CTX, isUpdateProfile ? TrackEventkeys.NAVIGATION_CTX_UPDATE_PROFILE :
-                TrackEventkeys.NAVIGATION_CTX_DELIVERY_ADDRESS);
-        ((TrackingAware) getActivity()).trackEvent(TrackingAware.OTP_DIALOG_SHOWN, map);
+        ((TrackingAware) getActivity()).trackEvent(TrackingAware.OTP_DIALOG_SHOWN, null);
     }
 
     public void showErrorText(String errorMsg) {

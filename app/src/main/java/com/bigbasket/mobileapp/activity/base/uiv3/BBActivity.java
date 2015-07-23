@@ -1,12 +1,10 @@
 package com.bigbasket.mobileapp.activity.base.uiv3;
 
-import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.LayoutRes;
@@ -43,7 +41,6 @@ import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.SearchableActivity;
 import com.bigbasket.mobileapp.activity.product.ProductListActivity;
 import com.bigbasket.mobileapp.adapter.NavigationAdapter;
-import com.bigbasket.mobileapp.adapter.db.MostSearchesAdapter;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
 import com.bigbasket.mobileapp.fragment.DynamicScreenFragment;
 import com.bigbasket.mobileapp.fragment.HomeFragment;
@@ -173,6 +170,9 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             btnViewBasket.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    HashMap<String, String> map = new HashMap<>();
+                    map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                    trackEvent(TrackingAware.BASKET_VIEW_CLICKED, map, null, null, false, true);
                     launchViewBasketScreen();
                 }
             });
@@ -200,8 +200,6 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-                logHomeScreenEvent(TrackingAware.MENU_CLICKED, TrackEventkeys.NAVIGATION_CTX,
-                        TrackEventkeys.NAVIGATION_CTX_TOPNAV);
                 toolbar.setTitle(formatToolbarTitle(mTitle));
                 invalidateOptionsMenu();
                 if (mSubNavLayout != null && mSubNavLayout.getVisibility() == View.VISIBLE) {
@@ -222,9 +220,9 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                logHomeScreenEvent(TrackingAware.MENU_CLICKED, TrackEventkeys.NAVIGATION_CTX,
-                        TrackEventkeys.NAVIGATION_CTX_TOPNAV);
-                trackEvent(TrackingAware.MENU_SHOWN, null);
+                Map<String, String> eventAttribs = new HashMap<>();
+                eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                trackEvent(TrackingAware.MENU_SHOWN, eventAttribs);
                 invalidateOptionsMenu();
             }
         };
@@ -254,7 +252,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     public void replaceToMainLayout(AbstractFragment fragment, String tag, boolean stateLess,
                                     FrameLayout frameLayout) {
         if (frameLayout == null) return;
-        UIUtil.addNavigationContextToBundle(fragment);
+        UIUtil.addNavigationContextToBundle(fragment, getNextScreenNavigationContext());
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         String ftTag = TextUtils.isEmpty(tag) ? fragment.getFragmentTxnTag() : tag;
@@ -272,7 +270,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
 
     public void addToMainLayout(AbstractFragment fragment, String tag, boolean stateLess) {
         if (fragment == null) return;
-        UIUtil.addNavigationContextToBundle(fragment);
+        UIUtil.addNavigationContextToBundle(fragment, getNextScreenNavigationContext());
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         String ftTag = TextUtils.isEmpty(tag) ? fragment.getFragmentTxnTag() : tag;
@@ -288,6 +286,8 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             mDrawerLayout.closeDrawers();
         }
     }
+
+    //method for add bundle
 
     public BBDrawerLayout getDrawerLayout() {
         return mDrawerLayout;
@@ -446,9 +446,9 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         if (resultCode == NavigationCodes.START_SEARCH) {
             if (data != null) {
                 String searchQuery = data.getStringExtra(Constants.SEARCH_QUERY);
+                String nc = data.getStringExtra(TrackEventkeys.NAVIGATION_CTX);
                 if (!TextUtils.isEmpty(searchQuery)) {
-                    logSearchEvent(searchQuery.trim());
-                    doSearch(searchQuery.trim());
+                    doSearch(searchQuery.trim(), nc);
                     return;
                 }
             }
@@ -622,73 +622,21 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     public void handleIntent(Intent intent, Bundle savedInstanceState) {
-        if (Intent.ACTION_SEARCH.equals(intent.getAction()) && savedInstanceState == null) {
-            // User has entered something in search, and pressed enter and this is not due to a screen rotation
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            if (!TextUtils.isEmpty(query)) {
-                logSearchEvent(query.trim());
-                doSearch(query.trim());
-            }
-        } else if (Intent.ACTION_VIEW.equals(intent.getAction()) && savedInstanceState == null) {
-            // User has selected a suggestion and this is not due to a screen rotation
-            String categoryUrl = intent.getStringExtra(SearchManager.EXTRA_DATA_KEY);
-            Uri data = intent.getData();
-            if (data != null) {
-                String query = data.getLastPathSegment();
-                if (!TextUtils.isEmpty(categoryUrl) && categoryUrl.contains("/")) {
-                    String[] categoryUrlElements = categoryUrl.split("/");
-                    String slug = categoryUrlElements[categoryUrlElements.length - 1];
-                    launchCategoryProducts(query, categoryUrl, slug);
-                } else {
-                    logSearchEvent(query.trim());
-                    doSearch(query.trim());
-                }
-            }
-        } else {
-            currentFragmentTag = savedInstanceState != null ? savedInstanceState.getString(Constants.FRAGMENT_TAG) : null;
-            if (TextUtils.isEmpty(currentFragmentTag) ||
-                    getSupportFragmentManager().findFragmentByTag(currentFragmentTag) == null) {
-                startFragment();
-            }
+        currentFragmentTag = savedInstanceState != null ? savedInstanceState.getString(Constants.FRAGMENT_TAG) : null;
+        if (TextUtils.isEmpty(currentFragmentTag) ||
+                getSupportFragmentManager().findFragmentByTag(currentFragmentTag) == null) {
+            startFragment();
         }
     }
 
-    private void logSearchEvent(String query) {
-        MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(this);
-        mostSearchesAdapter.update(query);
-        HashMap<String, String> map = new HashMap<>();
-        map.put(TrackEventkeys.QUERY, query);
-        map.put(TrackEventkeys.NAVIGATION_CTX, TrackEventkeys.NAVIGATION_CTX_TOPNAV);
-        trackEvent(TrackingAware.SEARCH, map);
-    }
-
-    private void launchCategoryProducts(String categoryName, String categoryUrl,
-                                        String categorySlug) {
-        MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(this);
-        mostSearchesAdapter.update(categoryName, categoryUrl);
-        ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.CATEGORY.get()));
-        nameValuePairs.add(new NameValuePair(Constants.SLUG, categorySlug));
-        Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
-        intent.putParcelableArrayListExtra(Constants.PRODUCT_QUERY, nameValuePairs);
-        startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-    }
-
-    public void logHomeScreenEvent(String trackAwareName, String eventKeyName,
-                                   String navigationCtx) {
-        Map<String, String> eventAttribs = new HashMap<>();
-        eventAttribs.put(eventKeyName, navigationCtx);
-        trackEvent(trackAwareName, eventAttribs);
-    }
-
-    public void doSearch(String searchQuery) {
+    public void doSearch(String searchQuery, String referrer) {
         Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.SEARCH.get()));
         nameValuePairs.add(new NameValuePair(Constants.SLUG, searchQuery.trim()));
         intent.putParcelableArrayListExtra(Constants.PRODUCT_QUERY, nameValuePairs);
         intent.putExtra(Constants.TITLE, searchQuery);
-        setNextScreenNavigationContext(TrackEventkeys.PL_PS + "." + searchQuery);
+        setNextScreenNavigationContext(referrer);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
     }
 

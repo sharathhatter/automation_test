@@ -574,10 +574,13 @@ public class UIUtil {
         }
     }
 
-    public static void addNavigationContextToBundle(Fragment fragment) {
+    public static void addNavigationContextToBundle(Fragment fragment, String mNextScreenNavigationContext) {
         Bundle args = fragment.getArguments();
         String nc = fragment instanceof AnalyticsNavigationContextAware ?
                 ((AnalyticsNavigationContextAware) fragment).getNextScreenNavigationContext() : null;
+
+        if(nc == null && fragment.getActivity() ==null) // when Fragment's onActivityCreated in not called
+            nc = mNextScreenNavigationContext;
         if (nc == null && fragment.getActivity() != null &&
                 fragment.getActivity() instanceof AnalyticsNavigationContextAware) {
             // Use activity's current nc

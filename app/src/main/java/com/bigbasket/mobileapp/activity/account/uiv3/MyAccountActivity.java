@@ -49,6 +49,7 @@ public class MyAccountActivity extends BackButtonActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setCurrentNavigationContext(TrackEventkeys.ACCOUNT_MENU);
         setTitle(getString(R.string.myAccount));
         getMemberDetails();
     }
@@ -102,7 +103,9 @@ public class MyAccountActivity extends BackButtonActivity {
                 intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_UPDATE_PROFILE);
                 intent.putExtra(Constants.UPDATE_PROFILE_OBJ, updateProfileModel);
                 startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-                trackEvent(TrackingAware.MY_ACCOUNT_UPDATE_PROFILE_CLICKED, null);
+                HashMap<String, String> map = new HashMap<>();
+                map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                trackEvent(TrackingAware.MY_ACCOUNT_UPDATE_PROFILE_CLICKED, map);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -189,6 +192,7 @@ public class MyAccountActivity extends BackButtonActivity {
         }
 
         contentLayout.addView(view);
+        setNextScreenNavigationContext(TrackEventkeys.ACCOUNT);
         trackEvent(TrackingAware.MY_ACCOUNT_SHOWN, null);
     }
 
@@ -197,7 +201,9 @@ public class MyAccountActivity extends BackButtonActivity {
         intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_VIEW_DELIVERY_ADDRESS);
         intent.putExtra(Constants.FROM_ACCOUNT_PAGE, true);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
-        trackEvent(TrackingAware.DELIVERY_ADDRESS_CLICKED, null);
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+        trackEvent(TrackingAware.DELIVERY_ADDRESS_CLICKED, map);
     }
 
     private String getAddress(UpdateProfileModel updateProfileModel) {

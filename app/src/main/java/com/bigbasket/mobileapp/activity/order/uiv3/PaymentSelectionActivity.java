@@ -83,6 +83,7 @@ public class PaymentSelectionActivity extends BackButtonActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setNextScreenNavigationContext(TrackEventkeys.CO_PAYMENT);
         mPotentialOrderId = getIntent().getStringExtra(Constants.P_ORDER_ID);
 
         mLblTransactionFailed = (TextView) findViewById(R.id.lblTransactionFailed);
@@ -115,7 +116,7 @@ public class PaymentSelectionActivity extends BackButtonActivity {
             findViewById(R.id.viewPaymentInProgress).setVisibility(View.GONE);
             renderPaymentDetails();
         }
-        trackEvent(TrackingAware.CHECKOUT_PAYMENT_SHOWN, null);
+        trackEvent(TrackingAware.CHECKOUT_PAYMENT_SHOWN, null, null, null, false, true);
     }
 
     private void renderFooter() {
@@ -130,7 +131,8 @@ public class PaymentSelectionActivity extends BackButtonActivity {
                 onPlaceOrderAction();
                 HashMap<String, String> map = new HashMap<>();
                 map.put(TrackEventkeys.PAYMENT_MODE, mSelectedPaymentMethod);
-                trackEvent(TrackingAware.CHECKOUT_PLACE_ORDER_CLICKED, map);
+                map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
+                trackEvent(TrackingAware.CHECKOUT_PLACE_ORDER_CLICKED, map, null, null, false, true);
             }
         });
     }

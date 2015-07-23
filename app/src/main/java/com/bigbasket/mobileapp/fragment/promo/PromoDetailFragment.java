@@ -71,7 +71,6 @@ public class PromoDetailFragment extends BaseFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
         if (savedInstanceState != null) {
             mPromoDetail = savedInstanceState.getParcelable(Constants.PROMO_DETAIL);
             if (mPromoDetail != null) {
@@ -80,10 +79,8 @@ public class PromoDetailFragment extends BaseFragment {
                 return;
             }
         }
-
-        int promoId = getArguments().getInt(Constants.PROMO_ID, -1);
         mPromoCategory = getArguments().getParcelable(Constants.PROMO_CATS);
-        getPromoDetail(promoId);
+        setNextScreenNavigationContext(TrackEventkeys.NC_PROMO_DETAIL);
     }
 
     @Override
@@ -93,12 +90,6 @@ public class PromoDetailFragment extends BaseFragment {
         getPromoDetail(promoId);
     }
 
-    @Override
-    public void onBackResume() {
-        super.onBackResume();
-        int promoId = getArguments().getInt(Constants.PROMO_ID, -1);
-        getPromoDetail(promoId);
-    }
 
     private void getPromoDetail(int promoId) {
         if (promoId > -1) {
@@ -120,7 +111,11 @@ public class PromoDetailFragment extends BaseFragment {
                             renderPromoDetail();
                             setCartSummary(promoDetailApiResponseContentApiResponse.cartSummary);
                             updateUIForCartInfo();
-                            trackEvent(TrackingAware.PROMO_DETAIL_SHOWN, null);
+                            HashMap<String, String> map = new HashMap<>();
+                            if(!TextUtils.isEmpty(mPromoDetail.getPromoName())){
+                                map.put(TrackEventkeys.PROMO_NAME, mPromoDetail.getPromoName());
+                            }
+                            trackEvent(TrackingAware.PROMO_DETAIL_SHOWN, map);
                         } else {
                             handler.sendEmptyMessage(promoDetailApiResponseContentApiResponse.status,
                                     promoDetailApiResponseContentApiResponse.message, true);
@@ -305,11 +300,10 @@ public class PromoDetailFragment extends BaseFragment {
             productRowParams.setMargins(8, 8, 8, 0);
 
             ProductView.setProductView(new ProductViewHolder(base), freeProduct, promoDetail.getBaseImgUrl(),
-                    null, productViewDisplayDataHolder, false, null, getNavigationCtx());
+                    null, productViewDisplayDataHolder, false, null, getNextScreenNavigationContext());
             base.setLayoutParams(productRowParams);
             view.addView(base);
         }
-        trackEvent(TrackingAware.PROMO_SET_PRODUCTS_SHOWN, null);
     }
 
     private View getPromoSetBar(String text, PromoDetail promoDetail, HashMap<String, Integer> cartInfo,
@@ -456,10 +450,6 @@ public class PromoDetailFragment extends BaseFragment {
     public String getTitle() {
         String promoName = getArguments() != null ? getArguments().getString(Constants.PROMO_NAME) : null;
         return TextUtils.isEmpty(promoName) ? "Promotion Detail" : promoName;
-    }
-
-    public String getNavigationCtx() {
-        return TrackEventkeys.NAVIGATION_CTX_PROMO_DETAIL;
     }
 
     @NonNull

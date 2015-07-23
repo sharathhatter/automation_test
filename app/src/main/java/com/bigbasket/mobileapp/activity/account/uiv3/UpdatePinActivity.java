@@ -39,6 +39,7 @@ public class UpdatePinActivity extends BackButtonActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setCurrentNavigationContext(TrackEventkeys.ACCOUNT_MENU);
         setTitle(getString(R.string.deliveryPin));
         getCurrentMemberPin();
     }
