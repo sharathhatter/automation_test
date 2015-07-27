@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
+import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.adapter.product.ProductListSpinnerAdapter;
 import com.bigbasket.mobileapp.common.CustomTypefaceSpan;
@@ -412,6 +413,8 @@ public final class ProductView {
                                     Toast.makeText(((ActivityAware) basketOperationAware).getCurrentActivity(), "Quantity shouldn\'t be blank", Toast.LENGTH_SHORT).show();
                                     return;
                                 }
+                                BaseActivity.hideKeyboard(((ActivityAware) basketOperationAware).getCurrentActivity(),
+                                        editTextQty);
                                 qty = txt;
                             }
                             BasketOperationTask<T> basketOperationTask = new BasketOperationTask<>(basketOperationAware,

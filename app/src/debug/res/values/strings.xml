@@ -4,5 +4,5 @@
     <string name="moe_app_id" templateMergeStrategy="preserve">YSD6Y5AVT60X4AWNLL35EIDJ</string>
     <string name="moe_gcm_sender_id" templateMergeStrategy="preserve">id:551288451469</string>
     <string name="new_relic_key">AA7a058918c000f6de19f87629160fe53b42368eb1</string>
-    <string name="localytics_api_key" templateMergeStrategy="preserve">9731fceaf3ec297492fbbed-4a3a1562-3070-11e5-2305-00020191b0b4</string>
+    <string name="localytics_api_key" templateMergeStrategy="preserve">14488daecef8aa9ffe0e606-fe0465b6-31f0-11e5-f019-008b20abc1fa</string>
 </resources>

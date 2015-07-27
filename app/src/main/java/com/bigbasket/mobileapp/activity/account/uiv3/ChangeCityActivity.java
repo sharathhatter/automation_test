@@ -18,7 +18,11 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
 import com.bigbasket.mobileapp.interfaces.CityListDisplayAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.model.SectionManager;
 import com.bigbasket.mobileapp.model.account.City;
+import com.bigbasket.mobileapp.model.order.PayuResponse;
+import com.bigbasket.mobileapp.model.order.PowerPayResponse;
+import com.bigbasket.mobileapp.model.order.VoucherApplied;
 import com.bigbasket.mobileapp.task.uiv3.GetCitiesTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
@@ -136,6 +140,11 @@ public class ChangeCityActivity extends BackButtonActivity implements CityListDi
         editor.putString(Constants.CITY_ID, String.valueOf(city.getId()));
         editor.putBoolean(Constants.HAS_USER_CHOSEN_CITY, true);
         editor.commit();
+
+        SectionManager.clearAllSectionData(this);
+        PayuResponse.clearTxnDetail(this);
+        VoucherApplied.clearFromPreference(this);
+        PowerPayResponse.clearTxnDetail(this);
 
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.CITY, city.getName());
