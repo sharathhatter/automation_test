@@ -435,7 +435,7 @@ public class ShipmentSelectionActivity extends BackButtonActivity {
 
                         HashMap<String, String> map = new HashMap<>();
                         map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
-                        if(selectedSlot.getSlotDisplay()!=null)
+                        if (selectedSlot.getSlotDisplay() != null)
                             map.put(TrackEventkeys.SELECTED_SLOT, selectedSlot.getSlotDisplay().getTime());
                         trackEvent(TrackingAware.CHECKOUT_SLOT_SELECTED, map);
                     }

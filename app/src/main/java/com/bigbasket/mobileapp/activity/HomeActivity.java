@@ -15,7 +15,7 @@ public class HomeActivity extends BBActivity {
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         setNextScreenNavigationContext(TrackEventkeys.HOME);
     }

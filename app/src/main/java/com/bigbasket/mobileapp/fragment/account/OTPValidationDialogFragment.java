@@ -22,8 +22,6 @@ import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.uiv3.AbstractDialogFragment;
 
-import java.util.HashMap;
-
 public class OTPValidationDialogFragment extends AbstractDialogFragment {
 
     private TextView txtErrorValidateNumber, txtResendNumber;

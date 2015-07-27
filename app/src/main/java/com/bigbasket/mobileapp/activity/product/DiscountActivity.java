@@ -111,9 +111,9 @@ public class DiscountActivity extends BBActivity {
                 @Override
                 public void onPageSelected(int position) {
                     HashMap<String, String> eventAttribs = new HashMap<>();
-                    if(position==0 && categorySectionData.getScreenName()!=null){
+                    if (position == 0 && categorySectionData.getScreenName() != null) {
                         eventAttribs.put(Constants.TAB_NAME, categorySectionData.getScreenName());
-                    }else if(binSectionData.getScreenName()!=null){
+                    } else if (binSectionData.getScreenName() != null) {
                         eventAttribs.put(Constants.TAB_NAME, binSectionData.getScreenName());
                     }
                     eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());

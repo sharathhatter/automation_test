@@ -572,8 +572,8 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     @Override
     public void trackEvent(String eventName, Map<String, String> eventAttribs,
-                    String source, String sourceValue, boolean isCustomerValueIncrease,
-                    boolean sendToFacebook){
+                           String source, String sourceValue, boolean isCustomerValueIncrease,
+                           boolean sendToFacebook) {
         trackEvent(eventName, eventAttribs, source, sourceValue, getCurrentNavigationContext(),
                 isCustomerValueIncrease, sendToFacebook);
     }
@@ -618,7 +618,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
             }
         }
         Log.d(getCurrentActivity().getClass().getName(), "Sending event = " + eventName +
-                ", eventAttribs = " + eventAttribs + ", "+
+                ", eventAttribs = " + eventAttribs + ", " +
                 ", sourceValue = " + sourceValue + ", isCustomerValueIncrease = "
                 + isCustomerValueIncrease);
         AuthParameters authParameters = AuthParameters.getInstance(getCurrentActivity());

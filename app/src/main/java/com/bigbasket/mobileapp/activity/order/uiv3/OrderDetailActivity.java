@@ -1,7 +1,6 @@
 package com.bigbasket.mobileapp.activity.order.uiv3;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
@@ -12,12 +11,10 @@ import com.bigbasket.mobileapp.adapter.TabPagerAdapter;
 import com.bigbasket.mobileapp.fragment.order.OrderInvoiceItemsListFragment;
 import com.bigbasket.mobileapp.fragment.order.OrderInvoiceSummaryFragment;
 import com.bigbasket.mobileapp.fragment.order.OrderModificationFragment;
-import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
-import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 

@@ -11,7 +11,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,8 +62,6 @@ import com.google.gson.Gson;
 import com.moe.imageLib.AsyncTask;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
-import org.json.JSONArray;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -104,9 +101,9 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
-        if(mNameValuePairs!=null)
+        if (mNameValuePairs != null)
             setNextScreenNavigationContext(NameValuePair.buildNavigationContext(mNameValuePairs));
     }
 
@@ -277,7 +274,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                     mArrayTabTypeAndFragmentPosition.put(i, productTabInfo.getTabType());
                     tabTypeWithNoProducts.add(productTabInfo.getTabType());
                 }
-                if(i==0)
+                if (i == 0)
                     logProductListingShownEvent(productTabInfo.getTabType());
             }
         }
@@ -614,7 +611,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         loadProductTabs();
     }
 
-    private void trackSortByEvent(String sortedOn){
+    private void trackSortByEvent(String sortedOn) {
         HashMap<String, String> map = new HashMap<>();
         map.put(TrackEventkeys.NAME, sortedOn);
         map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
@@ -645,14 +642,14 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         if (filteredOnArrayList == null || filteredOnArrayList.size() == 0) {
             trackEvent(TrackingAware.FILTER_CLEARED, null);
         } else {
-            if(mFilterOptionCategories!=null && mFilterOptionCategories.size()>0)
+            if (mFilterOptionCategories != null && mFilterOptionCategories.size() > 0)
                 new FilterTrackEvent(this, getNextScreenNavigationContext(),
                         mFilterOptionCategories, filteredOnArrayList).execute();
         }
     }
 
 
-    private static class FilterTrackEvent extends AsyncTask<Void, Void, Map<String, String>>{
+    private static class FilterTrackEvent extends AsyncTask<Void, Void, Map<String, String>> {
 
         private Context context;
         private Map<String, String> eventAttribs;
@@ -662,7 +659,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
         FilterTrackEvent(Context context, String mNextScreenNavigationContext,
                          ArrayList<FilterOptionCategory> mFilterOptionCategories,
-                         ArrayList<FilteredOn> filteredOnArrayList){
+                         ArrayList<FilteredOn> filteredOnArrayList) {
             this.context = context;
             this.mNextScreenNavigationContext = mNextScreenNavigationContext;
             this.mFilterOptionCategories = mFilterOptionCategories;
@@ -683,18 +680,19 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
         @Override
         protected void onPostExecute(Map<String, String> map) {
             super.onPostExecute(map);
-            ((ActivityAware)context).getCurrentActivity().trackEvent(TrackingAware.FILTER_APPLIED, map,
+            ((ActivityAware) context).getCurrentActivity().trackEvent(TrackingAware.FILTER_APPLIED, map,
                     null, null, false);
         }
     }
+
     private static ArrayList<String> getFilterDisplayName(final FilteredOn filteredOn,
-                                                          ArrayList<FilterOptionCategory> mFilterOptionCategories){
+                                                          ArrayList<FilterOptionCategory> mFilterOptionCategories) {
         final ArrayList<String> filterDisplayNameArrayList = new ArrayList<>();
-        for(FilterOptionCategory filterOptionCategory : mFilterOptionCategories){
-            if(filterOptionCategory.getFilterSlug().equals(filteredOn.getFilterSlug())){
-                for(FilterOptionItem filterOptionItem : filterOptionCategory.getFilterOptionItems()) {
-                    for(String filterValue : filteredOn.getFilterValues()){
-                        if(filterOptionItem.getFilterValueSlug().equals(filterValue)){
+        for (FilterOptionCategory filterOptionCategory : mFilterOptionCategories) {
+            if (filterOptionCategory.getFilterSlug().equals(filteredOn.getFilterSlug())) {
+                for (FilterOptionItem filterOptionItem : filterOptionCategory.getFilterOptionItems()) {
+                    for (String filterValue : filteredOn.getFilterValues()) {
+                        if (filterOptionItem.getFilterValueSlug().equals(filterValue)) {
                             filterDisplayNameArrayList.add(filterOptionItem.getDisplayName());
                         }
                     }

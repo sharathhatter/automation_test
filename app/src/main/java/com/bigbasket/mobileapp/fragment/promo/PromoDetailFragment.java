@@ -112,7 +112,7 @@ public class PromoDetailFragment extends BaseFragment {
                             setCartSummary(promoDetailApiResponseContentApiResponse.cartSummary);
                             updateUIForCartInfo();
                             HashMap<String, String> map = new HashMap<>();
-                            if(!TextUtils.isEmpty(mPromoDetail.getPromoName())){
+                            if (!TextUtils.isEmpty(mPromoDetail.getPromoName())) {
                                 map.put(TrackEventkeys.PROMO_NAME, mPromoDetail.getPromoName());
                             }
                             trackEvent(TrackingAware.PROMO_DETAIL_SHOWN, map);
