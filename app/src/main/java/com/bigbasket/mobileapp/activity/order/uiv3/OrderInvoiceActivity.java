@@ -38,13 +38,12 @@ public class OrderInvoiceActivity extends BaseActivity implements InvoiceDataAwa
         setContentView(R.layout.uiv3_multiple_order_invoice_layout);
         ArrayList<Order> orderArrayList = getIntent().getParcelableArrayListExtra(Constants.ORDERS);
         final String addMoreLink = getIntent().getStringExtra(Constants.ADD_MORE_LINK);
-        String addMoreMsg = getIntent().getStringExtra(Constants.ADD_MORE_MSG);
+        final String addMoreMsg = getIntent().getStringExtra(Constants.ADD_MORE_MSG);
         showOrderList(orderArrayList);
 
         TextView lblAddMoreProducts = (TextView) findViewById(R.id.lblAddMoreProducts);
         if (!TextUtils.isEmpty(addMoreMsg) && !TextUtils.isEmpty(addMoreLink)) {
-            final String addMoreText = lblAddMoreProducts.getText().toString();
-            SpannableString spannableString = new SpannableString(addMoreText);
+            SpannableString spannableString = new SpannableString(addMoreMsg);
             spannableString.setSpan(new UnderlineSpan(), 0, spannableString.length(),
                     Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
             lblAddMoreProducts.setText(spannableString);
@@ -55,7 +54,7 @@ public class OrderInvoiceActivity extends BaseActivity implements InvoiceDataAwa
                     Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
                     intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
                     intent.putExtra(Constants.WEBVIEW_URL, addMoreLink);
-                    intent.putExtra(Constants.WEBVIEW_TITLE, addMoreText);
+                    intent.putExtra(Constants.WEBVIEW_TITLE, addMoreMsg);
                     startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 }
             });

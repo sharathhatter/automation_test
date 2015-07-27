@@ -304,7 +304,7 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
         PayuResponse.clearTxnDetail(getCurrentActivity());
         VoucherApplied.clearFromPreference(getCurrentActivity());
         PowerPayResponse.clearTxnDetail(getCurrentActivity());
-
+        
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
         SharedPreferences.Editor editor = preferences.edit();
         editor.remove(Constants.FIRST_NAME_PREF);
@@ -377,7 +377,6 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
     }
 
     public void onLoginSuccess() {
-        SectionManager.clearAllSectionData(getCurrentActivity());
         String deepLink = getIntent().getStringExtra(Constants.DEEP_LINK);
         if (!TextUtils.isEmpty(deepLink)) {
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
