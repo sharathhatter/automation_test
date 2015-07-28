@@ -83,6 +83,7 @@
             android:name=".activity.CustomerFeedbackActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
         <!-- <activity android:name="com.luminous.pick.CustomGalleryActivity" > -->
@@ -100,6 +101,7 @@
             android:name=".activity.DeepLinkDispatcherActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan">
 
             <!--android:parentActivityName=".activity.SplashActivity"-->
@@ -321,6 +323,7 @@
             android:name=".activity.order.uiv3.ShowCartActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
         <activity
@@ -342,21 +345,25 @@
         <activity
             android:name=".activity.order.uiv3.OrderDetailActivity"
             android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.order.uiv3.AvailableVoucherListActivity"
             android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
         <activity
             android:name=".activity.order.MemberAddressFormActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.shoppinglist.ShoppingListActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.shoppinglist.ShoppingListSummaryActivity"
@@ -372,10 +379,12 @@
             android:name=".activity.order.uiv3.PayuTransactionActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.account.uiv3.ChangeCityActivity"
             android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.account.uiv3.SignInActivity"
@@ -399,16 +408,19 @@
             android:name=".activity.account.uiv3.SocialLoginConfirmActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.order.uiv3.ShipmentSelectionActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.order.uiv3.PaymentSelectionActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.order.uiv3.OrderInvoiceActivity"
@@ -423,37 +435,44 @@
         <activity
             android:name=".activity.account.uiv3.OrderListActivity"
             android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.base.uiv3.BackButtonActivity"
             android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.base.uiv3.BackButtonWithBasketButtonActivity"
             android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".activity.account.uiv3.MyAccountActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
         <activity
             android:name=".activity.account.uiv3.UpdatePinActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
         <activity
             android:name=".activity.account.uiv3.DoWalletActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
         <activity
             android:name=".activity.account.uiv3.WalletActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
         <provider
