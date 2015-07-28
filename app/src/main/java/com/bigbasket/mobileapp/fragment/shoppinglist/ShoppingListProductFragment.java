@@ -59,6 +59,7 @@ public class ShoppingListProductFragment extends ProductListAwareFragment {
                 .setShowShopListDeleteBtn(!shoppingListSummary.getShoppingListName().isSystem())
                 .setShoppingListName(shoppingListSummary.getShoppingListName())
                 .setRupeeTypeface(faceRupee)
+                .showQtyInput(AuthParameters.getInstance(getActivity()).isKirana())
                 .build();
     }
 
