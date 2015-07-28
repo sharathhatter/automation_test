@@ -50,7 +50,7 @@
     <string name="vat">VAT</string>
     <string name="action">Action</string>
     <string name="item">Item</string>
-    <string name="txnFailedRetryTxt">Please choose a different payment method, or retry again!</string>
+    <string name="txnFailedRetryTxt">Please choose a different payment method, and try again!</string>
     <string name="fromWalletMsg">Since, you have sufficient funds in wallet - total amount will be deducted directly from wallet.</string>
     <string name="ok">OK</string>
     <string name="yesTxt">Yes</string>
@@ -257,7 +257,7 @@
     <string name="termsAndCondHeading">Terms and conditions</string>
     <string name="home">Home</string>
     <string name="transactionFailed">Transaction Failed!</string>
-    <string name="failedToProcess">Failed to process your transaction</string>
+    <string name="failedToProcess">Failed to process your transaction</string> <!-- remove this -->
     <string name="youAborted">You aborted the transaction</string>
     <string name="smartBasket">Smart Basket</string>
     <string name="rateTheApp">Rate our App</string>
