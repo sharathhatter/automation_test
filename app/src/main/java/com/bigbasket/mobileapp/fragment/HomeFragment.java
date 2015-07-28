@@ -41,7 +41,6 @@ import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.view.AppNotSupportedDialog;
 import com.bigbasket.mobileapp.view.uiv2.UpgradeAppDialog;
 

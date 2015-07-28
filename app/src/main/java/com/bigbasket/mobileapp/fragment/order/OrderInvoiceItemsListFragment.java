@@ -10,7 +10,6 @@ import android.widget.ListView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.adapter.order.ActiveOrderRowAdapter;
 import com.bigbasket.mobileapp.fragment.base.BaseFragment;
-import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.cart.CartItem;
 import com.bigbasket.mobileapp.model.cart.CartItemHeader;
 import com.bigbasket.mobileapp.model.cart.CartItemList;
@@ -20,9 +19,7 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 public class OrderInvoiceItemsListFragment extends BaseFragment {

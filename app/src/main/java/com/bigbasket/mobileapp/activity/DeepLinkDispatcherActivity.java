@@ -43,7 +43,7 @@ public class DeepLinkDispatcherActivity extends BaseActivity implements InvoiceD
         }
 
         // Deep link can be from dynamic screen also, hence we need to preserve that referer
-        if(getCurrentNavigationContext()==null)
+        if (getCurrentNavigationContext() == null)
             setNextScreenNavigationContext(TrackEventkeys.DEEP_LINK);
         else
             setNextScreenNavigationContext(getCurrentNavigationContext());

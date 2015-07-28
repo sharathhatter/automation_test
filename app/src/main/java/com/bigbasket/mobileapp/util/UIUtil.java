@@ -16,6 +16,7 @@ import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -33,8 +34,6 @@ import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -575,11 +574,11 @@ public class UIUtil {
     }
 
     public static void changeStatusBarColor(Context context, @ColorRes int color) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = ((Activity) context).getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.setStatusBarColor(context.getResources().getColor(color));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && context instanceof Activity) {
+            DrawerLayout drawerLayout = (DrawerLayout) ((Activity) context).findViewById(R.id.drawer_layout);
+            if (drawerLayout != null) {
+                drawerLayout.setStatusBarBackground(color);
+            }
         }
     }
 
@@ -588,7 +587,7 @@ public class UIUtil {
         String nc = fragment instanceof AnalyticsNavigationContextAware ?
                 ((AnalyticsNavigationContextAware) fragment).getNextScreenNavigationContext() : null;
 
-        if(nc == null && fragment.getActivity() ==null) // when Fragment's onActivityCreated in not called
+        if (nc == null && fragment.getActivity() == null) // when Fragment's onActivityCreated in not called
             nc = mNextScreenNavigationContext;
         if (nc == null && fragment.getActivity() != null &&
                 fragment.getActivity() instanceof AnalyticsNavigationContextAware) {

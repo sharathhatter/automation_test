@@ -30,7 +30,6 @@ import com.bigbasket.mobileapp.util.UIUtil;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;

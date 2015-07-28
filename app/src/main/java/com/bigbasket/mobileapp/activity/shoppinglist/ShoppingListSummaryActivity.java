@@ -264,9 +264,9 @@ public class ShoppingListSummaryActivity extends BBActivity {
                         HashMap<String, String> eventAttribs = new HashMap<>();
                         eventAttribs.put(Constants.TAB_NAME, shoppingListSummaries.get(position).getFacetSlug());
                         String tabName = !TextUtils.isEmpty(nc) && nc.equals(TrackEventkeys.SB)
-                                                            ? "SmartBasket" : "ShoppingList";
+                                ? "SmartBasket" : "ShoppingList";
                         eventAttribs.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
-                        trackEvent(tabName+"."+ TrackingAware.TAB_CHANGED, eventAttribs);
+                        trackEvent(tabName + "." + TrackingAware.TAB_CHANGED, eventAttribs);
                     }
 
                     @Override

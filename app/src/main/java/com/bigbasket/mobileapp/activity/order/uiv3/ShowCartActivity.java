@@ -159,9 +159,9 @@ public class ShowCartActivity extends BackButtonActivity {
                 if (cartItems.get(i).getPromoAppliedType() == 2 ||
                         cartItems.get(i).getPromoAppliedType() == 3) {
                     HashMap<String, String> map = new HashMap<>();
-                    if(isCurrentPageRequest){
+                    if (isCurrentPageRequest) {
                         map.put(TrackEventkeys.NAVIGATION_CTX, getNextScreenNavigationContext());
-                    }else {
+                    } else {
                         map.put(TrackEventkeys.NAVIGATION_CTX, getCurrentNavigationContext());
                     }
                     trackEvent(TrackingAware.PROMO_REDEEMED, map);
@@ -216,7 +216,7 @@ public class ShowCartActivity extends BackButtonActivity {
         cartItemListView.setAdapter(activeOrderRowAdapter);
         contentLayout.addView(basketView);
 
-        if(!isCurrentPageRequest)
+        if (!isCurrentPageRequest)
             logViewBasketEvent(cartSummary, eventAttribs);
     }
 

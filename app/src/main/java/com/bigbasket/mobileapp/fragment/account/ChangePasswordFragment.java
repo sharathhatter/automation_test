@@ -48,6 +48,7 @@ public class ChangePasswordFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
         setCurrentNavigationContext(TrackEventkeys.ACCOUNT_MENU);
     }
+
     public void initiateChangePassword(View base) {
 
         oldEditText = (EditText) base.findViewById(R.id.oldPwdEditTxt);
