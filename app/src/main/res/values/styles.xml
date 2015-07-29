@@ -222,4 +222,8 @@
     </style>
 
     <style name="SpinnerDialogMode" />
+
+    <style name="Widget.Design.ScrimInsetsFrameLayout" parent="">
+        <item name="insetForeground">#4000</item>
+    </style>
 </resources>
