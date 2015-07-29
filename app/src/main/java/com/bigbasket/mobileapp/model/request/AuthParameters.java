@@ -47,6 +47,7 @@ public class AuthParameters {
     }
 
     public static void updateInstance(Context context) {
+        if (context == null) return;
         authParameters = new AuthParameters(context);
         BigBasketApiAdapter.refreshBigBasketApiService(context);
     }
@@ -107,6 +108,7 @@ public class AuthParameters {
                                     boolean isLocalyticsEnabled,
                                     boolean isFBLoggerEnabled,
                                     Context context) {
+        if (context == null) return;
         SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefer.edit();
         editor.putBoolean(Constants.ENABLE_MOENGAGE, isMoEngaleEnabled);

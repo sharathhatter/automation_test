@@ -340,7 +340,7 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                 new Callback<ApiResponse<AppDataResponse>>() {
                     @Override
                     public void success(ApiResponse<AppDataResponse> callbackAppDataResponse, Response response) {
-                        if (callbackAppDataResponse.status == 0) {
+                        if (callbackAppDataResponse.status == 0 && getActivity() != null) {
                             String appExpiredBy = callbackAppDataResponse.apiResponseContent.appUpdate.expiryDate;
                             String upgradeMsg = callbackAppDataResponse.apiResponseContent.appUpdate.upgradeMsg;
                             String latestAppVersion = callbackAppDataResponse.apiResponseContent.appUpdate.latestAppVersion;
