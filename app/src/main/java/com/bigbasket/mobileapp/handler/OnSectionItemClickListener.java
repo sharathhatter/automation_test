@@ -122,6 +122,7 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
                         intent.putExtra(Constants.SECTION_ITEM, (Parcelable) sectionItem);
                     } else {
                         intent = new Intent(((ActivityAware) context).getCurrentActivity(), BackButtonActivity.class);
+                        intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_WEBVIEW);
                         intent.putExtra(Constants.WEBVIEW_URL, destinationInfo.getDestinationSlug());
                     }
                     intent.putExtra(Constants.WEBVIEW_TITLE, sectionItem.getTitle() != null ?
