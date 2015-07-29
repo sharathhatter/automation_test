@@ -29,7 +29,6 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DataUtil;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
-import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -127,8 +126,6 @@ public class ShoppingListFragment extends BaseFragment implements ShoppingListNa
             showNoShoppingListView(base);
         }
 
-        FloatingActionButton fabCreateShoppingList = (FloatingActionButton) base.findViewById(R.id.btnFab);
-        base.removeView(fabCreateShoppingList);
         contentView.removeAllViews();
         contentView.addView(base);
     }

@@ -17,15 +17,14 @@ android {
         }
     }
     lintOptions {
-          abortOnError false
-      }
+        abortOnError false
+    }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     provided 'com.squareup.picasso:picasso:2.5.2'
-    provided 'com.android.support:support-v4:22.2.0'
-    provided 'com.android.support:appcompat-v7:22.2.0'
-    provided 'com.nineoldandroids:library:2.4.0'
+    provided 'com.android.support:support-v4:22.2.1'
+    provided 'com.android.support:appcompat-v7:22.2.1'
 }
 apply from: './gradle-mvn-push.gradle'

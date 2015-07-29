@@ -41,7 +41,7 @@
         <item name="colorAccent">@color/uiv3_action_bar_background</item>
     </style>
 
-    <style name="BBAppTheme.SearchViewTheme" parent="BBAppTheme" />
+    <style name="BaseAppTheme.SearchViewTheme" parent="BBAppTheme" />
 
     <!-- Nav drawer style to set width specified by Material Design specification -->
     <style name="NavDrawer" parent="WindowStyle">
