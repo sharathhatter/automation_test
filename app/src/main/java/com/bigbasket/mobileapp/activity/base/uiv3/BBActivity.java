@@ -123,6 +123,13 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             mNavRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         }
 
+        mListSubNavigation = (RecyclerView) findViewById(R.id.listSubNavigation);
+        if (mListSubNavigation != null) {
+            // Assign a layout manager as soon as RecyclerView is inflated to prevent onDestroy crash
+            mListSubNavigation.setHasFixedSize(false);
+            mListSubNavigation.setLayoutManager(new LinearLayoutManager(this));
+        }
+
         handler = new BigBasketMessageHandler<>(this);
         mTitle = getTitle().toString();
 
