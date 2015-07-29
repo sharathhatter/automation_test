@@ -22052,21 +22052,21 @@ com.bigbasket.mobileapp.model.request.AuthParameters -> com.bigbasket.mobileapp.
     boolean isLocalyticsEnabled -> isLocalyticsEnabled
     boolean isFBLoggerEnabled -> isFBLoggerEnabled
     boolean isKirana -> isKirana
-    50:52:void updateInstance(android.content.Context) -> updateInstance
-    55:58:com.bigbasket.mobileapp.model.request.AuthParameters getInstance(android.content.Context) -> getInstance
-    62:62:java.lang.String getVisitorId() -> getVisitorId
-    66:66:java.lang.String getBbAuthToken() -> getBbAuthToken
-    70:70:java.lang.String getOsVersion() -> getOsVersion
-    74:74:java.lang.String getMid() -> getMid
-    78:78:java.lang.String getMemberEmail() -> getMemberEmail
-    82:82:boolean isKirana() -> isKirana
-    86:91:java.lang.String getFirstName() -> getFirstName
-    95:95:java.lang.String getMemberFullName() -> getMemberFullName
-    99:99:boolean isAuthTokenEmpty() -> isAuthTokenEmpty
-    103:103:boolean isMoEngageEnabled() -> isMoEngageEnabled
-    110:119:void setAnyLyticsEnabled(boolean,boolean,boolean,android.content.Context) -> setAnyLyticsEnabled
-    122:122:boolean isLocalyticsEnabled() -> isLocalyticsEnabled
-    126:126:boolean isFBLoggerEnabled() -> isFBLoggerEnabled
+    50:53:void updateInstance(android.content.Context) -> updateInstance
+    56:59:com.bigbasket.mobileapp.model.request.AuthParameters getInstance(android.content.Context) -> getInstance
+    63:63:java.lang.String getVisitorId() -> getVisitorId
+    67:67:java.lang.String getBbAuthToken() -> getBbAuthToken
+    71:71:java.lang.String getOsVersion() -> getOsVersion
+    75:75:java.lang.String getMid() -> getMid
+    79:79:java.lang.String getMemberEmail() -> getMemberEmail
+    83:83:boolean isKirana() -> isKirana
+    87:92:java.lang.String getFirstName() -> getFirstName
+    96:96:java.lang.String getMemberFullName() -> getMemberFullName
+    100:100:boolean isAuthTokenEmpty() -> isAuthTokenEmpty
+    104:104:boolean isMoEngageEnabled() -> isMoEngageEnabled
+    111:121:void setAnyLyticsEnabled(boolean,boolean,boolean,android.content.Context) -> setAnyLyticsEnabled
+    124:124:boolean isLocalyticsEnabled() -> isLocalyticsEnabled
+    128:128:boolean isFBLoggerEnabled() -> isFBLoggerEnabled
 com.bigbasket.mobileapp.model.search.AutoSearchResponse -> com.bigbasket.mobileapp.model.search.AutoSearchResponse:
     int CACHE_INTERVAL_IN_DAYS -> CACHE_INTERVAL_IN_DAYS
     java.lang.String query -> query
@@ -60311,4 +60311,4 @@ retrofit.mime.TypedOutput -> retrofit.mime.TypedOutput:
 retrofit.mime.TypedString -> retrofit.mime.TypedString:
     28:30:byte[] convertToBytes(java.lang.String) -> convertToBytes
     36:38:java.lang.String toString() -> toString
-# NR_BUILD_ID: 5a5f7da4-511e-4feb-993f-848b1fca85a5# NR_BUILD_ID: f4718d30-c7ec-4b44-a775-57e0d38907b5# NR_BUILD_ID: d676b04d-41c0-413b-b343-21226afadcd4# NR_BUILD_ID: f5672d3f-c4b4-4a5b-a2b8-f13c19b84525# NR_BUILD_ID: 4cc3d4aa-6649-4197-b0e3-325cf69b2935
+# NR_BUILD_ID: 19740f95-4afa-4d7a-ac8f-1d018c76358e# NR_BUILD_ID: 808a5ee0-8f79-470a-a57e-13ab743a887b# NR_BUILD_ID: 5b313d34-e536-4c2c-a402-f902e9c4986e# NR_BUILD_ID: 6fb7b955-a62d-449c-8167-39f3bbfeb0ac
