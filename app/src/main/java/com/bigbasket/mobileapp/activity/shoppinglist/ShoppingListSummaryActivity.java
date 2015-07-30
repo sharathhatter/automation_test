@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
@@ -46,7 +47,6 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
 import com.bigbasket.mobileapp.view.uiv3.HeaderSpinnerView;
-import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -231,6 +231,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
                 txtSearchResultMsg2.setTypeface(faceRobotoRegular);
                 contentFrame.addView(relativeLayout);
             }
+            findViewById(R.id.slidingTabs).setVisibility(View.GONE);
             findViewById(R.id.layoutAddAll).setVisibility(View.GONE);
             return;
         }
@@ -240,6 +241,7 @@ public class ShoppingListSummaryActivity extends BBActivity {
         final String nc = getNc();
         setNextScreenNavigationContext(nc);
         if (numTabs == 1) {
+            findViewById(R.id.slidingTabs).setVisibility(View.GONE);
             Bundle bundle = getBundleForShoppingListProductFragment(shoppingListSummaries.get(0),
                     shoppingListName, baseImgUrl);
             ShoppingListProductFragment shoppingListProductFragment = new ShoppingListProductFragment();
@@ -247,9 +249,9 @@ public class ShoppingListSummaryActivity extends BBActivity {
             replaceToMainLayout(shoppingListProductFragment, ShoppingListProductFragment.class.getName(), false,
                     contentFrame);
         } else {
-            View base = inflater.inflate(R.layout.uiv3_swipe_tab_view, contentFrame, false);
+            findViewById(R.id.slidingTabs).setVisibility(View.VISIBLE);
 
-            viewPager = (ViewPager) base.findViewById(R.id.pager);
+            viewPager = (ViewPager) getLayoutInflater().inflate(R.layout.uiv3_viewpager, contentFrame, false);
             ProductListPagerAdapter productListPagerAdapter = new ProductListPagerAdapter(getCurrentActivity(),
                     getSupportFragmentManager(), getTabs(shoppingListSummaries, shoppingListName, baseImgUrl));
             if (viewPager != null) {
@@ -274,10 +276,10 @@ public class ShoppingListSummaryActivity extends BBActivity {
                     }
                 });
 
-                SmartTabLayout pagerSlidingTabStrip = (SmartTabLayout) base.findViewById(R.id.slidingTabs);
-                pagerSlidingTabStrip.setViewPager(viewPager);
+                TabLayout pagerSlidingTabStrip = (TabLayout) findViewById(R.id.slidingTabs);
+                pagerSlidingTabStrip.setupWithViewPager(viewPager);
 
-                contentFrame.addView(base);
+                contentFrame.addView(viewPager);
             }
         }
         logShoppingListingEvent(shoppingListSummaries.get(0));

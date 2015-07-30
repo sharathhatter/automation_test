@@ -159,7 +159,7 @@ public class FloatingBadgeCountView extends FrameLayout {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int size = getDimension(
-                mType == TYPE_NORMAL ? com.melnykov.fab.R.dimen.fab_size_normal : com.melnykov.fab.R.dimen.fab_size_mini);
+                mType == TYPE_NORMAL ? R.dimen.fab_size_normal : R.dimen.fab_size_mini);
         if (mShadow && !hasLollipopApi()) {
             size += mShadowSize * 2;
             setMarginsWithoutShadow();
@@ -169,13 +169,13 @@ public class FloatingBadgeCountView extends FrameLayout {
 
     private void init(Context context, AttributeSet attributeSet) {
         mVisible = true;
-        mColorNormal = getColor(com.melnykov.fab.R.color.material_blue_500);
+        mColorNormal = getColor(R.color.material_deep_teal_500);
         mColorPressed = darkenColor(mColorNormal);
         mColorRipple = lightenColor(mColorNormal);
         mColorDisabled = getColor(android.R.color.darker_gray);
         mType = TYPE_NORMAL;
         mShadow = true;
-        mShadowSize = getDimension(com.melnykov.fab.R.dimen.fab_shadow_size);
+        mShadowSize = getDimension(R.dimen.fab_shadow_size);
         if (attributeSet != null) {
             initAttributes(context, attributeSet);
         }
@@ -183,19 +183,19 @@ public class FloatingBadgeCountView extends FrameLayout {
     }
 
     private void initAttributes(Context context, AttributeSet attributeSet) {
-        TypedArray attr = getTypedArray(context, attributeSet, com.melnykov.fab.R.styleable.FloatingActionButton);
+        TypedArray attr = getTypedArray(context, attributeSet, R.styleable.FloatingActionButton);
         if (attr != null) {
             try {
-                mColorNormal = attr.getColor(com.melnykov.fab.R.styleable.FloatingActionButton_fab_colorNormal,
-                        getColor(com.melnykov.fab.R.color.material_blue_500));
-                mColorPressed = attr.getColor(com.melnykov.fab.R.styleable.FloatingActionButton_fab_colorPressed,
+                mColorNormal = attr.getColor(R.styleable.FloatingActionButton_fab_colorNormal,
+                        getColor(R.color.material_deep_teal_500));
+                mColorPressed = attr.getColor(R.styleable.FloatingActionButton_fab_colorPressed,
                         darkenColor(mColorNormal));
-                mColorRipple = attr.getColor(com.melnykov.fab.R.styleable.FloatingActionButton_fab_colorRipple,
+                mColorRipple = attr.getColor(R.styleable.FloatingActionButton_fab_colorRipple,
                         lightenColor(mColorNormal));
-                mColorDisabled = attr.getColor(com.melnykov.fab.R.styleable.FloatingActionButton_fab_colorDisabled,
+                mColorDisabled = attr.getColor(R.styleable.FloatingActionButton_fab_colorDisabled,
                         mColorDisabled);
-                mShadow = attr.getBoolean(com.melnykov.fab.R.styleable.FloatingActionButton_fab_shadow, true);
-                mType = attr.getInt(com.melnykov.fab.R.styleable.FloatingActionButton_fab_type, TYPE_NORMAL);
+                mShadow = attr.getBoolean(R.styleable.FloatingActionButton_fab_shadow, true);
+                mType = attr.getInt(R.styleable.FloatingActionButton_fab_type, TYPE_NORMAL);
             } finally {
                 attr.recycle();
             }
@@ -217,8 +217,8 @@ public class FloatingBadgeCountView extends FrameLayout {
 
         if (mShadow && !hasLollipopApi()) {
             Drawable shadowDrawable = ContextCompat.getDrawable(getContext(),
-                    mType == TYPE_NORMAL ? com.melnykov.fab.R.drawable.fab_shadow
-                            : com.melnykov.fab.R.drawable.fab_shadow_mini);
+                    mType == TYPE_NORMAL ? R.drawable.fab_shadow
+                            : R.drawable.fab_shadow_mini);
             LayerDrawable layerDrawable = new LayerDrawable(new Drawable[]{shadowDrawable, shapeDrawable});
             layerDrawable.setLayerInset(1, mShadowSize, mShadowSize, mShadowSize, mShadowSize);
             return layerDrawable;
@@ -262,7 +262,7 @@ public class FloatingBadgeCountView extends FrameLayout {
             float elevation;
             if (mShadow) {
                 elevation = getElevation() > 0.0f ? getElevation()
-                        : getDimension(com.melnykov.fab.R.dimen.fab_elevation_lollipop);
+                        : getDimension(R.dimen.fab_elevation_lollipop);
             } else {
                 elevation = 0.0f;
             }
@@ -272,8 +272,8 @@ public class FloatingBadgeCountView extends FrameLayout {
             setOutlineProvider(new ViewOutlineProvider() {
                 @Override
                 public void getOutline(View view, Outline outline) {
-                    int size = getDimension(mType == TYPE_NORMAL ? com.melnykov.fab.R.dimen.fab_size_normal
-                            : com.melnykov.fab.R.dimen.fab_size_mini);
+                    int size = getDimension(mType == TYPE_NORMAL ? R.dimen.fab_size_normal
+                            : R.dimen.fab_size_mini);
                     outline.setOval(0, 0, size, size);
                 }
             });

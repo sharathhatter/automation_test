@@ -486,7 +486,7 @@
             android:name=".activity.base.SearchableActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
-            android:theme="@style/BBAppTheme.SearchViewTheme"
+            android:theme="@style/BaseAppTheme.SearchViewTheme"
             android:windowSoftInputMode="stateVisible|adjustResize" />
 
 

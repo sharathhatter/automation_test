@@ -1,9 +1,8 @@
 package com.bigbasket.mobileapp.activity.product;
 
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.view.View;
-import android.widget.FrameLayout;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
@@ -19,7 +18,6 @@ import com.bigbasket.mobileapp.model.section.SectionUtil;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
-import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -84,22 +82,17 @@ public class DiscountActivity extends BBActivity {
 
 
     private void renderDiscountFragments(final SectionData categorySectionData, final SectionData binSectionData) {
-        FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
-        if (contentFrame == null) return;
-        contentFrame.removeAllViews();
 
         if (categorySectionData != null && categorySectionData.getSections() != null
                 && categorySectionData.getSections().size() > 0 &&
                 binSectionData != null && binSectionData.getSections() != null
                 && binSectionData.getSections().size() > 0) {
 
-            View view = getLayoutInflater().inflate(R.layout.uiv3_swipe_tab_view, contentFrame, false);
-
             ArrayList<BBTab> bbTabs = new ArrayList<>();
             createTabFragment(categorySectionData, bbTabs);
             createTabFragment(binSectionData, bbTabs);
 
-            ViewPager viewPager = (ViewPager) view.findViewById(R.id.pager);
+            ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
             TabPagerAdapter tabPagerAdapter = new TabPagerAdapter(getCurrentActivity(), getSupportFragmentManager(),
                     bbTabs);
             viewPager.setAdapter(tabPagerAdapter);
@@ -126,28 +119,11 @@ public class DiscountActivity extends BBActivity {
             });
 
 
-            SmartTabLayout pageTitleStrip = (SmartTabLayout) view.findViewById(R.id.slidingTabs);
-            pageTitleStrip.setDistributeEvenly(true);
-            pageTitleStrip.setViewPager(viewPager);
+            TabLayout pageTitleStrip = (TabLayout) findViewById(R.id.slidingTabs);
+            pageTitleStrip.setTabMode(TabLayout.MODE_FIXED);
+            pageTitleStrip.setTabGravity(TabLayout.GRAVITY_FILL);
+            pageTitleStrip.setupWithViewPager(viewPager);
 
-            contentFrame.addView(view);
-        } else {
-            SectionData availableSectionData = null;
-            if (categorySectionData != null && categorySectionData.getSections() != null
-                    && categorySectionData.getSections().size() > 0) {
-                availableSectionData = categorySectionData;
-            } else if (binSectionData != null && binSectionData.getSections() != null
-                    && binSectionData.getSections().size() > 0) {
-                availableSectionData = binSectionData;
-            }
-
-            if (availableSectionData != null) {
-                DiscountFragment discountFragment = new DiscountFragment();
-                Bundle bundle = new Bundle();
-                bundle.putParcelable(Constants.SECTIONS, availableSectionData);
-                discountFragment.setArguments(bundle);
-                onChangeFragment(discountFragment);
-            }
         }
         trackEvent(TrackingAware.DISCOUNT_SHOWN, null, null, null, false, true);
     }
@@ -165,4 +141,8 @@ public class DiscountActivity extends BBActivity {
         return TrackEventkeys.DISCOUNT_SCREEN;
     }
 
+    @Override
+    public int getMainLayout() {
+        return R.layout.uiv3_swipe_tabview_with_drawer;
+    }
 }

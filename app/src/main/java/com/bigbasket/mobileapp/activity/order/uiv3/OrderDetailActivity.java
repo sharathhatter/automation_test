@@ -1,9 +1,9 @@
 package com.bigbasket.mobileapp.activity.order.uiv3;
 
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.View;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.TabActivity;
@@ -16,7 +16,6 @@ import com.bigbasket.mobileapp.model.order.OrderInvoice;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.view.uiv3.BBTab;
-import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,17 +48,18 @@ public class OrderDetailActivity extends TabActivity {
     }
 
     @Override
-    public void setTabContent(View base) {
+    public void setTabContent() {
         final ArrayList<BBTab> bbTabs = getTabs();
 
-        ViewPager viewPager = (ViewPager) base.findViewById(R.id.pager);
+        ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
         FragmentStatePagerAdapter fragmentStatePagerAdapter = new
                 TabPagerAdapter(getCurrentActivity(), getSupportFragmentManager(), bbTabs);
         viewPager.setAdapter(fragmentStatePagerAdapter);
 
-        final SmartTabLayout pagerSlidingTabStrip = (SmartTabLayout) base.findViewById(R.id.slidingTabs);
-        pagerSlidingTabStrip.setDistributeEvenly(true);
-        pagerSlidingTabStrip.setViewPager(viewPager);
+        final TabLayout pagerSlidingTabStrip = (TabLayout) findViewById(R.id.slidingTabs);
+        pagerSlidingTabStrip.setTabGravity(TabLayout.GRAVITY_FILL);
+        pagerSlidingTabStrip.setTabMode(TabLayout.MODE_FIXED);
+        pagerSlidingTabStrip.setupWithViewPager(viewPager);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {

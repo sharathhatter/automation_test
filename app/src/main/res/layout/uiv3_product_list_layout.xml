@@ -12,12 +12,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <include
-            android:id="@+id/toolbarMain"
-            layout="@layout/uiv3_tool_layout" />
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:id="@+id/layoutFilterSort"
@@ -78,18 +73,40 @@
             </LinearLayout>
         </LinearLayout>
 
-        <FrameLayout
-            android:id="@+id/content_frame"
+        <android.support.design.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@id/layoutFilterSort"
-            android:layout_below="@id/toolbarMain" />
+            android:orientation="vertical">
+
+            <android.support.design.widget.AppBarLayout
+                android:id="@+id/appBarLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <include layout="@layout/uiv3_tool_layout" />
+
+                <android.support.design.widget.TabLayout
+                    android:id="@+id/slidingTabs"
+                    style="@style/BaseAppTheme.TabStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:tabMode="scrollable" />
+            </android.support.design.widget.AppBarLayout>
+
+            <FrameLayout
+                android:id="@+id/content_frame"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+        </android.support.design.widget.CoordinatorLayout>
 
         <com.bigbasket.mobileapp.view.uiv3.FloatingBadgeCountView
             android:id="@+id/btnViewBasket"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/content_frame"
+            android:layout_above="@id/layoutFilterSort"
             android:layout_alignParentRight="true"
             android:layout_marginBottom="@dimen/margin_normal"
             android:layout_marginRight="@dimen/margin_small"
@@ -98,7 +115,6 @@
             app:fab_colorPressed="@color/uiv3_action_bar_background_pressed" />
 
         <include layout="@layout/uiv3_header_dropdown_layout" />
-
     </RelativeLayout>
 
     <!-- android:layout_gravity="start" tells DrawerLayout to treat
