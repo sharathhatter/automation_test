@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
@@ -60,7 +61,6 @@ import com.bigbasket.mobileapp.view.uiv3.BBTab;
 import com.bigbasket.mobileapp.view.uiv3.HeaderSpinnerView;
 import com.google.gson.Gson;
 import com.moe.imageLib.AsyncTask;
-import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -210,9 +210,11 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
 
             // Setup content
             if (productTabData.getProductTabInfos().size() > 1) {
+                findViewById(R.id.slidingTabs).setVisibility(View.VISIBLE);
                 displayProductTabs(productTabData, contentFrame);
             } else {
                 // When only one product tab
+                findViewById(R.id.slidingTabs).setVisibility(View.GONE);
                 ProductTabInfo productTabInfo = productTabData.getProductTabInfos().get(0);
                 ProductInfo productInfo = productTabInfo.getProductInfo();
                 Bundle bundle = getBundleForProductListFragment(productTabInfo, productInfo,
@@ -236,6 +238,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
                 renderHeaderDropDown(productTabData.getHeaderSection());
             }
         } else if (contentSectionView == null) {
+            findViewById(R.id.slidingTabs).setVisibility(View.GONE);
             UIUtil.showEmptyProductsView(this, contentFrame, getString(R.string.noProducts),
                     R.drawable.empty_smart_basket);
             renderHeaderDropDown(null);
@@ -252,8 +255,7 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
     }
 
     private void displayProductTabs(ProductTabData productTabData, ViewGroup contentFrame) {
-        View base = getLayoutInflater().inflate(R.layout.uiv3_swipe_tab_view, contentFrame, false);
-        mViewPager = (ViewPager) base.findViewById(R.id.pager);
+        mViewPager = (ViewPager) getLayoutInflater().inflate(R.layout.uiv3_viewpager, contentFrame, false);
         if (mViewPager == null) return;
 
         ArrayList<BBTab> bbTabs = new ArrayList<>();
@@ -301,8 +303,8 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
             }
         });
 
-        SmartTabLayout pagerSlidingTabStrip = (SmartTabLayout) base.findViewById(R.id.slidingTabs);
-        pagerSlidingTabStrip.setViewPager(mViewPager);
+        TabLayout pagerSlidingTabStrip = (TabLayout) findViewById(R.id.slidingTabs);
+        pagerSlidingTabStrip.setupWithViewPager(mViewPager);
         if (productTabData.getContentSectionData() != null) {
             LinearLayout layoutProducts = new LinearLayout(this);
             layoutProducts.setOrientation(LinearLayout.VERTICAL);
@@ -311,10 +313,10 @@ public class ProductListActivity extends BBActivity implements ProductListDataAw
             if (sectionView != null) {
                 layoutProducts.addView(sectionView);
             }
-            layoutProducts.addView(base);
+            layoutProducts.addView(mViewPager);
             contentFrame.addView(layoutProducts);
         } else {
-            contentFrame.addView(base);
+            contentFrame.addView(mViewPager);
         }
         renderHeaderDropDown(productTabData.getHeaderSection());
 

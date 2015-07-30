@@ -23,6 +23,20 @@
         <item name="alertDialogTheme">@style/BaseAppTheme.AlertDialogStyle</item>
     </style>
 
+    <style name="BaseAppTheme.TabStyle" parent="Widget.Design.TabLayout">
+        <item name="tabIndicatorColor">@color/uiv3_action_bar_background</item>
+        <item name="tabIndicatorHeight">4dp</item>
+        <item name="android:background">@color/uiv3_list_bkg_color</item>
+        <item name="tabTextAppearance">@style/BaseAppTheme.Tab.TextStyle</item>
+        <item name="tabSelectedTextColor">@color/uiv3_action_bar_background</item>
+    </style>
+
+    <style name="BaseAppTheme.Tab.TextStyle" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/uiv3_secondary_text_color</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
     <style name="LandingPageTheme.DialogTheme" parent="BaseAppTheme.AlertDialogStyle">
         <item name="colorControlNormal">@color/uiv3_action_bar_background</item>
         <item name="colorControlHighlight">@color/uiv3_status_bar_background</item>

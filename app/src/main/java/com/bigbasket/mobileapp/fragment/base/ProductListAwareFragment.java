@@ -164,7 +164,9 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
             products = ((LazyProductListAware) getActivity()).provideProductsIfAvailable(mTabType);
         }
         if (products != null && products.size() > 0) {
-            RecyclerView productRecyclerView = UIUtil.getResponsiveRecyclerView(getActivity(), 1, 1, contentView);
+            RecyclerView productRecyclerView = (RecyclerView) getActivity().
+                    getLayoutInflater().inflate(R.layout.uiv3_recyclerview, contentView, false);
+            UIUtil.configureRecyclerView(productRecyclerView, getActivity(), 1, 1);
 
             // Set product-list data
             AuthParameters authParameters = AuthParameters.getInstance(getActivity());
