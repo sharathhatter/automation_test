@@ -1,9 +1,8 @@
 package com.daimajia.slider.library.Transformers;
 
+import android.os.Build;
 import android.support.v4.view.ViewPager;
 import android.view.View;
-
-import com.nineoldandroids.view.ViewHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,22 +59,24 @@ public abstract class BaseTransformer implements ViewPager.PageTransformer {
      * @param position
      */
     protected void onPreTransform(View view, float position) {
-        final float width = view.getWidth();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            final float width = view.getWidth();
 
-        ViewHelper.setRotationX(view, 0);
-        ViewHelper.setRotationY(view, 0);
-        ViewHelper.setRotation(view, 0);
-        ViewHelper.setScaleX(view, 1);
-        ViewHelper.setScaleY(view, 1);
-        ViewHelper.setPivotX(view, 0);
-        ViewHelper.setPivotY(view, 0);
-        ViewHelper.setTranslationY(view, 0);
-        ViewHelper.setTranslationX(view, isPagingEnabled() ? 0f : -width * position);
+            view.setRotationX(0);
+            view.setRotationY(0);
+            view.setRotation(0);
+            view.setScaleX(1);
+            view.setScaleY(1);
+            view.setPivotX(0);
+            view.setPivotY(0);
+            view.setTranslationY(0);
+            view.setTranslationX(isPagingEnabled() ? 0f : -width * position);
 
-        if (hideOffscreenPages()) {
-            ViewHelper.setAlpha(view, position <= -1f || position >= 1f ? 0f : 1f);
-        } else {
-            ViewHelper.setAlpha(view, 1f);
+            if (hideOffscreenPages()) {
+                view.setAlpha(position <= -1f || position >= 1f ? 0f : 1f);
+            } else {
+                view.setAlpha(1f);
+            }
         }
     }
 

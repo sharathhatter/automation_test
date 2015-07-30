@@ -19,6 +19,7 @@ import android.support.annotation.DimenRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IntDef;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewCompat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -34,8 +35,6 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.util.FontHolder;
-import com.nineoldandroids.view.ViewHelper;
-import com.nineoldandroids.view.ViewPropertyAnimator;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -77,7 +76,7 @@ public class FloatingBadgeCountView extends FrameLayout {
         @Override
         public void onSwipeLeft() {
             int translationX = -(getScreenWidth() - getMeasuredWidth() - getMarginRight() * 2);
-            ViewPropertyAnimator.animate(FloatingBadgeCountView.this).setInterpolator(mInterpolator)
+            ViewCompat.animate(FloatingBadgeCountView.this).setInterpolator(mInterpolator)
                     .setDuration(TRANSLATE_DURATION_MILLIS)
                     .translationX(translationX);
         }
@@ -85,7 +84,7 @@ public class FloatingBadgeCountView extends FrameLayout {
         @Override
         public void onSwipeRight() {
             int translationX = 0;
-            ViewPropertyAnimator.animate(FloatingBadgeCountView.this).setInterpolator(mInterpolator)
+            ViewCompat.animate(FloatingBadgeCountView.this).setInterpolator(mInterpolator)
                     .setDuration(TRANSLATE_DURATION_MILLIS)
                     .translationX(translationX);
         }
@@ -351,11 +350,11 @@ public class FloatingBadgeCountView extends FrameLayout {
             }
             int translationY = visible ? 0 : height + getMarginBottom();
             if (animate) {
-                ViewPropertyAnimator.animate(this).setInterpolator(mInterpolator)
+                ViewCompat.animate(this).setInterpolator(mInterpolator)
                         .setDuration(TRANSLATE_DURATION_MILLIS)
                         .translationY(translationY);
             } else {
-                ViewHelper.setTranslationY(this, translationY);
+                ViewCompat.setTranslationY(this, translationY);
             }
 
             // On pre-Honeycomb a translated view is still clickable, so we need to disable clicks manually
