@@ -31,7 +31,6 @@
     <string name="promo">Promo</string>
     <string name="remove">Remove</string>
     <string name="add">Add</string>
-    <string name="saving">Savings:</string>
     <string name="regular_price">Regular Price</string>
     <string name="totalMrp">Total: </string>
     <string name="current_pin">Your current Pin</string>
@@ -223,8 +222,6 @@
 
     <!-- Invoice -->
     <string name="thankYouHeader">Thank You!</string>
-    <string name="orderThankyouText">Thank you for placing order with BigBasket.\nYour Order# is\u00A0</string>
-    <string name="viewInvoice">VIEW INVOICE</string>
 
     <!-- cart page -->
     <string name="empty">Empty</string>
@@ -233,7 +230,6 @@
 
 
     <string name="start_shopping_txt">START SHOPPING</string>
-    <string name="continue_shopping_txt">CONTINUE SHOPPING</string>
     <string name="lostInternetConnection">Lost internet connection?</string>
     <string name="tapRetry">Tap to Retry</string>
     <string name="productNextPageFailed">Failed to load products!</string>
@@ -254,7 +250,6 @@
     <string name="otherError">An error occurred</string>
     <string name="updateGooglePlayServices">Update Google Play Services</string>
     <string name="updateGooglePlayServicesDesc">You are using an outdated version of Google Play Services.\nPlease update it, in order to login with Google.</string>
-    <string name="termsAndCondHeading">Terms and conditions</string>
     <string name="home">Home</string>
     <string name="transactionFailed">Transaction Failed!</string>
     <string name="failedToProcess">Failed to process your transaction</string> <!-- remove this -->
@@ -322,7 +317,6 @@
     <!-- order invoice -->
     <string name="multi_order_place_txt">Your orders have been placed!</string>
     <string name="order_place_txt">Your order has been placed!</string>
-    <string name="order_review_txt">You can review your order at any time in</string>
     <string name="continue_shopping">CONTINUE SHOPPING!</string>
 
     <string name="expressDelAvailable">\u0020 Express Delivery may be available</string>

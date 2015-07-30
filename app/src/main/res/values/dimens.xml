@@ -34,7 +34,6 @@
     <dimen name="vertical_tile_with_img_min_height">220dp</dimen>
     <integer name="numGridCols">2</integer>
 
-    <dimen name="margin_ref_small">5dp</dimen>
     <dimen name="grid_width">140dp</dimen>
 
     <dimen name="nav_drawer_margin_offset">-8dp</dimen>
