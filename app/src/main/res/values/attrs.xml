@@ -117,14 +117,6 @@
         </attr>
         <attr name="gravity" />
     </declare-styleable>
-    <!--<declare-styleable name="AddFloatingActionButton">-->
-    <!--<attr name="plusIconColor" format="color"/>-->
-    <!--</declare-styleable>-->
-    <!--<declare-styleable name="FloatingActionsMenu">-->
-    <!--<attr name="addButtonColorPressed" format="color"/>-->
-    <!--<attr name="addButtonColorNormal" format="color"/>-->
-    <!--<attr name="addButtonPlusIconColor" format="color"/>-->
-    <!--</declare-styleable>-->
     <declare-styleable name="FButton">
         <attr name="shadowEnabled" format="boolean" />
         <attr name="buttonColor" format="color" />
@@ -148,9 +140,6 @@
             <enum name="horizontal" value="0" />
             <enum name="vertical" value="1" />
         </attr>
-    </declare-styleable>
-    <declare-styleable name="ScrimInsetsFrameLayout">
-        <attr format="color|reference" name="insetForeground"/>
     </declare-styleable>
     <declare-styleable name="FloatingActionButton">
         <attr name="fab_colorPressed" format="color" />

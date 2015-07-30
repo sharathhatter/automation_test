@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.bigbasket.mobileapp.view.ScrimInsetsFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.internal.ScrimInsetsFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/left_drawer"
     style="@style/NavDrawer"
@@ -43,4 +43,4 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </com.bigbasket.mobileapp.view.uiv3.AnimatedRelativeLayout>
-</com.bigbasket.mobileapp.view.ScrimInsetsFrameLayout>
+</android.support.design.internal.ScrimInsetsFrameLayout>
