@@ -31,3 +31,5 @@ moEngageSDKv5.0/build/*
 captures/*
 moengagesdk/build/*
 moe-addon-ubox/build/*
+CustomBrowser-release/build/*
+payuSdk/build/*
