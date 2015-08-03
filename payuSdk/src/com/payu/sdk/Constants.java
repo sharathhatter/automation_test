@@ -5,7 +5,7 @@ package com.payu.sdk;
  */
 public class Constants {
 
-    public static final boolean DEBUG = false; // true for test env, false for prod env.
+    public static final boolean DEBUG = BuildConfig.DEBUG; // true for test env, false for prod env.
     public static final boolean SDK_HASH_GENERATION = false;
 
     public static final boolean ENABLE_VAS = true;

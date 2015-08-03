@@ -76,8 +76,7 @@
         <android.support.design.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@id/layoutFilterSort"
-            android:orientation="vertical">
+            android:layout_above="@id/layoutFilterSort">
 
             <android.support.design.widget.AppBarLayout
                 android:id="@+id/appBarLayout"

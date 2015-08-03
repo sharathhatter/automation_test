@@ -21,14 +21,16 @@ import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.GetPrepaidPaymentResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostPrepaidPaymentResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PostVoucherApiResponseContent;
 import com.bigbasket.mobileapp.handler.HDFCPowerPayHandler;
+import com.bigbasket.mobileapp.handler.PaymentInitiator;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.interfaces.payment.PayuPaymentAware;
+import com.bigbasket.mobileapp.interfaces.payment.PowerPayPaymentAware;
 import com.bigbasket.mobileapp.model.order.ActiveVouchers;
 import com.bigbasket.mobileapp.model.order.CreditDetails;
 import com.bigbasket.mobileapp.model.order.Order;
@@ -52,6 +54,7 @@ import com.enstage.wibmo.sdk.inapp.pojo.MerchantInfo;
 import com.enstage.wibmo.sdk.inapp.pojo.TransactionInfo;
 import com.enstage.wibmo.sdk.inapp.pojo.WPayInitRequest;
 import com.enstage.wibmo.sdk.inapp.pojo.WPayResponse;
+import com.payu.sdk.PayU;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,7 +65,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class PaymentSelectionActivity extends BackButtonActivity {
+public class PaymentSelectionActivity extends BackButtonActivity implements PayuPaymentAware, PowerPayPaymentAware {
 
     private ArrayList<ActiveVouchers> mActiveVouchersList;
     private LinkedHashMap<String, String> mPaymentTypeMap;
@@ -471,7 +474,7 @@ public class PaymentSelectionActivity extends BackButtonActivity {
         boolean isHdfcPpPending = powerPayResponse != null && powerPayResponse.isSuccess();
         if (isCreditCardPayment()) {
             if (!(isPayuPending || isHdfcPpPending) && mOrderDetails.getFinalTotal() > 0) {
-                startCreditCardTxnActivity(mOrderDetails.getFinalTotal());
+                getPaymentParams();
             } else {
                 if (isPayuPending) {
                     placeOrder(payuResponse.getTxnId());
@@ -488,20 +491,6 @@ public class PaymentSelectionActivity extends BackButtonActivity {
         return mSelectedPaymentMethod != null &&
                 (mSelectedPaymentMethod.equals(Constants.HDFC_POWER_PAY) ||
                         mSelectedPaymentMethod.equals(Constants.PAYU));
-    }
-
-    private void startCreditCardTxnActivity(double amount) {
-        switch (mSelectedPaymentMethod) {
-            case Constants.PAYU:
-                Intent intent = new Intent(getApplicationContext(), PayuTransactionActivity.class);
-                intent.putExtra(Constants.P_ORDER_ID, mPotentialOrderId);
-                intent.putExtra(Constants.FINAL_PAY, UIUtil.formatAsMoney(amount));
-                startActivityForResult(intent, Constants.PAYU_SUCCESS);
-                break;
-            case Constants.HDFC_POWER_PAY:
-                getHdfcPowerPayParams();
-                break;
-        }
     }
 
     private void syncContentView() {
@@ -531,6 +520,12 @@ public class PaymentSelectionActivity extends BackButtonActivity {
                 } else {
                     communicateHdfcPowerPayResponseFailure(null, null);
                 }
+            }
+        } else if (requestCode == PayU.RESULT) {
+            if (resultCode == RESULT_OK) {
+                showToast("Whoaa! Payu success");
+            } else {
+                showToast("Aila! It failed");
             }
         } else {
             switch (resultCode) {
@@ -675,44 +670,9 @@ public class PaymentSelectionActivity extends BackButtonActivity {
         startActivityForResult(invoiceIntent, NavigationCodes.GO_TO_HOME);
     }
 
-    private void getHdfcPowerPayParams() {
-        if (!checkInternetConnection()) {
-            handler.sendOfflineError();
-            return;
-        }
-        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
-        showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.getPrepaidPaymentParams(mPotentialOrderId, mSelectedPaymentMethod,
-                mOrderDetails.getFormattedFinalTotal(), new Callback<ApiResponse<GetPrepaidPaymentResponse>>() {
-                    @Override
-                    public void success(ApiResponse<GetPrepaidPaymentResponse> getPrepaidPaymentApiResponse, Response response) {
-                        if (isSuspended()) return;
-                        try {
-                            hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                        switch (getPrepaidPaymentApiResponse.status) {
-                            case 0:
-                                initializeHDFCPowerPay(getPrepaidPaymentApiResponse.apiResponseContent.powerPayPostParams);
-                                break;
-                            default:
-                                handler.sendEmptyMessage(getPrepaidPaymentApiResponse.status, getPrepaidPaymentApiResponse.message);
-                                break;
-                        }
-                    }
-
-                    @Override
-                    public void failure(RetrofitError error) {
-                        if (isSuspended()) return;
-                        try {
-                            hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                        handler.handleRetrofitError(error);
-                    }
-                });
+    private void getPaymentParams() {
+        new PaymentInitiator<>(this, mPotentialOrderId, mSelectedPaymentMethod, mOrderDetails.getFormattedFinalTotal())
+                .initiate();
     }
 
     private void validateHdfcPowerPayResponse(String pgTxnId, String dataPickupCode, String txnId) {
@@ -743,7 +703,8 @@ public class PaymentSelectionActivity extends BackButtonActivity {
                 new PostPrepaidParamsCallback());
     }
 
-    private void initializeHDFCPowerPay(PowerPayPostParams powerPayPostParams) {
+    @Override
+    public void initializeHDFCPowerPay(PowerPayPostParams powerPayPostParams) {
         new PowerPayTriggerAsyncTask().execute(powerPayPostParams);
     }
 
@@ -838,6 +799,12 @@ public class PaymentSelectionActivity extends BackButtonActivity {
     }
 
     @Override
+    public void initializePayu(HashMap<String, String> paymentParams) {
+        PayU.ibiboCodeHash = paymentParams.remove("hash");
+        PayU.getInstance(this).startPaymentProcess(mOrderDetails.getFinalTotal(), paymentParams);
+    }
+
+    @Override
     protected void onPositiveButtonClicked(DialogInterface dialogInterface, @Nullable String sourceName, Object valuePassed) {
         if (!TextUtils.isEmpty(sourceName) && sourceName.equals(Constants.REMOVE_VOUCHER)
                 && valuePassed != null) {
@@ -850,7 +817,7 @@ public class PaymentSelectionActivity extends BackButtonActivity {
                     PowerPayResponse.clearTxnDetail(this);
                     trackEvent(TrackingAware.CHECKOUT_PLACE_ORDER_AMOUNT_MISMATCH, null);
                     if (isCreditCardPayment()) {
-                        startCreditCardTxnActivity(mOrderDetails.getFinalTotal());
+                        getPaymentParams();
                     } else {
                         placeOrder(null);
                     }
