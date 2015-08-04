@@ -18,9 +18,6 @@ import com.bigbasket.mobileapp.handler.AnalyticsIdentifierKeys;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.SectionManager;
 import com.bigbasket.mobileapp.model.account.SocialAccount;
-import com.bigbasket.mobileapp.model.order.PayuResponse;
-import com.bigbasket.mobileapp.model.order.PowerPayResponse;
-import com.bigbasket.mobileapp.model.order.VoucherApplied;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
@@ -300,9 +297,6 @@ public abstract class SocialLoginActivity extends FacebookAndGPlusSigninBaseActi
     @SuppressWarnings("unchecked")
     public void doLogout() {
         SectionManager.clearAllSectionData(getCurrentActivity());
-        PayuResponse.clearTxnDetail(getCurrentActivity());
-        VoucherApplied.clearFromPreference(getCurrentActivity());
-        PowerPayResponse.clearTxnDetail(getCurrentActivity());
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
         SharedPreferences.Editor editor = preferences.edit();

@@ -50,9 +50,6 @@ import com.bigbasket.mobileapp.handler.AnalyticsIdentifierKeys;
 import com.bigbasket.mobileapp.interfaces.AnalyticsNavigationContextAware;
 import com.bigbasket.mobileapp.model.NameValuePair;
 import com.bigbasket.mobileapp.model.SectionManager;
-import com.bigbasket.mobileapp.model.order.PayuResponse;
-import com.bigbasket.mobileapp.model.order.PowerPayResponse;
-import com.bigbasket.mobileapp.model.order.VoucherApplied;
 import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
@@ -217,9 +214,6 @@ public class UIUtil {
 
     public static void updateStoredUserDetails(Context ctx, LoginUserDetails userDetails, String email, String mId) {
         SectionManager.clearAllSectionData(ctx);
-        PayuResponse.clearTxnDetail(ctx);
-        VoucherApplied.clearFromPreference(ctx);
-        PowerPayResponse.clearTxnDetail(ctx);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ctx);
         SharedPreferences.Editor editor = preferences.edit();

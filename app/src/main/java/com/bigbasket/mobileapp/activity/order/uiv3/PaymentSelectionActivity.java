@@ -2,7 +2,6 @@ package com.bigbasket.mobileapp.activity.order.uiv3;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -23,38 +22,21 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseContent;
-import com.bigbasket.mobileapp.apiservice.models.response.PostPrepaidPaymentResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PostVoucherApiResponseContent;
 import com.bigbasket.mobileapp.handler.HDFCPowerPayHandler;
-import com.bigbasket.mobileapp.handler.PaymentInitiator;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
-import com.bigbasket.mobileapp.interfaces.payment.PayuPaymentAware;
-import com.bigbasket.mobileapp.interfaces.payment.PowerPayPaymentAware;
 import com.bigbasket.mobileapp.model.order.ActiveVouchers;
 import com.bigbasket.mobileapp.model.order.CreditDetails;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.OrderDetails;
 import com.bigbasket.mobileapp.model.order.PaymentType;
-import com.bigbasket.mobileapp.model.order.PayuResponse;
-import com.bigbasket.mobileapp.model.order.PowerPayPostParams;
-import com.bigbasket.mobileapp.model.order.PowerPayResponse;
-import com.bigbasket.mobileapp.model.order.VoucherApplied;
-import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.enstage.wibmo.sdk.WibmoSDK;
-import com.enstage.wibmo.sdk.WibmoSDKConfig;
-import com.enstage.wibmo.sdk.inapp.pojo.CustomerInfo;
-import com.enstage.wibmo.sdk.inapp.pojo.MerchantInfo;
-import com.enstage.wibmo.sdk.inapp.pojo.TransactionInfo;
-import com.enstage.wibmo.sdk.inapp.pojo.WPayInitRequest;
-import com.enstage.wibmo.sdk.inapp.pojo.WPayResponse;
-import com.payu.sdk.PayU;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -65,23 +47,17 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class PaymentSelectionActivity extends BackButtonActivity implements PayuPaymentAware, PowerPayPaymentAware {
+public class PaymentSelectionActivity extends BackButtonActivity {
 
     private ArrayList<ActiveVouchers> mActiveVouchersList;
     private LinkedHashMap<String, String> mPaymentTypeMap;
     private String mPotentialOrderId;
-    private ArrayList<VoucherApplied> mVoucherAppliedList;
-    private HashMap<String, Boolean> mPreviouslyAppliedVoucherMap;
     private TextView mTxtApplyVoucher;
     private TextView mTxtRemoveVoucher;
     private TextView mTxtApplicableVoucherCount;
     private String mAppliedVoucherCode;
-    private TextView mLblTransactionFailed;
-    private TextView mTxtTransactionFailureReason;
-    private TextView mLblSelectAnotherMethod;
     private String mSelectedPaymentMethod;
     private OrderDetails mOrderDetails;
-    private WPayInitRequest wPayInitRequest;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -89,36 +65,11 @@ public class PaymentSelectionActivity extends BackButtonActivity implements Payu
         setNextScreenNavigationContext(TrackEventkeys.CO_PAYMENT);
         mPotentialOrderId = getIntent().getStringExtra(Constants.P_ORDER_ID);
 
-        mLblTransactionFailed = (TextView) findViewById(R.id.lblTransactionFailed);
-        mTxtTransactionFailureReason = (TextView) findViewById(R.id.txtTransactionFailedReason);
-        mLblSelectAnotherMethod = (TextView) findViewById(R.id.lblSelectAnotherMethod);
-
-        mLblTransactionFailed.setTypeface(faceRobotoRegular);
-        mTxtTransactionFailureReason.setTypeface(faceRobotoRegular);
-        mLblSelectAnotherMethod.setTypeface(faceRobotoRegular);
-
         if (TextUtils.isEmpty(mPotentialOrderId)) return;
         setTitle(getString(R.string.placeorder));
 
         renderFooter();
-        PayuResponse payuResponse = PayuResponse.getInstance(this);
-        PowerPayResponse powerPayResponse = PowerPayResponse.getInstance(this);
-        boolean isPayuPending = payuResponse != null && payuResponse.isSuccess();
-        boolean isHdfcPpPending = powerPayResponse != null && powerPayResponse.isSuccess();
-        if (isPayuPending || isHdfcPpPending) {
-            mSelectedPaymentMethod = isPayuPending ? Constants.PAYU : Constants.HDFC_POWER_PAY;
-            findViewById(R.id.viewPaymentInProgress).setVisibility(View.VISIBLE);
-            ArrayList<VoucherApplied> previouslyAppliedVoucherList = VoucherApplied.readFromPreference(getCurrentActivity());
-            if (previouslyAppliedVoucherList == null || previouslyAppliedVoucherList.size() == 0) {
-                onPlaceOrderAction();
-            } else {
-                mPreviouslyAppliedVoucherMap = VoucherApplied.toMap(previouslyAppliedVoucherList);
-                applyVoucher(previouslyAppliedVoucherList.get(0).getVoucherCode());
-            }
-        } else {
-            findViewById(R.id.viewPaymentInProgress).setVisibility(View.GONE);
-            renderPaymentDetails();
-        }
+        renderPaymentDetails();
         trackEvent(TrackingAware.CHECKOUT_PAYMENT_SHOWN, null, null, null, false, true);
     }
 
@@ -223,7 +174,7 @@ public class PaymentSelectionActivity extends BackButtonActivity implements Payu
         if (!TextUtils.isEmpty(mAppliedVoucherCode)) {
             showVoucherAppliedText(mAppliedVoucherCode);
         } else {
-            onVoucherRemoved(null);
+            onVoucherRemoved();
         }
 
         TextView lblAmountFromWallet = (TextView) findViewById(R.id.lblAmountFromWallet);
@@ -265,13 +216,6 @@ public class PaymentSelectionActivity extends BackButtonActivity implements Payu
                 i++;
             }
         }
-
-        mLblTransactionFailed.setTypeface(faceRobotoRegular);
-        mTxtTransactionFailureReason.setTypeface(faceRobotoRegular);
-        mLblTransactionFailed.setVisibility(View.GONE);
-        mTxtTransactionFailureReason.setVisibility(View.GONE);
-        mLblSelectAnotherMethod.setVisibility(View.GONE);
-        mLblSelectAnotherMethod.setTypeface(faceRobotoRegular);
     }
 
     private class OnShowAvailableVouchersListener implements View.OnClickListener {
@@ -283,15 +227,15 @@ public class PaymentSelectionActivity extends BackButtonActivity implements Payu
         }
     }
 
-    public void displayPayuFailure(String reason) {
-        if (mTxtTransactionFailureReason == null || mLblTransactionFailed == null
-                || mLblSelectAnotherMethod == null) return;
-        mTxtTransactionFailureReason.setVisibility(View.VISIBLE);
-        mLblTransactionFailed.setVisibility(View.VISIBLE);
-        mLblSelectAnotherMethod.setVisibility(View.VISIBLE);
-
-        mTxtTransactionFailureReason.setText(reason);
-    }
+//    public void displayPayuFailure(String reason) {
+//        if (mTxtTransactionFailureReason == null || mLblTransactionFailed == null
+//                || mLblSelectAnotherMethod == null) return;
+//        mTxtTransactionFailureReason.setVisibility(View.VISIBLE);
+//        mLblTransactionFailed.setVisibility(View.VISIBLE);
+//        mLblSelectAnotherMethod.setVisibility(View.VISIBLE);
+//
+//        mTxtTransactionFailureReason.setText(reason);
+//    }
 
     private RadioButton getPaymentOptionRadioButton(ViewGroup parent) {
         LayoutInflater inflater = getLayoutInflater();
@@ -343,10 +287,6 @@ public class PaymentSelectionActivity extends BackButtonActivity implements Payu
                     HashMap<String, String> map = new HashMap<>();
                     switch (postVoucherApiResponse.status) {
                         case 0:
-                            if (mPreviouslyAppliedVoucherMap == null ||
-                                    mPreviouslyAppliedVoucherMap.size() == 0) {
-                                trackEvent(TrackingAware.CHECKOUT_VOUCHER_APPLIED, map);
-                            }
                             onVoucherSuccessfullyApplied(voucherCode,
                                     postVoucherApiResponse.apiResponseContent.orderDetails,
                                     postVoucherApiResponse.apiResponseContent.creditDetails);
@@ -376,7 +316,7 @@ public class PaymentSelectionActivity extends BackButtonActivity implements Payu
         }
     }
 
-    public void removeVoucher(final String voucherCode) {
+    public void removeVoucher() {
         if (!checkInternetConnection()) {
             handler.sendOfflineError();
             return;
@@ -396,7 +336,7 @@ public class PaymentSelectionActivity extends BackButtonActivity implements Payu
                     case 0:
                         Toast.makeText(getCurrentActivity(),
                                 getString(R.string.voucherWasRemoved), Toast.LENGTH_SHORT).show();
-                        onVoucherRemoved(voucherCode, removeVoucherApiResponse.apiResponseContent.orderDetails,
+                        onVoucherRemoved(removeVoucherApiResponse.apiResponseContent.orderDetails,
                                 removeVoucherApiResponse.apiResponseContent.creditDetails);
                         break;
                     default:
@@ -424,35 +364,11 @@ public class PaymentSelectionActivity extends BackButtonActivity implements Payu
      */
     private void onVoucherSuccessfullyApplied(String voucherCode, OrderDetails orderDetails,
                                               ArrayList<CreditDetails> creditDetails) {
-        if (mPreviouslyAppliedVoucherMap != null) {
-            mPreviouslyAppliedVoucherMap.put(voucherCode, true);
-            boolean allApplied = true;
-            for (Map.Entry<String, Boolean> entry : mPreviouslyAppliedVoucherMap.entrySet()) {
-                if (!entry.getValue()) {
-                    allApplied = false;
-                    applyVoucher(entry.getKey());
-                    break;
-                }
-            }
-            if (allApplied) {
-                onPlaceOrderAction();
-            }
-        } else {
-            if (mVoucherAppliedList == null) {
-                mVoucherAppliedList = new ArrayList<>();
-            }
-            mVoucherAppliedList.add(new VoucherApplied(voucherCode));
-            VoucherApplied.saveToPreference(mVoucherAppliedList, this);
-            onVoucherApplied(voucherCode, orderDetails, creditDetails);
-        }
+        onVoucherApplied(voucherCode, orderDetails, creditDetails);
     }
 
-    private void onVoucherRemoved(@Nullable String voucherCode) {
+    private void onVoucherRemoved() {
         mAppliedVoucherCode = null;
-        if (voucherCode != null && mPreviouslyAppliedVoucherMap != null
-                && mPreviouslyAppliedVoucherMap.containsKey(voucherCode)) {
-            mPreviouslyAppliedVoucherMap.remove(voucherCode);
-        }
         mTxtApplyVoucher.setVisibility(View.VISIBLE);
         mTxtRemoveVoucher.setVisibility(View.GONE);
         if (mActiveVouchersList != null && mActiveVouchersList.size() > 0) {
@@ -460,115 +376,98 @@ public class PaymentSelectionActivity extends BackButtonActivity implements Payu
         }
     }
 
-    private void onVoucherRemoved(@Nullable String voucherCode, OrderDetails orderDetails,
+    private void onVoucherRemoved(OrderDetails orderDetails,
                                   ArrayList<CreditDetails> creditDetails) {
-        onVoucherRemoved(voucherCode);
+        onVoucherRemoved();
         mOrderDetails = orderDetails;
         renderPaymentMethodsAndSummary(creditDetails);
     }
 
     private void onPlaceOrderAction() {
-        PayuResponse payuResponse = PayuResponse.getInstance(getCurrentActivity());
-        PowerPayResponse powerPayResponse = PowerPayResponse.getInstance(getCurrentActivity());
-        boolean isPayuPending = payuResponse != null && payuResponse.isSuccess();
-        boolean isHdfcPpPending = powerPayResponse != null && powerPayResponse.isSuccess();
-        if (isCreditCardPayment()) {
-            if (!(isPayuPending || isHdfcPpPending) && mOrderDetails.getFinalTotal() > 0) {
-                getPaymentParams();
-            } else {
-                if (isPayuPending) {
-                    placeOrder(payuResponse.getTxnId());
-                } else if (isHdfcPpPending) {
-                    placeOrder(powerPayResponse.getTxnId());
-                }
-            }
-        } else {
-            placeOrder(null);
-        }
+        placeOrder(null);
     }
+//
+//    private boolean isCreditCardPayment() {
+//        return mSelectedPaymentMethod != null &&
+//                (mSelectedPaymentMethod.equals(Constants.HDFC_POWER_PAY) ||
+//                        mSelectedPaymentMethod.equals(Constants.PAYU));
+//    }
 
-    private boolean isCreditCardPayment() {
-        return mSelectedPaymentMethod != null &&
-                (mSelectedPaymentMethod.equals(Constants.HDFC_POWER_PAY) ||
-                        mSelectedPaymentMethod.equals(Constants.PAYU));
-    }
-
-    private void syncContentView() {
-        View paymentInProgress = findViewById(R.id.viewPaymentInProgress);
-        if (paymentInProgress.getVisibility() == View.VISIBLE) {
-            paymentInProgress.setVisibility(View.GONE);
-            renderPaymentDetails();
-        }
-    }
+//    private void syncContentView() {
+//        View paymentInProgress = findViewById(R.id.viewPaymentInProgress);
+//        if (paymentInProgress.getVisibility() == View.VISIBLE) {
+//            paymentInProgress.setVisibility(View.GONE);
+//            renderPaymentDetails();
+//        }
+//    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         setSuspended(false);
-        if (requestCode == WibmoSDK.REQUEST_CODE_IAP_PAY) {
-            findViewById(R.id.viewPaymentInProgress).setVisibility(View.GONE);
-            if (resultCode == RESULT_OK) {
-                WPayResponse res = WibmoSDK.processInAppResponseWPay(data);
-                String pgTxnId = res.getWibmoTxnId();
-                String dataPickupCode = res.getDataPickUpCode();
-                validateHdfcPowerPayResponse(pgTxnId, dataPickupCode,
-                        wPayInitRequest.getTransactionInfo().getMerTxnId());
-            } else {
+//        if (requestCode == WibmoSDK.REQUEST_CODE_IAP_PAY) {
+//            findViewById(R.id.viewPaymentInProgress).setVisibility(View.GONE);
+//            if (resultCode == RESULT_OK) {
+//                WPayResponse res = WibmoSDK.processInAppResponseWPay(data);
+//                String pgTxnId = res.getWibmoTxnId();
+//                String dataPickupCode = res.getDataPickUpCode();
+//                validateHdfcPowerPayResponse(pgTxnId, dataPickupCode,
+//                        wPayInitRequest.getTransactionInfo().getMerTxnId());
+//            } else {
+//                if (data != null) {
+//                    String resCode = data.getStringExtra("ResCode");
+//                    String resDesc = data.getStringExtra("ResDesc");
+//                    communicateHdfcPowerPayResponseFailure(resCode, resDesc);
+//                } else {
+//                    communicateHdfcPowerPayResponseFailure(null, null);
+//                }
+//            }
+//        } else if (requestCode == PayU.RESULT) {
+//            if (resultCode == RESULT_OK) {
+//                showToast("Whoaa! Payu success");
+//            } else {
+//                showToast("Aila! It failed");
+//            }
+//        } else {
+        switch (resultCode) {
+            case NavigationCodes.VOUCHER_APPLIED:
                 if (data != null) {
-                    String resCode = data.getStringExtra("ResCode");
-                    String resDesc = data.getStringExtra("ResDesc");
-                    communicateHdfcPowerPayResponseFailure(resCode, resDesc);
-                } else {
-                    communicateHdfcPowerPayResponseFailure(null, null);
+                    String voucherCode = data.getStringExtra(Constants.EVOUCHER_CODE);
+                    if (!TextUtils.isEmpty(voucherCode)) {
+                        applyVoucher(voucherCode);
+                    }
                 }
-            }
-        } else if (requestCode == PayU.RESULT) {
-            if (resultCode == RESULT_OK) {
-                showToast("Whoaa! Payu success");
-            } else {
-                showToast("Aila! It failed");
-            }
-        } else {
-            switch (resultCode) {
-                case NavigationCodes.VOUCHER_APPLIED:
-                    if (data != null) {
-                        String voucherCode = data.getStringExtra(Constants.EVOUCHER_CODE);
-                        if (!TextUtils.isEmpty(voucherCode)) {
-                            applyVoucher(voucherCode);
-                        }
-                    }
-                    break;
-                case Constants.PREPAID_TXN_FAILED:
-                    syncContentView();
-                    trackEvent(TrackingAware.CHECKOUT_PAYMENT_GATEWAY_FAILURE, null);
-                    displayPayuFailure(getString(R.string.failedToProcess));
-                    break;
-                case Constants.PREPAID_TXN_ABORTED:
-                    syncContentView();
-                    trackEvent(TrackingAware.CHECKOUT_PAYMENT_GATEWAY_ABORTED, null);
-                    displayPayuFailure(getString(R.string.youAborted));
-                    break;
-                case Constants.PAYU_SUCCESS:
-                    trackEvent(TrackingAware.CHECKOUT_PAYMENT_GATEWAY_SUCCESS, null);
-                    PayuResponse payuResponse = PayuResponse.getInstance(getCurrentActivity());
-                    if (payuResponse == null) {
-                        showAlertDialog("Error", "Unable to place your order via credit-card." +
-                                "\nPlease choose another method.\n" +
-                                "In case your credit card has been charged, " +
-                                "BigBasket customer service will get back to you regarding " +
-                                "the payment made by you.", Constants.SOURCE_PAYU_EMPTY);
-                    } else {
-                        placeOrder(payuResponse.getTxnId());
-                    }
-                    break;
-                case NavigationCodes.GO_TO_SLOT_SELECTION:
-                    setResult(NavigationCodes.GO_TO_SLOT_SELECTION);
-                    finish();
-                    break;
-                default:
-                    super.onActivityResult(requestCode, resultCode, data);
-                    break;
-            }
+                break;
+//                case Constants.PREPAID_TXN_FAILED:
+//                    syncContentView();
+//                    trackEvent(TrackingAware.CHECKOUT_PAYMENT_GATEWAY_FAILURE, null);
+//                    displayPayuFailure(getString(R.string.failedToProcess));
+//                    break;
+//                case Constants.PREPAID_TXN_ABORTED:
+//                    syncContentView();
+//                    trackEvent(TrackingAware.CHECKOUT_PAYMENT_GATEWAY_ABORTED, null);
+//                    displayPayuFailure(getString(R.string.youAborted));
+//                    break;
+//                case Constants.PAYU_SUCCESS:
+//                    trackEvent(TrackingAware.CHECKOUT_PAYMENT_GATEWAY_SUCCESS, null);
+//                    if (payuResponse == null) {
+//                        showAlertDialog("Error", "Unable to place your order via credit-card." +
+//                                "\nPlease choose another method.\n" +
+//                                "In case your credit card has been charged, " +
+//                                "BigBasket customer service will get back to you regarding " +
+//                                "the payment made by you.", Constants.SOURCE_PAYU_EMPTY);
+//                    } else {
+//                        placeOrder(payuResponse.getTxnId());
+//                    }
+//                    break;
+            case NavigationCodes.GO_TO_SLOT_SELECTION:
+                setResult(NavigationCodes.GO_TO_SLOT_SELECTION);
+                finish();
+                break;
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
+                break;
         }
+
     }
 
     private void placeOrder(String txnId) {
@@ -588,36 +487,6 @@ public class PaymentSelectionActivity extends BackButtonActivity implements Payu
                             postOrderCreation(placeOrderApiResponse.apiResponseContent.orders,
                                     placeOrderApiResponse.apiResponseContent.addMoreLink,
                                     placeOrderApiResponse.apiResponseContent.addMoreMsg);
-                        } else if (placeOrderApiResponse.errorType != null &&
-                                placeOrderApiResponse.errorType.equals(ApiErrorCodes.AMOUNT_MISMATCH_STR)) {
-                            String paymentMethod = mSelectedPaymentMethod;
-                            String amtTxt = null;
-                            switch (paymentMethod) {
-                                case Constants.PAYU:
-                                    PayuResponse payuResponse = PayuResponse.getInstance(getCurrentActivity());
-                                    amtTxt = payuResponse != null ? "of Rs. " + payuResponse.getAmount() + " " : "";
-                                    break;
-                                case Constants.HDFC_POWER_PAY:
-                                    amtTxt = wPayInitRequest != null ? "of Rs. " + wPayInitRequest.getTransactionInfo().getTxnAmount() + " " : "";
-                                    break;
-                            }
-                            showAlertDialog("Create a separate order?",
-                                    "We are sorry. The payment amount " + amtTxt + "does not match the" +
-                                            " order amount of Rs." + mOrderDetails.getFormattedFinalTotal() + ". Please go through the " +
-                                            "payment process to complete this" +
-                                            " transaction. BigBasket customer service will get back to you regarding " +
-                                            "the payment made by you.",
-                                    DialogButton.YES, DialogButton.NO, Constants.SOURCE_PLACE_ORDER,
-                                    amtTxt);
-                        } else if (placeOrderApiResponse.errorType != null
-                                && placeOrderApiResponse.errorType.equals(ApiErrorCodes.INVALID_FIELD_STR)) {
-                            PayuResponse.clearTxnDetail(getCurrentActivity());
-                            VoucherApplied.clearFromPreference(getCurrentActivity());
-                            PowerPayResponse.clearTxnDetail(getCurrentActivity());
-                            showAlertDialog(getString(R.string.error),
-                                    !TextUtils.isEmpty(placeOrderApiResponse.message) ?
-                                            placeOrderApiResponse.message : getString(R.string.failedToProcess));
-                            displayPayuFailure(getString(R.string.failedToProcess));
                         } else {
                             handler.sendEmptyMessage(placeOrderApiResponse.getErrorTypeAsInt(), placeOrderApiResponse.message);
                         }
@@ -653,9 +522,6 @@ public class PaymentSelectionActivity extends BackButtonActivity implements Payu
             trackEventAppsFlyer(TrackingAware.PLACE_ORDER, order.getOrderValue(), map);
         }
 
-        PayuResponse.clearTxnDetail(this);
-        VoucherApplied.clearFromPreference(this);
-        PowerPayResponse.clearTxnDetail(this);
         ((CartInfoAware) getCurrentActivity()).markBasketDirty();
         showOrderThankyou(orders, addMoreLink, addMoreMsg);
     }
@@ -670,166 +536,142 @@ public class PaymentSelectionActivity extends BackButtonActivity implements Payu
         startActivityForResult(invoiceIntent, NavigationCodes.GO_TO_HOME);
     }
 
-    private void getPaymentParams() {
-        new PaymentInitiator<>(this, mPotentialOrderId, mSelectedPaymentMethod, mOrderDetails.getFormattedFinalTotal())
-                .initiate();
-    }
+//    private void getPaymentParams() {
+//        new PaymentInitiator<>(this, mPotentialOrderId, mSelectedPaymentMethod, mOrderDetails.getFormattedFinalTotal())
+//                .initiate();
+//    }
+//
+//    private void validateHdfcPowerPayResponse(String pgTxnId, String dataPickupCode, String txnId) {
+//        if (!checkInternetConnection()) {
+//            handler.sendOfflineError();
+//            return;
+//        }
+//        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
+//        showProgressDialog(getString(R.string.please_wait));
+//        bigBasketApiService.postPrepaidPayment(txnId, mPotentialOrderId, mSelectedPaymentMethod, "1",
+//                pgTxnId, dataPickupCode, mOrderDetails.getFormattedFinalTotal(),
+//                new PostPrepaidParamsCallback());
+//    }
 
-    private void validateHdfcPowerPayResponse(String pgTxnId, String dataPickupCode, String txnId) {
-        if (!checkInternetConnection()) {
-            handler.sendOfflineError();
-            return;
-        }
-        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
-        PowerPayResponse.createInstance(this, txnId,
-                pgTxnId, dataPickupCode, true);
-        showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.postPrepaidPayment(txnId, mPotentialOrderId, mSelectedPaymentMethod, "1",
-                pgTxnId, dataPickupCode, mOrderDetails.getFormattedFinalTotal(),
-                new PostPrepaidParamsCallback());
-    }
+//    private void communicateHdfcPowerPayResponseFailure(String resCode, String resDesc) {
+//        if (!checkInternetConnection()) {
+//            handler.sendOfflineError();
+//            return;
+//        }
+//        if (wPayInitRequest == null || wPayInitRequest.getTransactionInfo() == null) return;
+//        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
+//        showProgressDialog(getString(R.string.please_wait));
+//        bigBasketApiService.postPrepaidPayment(wPayInitRequest.getTransactionInfo().getMerTxnId(),
+//                mPotentialOrderId, mSelectedPaymentMethod, "0",
+//                resCode, resDesc,
+//                new PostPrepaidParamsCallback());
+//    }
+//
+//    @Override
+//    public void initializeHDFCPowerPay(PowerPayPostParams powerPayPostParams) {
+//        new PowerPayTriggerAsyncTask().execute(powerPayPostParams);
+//    }
+//
+//    private void startHDFCPowerPay(PowerPayPostParams powerPayPostParams) {
+//        wPayInitRequest = new WPayInitRequest();
+//
+//        TransactionInfo transactionInfo = new TransactionInfo();
+//        transactionInfo.setTxnAmount(powerPayPostParams.getFormattedAmount());
+//        transactionInfo.setTxnCurrency(powerPayPostParams.getCurrency());
+//        transactionInfo.setSupportedPaymentType(powerPayPostParams.getPaymentChoices());
+//        transactionInfo.setTxnDesc(powerPayPostParams.getTxnDesc());
+//        transactionInfo.setMerTxnId(powerPayPostParams.getTxnId());
+//        if (powerPayPostParams.getAppData() != null) {
+//            transactionInfo.setMerAppData(powerPayPostParams.getAppData());
+//        }
+//
+//        MerchantInfo merchantInfo = new MerchantInfo();
+//        merchantInfo.setMerAppId(powerPayPostParams.getMerchantAppId());
+//        merchantInfo.setMerId(powerPayPostParams.getMerchantId());
+//        merchantInfo.setMerCountryCode(powerPayPostParams.getCountryCode());
+//
+//        CustomerInfo customerInfo = new CustomerInfo();
+//        customerInfo.setCustEmail(powerPayPostParams.getEmail());
+//        customerInfo.setCustDob(powerPayPostParams.getDob());
+//        customerInfo.setCustName(powerPayPostParams.getName());
+//        customerInfo.setCustMobile(powerPayPostParams.getMobile());
+//
+//        wPayInitRequest.setTransactionInfo(transactionInfo);
+//        wPayInitRequest.setMerchantInfo(merchantInfo);
+//        wPayInitRequest.setCustomerInfo(customerInfo);
+//
+//        wPayInitRequest.setMsgHash(powerPayPostParams.getMsgHash());
+//        WibmoSDK.startForInApp(this, wPayInitRequest);
+//    }
 
-    private void communicateHdfcPowerPayResponseFailure(String resCode, String resDesc) {
-        if (!checkInternetConnection()) {
-            handler.sendOfflineError();
-            return;
-        }
-        if (wPayInitRequest == null || wPayInitRequest.getTransactionInfo() == null) return;
-        BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
-        showProgressDialog(getString(R.string.please_wait));
-        bigBasketApiService.postPrepaidPayment(wPayInitRequest.getTransactionInfo().getMerTxnId(),
-                mPotentialOrderId, mSelectedPaymentMethod, "0",
-                resCode, resDesc,
-                new PostPrepaidParamsCallback());
-    }
+//    private class PowerPayTriggerAsyncTask extends AsyncTask<PowerPayPostParams, Integer, PowerPayPostParams> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            showProgressDialog(getString(R.string.please_wait));
+//        }
+//
+//        @Override
+//        protected PowerPayPostParams doInBackground(PowerPayPostParams... params) {
+//            PowerPayPostParams powerPayPostParams = params[0];
+//            WibmoSDK.setWibmoIntentActionPackage(powerPayPostParams.getPkgName());
+//            WibmoSDKConfig.setWibmoDomain(powerPayPostParams.getServerUrl());
+//            WibmoSDK.init(getApplicationContext());
+//            return powerPayPostParams;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(PowerPayPostParams powerPayPostParams) {
+//            hideProgressDialog();
+//            startHDFCPowerPay(powerPayPostParams);
+//        }
+//    }
 
-    @Override
-    public void initializeHDFCPowerPay(PowerPayPostParams powerPayPostParams) {
-        new PowerPayTriggerAsyncTask().execute(powerPayPostParams);
-    }
+//    private class PostPrepaidParamsCallback implements Callback<ApiResponse<PostPrepaidPaymentResponse>> {
+//        @Override
+//        public void success(ApiResponse<PostPrepaidPaymentResponse> postPrepaidPaymentApiResponse, Response response) {
+//            if (isSuspended()) return;
+//            try {
+//                hideProgressDialog();
+//            } catch (IllegalArgumentException e) {
+//                return;
+//            }
+//            switch (postPrepaidPaymentApiResponse.status) {
+//                case 0:
+//                    if (postPrepaidPaymentApiResponse.apiResponseContent.paymentStatus) {
+//                        placeOrder(PowerPayResponse.getInstance(getCurrentActivity()).getTxnId());
+//                    } else {
+//                        displayPayuFailure(getString(R.string.failedToProcess));
+//                    }
+//                    break;
+//                default:
+//                    handler.sendEmptyMessage(postPrepaidPaymentApiResponse.status, postPrepaidPaymentApiResponse.message);
+//                    break;
+//            }
+//        }
+//
+//        @Override
+//        public void failure(RetrofitError error) {
+//            if (isSuspended()) return;
+//            try {
+//                hideProgressDialog();
+//            } catch (IllegalArgumentException e) {
+//                return;
+//            }
+//            handler.handleRetrofitError(error);
+//        }
+//    }
 
-    private void startHDFCPowerPay(PowerPayPostParams powerPayPostParams) {
-        wPayInitRequest = new WPayInitRequest();
-
-        TransactionInfo transactionInfo = new TransactionInfo();
-        transactionInfo.setTxnAmount(powerPayPostParams.getFormattedAmount());
-        transactionInfo.setTxnCurrency(powerPayPostParams.getCurrency());
-        transactionInfo.setSupportedPaymentType(powerPayPostParams.getPaymentChoices());
-        transactionInfo.setTxnDesc(powerPayPostParams.getTxnDesc());
-        transactionInfo.setMerTxnId(powerPayPostParams.getTxnId());
-        if (powerPayPostParams.getAppData() != null) {
-            transactionInfo.setMerAppData(powerPayPostParams.getAppData());
-        }
-
-        MerchantInfo merchantInfo = new MerchantInfo();
-        merchantInfo.setMerAppId(powerPayPostParams.getMerchantAppId());
-        merchantInfo.setMerId(powerPayPostParams.getMerchantId());
-        merchantInfo.setMerCountryCode(powerPayPostParams.getCountryCode());
-
-        CustomerInfo customerInfo = new CustomerInfo();
-        customerInfo.setCustEmail(powerPayPostParams.getEmail());
-        customerInfo.setCustDob(powerPayPostParams.getDob());
-        customerInfo.setCustName(powerPayPostParams.getName());
-        customerInfo.setCustMobile(powerPayPostParams.getMobile());
-
-        wPayInitRequest.setTransactionInfo(transactionInfo);
-        wPayInitRequest.setMerchantInfo(merchantInfo);
-        wPayInitRequest.setCustomerInfo(customerInfo);
-
-        wPayInitRequest.setMsgHash(powerPayPostParams.getMsgHash());
-        WibmoSDK.startForInApp(this, wPayInitRequest);
-    }
-
-    private class PowerPayTriggerAsyncTask extends AsyncTask<PowerPayPostParams, Integer, PowerPayPostParams> {
-
-        @Override
-        protected void onPreExecute() {
-            showProgressDialog(getString(R.string.please_wait));
-        }
-
-        @Override
-        protected PowerPayPostParams doInBackground(PowerPayPostParams... params) {
-            PowerPayPostParams powerPayPostParams = params[0];
-            WibmoSDK.setWibmoIntentActionPackage(powerPayPostParams.getPkgName());
-            WibmoSDKConfig.setWibmoDomain(powerPayPostParams.getServerUrl());
-            WibmoSDK.init(getApplicationContext());
-            return powerPayPostParams;
-        }
-
-        @Override
-        protected void onPostExecute(PowerPayPostParams powerPayPostParams) {
-            hideProgressDialog();
-            startHDFCPowerPay(powerPayPostParams);
-        }
-    }
-
-    private class PostPrepaidParamsCallback implements Callback<ApiResponse<PostPrepaidPaymentResponse>> {
-        @Override
-        public void success(ApiResponse<PostPrepaidPaymentResponse> postPrepaidPaymentApiResponse, Response response) {
-            if (isSuspended()) return;
-            try {
-                hideProgressDialog();
-            } catch (IllegalArgumentException e) {
-                return;
-            }
-            switch (postPrepaidPaymentApiResponse.status) {
-                case 0:
-                    if (postPrepaidPaymentApiResponse.apiResponseContent.paymentStatus) {
-                        placeOrder(PowerPayResponse.getInstance(getCurrentActivity()).getTxnId());
-                    } else {
-                        displayPayuFailure(getString(R.string.failedToProcess));
-                    }
-                    break;
-                default:
-                    handler.sendEmptyMessage(postPrepaidPaymentApiResponse.status, postPrepaidPaymentApiResponse.message);
-                    break;
-            }
-        }
-
-        @Override
-        public void failure(RetrofitError error) {
-            if (isSuspended()) return;
-            try {
-                hideProgressDialog();
-            } catch (IllegalArgumentException e) {
-                return;
-            }
-            handler.handleRetrofitError(error);
-        }
-    }
-
-    @Override
-    public void initializePayu(HashMap<String, String> paymentParams) {
-        PayU.ibiboCodeHash = paymentParams.remove("hash");
-        PayU.getInstance(this).startPaymentProcess(mOrderDetails.getFinalTotal(), paymentParams);
-    }
+//    @Override
+//    public void initializePayu(HashMap<String, String> paymentParams) {
+//        PayU.ibiboCodeHash = paymentParams.remove("hash");
+//        PayU.getInstance(this).startPaymentProcess(mOrderDetails.getFinalTotal(), paymentParams);
+//    }
 
     @Override
     protected void onPositiveButtonClicked(DialogInterface dialogInterface, @Nullable String sourceName, Object valuePassed) {
-        if (!TextUtils.isEmpty(sourceName) && sourceName.equals(Constants.REMOVE_VOUCHER)
-                && valuePassed != null) {
-            removeVoucher(valuePassed.toString());
-        } else if (sourceName != null) {
-            // When user clicks the Yes button in Alert Dialog that is shown when there's a amount mismatch
-            switch (sourceName) {
-                case Constants.SOURCE_PLACE_ORDER:
-                    PayuResponse.clearTxnDetail(this);
-                    PowerPayResponse.clearTxnDetail(this);
-                    trackEvent(TrackingAware.CHECKOUT_PLACE_ORDER_AMOUNT_MISMATCH, null);
-                    if (isCreditCardPayment()) {
-                        getPaymentParams();
-                    } else {
-                        placeOrder(null);
-                    }
-                    break;
-                case Constants.SOURCE_POST_PAYMENT:
-                    PayuResponse.clearTxnDetail(this);
-                    finish();
-                    break;
-                case Constants.SOURCE_PAYU_EMPTY:
-                    finish();
-                    break;
-            }
+        if (!TextUtils.isEmpty(sourceName) && sourceName.equals(Constants.REMOVE_VOUCHER)) {
+            removeVoucher();
         } else {
             super.onPositiveButtonClicked(dialogInterface, null, valuePassed);
         }
@@ -840,7 +682,6 @@ public class PaymentSelectionActivity extends BackButtonActivity implements Payu
         if (sourceName != null) {
             switch (sourceName) {
                 case Constants.SOURCE_PLACE_ORDER:
-                    findViewById(R.id.viewPaymentInProgress).setVisibility(View.GONE);
                     renderPaymentDetails();
                 default:
                     super.onNegativeButtonClicked(dialogInterface, sourceName);

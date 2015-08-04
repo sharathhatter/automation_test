@@ -7,20 +7,23 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.model.order.PayuResponse;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class SectionItem extends BaseSectionTextItem implements Parcelable, Serializable {
@@ -163,10 +166,6 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
         return helpDestinationInfo;
     }
 
-    public void setHelpDestinationInfo(HelpDestinationInfo helpDestinationInfo) {
-        this.helpDestinationInfo = helpDestinationInfo;
-    }
-
     public ArrayList<SubSectionItem> getSubSectionItems() {
         return subSectionItems;
     }
@@ -225,7 +224,7 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
             if (image.startsWith(Constants.LOCAL_RES_PREFIX)) {
                 try {
                     URI uri = new URI(image);
-                    Map<String, String> queryMap = PayuResponse.getQueryMap(uri.getQuery());
+                    Map<String, String> queryMap = getQueryMap(uri.getQuery());
                     String name = queryMap.get(Constants.NAME);
                     if (!TextUtils.isEmpty(name)) {
                         Class res = R.drawable.class;
@@ -376,5 +375,27 @@ public class SectionItem extends BaseSectionTextItem implements Parcelable, Seri
     @Override
     public String toString() {
         return getTitle() != null ? (TextUtils.isEmpty(getTitle().getText()) ? "" : getTitle().getText()) : "";
+    }
+
+    public static Map<String, String> getQueryMap(String queryStr) {
+        Map<String, String> queryMap = null;
+        if (queryStr != null) {
+            queryMap = new HashMap<>();
+            for (String queryKeyValPair : queryStr.split("&")) {
+                if (queryKeyValPair.contains("=")) {
+                    String[] splittedParams = queryKeyValPair.split("=");
+                    if (splittedParams.length != 2)
+                        continue;
+                    try {
+                        queryMap.put(splittedParams[0], URLDecoder.decode(splittedParams[1], "UTF-8"));
+                    } catch (UnsupportedEncodingException e) {
+                        Log.e("Payu Response Parser ", "Unable to url-decode " + splittedParams[1]);
+                    }
+                } else {
+                    queryMap.put(queryKeyValPair, "");
+                }
+            }
+        }
+        return queryMap;
     }
 }
