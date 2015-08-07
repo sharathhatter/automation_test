@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.View;
@@ -343,7 +344,9 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
         ((ActivityAware) context).getCurrentActivity().setNextScreenNavigationContext(ncBuilder.toString());
     }
 
+    @Nullable
     private String getAnalyticsFormattedScreeName() {
+        if (screenName == null) return null;
         switch (screenName) {
             case SectionManager.HOME_PAGE:
                 return TrackingAware.HOME_PAGE_ITEM_CLICKED;
@@ -377,12 +380,15 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
             bannerName += ", " + sectionItem.getDestinationInfo().getDestinationSlug();
         }
 
-        HashMap<String, String> eventAttribs = new HashMap<>();
-        eventAttribs.put(TrackEventkeys.BANNER_ID, String.valueOf(index));
-        eventAttribs.put(TrackEventkeys.BANNER_SLUG, bannerName);
-        eventAttribs.put(TrackEventkeys.NAVIGATION_CTX,
-                ((ActivityAware) context).getCurrentActivity().getNextScreenNavigationContext());
-        ((TrackingAware) context).trackEvent(getAnalyticsFormattedScreeName(), eventAttribs);
+        String eventName = getAnalyticsFormattedScreeName();
+        if (eventName != null) {
+            HashMap<String, String> eventAttribs = new HashMap<>();
+            eventAttribs.put(TrackEventkeys.BANNER_ID, String.valueOf(index));
+            eventAttribs.put(TrackEventkeys.BANNER_SLUG, bannerName);
+            eventAttribs.put(TrackEventkeys.NAVIGATION_CTX,
+                    ((ActivityAware) context).getCurrentActivity().getNextScreenNavigationContext());
+            ((TrackingAware) context).trackEvent(eventName, eventAttribs);
+        }
     }
 
     private String getSectionItemName() {
@@ -402,11 +408,14 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
             eventAttribs.put(TrackEventkeys.SECTION_ITEM, getSectionItemName());
         eventAttribs.put(TrackEventkeys.NAVIGATION_CTX,
                 ((ActivityAware) context).getCurrentActivity().getNextScreenNavigationContext());
-        if (screenName != null && screenName.equals(SectionManager.DISCOUNT_PAGE))
-            ((TrackingAware) context).trackEvent(getAnalyticsFormattedScreeName(), eventAttribs,
+        String eventName = getAnalyticsFormattedScreeName();
+        if (eventName == null) return;
+        if (screenName != null && screenName.equals(SectionManager.DISCOUNT_PAGE)) {
+            ((TrackingAware) context).trackEvent(eventName, eventAttribs,
                     null, null, false, true);
-        else
-            ((TrackingAware) context).trackEvent(getAnalyticsFormattedScreeName(), eventAttribs);
+        } else {
+            ((TrackingAware) context).trackEvent(eventName, eventAttribs);
+        }
     }
 
     private boolean hasMainMenu() {
