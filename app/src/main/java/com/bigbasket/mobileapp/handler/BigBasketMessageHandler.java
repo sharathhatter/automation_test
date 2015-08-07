@@ -108,6 +108,9 @@ public class BigBasketMessageHandler<T> {
             case ApiErrorCodes.GENERIC_ERROR:
                 ((ApiErrorAware) ctx).showApiErrorDialog(null, !TextUtils.isEmpty(message) ? message : getString(R.string.server_error), finish);
                 break;
+            case ApiErrorCodes.PAYMENT_ERROR:
+                ((ApiErrorAware) ctx).showApiErrorDialog(null, !TextUtils.isEmpty(message) ? message : getString(R.string.server_error), finish);
+                break;
             case NavigationCodes.ADD_TO_SHOPPINGLIST_OK:
                 if (((ActivityAware) ctx).getCurrentActivity() != null) {
                     Toast.makeText(((ActivityAware) ctx).getCurrentActivity(),

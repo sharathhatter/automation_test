@@ -645,42 +645,45 @@ public class PaymentSelectionActivity extends BackButtonActivity
     }
 
     @Override
-    public void onPostPaymentFailure() {
-        showToast("Post payment Failure!");
+    public void onPostPaymentFailure(String txnId) {
+        // When transaction has failed. Place order as Cash on Delivery.
+        // User can later use 'Pay Now' to complete order.
+        String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
+        new ValidatePaymentHandler<>(this, mPotentialOrderId, txnId, fullOrderId).start();
     }
 
     @Override
     public void onPostPaymentSuccess(String txnId) {
         // Now Validate payment from server for excess collection
-        new ValidatePaymentHandler<>(this, mPotentialOrderId, txnId).start();
+        String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
+        new ValidatePaymentHandler<>(this, mPotentialOrderId, txnId, fullOrderId).start();
     }
 
     @Override
-    public void onPaymentValidated() {
-        showOrderThankyou(mOrdersCreated, mAddMoreLink, mAddMoreMsg);
-    }
-
-    @Override
-    protected void onPositiveButtonClicked(DialogInterface dialogInterface, @Nullable String sourceName, Object valuePassed) {
-        if (!TextUtils.isEmpty(sourceName) && sourceName.equals(Constants.REMOVE_VOUCHER)) {
-            removeVoucher();
+    public void onPaymentValidated(boolean status, @Nullable String msg) {
+        if (status || msg == null) {
+            showOrderThankyou(mOrdersCreated, mAddMoreLink, mAddMoreMsg);
         } else {
-            super.onPositiveButtonClicked(dialogInterface, null, valuePassed);
+            // Show a message and then take to Order thank-you page
+            showAlertDialog(null, msg, Constants.SOURCE_PLACE_ORDER);
         }
     }
 
     @Override
-    protected void onNegativeButtonClicked(DialogInterface dialogInterface, String sourceName) {
-        if (sourceName != null) {
+    protected void onPositiveButtonClicked(DialogInterface dialogInterface, @Nullable String sourceName, Object valuePassed) {
+        if (!TextUtils.isEmpty(sourceName)) {
             switch (sourceName) {
-                case Constants.SOURCE_PLACE_ORDER:
-                    renderPaymentDetails();
-                default:
-                    super.onNegativeButtonClicked(dialogInterface, sourceName);
+                case Constants.REMOVE_VOUCHER:
+                    removeVoucher();
                     break;
+                case Constants.SOURCE_PLACE_ORDER:
+                    showOrderThankyou(mOrdersCreated, mAddMoreLink, mAddMoreMsg);
+                    break;
+                default:
+                    super.onPositiveButtonClicked(dialogInterface, null, valuePassed);
             }
         } else {
-            super.onNegativeButtonClicked(dialogInterface, null);
+            super.onPositiveButtonClicked(dialogInterface, null, valuePassed);
         }
     }
 

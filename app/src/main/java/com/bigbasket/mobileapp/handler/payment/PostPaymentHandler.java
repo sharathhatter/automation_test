@@ -92,7 +92,7 @@ public class PostPaymentHandler<T> {
                     if (postPrepaidPaymentApiResponse.apiResponseContent.paymentStatus) {
                         ((OnPostPaymentListener) ctx).onPostPaymentSuccess(txnId);
                     } else {
-                        ((OnPostPaymentListener) ctx).onPostPaymentFailure();
+                        ((OnPostPaymentListener) ctx).onPostPaymentFailure(txnId);
                     }
                     break;
                 default:

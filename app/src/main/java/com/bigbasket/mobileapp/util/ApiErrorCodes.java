@@ -37,4 +37,5 @@ public interface ApiErrorCodes {
     int ADDRESS_NOT_SERVED = 185;
     int INVALID_REFERRAL_CODE = 186;
     int GENERIC_ERROR = 190;
+    int PAYMENT_ERROR = 191;
 }

@@ -15,7 +15,6 @@ import com.bigbasket.mobileapp.apiservice.models.response.CreatePotentialOrderRe
 import com.bigbasket.mobileapp.apiservice.models.response.CreateUpdateAddressApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.GetDeliveryAddressApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.GetDynamicPageApiResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.GetPaymentParamsApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPowerPayPaymentParamsResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPrepaidPaymentResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetProductsForOrderApiResponseContent;
@@ -259,10 +258,6 @@ public interface BigBasketApiService {
     @GET("/co-get-delivery-addresses/")
     void getDeliveryAddresses(Callback<ApiResponse<GetDeliveryAddressApiResponseContent>> getDeliveryAddressApiResponseCallback);
 
-    @GET("/get-payment-params/")
-    void getPaymentParams(@Query(Constants.PID) String potentialOrderId, @Query(Constants.AMOUNT) String amount,
-                          Callback<ApiResponse<GetPaymentParamsApiResponseContent>> getPaymentParamsApiResponseCallback);
-
     @GET("/search-tc/")
     ApiResponse<AutoSearchApiResponseContent> autoSearch(@Query("t") String term);
 
@@ -341,7 +336,8 @@ public interface BigBasketApiService {
                             Callback<ApiResponse<PostPrepaidPaymentResponse>> postPrepaidPaymentApiResponseCallback);
 
     @GET("/validate-order-payment/")
-    void validateOrderPayment(@Query(Constants.TXN_ID) String txnId, @Query(Constants.P_ORDER_ID) String potentalOrderId,
+    void validateOrderPayment(@Query(Constants.TXN_ID) String txnId, @Query(Constants.P_ORDER_ID) String potentialOrderId,
+                              @Query(Constants.ORDER_ID) String fullOrderId,
                               Callback<BaseApiResponse> validateOrderPaymentResponseCallback);
 
     @GET("/register-utm-params/")
