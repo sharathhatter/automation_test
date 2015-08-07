@@ -78,6 +78,10 @@ public class PaymentSelectionActivity extends BackButtonActivity
     private String mSelectedPaymentMethod;
     private OrderDetails mOrderDetails;
     private WPayInitRequest wPayInitRequest;
+    private ArrayList<Order> mOrdersCreated;
+    private String mAddMoreLink;
+    private String mAddMoreMsg;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -508,32 +512,33 @@ public class PaymentSelectionActivity extends BackButtonActivity
 
     private void postOrderCreation(ArrayList<Order> orders, String addMoreLink,
                                    String addMoreMsg) {
-
+        ((CartInfoAware) getCurrentActivity()).markBasketDirty();
         if (isCreditCardPayment()) {
+            mOrdersCreated = orders;
+            mAddMoreLink = addMoreLink;
+            mAddMoreMsg = addMoreMsg;
             getPaymentParams();
         } else {
-            if (orders == null || orders.size() == 0) return;
-            for (Order order : orders) {
-                HashMap<String, String> map = new HashMap<>();
-                map.put(TrackEventkeys.ORDER_ID, order.getOrderId());
-                map.put(TrackEventkeys.ORDER_AMOUNT, order.getOrderValue());
-                map.put(TrackEventkeys.ORDER_NUMBER, order.getOrderNumber());
-                map.put(TrackEventkeys.ORDER_TYPE, order.getOrderType());
-                if (!TextUtils.isEmpty(order.getVoucher()))
-                    map.put(TrackEventkeys.VOUCHER_NAME, order.getVoucher());
-                map.put(TrackEventkeys.PAYMENT_MODE, order.getPaymentMethod());
-                map.put(TrackEventkeys.POTENTIAL_ORDER, mPotentialOrderId);
-                trackEvent(TrackingAware.CHECKOUT_ORDER_COMPLETE, map, null, null, true);
-                trackEventAppsFlyer(TrackingAware.PLACE_ORDER, order.getOrderValue(), map);
-            }
-
-            ((CartInfoAware) getCurrentActivity()).markBasketDirty();
             showOrderThankyou(orders, addMoreLink, addMoreMsg);
         }
     }
 
     private void showOrderThankyou(ArrayList<Order> orders, String addMoreLink, String addMoreMsg) {
+        for (Order order : orders) {
+            HashMap<String, String> map = new HashMap<>();
+            map.put(TrackEventkeys.ORDER_ID, order.getOrderId());
+            map.put(TrackEventkeys.ORDER_AMOUNT, order.getOrderValue());
+            map.put(TrackEventkeys.ORDER_NUMBER, order.getOrderNumber());
+            map.put(TrackEventkeys.ORDER_TYPE, order.getOrderType());
+            if (!TextUtils.isEmpty(order.getVoucher()))
+                map.put(TrackEventkeys.VOUCHER_NAME, order.getVoucher());
+            map.put(TrackEventkeys.PAYMENT_MODE, order.getPaymentMethod());
+            map.put(TrackEventkeys.POTENTIAL_ORDER, mPotentialOrderId);
+            trackEvent(TrackingAware.CHECKOUT_ORDER_COMPLETE, map, null, null, true);
+            trackEventAppsFlyer(TrackingAware.PLACE_ORDER, order.getOrderValue(), map);
+        }
         setNextScreenNavigationContext(TrackEventkeys.CO_PAYMENT);
+        
         Intent invoiceIntent = new Intent(this, OrderInvoiceActivity.class);
         invoiceIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_THANKYOU);
         invoiceIntent.putExtra(Constants.ORDERS, orders);
@@ -652,7 +657,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
 
     @Override
     public void onPaymentValidated() {
-        showToast("All is well");
+        showOrderThankyou(mOrdersCreated, mAddMoreLink, mAddMoreMsg);
     }
 
     @Override
