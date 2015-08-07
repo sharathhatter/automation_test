@@ -537,7 +537,8 @@ public class CardsFragment extends ProcessPaymentFragment implements PaymentList
             ((TextView) getActivity().findViewById(R.id.amountTextView)).setGravity(Gravity.CENTER);
             ((TextView) getActivity().findViewById(R.id.amountTextView)).setTextColor(Color.BLACK);
             ((TextView) getActivity().findViewById(R.id.amountTextView)).setPaintFlags(0);
-            ((TextView) getActivity().findViewById(R.id.amountTextView)).setText(getString(R.string.amount, getActivity().getIntent().getExtras().getDouble(PayU.AMOUNT)));
+            //((TextView) getActivity().findViewById(R.id.amountTextView)).setText(getString(R.string.amount, getActivity().getIntent().getExtras().getDouble(PayU.AMOUNT)));
+            ((TextView) getActivity().findViewById(R.id.amountTextView)).setText("Rs. " + getActivity().getIntent().getExtras().getString(PayU.AMOUNT));
         }
     }
 

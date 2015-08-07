@@ -40,9 +40,11 @@ import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.OrderDetails;
 import com.bigbasket.mobileapp.model.order.PaymentType;
 import com.bigbasket.mobileapp.model.order.PowerPayPostParams;
+import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
@@ -554,7 +556,12 @@ public class PaymentSelectionActivity extends BackButtonActivity
 
     @Override
     public void initializePayu(HashMap<String, String> paymentParams) {
-        Double amount = Double.parseDouble(paymentParams.remove(Constants.AMOUNT));
+        Double amount = Double.parseDouble(paymentParams.get(Constants.AMOUNT));
+
+        AuthParameters authParameters = AuthParameters.getInstance(this);
+        PayU.CLIENT_AUTH_TOKEN = authParameters.getBbAuthToken();
+        PayU.CLIENT_VISITOR_ID = authParameters.getVisitorId();
+        PayU.CLIENT_DOMAIN = MobileApiUrl.DOMAIN;
 
         PayU.merchantCodesHash = paymentParams.remove("merchant_code_hash");
         PayU.paymentHash = paymentParams.remove("payment_hash");

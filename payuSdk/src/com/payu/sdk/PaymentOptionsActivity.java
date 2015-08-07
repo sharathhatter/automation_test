@@ -27,7 +27,8 @@ public class PaymentOptionsActivity extends FragmentActivity implements PaymentL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment_options);
         extras = getIntent().getExtras();
-        ((TextView) findViewById(R.id.amountTextView)).setText(getString(R.string.amount, extras.getDouble(PayU.AMOUNT)));
+        //((TextView) findViewById(R.id.amountTextView)).setText(getString(R.string.amount, extras.getDouble(PayU.AMOUNT)));
+        ((TextView) findViewById(R.id.amountTextView)).setText("Rs. " + extras.getString(PayU.AMOUNT));
 
         if (savedInstanceState == null) {
             PaymentOptionsFragment fragment = new PaymentOptionsFragment();
