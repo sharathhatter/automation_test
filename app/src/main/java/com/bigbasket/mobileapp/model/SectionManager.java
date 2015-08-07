@@ -6,7 +6,6 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-import com.bigbasket.mobileapp.BuildConfig;
 import com.bigbasket.mobileapp.model.section.Section;
 import com.bigbasket.mobileapp.model.section.SectionData;
 import com.google.gson.Gson;
@@ -96,7 +95,6 @@ public class SectionManager {
     }
 
     private boolean isStale(String createdOn, SimpleDateFormat simpleDateFormat, int duration) {
-        if (BuildConfig.DEBUG) return true;
         try {
             Date createOnDate = simpleDateFormat.parse(createdOn);
             Date now = new Date();

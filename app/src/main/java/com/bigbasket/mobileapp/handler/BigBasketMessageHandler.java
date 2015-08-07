@@ -105,6 +105,9 @@ public class BigBasketMessageHandler<T> {
             case ApiErrorCodes.EMAIL_DOESNT_EXISTS:
                 ((ApiErrorAware) ctx).showApiErrorDialog(null, message, finish);
                 break;
+            case ApiErrorCodes.GENERIC_ERROR:
+                ((ApiErrorAware) ctx).showApiErrorDialog(null, !TextUtils.isEmpty(message) ? message : getString(R.string.server_error), finish);
+                break;
             case NavigationCodes.ADD_TO_SHOPPINGLIST_OK:
                 if (((ActivityAware) ctx).getCurrentActivity() != null) {
                     Toast.makeText(((ActivityAware) ctx).getCurrentActivity(),
@@ -156,7 +159,7 @@ public class BigBasketMessageHandler<T> {
                 break;
             case CONVERSION:
                 ((ApiErrorAware) ctx).showApiErrorDialog(getString(R.string.headingServerError),
-                        getString(R.string.server_error), true);
+                        getString(R.string.server_error), finish);
                 break;
             case UNEXPECTED:
                 throw error;

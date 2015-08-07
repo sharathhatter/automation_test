@@ -36,4 +36,5 @@ public interface ApiErrorCodes {
     int PRODUCT_QTY_LIMIT = 184;
     int ADDRESS_NOT_SERVED = 185;
     int INVALID_REFERRAL_CODE = 186;
+    int GENERIC_ERROR = 190;
 }

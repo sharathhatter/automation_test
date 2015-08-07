@@ -365,11 +365,6 @@
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity
-            android:name=".activity.order.uiv3.PayuTransactionActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
-        <activity
             android:name=".activity.account.uiv3.ChangeCityActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme"
@@ -557,7 +552,7 @@
 
         <meta-data android:name="payu_merchant_id" android:value="@string/payu_merchant_id"/>
         <meta-data android:name="payu_merchant_salt" android:value="@string/payu_merchant_salt"/>
-        <meta-data android:name="payu_disable_back" android:value="true"/>
+        <!--<meta-data android:name="payu_disable_back" android:value="true"/>-->
 
     </application>
 
