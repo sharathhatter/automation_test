@@ -52,6 +52,7 @@ public class ValidatePaymentHandler<T> {
                     case ApiErrorCodes.PAYMENT_ERROR:
                         ((OnPaymentValidationListener) ctx).onPaymentValidated(false,
                                 validateOrderPaymentResponse.message);
+                        break;
                     default:
                         ((HandlerAware) ctx).getHandler().sendEmptyMessage(validateOrderPaymentResponse.status,
                                 validateOrderPaymentResponse.message);
