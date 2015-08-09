@@ -1,34 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/layoutUpdateProfile"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_gravity="top"
     android:background="@color/white"
-    android:orientation="vertical"
-    android:paddingBottom="@dimen/padding_small">
+    android:padding="@dimen/padding_normal"
+    android:paddingBottom="@dimen/padding_small"
+    android:scrollbars="none">
 
-    <ScrollView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="@dimen/margin_normal"
-        android:scrollbars="none">
+        android:layout_height="wrap_content"
+        android:background="@color/uiv3_large_list_item_bck"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/padding_small"
+        android:paddingRight="@dimen/padding_small"
+        android:paddingTop="@dimen/padding_small">
 
-        <RelativeLayout
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/textInputEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/uiv3_large_list_item_bck"
-            android:orientation="vertical"
-            android:paddingLeft="@dimen/padding_small"
-            android:paddingRight="@dimen/padding_small"
-            android:paddingTop="@dimen/padding_small">
+            android:layout_below="@id/textInputNewPasswd"
+            android:layout_marginBottom="@dimen/margin_small"
+            android:layout_marginLeft="@dimen/margin_small"
+            android:layout_marginRight="@dimen/margin_small">
 
             <EditText
                 android:id="@+id/editTextEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_marginLeft="@dimen/margin_small"
-                android:layout_marginRight="@dimen/margin_small"
                 android:ems="10"
                 android:hint="@string/email"
                 android:inputType="textEmailAddress"
@@ -37,23 +41,29 @@
                 android:textColor="@color/uiv3_primary_text_color"
                 android:textColorHint="@color/uiv3_secondary_text_color"
                 android:textSize="@dimen/primary_text_size" />
+        </android.support.design.widget.TextInputLayout>
 
-            <LinearLayout
-                android:id="@+id/layoutName"
-                android:layout_width="match_parent"
+        <LinearLayout
+            android:id="@+id/layoutName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textInputEmail"
+            android:layout_marginBottom="@dimen/margin_small"
+            android:layout_marginLeft="@dimen/margin_small"
+            android:layout_marginRight="@dimen/margin_small"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/textInputFirstName"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/editTextEmail"
-                android:layout_marginRight="@dimen/margin_small"
-                android:layout_marginTop="@dimen/margin_small"
-                android:orientation="horizontal">
+                android:layout_weight="1">
 
                 <EditText
                     android:id="@+id/editTextFirstName"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/margin_small"
-                    android:layout_marginRight="@dimen/margin_mini"
-                    android:layout_weight="1"
                     android:hint="@string/firstName"
                     android:inputType="textPersonName"
                     android:maxLength="30"
@@ -62,13 +72,19 @@
                     android:textColor="@color/uiv3_primary_text_color"
                     android:textColorHint="@color/uiv3_secondary_text_color"
                     android:textSize="@dimen/primary_text_size" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/textInputLastName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
 
                 <EditText
                     android:id="@+id/editTextLastName"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/margin_mini"
-                    android:layout_weight="1"
                     android:hint="@string/lastName"
                     android:inputType="textPersonName"
                     android:maxLength="30"
@@ -76,22 +92,28 @@
                     android:singleLine="true"
                     android:textColor="@color/uiv3_primary_text_color"
                     android:textSize="@dimen/primary_text_size" />
-            </LinearLayout>
+            </android.support.design.widget.TextInputLayout>
+        </LinearLayout>
 
-            <RelativeLayout
-                android:id="@+id/layoutDOB"
+        <RelativeLayout
+            android:id="@+id/layoutDOB"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/layoutName"
+            android:layout_marginBottom="@dimen/margin_small"
+            android:textColorHint="@color/uiv3_secondary_text_color">
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/textInputDob"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/layoutName"
-                android:layout_marginTop="@dimen/margin_small"
-                android:textColorHint="@color/uiv3_secondary_text_color">
+                android:layout_marginLeft="@dimen/margin_small"
+                android:layout_marginRight="@dimen/margin_small">
 
                 <EditText
                     android:id="@+id/editTextDob"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/margin_small"
-                    android:layout_marginRight="@dimen/margin_small"
                     android:ems="10"
                     android:hint="@string/dob"
                     android:maxLength="30"
@@ -99,27 +121,34 @@
                     android:singleLine="true"
                     android:textColor="@color/uiv3_primary_text_color"
                     android:textSize="@dimen/primary_text_size" />
+            </android.support.design.widget.TextInputLayout>
 
-                <ImageView
-                    android:id="@+id/imgCalc"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignRight="@id/editTextDob"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="10dp"
-                    android:contentDescription="@string/calender"
-                    android:src="@drawable/ic_today_grey600_24dp" />
+            <ImageView
+                android:id="@+id/imgCalc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignRight="@id/textInputDob"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:contentDescription="@string/calender"
+                android:src="@drawable/ic_today_grey600_24dp" />
 
-            </RelativeLayout>
+        </RelativeLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/textInputMobileNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/layoutDOB"
+            android:layout_marginBottom="@dimen/margin_small"
+            android:layout_marginLeft="@dimen/margin_small"
+            android:layout_marginRight="@dimen/margin_small">
 
             <EditText
                 android:id="@+id/editTextMobileNumber"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/layoutDOB"
-                android:layout_marginLeft="@dimen/margin_small"
-                android:layout_marginRight="@dimen/margin_small"
-                android:layout_marginTop="@dimen/margin_small"
                 android:ems="10"
                 android:hint="@string/mobileNumber"
                 android:inputType="numberSigned"
@@ -129,15 +158,22 @@
                 android:textColor="@color/uiv3_primary_text_color"
                 android:textColorHint="@color/uiv3_secondary_text_color"
                 android:textSize="@dimen/primary_text_size" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/textInputTelNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textInputMobileNumber"
+            android:layout_marginBottom="@dimen/margin_small"
+            android:layout_marginLeft="@dimen/margin_small"
+            android:layout_marginRight="@dimen/margin_small">
 
             <EditText
                 android:id="@+id/editTextTelNumber"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/editTextMobileNumber"
-                android:layout_marginLeft="@dimen/margin_small"
-                android:layout_marginRight="@dimen/margin_small"
-                android:layout_marginTop="@dimen/margin_small"
                 android:ems="10"
                 android:hint="@string/telNumber"
                 android:inputType="numberSigned"
@@ -147,36 +183,35 @@
                 android:textColor="@color/uiv3_primary_text_color"
                 android:textColorHint="@color/uiv3_secondary_text_color"
                 android:textSize="@dimen/primary_text_size" />
+        </android.support.design.widget.TextInputLayout>
 
+        <CheckBox
+            android:id="@+id/chkReceivePromos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textInputTelNumber"
+            android:layout_marginLeft="@dimen/margin_mini"
+            android:layout_marginRight="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_small"
+            android:text="@string/receivePromos"
+            android:textColor="@color/uiv3_primary_text_color"
+            android:textSize="@dimen/small_text_size" />
 
-            <CheckBox
-                android:id="@+id/chkReceivePromos"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/editTextTelNumber"
-                android:layout_marginLeft="@dimen/margin_mini"
-                android:layout_marginRight="@dimen/margin_small"
-                android:layout_marginTop="@dimen/margin_small"
-                android:text="@string/receivePromos"
-                android:textColor="@color/uiv3_primary_text_color"
-                android:textSize="@dimen/small_text_size" />
+        <TextView
+            android:id="@+id/txtUpdateProfile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/chkReceivePromos"
+            android:layout_marginRight="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_small"
+            android:paddingBottom="@dimen/padding_normal"
+            android:paddingLeft="@dimen/padding_normal"
+            android:paddingRight="@dimen/padding_mini"
+            android:paddingTop="@dimen/padding_normal"
+            android:text="@string/save"
+            android:textColor="@color/red_color"
+            android:textSize="@dimen/primary_text_size" />
 
-            <TextView
-                android:id="@+id/txtUpdateProfile"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_below="@id/chkReceivePromos"
-                android:layout_marginRight="@dimen/margin_small"
-                android:layout_marginTop="@dimen/margin_small"
-                android:paddingBottom="@dimen/padding_normal"
-                android:paddingLeft="@dimen/padding_normal"
-                android:paddingRight="@dimen/padding_mini"
-                android:paddingTop="@dimen/padding_normal"
-                android:text="@string/save"
-                android:textColor="@color/red_color"
-                android:textSize="@dimen/primary_text_size" />
-
-        </RelativeLayout>
-    </ScrollView>
-</LinearLayout>
+    </RelativeLayout>
+</ScrollView>

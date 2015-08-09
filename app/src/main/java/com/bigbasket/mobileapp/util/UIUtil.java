@@ -15,6 +15,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,21 +23,17 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.BulletSpan;
-import android.text.style.ForegroundColorSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -278,26 +275,14 @@ public class UIUtil {
         AuthParameters.updateInstance(ctx);
     }
 
-    public static void reportFormInputFieldError(EditText editText, String errMsg) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            editText.setError(errMsg);
-        } else {
-            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(errMsg);
-            spannableStringBuilder.setSpan(new ForegroundColorSpan(Color.BLACK), 0, errMsg.length(),
-                    Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-            editText.setError(spannableStringBuilder);
-        }
+    public static void reportFormInputFieldError(TextInputLayout textInputLayout, String errMsg) {
+        textInputLayout.setErrorEnabled(true);
+        textInputLayout.setError(errMsg);
     }
 
-    public static void reportFormInputFieldError(AutoCompleteTextView autoCompleteTextView, String errMsg) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            autoCompleteTextView.setError(errMsg);
-        } else {
-            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(errMsg);
-            spannableStringBuilder.setSpan(new ForegroundColorSpan(Color.BLACK), 0, errMsg.length(),
-                    Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-            autoCompleteTextView.setError(spannableStringBuilder);
-        }
+    public static void resetFormInputField(TextInputLayout textInputLayout) {
+        textInputLayout.setErrorEnabled(false);
+        textInputLayout.setError("");
     }
 
     public static int parseAsNativeColor(String rgbColorCode) {
@@ -528,10 +513,8 @@ public class UIUtil {
                 e1.printStackTrace();
                 return false;
             }
-            if (inputDate == null || toDaysData == null) return false;
-            if (inputDate.after(toDaysData))
-                return false;
-            return !inputDate.before(dateBefore1900);
+            return !(inputDate == null || toDaysData == null) &&
+                    !inputDate.after(toDaysData) && !inputDate.before(dateBefore1900);
         }
         return false;
     }

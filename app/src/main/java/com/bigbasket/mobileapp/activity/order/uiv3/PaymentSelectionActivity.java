@@ -479,7 +479,8 @@ public class PaymentSelectionActivity extends BackButtonActivity
 
     private void placeOrder(String txnId) {
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
-        showProgressDialog(getString(R.string.placeOrderPleaseWait), false);
+        showProgressDialog(isCreditCardPayment() ? getString(R.string.placeOrderPleaseWait) : getString(R.string.please_wait),
+                false);
         bigBasketApiService.placeOrder(mPotentialOrderId, txnId, mSelectedPaymentMethod,
                 new Callback<OldApiResponse<PlaceOrderApiResponseContent>>() {
                     @Override
@@ -540,7 +541,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
             trackEventAppsFlyer(TrackingAware.PLACE_ORDER, order.getOrderValue(), map);
         }
         setNextScreenNavigationContext(TrackEventkeys.CO_PAYMENT);
-        
+
         Intent invoiceIntent = new Intent(this, OrderInvoiceActivity.class);
         invoiceIntent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_ORDER_THANKYOU);
         invoiceIntent.putExtra(Constants.ORDERS, orders);

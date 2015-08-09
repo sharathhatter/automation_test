@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.TextInputLayout;
 import android.text.InputType;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -169,8 +170,11 @@ public class SignInActivity extends BackButtonActivity {
      */
     public void attemptLogin() {
         // Reset errors.
-        mEmailView.setError(null);
-        mPasswordView.setError(null);
+
+        TextInputLayout textInputEmail = (TextInputLayout) findViewById(R.id.textInputEmail);
+        TextInputLayout textInputPasswd = (TextInputLayout) findViewById(R.id.textInputPasswd);
+        UIUtil.resetFormInputField(textInputEmail);
+        UIUtil.resetFormInputField(textInputPasswd);
 
         // Store values at the time of the login attempt.
         String email = mEmailView.getText().toString().trim();
@@ -181,14 +185,14 @@ public class SignInActivity extends BackButtonActivity {
 
         // Check for a valid password
         if (TextUtils.isEmpty(password)) {
-            reportFormInputFieldError(mPasswordView, "Please enter your password");
-            focusView = mPasswordView;
+            UIUtil.reportFormInputFieldError(textInputPasswd, "Please enter your password");
+            focusView = textInputEmail;
             cancel = true;
         }
 
         // Check for a valid password length
         if (!TextUtils.isEmpty(password) && password.length() < 6) {
-            reportFormInputFieldError(mPasswordView,
+            UIUtil.reportFormInputFieldError(textInputPasswd,
                     getString(R.string.psswordMst6Digit));
             focusView = mPasswordView;
             cancel = true;
@@ -196,11 +200,11 @@ public class SignInActivity extends BackButtonActivity {
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
-            reportFormInputFieldError(mEmailView, "Please enter your e-mail address");
+            UIUtil.reportFormInputFieldError(textInputEmail, "Please enter your e-mail address");
             focusView = mEmailView;
             cancel = true;
         } else if (!UIUtil.isValidEmail(email)) {
-            reportFormInputFieldError(mEmailView, getString(R.string.error_invalid_email));
+            UIUtil.reportFormInputFieldError(textInputEmail, getString(R.string.error_invalid_email));
             focusView = mEmailView;
             cancel = true;
         }

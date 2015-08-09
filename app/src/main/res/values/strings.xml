@@ -206,7 +206,7 @@
     <string name="calender">Calender</string>
     <string name="telNumber">Telephone Number</string>
     <string name="area">Area</string>
-    <string name="landmark">Landmarks</string>
+    <string name="landmark">Landmarks (Optional)</string>
     <string name="profileUpdated">Profile updated successfully!</string>
 
     <!-- main nav -->

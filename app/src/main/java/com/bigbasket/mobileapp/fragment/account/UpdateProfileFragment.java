@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
 import android.text.InputFilter;
 import android.text.TextUtils;
@@ -118,46 +119,6 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
         trackEvent(TrackingAware.UPDATE_PROFILE_SHOWN, null);
     }
 
-    /**
-     * private void loadMemberDetails() {
-     * if (!DataUtil.isInternetAvailable(getActivity())) {
-     * return;
-     * }
-     * BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getActivity());
-     * showProgressDialog(getString(R.string.please_wait));
-     * bigBasketApiService.getMemberProfileData(new Callback<UpdateProfileOldApiResponse>() {
-     *
-     * @Override public void success(UpdateProfileOldApiResponse memberProfileDataCallback, Response response) {
-     * hideProgressDialog();
-     * if (memberProfileDataCallback.status.equals(Constants.OK)) {
-     * UpdateProfileModel updateProfileModel = memberProfileDataCallback.memberDetails;
-     * fillUpdateProfileData(updateProfileModel);
-     * } else {
-     * int errorType = Integer.parseInt(memberProfileDataCallback.errorType);
-     * switch (errorType) {
-     * case ApiErrorCodes.INVALID_USER_PASSED:
-     * showErrorMsg(getString(R.string.OLD_PASS_NOT_CORRECT));
-     * break;
-     * default:
-     * handler.sendEmptyMessage(errorType, memberProfileDataCallback.message, true);
-     * Map<String, String> eventAttribs = new HashMap<>();
-     * eventAttribs.put(TrackEventkeys.FAILURE_REASON, memberProfileDataCallback.message);
-     * trackEvent(TrackingAware.UPDATE_PROFILE_GET_FAILED, eventAttribs);
-     * break;
-     * }
-     * }
-     * }
-     * @Override public void failure(RetrofitError error) {
-     * hideProgressDialog();
-     * handler.handleRetrofitError(error, true);
-     * Map<String, String> eventAttribs = new HashMap<>();
-     * eventAttribs.put(TrackEventkeys.FAILURE_REASON, error.toString());
-     * trackEvent(TrackingAware.UPDATE_PROFILE_GET_FAILED, eventAttribs);
-     * }
-     * });
-     * }
-     */
-
     public void showDatePickerDialog(View view) {
         DialogFragment newFragment = new DatePickerFragment(view);
         newFragment.show(getFragmentManager(), Constants.DATE_PICKER);
@@ -215,89 +176,79 @@ public class UpdateProfileFragment extends BaseFragment implements OtpDialogAwar
         finish();
     }
 
-    /**
-     * private void fillUpdateProfileData(UpdateProfileModel updateProfileModel) {
-     * editTextEmail.setText(updateProfileModel.getEmail());
-     * editTextFirstName.setText(updateProfileModel.getFirstName());
-     * editTextLastName.setText(updateProfileModel.getLastName());
-     * editTextDob.setText(updateProfileModel.getDateOfBirth());
-     * editTextHouseAndDetails.setText(updateProfileModel.getHouseNumber());
-     * editTextStreetDetails.setText(updateProfileModel.getStreet());
-     * editTextCity.setText(updateProfileModel.getCityName());
-     * editTextMobileNumber.setText(updateProfileModel.getMobileNumber());
-     * editTextTelNumber.setText(updateProfileModel.getTelephoneNumber());
-     * editTextResAndComplex.setText(updateProfileModel.getResidentialComplex());
-     * editTextLandmark.setText(updateProfileModel.getLandmark());
-     * editTextPinCode.setText(updateProfileModel.getPincode());
-     * editTextArea.setText(updateProfileModel.getArea());
-     * ((BaseActivity) getActivity()).setAdapterArea(editTextArea, editTextPinCode);
-     * }
-     */
-
     @Override
     public void validateOtp(String otpCode) {
         btnUpdateAfterSuccessNumberValidation(otpCode);
     }
 
     public void btnUpdateAfterSuccessNumberValidation(String otpCode) {
-        editTextEmail.setError(null);
-        editTextFirstName.setError(null);
-        editTextLastName.setError(null);
-        editTextDob.setError(null);
-        editTextMobileNumber.setError(null);
+        final View view = getContentView();
+        if (view == null) return;
+
+        TextInputLayout textInputEmail = (TextInputLayout) view.findViewById(R.id.textInputEmail);
+        TextInputLayout textInputFirstName = (TextInputLayout) view.findViewById(R.id.textInputFirstName);
+        TextInputLayout textInputLastName = (TextInputLayout) view.findViewById(R.id.textInputLastName);
+        TextInputLayout textInputMobileNumber = (TextInputLayout) view.findViewById(R.id.textInputMobileNumber);
+        TextInputLayout textInputDob = (TextInputLayout) view.findViewById(R.id.textInputDob);
+
+        UIUtil.resetFormInputField(textInputEmail);
+        UIUtil.resetFormInputField(textInputFirstName);
+        UIUtil.resetFormInputField(textInputLastName);
+        UIUtil.resetFormInputField(textInputMobileNumber);
+        UIUtil.resetFormInputField(textInputDob);
 
         boolean cancel = false;
         View focusView = null;
         if (TextUtils.isEmpty(editTextEmail.getText().toString())) {
             cancel = true;
             focusView = editTextEmail;
-            UIUtil.reportFormInputFieldError(editTextEmail, getString(R.string.error_field_required));
+            UIUtil.reportFormInputFieldError(textInputEmail, getString(R.string.error_field_required));
         }
 
         if (!UIUtil.isValidEmail(editTextEmail.getText().toString())) {
-            UIUtil.reportFormInputFieldError(editTextEmail, getString(R.string.error_invalid_email));
+            UIUtil.reportFormInputFieldError(textInputEmail, getString(R.string.error_invalid_email));
             if (focusView == null) focusView = editTextEmail;
             cancel = true;
         }
         if (TextUtils.isEmpty(editTextFirstName.getText().toString())) {
             cancel = true;
             if (focusView == null) focusView = editTextFirstName;
-            UIUtil.reportFormInputFieldError(editTextFirstName, getString(R.string.error_field_required));
+            UIUtil.reportFormInputFieldError(textInputFirstName, getString(R.string.error_field_required));
         }
 
         if (!UIUtil.isAlphaString(editTextFirstName.getText().toString().trim())) {
             cancel = true;
             if (focusView == null) focusView = editTextFirstName;
-            UIUtil.reportFormInputFieldError(editTextFirstName, getString(R.string.error_field_name));
+            UIUtil.reportFormInputFieldError(textInputFirstName, getString(R.string.error_field_name));
         }
 
         if (TextUtils.isEmpty(editTextLastName.getText().toString())) {
             cancel = true;
             if (focusView == null) focusView = editTextLastName;
-            UIUtil.reportFormInputFieldError(editTextLastName, getString(R.string.error_field_required));
+            UIUtil.reportFormInputFieldError(textInputLastName, getString(R.string.error_field_required));
         }
 
         if (!UIUtil.isAlphaString(editTextLastName.getText().toString().trim())) {
             cancel = true;
             if (focusView == null) focusView = editTextLastName;
-            UIUtil.reportFormInputFieldError(editTextLastName, getString(R.string.error_field_name));
+            UIUtil.reportFormInputFieldError(textInputLastName, getString(R.string.error_field_name));
         }
 
         if (TextUtils.isEmpty(editTextMobileNumber.getText().toString())) {
             cancel = true;
             if (focusView == null) focusView = editTextMobileNumber;
-            UIUtil.reportFormInputFieldError(editTextMobileNumber, getString(R.string.error_field_required));
+            UIUtil.reportFormInputFieldError(textInputMobileNumber, getString(R.string.error_field_required));
         }
 
 
         if (!TextUtils.isDigitsOnly(editTextMobileNumber.getText().toString())) {
-            UIUtil.reportFormInputFieldError(editTextMobileNumber, getString(R.string.error_invalid_mobile_number));
+            UIUtil.reportFormInputFieldError(textInputMobileNumber, getString(R.string.error_invalid_mobile_number));
             if (focusView == null) focusView = editTextMobileNumber;
             cancel = true;
         }
 
         if (editTextMobileNumber.getText().toString().length() != 10) {
-            UIUtil.reportFormInputFieldError(editTextMobileNumber, getString(R.string.error_mobile_number_less_digits));
+            UIUtil.reportFormInputFieldError(textInputMobileNumber, getString(R.string.error_mobile_number_less_digits));
             if (focusView == null) focusView = editTextMobileNumber;
             cancel = true;
         }

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.TextInputLayout;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -143,21 +144,25 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
         final EditText editTextLandmark = (EditText) base.findViewById(R.id.editTextLandmark);
         final CheckBox chkIsAddrDefault = (CheckBox) base.findViewById(R.id.chkIsAddrDefault);
 
-        editTextAddressNick.setError(null);
-        editTextFirstName.setError(null);
-        editTextLastName.setError(null);
-        editTextMobileNumber.setError(null);
-        editTextHouseNum.setError(null);
-        editTextStreetName.setError(null);
-        editTextLandmark.setError(null);
-        editTextArea.setError(null);
-        editTextPincode.setError(null);
+        TextInputLayout textInputFirstName = (TextInputLayout) base.findViewById(R.id.textInputFirstName);
+        TextInputLayout textInputLastName = (TextInputLayout) base.findViewById(R.id.textInputLastName);
+        TextInputLayout textInputMobileNumber = (TextInputLayout) base.findViewById(R.id.textInputMobileNumber);
+        TextInputLayout textInputHouseNum = (TextInputLayout) base.findViewById(R.id.textInputHouseNum);
+        TextInputLayout textInputArea = (TextInputLayout) base.findViewById(R.id.textInputArea);
+        TextInputLayout textInputPincode = (TextInputLayout) base.findViewById(R.id.textInputPincode);
+
+        UIUtil.resetFormInputField(textInputFirstName);
+        UIUtil.resetFormInputField(textInputLastName);
+        UIUtil.resetFormInputField(textInputMobileNumber);
+        UIUtil.resetFormInputField(textInputHouseNum);
+        UIUtil.resetFormInputField(textInputArea);
+        UIUtil.resetFormInputField(textInputPincode);
 
         // Validation
         boolean cancel = false;
         View focusView = null;
         if (isEditTextEmpty(editTextFirstName)) {
-            reportFormInputFieldError(editTextFirstName, getString(R.string.error_field_required));
+            UIUtil.reportFormInputFieldError(textInputFirstName, getString(R.string.error_field_required));
             focusView = editTextFirstName;
             cancel = true;
         }
@@ -165,11 +170,11 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
         if (!UIUtil.isAlphaString(editTextFirstName.getText().toString().trim())) {
             cancel = true;
             if (focusView == null) focusView = editTextFirstName;
-            UIUtil.reportFormInputFieldError(editTextFirstName, getString(R.string.error_field_name));
+            UIUtil.reportFormInputFieldError(textInputFirstName, getString(R.string.error_field_name));
         }
 
         if (isEditTextEmpty(editTextLastName)) {
-            reportFormInputFieldError(editTextLastName, getString(R.string.error_field_required));
+            UIUtil.reportFormInputFieldError(textInputLastName, getString(R.string.error_field_required));
             if (focusView == null) focusView = editTextLastName;
             cancel = true;
         }
@@ -177,41 +182,41 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
         if (!UIUtil.isAlphaString(editTextLastName.getText().toString().trim())) {
             cancel = true;
             if (focusView == null) focusView = editTextLastName;
-            UIUtil.reportFormInputFieldError(editTextLastName, getString(R.string.error_field_name));
+            UIUtil.reportFormInputFieldError(textInputLastName, getString(R.string.error_field_name));
         }
 
         if (isEditTextEmpty(editTextMobileNumber)) {
-            reportFormInputFieldError(editTextMobileNumber, getString(R.string.error_field_required));
+            UIUtil.reportFormInputFieldError(textInputMobileNumber, getString(R.string.error_field_required));
             if (focusView == null)
                 focusView = editTextMobileNumber;
             cancel = true;
         } else if (editTextMobileNumber.getText().toString().length() < 10) {
-            reportFormInputFieldError(editTextMobileNumber, getString(R.string.contactNoMin10));
+            UIUtil.reportFormInputFieldError(textInputMobileNumber, getString(R.string.contactNoMin10));
             if (focusView == null)
                 focusView = editTextMobileNumber;
             cancel = true;
         }
         if (isEditTextEmpty(editTextHouseNum)) {
-            reportFormInputFieldError(editTextHouseNum, getString(R.string.error_field_required));
+            UIUtil.reportFormInputFieldError(textInputHouseNum, getString(R.string.error_field_required));
             if (focusView == null)
                 focusView = editTextHouseNum;
             cancel = true;
         }
         if (isEditTextEmpty(editTextArea)) {
-            reportFormInputFieldError(editTextArea, getString(R.string.error_field_required));
+            UIUtil.reportFormInputFieldError(textInputArea, getString(R.string.error_field_required));
             if (focusView == null)
                 focusView = editTextArea;
             cancel = true;
         }
         if (isEditTextEmpty(editTextPincode)) {
-            reportFormInputFieldError(editTextPincode, getString(R.string.error_field_required));
+            UIUtil.reportFormInputFieldError(textInputPincode, getString(R.string.error_field_required));
             if (focusView == null)
                 focusView = editTextPincode;
             cancel = true;
         }
 
         if (editTextPincode.getText().length() < 6) {
-            reportFormInputFieldError(editTextPincode, getString(R.string.pin_code_error));
+            UIUtil.reportFormInputFieldError(textInputPincode, getString(R.string.pin_code_error));
             if (focusView == null)
                 focusView = editTextPincode;
             cancel = true;

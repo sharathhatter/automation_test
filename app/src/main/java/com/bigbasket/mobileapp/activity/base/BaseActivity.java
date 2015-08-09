@@ -68,7 +68,6 @@ import com.bigbasket.mobileapp.util.FontHolder;
 import com.bigbasket.mobileapp.util.FragmentCodes;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
-import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.util.analytics.FacebookEventTrackWrapper;
 import com.bigbasket.mobileapp.util.analytics.LocalyticsWrapper;
 import com.bigbasket.mobileapp.util.analytics.MoEngageWrapper;
@@ -547,14 +546,6 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     public abstract void onChangeTitle(String title);
-
-    public void reportFormInputFieldError(EditText editText, String errMsg) {
-        UIUtil.reportFormInputFieldError(editText, errMsg);
-    }
-
-    protected void reportFormInputFieldError(AutoCompleteTextView autoCompleteTextView, String errMsg) {
-        UIUtil.reportFormInputFieldError(autoCompleteTextView, errMsg);
-    }
 
     public void trackEventAppsFlyer(String eventName, String valueToSum, Map<String, String> mapAttr) {
         try {
