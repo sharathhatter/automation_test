@@ -16,6 +16,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bigbasket.mobileapp.BuildConfig;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
@@ -550,7 +551,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         PayU.getUserCardHash = paymentParams.remove("get_card_hash");
         PayU.editUserCardHash = paymentParams.remove("edit_card_hash");
         PayU.saveUserCardHash = paymentParams.remove("save_card_hash");
-        PayU.getInstance(this).startPaymentProcess(amount, paymentParams);
+        PayU.getInstance(this).startPaymentProcess(amount, paymentParams, BuildConfig.DEBUG);
     }
 
     private void getPaymentParams() {

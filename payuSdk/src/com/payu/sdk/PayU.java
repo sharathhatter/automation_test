@@ -196,11 +196,14 @@ public class PayU {
 
 
 
-    public void startPaymentProcess(double amount, HashMap<String, String> userParams) {
-        startPaymentProcess(amount, userParams, null);
+    public void startPaymentProcess(double amount, HashMap<String, String> userParams,
+                                    boolean isDebug) {
+        startPaymentProcess(amount, userParams, null, isDebug);
     }
 
-    public void startPaymentProcess(double amount, HashMap<String, String> userParams, PaymentMode[] modes) {
+    public void startPaymentProcess(double amount, HashMap<String, String> userParams, PaymentMode[] modes,
+                                    boolean isDebug) {
+        Constants.DEBUG = isDebug;
         Intent intent = new Intent(mActivity, PaymentOptionsActivity.class);
         //intent.putExtra(AMOUNT, amount);
         for(String key : userParams.keySet()) {
