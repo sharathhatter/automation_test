@@ -24,6 +24,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostVoucherApiResponseContent;
+import com.bigbasket.mobileapp.handler.DuplicateClickAware;
 import com.bigbasket.mobileapp.handler.HDFCPowerPayHandler;
 import com.bigbasket.mobileapp.handler.payment.PaymentInitiator;
 import com.bigbasket.mobileapp.handler.payment.PostPaymentHandler;
@@ -43,6 +44,7 @@ import com.bigbasket.mobileapp.model.order.PowerPayPostParams;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.FragmentCodes;
+import com.bigbasket.mobileapp.util.MutableLong;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
@@ -82,11 +84,13 @@ public class PaymentSelectionActivity extends BackButtonActivity
     private ArrayList<Order> mOrdersCreated;
     private String mAddMoreLink;
     private String mAddMoreMsg;
-
+    private MutableLong mElapsedTime;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mElapsedTime = new MutableLong();
+
         setNextScreenNavigationContext(TrackEventkeys.CO_PAYMENT);
         mPotentialOrderId = getIntent().getStringExtra(Constants.P_ORDER_ID);
 
@@ -104,9 +108,9 @@ public class PaymentSelectionActivity extends BackButtonActivity
         ViewGroup layoutCheckoutFooter = (ViewGroup) findViewById(R.id.layoutCheckoutFooter);
         UIUtil.setUpFooterButton(this, layoutCheckoutFooter, mOrderDetails.getFormattedFinalTotal(),
                 getString(R.string.placeOrderCaps), false);
-        layoutCheckoutFooter.setOnClickListener(new View.OnClickListener() {
+        layoutCheckoutFooter.setOnClickListener(new DuplicateClickAware(mElapsedTime) {
             @Override
-            public void onClick(View v) {
+            public void onActualClick(View view) {
                 onPlaceOrderAction();
                 HashMap<String, String> map = new HashMap<>();
                 map.put(TrackEventkeys.PAYMENT_MODE, mSelectedPaymentMethod);
