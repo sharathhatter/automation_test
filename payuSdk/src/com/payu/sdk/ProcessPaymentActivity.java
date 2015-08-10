@@ -152,18 +152,11 @@ public class ProcessPaymentActivity extends FragmentActivity {
             webView.setWebViewClient(new WebViewClient());
         }
 
-        // Set _bb_vid and BBAUTHTOKEN cookies
-        CookieManager cookieManager = CookieManager.getInstance();
-        cookieManager.setAcceptCookie(true);
-        cookieManager.setCookie(PayU.CLIENT_DOMAIN, "_bb_vid=" + PayU.CLIENT_VISITOR_ID);
-        cookieManager.setCookie(PayU.CLIENT_DOMAIN, "BBAUTHTOKEN=" + PayU.CLIENT_AUTH_TOKEN);
-
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setDomStorageEnabled(true);
 
         if (Constants.DEBUG) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                cookieManager.setAcceptThirdPartyCookies(webView, true);
                 webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
             }
         }

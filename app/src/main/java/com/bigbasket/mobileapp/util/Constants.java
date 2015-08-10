@@ -119,7 +119,6 @@ public class Constants {
     public static final String BASKET = "basket";
 
     public static final String PROMO_CATS = "promo_categories";
-    public static final String PROMO_CAT = "promo_category";
     public static final String NUM_IN_BASKET = "num_completed_in_basket";
     public static final String SAVING = "saving";
     public static final String SAVINGS = "savings";
@@ -199,30 +198,20 @@ public class Constants {
     public static final String CREATED_ON = "created_on";
     public static final String ANALYTICS_ADDITIONAL_ATTRS = "additional_attrs";
     public static final String GENDER = "gender";
-    public static final String SOURCE = "src";
     public static final String DOB = "dob";
-    public static final String SOURCE_ID = "src_id";
 
     public static final String SLUG_PARAM = "&slug=";
 
-    public static final String PID = "pid";
     public static final String POST_PARAMS = "post_params";
     public static final String PAYU_GATEWAY_URL = "pg_server_url";
     public static final String SUCCESS_CAPTURE_URL = "scurl";
     public static final String FAILURE_CAPTURE_URL = "fcurl";
-    public static final String CAPTURED_URL_KEY = "capUrl";
-    public static final String IS_PAYU_SUCCESS_KEY = "isPayuSuccess";
     public static final String TXN_ID = "txn_id";
     public static final String P_ORDER_ID = "p_order_id";
-    public static final int PAYU_SUCCESS = 256;
     public static final String SUPPORT_CC = "support_cc";
     public static final String PAYU = "payu";
     public static final String HDFC_POWER_PAY = "hdfc-power-pay";
     public static final String SOURCE_PLACE_ORDER = "placeOrder";
-    public static final String PAYU_CANCELLED = "payuCancelled";
-    public static final String SOURCE_POST_PAYMENT = "postPayment";
-    public static final String SOURCE_PAYU_EMPTY = "payuEmpty";
-    public static final String FINAL_PAY = "finalpay";
     public static final String WALLET_USED = "wallet_used";
     public static final String AMT_PAYABLE = "amount_payable";
     public static final String WALLET_REMAINING = "wallet_remaining";
@@ -268,7 +257,6 @@ public class Constants {
 
     public static final String BASE_PKG_NAME = "com.bigbasket.mobileapp";
     public static final String VERSION_NAME = "versionName";
-    public static final String APPLIED_VOUCHER = "appliedVoucher";
     public static final String ENABLE_FB_LOGGER = "enable_fb_logger";
     public static final String ENABLE_MOENGAGE = "enable_moengage";
     public static final String ENABLE_LOCALYTICS = "enable_localytics";
@@ -368,7 +356,6 @@ public class Constants {
     public static final String FIRST_NAME_PREF = "firstname";
 
     //invoice
-    public static final String DELIVERY_DATE = "delivery_date";
     public static final String ITEMS_COUNT = "items_count";
     public static final String ORDER_STATUS = "order_status";
     public static final String STATUS = "status";
@@ -391,7 +378,6 @@ public class Constants {
     public static final String OS_NAME = "os_name";
     public static final String OS_VERSION = "os_version";
     public static final String TUTORIAL_SEEN = "tutorial_seen";
-    public static final String IS_UPDATE_REQUIRED = "is_update_required";
     public static final String CLIENT = "client";
     public static final String CLIENT_NAME = "android";
     public static final String APP_EXPIRE_BY = "app_expired_by";
@@ -521,9 +507,6 @@ public class Constants {
     public static final String PG_PKG_NAME = "pg_pkg_name";
     public static final String PG_TXN_ID = "pg_txn_id";
     public static final String DATA_PICKUP_CODE = "data_pickup_code";
-    public static final String IS_PP_SUCCESS = "isPpSuccess";
-    public static final int PREPAID_TXN_FAILED = 255;
-    public static final int PREPAID_TXN_ABORTED = 258;
     public static final String SUPPORT_POWER_PAY = "support_pp";
     public static final String ERR_RES_CODE = "err_res_code";
     public static final String ERR_RES_DESC = "err_res_desc";

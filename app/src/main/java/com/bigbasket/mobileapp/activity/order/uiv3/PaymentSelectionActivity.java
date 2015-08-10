@@ -40,11 +40,9 @@ import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.OrderDetails;
 import com.bigbasket.mobileapp.model.order.PaymentType;
 import com.bigbasket.mobileapp.model.order.PowerPayPostParams;
-import com.bigbasket.mobileapp.model.request.AuthParameters;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.FragmentCodes;
-import com.bigbasket.mobileapp.util.MobileApiUrl;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
@@ -80,6 +78,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
     private String mSelectedPaymentMethod;
     private OrderDetails mOrderDetails;
     private WPayInitRequest wPayInitRequest;
+    private String mPayuTxnId;
     private ArrayList<Order> mOrdersCreated;
     private String mAddMoreLink;
     private String mAddMoreMsg;
@@ -429,10 +428,11 @@ public class PaymentSelectionActivity extends BackButtonActivity
                 }
             }
         } else if (requestCode == PayU.RESULT) {
+            String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
             if (resultCode == RESULT_OK) {
-                showToast("Whoaa! Payu success");
+                new ValidatePaymentHandler<>(this, mPotentialOrderId, mPayuTxnId, fullOrderId).start();
             } else {
-                showToast("Aila! It failed");
+                new ValidatePaymentHandler<>(this, mPotentialOrderId, mPayuTxnId, fullOrderId).start();
             }
         } else {
             switch (resultCode) {
@@ -444,28 +444,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
                         }
                     }
                     break;
-//                case Constants.PREPAID_TXN_FAILED:
-//                    syncContentView();
-//                    trackEvent(TrackingAware.CHECKOUT_PAYMENT_GATEWAY_FAILURE, null);
-//                    displayPayuFailure(getString(R.string.failedToProcess));
-//                    break;
-//                case Constants.PREPAID_TXN_ABORTED:
-//                    syncContentView();
-//                    trackEvent(TrackingAware.CHECKOUT_PAYMENT_GATEWAY_ABORTED, null);
-//                    displayPayuFailure(getString(R.string.youAborted));
-//                    break;
-//                case Constants.PAYU_SUCCESS:
-//                    trackEvent(TrackingAware.CHECKOUT_PAYMENT_GATEWAY_SUCCESS, null);
-//                    if (payuResponse == null) {
-//                        showAlertDialog("Error", "Unable to place your order via credit-card." +
-//                                "\nPlease choose another method.\n" +
-//                                "In case your credit card has been charged, " +
-//                                "BigBasket customer service will get back to you regarding " +
-//                                "the payment made by you.", Constants.SOURCE_PAYU_EMPTY);
-//                    } else {
-//                        placeOrder(payuResponse.getTxnId());
-//                    }
-//                    break;
                 case NavigationCodes.GO_TO_SLOT_SELECTION:
                     setResult(NavigationCodes.GO_TO_SLOT_SELECTION);
                     finish();
@@ -559,11 +537,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
     public void initializePayu(HashMap<String, String> paymentParams) {
         Double amount = Double.parseDouble(paymentParams.get(Constants.AMOUNT));
 
-        AuthParameters authParameters = AuthParameters.getInstance(this);
-        PayU.CLIENT_AUTH_TOKEN = authParameters.getBbAuthToken();
-        PayU.CLIENT_VISITOR_ID = authParameters.getVisitorId();
-        PayU.CLIENT_DOMAIN = MobileApiUrl.DOMAIN;
-
+        mPayuTxnId = paymentParams.get(PayU.TXNID);
         PayU.merchantCodesHash = paymentParams.remove("merchant_code_hash");
         PayU.paymentHash = paymentParams.remove("payment_hash");
         PayU.vasHash = paymentParams.remove("vas_hash");

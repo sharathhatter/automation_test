@@ -65,11 +65,6 @@ public class PayU {
     public static final String UDF = "device_type";
     public static final String SDK = "1";
 
-    // Added by BigBasket
-    public static String CLIENT_DOMAIN;
-    public static String CLIENT_AUTH_TOKEN;
-    public static String CLIENT_VISITOR_ID;
-
 //    public static final String DISABLE_PAYMENT_PROCESS_BACK_BUTTON = "disable_web_view_back";
     public static final String DISABLE_CUSTOM_BROWSER = "showCustom";
     public static final String INSTRUMENT_TYPE = "instrument_type";
