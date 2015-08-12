@@ -15,15 +15,13 @@ import com.enstage.wibmo.sdk.inapp.pojo.WPayInitRequest;
 
 public class PowerPayInitializer {
 
-    public static void initiate(Activity activity, WPayInitRequest wPayInitRequest,
-                                PowerPayPostParams powerPayPostParams) {
-        new PowerPayTriggerAsyncTask(activity, wPayInitRequest).execute(powerPayPostParams);
+    public static void initiate(Activity activity, PowerPayPostParams powerPayPostParams) {
+        new PowerPayTriggerAsyncTask(activity).execute(powerPayPostParams);
     }
 
     private static void startHDFCPowerPay(PowerPayPostParams powerPayPostParams,
-                                          WPayInitRequest wPayInitRequest,
                                           Activity activity) {
-        wPayInitRequest = new WPayInitRequest();
+        WPayInitRequest wPayInitRequest = new WPayInitRequest();
 
         TransactionInfo transactionInfo = new TransactionInfo();
         transactionInfo.setTxnAmount(powerPayPostParams.getFormattedAmount());
@@ -57,12 +55,9 @@ public class PowerPayInitializer {
     private static class PowerPayTriggerAsyncTask extends AsyncTask<PowerPayPostParams, Integer, PowerPayPostParams> {
 
         private Activity activity;
-        private WPayInitRequest wPayInitRequest;
 
-        public PowerPayTriggerAsyncTask(Activity activity,
-                                        WPayInitRequest wPayInitRequest) {
+        public PowerPayTriggerAsyncTask(Activity activity) {
             this.activity = activity;
-            this.wPayInitRequest = wPayInitRequest;
         }
 
         @Override
@@ -85,7 +80,7 @@ public class PowerPayInitializer {
             if (((CancelableAware) activity).isSuspended() ||
                     powerPayPostParams == null) return;
             ((ProgressIndicationAware) activity).hideProgressDialog();
-            startHDFCPowerPay(powerPayPostParams, wPayInitRequest, activity);
+            startHDFCPowerPay(powerPayPostParams, activity);
         }
     }
 

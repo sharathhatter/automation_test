@@ -50,7 +50,6 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.enstage.wibmo.sdk.WibmoSDK;
-import com.enstage.wibmo.sdk.inapp.pojo.WPayInitRequest;
 import com.enstage.wibmo.sdk.inapp.pojo.WPayResponse;
 import com.payu.sdk.PayU;
 
@@ -74,7 +73,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
     private String mAppliedVoucherCode;
     private String mSelectedPaymentMethod;
     private OrderDetails mOrderDetails;
-    private WPayInitRequest wPayInitRequest;  // Ignore the warning, this is set in PowerPayInitializer.java
+    private String mHDFCPowerPayTxnId;
     private String mPayuTxnId;
     private ArrayList<Order> mOrdersCreated;
     private String mAddMoreLink;
@@ -410,8 +409,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
                 WPayResponse res = WibmoSDK.processInAppResponseWPay(data);
                 String pgTxnId = res.getWibmoTxnId();
                 String dataPickupCode = res.getDataPickUpCode();
-                validateHdfcPowerPayResponse(pgTxnId, dataPickupCode,
-                        wPayInitRequest.getTransactionInfo().getMerTxnId());
+                validateHdfcPowerPayResponse(pgTxnId, dataPickupCode, mHDFCPowerPayTxnId);
             } else {
                 if (data != null) {
                     String resCode = data.getStringExtra("ResCode");
@@ -524,7 +522,8 @@ public class PaymentSelectionActivity extends BackButtonActivity
 
     @Override
     public void initializeHDFCPowerPay(PowerPayPostParams powerPayPostParams) {
-        PowerPayInitializer.initiate(this, wPayInitRequest, powerPayPostParams);
+        mHDFCPowerPayTxnId = powerPayPostParams.getTxnId();
+        PowerPayInitializer.initiate(this, powerPayPostParams);
     }
 
     @Override
@@ -547,9 +546,8 @@ public class PaymentSelectionActivity extends BackButtonActivity
     }
 
     private void communicateHdfcPowerPayResponseFailure(String resCode, String resDesc) {
-        if (wPayInitRequest == null || wPayInitRequest.getTransactionInfo() == null) return;
         new PostPaymentHandler<>(this, mPotentialOrderId, mSelectedPaymentMethod,
-                wPayInitRequest.getTransactionInfo().getMerTxnId(), false, mOrderDetails.getFormattedFinalTotal())
+                mHDFCPowerPayTxnId, false, mOrderDetails.getFormattedFinalTotal())
                 .setErrResCode(resCode)
                 .setErrResDesc(resDesc)
                 .start();
