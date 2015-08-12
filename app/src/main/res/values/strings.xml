@@ -339,5 +339,5 @@
     <string name="emailBlank">Please enter an email address</string>
     <string name="payNow">Pay Now</string>
     <string name="payNowThankyou">Your payment was successful!</string>
-    <string name="payNowFailure">Failed to process your transaction.\n Please contact our customer care, in case you got charged.</string>
+    <string name="payNowFailure">Failed to process your transaction.\nPlease contact our customer care, in case you got charged.</string>
 </resources>

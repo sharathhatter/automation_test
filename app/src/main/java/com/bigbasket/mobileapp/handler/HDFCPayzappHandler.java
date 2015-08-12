@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-public class HDFCPowerPayHandler {
+public class HDFCPayzappHandler {
     private static final String DATE_FORMAT = "dd-MM-yyyy HH:mm:ss";
     private static final int DEFAULT_TIMEOUT_IN_MINUTES = 6 * 60;
 

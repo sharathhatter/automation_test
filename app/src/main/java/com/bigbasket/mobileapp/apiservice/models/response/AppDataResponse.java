@@ -21,5 +21,5 @@ public class AppDataResponse {
     public ArrayList<String> topSearches;
 
     @SerializedName(Constants.HDFC_POWER_PAY_EXPIRY)
-    public int hdfcPowerPayExpiry;
+    public int hdfcPayzappExpiry;
 }

@@ -16,7 +16,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.CreateUpdateAddressApi
 import com.bigbasket.mobileapp.apiservice.models.response.GetDeliveryAddressApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.GetDynamicPageApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPayNowParamsResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.GetPowerPayPaymentParamsResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.GetPayzappPaymentParamsResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPrepaidPaymentResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetProductsForOrderApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.GetShoppingListSummaryResponse;
@@ -318,15 +318,16 @@ public interface BigBasketApiService {
                                Callback<ApiResponse<GetPrepaidPaymentResponse>> getPrepaidPaymentApiResponseCallback);
 
     @GET("/get-order-payment-params/")
-    void getPowerPayOrderPaymentParams(@Query(Constants.P_ORDER_ID) String potentialOrderId,
-                                       Callback<ApiResponse<GetPowerPayPaymentParamsResponse>> getPrepaidPaymentApiResponseCallback);
+    void getPayzappOrderPaymentParams(@Query(Constants.P_ORDER_ID) String potentialOrderId,
+                                      Callback<ApiResponse<GetPayzappPaymentParamsResponse>> getPrepaidPaymentApiResponseCallback);
 
     @FormUrlEncoded
     @POST("/post-order-payment/")
     void postPrepaidPayment(@Field(Constants.TXN_ID) String txnId, @Field(Constants.P_ORDER_ID) String potentialOrderId,
                             @Field(Constants.PAYMENT_TYPE) String paymentType, @Field(Constants.STATUS) String status,
                             @Field(Constants.PG_TXN_ID) String pgTxnId, @Field(Constants.DATA_PICKUP_CODE) String dataPickupCode,
-                            @Field(Constants.AMOUNT) String amount,
+                            @Field(Constants.AMOUNT) String amount, @Field(Constants.ORDER_ID) String orderId,
+                            @Field(Constants.PAY_NOW) String payNow,
                             Callback<ApiResponse<PostPrepaidPaymentResponse>> postPrepaidPaymentApiResponseCallback);
 
     @FormUrlEncoded
@@ -334,6 +335,8 @@ public interface BigBasketApiService {
     void postPrepaidPayment(@Field(Constants.TXN_ID) String txnId, @Field(Constants.P_ORDER_ID) String potentialOrderId,
                             @Field(Constants.PAYMENT_TYPE) String paymentType, @Field(Constants.STATUS) String status,
                             @Field(Constants.ERR_RES_CODE) String errResCode, @Field(Constants.ERR_RES_DESC) String errResDesc,
+                            @Field(Constants.ORDER_ID) String orderId,
+                            @Field(Constants.PAY_NOW) String payNow,
                             Callback<ApiResponse<PostPrepaidPaymentResponse>> postPrepaidPaymentApiResponseCallback);
 
     @GET("/validate-order-payment/")
@@ -376,4 +379,10 @@ public interface BigBasketApiService {
     void postPayNowDetails(@Field(Constants.ORDER_ID) String orderId,
                            @Field(Constants.PAYMENT_METHOD) String paymentMethod,
                            Callback<ApiResponse<GetPrepaidPaymentResponse>> getPrepaidPaymentApiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/pay-now/")
+    void postPayzappPayNowDetails(@Field(Constants.ORDER_ID) String orderId,
+                                  @Field(Constants.PAYMENT_METHOD) String paymentMethod,
+                                  Callback<ApiResponse<GetPayzappPaymentParamsResponse>> getPrepaidPaymentApiResponseCallback);
 }

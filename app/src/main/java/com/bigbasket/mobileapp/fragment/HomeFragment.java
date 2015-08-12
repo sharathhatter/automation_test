@@ -29,7 +29,7 @@ import com.bigbasket.mobileapp.fragment.base.BaseSectionFragment;
 import com.bigbasket.mobileapp.handler.AppDataSyncHandler;
 import com.bigbasket.mobileapp.handler.AppUpdateHandler;
 import com.bigbasket.mobileapp.handler.BigBasketMessageHandler;
-import com.bigbasket.mobileapp.handler.HDFCPowerPayHandler;
+import com.bigbasket.mobileapp.handler.HDFCPayzappHandler;
 import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.SectionManager;
@@ -359,8 +359,8 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                                         prefer.getString(Constants.MEMBER_EMAIL_KEY, ""),
                                         prefer.getString(Constants.MID_KEY, ""));
                             }
-                            HDFCPowerPayHandler.setTimeOut(getCurrentActivity(),
-                                    callbackAppDataResponse.apiResponseContent.hdfcPowerPayExpiry);
+                            HDFCPayzappHandler.setTimeOut(getCurrentActivity(),
+                                    callbackAppDataResponse.apiResponseContent.hdfcPayzappExpiry);
                             savePopulateSearcher(callbackAppDataResponse.apiResponseContent.topSearches);
                             AppDataSyncHandler.updateLastAppDataCall(getCurrentActivity());
                         }

@@ -3,7 +3,7 @@ package com.bigbasket.mobileapp.handler.payment;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
-import com.bigbasket.mobileapp.apiservice.models.response.GetPowerPayPaymentParamsResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.GetPayzappPaymentParamsResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPrepaidPaymentResponse;
 import com.bigbasket.mobileapp.interfaces.ActivityAware;
 import com.bigbasket.mobileapp.interfaces.CancelableAware;
@@ -11,7 +11,7 @@ import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.interfaces.payment.PayuPaymentAware;
-import com.bigbasket.mobileapp.interfaces.payment.PowerPayPaymentAware;
+import com.bigbasket.mobileapp.interfaces.payment.PayzappPaymentAware;
 import com.bigbasket.mobileapp.util.Constants;
 
 import retrofit.Callback;
@@ -71,9 +71,9 @@ public class PaymentInitiator<T> {
                 });
                 break;
             case Constants.HDFC_POWER_PAY:
-                bigBasketApiService.getPowerPayOrderPaymentParams(potentialOrderId, new Callback<ApiResponse<GetPowerPayPaymentParamsResponse>>() {
+                bigBasketApiService.getPayzappOrderPaymentParams(potentialOrderId, new Callback<ApiResponse<GetPayzappPaymentParamsResponse>>() {
                     @Override
-                    public void success(ApiResponse<GetPowerPayPaymentParamsResponse> getPrepaidPaymentApiResponse, Response response) {
+                    public void success(ApiResponse<GetPayzappPaymentParamsResponse> getPrepaidPaymentApiResponse, Response response) {
                         if (((CancelableAware) ctx).isSuspended()) return;
                         try {
                             ((ProgressIndicationAware) ctx).hideProgressDialog();
@@ -82,7 +82,7 @@ public class PaymentInitiator<T> {
                         }
                         switch (getPrepaidPaymentApiResponse.status) {
                             case 0:
-                                ((PowerPayPaymentAware) ctx).initializeHDFCPowerPay(getPrepaidPaymentApiResponse.apiResponseContent.powerPayPostParams);
+                                ((PayzappPaymentAware) ctx).initializeHDFCPayzapp(getPrepaidPaymentApiResponse.apiResponseContent.payzappPostParams);
                                 break;
                             default:
                                 ((HandlerAware) ctx).getHandler()

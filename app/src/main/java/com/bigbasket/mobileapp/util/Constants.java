@@ -210,6 +210,7 @@ public class Constants {
     public static final String P_ORDER_ID = "p_order_id";
     public static final String SUPPORT_CC = "support_cc";
     public static final String PAYU = "payu";
+    public static final String PAY_NOW = "pay_now";
     public static final String HDFC_POWER_PAY = "hdfc-power-pay";
     public static final String SOURCE_PLACE_ORDER = "placeOrder";
     public static final String WALLET_USED = "wallet_used";
