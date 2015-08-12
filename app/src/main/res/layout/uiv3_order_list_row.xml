@@ -6,75 +6,100 @@
 
 
     <ImageView
+        android:id="@+id/imgOrderType"
         android:layout_width="25dp"
         android:layout_height="25dp"
-        android:id="@+id/imgOrderType"
-        android:layout_marginTop="@dimen/margin_22"
         android:layout_marginLeft="@dimen/margin_small"
-        android:src="@drawable/active_order"
-        android:scaleType="centerInside" />
+        android:layout_marginTop="@dimen/margin_22"
+        android:contentDescription="@string/status"
+        android:scaleType="centerInside"
+        android:src="@drawable/active_order" />
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/layoutOrderData"
         android:layout_width="match_parent"
-        android:layout_toRightOf="@+id/imgOrderType"
-        android:layout_marginTop="@dimen/margin_normal"
-        android:paddingTop="@dimen/padding_small"
-        android:paddingBottom="@dimen/padding_small"
-        android:paddingRight="@dimen/padding_normal"
-        android:paddingLeft="@dimen/padding_normal"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/margin_normal"
         android:layout_marginRight="@dimen/margin_normal"
-        android:orientation="vertical"
-        android:layout_height="wrap_content">
+        android:layout_marginTop="@dimen/margin_normal"
+        android:layout_toRightOf="@+id/imgOrderType"
+        android:paddingBottom="@dimen/padding_small"
+        android:paddingLeft="@dimen/padding_normal"
+        android:paddingRight="@dimen/padding_normal"
+        android:paddingTop="@dimen/padding_small">
 
-        <TextView
+        <Button
+            android:id="@+id/btnPayNow"
+            style="@style/EmptyPageButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tue 30 Sep 2014"
-            android:textSize="@dimen/primary_text_size"
+            android:layout_alignParentRight="true"
+            android:layout_margin="0dp"
+            android:clickable="true"
+            android:minHeight="0dp"
+            android:minWidth="0dp"
+            android:paddingBottom="@dimen/padding_mini"
+            android:paddingLeft="@dimen/padding_small"
+            android:paddingTop="@dimen/padding_mini"
+            android:text="@string/payNow"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/secondary_text_size" />
+
+        <TextView
             android:id="@+id/txtSlotDate"
-            android:textColor="@color/uiv3_primary_text_color" />
-
-        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="7:30 PM to 10:00PM"
-            android:textSize="@dimen/secondary_text_size"
+            android:layout_alignParentLeft="true"
+            android:layout_marginRight="@dimen/margin_mini"
+            android:layout_toLeftOf="@id/btnPayNow"
+            android:text="Tue 30 Sep 2014"
+            android:textColor="@color/uiv3_primary_text_color"
+            android:textSize="@dimen/primary_text_size" />
+
+        <TextView
             android:id="@+id/txtSlotTime"
-            android:textColor="@color/uiv3_primary_text_color" />
-
-
-        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/txtSlotDate"
+            android:layout_marginRight="@dimen/margin_mini"
+            android:layout_toLeftOf="@id/btnPayNow"
+            android:text="7:30 PM to 10:00PM"
+            android:textColor="@color/uiv3_primary_text_color"
+            android:textSize="@dimen/secondary_text_size" />
+
+        <TextView
+            android:id="@+id/txtOrderId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/txtSlotTime"
             android:layout_marginTop="2dp"
             android:text="ID : BBO-130440-240914"
-            android:textSize="@dimen/secondary_text_size"
-            android:id="@+id/txtOrderId"
-            android:textColor="@color/uiv3_primary_text_color" />
+            android:textColor="@color/uiv3_primary_text_color"
+            android:textSize="@dimen/secondary_text_size" />
 
 
         <TextView
+            android:id="@+id/txtNumItems"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@id/txtOrderId"
             android:text="2 Items"
-            android:textSize="@dimen/secondary_text_size"
-            android:id="@+id/txtNumItems"
-            android:textColor="@color/uiv3_secondary_text_color" />
-    </LinearLayout>
+            android:textColor="@color/uiv3_secondary_text_color"
+            android:textSize="@dimen/secondary_text_size" />
+    </RelativeLayout>
 
     <TextView
+        android:id="@+id/txtOrderStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Status"
         android:layout_alignBottom="@id/layoutOrderData"
-        android:layout_marginRight="@dimen/margin_normal"
-        android:paddingRight="@dimen/padding_normal"
         android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/margin_normal"
         android:paddingBottom="@dimen/padding_small"
+        android:paddingRight="@dimen/padding_normal"
+        android:text="Status"
+        android:textColor="@color/uiv3_primary_text_color"
         android:textSize="@dimen/secondary_text_size"
-        android:id="@+id/txtOrderStatus"
-        android:textStyle="italic"
-        android:textColor="@color/uiv3_primary_text_color" />
+        android:textStyle="italic" />
 </RelativeLayout>

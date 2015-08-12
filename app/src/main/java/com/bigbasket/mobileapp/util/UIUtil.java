@@ -36,6 +36,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
@@ -583,4 +585,15 @@ public class UIUtil {
             fragment.setArguments(args);
         }
     }
+
+    public static RadioButton getPaymentOptionRadioButton(ViewGroup parent, Context context, LayoutInflater inflater) {
+        RadioButton radioButton = (RadioButton) inflater.inflate(R.layout.uiv3_payment_option_rbtn, parent, false);
+        RadioGroup.LayoutParams layoutParams = new RadioGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins(0, 0, 0, (int) context.getResources().getDimension(R.dimen.margin_small));
+        radioButton.setLayoutParams(layoutParams);
+        radioButton.setTypeface(FontHolder.getInstance(context).getFaceRobotoRegular());
+        return radioButton;
+    }
+
 }

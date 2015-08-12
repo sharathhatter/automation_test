@@ -433,6 +433,7 @@ public class Constants {
     public static final String PAYMENT_TYPE = "payment_type";
     public static final String PAYMENT_STATUS = "payment_status";
     public static final String PAYMENT_METHOD = "payment_method";
+    public static final String CAN_PAY = "can_pay";
 
     //urls
     public static final String CATEGORIES_URL = "categories_url";

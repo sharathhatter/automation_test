@@ -443,6 +443,18 @@
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
         <activity
+            android:name=".activity.order.payment.PayNowActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+
+        <activity
+            android:name=".activity.order.payment.PayNowThankyouActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+
+        <activity
             android:name=".activity.account.uiv3.WalletActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme"

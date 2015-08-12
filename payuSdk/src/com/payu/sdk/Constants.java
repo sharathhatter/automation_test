@@ -52,6 +52,11 @@ public class Constants {
     private static final String PRODUCTION_PAYMENT_URL = "https://secure.payu.in/_payment";
     private static final String PRODUCTION_FETCH_DATA_URL = "https://info.payu.in/merchant/postservice.php?form=2";
 
-    public static final String FETCH_DATA_URL = DEBUG ? TEST_FETCH_DATA_URL : PRODUCTION_FETCH_DATA_URL;
-    public static final String PAYMENT_URL = DEBUG ? TEST_PAYMENT_URL : PRODUCTION_PAYMENT_URL;
+    public static String getFetchDataUrl() {
+        return DEBUG ? TEST_FETCH_DATA_URL : PRODUCTION_FETCH_DATA_URL;
+    }
+
+    public static String getPaymentUrl() {
+        return DEBUG ? TEST_PAYMENT_URL : PRODUCTION_PAYMENT_URL;
+    }
 }
