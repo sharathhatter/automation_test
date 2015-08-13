@@ -161,7 +161,7 @@ public class ProcessPaymentActivity extends FragmentActivity {
             }
         }
 
-        webView.postUrl(Constants.PAYMENT_URL, EncodingUtils.getBytes(getIntent().getExtras().getString("postData"), "base64"));
+        webView.postUrl(Constants.getPaymentUrl(), EncodingUtils.getBytes(getIntent().getExtras().getString("postData"), "base64"));
     }
 
 

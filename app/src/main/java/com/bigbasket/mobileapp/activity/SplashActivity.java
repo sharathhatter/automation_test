@@ -21,7 +21,7 @@ import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.RegisterDeviceResponse;
 import com.bigbasket.mobileapp.fragment.base.AbstractFragment;
-import com.bigbasket.mobileapp.handler.HDFCPowerPayHandler;
+import com.bigbasket.mobileapp.handler.HDFCPayzappHandler;
 import com.bigbasket.mobileapp.interfaces.DynamicScreenAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.model.CityManager;
@@ -70,7 +70,7 @@ public class SplashActivity extends SocialLoginActivity implements DynamicScreen
             try {
                 boolean isHDFCPayMode = getIntent().getBooleanExtra(Constants.MODE_HDFC_PAY, false);
                 if (isHDFCPayMode) {
-                    HDFCPowerPayHandler.setHDFCPayMode(this);
+                    HDFCPayzappHandler.setHDFCPayMode(this);
                 }
             } catch (ClassCastException e) {
 

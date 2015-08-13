@@ -212,6 +212,7 @@ public class Constants {
     public static final String P_ORDER_ID = "p_order_id";
     public static final String SUPPORT_CC = "support_cc";
     public static final String PAYU = "payu";
+    public static final String PAY_NOW = "pay_now";
     public static final String HDFC_POWER_PAY = "hdfc-power-pay";
     public static final String SOURCE_PLACE_ORDER = "placeOrder";
     public static final String WALLET_USED = "wallet_used";
@@ -435,6 +436,7 @@ public class Constants {
     public static final String PAYMENT_TYPE = "payment_type";
     public static final String PAYMENT_STATUS = "payment_status";
     public static final String PAYMENT_METHOD = "payment_method";
+    public static final String CAN_PAY = "can_pay";
 
     //urls
     public static final String CATEGORIES_URL = "categories_url";

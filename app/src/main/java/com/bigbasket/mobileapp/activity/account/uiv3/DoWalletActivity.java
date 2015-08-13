@@ -2,6 +2,7 @@ package com.bigbasket.mobileapp.activity.account.uiv3;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
+import com.bigbasket.mobileapp.activity.payment.FundWalletActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
@@ -45,17 +47,16 @@ public class DoWalletActivity extends BackButtonActivity {
     };
     private String month1 = "", month2 = "", month3 = "", monthClickText;
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setCurrentNavigationContext(TrackEventkeys.ACCOUNT_MENU);
         setNextScreenNavigationContext(TrackEventkeys.NAVIGATION_CTX_WALLET_SUMMARY);
         setTitle(getString(R.string.wallet_activity));
-        getCurrentMemberWalletBalance();
+        getCurrentMemberWalletBalance(false);
     }
 
-    private void getCurrentMemberWalletBalance() {
+    private void getCurrentMemberWalletBalance(final boolean hasWalletBeenFunded) {
         if (!DataUtil.isInternetAvailable(getCurrentActivity())) {
             handler.sendOfflineError(true);
             return;
@@ -73,7 +74,8 @@ public class DoWalletActivity extends BackButtonActivity {
                 }
                 if (currentWalletBalCallback.status == 0) {
                     renderWalletMonthActivity(currentWalletBalCallback.apiResponseContent.currentBalance,
-                            currentWalletBalCallback.apiResponseContent.walletRule);
+                            currentWalletBalCallback.apiResponseContent.walletRule,
+                            hasWalletBeenFunded);
                     trackEvent(TrackingAware.WALLET_SUMMARY_SHOWN, null);
                 } else {
                     handler.sendEmptyMessage(currentWalletBalCallback.status, currentWalletBalCallback.message);
@@ -130,10 +132,12 @@ public class DoWalletActivity extends BackButtonActivity {
     }
 
 
-    private void renderWalletMonthActivity(float currentBalance, WalletRule walletRule) {
+    private void renderWalletMonthActivity(float currentBalance, WalletRule walletRule,
+                                           boolean hasWalletBeenFunded) {
         if (getCurrentActivity() == null) return;
         ViewGroup contentView = getContentView();
         if (contentView == null) return;
+        contentView.removeAllViews();
 
         LayoutInflater inflater = getLayoutInflater();
         View view = inflater.inflate(R.layout.uiv3_dowallet, contentView, false);
@@ -314,6 +318,11 @@ public class DoWalletActivity extends BackButtonActivity {
         });
 
         renderDeliveryTokenData(walletRule, view);
+        if (hasWalletBeenFunded) {
+            Snackbar.make(contentView, getString(R.string.fundWalletSuccess),
+                    Snackbar.LENGTH_LONG).show();
+        }
+
     }
 
     private void getWalletActivityForMonth(final String dateFrom, final String dateTo) {
@@ -356,6 +365,25 @@ public class DoWalletActivity extends BackButtonActivity {
                     }
                 });
 
+    }
+
+    public void onFundWalletBtnClicked(View v) {
+        Intent intent = new Intent(this, FundWalletActivity.class);
+        startActivityForResult(intent, NavigationCodes.FUND_WALLET);
+    }
+
+    public void onWalletFunded() {
+        getCurrentMemberWalletBalance(true);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        setSuspended(false);
+        if (requestCode == NavigationCodes.FUND_WALLET &&  resultCode == RESULT_OK) {
+            onWalletFunded();
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     @Override

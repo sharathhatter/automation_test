@@ -49,7 +49,7 @@ public class GetResponseTask extends AsyncTask<List<NameValuePair>, String, Stri
     protected String doInBackground(List<NameValuePair>[] lists) {
 
         HttpClient httpclient = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost(Constants.FETCH_DATA_URL);
+        HttpPost httppost = new HttpPost(Constants.getFetchDataUrl());
 
 //        make api call here
 

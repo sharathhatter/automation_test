@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 21
-    buildToolsVersion "21.0.2"
+    buildToolsVersion "21.1.2"
 
     defaultConfig {
         minSdkVersion 10
@@ -31,4 +31,10 @@ dependencies {
     compile project(':wibmosdklib')
     compile files('libs/wibmoMerchant.jar')
     compile 'com.github.castorflex.smoothprogressbar:library:1.1.0'
+}
+
+android {
+    lintOptions {
+        abortOnError false
+    }
 }

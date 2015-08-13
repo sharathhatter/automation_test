@@ -3,7 +3,7 @@ package com.bigbasket.mobileapp.model.order;
 import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
-public class PowerPayPostParams {
+public class PayzappPostParams {
     @SerializedName(Constants.MERCHANT_ID)
     private String merchantId;
 

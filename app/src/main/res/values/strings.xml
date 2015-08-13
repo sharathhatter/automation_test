@@ -337,4 +337,13 @@
     <string name="add_bundle">ADD BUNDLE</string>
     <string name="error">Error!</string>
     <string name="emailBlank">Please enter an email address</string>
+    <string name="payNow">Pay Now</string>
+    <string name="payNowThankyou">Your payment was successful!</string>
+    <string name="txnFailureMsg">Failed to process your transaction.\nPlease contact our customer care, in case you got charged.</string>
+
+    <string name="fundWallet">Fund Wallet</string>
+    <string name="fundWalletHint">Amount</string>
+    <string name="invalidAmount">Please enter a valid amount</string>
+    <string name="missingPaymentMethod">Please choose at least one payment method</string>
+    <string name="fundWalletSuccess">You have successfully funded the wallet</string>
 </resources>

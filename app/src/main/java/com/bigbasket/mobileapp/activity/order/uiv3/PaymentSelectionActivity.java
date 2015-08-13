@@ -2,7 +2,6 @@ package com.bigbasket.mobileapp.activity.order.uiv3;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -26,8 +25,10 @@ import com.bigbasket.mobileapp.apiservice.models.response.OldApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.PostVoucherApiResponseContent;
 import com.bigbasket.mobileapp.handler.DuplicateClickAware;
-import com.bigbasket.mobileapp.handler.HDFCPowerPayHandler;
+import com.bigbasket.mobileapp.handler.HDFCPayzappHandler;
 import com.bigbasket.mobileapp.handler.payment.PaymentInitiator;
+import com.bigbasket.mobileapp.handler.payment.PayuInitializer;
+import com.bigbasket.mobileapp.handler.payment.PayzappInitializer;
 import com.bigbasket.mobileapp.handler.payment.PostPaymentHandler;
 import com.bigbasket.mobileapp.handler.payment.ValidatePaymentHandler;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
@@ -35,13 +36,13 @@ import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.interfaces.payment.OnPaymentValidationListener;
 import com.bigbasket.mobileapp.interfaces.payment.OnPostPaymentListener;
 import com.bigbasket.mobileapp.interfaces.payment.PayuPaymentAware;
-import com.bigbasket.mobileapp.interfaces.payment.PowerPayPaymentAware;
+import com.bigbasket.mobileapp.interfaces.payment.PayzappPaymentAware;
 import com.bigbasket.mobileapp.model.order.ActiveVouchers;
 import com.bigbasket.mobileapp.model.order.CreditDetails;
 import com.bigbasket.mobileapp.model.order.Order;
 import com.bigbasket.mobileapp.model.order.OrderDetails;
 import com.bigbasket.mobileapp.model.order.PaymentType;
-import com.bigbasket.mobileapp.model.order.PowerPayPostParams;
+import com.bigbasket.mobileapp.model.order.PayzappPostParams;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.DialogButton;
 import com.bigbasket.mobileapp.util.FragmentCodes;
@@ -50,29 +51,22 @@ import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.enstage.wibmo.sdk.WibmoSDK;
-import com.enstage.wibmo.sdk.WibmoSDKConfig;
-import com.enstage.wibmo.sdk.inapp.pojo.CustomerInfo;
-import com.enstage.wibmo.sdk.inapp.pojo.MerchantInfo;
-import com.enstage.wibmo.sdk.inapp.pojo.TransactionInfo;
-import com.enstage.wibmo.sdk.inapp.pojo.WPayInitRequest;
 import com.enstage.wibmo.sdk.inapp.pojo.WPayResponse;
 import com.payu.sdk.PayU;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class PaymentSelectionActivity extends BackButtonActivity
-        implements PowerPayPaymentAware, PayuPaymentAware,
+        implements PayzappPaymentAware, PayuPaymentAware,
         OnPostPaymentListener, OnPaymentValidationListener {
 
     private ArrayList<ActiveVouchers> mActiveVouchersList;
-    private LinkedHashMap<String, String> mPaymentTypeMap;
+    private ArrayList<PaymentType> mPaymentTypeList;
     private String mPotentialOrderId;
     private TextView mTxtApplyVoucher;
     private TextView mTxtRemoveVoucher;
@@ -80,7 +74,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
     private String mAppliedVoucherCode;
     private String mSelectedPaymentMethod;
     private OrderDetails mOrderDetails;
-    private WPayInitRequest wPayInitRequest;
+    private String mHDFCPayzappTxnId;
     private String mPayuTxnId;
     private ArrayList<Order> mOrdersCreated;
     private String mAddMoreLink;
@@ -125,11 +119,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
         mActiveVouchersList = getIntent().getParcelableArrayListExtra(Constants.VOUCHERS);
         mAppliedVoucherCode = getIntent().getStringExtra(Constants.EVOUCHER_CODE);
 
-        ArrayList<PaymentType> paymentTypes = getIntent().getParcelableArrayListExtra(Constants.PAYMENT_TYPES);
-        mPaymentTypeMap = new LinkedHashMap<>();
-        for (PaymentType paymentType : paymentTypes) {
-            mPaymentTypeMap.put(paymentType.getDisplayName(), paymentType.getValue());
-        }
+        mPaymentTypeList = getIntent().getParcelableArrayListExtra(Constants.PAYMENT_TYPES);
         ArrayList<CreditDetails> creditDetails = getIntent().getParcelableArrayListExtra(Constants.CREDIT_DETAILS);
         renderPaymentMethodsAndSummary(creditDetails);
     }
@@ -210,35 +200,46 @@ public class PaymentSelectionActivity extends BackButtonActivity
         TextView lblAmountFromWallet = (TextView) findViewById(R.id.lblAmountFromWallet);
         lblAmountFromWallet.setTypeface(faceRobotoRegular);
 
-        boolean isInHDFCPayMode = HDFCPowerPayHandler.isInHDFCPayMode(this)
-                && mPaymentTypeMap.containsValue(Constants.HDFC_POWER_PAY);
+        boolean isInHDFCPayMode = HDFCPayzappHandler.isInHDFCPayMode(this);
+        if (isInHDFCPayMode) {
+            // Now check whether Payzapp is actually present
+            boolean hasHdfc = false;
+            for (PaymentType paymentType : mPaymentTypeList) {
+                if (paymentType.getValue().equals(Constants.HDFC_POWER_PAY)) {
+                    hasHdfc = true;
+                    break;
+                }
+            }
+            isInHDFCPayMode = hasHdfc;
+        }
         RadioGroup layoutPaymentOptions = (RadioGroup) findViewById(R.id.layoutPaymentOptions);
         layoutPaymentOptions.removeAllViews();
 
         if (mOrderDetails.getFinalTotal() <= 0) {
             lblAmountFromWallet.setVisibility(View.VISIBLE);
-            mSelectedPaymentMethod = mPaymentTypeMap.entrySet().iterator().next().getValue();
+            mSelectedPaymentMethod = mPaymentTypeList.get(0).getValue();
         } else {
             lblAmountFromWallet.setVisibility(View.GONE);
             int i = 0;
-            for (final Map.Entry<String, String> entrySet : mPaymentTypeMap.entrySet()) {
-                if (isInHDFCPayMode && !entrySet.getValue().equals(Constants.HDFC_POWER_PAY)) {
+            for (final PaymentType paymentType : mPaymentTypeList) {
+                if (isInHDFCPayMode && !paymentType.getValue().equals(Constants.HDFC_POWER_PAY)) {
                     continue;
                 }
-                RadioButton rbtnPaymentType = getPaymentOptionRadioButton(layoutPaymentOptions);
-                rbtnPaymentType.setText(entrySet.getKey());
+                RadioButton rbtnPaymentType = UIUtil.
+                        getPaymentOptionRadioButton(layoutPaymentOptions, this, inflater);
+                rbtnPaymentType.setText(paymentType.getDisplayName());
                 rbtnPaymentType.setId(i);
                 boolean isSelected = TextUtils.isEmpty(mSelectedPaymentMethod) ? i == 0 :
-                        mSelectedPaymentMethod.equals(entrySet.getValue());
+                        mSelectedPaymentMethod.equals(paymentType.getValue());
                 if (isSelected) {
                     rbtnPaymentType.setChecked(true);
-                    mSelectedPaymentMethod = entrySet.getValue();
+                    mSelectedPaymentMethod = paymentType.getValue();
                 }
                 rbtnPaymentType.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked) {
-                            mSelectedPaymentMethod = entrySet.getValue();
+                            mSelectedPaymentMethod = paymentType.getValue();
                         }
                     }
                 });
@@ -256,18 +257,6 @@ public class PaymentSelectionActivity extends BackButtonActivity
             startActivityForResult(availableVoucherListActivity, NavigationCodes.VOUCHER_APPLIED);
         }
     }
-
-    private RadioButton getPaymentOptionRadioButton(ViewGroup parent) {
-        LayoutInflater inflater = getLayoutInflater();
-        RadioButton radioButton = (RadioButton) inflater.inflate(R.layout.uiv3_payment_option_rbtn, parent, false);
-        RadioGroup.LayoutParams layoutParams = new RadioGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams.setMargins(0, 0, 0, (int) getResources().getDimension(R.dimen.margin_small));
-        radioButton.setLayoutParams(layoutParams);
-        radioButton.setTypeface(faceRobotoRegular);
-        return radioButton;
-    }
-
 
     public void onVoucherApplied(String voucher, OrderDetails orderDetails,
                                  ArrayList<CreditDetails> creditDetails) {
@@ -421,15 +410,14 @@ public class PaymentSelectionActivity extends BackButtonActivity
                 WPayResponse res = WibmoSDK.processInAppResponseWPay(data);
                 String pgTxnId = res.getWibmoTxnId();
                 String dataPickupCode = res.getDataPickUpCode();
-                validateHdfcPowerPayResponse(pgTxnId, dataPickupCode,
-                        wPayInitRequest.getTransactionInfo().getMerTxnId());
+                validateHdfcPayzappResponse(pgTxnId, dataPickupCode, mHDFCPayzappTxnId);
             } else {
                 if (data != null) {
                     String resCode = data.getStringExtra("ResCode");
                     String resDesc = data.getStringExtra("ResDesc");
-                    communicateHdfcPowerPayResponseFailure(resCode, resDesc);
+                    communicateHdfcPayzappResponseFailure(resCode, resDesc);
                 } else {
-                    communicateHdfcPowerPayResponseFailure(null, null);
+                    communicateHdfcPayzappResponseFailure(null, null);
                 }
             }
         } else if (requestCode == PayU.RESULT) {
@@ -544,24 +532,15 @@ public class PaymentSelectionActivity extends BackButtonActivity
     }
 
     @Override
-    public void initializeHDFCPowerPay(PowerPayPostParams powerPayPostParams) {
-        new PowerPayTriggerAsyncTask().execute(powerPayPostParams);
+    public void initializeHDFCPayzapp(PayzappPostParams payzappPostParams) {
+        mHDFCPayzappTxnId = payzappPostParams.getTxnId();
+        PayzappInitializer.initiate(this, payzappPostParams);
     }
 
     @Override
     public void initializePayu(HashMap<String, String> paymentParams) {
-        Double amount = Double.parseDouble(paymentParams.get(Constants.AMOUNT));
-
         mPayuTxnId = paymentParams.get(PayU.TXNID);
-        PayU.merchantCodesHash = paymentParams.remove("merchant_code_hash");
-        PayU.paymentHash = paymentParams.remove("payment_hash");
-        PayU.vasHash = paymentParams.remove("vas_hash");
-        PayU.ibiboCodeHash = paymentParams.remove("mobile_sdk_hash");
-        PayU.deleteCardHash = paymentParams.remove("delete_card_hash");
-        PayU.getUserCardHash = paymentParams.remove("get_card_hash");
-        PayU.editUserCardHash = paymentParams.remove("edit_card_hash");
-        PayU.saveUserCardHash = paymentParams.remove("save_card_hash");
-        PayU.getInstance(this).startPaymentProcess(amount, paymentParams);
+        PayuInitializer.initiate(paymentParams, this);
     }
 
     private void getPaymentParams() {
@@ -569,76 +548,20 @@ public class PaymentSelectionActivity extends BackButtonActivity
                 .initiate();
     }
 
-    private void validateHdfcPowerPayResponse(String pgTxnId, String dataPickupCode, String txnId) {
+    private void validateHdfcPayzappResponse(String pgTxnId, String dataPickupCode, String txnId) {
         new PostPaymentHandler<>(this, mPotentialOrderId, mSelectedPaymentMethod, txnId,
-                true, mOrderDetails.getFormattedFinalTotal())
+                true, mOrderDetails.getFormattedFinalTotal(), null)
                 .setDataPickupCode(dataPickupCode)
                 .setPgTxnId(pgTxnId)
                 .start();
     }
 
-    private void communicateHdfcPowerPayResponseFailure(String resCode, String resDesc) {
-        if (wPayInitRequest == null || wPayInitRequest.getTransactionInfo() == null) return;
+    private void communicateHdfcPayzappResponseFailure(String resCode, String resDesc) {
         new PostPaymentHandler<>(this, mPotentialOrderId, mSelectedPaymentMethod,
-                wPayInitRequest.getTransactionInfo().getMerTxnId(), false, mOrderDetails.getFormattedFinalTotal())
+                mHDFCPayzappTxnId, false, mOrderDetails.getFormattedFinalTotal(), null)
                 .setErrResCode(resCode)
                 .setErrResDesc(resDesc)
                 .start();
-    }
-
-    private void startHDFCPowerPay(PowerPayPostParams powerPayPostParams) {
-        wPayInitRequest = new WPayInitRequest();
-
-        TransactionInfo transactionInfo = new TransactionInfo();
-        transactionInfo.setTxnAmount(powerPayPostParams.getFormattedAmount());
-        transactionInfo.setTxnCurrency(powerPayPostParams.getCurrency());
-        transactionInfo.setSupportedPaymentType(powerPayPostParams.getPaymentChoices());
-        transactionInfo.setTxnDesc(powerPayPostParams.getTxnDesc());
-        transactionInfo.setMerTxnId(powerPayPostParams.getTxnId());
-        if (powerPayPostParams.getAppData() != null) {
-            transactionInfo.setMerAppData(powerPayPostParams.getAppData());
-        }
-
-        MerchantInfo merchantInfo = new MerchantInfo();
-        merchantInfo.setMerAppId(powerPayPostParams.getMerchantAppId());
-        merchantInfo.setMerId(powerPayPostParams.getMerchantId());
-        merchantInfo.setMerCountryCode(powerPayPostParams.getCountryCode());
-
-        CustomerInfo customerInfo = new CustomerInfo();
-        customerInfo.setCustEmail(powerPayPostParams.getEmail());
-        customerInfo.setCustDob(powerPayPostParams.getDob());
-        customerInfo.setCustName(powerPayPostParams.getName());
-        customerInfo.setCustMobile(powerPayPostParams.getMobile());
-
-        wPayInitRequest.setTransactionInfo(transactionInfo);
-        wPayInitRequest.setMerchantInfo(merchantInfo);
-        wPayInitRequest.setCustomerInfo(customerInfo);
-
-        wPayInitRequest.setMsgHash(powerPayPostParams.getMsgHash());
-        WibmoSDK.startForInApp(this, wPayInitRequest);
-    }
-
-    private class PowerPayTriggerAsyncTask extends AsyncTask<PowerPayPostParams, Integer, PowerPayPostParams> {
-
-        @Override
-        protected void onPreExecute() {
-            showProgressDialog(getString(R.string.please_wait));
-        }
-
-        @Override
-        protected PowerPayPostParams doInBackground(PowerPayPostParams... params) {
-            PowerPayPostParams powerPayPostParams = params[0];
-            WibmoSDK.setWibmoIntentActionPackage(powerPayPostParams.getPkgName());
-            WibmoSDKConfig.setWibmoDomain(powerPayPostParams.getServerUrl());
-            WibmoSDK.init(getApplicationContext());
-            return powerPayPostParams;
-        }
-
-        @Override
-        protected void onPostExecute(PowerPayPostParams powerPayPostParams) {
-            hideProgressDialog();
-            startHDFCPowerPay(powerPayPostParams);
-        }
     }
 
     @Override

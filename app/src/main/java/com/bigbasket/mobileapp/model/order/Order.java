@@ -47,6 +47,8 @@ public class Order implements Parcelable {
     @SerializedName(Constants.PAYMENT_METHOD)
     private String paymentMethod;
     private Address address;
+    @SerializedName(Constants.CAN_PAY)
+    private boolean canPay;
 
     public Order(Parcel parcel) {
         this.orderId = parcel.readString();
@@ -67,6 +69,7 @@ public class Order implements Parcelable {
         if (!_wasAddressNull) {
             address = parcel.readParcelable(Order.class.getClassLoader());
         }
+        this.canPay = parcel.readByte() == (byte) 1;
     }
 
     @Override
@@ -91,6 +94,7 @@ public class Order implements Parcelable {
         if (!_wasAddressNull) {
             dest.writeParcelable(address, flags);
         }
+        dest.writeByte(canPay ? (byte) 1: (byte) 0);
     }
 
     @Override
@@ -148,5 +152,9 @@ public class Order implements Parcelable {
 
     public int getTotalCount() {
         return totalCount;
+    }
+
+    public boolean canPay() {
+        return canPay;
     }
 }

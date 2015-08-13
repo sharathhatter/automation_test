@@ -1,5 +1,7 @@
 package com.bigbasket.mobileapp.handler.payment;
 
+import android.support.annotation.Nullable;
+
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
@@ -21,6 +23,8 @@ public class PostPaymentHandler<T> {
     private String paymentType;
     private String txnId;
     private boolean status;
+    private String isPayNow;
+    private String isWallet;
 
     // For HDFC Power Pay
     private String pgTxnId;
@@ -28,15 +32,27 @@ public class PostPaymentHandler<T> {
     private String errResCode;
     private String errResDesc;
     private String amount;
+    private String orderId;
 
-    public PostPaymentHandler(T ctx, String potentialOrderId, String paymentType, String txnId,
-                              boolean status, String amount) {
+    public PostPaymentHandler(T ctx, @Nullable String potentialOrderId, String paymentType, String txnId,
+                              boolean status, String amount, @Nullable String orderId) {
         this.ctx = ctx;
         this.potentialOrderId = potentialOrderId;
         this.paymentType = paymentType;
         this.txnId = txnId;
         this.status = status;
         this.amount = amount;
+        this.orderId = orderId;
+    }
+
+    public PostPaymentHandler setPayNow(boolean payNow) {
+        this.isPayNow = payNow ? "1" : "0";
+        return this;
+    }
+
+    public PostPaymentHandler isWallet(boolean isWallet) {
+        this.isWallet = isWallet ? "1" : "0";
+        return this;
     }
 
     public PostPaymentHandler setPgTxnId(String pgTxnId) {
@@ -68,12 +84,12 @@ public class PostPaymentHandler<T> {
         ((ProgressIndicationAware) ctx).showProgressDialog("Please wait...");
         if (status) {
             bigBasketApiService.postPrepaidPayment(txnId, potentialOrderId, paymentType, "1",
-                    pgTxnId, dataPickupCode, amount,
+                    pgTxnId, dataPickupCode, amount, orderId, isPayNow, isWallet,
                     new PostPrepaidParamsCallback());
         } else {
             bigBasketApiService.postPrepaidPayment(txnId,
                     potentialOrderId, paymentType, "0",
-                    errResCode, errResDesc,
+                    errResCode, errResDesc, orderId, isPayNow, isWallet,
                     new PostPrepaidParamsCallback());
         }
     }

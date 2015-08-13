@@ -165,6 +165,15 @@
 
             </LinearLayout>
 
+            <Button
+                style="@style/FormButtonStyle"
+                android:text="@string/fundWallet"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:layout_marginRight="@dimen/margin_normal"
+                android:layout_marginTop="@dimen/margin_normal"
+                android:onClick="onFundWalletBtnClicked"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
