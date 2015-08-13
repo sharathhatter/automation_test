@@ -24,6 +24,7 @@ public class PostPaymentHandler<T> {
     private String txnId;
     private boolean status;
     private String isPayNow;
+    private String isWallet;
 
     // For HDFC Power Pay
     private String pgTxnId;
@@ -46,6 +47,11 @@ public class PostPaymentHandler<T> {
 
     public PostPaymentHandler setPayNow(boolean payNow) {
         this.isPayNow = payNow ? "1" : "0";
+        return this;
+    }
+
+    public PostPaymentHandler isWallet(boolean isWallet) {
+        this.isWallet = isWallet ? "1" : "0";
         return this;
     }
 
@@ -78,12 +84,12 @@ public class PostPaymentHandler<T> {
         ((ProgressIndicationAware) ctx).showProgressDialog("Please wait...");
         if (status) {
             bigBasketApiService.postPrepaidPayment(txnId, potentialOrderId, paymentType, "1",
-                    pgTxnId, dataPickupCode, amount, orderId, isPayNow,
+                    pgTxnId, dataPickupCode, amount, orderId, isPayNow, isWallet,
                     new PostPrepaidParamsCallback());
         } else {
             bigBasketApiService.postPrepaidPayment(txnId,
                     potentialOrderId, paymentType, "0",
-                    errResCode, errResDesc, orderId, isPayNow,
+                    errResCode, errResDesc, orderId, isPayNow, isWallet,
                     new PostPrepaidParamsCallback());
         }
     }

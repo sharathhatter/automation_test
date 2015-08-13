@@ -1,8 +1,9 @@
-package com.bigbasket.mobileapp.activity.order.payment;
+package com.bigbasket.mobileapp.activity.payment;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -125,44 +126,14 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
             handler.sendOfflineError();
             return;
         }
+        if (TextUtils.isEmpty(mSelectedPaymentMethod)) {
+            showAlertDialog(getString(R.string.missingPaymentMethod));
+            return;
+        }
         BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(this);
         showProgressDialog(getString(R.string.please_wait));
 
         switch (mSelectedPaymentMethod) {
-            case Constants.PAYU:
-                bigBasketApiService.postPayNowDetails(mOrderId, mSelectedPaymentMethod, new Callback<ApiResponse<GetPrepaidPaymentResponse>>() {
-                    @Override
-                    public void success(ApiResponse<GetPrepaidPaymentResponse> getPrepaidPaymentApiResponse, Response response) {
-                        if (isSuspended()) return;
-                        try {
-                            hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                        switch (getPrepaidPaymentApiResponse.status) {
-                            case 0:
-                                PayuInitializer.initiate(getPrepaidPaymentApiResponse.apiResponseContent.postParams,
-                                        getCurrentActivity());
-                                break;
-                            default:
-                                handler.sendEmptyMessage(getPrepaidPaymentApiResponse.status,
-                                        getPrepaidPaymentApiResponse.message);
-                                break;
-                        }
-                    }
-
-                    @Override
-                    public void failure(RetrofitError error) {
-                        if (isSuspended()) return;
-                        try {
-                            hideProgressDialog();
-                        } catch (IllegalArgumentException e) {
-                            return;
-                        }
-                        handler.handleRetrofitError(error);
-                    }
-                });
-                break;
             case Constants.HDFC_POWER_PAY:
                 bigBasketApiService.postPayzappPayNowDetails(mOrderId, mSelectedPaymentMethod, new Callback<ApiResponse<GetPayzappPaymentParamsResponse>>() {
                     @Override
@@ -198,11 +169,53 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
                     }
                 });
                 break;
+            default:
+                bigBasketApiService.postPayNowDetails(mOrderId, mSelectedPaymentMethod, new Callback<ApiResponse<GetPrepaidPaymentResponse>>() {
+                    @Override
+                    public void success(ApiResponse<GetPrepaidPaymentResponse> getPrepaidPaymentApiResponse, Response response) {
+                        if (isSuspended()) return;
+                        try {
+                            hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
+                        switch (getPrepaidPaymentApiResponse.status) {
+                            case 0:
+                                switch (mSelectedPaymentMethod) {
+                                    case Constants.PAY_NOW:
+                                        PayuInitializer.initiate(getPrepaidPaymentApiResponse.apiResponseContent.postParams,
+                                                getCurrentActivity());
+                                        break;
+                                    default:
+                                        onPayNowSuccess();
+                                        break;
+                                }
+                                break;
+                            default:
+                                handler.sendEmptyMessage(getPrepaidPaymentApiResponse.status,
+                                        getPrepaidPaymentApiResponse.message);
+                                break;
+                        }
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        if (isSuspended()) return;
+                        try {
+                            hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
+                        handler.handleRetrofitError(error);
+                    }
+                });
+                break;
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        setSuspended(false);
         if (requestCode == WibmoSDK.REQUEST_CODE_IAP_PAY) {
             if (resultCode == RESULT_OK) {
                 WPayResponse res = WibmoSDK.processInAppResponseWPay(data);
@@ -236,7 +249,7 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
 
     private void onPayNowFailure() {
         showAlertDialog(getString(R.string.transactionFailed),
-                getString(R.string.payNowFailure));
+                getString(R.string.txnFailureMsg));
     }
 
     private void validateHdfcPayzappResponse(String pgTxnId, String dataPickupCode, String txnId) {

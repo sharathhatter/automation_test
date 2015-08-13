@@ -1,4 +1,4 @@
-package com.bigbasket.mobileapp.activity.order.payment;
+package com.bigbasket.mobileapp.activity.payment;
 
 import android.content.Intent;
 import android.os.Bundle;

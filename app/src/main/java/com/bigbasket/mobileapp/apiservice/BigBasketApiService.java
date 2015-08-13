@@ -16,6 +16,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.CreateUpdateAddressApi
 import com.bigbasket.mobileapp.apiservice.models.response.GetDeliveryAddressApiResponseContent;
 import com.bigbasket.mobileapp.apiservice.models.response.GetDynamicPageApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPayNowParamsResponse;
+import com.bigbasket.mobileapp.apiservice.models.response.GetPaymentTypes;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPayzappPaymentParamsResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetPrepaidPaymentResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetProductsForOrderApiResponseContent;
@@ -328,6 +329,7 @@ public interface BigBasketApiService {
                             @Field(Constants.PG_TXN_ID) String pgTxnId, @Field(Constants.DATA_PICKUP_CODE) String dataPickupCode,
                             @Field(Constants.AMOUNT) String amount, @Field(Constants.ORDER_ID) String orderId,
                             @Field(Constants.PAY_NOW) String payNow,
+                            @Field(Constants.WALLET) String isWallet,
                             Callback<ApiResponse<PostPrepaidPaymentResponse>> postPrepaidPaymentApiResponseCallback);
 
     @FormUrlEncoded
@@ -337,6 +339,7 @@ public interface BigBasketApiService {
                             @Field(Constants.ERR_RES_CODE) String errResCode, @Field(Constants.ERR_RES_DESC) String errResDesc,
                             @Field(Constants.ORDER_ID) String orderId,
                             @Field(Constants.PAY_NOW) String payNow,
+                            @Field(Constants.WALLET) String isWallet,
                             Callback<ApiResponse<PostPrepaidPaymentResponse>> postPrepaidPaymentApiResponseCallback);
 
     @GET("/validate-order-payment/")
@@ -385,4 +388,21 @@ public interface BigBasketApiService {
     void postPayzappPayNowDetails(@Field(Constants.ORDER_ID) String orderId,
                                   @Field(Constants.PAYMENT_METHOD) String paymentMethod,
                                   Callback<ApiResponse<GetPayzappPaymentParamsResponse>> getPrepaidPaymentApiResponseCallback);
+
+    @GET("/fund-wallet")
+    void getFundWalletPayments(@Query(Constants.SUPPORT_CC) String supportsPayu,
+                               @Query(Constants.SUPPORT_POWER_PAY) String supportPowerPay,
+                               Callback<ApiResponse<GetPaymentTypes>> getFundWalletPaymentApiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/fund-wallet/")
+    void postFundWallet(@Field(Constants.PAYMENT_METHOD) String payment_method,
+                        @Field(Constants.AMOUNT) String amount,
+                        Callback<ApiResponse<GetPrepaidPaymentResponse>> getPrepaidPaymentApiResponseCallback);
+
+    @FormUrlEncoded
+    @POST("/fund-wallet/")
+    void postPayzappFundWallet(@Field(Constants.PAYMENT_METHOD) String payment_method,
+                               @Field(Constants.AMOUNT) String amount,
+                               Callback<ApiResponse<GetPayzappPaymentParamsResponse>> getPrepaidPaymentApiResponseCallback);
 }
