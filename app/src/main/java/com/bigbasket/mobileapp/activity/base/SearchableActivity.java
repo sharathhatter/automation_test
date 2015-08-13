@@ -13,6 +13,7 @@ import android.provider.BaseColumns;
 import android.speech.RecognizerIntent;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.FilterQueryProvider;
@@ -112,12 +113,12 @@ public class SearchableActivity extends BackButtonActivity
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Cursor cursor = (Cursor) parent.getItemAtPosition(position);
-                if (cursor != null && cursor.getString(4) != null) {
-                    if (cursor.getString(4).contains("/"))
-                        doSearchByCategory(cursor.getString(1), cursor.getString(4),
-                                getCategorySlug(cursor.getString(4)));
+                if (cursor != null && cursor.getString(1) != null) {
+                    if (!TextUtils.isEmpty(cursor.getString(3)) &&cursor.getString(3).contains("/"))
+                        doSearchByCategory(cursor.getString(1), cursor.getString(3),
+                                getCategorySlug(cursor.getString(3)));
                     else
-                        triggerSearch(cursor.getString(4).trim(),
+                        triggerSearch(cursor.getString(1).trim(),
                                 TrackEventkeys.PS_PL);
                 }
             }
@@ -211,14 +212,14 @@ public class SearchableActivity extends BackButtonActivity
         MostSearchesAdapter mostSearchesAdapter = new MostSearchesAdapter(this);
         int mostSearchTermsCount = mostSearchesAdapter.getRowCount();
         if (mostSearchTermsCount > 0) {
-            matrixCursor.addRow(new String[]{"0", "History", null, null, null, null, null});
+            matrixCursor.addRow(new String[]{"0", "History", null, null, null, "History", null});
             if (mostSearchTermsCount >= 5) {
                 List<MostSearchedItem> mostSearchedItemList = mostSearchesAdapter.getRecentSearchedItems(5);
                 int i = 1;
                 for (MostSearchedItem mostSearchedItem : mostSearchedItemList)
                     matrixCursor.addRow(new String[]{String.valueOf(i++), mostSearchedItem.getQuery(),
                             mostSearchedItem.getUrl(), null, mostSearchedItem.getQuery(),
-                            SearchUtil.HISTORY_LEFT_ICON, SearchUtil.CROSS_ICON});
+                            null, SearchUtil.CROSS_ICON});
                 if (mostSearchTermsCount > 20)
                     mostSearchesAdapter.deleteFirstRow();
             } else {
@@ -226,8 +227,8 @@ public class SearchableActivity extends BackButtonActivity
                 int i = 0;
                 for (MostSearchedItem mostSearchedItem : mostSearchedItemList)
                     matrixCursor.addRow(new String[]{String.valueOf(i++), mostSearchedItem.getQuery(),
-                            mostSearchedItem.getUrl(), null, mostSearchedItem.getQuery(),
-                            SearchUtil.HISTORY_LEFT_ICON, SearchUtil.CROSS_ICON});
+                            null, mostSearchedItem.getUrl(), null,
+                            null, SearchUtil.CROSS_ICON});
             }
         }
         populateTopSearch(matrixCursor);
@@ -238,11 +239,11 @@ public class SearchableActivity extends BackButtonActivity
         String[] topSearchArrayString = getTopSearches();
         if (topSearchArrayString != null && topSearchArrayString.length > 0) {
             int i = 0;
-            matrixCursor.addRow(new String[]{String.valueOf(i++), "Popular Searches", null, null, null, null, null});
+            matrixCursor.addRow(new String[]{String.valueOf(i++), "Popular Searches", null, null, null, "Popular Searches", null});
             for (String term : topSearchArrayString)
                 matrixCursor.addRow(new String[]{String.valueOf(i++), term,
                         null, null, term,
-                        SearchUtil.SEARCH_LEFT_ICON, null});
+                        null, null});
         }
     }
 

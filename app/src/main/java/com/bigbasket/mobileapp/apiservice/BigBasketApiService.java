@@ -357,6 +357,7 @@ public interface BigBasketApiService {
                       @Field(Constants.P_ORDER_ID) String potentialOrderId,
                       @Field(Constants.SUPPORT_CC) String supportsCreditCard,
                       @Field(Constants.SUPPORT_POWER_PAY) String supportsPowerPay,
+                      @Field(Constants.SUPPORT_MOBIKWIK) String supportsMobikWik,
                       Callback<ApiResponse<PostShipmentResponseContent>> apiResponseCallback);
 
     @FormUrlEncoded

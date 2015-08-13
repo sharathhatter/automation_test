@@ -103,6 +103,39 @@ public class PaymentInitiator<T> {
                     }
                 });
                 break;
+            case Constants.MOBIKWIK_PAYMENT:
+                bigBasketApiService.getOrderPaymentParams(potentialOrderId, new Callback<ApiResponse<GetPrepaidPaymentResponse>>() {
+                    @Override
+                    public void success(ApiResponse<GetPrepaidPaymentResponse> getPrepaidPaymentApiResponse, Response response) {
+                        if (((CancelableAware) ctx).isSuspended()) return;
+                        try {
+                            ((ProgressIndicationAware) ctx).hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
+                        switch (getPrepaidPaymentApiResponse.status) {
+                            case 0:
+                                ((PayuPaymentAware) ctx).initializePayu(getPrepaidPaymentApiResponse.apiResponseContent.postParams);
+                                break;
+                            default:
+                                ((HandlerAware) ctx).getHandler()
+                                        .sendEmptyMessage(getPrepaidPaymentApiResponse.status, getPrepaidPaymentApiResponse.message);
+                                break;
+                        }
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        if (((CancelableAware) ctx).isSuspended()) return;
+                        try {
+                            ((ProgressIndicationAware) ctx).hideProgressDialog();
+                        } catch (IllegalArgumentException e) {
+                            return;
+                        }
+                        ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
+                    }
+                });
+                break;
         }
     }
 }

@@ -75,7 +75,7 @@ public class SearchViewAdapter<T> extends CursorAdapter implements Filterable {
     }
 
     public int getItemViewType(Cursor cursor) {
-        if (cursor.getString(4) == null) {
+        if (cursor.getString(5) != null) {
             return VIEW_TYPE_HEADER;
         }
         return VIEW_TYPE_ITEM;

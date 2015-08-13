@@ -181,13 +181,13 @@ public final class ProductView {
         txtMrp.setTypeface(productViewDisplayDataHolder.getSerifTypeface());
 
         if (hasSavings && !TextUtils.isEmpty(product.getMrp())) {
-            String prefix = "`";
+            String prefix = "` ";
             String mrpStr = UIUtil.formatAsMoney(Double.parseDouble(product.getMrp()));
             int prefixLen = prefix.length();
             SpannableString spannableMrp = new SpannableString(prefix + mrpStr);
             spannableMrp.setSpan(new CustomTypefaceSpan("", productViewDisplayDataHolder.getRupeeTypeface()), prefixLen - 1,
                     prefixLen, Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-            spannableMrp.setSpan(new StrikethroughSpan(), 0,
+            spannableMrp.setSpan(new StrikethroughSpan(), 1,
                     spannableMrp.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
             txtMrp.setText(spannableMrp);
             txtMrp.setVisibility(View.VISIBLE);

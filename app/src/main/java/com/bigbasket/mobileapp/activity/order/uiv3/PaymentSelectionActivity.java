@@ -16,6 +16,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bigbasket.mobileapp.MobiKwikActivity;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
@@ -498,14 +499,24 @@ public class PaymentSelectionActivity extends BackButtonActivity
     private void postOrderCreation(ArrayList<Order> orders, String addMoreLink,
                                    String addMoreMsg) {
         ((CartInfoAware) getCurrentActivity()).markBasketDirty();
+
         if (isCreditCardPayment()) {
             mOrdersCreated = orders;
             mAddMoreLink = addMoreLink;
             mAddMoreMsg = addMoreMsg;
-            getPaymentParams();
+            Intent intent = new Intent(this, MobiKwikActivity.class);
+            intent.putExtra("pid", mPotentialOrderId);
+            intent.putExtra("payment", mSelectedPaymentMethod);
+            startActivity(intent);
+
+            //getPaymentParams();
         } else {
-            showOrderThankyou(orders, addMoreLink, addMoreMsg);
+            Intent intent = new Intent(this, MobiKwikActivity.class);
+            intent.putExtra("pid", mPotentialOrderId);
+            startActivity(intent);
+            //showOrderThankyou(orders, addMoreLink, addMoreMsg);
         }
+
     }
 
     private void showOrderThankyou(ArrayList<Order> orders, String addMoreLink, String addMoreMsg) {

@@ -1,5 +1,7 @@
 package com.bigbasket.mobileapp.util;
 
+import com.bigbasket.mobileapp.BuildConfig;
+
 public class Constants {
 
     // connection parameters
@@ -508,6 +510,7 @@ public class Constants {
     public static final String PG_TXN_ID = "pg_txn_id";
     public static final String DATA_PICKUP_CODE = "data_pickup_code";
     public static final String SUPPORT_POWER_PAY = "support_pp";
+    public static final String SUPPORT_MOBIKWIK = "support_mk";
     public static final String ERR_RES_CODE = "err_res_code";
     public static final String ERR_RES_DESC = "err_res_desc";
     public static final String FIXED_COMBO_PRODUCTS = "fixed_combo_products";
@@ -559,4 +562,24 @@ public class Constants {
     public static final String FORGOT_PASSWORD_DIALOG = "FPassDialog";
     public static final String AREA_INFO_CALL_LAST = "areaInfoCalledLast";
     public static final String CACHE_DURATION = "cache_duration";
+
+
+    //mobikwik
+    public static final String MOBIKWIK_PAYMENT = "mobikwik_wallet";
+    public static final String  MOBIKWIKSDK = "MobikwikSDK";
+    public static final String MOBIKWIK_ORDER_ID = "orderid";
+    public static final String MOBIKWIK_DEBIT_WALLET = "debitWallet";
+    public static final String MOBIKWIK_AMOUNT = "amount";
+    public static final String MOBIKWIK_EMAIL = "email";
+    public static final String MOBIKWIK_CELL = "cell";
+    public static final String MOBIKWIK_MID = "mid";
+    public static final String MOBIKWIK_MERCHANT_NAME = "merchantname";
+    public static final String MOBIKWIK_MODE = "mode";
+    public static final String MOBIKWIK_SDK_SIGN = "sdksign";
+    public static final String MOBIKWIK_REDIRECT_ANDROID_CLASS_NAME = "redirecturl";
+    public static final String MOBIKWIK_CHECKSUM_URL = "checksumUrl";
+    public static final String MOBIKWIK_CALL_BACK_URL = "pgResponseUrl";
+    public static final String MOBIKWIK_RESPONSE_HANDLER_CLASS = "com.bigbasket.mobileapp.MobiKwikResponseHandlerActivity";
+    public static final String MOBIKWIK_MODE_VALUE = BuildConfig.DEBUG ? "0" : "1";
+    public static final String MOBIKWIK_SDK_SIGN_VALUE  = "a_lvjRAEvSbC0ENdEVuGC0B2Uo9";
 }
