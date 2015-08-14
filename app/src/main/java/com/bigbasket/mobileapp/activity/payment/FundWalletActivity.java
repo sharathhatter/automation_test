@@ -203,6 +203,7 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
                             default:
                                 handler.sendEmptyMessage(getPayzappPaymentParamsApiResponse.status,
                                         getPayzappPaymentParamsApiResponse.message);
+                                break;
                         }
                     }
 

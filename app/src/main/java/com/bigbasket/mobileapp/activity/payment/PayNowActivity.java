@@ -182,7 +182,7 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
                         switch (getPrepaidPaymentApiResponse.status) {
                             case 0:
                                 switch (mSelectedPaymentMethod) {
-                                    case Constants.PAY_NOW:
+                                    case Constants.PAYU:
                                         PayuInitializer.initiate(getPrepaidPaymentApiResponse.apiResponseContent.postParams,
                                                 getCurrentActivity());
                                         break;
