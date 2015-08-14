@@ -425,6 +425,11 @@
             android:theme="@style/BaseAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
+            android:name=".activity.base.uiv3.BackButtonSpinnerDateActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/BBAppTheme.SpinnerDatePickerTheme"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+        <activity
             android:name=".activity.account.uiv3.MyAccountActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme"
