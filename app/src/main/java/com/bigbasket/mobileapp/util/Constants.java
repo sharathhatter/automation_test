@@ -328,6 +328,7 @@ public class Constants {
     public static final String FINAL_TOTAL = "final_total";
     public static final String ORDER_DETAILS = "order_details";
     public static final String CREDIT_DETAILS = "credit_details";
+    public static final String DETAILS = "details";
     public static final String CREDIT_VALUE = "credit_value";
 
     public static final String ORDER_NUMBER = "order_number";
@@ -394,6 +395,8 @@ public class Constants {
     public static final String CITY = "city";
     public static final String PIN_CODE_MAP = "pincode_map";
     public static final String VALUE = "value";
+    public static final String VAL = "val";
+    public static final String VAL_TYPE = "val_type";
 
     //update pin
     public static final String FOUR_ZERO = "0000";

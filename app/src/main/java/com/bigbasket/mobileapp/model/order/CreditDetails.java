@@ -43,10 +43,6 @@ public class CreditDetails implements Parcelable {
         dest.writeString(message);
     }
 
-    public String getType() {
-        return type;
-    }
-
     public String getCreditValue() {
         return creditValue;
     }
