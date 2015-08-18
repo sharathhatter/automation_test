@@ -278,6 +278,26 @@
                     android:host="inbox"
                     android:scheme="bigbasket" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="discount"
+                    android:scheme="bigbasket" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="home"
+                    android:scheme="bigbasket" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".activity.base.uiv3.BBActivity"

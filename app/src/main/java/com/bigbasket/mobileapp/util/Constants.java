@@ -32,6 +32,7 @@ public class Constants {
     public static final String PACKAGE_DESC = "pack_desc";
     public static final String PRODUCT_STATUS = "pstat";
     public static final String DISCOUNT_TYPE = "dis_t";
+    public static final String DISCOUNT = "discount";
     public static final String PRODUCT_TOP_LEVEL_CATEGORY_SLUG = "tlc_s";
     public static final String PRODUCT_TOP_LEVEL_CATEGORY_NAME = "tlc_n";
     public static final String PRODUCT_CATEGORY_NAME = "pc_n";
