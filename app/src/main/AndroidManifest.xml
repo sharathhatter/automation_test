@@ -36,10 +36,6 @@
         android:smallScreens="true"
         android:xlargeScreens="true" />
 
-    <!--<permission-->
-    <!--android:name="com.bigbasket.mobileapp.permission.C2D_MESSAGE"-->
-    <!--android:protectionLevel="signature" />-->
-
     <uses-permission android:name="com.bigbasket.mobileapp.permission.C2D_MESSAGE" />
 
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
@@ -63,7 +59,6 @@
             android:windowSoftInputMode="stateHidden|adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -85,28 +80,12 @@
             android:theme="@style/BaseAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
-        <!-- <activity android:name="com.luminous.pick.CustomGalleryActivity" > -->
-        <!-- <intent-filter> -->
-        <!-- <action android:name="luminous.ACTION_PICK" /> -->
-        <!-- <action android:name="luminous.ACTION_MULTIPLE_PICK" /> -->
-
-
-        <!-- <category android:name="android.intent.category.DEFAULT" /> -->
-        <!-- </intent-filter> -->
-        <!-- </activity> -->
-
 
         <activity
             android:name=".activity.DeepLinkDispatcherActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan">
-
-            <!--android:parentActivityName=".activity.SplashActivity"-->
-            <!--<meta-data-->
-            <!--android:name="android.support.PARENT_ACTIVITY"-->
-            <!--android:value=".activity.SplashActivity" />-->
-
 
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
