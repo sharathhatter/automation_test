@@ -20,17 +20,20 @@ import com.bigbasket.mobileapp.apiservice.models.response.GetPrepaidPaymentRespo
 import com.bigbasket.mobileapp.handler.payment.PayuInitializer;
 import com.bigbasket.mobileapp.handler.payment.PayzappInitializer;
 import com.bigbasket.mobileapp.handler.payment.PostPaymentHandler;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.interfaces.payment.OnPostPaymentListener;
 import com.bigbasket.mobileapp.model.order.PayNowDetail;
 import com.bigbasket.mobileapp.model.order.PaymentType;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.enstage.wibmo.sdk.WibmoSDK;
 import com.enstage.wibmo.sdk.inapp.pojo.WPayResponse;
 import com.payu.sdk.PayU;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -50,6 +53,8 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setNextScreenNavigationContext(TrackEventkeys.NAVIGATION_CTX_PAY_NOW);
+        trackEvent(TrackingAware.PAY_NOW_SHOWN, null);
         setTitle(getString(R.string.payNow));
 
         mOrderId = getIntent().getStringExtra(Constants.ORDER_ID);
@@ -236,6 +241,10 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
     }
 
     private void onPayNowSuccess() {
+        HashMap<String, String> attrs = new HashMap<>();
+        attrs.put(Constants.PAYMENT_METHOD, mSelectedPaymentMethod);
+        trackEvent(TrackingAware.PAY_NOW_DONE, attrs);
+
         Intent intent = new Intent(this, PayNowThankyouActivity.class);
         intent.putExtra(Constants.ORDER_ID, mOrderId);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);

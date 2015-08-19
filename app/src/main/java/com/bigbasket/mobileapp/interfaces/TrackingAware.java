@@ -184,6 +184,11 @@ public interface TrackingAware {
     String NOTIFICATION_ERROR = "Notification Error";
 
     String FLAT_PAGE_SHOWN = "Flat Page Shown";
+    String PAY_NOW_SHOWN = "PayNow.Shown";
+    String PAY_NOW_DONE = "PayNow.Done";
+
+    String FUND_WALLET_SHOWN = "Fund Wallet.Shown";
+    String FUND_WALLET_DONE = "Fund Wallet.Done";
 
     void trackEvent(String eventName, Map<String, String> eventAttribs,
                     String source, String sourceValue, boolean isCustomerValueIncrease,
