@@ -7,4 +7,5 @@
     <string name="localytics_api_key" templateMergeStrategy="preserve">14488daecef8aa9ffe0e606-fe0465b6-31f0-11e5-f019-008b20abc1fa</string>
     <string name="payu_merchant_id" templateMergeStrategy="preserve">gtKFFx</string>
     <string name="payu_merchant_salt" templateMergeStrategy="preserve">eCwWELxi</string>
+    <string name="google_geo_api_key" templateMergeStrategy="preserve">AIzaSyAcAYm_JguAF9LmBnNW1YC0Hmz6_UuO3Cw</string>
 </resources>

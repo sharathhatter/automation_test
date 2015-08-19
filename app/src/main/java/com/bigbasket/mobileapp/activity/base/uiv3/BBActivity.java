@@ -34,7 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
-import com.bigbasket.mobileapp.activity.account.uiv3.ChangeCityActivity;
+import com.bigbasket.mobileapp.activity.account.uiv3.PlacePickerApiActivity;
 import com.bigbasket.mobileapp.activity.account.uiv3.ShopFromOrderFragment;
 import com.bigbasket.mobileapp.activity.account.uiv3.SocialLoginActivity;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
@@ -721,7 +721,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
             txtCityName.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(getCurrentActivity(), ChangeCityActivity.class);
+                    Intent intent = new Intent(getCurrentActivity(), PlacePickerApiActivity.class);
                     startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
                 }
             });
