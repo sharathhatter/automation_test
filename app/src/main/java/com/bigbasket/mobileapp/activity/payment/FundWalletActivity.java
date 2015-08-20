@@ -22,15 +22,18 @@ import com.bigbasket.mobileapp.apiservice.models.response.GetPrepaidPaymentRespo
 import com.bigbasket.mobileapp.handler.payment.PayuInitializer;
 import com.bigbasket.mobileapp.handler.payment.PayzappInitializer;
 import com.bigbasket.mobileapp.handler.payment.PostPaymentHandler;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.interfaces.payment.OnPostPaymentListener;
 import com.bigbasket.mobileapp.model.order.PaymentType;
 import com.bigbasket.mobileapp.util.Constants;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.enstage.wibmo.sdk.WibmoSDK;
 import com.enstage.wibmo.sdk.inapp.pojo.WPayResponse;
 import com.payu.sdk.PayU;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -45,6 +48,8 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setNextScreenNavigationContext(TrackEventkeys.NAVIGATION_CTX_FUND_WALLET);
+        trackEvent(TrackingAware.FUND_WALLET_SHOWN, null);
         setTitle(getString(R.string.fundWallet));
         getPaymentTypes();
     }
@@ -203,6 +208,7 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
                             default:
                                 handler.sendEmptyMessage(getPayzappPaymentParamsApiResponse.status,
                                         getPayzappPaymentParamsApiResponse.message);
+                                break;
                         }
                     }
 
@@ -255,6 +261,10 @@ public class FundWalletActivity extends BackButtonActivity implements OnPostPaym
     }
 
     private void onFundWalletSuccess() {
+        HashMap<String, String> attrs = new HashMap<>();
+        attrs.put(Constants.PAYMENT_METHOD, mSelectedPaymentMethod);
+        trackEvent(TrackingAware.FUND_WALLET_DONE, attrs);
+
         setResult(RESULT_OK);
         finish();
     }

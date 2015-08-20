@@ -2,7 +2,6 @@ package com.bigbasket.mobileapp.activity.payment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,18 +20,20 @@ import com.bigbasket.mobileapp.apiservice.models.response.GetPrepaidPaymentRespo
 import com.bigbasket.mobileapp.handler.payment.PayuInitializer;
 import com.bigbasket.mobileapp.handler.payment.PayzappInitializer;
 import com.bigbasket.mobileapp.handler.payment.PostPaymentHandler;
+import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.interfaces.payment.OnPostPaymentListener;
-import com.bigbasket.mobileapp.model.order.CreditDetails;
-import com.bigbasket.mobileapp.model.order.OrderInvoiceDetails;
+import com.bigbasket.mobileapp.model.order.PayNowDetail;
 import com.bigbasket.mobileapp.model.order.PaymentType;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
+import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.enstage.wibmo.sdk.WibmoSDK;
 import com.enstage.wibmo.sdk.inapp.pojo.WPayResponse;
 import com.payu.sdk.PayU;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -52,6 +53,8 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setNextScreenNavigationContext(TrackEventkeys.NAVIGATION_CTX_PAY_NOW);
+        trackEvent(TrackingAware.PAY_NOW_SHOWN, null);
         setTitle(getString(R.string.payNow));
 
         mOrderId = getIntent().getStringExtra(Constants.ORDER_ID);
@@ -77,11 +80,9 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
                         }
                         switch (payNowParamsApiResponse.status) {
                             case 0:
-                                displayPayNowSummary(payNowParamsApiResponse.apiResponseContent.orderNumber,
-                                        payNowParamsApiResponse.apiResponseContent.invoiceNumber,
-                                        payNowParamsApiResponse.apiResponseContent.paymentTypes,
-                                        payNowParamsApiResponse.apiResponseContent.creditDetails,
-                                        payNowParamsApiResponse.apiResponseContent.orderDetails);
+                                displayPayNowSummary(payNowParamsApiResponse.apiResponseContent.amount,
+                                        payNowParamsApiResponse.apiResponseContent.payNowDetailList,
+                                        payNowParamsApiResponse.apiResponseContent.paymentTypes);
                                 break;
                             default:
                                 handler.sendEmptyMessage(payNowParamsApiResponse.status,
@@ -103,11 +104,9 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
                 });
     }
 
-    private void displayPayNowSummary(String fullOrderId, String invoiceNumber,
-                                      ArrayList<PaymentType> paymentTypes,
-                                      @Nullable ArrayList<CreditDetails> creditDetailsArrayList,
-                                      final OrderInvoiceDetails orderInvoiceDetails) {
-        displayOrderSummary(fullOrderId, invoiceNumber, creditDetailsArrayList, orderInvoiceDetails);
+    private void displayPayNowSummary(final String amount, ArrayList<PayNowDetail> payNowDetailList,
+                                      ArrayList<PaymentType> paymentTypes) {
+        displayOrderSummary(payNowDetailList);
         displayPaymentMethods(paymentTypes);
         ViewGroup layoutCheckoutFooter = (ViewGroup) findViewById(R.id.layoutCheckoutFooter);
         UIUtil.setUpFooterButton(this, layoutCheckoutFooter, null,
@@ -115,7 +114,7 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
         layoutCheckoutFooter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startPayNow(orderInvoiceDetails.getTotal());
+                startPayNow(Double.parseDouble(amount));
             }
         });
     }
@@ -182,7 +181,7 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
                         switch (getPrepaidPaymentApiResponse.status) {
                             case 0:
                                 switch (mSelectedPaymentMethod) {
-                                    case Constants.PAY_NOW:
+                                    case Constants.PAYU:
                                         PayuInitializer.initiate(getPrepaidPaymentApiResponse.apiResponseContent.postParams,
                                                 getCurrentActivity());
                                         break;
@@ -242,6 +241,10 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
     }
 
     private void onPayNowSuccess() {
+        HashMap<String, String> attrs = new HashMap<>();
+        attrs.put(Constants.PAYMENT_METHOD, mSelectedPaymentMethod);
+        trackEvent(TrackingAware.PAY_NOW_DONE, attrs);
+
         Intent intent = new Intent(this, PayNowThankyouActivity.class);
         intent.putExtra(Constants.ORDER_ID, mOrderId);
         startActivityForResult(intent, NavigationCodes.GO_TO_HOME);
@@ -280,66 +283,31 @@ public class PayNowActivity extends BackButtonActivity implements OnPostPaymentL
         onPayNowSuccess();
     }
 
-    private void displayOrderSummary(String fullOrderId, String invoiceNumber,
-                                     @Nullable ArrayList<CreditDetails> creditDetailsArrayList,
-                                     OrderInvoiceDetails orderInvoiceDetails) {
+    private void displayOrderSummary(ArrayList<PayNowDetail> payNowDetailList) {
         LayoutInflater inflater = getLayoutInflater();
 
         // Show order & invoice details
         int normalColor = getResources().getColor(R.color.uiv3_primary_text_color);
-        int orderTotalLabelColor = getResources().getColor(R.color.uiv3_primary_text_color);
-        int orderTotalValueColor = getResources().getColor(R.color.uiv3_ok_label_color);
 
         ViewGroup layoutOrderSummaryInfo = (ViewGroup) findViewById(R.id.layoutOrderSummaryInfo);
 
-        View orderNumberRow = UIUtil.getOrderSummaryRow(inflater, getString(R.string.ordernumber),
-                fullOrderId, normalColor, faceRobotoRegular);
-        layoutOrderSummaryInfo.addView(orderNumberRow);
-
-        View invoiceNumberRow = UIUtil.getOrderSummaryRow(inflater, getString(R.string.invoicenumber),
-                invoiceNumber, normalColor, faceRobotoRegular);
-        layoutOrderSummaryInfo.addView(invoiceNumberRow);
-
-        int numOrderItems = orderInvoiceDetails.getTotalItems();
-        String itemsStr = numOrderItems + " item";
-        if (numOrderItems > 1) {
-            itemsStr += "s";
-        }
-        View orderItemsNumRow = UIUtil.getOrderSummaryRow(inflater, getString(R.string.orderItems),
-                itemsStr, normalColor, faceRobotoRegular);
-        layoutOrderSummaryInfo.addView(orderItemsNumRow);
-
-        View subTotalRow = UIUtil.getOrderSummaryRow(inflater, getString(R.string.subTotal),
-                UIUtil.asRupeeSpannable(orderInvoiceDetails.getSubTotal(), faceRupee),
-                normalColor, faceRobotoRegular);
-        layoutOrderSummaryInfo.addView(subTotalRow);
-
-        if (orderInvoiceDetails.getVatValue() > 0) {
-            View vatRow = UIUtil.getOrderSummaryRow(inflater, getString(R.string.vat),
-                    UIUtil.asRupeeSpannable(orderInvoiceDetails.getVatValue(), faceRupee),
-                    normalColor, faceRobotoRegular);
-            layoutOrderSummaryInfo.addView(vatRow);
-        }
-
-        View deliveryChargeRow = UIUtil.getOrderSummaryRow(inflater, getString(R.string.deliveryCharges),
-                UIUtil.asRupeeSpannable(orderInvoiceDetails.getDeliveryCharge(), faceRupee),
-                normalColor, faceRobotoRegular);
-        layoutOrderSummaryInfo.addView(deliveryChargeRow);
-
-        if (creditDetailsArrayList != null && creditDetailsArrayList.size() > 0) {
-            for (CreditDetails creditDetails : creditDetailsArrayList) {
-                View creditDetailRow = UIUtil.getOrderSummaryRow(inflater, creditDetails.getMessage(),
-                        UIUtil.asRupeeSpannable(creditDetails.getCreditValue(), faceRupee),
-                        normalColor, faceRobotoRegular);
+        if (payNowDetailList != null && payNowDetailList.size() > 0) {
+            for (PayNowDetail payNowDetail : payNowDetailList) {
+                View creditDetailRow;
+                if (!TextUtils.isEmpty(payNowDetail.getValueType())
+                        && payNowDetail.getValueType().equals(Constants.AMOUNT)) {
+                    creditDetailRow = UIUtil.getOrderSummaryRow(inflater, payNowDetail.getMsg(),
+                            UIUtil.asRupeeSpannable(payNowDetail.getValue(), faceRupee),
+                            normalColor, faceRobotoRegular);
+                } else {
+                    creditDetailRow = UIUtil.getOrderSummaryRow(inflater, payNowDetail.getMsg(),
+                            payNowDetail.getValue(),
+                            normalColor, faceRobotoRegular);
+                }
                 layoutOrderSummaryInfo.addView(creditDetailRow);
             }
         }
 
-        View finalTotalRow = UIUtil.getOrderSummaryRow(inflater, getString(R.string.finalTotal),
-                UIUtil.asRupeeSpannable(orderInvoiceDetails.getTotal(), faceRupee),
-                orderTotalLabelColor,
-                orderTotalValueColor, faceRobotoRegular);
-        layoutOrderSummaryInfo.addView(finalTotalRow);
     }
 
     private void displayPaymentMethods(ArrayList<PaymentType> paymentTypes) {

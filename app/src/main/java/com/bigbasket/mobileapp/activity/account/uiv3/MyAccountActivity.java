@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
+import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonSpinnerDateActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
@@ -99,7 +100,7 @@ public class MyAccountActivity extends BackButtonActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_edit_detail:
-                Intent intent = new Intent(getCurrentActivity(), BackButtonActivity.class);
+                Intent intent = new Intent(getCurrentActivity(), BackButtonSpinnerDateActivity.class);
                 intent.putExtra(Constants.FRAGMENT_CODE, FragmentCodes.START_UPDATE_PROFILE);
                 intent.putExtra(Constants.UPDATE_PROFILE_OBJ, updateProfileModel);
                 startActivityForResult(intent, NavigationCodes.GO_TO_HOME);

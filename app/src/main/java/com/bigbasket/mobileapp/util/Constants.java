@@ -34,6 +34,7 @@ public class Constants {
     public static final String PACKAGE_DESC = "pack_desc";
     public static final String PRODUCT_STATUS = "pstat";
     public static final String DISCOUNT_TYPE = "dis_t";
+    public static final String DISCOUNT = "discount";
     public static final String PRODUCT_TOP_LEVEL_CATEGORY_SLUG = "tlc_s";
     public static final String PRODUCT_TOP_LEVEL_CATEGORY_NAME = "tlc_n";
     public static final String PRODUCT_CATEGORY_NAME = "pc_n";
@@ -330,6 +331,7 @@ public class Constants {
     public static final String FINAL_TOTAL = "final_total";
     public static final String ORDER_DETAILS = "order_details";
     public static final String CREDIT_DETAILS = "credit_details";
+    public static final String DETAILS = "details";
     public static final String CREDIT_VALUE = "credit_value";
 
     public static final String ORDER_NUMBER = "order_number";
@@ -396,6 +398,8 @@ public class Constants {
     public static final String CITY = "city";
     public static final String PIN_CODE_MAP = "pincode_map";
     public static final String VALUE = "value";
+    public static final String VAL = "val";
+    public static final String VAL_TYPE = "val_type";
 
     //update pin
     public static final String FOUR_ZERO = "0000";

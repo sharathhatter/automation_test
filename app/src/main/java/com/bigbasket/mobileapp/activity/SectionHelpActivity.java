@@ -25,6 +25,7 @@ public class SectionHelpActivity extends BaseActivity {
         setContentView(R.layout.uiv3_help_section_layout);
         Section section = getIntent().getParcelableExtra(Constants.SECTION_INFO);
         SectionItem sectionItem = getIntent().getParcelableExtra(Constants.SECTION_ITEM);
+        if (sectionItem == null || section == null) return;
         HelpDestinationInfo helpDestinationInfo = sectionItem.getHelpDestinationInfo();
 
         ViewGroup layoutCheckoutFooter = (ViewGroup) findViewById(R.id.layoutCheckoutFooter);

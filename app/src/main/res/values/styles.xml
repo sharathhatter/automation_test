@@ -51,6 +51,8 @@
 
     <style name="BBAppTheme" parent="BaseAppTheme" />
 
+    <style name="BBAppTheme.SpinnerDatePickerTheme" parent="BaseAppTheme" />
+
     <style name="FilterTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorAccent">@color/uiv3_action_bar_background</item>
     </style>

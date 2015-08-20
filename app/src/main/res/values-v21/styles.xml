@@ -6,6 +6,19 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
+    <style name="BBAppTheme.SpinnerDatePickerTheme" parent="BaseAppTheme">
+        <item name="android:dialogTheme">@style/BBAppTheme.SpinnerDatePicker.DialogTheme</item>
+        <item name="android:datePickerStyle">@style/BBAppTheme.SpinnerDatePicker.DatePickerTheme</item>
+    </style>
+
+    <style name="BBAppTheme.SpinnerDatePicker.DialogTheme" parent="android:Theme.Material.Light.Dialog">
+        <item name="android:datePickerStyle">@style/BBAppTheme.SpinnerDatePicker.DatePickerTheme</item>
+    </style>
+
+    <style name="BBAppTheme.SpinnerDatePicker.DatePickerTheme" parent="android:Widget.Material.Light.DatePicker">
+        <item name="android:datePickerMode">spinner</item>
+    </style>
+
     <style name="WindowStyle">
         <item name="android:fitsSystemWindows">true</item>
     </style>
