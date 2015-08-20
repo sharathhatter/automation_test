@@ -18,7 +18,7 @@ import java.util.HashMap;
 public class MobikwikInitializer {
 
     public static void initiate(HashMap<String, String> paymentParams, Activity ctx) {
-        String amount = UIUtil.round(Double.parseDouble(paymentParams.get(Constants.MOBIKWIK_AMOUNT)));
+        //String amount = UIUtil.round(Double.parseDouble(paymentParams.get(Constants.MOBIKWIK_AMOUNT)));
         Intent walletIntent = new Intent(Constants.MOBIKWIKSDK);
         walletIntent.setPackage(ctx.getPackageName());
         walletIntent.setType(HTTP.PLAIN_TEXT_TYPE);
@@ -26,7 +26,7 @@ public class MobikwikInitializer {
         orderID = orderID * 1000; //todo remove this
         walletIntent.putExtra(Constants.MOBIKWIK_ORDER_ID, String.valueOf(orderID));
         walletIntent.putExtra(Constants.MOBIKWIK_DEBIT_WALLET, paymentParams.get(Constants.MOBIKWIK_DEBIT_WALLET));
-        walletIntent.putExtra(Constants.MOBIKWIK_AMOUNT, amount);
+        walletIntent.putExtra(Constants.MOBIKWIK_AMOUNT, paymentParams.get(Constants.MOBIKWIK_AMOUNT));
         walletIntent.putExtra(Constants.MOBIKWIK_EMAIL, paymentParams.get(Constants.MOBIKWIK_EMAIL));
         walletIntent.putExtra(Constants.MOBIKWIK_CELL, paymentParams.get(Constants.MOBIKWIK_CELL));
         walletIntent.putExtra(Constants.MOBIKWIK_MID, paymentParams.get(Constants.MOBIKWIK_MID));

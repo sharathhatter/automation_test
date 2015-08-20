@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
@@ -34,6 +35,6 @@ public class MobiKwikResponseHandlerActivity extends BackButtonActivity {
     @Override
     public void onResume() {
         super.onResume();
-        finish();
+        onDestroy();
     }
 }

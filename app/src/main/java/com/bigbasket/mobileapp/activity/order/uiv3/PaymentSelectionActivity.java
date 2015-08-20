@@ -121,7 +121,7 @@ public class PaymentSelectionActivity extends BackButtonActivity
                 String mMobiKwikTxnId = String.valueOf(mobiKwikTxnId / 1000); //todo remove this
                 new ValidatePaymentHandler<>(this, mPotentialOrderId, mMobiKwikTxnId, fullOrderId).start();
             }else {
-                showAlertDialog(null, txnMsg, Constants.SOURCE_PLACE_ORDER);
+                showAlertDialog(txnMsg, getString(R.string.txnFailureMsg), Constants.SOURCE_PLACE_ORDER);
             }
 
             SharedPreferences.Editor editor = preferences.edit();

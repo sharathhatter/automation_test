@@ -376,6 +376,7 @@ public interface BigBasketApiService {
     @GET("/pay-now/")
     void getPayNowDetails(@Query(Constants.ORDER_ID) String orderId, @Query(Constants.SUPPORT_POWER_PAY) String supportPp,
                           @Query(Constants.SUPPORT_CC) String supportPayu,
+                          @Query(Constants.SUPPORT_MOBIKWIK) String mobikWik,
                           Callback<ApiResponse<GetPayNowParamsResponse>> getPayNowParamsResponseCallback);
 
     @FormUrlEncoded
