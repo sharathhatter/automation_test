@@ -14,14 +14,15 @@ import android.widget.TextView;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.adapter.BBCheckedListAdapter;
+import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
 import com.bigbasket.mobileapp.apiservice.models.response.OldBaseApiResponse;
-import com.bigbasket.mobileapp.interfaces.CityListDisplayAware;
+import com.bigbasket.mobileapp.interfaces.PinCodeAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
 import com.bigbasket.mobileapp.model.SectionManager;
 import com.bigbasket.mobileapp.model.account.City;
-import com.bigbasket.mobileapp.task.uiv3.GetCitiesTask;
+import com.bigbasket.mobileapp.task.uiv3.GetAreaPinInfoTask;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 
@@ -33,7 +34,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class ChangeCityActivity extends BackButtonActivity implements CityListDisplayAware {
+public class ChangeCityActivity extends BackButtonActivity implements PinCodeAware {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,12 +46,7 @@ public class ChangeCityActivity extends BackButtonActivity implements CityListDi
     }
 
     private void loadCities() {
-        new GetCitiesTask<>(this).startTask();
-    }
-
-    @Override
-    public void onReadyToDisplayCity(ArrayList<City> cities) {
-        renderCityList(cities);
+        new GetAreaPinInfoTask<>(this).startTask();
     }
 
     private void renderCityList(final ArrayList<City> cities) {
@@ -136,7 +132,7 @@ public class ChangeCityActivity extends BackButtonActivity implements CityListDi
         editor.putString(Constants.CITY, city.getName());
         editor.putString(Constants.CITY_ID, String.valueOf(city.getId()));
         editor.putBoolean(Constants.HAS_USER_CHOSEN_CITY, true);
-        editor.commit();
+        editor.apply();
 
         SectionManager.clearAllSectionData(this);
 
@@ -144,5 +140,11 @@ public class ChangeCityActivity extends BackButtonActivity implements CityListDi
         eventAttribs.put(TrackEventkeys.CITY, city.getName());
         trackEvent(TrackingAware.CHANGE_CITY_CLICKED, eventAttribs);
         goToHome(true);
+    }
+
+    @Override
+    public void onPinCodeFetchSuccess() {
+        AreaPinInfoAdapter areaPinInfoAdapter = new AreaPinInfoAdapter(this);
+        renderCityList(areaPinInfoAdapter.getCities());
     }
 }

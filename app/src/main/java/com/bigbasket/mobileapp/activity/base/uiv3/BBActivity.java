@@ -718,6 +718,8 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                     authParameters.getMemberFullName() : authParameters.getMemberEmail());
         } else {
             txtNavSalutation.setText(getString(R.string.bigbasketeer));
+        }
+        if (authParameters.isAuthTokenEmpty() || authParameters.isMultiCityEnabled()) {
             txtCityName.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -726,6 +728,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 }
             });
         }
+
         imgSwitchNav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
