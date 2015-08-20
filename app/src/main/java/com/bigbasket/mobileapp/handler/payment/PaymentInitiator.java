@@ -10,6 +10,7 @@ import com.bigbasket.mobileapp.interfaces.CancelableAware;
 import com.bigbasket.mobileapp.interfaces.ConnectivityAware;
 import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
+import com.bigbasket.mobileapp.interfaces.payment.MobikwikAware;
 import com.bigbasket.mobileapp.interfaces.payment.PayuPaymentAware;
 import com.bigbasket.mobileapp.interfaces.payment.PayzappPaymentAware;
 import com.bigbasket.mobileapp.util.Constants;
@@ -115,7 +116,7 @@ public class PaymentInitiator<T> {
                         }
                         switch (getPrepaidPaymentApiResponse.status) {
                             case 0:
-                                ((PayuPaymentAware) ctx).initializePayu(getPrepaidPaymentApiResponse.apiResponseContent.postParams);
+                                ((MobikwikAware) ctx).initializeMobikwik(getPrepaidPaymentApiResponse.apiResponseContent.postParams);
                                 break;
                             default:
                                 ((HandlerAware) ctx).getHandler()

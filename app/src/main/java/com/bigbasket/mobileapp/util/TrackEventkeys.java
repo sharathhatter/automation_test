@@ -24,7 +24,6 @@ public final class TrackEventkeys {
     public static final String NAVIGATION_CTX_WALLET_ACTIVITIES = "wallet_activity";
     public static final String NAVIGATION_CTX_DEEP_LINK = "deep_link";
     public static final String SECTION_ITEM = "section item";
-    public static final String SECTION_TYPE = "section type";
     public static final String BANNER_ID = "banner id";
     public static final String BANNER_SLUG = "banner slug";
     public static final String PRODUCT_ID = "skuId";

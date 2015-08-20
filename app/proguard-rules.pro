@@ -131,3 +131,13 @@
     public static int d(...);
     public static int e(...);
 }
+
+
+# Mobikwik
+-keepclassmembers class com.paymentsdk.android.PGWebView$MyJavaScriptInterface{
+   public *;
+}
+
+-keep class com.paymentsdk.android.model.** { *; }
+-keep class * extends android.app.Activity { *; }
+-keep class android.support.v4.** { *; }

@@ -2,7 +2,9 @@ package com.bigbasket.mobileapp.activity.order.uiv3;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -15,7 +17,6 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bigbasket.mobileapp.MobiKwikActivity;
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
@@ -26,6 +27,7 @@ import com.bigbasket.mobileapp.apiservice.models.response.PlaceOrderApiResponseC
 import com.bigbasket.mobileapp.apiservice.models.response.PostVoucherApiResponseContent;
 import com.bigbasket.mobileapp.handler.DuplicateClickAware;
 import com.bigbasket.mobileapp.handler.HDFCPayzappHandler;
+import com.bigbasket.mobileapp.handler.payment.MobikwikInitializer;
 import com.bigbasket.mobileapp.handler.payment.PaymentInitiator;
 import com.bigbasket.mobileapp.handler.payment.PayuInitializer;
 import com.bigbasket.mobileapp.handler.payment.PayzappInitializer;
@@ -33,6 +35,7 @@ import com.bigbasket.mobileapp.handler.payment.PostPaymentHandler;
 import com.bigbasket.mobileapp.handler.payment.ValidatePaymentHandler;
 import com.bigbasket.mobileapp.interfaces.CartInfoAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.interfaces.payment.MobikwikAware;
 import com.bigbasket.mobileapp.interfaces.payment.OnPaymentValidationListener;
 import com.bigbasket.mobileapp.interfaces.payment.OnPostPaymentListener;
 import com.bigbasket.mobileapp.interfaces.payment.PayuPaymentAware;
@@ -52,7 +55,10 @@ import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
 import com.enstage.wibmo.sdk.WibmoSDK;
 import com.enstage.wibmo.sdk.inapp.pojo.WPayResponse;
+import com.google.gson.Gson;
 import com.payu.sdk.PayU;
+
+import org.apache.http.protocol.HTTP;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,7 +69,7 @@ import retrofit.client.Response;
 
 public class PaymentSelectionActivity extends BackButtonActivity
         implements PayzappPaymentAware, PayuPaymentAware,
-        OnPostPaymentListener, OnPaymentValidationListener {
+        OnPostPaymentListener, OnPaymentValidationListener, MobikwikAware {
 
     private ArrayList<ActiveVouchers> mActiveVouchersList;
     private ArrayList<PaymentType> mPaymentTypeList;
@@ -95,6 +101,35 @@ public class PaymentSelectionActivity extends BackButtonActivity
         renderFooter();
         renderPaymentDetails();
         trackEvent(TrackingAware.CHECKOUT_PAYMENT_SHOWN, null, null, null, false, true);
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        processMobikWikResponse();
+    }
+
+    private void processMobikWikResponse(){
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
+        String txnId = preferences.getString(Constants.MOBIKWIK_ORDER_ID, null);
+        if(!TextUtils.isEmpty(txnId)){
+            String txnStatus = preferences.getString(Constants.MOBIKWIK_STATUS, null);
+            String txnMsg = preferences.getString(Constants.MOBIKWIK_STATUS_MSG, null);
+            if(!TextUtils.isEmpty(txnStatus) && Integer.parseInt(txnStatus) == 0){
+                String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
+                int mobiKwikTxnId = Integer.parseInt(txnId);
+                String mMobiKwikTxnId = String.valueOf(mobiKwikTxnId / 1000); //todo remove this
+                new ValidatePaymentHandler<>(this, mPotentialOrderId, mMobiKwikTxnId, fullOrderId).start();
+            }else {
+                showAlertDialog(null, txnMsg, Constants.SOURCE_PLACE_ORDER);
+            }
+
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.remove(Constants.MOBIKWIK_ORDER_ID);
+            editor.remove(Constants.MOBIKWIK_STATUS);
+            editor.remove(Constants.MOBIKWIK_STATUS_MSG);
+            editor.commit();
+        }
     }
 
     private void renderFooter() {
@@ -249,6 +284,21 @@ public class PaymentSelectionActivity extends BackButtonActivity
         }
     }
 
+    @Override
+    public void initializeMobikwik(HashMap<String, String> paymentParams) {
+        /*
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity()).edit();
+        editor.putString(Constants.P_ORDER_ID, mPotentialOrderId);
+        editor.putString(Constants.MOBIKWIK_ADD_MORE_LINK, mAddMoreLink);
+        editor.putString(Constants.MOBIKWIK_ADD_MORE_MSG, mAddMoreMsg);
+        editor.putString(Constants.MOBIKWIK_ORDER_CREATED, new Gson().toJson(mOrdersCreated));
+        String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
+        editor.putString(Constants.ORDER_ID, fullOrderId);
+        editor.commit();
+        */
+        MobikwikInitializer.initiate(paymentParams, this);
+    }
+
     private class OnShowAvailableVouchersListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
@@ -399,7 +449,8 @@ public class PaymentSelectionActivity extends BackButtonActivity
     private boolean isCreditCardPayment() {
         return mSelectedPaymentMethod != null &&
                 (mSelectedPaymentMethod.equals(Constants.HDFC_POWER_PAY) ||
-                        mSelectedPaymentMethod.equals(Constants.PAYU));
+                        mSelectedPaymentMethod.equals(Constants.PAYU) ||
+                        mSelectedPaymentMethod.equals(Constants.MOBIKWIK_WALLET));
     }
 
     @Override
@@ -427,6 +478,9 @@ public class PaymentSelectionActivity extends BackButtonActivity
             } else {
                 new ValidatePaymentHandler<>(this, mPotentialOrderId, mPayuTxnId, fullOrderId).start();
             }
+        }else if (requestCode == Constants.MOBIKWIK_REQUEST_CODE) {
+            String fullOrderId = mOrdersCreated.get(0).getOrderNumber();
+            new ValidatePaymentHandler<>(this, mPotentialOrderId, mPayuTxnId, fullOrderId).start();
         } else {
             switch (resultCode) {
                 case NavigationCodes.VOUCHER_APPLIED:
@@ -492,17 +546,9 @@ public class PaymentSelectionActivity extends BackButtonActivity
             mOrdersCreated = orders;
             mAddMoreLink = addMoreLink;
             mAddMoreMsg = addMoreMsg;
-            Intent intent = new Intent(this, MobiKwikActivity.class);
-            intent.putExtra("pid", mPotentialOrderId);
-            intent.putExtra("payment", mSelectedPaymentMethod);
-            startActivity(intent);
-
-            //getPaymentParams();
+            getPaymentParams();
         } else {
-            Intent intent = new Intent(this, MobiKwikActivity.class);
-            intent.putExtra("pid", mPotentialOrderId);
-            startActivity(intent);
-            //showOrderThankyou(orders, addMoreLink, addMoreMsg);
+            showOrderThankyou(orders, addMoreLink, addMoreMsg);
         }
 
     }

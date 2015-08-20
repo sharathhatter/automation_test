@@ -402,7 +402,6 @@ public class OnSectionItemClickListener<T> implements View.OnClickListener, Base
 
     private void logItemClickEvent() {
         HashMap<String, String> eventAttribs = new HashMap<>();
-        //eventAttribs.put(TrackEventkeys.SECTION_TYPE, getSectionName());
         String itemName = getSectionItemName();
         if (!TextUtils.isEmpty(itemName))
             eventAttribs.put(TrackEventkeys.SECTION_ITEM, getSectionItemName());

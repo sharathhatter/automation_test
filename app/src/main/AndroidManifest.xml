@@ -443,13 +443,7 @@
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
         <activity
-            android:name=".MobiKwikActivity"
-        android:screenOrientation="portrait"
-        android:theme="@style/BaseAppTheme"
-        android:windowSoftInputMode="stateHidden|adjustPan" />
-
-        <activity
-            android:name=".MobiKwikResponseHandlerActivity"
+            android:name=".activity.payment.MobiKwikResponseHandlerActivity"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
