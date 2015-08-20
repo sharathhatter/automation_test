@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:map="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -24,20 +23,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/layoutChooseLocation"
+        android:layout_below="@id/toolbarMain"
         tools:ignore="MissingPrefix" />
 
-    <android.support.design.widget.TextInputLayout
+    <AutoCompleteTextView
+        android:id="@+id/aEditTextChooseArea"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/toolbarMain"
         android:layout_margin="@dimen/margin_large"
         android:background="@color/white"
-        android:visibility="gone">
-
-        <AutoCompleteTextView
-            android:id="@+id/aEditTextChooseArea"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/areaInputHint" />
-    </android.support.design.widget.TextInputLayout>
+        android:padding="@dimen/padding_normal"
+        android:hint="@string/areaInputHint" />
 </RelativeLayout>
