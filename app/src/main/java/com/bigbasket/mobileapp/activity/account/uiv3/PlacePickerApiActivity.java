@@ -4,12 +4,15 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.widget.AutoCompleteTextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
-import com.bigbasket.mobileapp.adapter.location.PlaceAutoSuggestAdapter;
-import com.bigbasket.mobileapp.interfaces.PlaceAutoSuggestListener;
+import com.bigbasket.mobileapp.model.location.AutoCompletePlace;
+import com.bigbasket.mobileapp.view.uiv3.BBArrayAdapter;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.LocationServices;
@@ -31,7 +34,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.ArrayList;
 
 public class PlacePickerApiActivity extends BackButtonActivity implements OnMapReadyCallback,
-        GoogleMap.OnMyLocationButtonClickListener, PlaceAutoSuggestListener {
+        GoogleMap.OnMyLocationButtonClickListener {
 
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
@@ -39,8 +42,9 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
     private GoogleMap mGoogleMap;
     @Nullable
     private Marker mGoogleMapMarker;
-    private PlaceAutoSuggestAdapter<AutoCompletePlace> mPlaceAutoSuggestAdapter;
-    private ArrayList<AutoCompletePlace> mPlaces;
+    private BBArrayAdapter<AutoCompletePlace> mPlaceAutoSuggestAdapter;
+    private LatLngBounds mBounds;
+    private AutocompleteFilter mAutoCompleteFilter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,12 +62,29 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
 
         AutoCompleteTextView aEditTextChooseArea =
                 (AutoCompleteTextView) findViewById(R.id.aEditTextChooseArea);
-        mPlaces = new ArrayList<>();
-        mPlaceAutoSuggestAdapter =
-                new PlaceAutoSuggestAdapter<>(this, android.R.layout.simple_list_item_1, mPlaces,
-                        faceRobotoRegular, getResources().getColor(R.color.uiv3_primary_text_color),
-                        getResources().getColor(R.color.uiv3_primary_text_color));
+        mPlaceAutoSuggestAdapter = new BBArrayAdapter<>(this, android.R.layout.simple_list_item_1,
+                faceRobotoRegular, getResources().getColor(R.color.uiv3_primary_text_color),
+                getResources().getColor(R.color.uiv3_primary_text_color));
         aEditTextChooseArea.setAdapter(mPlaceAutoSuggestAdapter);
+        aEditTextChooseArea.setThreshold(2);
+        aEditTextChooseArea.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (!TextUtils.isEmpty(s) && s.length() > 2) {
+                    displaySuggestion(s.toString());
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -157,57 +178,35 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
         return false;
     }
 
-    @Override
     public void displaySuggestion(String constraint) {
         //Southwest corner to Northeast corner.
-        LatLngBounds bounds = new LatLngBounds(new LatLng(7.43231, 65.82658), new LatLng(36.93593, 99.04924));
-        ArrayList<Integer> filterTypes = new ArrayList<>();
-        filterTypes.add(Place.TYPE_LOCALITY);
-        filterTypes.add(Place.TYPE_SUBLOCALITY);
-        filterTypes.add(Place.TYPE_SUBLOCALITY);
-        filterTypes.add(Place.TYPE_ADMINISTRATIVE_AREA_LEVEL_1);
-        filterTypes.add(Place.TYPE_ADMINISTRATIVE_AREA_LEVEL_2);
+        if (mBounds == null) {
+            mBounds = new LatLngBounds(new LatLng(7.43231, 65.82658), new LatLng(36.93593, 99.04924));
+        }
+        if (mAutoCompleteFilter == null) {
+            ArrayList<Integer> filterTypes = new ArrayList<>();
+            filterTypes.add(Place.TYPE_GEOCODE);
+            filterTypes.add(Place.TYPE_ESTABLISHMENT);
+            mAutoCompleteFilter = AutocompleteFilter.create(filterTypes);
+        }
 
-
-        Places.GeoDataApi.getAutocompletePredictions(mGoogleApiClient, constraint, bounds,
-                AutocompleteFilter.create(filterTypes))
-            .setResultCallback(new ResultCallback<AutocompletePredictionBuffer>() {
-                @Override
-                public void onResult(AutocompletePredictionBuffer buffer) {
-                    if (buffer == null) return;
-                    if (buffer.getStatus().isSuccess()) {
-                        mPlaces = new ArrayList<>();
-                        for (AutocompletePrediction prediction: buffer) {
-                            mPlaces.add(new AutoCompletePlace(prediction.getPlaceId(),
-                                    prediction.getDescription()));
+        Places.GeoDataApi.getAutocompletePredictions(mGoogleApiClient, constraint, mBounds,
+                mAutoCompleteFilter)
+                .setResultCallback(new ResultCallback<AutocompletePredictionBuffer>() {
+                    @Override
+                    public void onResult(AutocompletePredictionBuffer buffer) {
+                        if (buffer == null) return;
+                        if (buffer.getStatus().isSuccess()) {
+                            mPlaceAutoSuggestAdapter.clear();
+                            for (AutocompletePrediction prediction : buffer) {
+                                mPlaceAutoSuggestAdapter.add(new AutoCompletePlace(prediction.getPlaceId(),
+                                        prediction.getDescription()));
+                            }
+                            mPlaceAutoSuggestAdapter.notifyDataSetChanged();
                         }
-                        mPlaceAutoSuggestAdapter.notifyDataSetChanged();
+                        buffer.release();
                     }
-                    buffer.release();
-                }
-            });
-    }
+                });
 
-    private static class AutoCompletePlace {
-        private String placeId;
-        private String description;
-
-        public AutoCompletePlace(String placeId, String description) {
-            this.placeId = placeId;
-            this.description = description;
-        }
-
-        public String getPlaceId() {
-            return placeId;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        @Override
-        public String toString() {
-            return description;
-        }
     }
 }
