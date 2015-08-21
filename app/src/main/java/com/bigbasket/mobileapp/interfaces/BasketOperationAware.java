@@ -14,13 +14,13 @@ import java.util.HashMap;
 public interface BasketOperationAware {
     void setBasketOperationResponse(BasketOperationResponse basketOperationResponse);
 
-    void updateUIAfterBasketOperationSuccess(BasketOperation basketOperation, TextView basketCountTextView, View viewDecQty,
+    void updateUIAfterBasketOperationSuccess(@BasketOperation.Mode int basketOperation, TextView basketCountTextView, View viewDecQty,
                                              View viewIncQty, View btnAddToBasket,
                                              Product product, String qty, @Nullable View productView,
                                              @Nullable HashMap<String, Integer> cartInfo,
                                              @Nullable EditText editTextQty);
 
-    void updateUIAfterBasketOperationFailed(BasketOperation basketOperation, TextView basketCountTextView, View viewDecQty,
+    void updateUIAfterBasketOperationFailed(@BasketOperation.Mode int basketOperation, TextView basketCountTextView, View viewDecQty,
                                             View viewIncQty, View btnAddToBasket,
                                             Product product, String qty, String errorType, @Nullable View productView,
                                             @Nullable EditText editTextQty);

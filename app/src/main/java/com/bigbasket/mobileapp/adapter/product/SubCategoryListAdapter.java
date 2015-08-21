@@ -103,7 +103,7 @@ public class SubCategoryListAdapter<T> extends RecyclerView.Adapter<RecyclerView
             int position = getActualPosition(getPosition());
             Intent intent = new Intent(((ActivityAware) ctx).getCurrentActivity(), ProductListActivity.class);
             ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-            nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.CATEGORY.get()));
+            nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.CATEGORY));
             nameValuePairs.add(new NameValuePair(Constants.SLUG, categoryList.get(position).getSlug()));
             if (categoryList.get(position).getFilter() != null) {
                 ArrayList<FilteredOn> filteredOns = new ArrayList<>();

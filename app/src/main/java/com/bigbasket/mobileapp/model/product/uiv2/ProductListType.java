@@ -1,25 +1,31 @@
 package com.bigbasket.mobileapp.model.product.uiv2;
 
+import android.support.annotation.StringDef;
+
 import com.bigbasket.mobileapp.util.Constants;
 
-public enum ProductListType {
-    CATEGORY("pc"),
-    BRAND("pb"),
-    SEARCH("ps"),
-    SHOP("sis"),
-    BRAND_CATEGORY("pbpc"),
-    EXPRESS("express"),
-    NOW_AT_BB(Constants.NOW_AT_BB),
-    NEW_AT_BB(Constants.NEW_AT_BB),
-    BUNDLE_PACK(Constants.BUNDLE_PACK);
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-    private String value;
-
-    ProductListType(String value) {
-        this.value = value;
+public final class ProductListType {
+    private ProductListType() {
     }
 
-    public String get() {
-        return this.value;
+    @Retention(RetentionPolicy.SOURCE)
+    @StringDef({CATEGORY, BRAND, SEARCH, SHOP, BRAND_CATEGORY,
+            EXPRESS, NOW_AT_BB, NEW_AT_BB, BUNDLE_PACK})
+    public @interface Value {
     }
+
+    public static final String CATEGORY = "pc";
+    public static final String BRAND = "pb";
+    public static final String SEARCH = "ps";
+    public static final String SHOP = "sis";
+    public static final String BRAND_CATEGORY = "pbpc";
+    public static final String EXPRESS = "express";
+    public static final String NOW_AT_BB = Constants.NOW_AT_BB;
+    public static final String NEW_AT_BB = Constants.NEW_AT_BB;
+    public static final String BUNDLE_PACK = Constants.BUNDLE_PACK;
+
+
 }

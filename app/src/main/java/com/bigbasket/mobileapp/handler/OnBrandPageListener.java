@@ -21,7 +21,7 @@ public class OnBrandPageListener implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.BRAND.get()));
+        nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.BRAND));
         nameValuePairs.add(new NameValuePair(Constants.SLUG, brandSlug));
         ctx.launchProductList(nameValuePairs, null, null);
     }
