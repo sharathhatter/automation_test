@@ -7,11 +7,15 @@ import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
 import com.bigbasket.mobileapp.model.location.AutoCompletePlace;
+import com.bigbasket.mobileapp.util.UIUtil;
 import com.bigbasket.mobileapp.view.uiv3.BBArrayAdapter;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -20,6 +24,7 @@ import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.AutocompletePrediction;
 import com.google.android.gms.location.places.AutocompletePredictionBuffer;
 import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -37,7 +42,7 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
         GoogleMap.OnMyLocationButtonClickListener {
 
     private GoogleApiClient mGoogleApiClient;
-    private Location mLastLocation;
+    private LatLng mSelectedLatLng;
     @Nullable
     private GoogleMap mGoogleMap;
     @Nullable
@@ -49,6 +54,12 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle(getString(R.string.chooseLocation));
+
+        renderChooseLocation();
+    }
+
+    private void renderChooseLocation() {
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -82,6 +93,26 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
 
             @Override
             public void afterTextChanged(Editable s) {
+
+            }
+        });
+        aEditTextChooseArea.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (mPlaceAutoSuggestAdapter != null && position != AdapterView.INVALID_POSITION) {
+                    AutoCompletePlace autoCompletePlace = mPlaceAutoSuggestAdapter.getItem(position);
+                    if (!TextUtils.isEmpty(autoCompletePlace.getPlaceId())) {
+                        setLocationFromId(autoCompletePlace.getPlaceId());
+                    }
+                }
+            }
+        });
+        ViewGroup layoutChooseLocation = (ViewGroup) findViewById(R.id.layoutChooseLocation);
+        UIUtil.setUpFooterButton(this, layoutChooseLocation, null, "Continue", true);
+        layoutChooseLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mSelectedLatLng == null) return;
 
             }
         });
@@ -120,8 +151,9 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
     @Override
     public void onConnected(Bundle connectionHint) {
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-            if (mLastLocation != null) {
+            Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            if (lastLocation != null) {
+                mSelectedLatLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
                 updateLastKnownLocationOnMap();
             }
         }
@@ -129,9 +161,8 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
 
     private void updateLastKnownLocationOnMap() {
         if (mGoogleMap == null) return;
-        LatLng latLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
         mGoogleMapMarker = mGoogleMap.addMarker(new MarkerOptions()
-                .position(latLng)
+                .position(mSelectedLatLng)
                 .draggable(true));
         mGoogleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
             @Override
@@ -178,7 +209,7 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
         return false;
     }
 
-    public void displaySuggestion(String constraint) {
+    private void displaySuggestion(String constraint) {
         //Southwest corner to Northeast corner.
         if (mBounds == null) {
             mBounds = new LatLngBounds(new LatLng(7.43231, 65.82658), new LatLng(36.93593, 99.04924));
@@ -208,5 +239,21 @@ public class PlacePickerApiActivity extends BackButtonActivity implements OnMapR
                     }
                 });
 
+    }
+
+    private void setLocationFromId(String id) {
+        Places.GeoDataApi.getPlaceById(mGoogleApiClient, id).setResultCallback(new ResultCallback<PlaceBuffer>() {
+            @Override
+            public void onResult(PlaceBuffer places) {
+                if (places.getStatus().isSuccess()) {
+                    Place place = places.get(0);
+                    mSelectedLatLng = place.getLatLng();
+                    places.release();
+                    updateLastKnownLocationOnMap();
+                } else {
+                    places.release();
+                }
+            }
+        });
     }
 }
