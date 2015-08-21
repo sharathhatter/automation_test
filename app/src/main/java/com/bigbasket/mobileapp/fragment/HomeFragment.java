@@ -20,7 +20,7 @@ import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.uiv3.BBActivity;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
-import com.bigbasket.mobileapp.apiservice.models.response.AnalyticsEngine;
+import com.bigbasket.mobileapp.apiservice.models.response.AppCapability;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.AppDataResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.LoginUserDetails;
@@ -325,11 +325,12 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
         return HomeFragment.class.getName();
     }
 
-    private void setAnalyticalData(AnalyticsEngine analyticsEngine) {
-        if (analyticsEngine == null) return;
-        AuthParameters.getInstance(getCurrentActivity()).setAnyLyticsEnabled(analyticsEngine.isMoEngageEnabled(),
-                analyticsEngine.isAnalyticsEnabled(),
-                analyticsEngine.isFBLoggerEnabled(), getCurrentActivity());
+    private void setAppCapability(AppCapability appCapability) {
+        if (appCapability == null) return;
+        AuthParameters.getInstance(getCurrentActivity()).setAppCapability(appCapability.isMoEngageEnabled(),
+                appCapability.isAnalyticsEnabled(),
+                appCapability.isFBLoggerEnabled(),
+                appCapability.isMultiCityEnabled(), getCurrentActivity());
         AuthParameters.updateInstance(getCurrentActivity());
     }
 
@@ -350,8 +351,8 @@ public class HomeFragment extends BaseSectionFragment implements DynamicScreenAw
                             } else {
                                 AppUpdateHandler.markAsCurrent(getActivity());
                             }
-                            AnalyticsEngine analyticsEngine = callbackAppDataResponse.apiResponseContent.capabilities;
-                            setAnalyticalData(analyticsEngine);
+                            AppCapability appCapability = callbackAppDataResponse.apiResponseContent.capabilities;
+                            setAppCapability(appCapability);
                             LoginUserDetails userDetails = callbackAppDataResponse.apiResponseContent.userDetails;
                             if (userDetails != null) {
                                 SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(getActivity());

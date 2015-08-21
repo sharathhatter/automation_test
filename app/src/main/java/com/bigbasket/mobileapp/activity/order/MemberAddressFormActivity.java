@@ -10,33 +10,40 @@ import android.support.design.widget.TextInputLayout;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigbasket.mobileapp.R;
 import com.bigbasket.mobileapp.activity.base.BaseActivity;
 import com.bigbasket.mobileapp.activity.base.uiv3.BackButtonActivity;
+import com.bigbasket.mobileapp.adapter.account.AreaPinInfoAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiAdapter;
 import com.bigbasket.mobileapp.apiservice.BigBasketApiService;
-import com.bigbasket.mobileapp.apiservice.callbacks.CallbackGetAreaInfo;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.CreateUpdateAddressApiResponseContent;
 import com.bigbasket.mobileapp.fragment.account.OTPValidationDialogFragment;
 import com.bigbasket.mobileapp.interfaces.OtpDialogAware;
 import com.bigbasket.mobileapp.interfaces.PinCodeAware;
 import com.bigbasket.mobileapp.interfaces.TrackingAware;
+import com.bigbasket.mobileapp.model.CityManager;
 import com.bigbasket.mobileapp.model.account.Address;
+import com.bigbasket.mobileapp.model.account.City;
+import com.bigbasket.mobileapp.task.uiv3.GetAreaPinInfoTask;
 import com.bigbasket.mobileapp.util.ApiErrorCodes;
 import com.bigbasket.mobileapp.util.Constants;
 import com.bigbasket.mobileapp.util.NavigationCodes;
 import com.bigbasket.mobileapp.util.TrackEventkeys;
 import com.bigbasket.mobileapp.util.UIUtil;
-import com.bigbasket.mobileapp.view.InstantAutoComplete;
+import com.bigbasket.mobileapp.view.InstantAutoCompleteTextView;
+import com.bigbasket.mobileapp.view.uiv3.BBArrayAdapter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,30 +54,38 @@ import retrofit.client.Response;
 
 public class MemberAddressFormActivity extends BackButtonActivity implements PinCodeAware, OtpDialogAware {
 
-    private Address address;
+    private Address mAddress;
     private View base;
-    private String cityName;
+    private City mChoosenCity;
     private AutoCompleteTextView editTextPincode;
-    private InstantAutoComplete editTextArea;
+    private InstantAutoCompleteTextView editTextArea;
     private String mErrorMsg;
     private OTPValidationDialogFragment otpValidationDialogFragment;
     private boolean mFromAccountPage = false;
+    private ArrayList<City> mCities;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle(getActivityTitle());
         mFromAccountPage = getIntent().getBooleanExtra(Constants.FROM_ACCOUNT_PAGE, false);
-        if (address == null) {
-            address = getIntent().getParcelableExtra(Constants.UPDATE_ADDRESS);
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-            cityName = preferences.getString(Constants.CITY, null);
+        if (mAddress == null) {
+            mAddress = getIntent().getParcelableExtra(Constants.UPDATE_ADDRESS);
         }
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String cityName = preferences.getString(Constants.CITY, null);
+        int cityId = Integer.parseInt(preferences.getString(Constants.CITY_ID, "1"));
+        mChoosenCity = new City(cityName, cityId);
 
-        if (getSystemAreaInfo()) {
+        if (CityManager.isAreaPinInfoDataValidStale(this)) {
             handleMessage(Constants.CALL_AREA_INFO);
         } else {
             showForm();
         }
+    }
+
+    private ArrayList<City> getCities() {
+        AreaPinInfoAdapter areaPinInfoAdapter = new AreaPinInfoAdapter(this);
+        return areaPinInfoAdapter.getCities();
     }
 
     private void showForm() {
@@ -80,12 +95,41 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
         contentLayout.setBackgroundColor(getResources().getColor(R.color.white));
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         base = inflater.inflate(R.layout.uiv3_member_address_form, contentLayout, false);
-        editTextArea = (InstantAutoComplete) base.findViewById(R.id.editTextArea);
+        editTextArea = (InstantAutoCompleteTextView) base.findViewById(R.id.editTextArea);
         editTextPincode = (AutoCompleteTextView) base.findViewById(R.id.editTextPincode);
         if (base == null) {
             finish();
             return;
         }
+        Spinner citySpinner = (Spinner) base.findViewById(R.id.spinnerCity);
+
+        int color = getResources().getColor(R.color.uiv3_primary_text_color);
+        mCities = getCities();
+        BBArrayAdapter<City> arrayAdapter = new BBArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item, mCities, faceRobotoRegular,
+                color, color);
+        citySpinner.setAdapter(arrayAdapter);
+        citySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mChoosenCity = mCities.get(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        int selectedPosition = 0;
+        for (int i = 0; i < mCities.size(); i++) {
+            if (mCities.get(i).getId() == mChoosenCity.getId()) {
+                mChoosenCity = mCities.get(i);
+                selectedPosition = i;
+                break;
+            }
+        }
+        citySpinner.setSelection(selectedPosition);
+
         TextView txtSaveAddress = (TextView) base.findViewById(R.id.txtSaveAddress);
         txtSaveAddress.setTypeface(faceRobotoMedium);
         txtSaveAddress.setOnClickListener(new View.OnClickListener() {
@@ -94,13 +138,10 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
                 uploadAddress(null);
             }
         });
-        if (address != null) {
+        if (mAddress != null) {
             populateUiFields();
-        } else {
-            EditText editTextCity = (EditText) base.findViewById(R.id.editTextCity);
-            editTextCity.setText(cityName);
         }
-        setAdapterArea(editTextArea, editTextPincode);
+        setAdapterArea(editTextArea, editTextPincode, mChoosenCity.getName());
         contentLayout.addView(base);
     }
 
@@ -114,22 +155,35 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
         EditText editTextStreetName = (EditText) base.findViewById(R.id.editTextStreetName);
         EditText editTextResidentialComplex = (EditText) base.findViewById(R.id.editTextResidentialComplex);
         EditText editTextLandmark = (EditText) base.findViewById(R.id.editTextLandmark);
-        EditText editTextCity = (EditText) base.findViewById(R.id.editTextCity);
         CheckBox chkIsAddrDefault = (CheckBox) base.findViewById(R.id.chkIsAddrDefault);
+        Spinner spinnerCity = (Spinner) base.findViewById(R.id.spinnerCity);
 
-        editTextAddressNick.setText(getValueOrBlank(address.getAddressNickName()));
-        editTextFirstName.setText(getValueOrBlank(address.getFirstName()));
-        editTextLastName.setText(getValueOrBlank(address.getLastName()));
-        editTextMobileNumber.setText(getValueOrBlank(address.getContactNum()));
-        editTextHouseNum.setText(getValueOrBlank(address.getHouseNumber()));
-        editTextStreetName.setText(getValueOrBlank(address.getStreet()));
-        editTextResidentialComplex.setText(getValueOrBlank(address.getResidentialComplex()));
-        editTextLandmark.setText(getValueOrBlank(address.getLandmark()));
-        editTextArea.setText(getValueOrBlank(address.getArea()));
-        editTextCity.setText(getValueOrBlank(address.getCityName()));
-        editTextPincode.setText(getValueOrBlank(address.getPincode()));
-        //chkIsAddrDefault.setChecked(address.isDefault()); // Don't remove since during request, this is read
-        chkIsAddrDefault.setVisibility(address.isDefault() ? View.GONE : View.VISIBLE);
+        if (!mAddress.getCityName().equals(mChoosenCity.getName())) {
+            // Update the spinner
+            int selectedPosition = 0;
+            for (int i = 0; i < mCities.size(); i++) {
+                if (mCities.get(i).getName().equals(mAddress.getCityName())) {
+                    mChoosenCity = mCities.get(i);
+                    selectedPosition = 0;
+                }
+            }
+            spinnerCity.setSelection(selectedPosition);
+        }
+
+        editTextAddressNick.setText(getValueOrBlank(mAddress.getAddressNickName()));
+        editTextFirstName.setText(getValueOrBlank(mAddress.getFirstName()));
+        editTextLastName.setText(getValueOrBlank(mAddress.getLastName()));
+        editTextMobileNumber.setText(getValueOrBlank(mAddress.getContactNum()));
+        editTextHouseNum.setText(getValueOrBlank(mAddress.getHouseNumber()));
+        editTextStreetName.setText(getValueOrBlank(mAddress.getStreet()));
+        editTextResidentialComplex.setText(getValueOrBlank(mAddress.getResidentialComplex()));
+        editTextLandmark.setText(getValueOrBlank(mAddress.getLandmark()));
+        editTextArea.setText(getValueOrBlank(mAddress.getArea()));
+
+        //editTextCity.setText(getValueOrBlank(mAddress.getCityName()));
+        editTextPincode.setText(getValueOrBlank(mAddress.getPincode()));
+        //chkIsAddrDefault.setChecked(mAddress.isDefault()); // Don't remove since during request, this is read
+        chkIsAddrDefault.setVisibility(mAddress.isDefault() ? View.GONE : View.VISIBLE);
     }
 
     private void uploadAddress(String otpCode) {
@@ -274,6 +328,10 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
             {
                 put(Constants.IS_DEFAULT, chkIsAddrDefault.isChecked() ? "1" : "0");
             }
+
+            {
+                put(Constants.CITY_ID, String.valueOf(mChoosenCity.getId()));
+            }
         };
 
         if (otpCode != null) {
@@ -284,8 +342,8 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
         Map<String, String> eventAttribs = new HashMap<>();
         eventAttribs.put(TrackEventkeys.ENABLED, chkIsAddrDefault.isChecked() ? TrackEventkeys.YES : TrackEventkeys.NO);
         trackEvent(TrackingAware.ENABLE_DEFAULT_ADDRESS, eventAttribs);
-        if (address != null) {
-            payload.put(Constants.ID, address.getId());
+        if (mAddress != null) {
+            payload.put(Constants.ID, mAddress.getId());
             showProgressDialog(getString(R.string.please_wait));
             bigBasketApiService.updateAddress(payload, new CreateUpdateAddressApiCallback());
         } else {
@@ -297,12 +355,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
     @Override
     public void onPinCodeFetchSuccess() {
         showForm();
-        setAdapterArea(editTextArea, editTextPincode);
-    }
-
-    @Override
-    public void onPinCodeFetchFailure() {
-        showForm();
+        setAdapterArea(editTextArea, editTextPincode, mChoosenCity.getName());
     }
 
     @Override
@@ -332,10 +385,10 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
     }
 
     public String getActivityTitle() {
-        if (address == null) {
-            address = getIntent().getParcelableExtra(Constants.UPDATE_ADDRESS);
+        if (mAddress == null) {
+            mAddress = getIntent().getParcelableExtra(Constants.UPDATE_ADDRESS);
         }
-        return address == null ? "Add address" : "Update address";
+        return mAddress == null ? "Add Address" : "Update Address";
     }
 
     private void validateMobileNumber(boolean txtErrorValidateNumberVisibility, String errorMsg) {
@@ -373,9 +426,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
     public void handleMessage(int what) {
         switch (what) {
             case Constants.CALL_AREA_INFO:
-                BigBasketApiService bigBasketApiService = BigBasketApiAdapter.getApiService(getCurrentActivity());
-                showProgressDialog(getString(R.string.please_wait));
-                bigBasketApiService.getAreaInfo(new CallbackGetAreaInfo<>(getCurrentActivity()));
+                new GetAreaPinInfoTask<>(this).startTask();
                 break;
             case Constants.VALIDATE_MOBILE_NUMBER_POPUP:
                 validateMobileNumber(false, mErrorMsg);
@@ -425,7 +476,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
                     if (!mFromAccountPage) {
                         trackEvent(TrackingAware.CHECKOUT_ADDRESS_CREATED, null);
                     }
-                    if (address == null) {
+                    if (mAddress == null) {
                         Toast.makeText(getCurrentActivity(), "Address added successfully", Toast.LENGTH_LONG).show();
                         addressCreatedModified(createUpdateAddressApiResponse.apiResponseContent.addressId);
                     } else {
@@ -448,7 +499,7 @@ public class MemberAddressFormActivity extends BackButtonActivity implements Pin
                 default:
                     HashMap<String, String> map = new HashMap<>();
                     map.put(TrackEventkeys.FAILURE_REASON, createUpdateAddressApiResponse.message);
-                    trackEvent(address == null ? TrackingAware.NEW_ADDRESS_FAILED :
+                    trackEvent(mAddress == null ? TrackingAware.NEW_ADDRESS_FAILED :
                             TrackingAware.UPDATE_ADDRESS_FAILED, map);
                     handler.sendEmptyMessage(createUpdateAddressApiResponse.status,
                             createUpdateAddressApiResponse.message, false);

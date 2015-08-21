@@ -196,6 +196,7 @@ public class Constants {
     public static final String MEMBER_EMAIL_KEY = "email_id";
     public static final String FULL_NAME = "full_name";
     public static final String IS_KIRANA = "is_kirana";
+    public static final String IS_MULTICITY_ENABLED = "multicity_enabled";
     public static final String MEMBER_FULL_NAME_KEY = "memberName";
     public static final String HUB = "hub";
     public static final String CREATED_ON = "created_on";
@@ -397,6 +398,7 @@ public class Constants {
 
     public static final String CITY = "city";
     public static final String PIN_CODE_MAP = "pincode_map";
+    public static final String CITY_MAP = "city_map";
     public static final String VALUE = "value";
     public static final String VAL = "val";
     public static final String VAL_TYPE = "val_type";

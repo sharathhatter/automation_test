@@ -65,9 +65,6 @@ import retrofit.http.QueryMap;
 
 public interface BigBasketApiService {
 
-    @GET("/cities/")
-    void listCities(Callback<ArrayList<City>> cities);
-
     @FormUrlEncoded
     @POST("/register-device/")
     void registerDevice(@Field(Constants.DEVICE_ID) String deviceId,

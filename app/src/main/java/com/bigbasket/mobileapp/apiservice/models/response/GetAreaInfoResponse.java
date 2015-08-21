@@ -9,5 +9,8 @@ import java.util.HashMap;
 public class GetAreaInfoResponse {
 
     @SerializedName(Constants.PIN_CODE_MAP)
-    public HashMap<String, ArrayList<String>> pinCodeMaps;
+    public HashMap<String, HashMap<String, ArrayList<String>>> pinCodeMaps;
+
+    @SerializedName(Constants.CITY_MAP)
+    public HashMap<String, Integer> cityMap;
 }

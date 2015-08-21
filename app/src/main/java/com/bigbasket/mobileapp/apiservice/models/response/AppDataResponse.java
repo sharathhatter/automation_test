@@ -12,7 +12,7 @@ public class AppDataResponse {
     public LoginUserDetails userDetails;
 
     @SerializedName(Constants.CAPABILITIES)
-    public AnalyticsEngine capabilities;
+    public AppCapability capabilities;
 
     @SerializedName(Constants.APP_UPDATE)
     public AppUpdate appUpdate;

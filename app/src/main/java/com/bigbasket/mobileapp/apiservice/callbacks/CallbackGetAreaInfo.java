@@ -3,7 +3,7 @@ package com.bigbasket.mobileapp.apiservice.callbacks;
 import com.bigbasket.mobileapp.apiservice.models.response.ApiResponse;
 import com.bigbasket.mobileapp.apiservice.models.response.GetAreaInfoResponse;
 import com.bigbasket.mobileapp.interfaces.CancelableAware;
-import com.bigbasket.mobileapp.interfaces.PinCodeAware;
+import com.bigbasket.mobileapp.interfaces.HandlerAware;
 import com.bigbasket.mobileapp.interfaces.ProgressIndicationAware;
 import com.bigbasket.mobileapp.task.uiv3.InsertPinCodeAsyncTask;
 
@@ -32,29 +32,41 @@ public class CallbackGetAreaInfo<T> implements Callback<ApiResponse<GetAreaInfoR
             case 0:
                 if (getAreaInfoResponseApiResponse.apiResponseContent.pinCodeMaps != null) {
                     InsertPinCodeAsyncTask task = new InsertPinCodeAsyncTask<>(ctx,
-                            getAreaInfoResponseApiResponse.apiResponseContent.pinCodeMaps);
+                            getAreaInfoResponseApiResponse.apiResponseContent.pinCodeMaps,
+                            getAreaInfoResponseApiResponse.apiResponseContent.cityMap);
                     task.execute();
                     return;
                 }
-                pinCodeFailure();
+                pinCodeFailure(getAreaInfoResponseApiResponse.status,
+                        getAreaInfoResponseApiResponse.message);
                 break;
             default:
-                pinCodeFailure();
+                pinCodeFailure(getAreaInfoResponseApiResponse.status,
+                        getAreaInfoResponseApiResponse.message);
                 break;
         }
     }
 
     @Override
     public void failure(RetrofitError error) {
-        pinCodeFailure();
+        pinCodeFailure(error);
     }
 
-    private void pinCodeFailure() {
+    private void pinCodeFailure(RetrofitError error) {
         try {
             ((ProgressIndicationAware) ctx).hideProgressDialog();
         } catch (IllegalArgumentException e) {
             return;
         }
-        ((PinCodeAware) ctx).onPinCodeFetchFailure();
+        ((HandlerAware) ctx).getHandler().handleRetrofitError(error);
+    }
+
+    private void pinCodeFailure(int status, String msg) {
+        try {
+            ((ProgressIndicationAware) ctx).hideProgressDialog();
+        } catch (IllegalArgumentException e) {
+            return;
+        }
+        ((HandlerAware) ctx).getHandler().sendEmptyMessage(status, msg, true);
     }
 }

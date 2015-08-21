@@ -7,17 +7,17 @@ import com.bigbasket.mobileapp.util.Constants;
 import com.google.gson.annotations.SerializedName;
 
 
-public class AnalyticsEngine implements Parcelable {
+public class AppCapability implements Parcelable {
 
-    public static final Parcelable.Creator<AnalyticsEngine> CREATOR = new Parcelable.Creator<AnalyticsEngine>() {
+    public static final Parcelable.Creator<AppCapability> CREATOR = new Parcelable.Creator<AppCapability>() {
         @Override
-        public AnalyticsEngine createFromParcel(Parcel source) {
-            return new AnalyticsEngine(source);
+        public AppCapability createFromParcel(Parcel source) {
+            return new AppCapability(source);
         }
 
         @Override
-        public AnalyticsEngine[] newArray(int size) {
-            return new AnalyticsEngine[size];
+        public AppCapability[] newArray(int size) {
+            return new AppCapability[size];
         }
     };
     @SerializedName(Constants.ENABLE_MOENGAGE)
@@ -26,12 +26,14 @@ public class AnalyticsEngine implements Parcelable {
     private boolean isAnalyticsEnabled;
     @SerializedName(Constants.ENABLE_FB_LOGGER)
     private boolean isFBLoggerEnabled;
+    @SerializedName(Constants.IS_MULTICITY_ENABLED)
+    private boolean isMultiCityEnabled;
 
-
-    public AnalyticsEngine(Parcel source) {
+    public AppCapability(Parcel source) {
         isMoEngageEnabled = source.readByte() == (byte) 1;
         isAnalyticsEnabled = source.readByte() == (byte) 1;
         isFBLoggerEnabled = source.readByte() == (byte) 1;
+        isMultiCityEnabled = source.readByte() == (byte) 1;
     }
 
     @Override
@@ -44,22 +46,15 @@ public class AnalyticsEngine implements Parcelable {
         dest.writeByte(isMoEngageEnabled ? (byte) 1 : (byte) 0);
         dest.writeByte(isAnalyticsEnabled ? (byte) 1 : (byte) 0);
         dest.writeByte(isFBLoggerEnabled ? (byte) 1 : (byte) 0);
+        dest.writeByte(isMultiCityEnabled ? (byte) 1: (byte) 0);
     }
 
     public boolean isMoEngageEnabled() {
         return isMoEngageEnabled;
     }
 
-    public void setMoEngageEnabled(boolean isMoEngageEnabled) {
-        this.isMoEngageEnabled = isMoEngageEnabled;
-    }
-
     public boolean isAnalyticsEnabled() {
         return isAnalyticsEnabled;
-    }
-
-    public void setAnalyticsEnabled(boolean isAnalyticsEnabled) {
-        this.isAnalyticsEnabled = isAnalyticsEnabled;
     }
 
 
@@ -67,7 +62,7 @@ public class AnalyticsEngine implements Parcelable {
         return isFBLoggerEnabled;
     }
 
-    public void setFBLoggerEnabled(boolean isFBLoggerEnabled) {
-        this.isFBLoggerEnabled = isFBLoggerEnabled;
+    public boolean isMultiCityEnabled() {
+        return isMultiCityEnabled;
     }
 }

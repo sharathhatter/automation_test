@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -104,6 +105,13 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         }
     }
 
+
+    @Nullable
+    @Override
+    public ProgressDialog getProgressDialog() {
+        return progressDialog;
+    }
+
     public void showProgressView() {
         if (getActivity() == null) return;
         ViewGroup view = getContentView();
@@ -127,10 +135,23 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
 
     @Override
     public void showProgressDialog(String msg, boolean cancelable) {
+        showProgressDialog(msg, cancelable, false);
+    }
+
+    @Override
+    public void showProgressDialog(String msg, boolean cancelable, boolean isDeterminate) {
         if (TextUtils.isEmpty(msg)) {
             msg = getResources().getString(R.string.please_wait);
         }
         progressDialog = new ProgressDialog(getActivity());
+        if (isDeterminate) {
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            progressDialog.setIndeterminate(false);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                progressDialog.setProgressNumberFormat(null);
+                progressDialog.setProgressPercentFormat(null);
+            }
+        }
         progressDialog.setCancelable(cancelable);
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.setMessage(msg);
