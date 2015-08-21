@@ -79,10 +79,7 @@ import com.newrelic.agent.android.NewRelic;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -151,6 +148,12 @@ public abstract class BaseActivity extends AppCompatActivity implements
         return DataUtil.isInternetAvailable(getCurrentActivity());
     }
 
+    @Nullable
+    @Override
+    public ProgressDialog getProgressDialog() {
+        return progressDialog;
+    }
+
     @Override
     public void showProgressDialog(String msg) {
         showProgressDialog(msg, true);
@@ -158,7 +161,20 @@ public abstract class BaseActivity extends AppCompatActivity implements
 
     @Override
     public void showProgressDialog(String msg, boolean cancelable) {
+        showProgressDialog(msg, cancelable, false);
+    }
+
+    @Override
+    public void showProgressDialog(String msg, boolean cancelable, boolean isDeterminate) {
         progressDialog = new ProgressDialog(this);
+        if (isDeterminate) {
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            progressDialog.setIndeterminate(false);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                progressDialog.setProgressNumberFormat(null);
+                progressDialog.setProgressPercentFormat(null);
+            }
+        }
         progressDialog.setCancelable(cancelable);
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.setMessage(msg);
@@ -301,30 +317,30 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     public void showAlertDialog(String title,
-                                String msg, DialogButton dialogButton,
-                                DialogButton nxtDialogButton, final String sourceName) {
+                                String msg, @DialogButton.ButtonType int dialogButton,
+                                @DialogButton.ButtonType int nxtDialogButton, final String sourceName) {
         showAlertDialog(title, msg, dialogButton, nxtDialogButton, sourceName, null, null);
     }
 
     public void showAlertDialog(String title,
-                                String msg, DialogButton dialogButton,
-                                DialogButton nxtDialogButton, final String sourceName,
+                                String msg, @DialogButton.ButtonType int dialogButton,
+                                @DialogButton.ButtonType int nxtDialogButton, final String sourceName,
                                 final String passedValue) {
         showAlertDialog(title, msg, dialogButton, nxtDialogButton, sourceName, passedValue, null);
     }
 
     public void showAlertDialog(String title,
-                                String msg, DialogButton dialogButton,
-                                DialogButton nxtDialogButton, final String sourceName,
+                                String msg, @DialogButton.ButtonType int dialogButton,
+                                @DialogButton.ButtonType int nxtDialogButton, final String sourceName,
                                 final Object passedValue, String positiveBtnText) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getCurrentActivity());
         builder.setTitle(title);
         builder.setMessage(msg);
         builder.setCancelable(false);
-        if (dialogButton != null && nxtDialogButton != null) {
-            if (dialogButton.equals(DialogButton.YES) || dialogButton.equals(DialogButton.OK)) {
+        if (dialogButton != DialogButton.NONE && nxtDialogButton != DialogButton.NONE) {
+            if (dialogButton == DialogButton.YES || dialogButton == DialogButton.OK) {
                 if (TextUtils.isEmpty(positiveBtnText)) {
-                    int textId = dialogButton.equals(DialogButton.YES) ? R.string.yesTxt : R.string.ok;
+                    int textId = dialogButton == DialogButton.YES ? R.string.yesTxt : R.string.ok;
                     positiveBtnText = getString(textId);
                 }
                 builder.setPositiveButton(positiveBtnText, new DialogInterface.OnClickListener() {
@@ -334,8 +350,8 @@ public abstract class BaseActivity extends AppCompatActivity implements
                     }
                 });
             }
-            if (nxtDialogButton.equals(DialogButton.NO) || nxtDialogButton.equals(DialogButton.CANCEL)) {
-                int textId = nxtDialogButton.equals(DialogButton.NO) ? R.string.noTxt : R.string.cancel;
+            if (nxtDialogButton == DialogButton.NO || nxtDialogButton == DialogButton.CANCEL) {
+                int textId = nxtDialogButton == DialogButton.NO ? R.string.noTxt : R.string.cancel;
                 builder.setNegativeButton(textId, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int id) {
@@ -352,8 +368,8 @@ public abstract class BaseActivity extends AppCompatActivity implements
     }
 
     public void showAlertDialog(String title,
-                                String msg, DialogButton dialogButton,
-                                DialogButton nxtDialogButton) {
+                                String msg, @DialogButton.ButtonType int dialogButton,
+                                @DialogButton.ButtonType int nxtDialogButton) {
         showAlertDialog(title, msg, dialogButton, nxtDialogButton, null);
     }
 
@@ -439,22 +455,26 @@ public abstract class BaseActivity extends AppCompatActivity implements
         }
     }
 
-    public void setAreaPinCode(String areaName, AreaPinInfoAdapter areaPinInfoAdapter, EditText editTextPincode) {
+    public void setAreaPinCode(String areaName, AreaPinInfoAdapter areaPinInfoAdapter, EditText editTextPincode,
+                               String cityName) {
         if (!TextUtils.isEmpty(areaName)) {
-            String pinCode = areaPinInfoAdapter.getAreaPin(areaName);
+            String pinCode = areaPinInfoAdapter.getAreaPin(areaName, cityName);
             editTextPincode.setText(pinCode);
         }
     }
 
-    public void setAdapterArea(final AutoCompleteTextView editTextArea, final AutoCompleteTextView editTextPincode) {
+    public void setAdapterArea(final AutoCompleteTextView editTextArea, final AutoCompleteTextView editTextPincode,
+                               final String cityName) {
         final AreaPinInfoAdapter areaPinInfoAdapter = new AreaPinInfoAdapter(getCurrentActivity());
-        ArrayList<String> areaPinArrayList = areaPinInfoAdapter.getPinList();
-        ArrayAdapter<String> pinAdapter = new ArrayAdapter<>(getCurrentActivity(), android.R.layout.select_dialog_item, areaPinArrayList);
+        ArrayList<String> areaPinArrayList = areaPinInfoAdapter.getPinList(cityName);
+        ArrayAdapter<String> pinAdapter = new ArrayAdapter<>(getCurrentActivity(),
+                android.R.layout.select_dialog_item, areaPinArrayList);
         editTextPincode.setThreshold(1);
         editTextPincode.setAdapter(pinAdapter);
 
-        ArrayList<String> areaNameArrayList = areaPinInfoAdapter.getAreaNameList();
-        final ArrayAdapter<String> areaAdapter = new ArrayAdapter<>(getCurrentActivity(), android.R.layout.select_dialog_item, areaNameArrayList);
+        ArrayList<String> areaNameArrayList = areaPinInfoAdapter.getAreaNameList(cityName);
+        final ArrayAdapter<String> areaAdapter = new ArrayAdapter<>(getCurrentActivity(),
+                android.R.layout.select_dialog_item, areaNameArrayList);
         editTextArea.setThreshold(1);
         editTextArea.setAdapter(areaAdapter);
 
@@ -463,7 +483,7 @@ public abstract class BaseActivity extends AppCompatActivity implements
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 editTextArea.setText("");
                 String pinCode = editTextPincode.getText().toString();
-                ArrayList<String> areaNameArrayList = areaPinInfoAdapter.getAreaName(pinCode);
+                ArrayList<String> areaNameArrayList = areaPinInfoAdapter.getAreaName(pinCode, cityName);
                 if (areaNameArrayList != null && areaNameArrayList.size() > 1) {
                     areaAdapter.clear();
                     for (String areaName : areaNameArrayList)
@@ -482,35 +502,9 @@ public abstract class BaseActivity extends AppCompatActivity implements
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 String areaName = editTextArea.getText().toString();
-                setAreaPinCode(areaName, areaPinInfoAdapter, editTextPincode);
+                setAreaPinCode(areaName, areaPinInfoAdapter, editTextPincode, cityName);
             }
         });
-    }
-
-    public boolean getSystemAreaInfo() {
-        SharedPreferences prefer = PreferenceManager.getDefaultSharedPreferences(this);
-        String areaInfoCalledLast = prefer.getString(Constants.AREA_INFO_CALL_LAST, null);
-        SharedPreferences.Editor editor = prefer.edit();
-        try {
-            DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
-            Date d1 = format.getCalendar().getTime();
-            int days = 0;
-            if (areaInfoCalledLast != null) {
-                Date d2 = format.parse(areaInfoCalledLast);
-                long diff = d1.getTime() - d2.getTime();
-                days = (int) diff / (24 * 60 * 60 * 1000);
-            }
-            if (areaInfoCalledLast == null || days > 30) {
-                String currentDate = format.format(d1);
-                editor.putString("areaInfoCalledLast", currentDate);
-                editor.commit();
-                return true;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return false;
     }
 
     @Override

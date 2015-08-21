@@ -313,7 +313,7 @@ public abstract class ProductListAwareFragment extends BaseSectionFragment imple
     }
 
     @Override
-    public void updateUIAfterBasketOperationSuccess(BasketOperation basketOperation, TextView basketCountTextView, View viewDecQty,
+    public void updateUIAfterBasketOperationSuccess(@BasketOperation.Mode int basketOperation, TextView basketCountTextView, View viewDecQty,
                                                     View viewIncQty, View btnAddToBasket, Product product, String qty,
                                                     @Nullable View productView, @Nullable HashMap<String, Integer> cartInfoMap,
                                                     @Nullable EditText editTextQty) {

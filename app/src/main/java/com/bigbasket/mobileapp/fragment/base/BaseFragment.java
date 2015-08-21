@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -104,6 +105,13 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
         }
     }
 
+
+    @Nullable
+    @Override
+    public ProgressDialog getProgressDialog() {
+        return progressDialog;
+    }
+
     public void showProgressView() {
         if (getActivity() == null) return;
         ViewGroup view = getContentView();
@@ -127,10 +135,23 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
 
     @Override
     public void showProgressDialog(String msg, boolean cancelable) {
+        showProgressDialog(msg, cancelable, false);
+    }
+
+    @Override
+    public void showProgressDialog(String msg, boolean cancelable, boolean isDeterminate) {
         if (TextUtils.isEmpty(msg)) {
             msg = getResources().getString(R.string.please_wait);
         }
         progressDialog = new ProgressDialog(getActivity());
+        if (isDeterminate) {
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            progressDialog.setIndeterminate(false);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                progressDialog.setProgressNumberFormat(null);
+                progressDialog.setProgressPercentFormat(null);
+            }
+        }
         progressDialog.setCancelable(cancelable);
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.setMessage(msg);
@@ -206,7 +227,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     }
 
     @Override
-    public void updateUIAfterBasketOperationFailed(BasketOperation basketOperation, TextView basketCountTextView,
+    public void updateUIAfterBasketOperationFailed(@BasketOperation.Mode int basketOperation, TextView basketCountTextView,
                                                    View viewDecQty, View viewIncQty, View btnAddToBasket,
                                                    Product product, String qty, String errorType,
                                                    @Nullable View productView,
@@ -217,7 +238,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     }
 
     @Override
-    public void updateUIAfterBasketOperationSuccess(BasketOperation basketOperation, TextView basketCountTextView,
+    public void updateUIAfterBasketOperationSuccess(@BasketOperation.Mode int basketOperation, TextView basketCountTextView,
                                                     View viewDecQty, View viewIncQty, View btnAddToBasket,
                                                     Product product, String qty,
                                                     @Nullable View productView, @Nullable HashMap<String, Integer> cartInfoMap,
@@ -319,18 +340,18 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     }
 
     public void showAlertDialog(String title,
-                                String msg, DialogButton dialogButton,
-                                DialogButton nxtDialogButton, final String sourceName,
+                                String msg, @DialogButton.ButtonType int dialogButton,
+                                @DialogButton.ButtonType int nxtDialogButton, final String sourceName,
                                 final Object passedValue, String positiveBtnText) {
         if (getActivity() == null) return;
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(!TextUtils.isEmpty(title) ? title : "BigBasket");
         builder.setMessage(msg);
         builder.setCancelable(false);
-        if (dialogButton != null) {
-            if (dialogButton.equals(DialogButton.YES) || dialogButton.equals(DialogButton.OK)) {
+        if (dialogButton != DialogButton.NONE) {
+            if (dialogButton == DialogButton.YES || dialogButton == DialogButton.OK) {
                 if (TextUtils.isEmpty(positiveBtnText)) {
-                    int textId = dialogButton.equals(DialogButton.YES) ? R.string.yesTxt : R.string.ok;
+                    int textId = dialogButton == DialogButton.YES ? R.string.yesTxt : R.string.ok;
                     positiveBtnText = getString(textId);
                 }
                 builder.setPositiveButton(positiveBtnText, new DialogInterface.OnClickListener() {
@@ -340,14 +361,15 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
                     }
                 });
             }
-            if (nxtDialogButton != null && (nxtDialogButton.equals(DialogButton.NO)
-                    || nxtDialogButton.equals(DialogButton.CANCEL)))
+            if (nxtDialogButton != DialogButton.NONE && nxtDialogButton == DialogButton.NO
+                    || nxtDialogButton == DialogButton.CANCEL) {
                 builder.setNegativeButton(R.string.noTxt, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int id) {
                         onNegativeButtonClicked(dialogInterface, sourceName);
                     }
                 });
+            }
         }
         AlertDialog alertDialog = builder.create();
         if (isSuspended())
@@ -451,7 +473,7 @@ public abstract class BaseFragment extends AbstractFragment implements HandlerAw
     @Override
     public void showApiErrorDialog(@Nullable String title, String message, String sourceName, Object valuePassed) {
         if (getCurrentActivity() == null) return;
-        showAlertDialog(title, message, DialogButton.OK, null, sourceName, valuePassed, null);
+        showAlertDialog(title, message, DialogButton.OK, DialogButton.NONE, sourceName, valuePassed, null);
     }
 
     @Override

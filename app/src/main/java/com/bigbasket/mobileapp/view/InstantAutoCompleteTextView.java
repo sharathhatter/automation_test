@@ -5,17 +5,17 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.widget.AutoCompleteTextView;
 
-public class InstantAutoComplete extends AutoCompleteTextView {
+public class InstantAutoCompleteTextView extends AutoCompleteTextView {
 
-    public InstantAutoComplete(Context context) {
+    public InstantAutoCompleteTextView(Context context) {
         super(context);
     }
 
-    public InstantAutoComplete(Context arg0, AttributeSet arg1) {
+    public InstantAutoCompleteTextView(Context arg0, AttributeSet arg1) {
         super(arg0, arg1);
     }
 
-    public InstantAutoComplete(Context arg0, AttributeSet arg1, int arg2) {
+    public InstantAutoCompleteTextView(Context arg0, AttributeSet arg1, int arg2) {
         super(arg0, arg1, arg2);
     }
 

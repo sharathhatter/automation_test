@@ -21,6 +21,9 @@ public final class TrackEventkeys {
     public static final String ORDER_ID = "order id";
     public static final String NAVIGATION_CTX_THANK_YOU_PAGE = "thank_you_page";
     public static final String NAVIGATION_CTX_WALLET_SUMMARY = "wallet_summary";
+    public static final String NAVIGATION_CTX_PAY_NOW = "pay_now";
+    public static final String NAVIGATION_CTX_FUND_WALLET = "fund_wallet";
+    public static final String NAVIGATION_CTX_PAY_NOW_THANK_YOU = "pay_now_thank_you";
     public static final String NAVIGATION_CTX_WALLET_ACTIVITIES = "wallet_activity";
     public static final String NAVIGATION_CTX_DEEP_LINK = "deep_link";
     public static final String SECTION_ITEM = "section item";

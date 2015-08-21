@@ -27,6 +27,7 @@ public class PayNowThankyouActivity extends BaseActivity implements InvoiceDataA
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.uiv3_paynow_thankyou);
+        setNextScreenNavigationContext(TrackEventkeys.NAVIGATION_CTX_PAY_NOW_THANK_YOU);
         final String orderId = getIntent().getStringExtra(Constants.ORDER_ID);
 
         TextView txtThankYou = (TextView) findViewById(R.id.txtThankYou);

@@ -498,7 +498,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     @Override
-    public void updateUIAfterBasketOperationFailed(BasketOperation basketOperation, TextView basketCountTextView,
+    public void updateUIAfterBasketOperationFailed(@BasketOperation.Mode int basketOperation, TextView basketCountTextView,
                                                    View viewDecQty, View viewIncQty, View btnAddToBasket,
                                                    Product product, String qty,
                                                    String errorType, @Nullable View productView,
@@ -509,7 +509,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     }
 
     @Override
-    public void updateUIAfterBasketOperationSuccess(BasketOperation basketOperation, TextView basketCountTextView,
+    public void updateUIAfterBasketOperationSuccess(@BasketOperation.Mode int basketOperation, TextView basketCountTextView,
                                                     View viewDecQty, View viewIncQty, View btnAddToBasket,
                                                     Product product, String qty,
                                                     @Nullable View productView,
@@ -649,7 +649,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
     public void doSearch(String searchQuery, String referrer) {
         Intent intent = new Intent(getCurrentActivity(), ProductListActivity.class);
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<>();
-        nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.SEARCH.get()));
+        nameValuePairs.add(new NameValuePair(Constants.TYPE, ProductListType.SEARCH));
         nameValuePairs.add(new NameValuePair(Constants.SLUG, searchQuery.trim()));
         intent.putParcelableArrayListExtra(Constants.PRODUCT_QUERY, nameValuePairs);
         intent.putExtra(Constants.TITLE, searchQuery);
@@ -718,6 +718,8 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                     authParameters.getMemberFullName() : authParameters.getMemberEmail());
         } else {
             txtNavSalutation.setText(getString(R.string.bigbasketeer));
+        }
+        if (authParameters.isAuthTokenEmpty() || authParameters.isMultiCityEnabled()) {
             txtCityName.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -726,6 +728,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
                 }
             });
         }
+
         imgSwitchNav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -932,7 +935,7 @@ public class BBActivity extends SocialLoginActivity implements BasketOperationAw
         // Update from preference
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getCurrentActivity());
         String cartCountStr = preferences.getString(Constants.GET_CART, "0");
-        if (cartSummary == null || cartCountStr == null || !TextUtils.isDigitsOnly(cartCountStr)) {
+        if (cartSummary == null || TextUtils.isEmpty(cartCountStr) || !TextUtils.isDigitsOnly(cartCountStr)) {
             cartSummary = new CartSummary(0, 0, Integer.parseInt(cartCountStr));
         } else if (!TextUtils.isEmpty(cartCountStr) && TextUtils.isDigitsOnly(cartCountStr)) {
             cartSummary.setNoOfItems(Integer.parseInt(cartCountStr));
